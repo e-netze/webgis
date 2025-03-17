@@ -1,0 +1,3 @@
+﻿# name: Zurück
+
+Letzer Kartenausschnitt

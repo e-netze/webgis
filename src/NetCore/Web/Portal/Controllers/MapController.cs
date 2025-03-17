@@ -182,7 +182,8 @@ public class MapController : PortalBaseController
                 MapMessage = mapMessage,
                 ShowNewsTipsSinceVesion = _config.ShowNewsTipsSinceVersion(),
                 AddCustomCss = _config.AddCss(map),
-                AddCustomJavascript = _config.AddJs(map)
+                AddCustomJavascript = _config.AddJs(map),
+                Language = Request.Query["language"]
                 //,HtmlMetaTags = await _api.GetMapHtmlMetaTags(this.HttpContext, id, category, map) => wird zur zZ nicht verwendet. Ist einmal vorbereitet, die Frage ist, ob das wer braucht
             });
         }
