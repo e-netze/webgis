@@ -1,0 +1,6 @@
+﻿Hier werden Kartendienste verwaltet. 
+
+Durch einen Klick auf einen Dienst, können weitere Eigenschaften für einen Dienst definiert werden (z.B. Abfragen).
+
+Mit dem Button _[Neuen Dienst einbinden]_ kann ein Kartendienst hinzugefügt werden. Im folgenden Dialog sind Name und Quelle (Server) für den Dienst anzugeben.
+

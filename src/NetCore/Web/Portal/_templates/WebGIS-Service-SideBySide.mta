@@ -1,0 +1,44 @@
+﻿{
+	"parameters": [
+		{
+			"title": "Karten Ausdehnung",
+			"name": "map-extent",
+			"type": "extents"
+		},
+		{
+			"title": "Karten Hintergrund Dienst",
+			"name": "map-basemap-services",
+			"type": "service"
+		},
+		{
+			"title": "Hintergrund Durchlässigkeit (0-1)",
+			"name": "basemap-opacity",
+			"inputType": "number",
+			"value": 0.5
+		},
+		{
+			"title": "Karten Vergleichs-Dienst",
+			"name": "map-services",
+			"type": "service"
+		},
+		{
+			"title": "Vergleichs-Ansichten",
+			"name": "presentations",
+			"inputType": "json",
+			"jsonExample": [
+				{
+					"name": "Befliegung 3",
+					"layers": [ "0", "21" ]
+				},
+				{
+					"name": "Befliegung 2",
+					"layers": [ "12", "14" ]
+				},
+				{
+					"name": "Befliegung 1",
+					"layers": [ "8", "10" ]
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,75 @@
+﻿<style>
+
+    /*#map {
+        border: 2px solid red !important;
+    }
+
+    #toolbar::after {
+        content: "Testsystem - Daten nicht aktuell";
+        color: red;
+        font-weight: bold;
+        font-size: xx-large;
+        padding: 5px;
+    }*/
+
+    #toolbar {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        z-index: 1000;
+        background: white;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+        border: 1px solid #aaa;
+        overflow: hidden;
+    }
+
+    #topbar {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        text-align: right;
+        background-color: #fff;
+        z-index: 1000;
+        /*opacity: 1;*/
+        box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+    }
+
+    .leaflet-top {
+        top: 75px;
+    }
+
+    .webgis-map-app-menu,
+    .webgis-detail-search-holder {
+        box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+    }
+
+    .webgis-toolbar-tabs .webgis-toolbar-tab {
+        font-size: 1.42em;
+    }
+    
+</style>
+
+<div id='map' 
+     style='position:absolute;top:0px;left:0px;bottom:0px;right:0px;opacity:0;border-top:1px solid #62b851;border-left:1px solid #62b851;box-sizing:border-box'>
+</div>
+
+
+<div id="tabs" class="tabs-layout-container-options"
+     data-option-add_tools="false"
+     data-option-add_tool_content="true"
+     data-option-selected="presentations"
+     style='display:none'>
+</div>
+
+<div style='z-index:9998;position:absolute;right:0px;width:320px;bottom:0px;height:24px;background:#aaa'>
+    <div style="position:absolute;left:0px;top:0px;width:24px;height:24px;cursor:pointer;background-image:url()" id='webgis-info'>
+    </div>
+    <div style="position:absolute;left:24px;top:0px;bottom:0px;right:0px" id='hourglass'>
+    </div>
+</div>
+
+<div id="toolbar" class="webgis-ui-trans">
+</div> 
+
+<div id='topbar' style="">
+</div>

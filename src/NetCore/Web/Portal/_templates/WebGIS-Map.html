@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    
+
+    <script type="text/javascript">
+
+        {app-object}
+
+        var url = "{{portal-url}}/{{portal-page-id}}/map/{{map-category}}/{{map-name}}?";
+
+        if("{{append-services}}") {
+            url += "append-services={{append-services}}&"; 
+        }
+        if("{{append-search-services}}") {
+            url += "append-search-services={{append-search-services}}&";
+        }
+        if("{{query}}"){
+            url += "query={{query}}&";
+        }
+        if("{{additional-parameters}}") {
+            url += "{{additional-parameters}}&";
+        }
+
+        if (app.is_creator === false) {
+            redirectTo(url);
+        }
+
+        function redirectTo(location){
+            document.location=location;
+        }
+    </script>
+
+</head>
+<body class="webgis-container">
+    
+    <p>
+        Die App leitet den Anwender automatisch weiter.
+        Als Ersteller der App k&ouml;nnen sie die App mit dem Buttons unten Administrieren
+    </p>
+
+    <a href="" onclick="redirectTo(url);return false;">Weiterleitung, hier klicken...</a>
+
+</body>
+</html>

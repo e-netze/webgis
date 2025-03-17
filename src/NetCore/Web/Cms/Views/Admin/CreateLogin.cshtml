@@ -1,0 +1,45 @@
+﻿@model Cms.Models.AdminCreateLoginModel
+@{
+    ViewData["Title"] = "CreateLogin";
+}
+
+<style>
+    input,
+    textarea {
+        width:100%
+    }
+</style>
+
+
+<div style="max-width:800px;margin:20px auto">
+    
+
+    <div style="padding:15px;border:1px solid #aaa;background:#efefef">
+        <h2>Generate Login JSON</h2>
+        <br />
+        @using (Html.BeginForm("CreateLogin", "Admin"))
+        {
+
+            <div class="form-group">
+                @Html.TextBoxFor(m => m.Username, htmlAttributes: new { placeholder = "Username..." })
+            </div>
+            <div class="form-group">
+                @Html.PasswordFor(m => m.Password, htmlAttributes: new { placeholder = "Password..." })
+            </div>
+
+            <button type="submit">Generate</button>
+        }
+        <br />
+        <br />
+        @if(!String.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div style="color:red">@Model.ErrorMessage</div>
+        }
+        @if (!String.IsNullOrWhiteSpace(Model.Json))
+        {
+        @Html.TextAreaFor(m => m.Json, htmlAttributes: new { @readonly = "readonly", rows = 6 })
+        }
+    </div>
+
+    
+</div>

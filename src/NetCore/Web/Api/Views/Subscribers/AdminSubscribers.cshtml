@@ -1,0 +1,27 @@
+﻿@model E.Standard.WebGIS.SubscriberDatabase.SubscriberDb.Subscriber[]
+
+@{
+    ViewBag.Title = "Admin Subscribers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    <a href="@Url.Action("Index","Subscribers")" class="back-button"></a>
+    Admin subscribers
+</h2>
+
+<br />
+<br />
+
+@foreach(var subscriber in Model)
+{
+    <div>
+        @Html.ActionLink(subscriber.Name, "Update", new { id = subscriber.Id })
+        <div>
+            @(subscriber.FirstName+" "+subscriber.LastName)
+        </div>
+    </div>
+    <br/>
+}
+
+

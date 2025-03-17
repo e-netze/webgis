@@ -1,0 +1,74 @@
+﻿@using System.Reflection
+@using Cms.AppCode.Extensions
+
+@model Cms.Models.ImportModel
+@{
+    ViewData["Title"] = "Import";
+    Layout = "~/Views/Shared/_Layout_empty.cshtml";
+}
+
+<p>
+    Hier kann ein exportiertes CMS importiert werden.
+</p>
+<p>
+    <strong>Actung:</strong>
+    Ein Import ist endgültig und kann nicht rückgängig gemacht werden. Da hier Knoten unabsichtlich zerstört (überschrieben) werden können, wird empfohlen, vor einem Import immer eine Sicherungskopie durch einen Export durchzuführen.
+    Der Import erfolgt auf eigene Gefahr.
+</p>
+<p>
+    Beim Import sind dabei folgende Optionen vorhanden:
+
+    <ul style="list-style: circle;padding:5px 0px 30px 30px">
+        <li>
+            <strong>Nur vorhandene Knoten erstellen:</strong><br />
+            Dabei werden Konten aus dem ZIP File übernommen, die im aktuellen CMS noch nicht existieren
+        </li>
+        <li>
+            <strong>Vorhandene Knoten überschreiben, nicht vorhande erstellen:</strong><br />
+            Wie oben, allerdings werden hier bereits im aktuellen CMS vorhandene Knoten überschreiben
+        </li>
+    </ul>
+</p>
+
+@if (!String.IsNullOrWhiteSpace(Model?.ErrorMesssage))
+{
+    <div class="error-message">
+        @Model.ErrorMesssage
+    </div>
+}
+
+<form method="post" enctype="multipart/form-data" class="cms-form">
+    <div class="input-container">
+        <div class="label">Import Typ:</div>
+        <select name="ImportType">
+            @foreach (ImportType option in Enum.GetValues(typeof(Cms.Models.ImportType)))
+            {
+                <option value="@((int)option)">@option.GetDescription()</option>
+            }
+        </select>
+    </div>
+
+    <br />
+
+    <div class="input-container">
+        <div class="label">ZIP File:</div>
+        <input type="file" name="zipFile" />
+    </div>
+
+    <br />
+
+    <button type="submit">Import</button>
+</form>
+
+@section scripts {
+    <script type="text/javascript">
+    @if(Model?.ProcDefinition!=null)
+    {
+        <text>
+    var proc = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject( Model.ProcDefinition))');
+    CMS.showConsole(proc);
+        </text>
+
+    }
+    </script>
+}

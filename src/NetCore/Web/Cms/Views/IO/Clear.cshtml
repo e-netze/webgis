@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewData["Title"] = "Clear";
+    Layout = "~/Views/Shared/_Layout_empty.cshtml";
+}
+
+<p>
+    Hier kann das gesamte CMS zurückgesetzt werden. Dadurch werden alle Konten gelöscht.
+</p>
+<p>
+    <strong>Actung:</strong>
+    Ein Löschen ist endgültig und kann nicht rückgängig gemacht werden. Da hier alle Knoten gelöscht werden, wird empfohlen, vor einem Clear immer eine Sicherungskopie durch einen Export durchzuführen.
+    Der Clear-Befehl erfolgt auf eigene Gefahr.
+</p>
+
+@if (!String.IsNullOrWhiteSpace(Model?.ErrorMesssage))
+{
+    <div class="error-message">
+        @Model.ErrorMesssage
+    </div>
+}
+
+<form id="form" method="post">
+    <input type="hidden" />
+    <button type="submit" class="btn-danger">!!! Clear !!!</button>
+</form>
+
+@section scripts {
+<script type="text/javascript">
+    @if(Model?.ProcDefinition!=null)
+    {
+        <text>
+    var proc = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject( Model.ProcDefinition))');
+    CMS.showConsole(proc);
+        </text>
+
+    }
+</script>
+}
+

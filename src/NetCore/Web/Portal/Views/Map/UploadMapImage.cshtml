@@ -1,0 +1,16 @@
+﻿@model Portal.Core.Models.Portal.PortalUploadContentModel
+
+@{
+    ViewBag.Title = "UploadContentImage";
+    Layout = "~/Views/Shared/_Layout_empty.cshtml";
+}
+
+<h2>UploadContentImage</h2>
+
+<script type="text/javascript">
+
+    top.$('.mapimage-preview').empty();
+    var imageUrl = top.webgis.url.relative('@Html.Raw(Model.ImageUrl)');
+    $("<div style=\"background:url('"+imageUrl+"') no-repeat center center;width:140px;height:140px\"></div>").appendTo(top.$('.mapimage-preview'));
+
+</script>

@@ -1,0 +1,45 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "leaflet-minimap@3.6.1",
+      "destination": "wwwroot/scripts/leaflet/leaflet-minimap/"
+    },
+    { 
+      "provider": "unpkg",
+      "library": "@microsoft/signalr@latest",
+      "destination": "wwwroot/scripts/signalr",
+      "files": [
+        "dist/browser/signalr.js",
+        "dist/browser/signalr.min.js"
+      ]
+    },
+    {
+      "library": "Sortable@1.15.0",
+      "destination": "wwwroot/lib/sortable/"
+    },
+    {
+      "library": "monaco-editor@0.52.2",
+      "destination": "wwwroot/lib/monaco-editor"
+    },
+    {
+      "provider": "unpkg",
+      "library": "maplibre-gl@3.6.2",
+      "destination": "wwwroot/lib/maplibre-gl/",
+      "files": [
+        "dist/*"
+      ]
+    },
+    {
+      "provider": "unpkg",
+      "library": "@maplibre/maplibre-gl-leaflet@0.0.22",
+      "destination": "wwwroot/lib/maplibre-gl-leaflet/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "@jugstalt/jextend@0.2.1",
+      "destination": "wwwroot/lib/jextend/"
+    }
+  ]
+} 

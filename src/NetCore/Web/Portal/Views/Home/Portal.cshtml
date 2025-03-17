@@ -1,0 +1,139 @@
+﻿@using E.Standard.WebGIS.Core
+@using Portal.Core.AppCode.Extensions 
+
+@inject Portal.Core.AppCode.Services.UrlHelperService urlHelper
+@inject Portal.Core.AppCode.Services.CustomContentService customContent
+@inject E.Standard.Configuration.Services.ConfigurationService config
+
+@model Portal.Core.Models.Portal.PortalModel
+@{
+    ViewBag.Title = Model.PortalPageName;
+    Layout = "~/Views/Shared/_Layout_empty.cshtml";
+}
+
+@{
+    var request = this.Context.Request;
+
+    string apiUrl = urlHelper.ApiUrl(request, E.Standard.WebGIS.Core.HttpSchema.Current);
+    string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
+}
+
+@if (Model.IsContentAuthor)
+{
+    <link href="@(apiUrl)/content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="@(apiUrl)/scripts/jquery-ui-1.10.4.min.js"></script>
+}
+<script src="@(apiUrl)/scripts/api/api.min.js?@(WebGISVersion.CssVersion)"></script>
+
+@if (Model.IsContentAuthor)
+{
+    <script src="@((request.Uri().ToString().Split('?')[0].EndsWith("/") ? "../":"") +Url.Content("Scripts/webgis-portal-content.js"))"></script>
+    @*<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>*@
+
+    <script src="~/scripts/tinymce/4/tinymce.js"></script>
+
+    <script src="@(apiUrl)/scripts/typeahead/typeahead.jquery.min.js"></script>
+
+    <link href="@(apiUrl)/content/styles/default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+    <script src="@(apiUrl)/scripts/api/ui/webgis_modal.js?@(WebGISVersion.CssVersion)"></script>
+}
+
+@if (Model.IsPortalPageOwner)
+{
+    <script src="@(portalContentUrl)/scripts/webgis-portal-ua.js?@(WebGISVersion.CssVersion)"></script>
+    <script src="@(apiUrl)/scripts/webgis-jquery-multiselect-autocomplete.js?@(WebGISVersion.CssVersion)"></script>
+}
+
+<link href="@(portalContentUrl)/content/portal.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+@if (customContent.CompanyPortalCssExists())
+{
+    <link href="@(portalContentUrl)/content/companies/@(config.Company())/portal.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+}
+@{ var portalCssVersion = customContent.PagePortalCssVersion(Model.PortalPageId); }
+@if (!String.IsNullOrWhiteSpace(portalCssVersion))
+{
+    @if (String.IsNullOrWhiteSpace(customContent.PortalCustomContentRootPath))
+    {
+        <link href="@(portalContentUrl)/content/portals/@(Model.PortalPageId)/portal.css?@(portalCssVersion)" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="@(customContent.CustomScriptContent(Model.PortalPageId, Model.CurrentUsername, "portal.css", portalCssVersion))" rel="stylesheet" />
+    }
+}
+<script src="@(portalContentUrl)/scripts/webgis-portal.js?@(WebGISVersion.CssVersion)"></script>
+
+<script type="text/javascript">
+    portal = '@(Model.PortalPageId)';
+    isAuthor=@(Model.IsMapAuthor.ToString().ToLower());
+    isOwner=@(Model.IsPortalPageOwner.ToString().ToLower());
+    uaEditable=@(Model.AllowUserAccessSettings.ToString().ToLower());
+    isAnonymous =@(String.IsNullOrWhiteSpace(Model.CurrentUsername).ToString().ToLower());
+    currentUsername = '@Model.CurrentUsername';
+</script>
+
+<div class="webgis-page-header-container">
+    <div class="webgis-page-header" style="">
+        <a target="_blank" href="@(config.PortalNameUrl())">
+            @(config.PortalName())
+        </a>
+    </div>
+    <div class="webgis-page-header2" style="">
+        <div class="page-content-item page-editable-content" data-content-id="page-title" data-content-type="input" id="portal-title" style="display:inline-block">@Model.PortalPageName</div>
+
+        @if (!String.IsNullOrWhiteSpace(Model.CurrentUsername))
+        {
+            <span class="webgis-page-username">
+                Angemeldet:<br />@Model.CurrentUsername
+
+                @if (Model.AllowLogout)
+                {
+                    @Html.ActionLink("[Logout]", "Logout", "Auth")
+                }
+            </span>
+        }
+    </div>
+</div>
+
+<div style="overflow:auto;text-align:center">
+    <div class="page-content-frame">
+        <div style="margin:0px;padding:0px;position:relative;">
+            <img style="width:100%" src="@(portalContentUrl)/proxy/toolmethod/webgis-tools-portal-portal/page-banner?format=image/png&id=@(Model.BannerId)" />
+
+            <div id="page-description" class="page-content-item portal-editable-content page-description" data-content-id="page-description" data-content-type="text">
+                @Model.PortalPageDescription
+            </div>
+        </div>
+
+        <ul class="page-content-item-list" style="" id="page-content-list">
+
+
+        </ul>
+        @if (Model.IsContentAuthor)
+        {
+            <br />
+            <br />
+            <div class='webgis-page-content-new-item' id="page-content-new-item">Inhalt hinzufügen</div>
+        }
+
+    </div>
+
+</div>
+
+<iframe id="image-upload-form-target" name="image-upload-form-target" style="display:none"></iframe>
+<form id="image-upload-form" action="./@(Model.PortalPageId)/UploadContentImage" target="image-upload-form-target" method="post" enctype="multipart/form-data" style="width:0px;height:0;overflow:hidden">
+    <input type="hidden" name="contentId" id="currentEditContentId" value="" />
+    <input name="content-image" type="file" onchange="$('#image-upload-form').submit();this.value='';">
+</form>
+
+@if (Model.IsPortalPageOwner)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+
+        });
+    </script>
+}
+
+

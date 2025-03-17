@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="regex.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="regex.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.CMS.Schema\E.Standard.CMS.Schema.csproj" />
+    <ProjectReference Include="..\E.Standard.CMS.UI\E.Standard.CMS.UI.csproj" />
+    <ProjectReference Include="..\E.Standard.OGC.Schema\E.Standard.OGC.Schema.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.CMS\E.Standard.WebGIS.CMS.csproj" />
+    <ProjectReference Include="..\E.Standard.WebMapping.Services\E.Standard.WebMapping.Services.csproj" />
+  </ItemGroup>
+
+</Project>

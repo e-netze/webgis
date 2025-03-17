@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+	  <Nullable>enable</Nullable>
+	  <LangVersion>13</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E.Standard.Platform\E.Standard.Platform.csproj" />
+  </ItemGroup>
+
+</Project>

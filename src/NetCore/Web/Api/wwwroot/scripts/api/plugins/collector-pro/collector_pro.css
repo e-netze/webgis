@@ -1,0 +1,467 @@
+#collector-container {
+    /*max-width: 98%;*/
+    /*max-width: 1200px;*/
+    padding:10px;
+    margin: 0 auto;
+    position: absolute;
+    left:0px; right:0px;
+    top:0px; bottom: 0px;
+}
+
+
+.tabs {
+    min-width:300px;
+    border: 1px solid #eee;
+    margin: -2px 0;
+    position: absolute;
+    left: 10px; right: 10px; top: 50px;bottom: 10px;
+    overflow: auto;
+}
+
+.tab {
+    float: left;
+    display: none;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    position: absolute;
+    left: 4px;right: 4px;top: 10px;bottom: 4px;  
+}
+
+.tab .content {
+    width: 100%;
+    min-height: calc(100% - 58px);  
+}
+
+.tabHeader {
+    position: absolute;
+    z-index: 10;
+}
+
+.tabHeader span {
+    align-self: center;
+}
+
+.tabHeaderPart {
+    height: inherit;
+    display: flex;
+    padding: 2px 24px 2px 2px;
+    max-width: 220px; /* Wenn Tabswitcher nicht über gesamte Breite gehen sollen */
+    border-bottom: 1px solid #eee;
+    box-sizing: border-box;
+    height: 40px;
+    background-color: white;
+    z-index: 100;
+    border-top: 2px solid white;
+    white-space: nowrap;
+    background: #f6f6f6;
+}
+
+.tabHeaderPart.stretch {
+    padding: 0;
+    width: 0;    
+}
+
+.tabHeaderPart:hover{
+    cursor: pointer;
+    background-color: #efefef;
+}
+
+    .tabHeaderPart.selected {
+        border-color: #eee;
+        border-width: 1px 1px 0;
+        border-style: solid solid none;
+        background-color: #b5dbad;
+    }
+
+.tabHeaderIcon {
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    float: left;
+    width: 30px;
+    margin-right: 4px;
+    height: inherit;
+}
+
+.tabHeaderPart span {
+    margin: auto;
+}
+
+.tabHeaderIcon.icontab1{
+    background-image: url("properties.png");
+}
+.tabHeaderIcon.icontab2{
+    background-image: url("pin.png");
+}
+.tabHeaderIcon.icontab3{
+    background-image: url("save.png");
+}
+
+.content.webgis-container {
+    margin-bottom: 15px;
+}
+
+.button {
+    text-align: center;
+    min-width: 200px;
+    display: inline-block;
+    background-color: #b5dbad;
+    color: #333;
+    border: 2px solid #82C828;
+    padding: 6px;
+    cursor: pointer;
+    margin: 1px;
+    background-position: 2px center !important;
+    background-repeat: no-repeat !important;
+    box-sizing: border-box !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-radius: 16px;
+    outline:none !important;
+}
+
+    .button:hover {
+        background-color: #fff;
+        color: #82C828;
+    }
+
+.button.forward {
+    float: right;
+}
+
+.button.close {
+    background-color: transparent;
+    border: 1px solid #80c826;
+    color: dimgrey;
+    font-style: italic;
+    font-weight: normal;
+    text-transform: uppercase;
+    /*cursor: default;*/
+}
+
+
+.loaderimage {
+    background-image: url('ajax-loader.gif');
+    background-size: 20px 20px;
+    width: 20px;
+    height: 20px;
+    margin: 0 auto;
+}
+
+.collectorpro-presentation_toc-content {
+    width: 680px;
+    float: left;
+    padding-bottom: 2px;
+    margin-top: 8px;
+    cursor:auto;
+}
+
+.category-description {
+    margin-top: 12px;
+    overflow: hidden;
+    color: gray;
+    font-weight: normal;
+    font-size: 12px;
+    white-space: normal;
+    padding-left: 20px;
+    max-width: 700px;
+}
+
+.wrapper-input {
+    clear: left;
+    margin-top: 6px;
+}
+
+
+.webgis-plugin-collectorpro-container
+.tab1
+.collectorpro-input-label {
+    float: left;
+    width: 250px;
+    word-wrap: break-word;
+    font-weight: normal;
+    font-size: 14px;
+
+    padding: 7px;
+    margin: 0px 4px 2px 0;
+    text-align: left;
+}
+
+.infotext {
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.webgis-plugin-collectorpro-container
+.tab1
+.collectorpro-input:read-only {
+    /*background-color: #e4e4e4;*/
+}
+
+.webgis-plugin-collectorpro-container
+.tab1
+.collectorpro-input, 
+.webgis-plugin-collectorpro-container
+.tab1 
+.wrapperRadioCheck, 
+.ui-datepicker {
+    display: inline;
+    box-sizing: content-box;
+    width: calc(100% - 274px);       /* 250px Width Label + 2x 1px Border links/rechts + 2x 7px Padding + 4px margin-right */
+    max-width: 400px;
+    padding: 6px 2px;
+    border: 1px solid #b5dbad;
+    font-size: 14px;
+}
+
+.webgis-plugin-collectorpro-container
+.tab1
+.wrapperRadioCheck {
+    display: inline-block;
+    padding: 5px 2px;
+}
+
+.webgis-plugin-collectorpro-container
+.tab1
+.webgis-fileupload {
+    width: calc(100% - 274px); 
+    height: 40px;
+}
+
+.webgis-plugin-collectorpro-container
+.tab1
+.collectorpro-radio {
+    width: auto;
+    max-width: auto;
+}
+
+.webgis-plugin-collectorpro-container
+.tab1
+.collectorpro-input[type='checkbox'] {
+    margin: 3px 0;
+    width: auto;
+}
+
+span.alias {
+    font-size: 14px;
+    font-weight: normal;
+}
+
+
+.required {
+    background-color: #fce88d;
+}
+
+.webgis-plugin-collectorpro-container
+.tab1
+.webgis-expanded {
+    background: #ffffff;
+    color: #000;
+    font-size: 16px;
+    /*font-weight: bold;*/
+}
+
+.webgis-plugin-collectorpro-container
+.tab1
+.collectorpro-presentation_toc-title {
+    border-bottom: none;
+    cursor: default;
+    white-space: nowrap;
+    padding: 5px;
+    position: relative;
+    font-size: 16px;
+    background: #b5dbad;
+    clear: left;
+}
+
+.webgis-plugin-collectorpro-container
+.tab1
+.collectorpro-presentation_toc-title.webgis-expanded {
+    background: white;
+}
+
+.webgis-plugin-collectorpro-container
+.tab1
+.collectorpro-presentation_toc-title-text {
+    color: #000;
+    font-size: 14px;
+    cursor: pointer;
+    background: #f6f6f6 none repeat scroll 0 0;
+    border-bottom: none;
+    border-left: none;
+    border-radius: 0;
+    margin: -5px;
+    padding: 5px 5px 5px 30px;
+}
+
+    .webgis-plugin-collectorpro-container
+    .tab1
+    .collectorpro-presentation_toc-title-text:hover {
+        background: #efefef none repeat scroll 0 0;
+    }
+
+.collectorpro-presentation_toc-title.webgis-expanded
+.collectorpro-presentation_toc-title-text {
+    background: #b5dbad none repeat scroll 0 0 !important;
+}
+
+.summary-category {
+    text-align: left;
+    padding: 5px;
+    /*font-weight: bold;*/
+    margin-bottom: 2px;
+    background-color: #b5dbad;
+    color: #000;
+    margin-top: 14px;
+}
+
+.summary-label {
+    text-align: right;
+    width: 250px;
+    float: left;
+    word-wrap: break-word;
+    font-weight: bold;
+    padding-right: 5px;
+}
+
+.summary-value:nth-of-type(4n) { background-color: #ecf0f1; }
+
+.summary-category-content {
+    line-height: 20px;
+}
+
+.missing {
+    background-color: #ffefef !important;
+    border: 1px solid #f00;
+}
+
+.multi-geom-table {
+    max-width: 674px; /*400px Input + 274 Label*/
+    width: 100%;
+    font-weight: normal;
+    font-size: 14px;
+    border-collapse: collapse;
+}
+
+.multi-geom-table tbody tr:nth-child(even) {background: #fff;}
+.multi-geom-table tbody tr:nth-child(odd) {background: #f6f6f6;}
+.multi-geom-table tbody tr:hover {background: #efefef;}
+
+.multi-geom-table tbody td {
+    font-size: 14px;
+}
+
+.multi-geom-table tbody td.symbol {
+    width: 30px;
+}
+
+.recordsymbol {
+    width: 20px;
+    height: 20px;
+    background-size: 20px 20px;
+    cursor:pointer;
+}
+
+.deleteRow {
+    background-image: url('Delete20_dark.png');
+    float: right;
+}
+.deleteRow:hover {
+    background-image: url('Delete20_light.png');
+}
+
+@media screen and (max-width: 900px) {
+    .category-description {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 730px) {
+    .collectorpro-presentation_toc-content {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .webgis-plugin-collectorpro-container
+    .tab1
+    .collectorpro-input, 
+    .webgis-plugin-collectorpro-container
+    .tab1
+    .webgis-fileupload, 
+    .webgis-plugin-collectorpro-container
+    .tab1
+    .wrapperRadioCheck {
+        width: calc(100% - 6px);       /* 2x 1px Border links/rechts + 2x 2px Padding horizontal */
+        max-width: none;
+    }
+
+    .ui-datepicker {
+        width: calc(100% - 44px);
+        max-width: none;
+    }
+
+    .webgis-plugin-collectorpro-container
+    .tab1
+    .collectorpro-radio {
+        width: auto;
+        max-width: auto;
+    }
+
+    .webgis-plugin-collectorpro-container
+    .tab1
+    .collectorpro-input-label {
+        float: none;
+        width: auto;
+        margin-right: 0px;
+    }
+
+    .summary-label {
+        text-align: left;
+        width: auto;
+        float: none;
+    }
+
+    .summary-label:nth-of-type(4n+3) { 
+        background-color: #ecf0f1; 
+    }
+
+    /* Bei kleinen Bildschirmen nur aktuell ausgewählten TabHeader mit Text anzeigen, alle anderen nur Symbol */
+    .tabHeaderPart span{    
+        display: none;
+    }
+    .tabHeaderPart.selected span{    
+        display: block;
+    }
+}
+
+/* jQuery UI Überschreibungen */
+.ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br, .ui-corner-bl, .ui-corner-top, .ui-corner-left, .ui-corner-tr, .ui-corner-tl  {
+    border-radius: 0px;
+}
+
+.ui-widget-content {
+    border: 1px solid #80c826;
+}
+
+.ui-widget-header {
+    background-color: #62b851;
+    background-image: none;
+    color: white;
+}
+
+/*.ui-widget-header .ui-icon {
+    background-image: url("ui-icons_ffffff_256x240.png");
+}
+
+.webgis-plugin-collectorpro-container
+.tab1
+.webgis-api-icon {
+    background-image: url("ui-icons_ffffff_256x240.png");
+}*/
+
+.flatpickr-calendar {
+    font-family: "Verdana";
+}
+

@@ -1,0 +1,163 @@
+﻿@model E.Standard.Api.App.NavTreeNode
+
+@{
+    ViewBag.Title = "DataLinqTree";
+    Layout = "~/Views/Shared/_Layout_empty.cshtml";
+}
+
+<link href="~/content/datalinq/tree.css" rel="stylesheet" />
+
+<div class="treeview-header">
+    <a href="" onclick="document.location.reload(); return false;">Datalinq (reload)</a>
+</div>
+<div class="treeview">
+    @Html.Raw(Model.Render())
+</div>
+
+<div id="verify_all_c_sharp">
+    <div id="verify_all_c_sharp_button" class="button">Verify all C#</div>
+    <div class="result-pane">
+        <ul class="result-list">
+        </ul>
+    </div>
+</div>
+
+<div style="position:absolute;left:321px;top:0px;bottom:0px;right:0px;overflow:hidden;">
+    <iframe style="width:100%;height:100%;border:none" id="mainFrame">
+
+    </iframe>
+</div>
+
+<script type="text/javascript">
+
+    $('.treenode').click(function (e) {
+        e.stopPropagation();
+
+        $('.treenode').removeClass('selected').addClass('unselected');
+        $(this).addClass('selected').removeClass('unselected');
+
+        $('#mainFrame').attr('src', $(this).attr('data-url'));
+        
+    });
+
+    $('.treenode-collapse').click(function (e) {
+        e.stopPropagation();
+
+        var $collapse = $(this);
+        
+        $(this).closest('.treenode').children('.treenode-nodes').slideToggle(300, function () {
+            if ($(this).css('display') == 'none')
+                $collapse.html('[ + ]');
+            else
+                $collapse.html('[ - ]');
+        });
+    });
+
+    $(document).ready(function () {
+        window.homeUrl = $('.treenode:first').attr('data-url');
+
+        $('.treenode:first').trigger('click').find('.treenode-collapse:first').trigger('click');
+
+        $('#verify_all_c_sharp_button').click(verify_all_c_sharp)
+    });
+
+    function verify_all_c_sharp(e) {
+
+        var $this = $(this);
+        var $parent = $this.parent().css({ height: '50%', 'overflow': 'auto' });
+
+        if ($this.hasClass('running')) {
+            $this.removeClass('running').text('Verify all C#');
+            $parent.css({ height: '', 'overflow': '' });
+            return;
+        }
+
+        $this.addClass('running')
+             .text('Minimize...');
+
+        var $resultPane = $parent.children('.result-pane');
+        var $resultList = $resultPane.children('.result-list').empty();
+
+        var $treeview = $('.treeview');
+        $treeview.find('.treenode-title').removeClass('verify').removeClass('working').removeClass('success').removeClass('error');
+
+        // Collection C# nodes
+        var c_sharp_verifyData = [];
+        $treeview.find('.treenode-title-prefix.csharp').each(function (i, e) {
+            var $treenode = $(e).closest(".treenode[data-url]"), $parentnode = $treenode.parent().closest('.treenode');
+            $treenode.find('.treenode-title').first().addClass('verify').addClass('working');
+
+            while ($parentnode.length > 0) {
+                $parentnode.find('.treenode-title').first().find('.treenode-collapse').addClass('verify').addClass('working');
+                $parentnode = $parentnode.parent().closest('.treenode');
+            }
+
+            dataUrl = $treenode.attr('data-url').replace("UpdateDataLinqEndPointQueryView", "VerifyView") + "&nodeId=" + $treenode.attr('id');
+            c_sharp_verifyData.push({
+                treeNode: $treenode,
+                dataUrl: dataUrl,
+                title: $treenode.text()
+            });
+        });
+
+        var counter = 0;
+
+        function verifyNext(index) {
+            if (!$this.hasClass('running'))
+                return;
+
+            var verifyData = c_sharp_verifyData.pop();
+            if (!verifyData) {
+                var errorItems = $resultList.children('li.error');
+                if (errorItems.length > 0) {
+                    $resultList.children('li.success').remove();
+                } else {
+                    $resultList.children('li.success').remove();
+                    $this.trigger('click');
+                }
+                return;
+            }
+            var $listItem = $("<li>")
+                .addClass('result-item')
+                .prependTo($resultList);
+            $("<div>")
+                .addClass('title')
+                .text((++counter).toString().padStart(3, '0') + ': ' + verifyData.title)
+                .appendTo($listItem);
+
+            var dataUrl = verifyData.dataUrl;
+            var $treenode = verifyData.treeNode;
+
+            $.ajax({
+                url: dataUrl + '&collect_memory='+(index % 5 == 0),
+                type: 'get',
+                success: function (result) {
+                    console.log(result);
+                    var cls = result.success == true ? 'success' : 'error';
+                    var $treenode = $('#' + result.nodeid), $parentnode = $treenode.parent().closest('.treenode');;
+                    $treenode.find('.treenode-title').first().removeClass('working').addClass(cls);
+                    $listItem.addClass(cls);
+
+                    if (!result.success) {
+                        $("<div>")
+                            .addClass("message")
+                            .text(result.message || 'not specified...')
+                            .appendTo($listItem);
+                    }
+
+                    while ($parentnode.length > 0) {
+                        $parentnode.find('.treenode-title').first().find('.treenode-collapse').removeClass('working').addClass(cls);
+                        $parentnode = $parentnode.parent().closest('.treenode');
+                    }
+
+                    verifyNext(index);
+                }
+            });
+        };
+
+        for (var i = 0; i < 4; i++) {  // start 4 paralell reqests
+            verifyNext(i);
+        }
+    }
+
+</script>

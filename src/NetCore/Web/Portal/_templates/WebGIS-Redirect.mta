@@ -1,0 +1,10 @@
+﻿{
+	"parameters":[
+	
+    {
+			"title":"Redirect Url",
+			"name":"redirect-url"
+		}
+		
+	]
+}

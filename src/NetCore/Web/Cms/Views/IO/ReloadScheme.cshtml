@@ -1,0 +1,38 @@
+﻿@model Cms.Models.ReloadSchemeModel
+@{
+    ViewData["Title"] = "Export";
+    Layout = "~/Views/Shared/_Layout_empty.cshtml";
+}
+
+<p>
+    Das CMS Schema definiert, welche Knoten angezeigt bzw. anglegt werden könne. Wenn das aktuelle CMS Schema nicht auf den aktuellen Stand ist, kann es vorkommen, dass neuere Funktionen nicht angezeigt werden.
+    Um das Schema auf den aktuellen Stand zu bringen, kann dieses Werkzeug verwendet werden.
+    Je nach Umfang des CMS kann dieser Vorgang einige Minuten dauern.
+</p>
+
+@if (!String.IsNullOrWhiteSpace(Model?.ErrorMesssage))
+{
+    <div class="error-message">
+        @Model.ErrorMesssage
+    </div>
+}
+
+<form id="form" method="post">
+    <input type="hidden" />
+    <button type="submit">Reload Schema</button>
+</form>
+
+
+@section scripts {
+    <script type="text/javascript">
+    @if(Model?.ProcDefinition!=null)
+    {
+        <text>
+    var proc = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ProcDefinition))');
+    CMS.showConsole(proc);
+        </text>
+
+    }
+    </script>
+}
+

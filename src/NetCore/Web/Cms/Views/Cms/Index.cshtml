@@ -1,0 +1,41 @@
+﻿@model Cms.Models.CmsModel
+@using E.Standard.Cms.Configuration.Services
+@inject CmsConfigurationService CCS
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div id="main-navbar">
+</div>
+<div id="main-navtree">
+</div>
+<div id="main-container" class="cms-main-container">
+    <div id="main-toolbar">
+    </div>
+    <div id="main-content">
+    </div>
+</div>
+
+
+
+@section Scripts  {
+    <script src="~/js/site-cms.js"></script>
+    <script type="text/javascript">
+
+        CMS.id = '@Model.CmsId';
+        CMS.init();
+
+        var hasElastic = @(CCS.HasElastic.ToString().ToLower());
+
+        $('.navbar-search-button')
+            .click(function () {
+                $('.navbar-search-holder').toggleClass('collapsed');
+                if ($('.navbar-search-holder').hasClass('collapsed')) {
+                    $('.navbar-search-holder input').focus();
+                }
+            });
+
+    </script>
+}
+

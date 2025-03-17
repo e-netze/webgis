@@ -1,0 +1,14 @@
+﻿Mit dem _WebGIS CMS_ können eigene Dienste für die Verwendung innerhalb von WebGIS Karten definiert werden.
+
+Klicken sie auf einen der Unterpunkte um fortzufahren.
+
+Die einzelnen Unterpunkte haben folgende Funktion:
+
+- __Dienste:__ Hier werden die einzelnen Kartendienste eingebunden
+
+- __Karten Viewer:__ Hier kann definiert werden, wie die Dienste in der Karte „funktionioniern“. Beispielsweise wie einzelnen Layer geschalten werden können (Darstellungsvarianten).
+
+- __Rechtecksausdehnungen:__ Hier können Ausdehnungen und die dazugehörigen Zoommaßstäbe für Karten definiert werden.
+
+- __Sonstiges:__ Hier werden beispielsweise Copyright Informationen definiert.
+

@@ -1,0 +1,11 @@
+<xml>
+
+<heightabovedatum type="ims" 
+                  srs="31287"
+                  name="DGM 10m"
+                  server="https://gview.webgiscloud.com/servlet/com.esri.esrimap.Esrimap?"
+                  service="sys/dhm_at_lamb_10m_2018"
+                  rastertheme="dhm_at_lamb_10m_2018.tif"
+                  expression="+{0:.00} müA"
+                  />     	
+</xml>

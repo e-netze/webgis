@@ -1,0 +1,41 @@
+﻿/*** Logo ***/
+#my-logo {
+    background-color:#fff;
+}
+.webgis-container.dark #my-logo {
+    background-color: #444;
+}
+
+#my-logo .webgis-my-logo-title {
+    font-size: 2.1em;
+    color: #62B851;
+    font-weight: bold;
+    vertical-align: top;
+    padding: 2px 6px;
+}
+    #my-logo .webgis-my-logo-title::before {
+        content: "WebGIS";
+    }
+
+#my-logo .webgis-my-logo-subtitle {
+    font-size: .5em;
+}
+    #my-logo .webgis-my-logo-subtitle::after {
+        content: "Cloud";
+    }
+
+#my-logo .webgis-my-logo-image {
+    content: url("/content/companies/__default/logo-32x32.png");
+}
+
+.webgis-map-title {
+    color: #62B851;
+    font-size: 12px;
+    font-weight: bold;
+    padding-left: 8px;
+}
+
+.navbar-brand {
+    background-image: url(https://e-netze.at/images/svgs/e-netze_logo.svg);
+    background-size: 32px;
+}

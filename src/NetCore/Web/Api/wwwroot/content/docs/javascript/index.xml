@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<doc>
+  <objects>
+    [general.html]
+    <object name="webgis">
+      <properties>
+        <property name="mapFramework">
+          
+        </property>
+        <property name="baseUrl">
+          
+        </property>
+      </properties>
+      <methods>
+        <method name="init">
+          
+        </method>
+        <method name="createCrs">
+          
+        </method>
+        <method name="createMap">
+          
+        </method>
+        <method name="createMarker">
+          
+        </method>
+      </methods>
+      <events>
+        
+      </events>
+    </object>
+    
+    <object name="webgis.map">
+      
+    </object>
+    
+    <object>
+      
+    </object>
+  
+  </objects>
+</doc>

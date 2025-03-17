@@ -1,0 +1,16 @@
+<config>
+  <name type="System.String">WebGIS Cloud Allgemein</name>
+  <url type="System.String">webgis_cloud_allgemein</url>
+  <serviceUrl type="System.String">https://api.webgiscloud.com/rest/search/webgis_cloud_allgemein@webgiscloud?c=query&amp;term={0}</serviceUrl>
+  <target type="System.Int32">9</target>
+  <suggestedtext type="System.String">textsuggest</suggestedtext>
+  <thumbnail type="System.String">thumbnail_url</thumbnail>
+  <geo type="System.String">geo</geo>
+  <subtext type="System.String">subtext</subtext>
+  <link type="System.String">
+  </link>
+  <rows type="System.Int32">5</rows>
+  <projid type="System.Int32">-1</projid>
+  <copyright type="System.String">
+  </copyright>
+</config>

@@ -1,0 +1,41 @@
+﻿@using Portal.Core.AppCode.Extensions;
+@model E.Standard.WebGIS.Core.Models.PortalInfoDTO
+@{
+    ViewBag.Title = "Info";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Info</h2>
+
+<h3>Repository</h3>
+<a href="https://github.com/e-netze/webgis">Github</a>
+
+<h3>Version</h3>
+<div>Portal Version: @Model.PortalVersion</div>
+
+<h3>Api</h3>
+<div>Api Url: @Model.ApiUrl</div>
+
+
+@if (Model.ApiInfo != null)
+{
+    <div>Api Javascript Version: @Model.ApiInfo.JsVersion</div>
+}
+else
+{
+    <div>WARNING: Can't load API Info!!!</div>
+}
+
+<h3>Cache</h3>
+<div>Type: @Model.CacheType</div>
+
+<h3>Cache (aside)</h3>
+<div>Type: @Model.CacheAsideType</div>
+
+<h3>Crypto</h3>
+@*<div>Hash: @Model.CryptoCompatibilityHash</div>*@
+@if(Model.CryptoIsCompatible) {
+    <div style="color:green">Compatible with API Instance</div>
+} else {
+    <div style="color:red">Warning - Not vompatible with API Instance: @Model.ApiInfo?.CryptoCompatibilityHash</div>
+}

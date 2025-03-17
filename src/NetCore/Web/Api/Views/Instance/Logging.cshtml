@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = "Logging";
+    Layout = "~/Views/Shared/_RestLayout.cshtml";
+}
+
+<h2>Logging</h2>
+
+<h3>Type</h3>
+<div>@(E.Standard.Api.App.ApiGlobals.LoggingType)</div>
+<br />
+<br />
+<a href="logging?reload=true">Reload all settings...</a>

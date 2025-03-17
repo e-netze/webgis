@@ -1,0 +1,15 @@
+﻿
+@{
+    ViewData["Title"] = "Forbidden";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 style="color:red">Forbidden</h1>
+
+<h4>Username: @ViewData["Username"]</h4>
+
+<br />
+<br />
+<br />
+
+@Html.ActionLink("Abmelden", "Logout", "Login")

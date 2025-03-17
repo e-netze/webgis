@@ -1,0 +1,38 @@
+﻿<!--<script type="text/javascript" src="@(Model.ApiUrl)/scripts/jquery-3.2.0.min.js"></script>-->
+
+<link href="@(Model.ApiUrlHttps)/content/styles/default.css" rel="stylesheet" />
+<link href="@(Model.ApiUrlHttps)/content/api/ui.css" rel="stylesheet" />
+
+<script type="text/javascript" src="@(Model.ApiUrlHttps)/scripts/typeahead/typeahead.jquery.min.js"></script>
+
+<script src="@(Model.ApiUrlHttps)/scripts/api/api.min.js" id="webgis-api-script"></script>
+<script src="@(Model.ApiUrlHttps)/scripts/api/api-ui.min.js"></script>
+
+<div id="webgis-container" class="webgis-container" style="width:100%;height:500px;position:relative;">
+
+    <div id="map" style="position:absolute;left:0px;top:0px;right:0px;bottom:0px">
+    </div>
+
+    <div style="z-index:10;position:absolute;right:0px;width:320px;bottom:0px;height:24px;background:#aaa">
+        <div id="hourglass"></div>
+    </div>
+    @if (Model.HasUISearch)
+    {
+        <div id="search" style='position:absolute;right:0px;top:0px;z-index:99;text-align:right;'>
+        </div>
+    }
+    @if (!String.IsNullOrWhiteSpace(Model.ToolsQuickAccess))
+    {
+        <div class="webgis-tool-button-bar shadow"
+             data-tools="@(Model.ToolsQuickAccess)"
+             style="position:absolute;left:9px;top:99px">
+        </div>
+    }
+
+</div>
+
+<script type='text/javascript'>
+// Höhe für Container setzen (optional)
+$('#webgis-container').height(($(document.body).height() - 250));
+@Raw(Portal.Core.AppCode.Mvc.PortalBaseController.RenderTemplate("js-renderer",Model))
+</script>

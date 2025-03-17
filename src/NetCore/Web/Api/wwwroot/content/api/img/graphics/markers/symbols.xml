@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<symbols>
+  <symbol name="pin1.png" hx="0" hy="31" />
+  <symbol name="marker.gif" hx="12" hy="27" />
+  <symbol name="marker_blau.gif" hx="12" hy="27" />
+  <symbol name="marker_gruen.gif" hx="12" hy="27" />
+  <symbol name="marker_rot.gif" hx="12" hy="27" />
+  <symbol name="marker_red.gif" hx="9" hy="18" />
+</symbols>

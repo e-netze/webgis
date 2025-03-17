@@ -1,0 +1,13 @@
+<config>
+  <name type="System.String">Geoland Basemap Orthofoto</name>
+  <guid type="System.String">d6cfe3e6f7ad4fd69e36961f666898a5</guid>
+  <server type="System.String">https://mapsneu.wien.gv.at/basemapneu/1.0.0/WMTSCapabilities.xml</server>
+  <tilematrixset type="System.String">google3857</tilematrixset>
+  <imageformat type="System.String">image/jpeg</imageformat>
+  <layer type="System.String">bmaporthofoto30cm</layer>
+  <style type="System.String">normal</style>
+  <maxlevel type="System.Int32">19</maxlevel>
+  <hide_beyond_maxlevel type="System.Boolean">False</hide_beyond_maxlevel>
+  <rendering type="System.Int32">0</rendering>
+  <resourceurls type="System.String">https://mapsneu.wien.gv.at/basemap/bmaporthofoto30cm/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpeg</resourceurls>
+</config>

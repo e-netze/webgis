@@ -1,0 +1,88 @@
+﻿@using Cms.Models.Json
+@using E.DataLinq.Code.Services
+@using E.Standard.Cms.Configuration.Models
+@using E.Standard.Cms.Configuration.Services
+@using E.Standard.Configuration
+@using Microsoft.Extensions.Options
+@inject CmsConfigurationService CmsConfigurationService
+@inject E.Standard.Security.Cryptography.Services.JwtAccessTokenService JwtAccessTokenService
+@inject DataLinqCodeService DataLinqCodeService
+
+@{
+    ViewData["Title"] = "Index";
+
+    var dataLinqInstances = DataLinqCodeService?.Instances;
+    string dataLinqLoginToken = "";
+    try
+    {
+        var dataLinqConfig = new JsonAppConfiguration("datalinq.config");
+        if (dataLinqConfig.Exists)
+        {
+            var autoLogin = dataLinqConfig.Deserialize<DataLinqAutoLoginModel>()?.AutoLogin;
+
+            if(!String.IsNullOrEmpty(autoLogin))
+            {
+                dataLinqLoginToken = $"&token={JwtAccessTokenService.GenerateToken(autoLogin, 10)}";
+            }
+        }
+    } catch{}
+}
+
+<div style="padding:0px 7px;max-width:800px;margin:35px auto;">
+
+    @if (CmsConfigurationService?.Instance?.CmsItems != null &&
+         CmsConfigurationService.Instance.CmsItems.Count() > 0)
+    {
+        <h1>WebGIS API CMS</h1>
+        @foreach (var item in CmsConfigurationService.Instance.CmsItems)
+        {
+            <div class="tile edit cms" data-cmsid="@item.Id">
+                <div class="text">@item.Name</div>
+            </div>
+        }
+
+    }
+
+    @if(dataLinqInstances != null &&
+        dataLinqInstances.Count()>0) 
+    {
+        <h1>DataLinq Instances</h1>
+        @foreach(var instance in dataLinqInstances)
+        {
+            <div class="tile edit datalinq" 
+                 data-loginurl="@(instance.LoginUrl)">
+              <div class="text">@(instance.Name)</div>
+            </div>
+        }
+    }
+    <br />
+    <br />
+    <br />
+    @if (true.Equals(ViewData["CanLogout"]))
+    {
+        @Html.ActionLink("Abmelden", "Logout", "Login")
+    }
+</div>
+
+@section Scripts  {
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('.tile.edit.cms').click(function () {
+                document.location = CMS.appRootUrl + '/' + $(this).attr('data-cmsid') + '/cms';
+            });
+
+            $('.tile.edit.datalinq').click(function() {
+                document.location = $(this).attr('data-loginurl')+"@Html.Raw(dataLinqLoginToken)";
+            });
+
+            $('.tile.deploy').click(function () {
+                document.location = CMS.appRootUrl + '/' + $(this).attr('data-cmsid') + '/deploy';
+            });
+        });
+
+    </script>
+
+}

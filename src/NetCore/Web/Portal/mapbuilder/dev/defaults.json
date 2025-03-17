@@ -1,0 +1,148 @@
+{
+ "map": {
+  "options": {
+   "extent": "stmk_m34@ccgis_default",
+   "services": "tor_tiles_default@ccgis_default,tor_tiles_gray@ccgis_default,ortsplan_tiles_gray@ccgis_default,ortsplan_tiles_default@ccgis_default"
+  }
+ },
+ "ui": {
+  "appmenu": true,
+  "detailsearch": true,
+  "search": true,
+  "search-service-elastic_allgemein@ccgis_default": true,
+  "search-service-elastic_strom_nao@ccgis_default": true,
+  "tabs-presentation": true,
+  "tabs-presentation-addservices": true,
+  "tabs-queryresults": true,
+  "tabs-tools": true,
+  "tabs-settings-themes": true
+ },
+ "tools": {
+  "webgis.tools.navigation.fullExtent": true,
+  "webgis.tools.navigation.zoomBack": true,
+  "webgis.tools.navigation.currentPos": true,
+  "webgis.tools.navigation.continuousPos": true,
+  "webgis.tools.navigation.zoomIn": true,
+  "webgis.tools.navigation.zoomToSketch": true,
+  "webgis.tools.navigation.refreshMap": true,
+  "webgis.tools.navigation.showlegend": true,
+  "webgis.tools.navigation.saveMap": true,
+  "webgis.tools.navigation.loadMap": true,
+  "webgis.tools.navigation.shareMap": true,
+  "webgis.tools.info.markerInfo": true,
+  "webgis.tools.io.print": true,
+  "l9ljwxcvu-e2dedi_cq2guq@ccgis_default": true,
+  "lkmyzkjugleodsjpu-75pdg@ccgis_default": true,
+  "webgis.tools.info.identify": true,
+  "webgis.tools.info.coordinates": true,
+  "webgis.tools.info.rasteridentify": true,
+  "webgis.tools.info.chainage": true,
+  "webgis.tools.info.queryResults": true,
+  "webgis.tools.info.addtoselection": true,
+  "webgis.tools.info.removefromselection": true,
+  "webgis.tools.advanced.measureDistance": true,
+  "webgis.tools.advanced.measureArea": true,
+  "webgis.tools.advanced.measureCircle": true,
+  "webgis.tools.advanced.profile": true,
+  "webgis.tools.advanced.redlining": true,
+  "webgis.tools.advanced.edit": true,
+  "webgis.tools.advanced.snapping": true,
+  "webgis.tools.advanced.geocode": true,
+  "webgis.tools.presenation.labeling": true,
+  "webgis.tools.presenation.filter": true
+ },
+ "defaulttool": [
+  {
+   "id": "none",
+   "selected": false
+  },
+  {
+   "id": "webgis.tools.identify",
+   "selected": true,
+   "options": []
+  }
+ ],
+ "actions": {},
+ "tools-quick-access": {
+  "webgis.tools.navigation.zoomIn": true,
+  "webgis.tools.navigation.fullExtent": true,
+  "webgis.tools.navigation.zoomBack": true,
+  "webgis.tools.navigation.currentPos": true
+ },
+ "queries": [
+  {
+   "service": "estag_basis_ags@ccgis_default",
+   "query": "adressen",
+   "visible": true
+  },
+  {
+   "service": "estag_basis_ags@ccgis_default",
+   "query": "adressen_exakt",
+   "visible": true
+  },
+  {
+   "service": "estag_basis_ags@ccgis_default",
+   "query": "auto_schnell_strasse",
+   "visible": true
+  },
+  {
+   "service": "estag_basis_ags@ccgis_default",
+   "query": "bezirke",
+   "visible": true
+  },
+  {
+   "service": "estag_basis_ags@ccgis_default",
+   "query": "bundesstrassen",
+   "visible": true
+  },
+  {
+   "service": "estag_basis_ags@ccgis_default",
+   "query": "landesstrasse",
+   "visible": true
+  },
+  {
+   "service": "estag_basis_ags@ccgis_default",
+   "query": "gassen_wege",
+   "visible": true
+  },
+  {
+   "service": "estag_basis_ags@ccgis_default",
+   "query": "gemeinden",
+   "visible": true
+  },
+  {
+   "service": "estag_basis_ags@ccgis_default",
+   "query": "kg",
+   "visible": true
+  },
+  {
+   "service": "estag_basis_ags@ccgis_default",
+   "query": "gemeinden_2014",
+   "visible": true
+  },
+  {
+   "service": "estag_basis_ags@ccgis_default",
+   "query": "kilometrierung",
+   "visible": true
+  },
+  {
+   "service": "estag_basis_ags@ccgis_default",
+   "query": "plzflaechen",
+   "visible": true
+  }
+ ],
+ "dyncontent": [],
+ "initialDefaults": {
+  "initial-tool": "",
+  "initial-query": "",
+  "initial-edittheme": ""
+ },
+ "snapshots": {
+  "active": "default",
+  "snapshots": [
+   {
+    "name": "default"
+   }
+  ]
+ }
+}

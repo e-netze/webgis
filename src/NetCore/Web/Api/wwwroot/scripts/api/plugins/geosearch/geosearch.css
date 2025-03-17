@@ -1,0 +1,329 @@
+#geosearch-container {
+    /*max-width: 98%;*/
+    /*max-width: 1200px;*/
+    padding:10px;
+    margin: 0 auto;
+    position: absolute;
+    left:0px; right:0px;
+    top:0px; bottom: 0px;
+}
+
+
+.myTable {
+    width: 100%;
+    height: 100%;
+}
+
+#viewSearch {
+    vertical-align: top;
+    width: 100%; 
+    float: left;
+}
+
+#viewMap {
+    height: 100%;
+    float:right;
+    position: relative;
+}
+
+#map {
+    height: inherit;
+    position: relative;
+}
+
+.buttonMap{
+    position:absolute;
+    z-index:1000;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+    top: 0px;
+    background-color: #80c826;
+    cursor: pointer;
+}
+
+.buttonMap:hover{
+    background-color: #cde986;
+}
+
+#backToSearch {
+    float: left;
+    background-image: url("Search.png");
+    margin-left: 7px;
+    background-color: white;
+    opacity: 0.7;
+    border: 1px solid #80c826;
+}
+
+#fullScreen {
+    left:35px;
+    background-image: url("Fullscreen.png"); 
+}
+
+#fullScreen.off {
+    background-image: url("Collapse.png"); 
+}
+
+
+
+.searchContainer {
+    text-align: center;
+    position: relative; 
+    top: 90px;
+    padding-bottom: 40px;
+}
+
+
+#geoSearch {
+    max-width: 500px;
+    position:relative;
+    width: 100%;
+    margin: 50px auto auto auto;
+}
+
+#geoSearchInput {
+    width: 100%;
+    border: 1px solid #dfe1e5;
+    padding: 12px 20px;
+    border-radius: 20px;
+}
+
+    #geoSearchInput:focus,
+    #geoSearchInput:hover {
+        box-shadow: 0 1px 5px rgb(0 0 0 / 65%);
+    }
+
+/************** Media *******************/
+@media screen and (max-width: 800px) {
+    #geoSearch {
+        max-width: calc(100% - 30px);
+        position: relative;
+        width: 100%;
+        margin: 50px auto auto auto;
+    }
+
+    #geoSearchInput {
+        max-width: calc(100% - 10px);
+        width: 100%;
+        border: 1px solid #80c826;
+        padding: 10px;
+    }
+}
+
+#startSearch {
+    background-color: #b5dbad;
+    color: #303030;
+    border: 2px solid #82C828;
+    padding: 8px 16px;
+    cursor: pointer;
+    margin: 64px 1px 1px 1px;
+    width:200px;
+    background-position: 6px center !important;
+    background-repeat: no-repeat !important;
+    box-sizing: border-box !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-radius: 18px;
+    outline: none !important;
+    font-size:1.5em;
+}
+
+    #startSearch:hover {
+        background-color: #fff;
+        color: #82C828
+    }
+
+.logo {
+    background-size: 233px 64px;
+    background-repeat: no-repeat;
+    width: 233px;
+    height: 64px;
+    margin: auto;
+    margin-bottom: -15px;
+    /*background-image: url("geojuhu.png");*/ 
+    background-image: url("gis_suche.png"); 
+}
+
+
+.webgis-geojuhu-results-list {
+    padding:2px;
+    list-style:none;
+}
+.webgis-geojuhu-results-list .webgis-geojuhu-result-list {
+    cursor:pointer;
+    margin:0px;
+    padding:8px;
+}
+.webgis-geojuhu-results-list .webgis-geojuhu-result-list:hover { background-color:#b5dbad;}
+.webgis-geojuhu-result-list:nth-child(odd) { background-color: #fff; }
+.webgis-geojuhu-result-list:nth-child(even) { background-color:#ecf0f1; }
+
+.webgis-geojuhu-results-list .webgis-geojuhu-result-list .webgis-geojuhu-reslut-category {
+    color:blue;
+}
+
+.webgis-search-result-list {
+    height: calc(100% - 134px);
+    max-height: none;
+    overflow: auto;
+    position: absolute;
+    left: 0;
+    margin-top: 50px;
+    opacity: 0;
+    width: inherit;
+}
+
+
+.webgis-geojuhu-results {
+    margin: -2px auto auto;
+    /*width: 80%;*/
+    max-width: 800px;
+    /*clear: left;*/
+}
+
+.webgis-geojuhu-result-map {
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    width: 30px;
+    height: 30px;
+    float: right;
+    position: relative;
+    background-image: url("Map.png");     
+}
+
+.webgissymbol {
+   background-image: url("Tiles.png");
+   margin-right: 8px;   
+}
+/*
+.webgis-geojuhu-result-arrow.up {
+    background-image: url("Arrow_collapse.png");     
+}
+*/
+.webgis-geojuhu-result-map:hover {
+    background-color: #80c826;
+}
+
+.webgis-geojuhu-result:nth-child(2n)    {   background-color: #fff; }
+.webgis-geojuhu-result:nth-child(2n+1)  {   background-color: #ecf0f1;}
+
+.webgis-geojuhu-result.selected {
+    background-color: #cde986;
+}
+
+
+.webgis-geojuhu-result-table-header{
+    width: 100%;
+}
+
+table.webgis-geojuhu-result-table-header td.symbols {
+    min-width: 68px;
+}
+
+.webgis-geojuhu-result-detail {
+    display: none;
+}
+
+.details {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.details td {
+    border-bottom: 1px solid grey;
+}
+
+
+
+/* Link Collection für WebGIS */
+.webgis-link-container {
+    margin: 10px 0;
+}
+
+.webgis-link-tile {
+    background-color: #7cba32;
+    color: white;
+    display: inline-block;
+    height: 160px;
+    margin: 3px;
+    overflow: hidden;
+    text-align: center;
+    width: 160px;
+}
+
+.webgis-link-tile-image {
+    background-image: url(maps-default.png);
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 158px;
+    margin: 1px;
+    width: 158px;
+}
+
+.webgis-link-tile-text {
+    background-color: rgba(0, 0, 0, 0.6);
+    height: 160px;
+    position: relative;
+    text-align: left;
+    top: -60px;
+    transition-delay: 0s, 0s;
+    transition-duration: 0.5s;
+    transition-property: top;
+    width: 160px;
+}
+
+.webgis-link-tile-text div {
+    padding: 4px;
+}
+
+.webgis-link-tile-text:hover {
+    top: -160px;
+}
+
+.webgis-link-tile-heading {
+    height: 50px;
+}
+
+.webgis-link-tile-desc {
+    font-size: 0.85em;
+}
+
+
+
+/* Bei kleinen Bildschirmen nur aktuell ausgewählten TabHeader mit Text anzeigen, alle anderen nur Symbol */
+@media screen and (max-width: 400px) {
+    table.webgis-geojuhu-result-table-header td.symbols {
+        min-width: 38px;
+    }
+
+}
+
+@media screen and (max-width: 640px) { 
+    #startSearch {
+        margin-top: 30px;
+        margin-left: 0px;
+    }
+
+    #geosearch-container {
+        padding:0px;
+    }
+
+    .webgis-search-result-list {
+        height: calc(100% - 80px);
+    }
+}
+
+
+
+
+/* jQuery UI Überschreibungen */
+.ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br, .ui-corner-bl, .ui-corner-top, .ui-corner-left, .ui-corner-tr, .ui-corner-tl  {
+    border-radius: 0px;
+}
+
+.ui-widget-content {
+    border: 1px solid #80c826;
+}

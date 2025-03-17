@@ -1,0 +1,8 @@
+Dienste können je nach Anwendungsfall unterschiedliche OGC-Schnittstellen definieren:
+
+__WMS:__ (Web Map Service) Klassische Kartendienste, die über GetMap Kartenbilder bereit stellen. Dienste dieses Typs können in einer Karte dargestellt und über das Identifizieren Werkzeug abgefragt werden.
+
+__WFS:__ (Web Feature Service) Diese Dienste könnte zusätzlich zu WMS verwendet werden, um in OGC Diensten auch Suchen zu können. Außerdem sind damit auch erweiterte Abfragen (zB Rechteck aufziehen) möglich.
+Diese Dienste liefern jedoch kein Kartenbild und können in der Karte nicht dargestellt werden. Daher ergibt das Einbinden eines WFS Dienstes nur im Zusammenhang mit einem WMS Dienst sind.
+
+__WMTS:__ (Web Map Tiling Service) Diese Dienste stellen Kartenkacheln bereit.

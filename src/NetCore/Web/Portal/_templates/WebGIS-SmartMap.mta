@@ -1,0 +1,56 @@
+﻿{
+	"parameters":[
+
+    {
+      "title": "Titel",
+      "name": "title"
+    },
+    {
+			"title":"Karten Selektor Ausdehnung",
+      "name": "map-extent",
+      "type": "extent"
+		},
+		{
+			"title":"Karten Selektor Dienste",
+      "name": "map-services",
+      "type": "services"
+		},
+		{
+			"title":"Edit Service",
+      "name": "edit-service",
+      "type": "hidden"
+		},
+    {
+      "title": "Edit Themen",
+      "name": "edit-themes",
+      "type": "edittheme",
+      "setters": [
+        {
+          "parameter": "edit-service",
+          "value": "service"
+        }
+      ]
+    },
+    {
+      "title": "Abfragethemen (optional)",
+      "name": "query-themes"
+    },
+    {
+      "title": "Suchdienste",
+      "name": "quick-search-service",
+      "type": "searchservices"
+    },
+    {
+      "title": "Suche: Kategorien",
+      "name": "quick-search-category"
+    },
+    {
+      "title": "Suche: Platzhalter (optional)",
+      "name": "quick-search-placeholder"
+    },	
+    {
+      "title": "Suche: Zoom-Massstab (optional)",
+      "name": "quick-search-map-scale"
+    }	    	
+	]
+}

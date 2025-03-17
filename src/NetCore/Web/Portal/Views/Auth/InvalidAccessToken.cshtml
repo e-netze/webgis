@@ -1,0 +1,33 @@
+﻿@using E.Standard.WebGIS.Core
+@using Portal.Core.AppCode.Extensions
+
+@inject Portal.Core.AppCode.Services.UrlHelperService urlHelper
+@inject E.Standard.Configuration.Services.ConfigurationService config
+@inject Portal.Core.AppCode.Services.CustomContentService customContent
+
+@{
+    ViewBag.Title = config.PortalName();
+    Layout = "~/Views/Shared/_Layout_empty.cshtml";
+
+    string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
+}
+
+<link href="@(portalContentUrl)/content/portal.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+@if (customContent.CompanyPortalCssExists())
+{
+    <link href="@(portalContentUrl)/content/companies/@(config.Company())/portal.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+}
+
+<div id="body">
+    <div class="content-wrapper" style="background-color:white;margin:10% auto;border-radius:5px;box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);padding:10px">
+        
+        <h1>Access Token:</h1>
+        <p>
+            The Access Token is invalid or expired
+        </p>
+        
+    </div>
+</div>
+
+
+

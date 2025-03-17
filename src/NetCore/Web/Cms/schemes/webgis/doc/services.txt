@@ -1,0 +1,10 @@
+﻿Kartendienste können aus unterschiedlichen Quellen kommen und bestimmte Schnittstellen für den Zugriff zur Verfügung stellen.
+
+__ArcGIS Server:__ Hier können Dienste eingebunden werden, die mithilfe von ArcGIS Server bereitgestellt wurden oder die _REST GeoServices_ Schnittstelle unterstützen.
+
+__ArcIMS:__ Für Dienste, die mit dem ArcIMS bzw. mit der ArcXML Schnittstelle für Kartendienste bereitgestellt wurden (veraltet)
+
+__OGC Dienste:__ Hier können Dienste eingebunden werden, die OGC Schnittstellen (WMS, WMTS, WFS) implementieren.
+
+__Sonstige:__ Für allgemeinere Dienste (z.B. Tilecaches, die nicht mit WMTS oder ArcGIS Server bereitgestellt werden). Außerdem können hier Suchdienste (z.B. Elasicsearch, SolR) eingebunden werden.
+

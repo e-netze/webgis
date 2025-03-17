@@ -1,0 +1,50 @@
+﻿{
+  "parameters": [
+
+    {
+      "title": "Karten Ausdehnung",
+      "name": "app-map-extent",
+      "type": "extents"
+    },
+    {
+      "title": "Karten Dienste",
+      "name": "app-map-services",
+      "type": "services"
+    },
+    {
+      "title": "Karten Such-Dienste",
+      "name": "app-search-service",
+      "type": "searchservices"
+    },
+
+
+    {
+      "title": "Karten Selektor Ausdehnung",
+      "name": "selector-map-extent",
+      "type": "extents"
+    },
+    {
+      "title": "Karten Selektor Dienste",
+      "name": "selector-map-services",
+      "type": "services"
+    },
+
+    {
+      "title": "Edit Service",
+      "name": "selector-edit-service",
+      "type": "hidden"
+    },
+    {
+      "title": "Edit Themen",
+      "name": "selector-edit-themes",
+      "type": "editthemes",
+      "setters": [
+        {
+          "parameter": "selector-edit-service",
+          "value": "service"
+        }
+      ]
+    }
+
+  ]
+}

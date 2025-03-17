@@ -1,0 +1,249 @@
+﻿<style>
+
+    /*#map {
+        border: 2px solid red !important;
+    }
+
+    #toolbar::after {
+        content: "Testsystem - Daten nicht aktuell";
+        color: red;
+        font-weight: bold;
+        font-size: xx-large;
+        padding: 5px;
+    }*/
+
+    .webgis-search-result-list {
+        max-height: 100%;
+    }
+
+    #toolbar {
+        position: absolute;
+        left: 330px;
+        top: 10px;
+        z-index: 1000;
+        background: white;
+        border: 1px solid #aaa;
+        overflow: hidden;
+        transition: left .15s ease-in;
+    }
+
+    #topbar {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        text-align: right;
+        background-color: #fff;
+        z-index: 1000;
+        opacity: 1;
+        /*border: 1px solid #aaa;*/
+    }
+
+    #webgis-sidebar {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        bottom: 0px;
+        width: 320px;
+        overflow: hidden;
+        transition: width .15s ease-in;
+    }
+
+
+    #my-logo {
+        position: absolute;
+        right: 0px;
+        bottom: 0px;
+        width: 100%;
+        height: 40px;
+        background-color: white;
+        cursor: pointer;
+    }
+
+    .leaflet-top {
+        top: 80px;
+        left: 10px;
+    }
+
+    .webgis-map-app-menu,
+    .webgis-detail-search-holder,
+    .webgis-sidebar-toggle-button,
+    #webgis-sidebar,
+    #topbar,
+    #toolbar {
+        box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+    }
+
+    .webgis-tool-button-bar {
+        transition: left .15s ease-in;
+    }
+
+    .webgis-toolbar-tabs .webgis-toolbar-tab {
+        font-size: 1.42em;
+    }
+
+    #webgis-edit-undo-button {
+        position: absolute;
+        bottom: 0px;
+    }
+
+    #map-container {
+        position: absolute;
+        top: 0px;
+        left: 320px;
+        bottom: 0px;
+        right: 0px;
+        box-sizing: border-box;
+    }
+
+    #map {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        bottom: 0px;
+        right: 0px;
+        opacity: 0;
+        border-top: 1px solid #62b851;
+        border-left: 1px solid #62b851;
+        box-sizing: border-box;
+    }
+
+    #query-results {
+        position: absolute;
+        height: 100px;
+        left: 0px;
+        bottom: 0px;
+        right: 0px;
+        opacity: 0;
+        border-top: 1px solid #62b851;
+        border-left: 1px solid #62b851;
+        box-sizing: border-box;
+    }
+
+    /***** sidebar  toggle ******/
+    .webgis-sidebar-toggle-button {
+        position: absolute;
+        left: 321px;
+        height: 40px;
+        width: 20px;
+        bottom: calc(50% - 20px);
+        background-color: #efefef;
+        cursor: pointer;
+        transition: left .15s ease-in;
+        font-size: 22px;
+        padding: 6px 3px;
+        box-sizing: border-box;
+    }
+
+        .webgis-sidebar-toggle-button::after {
+            content: "«"
+        }
+
+    .webgis-container.sidebar-collapsed #webgis-sidebar {
+        width: 0px;
+    }
+
+    .webgis-container.sidebar-collapsed #map-container {
+        left: 0px;
+    }
+
+    .webgis-container.sidebar-collapsed #toolbar {
+        left: 10px;
+    }
+
+    .webgis-container.sidebar-collapsed .webgis-sidebar-toggle-button {
+        left: 0px;
+    }
+
+        .webgis-container.sidebar-collapsed .webgis-sidebar-toggle-button::after {
+            content: "»"
+        }
+
+    .webgis-container.sidebar-collapsed .webgis-tool-button-bar {
+        left: 10px !important;
+    }
+
+    .webgis-container.sidebar-collapsed .webgis-dockpanel.webgis-dockpanel-bottom {
+        left: 10px !important;
+    }
+    /*****************************/
+
+</style>
+<script>
+    webgis.gdiScheme = !webgis.gdiScheme ? '~' : webgis.gdiScheme;
+
+    webgis.usability.dockPanelPadding = {
+        top: 125,
+        left: 10,
+        right: 10,
+        bottom: 10
+    };
+    //console.log(webgis.usability);
+</script>
+
+<div id="map-container" class="webgis-splitter" data-direction="horizontal" data-sizes="100%,0">
+    <div id='map' style=''>
+    </div>
+    <div class='query-results-tab-control-container webgis-ui-element-dependency' data-minsize="30">
+    </div>
+</div>
+
+<div id="webgis-sidebar">
+    <div style='position:absolute;top:0px;left:0px;bottom:40px;width:100%;box-sizing:border-box'>
+        <div id="tabs" class="tabs-layout-container"
+             data-option-top="0"
+             data-option-right="0"
+             data-option-bottom="0"
+             data-option-left="0"
+             data-option-add_tools="false"
+             data-option-add_tool_content="true"
+             data-option-content_size="fill"
+             data-option-selected="presentations"
+             style='position:absolute;left:0px;top:0px;right:0px;bottom:48px;'>
+
+        </div>
+
+        <div class="webgis-currentcoords-container" style='z-index:9998;position:absolute;right:0px;width:320px;bottom:24px;height:24px;'>
+            <table>
+                <tr>
+                    <td style="width:40px">EPSG:</td>
+                    <td style="width:50px" class="epsg"></td>
+                    <td style="width:14px">R:</td>
+                    <td style="width:80px" class="x"></td>
+                    <td style="width:14px">H:</td>
+                    <td style="width:80px" class="y"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div style='z-index:9998;position:absolute;right:0px;width:320px;bottom:0px;height:24px;background:#aaa'>
+            <div style="position:absolute;left:0px;top:0px;width:24px;height:24px;cursor:pointer;background-image:url()" id='webgis-info'>
+            </div>
+            <div style="position:absolute;left:24px;top:0px;bottom:0px;right:0px" id='hourglass'>
+            </div>
+        </div>
+    </div>
+
+    <div id='my-logo' onclick="window.open('https://webgiscloud.com/')">
+        <table>
+            <tr>
+                <td style="font-size:2.1em;color:#62B851;font-weight:bold;vertical-align:top;padding:2px 6px">
+                    WebGIS
+                    <span style="font-size:.5em">Energienetze Steiermark</span>
+                </td>
+                <td>
+                    <img src="https://webgiscloud.com/images/logos/webgis5-100x100.png" style="height:32px" />
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="webgis-sidebar-toggle-button webgis-ui-toggle-layout-button" data-toggle-class="sidebar-collapsed">
+</div>
+
+
+<div id="toolbar" class="">
+</div>
+
+<div id='topbar'>
+</div>

@@ -1,0 +1,25 @@
+﻿{
+	"parameters":[
+	
+    {
+			"title":"Karten Ausdehnung",
+      "name": "map-extent",
+      "type": "extents"
+		},
+    {
+      "title": "Karten Dienste",
+      "name": "map-services",
+      "type": "services"
+    },
+    {
+      "title": "Such-Dienste",
+      "name": "search-service",
+      "type": "searchservices"
+    },
+		{
+			"title":"Webgis 4 Comp. Schema",
+			"name":"webgis4-compatibility-schema"
+		}
+		
+	]
+}

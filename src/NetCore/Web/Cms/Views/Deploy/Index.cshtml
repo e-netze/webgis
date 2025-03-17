@@ -1,0 +1,55 @@
+﻿@model Cms.Models.DeployModel
+
+@{
+    ViewData["Title"] = "Deplay";
+    Layout = Model.IsIFramed ? "~/Views/Shared/_Layout_empty.cshtml" : "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="padding:4px">
+    <h3>@(Model.CmsItem.Name) Veröffentlichen</h3>
+
+    @foreach (var deploy in Model.CmsItem.Deployments)
+    {
+        var fi = new System.IO.FileInfo(deploy.Target);
+        var fiWargings = new System.IO.FileInfo(deploy.Target + ".warnings");
+
+    <div style="display:inline-block">
+        <div class="tile wide deploy" data-cmsid="@Model.CmsItem.Id" data-name="@deploy.Name">
+            @if (fi.Exists)
+            {
+                <div class="text">@deploy.Name<br />@(fi.LastWriteTime.ToShortDateString() + " " + fi.LastWriteTime.ToLongTimeString())</div>
+            }
+            else
+            {
+                <div class="text">@deploy.Name</div>
+            }
+
+        </div>
+        @if(fiWargings.Exists) 
+        { 
+            <div class="tile wide warning" data-cmsid="@Model.CmsItem.Id" data-name="@deploy.Name">
+                <div class="text">@deploy.Name<br/>Warnungen automatisch beheben/löschen</div>
+            </div>
+        }
+    </div>
+    }
+</div>
+
+
+@section Scripts  {
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+      
+            $('.tile.deploy').click(function () {
+                CMS.openConsole($(this).attr('data-cmsid') + '/deploy/' + encodeURI($(this).attr('data-name')), true);
+            });
+            $('.tile.warning').click(function () {
+                CMS.openConsole($(this).attr('data-cmsid') +'/solvewarnings/' + encodeURI($(this).attr('data-name')), true);
+            });
+        });
+
+    </script>
+
+}

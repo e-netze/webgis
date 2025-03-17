@@ -1,0 +1,149 @@
+﻿@using Portal.AppCode.Mvc.Wrapper;
+@using E.Standard.WebGIS.Core
+@using Portal.Core.AppCode.Extensions
+@model Portal.Core.Models.AppBuilder.AppBuilderInit
+
+@inject E.Standard.Configuration.Services.ConfigurationService config
+@inject Portal.Core.AppCode.Services.UrlHelperService urlHelper
+@inject Portal.Core.AppCode.Services.CustomContentService customContent
+
+@{
+    ViewBag.Title = "App Builder";
+    Layout = "~/Views/Shared/_Layout_empty.cshtml";
+}
+
+@{
+    var request = new HttpRequestWrapper(this.Context.Request);
+    string apiUrl = urlHelper.ApiUrl(this.Context.Request, E.Standard.WebGIS.Core.HttpSchema.Current);
+    string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
+}
+
+<link href="~/lib/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" />
+<link href="@(apiUrl)/content/styles/default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+<link href="@(apiUrl)/content/api/ui.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+
+<link href="~/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />
+<link href="~/content/mapbuilder.css" rel="stylesheet" />
+
+<script src="~/lib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+
+<link href="@(portalContentUrl)/content/portal.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+@if (customContent.CompanyPortalCssExists())
+{
+    <link href="@(portalContentUrl)/content/companies/@(config.Company())/portal.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+}
+@{ var portalCssVersion = customContent.PagePortalCssVersion(Model.PortalId); }
+@if (!String.IsNullOrWhiteSpace(portalCssVersion))
+{
+    @if (String.IsNullOrWhiteSpace(customContent.PortalCustomContentRootPath))
+    {
+        <link href="@(portalContentUrl)/content/portals/@(Model.PortalId)/portal.css?@(portalCssVersion)" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="@(customContent.CustomScriptContent(Model.PortalId, Model.CurrentUsername, "portal.css", portalCssVersion))" rel="stylesheet" />
+    }
+}
+<link href="@(portalContentUrl)/content/mapbuilder.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+@if (customContent.PageMapBuilderCssExists(Model.PortalId))
+{
+    <link href="@(portalContentUrl)/content/portals/@(Model.PortalId)/mapbuilder.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+}
+
+
+<script src="@(apiUrl)/scripts/api/api.min.js?@(WebGISVersion.CssVersion)" id="webgis-api-script"></script>
+<script src="@(apiUrl)/scripts/api/api-ui.min.js?@(WebGISVersion.CssVersion)"></script>
+<script src="~/lib/webportal-layout/webportal-layout.js"></script>
+
+<script type="text/javascript">
+
+    var hObj=@Html.Raw(Model.ClientIdPlus);
+    if (typeof hObj === 'string')
+        webgis.clientid = hObj;
+    else
+        webgis.hmac = new webgis.hmacController(hObj);
+
+</script>
+
+<script src="@(portalContentUrl)/scripts/webgis-builder.js?@(WebGISVersion.CssVersion)"></script>
+<script src="@(portalContentUrl)/scripts/webgis-appbuilder.js?@(WebGISVersion.CssVersion)"></script>
+<script src="@(apiUrl)/scripts/typeahead/typeahead.jquery.min.js"></script>
+
+<script type="text/javascript">
+
+    _template = @(Html.Raw(Model.AppJson));
+    _metadata = @(Html.Raw(Model.AppMetadataJson));
+
+</script>
+
+<style>
+    button[disabled="disabled"] {
+        background-color: #fff;
+        color: #333;
+    }
+</style>
+
+<nav class="webportal-layout-header navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <div class="container">
+        <div class="navbar-brand">AppBuilder</div>
+        <div class="template-selector-holder">
+            <select id="template-selector">
+                @foreach (string template in Model.Templates)
+                {
+                    <option value="@template">@template</option>
+                }
+            </select>
+        </div>
+    </div>
+</nav>
+
+<div class="webportal-layout-container page-has-header page-has-footer">
+    <div class="webportal-layout-sidebar">
+        <ul class="webportal-layout-sidebar-items top">
+            <li class="webportal-layout-sidebar-item resource">
+                <img src="~/content/img/help-26-w.png" />
+                <a href="https://docs.webgiscloud.com/de/webgis/apps/app_builder/index.html" target="_blank">Help/Tutorials</a>
+            </li>
+
+            @if (!String.IsNullOrWhiteSpace(Model.PortalId))
+            {
+                <li class="webportal-layout-sidebar-item">
+                    <img src="~/content/img/sidebar/description-26-w.png" />
+                    <a href="" onclick="editAppDescription(); return false;">App beschreiben...</a>
+                </li>
+                <li class="webportal-layout-sidebar-item">
+                    <img src="~/content/img/sidebar/deploy-26-w.png" />
+                    <a href="" onclick="publishApp('@(Model.PortalId)', '@(Model.PortalCategory)', '@(Model.AppName)'); return false;">App veröffentlichen</a>
+                </li>
+                <li class="webportal-layout-sidebar-item">
+                    <img src="~/content/img/sidebar/portal-26-w.png" />
+                    <a href="@Url.Action("Index", "Home",new {id=Model.PortalId})">Map Portal</a>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="webportal-layout-main">
+        <div class="webportal-layout-main-container">
+
+            <div id="mapbuilder-container">
+
+            </div>
+
+            <div id="webgis-container">
+                <div id="dummymap" style="width:100px;height:100px;display:none">
+
+                </div>
+                <iframe id="webgis-app-frame" style="width:100%;height:100%;border:none"></iframe>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="webportal-layout-footer">
+    <div class="version">
+        Version @E.Standard.WebGIS.Core.WebGISVersion.Version
+    </div>
+</div>

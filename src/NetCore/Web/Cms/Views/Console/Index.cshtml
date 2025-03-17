@@ -1,0 +1,89 @@
+﻿@model ConsoleModel
+
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "~/Views/Shared/_Empty.cshtml";
+}
+
+
+<div class="console-pane">
+    <div class="console-output">
+        Prompt:>
+    </div>
+    <button id="btnCancel">Cancel</button>
+</div>
+
+@section Scripts  {
+
+    <script type="text/javascript">
+
+        var procId = '@Model.ProcId';
+
+        function finished() {
+            $('#btnCancel').css('display', 'none');
+            $('.console-output').css('bottom', '4px');
+            window.parent.CMS.consoleFinished();
+        };
+
+        $(document).ready(function () {
+
+            $('#btnCancel').click(function () {
+                $.ajax({
+                    url: 'Console/Cancel?procId=' + procId,
+                    type: 'get',
+                    success: function(result) {
+                    }
+                });
+            });
+
+            function ping() {
+                clearInterval(timer);
+                $.ajax({
+                    url: 'Console/Ping?procId=' + procId,
+                    type: 'get',
+                    success: function(result) {
+                        var d = $('.console-output');
+                        if (result.success == true) {
+                            if (result.lines == null) {
+                                d.append($("<div>END</div>"));
+                                d.scrollTop(d.prop("scrollHeight"));
+                                finished();
+
+                                if (result.hasfile === true) {
+                                    CMS.downloadFile('Console/DownloadFile?procId=' + procId);
+                                }
+                            } else {
+                                for (var i = 0; i < result.lines.length; i++) {
+                                    var line = result.lines[i];
+                                   
+                                    d.append($("<div>" + line + "</div>"))
+                                    //d.scrollTop(d.prop("scrollHeight"));
+                                }
+
+                                d.animate({ scrollTop: d.prop("scrollHeight")-$(window).height() }, 1000);
+                                timer = setInterval(ping, 1000);
+                            }
+                        } else {
+                            d.append($("<div>ERROR: " + result.message + "</div>").addClass('error'));
+                            d.scrollTop(d.prop("scrollHeight"));
+                            finished();
+
+                        }
+                    },
+                    error: function() {
+                        timer = setInterval(ping, 1000);
+                        d.append($("<div>Connection error...</div>").addClass('error'));
+                        d.scrollTop(d.prop("scrollHeight"));
+                    }
+                });
+            }
+
+            var timer=setInterval(ping, 1000);
+        });
+
+    </script>
+
+}
+
+
+

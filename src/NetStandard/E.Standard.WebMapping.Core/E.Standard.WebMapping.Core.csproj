@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net9.0</TargetFramework>
+	  <LangVersion>13</LangVersion>
+    <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Proj4Net.Core" Version="1.23.2501" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E.Standard.ActiveDirectory\E.Standard.ActiveDirectory.csproj" />
+    <ProjectReference Include="..\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.Combinatorial\E.Standard.Combinatorial.csproj" />
+    <ProjectReference Include="..\E.Standard.DbConnector\E.Standard.DbConnector.csproj" />
+    <ProjectReference Include="..\E.Standard.Extensions\E.Standard.Extensions.csproj" />
+    <ProjectReference Include="..\E.Standard.Platform\E.Standard.Platform.csproj" />
+    <ProjectReference Include="..\E.Standard.Security.Cryptography\E.Standard.Security.Cryptography.csproj" />
+    <ProjectReference Include="..\E.Standard.ThreadsafeClasses\E.Standard.ThreadsafeClasses.csproj" />
+    <ProjectReference Include="..\E.Standard.Ticket.LoginService\E.Standard.Ticket.LoginService.csproj" />
+    <ProjectReference Include="..\E.Standard.Web\E.Standard.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Web\" />
+  </ItemGroup>
+
+</Project>

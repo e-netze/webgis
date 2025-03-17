@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+<html style="background:white">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="X-UA-Compatible" content="IE=9,10,edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>@ViewBag.Title</title>
+
+    <environment names="Development">
+        <link href="~/content/Site.css" rel="stylesheet" />
+    </environment>
+
+    <environment names="Staging,Production">
+        <link href="~/content/Site.css" rel="stylesheet" />
+    </environment>
+    <link href="~/content/styles/default.css" rel="stylesheet" />
+
+    <script src="~/scripts/jquery-3.4.1.min.js"></script>
+    <link href="~/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />
+    <script src="~/lib/webportal-layout/webportal-layout.js"></script>
+
+    <script src="~/scripts/typeahead/typeahead.jquery.js"></script>
+    
+    @*<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>*@
+
+    @*<link href="~/content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>*@
+
+    <script type="text/javascript">
+        function moveDown(dir) {
+            document.location += '/' + dir;
+        }
+        function toJsonView() {
+            document.location += '?f=pjson';
+        }
+
+        $(document).ready(function () {
+            $('.webgis-autocomplete').each(function (i, e) {
+                $(e)
+                    .on({
+                        'typeahead:select': function (e, item) {
+                            if (typeof item === 'string') {
+                                $(this).typeahead('val', item);
+                            } else {
+                                $(this).typeahead('val', item.label);
+                            }
+                        }
+                    })
+                    .typeahead({
+                    hint: false,
+                    highlight: false,
+                    minLength: 1,
+                }, {
+                        limit: Number.MAX_VALUE,
+                        async: true,
+                        source: function (query, processSync, processAsync) {
+                            var $ctrl = $(this.$el[0].parentElement.parentElement).children(".webgis-autocomplete").first();
+
+                            var s = $ctrl.attr('data-source'); //.dataset.source;
+                            $ctrl.parent().parent().find('.webgis-input,.webgis-autocomplete-parameter').each(function (j, h) {
+                                 s += '&' + (h.name || h.id) + '=' + encodeURIComponent($(h).val());
+                            });
+                            if ($(e).attr('data-search-categories'))
+                                s += '&categories=' + encodeURIComponent($(e).attr('data-search-categories'));
+
+                            return $.ajax({
+                                url: s,
+                                type: 'get',
+                                //data: { term: query },
+                                success: function (data) {
+                                    data = data.slice(0, 12);
+                                    processAsync(data);
+                                },
+                                error: function () {
+                                }
+                            });
+                        },
+                        templates: {
+                            empty: [
+                                '<div class="tt-suggestion">',
+                                '<div class="tt-content">Keine Ergebnisse gefunden</div>',
+                                '</div>'
+                            ].join('\n'),
+                                suggestion: function (item) {
+                                    if (typeof item === 'string')
+                                        return $("<div>" + item + "</div>");
+
+                                    var $li = $("<div>").data("item.autocomplte", item).attr('data-value', item.value);
+                                    var $a = $("<a>").appendTo($li);
+                                    if (item.thumbnail || item.subtext) {
+                                        $("<table style='margin:0px;padding:0px'><tr><td style='padding:0px;vertical-align:top'>" +
+                                            (item.thumbnail ? "<img style='max-height:40px' src='" + item.thumbnail + "' /></td><td style='padding:0px;vertical-align:top'>" : "") +
+                                            "<span>" + item.label + "</span>" +
+                                            (item.subtext ? "<br><span style='color:#aaa;font-size:0.7em'>" + item.subtext + "</span>" : "") +
+                                        "</td></tr></table>").appendTo($a);
+
+                                    } else {
+                                        $a.html(item.label);
+                                    }
+
+                                return $li;
+                        }
+                    }
+                });
+            });
+        });
+
+        /**/</script>
+</head>
+
+<body style="background-color:#fff">
+    @*<header>
+            <div class="content-wrapper" style="background-color:#6cbe1a;">
+                <div class="">
+                    <p class="site-title">
+                        <a href="~/">webGIS Api</a>
+                        <br/>
+                    </p>
+
+                    <div style="text-align:right">
+                        <a onclick="toJsonView(); return false;" href="">>>JSON View</a>
+
+                        @if (!String.IsNullOrWhiteSpace((string)ViewData["append-rest-username"]))
+                        {
+                            @Html.Raw("<span>" + (string)ViewData["append-rest-username"] + "</span>");
+                            @Html.ActionLink("Logout", "Logout", "Rest");
+                        }
+                    </div>
+                </div>
+            </div>
+        </header>*@
+    <nav class="webportal-layout-header navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            <div class="navbar-brand">WebGIS API</div>
+        </div>
+    </nav>
+
+    @*<div class="content-wrapper" style="background-color:white">
+            <div style="padding:5px">
+                @RenderBody()
+            </div>
+        </div>*@
+
+    <div class="webportal-layout-container page-has-header page-has-footer">
+        <div class="webportal-layout-sidebar">
+            <ul class="webportal-layout-sidebar-items top">
+                <li class="webportal-layout-sidebar-item">
+                    <img src="~/content/sidebar/portal-26-w.png" />
+                    <a href="~/">Home</a>
+                </li>
+                <li class="webportal-layout-sidebar-item hr">
+                    <hr />
+                    <div class="text"></div>
+                </li>
+            </ul>
+            <ul class="webportal-layout-sidebar-items center">
+                <li class="webportal-layout-sidebar-item">
+                    <img src="~/content/sidebar/login-26-w.png" />
+                    <a onclick="toJsonView(); return false;" href="">JSON View</a>
+                </li>
+            </ul>
+            <ul class="webportal-layout-sidebar-items bottom">
+                <li class="webportal-layout-sidebar-item hr">
+                    <hr />
+                    <div class="text">@((string)ViewData["append-rest-username"])</div>
+                </li>
+                @if (String.IsNullOrWhiteSpace((string)ViewData["append-rest-username"]))
+                {
+                    <li class="webportal-layout-sidebar-item login">
+                        <img src="~/content/sidebar/login-26-w.png" />
+                        <a asp-area="" asp-controller="Subscribers" asp-action="Login" asp-route-id="">Anmelden</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="webportal-layout-sidebar-item logout">
+                        <img src="~/content/sidebar/logout-26-w.png" />
+                        <a asp-area="" asp-controller="Rest" asp-action="Logout" asp-route-id="">Abmelden</a>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="webportal-layout-main">
+            <div class="webportal-layout-main-container">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <div class="webportal-layout-footer">
+        <div class="version">
+            Version @E.Standard.WebGIS.Core.WebGISVersion.Version
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+﻿html, body {
+	/* iOS: avoid Pull to Refresh */
+	overflow: hidden;
+}

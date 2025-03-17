@@ -1,0 +1,34 @@
+﻿@model E.Standard.WebGIS.SubscriberDatabase.SubscriberDb.Client
+
+@{
+    ViewBag.Title = "Edit Api Client";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@using (Html.BeginForm("UpdateClient", "Subscribers", FormMethod.Post))
+{
+    <span>Client Name</span>
+    <br />
+    @Html.TextBoxFor(m => m.ClientName)
+    <br/>
+    <span>Client Id:</span>
+    <br/>
+    @Html.TextBoxFor(m => m.ClientId, "", new { @readonly="readonly" })
+    <br/>
+    <span>Client Secret:</span>
+    <br />
+    @Html.TextBoxFor(m => m.ClientSecret, "", new { @readonly = "readonly" })
+    <br/>
+    <span>Client Http Referer</span>
+    <br/>
+    @Html.TextBoxFor(m => m.ClientReferer)
+    <br/>
+    <span>Creation Date (UTC)</span>
+    <br />
+    @Html.TextBoxFor(m => m.Created, "", new { @readonly = "readonly" })
+    <br />
+    <button type="submit">
+        Save
+    </button>
+}

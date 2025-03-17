@@ -1,0 +1,20 @@
+﻿@using Portal.Core.AppCode.Extensions;
+@model Portal.Core.Models.App.DeleteAppModel;
+@{
+    ViewBag.Title = "Delete App";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete App: @Model.AppName</h2>
+
+<p>
+    Permanently delete the @Model.AppName. app
+</p>
+
+<form method="post">
+    @Html.HiddenFor(m => m.AppName)
+    @Html.HiddenFor(m => m.AppCategory)
+    <button style="color:white;background:#ffaaaa; border: 2px solid red; border-radius: 18px;width:200px">Yes, Delete!</button>
+</form>
+
+

@@ -1,0 +1,61 @@
+﻿@model E.Standard.Api.App.Models.UpdateClient
+
+@{
+    ViewBag.Title = "Edit Api Client";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    <a href="@Url.Action("Clients","Subscribers")" class="back-button"></a>
+    Create/Update Api Client
+</h2>
+<br />
+<br />
+
+@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <span style="color:red">@(Model.ErrorMessage)</span>
+}
+<br/>
+<br />
+
+@using (Html.BeginForm("UpdateClient", "Subscribers", FormMethod.Post))
+{
+    <div id="wizard" class="webgis-wizard" data-wizard-submit-method="submit" data-wizard-submit-title="Save" >
+        <div class="webgis-wizard-step" data-wizard-step-title="General">
+            <span>Client Name</span>
+            <br />
+            @Html.TextBoxFor(m => m.ClientName)
+            <br />
+            <span>Client Http Referer</span>
+            <br/>
+            @Html.TextBoxFor(m => m.ClientReferer)
+            <br />
+        </div>
+
+        <div class="webgis-wizard-step" data-wizard-step-title="Securiry">
+            <br />
+            <span>Client Id:</span>
+            <br />
+            @Html.TextBoxFor(m => m.ClientId, "", new { @readonly = "readonly" })
+            <br />
+            <span>Client Secret:</span>
+            <br />
+            @Html.TextBoxFor(m => m.ClientSecret, "", new { @readonly = "readonly" })
+            <br />
+            <br />
+        </div>
+
+        <div class="webgis-wizard-step" data-wizard-step-title="Creation Info">
+            <span>Creation Date (UTC)</span>
+            <br />
+            @Html.TextBoxFor(m => m.Created, "", new { @readonly = "readonly" })
+            <br />
+        </div>
+        <!--
+            <button type="submit">
+                Save
+            </button>
+        -->
+    </div>
+   }

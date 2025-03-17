@@ -1,0 +1,44 @@
+﻿@model E.Standard.Api.App.Models.RegisterSubscriberModel
+
+@{
+    ViewBag.Title = "Edit Api Client";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Register new subscriber</h2>
+<br />
+<br />
+
+@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <span style="color:red">@(Model.ErrorMessage)</span>
+}
+<br />
+<br />
+
+@using (Html.BeginForm("Register", "Subscribers", FormMethod.Post))
+{
+    <div id="wizard" class="webgis-wizard" data-wizard-submit-method="submit" data-wizard-submit-title="Register">
+        <div class="webgis-wizard-step" data-wizard-step-title="Subscriber">
+            @Html.LabelFor(m => m.Username)
+            @Html.TextBoxFor(m => m.Username)
+            <br />
+            @Html.LabelFor(m => m.FirstName)
+            @Html.TextBoxFor(m => m.FirstName)
+            <br />
+            @Html.LabelFor(m => m.LastName)
+            @Html.TextBoxFor(m => m.LastName)
+            <br />
+            @Html.LabelFor(m => m.Email)
+            @Html.TextBoxFor(m => m.Email)
+            <br />
+            @Html.LabelFor(m => m.Password1)
+            @Html.PasswordFor(m => m.Password1)
+            <br />
+            @Html.LabelFor(m => m.Password2)
+            @Html.PasswordFor(m => m.Password2)
+            <br />
+
+        </div>
+    </div>
+}

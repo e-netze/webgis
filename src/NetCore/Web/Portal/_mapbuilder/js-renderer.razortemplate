@@ -1,0 +1,11 @@
+﻿// The WebGIS API Client ID
+webgis.clientid = '@(Model.ClientId)';
+
+// Use Marker-Info Window instead of Marker-Popup
+webgis.usability.useGraphicsMarkerPopups = false;
+
+webgis.init(function () {
+@Raw(Portal.Core.AppCode.Mvc.PortalBaseController.RenderTemplate("js-map-renderer", Model))
+    map.ui.createHourglass('hourglass');
+@Raw(Portal.Core.AppCode.Mvc.PortalBaseController.RenderTemplate("js-ui-renderer", Model))
+});

@@ -1,0 +1,58 @@
+﻿@using E.Standard.Api.App.Extensions 
+@model E.Standard.WebGIS.SubscriberDatabase.SubscriberDb.Subscriber
+@inject E.Standard.Configuration.Services.ConfigurationService config
+
+@{
+    ViewBag.Title = "Api Clients";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="padding:10px">
+
+@if (Model != null)
+{
+    <h2>
+        Hello, @Model.FirstName
+    </h2>
+
+    <br/>
+    <br/>
+}
+
+@if (config.IsAdminSubscriber(Model?.Name))
+{
+    <div class="webgis-api-tile" onclick="document.location='@Url.Action("adminsubscribers")'">
+        <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+        <span class="webgis-api-tile-title">Admin Subscribers</span>
+        <span class="webgis-api-tile-description">
+            Manage API Subscribers
+        </span>
+    </div>
+}
+else
+{
+
+    if (config.SubscriberToolClientsAvailable())
+    {
+    <div class="webgis-api-tile" onclick="document.location='@Url.Action("clients")'">
+        <img class="webgis-api-tile-image" src="~/content/api/img/api-100.png" />
+        <span class="webgis-api-tile-title">API Clients</span>
+        <span class="webgis-api-tile-description">
+            Manage your API Clients
+        </span>
+    </div>
+    }
+
+    if (config.SubscriberToolPortalsAvailable())
+    {
+    <div class="webgis-api-tile" onclick="document.location='@Url.Action("portalpages")'">
+        <img class="webgis-api-tile-image" src="~/content/api/img/portal-100.png" />
+        <span class="webgis-api-tile-title">Portal Pages</span>
+        <span class="webgis-api-tile-description">
+            Manage your Portal Pages
+        </span>
+    </div>
+    }
+}
+
+</div>

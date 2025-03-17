@@ -1,0 +1,14 @@
+﻿{
+	"parameters": [
+		{
+			"title": "Karten Ausdehnung",
+			"name": "map-extent",
+			"type": "extents"
+		},
+		{
+			"title": "Tiling Dienste",
+			"name": "map-basemap-services",
+			"type": "services"
+		}
+	]
+}

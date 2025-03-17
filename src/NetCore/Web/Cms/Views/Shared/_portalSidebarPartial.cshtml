@@ -1,0 +1,55 @@
+@using Cms.AppCode
+@model Cms.Models.CmsModel
+@using E.Standard.Cms.Configuration.Services
+@inject CmsConfigurationService CCS
+
+<div class="webportal-layout-sidebar">
+    <ul class="webportal-layout-sidebar-items top">
+        @if (CCS.IsCustomCms(Model.CmsId) == false)
+        {
+            <li class="webportal-layout-sidebar-item portal">
+                <img src="~/images/home-26.png" />
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index">Home</a>
+            </li>
+        }
+        <li class="webportal-layout-sidebar-item resource">
+            <img src="~/images/help-26.png" />
+            <a href="https://docs.webgiscloud.com/de/webgis/apps/cms/index.html" target="_blank">Help/Tutorials</a>
+        </li>
+        <li class="webportal-layout-sidebar-item hr">
+            <hr />
+            <div class="text">Tools</div>
+        </li>
+    </ul>
+    <ul class="webportal-layout-sidebar-items center">
+        <li class="webportal-layout-sidebar-item resource">
+            <img src="~/images/deploy-26.png" />
+            <a href="" onclick="CMS.showDeployDialog();return false;">Deploy</a>
+        </li>
+
+        <li class="webportal-layout-sidebar-item resource">
+            <img src="~/images/export-26.png" />
+            <a href="" onclick="CMS.showExportDialog();return false;">Export</a>
+        </li>
+        @if (Model.CanImport == true)
+        {
+            <li class="webportal-layout-sidebar-item resource">
+                <img src="~/images/import-26.png" />
+                <a href="" onclick="CMS.showImportDialog();return false;">Import</a>
+            </li>
+        }
+        @if (Model.CanClear == true)
+        {
+            <li class="webportal-layout-sidebar-item resource">
+                <img src="~/images/delete-26.png" />
+                <a href="" onclick="CMS.showClearDialog();return false;">Clear</a>
+            </li>
+        }
+        <li class="webportal-layout-sidebar-item resource">
+            <img src="~/images/scheme-26.png" />
+            <a href="" onclick="CMS.showReloadSchemeDialog();return false;">Reload Scheme</a>
+        </li>
+    </ul>
+</div>

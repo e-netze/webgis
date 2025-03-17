@@ -1,0 +1,7 @@
+Der ArcGIS Server bietet unterschiedliche Arten von Karten an.
+
+__Image Server Dienste:__ Dienste mit Rasterdaten, die über den ImageServer bereit gestellt werden.
+
+__MapServer Dienste:__ Klassische Kartendienste (Vektor und Rasterdaten), die mit dem ArcGIS Server bereit gestellt werden bzw. die _GeoService REST_ Schnittstelle unterstützen.
+
+__MapServer Tiling Dienste:__ Dienste für Kartenkacheln, die über den ArcGIS Server bereit gestellt werden.
