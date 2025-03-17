@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg">
-  <img src="https://img.shields.io/badge/Version-0.13.37-brightgreen">
+  <img src="https://img.shields.io/badge/Version-7.25.1201-brightgreen">
   <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey">
 </p><br>
 
