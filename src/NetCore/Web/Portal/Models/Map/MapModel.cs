@@ -43,4 +43,6 @@ public class MapModel
 
     public IEnumerable<string> AddCustomCss { get; set; }
     public IEnumerable<string> AddCustomJavascript { get; set; }
+
+    public string Language { get; set; }
 }

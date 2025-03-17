@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Localization;
+using System.Collections.Concurrent;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -26,7 +27,9 @@ using System.Text.RegularExpressions;
 
 class MarkdownLocalizer : IStringLocalizer
 {
-    private readonly Dictionary<string, (string Header, string Body)> _translations = new();
+    private static ConcurrentDictionary<string, ConcurrentDictionary<string, (string Header, string Body)>> LanguageDictionaries = new();
+
+    private ConcurrentDictionary<string, (string Header, string Body)>? _translations;
 
     public MarkdownLocalizer(string language, string resourcePath = "")
     {
@@ -35,7 +38,21 @@ class MarkdownLocalizer : IStringLocalizer
             ResourcePath = resourcePath;
         }
 
-        LoadTranslations(language);
+        if (!LanguageDictionaries.TryGetValue(language, out _translations))
+        {
+            _translations = new();
+
+            LoadTranslations(language);
+
+            if (_translations is not null)
+            {
+                LanguageDictionaries[language] = _translations;
+            }
+        }
+        else
+        {
+            _translations = LanguageDictionaries[language];
+        }
     }
 
     public string ResourcePath { get; } = "l10n";
@@ -53,7 +70,7 @@ class MarkdownLocalizer : IStringLocalizer
         {
             string fileNameSpace = fi.Name.Replace($".md", "").ToLowerInvariant();
 
-            var lines = File.ReadAllLines(fi.FullName);
+            var lines = File.ReadAllLines(fi.FullName, Encoding.UTF8);
             string currentKey = "";
             string currentHeader = "";
             StringBuilder currentBody = new();
