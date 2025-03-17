@@ -39,10 +39,9 @@ public class DiagnosticController : ApiBaseController
                                 UrlHelperService urlHelper,
                                 CmsDocumentsService cmsDocuments,
                                 IHttpService http,
-                                IGlobalisationService globalisationService,
                                 IRequestContext requestContext,
                                 IEnumerable<ICustomApiService> customServices = null)
-        : base(logger, urlHelper, http, customServices, globalisationService)
+        : base(logger, urlHelper, http, customServices)
     {
         _logger = logger;
         _cache = cache;

@@ -107,6 +107,8 @@
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Custom.Core\E.Standard.Custom.Core.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.DbConnector\E.Standard.DbConnector.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Json\E.Standard.Json.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Localization.Extensions\E.Standard.Localization.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Localization\E.Standard.Localization.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.MessageQueues\E.Standard.MessageQueues.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.OpenIdConnect.Extensions\E.Standard.OpenIdConnect.Extensions.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.OracleWorkspace\E.Standard.OracleWorkspace.csproj" />
@@ -170,6 +172,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="i18n\en.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="l10n\de\Tools.FullExtent.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="l10n\en\Tools.FullExtent.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

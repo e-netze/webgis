@@ -34,10 +34,9 @@ public class SetupController : ApiBaseController
                            UrlHelperService urlHelper,
                            IHttpService http,
                            ConfigurationService config,
-                           IGlobalisationService globalisationService,
                            IEnumerable<IExpectableUserRoleNamesProvider> expectableUserRolesNamesProviders,
                            IEnumerable<ICustomApiService> customServices = null)
-        : base(logger, urlHelper, http, customServices, globalisationService)
+        : base(logger, urlHelper, http, customServices)
     {
         _logger = logger;
         _cache = cache;

@@ -57,11 +57,10 @@ public class OgcController : ApiBaseController
                          ConfigurationService config,
                          IRequestContext requestContext,
                          ICryptoService crypto,
-                         IGlobalisationService globalisationService,
                          IOgcPerformanceLogger ogcPerformanceLogger,
                          IEnumerable<ICustomApiService> customServices = null,
                          IEnumerable<ICustomTokenService> tokenServices = null)
-        : base(logger, urlHelper, requestContext.Http, customServices, globalisationService)
+        : base(logger, urlHelper, requestContext.Http, customServices)
     {
         _logger = logger;
         _etag = etag;

@@ -21,9 +21,8 @@ public class CustomContentController : ApiBaseController
                                    IHostEnvironment environment,
                                    UrlHelperService urlHelper,
                                    IHttpService http,
-                                   IGlobalisationService globalisationService,
                                    IEnumerable<ICustomApiService> customServices = null)
-            : base(logger, urlHelper, http, customServices, globalisationService)
+            : base(logger, urlHelper, http, customServices)
     {
         _logger = logger;
         _environment = environment;

@@ -31,6 +31,7 @@ using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -55,8 +56,7 @@ public class Bridge : IBridge
     private readonly IRequestContext _requestContext;
     private readonly ICryptoService _crypto;
     private readonly LookupService _lookup;
-    private readonly IGlobalisationService _globalisation;
-    private readonly string _userDefaultLanguage;
+    private readonly IStringLocalizer _localizer;
 
     public Bridge(IHttpRequestWrapper request,
                   HttpRequestContextService httpRequestContext,
@@ -68,8 +68,7 @@ public class Bridge : IBridge
                   IRequestContext requestContext,
                   ICryptoService crypto,
                   LookupService lookup,
-                  IGlobalisationService globalisation,
-                  string userDefaultLanguage,
+                  IStringLocalizer localizer,
                   CmsDocument.UserIdentification userIdentification,
                   IApiButton currentTool = null,
                   string storagePath = "")
@@ -84,8 +83,6 @@ public class Bridge : IBridge
         _http = _requestContext.Http;
         _crypto = crypto;
         _lookup = lookup;
-        _globalisation = globalisation;
-        _userDefaultLanguage = userDefaultLanguage;
 
         _userIdentification = userIdentification;
         this.Request = request;
@@ -253,8 +250,7 @@ public class Bridge : IBridge
                 _requestContext,
                 _crypto,
                 _lookup,
-                _globalisation,
-                _userDefaultLanguage,
+                _localizer,
                 _userIdentification,
                 currentTool
             );
@@ -1582,7 +1578,7 @@ public class Bridge : IBridge
         return String.Empty;
     }
 
-    public string Globalize(string key) => _globalisation.Get(key, _userDefaultLanguage); // use default langauge
+    public string Globalize(string key) => _localizer[key]; // use default langauge
 
     #region Tools
 

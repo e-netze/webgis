@@ -40,12 +40,11 @@ public class InstanceController : ApiBaseController
                               ApiJavaScriptService apiJs,
                               IEnumerable<IExpectableUserRoleNamesProvider> expectableUserRolesNamesProviders,
                               IOptionsMonitor<CryptoServiceOptions> cryptoServiceOptions,
-                              IGlobalisationService globalisationService,
                               IGeoServicePerformanceLogger geoServicePerformanceLogger,
                               IUsagePerformanceLogger usagePerformanceLogger,
                               IRequestContext requestContext,
                               IEnumerable<ICustomApiService> customServices = null)
-        : base(logger, urlHelper, http, customServices, globalisationService)
+        : base(logger, urlHelper, http, customServices)
     {
         _logger = logger;
         _cache = cache;

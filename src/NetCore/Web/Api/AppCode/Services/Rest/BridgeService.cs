@@ -12,6 +12,7 @@ using E.Standard.WebGIS.SubscriberDatabase.Services;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
@@ -30,8 +31,7 @@ public class BridgeService
     private readonly IRequestContext _requestContext;
     private readonly ICryptoService _crypto;
     private readonly LookupService _lookup;
-    private readonly IGlobalisationService _globalisation;
-    private readonly string _userLanguage;
+    private readonly IStringLocalizer _localizer;
 
     public BridgeService(IHttpContextAccessor httpContextAccessor,
                          CacheService cache,
@@ -43,7 +43,7 @@ public class BridgeService
                          IRequestContext requestContext,
                          ICryptoService crypto,
                          LookupService lookup,
-                         IGlobalisationService globalisation)
+                         IStringLocalizerFactory localizerFactory)
     {
         _httpContext = httpContextAccessor.HttpContext;
         _cache = cache;
@@ -55,7 +55,7 @@ public class BridgeService
         _requestContext = requestContext;
         _crypto = crypto;
         _lookup = lookup;
-        _globalisation = globalisation;
+        _localizer = localizerFactory.Create(typeof(BridgeService));
 
         if (_httpContext?.Request != null)
         {
@@ -64,11 +64,8 @@ public class BridgeService
                 NameValueCollection nvc = "post".Equals(_httpContext.Request.Method, StringComparison.OrdinalIgnoreCase)
                     ? _httpContext.Request.Form.ToNameValueCollection()
                     : _httpContext.Request.Query.ToNameValueCollection();
-
-                _userLanguage = (nvc["_ul"] ?? _httpContext.Request.Query["_ul"])
-                    .OrTake(_globalisation.DefaultLanguage);
             }
-            catch { _userLanguage = _globalisation.DefaultLanguage; }
+            catch {  }
         }
     }
 
@@ -91,8 +88,7 @@ public class BridgeService
                             _requestContext,
                             _crypto,
                             _lookup,
-                            _globalisation,
-                            _userLanguage,
+                            _localizer,
                             ui,
                             currentTool,
                             storagePath);
