@@ -1,0 +1,7 @@
+Die Dienste, die keinen üblichen Standard entsprechen.
+
+__Allgemeine TileCaches:__ Kartenkacheln, die nicht vom ArcGIS Server bereitgestellt werden und nicht OGC-WMTS unterstützen. Diese Dienste können nur eingebunden werden,
+wenn hier alle notwendigen Eigenschaften für einen Kacheldienst definiert werden (Ausdehnung, Maßstäbe, Kachelgrößen, usw.)
+
+__Suche Dienste:__ Dienste zu schnellen Suche mit Vorschlagwerten im WebGIS Viewer. Diese Dienste müssen über REST Befehle aufrufbar sein zusätzlich zum Vorschlagtext Koordinaten
+zurückliefen. Da diese Dienste bei einem Suchvorgang bei jedem Tastendruck des Anwenders abgefragt werden, wird für diese Dienste auch eine hohe Performance vorausgesetzt (Elasticsearch, SolR, ...)   

@@ -1,0 +1,20 @@
+#mapdraw-container {
+    padding:10px;
+    margin: 0 auto;
+    position: absolute;
+    left:0px; right:0px;
+    top:0px; bottom: 0px;
+}
+
+    #mapdraw-container .webgis-container {
+        overflow:visible !important; /* *** Workaround: PV-Rechner stellt Suche außerhalb des webgis-containers dar -> ist sonst nicht sichtbar */
+    }
+
+    .content {
+        border: 2px solid #80c826;
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        top: 10px;
+        bottom: 10px;
+    }

@@ -1,0 +1,6 @@
+﻿Sie können hier alle Ihre Favoriten für diese Karte zurücksetzen (löschen). Sie bleiben danach trotzdem im Favoriten-Programm, allerdings werden Ihre Favoriten für diese Karte neu ermittelt.
+
+Wenn Sie aus dem Favoriten-Programm aussteigen wollen, wählen sie den Menüpunkt „Favoriten-Programm“.
+
+Änderungen werden eventuell erst sichtbar, wenn der Kartenviewer neu gestartet wird.
+

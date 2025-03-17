@@ -1,0 +1,18 @@
+﻿WebGIS bietet ein Favoriten-Programm an, bei dem Ihre vornehmlich genutzten Aktivtäten ermittelt werden.
+
+Zu diesen Aktivitäten gehören beispielsweise:
+
+•	Werkzeuge
+•	Abfragen
+•	Editierthemen
+•	verwendete Karten ...
+
+Die Erfassung erfolgt je Karte.
+
+Dinge, die Sie öfter benutzen werden durch dieses Programm in Zukunft für Sie leichter zugänglich gemacht und somit auch Ihre Produktivität erhöht. Außerdem werden einige Werkzeuge (z.B. Abfragen) schneller funktionieren.
+
+Ihre Aktivitäten werden anonymisiert erfasst!
+
+Ein Ausstieg aus dem Favoriten-Programm ist jederzeit möglich!
+
+Änderungen werden eventuell erst sichtbar, wenn der Kartenviewer neu gestartet wird.

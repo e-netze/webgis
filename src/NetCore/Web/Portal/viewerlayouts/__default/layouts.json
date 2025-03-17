@@ -1,0 +1,28 @@
+[
+  {
+    "width": 1024,
+    "templates": [
+      {
+        "id": "default",
+        "name": "Default",
+        "file": "w1024.html"
+      }
+    ]
+  },
+  {
+    "width": 1200,
+    "templates": [
+      {
+        "id": "desktop",
+        "name": "Desktop (Tastatur/Maus)",
+        "file": "w1200_desktop.html"
+      },
+      {
+        "id": "touch",
+        "name": "Mobile (Touch-Bedienung)",
+        "file": "w1200_touch.html"
+      }
+    ]
+  }
+]
+

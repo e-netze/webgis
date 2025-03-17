@@ -1,0 +1,11 @@
+﻿{
+    "compilerOptions": {
+      "target": "es5",
+      "allowJs": true,
+      "noErrorTruncation": true,
+      "outDir": "wwwroot/js/cms"
+    },
+    "include": [
+      "_clientscripts/cms"
+    ]
+}

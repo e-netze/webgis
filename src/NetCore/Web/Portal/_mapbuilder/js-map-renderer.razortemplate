@@ -1,0 +1,34 @@
+﻿    var map = webgis.createMap('map', {
+         extent: '@(Model.Extent)'
+        ,services: '@(Model.Services)'
+        @(Raw(!String.IsNullOrWhiteSpace(Model.Queries) ? ",queries:" + Model.Queries : ""))
+        @(Raw(!String.IsNullOrWhiteSpace(Model.DynamicContent) && Model.DynamicContent.Length > 2 ? ",dynamiccontent:" + Model.DynamicContent : ""))
+        });
+
+        @if (Model.Visibilities != null)
+        {
+            foreach (var visibility in Model.Visibilities)
+            {
+                if(visibility.IsBasemap == true)
+                {
+        @Raw("    map.setBasemap('"+ visibility.ServiceId+"',"+visibility.IsOverlayBasemap.ToString().ToLower()+");\n")
+                }
+                else
+                {
+        @Raw("    map.setServiceVisibility('"+ visibility.ServiceId+"',"+visibility.VisibleLayersToJson()+");\n")
+                }
+        @Raw("    map.setServiceOpacity('"+ visibility.ServiceId+"',"+visibility.Opacity.ToString(Portal.Core.AppCode.Mvc.PortalBaseController.Nhi)+");\n")
+            }
+        }
+
+    map.setScale(@(Model.MapScale.ToString(Portal.Core.AppCode.Mvc.PortalBaseController.Nhi)),[@(Model.MapCenter[0].ToString(Portal.Core.AppCode.Mvc.PortalBaseController.Nhi)),@(Model.MapCenter[1].ToString(Portal.Core.AppCode.Mvc.PortalBaseController.Nhi))]);
+
+    @if(!String.IsNullOrWhiteSpace(Model.Graphics)) {
+    <text>
+    webgis.delayed(function(){
+        var geoJson=@Raw(Model.Graphics);
+        map.graphics.fromGeoJson({replaceelements:true, geojson:geoJson});
+    },3);
+    </text>
+    }
+

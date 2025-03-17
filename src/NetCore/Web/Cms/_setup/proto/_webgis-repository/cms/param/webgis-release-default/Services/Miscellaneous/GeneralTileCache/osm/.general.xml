@@ -1,0 +1,6 @@
+<config>
+  <name type="System.String">OSM</name>
+  <guid type="System.String">31200ca63e784fdaac8ac746899a9b68</guid>
+  <rendering type="System.Int32">1</rendering>
+  <hide_beyond_maxlevel type="System.Boolean">False</hide_beyond_maxlevel>
+</config>

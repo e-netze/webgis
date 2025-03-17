@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net9.0</TargetFramework>
+	  <LangVersion>13</LangVersion>
+    <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E.Standard.Configuration\E.Standard.Configuration.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.Core\E.Standard.WebGIS.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.SubscriberDatabase\E.Standard.WebGIS.SubscriberDatabase.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\Abstractions\" />
+  </ItemGroup>
+
+</Project>

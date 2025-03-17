@@ -1,0 +1,164 @@
+﻿@using E.Standard.Api.App.Extensions
+@inject E.Standard.Configuration.Services.ConfigurationService config 
+<!DOCTYPE html>
+<html style="background-color:#fff">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="X-UA-Compatible" content="IE=9,10,edge" />
+
+    <title>@ViewBag.Title</title>
+    <environment names="Development">
+        <link href="~/content/Site.css" rel="stylesheet" />
+    </environment>
+
+    <environment names="Staging,Production">
+        <link href="~/content/Site.css" rel="stylesheet" />
+    </environment>
+
+    <script type="text/javascript">
+        function moveDown(dir) {
+            document.location += '/' + dir;
+        }
+        function toJsonView() {
+            document.location += '?f=json';
+        }
+    </script>
+
+</head>
+<body>
+    @*<header>
+            <div class="content-wrapper" style="background-color:#6cbe1a">
+                <div class="">
+                    <p class="site-title">
+                        <a href="~/">webGIS Api</a>
+                        <br />
+                    </p>
+                    <div style="text-align:right;color:white">
+                        @if (!String.IsNullOrWhiteSpace((string)ViewData["append-subscriber-username"]))
+                        {
+                            @Html.ActionLink((string)ViewData["append-subscriber-username"], "Update", "Subscribers", new { style = "color:white" });
+                            @Html.Raw("&raquo;&nbsp;&nbsp;&nbsp;")
+                            @Html.ActionLink("Logout", "Logout", "Subscribers", new { style = "color:white" });
+                            @Html.Raw("&raquo;&nbsp;")
+                        }
+                        @if (!String.IsNullOrWhiteSpace((string)ViewData["append-rest-username"]))
+                        {
+                            @Html.Raw("<span style='color:white'>" + (string)ViewData["append-rest-username"] + "</span>");
+                            @Html.ActionLink("Logout", "Logout", "Rest", new { style = "color:white" });
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </header>*@
+
+    <nav class="webportal-layout-header navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            <div class="navbar-brand">WebGIS API</div>
+        </div>
+    </nav>
+
+    <script src="~/scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/scripts/site.js"></script>
+    <script src="~/scripts/api/ui/webgis_wizard.js"></script>
+    <link href="~/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />
+    <script src="~/lib/webportal-layout/webportal-layout.js"></script>
+
+    <div class="webportal-layout-container page-has-header page-has-footer">
+        <div class="webportal-layout-sidebar">
+            <ul class="webportal-layout-sidebar-items top">
+                <li class="webportal-layout-sidebar-item">
+                    <img src="~/content/sidebar/portal-26-w.png" />
+                    <a href="" onclick="goHome(); return false;">Home</a>
+                </li>
+                <li class="webportal-layout-sidebar-item hr">
+                    <hr />
+                    <div class="text"></div>
+                </li>
+            </ul>
+            <ul class="webportal-layout-sidebar-items center">
+            </ul>
+            <ul class="webportal-layout-sidebar-items bottom">
+                <li class="webportal-layout-sidebar-item hr">
+                    <hr />
+                    <div class="text">@((string)ViewData["append-subscriber-username"] ?? (string)ViewData["append-rest-username"])</div>
+                </li>
+                @if (String.IsNullOrWhiteSpace((string)ViewData["append-rest-username"]) && String.IsNullOrWhiteSpace((string)ViewData["append-subscriber-username"]))
+                {
+                   if (config.AllowSubscriberLogin() == true) 
+                   {
+                      <li class="webportal-layout-sidebar-item login">
+                            <img src = "~/content/sidebar/login-26-w.png" />
+                            <a asp-area="" asp-controller="Subscribers" asp-action="Login" asp-route-id="">Anmelden</a>
+                      </li>
+                    }
+                }
+                else
+                {
+                    @if (!String.IsNullOrWhiteSpace((string)ViewData["append-subscriber-username"]))
+                    {
+                        <li class="webportal-layout-sidebar-item logout">
+                            <img src="~/content/sidebar/logout-26-w.png" />
+                            @*<a asp-area="" asp-controller="Subscribers" asp-action="Logout" asp-route-id="">Abmelden</a>*@
+                            <a href="" onclick="subscriberLogOff();return false">Abmelden</a>
+                        </li>
+                    }
+                    @if (!String.IsNullOrWhiteSpace((string)ViewData["append-rest-username"]))
+                    {
+                        <li class="webportal-layout-sidebar-item logout">
+                            <img src="~/content/sidebar/logout-26-w.png" />
+                            <a asp-area="" asp-controller="Rest" asp-action="Logout" asp-route-id="">Abmelden</a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+        <div class="webportal-layout-main">
+            <div class="webportal-layout-main-container">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <div class="webportal-layout-footer">
+        <div class="version">
+            Version @E.Standard.WebGIS.Core.WebGISVersion.Version
+        </div>
+    </div>
+
+    @RenderSection("scripts", required: false)
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('.webgis-wizard').webgis_wizard();
+        });
+
+        function setLocation(url) {
+            if (window.parent && window.parent.location) {
+                window.parent.location.href = url;
+            } else {
+                window.location.href = url;
+            }
+        }
+
+        function goHome() {
+            var url = (window.parent && window.parent.homeUrl) ?
+                window.parent.homeUrl :
+                '@Url.Action("Index", "Home")';
+
+            window.location.href = url;
+        }
+
+        function subscriberLogOff() {
+            var url = '@Url.Action("Logout","Subscribers")';
+            setLocation(url);
+        }
+
+    </script>
+
+</body>
+</html>

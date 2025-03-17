@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net9.0</TargetFramework>
+	  <LangVersion>13</LangVersion>
+    <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Services\Configuration\**" />
+    <EmbeddedResource Remove="Services\Configuration\**" />
+    <None Remove="Services\Configuration\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Models\ApiPortalPageDTO" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\Json\Geometry\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E.Standard.ActiveDirectory\E.Standard.ActiveDirectory.csproj" />
+    <ProjectReference Include="..\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.Configuration\E.Standard.Configuration.csproj" />
+    <ProjectReference Include="..\E.Standard.Extensions\E.Standard.Extensions.csproj" />
+    <ProjectReference Include="..\E.Standard.WebMapping.Core.Api\E.Standard.WebMapping.Core.Api.csproj" />
+    <ProjectReference Include="..\E.Standard.WebMapping.Core\E.Standard.WebMapping.Core.csproj" />
+  </ItemGroup>
+
+</Project>

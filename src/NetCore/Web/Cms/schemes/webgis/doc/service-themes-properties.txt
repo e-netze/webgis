@@ -1,0 +1,5 @@
+﻿WebGIS 5:
+Hier können Themen aus dem Dienst hinzugefügt werden, für die spezielle Themen Eigenschaften gelten (Layer sperren, In Legende anzeigen, Anzeigename in der Legende).
+Außerdendem können gewisse Eigenschaften aus dem Themen des Dienstes überschrieben werden (Sichtbarkeit, Aliasname)
+
+Hinweis: Dieser Konten ersetzt in WebGIS 5 den TOC

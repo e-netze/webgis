@@ -1,0 +1,38 @@
+﻿@using E.Standard.WebGIS.Core
+@using Portal.Core.AppCode.Extensions
+ 
+@inject Portal.Core.AppCode.Services.UrlHelperService urlHelper
+@inject Portal.Core.AppCode.Services.CustomContentService customContent
+@inject E.Standard.Configuration.Services.ConfigurationService config
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "webGIS Produkte";
+
+    var request = this.Context.Request;
+
+    string apiUrl = urlHelper.ApiUrl(request, E.Standard.WebGIS.Core.HttpSchema.Current);
+    string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
+}
+
+
+<link href="@(portalContentUrl)/content/portal.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+@if (customContent.CompanyPortalCssExists())
+{
+    <link href="@(portalContentUrl)/content/companies/@(config.Company())/portal.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+}
+@{ var portalCssVersion = customContent.PagePortalCssVersion(Model.PortalPageId); }
+@if (!String.IsNullOrWhiteSpace(portalCssVersion))
+{
+    @if (String.IsNullOrWhiteSpace(customContent.PortalCustomContentRootPath))
+    {
+        <link href="@(portalContentUrl)/content/portals/@(Model.PortalPageId)/portal.css?@(portalCssVersion)" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="@(customContent.CustomScriptContent(Model.PortalPageId, Model.CurrentUsername, "portal.css", portalCssVersion))" rel="stylesheet" />
+    }
+}
+<div class="index-header">
+
+</div>

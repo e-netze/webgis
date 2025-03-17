@@ -1,0 +1,142 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+	  <LangVersion>13</LangVersion>
+    <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
+    <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
+	  <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="schemes\api-config\schema.xml" />
+    <None Remove="schemes\secrets-template.xml" />
+    <None Remove="schemes\webgis\doc\arcgis-services.txt" />
+    <None Remove="schemes\webgis\doc\misc-services.txt" />
+    <None Remove="schemes\webgis\doc\ogc-services.txt" />
+    <None Remove="schemes\webgis\doc\queries.txt" />
+    <None Remove="schemes\webgis\doc\root.txt" />
+    <None Remove="schemes\webgis\doc\service-themes-properties.txt" />
+    <None Remove="schemes\webgis\doc\service-themes-readonly.txt" />
+    <None Remove="schemes\webgis\doc\service.txt" />
+    <None Remove="schemes\webgis\doc\services.txt" />
+    <None Remove="schemes\webgis\schema.xml" />
+    <None Remove="schemes\webgis\translate.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\js\cms\cms.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\cms\cms.min.js.map" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile_linux64.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile_win64.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\OpenSourceProfile.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\OpenSourceProfile_linux64.pubxml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="schemes\api-config\schema.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="schemes\secrets-template.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="schemes\webgis\doc\arcgis-services.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="schemes\webgis\doc\misc-services.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="schemes\webgis\doc\ogc-services.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="schemes\webgis\doc\queries.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="schemes\webgis\doc\root.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="schemes\webgis\doc\service-themes-properties.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="schemes\webgis\doc\service-themes-readonly.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="schemes\webgis\doc\service.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="schemes\webgis\doc\services.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="schemes\webgis\schema.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="schemes\webgis\translate.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+    <PackageReference Include="BundlerMinifier.Core" Version="3.2.449" />
+    <PackageReference Include="E.DataLinq.Code" Version="7.25.1110" />
+    <PackageReference Include="E.DataLinq.Core" Version="7.25.1110" />
+    <PackageReference Include="E.DataLinq.Web.Api.Client" Version="7.25.1110" />
+    <PackageReference Include="jquery.TypeScript.DefinitelyTyped" Version="3.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.2" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="3.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
+    <PackageReference Include="System.Private.Uri" Version="4.3.2" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+    <!--<PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.6" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Azure\E.Standard.Azure.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Cms.Configuration\E.Standard.Cms.Configuration.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.CMS.MongoDB\E.Standard.CMS.MongoDB.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.CMS.UI\E.Standard.CMS.UI.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Cms\E.Standard.Cms.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Configuration\E.Standard.Configuration.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Custom.Core\E.Standard.Custom.Core.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.OpenIdConnect.Extensions\E.Standard.OpenIdConnect.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Security.Cryptography\E.Standard.Security.Cryptography.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebGIS.CmsSchema\E.Standard.WebGIS.CmsSchema.csproj" />
+	  <ProjectReference Include="..\..\..\NetStandard\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
+	  <ProjectReference Include="..\Aspire\webgis.ServiceDefaults\webgis.ServiceDefaults.csproj" />
+	
+  </ItemGroup>
+
+  <Target Name="BeforeBuild" BeforeTargets="BeforeBuild">
+    <Message Text="Current Configuration: '$(Configuration)'" Importance="high" />
+    <Message Text="WEBGIS_CUSTOM_LIBS: '$(WEBGIS_CUSTOM_LIBRARIES)'" Importance="high" />
+  </Target>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Debug_Internal' or '$(Configuration)' == 'Release_Internal'">
+	  <ProjectReference Include="$(WEBGIS_CUSTOM_LIBRARIES)\E.Standard.Custom.Cms\E.Standard.Custom.Cms.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\cms\cms.min.js" />
+    <None Include="wwwroot\js\cms\cms.min.js.map" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="_config\" />
+  </ItemGroup>
+
+</Project>

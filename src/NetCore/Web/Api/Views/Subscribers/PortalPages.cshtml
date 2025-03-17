@@ -1,0 +1,59 @@
+﻿@model E.Standard.WebGIS.Core.Models.ApiPortals
+
+@using  E.Standard.Api.App.Extensions   
+@inject Api.Core.AppCode.Services.UrlHelperService urlHelper
+@{
+    ViewBag.Title = "Api Portals";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    <a href="@Url.Action("Index","Subscribers")" class="back-button"></a>
+    Portal Pages
+</h2>
+
+<div style="padding:10px">
+
+    @if (Model != null && Model.Portals != null)
+    {
+
+        foreach (var portal in Model.Portals)
+        {
+            <div class="webgis-api-tile-pro">
+                <div class="webgis-api-tile" onclick="document.location='@Url.Action("UpdatePortalPage", new { id = portal.Id })'">
+                    <img class="webgis-api-tile-image" src="~/content/api/img/portal-100.png" />
+                    <span class="webgis-api-tile-title">@portal.Id</span>
+                    <span class="webgis-api-tile-description">
+                        @portal.Name
+                    </span>
+                </div>
+                <div class="webgis-api-tile-pro-link" title="Poral" alt="Portal" onclick="var c=portalCedentials('@portal.Id');window.open('@(urlHelper.PortalUrl().RemoveEndingSlashes()+"/auth/loginAsAdmin/" +@portal.Id)?credential_token=' + c);">
+                    <div>&nbsp;Portal</div>
+                </div>
+            </div>
+        }
+    }
+
+    <br />
+    <br />
+
+    @Html.ActionLink("New Portal Page", "NewPortalPage")
+</div>
+
+<script type="text/javascript">
+
+    function portalCedentials(id) {
+        var c = '';
+        $.ajax({
+            type: 'post',
+            url: 'CreatePortalCredentialToken/' + id,
+            dataType: 'json',
+            success: function (result) { c = result.credentialToken },
+            data: {},
+            async: false
+        });
+
+        return c;
+    }
+
+</script>

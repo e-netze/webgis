@@ -1,0 +1,79 @@
+﻿# Generell
+ok:				Ok
+cancel:			Abbrechen
+
+length:         Länge
+area:           Fläche
+
+parts:          Teile
+ChooseResult:   Ergebnis auswählen
+
+# Sketch
+RemoveSketch:	Sketch entfernen
+
+# Editing
+ErrorOnInsert:      Fehler beim INSERT
+ErrorOnUpdate:      Fehler beim UPDATE
+ErrorOnDelete:      Fehler beim DELETE
+
+# Editing Clip
+clip:				Zuschneiden
+clipObjects:		Objekte zuschneiden (Clip)
+clipDescription:    Zeichnen sie ein Polygon in die Karte, mit dem geschnitten werden soll.
+
+clipHasNoResult:               Beim Zerschneiden (Clippen) wurde ein Ergebnis gefunden
+
+chooseClipMethod:   Clip Methode auswählen
+
+ClipIntersectedAndDifference:		Schnittmenge + Differenzmenge
+ClipIntersected:					Schnittmenge
+ClipDifference:					    Differenzmenge
+ClipXor:							Symmetrische Differenzmenge
+
+DrawClipPolygonFirst:               Bitte zuerst eine Verschnittfläche zeichnen
+
+ApplyClipToIntersected:			Nur auf geschnittene Objekte anwenden
+ApplyClipToIntersected-description:
+                                Sind mehrere Objekte ausgewählt und nicht alle werden von der Schnittfläche
+                                getroffen, bleiben diese durch das Zuschneiden unverändert.
+ApplyClipToAll:					Auf alle Objekte anwenden
+ApplyClipToAll-description:     Sind mehrere Objekte ausgewählt und nicht alle werden von der Schnittfläche
+                                getroffen, werden auch diese für das Zuschneiden berücksichtigt. Objekte außerhalb
+                                der Schnittfläche, kommen damit in die Differenzschnittmenge. Wird im nächsten
+                                Schritt nur die Schnittmenge als Ergebenis ausgewählt, werden alle Objekte Objekte
+                                aus der Differenzmenge (optional) gelöscht.
+
+DisolveMultipartFeatures:		Multiparts auflösen
+DisolveMultipartFeatures-description:
+                                Wird durch das Zuschneiden ein Objekt in mehrere Teile geteilt, wird aus den 
+                                einzelnen Teilen je ein neues Objekt erstellt. Somit entstehen keine Multipart Objekte.
+                                Durch das Zerschneiden können so mehr Objekte entstehen, als ürsprunglich ausgwählt waren.
+ClippedFeaturesStayMultiparts:	Zugeschnittene Features als Multiparts
+ClippedFeaturesStayMultiparts-description:
+                                 Wird durch das Zuschneiden ein Objekt in mehrere Teile geteilt, bleibt es ein Objekt,
+                                 das aus mehreren Teilen besteht. In diesen Fall enstehent ein Multipart-Features.
+                                 Nach dem Verschnitt gibt es wieder gleich viele Objekte, wie vor dem Verschnitt.
+
+# Editing Merge
+merge:                          Zusammenführen
+mergeObject:                    Objekte zusammenführen
+mergedObject:                   Zusammengeführtes Objekt
+PolylineMergeMethod:            Merge Methode (Polylinien)
+
+mergeHasNoResult:               Beim Zusammenführen, wurde keine Lösung gefunden, in der alle Ausgangsobjekte enthalten sind.
+
+mergeOriginFeature:             Attribute aus diesem Objekt übernehmen
+mergeOriginFeature-description: Durch das Zusammenführen entsteht ein neues Objekte. Die Sachdaten für das neue Objekt werden aus dem hier 
+                                angeführten Objekt übernommen (entsprechende Objekt-ID wählen). Das gewählte Objekt wird in der Karte 
+                                farblich hervorgehoben. Die Sachendaten für das Ausgewählte Element, werden die der (readonly) Editmaske unten angezeigt.
+
+CreateMultipart:                Multipart Objekt erzeugen
+CreateMultipart-description:    Die Ursprünglichen Objekte werden 1:1 übernommen und ein Multipart Objekt erzeugt.
+                                Jeder Teil des neuen Objekts entspricht einen Teil der Ausgangsobjekte.
+CreateSinglepart:               Singlepart Objekt erzeugen
+CreateSinglepart-description:   Es wird versucht, aus den Objekten ein Single Part Feature zu erzeugen. Daruch werden die Ausgangsobjekte
+                                zuschnitten und neue zusammengesetzt. Durch den Schnitt und das neue Zusammensetzen, gehen eventuelle einige 
+                                Teile aus den Ausgangsobjekten verloren (Artifakte). 
+                                Es gibt in der Regel mehrere Lösungen, die im nächsten Schritt angeboten werden. 
+                                Die Methode ist nur erfolgreich, wen ein neuens Objekte zusammengesetzt wird, in dem mindesten ein Teil aus jedem
+                                Ausgangsobjekt enthalten ist.

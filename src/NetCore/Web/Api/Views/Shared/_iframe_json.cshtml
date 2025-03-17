@@ -1,0 +1,33 @@
+﻿@{
+    Layout = null;
+
+    var response = this.Context.Response;
+    var request = this.Context.Request;
+
+    if (ViewData["json"] != null)
+    {
+        response.ContentType = "text/html";
+        response.Headers.Add("Pragma", "no-cache");
+        response.Headers.Add("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
+        response.Headers.Add("Access-Control-Allow-Headers", "*");
+        response.Headers.Add("Access-Control-Allow-Origin", (string)request.Headers["Origin"] != null ? (string)request.Headers["Origin"] : "*");
+        response.Headers.Add("Access-Control-Allow-Credentials", "true");
+    }
+
+}
+
+<html>
+<head>
+
+    <script type="text/javascript">
+        try {
+            var json = @Html.Raw(ViewData["json"].ToString().Replace("\n","").Replace("\r",""));
+            top.webgis.events.fire('@ViewData["callback-channel"]',json);
+        } catch(e) { alert("Error: "+e); }
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>

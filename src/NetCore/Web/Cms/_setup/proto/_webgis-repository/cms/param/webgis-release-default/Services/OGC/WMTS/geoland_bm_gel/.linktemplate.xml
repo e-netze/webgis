@@ -1,0 +1,36 @@
+<config>
+  <_linkuri type="System.String">
+  </_linkuri>
+  <tocdisplayname type="System.String">
+  </tocdisplayname>
+  <tocname type="System.String">default</tocname>
+  <collapsed type="System.Boolean">False</collapsed>
+  <showintoc type="System.Boolean">True</showintoc>
+  <copyright type="System.String">
+  </copyright>
+  <projmethode type="System.Int32">0</projmethode>
+  <projid type="System.Int32">-1</projid>
+  <opacity type="System.Double">100</opacity>
+  <timeout type="System.Int32">20</timeout>
+  <visible type="System.Boolean">True</visible>
+  <imageformat type="System.Int32">0</imageformat>
+  <showinlegend type="System.Boolean">True</showinlegend>
+  <legendopt type="System.Int32">0</legendopt>
+  <legendoptsymbolscale type="System.Double">1000</legendoptsymbolscale>
+  <legendurl type="System.String">
+  </legendurl>
+  <usefixrefscale type="System.Boolean">False</usefixrefscale>
+  <fixrefscale type="System.Double">0</fixrefscale>
+  <minscale type="System.Double">0</minscale>
+  <maxscale type="System.Double">0</maxscale>
+  <metadata type="System.String">
+  </metadata>
+  <usewithspatialconstraintservice type="System.Boolean">False</usewithspatialconstraintservice>
+  <isbasemap type="System.Boolean">True</isbasemap>
+  <basemaptype type="System.Int32">0</basemaptype>
+  <warninglevel type="System.Int32">0</warninglevel>
+  <supportedcrs type="System.String">3857</supportedcrs>
+  <exportwms type="System.Boolean" unauthorizeddefault="False">False</exportwms>
+  <serviceextenturl type="System.String">
+  </serviceextenturl>
+</config>

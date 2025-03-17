@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net9.0</TargetFramework>
+	  <LangVersion>13</LangVersion>
+    <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E.Standard.ActiveDirectory\E.Standard.ActiveDirectory.csproj" />
+    <ProjectReference Include="..\E.Standard.Azure\E.Standard.Azure.csproj" />
+    <ProjectReference Include="..\E.Standard.Caching\E.Standard.Caching.csproj" />
+    <ProjectReference Include="..\E.Standard.Configuration\E.Standard.Configuration.csproj" />
+    <ProjectReference Include="..\E.Standard.OpenIdConnect.Extensions\E.Standard.OpenIdConnect.Extensions.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.CMS\E.Standard.WebGIS.CMS.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.Core\E.Standard.WebGIS.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.WebMapping.Core\E.Standard.WebMapping.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+  </ItemGroup>
+
+</Project>

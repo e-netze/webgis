@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "webgis.deploy": {
+      "commandName": "Project"
+    }
+  }
+}

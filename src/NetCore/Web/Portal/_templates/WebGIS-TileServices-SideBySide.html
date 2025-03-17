@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title></title>
+
+    <script type="text/javascript" src="{api}/scripts/jquery-3.2.0.min.js"></script>
+    <script type="text/javascript" src="{api}/scripts/typeahead/typeahead.jquery.min.js"></script>
+
+    <link href="{api}/content/styles/default.css" rel="stylesheet" />
+    <link href="{api}/content/api/ui.css" rel="stylesheet" />
+
+    <script src="{api}/scripts/api/api.min.js" id="webgis-api-script"></script>
+    <script src="{api}/scripts/api/api-ui.min.js"></script>
+
+    <link href="{api}/scripts/api/plugins/service-layerswitch/service-layerswitch.css" rel="stylesheet" />
+    <script src="{api}/scripts/api/plugins/service-layerswitch/basemap-switch.js"></script>
+
+    <script type="text/javascript">
+
+    </script>
+</head>
+<body>
+    <div class="webgis-container" style="z-index:0;position:absolute;left:0px;right:0px;top:0px;bottom:0px;">
+        <div id="map" style="z-index:0;position:absolute;left:0px;right:0px;top:0px;bottom:0px;">
+
+        </div>
+
+        <div id="layerswitch-left" style="position: absolute; left: 5px; top: 5px; overflow-y: auto; max-height: calc(100% - 10px)">
+        </div>
+
+        <div id="layerswitch-right" style="position: absolute; right: 5px; top: 5px; overflow-y: auto; max-height: calc(100% - 10px)">
+        </div>
+
+    </div>
+    <script type="text/javascript">
+
+        {api-hmac}
+
+        // Use Marker-Info Window instead of Marker-Popup
+        webgis.usability.useGraphicsMarkerPopups = false;
+        webgis.leaflet.onePanePerService = true;
+        webgis.mapFramework_version = "1.6.0";
+
+    webgis.init(function () {
+        var map = webgis.createMap('map', {
+            extent: '{{map-extent}}'
+            , services: '{{map-basemap-services}}'
+        });
+
+        map.setBasemap(null, false);
+        //map.setServiceOpacity('{{map-basemap-services}}', {{basemap-opacity}});
+
+        //map.setScale(500001, [14.832575893762465, 47.2837533131992]);
+
+        var sideBySideControl = null, leftLayer = null, rightLayer = null;
+        webgis.require('leaflet-side-by-side', function () {
+            var serviceIds = map.serviceIds();
+
+            $("#layerswitch-left").webgis_basemapswitch({
+                map: map,
+                onChange: function (sender, serviceId) {
+                    if (leftLayer) {
+                        leftLayer.remove();
+                    }
+                    leftLayer = map.getLeafletLayer(serviceId);
+                    if (leftLayer) {
+                        $("#layerswitch-right").webgis_basemapswitch('hideServiceIds', { serviceIds: [serviceId] });
+                        leftLayer.addTo(map.frameworkElement);
+                        if (sideBySideControl)
+                            sideBySideControl.setLeftLayers([leftLayer]);
+                    }
+                }
+            });
+
+            $("#layerswitch-right").webgis_basemapswitch({
+                map: map,
+                onChange: function (sender, serviceId) {
+                    if (rightLayer) {
+                        rightLayer.remove();
+                    }
+                    rightLayer = map.getLeafletLayer(serviceId);
+                    if (rightLayer) {
+                        $("#layerswitch-left").webgis_basemapswitch('hideServiceIds', { serviceIds: [serviceId] });
+                        rightLayer.addTo(map.frameworkElement);
+                        if (sideBySideControl)
+                            sideBySideControl.setRightLayers([rightLayer]);
+                    }
+                }
+            });
+
+            sideBySideControl = L.control.sideBySide();
+            sideBySideControl.addTo(map.frameworkElement);
+
+            console.log(serviceIds);
+            const params = new URLSearchParams(window.location.search);
+            const leftLayerParameter = params.get('left-layer');
+            const rightLayerParameter = params.get('right-layer');
+
+            if (leftLayerParameter != rightLayerParameter
+                && serviceIds.includes(leftLayerParameter)
+                && serviceIds.includes(rightLayerParameter))
+            {
+                $("#layerswitch-left").webgis_basemapswitch('setServiceId', { serviceId: leftLayerParameter });
+                $("#layerswitch-right").webgis_basemapswitch('setServiceId', { serviceId: rightLayerParameter });
+            }
+            else
+            {
+                $("#layerswitch-left").webgis_basemapswitch('setServiceId', { serviceId: serviceIds[0] });
+                $("#layerswitch-right").webgis_basemapswitch('setServiceId', { serviceId: serviceIds[1] });
+            }
+        });
+
+        {map-script}
+    });
+    </script>
+</body>
+</html>

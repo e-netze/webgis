@@ -1,0 +1,24 @@
+﻿@using E.Standard.Api.App.Models.Abstractions 
+@model  E.Standard.Api.App.Models.Abstractions.IHtml
+@inject E.Standard.Api.App.Services.Cache.CacheService Cache
+
+@{
+    ViewBag.Title = "webGIS API";
+    this.Layout = "_RestLayout.cshtml";
+}
+
+@if (Model != null)
+{
+    @Html.Raw(Model is IHtml3 ? ((IHtml3)Model).ToHtmlString(Cache) : Model.ToHtmlString())
+
+    <div class="content-wrapper" style="background-color:#0094ff">
+        @if (Model is IHtml2)
+        {
+            foreach (string link in ((IHtml2)Model).PropertyLinks)
+            {
+                @Html.Raw(E.Standard.Api.App.DTOs.HtmlHelper.ToNextLevelLink(link.ToLower(), link));
+            }
+        }
+    </div>
+}
+

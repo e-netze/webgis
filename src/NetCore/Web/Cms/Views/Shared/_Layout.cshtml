@@ -1,0 +1,129 @@
+﻿@using Cms.AppCode
+@using E.Standard.Cms.Configuration.Services
+@using E.Standard.Cms.Configuration
+@inject CmsConfigurationService CCS
+
+@model object;
+@{
+    var isCmsView = Model is Cms.Models.CmsModel;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    @*<link rel="manifest" href="manifest.json">*@
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@CmsGlobals.SchemaName - Cms</title>
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link href="~/lib/webportal-layout/webportal-layout.css?@(CmsGlobals.CssVersion)" rel="stylesheet" />
+        <link rel="stylesheet" href="~/css/site.css?@(CmsGlobals.CssVersion)" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link href="~/lib/webportal-layout/webportal-layout.css?@(CmsGlobals.CssVersion)" rel="stylesheet" />
+        <link href="~/css/site.min.css?@(CmsGlobals.CssVersion)" rel="stylesheet" />
+    </environment>
+
+    @if (!String.IsNullOrWhiteSpace(CCS.Instance?.Company))
+    {
+        <link rel="stylesheet" href="~/css/@CCS.Instance.Company/site.css?@(CmsGlobals.CssVersion)" />
+    }
+</head>
+<body>
+    <nav class="webportal-layout-header navbar navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <table>
+                    <tr>
+                        <td style="white-space:nowrap" class="navbar-brand-holder">
+                            <div class="navbar-brand">@(CmsGlobals.SchemaName) Cms</div>
+                        </td>
+                        @if (isCmsView)
+                        {
+                            <td style="width:100%" class="navbar-search-holder collapsed">
+                                <input id="cms-search" class="typeahead cms-search" type="text" placeholder="Knoten suchen..." style="display:none">
+                            </td>
+                            <td>
+                                <div class="navbar-search-button">
+
+                                </div>
+                            </td>
+                        }
+
+                    </tr>
+                </table>
+
+            </div>
+            <div class="navbar-collapse collapse">
+
+            </div>
+        </div>
+    </nav>
+
+    <partial name="_CookieConsentPartial" />
+
+    @if (isCmsView)
+    {
+        <div class="webportal-layout-container page-has-header page-has-footer">
+            <partial name="_portalSidebarPartial" />
+            <div class="webportal-layout-main">
+                <div class="webportal-layout-main-container">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="container body-content page-has-footer page-has-header">
+            @RenderBody()
+        </div>
+    }
+
+    <div class="webportal-layout-footer">
+        <div class="version">
+            Version: @CmsGlobals.Version.ToString()
+            <span style="float:right">
+                User: @ViewData["Username"]
+            </span>
+        </div>
+    </div>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/sortable/Sortable.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/cms/cms.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/js/cms/cms.db.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/lib/webportal-layout/webportal-layout.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/js/cms/jquey-extenstions.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/js/cms/propertygrid.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/js/cms/Forms.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/lib/cryptojs/sha512.js"></script>
+        <script src="~/lib/cryptojs/enc-base64.js"></script>
+        <script src="~/lib/typeahead/typeahead.bundle.js"></script>
+        <script src="~/lib/bootbox.js/bootbox.js"></script>
+        <script src="~/lib/showdown/showdown.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="~/lib/sortable/Sortable.min.js"></script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script src="~/js/cms/cms.min.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/lib/webportal-layout/webportal-layout.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/lib/typeahead/typeahead.bundle.js"></script>
+        <script src="~/lib/bootbox.js/bootbox.min.js"></script>
+        <script src="~/lib/showdown/showdown.min.js"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+
+    <script type="text/javascript">
+        CMS.appRootUrl = '@(ViewData["AppRootUrl"] ?? String.Empty)';
+    </script>
+</body>
+</html>

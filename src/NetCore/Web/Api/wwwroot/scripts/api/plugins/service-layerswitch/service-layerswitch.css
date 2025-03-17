@@ -1,0 +1,57 @@
+﻿.webgis-plugin-service-layerswitch {
+    width: 320px;
+    display: inline-block;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    border: 1px solid #efefef;
+    border-radius:5px;
+    overflow:hidden;
+}
+
+    .webgis-plugin-service-layerswitch.loading {
+        background-image: url('loader1.gif');
+        background-position:12px 8px;
+        background-repeat:no-repeat;
+    }
+
+    .webgis-plugin-service-layerswitch .webgis-plugin-service-layerswitch-title {
+        width: 280px;
+        height: 34px;
+        box-sizing: border-box;
+        padding: 5px;
+        font-size: 20px;
+        margin-left: 34px;
+    }
+
+    .webgis-plugin-service-layerswitch .webgis-plugin-service-layerswitch-presentations {
+        display: none;
+        list-style:none;
+        padding:0px;
+        margin:0px;
+    }
+
+    .webgis-plugin-service-layerswitch .webgis-plugin-service-layerswitch-presentations.expanded {
+        display: block;
+    }
+
+        .webgis-plugin-service-layerswitch .webgis-plugin-service-layerswitch-presentations .webgis-plugin-service-layerswitch-presentation {
+            height: 40px;
+            box-sizing: border-box;
+            padding: 12px 8px 12px 42px;
+            border-top: 1px solid #efefef;
+        }
+
+            .webgis-plugin-service-layerswitch .webgis-plugin-service-layerswitch-presentations .webgis-plugin-service-layerswitch-presentation.selected {
+                background-image: url('check1.png');
+                background-repeat:no-repeat;
+                background-position:12px center;
+            }
+
+            .webgis-plugin-service-layerswitch .webgis-plugin-service-layerswitch-presentations .webgis-plugin-service-layerswitch-presentation:hover {
+                background-color: #efefef;
+            }
+
+            .webgis-plugin-service-layerswitch .webgis-plugin-service-layerswitch-presentations .webgis-plugin-service-layerswitch-presentation.hidden {
+                display:none;
+            }

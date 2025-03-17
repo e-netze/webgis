@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net9.0</TargetFramework>
+	  <LangVersion>13</LangVersion>
+      <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>	
+	
+  <ItemGroup>
+    <ProjectReference Include="..\E.Standard.Azure\E.Standard.Azure.csproj" />
+    <ProjectReference Include="..\E.Standard.Caching\E.Standard.Caching.csproj" />
+    <ProjectReference Include="..\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.Configuration\E.Standard.Configuration.csproj" />
+    <ProjectReference Include="..\E.Standard.Custom.Core\E.Standard.Custom.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.GeoCoding\E.Standard.GeoCoding\E.Standard.GeoCoding.csproj" />
+    <ProjectReference Include="..\E.Standard.GeoRSS\E.Standard.GeoRSS.csproj" />
+    <ProjectReference Include="..\E.Standard.OpenIdConnect.Extensions\E.Standard.OpenIdConnect.Extensions.csproj" />
+    <ProjectReference Include="..\E.Standard.Platform\E.Standard.Platform.csproj" />
+    <ProjectReference Include="..\E.Standard.Security.Captcha\E.Standard.Security.Captcha.csproj" />
+    <ProjectReference Include="..\E.Standard.Security.Cryptography\E.Standard.Security.Cryptography.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.Api\E.Standard.WebGIS.Api.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.CMS\E.Standard.WebGIS.CMS.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.Core\E.Standard.WebGIS.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.SDK\E.Standard.WebGIS.SDK.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.SubscriberDatabase\E.Standard.WebGIS.SubscriberDatabase.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.Tools\E.Standard.WebGIS.Tools.csproj" />
+    <ProjectReference Include="..\E.Standard.WebMapping.Core.Api\E.Standard.WebMapping.Core.Api.csproj" />
+    <ProjectReference Include="..\E.Standard.WebMapping.Core\E.Standard.WebMapping.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.WebMapping.Services.LuceneServer\E.Standard.WebMapping.Services.LuceneServer.csproj" />
+    <ProjectReference Include="..\E.Standard.WebMapping.GeoServices\E.Standard.WebMapping.GeoServices.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DTOs\Logging\" />
+    <Folder Include="Services\Api\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+  </ItemGroup>
+
+</Project>

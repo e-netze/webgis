@@ -1,0 +1,202 @@
+﻿/* Input Fields */
+
+input:focus, textarea:focus, select:focus {
+    border: 1px solid #0094ff;
+}
+
+input, textarea, select {
+    border: 1px solid #e2e2e2;
+    background: #fff;
+    color: #333;
+}
+
+.webgis-input {
+    border: 1px solid #e2e2e2;
+}
+
+/* Buttons */
+
+button {
+    background-color: #0094ff;
+    color:white;
+}
+    button:hover {
+        background: #71b5ff;
+        color:#777;
+    }
+
+.uibutton {
+    background-color: #0094ff;
+    color:#fff;
+    border:1px solid #333;
+}
+
+    
+    .uibutton.uibutton-default {
+        background-color: #0094ff;
+        color:white;
+    }
+        .uibutton.uibutton-default:hover {
+            color:#fff;
+        }
+    .uibutton.uibutton-cancel {
+        background-color: #fff;
+        color:#333;
+    }
+    .uibutton.uibutton-option {
+        width: 100%;
+        max-width: 320px;
+    }
+    .uibutton:hover 
+    {
+        background-color: #71b5ff;
+        color:white;
+    }
+
+/*** Suche  *****/
+.webgis-search-input {
+    border: 1px solid #71b5ff;
+}
+
+.webgis-search-button {
+    background-color: #71b5ff;
+    border-top:1px solid #62B851;
+    border-bottom:1px solid #62B851;
+}
+
+.webgis-detail-search-holder {
+    border-bottom: 1px solid #0094ff;
+}
+
+.webgis-detail-search-combo-holder {
+    background-color:#71b5ff;
+}
+
+.webgis-detail-search-combo {
+    border: 1px solid #0094ff;
+}
+
+/* Suchergebnisse */
+.webgis-search-result-header {
+    background-color: #0094ff;
+    color:#fff;
+}
+.webgis-detail-search-holder {
+    border-bottom: 1px solid #0094ff;
+}
+
+.webgis-geojuhu-result:hover {
+        background-color:#71b5ff !important;
+    }
+.webgis-geojuhu-result:nth-child(odd) {
+    background-color: #fff;
+}
+.webgis-geojuhu-result:nth-child(even) {
+    background-color:#a7d7ff;
+}
+.webgis-geojuhu-result-selected {
+    background-color:#ffff66 !important;
+}
+
+/******  Suchergebnisse-Tabelle *********************/
+.webgis-result-table {
+    background-color:#71b5ff;
+}
+
+.webgis-result-table-header {
+    background-color:#0094ff;
+    color:white;
+}
+
+.webgis-result-table tr:nth-child(even) {
+    background-color: #fff;
+}
+
+.webgis-result-table tr:nth-child(odd) {
+    background-color: #a7d7ff;
+}
+
+/* Tabs */
+.webgis-tabs-holder {
+    background-color:#a7d7ff;
+    border-bottom:1px solid #0094ff;
+    border-top:1px solid #0094ff;
+}
+.webgis-tabs-tab-header {
+    background-color:#a7d7ff;
+    border-top:1px solid #0094ff;
+}
+.webgis-tabs-tab:hover {
+    background:#71b5ff;
+}
+.webgis-tabs-tab-selected {
+    background:#0094ff;
+}
+
+
+/************ GeoJuhu Results ****************/
+    .webgis-geojuhu-results .webgis-geojuhu-result:hover {
+        background-color:#b5dbad;
+    }
+
+/* Farben */
+.webgis-presentation_toc-title {
+    background:#71b5ff;
+    border-bottom:1px solid #aaa;
+    color:#fff;
+}
+
+.webgis-expanded .webgis-presentation_toc-title-text {
+    background:#0094ff;
+    border-left:1px solid #aaa;
+    border-bottom:1px solid #aaa;
+}
+.webgis-presentation_toc-legend-title:hover,
+.webgis-presentation_toc-item-group div:hover,
+.webgis-presentation_toc-item:hover {
+        background:#71b5ff;
+    }
+
+.webgis-addservices_toc-title {
+    background:#71b5ff;
+    border-bottom:1px solid #aaa;
+    color:#777;
+}
+
+.webgis-expanded .webgis-addservices_toc-title-text {
+    background:#0094ff;
+    border-left:1px solid #aaa;
+    border-bottom:1px solid #aaa;
+}
+
+.webgis-services_toc-title {
+    background:#71b5ff;
+    border-bottom:1px solid #aaa;
+    color:#fff;
+}
+
+.webgis-expanded .webgis-services_toc-title-text {
+    background:#0094ff;
+    border-left:1px solid #aaa;
+    border-bottom:1px solid #aaa;
+}
+
+/* Tools */
+.webgis-ui-option-selected {
+    background-color:#0094ff;
+}
+.webgis-ui-imagebutton:hover {
+        background-color: #71b5ff;
+}
+
+/* Dialogs */
+.webgis-modal-title {
+    background-color: #a7d7ff;
+    border-top: 1px solid #0094ff;
+}
+
+.webgis-dockpanel-title {
+    background-color: #a7d7ff;
+    border-top: 1px solid #0094ff;
+}
+

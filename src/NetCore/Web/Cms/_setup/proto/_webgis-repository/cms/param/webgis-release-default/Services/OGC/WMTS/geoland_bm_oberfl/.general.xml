@@ -1,0 +1,13 @@
+<config>
+  <name type="System.String">Geoland Basemap Oberfläche</name>
+  <guid type="System.String">1fa636a010e14430b9965bb719ca64ae</guid>
+  <server type="System.String">https://mapsneu.wien.gv.at/basemapneu/1.0.0/WMTSCapabilities.xml</server>
+  <tilematrixset type="System.String">google3857_0-17</tilematrixset>
+  <imageformat type="System.String">image/jpeg</imageformat>
+  <layer type="System.String">bmapoberflaeche</layer>
+  <style type="System.String">grau</style>
+  <maxlevel type="System.Int32">-1</maxlevel>
+  <hide_beyond_maxlevel type="System.Boolean">False</hide_beyond_maxlevel>
+  <rendering type="System.Int32">0</rendering>
+  <resourceurls type="System.String">https://mapsneu.wien.gv.at/basemap/bmapoberflaeche/{Style}/google3857/{TileMatrix}/{TileRow}/{TileCol}.jpeg</resourceurls>
+</config>

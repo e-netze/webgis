@@ -1,0 +1,60 @@
+﻿html, body {
+	/* Disables pull-to-refresh but allows overscroll glow effects. */
+	overscroll-behavior-y: contain !important;
+}
+
+body {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/*.webgis-api-icon { display: block; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; width:16px;height:16px; background-image:url(img/ui-icons_000000_256x240.png) }
+.webgis-api-icon-triangle-1-s { background-position: -64px -16px; }
+.webgis-api-icon-triangle-1-e { background-position: -32px -16px; }
+
+.webgis-api-icon-info { background-position: -16px -144px; }*/
+
+.webgis-api-icon { 
+	display: block;
+	text-indent: -99999px; 
+	overflow: hidden; 
+	background-repeat: no-repeat;
+	background-position:center;
+	width:16px;height:16px;
+}
+.webgis-api-icon-triangle-1-s { 
+	background-image: url(img/ui/collapsed-16.png);
+}
+.webgis-api-icon-triangle-1-e {
+	background-image: url(img/ui/expanded-16.png);
+}
+
+.webgis-toc-invisible-container .webgis-api-icon-triangle-1-s {
+	background-image: url(img/ui/collapsed-empty-16.png);
+}
+
+.webgis-toc-invisible-container .webgis-api-icon-triangle-1-e {
+	background-image: url(img/ui/expanded-empty-16.png);
+}
+
+.webgis-presentation_toc-title.loading > .webgis-api-icon-triangle-1-s,
+.webgis-presentation_toc-title.loading > .webgis-api-icon-triangle-1-e {
+	background-image: url(img/hourglass/loader1.gif);
+}
+
+.webgis-presentation_toc-item-group.loading > div > .webgis-api-icon-triangle-1-s,
+.webgis-presentation_toc-item-group.loading > div > .webgis-api-icon-triangle-1-e {
+	background-image: url(img/hourglass/loader1.gif);
+}
+
+.webgis-api-icon-info {
+	background-image: url(img/ui/info-16.png);
+}
+
+.webgis-api-icon-help {
+	background-image: url(img/ui/help-16.png);
+}

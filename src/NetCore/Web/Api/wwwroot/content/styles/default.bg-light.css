@@ -1,0 +1,566 @@
+﻿/***************************************************/
+/*******               lightmode          **********/
+/***************************************************/
+.webgis-container.light .leaflet-container {
+    background-color: #fafafa !important;
+}
+
+.webgis-container.light #map {
+    border: none;
+}
+
+.webgis-container.light .webgis-tabs-tab-content-holder {
+    background-color: #fafafa;
+    color: #303030;
+}
+
+.webgis-container.light .webgis-presentation_toc-holder .webgis-expanded,
+.webgis-container.light .webgis-presentation_toc-content,
+.webgis-container.light .webgis-presentation_toc-item-group ul {
+    background-color: #fafafa;
+    color: #000;
+}
+
+.webgis-container.light .webgis-presentation_toc-legend-title:hover,
+.webgis-container.light .webgis-presentation_toc-item-group div:hover,
+.webgis-container.light .webgis-presentation_toc-item:hover {
+    background-color: #ccc;
+}
+
+.webgis-container.light #toolbar {
+    background-color: #ccc;
+    border: 1px solid #eee;
+}
+
+    .webgis-container.light #toolbar .webgis-toolbar-tabs {
+        background-color: #fafafa;
+        border-bottom: 1px solid #eee;
+    }
+
+    .webgis-container.light #toolbar .webgis-toolbar-tabcontent {
+        background-color: #fafafa;
+    }
+
+    .webgis-container.light #toolbar .webgis-toolbox-tool-item {
+        background-color: #fafafa;
+    }
+
+        .webgis-container.light #toolbar .webgis-toolbox-tool-item.selected {
+            background-color: #ccc;
+        }
+
+        .webgis-container.light #toolbar .webgis-toolbox-tool-item .webgis-toolbox-tool-item-label {
+            color: #303030;
+        }
+
+
+.webgis-container.light .webgis-detail-search-combo-holder {
+    background-color: #ccc;
+}
+
+.webgis-container.light .webgis-detail-search-holder {
+    border-bottom: 1px solid #eee;
+    background-color: #fafafa;
+    color: #303030;
+}
+
+.webgis-container.light .webgis-toolbox-tool-item-group ul {
+    background-color: #fafafa;
+}
+
+.webgis-container.light .webgis-toolbox-tool-item-group.selected div {
+    background-color: #ccc;
+}
+
+.webgis-container.light .webgis-toolbox-tool-item-group div {
+    background-color: #fafafa;
+}
+
+    .webgis-container.light .webgis-toolbox-tool-item-group div:not(first-child) {
+        border-top: 1px solid #eee;
+    }
+
+
+.webgis-container.light .webgis-ui-imagebutton {
+    background-color: #fafafa;
+}
+
+    .webgis-container.light .webgis-ui-imagebutton .webgis-ui-imagebutton-text {
+        color: #303030;
+    }
+
+.webgis-container.light .webgis-ui-option-selected {
+    background-color: #ccc;
+}
+
+.webgis-container.light .webgis-tabs-tab-text {
+    border: 2px solid #eee;
+}
+
+.webgis-container.light input,
+body.webgis-light input,
+.webgis-container.light .webgis-input,
+body.webgis-lightk .webgis-input,
+.webgis-container.light .webgis-select,
+body.webgis-light .webgis-select,
+.webgis-container.light .webgis-textarea,
+body.webgis-light .webgis-textarea,
+.webgis-container.light .webgis-detail-search-combo {
+    background-color: #fff !important;
+    color: #000 !important;
+    border: 1px solid #777;
+}
+
+.webgis-container.light .webgis-input-element-stack .webgis-input,
+.webgis-container.light .webgis-input-element-stack .webgis-textarea,
+.webgis-container.light .webgis-input-element-stack .webgis-select {
+    border-top: solid 1px #eee !important;
+    border: transparent;
+}
+
+.webgis-container.light .webgis-input[readonly='readonly'] {
+    background-color: #ccc !important;
+}
+
+.webgis-container.light .webgis-tool-parameter-required {
+    background-color: #ffffbb !important;
+}
+
+.webgis-container.light .webgis-tool-parameter.validated-parameter,
+.webgis-container.light .webgis-tool-parameter-persistent.validated-parameter {
+    background-color: #eeffee !important;
+}
+
+.webgis-container.light .webgis-bbox-input-holder div.row input {
+    border: 1px solid #777;
+}
+
+.webgis-container.light .webgis-graphics-info-container-holder .webgis-graphics-info-list .webgis-graphics-info-listitem:hover {
+    background-color: #efefef;
+}
+
+body.webgis-light .webgis-button,
+.webgis-container.light .webgis-button {
+    background-color: #eee;
+    color: #303030;
+}
+
+.webgis-container.light .uibutton {
+    background-color: #eee;
+    color: #202020;
+    border: 1px solid #777;
+}
+
+.webgis-container.light .uibutton-cancel {
+    background-color: #fafafa;
+    color: #202020;
+    border: 1px solid #777;
+}
+
+.webgis-container.light .uibutton.uibutton-option-rect {
+    border: none;
+    background-color: #fafafa;
+    color: #303030;
+}
+
+.webgis-container.light .webgis-button.light {
+    background-color: #fafafa;
+    color: #303030;
+}
+
+.webgis-container.light .webgis-ui-selected-option .webgis-ui-imagebutton {
+    background-color: transparent;
+}
+
+.webgis-container.light .webgis-presentation_toc-basemap-item:hover {
+    background-color: #fafafa !important;
+}
+
+.webgis-container.light .webgis-info {
+    background-color: #ccc;
+}
+
+.webgis-container.light .tt-menu {
+    background-color: #fafafa;
+    border: 1px solid #eee;
+    color: #202020;
+}
+
+.webgis-container.light .tt-suggestion:hover {
+    background-color: #ccc;
+}
+
+.webgis-container.light .clearable {
+    background: #fff url(../api/img/x.gif) no-repeat right -10px center !important;
+}
+
+    .webgis-container.light .clearable.x {
+        background-position: right 8px center !important;
+    }
+
+.webgis-container.light .webgis-tabs-tab-header {
+    background-color: #ccc;
+    color: #333;
+}
+
+.webgis-container.light .webgis-tabs-holder {
+    border-bottom: 1px solid #0078d4;
+    border-top: 1px solid #fafafa;
+}
+
+    .webgis-container.light .webgis-tabs-holder .webgis-tabs-tab {
+        background-color: #fafafa;
+    }
+
+        .webgis-container.light .webgis-tabs-holder .webgis-tabs-tab.webgis-tabs-tab-selected {
+            background-color: #ccc;
+        }
+
+.webgis-container.light .webgis-topbar-holder .webgis-topbar-button {
+    background-color: #fafafa; 
+    border-bottom: 1px solid #eee; 
+    border-top: 1px solid #eee;
+}
+
+.webgis-container.light .webgis-topbar-holder .webgis-search-input {
+    border: 1px solid #eee;
+}
+
+.webgis-container.light .webgis-topbar-holder .webgis-app-menu-holder {
+    color: #545454;
+    border-bottom: 1px solid #888;
+    background-color: #bbb; /* invert => #fafafa */
+}
+
+.webgis-container.light .webgis-topbar-holder .webgis-map-app-menu li:hover {
+    background-color: #aaa;
+}
+
+.webgis-container.light .webgis-toolbar-holder .webgis-toolbar-tab {
+    background-color: #fafafa;
+    color: #303030;
+    border-right: 1px solid #eee;
+}
+
+    .webgis-container.light .webgis-toolbar-holder .webgis-toolbar-tab.selected {
+        background-color: #ccc;
+        color: #202020;
+    }
+
+.webgis-container.light .webgis-tabs-tab-content-holder .webgis-presentation_toc-title /*.webgis-presentation_toc-title-text*/ {
+    background-color: #fafafa;
+    color: #303030;
+    border-bottom: 1px solid #eee;
+}
+
+    .webgis-container.light .webgis-tabs-tab-content-holder .webgis-presentation_toc-title.webgis-expanded {
+        background-color: #fafafa;
+        color: #303030;
+        border-bottom: 1px solid #eee;
+    }
+
+        .webgis-container.light .webgis-tabs-tab-content-holder .webgis-presentation_toc-title.webgis-expanded .webgis-presentation_toc-title-text {
+            background-color: #ccc;
+            border-bottom: 1px solid #eee;
+        }
+
+.webgis-container.light .webgis-presentation_toc-basemap-opacity-item.selected {
+    background-color: #ccc;
+}
+
+.webgis-container.light .webgis-presentation_toc-basemap-opacity-item:hover {
+    background-color: #ccc;
+}
+
+body.webgis-light .webgis-modal-title,
+.webgis-container.light .webgis-modal-title,
+body.webgis-light .webgis-dockpanel-title,
+.webgis-container.light .webgis-dockpanel-title {
+    background-color: #dcdcdc;
+    color: #303030;
+    border-bottom: 1px solid #0078d4;
+}
+
+body.webgis-light .webgis-modal-con#tent,
+.webgis-container.light .webgis-modal-content,
+body.webgis-light .webgis-dockpanel-content,
+.webgis-container.light .webgis-dockpanel-content {
+    color: #303030 !important;
+    background-color: #fafafa !important;
+}
+
+body.webgis-light .webgis-dockpanel-content,
+.webgis-container.light .webgis-dockpanel-content {
+    border-left: 1px solid #eee;
+    border-right: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+body.webgis-light .webgis-result-table,
+.webgis-container.light .webgis-result-table {
+    background-color: #eee;
+}
+
+body.webgis-light .webgis-result-table-header,
+.webgis-container.light .webgis-result-table-header,
+body.webgis-light .webgis-result-table-menucell,
+.webgis-container.light .webgis-result-table-menucell {
+    color: #333;
+}
+
+body.webgis-light .webgis-result-table tr,
+.webgis-container.light .webgis-result-table tr {
+    background-color: #fafafa;
+    color: #333;
+}
+
+    body.webgis-light .webgis-result-table tr:nth-child(odd),
+    .webgis-container.light .webgis-result-table tr:nth-child(odd) {
+        background-color: #efefef;
+    }
+
+    body.webgis-light .webgis-result-table tr.webgis-table-result-selected,
+    .webgis-container.light .webgis-result-table tr.webgis-table-result-selected {
+        background-color: #aaa;
+        color: #0078d4;
+    }
+
+.webgis-container.light .webgis-tooldialog-header {
+    background-color: #dcdcdc;
+    color: #303030;
+}
+
+.webgis-container.light .webgis-search-result-holder {
+    background-color: #fafafa;
+}
+
+.webgis-container.light .webgis-queryresult-tools .webgis-toolbox-tool-item,
+.webgis-container.light .webgis-queryresult-tools .webgis-toolbox-tool-item-group {
+    background-color: #fafafa;
+}
+
+    .webgis-container.light .webgis-queryresult-tools .webgis-toolbox-tool-item .webgis-toolbox-tool-item-label,
+    .webgis-container.light .webgis-queryresult-tools .webgis-toolbox-tool-item-group .webgis-toolbox-tool-item-label {
+        color: #303030;
+    }
+
+.webgis-container.light .webgis-toolbox-tool-item:hover {
+    background-color: #efefef;
+}
+
+.webgis-container.light .webgis-toolbox-tool-item.selected,
+.webgis-container.light .webgis-ui-imagebutton.selected {
+    background-color: #ccc;
+}
+
+    .webgis-container.light .webgis-toolbox-tool-item.selected .webgis-toolbox-tool-item-label,
+    .webgis-container.light .webgis-ui-imagebutton.selected .webgis-toolbox-tool-item-label {
+        color: #454545;
+    }
+
+.webgis-container.light .webgis-geojuhu-result:nth-child(odd) {
+    background-color: #fafafa;
+}
+
+.webgis-container.light .webgis-geojuhu-result {
+    background-color: #efefef;
+}
+
+body.webgis-light .webgis-tabs-tab-header,
+.webgis-container.light .webgis-tabs-tab-header {
+    border-top: 1px solid #eee;
+}
+
+body.webgis-light .webgis-tab-header {
+    background-color: #fafafa;
+}
+
+    body.webgis-light .webgis-tab-header.selected {
+        background-color: #ccc;
+    }
+
+body.webgis-light .webgis-tab-header {
+    border-bottom: 1px solid #eee;
+}
+
+.webgis-container.light .webgis-sidebar-toggle-button {
+    color: #303030;
+    background-color: #fafafa;
+}
+
+.webgis-container.light .webgis-addservices_toc-title,
+body.webgis-light .webgis-addservices_toc-title {
+    background-color: #fafafa;
+    border-bottom: 1px solid #eee;
+    color: #303030;
+}
+
+.webgis-container.light .webgis-expanded .webgis-addservices_toc-title-text,
+body.webgis-light .webgis-expanded .webgis-addservices_toc-title-text {
+    background-color: #ccc;
+    border-bottom: 1px solid #eee;
+}
+
+.webgis-container.light .webgis-addservices_toc-holder .webgis-expanded, .webgis-container.light .webgis-addservices_toc-holder .webgis-expanded:hover,
+body.webgis-light .webgis-addservices_toc-holder .webgis-expanded, body.webgis-light .webgis-addservices_toc-holder .webgis-expanded:hover {
+    background: unset;
+    color: unset;
+}
+
+.webgis-container.light .webgis-page-category-item-selected .webgis-page-category-item-title,
+body.webgis-light .webgis-page-category-item-selected .webgis-page-category-item-title {
+    background: #ccc url(img/nav-up.png) no-repeat left center;
+    color: #303030;
+}
+
+.webgis-container.light .webgis-page-category-list,
+body.webgis-light .webgis-page-category-list {
+    background-color: #fafafa;
+}
+
+.webgis-container.light .webgis-page-category-item,
+body.webgis-light .webgis-page-category-item {
+    background-color: unset;
+}
+
+.webgis-container.light #category-content .webgis-page-category-header,
+body.webgis-light #category-content .webgis-page-category-header {
+    border-bottom: 1px solid #eee;
+    border-collapse: collapse;
+    background-color: #fafafa;
+    color: #303030;
+}
+
+.webgis-container.light .webgis-page-map-item,
+body.webgis-light .webgis-page-map-item {
+    border: 1px solid #eee;
+}
+
+.webgis-container.light .webgis-collapsable-paragraph.collapsed .switcher,
+body.webgis-light .webgis-collapsable-paragraph.collapsed .switcher {
+    background-color: #fafafa;
+}
+
+.webgis-container.light .webgis-ui-collapsable-title {
+    background-color: #ccc;
+}
+
+.webgis-container.light .webgis-sketch-info-container-holder table {
+    background-color: #efefef;
+    color: #333;
+}
+
+.webgis-container.light .webgis-result-table-tools-container {
+    background-color: #fafafa;
+    color: #303030;
+}
+
+.webgis-container.light .webgis-map-app-menu li {
+    border-bottom: 1px solid #eee;
+    border-left: 1px solid #eee;
+    background-color: #fafafa;
+    color: #303030;
+}
+
+.webgis-container.light .webgis-presentation_toc-basemap-opacity .webgis-menu-item-imagebutton,
+.webgis-container.light .webgis-tooldialog-content .webgis-menu-item-imagebutton {
+    border: 1px solid #eee;
+}
+
+.webgis-container.light .webgis-presentation_toc-basemap-item-img {
+    border: 1px solid #eee;
+}
+
+    .webgis-container.light .webgis-presentation_toc-basemap-item-img:hover {
+        background-color: #ccc;
+    }
+
+.webgis-container.light .webgis-presentation_toc-basemap-opacity .webgis-menu-item-imagebutton.selected,
+.webgis-container.light .webgis-presentation_toc-basemap-opacity .webgis-menu-item-imagebutton.selected:hover,
+.webgis-container.light .webgis-tooldialog-content .webgis-menu-item-imagebutton.selected,
+.webgis-container.light .webgis-tooldialog-content .webgis-menu-item-imagebutton.selected:hover {
+    background-color: #ccc;
+}
+
+.webgis-container.light .webgis-label {
+    color: #303030;
+}
+
+.webgis-container.light .webgis-result-table-tools-container .toggle-button {
+    color: #303030;
+    background-color: #efefef;
+}
+
+.webgis-container.light .webgis-tab-control {
+    background-color: #fff;
+}
+
+    .webgis-container.light .webgis-tab-control .webgis-tab-control-tabbar .webgis-tab-control-tab {
+        color: #303030;
+        background-color: #fafafa;
+        border-top: 4px solid #fafafa;
+    }
+
+        .webgis-container.light .webgis-tab-control .webgis-tab-control-tabbar .webgis-tab-control-tab.selected {
+            color: #202020;
+            background-color: #ccc;
+            border-top: 4px solid #ccc;
+        }
+
+        .webgis-container.light .webgis-tab-control .webgis-tab-control-tabbar .webgis-tab-control-tab.pinned {
+            border-top: 4px solid #dcdcdc;
+        }
+
+        .webgis-container.light .webgis-tab-control .webgis-tab-control-tabbar .webgis-tab-control-tab .counter {
+            background-color: #777;
+            color: #fff;
+        }
+
+.webgis-container.light .webgis-splitter .webgis-splitter-bar {
+    background-color: #e0e0e0;
+}
+
+    .webgis-container.light .webgis-splitter .webgis-splitter-bar:hover {
+        background-color: #eee;
+    }
+
+.webgis-container.light .webgis-currentcoords-container {
+    background-color: #fafafa;
+    color: #202020;
+}
+
+    .webgis-container.light .webgis-currentcoords-container .x,
+    .webgis-container.light .webgis-currentcoords-container .y,
+    .webgis-container.light .webgis-currentcoords-container .epsg {
+        background-color: #fff;
+    }
+
+    .webgis-container.light .webgis-currentcoords-container table td {
+        border: 1px solid #eee;
+    }
+
+.webgis-container.light .webgis-hourglass-container {
+    background-color: #fafafa;
+}
+
+
+.webgis-container.light .webgis-hourglass-scaletext {
+    background-color: #fafafa;
+    border: 1px solid #eee;
+    color: #202020;
+}
+
+.webgis-container.light .webgis-hourglass-ruler {
+    border-left: 2px solid #777;
+    border-right: 2px solid #777;
+    border-bottom: 2px solid #777;
+}
+
+.webgis-container.light .webgis-hourglass-rulertext {
+    color: #777;
+}
+
+.webgis-container.light .webgis-edittheme-tree .webgis-edittheme-tree-theme-list .webgis-edittheme-tree-theme-list-item.selected {
+    background-color: #ccc;
+}
+

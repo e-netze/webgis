@@ -1,0 +1,267 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+	  <LangVersion>13</LangVersion>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <UserSecretsId>1a7c43b2-1c2a-4ff6-8215-245ac2f2ae5c</UserSecretsId>
+    <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
+	<GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="credits.html" />
+    <None Remove="viewerlayouts\dev\w1200_v0.html" />
+    <None Remove="viewerlayouts\dev\w1200_v2.html" />
+    <None Remove="viewerlayouts\__default\w1024.html" />
+    <None Remove="viewerlayouts\__default\w1200_desktop.html" />
+    <None Remove="viewerlayouts\__default\w1200_touch.html" />
+    <None Remove="viewerlayouts\__default\w1200_v2.html" />
+    <None Remove="viewerlayouts\__default\_w320.html" />
+    <None Remove="_mapbuilder\js-map-renderer.razortemplate" />
+    <None Remove="_mapbuilder\js-renderer.razortemplate" />
+    <None Remove="_mapbuilder\js-ui-renderer.razortemplate" />
+    <None Remove="_mapbuilder\template-html_document.razortemplate" />
+    <None Remove="_mapbuilder\template-html_snippet.razortemplate" />
+    <None Remove="_templates\WebGIS-Collector-app.html" />
+    <None Remove="_templates\WebGIS-Collector-app.mta" />
+    <None Remove="_templates\WebGIS-Collector-pro.html" />
+    <None Remove="_templates\WebGIS-Collector-pro.mta" />
+    <None Remove="_templates\WebGIS-Collector-simple.html" />
+    <None Remove="_templates\WebGIS-Collector-simple.mta" />
+    <None Remove="_templates\WebGIS-GeoSearch.html" />
+    <None Remove="_templates\WebGIS-GeoSearch.mta" />
+    <None Remove="_templates\WebGIS-MapDraw\mapdraw.css" />
+    <None Remove="_templates\WebGIS-Redirect.html" />
+    <None Remove="_templates\WebGIS-Redirect.mta" />
+    <None Remove="_templates\WebGIS-Service-SideBySide.html" />
+    <None Remove="_templates\WebGIS-Service-SideBySide.mta" />
+    <None Remove="_templates\WebGIS-SmartMap.html" />
+    <None Remove="_templates\WebGIS-SmartMap.mta" />
+    <None Remove="_templates\WebGIS-TileServices-SideBySide.html" />
+    <None Remove="_templates\WebGIS-TileServices-SideBySide.mta" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile_linux64.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile_win64.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\OpenSourceProfile.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\OpenSourceProfile_linux64.pubxml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="credits.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="viewerlayouts\dev\w1200_v0.html">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="viewerlayouts\__default\w1024.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="viewerlayouts\__default\w1200_touch.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="viewerlayouts\__default\w1200_desktop.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="viewerlayouts\dev\w1024.html">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="viewerlayouts\dev\w1200_v1.html">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="viewerlayouts\dev\w1200_v2.html">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="viewerlayouts\dev\w1200.html">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="viewerlayouts\dev\_w320.html">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_mapbuilder\js-map-renderer.razortemplate">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_mapbuilder\js-renderer.razortemplate">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_mapbuilder\js-ui-renderer.razortemplate">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_mapbuilder\template-html_document.razortemplate">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_mapbuilder\template-html_snippet.razortemplate">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-Collector-app.html">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-Collector-app.mta">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-Collector-pro.html">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-Collector-pro.mta">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-Collector-simple.html">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-Collector-simple.mta">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-GeoSearch.html">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-GeoSearch.mta">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-MapDraw\mapdraw.css" />
+    <Content Include="_templates\WebGIS-Map.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-Map.mta">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-TileServices-SideBySide.mta">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-TileServices-SideBySide.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-Service-SideBySide.mta">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-Service-SideBySide.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-Redirect.html">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-Redirect.mta">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-SmartMap.html">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_templates\WebGIS-SmartMap.mta">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
+    <!--<PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="mapbuilder\" />
+    <Folder Include="_config\" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+    <PackageReference Include="BundlerMinifier.Core" Version="3.2.449" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.AzureStorage" Version="3.1.24" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Identity.Web" Version="3.8.0" />
+    <PackageReference Include="RazorEngine.NetCore" Version="3.1.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Azure\E.Standard.Azure.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Configuration\E.Standard.Configuration.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Custom.Core\E.Standard.Custom.Core.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Extensions\E.Standard.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Json\E.Standard.Json.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.MessageQueues\E.Standard.MessageQueues.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.OpenIdConnect.Extensions\E.Standard.OpenIdConnect.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Platform\E.Standard.Platform.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Portal.App\E.Standard.Portal.App.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebApp\E.Standard.WebApp.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebGIS.Core\E.Standard.WebGIS.Core.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebGIS.SubscriberDatabase\E.Standard.WebGIS.SubscriberDatabase.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Web\E.Standard.Web.csproj" />
+    <ProjectReference Include="..\Aspire\webgis.ServiceDefaults\webgis.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' == 'Debug_Internal' or '$(Configuration)' == 'Release_Internal'">
+		<ProjectReference Include="$(WEBGIS_CUSTOM_LIBRARIES)\E.Standard.Custom.Portal\E.Standard.Custom.Portal.csproj" />
+	</ItemGroup>	
+	
+  <ItemGroup>
+    <Content Update="wwwroot\scripts\portals\dev\custom.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\scripts\portals\default\custom.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\scripts\portals\dev\custom.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\scripts\webgis-map.favorites.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!--<ItemGroup>
+    <Content Update="_mapbuilder\js-map-renderer.razor">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="_mapbuilder\js-renderer.razor">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="_mapbuilder\js-ui-renderer.razor">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="_mapbuilder\template-html_document.razor">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="_mapbuilder\template-html_snippet.razor">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>-->
+
+  <ItemGroup>
+    <None Update="viewercontent\_favoriteprogram.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="viewercontent\_favoritereset.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="viewerlayouts\__default\__w320.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

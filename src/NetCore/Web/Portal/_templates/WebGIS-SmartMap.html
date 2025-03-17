@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title>{{title}}</title>
+
+    <link rel="stylesheet" href="{api}/content/styles/default.css" />
+    <link rel="stylesheet" href="{api}/content/api/ui.css" />
+
+    <script type="text/javascript" src="{api}/scripts/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="{api}/scripts/typeahead/typeahead.jquery.min.js"></script>
+    <script type="text/javascript" src="{api}/scripts/Api/api.min.js" id="webgis-api-script"></script>
+    <script type="text/javascript" src="{api}/scripts/Api/api-ui.min.js"></script>
+
+    <link rel="stylesheet"          href="{api}/scripts/api/plugins/smartmap/smartmap.css" />    
+    <script type="text/javascript"   src="{api}/scripts/api/plugins/smartmap/smartmap.js"></script>
+
+</head>
+<body style="overflow:auto">
+
+    <div style='width:100%'>
+        <div id="smartmap-container">
+
+        </div>
+    </div>
+    <div id="map-container-ui" style="display:none">
+        <!--<div id="map-container-topbar" style="position:absolute;right:0px;top:0px;z-index:9999;text-align:right;">
+        </div>-->
+
+        <div style="z-index:10;position:absolute;right:0px;width:320px;bottom:0px;height:24px;background:#aaa;z-index:9999">
+            <div id="map-container-hourglass"></div>
+        </div>
+
+
+        <div class="webgis-tool-button-bar shadow"
+             data-tools="webgis.tools.navigation.currentPos"
+             style="position:absolute;left:9px;top:109px">
+        </div>
+    </div>
+    <script type="text/javascript">
+
+{api-hmac} //'1c15e059984f47ce82f4d32d639ec58b';
+
+webgis.init(function () {
+
+    webgis.markerIcons["sketch_vertex"].url = function () {
+        return webgis.css.imgResource('marker_red_flag.png', 'markers')
+    };
+
+    $('#smartmap-container').webgis_smartmap({
+
+        map_options: {
+            services: '{{map-services}}',
+            extent: '{{map-extent}}'
+            //,enabled:false
+        },
+        edit_service: '{{edit-service}}',
+        edit_themeid: '{{edit-themes}}',
+        query_themeid: '{{query-themes}}',
+        quick_search_service: '{{quick-search-service}}',
+        quick_search_category: '{{quick-search-category}}',
+        quick_search_placeholder: '{{quick-search-placeholder}}',
+        quick_search_map_scale: '{{quick-search-map-scale}}',
+        quick_tools: 'webgis.tools.navigation.currentPos',
+        on_init: function (options) {
+            // UI
+            // temporäre DOM Elemente in den webgis-contaier kopiren
+            $('#map-container-ui').children().each(function () {
+                $(this).appendTo($(options.webgisContainer));
+            });
+            options.map.ui.createHourglass('#map-container-hourglass');
+
+            //options.map.setFilter('waerme_meld@ccgis_default~aenderungs_status', [{ n: "Status", v: "in Bearbeitung" }]);
+        }
+    }).data('eventHandlers').events
+        .on('onfeaturefound', function (channel, args) {
+            var f = args.feature;
+            //console.log("Feature gefunden: " + f.properties.STR + " " + f.properties.HNR + ", " + f.properties.PLZ + " " + f.properties.ORT + " (" + f.geometry.coordinates + ")");
+        })
+        
+        .on('onfeatureprepared', function (channel, args) {
+            var data = args.data;
+            //data["GF"] = "LTG-Attributvervollständigung";
+            //data["STATUS"] = "angelegt";  
+        })
+        .on('onsketchchanged', function (channel, args) {
+            var sketch = args.sketch;
+            console.log("Ausdehnung X: " + (sketch.getBounds(true).maxX - sketch.getBounds(true).minX));
+            //console.log(sketch.toWKT());
+        });
+
+});
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+﻿#smartmap-container {
+    padding:10px;
+    margin: 0 auto;
+    position: absolute;
+    left:0px; right:0px;
+    top:0px; bottom: 0px;
+}
+
+.content {
+    width: 100%;
+    /*min-height: calc(100% - 80px);*/  
+}
+
+.content.webgis-container {
+    margin-bottom: 15px;
+}
+
+.webgis-plugin-smartmap-container
+.smartmap-searchbar 
+ {
+    display: block;
+    margin: 0 auto;
+    box-sizing: content-box;
+    width: calc(100% - 10px);       /* 2x 1px Border links/rechts + 2x 4px Padding links/rechts */
+    max-width: 400px;
+    padding: 6px 4px;
+    border: 1px solid #b5dbad;
+    font-size: 14px;
+    z-index: 1000;
+    margin-bottom: 10px;
+}
+
+
+.webgis-plugin-smartmap-container
+.smartmap-editpanel {
+    margin: 4px auto;
+    height: 30px;
+    display: table;
+    /*width: 360px; fit-content*/
+}
+
+.webgis-plugin-smartmap-container
+.smartmap-editbutton {
+    float: left;
+    display: flex;
+    height: 32px;
+    margin-right: 20px;
+    box-sizing: border-box;
+    padding: 0 4px;
+}
+
+.webgis-plugin-smartmap-container
+.smartmap-editbutton.inactive {
+    opacity: 0.5;
+}
+.webgis-plugin-smartmap-container
+.smartmap-editbutton.inactive:hover {
+    cursor: auto;
+    background-color: transparent;
+}
+
+.webgis-plugin-smartmap-container
+.smartmap-editbutton:hover {
+    background-color: #cde986;
+    cursor: pointer;
+}
+
+.webgis-plugin-smartmap-container
+.smartmap-editbutton > span{
+    margin: auto;
+}
+
+.webgis-plugin-smartmap-container
+.smartmap-editsymbol {
+    width: 26px;
+    height: 26px;
+    background-size: 26px 26px;
+    background-repeat: no-repeat;
+    cursor:pointer;
+    margin: auto 6px auto 0px;
+}
+
+.save {
+    background-image: url('save-32.png');
+}
+.delete {
+    background-image: url('waste-32.png');
+}
+.edit {
+    background-image: url('edit-32.png');
+}
+
+.smartmap-editbutton.selected {
+    background-color: #cde986;
+}
+
+.webgis-plugin-smartmap-container .webgis-basemaps-bar {
+    position: absolute;
+    left: 9px;
+    bottom: 9px;
+    height: 42px;
+    width: 106px;
+}
+
+    .webgis-plugin-smartmap-container .webgis-basemaps-bar.expanded {
+        left: 9px;
+        width: unset;
+    }
+
+    .webgis-plugin-smartmap-container .webgis-basemaps-bar .basemap-buttons {
+        display: none;
+    }
+
+    .webgis-plugin-smartmap-container .webgis-basemaps-bar.expanded .basemap-buttons {
+        display: inline-block;
+    }
+
+@media screen and (max-width: 600px) {
+}
+
+/* IE10+ specific styles go here */ 
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {  
+    .webgis-plugin-smartmap-container
+    .smartmap-editbutton > span{
+        margin-top: 8px;
+    }    
+}

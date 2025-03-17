@@ -1,0 +1,105 @@
+﻿.navbar {
+    border-bottom: 2px solid #808080 !important;
+}
+
+.webgis-toolbox-tool-item-options{
+    background-color:transparent !important;
+    margin: 8px 0px 0px 0px;
+    padding: 0px 0px 0px 30px;
+}
+
+.webgis-toolbox-tool-item-option {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: normal;
+    margin: 3px;
+    padding: 8px 8px 8px 30px;
+    white-space: nowrap;
+    color:#aaa;
+
+    border: 1px solid #eee;
+    border-radius:5px;
+    width:262px;
+
+    background-image:url(../content/img/check-26-g.png);
+    background-repeat:no-repeat;
+    background-position:left center;
+    background-color:white;
+}
+
+.webgis-toolbox-tool-item-option.webgis-toolbox-tool-item-selected {
+    background-image:url(../content/img/check-26-b.png);
+    background-color:transparent !important;
+    color:#333;
+}
+
+.webgis-presentation_toc-title {
+    background: #f8f8f8;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+}
+
+    .webgis-presentation_toc-title:hover {
+        background-color: #f0f0f0;
+    }
+
+
+
+#mapbuilder-container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    width: 398px;
+    background: #f6f6f6;
+    overflow: auto;
+    border-right: 2px solid #808080
+}
+
+    #mapbuilder-container .selector-container.custom {
+    }
+
+        #mapbuilder-container .selector-container.custom li.custom-item {
+            padding: 0px 10px;
+        }
+
+            #mapbuilder-container .selector-container.custom li.custom-item input,
+            #mapbuilder-container .selector-container.custom li.custom-item select {
+                width:100%;
+            }
+
+#webgis-container {
+    position: absolute;
+    top: 0px;
+    left: 400px;
+    bottom: 0px;
+    right: 0px
+}
+
+
+.webgis-toolbox-tool-item-group-details {
+    background-color:#fff;
+    padding:10px 0px;
+    margin:0px;
+}
+
+.navbar .navbar-brand {
+    background-image: url('img/navbar/map-builder-48-w.png');
+}
+
+.template-selector-holder {
+    display: inline-block;
+    width: 485px;
+    max-width: calc(100% - 160px);
+}
+
+    .template-selector-holder #template-selector {
+        position: relative;
+        top: 0px;
+        width:100%;
+    }
+
+
+.select2-container {
+    z-index: 99999;
+}

@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title></title>
+
+    <link href="{api}/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="{api}/scripts/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="{api}/scripts/jquery-ui-1.10.4.min.js"></script>
+
+    <link href="{api}/Content/styles/default.css" rel="stylesheet" />
+    <link href="{api}/Content/api/ui.css" rel="stylesheet" />
+
+    <script src="{api}/Scripts/Api/api.min.js" id="webgis-api-script"></script>
+    <script src="{api}/Scripts/Api/ui/webgis_control_upload.js"></script>
+    <script src="{api}/Scripts/Api/plugins/collector.js"></script>
+
+
+    <script type="text/javascript">
+
+    </script>
+</head>
+<body style="overflow:auto">
+    <div style='max-width:640px;margin:0px 20%'>
+        <div id="collector-container" style="padding:10px">
+
+        </div>
+    </div>
+    <script type="text/javascript">
+
+{api-hmac} //'1c15e059984f47ce82f4d32d639ec58b';
+
+webgis.init(function () {
+
+	$('#collector-container').webgis_collector({
+
+		map_options:{
+			services:'{{map-services}}',
+			extent:'{{map-extent}}'
+		},
+
+		edit_service:'{{edit-service}}',
+		edit_themeids:'{{edit-themes}}'
+	});
+
+});
+
+    </script>
+</body>
+</html>

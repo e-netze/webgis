@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title></title>
+
+    <!--<link href="{api}/Content/themes/base/jquery-ui.css" rel="stylesheet" />-->
+
+    <script type="text/javascript" src="{api}/scripts/jquery-3.4.1.min.js"></script>
+    <!--<script type="text/javascript" src="{api}/scripts/jquery-ui-1.10.4.min.js"></script>-->
+    <script type="text/javascript" src="{api}/Scripts/typeahead/typeahead.jquery.min.js"></script>
+
+    <link href="{api}/Content/styles/default.css" rel="stylesheet" />
+    <link href="{api}/Content/api/ui.css" rel="stylesheet" />
+
+    <script src="{api}/Scripts/Api/api.min.js" id="webgis-api-script"></script>
+    <script src="{api}/Scripts/Api/api-ui.min.js" ></script>
+    <script src="{api}/Scripts/Api/plugins/collector.js"></script>
+    <script src="{api}/Scripts/Api/ui/webgis_control_upload.js"></script>
+
+    <script type="text/javascript">
+
+    </script>
+</head>
+<body class="webgis-container">
+    
+    <div id="map" style="z-index:0;position:absolute;left:0px;right:0px;top:0px;bottom:0px;">
+
+    </div>
+
+    <div style="z-index:10;position:absolute;right:0px;width:320px;bottom:0px;height:24px;background:#aaa">
+        <div id="hourglass"></div>
+    </div>
+
+    <div id="search" style='position:absolute;right:0px;top:0px;z-index:99;text-align:right;'>
+    </div>
+    <!--
+    <div id="add-feature" style="position:absolute;right:0px;bottom:24px;width:40px;height:40px;cursor:pointer;background:url('//localhost/api5/Content/api/img/add-data-26.png') no-repeat center center white"></div>
+    -->
+
+    <script type="text/javascript">
+
+        {api-hmac} //'1c15e059984f47ce82f4d32d639ec58b';
+
+        webgis.init(function () {
+
+            var map = webgis.createMap('map', {
+                extent: '{{app-map-extent}}',
+                services: '{{app-map-services}}'
+            });
+
+            map.ui.createHourglass('hourglass');
+
+            if ('{{app-search-service}}' != '') {
+                map.ui.createTopbar('search', {
+                    service: '{{app-search-service}}',
+                });
+            }
+
+            webgis.loadTool("webmapping.tools.api.identify", function (tool) {
+                map.setActiveTool(tool);
+            });
+
+            var picTool = new webgis.tools.userButton({
+                name: 'Objekt erfassen',
+                image:'add-data-26.png',
+                command: function () {
+                    $('body').webgis_modal({
+                        title: 'Objekt erfassen',
+                        width: '660px',
+                        onload: function ($content) {
+                            var $div = $("<div></div>").appendTo($content);
+                            $div.webgis_collector({
+
+                                map_options: {
+                                    services: '{{selector-map-services}}',
+                                    extent: '{{selector-map-extent}}'
+                                },
+
+                                edit_service: '{{selector-edit-service}}',
+                                edit_themeids: '{{selector-edit-themes}}',
+
+                                onsave: function (options) {
+                                    $(null).webgis_modal('close');
+                                    if (options.extent) {
+
+                                        //map.loadDynamicContent(dynamicContent);
+                                        map.zoomTo(options.extent);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+
+            var tabs = map.ui.createTabs('.webgis-container', {
+                left: null, right: 0, bottom: 24, top: null, width: 320,
+                add_presentations: true,
+                add_settings: false,
+                add_tools: false,
+                add_queryResults: true,
+                options_presentations: {
+                    gdi_button: false
+                },
+                add_custom: {
+                    tools: [picTool]
+                }
+            });
+
+        });
+
+    </script>
+</body>
+</html>

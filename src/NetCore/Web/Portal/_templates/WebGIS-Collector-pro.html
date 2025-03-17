@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title>{{title}}</title>
+
+    <link rel="stylesheet" href="{api}/Content/styles/default.css" />
+    <link rel="stylesheet" href="{api}/Content/api/ui.css" />
+    <link rel="stylesheet" href="{api}/Scripts/flatpickr/flatpickr.css" />
+
+    <script type="text/javascript" src="{api}/scripts/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="{api}/Scripts/typeahead/typeahead.jquery.min.js"></script>
+    <script type="text/javascript" src="{api}/Scripts/Api/api.min.js" id="webgis-api-script"></script>
+    <script type="text/javascript" src="{api}/Scripts/Api/api-ui.min.js"></script>
+
+    <script type="text/javascript" src="{api}/Scripts/flatpickr/flatpickr.js"></script>
+    <script type="text/javascript" src="{api}/Scripts/flatpickr/de.js"></script>
+    <script type="text/javascript" src="{api}/Scripts/Api/ui/webgis_control_upload.js"></script>
+
+    <!-- Nach Umstellung auf Core/Framework: Pfade ändern -->
+    <link rel="stylesheet" href="{api}/scripts/api/plugins/collector-pro/collector_pro.css" />                      <!-- ALT: <link rel="stylesheet" href="{portal}/_templates/WebGIS-Collector-pro/collector_pro.css" />  -->
+    <link rel="stylesheet" href="{api}/scripts/api/plugins/collector-pro/select2.custom.css" />                     <!-- ALT: <link rel="stylesheet" href="{portal}/_templates/WebGIS-Collector-pro/select2.custom.css" /> -->
+    <script type="text/javascript" src="{api}/Scripts/api/plugins/collector-pro/collector-pro.js"></script>         <!-- ALT: <script type="text/javascript" src="{api}/Scripts/Api/plugins/collector-pro.js"></script>    -->
+
+    <script type="text/javascript" src="{api}/Scripts/select2/js/select2.min.js"></script>
+
+</head>
+<body style="overflow:auto">
+    <div style='width:100%'>
+        <div id="collector-container">
+
+        </div>
+    </div>
+    <script type="text/javascript">
+
+{api-hmac}
+
+webgis.init(function () {
+
+    $('#collector-container').webgis_collector_pro({
+
+		map_options:{
+			services:'{{map-services}}',
+			extent:'{{map-extent}}'
+		},
+
+		map_search_service: '{{map-search-service}}',
+		edit_service: '{{edit-service}}',
+		edit_themeid: '{{edit-themes}}',
+		on_init: function () {
+		    // Element zu Beginn unsichtbar
+		},
+        allow_multipart: '{{allow-multipart}}'
+    }).data('eventHandlers').events
+        .on('change', function (channel, args) {
+            //alert('change '+args.field+"="+args.value);
+        })
+        .on('save', function (channel, args) {
+            if (args.success == true) {
+                //alert("fertig");
+            } else {
+                //alert(args.result);
+            }
+        });
+});
+
+    </script>
+</body>
+</html>

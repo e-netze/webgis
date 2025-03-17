@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net9.0</TargetFramework>
+	  <LangVersion>13</LangVersion>
+    <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
+	  <LangVersion>13</LangVersion>
+	  <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	
+  <ItemGroup>
+    <!--<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />-->
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.2" />
+	  <PackageReference Include="gView.GraphicsEngine" Version="6.24.807" />
+	  <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="UserAgents\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E.Standard.Extensions\E.Standard.Extensions.csproj" />
+  </ItemGroup>
+</Project>

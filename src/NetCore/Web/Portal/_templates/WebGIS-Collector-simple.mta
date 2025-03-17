@@ -1,0 +1,31 @@
+﻿{
+  "parameters": [
+
+    {
+      "title": "Karten Selektor Ausdehnung",
+      "name": "map-extent",
+      "type": "extents"
+    },
+    {
+      "title": "Karten Selektor Dienste",
+      "name": "map-services",
+      "type": "services"
+    },
+    {
+      "title": "Edit Service",
+      "name": "edit-service",
+      "type": "hidden"
+    },
+    {
+      "title": "Edit Themen",
+      "name": "edit-themes",
+      "type": "editthemes",
+      "setters": [
+        {
+          "parameter": "edit-service",
+          "value": "service"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AppendSystemTextJsonAttributes": {
+      "commandName": "Project",
+      "commandLineArgs": "G:\\github\\gis-eni\\WebGIS"
+    }
+  }
+}

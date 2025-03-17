@@ -1,0 +1,61 @@
+﻿.webgis-container.webgis-space-saving .webgis-toolbox-tool-item .webgis-toolbox-tool-item-label {
+    display:none !important;
+}
+
+.webgis-container.webgis-space-saving .webgis-presentation_toc-item,
+.webgis-container.webgis-space-saving .webgis-presentation_toc-legend,
+.webgis-container.webgis-space-saving .webgis-presentation_toc-item-group {
+    padding: 2px 8px;
+    font-size: 13px;
+    margin: 2px;
+}
+
+.webgis-container.webgis-space-saving .webgis-expanded .webgis-presentation_toc-title-text {
+    padding: 2px 16px 2px 30px;
+}
+
+.webgis-container.webgis-space-saving .webgis-presentation_toc-title-legend-icon {
+    width: 24px;
+    height: 24px;
+    background-size: 20px 20px;
+}
+
+.webgis-container.webgis-space-saving .webgis-tab-control-tab-content .webgis-result-table.features .webgis-result-table-header {
+    top: 68px;
+}
+
+.webgis-container.webgis-space-saving .webgis-tab-control-tab-content.tools-collapsed .webgis-result-table.features .webgis-result-table-header {
+    top: 20px;
+}
+
+.webgis-container.webgis-space-saving .webgis-toolbox-tool-item {
+    padding: 5px;
+}
+
+.webgis-container.webgis-space-saving .webgis-result-table-tools-container .webgis-result-table-tools .webgis-toolbox-tool-item {
+    width: 38px;
+}
+
+.webgis-container.webgis-space-saving .webgis-toolbar-tabs .webgis-toolbar-tab {
+    font-size: 1.25em;
+}
+
+.webgis-container.webgis-space-saving .uibutton {
+    padding: 8px 4px;
+}
+
+.webgis-container.webgis-space-saving #edit-editmask-container .webgis-editfield-container {
+    padding: 3px 0px;
+}
+
+.webgis-container.webgis-space-saving .webgis-input,
+.webgis-container.webgis-space-saving .webgis-textarea,
+.webgis-container.webgis-space-saving .webgis-select {
+    padding: 4px 4px;
+}
+
+.webgis-container.webgis-space-saving .webgis-toolbox-tool-block.webgis-tips .webgis-toolbox-tool-block-content {
+    max-width: 170px;
+    height: 48px;
+    font-size: 9px;
+}

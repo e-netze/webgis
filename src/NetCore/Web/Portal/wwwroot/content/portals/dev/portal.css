@@ -1,0 +1,13 @@
+﻿.webgis-page-header {
+    font-size:26px;
+    font-weight:bold;
+    padding:4px 4px 4px 43px;
+    background:#eaf6dd url(e-netze_logo.svg) no-repeat 4px center;
+    background-size: 36px;
+    color:#313131;
+}
+
+.webgis-page-header a{
+    text-decoration:none !important;
+    cursor:pointer;
+}

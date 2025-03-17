@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net9.0</TargetFramework>
+	  <LangVersion>13</LangVersion>
+    <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E.Standard.Drawing\E.Standard.Drawing.csproj" />
+    <ProjectReference Include="..\E.Standard.Extensions\E.Standard.Extensions.csproj" />
+    <ProjectReference Include="..\E.Standard.Json\E.Standard.Json.csproj" />
+    <ProjectReference Include="..\E.Standard.Security.Cryptography\E.Standard.Security.Cryptography.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.CMS\E.Standard.WebGIS.CMS.csproj" />
+    <ProjectReference Include="..\E.Standard.WebMapping.Core\E.Standard.WebMapping.Core.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,36 @@
+﻿@{
+    string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
+}
+@using E.Standard.WebGIS.Core
+
+@inject Portal.Core.AppCode.Services.CustomContentService customContent
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta http-equiv="X-UA-Compatible" content="IE=9,10,edge" />
+
+    @Html.Raw(customContent.HtmlMetaTags())
+
+    <title>@ViewBag.Title</title>
+    <link href="@(portalContentUrl)/content/Site.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+
+</head>
+<body style="background-color:#E2E2E2; width: 100%; padding:20px 0px">
+
+
+    <div style="padding: 0px; margin: 0px; height: 100%;">
+        <!-- class="content-wrapper" -->
+        <div style="padding:5px">
+            @RenderBody()
+        </div>
+    </div>
+
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

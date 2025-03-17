@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>eb67a133-534c-4975-9b7e-5609d9ccd90b</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.1.0" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="9.1.0" />
+    <PackageReference Include="IdentityServerNET.Aspire.Hosting" Version="5.24.4405" IsAspireProjectResource="false" />
+    <PackageReference Include="MessageQueueNET.Aspire.Hosting" Version="3.25.101" IsAspireProjectResource="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Api\webgis-api.csproj" />
+    <ProjectReference Include="..\..\Cms\webgis-cms.csproj" />
+    <ProjectReference Include="..\..\Portal\webgis-portal.csproj" />
+  </ItemGroup>
+</Project>

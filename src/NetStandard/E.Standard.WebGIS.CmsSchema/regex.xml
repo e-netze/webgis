@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<predefined>
+  <regex name="Grst.Nummer" expression="^([.]{0,1})([0-9]{1,5}|[0-9]{1,5}\/{1}[0-9]{1,5})$"/>
+  <regex name="Grst.Nummer m. Wildchard" expression="^([.]{0,1})([0-9]{1,5}|[0-9]{1,5}\/{1}$|[0-9]{1,5}\/{1}[0-9]{1,5})$"/>
+  <regex name="KG-Nummer - Allgemein" expression="^([0-9]{5})$"/>
+  <regex name="KG-Nummer - Steiermark" expression="^([6][0-9]{4})$"/>
+  <regex name="Bauflächenpunkt" expression="^([.]{0,1})$"/>
+  <regex name="Postleitzahl" expression="^([1-9][0-9]{3})$"/>
+  <regex name="Alphanumerish" expression="^([a-zA-Z0-9_-]+)$"/>
+  <regex name="Nur Text (kein .,0123...)" expression="^([a-zA-Z]+)$"/>
+  <regex name="Mit Text beginned" expression="^[a-zA-Z]"/>
+  <regex name="Mit Zahl beginned (Hausnummer 8a)" expression="^[0-9]"/>
+  <regex name="SAP - Technischer Platz (N)" expression="^[nN]{1}[0-9]{6}$"/>
+  <regex name="SAP - Technischer Platz (E)" expression="^[eE]{1}[0-9]{6}$"/>
+  <regex name="SAP - Technischer Platz (M)" expression="^[mM]{1}[123]{1}[-]{1}[0-9]"/>
+ </predefined>

@@ -1,0 +1,16 @@
+﻿@model  E.Standard.Api.App.Models.Binary
+
+@{
+    this.Layout = null;
+
+    var response = this.Context.Response;
+
+    if (Model != null)
+    {
+        response.ContentType = Model.ContentType;
+        if (!String.IsNullOrWhiteSpace(Model.FileName)) {
+            response.Headers.Add("Content-Disposition", "attachment; filename=\"" + Model.FileName + "\"");
+        }
+        response.Body.Write(Model.Data, 0, Model.Data.Length);
+    }
+}

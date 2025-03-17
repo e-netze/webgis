@@ -1,0 +1,13 @@
+<config>
+  <name type="System.String">BEV Adressen</name>
+  <url type="System.String">bev_adressen</url>
+  <copyright type="System.String">Bundesamt für Eich- und Vermessungswesen</copyright>
+  <copyrightlink type="System.String">https://www.bev.gv.at</copyrightlink>
+  <copyrightlinktext type="System.String">
+  </copyrightlinktext>
+  <advice type="System.String">© Österreichisches Adressregister, Stichtagsdaten vom TT.MM.JJJJ</advice>
+  <logo type="System.String">
+  </logo>
+  <logowidth type="System.Int32">0</logowidth>
+  <logoheight type="System.Int32">0</logoheight>
+</config>

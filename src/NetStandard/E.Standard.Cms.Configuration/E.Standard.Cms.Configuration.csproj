@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+	<LangVersion>13</LangVersion>
+    <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.CMS.Schema\E.Standard.CMS.Schema.csproj" />
+    <ProjectReference Include="..\E.Standard.Configuration\E.Standard.Configuration.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.CmsSchema\E.Standard.WebGIS.CmsSchema.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.Core\E.Standard.WebGIS.Core.csproj" />
+  </ItemGroup>
+
+</Project>

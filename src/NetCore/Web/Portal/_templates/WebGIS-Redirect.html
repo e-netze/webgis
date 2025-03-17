@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    
+
+    <script type="text/javascript">
+
+        {app-object}
+
+        if (app.is_creator === false) {
+            document.location = "{{redirect-url}}";
+        }
+    </script>
+
+</head>
+<body class="webgis-container">
+    
+    <p>
+        Die App leitet den Anwender automatisch weiter.
+        Als Ersteller der App k&ouml;nnen sie die App mit dem Buttons unten Administrieren
+    </p>
+
+    <a href="{{redirect-url}}">Weiterleitung, hier klicken...</a>
+
+</body>
+</html>

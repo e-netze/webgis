@@ -1,0 +1,78 @@
+﻿@model Api.Core.Models.Home.ErrorModel
+@{
+    Layout = null;
+}
+
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>WebGIS API Error</title>
+    <meta name="description" content="The HTML5 Herald">
+    <meta name="author" content="SitePoint">
+
+    <style>
+        body {
+            background: #808080;
+            text-align: center;
+            font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+        }
+
+        .error-message {
+            max-width: 800px;
+            text-align: left;
+            margin: auto;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+            .error-message h1 {
+                color: #80c826;
+                background: #f8f8f8;
+                padding: 20px;
+                margin: 0px;
+                font-weight: normal;
+            }
+
+            .error-message h2 {
+                padding: 20px;
+                font-weight: normal;
+                color: #ff0000;
+                margin: 0px;
+            }
+
+            .error-message .message {
+                padding: 20px;
+            }
+
+            .error-message .stacktrace {
+                padding: 20px;
+                color: #acacac;
+                font-size: 12px;
+            }
+    </style>
+
+</head>
+
+<body>
+    <div class="error-message">
+        <h1>WebGIS API Error</h1>
+        <h2>Bei Ihrer Anforderung sind Fehler aufgetreten:</h2>
+        <div class="message">
+            @Model.Message
+        </div>
+        @if (!String.IsNullOrEmpty(Model.StackTrace))
+        {
+        <p class="stacktrace">
+            @Html.Raw(Model.StackTrace.Replace("\n", "<br/>"))
+        </p>
+        }
+    </div> 
+</body>
+</html>
+
+

@@ -1,0 +1,55 @@
+﻿@using E.Standard.Api.App.Extensions
+@model E.Standard.Api.App.Models.ApiSubscribersLogin
+
+@inject E.Standard.Configuration.Services.ConfigurationService config
+
+@{
+    ViewBag.Title = "Api Subscriber Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    <a href="@Url.Action("Index","Home")" class="back-button"></a>
+    Subscriber Login
+</h2>
+<br/>
+<br/>
+@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <span style="color:red">@(Model.ErrorMessage)</span>
+}
+<br />
+<br />
+
+@using (Html.BeginForm("Login", "Subscribers", method: FormMethod.Post))
+{
+    <div id="wizard" class="webgis-wizard" data-wizard-submit-method="submit" data-wizard-submit-title="Login">
+        <div class="webgis-wizard-step" data-wizard-step-title="Subscriber">
+            @Html.LabelFor(m => m.Username)
+            @Html.TextBoxFor(m => m.Username)
+            <br />
+            @Html.LabelFor(m => m.Password)
+            @Html.PasswordFor(m => m.Password)
+            <br />
+            @if (!String.IsNullOrWhiteSpace(Model.CaptchaCodeEncrypted))
+            {
+                <input type="hidden" name="CaptchaCodeEncrypted" value="@Model.CaptchaCodeEncrypted" />
+                <img src="data:image/png;base64, @Model.CaptchaDataBase64" />
+                <br />
+                @Html.LabelFor(m=>m.CaptchaInput)
+                @Html.TextBoxFor(m=>m.CaptchaInput)
+                <br />
+            }
+
+            @Html.HiddenFor(m => m.Redirect)
+        </div>
+    </div>
+ }
+
+        <br />
+        <br />
+
+        @if (config.AllowRegisterNewSubscribers())
+        {
+            @Html.ActionLink("Register as new subscriber...", "Register")
+        }

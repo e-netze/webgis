@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title></title>
+
+    <script type="text/javascript" src="{api}/scripts/jquery-3.2.0.min.js"></script>
+    <script type="text/javascript" src="{api}/scripts/typeahead/typeahead.jquery.min.js"></script>
+
+    <link href="{api}/content/styles/default.css" rel="stylesheet" />
+    <link href="{api}/content/api/ui.css" rel="stylesheet" />
+
+    <script src="{api}/scripts/api/api.min.js" id="webgis-api-script"></script>
+    <script src="{api}/scripts/api/api-ui.min.js"></script>
+
+    <link href="{api}/scripts/api/plugins/service-layerswitch/service-layerswitch.css" rel="stylesheet" />
+    <script src="{api}/scripts/api/plugins/service-layerswitch/service-layerswitch.js"></script>
+
+    <script type="text/javascript">
+
+    </script>
+</head>
+<body>
+    <div class="webgis-container" style="z-index:0;position:absolute;left:0px;right:0px;top:0px;bottom:0px;">
+        <div id="map" style="z-index:0;position:absolute;left:0px;right:0px;top:0px;bottom:0px;">
+
+        </div>
+
+        <div id="layerswitch-left" style="position: absolute; left: 5px; top: 5px; overflow-y: auto; max-height: calc(100% - 10px)">
+        </div>
+
+        <div id="layerswitch-right" style="position: absolute; right: 5px; top: 5px; overflow-y: auto; max-height: calc(100% - 10px)">
+        </div>
+
+    </div>
+    <script type="text/javascript">
+
+        {api-hmac}
+
+        // Use Marker-Info Window instead of Marker-Popup
+        webgis.usability.useGraphicsMarkerPopups = false;
+        webgis.leaflet.onePanePerService = true;
+        webgis.mapFramework_version = "1.6.0";
+
+    webgis.init(function () {
+        var map = webgis.createMap('map', {
+            extent: '{{map-extent}}'
+            , services: '{{map-basemap-services}},{{map-services}},{{map-services}}'
+        });
+
+        map.setBasemap('{{map-basemap-services}}', false);
+        map.setServiceOpacity('{{map-basemap-services}}', {{basemap-opacity}});
+
+        //map.setScale(500001, [14.832575893762465, 47.2837533131992]);
+
+        var presentations = {{presentations}};
+
+        var leftService = map.services['{{map-services}}'];
+        var rightService = map.services['{{map-services}}:1'];
+
+        leftService.setOpacity(1);
+        rightService.setOpacity(1);
+
+        $("#layerswitch-left").webgis_layerswitch({
+            map: map,
+            service: leftService,
+            presentations: presentations
+        });
+
+        $("#layerswitch-right").webgis_layerswitch({
+            map: map,
+            service: rightService,
+            presentations: presentations
+        });
+
+        $("#layerswitch-left").webgis_layerswitch('setIndex', { index: 0 });
+        $("#layerswitch-right").webgis_layerswitch('setIndex', { index: 1 });
+
+        //map.ui.createHourglass('hourglass');
+
+        webgis.require('leaflet-side-by-side', function () {
+            var leftLayer = map.getLeafletLayer('{{map-services}}');
+            var rightLayer = map.getLeafletLayer('{{map-services}}:1');
+
+            L.control.sideBySide(leftLayer, rightLayer).addTo(map.frameworkElement);
+        });
+
+        {map-script}
+    });
+    </script>
+</body>
+</html>

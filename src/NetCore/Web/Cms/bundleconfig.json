@@ -1,0 +1,36 @@
+[
+  {
+    "outputFileName": "wwwroot/js/site.min.js",
+    "inputFiles": [
+      "wwwroot/js/site.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": true
+  },
+  {
+    "outputFileName": "wwwroot/js/cms/cms.min.js",
+    "inputFiles": [
+      "wwwroot/js/cms/cms.js",
+      "wwwroot/js/cms/cms.db.js",
+      "wwwroot/js/cms/jquey-extenstions.js",
+      "wwwroot/js/cms/propertygrid.js",
+      "wwwroot/js/cms/Forms.js",
+      "wwwroot/lib/cryptojs/sha512.js",
+      "wwwroot/lib/cryptojs/enc-base64.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": true
+  },
+  {
+    "outputFileName": "wwwroot/css/site.min.css",
+    "inputFiles": [
+      "wwwroot/css/site.css"
+    ]
+  }
+]

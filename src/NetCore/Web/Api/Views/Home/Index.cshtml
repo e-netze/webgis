@@ -1,0 +1,57 @@
+﻿@using E.Standard.Api.App.Extensions
+@inject E.Standard.Configuration.Services.ConfigurationService config 
+
+<script src="~/scripts/api/api.min.js"></script>
+
+<div id="body" style="background:white">
+    <div style="padding:10px">
+        
+            <h1>Welcome to webgis 5 API!</h1>
+            <p>An API for creating interactive WebGIS maps.</p>
+            
+    </div>
+
+
+    <div style="padding:10px">
+
+        @if (config.AllowSubscriberLogin() && config.AppRoles().IsAllowed(E.Standard.Api.App.AppRoles.SubscriberPages))
+        {
+        <div class="webgis-api-tile" onclick="document.location='@Url.Action("index", "subscribers")'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/user-100.png" />
+            <span class="webgis-api-tile-title">@(!String.IsNullOrWhiteSpace((string)ViewData["append-subscriber-username"]) ? (string)ViewData["append-subscriber-username"] : "Subscriber Login")</span>
+            <span class="webgis-api-tile-description">
+                Manage your WebGIS API Clients and Portals
+            </span>
+        </div>
+        }
+
+        @if (config.AppRoles().IsAllowed(E.Standard.Api.App.AppRoles.WebgisApi))
+        {
+        <div class="webgis-api-tile" onclick="document.location='@Url.Action("index", "rest")'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/code-100.png" />
+            <span class="webgis-api-tile-title">Rest API</span>
+            <span class="webgis-api-tile-description">
+                The REST Api to create interactive WebGIS maps.
+            </span>
+        </div>
+        }
+
+        <div id="api-doc-tile" class="webgis-api-tile" style="width:285px;opacity:0.5">
+            <img class="webgis-api-tile-image" src="~/content/api/img/doc-100.png" />
+            <span class="webgis-api-tile-title">JS API</span>
+            <span class="webgis-api-tile-description">
+                The Javascript API Reference.
+            </span>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#api-doc-tile').click(function () {
+            document.location = 'https://docs.webgiscloud.com/dev/API/API_JavaScript/index.html';
+        });
+    });
+</script>
+

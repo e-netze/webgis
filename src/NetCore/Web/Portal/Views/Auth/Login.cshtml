@@ -1,0 +1,193 @@
+﻿@using Portal.AppCode.Mvc.Wrapper
+@using E.Standard.WebGIS.Core
+@using Portal.Core.AppCode.Extensions
+@using E.Standard.OpenIdConnect.Extensions
+
+@model Portal.Core.Models.Auth.AuthLoginModel
+
+@inject Portal.Core.AppCode.Services.Authentication.WebgisCookieService WebgisCookieService
+@inject Portal.Core.AppCode.Services.UrlHelperService urlHelper
+@inject E.Standard.Configuration.Services.ConfigurationService config
+@inject Portal.Core.AppCode.Services.CustomContentService customContent
+
+@{
+    ViewBag.Title = config.PortalName();
+    Layout = "~/Views/Shared/_Layout_empty.cshtml";
+
+    string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
+}
+
+<link href="@(portalContentUrl)/content/portal.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+@if (customContent.CompanyPortalCssExists())
+{
+    <link href="@(portalContentUrl)/content/companies/@(config.Company())/portal.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+}
+
+<div id="body">
+    @*<header>
+            <div class="webgis-page-header" style="">
+                <a target="_blank" href="@(E.Standard.Portal.App.Webgis5Globals.PortalNameUrl)">
+                    @(E.Standard.Portal.App.Webgis5Globals.PortalName)
+                </a>
+            </div>
+        </header>*@
+    <div class="content-wrapper" style="background-color:white;margin:10% auto;border-radius:5px;box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);">
+        <div style="padding:20px">
+            <div class="heading">
+                <h1>@(config.PortalName())</h1>
+            </div>
+            <h4>Willkommen beim WebGIS 5 Portal!</h4>
+
+            <br />
+            <select id="cmb-portal" onchange="selectPortal()">
+                <option value="">Wähle eine Portal Seite aus...</option>
+                @foreach (var portal in Model.Portals)
+                {
+                    <option value="@(portal.Id)">@(portal.Name)</option>
+                }
+            </select>
+
+            <p id="page-description">
+
+            </p>
+        </div>
+
+
+        <div style="padding:20px">
+
+
+            <div style="display:none" id="btn-page-auth" class="webgis-api-tile" onclick="redirect('{redirect}')">
+                <img class="webgis-api-tile-image" src="@(portalContentUrl)/content/img/login/portal-100.png" />
+                <span class="webgis-api-tile-title">Portal aufrufen</span>
+                <span class="webgis-api-tile-description">
+                    Du bist für dieses Portal berechtigt
+                    <br />
+                    <strong>@(Model.CurrentUsername)</strong>
+                </span>
+            </div>
+
+            @foreach (var loginButton in Model.LoginButtons)
+            {
+                <div style="display:none" id="btn-login-@(loginButton.Method)" class="webgis-api-tile" onclick="redirect('@(loginButton.RedirectAction.StartsWith("http://") || loginButton.RedirectAction.StartsWith("https://") ? loginButton.RedirectAction : Url.Action(loginButton.RedirectAction, new { id = "~~portalid~~" }))')">
+                    <img class="webgis-api-tile-image" src="@(portalContentUrl)@(loginButton.RelativeImagePath)" />
+                    <span class="webgis-api-tile-title">@(loginButton.Title)</span>
+                    <span class="webgis-api-tile-description">
+                        @(loginButton.Description)
+                    </span>
+                </div>
+            }
+
+            @if (this.Context.User.Identity.IsAuthenticated && this.Context.User.IsPortalUserClaimsPrincipal())
+            {
+                <div style="text-align:left;color:rgba(0, 0, 0, 0.25)" id="btn-login-subscriber">
+                    @Html.ActionLink($"Als { this.Context.User.GetUsername() } abmelden", "Logout", "Auth")
+                </div>
+            }
+
+            @if (config.AllowSubscriberLogin() && !String.IsNullOrWhiteSpace(Model.SubscriberLoginUrl))
+            {
+                <div style="text-align:right;color:rgba(0, 0, 0, 0.25)" id="btn-login-subscriber">
+                    <a href="" onclick="redirectLoginAsAdmin('@(Model.SubscriberLoginUrl)'); return false;">Als Administrator für dieses Portal anmelden</a>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    @{ string adUsername= new HttpRequestWrapper(this.Context.Request).ServerVariables["LOGON_USER"]; }
+
+    var allowedMethods = [ @Html.Raw(String.Join(",", Model.LoginButtons.Select(b => $"'{ b.Method }'"))) ];
+
+    var portals = [{id:''}
+    @foreach(var portal in Model.Portals)
+    {
+         <text>
+         ,{ id:'@(portal.Id)',
+             description:"@(portal.Description)",
+             auth:@(portal.IsAuthorized.ToString().ToLower()),
+             allow_subscriber:@(portal.AllowSubscriberLogin.ToString().ToLower())
+         </text>
+         foreach(var method in portal.AllowedAuthenticationMethods)
+             {
+                 if (method != "windows" || !String.IsNullOrWhiteSpace(adUsername))
+                 {
+                 <text>
+                     ,allow_@(method):true
+                 </text>
+                 }
+             }
+            <text>
+            }
+            </text>
+        }
+    ];
+
+    function redirectLoginAsAdmin(url) {
+        var portalUrl = document.location.toString().toLowerCase().replace('/auth/login/@(Model.PortalId.ToLower())', '');
+        var portalUrl = portalUrl.replace('/auth/login', '') + "/auth/loginAsAdmin";
+
+        portalUrl+='/'+$("#cmb-portal").val();
+        var loginUrl = url.replace("{redirect}", portalUrl).replace("~~portalid~~",$("#cmb-portal").val());
+
+        //alert(loginUrl);
+
+        document.location = loginUrl;
+    }
+
+    function redirect(url) {
+            var portalUrl = document.location.toString().toLowerCase().replace('/auth/login/@(Model.PortalId.ToLower())', '');
+            var portalUrl = portalUrl.replace('/auth/login', '');
+
+            portalUrl+='/'+$("#cmb-portal").val();
+            var loginUrl = url.replace("{redirect}", portalUrl).replace("~~portalid~~",$("#cmb-portal").val());
+
+            //alert(loginUrl);
+
+            document.location = loginUrl;
+    }
+
+    function selectPortal() {
+        var id = $("#cmb-portal").val();
+
+        console.log('selectPortal', id);
+
+        for (var i in portals) {
+            var portal = portals[i];
+            if (portal.id == id) {
+
+                $('#page-description').html(portal.description || '');
+                $('#btn-page-auth').css('display', (portal.auth ? '' : 'none'));
+                $('#btn-login-subscriber').css('display', (portal.allow_subscriber ? '' : 'none'));
+
+                for (var p in allowedMethods) {
+                    if (allowedMethods[p] === 'windows') {
+                        $('#btn-login-' + allowedMethods[p]).css('display', (portal['allow_' + allowedMethods[p]] && portal.auth===false ? '' : 'none'));
+                    } else {
+                        $('#btn-login-' + allowedMethods[p]).css('display', (portal['allow_' + allowedMethods[p]] ? '' : 'none'));
+                    }
+                }
+
+                //$('#btn-login-oidc').css('display', (portal.allow_oidc ? '' : 'none'));
+            }
+        }
+    }
+
+    $("#cmb-portal").val('@(Model.PortalId)');
+        @if (String.IsNullOrEmpty(Model.PortalId))
+    {
+        <text>
+    var portalCount = $("#cmb-portal").children().length;
+            console.log(portalCount);
+            if (portalCount == 2) {  @* Nur ein Portal zur auswahl: erstes Element ist 'Bitte wählen sie Portal aus' *@
+            $('#cmb-portal').val($($("#cmb-portal").children()[1]).attr('value'))
+        }
+        </text>
+    }
+    selectPortal();
+
+</script>
+
+

@@ -1,0 +1,130 @@
+﻿@model E.Standard.WebGIS.Core.Models.ApiPortalPageDTO
+
+@{
+    ViewBag.Title = "Edit Portal Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<link href="~/content/themes/base/jquery-ui.css" rel="stylesheet" />
+  <script src="~/scripts/jquery-ui-1.10.4.min.js"></script>*@
+<script src="~/scripts/typeahead/typeahead.jquery.min.js"></script>
+<script src="~/scripts/webgis-jquery-multiselect-autocomplete.js"></script>
+
+<h2>
+    <a href="@Url.Action("PortalPages","Subscribers")" class="back-button"></a>
+    @(String.IsNullOrWhiteSpace(Model.Id) ? "Create" : "Update") Api Portal Page
+</h2>
+<br />
+
+@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <span style="color:red">@(Model.ErrorMessage)</span>
+}
+<br />
+<br />
+
+@using (Html.BeginForm("UpdatePortalPage", "Subscribers", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div id="wizard" class="webgis-wizard" data-wizard-submit-method="submit" data-wizard-submit-title="@(String.IsNullOrWhiteSpace(Model.Id) ? "Create" : "Update")">
+        <div class="webgis-wizard-step" data-wizard-step-title="General">
+            <span>Portal Id: *</span>
+            <br />
+            @Html.TextBoxFor(m => m.Id, "", String.IsNullOrWhiteSpace(Model.Id) ? (object)null : (object)new { @readonly = "readonly" })
+            <br />
+            <span>Portal Name: *</span>
+            <br />
+            @Html.TextBoxFor(m => m.Name)
+            <br />
+            <span>Description:</span>
+            <br />
+            @Html.TextAreaFor(m => m.Description, new { rows = 10 })
+            <br />
+            <span>Banner-Image:</span>
+            <br />
+            <input type="file" name="banner-image" />
+            <br />
+            <br />
+        </div>
+        <div class="webgis-wizard-step" data-wizard-step-title="Securiry">
+            <br />
+            <span>Authorized Users:</span>
+            <div id="auth-users"></div>
+            <br />
+            <span>Authorized (Map) Authors:</span>
+            <div id="auth-map-authors"></div>
+            <br />
+            <span>Authorized (Content) Authors:</span>
+            <div id="auth-content-authors"></div>
+            <br />
+        </div>
+        <div class="webgis-wizard-step" data-wizard-step-title="Meta">
+            <span>HTML Meta Tags:</span>
+            <br />
+            @Html.TextAreaFor(m => m.HtmlMetaTags, new { rows = 10 })
+        </div>
+        <div class="webgis-wizard-step" data-wizard-step-title="Creation Info">
+            <span>Creation Date (UTC):</span>
+            <br />
+            @Html.TextBoxFor(m => m.Created, "", new { @readonly = "readonly" })
+            <br />
+            <br />
+            <span>Owner:</span>
+            <br />
+            @Html.TextBoxFor(m => m.Subscriber, "", new { @readonly = "readonly" })
+            <br />
+            <br />
+        </div>
+
+        <!--
+        <button type="submit" class="webgis-wizard-submit">
+            @(String.IsNullOrWhiteSpace(Model.Id) ? "Create" : "Update")
+        </button>-->
+
+    </div>
+
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#auth-users').webgis_autocomplete_multiselect({
+            source: '@Url.Action("autocomplete_portal_auth")',
+            name: 'Users',
+            prefixes: @Html.Raw(ViewData["security-prefixes"])
+        });
+        $('#auth-map-authors').webgis_autocomplete_multiselect({
+            source: '@Url.Action("autocomplete_portal_auth")',
+            name: 'MapAuthors',
+            prefixes: @Html.Raw(ViewData["security-prefixes"])
+            });
+        $('#auth-content-authors').webgis_autocomplete_multiselect({
+            source: '@Url.Action("autocomplete_portal_auth")',
+            name: 'ContentAuthors',
+            prefixes: @Html.Raw(ViewData["security-prefixes"])
+        });
+
+@if (Model.Users != null) {
+    foreach (string user in Model.Users)
+    {
+       <text>
+        $('#auth-users').webgis_autocomplete_multiselect('add', { value: '@(user.Replace(@"\",@"\\"))' });
+        </text>
+    }
+}
+@if (Model.MapAuthors != null) {
+    foreach (string author in Model.MapAuthors)
+    {
+       <text>
+        $('#auth-map-authors').webgis_autocomplete_multiselect('add', { value: '@(author.Replace(@"\", @"\\"))' });
+       </text>
+    }
+}
+@if (Model.ContentAuthors != null) {
+    foreach (string author in Model.ContentAuthors)
+    {
+       <text>
+        $('#auth-content-authors').webgis_autocomplete_multiselect('add', { value: '@(author.Replace(@"\", @"\\"))' });
+    </text>
+}
+    }
+    });
+</script>

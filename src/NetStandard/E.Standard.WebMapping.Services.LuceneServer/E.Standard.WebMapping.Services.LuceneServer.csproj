@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net9.0</TargetFramework>
+	  <LangVersion>13</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LuceneServerNET.Client" Version="1.22.1203" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.WebMapping.Core.Api\E.Standard.WebMapping.Core.Api.csproj" />
+    <ProjectReference Include="..\E.Standard.WebMapping.Core\E.Standard.WebMapping.Core.csproj" />
+  </ItemGroup>
+
+</Project>

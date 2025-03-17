@@ -1,0 +1,156 @@
+﻿@using E.Standard.Api.App.Extensions;
+@model E.Standard.WebGIS.Core.Models.ApiInfoDTO
+@inject E.Standard.Configuration.Services.ConfigurationService config
+@{
+    ViewBag.Title = "Info";
+    Layout = "~/Views/Shared/_RestLayout.cshtml";
+}
+
+<script src="~/scripts/api/api.min.js"></script>
+
+<h2>Info</h2>
+
+<h3>Repository</h3>
+<a href="https://github.com/e-netze/webgis">Github</a>
+
+<h3>Javascript</h3>
+<div>Javascript Version: @Model.JsVersion</div>
+
+<h3>Cache</h3>
+@if (Model.Cache != null)
+{
+    <div>Initialization: @Model.Cache.InitialTime.ToLocalTime()</div>
+    <table>
+        <tr>
+            <td style="text-align:right">
+            @Model.Cache.CmsCount
+            </td>
+            <td>Cms files available...</td>
+        </tr>
+        <tr>
+            <td style="text-align:right">@Model.Cache.ServicesCount 
+            </td><td>services available...</td>
+        </tr>
+        <tr>
+            <td style="text-align:right">
+                @Model.Cache.ExtentsCount
+        </td>
+        <td>
+            extents available...
+        </td>
+        </tr>
+        <tr>
+            <td style="text-align:right">
+                @Model.Cache.PresentationsCount
+        </td>
+        <td>
+            presentations available...</td>
+        </tr>
+        <tr>
+            <td style="text-align:right">
+                @Model.Cache.QueriesCount
+        </td>
+        <td>
+            queries available...</td>
+        </tr>
+        <tr>
+            <td style="text-align:right">
+                @Model.Cache.ToolsCount
+        </td>
+        <td>
+            tools available...</td>
+        </tr>
+        <tr>
+            <td style="text-align:right">
+                @Model.Cache.SearchServicCount
+        </td>
+        <td>
+            search services available...</td>
+        </tr>
+        <tr>
+            <td style="text-align:right">
+                @Model.Cache.EditThemesCount
+        </td>
+        <td>
+            edit themes available...</td>
+        </tr>
+        <tr>
+            <td style="text-align:right">
+                @Model.Cache.VisFiltersCount
+        </td>
+        <td>
+            vis-filters available...</td>
+        </tr>
+</table>
+}
+
+@*
+<h3>Client</h3>
+<table>
+    <tr>
+        <td style="text-align:right">
+            User Agent:
+        </td>
+        <td id="useragent-text"></td>
+    </tr>
+    <tr>
+        <td style="text-align:right">
+            Operation System:
+        </td>
+        <td id="operation-system-text"></td>
+    </tr>
+    <tr>
+        <td style="text-align:right">
+            Is Mobile:
+        </td>
+        <td id="mobile-text"></td>
+    </tr>
+    <tr>
+        <td style="text-align:right">
+            Browser:
+        </td>
+        <td id="browser-text"></td>
+    </tr>
+    <tr>
+        <td style="text-align:right">
+            Touch Device:
+        </td>
+        <td id="touch-device-text"></td>
+    </tr>
+
+</table>
+*@
+@*
+<h3>Encodings</h3>
+@{ var defaultEncoding = config.DefaultTextDownloadEncoding();  }
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Codepage</th>
+        <th>Displayname</th>
+    </tr>
+    @foreach(System.Text.EncodingInfo ei in System.Text.Encoding.GetEncodings())
+    {
+    <tr>
+        <td>@ei.Name</td>
+        <td>@ei.CodePage</td>
+        <td>@ei.DisplayName</td>
+        <td>@((defaultEncoding.CodePage == ei.CodePage) ? "default for text download" : "")</td>
+    </tr>
+    }
+</table>
+*@
+
+<script type="text/javascript">
+    try {
+        $("#useragent-text").text(webgis.userAgent);
+        $("#touch-device-text").text(webgis.isTouchDevice().toString());
+        $("#operation-system-text").text(webgis.is_iOS ? 'iOS' : (webgis.is_Android ? 'Android' : (webgis.is_WindowsPhone ? 'Windows Phone' : 'Desktop')));
+        $("#mobile-text").text(webgis.isMobileDevice().toString());
+        $("#browser-text").text(webgis.isChrome() ? "Chrome" : (webgis.isSafari() ? "Safari" : "Unknown"));
+        
+    } catch (e) {
+        console.log('exception', e);
+        console.trace();
+    }
+</script>

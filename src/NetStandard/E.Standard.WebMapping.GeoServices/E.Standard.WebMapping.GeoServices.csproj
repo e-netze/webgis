@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net9.0</TargetFramework>
+	  <LangVersion>13</LangVersion>
+    <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
+  </PropertyGroup>
+
+	<!--
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.1" />
+  </ItemGroup>
+  -->
+		
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+  </ItemGroup>
+
+	<ItemGroup>
+    <ProjectReference Include="..\E.Standard.ArcXml\E.Standard.ArcXml.csproj" />
+    <ProjectReference Include="..\E.Standard.Converters\E.Standard.Converters.csproj" />
+    <ProjectReference Include="..\E.Standard.GeoJson\E.Standard.GeoJson.csproj" />
+    <ProjectReference Include="..\E.Standard.OGC.Schema\E.Standard.OGC.Schema.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.Api\E.Standard.WebGIS.Api.csproj" />
+    <ProjectReference Include="..\E.Standard.WebGIS.CMS\E.Standard.WebGIS.CMS.csproj" />
+    <ProjectReference Include="..\E.Standard.WebMapping.Core.Api\E.Standard.WebMapping.Core.Api.csproj" />
+    <ProjectReference Include="..\E.Standard.WebMapping.Core\E.Standard.WebMapping.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.Web\E.Standard.Web.csproj" />
+  </ItemGroup>
+
+</Project>

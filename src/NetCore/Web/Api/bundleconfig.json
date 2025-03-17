@@ -1,0 +1,218 @@
+﻿// Configure bundling and minification for the project.
+// More info at https://go.microsoft.com/fwlink/?LinkId=808241
+[
+  /*******************/
+  /* Current Version */
+  /*******************/
+  {
+    "outputFileName": "wwwroot/scripts/api/api.min.js",
+    "inputFiles": [
+      "wwwroot/scripts/api/webgis.js",
+      "wwwroot/scripts/api/webgis.events.js",
+      "wwwroot/scripts/api/webgis.sequence.js",
+      "wwwroot/scripts/api/webgis.security.js",
+      "wwwroot/scripts/api/webgis.calc.js",
+      "wwwroot/scripts/api/webgis.timer.js",
+      "wwwroot/scripts/api/webgis.position.js",
+      "wwwroot/scripts/api/webgis.options.js",
+      "wwwroot/scripts/api/webgis.custom.js",
+      "wwwroot/scripts/api/webgis.i18n.js",
+      "wwwroot/scripts/api/webgis.i18n.de.js",
+      "wwwroot/scripts/api/webgis.storage.js",
+      "wwwroot/scripts/api/webgis.markdown.js",
+      "wwwroot/scripts/api/webgis.effects.js",
+      "wwwroot/scripts/api/webgis.map.js",
+      "wwwroot/scripts/api/webgis.map.queryresults.js",
+      "wwwroot/scripts/api/webgis.map.ui.js",
+      "wwwroot/scripts/api/webgis.map.viewlense.js",
+      "wwwroot/scripts/api/webgis.map.graphics.js",
+      "wwwroot/scripts/api/webgis.map.handlers.js",
+      "wwwroot/scripts/api/webgis.service.js",
+      "wwwroot/scripts/api/webgis.selection.js",
+      "wwwroot/scripts/api/webgis.sketch.js",
+      "wwwroot/scripts/api/webgis.sketch.construct.js",
+      "wwwroot/scripts/api/webgis.sketch.construct.tools.js",
+      "wwwroot/scripts/api/webgis.sketch.ui.js",
+      "wwwroot/scripts/api/webgis.chart.js",
+      "wwwroot/scripts/api/webgis.hourglassCounter.js",
+      "wwwroot/scripts/api/webgis.stack.js",
+      "wwwroot/scripts/api/webgis.construct.js",
+      "wwwroot/scripts/api/webgis.tsp.js",
+      "wwwroot/scripts/api/webgis.liveshare.js",
+      "wwwroot/scripts/api/webgis.embedding.js",
+      "wwwroot/scripts/api/webgis.tools.js",
+      "wwwroot/scripts/cryptojs/hmac-sha256.js",
+      "wwwroot/scripts/cryptojs/hmac-sha1.js",
+      "wwwroot/scripts/cryptojs/aes.js",
+      //"wwwroot/scripts/cryptojs/hmac-sha1_aes.js",
+      "wwwroot/scripts/cryptojs/enc-base64.js",
+      "wwwroot/scripts/api/webgis.init_bundels.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/scripts/api/api-ui.min.js",
+    "inputFiles": [
+      "wwwroot/scripts/api/ui/webgis_contentsearch.js",
+      "wwwroot/scripts/api/ui/webgis_presentationToc.js",
+      "wwwroot/scripts/api/ui/webgis_addServicesToc.js",
+      "wwwroot/scripts/api/ui/webgis_servicesToc.js",
+      "wwwroot/scripts/api/ui/webgis_hourglass.js",
+      "wwwroot/scripts/api/ui/webgis_topbar.js",
+      "wwwroot/scripts/api/ui/webgis_queryResults.js",
+      "wwwroot/scripts/api/ui/webgis_queryBuilder.js",
+      "wwwroot/scripts/api/ui/webgis_modal.js",
+      "wwwroot/scripts/api/ui/webgis_modalprogress.js",
+      "wwwroot/scripts/api/ui/webgis_toolbox.js",
+      "wwwroot/scripts/api/ui/webgis_toolbar.js",
+      "wwwroot/scripts/api/ui/webgis_uibuilder.js",
+      "wwwroot/scripts/api/ui/webgis_tabs.js",
+      "wwwroot/scripts/api/ui/webgis_tab_control.js",
+      "wwwroot/scripts/api/ui/webgis_querycombo.js",
+      "wwwroot/scripts/api/ui/webgis_editthemeCombo.js",
+      "wwwroot/scripts/api/ui/webgis_editthemeTree.js",
+      "wwwroot/scripts/api/ui/webgis_dockpanel.js",
+      "wwwroot/scripts/api/ui/webgis_control_search.js",
+      "wwwroot/scripts/api/ui/webgis_copyright.js",
+      "wwwroot/scripts/api/ui/webgis_control_upload.js",
+      "wwwroot/scripts/api/ui/webgis_construct.js",
+      "wwwroot/scripts/api/ui/webgis_bubble.js",
+      "wwwroot/scripts/api/ui/webgis_control_upload.js",
+      "wwwroot/scripts/api/ui/webgis_graphics_info_container.js",
+      "wwwroot/scripts/api/ui/webgis_sketch_info_container.js",
+      "wwwroot/scripts/api/ui/webgis_validation.js",
+      "wwwroot/scripts/api/ui/webgis_liveshare.js",
+      "wwwroot/scripts/api/ui/webgis_errors.js",
+      "wwwroot/scripts/api/ui/webgis_staticOverlayControl.js",
+      "wwwroot/scripts/api/ui/webgis_splitter.js",
+      "wwwroot/scripts/api/ui/webgis_contextMenu.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+
+  /***************/
+  /* Versoin 3.0 */
+  /***************/
+  /*
+  {
+    "outputFileName": "wwwroot/scripts/api/v/3.0/api.min.js",
+    "inputFiles": [
+      "wwwroot/scripts/api/v-source/3.0/base.js",
+      "wwwroot/scripts/api/v-source/3.0/map.js",
+      "wwwroot/scripts/api/v-source/3.0/service.js",
+      "wwwroot/scripts/api/v-source/3.0/selection.js",
+      "wwwroot/scripts/api/v-source/3.0/sketch.js",
+      "wwwroot/scripts/api/v-source/3.0/chart.js",
+      "wwwroot/scripts/api/v-source/3.0/hourglassCounter.js",
+      "wwwroot/scripts/api/v-source/3.0/stack.js",
+      "wwwroot/scripts/api/v-source/3.0/construct.js",
+      "wwwroot/scripts/api/v-source/3.0/tools/toolsbase.js",
+      "wwwroot/scripts/cryptojs/hmac-sha1.js",
+      "wwwroot/scripts/cryptojs/enc-base64.js",
+      "wwwroot/scripts/api/v-source/3.0/base_init_bundels.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/scripts/api/v/3.0/api-ui.min.js",
+    "inputFiles": [
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_contentsearch.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_presentationToc.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_addServicesToc.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_servicesToc.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_hourglass.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_topbar.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_queryResults.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_modal.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_modalprogress.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_toolbox.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_toolbar.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_uibuilder.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_tabs.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_querycombo.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_editthemecombo.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_dockpanel.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_control_search.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_copyright.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_control_upload.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_construct.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_bubble.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_control_upload.js",
+      "wwwroot/scripts/api/v-source/3.0/ui/webgis_graphics_info_container.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  */
+  /************************************************************************/
+  {
+    "outputFileName": "wwwroot/scripts/leaflet/plugins/leaflet-plugins.min.js",
+    "inputFiles": [
+      "wwwroot/scripts/leaflet/plugins/webgisservicelayer.js",
+      "wwwroot/scripts/leaflet/plugins/webgisgraphics.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/scripts/leaflet/plugins/leaflet-plugins-gesture-handling.min.js",
+    "inputFiles": [
+      "wwwroot/scripts/leaflet/plugins/webgisservicelayer.js",
+      "wwwroot/scripts/leaflet/plugins/webgisgraphics.js",
+      "wwwroot/scripts/leaflet/leaflet-gesture-handling/dist/leaflet-gesture-handling.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/scripts/leaflet/plugins/leaflet-plugins.min.css",
+    "inputFiles": [
+      "wwwroot/scripts/leaflet/plugins/leaflet-plugins.css"
+    ],
+    "minify": {
+      "enabled": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/scripts/leaflet/plugins/leaflet-plugins-gesture-handling.min.css",
+    "inputFiles": [
+      "wwwroot/scripts/leaflet/leaflet-gesture-handling/dist/leaflet-gesture-handling.css"
+    ],
+    "minify": {
+      "enabled": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/scripts/flatpickr/flatpickr.de.min.js",
+    "inputFiles": [
+      "wwwroot/scripts/flatpickr/flatpickr.js",
+      "wwwroot/scripts/flatpickr/de.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  }
+]

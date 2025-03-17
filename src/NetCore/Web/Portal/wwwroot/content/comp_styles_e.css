@@ -1,0 +1,65 @@
+﻿.webgis-link-tile {
+	background-color:#7cba32;
+	color:white;
+	width:160px;
+	height:160px;
+	display:inline-block;
+	margin:3px;
+	text-align:center;
+	overflow:hidden;
+}
+    .webgis-link-tile:hover {
+        background-color:#80c826;
+    }
+.webgis-link-tile-image {
+	height:158px;
+	width:158px;
+    margin:1px;
+	background-image:url('img/maps-default.png');
+	background-position:center;
+	background-repeat:no-repeat;
+}
+
+.webgis-link-tile-text {
+    height: 160px;
+    width: 160px;
+    top: -60px;
+	position:relative;
+    background-color: rgba(0, 0, 0, 0.6);
+    text-align:left;
+	
+	transition-property:top;
+	transition-duration:0.5s;
+	transition-delay:0s, 0s;
+}
+	.webgis-link-tile-text:hover {
+		/*background-color:black;*/
+		top:-160px;
+	}
+    .webgis-link-tile-text div {
+        padding:4px;
+    }
+
+.webgis-link-collection{
+
+}
+
+.webgis-link-collection-nav {
+	padding-left:30px;
+	padding-bottom:2px;
+	background-repeat:no-repeat;
+	background-position:left;
+	color:#444;
+}
+.webgis-link-collection-up {
+	background-image:url('img/nav-up.png');
+}
+.webgis-link-collection-down {
+	background-image:url('img/nav-down.png');
+}
+
+.webgis-hourglass-image {
+    background:url('img/hourglass/hourglassloader.gif') no-repeat center center;
+    width:50px;
+    height:20px;
+}

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<layout scales="500,1000"
+        page_sizes="A4"
+		page_orientations="Landscape,Portrait"	>
+<panel dock="fill" border="none" bordercolor="0,0,0" fillcolor="255,255,255">
+	
+	<panel dock="top" height="20" border="none" bordercolor="0,0,0">
+		
+		<panel dock="left" width="15" border="none" bordercolor="0,0,0">
+			<image src="img/logos/e.png" align="center"  width="13.14" height="10" />
+		</panel>
+		
+		<panel dock="right" width="40" border="none" bordercolor="0,0,0">
+			<image src="img/logos/basemap_at.png" align="center"  width="36" height="10" />
+		</panel>
+		
+		
+		
+		<panel dock="fill"  border="none" bordercolor="0,0,0">
+			<text string="[TITLE]" align="center" y="2"  font="Calibri" fontstyle="bold" fontsize="5" fontcolor="0,0,0" />
+			<text string="[SUBT]" align="center" y="10"  font="Calibri"  fontsize="4" fontcolor="0,0,0" />
+		</panel>
+		
+	</panel>
+	
+	
+	
+	
+	<panel dock="bottom" height="8" border="none" bordercolor="0,0,0" fillcolor="255,255,255">
+		<panel dock="fill"  border="none" bordercolor="0,0,0">
+			<text string="Diese Website wurde mit größtmöglicher Sorgfalt zusammengestellt. Die enthaltenen Informationen wurden eingehend auf ihre Richtigkeit geprüft. Trotzdem kann das EPZ Elementarschaden Präventionszentrum für die Fehlerfreiheit, Vollständigkeit und der enthaltenen Informationen nicht garantieren." font="Arial" y="2" fontcolor="0,0,0"  fontsize="1.0"/>
+			<text string="Der Zugang zur Website und der Gebrauch der dort angebotenen Dokumente erfolgt auf eigenes Risiko des Nutzers. Die Dokumente, die auf dieser Website veröffentlicht werden, können technische Fehler enthalten. Die Dokumente, die auf dieser Website veröffentlicht werden, können technische Fehler enthalten." font="Arial" y="4" fontcolor="0,0,0"  fontsize="1.0"/>
+		</panel>
+	
+
+	</panel>	
+	
+	
+	
+	
+	
+	<panel dock="fill" border="all" bordercolor="0,0,0" fillcolor="255,255,255">
+	
+	<panel dock="right" width="50" border="none" bordercolor="0,0,0">
+	
+		<panel dock="left" width="1" border="none"  bordercolor="0,0,0"/>
+	
+
+		
+		<panel dock="top" height="10" border="none" bordercolor="0,0,0">
+			<text string="Legende: " font="Arial" y="2" fontcolor="0,0,0" fontsize="2.5"/>
+		</panel>
+		
+			
+			
+		<panel dock="bottom" height="28" border="top" bordercolor="0,0,0" >
+			<panel dock="fill"  border="none" bordercolor="0,0,0">
+
+			<text string="Adresse: [ADR]" y="1" x="0" font="Arial"  fontcolor="0,0,0" fontsize="2.0"/>
+			<text string="Projekt Nr.: [PROJEKT]" y="5" x="0" font="Arial"  fontcolor="0,0,0" fontsize="2.0"/>
+			<text string="Diverses: [DIV]" y="9" x="0" font="Arial"  fontcolor="0,0,0" fontsize="2.0"/>	
+			<text string="Erstellt von: [ERSTELLER]" y="13" x="0" font="Arial"  fontcolor="0,0,0" fontsize="2.0"/>
+			<text string="Datum: [DATE]" y="17" x="0" font="Arial"  fontcolor="0,0,0" fontsize="2.0"/>
+			<text string="Anzeigemaßstab: [SCALE] " font="Arial" y="21" fontcolor="0,0,0"  fontsize="2.0"/>
+			<!-- <text string="Gauß-Krüger M 34, EPSG: 31256" font="Arial" y="25" fontcolor="0,0,0"  fontsize="2.0"/> -->
+		</panel>
+		</panel>
+		
+		
+		<!-- <panel dock="fill"  border="none" bordercolor="0,0,0"> -->
+			<legend dock="fill" />
+		<!-- </panel> -->
+		
+		
+		
+	</panel>
+	
+	
+
+
+
+<map dock="fill" border="all" bordercolor="0,0,0">
+</map>
+
+<panel dock="top" border="none" bordercolor="0,0,0" height="25">
+
+	<panel dock="right" border="none" bordercolor="0,0,0" width="40">
+
+		<panel dock="fill" border="all" bordercolor="0,0,0" fillcolor="255,255,255" >
+
+			<!-- <text string="übersichtskarte" align="center" font="arial" y="6" fontcolor="0,0,0" fontsize="2.5"/> -->
+			<ovmap  border="all" dock='fill' bordercolor="0,0,0" />
+		</panel>
+
+	</panel>
+
+
+</panel>
+
+
+<panel dock="bottom" border="none" bordercolor="0,0,0" height="6.5">
+	<scalebar dock="left" width="65" border="all" bordercolor="0,0,0" fillcolor="240,240,240"  />
+	<northarrow dock="right" width="7" height="8.5"  border="all" bordercolor="0,0,0" fillcolor="240,240,240"/>
+</panel>
+
+
+</panel>
+
+
+</panel>
+
+
+
+
+  <variables>
+	<variable name="TITLE" alias="Karten-Titel" />
+	<variable name="SUBT" alias="Karten-Untertitel" />
+	<variable name="ERSTELLER" alias="Ersteller"/> 
+	<variable name="ADR" alias="Adresse"/>
+	<variable name="PROJEKT" alias="Projekt.Nr."/> 
+	<variable name="DIV" alias="Diverses"/> 
+
+
+  </variables>
+
+
+
+
+
+</layout>
+<!-- 
+Autor: Wecht Matthias 
+Datum: 20200415
+Abteilung: ENI GIS
+Standort: GRS
+ -->

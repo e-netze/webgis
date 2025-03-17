@@ -1,0 +1,36 @@
+﻿@model Cms.Models.ExportModel
+@{
+    ViewData["Title"] = "Export";
+    Layout = "~/Views/Shared/_Layout_empty.cshtml";
+}
+
+<p>
+    Hier kann das CMS Exportiert werden. Der Export erfolgt in ein ZIP File, die einzelnen Konten werden darin als Verzeichnisse und XML Dateien abgebildet.
+    Ein exportiertes CMS kann als Sicherungskopie verwendet werden, um später wieder zu einem bestimmten Stand zurückkehren zu können.
+</p>
+
+@if (!String.IsNullOrWhiteSpace(Model?.ErrorMesssage))
+{
+    <div class="error-message">
+        @Model.ErrorMesssage
+    </div>
+}
+
+<form id="form" method="post">
+    <input type="hidden" />
+    <button type="submit">Export</button>
+</form>
+
+
+@section scripts {
+    <script type="text/javascript">
+    @if(Model?.ProcDefinition!=null)
+    {
+        <text>
+    var proc = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject( Model.ProcDefinition))');
+    CMS.showConsole(proc);
+        </text>
+
+    }
+    </script>
+}

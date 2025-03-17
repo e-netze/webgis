@@ -1,0 +1,6 @@
+﻿.cms-content .node.obsolete,
+.cms-treenode-nodes .cms-treenode.obsolete,
+.cms-propertygrid .propertygrid-category.obsolete,
+.cms-propertygrid .propertygrid-property-wrapper.obsolete {
+    display: none !important;
+}

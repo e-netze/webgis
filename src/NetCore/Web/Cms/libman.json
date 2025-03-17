@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "bootbox.js@4.4.0",
+      "destination": "wwwroot/lib/bootbox.js/"
+    },
+    { 
+      "library": "showdown@1.9.1",
+      "destination": "wwwroot/lib/showdown/"
+    }, 
+    {
+      "library": "Sortable@1.15.6",
+      "destination": "wwwroot/lib/sortable/"
+    }
+  ]
+}

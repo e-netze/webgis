@@ -1,0 +1,281 @@
+﻿@using E.Standard.WebGIS.Core
+@using Portal.Core.AppCode.Extensions 
+
+@inject Portal.Core.AppCode.Services.UrlHelperService urlHelper
+@inject E.Standard.Configuration.Services.ConfigurationService config
+@inject Portal.Core.AppCode.Services.CustomContentService customContent
+
+@model Portal.Core.Models.MapBuilder.MapBuilderInit
+
+@{
+    ViewBag.Title = "Map Builder";
+    Layout = "~/Views/Shared/_Layout_empty.cshtml";
+}
+
+@{
+    var request = this.Context.Request;
+
+    string apiUrl = urlHelper.ApiUrl(request, E.Standard.WebGIS.Core.HttpSchema.Current);
+    string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
+}
+
+@*<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>*@
+<link href="~/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />
+<script src="~/lib/webportal-layout/webportal-layout.js"></script>
+
+<link href="~/lib/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" />
+<link href="@(apiUrl)/content/styles/default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+@if (customContent.PageMapDefaultCssExists(Model.PortalId))
+{
+    <link href="@(portalContentUrl)/content/portals/@(Model.PortalId)/map-default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+}
+
+<link href="@(apiUrl)/content/api/ui.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+<link href="@(apiUrl)/scripts/select2/css/select2.min.css" rel="stylesheet" />
+
+<script src="~/lib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+
+<environment include="Staging,Production">
+    <script src="@(apiUrl)/scripts/api/api.min.js?@(WebGISVersion.JsVersion)" id="webgis-api-script"></script>
+    <script src="@(apiUrl)/scripts/api/api-ui.min.js?@(WebGISVersion.JsVersion)"></script>
+</environment>
+<environment include="Development">
+    <script src="@(apiUrl)/scripts/api/webgis.js" id="webgis-api-script"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.events.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.sequence.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.security.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.calc.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.timer.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.position.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.options.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.custom.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.i18n.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.i18n.de.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.storage.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.markdown.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.effects.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.map.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.map.queryresults.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.map.ui.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.map.viewlense.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.map.graphics.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.map.handlers.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.service.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.selection.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.sketch.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.sketch.construct.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.sketch.construct.tools.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.sketch.ui.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.chart.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.hourglassCounter.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.stack.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.construct.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.liveshare.js"></script>
+    <script src="@(apiUrl)/scripts/api/webgis.tools.js"></script>
+    <script src="@(apiUrl)/scripts/cryptojs/hmac-sha256.js"></script>
+    <script src="@(apiUrl)/scripts/cryptojs/hmac-sha1.js"></script>
+    <script src="@(apiUrl)/scripts/cryptojs/aes.js"></script>
+    <script src="@(apiUrl)/scripts/cryptojs/enc-base64.js"></script>
+
+    <script src="@(apiUrl)/scripts/api/ui/webgis_tabs.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_tab_control.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_contentsearch.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_presentationToc.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_addServicesToc.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_servicesToc.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_hourglass.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_topbar.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_queryResults.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_queryBuilder.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_modal.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_dockPanel.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_modalprogress.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_toolbox.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_toolbar.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_uibuilder.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_queryCombo.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_editthemeCombo.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_editthemeTree.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_copyright.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_control_search.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_construct.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_bubble.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_errors.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_graphics_info_container.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_sketch_info_container.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_staticOverlayControl.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_splitter.js"></script>
+    <script src="@(apiUrl)/scripts/api/ui/webgis_contextMenu.js"></script>
+</environment>
+<script src="@(apiUrl)/scripts/typeahead/typeahead.jquery.min.js"></script>
+<script type="text/javascript" src="@(apiUrl)/scripts/select2/js/select2.min.js"></script>
+
+<link href="@(portalContentUrl)/content/portal.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+@if (customContent.CompanyPortalCssExists())
+{
+    <link href="@(portalContentUrl)/content/companies/@(config.Company())/portal.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+}
+@{ var portalCssVersion = customContent.PagePortalCssVersion(Model.PortalId); }
+@if (!String.IsNullOrWhiteSpace(portalCssVersion))
+{
+    @if (String.IsNullOrWhiteSpace(customContent.PortalCustomContentRootPath))
+    {
+        <link href="@(portalContentUrl)/content/portals/@(Model.PortalId)/portal.css?@(portalCssVersion)" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="@(customContent.CustomScriptContent(Model.PortalId, Model.CurrentUsername, "portal.css", portalCssVersion))" rel="stylesheet" />
+    }
+}
+
+<link href="@(portalContentUrl)/content/mapbuilder.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+@if (customContent.PageMapBuilderCssExists(Model.PortalId))
+{
+    <link href="@(portalContentUrl)/content/portals/@(Model.PortalId)/mapbuilder.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+}
+
+<script src="@(portalContentUrl)/scripts/webgis-builder.js?@(WebGISVersion.CssVersion)"></script>
+<script src="@(portalContentUrl)/scripts/webgis-mapbuilder.js?@(WebGISVersion.CssVersion)"></script>
+<script src="@(portalContentUrl)/scripts/webgis-mapbuilder-ui.js?@(WebGISVersion.CssVersion)"></script>
+
+<script type="text/javascript">
+    @if(!String.IsNullOrWhiteSpace(Model.PortalCategory) && !String.IsNullOrWhiteSpace(Model.MapName))
+    {
+        <text>
+    _openMap = { urlName: '@Html.Raw(Model.MapName)', mapCategory: '@Html.Raw(Model.PortalCategory)', mapPortal: '@Html.Raw(Model.PortalId)' };
+        </text>
+    }
+
+    var hObj=@Html.Raw(Model.ClientIdPlus);
+    if (typeof hObj === 'string')
+        webgis.clientid = hObj;
+    else
+        webgis.hmac = new webgis.hmacController(hObj);
+
+    // Custom.js Variables...
+    var mapPortalPage = '@(Model.PortalId)';
+    var mapCategory = '@Html.Raw(Model.PortalCategory)';
+    var mapUrlName = '@Html.Raw(Model.MapName)';
+    var mapPortalPageName = '', mapDescription = '', projectUrlName = '', mapMessage = ''; // Compatibility to custom.js
+</script>
+
+@if (config.UseCustomRecommendationJs() == true)
+{
+    <script src="@(portalContentUrl)/scripts/portals/custom-recommendation.js?@(WebGISVersion.CssVersion)"></script>
+}
+@{ var customJsVersion = customContent.PageCustomJsVersion(Model.PortalId); }
+@if (!String.IsNullOrWhiteSpace(customJsVersion))
+{
+    if (String.IsNullOrWhiteSpace(customContent.PortalCustomContentRootPath))
+    {
+        <script src="@(portalContentUrl)/scripts/portals/@(Model.PortalId)/custom.js?@(customJsVersion)"></script>
+    }
+    else
+    {
+        <script src="@(customContent.CustomScriptContent(Model.PortalId, Model.CurrentUsername, "custom.js", customJsVersion))"></script>
+    }
+}
+
+<nav class="webportal-layout-header navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <div class="container">
+        <div class="navbar-brand">MapBuilder</div>
+    </div>
+</nav>
+
+<div class="webportal-layout-container page-has-header page-has-footer" style="position:absolute;left:0px;right:0px;top:0px;bottom:0px">
+    <div class="webportal-layout-sidebar">
+        <ul class="webportal-layout-sidebar-items top">
+            <li class="webportal-layout-sidebar-item resource">
+                <img src="~/content/img/help-26-w.png" />
+                <a href="https://docs.webgiscloud.com/de/webgis/apps/map_builder/index.html" target="_blank">Help/Tutorials</a>
+            </li>
+
+            <!--
+            <li class="webportal-layout-sidebar-item">
+                <img src="~/content/img/sidebar/edit-26-w.png" />
+                <a href="" onclick="$('body').addClass('sidebar-collapsed'); return false;">Karte bearbeiten</a>
+            </li>
+            -->
+            
+            <li class="webportal-layout-sidebar-item">
+                <img src="~/content/img/sidebar/description-26-w.png" />
+                <a href="" onclick="editMapDescription(); return false;">Karte beschreiben...</a>
+            </li>
+
+            @if (!String.IsNullOrWhiteSpace(Model.PortalId))
+            {
+                <li class="webportal-layout-sidebar-item">
+                    <img src="~/content/img/sidebar/deploy-26-w.png" />
+                    <a href="" onclick="publishMap('@(Model.PortalId)', '@(Model.PortalCategory)', '@(Model.MapName)'); return false;">Karte veröffentlichen</a>
+                </li>
+                @*
+            <li class="webportal-layout-sidebar-item">
+                <img src="~/content/img/sidebar/html-26-w.png" />
+                <a href="" onclick="editHtmlMetaTags(); return false;">Html Meta Tags</a>
+            </li>
+                *@
+                if (Model.IsPortalOwner)
+                {
+                    if (!String.IsNullOrWhiteSpace(Model.PortalCategory) && config.AllowMapUIMaster())
+                    {
+                        <li class="webportal-layout-sidebar-item">
+                            <img src="~/content/img/sidebar/master-26-w.png" />
+                            <a href="" onclick="emptyUIMaster('@(Model.PortalId)', '@(Model.PortalCategory)'); return false;">Leere UI Master Vorlage</a>
+                        </li>
+                        <li class="webportal-layout-sidebar-item">
+                            <img src="~/content/img/sidebar/master-26-w.png" />
+                            <a href="" onclick="manageUIMaster('@(Model.PortalId)', '@(Model.PortalCategory)'); return false;">UI Master verwalten</a>
+                        </li>
+                    }
+
+                    <li class="webportal-layout-sidebar-item">
+                        <img src="~/content/img/sidebar/default-26-w.png" />
+                        <a href="" onclick="publishDefaults('@(Model.PortalId)'); return false;">Als Standard definieren</a>
+                    </li>
+                }
+
+                <li class="webportal-layout-sidebar-item">
+                    <img src="~/content/img/sidebar/portal-26-w.png" />
+                    <a href="@Url.Action("Index", "Home", new { id = Model.PortalId })">Map Portal</a>
+                </li>
+            }
+
+            <li class="webportal-layout-sidebar-item hr">
+                <hr />
+                <div class="text">HTML Templates</div>
+            </li>
+        </ul>
+        <ul class="webportal-layout-sidebar-items center">
+            @foreach (string template in Model.Templates)
+            {
+                <li class="webportal-layout-sidebar-item">
+                    <img src="~/content/img/sidebar/html-26-w.png" />
+                    <a href="" onclick="createTemplate('@(template)'); return false;">Erstellen: @(template)</a>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="webportal-layout-main">
+        <div class="webportal-layout-main-container">
+
+            <div id="mapbuilder-container" style="">
+                <div id="mapbuilder-tools-content" style="background-color:white;padding:0px 5px"></div>
+            </div>
+
+            <div id="webgis-container" style="">
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="webportal-layout-footer">
+    <div class="version">
+        Version @E.Standard.WebGIS.Core.WebGISVersion.Version
+    </div>
+</div>

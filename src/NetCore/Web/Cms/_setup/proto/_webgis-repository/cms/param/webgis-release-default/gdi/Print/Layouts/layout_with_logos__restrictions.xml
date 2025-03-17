@@ -1,0 +1,7 @@
+<config>
+  <name type="System.String">Layout with Logos &amp; Restrictions</name>
+  <url type="System.String">layout_with_logos__restrictions</url>
+  <layoutfile type="System.String">layout_logos_restricted.xml</layoutfile>
+  <parameters type="System.String">
+  </parameters>
+</config>

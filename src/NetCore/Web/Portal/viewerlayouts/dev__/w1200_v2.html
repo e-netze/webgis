@@ -1,0 +1,85 @@
+﻿<style>
+
+    .webgis-search-result-list {
+        max-height:100%;
+    }
+
+    .webgis-toolbox-holder .webgis-toolbox-tool-item, .webgis-toolbar-holder .webgis-toolbox-tool-item {
+        width:52px
+    }
+    .webgis-toolbox-tool-item .webgis-toolbox-tool-item-label {
+        max-width: 69px;
+    }
+
+</style>
+<script>
+    //webgis.gdiScheme = !webgis.gdiScheme ? '~' : webgis.gdiScheme;
+
+    webgis.usability.dockPanelPadding = {
+        top: 103,
+        left: 325,
+        right: 5,
+        bottom: 5
+    };
+</script>
+
+<div id='my-logo' style="position:absolute;left:0px;top:0px;width:320px;height:97px">
+    <table>
+        <tr>
+            <td>
+                <img src="https://webgiscloud.com/images/logos/webgis5-100x100.png" style="height:78px" />
+            </td>
+            <td style="font-size:2.5em;color:#62B851;font-weight:bold;vertical-align:top;padding:0px 12px">
+                WebGIS Fluent
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id='map' style='position:absolute;top:98px;left:320px;bottom:0px;right:0px;opacity:0;border-top:1px solid #62b851;border-left:1px solid #62b851;box-sizing:border-box'>
+</div>
+
+<div style='position:absolute;top:98px;left:0px;bottom:0px;width:320px;box-sizing:border-box'>
+    <div id="tabs" class="tabs-layout-container"
+         data-option-top="0"
+         data-option-right="0"
+         data-option-bottom="0"
+         data-option-left="0"
+         data-option-add_tools="false"
+         data-option-add_tool_content="true"
+         data-option-content_size="fill"
+         data-option-selected="presentations"
+         style='position:absolute;left:0px;top:0px;right:0px;bottom:48px;'>
+
+    </div>
+
+    <div class="webgis-currentcoords-container" style='z-index:9998;position:absolute;right:0px;width:320px;bottom:24px;height:24px;'>
+        <table>
+            <tr>
+                <td style="width:40px">EPSG:</td>
+                <td style="width:50px" class="epsg"></td>
+                <td style="width:14px">R:</td>
+                <td style="width:80px" class="x"></td>
+                <td style="width:14px">H:</td>
+                <td style="width:80px" class="y"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div style='z-index:9998;position:absolute;right:0px;width:320px;bottom:0px;height:24px;background:#aaa'>
+        <div style="position:absolute;left:0px;top:0px;width:24px;height:24px;cursor:pointer;background-image:url()" id='webgis-info'>
+        </div>
+        <div style="position:absolute;left:24px;top:0px;bottom:0px;right:0px" id='hourglass'>
+        </div>
+    </div>
+</div>
+
+<div id="webgis-headerbar" style='position:absolute;top:0px;left:0px;right:0px;height:98px;z-index:999;overflow:visible'>
+    
+    <div id="toolbar" style="position:absolute;left:320px;top:0px;z-index:0">
+    </div>   
+    
+</div>
+
+<div id='topbar' style="position:absolute;right:0px;top:103px;text-align:right;background-color:#fff;z-index:1020;">
+</div>

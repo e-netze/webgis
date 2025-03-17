@@ -1,0 +1,72 @@
+﻿@using Cms.AppCode
+@using E.Standard.Cms.Configuration
+@using E.Standard.Cms.Configuration.Services
+@inject CmsConfigurationService CCS
+
+@{
+
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@CmsGlobals.SchemaName - Cms</title>
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link href="~/lib/webportal-layout/webportal-layout.css?@(CmsGlobals.JsVersion)" rel="stylesheet" />
+        <link rel="stylesheet" href="~/css/site.css?@(CmsGlobals.JsVersion)" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link href="~/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />
+        <link rel="stylesheet" href="~/css/site.css?@(CmsGlobals.JsVersion)" />
+    </environment>
+
+    @if (!String.IsNullOrWhiteSpace(CCS.Instance?.Company))
+    {
+        <link rel="stylesheet" href="~/css/@CCS.Instance.Company/site.css" />
+    }
+</head>
+<body>
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/sortable/Sortable.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/cms/cms.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/lib/webportal-layout/webportal-layout.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/js/cms/jquey-extenstions.js"></script>
+        <script src="~/js/cms/propertygrid.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/js/cms/Forms.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/lib/cryptojs/sha512.js"></script>
+        <script src="~/lib/cryptojs/enc-base64.js"></script>
+        <script src="~/lib/typeahead/typeahead.bundle.js"></script>
+        <script src="~/lib/bootbox.js/bootbox.js"></script>
+        <script src="~/lib/showdown/showdown.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="~/lib/sortable/Sortable.min.js"></script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script src="~/js/cms/cms.min.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/lib/webportal-layout/webportal-layout.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/lib/typeahead/typeahead.bundle.js"></script>
+        <script src="~/lib/bootbox.js/bootbox.min.js"></script>
+        <script src="~/lib/showdown/showdown.min.js"></script>
+    </environment>
+
+    <script type="text/javascript">
+        CMS.appRootUrl = '@(ViewData["AppRootUrl"] ?? String.Empty)';
+    </script>
+
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+﻿Hier werden die Themen des Dienstes aufgelistet.
+Die Eigenschaften der Themen (wie Id, Standardmäßig Sichtbar, Name) können hier nicht überschrieben werden, weil sie direkt aus dem Dienst kommen und bei einem Refresh des Dienstes aktualisiert werden.
+
+Sollten Eigenschaften für eine Thema überschrieben oder gesetzt werden (Layer sperren, In Legende anzeigen), müssen die betroffenen Themen beim Dienst unter Themen (Eigenschaften) hinzugefügt werden. Dort können die Eigenschaften gesetzt werden und 
+bleiben bei einem Refresh des Dienstes erhalten.
+

@@ -1,0 +1,56 @@
+﻿@model E.Standard.Api.App.Models.RegisterSubscriberModel
+
+@{
+    ViewBag.Title = "Edit Api Client";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    <a href="@Url.Action("Index","Subscribers")" class="back-button"></a>
+    Update subscriber
+</h2>
+<br />
+<br />
+@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <span style="color:red">@(Model.ErrorMessage)</span>
+}
+
+@using (Html.BeginForm("Update", "Subscribers", FormMethod.Post))
+{
+    @Html.HiddenFor(m => m.Id);
+    @Html.LabelFor(m => m.Username)
+    @Html.TextBoxFor(m => m.Username, new { @readonly = "readolny" })
+    <br />
+    @Html.LabelFor(m => m.FirstName)
+    @Html.TextBoxFor(m => m.FirstName)
+    <br />
+    @Html.LabelFor(m => m.LastName)
+    @Html.TextBoxFor(m => m.LastName)
+    <br />
+    @Html.LabelFor(m => m.Email)
+    @Html.TextBoxFor(m => m.Email)
+    <br />
+    <br/>
+    <button type="submit">
+        Change Settings
+    </button>
+}
+
+<br />
+<br />
+
+@using (Html.BeginForm("ChangePassword", "Subscribers", FormMethod.Post))
+{
+    @Html.HiddenFor(m => m.Id);
+    @Html.LabelFor(m => m.Password1)
+    @Html.PasswordFor(m => m.Password1)
+    <br />
+    @Html.LabelFor(m => m.Password2)
+    @Html.PasswordFor(m => m.Password2)
+    <br />
+    <br />
+    <button type="submit">
+        Change Password
+    </button>
+}

@@ -1,0 +1,20 @@
+﻿@{
+    Layout = null;
+
+    var response = this.Context.Response;
+    var request = this.Context.Request;
+
+    if (ViewData["json"] != null)
+    {
+        response.ContentType = "application/json; charset=utf-8";
+        response.Headers.Add("Pragma", "no-cache");
+        response.Headers.Add("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
+        response.Headers.Add("Access-Control-Allow-Headers", "*");
+        response.Headers.Add("Access-Control-Allow-Origin", (string)request.Headers["Origin"] != null ? (string)request.Headers["Origin"] : "*");
+        response.Headers.Add("Access-Control-Allow-Credentials", "true");
+
+        var buffer = System.Text.Encoding.UTF8.GetBytes((string)ViewData["json"]);
+        response.Body.Write(buffer, 0, buffer.Length);
+    }
+
+}

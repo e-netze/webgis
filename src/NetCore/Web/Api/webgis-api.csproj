@@ -1,0 +1,176 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+	  <LangVersion>13</LangVersion>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <RootNamespace>Api.Core</RootNamespace>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+    <ApplicationIcon />
+    <Win32Resource />
+    <UserSecretsId>2aa4b7d4-2c84-4b47-a9de-6f3d87bd654e</UserSecretsId>
+    <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
+	<GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Internal|AnyCPU'">
+    <DefineConstants>TRACE;Internal</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Internal|AnyCPU'">
+    <DefineConstants>TRACE;Internal</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="system\proj\**" />
+    <Content Remove="system\proj\**" />
+    <EmbeddedResource Remove="system\proj\**" />
+    <None Remove="system\proj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\scripts\api\ui\webgis_querybuilder.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.LoadMap-label1.txt" />
+    <None Remove="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.SaveMap-label1.txt" />
+    <None Remove="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.SaveMap-label2.txt" />
+    <None Remove="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.SaveMap-restorationcode-label1.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\scripts\api\ui\webgis_querybuilder.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile_linux64.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile_win64.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\OpenSourceProfile.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\OpenSourceProfile_linux64.pubxml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.LoadMap-label1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.SaveMap-restorationcode-label1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.SaveMap-label1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.SaveMap-label2.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+    <PackageReference Include="BundlerMinifier.Core" Version="3.2.449" />
+    <PackageReference Include="E.DataLinq.Core" Version="7.25.1110" />
+    <PackageReference Include="E.DataLinq.Engine.MsSqlServer" Version="7.25.1110" />
+    <PackageReference Include="E.DataLinq.Engine.OracleClient" Version="7.25.1110" />
+    <PackageReference Include="E.DataLinq.Engine.Postgres" Version="7.25.1110" />
+    <PackageReference Include="E.DataLinq.Engine.SQLite" Version="7.25.1110" />
+    <PackageReference Include="E.DataLinq.Engine.SqlServer-legacy" Version="7.25.1110" />
+    <PackageReference Include="E.DataLinq.Web" Version="7.25.1110" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.AzureStorage" Version="3.1.24" />
+    <!--<PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />-->
+  </ItemGroup>
+
+  <ItemGroup><!--<DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />-->
+  
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.2" />
+  
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
+  
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.2" />
+  
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+    <!--
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
+    -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Api.App\E.Standard.Api.App.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Configuration\E.Standard.Configuration.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Custom.Core\E.Standard.Custom.Core.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.DbConnector\E.Standard.DbConnector.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Json\E.Standard.Json.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.MessageQueues\E.Standard.MessageQueues.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.OpenIdConnect.Extensions\E.Standard.OpenIdConnect.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.OracleWorkspace\E.Standard.OracleWorkspace.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebApp\E.Standard.WebApp.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebGIS.Api\E.Standard.WebGIS.Api.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebGIS.SDK\E.Standard.WebGIS.SDK.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebGIS.SubscriberDatabase\E.Standard.WebGIS.SubscriberDatabase.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebGIS.Tools\E.Standard.WebGIS.Tools.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebMapping.Core\E.Standard.WebMapping.Core.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Web\E.Standard.Web.csproj" />
+    <ProjectReference Include="..\Aspire\webgis.ServiceDefaults\webgis.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Debug_Internal' or '$(Configuration)' == 'Release_Internal'">
+	<ProjectReference Include="$(WEBGIS_CUSTOM_LIBRARIES)\E.Standard.Custom.Api\E.Standard.Custom.Api.csproj" />
+  </ItemGroup>	
+	
+  <ItemGroup>
+    <Folder Include="Models\Rest\Json\" />
+    <Folder Include="wwwroot\content\api\img\tools\akt\" />
+    <Folder Include="_config\" />
+  </ItemGroup>	
+	
+  <ItemGroup>
+    <None Include="wwwroot\scripts\api\ui\webgis_queryBuilder.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\scripts\leaflet-1.6.0\leaflet.label-src.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\scripts\leaflet-1.6.0\leaflet.label.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\scripts\leaflet-1.6.0\leaflet.markercluster-src.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\scripts\leaflet-1.6.0\leaflet.markercluster.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="_setup\proto\_webgis-repository\db\subscriber\subscribers\11702178.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="i18n\de.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="i18n\it.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="i18n\fr.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="i18n\sl.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="i18n\en.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

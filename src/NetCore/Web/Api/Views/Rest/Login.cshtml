@@ -1,0 +1,31 @@
+﻿@model E.Standard.Api.App.Models.RestLoginModel
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Rest Login</h2>
+<br />
+<br />
+@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <span style="color:red">@(Model.ErrorMessage)</span>
+}
+<br />
+<br />
+
+@using (Html.BeginForm("Login", "Rest", FormMethod.Post))
+{
+    <div id="wizard" class="webgis-wizard" data-wizard-submit-method="submit" data-wizard-submit-title="Login">
+        <div class="webgis-wizard-step" data-wizard-step-title="REST Client">
+            @Html.LabelFor(m => m.ClientId)
+            @Html.TextBoxFor(m => m.ClientId)
+            <br />
+            @Html.LabelFor(m => m.ClientSecret)
+            @Html.PasswordFor(m => m.ClientSecret)
+            <br />
+        </div>
+    </div>
+}
+

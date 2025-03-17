@@ -1,0 +1,55 @@
+<profiles>
+  <profile name="Laengsprofil 1:1000"
+           scale="1:1000"
+           vertexincrement="10"
+           vertexlimit="100"
+           minheight="0"
+           superelevation="2"
+           
+           
+           server="localhost"
+           service="fuerstenkat"
+           rastertheme="Luftbilder"
+           
+           layout="layout1.xml"
+           />
+           <!--
+           server="vogis.cnv.at"
+           service="vogis_laser_hsd_1"
+           rastertheme="LASER_DGM_1M_TERR"
+           -->
+           
+   <profile name="Laengsprofil 1:100000"
+           scale="1:100000"
+           vertexincrement="50"
+           vertexlimit="1000000"
+           minheight="0"
+           superelevation="3"
+           v_linestep="1000"
+           h_lineStep="500"
+           show_heightbar="true"
+           show_statbar="true"
+           show_verticesheightbar="true"
+           show_verticesstatbar="true"
+           earthcolor="200,100,0"
+           
+           aigrid="C:\Daten\dgm"
+           
+           layout="layout1.xml"
+           
+           pagesize="A4"
+           />
+           
+    <profile name="Laengsprofil 1:1000000"
+           scale="1:1000000"
+           vertexincrement="25"
+           vertexlimit="1000000"
+           minheight="0"
+           superelevation="2"
+           
+           aigrid="C:\Daten\dgm"
+           
+           layout="layout1.xml"
+           />
+                   
+</profiles>

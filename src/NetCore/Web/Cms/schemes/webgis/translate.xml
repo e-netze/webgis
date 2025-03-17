@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<dictionary>
+  <add key="Maps" value="Karten" />
+  <add key="Queries" value="Abfragen" />
+  <add key="Mouseover" value="Mouse Over (Maptipps)" />
+  <add key="Map Collections" value="Kartensammlungen" />
+  <add key="general" value="Allgemein" />
+  <add key="Services" value="Dienste" />
+  <add key="Tools" value="Werkzeuge" />
+  <add key="Print" value="Drucken" />
+  <add key="formats" value="Papierformate" />
+  <add key="layouts" value="Layouts" />
+  <add key="TOC" value="Inhaltsverzeichnis" />
+  <add key="TOCS" value="Inhaltsverzeichnisse" />
+  <add key="mapfooter" value="Footer" />
+  <add key="presentations" value="Darstellungsvarianten" />
+  <add key="LayerSwitcher" value="Layer-Schaltungen" />
+  <add key="extents" value="Rechtecksausdehnungen" />
+  <add key="OverlayServices" value="Überblendbare Dienste" />
+  <add key="StandaloneQuery" value="Vorgeschaltene Suche" />
+  <add key="StandaloneQueryMaps" value="Möglich Kartenaufrufe" />
+  <add key="Editing" value="Editing" />
+  <add key="Editthemes" value="Edit Themen" />
+  <add key="Snapthemes" value="Snap Themen" />
+  <add key="Snapschemas" value="Snap Schemata" />
+  <add key="Snapping" value="Objektfang (Snapping)" />
+  <add key="visfilter" value="Darstellungsfilter" />
+  <add key="labelling" value="Themen Beschriften" />
+  <add key="labellingfields" value="Felder" />
+  <add key="labellingtheme" value="Thema" />
+  <add key="GeoRss" value="GeoRSS Dienste" />
+  <add key="documentmanagement" value="Dokumenten Management" />
+  <add key="processingserver" value="Processing Server" />
+  <add key="bookmarks" value="Bookmarks" />
+  <add key="MapConfig" value="Kartenkonfiguration" />
+  <add key="OverviewMap" value="Übersichtskarte" />
+  <add key="Themes" value="Themen (readonly)" />
+  <add key="ThemesProperties" value="Themen (Eigenschaften)" />
+  <add key="ims" value="ArcIMS" />
+  <add key="arcgisserver" value="ArcGis Server" />
+  <add key="mapserver" value="MapServer Dienste" />
+  <add key="imageserverservice" value="Image Server Dienste" />
+  <add key="tileservice" value="MapServer Tiling Dienste (deprecated)" />
+  <add key="wmtsservice" value="MapServer WMTS Service" />
+  <add key="ogc" value="OGC Dienste" />
+  <add key="wms" value="WMS" />
+  <add key="wfs" value="WFS" />
+  <add key="wmsc" value="Tiled WMS (WMS-C)" />
+  <add key="wmts" value="WMTS" />
+  <add key="QueryTheme" value="Abfragethema (Dienst-Thema)" />
+  <add key="QueryTocTheme" value="Toc Thema für diese Abfrage (nur falls nicht ident mit Abfragethema)" />
+  <add key="SearchItems" value="Suchfelder" />
+  <add key="TableColumns" value="Tabelle" />
+  <add key="Advanced Settings" value="Erweiterte Einstellungen" />
+
+  <add key="chainage" value="Stationierung" />
+  <add key="chainagelinetheme" value="Linienthema für Stationierung" />
+  <add key="chainagepointtheme" value="Punktthema mit Stationierungswerten (optional)"/>
+
+  <add key="CustomTools" value="Benutzerdefinierte Werkzeuge" />
+  <add key="ExportFormats" value="Exportierbare/Benutzerdefinierte Formate" />
+  
+  <add key="Miscellaneous" value="Sonstige" />
+  <add key="etc" value="Sonstiges" />
+  <add key="ui" value="User Interface" />
+  <add key="GeneralTileCache" value="Allgemeine Raster Tile Caches" />
+  <add key="GeneralVectorTileCache" value="Allgemeine Vector Tile Caches" />
+  <add key="Properties" value="Eigenschaften" />
+  <add key="ServiceCollection" value="Dienste Sammlung" />
+
+  <add key="SpatialConstraintService" value="Dienst für räumliche Einschränkungen" />
+  <add key="Links" value="Linksammlung" />
+  <add key="Fallback" value="Fallback" />
+
+  <add key="containers" value="Container" />
+  <add key="gdi" value="Karten Viewer" />
+  <add key="gdi-custom" value="GDI Schemata" />
+  <add key="addservices" value="Hinzufügbare Dienste" />
+  <add key="searchservices" value="Such Dienste" />
+  <add key="copyright" value="Copyright Infos" />
+  <add key="mapservicecollections" value="Kartendienst Sammlungen" />
+
+  <add key="EditingFields" value="Editierbare Felder" />
+  <add key="EditingTheme" value="Edit Thema/Layer" />
+  <add key="FeatureTransfers" value="Feature Transfers (copy/move)"	/>
+  <add key="FieldSetters" value="Field Setters" />
+	<add key="validations" value="Validierungen" />
+  
+  <add key=".linktemplate" value="Erweiterte Einstellungen (GDI)" />
+</dictionary>

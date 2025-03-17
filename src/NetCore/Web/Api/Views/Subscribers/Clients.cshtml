@@ -1,0 +1,44 @@
+﻿@model E.Standard.Api.App.Models.ApiClients
+@inject Api.Core.AppCode.Services.UrlHelperService urlHelper;
+
+@{
+    ViewBag.Title = "Api Clients";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    <a href="@Url.Action("Index","Subscribers")" class="back-button"></a>
+    Clients
+</h2>
+
+    @if (Model != null && Model.Clients != null)
+    {
+
+        foreach (var client in Model.Clients)
+        {
+            <div class="webgis-api-tile-pro links2">
+                <div class="webgis-api-tile" onclick="document.location='@Url.Action("UpdateClient", new { clientId = client.ClientId })'">
+                    <img class="webgis-api-tile-image" src="~/content/api/img/api-100.png" />
+                    <span class="webgis-api-tile-title">@client.ClientName</span>
+                    <span class="webgis-api-tile-description">
+                        @client.ClientReferer
+                    </span>
+                    
+                </div>
+                <div class="webgis-api-tile-pro-link link2" title="REST" alt="REST" onclick="document.location='@Url.Action("LoginAsClient", new { clientId = client.ClientId })'">
+                    <div>&nbsp;REST</div>
+                </div>
+                <div class="webgis-api-tile-pro-link" title="Map Builder" alt="Map Builder" onclick="window.open('@(urlHelper.MapBuilderUrl() + "?clientid=" + client.ClientId)')">
+                    <div>&nbsp;MapBuilder</div>
+                </div>
+            </div>
+        }
+
+    }
+
+
+
+                <br />
+                <br />
+
+                @Html.ActionLink("New Api Client", "NewClient")

@@ -1,0 +1,7 @@
+﻿Hier können Abfragen auf Themen eines Dienstes erstellt werden.
+
+Jede Abfrage bezieht sich auf ein Thema, über das sich der Anwender in einer Karte Attributinformationen anzeigen lassen kann. Welche Attribute angezeigt werden, ist bei jeder Abfrage unter "Tabelle" einstellbar.
+
+Werden innerhalb einer Abfrage zusätzlich Suchfelder definiert, kann ein Anwender auch gezielt in einem Thema suchen.
+
+Und eine Abfrage für diesen Dienst zu erstellen, klicke auf die Button „Neue Abfrage“.

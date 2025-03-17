@@ -1,0 +1,29 @@
+﻿{
+	"parameters":[
+
+		{
+			"title": "Map Category",
+			"name": "map-category"
+		},
+		{
+			"title": "Map Name",
+			"name": "map-name"
+		},
+		{
+			"title": "optional: Append Services",
+			"name": "append-services"
+		},
+		{
+			"title": "optional: Append Search Services",
+			"name": "append-search-services"
+		},
+		{
+			"title": "optional: Query",
+			"name": "query"
+		},
+		{
+			"title": "optional: Additional Parameters",
+      "name": "additional-parameters"
+		}
+	]
+}

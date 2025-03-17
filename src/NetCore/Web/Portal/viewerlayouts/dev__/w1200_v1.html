@@ -1,0 +1,114 @@
+﻿<style>
+
+    .webgis-search-result-list {
+        max-height: 100%;
+    }
+
+    #toolbar {
+        position: absolute;
+        left: 330px;
+        top: 10px;
+        z-index: 1000;
+        background: white;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+        border: 1px solid #aaa;
+        overflow: hidden;
+    }
+
+    #topbar {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        text-align: right;
+        background-color: #fff;
+        z-index: 1000;
+        opacity: 1;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+        /*border: 1px solid #aaa;*/
+    }
+
+    #webgis-sidebar {
+        position: absolute;
+        left:0px;
+        top:0px;
+        bottom:0px;
+        width:320px;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+    }
+
+    .leaflet-top {
+        top:80px;
+    }
+
+    .webgis-map-app-menu,
+    .webgis-detail-search-holder {
+        box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+    }
+    .webgis-toolbar-tabs .webgis-toolbar-tab {
+        font-size: 1.8em;
+    }
+
+</style>
+<script>
+    //webgis.gdiScheme = !webgis.gdiScheme ? '~' : webgis.gdiScheme;
+    //console.log(webgis.gdiScheme);
+</script>
+
+<div id='map' style='position:absolute;top:0px;left:320px;bottom:0px;right:0px;opacity:0;border-top:1px solid #62b851;border-left:1px solid #62b851;box-sizing:border-box'>
+</div>
+
+<div id="webgis-sidebar">
+    <div style='position:absolute;top:0px;left:0px;bottom:82px;width:100%;box-sizing:border-box'>
+        <div id="tabs" class="tabs-layout-container"
+             data-option-top="0"
+             data-option-right="0"
+             data-option-bottom="0"
+             data-option-left="0"
+             data-option-add_tools="false"
+             data-option-add_tool_content="true"
+             data-option-content_size="fill"
+             data-option-selected="presentations"
+             style='position:absolute;left:0px;top:0px;right:0px;bottom:48px;'>
+
+        </div>
+
+        <div class="webgis-currentcoords-container" style='z-index:9998;position:absolute;right:0px;width:320px;bottom:24px;height:24px;'>
+            <table>
+                <tr>
+                    <td style="width:40px">EPSG:</td>
+                    <td style="width:50px" class="epsg"></td>
+                    <td style="width:14px">R:</td>
+                    <td style="width:80px" class="x"></td>
+                    <td style="width:14px">H:</td>
+                    <td style="width:80px" class="y"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div style='z-index:9998;position:absolute;right:0px;width:320px;bottom:0px;height:24px;background:#aaa'>
+            <div style="position:absolute;left:0px;top:0px;width:24px;height:24px;cursor:pointer;background-image:url()" id='webgis-info'>
+            </div>
+            <div style="position:absolute;left:24px;top:0px;bottom:0px;right:0px" id='hourglass'>
+            </div>
+        </div>
+    </div>
+
+    <div id='my-logo' style="position:absolute;left:0px;bottom:0px;width:100%;height:81px">
+        <table>
+            <tr>
+                <td>
+                    <img src="https://webgiscloud.com/images/logos/webgis5-100x100.png" style="height:78px" />
+                </td>
+                <td style="font-size:2.5em;color:#62B851;font-weight:bold;vertical-align:top;padding:0px 12px">
+                    WebGIS Fluent
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="toolbar" class="">
+</div>
+
+<div id='topbar'>
+</div>

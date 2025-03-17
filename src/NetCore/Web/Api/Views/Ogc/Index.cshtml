@@ -1,0 +1,107 @@
+﻿@model Api.Core.Models.Ogc.OgcIndexModel
+
+@{
+    ViewBag.Title = "Index";
+
+    var link = "";
+}
+
+
+
+<style>
+
+table{
+    border-spacing:1px !important;
+    background-color:#808080;
+    border-collapse:separate !important;
+    width:100%;
+}
+td{
+    background-color:#ffffff;
+    margin:1px;
+}
+.content-wrapper{
+    max-width:100% !important;
+}
+
+</style>
+
+<h2>WMS Services</h2>
+
+@{ 
+    var request = new Api.AppCode.Mvc.Wrapper.HttpRequestWrapper(this.Context.Request);
+}
+
+@if (!String.IsNullOrWhiteSpace(Model.Username))
+{
+    if (!String.IsNullOrWhiteSpace(Model.LogoutService))
+    {
+        <a href="@(Model.LogoutService)">[@(Model.Username)] Abmelden...</a>
+    }
+}
+else if (!String.IsNullOrWhiteSpace(Model.LoginService))
+{
+    <a href="@(Model.LoginService)">Anmelden...</a>
+}
+
+
+@foreach (var service in Model.WmsServices)
+{
+    <h3>@(service.Name)</h3>
+    <table>
+        <tr>
+            @{link = service.Url + "?SERVICE=WMS";}
+            <td style="white-space:nowrap;font-weight:bold">
+                General
+            </td>
+            <td>
+                @Html.Raw(Model.Links(link))
+            </td>
+        </tr>
+        <tr>
+            @{link=  service.Url + "?SERVICE=WMS&VERSION=1.1.1" ;}
+            <td style="white-space:nowrap;font-weight:bold">
+                <a href="@("ogc/"+link+"&REQUEST=GetCapabilities")">WMS 1.1.1</a>
+            </td>
+            <td>
+                @Html.Raw(Model.Links(link))
+            </td>
+        </tr>
+        <tr>
+            @{link =  service.Url + "?SERVICE=WMS&VERSION=1.3.0";}
+            <td style="white-space:nowrap;font-weight:bold">
+                <a href="@("ogc/" +link+"&REQUEST=GetCapabilities")">WMS 1.3.0</a>
+            </td>
+            <td>
+                @Html.Raw(Model.Links(link))
+            </td>
+        </tr>
+
+        <tr>
+            @{link =  service.Url + "?SERVICE=WMS&VERSION=1.3.0&client=inspire";}
+            <td style="white-space:nowrap;font-weight:bold">
+                <a href="@("ogc/" +link+"&REQUEST=GetCapabilities")">WMS 1.3.0 (Inspire)</a>
+            </td>
+            <td>
+                @Html.Raw(Model.Links(link))
+            </td>
+        </tr>
+
+        @if (service is E.Standard.WebMapping.GeoServices.Tiling.TileService)
+        {
+            <tr>
+                @{link = service.Url + "?SERVICE=WMTS&VERSION=1.0.0";}
+                <td style="white-space:nowrap;font-weight:bold">
+                    <a href="@("ogc/" + link+"&REQUEST=GetCapabilities")">WMTS 1.0.0</a>
+                </td>
+                <td>
+                    @Html.Raw(Model.Links(link))
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+<br/>
+<br/>
+

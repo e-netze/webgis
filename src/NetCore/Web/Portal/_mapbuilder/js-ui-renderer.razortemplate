@@ -1,0 +1,35 @@
+﻿@if (Model.HasUISearch)
+{
+    <text>
+    map.ui.createTopbar('search',
+        {
+            quick_search_service:'@Model.UISearchService',
+            quick_search:@(Model.HasUISearch.ToString().ToLower()),
+            detail_search:@(Model.HasUIDetailSearch.ToString().ToLower()),
+            app_menu:@(Model.HasUIAppMenu.ToString().ToLower())
+        });
+    </text>
+}
+@if (Model.HasUITabs)
+{
+    <text>
+    var tabs=map.ui.createTabs('.webgis-container',{
+        left: null, right: 0, bottom: 24, top: null, width: 320,
+        add_presentations: @(Model.HasUIPresentationsTab.ToString().ToLower()),
+        add_settings: @(Model.HasUISettingsTab.ToString().ToLower()),
+        add_tools: @(Model.HasUIToolsTab.ToString().ToLower()),
+        add_queryResults: @(Model.HasUIQueryResultTab.ToString().ToLower()),
+        options_presentations: {
+            gdi_button: @(Model.HasUIPresentationsTabAddService.ToString().ToLower())
+        },
+        options_settings: {
+            gdi_button: @(Model.HasUISettingsTabAddService.ToString().ToLower()),
+            themes:@(Model.HasUISettingsTabThemes.ToString().ToLower())
+        },
+        options_tools:
+        {
+             containers:@(Raw(Model.Tools))
+        }
+});
+    </text>
+}

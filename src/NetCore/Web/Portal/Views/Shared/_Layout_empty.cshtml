@@ -1,0 +1,87 @@
+﻿@using E.Standard.WebGIS.Core
+@using Portal.Core.Models.Portal
+@using Portal.Core.AppCode.Extensions
+
+@inject Portal.Core.AppCode.Services.UrlHelperService urlHelper
+@inject Portal.Core.AppCode.Services.CustomContentService customContent
+@inject E.Standard.Configuration.Services.ConfigurationService config
+
+@model object
+@{ 
+    string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
+    var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
+    var actionName = this.ViewContext.RouteData.Values["action"].ToString();
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta http-equiv="X-UA-Compatible" content="IE=9,10,edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="icon" href="favicon.ico" type="image/vnd.microsoft.icon">
+
+    @if (Model is PortalModel) {
+        @if(!String.IsNullOrEmpty(((PortalModel)Model).ManifestUrl))
+        {
+            <link rel="manifest" href="@(((PortalModel)Model).ManifestUrl)" />
+        }
+
+        @if(!String.IsNullOrEmpty(((PortalModel)Model).HtmlMetaTags))
+        {
+            @Html.Raw(((PortalModel)Model).HtmlMetaTags)
+        }
+    }
+
+    @Html.Raw(customContent.HtmlMetaTags())
+
+    <title>@ViewBag.Title</title>
+    <environment names="Development">
+        <link href="@(portalContentUrl)/content/Site.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+    </environment>
+
+    <environment names="Staging,Production">
+        <link href="@(portalContentUrl)/content/Site.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+    </environment>
+
+
+    <script type="text/javascript">
+        function moveDown(dir) {
+            document.location += '/' + dir;
+        }
+        function toJsonView() {
+            document.location += '?f=json';
+        }
+
+        window.portalEnv = {
+            portalUrl:'@ViewData["portalRootUrl"]',
+            apiUrl:'@ViewData["apiRootUrl"]'
+        };
+    </script>
+    <style>
+        body {
+            background-color: #E2E2E2;
+        }
+    </style>
+</head>
+
+<body style="overflow:auto" class="@($"{ controllerName.ToLower() }-{ actionName.ToLower() }") variation-@( (1+new Random().Next(12)).ToString() )">
+
+    <script src="@(portalContentUrl)/scripts/jquery-3.4.1.min.js"></script>
+
+    @RenderBody()
+
+    @RenderSection("scripts", required: false)
+
+    @if (Model is PortalModel && !String.IsNullOrEmpty(((PortalModel)Model).ManifestUrl) && config.RegisterServiceWorker())
+    {
+<script type="text/javascript">
+    service_worker_scope = '@(((PortalModel)Model).ScopeUrl)';
+</script>
+        <script src="@(portalContentUrl)/scripts/webgis-serviceworker-register.js"></script>
+    }
+
+</body>
+</html>
