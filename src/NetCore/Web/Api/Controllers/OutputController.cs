@@ -17,9 +17,8 @@ public class OutputController : ApiBaseController
 
     public OutputController(ILogger<OutputController> logger,
                             UrlHelperService urlHelper,
-                            IHttpService http,
-                            IGlobalisationService globalisationService)
-        : base(logger, urlHelper, http, null, globalisationService)
+                            IHttpService http)
+        : base(logger, urlHelper, http, null)
     {
         _logger = logger;
         _urlHelper = urlHelper;

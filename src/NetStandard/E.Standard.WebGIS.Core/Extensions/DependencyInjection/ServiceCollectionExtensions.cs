@@ -44,12 +44,4 @@ static public class ServiceCollectionExtensions
 
         return services;
     }
-
-    static public IServiceCollection AddGlobalisationService(this IServiceCollection services, Action<GlobalisationServiceOptions> configureOptions)
-    {
-        services.Configure(configureOptions);
-        services.AddSingleton<IGlobalisationService, GlobalisationService>();
-
-        return services;
-    }
 }

@@ -42,10 +42,9 @@ public class CacheController : ApiBaseController
                            IServiceProvider serviceProvider,
                            ICryptoService cryptoService,
                            IHttpService http,
-                           IGlobalisationService globalisationService,
                            IEnumerable<ICacheClearableService> cacheClearableServices,
                            IEnumerable<ICustomApiService> customServices = null)
-        : base(logger, urlHelper, http, customServices, globalisationService)
+        : base(logger, urlHelper, http, customServices)
     {
         _logger = logger;
         _config = config;

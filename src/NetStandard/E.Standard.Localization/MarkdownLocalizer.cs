@@ -24,7 +24,7 @@ using System.Text.RegularExpressions;
 /// 
 /// </summary>
 
-public class MarkdownLocalizer : IStringLocalizer
+class MarkdownLocalizer : IStringLocalizer
 {
     private readonly Dictionary<string, (string Header, string Body)> _translations = new();
 
@@ -38,11 +38,16 @@ public class MarkdownLocalizer : IStringLocalizer
         LoadTranslations(language);
     }
 
-    public string ResourcePath { get; } = "Resources";
+    public string ResourcePath { get; } = "l10n";
 
     private void LoadTranslations(string language)
     {
         var diInfo = new DirectoryInfo(Path.Combine(ResourcePath, language));
+
+        if(!diInfo.Exists)
+        {
+            return;
+        }   
 
         foreach (var fi in diInfo.GetFiles($"*.md"))
         {
@@ -98,6 +103,11 @@ public class MarkdownLocalizer : IStringLocalizer
     {
         get
         {
+            if(String.IsNullOrEmpty(name))
+            {
+                return new LocalizedString("", "", resourceNotFound: true);
+            }
+
             string lookupKey = name.ToLower();
             bool isBodyRequest = lookupKey.EndsWith(":body");
             string actualKey = isBodyRequest ? lookupKey.Replace(":body", "") : lookupKey;

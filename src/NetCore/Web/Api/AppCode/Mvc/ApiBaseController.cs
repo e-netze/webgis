@@ -41,19 +41,16 @@ public class ApiBaseController : Controller
     private readonly UrlHelperService _urlHelper;
     private readonly IHttpService _http;
     private readonly IEnumerable<ICustomApiService> _customServices;
-    private readonly IGlobalisationService _globalisationService;
 
     public ApiBaseController(ILogger logger,
                              UrlHelperService urlHelper,
                              IHttpService http,
-                             IEnumerable<ICustomApiService> customServices,
-                             IGlobalisationService globalisationService)
+                             IEnumerable<ICustomApiService> customServices)
     {
         _logger = logger;
         _urlHelper = urlHelper;
         _http = http;
         _customServices = customServices;
-        _globalisationService = globalisationService;
     }
 
     public override void OnActionExecuting(ActionExecutingContext context)
@@ -143,16 +140,6 @@ public class ApiBaseController : Controller
         }
 
         return new System.Version(apiVersion);
-    }
-
-    public string UserLanguage()
-    {
-        NameValueCollection nvc = this.HasFormData
-            ? Request.Form.ToCollection()
-            : Request.Query.ToCollection();
-
-        return (nvc["_ul"] ?? Request.Query["_ul"])
-            .OrTake(_globalisationService.DefaultLanguage);
     }
 
     public bool ClientJavascriptVersionOrLater(System.Version version)

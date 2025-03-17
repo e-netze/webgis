@@ -13,7 +13,6 @@ using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.Api.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
-using E.Standard.WebGIS.Core.Services;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -22,13 +21,14 @@ using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using E.Standard.Localization.Extensions;
 
 namespace Api.Core.AppCode.Services.Rest;
 
@@ -40,7 +40,7 @@ public class RestToolsHelperService
     private readonly ConfigurationService _config;
     private readonly ICryptoService _crypto;
     private readonly IUrlHelperService _urlHelper;
-    private readonly IGlobalisationService _globalisation;
+    private readonly IStringLocalizer _localizer;
 
     public RestToolsHelperService(ILogger<RestToolsHelperService> logger,
                                   RestHelperService restHelper,
@@ -48,7 +48,7 @@ public class RestToolsHelperService
                                   ConfigurationService config,
                                   ICryptoService crypto,
                                   UrlHelperService urlHelper,
-                                  IGlobalisationService globalisation)
+                                  IStringLocalizerFactory localizerFactory)
     {
         _logger = logger;
         _restHelper = restHelper;
@@ -56,7 +56,7 @@ public class RestToolsHelperService
         _config = config;
         _crypto = crypto;
         _urlHelper = urlHelper;
-        _globalisation = globalisation;
+        _localizer = localizerFactory.Create(typeof(RestToolsHelperService));
     }
 
     public ToolDTO Create(IApiButton apiTool)
@@ -105,9 +105,9 @@ public class RestToolsHelperService
         tool.ClientName = apiTool.GetType().GetCustomAttribute<ToolClientAttribute>()?.ClientName?.ToLower();
         tool.id = apiTool.GetType().ToToolId();
         tool.container = apiTool.Container;
-        tool.name = _globalisation.Get(apiTool.Name);
+        tool.name = apiTool.LocalizedName(_localizer);
         tool.image = apiTool.Image;
-        tool.tooltip = _globalisation.Get(apiTool.ToolTip);
+        tool.tooltip = apiTool.LocalizedToolTip(_localizer);
         tool.hasui = apiTool.HasUI;
         if (apiTool is IApiTool)
         {

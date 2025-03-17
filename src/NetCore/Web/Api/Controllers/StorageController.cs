@@ -35,9 +35,8 @@ public class StorageController : ApiBaseController
                              UrlHelperService urlHelper,
                              ICryptoService crypto,
                              IHttpService http,
-                             IGlobalisationService globalisationService,
                              IEnumerable<ICustomApiService> customServices = null)
-        : base(logger, urlHelper, http, customServices, globalisationService)
+        : base(logger, urlHelper, http, customServices)
     {
         _logger = logger;
         _apiConfig = apiConfig;

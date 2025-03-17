@@ -99,9 +99,8 @@ public class RestController : ApiBaseController
                           ApiLoggingService apiLogging,
                           IRequestContext requestContext,
                           ICryptoService crypto,
-                          IGlobalisationService globalisationService,
                           IEnumerable<ICustomApiService> customServices = null)
-        : base(logger, urlHelper, requestContext.Http, customServices, globalisationService)
+        : base(logger, urlHelper, requestContext.Http, customServices)
     {
         _logger = logger;
         _urlHelper = urlHelper;

@@ -22,6 +22,7 @@ using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
 using E.Standard.Custom.Core.Services;
 using E.Standard.Json;
+using E.Standard.Localization;
 using E.Standard.MessageQueues.Extensions.DependencyInjection;
 using E.Standard.Security.App;
 using E.Standard.Security.App.Json;
@@ -42,13 +43,16 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -397,13 +401,9 @@ public class Startup
 
         #endregion
 
-        #region Globalisation
+        #region Localization
 
-        services.AddGlobalisationService(options =>
-        {
-            options.DefaultLanguage = Configuration.DefaultUserLanguage();
-            options.RootPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "i18n");
-        });
+        services.AddMarkdownLocalizerFactory<CultureProvider>();
 
         #endregion
     }
@@ -414,7 +414,6 @@ public class Startup
                           CacheService cacheService,
                           ApiGlobalsService apiGlobals,                                     // Init Globals
                           ICryptoService cryptoService,                                     // Init CryptoService
-                          IGlobalisationService globalisationServie,                        // Init Globalisation Service
                           IOptionsMonitor<ApplicationSecurityConfig> applicationSecurity,
                           IEnumerable<IExpectableUserRoleNamesProvider> expectableUserRolesNamesProviders,
                           ILogger<Startup> logger,

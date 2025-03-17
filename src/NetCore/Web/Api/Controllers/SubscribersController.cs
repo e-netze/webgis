@@ -74,11 +74,10 @@ public class SubscribersController : ApiBaseController
                                  BotDetectionService botDetection,
                                  IHttpService http,
                                  IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
-                                 IGlobalisationService globalisationService,
                                  JwtAccessTokenService jwtAccessTokenService,
                                  IEnumerable<ICustomApiService> customServices = null,
                                  IEnumerable<ICustomSubscriberIdenticationService> customSubscriberIdentications = null)
-        : base(logger, urlHelper, http, customServices, globalisationService)
+        : base(logger, urlHelper, http, customServices)
     {
         _logger = logger;
         _urlHelper = urlHelper;
