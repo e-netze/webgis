@@ -11,6 +11,7 @@ using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
+using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Geometry;
 using System;
 using System.Collections.Generic;
@@ -171,7 +172,7 @@ internal class IdentifyServiceDesktop
             }
             else
             {
-                throw new Exception("Keine Abfragen gefunden!?");
+                throw new InfoException("Keine Abfragen gefunden!?");
             }
         }
 
