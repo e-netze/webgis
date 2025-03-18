@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
     "use strict";
     $.fn.webgis_uibuilder = function (method) {
         if (methods[method]) {
@@ -2492,9 +2492,9 @@
             .click(function () {
                 var service = $(this).data('service');
                 webgis.confirm({
-                    message: webgis.i18n.get('confirm-remove-service'),
-                    cancelText: webgis.i18n.get('confirm-remove-service-cancel'),
-                    okText: webgis.i18n.get('confirm-remove-service-ok'),
+                    message: webgis.l10n.get('confirm-remove-service'),
+                    cancelText: webgis.l10n.get('confirm-remove-service-cancel'),
+                    okText: webgis.l10n.get('confirm-remove-service-ok'),
                     onOk: function () {
                         service.map.removeServices([service.id]);
                     }

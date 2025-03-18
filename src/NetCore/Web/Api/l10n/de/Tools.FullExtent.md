@@ -1,3 +1,5 @@
-# name: Gesamter Kartenausschnitt
+﻿# name: Gesamter Kartenausschnitt
 
-Setzt die Karte auf den gesamten Kartenausschnitt zur�ck.
+Setzt die Karte auf den gesamten Kartenausschnitt zurück.
+
+# container: Navigation

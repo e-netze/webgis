@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
     "use strict";
     $.fn.webgis_addServicesToc = function (method) {
         if (methods[method]) {
@@ -429,14 +429,14 @@
 
             $("<div>")
                 .addClass('webgis-label-description show')
-                .html(webgis.encodeUntrustedHtml(webgis.i18n.get('description-customservice'), true))
+                .html(webgis.encodeUntrustedHtml(webgis.l10n.get('description-customservice'), true))
                 .appendTo($div);
 
             $div.webgis_general_input({
                 name: 'webgis-customservice-url',
                 label: 'Dienst Url',
                 placeholder: 'Url zum WMS/AGS Dienst...',
-                description: webgis.i18n.get('description-customservice-url'),
+                description: webgis.l10n.get('description-customservice-url'),
                 onInit: function ($parent, $input) {
                     $input.css({ width: '100%', boxSizing: 'border-box' });
                 }
@@ -446,14 +446,14 @@
                 name: 'webgis-customservice-displayname',
                 label: 'Anzeigename (optional)',
                 placeholder: 'Anzeigename des Dienstes...',
-                description: webgis.i18n.get('description-customservice-displayname'),
+                description: webgis.l10n.get('description-customservice-displayname'),
             });
 
             $div.webgis_general_input({
                 name: 'webgis-customservice-user',
                 label: 'Security (optional)',
                 placeholder: 'Username...',
-                description: webgis.i18n.get('description-customservice-security'),
+                description: webgis.l10n.get('description-customservice-security'),
                 onInit: function ($parent, $input) {
                     $("<input name='webgis-customservice-pwd' type='password'>")
                         .attr('placeholder', 'Passwort')

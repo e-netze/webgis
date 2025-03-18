@@ -1,5 +1,7 @@
-﻿using E.Standard.Localization;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.Localization.Services;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 using System.Globalization;
 
 // usage:
@@ -8,9 +10,17 @@ using System.Globalization;
 class MarkdownLocalizerFactory : IStringLocalizerFactory
 {
     private string _culture;
-    public MarkdownLocalizerFactory(ICultureProvider cultureProvider)
+    private MarkdownLocalizerOptions _options;
+
+    public MarkdownLocalizerFactory(
+                ICultureProvider cultureProvider,
+                IOptions<MarkdownLocalizerOptions> options)
     {
-        _culture = cultureProvider.Culture;
+        _options = options.Value;
+
+        _culture = _options.SupportedLanguages.Contains(cultureProvider.Culture)
+                        ? cultureProvider.Culture
+                        : _options.DefaultLanguage;
     }
 
     public IStringLocalizer Create(Type resourceSource)

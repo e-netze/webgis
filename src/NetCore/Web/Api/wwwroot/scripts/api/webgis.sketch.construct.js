@@ -293,18 +293,18 @@
 
         this._infoItemClickConstructionPoint = function () {
             return {
-                text: webgis.i18n.get("construction-info-apply-vertex")
+                text: webgis.l10n.get("construction-info-apply-vertex")
             };
         };
         this._infoItemClickConstructionPoints = function () {
             return {
-                text: webgis.i18n.get("construction-info-apply-vertices")
+                text: webgis.l10n.get("construction-info-apply-vertices")
             };
         };
 
         this._infoItemRightMouseButton = function () {
             return {
-                text: webgis.i18n.get("construction-info-tip-use-context-menu"),
+                text: webgis.l10n.get("construction-info-tip-use-context-menu"),
                 class: "info"
             }
         };

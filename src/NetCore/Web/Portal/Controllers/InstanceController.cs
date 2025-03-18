@@ -33,9 +33,9 @@ public class InstanceController : PortalBaseController
                               ConfigurationService config,
                               WebgisApiService webgisApiService,
                               KeyValueCacheService keyValueCache,
-                              IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                              IOptions<ApplicationSecurityConfig> appSecurityConfig,
                               ICryptoService crypto,
-                              IOptionsMonitor<CryptoServiceOptions> cryptoServiceOptions,
+                              IOptions<CryptoServiceOptions> cryptoServiceOptions,
                               IEnumerable<ICustomPortalSecurityService> customSecurity = null)
         : base(logger, urlHelper, appSecurityConfig, customSecurity, crypto)
     {
@@ -44,7 +44,7 @@ public class InstanceController : PortalBaseController
         _config = config;
         _webgisApiService = webgisApiService;
         _keyValueCache = keyValueCache;
-        _cryptoServiceOptions = cryptoServiceOptions.CurrentValue;
+        _cryptoServiceOptions = cryptoServiceOptions.Value;
     }
 
     public IActionResult Index()

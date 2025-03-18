@@ -222,7 +222,7 @@
 
                 $('body').webgis_modal({
                     id: 'webgis-tab-control-all-tabs-modal',
-                    title: webgis.i18n.get('active-queryresults'),
+                    title: webgis.l10n.get('active-queryresults'),
                     width: '330px',
                     height: (50 + (tabs.length + 1) * 40 + 20) + 'px',
                     onload: function ($content) {
@@ -551,7 +551,7 @@
 
         $("<button>")
             .addClass('webgis-button uibutton-cancel uibutton')
-            .text(webgis.i18n.get('close-selected-tabs'))
+            .text(webgis.l10n.get('close-selected-tabs'))
             .appendTo($item)
             .click(function (e) {
                 e.stopPropagation();

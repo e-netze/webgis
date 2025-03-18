@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\E.Standard.Extensions\E.Standard.Extensions.csproj" />
+    <ProjectReference Include="..\E.Standard.Localization\E.Standard.Localization.csproj" />
     <ProjectReference Include="..\E.Standard.WebMapping.Core.Api\E.Standard.WebMapping.Core.Api.csproj" />
   </ItemGroup>
 

@@ -22,7 +22,7 @@ using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
 using E.Standard.Custom.Core.Services;
 using E.Standard.Json;
-using E.Standard.Localization;
+using E.Standard.Localization.Abstractions;
 using E.Standard.MessageQueues.Extensions.DependencyInjection;
 using E.Standard.Security.App;
 using E.Standard.Security.App.Json;
@@ -35,7 +35,6 @@ using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
 using E.Standard.WebApp.Extensions;
 using E.Standard.WebGIS.Core.Extensions.DependencyInjection;
-using E.Standard.WebGIS.Core.Services;
 using E.Standard.WebGIS.SDK.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SubscriberDatabase.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication;
@@ -43,19 +42,16 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
 using System.Security.Authentication;
 
 namespace Api;
@@ -360,7 +356,7 @@ public class Startup
 
         foreach (string cmsName in cmsNames)
         {
-            if (Configuration.IsCmsUploadAllowed(cmsName) 
+            if (Configuration.IsCmsUploadAllowed(cmsName)
                 && !string.IsNullOrEmpty(Configuration.CmsUploadClient(cmsName))
                 && !string.IsNullOrEmpty(Configuration.CmsUploadSecret(cmsName)))
             {
@@ -403,7 +399,11 @@ public class Startup
 
         #region Localization
 
-        services.AddMarkdownLocalizerFactory<CultureProvider>();
+        services.AddMarkdownLocalizerFactory<CultureProvider>(config =>
+        {
+            config.SupportedLanguages = Configuration.SupportedLanguages();
+            config.DefaultLanguage = config.SupportedLanguages.First();
+        });
 
         #endregion
     }
@@ -417,6 +417,7 @@ public class Startup
                           IOptionsMonitor<ApplicationSecurityConfig> applicationSecurity,
                           IEnumerable<IExpectableUserRoleNamesProvider> expectableUserRolesNamesProviders,
                           ILogger<Startup> logger,
+                          IMarkdownLocationInitializer markdownLocationInitializer,
                           IEnumerable<ICustomApiAuthenticationMiddlewareService> customAuthentications = null,
                           IEnumerable<ICustomRouteService> customRouteServices = null)
     {

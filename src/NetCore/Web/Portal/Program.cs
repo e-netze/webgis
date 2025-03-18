@@ -1,6 +1,7 @@
-using E.Standard.Caching.Services;
+﻿using E.Standard.Caching.Services;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
 using Microsoft.AspNetCore.Builder;
@@ -37,6 +38,7 @@ startup.Configure(app,
                   app.Services.GetRequiredService<ICryptoService>(),
                   app.Services.GetRequiredService<IOptionsMonitor<ApplicationSecurityConfig>>(),
                   app.Services.GetRequiredService<ILogger<Startup>>(),
+                  app.Services.GetRequiredService<IMarkdownLocationInitializer>(),
                   app.Services.GetService<IEnumerable<ICustomPortalAuthenticationMiddlewareService>>(),
                   app.Services.GetService<IEnumerable<ICustomPortalSecurityService>>());
 

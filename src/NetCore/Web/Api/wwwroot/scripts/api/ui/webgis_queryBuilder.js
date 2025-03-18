@@ -43,12 +43,12 @@
 
             $("<option>")
                 .attr('value', 'use')
-                .text(webgis.i18n.get('querybuilder-use-geometry'))
+                .text(webgis.l10n.get('querybuilder-use-geometry'))
                 .appendTo($geometryOption);
 
             $("<option>")
                 .attr('value', 'ignore')
-                .text(webgis.i18n.get('querybuilder-ignore-geometry'))
+                .text(webgis.l10n.get('querybuilder-ignore-geometry'))
                 .appendTo($geometryOption);
         }
 
@@ -68,7 +68,7 @@
 
         $("<button>")
             .addClass('webgis-button')
-            .text(webgis.i18n.get('apply'))
+            .text(webgis.l10n.get('apply'))
             .appendTo($buttonBar)
             .click(function () {
                 var map = options.map;
@@ -121,7 +121,7 @@
             .addClass('webgis-input  webgis-query-builder-logical-operators depends-on-fields')
             .appendTo($tdLogicalOperator);
 
-        $("<option>").attr('value', '').text('-- ' + webgis.i18n.get('select-field') + ' --').appendTo($selectFields);
+        $("<option>").attr('value', '').text('-- ' + webgis.l10n.get('select-field') + ' --').appendTo($selectFields);
 
         $("<option>").attr('value', '').appendTo($selectLogicalOperator);
         $("<option>").attr('value', 'and').text("AND").appendTo($selectLogicalOperator);

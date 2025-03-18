@@ -9,6 +9,7 @@ using E.Standard.Custom.Core;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
 using E.Standard.Custom.Core.Services;
+using E.Standard.Localization.Abstractions;
 using E.Standard.MessageQueues.Extensions.DependencyInjection;
 using E.Standard.Security.App;
 using E.Standard.Security.App.Extensions;
@@ -38,6 +39,7 @@ using Portal.Core.AppCode.Services;
 using Portal.Core.AppCode.Services.Worker;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Authentication;
@@ -269,6 +271,16 @@ public class Startup
 
         #endregion
 
+        #region Localization
+
+        services.AddMarkdownLocalizerFactory<CultureProvider>(config =>
+        {
+            config.SupportedLanguages = Configuration.SupportedLanguages();
+            config.DefaultLanguage = config.SupportedLanguages.First();
+        });
+
+        #endregion
+
         services.AddAntiforgery(o =>
         {
             o.SuppressXFrameOptionsHeader = Configuration[PortalConfigKeys.SecuritySuppressXFrameOptionsHeader]?.ToString()?.ToLower() == "true";
@@ -281,6 +293,7 @@ public class Startup
                           ICryptoService cryptoService,                                    // Init CryptoService
                           IOptionsMonitor<ApplicationSecurityConfig> applicationSecurityMonitor,
                           ILogger<Startup> logger,
+                          IMarkdownLocationInitializer markdownLocationInitializer,
                           IEnumerable<ICustomPortalAuthenticationMiddlewareService> customAuthentications = null,
                           IEnumerable<ICustomPortalSecurityService> customPortalSecurity = null)
     {

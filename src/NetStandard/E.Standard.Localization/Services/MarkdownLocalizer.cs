@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using E.Standard.Localization.Models;
+using Microsoft.Extensions.Localization;
 using System.Collections.Concurrent;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,9 +28,9 @@ using System.Text.RegularExpressions;
 
 class MarkdownLocalizer : IStringLocalizer
 {
-    private static ConcurrentDictionary<string, ConcurrentDictionary<string, (string Header, string Body)>> LanguageDictionaries = new();
+    private static ConcurrentDictionary<string, Translations> LanguageDictionaries = new();
 
-    private ConcurrentDictionary<string, (string Header, string Body)>? _translations;
+    private Translations _translations;
 
     public MarkdownLocalizer(string language, string resourcePath = "")
     {
@@ -40,31 +41,24 @@ class MarkdownLocalizer : IStringLocalizer
 
         if (!LanguageDictionaries.TryGetValue(language, out _translations))
         {
-            _translations = new();
-
-            LoadTranslations(language);
-
-            if (_translations is not null)
-            {
-                LanguageDictionaries[language] = _translations;
-            }
+            LanguageDictionaries[language] = LoadTranslations(language) ?? new();
         }
-        else
-        {
-            _translations = LanguageDictionaries[language];
-        }
+
+        _translations = LanguageDictionaries[language];
     }
 
     public string ResourcePath { get; } = "l10n";
 
-    private void LoadTranslations(string language)
+    private Translations? LoadTranslations(string language)
     {
         var diInfo = new DirectoryInfo(Path.Combine(ResourcePath, language));
 
         if(!diInfo.Exists)
         {
-            return;
+            return null;
         }   
+
+        var result = new Translations();
 
         foreach (var fi in diInfo.GetFiles($"*.md"))
         {
@@ -84,7 +78,7 @@ class MarkdownLocalizer : IStringLocalizer
                     // save current entry
                     if (!string.IsNullOrEmpty(currentKey))
                     {
-                        _translations[$"{fileNameSpace}.{currentKey}"] = (currentHeader, currentBody.ToString().Trim());
+                        result[$"{fileNameSpace}.{currentKey}"] = (currentHeader, currentBody.ToString().Trim());
                     }
 
                     // define new entry
@@ -111,9 +105,11 @@ class MarkdownLocalizer : IStringLocalizer
             // save last entry
             if (!string.IsNullOrEmpty(currentKey))
             {
-                _translations[$"{fileNameSpace}.{currentKey}"] = (currentHeader, currentBody.ToString().Trim());
+                result[$"{fileNameSpace}.{currentKey}"] = (currentHeader, currentBody.ToString().Trim());
             }
         }
+
+        return result;
     }
 
     public LocalizedString this[string name]

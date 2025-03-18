@@ -1,5 +1,5 @@
 ﻿using Api.Core.AppCode.Extensions;
-using E.Standard.Localization;
+using E.Standard.Localization.Abstractions;
 using Microsoft.AspNetCore.Http;
 
 namespace Api.Core.AppCode.Services;

@@ -96,7 +96,7 @@ webgis.sketch.construct.register(new function () {
 
     this.getInfoItems = function (sketch) {
         return [{
-            text: webgis.i18n.get("construction-info-add-vertex")
+            text: webgis.l10n.get("construction-info-add-vertex")
         }];
     };
 });
@@ -144,7 +144,7 @@ webgis.sketch.construct.register(new function () {
 
     this.getInfoItems = function (sketch) {
         return [{
-            text: webgis.i18n.get("construction-info-remove-vertex")
+            text: webgis.l10n.get("construction-info-remove-vertex")
         }];
     };
 });
@@ -185,7 +185,7 @@ webgis.sketch.construct.register(new function () {
 
     this.getInfoItems = function (sketch) {
         return [{
-            text: webgis.i18n.get("construction-info-select-vertex")
+            text: webgis.l10n.get("construction-info-select-vertex")
         }];
     };
 });
@@ -285,19 +285,19 @@ webgis.sketch.construct.register(new function () {
     this.getInfoItems = function (sketch) {
         if (!_distanceElement1) {
             return [{
-                text: webgis.i18n.get("construction-info-distance1"),
+                text: webgis.l10n.get("construction-info-distance1"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else if (!_distanceElement1._closed) {
             return [{
-                text: webgis.i18n.get("construction-info-distance1-close")
+                text: webgis.l10n.get("construction-info-distance1-close")
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else if (!_distanceElement2) {
             return [{
-                text: webgis.i18n.get("construction-info-distance2"),
+                text: webgis.l10n.get("construction-info-distance2"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else if (!_distanceElement2._closed) {
             return [{
-                text: webgis.i18n.get("construction-info-distance2-close"),
+                text: webgis.l10n.get("construction-info-distance2-close"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else {
             return [webgis.sketch.construct._ui._infoItemClickConstructionPoint(), webgis.sketch.construct._ui._infoItemRightMouseButton() ];
@@ -461,19 +461,19 @@ webgis.sketch.construct.register(new function () {
     this.getInfoItems = function (sketch) {
         if (!_directionElement) {
             return [{
-                text: webgis.i18n.get("construction-info-direction"),
+                text: webgis.l10n.get("construction-info-direction"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else if (!_directionElement._closed) {
             return [{
-                text: webgis.i18n.get("construction-info-direction-close"),
+                text: webgis.l10n.get("construction-info-direction-close"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else if (!_distanceElement) {
             return [{
-                text: webgis.i18n.get("construction-info-distance"),
+                text: webgis.l10n.get("construction-info-distance"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else if (!_distanceElement._closed) {
             return [{
-                text: webgis.i18n.get("construction-info-distance-close"),
+                text: webgis.l10n.get("construction-info-distance-close"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else {
             return [webgis.sketch.construct._ui._infoItemClickConstructionPoint(), webgis.sketch.construct._ui._infoItemRightMouseButton()];
@@ -636,19 +636,19 @@ webgis.sketch.construct.register(new function () {
     this.getInfoItems = function (sketch) {
         if (!_directionElement1) {
             return [{
-                text: webgis.i18n.get("construction-info-direction1"),
+                text: webgis.l10n.get("construction-info-direction1"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else if (!_directionElement1._closed) {
             return [{
-                text: webgis.i18n.get("construction-info-direction1-close"),
+                text: webgis.l10n.get("construction-info-direction1-close"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else if (!_directionElement2) {
             return [{
-                text: webgis.i18n.get("construction-info-direction2"),
+                text: webgis.l10n.get("construction-info-direction2"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else if (!_directionElement2._closed) {
             return [{
-                text: webgis.i18n.get("construction-info-direction2-close"),
+                text: webgis.l10n.get("construction-info-direction2-close"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else {
             return [webgis.sketch.construct._ui._infoItemClickConstructionPoint(), webgis.sketch.construct._ui._infoItemRightMouseButton()];
@@ -757,11 +757,11 @@ webgis.sketch.construct.register(new function () {
     this.getInfoItems = function (sketch) {
         if (!_lineElement) {
             return [{
-                text: webgis.i18n.get("construction-info-midpoint"),
+                text: webgis.l10n.get("construction-info-midpoint"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else if (!_lineElement._closed) {
             return [{
-                text: webgis.i18n.get("construction-info-midpoint-close"),
+                text: webgis.l10n.get("construction-info-midpoint-close"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else {
             return [webgis.sketch.construct._ui._infoItemClickConstructionPoint(), webgis.sketch.construct._ui._infoItemRightMouseButton()];
@@ -1032,11 +1032,11 @@ webgis.sketch.construct.register(new function () {
         }
         else if (_latLngs.length === 2) {
             return [{
-                text: webgis.i18n.get("construction-info-arc-3points-point1"),
+                text: webgis.l10n.get("construction-info-arc-3points-point1"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else if (_latLngs.length === 3 && !_closed) {
             return [{
-                text: webgis.i18n.get("construction-info-arc-3points-point2"),
+                text: webgis.l10n.get("construction-info-arc-3points-point2"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else {
             return [webgis.sketch.construct._ui._infoItemClickConstructionPoints(), webgis.sketch.construct._ui._infoItemRightMouseButton()];
@@ -1130,7 +1130,7 @@ webgis.sketch.construct.register(new function () {
         webgis.complementWGS84(sketch.map.calcCrs(), arcPoints1);
         webgis.complementWGS84(sketch.map.calcCrs(), arcPoints2);
 
-        var undoText = _closed ? webgis.i18n.get("construction-mode-arc-3points") : null;
+        var undoText = _closed ? webgis.l10n.get("construction-mode-arc-3points") : null;
         _resultMarkers1 = L.sketchConstructionResults({
             sketch: sketch,
             vertices: arcPoints1,
@@ -1264,11 +1264,11 @@ webgis.sketch.construct.register(new function () {
     this.getInfoItems = function (sketch) {
         if (!_directionElement2) {
             return [{
-                text: webgis.i18n.get("construction-info-arc-2tangents-point1"),
+                text: webgis.l10n.get("construction-info-arc-2tangents-point1"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         } else if (!_directionElement2._closed) {
             return [{
-                text: webgis.i18n.get("construction-info-arc-2tangents-point2"),
+                text: webgis.l10n.get("construction-info-arc-2tangents-point2"),
             }, webgis.sketch.construct._ui._infoItemRightMouseButton()];
         }
         else {
@@ -1382,7 +1382,7 @@ webgis.sketch.construct.register(new function () {
         webgis.complementWGS84(sketch.map.calcCrs(), arcPoints1);
         webgis.complementWGS84(sketch.map.calcCrs(), arcPoints2);
 
-        var undoText = _directionElement2._closed === true ? webgis.i18n.get("construction-mode-arc-2tangents") : null;
+        var undoText = _directionElement2._closed === true ? webgis.l10n.get("construction-mode-arc-2tangents") : null;
         _resultMarkers1 = L.sketchConstructionResults({
             sketch: sketch,
             vertices: arcPoints1,

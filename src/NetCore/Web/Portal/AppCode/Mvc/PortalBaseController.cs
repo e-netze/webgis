@@ -1,4 +1,4 @@
-using E.Standard.Custom.Core.Abstractions;
+﻿using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
 using E.Standard.Json;
 using E.Standard.Security.App.Exceptions;
@@ -44,13 +44,13 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
 
     protected PortalBaseController(ILogger logger,
                                    UrlHelperService urlHelper,
-                                   IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                                   IOptions<ApplicationSecurityConfig> appSecurityConfig,
                                    IEnumerable<ICustomPortalSecurityService> securityServices,
                                    ICryptoService crypto)
     {
         _logger = logger;
         _urlHelper = urlHelper;
-        _appSecurityConfig = appSecurityConfig.CurrentValue;
+        _appSecurityConfig = appSecurityConfig.Value;
         _securityServices = securityServices;
         _crypto = crypto;
     }

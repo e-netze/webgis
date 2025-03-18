@@ -1,4 +1,4 @@
-var webgis = new function () {
+﻿var webgis = new function () {
     "use strict";
     var $ = window.jExt || window.jQuery;
     this.jQuery = $;
@@ -232,9 +232,9 @@ var webgis = new function () {
                 webgis.confirm({
                     title: activeTool.name,
                     height: '270px',
-                    message: webgis.i18n.get('discard-changes'),
-                    okText: webgis.i18n.get('yes'),
-                    cancelText: webgis.i18n.get('no'),
+                    message: webgis.l10n.get('discard-changes'),
+                    okText: webgis.l10n.get('yes'),
+                    cancelText: webgis.l10n.get('no'),
                     onOk: discardFunc
                 });
 
@@ -246,15 +246,15 @@ var webgis = new function () {
     };
     this.showTip = function (tipId) {
         if (webgis.usability.showTips === true && webgis.localStorage.usable() && webgis.localStorage.get('confirmation-' + tipId) !== 'understood') {
-            var tipText = webgis.i18n.get(tipId);
+            var tipText = webgis.l10n.get(tipId);
             if (!tipText)
                 reutrn;
 
             this.confirm({
-                title: webgis.i18n.get('tip'),
+                title: webgis.l10n.get('tip'),
                 message: tipText,
-                okText: webgis.i18n.get('understood'),
-                cancelText: webgis.i18n.get('later'),
+                okText: webgis.l10n.get('understood'),
+                cancelText: webgis.l10n.get('later'),
                 onOk: function () {
                     webgis.localStorage.set('confirmation-' + tipId, 'understood');
                 }
@@ -1073,7 +1073,7 @@ var webgis = new function () {
 
                                     if (hasChanged) {
                                         result.metadata.warnings = result.metadata.warnings || [];
-                                        result.metadata.warnings.push(webgis.i18n.get('results-has-changed-warning'));
+                                        result.metadata.warnings.push(webgis.l10n.get('results-has-changed-warning'));
                                     }
                                 }
 
@@ -2780,7 +2780,7 @@ var webgis = new function () {
         var $msg = $("<div>")
             .addClass('webgis-copy-message')
             .css(css)
-            .text(webgis.i18n.get('copied'))
+            .text(webgis.l10n.get('copied'))
             .appendTo($('body'));
 
         webgis.delayed(function(args){

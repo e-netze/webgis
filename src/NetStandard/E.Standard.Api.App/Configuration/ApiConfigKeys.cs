@@ -102,4 +102,6 @@ public class ApiConfigKeys
     public const string SecuritySetupPassword = ConfigurationSectionName + ":security-setup-pwd";
     public const string SecurityAddCustomServiceHostBlacklist = ConfigurationSectionName + ":security-add-custom-services-host-blacklist";
     public const string AppCacheListPassword = ConfigurationSectionName + ":app-cache-list-pwd";
+
+    public const string SupportedLanguages = ConfigurationSectionName + ":supported-languages";
 }

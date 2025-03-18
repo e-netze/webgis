@@ -135,7 +135,7 @@
         var constructionMode = webgis.sketch.construct ? webgis.sketch.construct.getConstructionMode(sketch) : null
 
         var geometryType = info.geometryType;
-        $elem.find('.sketch-info-item.sketch-geometrytype').text(webgis.i18n.get(geometryType));
+        $elem.find('.sketch-info-item.sketch-geometrytype').text(webgis.l10n.get(geometryType));
 
         if (!constructionMode && $.inArray(geometryType, ["polygon", "polyline"]) >= 0) {
             $tabSegment.css('display', 'block');
@@ -185,7 +185,7 @@
                 .appendTo($header);
             $("<br>").appendTo($header);
             $("<strong>")
-                .text(webgis.i18n.get("construction-mode-" + constructionMode))
+                .text(webgis.l10n.get("construction-mode-" + constructionMode))
                 .appendTo($header);
 
             $("<div>")
@@ -204,7 +204,7 @@
         if (sketch.map && sketch.map.construct.hasSnapping(sketch) === true) {
             $tabSnapping.css('display', 'block');
             if (info.snapResult) {
-                $elem.find('.sketch-info-item.snap-result-type').text(webgis.i18n.get(info.snapResult.type));
+                $elem.find('.sketch-info-item.snap-result-type').text(webgis.l10n.get(info.snapResult.type));
                 if (info.snapResult.meta) {
                     $elem.find('.sketch-info-item.snap-result-name').text(info.snapResult.meta.name);
                 }

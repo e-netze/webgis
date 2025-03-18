@@ -22,7 +22,10 @@ using Portal.Core.Models.Map;
 using Portal.Core.Models.Portal;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using E.Standard.Localization.Extensions;
+using E.Standard.Localization.Services;
 
 namespace Portal.Core.Controllers;
 
@@ -38,6 +41,7 @@ public class MapController : PortalBaseController
     private readonly ViewerLayoutService _viewerLayout;
     private readonly IEnumerable<ICustomPortalService> _customServices;
     private readonly IEnumerable<ICustomPortalSecurityService> _customSecurity;
+    private readonly MarkdownLocalizerOptions _localizerOptions;
 
     public MapController(ILogger<MapController> logger,
                          ConfigurationService config,
@@ -48,7 +52,8 @@ public class MapController : PortalBaseController
                          SubscriberDatabaseService subscriberDb,
                          ViewerLayoutService viewerLayout,
                          ICryptoService crypto,
-                         IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                         IOptions<ApplicationSecurityConfig> appSecurityConfig,
+                         IOptions<MarkdownLocalizerOptions> localizationOptions,
                          IEnumerable<ICustomPortalService> customServices = null,
                          IEnumerable<ICustomPortalSecurityService> customSecurity = null)
         : base(logger, urlHelper, appSecurityConfig, customSecurity, crypto)
@@ -63,6 +68,7 @@ public class MapController : PortalBaseController
         _subscriberDb = subscriberDb;
         _customServices = customServices;
         _customSecurity = customSecurity;
+        _localizerOptions = localizationOptions.Value;
     }
 
     //[ValidateInput(false)]
@@ -183,7 +189,13 @@ public class MapController : PortalBaseController
                 ShowNewsTipsSinceVesion = _config.ShowNewsTipsSinceVersion(),
                 AddCustomCss = _config.AddCss(map),
                 AddCustomJavascript = _config.AddJs(map),
-                Language = Request.Query["language"]
+                Language = Request.Query["language"].ToString().ToLowerInvariant() switch
+                {
+                    String language when String.IsNullOrEmpty(language) => "",
+                    String language when _localizerOptions.SupportedLanguages.Contains(language) => language,
+                    _ => "" // default language
+                },
+                SupportedLanguages = _localizerOptions.SupportedLanguageDictionary()
                 //,HtmlMetaTags = await _api.GetMapHtmlMetaTags(this.HttpContext, id, category, map) => wird zur zZ nicht verwendet. Ist einmal vorbereitet, die Frage ist, ob das wer braucht
             });
         }

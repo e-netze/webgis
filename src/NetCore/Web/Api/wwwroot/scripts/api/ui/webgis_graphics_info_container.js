@@ -478,6 +478,6 @@
     };
     const elementHasNoLabel = function (element) { return elementIsCurrent(element) === false && elementHasLabel(element) === false; };
     const translateType = function (type) {
-        return webgis.i18n.get("redlining-tool-" + type);
+        return webgis.l10n.get("redlining-tool-" + type);
     };
 })(webgis.$ || jQuery);

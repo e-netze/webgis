@@ -1,4 +1,4 @@
-webgis.sketch = function (map) {
+﻿webgis.sketch = function (map) {
     "use strict"
 
     var $ = webgis.$;
@@ -934,16 +934,16 @@ webgis.sketch = function (map) {
 
                     var me = this;
                     webgis.confirm({
-                        title: webgis.i18n.get('sketch-overlapping-segments'),
-                        message: webgis.i18n.get('sketch-overlapping-segments-message'),
+                        title: webgis.l10n.get('sketch-overlapping-segments'),
+                        message: webgis.l10n.get('sketch-overlapping-segments-message'),
                         iconUrl: webgis.baseUrl + '/content/api/img/' + (_isPolygon() ? 'polygon' : 'polyline') + '-overlapping-segments.png',
-                        okText: webgis.i18n.get('sketch-overlapping-segements-remove-prev'),
+                        okText: webgis.l10n.get('sketch-overlapping-segements-remove-prev'),
                         onOk: function () {
                             addAddVertexUndo(me, _geometryType);
                             me.removeVertex(_vertices.length - 1, true);
                             me.addVertices([vertex], true);
                         },
-                        cancelText: webgis.i18n.get('cancel')
+                        cancelText: webgis.l10n.get('cancel')
                     });
 
                     return;

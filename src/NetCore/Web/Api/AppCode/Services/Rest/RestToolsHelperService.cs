@@ -104,7 +104,7 @@ public class RestToolsHelperService
 
         tool.ClientName = apiTool.GetType().GetCustomAttribute<ToolClientAttribute>()?.ClientName?.ToLower();
         tool.id = apiTool.GetType().ToToolId();
-        tool.container = apiTool.Container;
+        tool.container = apiTool.LocalizedContainer(_localizer);
         tool.name = apiTool.LocalizedName(_localizer);
         tool.image = apiTool.Image;
         tool.tooltip = apiTool.LocalizedToolTip(_localizer);

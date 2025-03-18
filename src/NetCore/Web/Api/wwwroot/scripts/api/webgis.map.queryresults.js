@@ -1283,7 +1283,7 @@
             $("<button>")
                 .data('features', features)
                 .addClass('webgis-button')
-                .text(webgis.i18n.get('got-it'))
+                .text(webgis.l10n.get('got-it'))
                 .appendTo($warningsPanel)
                 .click(function (e) {
                     e.stopPropagation(e);

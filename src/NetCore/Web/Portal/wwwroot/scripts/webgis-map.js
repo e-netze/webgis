@@ -1190,7 +1190,7 @@ webgis.mapInitializer = (function (m) {
             }
 
             $("<li></li>")
-                .text(webgis.i18n.get('viewer-settings'))
+                .text(webgis.l10n.get('viewer-settings'))
                 .css("backgroundImage", "url(" + webgis.css.imgResource("admin-26.png", "ui") + ")")
                 .appendTo($ul)
                 .click(function (e) {

@@ -39,7 +39,7 @@ public class MapBuilderController : PortalBaseController
                                 UrlHelperService urlHelper,
                                 HmacService hmac,
                                 CustomContentService customContent,
-                                IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                                IOptions<ApplicationSecurityConfig> appSecurityConfig,
                                 ICryptoService crypto,
                                 IEnumerable<ICustomPortalSecurityService> customSecurity = null)
         : base(logger, urlHelper, appSecurityConfig, customSecurity, crypto)

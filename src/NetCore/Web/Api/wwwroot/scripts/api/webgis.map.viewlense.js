@@ -243,10 +243,10 @@
         var rotation = Math.round(_currentMapViewLenseRotation * 10) / 10;
 
         $(_map.elem).find('.webgis-mapviewlense-info-tool')
-            .text('Tool: ' + webgis.i18n.get(_currentMapViewLenseTool) + ' (Rotation: ' + (rotation < 0 ? rotation + 360 : rotation) + '°)');
+            .text('Tool: ' + webgis.l10n.get(_currentMapViewLenseTool) + ' (Rotation: ' + (rotation < 0 ? rotation + 360 : rotation) + '°)');
 
         $(_map.elem).find('.webgis-mapviewlense-info-tool-description')
-            .text(webgis.i18n.get(_currentMapViewLenseTool + '-tool-description'));
+            .text(webgis.l10n.get(_currentMapViewLenseTool + '-tool-description'));
     };
 
     this.updateOptions = function () {

@@ -1,5 +1,5 @@
 ﻿// könnte in Zunkuft aus einer eigenen Datei oder Request geladen werden.
-webgis.i18n.literals['de'] = {
+webgis.l10n.literals['de'] = {
     "redlining-tool-pointer": "Objekt auswählen",
     "redlining-tool-symbol": "Symbol",
     "redlining-tool-line": "Linie",

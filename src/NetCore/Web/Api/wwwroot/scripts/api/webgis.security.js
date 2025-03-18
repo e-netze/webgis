@@ -68,7 +68,7 @@
             data.__gdi = webgis.gdiScheme;
 
         // user language
-        data._ul = webgis.i18n.language;
+        data._ul = webgis.l10n.language;
 
         return data;
     };

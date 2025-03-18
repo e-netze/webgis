@@ -66,7 +66,7 @@
         }
 
         if (constructionMode && map.calcCrs() && !suppressConstructionForms) {
-            $("<li style='font-weight:bold'><i>Konstruktionsmodus: " + webgis.i18n.get("construction-mode-" + constructionMode) + "&nbsp;&nbsp;</i><div class='webgis-close-button'></div></li>")
+            $("<li style='font-weight:bold'><i>Konstruktionsmodus: " + webgis.l10n.get("construction-mode-" + constructionMode) + "&nbsp;&nbsp;</i><div class='webgis-close-button'></div></li>")
                 .appendTo($menu);
 
             $("<li>Konstruktionsmodus abbrechen</li>")
@@ -869,7 +869,7 @@
                     if (webgis.sketch.construct) {
                         var menuItems = webgis.sketch.construct.contextMenuItems(sketch);
                         for (var m in menuItems) {
-                            $_menuItem($container, menuItems[m].title || webgis.i18n.get("construction-mode-" + menuItems[m].mode), menuItems[m].icon)
+                            $_menuItem($container, menuItems[m].title || webgis.l10n.get("construction-mode-" + menuItems[m].mode), menuItems[m].icon)
                                 .data('mode', menuItems[m].mode)
                                 .click(function () {
                                     var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();

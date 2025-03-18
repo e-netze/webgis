@@ -34,7 +34,7 @@ public class HMACController : PortalBaseController
                           IEnumerable<IPortalAuthenticationService> authenticationServices,
                           ConfigurationService configService,
                           ICryptoService crypto,
-                          IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                          IOptions<ApplicationSecurityConfig> appSecurityConfig,
                           IEnumerable<ICustomPortalSecurityService> customSecurity = null)
         : base(logger, urlHelper, appSecurityConfig, customSecurity, crypto)
     {
@@ -44,7 +44,7 @@ public class HMACController : PortalBaseController
         _authenticationServices = authenticationServices;
         _configService = configService;
         _crypto = crypto;
-        _appSecurityConfig = appSecurityConfig.CurrentValue;
+        _appSecurityConfig = appSecurityConfig.Value;
     }
 
     [AuthorizeEndpoint]
