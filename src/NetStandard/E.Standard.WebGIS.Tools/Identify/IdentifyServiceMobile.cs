@@ -147,7 +147,7 @@ internal class IdentifyServiceMobile
 
         if (queries == null || queries.Count() == 0)
         {
-            throw new InfoException("Keine Abfragen gefunden!?");
+            throw new InfoException(bridge.LocalizeString(tool, "Keine Abfragen gefunden!?"));
         }
 
         #region Add Map Sref, BBox & Size (wichtig für WMS Identify) 

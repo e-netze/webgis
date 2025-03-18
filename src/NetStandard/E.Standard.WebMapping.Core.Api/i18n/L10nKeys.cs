@@ -1,6 +1,6 @@
 ﻿namespace E.Standard.WebMapping.Core.Api.I18n;
 
-public class I18nKeys
+public class L10nKeys
 {
     public const string Ok = "ok";
     public const string Cancel = "cancel";

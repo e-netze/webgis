@@ -14,7 +14,7 @@ static public class EnumExtensions
 
         foreach (var i in Enum.GetValues(typeof(T)))
         {
-            options.Add(new UISelect.Option() { value = ((int)i).ToString(), label = bridge.Globalize(i.ToString()) });
+            options.Add(new UISelect.Option() { value = ((int)i).ToString(), label = bridge.LocalizeString(null, i.ToString()) });
         }
 
         return options;
@@ -27,7 +27,7 @@ static public class EnumExtensions
 
         foreach (var i in Enum.GetValues(typeof(T)))
         {
-            dict.Add(((int)i).ToString(), bridge.Globalize($"{i}-description"));
+            dict.Add(((int)i).ToString(), bridge.LocalizeString(null, $"{i}-description"));
         }
 
         return dict;
