@@ -68,10 +68,10 @@ public class ClipFeatures : IApiServerToolAsync, IApiChildTool, IApiButtonResour
 
         var uiElements = new List<IUIElement>(new IUIElement[]
         {
-            new UIInfoBox(bridge.Globalize(I18nKeys.ClipDescription)),
+            new UIInfoBox(bridge.LocalizeString(this, L10nKeys.ClipDescription)),
             new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removesketch)
             {
-                text = bridge.Globalize(I18nKeys.RemoveSketch),
+                text = bridge.LocalizeString(this, L10nKeys.RemoveSketch),
                 css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionButtonStyle })
             },
             new UIBreak(1),
@@ -95,12 +95,12 @@ public class ClipFeatures : IApiServerToolAsync, IApiChildTool, IApiButtonResour
                 {
                     new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
                     {
-                        text = bridge.Globalize(I18nKeys.Cancel),
+                        text = bridge.LocalizeString(this, L10nKeys.Cancel),
                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.ButtonIcon })
                     },
                     new UIButton(UIButton.UIButtonType.servertoolcommand, "clip")
                     {
-                        text = bridge.Globalize(I18nKeys.Clip),
+                        text = bridge.LocalizeString(this, L10nKeys.Clip),
                         css = UICss.ToClass(new string[] { UICss.OkButtonStyle, UICss.ButtonIcon })
                     }
                 }
@@ -146,7 +146,7 @@ public class ClipFeatures : IApiServerToolAsync, IApiChildTool, IApiButtonResour
 
     #region IApiButton Member
 
-    public string Name => I18nKeys.ClipObjects;
+    public string Name => L10nKeys.ClipObjects;
 
     public string Container
     {
@@ -203,7 +203,7 @@ public class ClipFeatures : IApiServerToolAsync, IApiChildTool, IApiButtonResour
     {
         if (!(e.Sketch is Polygon))
         {
-            throw new Exception(bridge.Globalize(I18nKeys.DrawClipPolygonFirst));
+            throw new Exception(bridge.LocalizeString(this, L10nKeys.DrawClipPolygonFirst));
         }
 
         var affectedFeaturesMethod = (AffectedFeaturesMethod)e.GetInt(EditClipAffectedFeaturesMethodId);
@@ -305,7 +305,7 @@ public class ClipFeatures : IApiServerToolAsync, IApiChildTool, IApiButtonResour
         {
             menuItems.Add(new UIMenuItem(this, e)
             {
-                text = bridge.Globalize(I18nKeys.ClipIntersectedAndDifference),
+                text = bridge.LocalizeString(this, L10nKeys.ClipIntersectedAndDifference),
                 value = ClipMethod.Both.ToString(),
                 icon_large = UIImageButton.ToolResourceImage(this, "construct_clip_polygon_both_128"),
                 highlight_feature = bridge.ToGeoJson(new WebMapping.Core.Collections.FeatureCollection(new WebMapping.Core.Feature()
@@ -319,7 +319,7 @@ public class ClipFeatures : IApiServerToolAsync, IApiChildTool, IApiButtonResour
         {
             menuItems.Add(new UIMenuItem(this, e)
             {
-                text = bridge.Globalize(I18nKeys.ClipIntersected),
+                text = bridge.LocalizeString(this, L10nKeys.ClipIntersected),
                 value = ClipMethod.Intersect.ToString(),
                 icon_large = UIImageButton.ToolResourceImage(this, "construct_clip_polygon_intersect_128"),
                 highlight_feature = bridge.ToGeoJson(new WebMapping.Core.Collections.FeatureCollection(new WebMapping.Core.Feature()
@@ -333,7 +333,7 @@ public class ClipFeatures : IApiServerToolAsync, IApiChildTool, IApiButtonResour
         {
             menuItems.Add(new UIMenuItem(this, e)
             {
-                text = bridge.Globalize(I18nKeys.ClipDifference),
+                text = bridge.LocalizeString(this, L10nKeys.ClipDifference),
                 value = ClipMethod.Difference.ToString(),
                 icon_large = UIImageButton.ToolResourceImage(this, "construct_clip_polygon_difference_128"),
                 highlight_feature = bridge.ToGeoJson(new WebMapping.Core.Collections.FeatureCollection(new WebMapping.Core.Feature()
@@ -347,7 +347,7 @@ public class ClipFeatures : IApiServerToolAsync, IApiChildTool, IApiButtonResour
         {
             menuItems.Add(new UIMenuItem(this, e)
             {
-                text = bridge.Globalize(I18nKeys.ClipXor),
+                text = bridge.LocalizeString(this, L10nKeys.ClipXor),
                 value = ClipMethod.Xor.ToString(),
                 icon_large = UIImageButton.ToolResourceImage(this, "construct_clip_polygon_xor_128"),
                 highlight_feature = bridge.ToGeoJson(new WebMapping.Core.Collections.FeatureCollection(new WebMapping.Core.Feature()
@@ -375,14 +375,14 @@ public class ClipFeatures : IApiServerToolAsync, IApiChildTool, IApiButtonResour
                         new UIMenu()
                         {
                             elements = menuItems.ToArray(),
-                            header = bridge.Globalize(I18nKeys.ChooseResult)
+                            header = bridge.LocalizeString(this, L10nKeys.ChooseResult)
                         },
                         new UIButtonGroup()
                         {
                             elements = new IUIElement[] {
                                 new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
                                 {
-                                    text = bridge.Globalize(I18nKeys.Cancel),
+                                    text = bridge.LocalizeString(this, L10nKeys.Cancel),
                                     css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionButtonStyle })
                                 }
                             }
@@ -541,7 +541,7 @@ public class ClipFeatures : IApiServerToolAsync, IApiChildTool, IApiButtonResour
 
         if (newFeatures.Count() == 0)
         {
-            throw new Exception(bridge.Globalize(I18nKeys.ChooseResult));
+            throw new Exception(bridge.LocalizeString(this, L10nKeys.ChooseResult));
         }
 
         if (e.GetEnumValue<MultipartBehavior>(EditClipAutoExplodeMultipartFeaturesId) == MultipartBehavior.DisolveMultipartFeatures)  // explode features
@@ -551,7 +551,7 @@ public class ClipFeatures : IApiServerToolAsync, IApiChildTool, IApiButtonResour
 
         if (!await editEnvironment.InserFeatures(editTheme, newFeatures))
         {
-            throw new Exception(bridge.Globalize(I18nKeys.ErrorOnInsert));
+            throw new Exception(bridge.LocalizeString(this, L10nKeys.ErrorOnInsert));
         }
 
         return new ApiEventResponse()

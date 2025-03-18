@@ -779,7 +779,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             .AddUIElements(
                 new UIDiv()
                     .WithTarget(UIElementTarget.tool_modaldialog_noblocking_closable.ToString())
-                        .WithTargetTitle($"Symbolik änderen: {bridge.Globalize(e["redlinig-symbol-type"])}")
+                        .WithTargetTitle($"Symbolik änderen: {bridge.LocalizeString(this, e["redlinig-symbol-type"])}")
                         .WithTargetOnClose(ApiClientButtonCommand.refreshgraphicsui.ToString())
                         .AddChildren(e["redlinig-symbol-type"] switch
                         {

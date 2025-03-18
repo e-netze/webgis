@@ -1578,7 +1578,7 @@ public class Bridge : IBridge
         return String.Empty;
     }
 
-    public string Globalize(string key) => _localizer[key]; // use default langauge
+    public string LocalizeString(IApiButton tool, string key) => _localizer[key]; // use default langauge
 
     #region Tools
 

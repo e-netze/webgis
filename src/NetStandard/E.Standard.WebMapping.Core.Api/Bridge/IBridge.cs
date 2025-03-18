@@ -176,7 +176,7 @@ public interface IBridge : IAppCryptography
 
     string CreateCustomSelection(Shape shape, SpatialReference shapesSRef);
 
-    string Globalize(string key);
+    string LocalizeString(IApiButton tool, string key);
 }
 
 public interface IBridgeUser

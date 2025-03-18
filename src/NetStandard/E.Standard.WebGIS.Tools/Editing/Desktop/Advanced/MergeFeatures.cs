@@ -91,7 +91,7 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
 
     #region IApiButton Member
 
-    public string Name => I18nKeys.MergeObjects;
+    public string Name => L10nKeys.MergeObjects;
 
     public string Container
     {
@@ -203,7 +203,7 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
 
         if (createFeatures.Count == 0)
         {
-            throw new Exception(bridge.Globalize(I18nKeys.MergeHasNoResult));
+            throw new Exception(bridge.LocalizeString(this, L10nKeys.MergeHasNoResult));
         }
 
         if (createFeatures.Count == 1 && createPreview == false)
@@ -219,11 +219,11 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
 
             if (createFeature.Shape is Polyline)
             {
-                subText = $"{bridge.Globalize(I18nKeys.Length)}: {Math.Round(((Polyline)createFeature.Shape).Length, 2)}";
+                subText = $"{bridge.LocalizeString(this, L10nKeys.Length)}: {Math.Round(((Polyline)createFeature.Shape).Length, 2)}";
             }
             else if (createFeature.Shape is Polygon)
             {
-                subText = $"{bridge.Globalize(I18nKeys.Area)}: {Math.Round(((Polygon)createFeature.Shape).Area, 2)}";
+                subText = $"{bridge.LocalizeString(this, L10nKeys.Area)}: {Math.Round(((Polygon)createFeature.Shape).Area, 2)}";
             }
 
             string value = createFeature.Shape.WKTFromShape();
@@ -239,7 +239,7 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
 
             menuItems.Add(new UIMenuItem(this, e)
             {
-                text = $"{bridge.Globalize(I18nKeys.MergedObject)}: {createFeature.Shape.GetType().ToString().Split('.').Last()}{(createFeature.Shape.IsMultipart ? $" [{createFeature.Shape.Multiparts.Count()} {bridge.Globalize(I18nKeys.Parts)}]" : "")}",
+                text = $"{bridge.LocalizeString(this, L10nKeys.MergedObject)}: {createFeature.Shape.GetType().ToString().Split('.').Last()}{(createFeature.Shape.IsMultipart ? $" [{createFeature.Shape.Multiparts.Count()} {bridge.LocalizeString(this, L10nKeys.Parts)}]" : "")}",
                 subtext = subText,
                 value = value,
                 highlight_feature = bridge.ToGeoJson(new WebMapping.Core.Collections.FeatureCollection(createFeature))
@@ -264,14 +264,14 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
                         new UIMenu()
                         {
                             elements = menuItems.ToArray(),
-                            header = bridge.Globalize(I18nKeys.ChooseResult)
+                            header = bridge.LocalizeString(this, L10nKeys.ChooseResult)
                         },
                         new UIButtonGroup()
                         {
                             elements = new IUIElement[] {
                                 new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
                                 {
-                                    text = bridge.Globalize(I18nKeys.Cancel),
+                                    text = bridge.LocalizeString(this, L10nKeys.Cancel),
                                     css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionButtonStyle })
                                 }
                             }
@@ -324,7 +324,7 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
             {
                 new UITitle()
                 {
-                    label = bridge.Globalize(I18nKeys.PolylineMergeMethod)
+                    label = bridge.LocalizeString(this, L10nKeys.PolylineMergeMethod)
                 },
                 new UISelect()
                 {
@@ -341,9 +341,9 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
             {
                 new UITitle()
                 {
-                    label = bridge.Globalize(I18nKeys.MergeOriginFeature)
+                    label = bridge.LocalizeString(this, L10nKeys.MergeOriginFeature)
                 },
-                new UIInfoBox(bridge.Globalize(I18nKeys.MergeOriginFeatureDesription)),
+                new UIInfoBox(bridge.LocalizeString(this, L10nKeys.MergeOriginFeatureDesription)),
                 new UISelect(UIButton.UIButtonType.servertoolcommand,"changefeature")
                 {
                     id = CurrentFeatureAttributeId,
