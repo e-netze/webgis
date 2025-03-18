@@ -31,7 +31,7 @@
 
     var initUI = function ($parent, options) {
         $parent.webgis_modal({
-            title: webgis.i18n.get('viewer-settings'),
+            title: webgis.l10n.get('viewer-settings'),
             width: '800px',
             height: '600px',
             onload: function ($modalContent) {
@@ -99,12 +99,12 @@
             .appendTo($parent);
 
         $("<p>")
-            .text(webgis.i18n.get('viewer-restart-message'))
+            .text(webgis.l10n.get('viewer-restart-message'))
             .appendTo($div);
 
         $("<button>")
             .addClass('webgis-button')
-            .text(webgis.i18n.get('viewer-restart'))
+            .text(webgis.l10n.get('viewer-restart'))
             .appendTo($div)
             .click(function (e) {
                 e.stopPropagation();
@@ -117,14 +117,14 @@
     };
 
     var addAppearencePage = function ($parent) {
-        let page = addPropertyPage($parent, { id: 'appearence', title: webgis.i18n.get('viewer-appearence') });
+        let page = addPropertyPage($parent, { id: 'appearence', title: webgis.l10n.get('viewer-appearence') });
 
         page.$tab.css("backgroundImage", "url(" + webgis.css.imgResource("colorschema-26.png", "tools") + ")");
 
         if (webgis.usability.allowDarkmode === true) {
             $("<div>")
                 .addClass("webgis-property-content-title2")
-                .text(webgis.i18n.get('viewer-color-scheme'))
+                .text(webgis.l10n.get('viewer-color-scheme'))
                 .appendTo(page.$content);
 
             let $select = $("<select>")
@@ -155,7 +155,7 @@
 
             $("<div>")
                 .addClass('webgis-property-content-title2')
-                .text(webgis.i18n.get('viewer-layout-template'))
+                .text(webgis.l10n.get('viewer-layout-template'))
                 .appendTo(page.$content);
 
             let $select = $("<select>")
@@ -188,7 +188,7 @@
 
             $("<div>")
                 .addClass("webgis-property-content-title2")
-                .text(webgis.i18n.get('viewer-css-style-class'))
+                .text(webgis.l10n.get('viewer-css-style-class'))
                 .appendTo(page.$content);
 
             let $select = $("<select>")

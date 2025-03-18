@@ -1344,9 +1344,9 @@
                         .appendTo($content);
                     $("<label>")
                         .attr("for", "check-use-as-pref-scale")
-                        .text(webgis.i18n.get('as-preference-scale'))
+                        .text(webgis.l10n.get('as-preference-scale'))
                         .appendTo($content);
-                    $("<div>").addClass('webgis-info').text(webgis.i18n.get('preference-scale-info')).appendTo($content);
+                    $("<div>").addClass('webgis-info').text(webgis.l10n.get('preference-scale-info')).appendTo($content);
 
                     $bottonConatainer = $("<div>").addClass('webgis-uibutton-container').appendTo($content);
 

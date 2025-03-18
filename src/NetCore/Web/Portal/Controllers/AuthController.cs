@@ -43,7 +43,7 @@ public class AuthController : PortalBaseController
                           ConfigurationService config,
                           WebgisApiService api,
                           ICryptoService crypto,
-                          IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                          IOptions<ApplicationSecurityConfig> appSecurityConfig,
                           ILogger<AuthController> logger,
                           JwtAccessTokenService jwtAccessTokenService,
                           IEnumerable<ICustomPortalSecurityService> customSecurity = null)
@@ -55,7 +55,7 @@ public class AuthController : PortalBaseController
         _config = config;
         _api = api;
         _crypto = crypto;
-        _appSecurityConfig = appSecurityConfig.CurrentValue;
+        _appSecurityConfig = appSecurityConfig.Value;
         _customSecurity = customSecurity;
         _logger = logger;
         _jwtAccessTokenService = jwtAccessTokenService;

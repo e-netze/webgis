@@ -27,7 +27,7 @@ public class CustomContentController : PortalBaseController
                                    UrlHelperService urlHelper,
                                    ICryptoService crypto,
                                    WebgisApiService api,
-                                   IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                                   IOptions<ApplicationSecurityConfig> appSecurityConfig,
                                    IEnumerable<ICustomPortalSecurityService> customSecurity = null)
         : base(logger, urlHelper, appSecurityConfig, customSecurity, crypto)
     {

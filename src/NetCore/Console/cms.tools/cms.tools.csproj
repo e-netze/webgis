@@ -10,7 +10,6 @@
   <ItemGroup>
     <None Remove="schemes\secrets-template.xml" />
     <None Remove="schemes\webgis\schema.xml" />
-    <None Remove="_config\cms.config" />
     <None Remove="_config\env-p1900211.config" />
   </ItemGroup>
 
@@ -20,11 +19,6 @@
     </Content>
     <Content Include="schemes\webgis\schema.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="_config\cms.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
 
@@ -37,6 +31,14 @@
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Cms.Configuration\E.Standard.Cms.Configuration.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Cms\E.Standard.Cms.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebGIS.CmsSchema\E.Standard.WebGIS.CmsSchema.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="_config\cms.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

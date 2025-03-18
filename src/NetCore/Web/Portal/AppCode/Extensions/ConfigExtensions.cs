@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Portal.Core.AppCode.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -92,6 +93,34 @@ static public class ConfigExtensions
     static public string AppCacheListPassword(this ConfigurationService config)
     {
         return config[PortalConfigKeys.AppCacheListPassword];
+    }
+
+    static public string[] SupportedLanguages(this IConfiguration config)
+    {
+        var supportedLanguagesString = config[PortalConfigKeys.SupportedLanguages];
+        string[] supportedLanguages = null;
+
+        if (String.IsNullOrEmpty(supportedLanguagesString))
+        {
+            var l10n = new DirectoryInfo("l10n");
+            supportedLanguages = l10n.GetDirectories()
+                                            .Select(d => d.Name)
+                                            .ToArray();
+        }
+        else
+        {
+            supportedLanguages = supportedLanguagesString
+                .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim())
+                .ToArray();
+        }
+
+        if (supportedLanguages?.Any() == false)
+        {
+            supportedLanguages = ["de"];
+        }
+
+        return supportedLanguages;
     }
 
     #region Security Methods/Default

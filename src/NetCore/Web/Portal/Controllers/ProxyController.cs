@@ -34,7 +34,7 @@ public class ProxyController : PortalBaseController
                            ProxyService proxy,
                            UrlHelperService urlHelper,
                            ICryptoService crypto,
-                           IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                           IOptions<ApplicationSecurityConfig> appSecurityConfig,
                            IEnumerable<ICustomPortalSecurityService> customSecurity = null)
         : base(logger, urlHelper, appSecurityConfig, customSecurity, crypto)
     {

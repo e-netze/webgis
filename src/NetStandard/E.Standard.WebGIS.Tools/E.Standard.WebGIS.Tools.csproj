@@ -36,6 +36,7 @@
     <ProjectReference Include="..\E.Standard.Esri.Shapefile\E.Standard.Esri.Shapefile.csproj" />
     <ProjectReference Include="..\E.Standard.GeoJson\E.Standard.GeoJson.csproj" />
     <ProjectReference Include="..\E.Standard.Gpx\E.Standard.Gpx.csproj" />
+    <ProjectReference Include="..\E.Standard.Localization\E.Standard.Localization.csproj" />
     <ProjectReference Include="..\E.Standard.Plot\E.Standard.Plot.csproj" />
     <ProjectReference Include="..\E.Standard.ThreadsafeClasses\E.Standard.ThreadsafeClasses.csproj" />
     <ProjectReference Include="..\E.Standard.WebGIS.CMS\E.Standard.WebGIS.CMS.csproj" />

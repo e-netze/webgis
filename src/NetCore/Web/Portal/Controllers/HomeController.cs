@@ -1,4 +1,4 @@
-using E.Standard.Configuration.Services;
+﻿using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Exceptions;
 using E.Standard.Json;
@@ -53,7 +53,7 @@ public class HomeController : PortalBaseController
                           ProxyService proxy,
                           ICryptoService crypto,
                           SubscriberDatabaseService subscriberDb,
-                          IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                          IOptions<ApplicationSecurityConfig> appSecurityConfig,
                           IEnumerable<ICustomPortalSecurityService> customSecurity = null)
         : base(logger, urlHelper, appSecurityConfig, customSecurity, crypto)
     {
@@ -65,7 +65,7 @@ public class HomeController : PortalBaseController
         _urlHelper = urlHelper;
         _proxy = proxy;
         _subscriberDb = subscriberDb;
-        _appSecurityConfig = appSecurityConfig.CurrentValue;
+        _appSecurityConfig = appSecurityConfig.Value;
         _customSecurity = customSecurity;
     }
 

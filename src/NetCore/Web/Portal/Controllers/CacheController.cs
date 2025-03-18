@@ -38,7 +38,7 @@ public class CacheController : PortalBaseController
                            WebgisApiService api,
                            ICryptoService crypto,
                            IMessageQueueService messageQueue,
-                           IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                           IOptions<ApplicationSecurityConfig> appSecurityConfig,
                            IEnumerable<ICustomPortalSecurityService> customSecurity = null)
         : base(logger, urlHelper, appSecurityConfig, customSecurity, crypto)
     {

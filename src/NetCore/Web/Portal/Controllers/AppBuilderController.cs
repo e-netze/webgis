@@ -37,7 +37,7 @@ public class AppBuilderController : PortalBaseController
                                 UrlHelperService urlHelper,
                                 HmacService hmac,
                                 ICryptoService crypto,
-                                IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                                IOptions<ApplicationSecurityConfig> appSecurityConfig,
                                 IEnumerable<ICustomPortalSecurityService> customSecurity = null)
         : base(logger, urlHelper, appSecurityConfig, customSecurity, crypto)
     {

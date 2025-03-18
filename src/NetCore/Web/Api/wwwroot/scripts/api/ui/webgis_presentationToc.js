@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
     "use strict";
     $.fn.webgis_presentationToc = function (method) {
         if (methods[method]) {
@@ -683,9 +683,9 @@
                             .click(function () {
                                 var $this = $(this);
                                 webgis.confirm({
-                                    message: webgis.i18n.get('confirm-remove-service'),
-                                    cancelText: webgis.i18n.get('confirm-remove-service-cancel'),
-                                    okText: webgis.i18n.get('confirm-remove-service-ok'),
+                                    message: webgis.l10n.get('confirm-remove-service'),
+                                    cancelText: webgis.l10n.get('confirm-remove-service-cancel'),
+                                    okText: webgis.l10n.get('confirm-remove-service-ok'),
                                     onOk: function () {
                                         map.removeServices([$this.data('serviceId')]);
                                         $this.closest('.webgis-service-toc-container').remove();
@@ -1187,7 +1187,7 @@
                                     serviceCollection.services,
                                     $(this).closest('.webgis-presentation_toc-title').find('.webgis-presentation_toc-title-text').html());
                             } else {
-                                webgis.alert(webgis.i18n.get('msg-no-legend-available'));
+                                webgis.alert(webgis.l10n.get('msg-no-legend-available'));
                             }
                         })
                         .contextmenu(function () {
@@ -1200,7 +1200,7 @@
                                     $(this).closest('.webgis-presentation_toc-title').find('.webgis-presentation_toc-title-text').html(),
                                     "1", true);
                             } else {
-                                webgis.alert(webgis.i18n.get('msg-no-services-available'));
+                                webgis.alert(webgis.l10n.get('msg-no-services-available'));
                             }
 
                             return false;
@@ -2102,7 +2102,7 @@
 
         $("<div>")
             .addClass('webgis-info')
-            .text(webgis.i18n.get('service-order'))
+            .text(webgis.l10n.get('service-order'))
             .appendTo($parent);
 
         var $list = $("<ul>")

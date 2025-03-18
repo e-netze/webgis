@@ -45,4 +45,5 @@ public class MapModel
     public IEnumerable<string> AddCustomJavascript { get; set; }
 
     public string Language { get; set; }
+    public IDictionary<string, string> SupportedLanguages { get; set; }
 }

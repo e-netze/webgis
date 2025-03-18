@@ -1,4 +1,4 @@
-
+﻿
 using Api;
 using Api.Core.AppCode.Extensions.DependencyInjection;
 using Api.Core.AppCode.Services;
@@ -7,6 +7,7 @@ using E.Standard.Api.App.Services.Cache;
 using E.Standard.Caching.Services;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebGIS.Core.Services;
@@ -44,6 +45,7 @@ startup.Configure(app,
                   app.Services.GetRequiredService<IOptionsMonitor<ApplicationSecurityConfig>>(),
                   app.Services.GetRequiredService<IEnumerable<IExpectableUserRoleNamesProvider>>(),
                   app.Services.GetRequiredService<ILogger<Startup>>(),
+                  app.Services.GetRequiredService<IMarkdownLocationInitializer>(),
                   app.Services.GetService<IEnumerable<ICustomApiAuthenticationMiddlewareService>>(),
                   app.Services.GetService<IEnumerable<ICustomRouteService>>());
 

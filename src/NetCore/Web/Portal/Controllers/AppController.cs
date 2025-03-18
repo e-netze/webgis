@@ -49,7 +49,7 @@ public class AppController : PortalBaseController
                          WebgisApiService api,
                          HmacService hmac,
                          SpatialReferenceService spatialReference,
-                         IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                         IOptions<ApplicationSecurityConfig> appSecurityConfig,
                          ICryptoService crypto,
                          GlobalReplacementsService globalReplacements,
                          IEnumerable<ICustomPortalService> customServices = null,

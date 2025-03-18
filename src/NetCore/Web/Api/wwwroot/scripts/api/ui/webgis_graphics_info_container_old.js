@@ -272,7 +272,7 @@
     var elementAny = function (element) { return true; };
 
     var translateType = function (type) {
-        return webgis.i18n.get("redlining-tool-" + type);
+        return webgis.l10n.get("redlining-tool-" + type);
     };
 
     var metaTextLabel = function (type) {

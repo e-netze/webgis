@@ -31,7 +31,7 @@ public class FavoritesController : PortalBaseController
                                SubscriberDatabaseService subscriberDb,
                                KeyValueCacheService keyValueCache,
                                ICryptoService crypto,
-                               IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                               IOptions<ApplicationSecurityConfig> appSecurityConfig,
                                IEnumerable<ICustomPortalSecurityService> customSecurity = null)
         : base(logger, urlHelper, appSecurityConfig, customSecurity, crypto)
     {

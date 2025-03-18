@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using ReverseMarkdown;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 
@@ -114,11 +115,34 @@ static public class ConfigurationServiceExtensions
 
     #endregion
 
-    #region Globalisation
+    #region Localization
 
-    static public string DefaultUserLanguage(this IConfiguration config)
+    static public string[] SupportedLanguages(this IConfiguration config)
     {
-        return config[ApiConfigKeys.DefaultUserLanguage].OrTake("en");
+        var supportedLanguagesString = config[ApiConfigKeys.SupportedLanguages];
+        string[] supportedLanguages = null;
+
+        if (String.IsNullOrEmpty(supportedLanguagesString))
+        {
+            var l10n = new DirectoryInfo("l10n");
+            supportedLanguages = l10n.GetDirectories()
+                                            .Select(d => d.Name)
+                                            .ToArray();
+        }
+        else
+        {
+            supportedLanguages = supportedLanguagesString
+                .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim())
+                .ToArray();
+        }
+
+        if (supportedLanguages?.Any() == false)
+        {
+            supportedLanguages = ["de"];
+        }
+
+        return supportedLanguages;
     }
 
     #endregion

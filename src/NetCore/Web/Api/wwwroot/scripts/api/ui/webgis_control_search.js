@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
     "use strict";
     $.fn.webgis_control_search = function (method) {
         if (methods[method]) {
@@ -182,7 +182,7 @@
                     webgis.confirm({
                         title: 'Nach Inhalten/Dienste suchen...',
                         iconUrl: webgis.baseUrl + '/content/api/img/content-search.png',
-                        message: webgis.i18n.get('content-search-info'),
+                        message: webgis.l10n.get('content-search-info'),
                         suppressCancel: searchTag === '',
                         cancelText: 'Nein, danke',
                         okText: searchTag && map ? 'In (Karten)diensten suchen' : 'Ok',
