@@ -1,0 +1,813 @@
+<config>
+  <etc schemanode="1">
+    <copyright schemanode="1">
+      <bev_adressen schemanode="1">
+        <name type="System.String">BEV Adressen</name>
+        <url type="System.String">bev_adressen</url>
+        <copyright type="System.String">Bundesamt für Eich- und Vermessungswesen</copyright>
+        <copyrightlink type="System.String">https://www.bev.gv.at</copyrightlink>
+        <copyrightlinktext type="System.String">
+        </copyrightlinktext>
+        <advice type="System.String">© Österreichisches Adressregister, Stichtagsdaten vom TT.MM.JJJJ</advice>
+        <logo type="System.String">
+        </logo>
+        <logowidth type="System.Int32">0</logowidth>
+        <logoheight type="System.Int32">0</logoheight>
+      </bev_adressen>
+    </copyright>
+  </etc>
+  <extents schemanode="1">
+    <web_mercator_at schemanode="1">
+      <name type="System.String">web_mercator_at</name>
+      <url type="System.String">web_mercator_at</url>
+      <minx type="System.Double">974074</minx>
+      <miny type="System.Double">5766438</miny>
+      <maxx type="System.Double">1926522</maxx>
+      <maxy type="System.Double">6305211</maxy>
+      <projid type="System.Int32">3857</projid>
+      <res0 type="System.Double">156543.033928041</res0>
+      <res1 type="System.Double">78271.5169640205</res1>
+      <res2 type="System.Double">39135.7584820102</res2>
+      <res3 type="System.Double">19567.8792410051</res3>
+      <res4 type="System.Double">9783.93962050256</res4>
+      <res5 type="System.Double">4891.96981025128</res5>
+      <res6 type="System.Double">2445.98490512564</res6>
+      <res7 type="System.Double">1222.99245256282</res7>
+      <res8 type="System.Double">611.49622628141</res8>
+      <res9 type="System.Double">305.748113140705</res9>
+      <res10 type="System.Double">152.874056570353</res10>
+      <res11 type="System.Double">76.4370282851762</res11>
+      <res12 type="System.Double">38.2185141425881</res12>
+      <res13 type="System.Double">19.1092570712941</res13>
+      <res14 type="System.Double">9.55462853564703</res14>
+      <res15 type="System.Double">4.77731426782352</res15>
+      <res16 type="System.Double">2.38865713391176</res16>
+      <res17 type="System.Double">1.19432856695588</res17>
+      <res18 type="System.Double">0.597164283477939</res18>
+      <res19 type="System.Double">0.29858214173897</res19>
+      <originx type="System.Double">-20037508.3427892</originx>
+      <originy type="System.Double">20037508.3427892</originy>
+    </web_mercator_at>
+    <web_mercator_world schemanode="1">
+      <name type="System.String">web_mercator_world</name>
+      <url type="System.String">web_mercator_world</url>
+      <minx type="System.Double">-20037508.3427892</minx>
+      <miny type="System.Double">-20037508.3427892</miny>
+      <maxx type="System.Double">20037508.3427892</maxx>
+      <maxy type="System.Double">20037508.3427892</maxy>
+      <projid type="System.Int32">3857</projid>
+      <res0 type="System.Double">156543.033928041</res0>
+      <res1 type="System.Double">78271.5169640205</res1>
+      <res2 type="System.Double">39135.7584820102</res2>
+      <res3 type="System.Double">19567.8792410051</res3>
+      <res4 type="System.Double">9783.93962050256</res4>
+      <res5 type="System.Double">4891.96981025128</res5>
+      <res6 type="System.Double">2445.98490512564</res6>
+      <res7 type="System.Double">1222.99245256282</res7>
+      <res8 type="System.Double">611.49622628141</res8>
+      <res9 type="System.Double">305.748113140705</res9>
+      <res10 type="System.Double">152.874056570353</res10>
+      <res11 type="System.Double">76.4370282851762</res11>
+      <res12 type="System.Double">38.2185141425881</res12>
+      <res13 type="System.Double">19.1092570712941</res13>
+      <res14 type="System.Double">9.55462853564703</res14>
+      <res15 type="System.Double">4.77731426782352</res15>
+      <res16 type="System.Double">2.38865713391176</res16>
+      <res17 type="System.Double">1.19432856695588</res17>
+      <res18 type="System.Double">0.597164283477939</res18>
+      <res19 type="System.Double">0.29858214173897</res19>
+      <originx type="System.Double">-20037508.3427892</originx>
+      <originy type="System.Double">20037508.3427892</originy>
+    </web_mercator_world>
+  </extents>
+  <gdi schemanode="1">
+    <print schemanode="1">
+      <layouts schemanode="1">
+        <default_layout schemanode="1">
+          <name type="System.String">Default Layout</name>
+          <url type="System.String">default_layout</url>
+          <layoutfile type="System.String">layout_default.xml</layoutfile>
+          <parameters type="System.String">
+          </parameters>
+        </default_layout>
+        <layout_with_logos schemanode="1">
+          <name type="System.String">Layout with Logos</name>
+          <url type="System.String">layout_with_logos</url>
+          <layoutfile type="System.String">layout_logos.xml</layoutfile>
+          <parameters type="System.String">
+          </parameters>
+        </layout_with_logos>
+        <layout_with_logos__restrictions schemanode="1">
+          <name type="System.String">Layout with Logos &amp; Restrictions</name>
+          <url type="System.String">layout_with_logos__restrictions</url>
+          <layoutfile type="System.String">layout_logos_restricted.xml</layoutfile>
+          <parameters type="System.String">
+          </parameters>
+        </layout_with_logos__restrictions>
+      </layouts>
+      <formats schemanode="1">
+        <a4port type="System.Boolean">True</a4port>
+        <a4land type="System.Boolean">True</a4land>
+        <a3port type="System.Boolean">True</a3port>
+        <a3land type="System.Boolean">True</a3land>
+        <a2port type="System.Boolean">False</a2port>
+        <a2land type="System.Boolean">False</a2land>
+        <a1port type="System.Boolean">False</a1port>
+        <a1land type="System.Boolean">False</a1land>
+        <a0port type="System.Boolean">False</a0port>
+        <a0land type="System.Boolean">False</a0land>
+        <a4a3 type="System.Boolean">False</a4a3>
+        <a4a2 type="System.Boolean">False</a4a2>
+        <a4a1 type="System.Boolean">False</a4a1>
+        <a4a0 type="System.Boolean">False</a4a0>
+        <a3a2 type="System.Boolean">False</a3a2>
+        <a3a1 type="System.Boolean">False</a3a1>
+        <a2a1 type="System.Boolean">False</a2a1>
+      </formats>
+    </print>
+    <tools schemanode="1">
+      <verticalalignmentconfig type="System.String">profiles.xml</verticalalignmentconfig>
+    </tools>
+  </gdi>
+  <services schemanode="1">
+    <miscellaneous schemanode="1">
+      <generaltilecache schemanode="1">
+        <osm schemanode="1">
+          <name type="System.String">OSM</name>
+          <guid type="System.String">31200ca63e784fdaac8ac746899a9b68</guid>
+          <rendering type="System.Int32">1</rendering>
+          <hide_beyond_maxlevel type="System.Boolean">False</hide_beyond_maxlevel>
+          <themes schemanode="1">
+            <ih59bamir3ug1xur37zb9gw schemanode="1">
+              <name type="System.String">_tilecache</name>
+              <id type="System.String">0</id>
+              <visible type="System.Boolean">True</visible>
+            </ih59bamir3ug1xur37zb9gw>
+          </themes>
+          <tocs schemanode="1">
+            <default schemanode="1">
+              <name type="System.String">default</name>
+              <checkmode type="System.Int32">2</checkmode>
+            </default>
+          </tocs>
+          <gdiproperties schemanode="1">
+            <_linkuri type="System.String">
+            </_linkuri>
+            <tocdisplayname type="System.String">
+            </tocdisplayname>
+            <tocname type="System.String">default</tocname>
+            <collapsed type="System.Boolean">False</collapsed>
+            <showintoc type="System.Boolean">True</showintoc>
+            <copyright type="System.String">
+            </copyright>
+            <projmethode type="System.Int32">0</projmethode>
+            <projid type="System.Int32">-1</projid>
+            <opacity type="System.Double">100</opacity>
+            <timeout type="System.Int32">20</timeout>
+            <visible type="System.Boolean">True</visible>
+            <imageformat type="System.Int32">0</imageformat>
+            <showinlegend type="System.Boolean">True</showinlegend>
+            <legendopt type="System.Int32">0</legendopt>
+            <legendoptsymbolscale type="System.Double">1000</legendoptsymbolscale>
+            <legendurl type="System.String">
+            </legendurl>
+            <usefixrefscale type="System.Boolean">False</usefixrefscale>
+            <fixrefscale type="System.Double">0</fixrefscale>
+            <minscale type="System.Double">0</minscale>
+            <maxscale type="System.Double">0</maxscale>
+            <metadata type="System.String">
+            </metadata>
+            <usewithspatialconstraintservice type="System.Boolean">False</usewithspatialconstraintservice>
+            <isbasemap type="System.Boolean">True</isbasemap>
+            <basemaptype type="System.Int32">0</basemaptype>
+            <warninglevel type="System.Int32">0</warninglevel>
+            <exportwms type="System.Boolean" unauthorizeddefault="False">False</exportwms>
+            <serviceextenturl type="System.String">
+            </serviceextenturl>
+          </gdiproperties>
+          <properties schemanode="1">
+            <minx type="System.Double">-20037508.3427892</minx>
+            <miny type="System.Double">-20037508.3427892</miny>
+            <maxx type="System.Double">20037508.3427892</maxx>
+            <maxy type="System.Double">20037508.3427892</maxy>
+            <res0 type="System.Double">156543.033928041</res0>
+            <res1 type="System.Double">78271.5169640206</res1>
+            <res2 type="System.Double">39135.7584820103</res2>
+            <res3 type="System.Double">19567.8792410051</res3>
+            <res4 type="System.Double">9783.93962050256</res4>
+            <res5 type="System.Double">4891.96981025127</res5>
+            <res6 type="System.Double">2445.98490512564</res6>
+            <res7 type="System.Double">1222.99245256282</res7>
+            <res8 type="System.Double">611.496226281409</res8>
+            <res9 type="System.Double">305.748113140706</res9>
+            <res10 type="System.Double">152.874056570352</res10>
+            <res11 type="System.Double">76.4370282851762</res11>
+            <res12 type="System.Double">38.2185141425882</res12>
+            <res13 type="System.Double">19.1092570712941</res13>
+            <res14 type="System.Double">9.55462853564703</res14>
+            <res15 type="System.Double">4.77731426782352</res15>
+            <res16 type="System.Double">2.38865713391176</res16>
+            <res17 type="System.Double">1.19432856695588</res17>
+            <res18 type="System.Double">0.597164283477941</res18>
+            <res19 type="System.Double">0.298582141738971</res19>
+            <origin type="System.Int32">1</origin>
+            <tileurl type="System.String">https://{0}.tile.openstreetmap.de/[LEVEL]/[COL]/[ROW].png</tileurl>
+            <tilepath type="System.String">
+            </tilepath>
+            <tilewidth type="System.Int32">256</tilewidth>
+            <tileheight type="System.Int32">256</tileheight>
+            <domains type="System.String">a|b|c</domains>
+            <projid type="System.Int32">-1</projid>
+          </properties>
+        </osm>
+      </generaltilecache>
+      <searchservices schemanode="1">
+        <webgis_cloud_allgemein schemanode="1">
+          <name type="System.String">WebGIS Cloud Allgemein</name>
+          <url type="System.String">webgis_cloud_allgemein</url>
+          <serviceUrl type="System.String">https://api.webgiscloud.com/rest/search/webgis_cloud_allgemein@webgiscloud?c=query&amp;term={0}</serviceUrl>
+          <target type="System.Int32">9</target>
+          <suggestedtext type="System.String">textsuggest</suggestedtext>
+          <thumbnail type="System.String">thumbnail_url</thumbnail>
+          <geo type="System.String">geo</geo>
+          <subtext type="System.String">subtext</subtext>
+          <link type="System.String">
+          </link>
+          <rows type="System.Int32">5</rows>
+          <projid type="System.Int32">-1</projid>
+          <copyright type="System.String">
+          </copyright>
+        </webgis_cloud_allgemein>
+      </searchservices>
+    </miscellaneous>
+    <ogc schemanode="1">
+      <wmts schemanode="1">
+        <geoland_bm schemanode="1">
+          <name type="System.String">Geoland Basemap</name>
+          <guid type="System.String">0badc493cb4b46ada7cd1b0594a7f903</guid>
+          <server type="System.String">https://mapsneu.wien.gv.at/basemapneu/1.0.0/WMTSCapabilities.xml</server>
+          <tilematrixset type="System.String">google3857</tilematrixset>
+          <imageformat type="System.String">image/png</imageformat>
+          <layer type="System.String">geolandbasemap</layer>
+          <style type="System.String">normal</style>
+          <maxlevel type="System.Int32">19</maxlevel>
+          <hide_beyond_maxlevel type="System.Boolean">False</hide_beyond_maxlevel>
+          <rendering type="System.Int32">0</rendering>
+          <resourceurls type="System.String">https://mapsneu.wien.gv.at/basemap/geolandbasemap/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png</resourceurls>
+          <themes schemanode="1">
+            <ixqcao-eisuuwruiuvlzaqg schemanode="1">
+              <name type="System.String">google3857</name>
+              <id type="System.String">0</id>
+              <visible type="System.Boolean">True</visible>
+            </ixqcao-eisuuwruiuvlzaqg>
+          </themes>
+          <tocs schemanode="1">
+            <default schemanode="1">
+              <name type="System.String">default</name>
+              <checkmode type="System.Int32">2</checkmode>
+              <lwstyrd77jewqgtyixeah6a schemanode="1">
+                <_linkuri type="System.String">services/ogc/wmts/geoland_bm/themes/ixqcao-eisuuwruiuvlzaqg</_linkuri>
+                <aliasname type="System.String">google3857</aliasname>
+                <metadata type="System.String">
+                </metadata>
+                <metadataformat type="System.String">text/html</metadataformat>
+                <visible type="System.Boolean">True</visible>
+                <locked type="System.Boolean">False</locked>
+                <legend type="System.Boolean">True</legend>
+                <legendaliasname type="System.String">
+                </legendaliasname>
+                <refscale type="System.Boolean">True</refscale>
+                <downloadable type="System.Boolean">False</downloadable>
+                <labeling_fields type="System.String">
+                </labeling_fields>
+                <labeling_fieldsalias type="System.String">
+                </labeling_fieldsalias>
+              </lwstyrd77jewqgtyixeah6a>
+            </default>
+          </tocs>
+          <gdiproperties schemanode="1">
+            <_linkuri type="System.String">
+            </_linkuri>
+            <tocdisplayname type="System.String">
+            </tocdisplayname>
+            <tocname type="System.String">default</tocname>
+            <collapsed type="System.Boolean">False</collapsed>
+            <showintoc type="System.Boolean">True</showintoc>
+            <copyright type="System.String">
+            </copyright>
+            <projmethode type="System.Int32">0</projmethode>
+            <projid type="System.Int32">-1</projid>
+            <opacity type="System.Double">100</opacity>
+            <timeout type="System.Int32">20</timeout>
+            <visible type="System.Boolean">True</visible>
+            <imageformat type="System.Int32">0</imageformat>
+            <showinlegend type="System.Boolean">True</showinlegend>
+            <legendopt type="System.Int32">0</legendopt>
+            <legendoptsymbolscale type="System.Double">1000</legendoptsymbolscale>
+            <legendurl type="System.String">
+            </legendurl>
+            <usefixrefscale type="System.Boolean">False</usefixrefscale>
+            <fixrefscale type="System.Double">0</fixrefscale>
+            <minscale type="System.Double">0</minscale>
+            <maxscale type="System.Double">0</maxscale>
+            <metadata type="System.String">
+            </metadata>
+            <usewithspatialconstraintservice type="System.Boolean">False</usewithspatialconstraintservice>
+            <isbasemap type="System.Boolean">True</isbasemap>
+            <basemaptype type="System.Int32">0</basemaptype>
+            <warninglevel type="System.Int32">0</warninglevel>
+            <supportedcrs type="System.String">3857</supportedcrs>
+            <exportwms type="System.Boolean" unauthorizeddefault="False">False</exportwms>
+            <serviceextenturl type="System.String">
+            </serviceextenturl>
+          </gdiproperties>
+        </geoland_bm>
+        <geoland_bm_gel schemanode="1">
+          <name type="System.String">Geoland Basemap Gelände</name>
+          <guid type="System.String">7dd4856e0fdf4d50b430baed051919fd</guid>
+          <server type="System.String">https://mapsneu.wien.gv.at/basemapneu/1.0.0/WMTSCapabilities.xml</server>
+          <tilematrixset type="System.String">google3857_0-17</tilematrixset>
+          <imageformat type="System.String">image/jpeg</imageformat>
+          <layer type="System.String">bmapgelaende</layer>
+          <style type="System.String">grau</style>
+          <maxlevel type="System.Int32">-1</maxlevel>
+          <hide_beyond_maxlevel type="System.Boolean">False</hide_beyond_maxlevel>
+          <rendering type="System.Int32">0</rendering>
+          <resourceurls type="System.String">https://mapsneu.wien.gv.at/basemap/bmapgelaende/{Style}/google3857/{TileMatrix}/{TileRow}/{TileCol}.jpeg</resourceurls>
+          <themes schemanode="1">
+            <ifwmblor1huk2ihaejhjecq schemanode="1">
+              <name type="System.String">google3857</name>
+              <id type="System.String">0</id>
+              <visible type="System.Boolean">True</visible>
+            </ifwmblor1huk2ihaejhjecq>
+          </themes>
+          <tocs schemanode="1">
+            <default schemanode="1">
+              <name type="System.String">default</name>
+              <checkmode type="System.Int32">2</checkmode>
+              <lnheouzmhvuw0dqco-pwpjw schemanode="1">
+                <_linkuri type="System.String">services/ogc/wmts/geoland_bm_gel/themes/ifwmblor1huk2ihaejhjecq</_linkuri>
+                <aliasname type="System.String">google3857</aliasname>
+                <metadata type="System.String">
+                </metadata>
+                <metadataformat type="System.String">text/html</metadataformat>
+                <visible type="System.Boolean">True</visible>
+                <locked type="System.Boolean">False</locked>
+                <legend type="System.Boolean">True</legend>
+                <legendaliasname type="System.String">
+                </legendaliasname>
+                <refscale type="System.Boolean">True</refscale>
+                <downloadable type="System.Boolean">False</downloadable>
+                <labeling_fields type="System.String">
+                </labeling_fields>
+                <labeling_fieldsalias type="System.String">
+                </labeling_fieldsalias>
+              </lnheouzmhvuw0dqco-pwpjw>
+            </default>
+          </tocs>
+          <gdiproperties schemanode="1">
+            <_linkuri type="System.String">
+            </_linkuri>
+            <tocdisplayname type="System.String">
+            </tocdisplayname>
+            <tocname type="System.String">default</tocname>
+            <collapsed type="System.Boolean">False</collapsed>
+            <showintoc type="System.Boolean">True</showintoc>
+            <copyright type="System.String">
+            </copyright>
+            <projmethode type="System.Int32">0</projmethode>
+            <projid type="System.Int32">-1</projid>
+            <opacity type="System.Double">100</opacity>
+            <timeout type="System.Int32">20</timeout>
+            <visible type="System.Boolean">True</visible>
+            <imageformat type="System.Int32">0</imageformat>
+            <showinlegend type="System.Boolean">True</showinlegend>
+            <legendopt type="System.Int32">0</legendopt>
+            <legendoptsymbolscale type="System.Double">1000</legendoptsymbolscale>
+            <legendurl type="System.String">
+            </legendurl>
+            <usefixrefscale type="System.Boolean">False</usefixrefscale>
+            <fixrefscale type="System.Double">0</fixrefscale>
+            <minscale type="System.Double">0</minscale>
+            <maxscale type="System.Double">0</maxscale>
+            <metadata type="System.String">
+            </metadata>
+            <usewithspatialconstraintservice type="System.Boolean">False</usewithspatialconstraintservice>
+            <isbasemap type="System.Boolean">True</isbasemap>
+            <basemaptype type="System.Int32">0</basemaptype>
+            <warninglevel type="System.Int32">0</warninglevel>
+            <supportedcrs type="System.String">3857</supportedcrs>
+            <exportwms type="System.Boolean" unauthorizeddefault="False">False</exportwms>
+            <serviceextenturl type="System.String">
+            </serviceextenturl>
+          </gdiproperties>
+        </geoland_bm_gel>
+        <geoland_bm_grau schemanode="1">
+          <name type="System.String">Geoland Basemap Grau</name>
+          <guid type="System.String">6e8bd1b8da234124b84e5f83da3d0571</guid>
+          <server type="System.String">https://mapsneu.wien.gv.at/basemapneu/1.0.0/WMTSCapabilities.xml</server>
+          <tilematrixset type="System.String">google3857</tilematrixset>
+          <imageformat type="System.String">image/png</imageformat>
+          <layer type="System.String">bmapgrau</layer>
+          <style type="System.String">normal</style>
+          <maxlevel type="System.Int32">-1</maxlevel>
+          <hide_beyond_maxlevel type="System.Boolean">False</hide_beyond_maxlevel>
+          <rendering type="System.Int32">0</rendering>
+          <resourceurls type="System.String">https://mapsneu.wien.gv.at/basemap/bmapgrau/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png</resourceurls>
+          <themes schemanode="1">
+            <il5kjgmt9dumkpgziobtglw schemanode="1">
+              <name type="System.String">google3857</name>
+              <id type="System.String">0</id>
+              <visible type="System.Boolean">True</visible>
+            </il5kjgmt9dumkpgziobtglw>
+          </themes>
+          <tocs schemanode="1">
+            <default schemanode="1">
+              <name type="System.String">default</name>
+              <checkmode type="System.Int32">2</checkmode>
+              <l_tsqtdmaykmlp0ocbcjxcq schemanode="1">
+                <_linkuri type="System.String">services/ogc/wmts/geoland_bm_grau/themes/il5kjgmt9dumkpgziobtglw</_linkuri>
+                <aliasname type="System.String">google3857</aliasname>
+                <metadata type="System.String">
+                </metadata>
+                <metadataformat type="System.String">text/html</metadataformat>
+                <visible type="System.Boolean">True</visible>
+                <locked type="System.Boolean">False</locked>
+                <legend type="System.Boolean">True</legend>
+                <legendaliasname type="System.String">
+                </legendaliasname>
+                <refscale type="System.Boolean">True</refscale>
+                <downloadable type="System.Boolean">False</downloadable>
+                <labeling_fields type="System.String">
+                </labeling_fields>
+                <labeling_fieldsalias type="System.String">
+                </labeling_fieldsalias>
+              </l_tsqtdmaykmlp0ocbcjxcq>
+            </default>
+          </tocs>
+          <gdiproperties schemanode="1">
+            <_linkuri type="System.String">
+            </_linkuri>
+            <tocdisplayname type="System.String">
+            </tocdisplayname>
+            <tocname type="System.String">default</tocname>
+            <collapsed type="System.Boolean">False</collapsed>
+            <showintoc type="System.Boolean">True</showintoc>
+            <copyright type="System.String">
+            </copyright>
+            <projmethode type="System.Int32">0</projmethode>
+            <projid type="System.Int32">-1</projid>
+            <opacity type="System.Double">100</opacity>
+            <timeout type="System.Int32">20</timeout>
+            <visible type="System.Boolean">True</visible>
+            <imageformat type="System.Int32">0</imageformat>
+            <showinlegend type="System.Boolean">True</showinlegend>
+            <legendopt type="System.Int32">0</legendopt>
+            <legendoptsymbolscale type="System.Double">1000</legendoptsymbolscale>
+            <legendurl type="System.String">
+            </legendurl>
+            <usefixrefscale type="System.Boolean">False</usefixrefscale>
+            <fixrefscale type="System.Double">0</fixrefscale>
+            <minscale type="System.Double">0</minscale>
+            <maxscale type="System.Double">0</maxscale>
+            <metadata type="System.String">
+            </metadata>
+            <usewithspatialconstraintservice type="System.Boolean">False</usewithspatialconstraintservice>
+            <isbasemap type="System.Boolean">True</isbasemap>
+            <basemaptype type="System.Int32">0</basemaptype>
+            <warninglevel type="System.Int32">0</warninglevel>
+            <supportedcrs type="System.String">3857</supportedcrs>
+            <exportwms type="System.Boolean" unauthorizeddefault="False">False</exportwms>
+            <serviceextenturl type="System.String">
+            </serviceextenturl>
+          </gdiproperties>
+        </geoland_bm_grau>
+        <geoland_bm_hdpi schemanode="1">
+          <name type="System.String">Geoland Basemap High DPI</name>
+          <guid type="System.String">ddf3320fe6584946bce86396fc11a04f</guid>
+          <server type="System.String">https://mapsneu.wien.gv.at/basemapneu/1.0.0/WMTSCapabilities.xml</server>
+          <tilematrixset type="System.String">google3857</tilematrixset>
+          <imageformat type="System.String">image/jpeg</imageformat>
+          <layer type="System.String">bmaphidpi</layer>
+          <style type="System.String">normal</style>
+          <maxlevel type="System.Int32">19</maxlevel>
+          <hide_beyond_maxlevel type="System.Boolean">False</hide_beyond_maxlevel>
+          <rendering type="System.Int32">0</rendering>
+          <resourceurls type="System.String">https://mapsneu.wien.gv.at/basemap/bmaphidpi/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpeg</resourceurls>
+          <themes schemanode="1">
+            <igrcx2ym_ieihumjbh0v7na schemanode="1">
+              <name type="System.String">google3857</name>
+              <id type="System.String">0</id>
+              <visible type="System.Boolean">True</visible>
+            </igrcx2ym_ieihumjbh0v7na>
+          </themes>
+          <tocs schemanode="1">
+            <default schemanode="1">
+              <name type="System.String">default</name>
+              <checkmode type="System.Int32">2</checkmode>
+              <lgvs_ja2uoec5ow1_iiuq2q schemanode="1">
+                <_linkuri type="System.String">services/ogc/wmts/geoland_bm_hdpi/themes/igrcx2ym_ieihumjbh0v7na</_linkuri>
+                <aliasname type="System.String">google3857</aliasname>
+                <metadata type="System.String">
+                </metadata>
+                <metadataformat type="System.String">text/html</metadataformat>
+                <visible type="System.Boolean">True</visible>
+                <locked type="System.Boolean">False</locked>
+                <legend type="System.Boolean">True</legend>
+                <legendaliasname type="System.String">
+                </legendaliasname>
+                <refscale type="System.Boolean">True</refscale>
+                <downloadable type="System.Boolean">False</downloadable>
+                <labeling_fields type="System.String">
+                </labeling_fields>
+                <labeling_fieldsalias type="System.String">
+                </labeling_fieldsalias>
+              </lgvs_ja2uoec5ow1_iiuq2q>
+            </default>
+          </tocs>
+          <gdiproperties schemanode="1">
+            <_linkuri type="System.String">
+            </_linkuri>
+            <tocdisplayname type="System.String">
+            </tocdisplayname>
+            <tocname type="System.String">default</tocname>
+            <collapsed type="System.Boolean">False</collapsed>
+            <showintoc type="System.Boolean">True</showintoc>
+            <copyright type="System.String">
+            </copyright>
+            <projmethode type="System.Int32">0</projmethode>
+            <projid type="System.Int32">-1</projid>
+            <opacity type="System.Double">100</opacity>
+            <timeout type="System.Int32">20</timeout>
+            <visible type="System.Boolean">True</visible>
+            <imageformat type="System.Int32">0</imageformat>
+            <showinlegend type="System.Boolean">True</showinlegend>
+            <legendopt type="System.Int32">0</legendopt>
+            <legendoptsymbolscale type="System.Double">1000</legendoptsymbolscale>
+            <legendurl type="System.String">
+            </legendurl>
+            <usefixrefscale type="System.Boolean">False</usefixrefscale>
+            <fixrefscale type="System.Double">0</fixrefscale>
+            <minscale type="System.Double">0</minscale>
+            <maxscale type="System.Double">0</maxscale>
+            <metadata type="System.String">
+            </metadata>
+            <usewithspatialconstraintservice type="System.Boolean">False</usewithspatialconstraintservice>
+            <isbasemap type="System.Boolean">True</isbasemap>
+            <basemaptype type="System.Int32">0</basemaptype>
+            <warninglevel type="System.Int32">0</warninglevel>
+            <supportedcrs type="System.String">3857</supportedcrs>
+            <exportwms type="System.Boolean" unauthorizeddefault="False">False</exportwms>
+            <serviceextenturl type="System.String">
+            </serviceextenturl>
+          </gdiproperties>
+        </geoland_bm_hdpi>
+        <geoland_bm_oberfl schemanode="1">
+          <name type="System.String">Geoland Basemap Oberfläche</name>
+          <guid type="System.String">1fa636a010e14430b9965bb719ca64ae</guid>
+          <server type="System.String">https://mapsneu.wien.gv.at/basemapneu/1.0.0/WMTSCapabilities.xml</server>
+          <tilematrixset type="System.String">google3857_0-17</tilematrixset>
+          <imageformat type="System.String">image/jpeg</imageformat>
+          <layer type="System.String">bmapoberflaeche</layer>
+          <style type="System.String">grau</style>
+          <maxlevel type="System.Int32">-1</maxlevel>
+          <hide_beyond_maxlevel type="System.Boolean">False</hide_beyond_maxlevel>
+          <rendering type="System.Int32">0</rendering>
+          <resourceurls type="System.String">https://mapsneu.wien.gv.at/basemap/bmapoberflaeche/{Style}/google3857/{TileMatrix}/{TileRow}/{TileCol}.jpeg</resourceurls>
+          <themes schemanode="1">
+            <iwhg8uhwnx0k-pt8m9vm1ug schemanode="1">
+              <name type="System.String">google3857</name>
+              <id type="System.String">0</id>
+              <visible type="System.Boolean">True</visible>
+            </iwhg8uhwnx0k-pt8m9vm1ug>
+          </themes>
+          <tocs schemanode="1">
+            <default schemanode="1">
+              <name type="System.String">default</name>
+              <checkmode type="System.Int32">2</checkmode>
+              <lwdrwvshkq0mfi9heqqqduw schemanode="1">
+                <_linkuri type="System.String">services/ogc/wmts/geoland_bm_oberfl/themes/iwhg8uhwnx0k-pt8m9vm1ug</_linkuri>
+                <aliasname type="System.String">google3857</aliasname>
+                <metadata type="System.String">
+                </metadata>
+                <metadataformat type="System.String">text/html</metadataformat>
+                <visible type="System.Boolean">True</visible>
+                <locked type="System.Boolean">False</locked>
+                <legend type="System.Boolean">True</legend>
+                <legendaliasname type="System.String">
+                </legendaliasname>
+                <refscale type="System.Boolean">True</refscale>
+                <downloadable type="System.Boolean">False</downloadable>
+                <labeling_fields type="System.String">
+                </labeling_fields>
+                <labeling_fieldsalias type="System.String">
+                </labeling_fieldsalias>
+              </lwdrwvshkq0mfi9heqqqduw>
+            </default>
+          </tocs>
+          <gdiproperties schemanode="1">
+            <_linkuri type="System.String">
+            </_linkuri>
+            <tocdisplayname type="System.String">
+            </tocdisplayname>
+            <tocname type="System.String">default</tocname>
+            <collapsed type="System.Boolean">False</collapsed>
+            <showintoc type="System.Boolean">True</showintoc>
+            <copyright type="System.String">
+            </copyright>
+            <projmethode type="System.Int32">0</projmethode>
+            <projid type="System.Int32">-1</projid>
+            <opacity type="System.Double">100</opacity>
+            <timeout type="System.Int32">20</timeout>
+            <visible type="System.Boolean">True</visible>
+            <imageformat type="System.Int32">0</imageformat>
+            <showinlegend type="System.Boolean">True</showinlegend>
+            <legendopt type="System.Int32">0</legendopt>
+            <legendoptsymbolscale type="System.Double">1000</legendoptsymbolscale>
+            <legendurl type="System.String">
+            </legendurl>
+            <usefixrefscale type="System.Boolean">False</usefixrefscale>
+            <fixrefscale type="System.Double">0</fixrefscale>
+            <minscale type="System.Double">0</minscale>
+            <maxscale type="System.Double">0</maxscale>
+            <metadata type="System.String">
+            </metadata>
+            <usewithspatialconstraintservice type="System.Boolean">False</usewithspatialconstraintservice>
+            <isbasemap type="System.Boolean">True</isbasemap>
+            <basemaptype type="System.Int32">0</basemaptype>
+            <warninglevel type="System.Int32">0</warninglevel>
+            <supportedcrs type="System.String">3857</supportedcrs>
+            <exportwms type="System.Boolean" unauthorizeddefault="False">False</exportwms>
+            <serviceextenturl type="System.String">
+            </serviceextenturl>
+          </gdiproperties>
+        </geoland_bm_oberfl>
+        <geoland_bm_of schemanode="1">
+          <name type="System.String">Geoland Basemap Orthofoto</name>
+          <guid type="System.String">d6cfe3e6f7ad4fd69e36961f666898a5</guid>
+          <server type="System.String">https://mapsneu.wien.gv.at/basemapneu/1.0.0/WMTSCapabilities.xml</server>
+          <tilematrixset type="System.String">google3857</tilematrixset>
+          <imageformat type="System.String">image/jpeg</imageformat>
+          <layer type="System.String">bmaporthofoto30cm</layer>
+          <style type="System.String">normal</style>
+          <maxlevel type="System.Int32">19</maxlevel>
+          <hide_beyond_maxlevel type="System.Boolean">False</hide_beyond_maxlevel>
+          <rendering type="System.Int32">0</rendering>
+          <resourceurls type="System.String">https://mapsneu.wien.gv.at/basemap/bmaporthofoto30cm/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpeg</resourceurls>
+          <themes schemanode="1">
+            <iya1exqgel0s7uihcabehmg schemanode="1">
+              <name type="System.String">google3857</name>
+              <id type="System.String">0</id>
+              <visible type="System.Boolean">True</visible>
+            </iya1exqgel0s7uihcabehmg>
+          </themes>
+          <tocs schemanode="1">
+            <default schemanode="1">
+              <name type="System.String">default</name>
+              <checkmode type="System.Int32">2</checkmode>
+              <l21x1b4njikye4v-v4m9jsa schemanode="1">
+                <_linkuri type="System.String">services/ogc/wmts/geoland_bm_of/themes/iya1exqgel0s7uihcabehmg</_linkuri>
+                <aliasname type="System.String">google3857</aliasname>
+                <metadata type="System.String">
+                </metadata>
+                <metadataformat type="System.String">text/html</metadataformat>
+                <visible type="System.Boolean">True</visible>
+                <locked type="System.Boolean">False</locked>
+                <legend type="System.Boolean">True</legend>
+                <legendaliasname type="System.String">
+                </legendaliasname>
+                <refscale type="System.Boolean">True</refscale>
+                <downloadable type="System.Boolean">False</downloadable>
+                <labeling_fields type="System.String">
+                </labeling_fields>
+                <labeling_fieldsalias type="System.String">
+                </labeling_fieldsalias>
+              </l21x1b4njikye4v-v4m9jsa>
+            </default>
+          </tocs>
+          <gdiproperties schemanode="1">
+            <_linkuri type="System.String">
+            </_linkuri>
+            <tocdisplayname type="System.String">
+            </tocdisplayname>
+            <tocname type="System.String">default</tocname>
+            <collapsed type="System.Boolean">False</collapsed>
+            <showintoc type="System.Boolean">True</showintoc>
+            <copyright type="System.String">
+            </copyright>
+            <projmethode type="System.Int32">0</projmethode>
+            <projid type="System.Int32">-1</projid>
+            <opacity type="System.Double">100</opacity>
+            <timeout type="System.Int32">20</timeout>
+            <visible type="System.Boolean">True</visible>
+            <imageformat type="System.Int32">0</imageformat>
+            <showinlegend type="System.Boolean">True</showinlegend>
+            <legendopt type="System.Int32">0</legendopt>
+            <legendoptsymbolscale type="System.Double">1000</legendoptsymbolscale>
+            <legendurl type="System.String">
+            </legendurl>
+            <usefixrefscale type="System.Boolean">False</usefixrefscale>
+            <fixrefscale type="System.Double">0</fixrefscale>
+            <minscale type="System.Double">0</minscale>
+            <maxscale type="System.Double">0</maxscale>
+            <metadata type="System.String">
+            </metadata>
+            <usewithspatialconstraintservice type="System.Boolean">False</usewithspatialconstraintservice>
+            <isbasemap type="System.Boolean">True</isbasemap>
+            <basemaptype type="System.Int32">0</basemaptype>
+            <warninglevel type="System.Int32">0</warninglevel>
+            <supportedcrs type="System.String">3857</supportedcrs>
+            <exportwms type="System.Boolean" unauthorizeddefault="False">False</exportwms>
+            <serviceextenturl type="System.String">
+            </serviceextenturl>
+          </gdiproperties>
+        </geoland_bm_of>
+        <geoland_bm_ov schemanode="1">
+          <name type="System.String">Geoland Basemap Overlay</name>
+          <guid type="System.String">2b7e0c9abbf14faa8d8d0c2d613c4567</guid>
+          <server type="System.String">https://mapsneu.wien.gv.at/basemapneu/1.0.0/WMTSCapabilities.xml</server>
+          <tilematrixset type="System.String">google3857</tilematrixset>
+          <imageformat type="System.String">image/png</imageformat>
+          <layer type="System.String">bmapoverlay</layer>
+          <style type="System.String">normal</style>
+          <maxlevel type="System.Int32">19</maxlevel>
+          <hide_beyond_maxlevel type="System.Boolean">False</hide_beyond_maxlevel>
+          <rendering type="System.Int32">0</rendering>
+          <resourceurls type="System.String">https://mapsneu.wien.gv.at/basemap/bmapoverlay/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png</resourceurls>
+          <themes schemanode="1">
+            <i5imu6xk8skgpmpzgw6g3nq schemanode="1">
+              <name type="System.String">google3857</name>
+              <id type="System.String">0</id>
+              <visible type="System.Boolean">True</visible>
+            </i5imu6xk8skgpmpzgw6g3nq>
+          </themes>
+          <tocs schemanode="1">
+            <default schemanode="1">
+              <name type="System.String">default</name>
+              <checkmode type="System.Int32">2</checkmode>
+              <l7j5iok4q2kyuq77w2kbgvw schemanode="1">
+                <_linkuri type="System.String">services/ogc/wmts/geoland_bm_ov/themes/i5imu6xk8skgpmpzgw6g3nq</_linkuri>
+                <aliasname type="System.String">google3857</aliasname>
+                <metadata type="System.String">
+                </metadata>
+                <metadataformat type="System.String">text/html</metadataformat>
+                <visible type="System.Boolean">True</visible>
+                <locked type="System.Boolean">False</locked>
+                <legend type="System.Boolean">True</legend>
+                <legendaliasname type="System.String">
+                </legendaliasname>
+                <refscale type="System.Boolean">True</refscale>
+                <downloadable type="System.Boolean">False</downloadable>
+                <labeling_fields type="System.String">
+                </labeling_fields>
+                <labeling_fieldsalias type="System.String">
+                </labeling_fieldsalias>
+              </l7j5iok4q2kyuq77w2kbgvw>
+            </default>
+          </tocs>
+          <gdiproperties schemanode="1">
+            <_linkuri type="System.String">
+            </_linkuri>
+            <tocdisplayname type="System.String">
+            </tocdisplayname>
+            <tocname type="System.String">default</tocname>
+            <collapsed type="System.Boolean">False</collapsed>
+            <showintoc type="System.Boolean">True</showintoc>
+            <copyright type="System.String">
+            </copyright>
+            <projmethode type="System.Int32">0</projmethode>
+            <projid type="System.Int32">-1</projid>
+            <opacity type="System.Double">100</opacity>
+            <timeout type="System.Int32">20</timeout>
+            <visible type="System.Boolean">True</visible>
+            <imageformat type="System.Int32">0</imageformat>
+            <showinlegend type="System.Boolean">True</showinlegend>
+            <legendopt type="System.Int32">0</legendopt>
+            <legendoptsymbolscale type="System.Double">1000</legendoptsymbolscale>
+            <legendurl type="System.String">
+            </legendurl>
+            <usefixrefscale type="System.Boolean">False</usefixrefscale>
+            <fixrefscale type="System.Double">0</fixrefscale>
+            <minscale type="System.Double">0</minscale>
+            <maxscale type="System.Double">0</maxscale>
+            <metadata type="System.String">
+            </metadata>
+            <usewithspatialconstraintservice type="System.Boolean">False</usewithspatialconstraintservice>
+            <isbasemap type="System.Boolean">True</isbasemap>
+            <basemaptype type="System.Int32">1</basemaptype>
+            <warninglevel type="System.Int32">0</warninglevel>
+            <supportedcrs type="System.String">3857</supportedcrs>
+            <exportwms type="System.Boolean" unauthorizeddefault="False">False</exportwms>
+            <serviceextenturl type="System.String">
+            </serviceextenturl>
+          </gdiproperties>
+        </geoland_bm_ov>
+      </wmts>
+    </ogc>
+  </services>
+  <acl>
+    <authnode value="">
+      <user name="jeder" allowed="true" />
+    </authnode>
+  </acl>
+</config>

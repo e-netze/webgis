@@ -5,7 +5,7 @@ namespace webgis.deploy.Services;
 
 internal class DeployVersionService
 {
-    public static readonly Version DeployToolVersion = new Version(7, 25, 1001);
+    public static readonly Version DeployToolVersion = new Version(7, 25, 1201);
 
     private const string zipPrefix = "webgis";
 
@@ -21,6 +21,11 @@ internal class DeployVersionService
 
         _versionsDirectory =
             Path.Combine(_deployRepositoryService.RepositoryRootDirectoryInfo().Parent.FullName, "download");
+
+        if (!Directory.Exists(_versionsDirectory))
+        {
+            Directory.CreateDirectory(_versionsDirectory);
+        }
     }
 
     public IEnumerable<string> GetVersions()
