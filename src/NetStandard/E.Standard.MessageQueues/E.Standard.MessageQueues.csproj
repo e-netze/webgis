@@ -7,8 +7,8 @@
 
   <ItemGroup>
     <PackageReference Include="MessageQueueNET.Client" Version="3.24.5101" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.2" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.3" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.3" />
   </ItemGroup>
 
 </Project>

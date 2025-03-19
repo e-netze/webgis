@@ -1,0 +1,1 @@
+﻿# no-query-found: Unfortunately, no topic was found to query at the clicked location.

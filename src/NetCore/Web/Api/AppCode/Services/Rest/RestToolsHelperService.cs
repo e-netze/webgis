@@ -29,6 +29,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using E.Standard.Localization.Extensions;
+using E.Standard.Extensions.Reflection;
+using E.Standard.DependencyInjection;
+using E.Standard.DependencyInjection.Abstractions;
 
 namespace Api.Core.AppCode.Services.Rest;
 
@@ -40,7 +43,7 @@ public class RestToolsHelperService
     private readonly ConfigurationService _config;
     private readonly ICryptoService _crypto;
     private readonly IUrlHelperService _urlHelper;
-    private readonly IStringLocalizer _localizer;
+    private readonly IStringLocalizer _stringLocalizer;
 
     public RestToolsHelperService(ILogger<RestToolsHelperService> logger,
                                   RestHelperService restHelper,
@@ -56,12 +59,13 @@ public class RestToolsHelperService
         _config = config;
         _crypto = crypto;
         _urlHelper = urlHelper;
-        _localizer = localizerFactory.Create(typeof(RestToolsHelperService));
+        _stringLocalizer = localizerFactory.Create(typeof(RestToolsHelperService));
     }
 
     public ToolDTO Create(IApiButton apiTool)
     {
         ToolDTO tool = null;
+
         if (apiTool is IApiClientButton)
         {
             tool = new ClientButtonToolDTO()
@@ -73,7 +77,11 @@ public class RestToolsHelperService
         {
             tool = new ServerButtonToolDTO();
         }
-        else if (apiTool is IApiServerTool || apiTool is IApiServerToolAsync)
+        else if (apiTool.GetType().ImplementsAnyInterface(
+                typeof(IApiServerTool),
+                typeof(IApiServerToolLocalizable<>),
+                typeof(IApiServerToolAsync),
+                typeof(IApiServerToolLocalizableAsync<>)))
         {
             tool = new ServerToolDTO()
             {
@@ -104,11 +112,12 @@ public class RestToolsHelperService
 
         tool.ClientName = apiTool.GetType().GetCustomAttribute<ToolClientAttribute>()?.ClientName?.ToLower();
         tool.id = apiTool.GetType().ToToolId();
-        tool.container = apiTool.LocalizedContainer(_localizer);
-        tool.name = apiTool.LocalizedName(_localizer);
+        tool.container = apiTool.LocalizedContainer(_stringLocalizer);
+        tool.name = apiTool.LocalizedName(_stringLocalizer);
         tool.image = apiTool.Image;
-        tool.tooltip = apiTool.LocalizedToolTip(_localizer);
+        tool.tooltip = apiTool.LocalizedToolTip(_stringLocalizer);
         tool.hasui = apiTool.HasUI;
+
         if (apiTool is IApiTool)
         {
             var cursor = ((IApiTool)apiTool).Cursor.ToString().ToLower();
@@ -246,7 +255,9 @@ public class RestToolsHelperService
             var currentArguments = bridge.CurrentEventArguments;
             bridge.CurrentEventArguments = e;
 
-            var result = await InvokeMethodAsync<T>(methodInfo, tool, new object[] { bridge, e });
+            var dependencyProvider = new ToolDependencyProvider(bridge, e, _stringLocalizer);
+
+            var result = await InvokeMethodAsync<T>(methodInfo, tool, dependencyProvider);
 
             bridge.CurrentEventArguments = currentArguments;
 
@@ -256,11 +267,11 @@ public class RestToolsHelperService
         return default(T);
     }
 
-    async public Task<T> InvokeMethodAsync<T>(System.Reflection.MethodInfo methodInfo, object instance, object[] parameters)
+    async public Task<T> InvokeMethodAsync<T>(System.Reflection.MethodInfo methodInfo, object instance, IDependencyProvider dependencyProvider)
     {
         try
         {
-            var response = methodInfo.Invoke(instance, parameters);
+            var response = methodInfo.Invoke(instance, Invoker.GetDependencies(methodInfo, dependencyProvider).ToArray());
 
             if (response is Task<T>)
             {

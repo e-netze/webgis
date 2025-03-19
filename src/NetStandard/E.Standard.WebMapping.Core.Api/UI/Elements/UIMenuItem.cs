@@ -1,3 +1,4 @@
+﻿using E.Standard.Extensions.Reflection;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Extensions;
@@ -19,7 +20,12 @@ public class UIMenuItem : UIElement, IUIElementText
 
     protected void Init(object callbackObject, ApiToolEventArguments e, UIButton.UIButtonType? type = null, string command = "")
     {
-        if (callbackObject is IApiServerTool || callbackObject is IApiServerToolAsync || type == UIButton.UIButtonType.servertoolcommand_ext)
+        if(callbackObject.GetType().ImplementsAnyInterface(
+            typeof(IApiServerTool),
+            typeof(IApiServerToolLocalizable<>),
+            typeof(IApiServerToolAsync),
+            typeof(IApiServerToolLocalizableAsync<>))
+            || type == UIButton.UIButtonType.servertoolcommand_ext)
         {
             this.callback = new
             {

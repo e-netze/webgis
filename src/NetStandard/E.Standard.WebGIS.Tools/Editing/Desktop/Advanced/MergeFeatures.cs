@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Compare;
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
@@ -27,7 +28,7 @@ namespace E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(SelectionInfoDependent = true, MapCrsDependent = true)]
-public class MergeFeatures : IApiServerToolAsync, IApiChildTool
+public class MergeFeatures : IApiServerToolLocalizableAsync<MergeFeatures>, IApiChildTool
 {
     const string CurrentFeatureAttributeId = "edit-mergefeature-feature-oid";
     const string MergeMethodId = "edit-merge-methode";
@@ -41,12 +42,12 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
 
     #region IApiServerTool Member
 
-    async public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MergeFeatures> localizer)
     {
-        return await OnChangeFeature(bridge, e);
+        return await OnChangeFeature(bridge, e, localizer);
     }
 
-    async public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<MergeFeatures> localizer)
     {
         string featureOid = e[CurrentFeatureAttributeId];
         var shape = e.MenuItemValue?.ShapeFromWKT()
@@ -128,7 +129,7 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
     #region Commands
 
     [ServerToolCommand("merge")]
-    async public Task<ApiEventResponse> OnMerge(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnMerge(IBridge bridge, ApiToolEventArguments e, ILocalizer<MergeFeatures> localizer)
     {
         string featureOid = e[CurrentFeatureAttributeId];
 
@@ -203,7 +204,7 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
 
         if (createFeatures.Count == 0)
         {
-            throw new Exception(bridge.LocalizeString(this, L10nKeys.MergeHasNoResult));
+            throw new Exception(localizer.Localize(L10nKeys.MergeHasNoResult));
         }
 
         if (createFeatures.Count == 1 && createPreview == false)
@@ -219,11 +220,11 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
 
             if (createFeature.Shape is Polyline)
             {
-                subText = $"{bridge.LocalizeString(this, L10nKeys.Length)}: {Math.Round(((Polyline)createFeature.Shape).Length, 2)}";
+                subText = $"{localizer.Localize(L10nKeys.Length)}: {Math.Round(((Polyline)createFeature.Shape).Length, 2)}";
             }
             else if (createFeature.Shape is Polygon)
             {
-                subText = $"{bridge.LocalizeString(this, L10nKeys.Area)}: {Math.Round(((Polygon)createFeature.Shape).Area, 2)}";
+                subText = $"{localizer.Localize(L10nKeys.Area)}: {Math.Round(((Polygon)createFeature.Shape).Area, 2)}";
             }
 
             string value = createFeature.Shape.WKTFromShape();
@@ -239,7 +240,7 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
 
             menuItems.Add(new UIMenuItem(this, e)
             {
-                text = $"{bridge.LocalizeString(this, L10nKeys.MergedObject)}: {createFeature.Shape.GetType().ToString().Split('.').Last()}{(createFeature.Shape.IsMultipart ? $" [{createFeature.Shape.Multiparts.Count()} {bridge.LocalizeString(this, L10nKeys.Parts)}]" : "")}",
+                text = $"{localizer.Localize(L10nKeys.MergedObject)}: {createFeature.Shape.GetType().ToString().Split('.').Last()}{(createFeature.Shape.IsMultipart ? $" [{createFeature.Shape.Multiparts.Count()} {localizer.Localize(L10nKeys.Parts)}]" : "")}",
                 subtext = subText,
                 value = value,
                 highlight_feature = bridge.ToGeoJson(new WebMapping.Core.Collections.FeatureCollection(createFeature))
@@ -264,14 +265,14 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
                         new UIMenu()
                         {
                             elements = menuItems.ToArray(),
-                            header = bridge.LocalizeString(this, L10nKeys.ChooseResult)
+                            header = localizer.Localize(L10nKeys.ChooseResult)
                         },
                         new UIButtonGroup()
                         {
                             elements = new IUIElement[] {
                                 new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
                                 {
-                                    text = bridge.LocalizeString(this, L10nKeys.Cancel),
+                                    text = localizer.Localize(L10nKeys.Cancel),
                                     css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionButtonStyle })
                                 }
                             }
@@ -288,7 +289,7 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
     }
 
     [ServerToolCommand("changefeature")]
-    async public Task<ApiEventResponse> OnChangeFeature(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnChangeFeature(IBridge bridge, ApiToolEventArguments e, ILocalizer<MergeFeatures> localizer)
     {
         string featureOid = e[CurrentFeatureAttributeId];
 
@@ -324,15 +325,15 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
             {
                 new UITitle()
                 {
-                    label = bridge.LocalizeString(this, L10nKeys.PolylineMergeMethod)
+                    label = localizer.Localize(L10nKeys.PolylineMergeMethod)
                 },
                 new UISelect()
                 {
                     id = MergeMethodId,
                     css = UICss.ToClass(new[] { UICss.ToolParameter }),
-                    options = EnumExtensions.ToUISelectOptions<PolylineMergeMethod>(bridge)
+                    options = EnumExtensions.ToUISelectOptions<PolylineMergeMethod>(localizer)
                 },
-                new UIInfoBox(MergeMethodId, EnumExtensions.ToDescriptionDictionary<PolylineMergeMethod>(bridge))
+                new UIInfoBox(MergeMethodId, EnumExtensions.ToDescriptionDictionary<PolylineMergeMethod>(localizer))
             });
         }
 
@@ -341,9 +342,9 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
             {
                 new UITitle()
                 {
-                    label = bridge.LocalizeString(this, L10nKeys.MergeOriginFeature)
+                    label = localizer.Localize(L10nKeys.MergeOriginFeature)
                 },
-                new UIInfoBox(bridge.LocalizeString(this, L10nKeys.MergeOriginFeatureDesription)),
+                new UIInfoBox(localizer.Localize(L10nKeys.MergeOriginFeatureDesription)),
                 new UISelect(UIButton.UIButtonType.servertoolcommand,"changefeature")
                 {
                     id = CurrentFeatureAttributeId,

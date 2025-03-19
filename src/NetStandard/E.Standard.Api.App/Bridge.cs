@@ -9,6 +9,8 @@ using E.Standard.Configuration.Services;
 using E.Standard.Drawing.Models;
 using E.Standard.Extensions.Compare;
 using E.Standard.Json;
+using E.Standard.Localization.Abstractions;
+using E.Standard.Localization.Extensions;
 using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.ThreadSafe;
@@ -83,6 +85,7 @@ public class Bridge : IBridge
         _http = _requestContext.Http;
         _crypto = crypto;
         _lookup = lookup;
+        _localizer = localizer;
 
         _userIdentification = userIdentification;
         this.Request = request;
@@ -1578,7 +1581,8 @@ public class Bridge : IBridge
         return String.Empty;
     }
 
-    public string LocalizeString(IApiButton tool, string key) => _localizer[key]; // use default langauge
+    public ILocalizer<T> GetLocalizer<T>()
+        => new Localizer<T>(_localizer);
 
     #region Tools
 
@@ -1699,6 +1703,32 @@ public class Bridge : IBridge
         public bool IsOpera => DetectBrowser()?.Name == Standard.Web.UserAgents.Constants.BrowserNames.Opera;
     }
 
+    // garbage
+    private class Localizer<T> : ILocalizer<T>
+    {
+        private readonly IStringLocalizer _stringLocalizer;
+        private string _localizationNamespace;
+
+        public Localizer(IStringLocalizer stringLocalizer)
+        {
+            _stringLocalizer = stringLocalizer;
+
+            _localizationNamespace = typeof(T).GetLocalizationNamespace();
+        }
+
+        public string Localize(string key)
+        {
+            var val = _stringLocalizer[$"{_localizationNamespace}.{key}"];
+
+            if (val.ResourceNotFound)  // fallback. Without namespace
+            {
+                val = _stringLocalizer[key];
+            }
+
+            return val.Value;
+        }
+    }
+
     #endregion
 
     #region Helper
@@ -1737,3 +1767,4 @@ public class Bridge : IBridge
 
     #endregion
 }
+

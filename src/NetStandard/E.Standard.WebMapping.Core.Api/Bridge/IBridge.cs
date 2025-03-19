@@ -1,5 +1,6 @@
 ﻿using E.Standard.ActiveDirectory;
 using E.Standard.Drawing.Models;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Abstractions;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -176,7 +177,7 @@ public interface IBridge : IAppCryptography
 
     string CreateCustomSelection(Shape shape, SpatialReference shapesSRef);
 
-    string LocalizeString(IApiButton tool, string key);
+    ILocalizer<T> GetLocalizer<T>();
 }
 
 public interface IBridgeUser

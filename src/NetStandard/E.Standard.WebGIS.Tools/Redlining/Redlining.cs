@@ -2,6 +2,7 @@
 using E.Standard.GeoJson;
 using E.Standard.GeoJson.Extensions;
 using E.Standard.Json;
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Extensions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
@@ -774,12 +775,12 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
     }
 
     [ServerToolCommand("show-symbol-selector")]
-    public ApiEventResponse OnShowSymbolSelector(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnShowSymbolSelector(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
         => new ApiEventResponse()
             .AddUIElements(
                 new UIDiv()
                     .WithTarget(UIElementTarget.tool_modaldialog_noblocking_closable.ToString())
-                        .WithTargetTitle($"Symbolik änderen: {bridge.LocalizeString(this, e["redlinig-symbol-type"])}")
+                        .WithTargetTitle($"Symbolik änderen: {localizer.Localize(e["redlinig-symbol-type"])}")
                         .WithTargetOnClose(ApiClientButtonCommand.refreshgraphicsui.ToString())
                         .AddChildren(e["redlinig-symbol-type"] switch
                         {

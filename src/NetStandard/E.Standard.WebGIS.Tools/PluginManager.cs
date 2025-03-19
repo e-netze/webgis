@@ -42,9 +42,9 @@ public class PluginManager
                                 .Select(t => (IApiButton)Activator.CreateInstance(t))
                                 .ToArray());
                         }
-                        catch (Exception/* ex*/)
+                        catch (Exception ex)
                         {
-                            //string message = ex.Message.ToString();
+                            Console.WriteLine(ex.Message);
                         }
                     }
                 }

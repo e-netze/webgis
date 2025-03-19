@@ -16,8 +16,10 @@
     <ProjectReference Include="..\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
     <ProjectReference Include="..\E.Standard.Configuration\E.Standard.Configuration.csproj" />
     <ProjectReference Include="..\E.Standard.Custom.Core\E.Standard.Custom.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.DependencyInjection\E.Standard.DependencyInjection.csproj" />
     <ProjectReference Include="..\E.Standard.GeoCoding\E.Standard.GeoCoding\E.Standard.GeoCoding.csproj" />
     <ProjectReference Include="..\E.Standard.GeoRSS\E.Standard.GeoRSS.csproj" />
+    <ProjectReference Include="..\E.Standard.Localization.Extensions\E.Standard.Localization.Extensions.csproj" />
     <ProjectReference Include="..\E.Standard.OpenIdConnect.Extensions\E.Standard.OpenIdConnect.Extensions.csproj" />
     <ProjectReference Include="..\E.Standard.Platform\E.Standard.Platform.csproj" />
     <ProjectReference Include="..\E.Standard.Security.Captcha\E.Standard.Security.Captcha.csproj" />
@@ -40,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.3" />
   </ItemGroup>
 
 </Project>

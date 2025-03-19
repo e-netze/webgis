@@ -1,5 +1,7 @@
 ﻿using E.Standard.Drawing.Models;
 using E.Standard.Extensions.Compare;
+using E.Standard.Localization.Abstractions;
+using E.Standard.Localization.Reflection;
 using E.Standard.ThreadSafe;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
@@ -35,7 +37,8 @@ namespace E.Standard.WebGIS.Tools.Identify;
                         MapBBoxDependent = true)]
 [ToolConfigurationSection("identify")]
 [ToolHelp("tools/identify/identify.html", urlPathDefaultTool: "index.html")]
-public class IdentifyDefault : IApiServerToolAsync, IApiButtonDependency, IApiButtonResources, IApiToolMarker, IAdvancedSketchTool
+[LocalizationNamespace("tools.identify")]
+public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, IApiButtonDependency, IApiButtonResources, IApiToolMarker, IAdvancedSketchTool
 {
     public const string IdentifyAllQueriesId = "identify-all-queries";
     public const string IdentifyAllServicesId = "identify-all-services";
@@ -65,7 +68,7 @@ public class IdentifyDefault : IApiServerToolAsync, IApiButtonDependency, IApiBu
 
     #region IApiServerTool Member
 
-    async public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<IdentifyDefault> localizer)
     {
         List<UINameValue> comboCustomItems = new List<UINameValue>(new UINameValue[]{
                         new UINameValue(){
@@ -253,14 +256,14 @@ public class IdentifyDefault : IApiServerToolAsync, IApiButtonDependency, IApiBu
 
     [ServerToolCommand("box")]
     [ServerToolCommand("apply")]
-    public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e)
+    public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<IdentifyDefault> localizer)
     {
         if (e.UseDesktopBehavior())
         {
-            return new IdentifyServiceDesktop().OnEvent(this, bridge, e);
+            return new IdentifyServiceDesktop().OnEvent(this, bridge, e, localizer);
         }
 
-        return new IdentifyServiceMobile().OnEvent(this, bridge, e);
+        return new IdentifyServiceMobile().OnEvent(this, bridge, e, localizer);
     }
 
     #endregion

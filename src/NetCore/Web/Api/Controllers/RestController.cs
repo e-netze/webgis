@@ -22,9 +22,10 @@ using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
+using E.Standard.DependencyInjection;
 using E.Standard.Extensions.Collections;
 using E.Standard.Extensions.Compare;
-using E.Standard.Extensions.ErrorHandling;
+using E.Standard.Extensions.Reflection;
 using E.Standard.Json;
 using E.Standard.Platform;
 using E.Standard.Security.Cryptography;
@@ -49,6 +50,7 @@ using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -83,6 +85,7 @@ public class RestController : ApiBaseController
     private readonly IRequestContext _requestContext;
     private readonly ICryptoService _crypto;
     private readonly IEnumerable<ICustomApiService> _customServices;
+    private readonly IStringLocalizer _stringLocalizer;
 
     public RestController(ILogger<RestController> logger,
                           UrlHelperService urlHelper,
@@ -99,6 +102,7 @@ public class RestController : ApiBaseController
                           ApiLoggingService apiLogging,
                           IRequestContext requestContext,
                           ICryptoService crypto,
+                          IStringLocalizerFactory stringLocalizerFactory,
                           IEnumerable<ICustomApiService> customServices = null)
         : base(logger, urlHelper, requestContext.Http, customServices)
     {
@@ -118,6 +122,7 @@ public class RestController : ApiBaseController
         _requestContext = requestContext;
         _http = requestContext.Http;
         _crypto = crypto;
+        _stringLocalizer = stringLocalizerFactory.Create(typeof(RestController));
         _customServices = customServices;
     }
 
@@ -898,6 +903,8 @@ public class RestController : ApiBaseController
 
             bridge.CurrentEventArguments = e;
 
+            var dependencyProvider = new ToolDependencyProvider(bridge, e, _stringLocalizer);
+
             var advancedToolProperties = button.GetType().GetCustomAttribute<AdvancedToolPropertiesAttribute>();
             if (advancedToolProperties != null)
             {
@@ -919,42 +926,81 @@ public class RestController : ApiBaseController
             {
                 if (eventType == "buttonclick")
                 {
-                    if (button is IApiServerButton)
+                    apiResponse = button switch
                     {
-                        apiResponse = ((IApiServerButton)button).OnButtonClick(bridge, e);
-                    }
-                    else if (button is IApiServerTool)
+                        { } when button.GetType().ImplementsAnyInterface(
+                                typeof(IApiServerButton),
+                                typeof(IApiServerTool),
+                                typeof(IApiServerToolLocalizable<>),
+                                typeof(IApiClientTool)
+                            ) =>
+                             Invoker.Invoke<ApiEventResponse>(button, "OnButtonClick", dependencyProvider),
+                        { } when button.GetType().ImplementsAnyInterface(
+                                typeof(IApiServerToolAsync),
+                                typeof(IApiServerButtonAsync),
+                                typeof(IApiServerToolLocalizableAsync<>)
+                            ) =>
+                            await Invoker.InvokeAsync<ApiEventResponse>(button, "OnButtonClick", dependencyProvider),
+                        
+                        _ => null
+                    };
+
+                    // garbage
+                    /*
+                    if (button is IApiServerButton serverButton)
                     {
-                        apiResponse = ((IApiServerTool)button).OnButtonClick(bridge, e);
+                        apiResponse = serverButton.OnButtonClick(bridge, e);
                     }
-                    else if (button is IApiClientTool)
+                    else if (button is IApiServerTool serverTool)
                     {
-                        apiResponse = ((IApiClientTool)button).OnButtonClick(bridge, e);
+                        apiResponse = serverTool.OnButtonClick(bridge, e);
                     }
-                    else if (button is IApiServerToolAsync)
+                    else if (button is IApiClientTool clientTool)
                     {
-                        apiResponse = await ((IApiServerToolAsync)button).OnButtonClick(bridge, e);
+                        apiResponse = clientTool.OnButtonClick(bridge, e);
                     }
-                    else if (button is IApiServerButtonAsync)
+                    else if (button is IApiServerToolAsync serverToolAsync)
                     {
-                        apiResponse = await ((IApiServerButtonAsync)button).OnButtonClick(bridge, e);
+                        apiResponse = await serverToolAsync.OnButtonClick(bridge, e);
                     }
+                    else if (button is IApiServerButtonAsync serverButtonAsync)
+                    {
+                        apiResponse = await serverButtonAsync.OnButtonClick(bridge, e);
+                    }
+                    */
 
                     if (button != null && e.AsDefaultTool == false)
                     {
                         await bridge.SetUserFavoritesItemAsync(E.Standard.WebGIS.Tools.Favorites.Instance, "buttonclick", button.GetType().ToToolId());
                     }
+                    
                 }
                 else if (eventType == "toolevent")
                 {
-                    if (button is IApiServerTool)
+                    apiResponse = button switch
                     {
-                        apiResponse = ((IApiServerTool)button).OnEvent(bridge, e);
-                    }
-                    else if (button is IApiServerToolAsync)
-                    {
-                        apiResponse = await ((IApiServerToolAsync)button).OnEvent(bridge, e);
-                    }
+                        { } when button.GetType().ImplementsAnyInterface(
+                                typeof(IApiServerTool)
+                            ) 
+                            => Invoker.Invoke<ApiEventResponse>(button, "OnEvent", dependencyProvider),
+                        { } when button.GetType().ImplementsAnyInterface(
+                                typeof(IApiServerToolAsync),
+                                typeof(IApiServerToolLocalizableAsync<>)
+                            ) 
+                            => await Invoker.InvokeAsync<ApiEventResponse>(button, "OnEvent", dependencyProvider),
+                        _ => null
+                    };
+
+                    // garbage
+
+                    //if (button is IApiServerTool)
+                    //{
+                    //    apiResponse = ((IApiServerTool)button).OnEvent(bridge, e);
+                    //}
+                    //else if (button is IApiServerToolAsync)
+                    //{
+                    //    apiResponse = await ((IApiServerToolAsync)button).OnEvent(bridge, e);
+                    //}
                 }
                 else if (eventType == "servertoolcommand" && e["_method"] != null)
                 {
@@ -977,7 +1023,7 @@ public class RestController : ApiBaseController
 
                                 try
                                 {
-                                    apiResponse = await _restService.Tools.InvokeMethodAsync<ApiEventResponse>(methodInfo, serverCommandInstance, new object[] { bridge, e });
+                                    apiResponse = await _restService.Tools.InvokeMethodAsync<ApiEventResponse>(methodInfo, serverCommandInstance, dependencyProvider);
                                 }
                                 catch (System.Reflection.TargetInvocationException ex)
                                 {
@@ -1020,7 +1066,7 @@ public class RestController : ApiBaseController
                                         try
                                         {
                                             //apiResponse = (ApiEventResponse)methodInfo.Invoke(button, new object[] { bridge, e });
-                                            apiResponse = await _restService.Tools.InvokeMethodAsync<ApiEventResponse>(methodInfo, serverCommandInstance, new object[] { bridge, e });
+                                            apiResponse = await _restService.Tools.InvokeMethodAsync<ApiEventResponse>(methodInfo, serverCommandInstance, dependencyProvider);
                                         }
                                         catch (System.Reflection.TargetInvocationException ex)
                                         {
@@ -1082,6 +1128,8 @@ public class RestController : ApiBaseController
                                                                 configuration: button.ToolConfiguration(_config));
             bridge.CurrentEventArguments = e;
 
+            var dependencyProvider = new ToolDependencyProvider(bridge, e, _stringLocalizer);
+
             if (_logger.IsEnabled(LogLevel.Debug))
             {
                 _logger.LogDebug("ToolMethod Arguments: {arguments}", e.RawEventString);
@@ -1102,7 +1150,7 @@ public class RestController : ApiBaseController
                 {
                     if (method == attribute.Method)
                     {
-                        apiResponse = await restToolHelper.InvokeMethodAsync<ApiEventResponse>(methodInfo, serverCommandInstance, new object[] { bridge, e });
+                        apiResponse = await restToolHelper.InvokeMethodAsync<ApiEventResponse>(methodInfo, serverCommandInstance, dependencyProvider);
                     }
                 }
             }
