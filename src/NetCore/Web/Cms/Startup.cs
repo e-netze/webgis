@@ -224,7 +224,7 @@ public class Startup
             });
         }
 
-        foreach (var cmsItem in cmsConfig.CmsItems ?? []) 
+        foreach (var cmsItem in cmsConfig.CmsItems ?? [])
         {
             foreach (var deployment in cmsItem.Deployments?
                                               .Where(d => d.Target.IsUrl()) ?? [])

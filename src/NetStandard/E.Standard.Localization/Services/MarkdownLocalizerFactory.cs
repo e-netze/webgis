@@ -2,7 +2,6 @@
 using E.Standard.Localization.Services;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
-using System.Globalization;
 
 // usage:
 // services.AddScoped<IStringLocalizerFactory, MarkdownLocalizerFactory>();

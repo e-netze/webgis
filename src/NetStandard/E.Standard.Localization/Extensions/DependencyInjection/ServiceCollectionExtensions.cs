@@ -1,6 +1,5 @@
 ﻿using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Services;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 
 namespace Microsoft.Extensions.DependencyInjection;

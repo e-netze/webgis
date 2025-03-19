@@ -8,7 +8,6 @@ using E.Standard.CMS.Core;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Abstractions;
-using E.Standard.WebGIS.Core.Services;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.IO;

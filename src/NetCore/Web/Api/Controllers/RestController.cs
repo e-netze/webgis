@@ -36,7 +36,6 @@ using E.Standard.WebGIS.CMS.Extensions;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebGIS.Core.Reflection;
-using E.Standard.WebGIS.Core.Services;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api;
@@ -201,7 +200,7 @@ public class RestController : ApiBaseController
                 if (onlyContainerServices && String.IsNullOrWhiteSpace(container))
                 {
                     continue;
-                }    
+                }
 
                 jsonServices.Add(new ServiceDTO()
                 {
@@ -213,7 +212,7 @@ public class RestController : ApiBaseController
                     isbasemap = service.IsBaseMap,
                     opacity = service.Opacity,
                     childServices = service is IMapServiceCollection
-                        ? service.ResolveCollectionServiceUrls(_cache, ui) 
+                        ? service.ResolveCollectionServiceUrls(_cache, ui)
                         : null
                 });
             }
@@ -267,7 +266,7 @@ public class RestController : ApiBaseController
 
                     foreach (var service in services)
                     {
-                        if(infos.Any(infos => infos.id == service.Key))
+                        if (infos.Any(infos => infos.id == service.Key))
                         {
                             // already added (e.g. collection service item)
                             continue;
@@ -941,7 +940,7 @@ public class RestController : ApiBaseController
                                 typeof(IApiServerToolLocalizableAsync<>)
                             ) =>
                             await Invoker.InvokeAsync<ApiEventResponse>(button, "OnButtonClick", dependencyProvider),
-                        
+
                         _ => null
                     };
 
@@ -973,7 +972,7 @@ public class RestController : ApiBaseController
                     {
                         await bridge.SetUserFavoritesItemAsync(E.Standard.WebGIS.Tools.Favorites.Instance, "buttonclick", button.GetType().ToToolId());
                     }
-                    
+
                 }
                 else if (eventType == "toolevent")
                 {
@@ -981,12 +980,12 @@ public class RestController : ApiBaseController
                     {
                         { } when button.GetType().ImplementsAnyInterface(
                                 typeof(IApiServerTool)
-                            ) 
+                            )
                             => Invoker.Invoke<ApiEventResponse>(button, "OnEvent", dependencyProvider),
                         { } when button.GetType().ImplementsAnyInterface(
                                 typeof(IApiServerToolAsync),
                                 typeof(IApiServerToolLocalizableAsync<>)
-                            ) 
+                            )
                             => await Invoker.InvokeAsync<ApiEventResponse>(button, "OnEvent", dependencyProvider),
                         _ => null
                     };

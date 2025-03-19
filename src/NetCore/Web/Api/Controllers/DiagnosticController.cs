@@ -11,7 +11,6 @@ using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Extensions.Compare;
 using E.Standard.Web.Abstractions;
 using E.Standard.WebGIS.CMS;
-using E.Standard.WebGIS.Core.Services;
 using E.Standard.WebMapping.Core.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

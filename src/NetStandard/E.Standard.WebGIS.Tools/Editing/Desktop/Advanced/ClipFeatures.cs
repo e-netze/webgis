@@ -27,8 +27,8 @@ namespace E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(SelectionInfoDependent = true, MapCrsDependent = true)]
 [LocalizationNamespace("tools.editing.clip")]
-public class ClipFeatures : IApiServerToolLocalizableAsync<ClipFeatures>, 
-                            IApiChildTool, 
+public class ClipFeatures : IApiServerToolLocalizableAsync<ClipFeatures>,
+                            IApiChildTool,
                             IApiButtonResources
 {
     const string EditClipFeatureMethodId = "editing-clip-feature-method";
@@ -58,12 +58,12 @@ public class ClipFeatures : IApiServerToolLocalizableAsync<ClipFeatures>,
     #region IApiServerTool Member
 
     async public Task<ApiEventResponse> OnButtonClick(
-                        IBridge bridge, 
+                        IBridge bridge,
                         ApiToolEventArguments e,
                         ILocalizer<ClipFeatures> localizer
                 )
     {
-        
+
         var features = await e.FeaturesFromSelectionAsync(bridge);
         if (features == null || features.Count == 0)
         {

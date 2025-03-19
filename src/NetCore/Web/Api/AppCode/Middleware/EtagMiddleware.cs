@@ -2,7 +2,6 @@
 using Api.Core.AppCode.Services;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Globalization;
 using System.Threading.Tasks;
 
 namespace Api.Core.AppCode.Middleware;

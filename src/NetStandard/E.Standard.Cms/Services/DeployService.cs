@@ -58,7 +58,7 @@ public class DeployService : ICmsTool
     {
         CmsConfig.CmsItem? cmsItem = _ccs.Instance.CmsItems.Where(i => i.Id == context.CmsId).FirstOrDefault(); ;
         var deploy = cmsItem?.Deployments.Where(d => d.Name == context.Deployment.ToString()).FirstOrDefault();
-    
+
         if (deploy?.Target.IsUrl() == true)
         {
             _jwtTokenService = _serviceProvider.GetRequiredKeyedService<JwtAccessTokenService>($"cms-upload-{cmsItem!.Id}-{deploy.Name}");
@@ -247,7 +247,7 @@ public class DeployService : ICmsTool
 
                 console.WriteLine($"Upload to {deploy.Target}");
 
-                using(var memoryStream = new MemoryStream())
+                using (var memoryStream = new MemoryStream())
                 {
                     document.Save(memoryStream);
                     memoryStream.Position = 0;

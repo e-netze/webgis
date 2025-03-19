@@ -154,7 +154,7 @@ internal class DeployVersionService
             if (!di.Exists)
             {
                 di.Create();
-                File.WriteAllText(Path.Combine(di.FullName, "modify.json"), 
+                File.WriteAllText(Path.Combine(di.FullName, "modify.json"),
                     """
                     {
                       "mode": "shrink",

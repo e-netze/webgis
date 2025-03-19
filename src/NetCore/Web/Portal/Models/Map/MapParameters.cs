@@ -1,4 +1,4 @@
-using E.Standard.Extensions.Compare;
+﻿using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Platform;
 using E.Standard.WebGIS.Core.Models;

@@ -386,21 +386,21 @@ public class WebgisApiService
 
     async public Task<string> CallToolMethodAsync(HttpContext context, string id, string method, Dictionary<string, string> methodParameters = null)
     {
-        if(_logger.IsEnabled(LogLevel.Debug))
+        if (_logger.IsEnabled(LogLevel.Debug))
         {
-            _logger.LogDebug("CallToolMethodAsync: tool={id} method={method} data={data}", 
-                id, method, 
+            _logger.LogDebug("CallToolMethodAsync: tool={id} method={method} data={data}",
+                id, method,
                 methodParameters == null
                     ? "NULL"
                     : JSerializer.Serialize(methodParameters));
         }
-        
+
         var result = await CallToolMethodBytesAsync(context, id, method, methodParameters);
 
         if (_logger.IsEnabled(LogLevel.Debug))
         {
             _logger.LogDebug("CallToolMethodAsync Result: {result}",
-                result.data == null 
+                result.data == null
                 ? "NULL"
                 : System.Text.Encoding.UTF8.GetString(result.data));
         }

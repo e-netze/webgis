@@ -1,4 +1,4 @@
-using E.Standard.Json;
+﻿using E.Standard.Json;
 using E.Standard.Platform;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -963,16 +963,16 @@ public class EsriFeatures
         int index = 0;
 
         var point = new Point(coords[coordIndex, index++].Value, coords[coordIndex, index++].Value);
-        
+
         if (hasZ && index < coords.GetLength(1))
         {
-            point.Z = coords[coordIndex, index].HasValue 
-                ? coords[coordIndex, index].Value 
+            point.Z = coords[coordIndex, index].HasValue
+                ? coords[coordIndex, index].Value
                 : 0D;
 
             index++;
         }
-        
+
         if (hasM && index < coords.GetLength(1))
         {
             point = new PointM(point, coords[coordIndex, index++]);

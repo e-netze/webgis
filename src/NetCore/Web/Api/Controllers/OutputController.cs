@@ -1,7 +1,6 @@
 ﻿using Api.Core.AppCode.Mvc;
 using Api.Core.AppCode.Services;
 using E.Standard.Web.Abstractions;
-using E.Standard.WebGIS.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;

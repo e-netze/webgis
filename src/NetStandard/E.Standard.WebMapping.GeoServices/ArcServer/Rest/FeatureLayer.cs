@@ -6,7 +6,6 @@ using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
-using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.Core.Renderer;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.RequestBuilders;
@@ -140,8 +139,8 @@ class FeatureLayer : RestLayer, ILayer2, ILayer3, ILayerDistinctQuery, ILabelabl
                 requestBuilder.Build(),
                 "getfeatures",
                 (requestBody) => authHandler.TryPostAsync(
-                    _service, 
-                    featuresReqUrl, 
+                    _service,
+                    featuresReqUrl,
                     requestBody));
 
             jsonFeatureResponse = JSerializer.Deserialize<JsonFeatureResponse>(featuresResponse);

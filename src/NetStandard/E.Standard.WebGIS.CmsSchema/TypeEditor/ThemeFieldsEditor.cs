@@ -1,4 +1,4 @@
-using E.Standard.ArcXml;
+﻿using E.Standard.ArcXml;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.UI.Abstraction;

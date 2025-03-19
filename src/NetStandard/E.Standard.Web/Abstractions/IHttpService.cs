@@ -1,12 +1,9 @@
-﻿using E.Standard.Web.Extensions;
-using E.Standard.Web.Models;
+﻿using E.Standard.Web.Models;
 using gView.GraphicsEngine.Abstraction;
-using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace E.Standard.Web.Abstractions;

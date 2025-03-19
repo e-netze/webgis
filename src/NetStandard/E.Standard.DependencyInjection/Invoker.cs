@@ -19,7 +19,7 @@ public class Invoker
         )
     {
         return (TResult?)methodInfo.Invoke(
-                        instance, 
+                        instance,
                         GetDependencies(methodInfo, dependencyProvider).ToArray()
                     );
     }

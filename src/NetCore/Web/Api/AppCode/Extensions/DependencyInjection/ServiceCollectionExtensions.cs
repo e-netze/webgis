@@ -299,7 +299,7 @@ static public class ServiceCollectionExtensions
                 {
                     config.AddRazorNamespace(razorNamespace);
                 }
-                
+
                 config.AddToRazorWhiteList(configuration.DataLinqRazorWhiteListItems());
                 config.AddToRazorBlackList(configuration.DataLinqRazorBlackListItems());
 

@@ -312,7 +312,7 @@ internal class AgsAuthenticationHandler
 
             string tokenServiceUrl = $"{serviceUrl.Substring(0, pos)}/tokens/generateToken";
             string tokenParams = $"request=gettoken&username={mapService.Username}&password={mapService.Password.UrlEncodePassword()}&expiration={mapService.TokenExpiration}&f=json";
-            
+
             string tokenResponse = String.Empty;
 
             while (true)

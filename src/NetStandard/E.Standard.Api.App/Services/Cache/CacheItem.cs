@@ -3,7 +3,6 @@ using E.Standard.Api.App.Exceptions;
 using E.Standard.Api.App.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
-using E.Standard.CMS.Core.Schema;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -930,7 +929,7 @@ public class CmsCacheItem
                                     {
                                         Id = tocElement.Target.Id,
                                         Aliasname = tocElement.LoadString("aliasname"),
-                                        
+
                                         Metadata = tocElement.LoadString("metadata"),
                                         MetadataFormat = tocElement.LoadString("metadataformat"),
 
@@ -994,7 +993,7 @@ public class CmsCacheItem
                                     layerProps.Id = layerPropertyNode.Target.Id;
                                     layerProps.Name = null;
                                     layerProps.Aliasname = layerPropertyNode.LoadString("aliasname");
-                                    
+
                                     layerProps.Metadata = layerPropertyNode.LoadString("metadata");
                                     layerProps.MetadataFormat = layerPropertyNode.LoadString("metadataformat");
                                     layerProps.MetadataTarget = (BrowserWindowTarget2)layerPropertyNode.Load("metadata_target", (int)BrowserWindowTarget2.tab);
@@ -1021,7 +1020,7 @@ public class CmsCacheItem
                                     {
                                         layerAuthProperties.Add(new AuthProperty<bool>(layerVisibilityAutPropertyId, true, false, layerAuthNode));
                                     }
-                                } 
+                                }
                             }
 
                             if (layerProperies.Count > 0)
@@ -1262,7 +1261,7 @@ public class CmsCacheItem
 
                             if (service is IExportableOgcService)
                             {
-                                CmsDocument.AuthNode wmsExportAuthNode = CmsDocument.GetPropertyAuthNodeFast(cms, serviceGdiPropierties.ParentNode.NodeXPath + "/.linktemplate",    "exportwms");
+                                CmsDocument.AuthNode wmsExportAuthNode = CmsDocument.GetPropertyAuthNodeFast(cms, serviceGdiPropierties.ParentNode.NodeXPath + "/.linktemplate", "exportwms");
                                 if (wmsExportAuthNode != null)
                                 {
                                     _authBoolProperties.Add(new AuthProperty<bool>(serviceUrlKey + "::exportwms", ((IExportableOgcService)service).ExportWms, false, wmsExportAuthNode));

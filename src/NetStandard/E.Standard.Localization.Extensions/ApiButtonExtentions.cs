@@ -1,7 +1,5 @@
-﻿using E.Standard.Localization.Reflection;
-using E.Standard.WebMapping.Core.Api.Abstraction;
+﻿using E.Standard.WebMapping.Core.Api.Abstraction;
 using Microsoft.Extensions.Localization;
-using System.Reflection;
 
 namespace E.Standard.Localization.Extensions;
 

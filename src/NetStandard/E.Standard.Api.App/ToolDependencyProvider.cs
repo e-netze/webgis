@@ -36,7 +36,7 @@ public class ToolDependencyProvider : IDependencyProvider
             return _arguments;
         }
 
-        if (dependencyType.IsGenericType 
+        if (dependencyType.IsGenericType
             && dependencyType.GetGenericTypeDefinition() == typeof(ILocalizer<>))
         {
             Type genericArgument = dependencyType.GetGenericArguments()[0];

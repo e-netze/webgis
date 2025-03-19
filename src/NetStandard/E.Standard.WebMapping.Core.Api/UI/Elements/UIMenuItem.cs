@@ -20,7 +20,7 @@ public class UIMenuItem : UIElement, IUIElementText
 
     protected void Init(object callbackObject, ApiToolEventArguments e, UIButton.UIButtonType? type = null, string command = "")
     {
-        if(callbackObject.GetType().ImplementsAnyInterface(
+        if (callbackObject.GetType().ImplementsAnyInterface(
             typeof(IApiServerTool),
             typeof(IApiServerToolLocalizable<>),
             typeof(IApiServerToolAsync),

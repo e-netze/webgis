@@ -1,11 +1,8 @@
 ﻿using E.Standard.Api.App.Configuration;
-using E.Standard.CMS.Core;
 using E.Standard.Configuration.Services;
 using E.Standard.Extensions.Compare;
 using E.Standard.Security.App.Services.Abstraction;
-using MathNet.Numerics.RootFinding;
 using Microsoft.Extensions.Configuration;
-using ReverseMarkdown;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -690,11 +687,11 @@ static public class ConfigurationServiceExtensions
 
     static public IEnumerable<string> AllCmsNames(this IConfiguration config)
     {
-        foreach(var configSection in config.GetSection(ApiConfigKeys.ConfigurationSectionName)
+        foreach (var configSection in config.GetSection(ApiConfigKeys.ConfigurationSectionName)
                                            .GetChildren()
                                            .Where(c => c.Key.StartsWith("cmspath")))
         {
-            if(configSection.Key == "cmspath")
+            if (configSection.Key == "cmspath")
             {
                 yield return String.Empty;
             }
