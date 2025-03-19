@@ -1,5 +1,6 @@
 ﻿using E.Standard.Extensions.Reflection;
 using E.Standard.WebMapping.Core.Api.Abstraction;
+using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Extensions;
 using Newtonsoft.Json;
@@ -20,11 +21,7 @@ public class UIMenuItem : UIElement, IUIElementText
 
     protected void Init(object callbackObject, ApiToolEventArguments e, UIButton.UIButtonType? type = null, string command = "")
     {
-        if (callbackObject.GetType().ImplementsAnyInterface(
-            typeof(IApiServerTool),
-            typeof(IApiServerToolLocalizable<>),
-            typeof(IApiServerToolAsync),
-            typeof(IApiServerToolLocalizableAsync<>))
+        if (callbackObject.GetType().IsApiServerTool()
             || type == UIButton.UIButtonType.servertoolcommand_ext)
         {
             this.callback = new

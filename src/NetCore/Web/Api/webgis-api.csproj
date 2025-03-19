@@ -160,21 +160,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="i18n\de.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="i18n\it.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="i18n\fr.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="i18n\sl.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="i18n\en.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="l10n\de\Tools.FullExtent.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
