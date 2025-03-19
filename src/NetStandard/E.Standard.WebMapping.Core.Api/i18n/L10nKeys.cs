@@ -9,48 +9,48 @@ public class L10nKeys
     public const string Area = "area";
 
     public const string Parts = "parts";
-    public const string ChooseResult = "chooseResult";
+    public const string ChooseResult = "choose-result";
+
+    public const string RemoveSketch = "remove-sketch";
 
     #region Sketch
-
-    public const string RemoveSketch = "RemoveSketch";
 
     #endregion
 
     #region Editing
 
-    public const string ErrorOnInsert = "ErrorOnInsert";
-    public const string ErrorOnUpdate = "ErrorOnUpdate";
-    public const string ErrorOnDelete = "ErrorOnDelete";
+    public const string ErrorOnInsert = "error-on-insert";
+    public const string ErrorOnUpdate = "error-on-update";
+    public const string ErrorOnDelete = "error-on-delete";
 
     #endregion
 
     #region Editing Clip
 
     public const string Clip = "clip";
-    public const string ClipObjects = "ClipObjects";
-    public const string ClipDescription = "ClipDescription";
-    public const string ChooseClipMethod = "chooseClipMethod";
-    public const string ClipHasNoResult = "clipHasNoResult";
+    public const string ClipObjects = "clip-objects";
+    public const string ClipDescription = "clip-objects:body";
+    public const string ChooseClipMethod = "choose-clip-method";
+    public const string ClipHasNoResult = "clip-has-no-result";
 
-    public const string DrawClipPolygonFirst = "DrawClipPolygonFirst";
+    public const string DrawClipPolygonFirst = "draw-clip-polygon-first";
 
-    public const string ClipIntersectedAndDifference = "ClipIntersectedAndDifference";
-    public const string ClipIntersected = "ClipIntersected";
-    public const string ClipDifference = "ClipDifference";
-    public const string ClipXor = "ClipXor";
+    public const string ClipIntersectedAndDifference = "clip-intersected-and-difference";
+    public const string ClipIntersected = "clip-intersected";
+    public const string ClipDifference = "clip-difference";
+    public const string ClipXor = "clip-xor";
 
     #endregion
 
     #region Editing Merge
 
     public const string Merge = "merge";
-    public const string MergedObject = "mergedObject";
-    public const string MergeObjects = "mergeObjects";
-    public const string PolylineMergeMethod = "PolylineMergeMethod";
-    public const string MergeHasNoResult = "mergeHasNoResult";
-    public const string MergeOriginFeature = "mergeOriginFeature";
-    public const string MergeOriginFeatureDesription = "mergeOriginFeature-description";
+    public const string MergedObject = "merged-object";
+    public const string MergeObjects = "merge-objects";
+    public const string PolylineMergeMethod = "polyline-merge-method";
+    public const string MergeHasNoResult = "merge-has-no-result";
+    public const string MergeOriginFeature = "merge-origin-feature";
+    public const string MergeOriginFeatureDesription = "merge-origin-feature:body";
 
     #endregion
 }

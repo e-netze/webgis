@@ -23,11 +23,7 @@ public static class ApiButtonExtentions
             return "";
         }
 
-        var localizationNamespace = button.GetType().GetCustomAttribute<LocalizationNamespaceAttribute>() switch
-        {
-            null => $"tools.{button.GetType().Name.ToLowerInvariant()}",
-            LocalizationNamespaceAttribute lsa => lsa.Namespace
-        };
+        var localizationNamespace = button.GetType().GetLocalizationNamespace();
 
         string key = $"{localizationNamespace}.{subKey}";
         var name = localizer[key];

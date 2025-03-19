@@ -1,4 +1,5 @@
-﻿using E.Standard.ThreadSafe;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.ThreadSafe;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebGIS.Tools.Identify.Abstractions;
 using E.Standard.WebGIS.Tools.Identify.Extensions;
@@ -24,7 +25,7 @@ namespace E.Standard.WebGIS.Tools.Identify;
 
 internal class IdentifyServiceMobile
 {
-    async public Task<ApiEventResponse> OnEvent(IApiTool tool, IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnEvent(IApiTool tool, IBridge bridge, ApiToolEventArguments e, ILocalizer localizer)
     {
         var click = e.ToMapProjectedClickEvent();
 
@@ -147,7 +148,7 @@ internal class IdentifyServiceMobile
 
         if (queries == null || queries.Count() == 0)
         {
-            throw new InfoException(bridge.LocalizeString(tool, "Keine Abfragen gefunden!?"));
+            throw new InfoException(localizer.Localize("no-query-found"));
         }
 
         #region Add Map Sref, BBox & Size (wichtig für WMS Identify) 
@@ -374,7 +375,7 @@ internal class IdentifyServiceMobile
 
                         e.ClearMenuItemValue();
 
-                        return await OnEvent(tool, bridge, e);
+                        return await OnEvent(tool, bridge, e, localizer);
                     }
                     menuItems.Add(new UIMenuItem(tool, e)
                     {
@@ -399,7 +400,7 @@ internal class IdentifyServiceMobile
 
                         e.ClearMenuItemValue();
 
-                        return await OnEvent(tool, bridge, e);
+                        return await OnEvent(tool, bridge, e, localizer);
                     }
                     menuItems.Add(new UIMenuItem(tool, e)
                     {

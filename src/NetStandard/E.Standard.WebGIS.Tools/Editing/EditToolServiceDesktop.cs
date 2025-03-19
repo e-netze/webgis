@@ -187,7 +187,7 @@ internal class EditToolServiceDesktop : IEditToolService
 
         try
         {
-            response = await identifyToolService.OnEvent(_sender, bridge, e);
+            response = await identifyToolService.OnEvent(_sender, bridge, e, bridge.GetLocalizer<IdentifyDefault>());
         }
         catch
         {
@@ -299,7 +299,7 @@ internal class EditToolServiceDesktop : IEditToolService
 
         ApiEventResponse response = null;
 
-        response = await identifyToolService.OnEvent(_sender, bridge, e);
+        response = await identifyToolService.OnEvent(_sender, bridge, e, bridge.GetLocalizer<IdentifyDefault>());
 
         response.UIElements = new List<IUIElement>(response.UIElements);
         response.UIElements.Add(new UIEmpty()

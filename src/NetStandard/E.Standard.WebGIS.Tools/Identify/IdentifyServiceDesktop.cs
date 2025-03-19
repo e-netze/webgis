@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Compare;
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebGIS.Tools.Identify.Abstractions;
 using E.Standard.WebGIS.Tools.Identify.Extensions;
@@ -23,7 +24,7 @@ namespace E.Standard.WebGIS.Tools.Identify;
 
 internal class IdentifyServiceDesktop
 {
-    async public Task<ApiEventResponse> OnEvent(IApiTool tool, IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnEvent(IApiTool tool, IBridge bridge, ApiToolEventArguments e, ILocalizer localizer)
     {
         var click = e.ToMapProjectedClickEvent();
 
@@ -172,7 +173,7 @@ internal class IdentifyServiceDesktop
             }
             else
             {
-                throw new InfoException("Keine Abfragen gefunden!?");
+                throw new InfoException(localizer.Localize("no-query-found"));
             }
         }
 
@@ -422,7 +423,7 @@ internal class IdentifyServiceDesktop
 
                         e.ClearMenuItemValue();
 
-                        return await OnEvent(tool, bridge, e);
+                        return await OnEvent(tool, bridge, e, localizer);
                     }
                 }
                 else if (queryTheme.IsDefaultQueryThemeType())
@@ -434,7 +435,7 @@ internal class IdentifyServiceDesktop
 
                         e.ClearMenuItemValue();
 
-                        return await OnEvent(tool, bridge, e);
+                        return await OnEvent(tool, bridge, e, localizer);
                     }
 
                     if (!appendToUI)

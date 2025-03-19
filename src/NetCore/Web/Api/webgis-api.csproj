@@ -76,7 +76,7 @@
     <PackageReference Include="E.DataLinq.Engine.SQLite" Version="7.25.1110" />
     <PackageReference Include="E.DataLinq.Engine.SqlServer-legacy" Version="7.25.1110" />
     <PackageReference Include="E.DataLinq.Web" Version="7.25.1110" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.AzureStorage" Version="3.1.24" />
     <!--<PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />-->
@@ -84,7 +84,7 @@
 
   <ItemGroup><!--<DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />-->
   
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.3" />
   
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
       <PrivateAssets>all</PrivateAssets>
@@ -93,9 +93,9 @@
   
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
   
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.2" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.3" />
   
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.3" />
     <!--
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
     -->
@@ -106,6 +106,7 @@
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Configuration\E.Standard.Configuration.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Custom.Core\E.Standard.Custom.Core.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.DbConnector\E.Standard.DbConnector.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.DependencyInjection\E.Standard.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Json\E.Standard.Json.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Localization.Extensions\E.Standard.Localization.Extensions.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Localization\E.Standard.Localization.csproj" />
