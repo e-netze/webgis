@@ -39,7 +39,6 @@ using Portal.Core.AppCode.Services;
 using Portal.Core.AppCode.Services.Worker;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Authentication;

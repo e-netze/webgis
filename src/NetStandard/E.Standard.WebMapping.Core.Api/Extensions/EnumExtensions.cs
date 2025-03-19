@@ -1,5 +1,4 @@
 ﻿using E.Standard.Localization.Abstractions;
-using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using System;
 using System.Collections.Generic;

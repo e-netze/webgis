@@ -7,7 +7,7 @@ namespace E.Standard.WebMapping.GeoServices.Extensions;
 static internal class RequestContextExtensions
 {
     async static public Task<string> LogRequest(
-        this IRequestContext requestContext, 
+        this IRequestContext requestContext,
         string server,
         string service,
         string requestBody,

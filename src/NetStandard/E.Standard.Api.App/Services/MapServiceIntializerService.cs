@@ -344,7 +344,7 @@ public class MapServiceInitializerService
                 #region obsolete
 
                 throw new NotImplementedException();
-                
+
                 //service = new ApiCollectionService(_cmsDocuments, cmsName, serviceLink.Target.NodeXPath);
                 //CmsNodeCollection childServiceLinks = cms.SelectNodes(null, serviceLink.Target.NodeXPath + "/services/*");
                 //childServiceLinks.Reverse();

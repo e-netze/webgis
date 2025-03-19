@@ -32,8 +32,8 @@ static internal class CollectionExtensions
         services.Remove(serviceCollectionUrl);
 
         foreach (var item in serviceCollection.Items.Reverse())
-        { 
-            if(item.Url == serviceCollectionUrl)
+        {
+            if (item.Url == serviceCollectionUrl)
             {
                 throw new System.Exception($"Self-Recursive collection detected. {serviceCollectionUrl} contains {item.Url}");
             }
@@ -49,7 +49,7 @@ static internal class CollectionExtensions
                         layer.Visible = true;
                     }
                 }
-                else if(item.LayerVisibility == E.Standard.WebMapping.Core.MapServiceLayerVisibility.AllInvisible)
+                else if (item.LayerVisibility == E.Standard.WebMapping.Core.MapServiceLayerVisibility.AllInvisible)
                 {
                     foreach (var layer in service.Layers)
                     {
@@ -100,7 +100,7 @@ static internal class CollectionExtensions
     }
 
     static public string[] ResolveCollectionServiceUrls(
-                this IMapService service, 
+                this IMapService service,
                 CacheService cache,
                 CmsDocument.UserIdentification ui)
     {

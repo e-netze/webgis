@@ -1,4 +1,4 @@
-#pragma warning disable CA1416
+﻿#pragma warning disable CA1416
 
 using Api.AppCode.Mvc.Wrapper;
 using Api.Core.AppCode.Services;
@@ -8,7 +8,6 @@ using E.Standard.Api.App.Extensions;
 using E.Standard.Configuration.Extensions;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
-using E.Standard.Extensions.Compare;
 using E.Standard.Extensions.ErrorHandling;
 using E.Standard.Json;
 using E.Standard.Platform;
@@ -17,7 +16,6 @@ using E.Standard.Web.Abstractions;
 using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.Core.Models.Abstraction;
 using E.Standard.WebGIS.Core.Mvc.Wrapper;
-using E.Standard.WebGIS.Core.Services;
 using E.Standard.WebMapping.Core;
 using gView.GraphicsEngine;
 using Microsoft.AspNetCore.Http;

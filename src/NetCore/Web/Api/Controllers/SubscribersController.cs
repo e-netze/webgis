@@ -24,7 +24,6 @@ using E.Standard.Security.Cryptography.Token;
 using E.Standard.Web.Abstractions;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Models;
-using E.Standard.WebGIS.Core.Services;
 using E.Standard.WebGIS.SDK.Services;
 using E.Standard.WebGIS.SubscriberDatabase;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
@@ -185,7 +184,7 @@ public class SubscribersController : ApiBaseController
                             {
                                 alg = "",
                                 typ = "webgis-api-accesstoken"
-                            }, 
+                            },
                             new E.Standard.Security.Cryptography.Token.Models.Payload(60)
                             {
                                 iis = _urlHelper.AppRootUrl(HttpSchema.Https),

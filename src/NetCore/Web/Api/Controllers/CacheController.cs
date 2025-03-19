@@ -10,7 +10,6 @@ using E.Standard.MessageQueues.Services.Abstraction;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Security.Cryptography.Services;
 using E.Standard.Web.Abstractions;
-using E.Standard.WebGIS.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -153,8 +152,8 @@ public class CacheController : ApiBaseController
                         $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}_{fi.Name}");
 
                 fi.CopyTo(archiveFilename);
-            } 
-            else if(fi.Directory.Exists == false)
+            }
+            else if (fi.Directory.Exists == false)
             {
                 fi.Directory.Create();
             }

@@ -655,8 +655,8 @@ public class MapService : IMapService2,
                         requestBuilder.Build(),
                         "export_map",
                         (requestBody) => authHandler.TryPostAsync(
-                            this, 
-                            requestUrl, 
+                            this,
+                            requestUrl,
                             requestBody));
 
                     var jsonResult = JSerializer.Deserialize<JsonExportResponse>(result);

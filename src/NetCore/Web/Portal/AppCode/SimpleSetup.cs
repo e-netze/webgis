@@ -3,7 +3,6 @@ using E.Standard.Platform;
 using E.Standard.WebGIS.Core.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Text;
 using System.IO;
 using System.Reflection;
 
@@ -158,7 +157,7 @@ public class SimpleSetup
         string apiOnlineResource = GetEnvironmentVariable(EnvKey_ApiOnlineResourceUrl) ?? "http://localhost:5001";
         string apiInternalUrl = GetEnvironmentVariable(EnvKey_ApiInternalUrl) ?? "http://webgis-api:8080";
         string portalOnlineResource = GetEnvironmentVariable(EnvKey_PortalOnlineResourceUrl) ?? "http://localhost:5002";
-        string company = GetEnvironmentVariable(EnvKey_Company) 
+        string company = GetEnvironmentVariable(EnvKey_Company)
             ??
 #if DEBUG || DEBUG_INTERNAL
             "dev";
@@ -178,7 +177,7 @@ public class SimpleSetup
         return configText;
     }
 
-#endregion
+    #endregion
 
     #region Helper
 

@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core;
+ï»¿using E.Standard.CMS.Core;
 using E.Standard.Extensions.Text;
 using E.Standard.Platform;
 using E.Standard.WebMapping.Core;
@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web;
 
 namespace E.Standard.WebGIS.CMS;
 
@@ -46,13 +45,13 @@ public class Globals
 
     public static string EncUmlaute(string val, bool umlaute2wildcard)
     {
-        val = val.Replace("ä", (umlaute2wildcard) ? "%" : "&#228;");
-        val = val.Replace("ö", (umlaute2wildcard) ? "%" : "&#246;");
-        val = val.Replace("ü", (umlaute2wildcard) ? "%" : "&#252;");
-        val = val.Replace("Ä", (umlaute2wildcard) ? "%" : "&#196;");
-        val = val.Replace("Ö", (umlaute2wildcard) ? "%" : "&#214;");
-        val = val.Replace("Ü", (umlaute2wildcard) ? "%" : "&#220;");
-        val = val.Replace("ß", (umlaute2wildcard) ? "%" : "&#223;");
+        val = val.Replace("Ã¤", (umlaute2wildcard) ? "%" : "&#228;");
+        val = val.Replace("Ã¶", (umlaute2wildcard) ? "%" : "&#246;");
+        val = val.Replace("Ã¼", (umlaute2wildcard) ? "%" : "&#252;");
+        val = val.Replace("Ã„", (umlaute2wildcard) ? "%" : "&#196;");
+        val = val.Replace("Ã–", (umlaute2wildcard) ? "%" : "&#214;");
+        val = val.Replace("Ãœ", (umlaute2wildcard) ? "%" : "&#220;");
+        val = val.Replace("ÃŸ", (umlaute2wildcard) ? "%" : "&#223;");
         return val;
     }
 
@@ -335,10 +334,10 @@ public class Globals
 
         name = name.ToLower();
         name = name.Replace(" ", "_");
-        name = name.Replace("ä", "ae");
-        name = name.Replace("ö", "oe");
-        name = name.Replace("ü", "ue");
-        name = name.Replace("ß", "ss");
+        name = name.Replace("Ã¤", "ae");
+        name = name.Replace("Ã¶", "oe");
+        name = name.Replace("Ã¼", "ue");
+        name = name.Replace("ÃŸ", "ss");
 
         return name;
     }

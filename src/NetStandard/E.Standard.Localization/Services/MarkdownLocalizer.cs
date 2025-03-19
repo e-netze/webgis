@@ -53,10 +53,10 @@ class MarkdownLocalizer : IStringLocalizer
     {
         var diInfo = new DirectoryInfo(Path.Combine(ResourcePath, language));
 
-        if(!diInfo.Exists)
+        if (!diInfo.Exists)
         {
             return null;
-        }   
+        }
 
         var result = new Translations();
 
@@ -116,7 +116,7 @@ class MarkdownLocalizer : IStringLocalizer
     {
         get
         {
-            if(String.IsNullOrEmpty(name))
+            if (String.IsNullOrEmpty(name))
             {
                 return new LocalizedString("", "", resourceNotFound: true);
             }

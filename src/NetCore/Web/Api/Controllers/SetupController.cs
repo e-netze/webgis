@@ -8,7 +8,6 @@ using E.Standard.Caching.Services;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Web.Abstractions;
-using E.Standard.WebGIS.Core.Services;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;

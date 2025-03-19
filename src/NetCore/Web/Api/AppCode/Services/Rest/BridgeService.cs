@@ -5,9 +5,7 @@ using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
 using E.Standard.Configuration.Services;
 using E.Standard.Extensions.Collections;
-using E.Standard.Extensions.Compare;
 using E.Standard.Security.Cryptography.Abstractions;
-using E.Standard.WebGIS.Core.Services;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Abstraction;
@@ -65,7 +63,7 @@ public class BridgeService
                     ? _httpContext.Request.Form.ToNameValueCollection()
                     : _httpContext.Request.Query.ToNameValueCollection();
             }
-            catch {  }
+            catch { }
         }
     }
 

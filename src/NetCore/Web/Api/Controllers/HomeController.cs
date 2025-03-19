@@ -8,7 +8,6 @@ using E.Standard.Api.App.Services.Cache;
 using E.Standard.Custom.Core;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Web.Abstractions;
-using E.Standard.WebGIS.Core.Services;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

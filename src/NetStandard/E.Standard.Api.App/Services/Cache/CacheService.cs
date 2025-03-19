@@ -561,7 +561,7 @@ public class CacheService
         }
 
         IMapService service = cmsCacheItem._mapServices[url].QueryObject(ui);
-        if (service is not null 
+        if (service is not null
             && !ServiceIsIntialized(cmsCacheItem.CacheInstance, service, url))
         {
             await InitServiceAsync(cmsCacheItem.CacheInstance, service, url, urlHelper);
