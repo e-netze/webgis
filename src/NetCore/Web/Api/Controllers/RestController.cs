@@ -927,46 +927,12 @@ public class RestController : ApiBaseController
                 {
                     apiResponse = button switch
                     {
-                        { } when button.GetType().ImplementsAnyInterface(
-                                typeof(IApiServerButton),
-                                typeof(IApiServerTool),
-                                typeof(IApiServerToolLocalizable<>),
-                                typeof(IApiClientTool)
-                            ) =>
-                             Invoker.Invoke<ApiEventResponse>(button, "OnButtonClick", dependencyProvider),
-                        { } when button.GetType().ImplementsAnyInterface(
-                                typeof(IApiServerToolAsync),
-                                typeof(IApiServerButtonAsync),
-                                typeof(IApiServerToolLocalizableAsync<>)
-                            ) =>
-                            await Invoker.InvokeAsync<ApiEventResponse>(button, "OnButtonClick", dependencyProvider),
-
+                        { } when button.GetType().IsApiToolOrButtonNonAsync()
+                             => Invoker.Invoke<ApiEventResponse>(button, "OnButtonClick", dependencyProvider),
+                        { } when button.GetType().IsApiToolOrButtonAsync()
+                             => await Invoker.InvokeAsync<ApiEventResponse>(button, "OnButtonClick", dependencyProvider),
                         _ => null
                     };
-
-                    // garbage
-                    /*
-                    if (button is IApiServerButton serverButton)
-                    {
-                        apiResponse = serverButton.OnButtonClick(bridge, e);
-                    }
-                    else if (button is IApiServerTool serverTool)
-                    {
-                        apiResponse = serverTool.OnButtonClick(bridge, e);
-                    }
-                    else if (button is IApiClientTool clientTool)
-                    {
-                        apiResponse = clientTool.OnButtonClick(bridge, e);
-                    }
-                    else if (button is IApiServerToolAsync serverToolAsync)
-                    {
-                        apiResponse = await serverToolAsync.OnButtonClick(bridge, e);
-                    }
-                    else if (button is IApiServerButtonAsync serverButtonAsync)
-                    {
-                        apiResponse = await serverButtonAsync.OnButtonClick(bridge, e);
-                    }
-                    */
 
                     if (button != null && e.AsDefaultTool == false)
                     {
@@ -978,28 +944,12 @@ public class RestController : ApiBaseController
                 {
                     apiResponse = button switch
                     {
-                        { } when button.GetType().ImplementsAnyInterface(
-                                typeof(IApiServerTool)
-                            )
+                        { } when button.GetType().IsApiServerToolNonAsync()
                             => Invoker.Invoke<ApiEventResponse>(button, "OnEvent", dependencyProvider),
-                        { } when button.GetType().ImplementsAnyInterface(
-                                typeof(IApiServerToolAsync),
-                                typeof(IApiServerToolLocalizableAsync<>)
-                            )
+                        { } when button.GetType().IsApiServerToolAsync()
                             => await Invoker.InvokeAsync<ApiEventResponse>(button, "OnEvent", dependencyProvider),
                         _ => null
                     };
-
-                    // garbage
-
-                    //if (button is IApiServerTool)
-                    //{
-                    //    apiResponse = ((IApiServerTool)button).OnEvent(bridge, e);
-                    //}
-                    //else if (button is IApiServerToolAsync)
-                    //{
-                    //    apiResponse = await ((IApiServerToolAsync)button).OnEvent(bridge, e);
-                    //}
                 }
                 else if (eventType == "servertoolcommand" && e["_method"] != null)
                 {

@@ -21,6 +21,7 @@ using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse;
+using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
@@ -77,11 +78,7 @@ public class RestToolsHelperService
         {
             tool = new ServerButtonToolDTO();
         }
-        else if (apiTool.GetType().ImplementsAnyInterface(
-                typeof(IApiServerTool),
-                typeof(IApiServerToolLocalizable<>),
-                typeof(IApiServerToolAsync),
-                typeof(IApiServerToolLocalizableAsync<>)))
+        else if (apiTool.GetType().IsApiServerTool())
         {
             tool = new ServerToolDTO()
             {
