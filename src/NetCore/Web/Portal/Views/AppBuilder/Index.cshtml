@@ -18,14 +18,11 @@
     string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
 }
 
-<link href="~/lib/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" />
 <link href="@(apiUrl)/content/styles/default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 <link href="@(apiUrl)/content/api/ui.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 
 <link href="~/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />
 <link href="~/content/mapbuilder.css" rel="stylesheet" />
-
-<script src="~/lib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 
 <link href="@(portalContentUrl)/content/portal.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 @if (customContent.CompanyPortalCssExists())

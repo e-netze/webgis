@@ -212,14 +212,25 @@ function createSelector(name, id, selectOptions, result, sortable) {
         }
 
         if (sortable == true) {
-            $parentList.sortable({
-                update: function (event, ui) {
-                    var $parent = $parentList.closest('.selector-container').parent();
-                    calcContainerValues($parent, ui.item);
-                    if (window.fireSelectionChanged)
-                        fireSelectionChanged();
-                }
+            webgis.require('sortable', function () {
+                Sortable.create($parentList.get(0),
+                    {
+                        onSort: function (e) {
+                            var $parent = $parentList.closest('.selector-container').parent();
+                            calcContainerValues($parent, ui.item);
+                            if (window.fireSelectionChanged)
+                                fireSelectionChanged();
+                        }
+                    });
             });
+            //$parentList.sortable({
+            //    update: function (event, ui) {
+            //        var $parent = $parentList.closest('.selector-container').parent();
+            //        calcContainerValues($parent, ui.item);
+            //        if (window.fireSelectionChanged)
+            //            fireSelectionChanged();
+            //    }
+            //});
         }
     }
 
@@ -227,7 +238,10 @@ function createSelector(name, id, selectOptions, result, sortable) {
     div.selectOptions = selectOptions;
 
     if (sortable == true) {
-        $ul.sortable();
+        webgis.require('sortable', function () {
+            Sortable.create($ul.get(0));
+        })
+        //$ul.sortable();
     }
 };
 
@@ -352,6 +366,8 @@ function calcContainerValues($parent, clickItem) {
 
             var v = $('#' + $div.attr("data-id"));
             v.val(val);
+
+            console.log('calcContainerValues', val);
         }
     });
 }

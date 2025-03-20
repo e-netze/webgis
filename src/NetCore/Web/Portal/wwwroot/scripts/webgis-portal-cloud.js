@@ -208,28 +208,34 @@ function startEditOrdering() {
             .addClass('uibutton-danger')
             .removeClass('uibutton-cancel');
 
-        $('.webgis-portal-sortable').sortable({
-            update: function (event, ui) {
-                var $sender = $(event.target);
-                var sortedItems = [];
-                $sender
-                    .children('.webgis-portal-sortable-item[data-sortable]')
-                    .each(function (i, e) {
-                        sortedItems.push($(e).attr('data-sortable'));
-                    });
+        webgis.require('sortable', function () {
+            $('.webgis-portal-sortable').each(function (i, e) {
+                //console.log('Sortable.create', e);
+                $(e).data('sortable', Sortable.create(e, {
+                    onSort: function (event) {
+                        var $sender = $(event.target);
+                        var sortedItems = [];
+                        $sender
+                            .children('.webgis-portal-sortable-item[data-sortable]')
+                            .each(function (i, e) {
+                                sortedItems.push($(e).attr('data-sortable'));
+                            });
 
-                console.log('sort', $sender.attr('data-sorting-method'), sortedItems);
+                        console.log('sort', $sender.attr('data-sorting-method'), sortedItems);
 
-                $.ajax({
-                    url: webgis.url.relative(portal + '/sortitems'),
-                    data: { sortingMethod: $sender.attr('data-sorting-method'), items: JSON.stringify(sortedItems), currentCategory: $sender.attr('data-sorting-currentcategory') || '' },
-                    type: 'post',
-                    success: function (result) {
+                        $.ajax({
+                            url: webgis.url.relative(portal + '/sortitems'),
+                            data: { sortingMethod: $sender.attr('data-sorting-method'), items: JSON.stringify(sortedItems), currentCategory: $sender.attr('data-sorting-currentcategory') || '' },
+                            type: 'post',
+                            success: function (result) {
 
+                            }
+                        });
                     }
-                });
-            }
+                }));
+            });            
         });
+        
         $('.webgis-portal-sortable').children().each(function (i, e) {
             if (!$(e).hasClass('webgis-portal-sortable-item'))
                 $(e).addClass('webgis-portal-sortable-hidden-item');
@@ -253,8 +259,18 @@ function stopEditOrdering() {
             .removeClass('webgis-portal-sortable-hidden-item')
 
         try {
-            $('.webgis-portal-sortable').sortable("destroy");
-        } catch (e) { }
+            webgis.require('sortable', function () {
+                $('.webgis-portal-sortable').each(function (i, e) {
+                    var sortable = $(e).data('sortable');
+                    if (sortable) {
+                        //console.log('Sortable.destroy', e, sortable);
+                        sortable.destroy();
+                        $(e).data('sortable', null);
+                    }
+                });
+            });
+            //$('.webgis-portal-sortable').sortable("destroy");
+        } catch (e) { console.log(e); }
     }
 }
 

@@ -5,17 +5,19 @@
 function initEditables() {
     $('.page-editable-content').portal_contenteditor();
 
-    $('#page-content-list').sortable({
-        update: function (event, ui) {
-            $.ajax({
-                url: webgis.url.relative(portal + '/sortcontent'),
-                data: { sorting: $.webgis_portal_contentItemSorting() },
-                type: 'post',
-                success: function (result) {
+    webgis.require('sortable', function () {
+        Sortable.create($('#page-content-list').get(0), {
+            onSort: function (event) {
+                $.ajax({
+                    url: webgis.url.relative(portal + '/sortcontent'),
+                    data: { sorting: $.webgis_portal_contentItemSorting() },
+                    type: 'post',
+                    success: function (result) {
 
-                }
-            });
-        }
+                    }
+                });
+            }
+        });
     });
 
     $('#page-content-new-item').click(function () {
