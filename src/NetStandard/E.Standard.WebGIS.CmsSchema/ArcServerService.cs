@@ -376,7 +376,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
             layer.Url = Crypto.GetID();
             layer.Id = layerInfo.Id.ToString();
 
-            layer.Visible = layerInfo.DefaultVisibility;
+            layer.Visible = ParentLayerVisibility(layerInfo, jsonLayers.Layers, layerInfo.DefaultVisibility);
 
             c++;
 
@@ -841,13 +841,27 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         return ParentLayerName(layer.ParentLayer, layers) + layer.ParentLayer.Name + "\\";
     }
 
+    private bool ParentLayerVisibility(JsonLayer layer, IEnumerable<JsonLayer> layers, bool layerDefaultVisiblity)
+    {
+        if (layerDefaultVisiblity == false) return false;
+
+        if (layer?.ParentLayer == null)
+        {
+            return layerDefaultVisiblity;
+        }
+
+        if (layer.ParentLayer.DefaultVisibility == false)
+        {
+            return false;
+        }
+
+        return ParentLayerVisibility(layer.ParentLayer, layers, layerDefaultVisiblity);
+    }
+
     private string _tokenParam = String.Empty;
 
     async internal Task<string> TryPostAsync(string requestUrl, string postBodyData)
     {
-        //dotNETConnector conn = new dotNETConnector(
-        //                        System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/dotNETConnector.xml", String.Empty, String.Empty);
-
         int i = 0;
         while (true)
         {
