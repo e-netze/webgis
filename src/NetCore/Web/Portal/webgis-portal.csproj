@@ -179,6 +179,7 @@
 
   <ItemGroup>
     <Folder Include="mapbuilder\" />
+    <Folder Include="wwwroot\content\themes\" />
     <Folder Include="_config\" />
   </ItemGroup>
 
