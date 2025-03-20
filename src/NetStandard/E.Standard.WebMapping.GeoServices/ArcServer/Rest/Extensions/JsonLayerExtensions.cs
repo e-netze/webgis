@@ -23,4 +23,22 @@ static internal class JsonLayerExtensions
 
         return jsonLayer.MaxScale;
     }
+
+    static public bool DefaultVisbilityIncludesGroups(this JsonLayer jsonLayer)
+    {
+        if (jsonLayer.DefaultVisibility == false)
+        {
+            return false;
+        }
+
+        if (jsonLayer.ParentLayer == null)
+        {
+            //return jsonLayer.Type == "Group Layer"
+            //    ? false
+            //    : jsonLayer.DefaultVisibility;
+            return jsonLayer.DefaultVisibility;
+        }
+
+        return DefaultVisbilityIncludesGroups(jsonLayer.ParentLayer);
+    }
 }

@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core;
+ï»¿using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
@@ -62,15 +62,15 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
     public WebMapping.Core.ServiceDynamicPresentations DynamicPresentations { get; set; }
 
     [DisplayName("Abfragen bereitstellen")]
-    [Description("Abfragen werden nicht mehr parametriert, sondern werden zur Laufzeit für alle (Feature) Layer eine Abfrage erstellt (ohne Suchbegriffe, nur Identify)")]
+    [Description("Abfragen werden nicht mehr parametriert, sondern werden zur Laufzeit fÃ¼r alle (Feature) Layer eine Abfrage erstellt (ohne Suchbegriffe, nur Identify)")]
     public WebMapping.Core.ServiceDynamicQueries DynamicQueries { get; set; }
 
     [DisplayName("Dynamisches Verhalten")]
-    [Description("Gibt an, wie mit Layern umgegangen wird, die nicht beim erstellen oder nach einem Refresh im CMS unter Themen gelistet werden. AutoAppendNewLayers ... neue Themen werden beim Initialisieren des Dienstes (nach einem cache/clear) der Karte hinzugefügt und können über den TOC geschalten werden. UseStrict ... nur jene Themen, die unter Themen aufgelistet sind, kommen auch in der Karte vor. SealedLayers_UseServiceDefaults ... des wird keine Layerschaltung an den Dienst übergeben. Das bewirkt, dass immer die Defaultschaltung aus dem Layer angezeigt wird. Diese Options macht nur beim Fallback(druck)services für VTC Dienste Sinn!")]
+    [Description("Gibt an, wie mit Layern umgegangen wird, die nicht beim erstellen oder nach einem Refresh im CMS unter Themen gelistet werden. AutoAppendNewLayers ... neue Themen werden beim Initialisieren des Dienstes (nach einem cache/clear) der Karte hinzugefÃ¼gt und kÃ¶nnen Ã¼ber den TOC geschalten werden. UseStrict ... nur jene Themen, die unter Themen aufgelistet sind, kommen auch in der Karte vor. SealedLayers_UseServiceDefaults ... des wird keine Layerschaltung an den Dienst Ã¼bergeben. Das bewirkt, dass immer die Defaultschaltung aus dem Layer angezeigt wird. Diese Options macht nur beim Fallback(druck)services fÃ¼r VTC Dienste Sinn!")]
     public WebMapping.Core.DynamicDehavior DynamicDehavior { get; set; }
 
     [DisplayName("Service-Typ")]
-    [Description("Watermark Services werden immer ganz oben gezeichnet und können vom Anwender nicht transparent geschalten oder ausgelendet werden. Watermark Services können neben Wasserzeichen auch Polygondecker enthalten.")]
+    [Description("Watermark Services werden immer ganz oben gezeichnet und kÃ¶nnen vom Anwender nicht transparent geschalten oder ausgelendet werden. Watermark Services kÃ¶nnen neben Wasserzeichen auch Polygondecker enthalten.")]
     public WebMapping.Core.ImageServiceType ServiceType { get; set; }
 
     [DisplayName("Karten Server")]
@@ -97,7 +97,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
 
     [DisplayName("Export Map Format")]
     [Category("Service")]
-    [Description("Bei 'Json' wird das Ergebnis ins Outputverzeichnis von ArcGIS Server gelegt und dort vom Client abgeholt. Hat der Client keinen Zugriff auf dieses Output Verzeichnis, kann als Option 'Image' gewählt werden. Es wird dann vom ArcGIS Server keine Bild abgelegt sondern direkt übergeben.")]
+    [Description("Bei 'Json' wird das Ergebnis ins Outputverzeichnis von ArcGIS Server gelegt und dort vom Client abgeholt. Hat der Client keinen Zugriff auf dieses Output Verzeichnis, kann als Option 'Image' gewÃ¤hlt werden. Es wird dann vom ArcGIS Server keine Bild abgelegt sondern direkt Ã¼bergeben.")]
     public AGSExportMapFormat ExportMapFormat { get; set; }
 
     [DisplayName("Username")]
@@ -124,7 +124,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
     public string Token { get; set; }
 
     [Category("~Anmeldungs-Credentials")]
-    [DisplayName("Ticket-Gültigkeit [min]")]
+    [DisplayName("Ticket-GÃ¼ltigkeit [min]")]
     public int TicketExpiration
     {
         get { return _expiration; }
@@ -299,7 +299,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
 
         if (jsonLayers?.Layers == null || jsonLayers.Layers.Length == 0)
         {
-            throw new System.Exception("Es konnten keine Layer ausgelesen werden.\nMöchten Sie trotzden fortfahren und alle (TOC)Themen dieses Dienstes aus dem CMS löschen?");
+            throw new System.Exception("Es konnten keine Layer ausgelesen werden.\nMÃ¶chten Sie trotzden fortfahren und alle (TOC)Themen dieses Dienstes aus dem CMS lÃ¶schen?");
         }
 
         int counter = 0;
@@ -314,7 +314,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
             counter++;
         }
 
-        #region Überprüfen, ob beim Refresh layer gelöscht/hinzugefügt werden werden
+        #region ÃœberprÃ¼fen, ob beim Refresh layer gelÃ¶scht/hinzugefÃ¼gt werden werden
 
         if (refresh && level == 0)
         {
@@ -323,11 +323,11 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
             int divT = newT - oldT;
             if (divT < 0)
             {
-                throw new RefreshConfirmException("Durch den Refresh " + (divT == -1 ? "wird" : "werden") + " " + (-divT).ToString() + " " + (divT == -1 ? "Thema" : "Themen") + " aus Dienst gelöscht.\nMöchten Sie trotzden fortfahren?");
+                throw new RefreshConfirmException("Durch den Refresh " + (divT == -1 ? "wird" : "werden") + " " + (-divT).ToString() + " " + (divT == -1 ? "Thema" : "Themen") + " aus Dienst gelÃ¶scht.\nMÃ¶chten Sie trotzden fortfahren?");
             }
             else if (divT > 0)
             {
-                throw new RefreshConfirmException("Durch den Refresh " + (divT == 1 ? "wird" : "werden") + " dem Dienst " + (divT).ToString() + " " + (divT == 1 ? "Thema" : "Themen") + " hinzugefügt.\nMöchten Sie fortfahren?");
+                throw new RefreshConfirmException("Durch den Refresh " + (divT == 1 ? "wird" : "werden") + " dem Dienst " + (divT).ToString() + " " + (divT == 1 ? "Thema" : "Themen") + " hinzugefÃ¼gt.\nMÃ¶chten Sie fortfahren?");
             }
         }
 
@@ -376,7 +376,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
             layer.Url = Crypto.GetID();
             layer.Id = layerInfo.Id.ToString();
 
-            layer.Visible = layerInfo.DefaultVisibility;
+            layer.Visible = ParentLayerVisibility(layerInfo, jsonLayers.Layers, layerInfo.DefaultVisibility);
 
             c++;
 
@@ -391,7 +391,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
             {
                 save = false;
 
-                #region Überprüfen, ob LayerID und LayerName noch zusammenpasst!
+                #region ÃœberprÃ¼fen, ob LayerID und LayerName noch zusammenpasst!
 
                 string eFilename = di.FullName + "/themes/" + IMSService.ExtractLastPathElement(themeLinkUri) + ".xml";
                 IStreamDocument eXmlSteam = DocumentFactory.Open(eFilename);
@@ -841,13 +841,27 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         return ParentLayerName(layer.ParentLayer, layers) + layer.ParentLayer.Name + "\\";
     }
 
+    private bool ParentLayerVisibility(JsonLayer layer, IEnumerable<JsonLayer> layers, bool layerDefaultVisiblity)
+    {
+        if (layerDefaultVisiblity == false) return false;
+
+        if (layer?.ParentLayer == null)
+        {
+            return layerDefaultVisiblity;
+        }
+
+        if (layer.ParentLayer.DefaultVisibility == false)
+        {
+            return false;
+        }
+
+        return ParentLayerVisibility(layer.ParentLayer, layers, layerDefaultVisiblity);
+    }
+
     private string _tokenParam = String.Empty;
 
     async internal Task<string> TryPostAsync(string requestUrl, string postBodyData)
     {
-        //dotNETConnector conn = new dotNETConnector(
-        //                        System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/dotNETConnector.xml", String.Empty, String.Empty);
-
         int i = 0;
         while (true)
         {
@@ -957,9 +971,9 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
 
                 //
                 // 15.07.2019
-                // Bei komplizerteren Passwörtern mit Sonderzeichen muss man URL Encoden
+                // Bei komplizerteren PasswÃ¶rtern mit Sonderzeichen muss man URL Encoden
                 // Da trat bisher nur beim gView Server auf. Die Frage ist, ob man das auch beim Esri AGS Server machen muss
-                // Falls bei Kunden einmal irgendwas nicht geht, sollte man das überprüfen
+                // Falls bei Kunden einmal irgendwas nicht geht, sollte man das Ã¼berprÃ¼fen
                 //
                 string tokenParams = "request=gettoken&username=" + this._user + "&password=" + System.Web.HttpUtility.UrlEncode(this._pwd) + "&expiration=" + this.TicketExpiration + "&f=json";
 
