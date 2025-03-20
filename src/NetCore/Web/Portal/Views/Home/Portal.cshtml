@@ -18,11 +18,6 @@
     string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
 }
 
-@if (Model.IsContentAuthor)
-{
-    <link href="@(apiUrl)/content/themes/base/jquery-ui.css" rel="stylesheet" />
-    <script src="@(apiUrl)/scripts/jquery-ui-1.10.4.min.js"></script>
-}
 <script src="@(apiUrl)/scripts/api/api.min.js?@(WebGISVersion.CssVersion)"></script>
 
 @if (Model.IsContentAuthor)

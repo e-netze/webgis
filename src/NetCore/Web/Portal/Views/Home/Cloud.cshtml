@@ -21,11 +21,6 @@
 <link href="~/lib/webportal-layout/webportal-layout.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 <script src="~/lib/webportal-layout/webportal-layout.js?@(WebGISVersion.CssVersion)"></script>
 
-@if (Model.IsContentAuthor)
-{
-    <link href="@(apiUrl)/content/themes/base/jquery-ui.css" rel="stylesheet" />
-    <script src="@(apiUrl)/scripts/jquery-ui-1.10.4.min.js"></script>
-}
 <script src="@(apiUrl)/scripts/api/api.min.js?@(WebGISVersion.CssVersion)" id="webgis-api-script"></script>
 <script src="@(apiUrl)/scripts/api/api-ui.min.js?@(WebGISVersion.CssVersion)"></script>
 

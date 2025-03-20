@@ -28,7 +28,6 @@ Um Collector-Pro einzubinden, sind folgende Ressouren nötig:
 ##### Stylesheets
 
 ````html
-<link rel="stylesheet" href=".../Content/themes/base/jquery-ui.css"/>
 <link rel="stylesheet" href=".../Content/styles/default.css" />
 <link rel="stylesheet" href=".../Content/api/ui.css" />
 <link rel="stylesheet" href=".../Scripts/flatpickr/flatpickr.css" />
