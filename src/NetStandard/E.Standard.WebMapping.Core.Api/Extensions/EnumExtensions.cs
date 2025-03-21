@@ -27,7 +27,7 @@ static public class EnumExtensions
 
         foreach (var i in Enum.GetValues(typeof(TEnum)))
         {
-            dict.Add(((int)i).ToString(), localizer.Localize($"{i}-description"));
+            dict.Add(((int)i).ToString(), localizer.Localize($"{i}:body"));
         }
 
         return dict;

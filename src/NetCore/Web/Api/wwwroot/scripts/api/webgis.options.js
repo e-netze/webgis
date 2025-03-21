@@ -37,6 +37,7 @@ webgis.usability = {
     presentationTocSearch: false,
     allowDarkmode: false,
     allowStyleClassSelection: false,
+    allowLanguageSelection: false,
     mapClickTolerance: 3,
     mapSketchClickTolerance: 80,
     toolSketchOnlyEditableIfToolTabIsActive: false,

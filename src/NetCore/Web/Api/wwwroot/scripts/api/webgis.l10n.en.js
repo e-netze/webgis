@@ -1,0 +1,144 @@
+﻿webgis.l10n.literals['en'] = {
+    "language": "Language",
+
+    "redlining-tool-pointer": "Select object",
+    "redlining-tool-symbol": "Symbol",
+    "redlining-tool-line": "Line",
+    "redlining-tool-polygon": "Polygon",
+    "redlining-tool-freehand": "Freehand drawing",
+    "redlining-tool-distance_circle": "Distance circle",
+    "redlining-tool-compass_rose": "Compass rose",
+    "redlining-tool-circle": "Circle",
+    "redlining-tool-rectangle": "Rectangle",
+    "redlining-tool-text": "Text",
+    "redlining-tool-point": "Point",
+    "redlining-tool-dimline": "Dimension line",
+    "redlining-tool-hectoline": "Hectometer line",
+
+    "redlining-pointer": "Click on an existing redlining object in the map to edit it. To draw a new object, the corresponding tool must be selected.",
+    "redlining-symbol": "Click on the map to place a symbol...",
+    "redlining-text": "Click on the map to position the text. The text will be left-aligned in the map. After placing it, you can enter or modify the text in a text field.",
+    "redlining-point": "Click on the map to place the point.",
+    "redlining-freehand": "Draw a freehand line while holding the mouse button. On touch devices, draw a freehand line using your finger.",
+    "redlining-line": "Click on the map to define at least two vertices of the line.",
+    "redlining-polygon": "Click on the map to define at least three vertices of the polygon.",
+    "redlining-rectangle": "Click on the map to define the first corner of the rectangle. Then click again to set the second corner.",
+    "redlining-circle": "Click on the map to set the center of the circle. Then click again to define the radius.",
+    "redlining-distance_circle": "Click on the map to set the center of the distance circle. Then click again to define the radius. Alternatively, you can specify a radius under 'Properties (Radius...)'. There you can also set the number of intermediate circles.",
+    "redlining-compass_rose": "Click on the map to set the center of the compass rose. Then click again to define the radius.",
+    "redlining-dimline": "Click on the map to define at least two vertices of the line. Each segment will be labeled with its length [m].",
+    "redlining-hectoline": "Click on the map to define at least two vertices of the line. Intermediate points will be marked and labeled depending on the configured distance (under Properties).",
+
+    "service-order": "Here you can change the drawing order of map services. Services higher in the list will overlay those below. The order can be changed by dragging. Additionally, you can adjust the opacity of each service.",
+
+    "point": "Point",
+    "polyline": "(Poly)line",
+    "polygon": "Polygon (area)",
+
+    "node": "Node",
+    "edge": "Edge",
+    "endpoint": "Endpoint",
+
+    "angle": "Angle",
+    "cancel": "Cancel",
+    "ok": "Ok",
+    "apply": "Apply",
+    "yes": "Yes",
+    "no": "No",
+    "discard-changes": "Discard changes",
+
+    "select-field": "Select field",
+
+    "pan": "Pan",
+    "pan-tool-description": "Move the map by holding down the mouse button",
+    "rotate": "Rotate",
+    "rotate-tool-description": "Rotate the map by holding down the mouse button (plus SHIFT or CTRL key => 5° or 10° steps).",
+
+    "content-search-info": "In addition to the quick search (find places), you can also search for content (topics) in the current map. If the desired content is not shown there either, you can also search in map services. If a topic is found in services, it can be added to the current map.",
+
+    "tip": "Tip",
+    "understood": "Understood",
+    "later": "Later",
+    "tip-desktop-boxzoomin": "md:This tool is primarily designed for *touch devices*.\n\nWith this tool you can draw a rectangle once and zoom to the best fitting extent. After that, the tool automatically switches back to the current tool.\n\nIf you use a mouse and keyboard, there are *better methods* for zooming:\n\n*Mouse wheel:* Use the mouse wheel to zoom in and out at any time.\n\n*Shift key:* While holding the Shift key, you can draw a rectangle with the left mouse button, regardless of the active tool. Releasing the button will zoom to the selected extent.",
+    "tip-desktop-navigation": "md:*Navigation in the map*:\n\nOn desktop devices, navigation is done using the *left mouse button and the mouse wheel*. The right mouse button is not needed for map navigation and is reserved for the context menu (e.g., during drawing).\n\n*Move map extent:* Click and hold the left mouse button and drag to move the map. Releasing the button finishes the operation.\n\n*Zoom in/out:* Use the mouse wheel. Scrolling forward zooms out, scrolling backward zooms in.\n\nMap navigation is always possible, regardless of the active tool.",
+
+    "copied": "Copied to clipboard",
+    "close-selected-tabs": "Close selected tabs",
+    "active-queryresults": "Current query results",
+    "got-it": "Got it",
+
+    "querybuilder-use-geometry": "Use query geometry (rectangle)",
+    "querybuilder-ignore-geometry": "Ignore query geometry (rectangle)",
+
+    "description-customservice": "Experienced users can add their own map services (WMS/ArcGIS Server) here",
+    "description-customservice-url": "md: Custom services can include WMS and ArcGIS Server (MapServer/ImageServer) services.\nExamples:\n\n*WMS:*\n\nhttps://my.server.com/services/wms?VERSION=1.3.0\n\n*ArcGIS Server:*\n\nhttps://my.server.com/arcgis/rest/service/my-service/MapServer\nhttps://my.server.com/arcgis/rest/service/my-service/ImageServer\n",
+    "description-customservice-displayname": "md: Here you can specify a name under which the service will appear in the table of contents. If left empty, the name will be automatically determined from the service's capabilities.",
+    "description-customservice-security": "md: Not all services are publicly accessible. If a service requires login, you can optionally provide username and password here.",
+
+    "confirm-remove-service": "Do you really want to remove the service from the map?",
+    "confirm-remove-service-ok": "Yes, remove service",
+    "confirm-remove-service-cancel": "No, keep it",
+
+    "msg-no-legend-available": "Unfortunately, there is no legend available for this topic group",
+    "msg-no-services-available": "Unfortunately, there is no service available for this topic group",
+
+    "construction-mode-circle": "Construct circle",
+    "construction-mode-rectangle": "Construct rectangle",
+    "construction-mode-direction-distance": "Intersection: line with circle",
+    "construction-mode-distance-distance": "Arc intersection",
+    "construction-mode-direction-direction": "Intersection of two lines",
+    "construction-mode-midpoint": "Midpoint of line",
+    "construction-mode-add-vertex": "Add vertex",
+    "construction-mode-remove-vertex": "Remove vertex",
+    "construction-mode-select-vertex": "Select vertex",
+    "construction-mode-vertex-perpendicular": "Right angle",
+    "construction-mode-arc-3points": "Circular arc (3 points)",
+    "construction-mode-arc-2tangents": "Circular arc (2 tangents)",
+
+    "construction-info-apply-vertex": "Click on the construction point to apply the vertex",
+    "construction-info-apply-vertices": "Click on the corresponding shape to apply the vertices",
+    "construction-info-tip-use-context-menu": "Tip: Right-click to exit construction mode or to access more tools.",
+    "construction-info-add-vertex": "Click on a sketch edge to insert new vertices.",
+    "construction-info-remove-vertex": "Click on a vertex to remove it.",
+    "construction-info-select-vertex": "Select vertex/vertices: draw a selection window or click on the desired vertex.",
+
+    "construction-info-distance": "Set a point to define the center of the arc",
+    "construction-info-distance-close": "Set a point to define the radius of the arc",
+    "construction-info-distance1": "Set a point to define the center of the first arc",
+    "construction-info-distance1-close": "Set a point to define the radius of the first arc",
+    "construction-info-distance2": "Set a point to define the center of the second arc",
+    "construction-info-distance2-close": "Set a point to define the radius of the second arc",
+
+    "construction-info-direction": "Set the first point to define the direction",
+    "construction-info-direction-close": "Set the second point to finalize the direction",
+    "construction-info-direction1": "Set the first point to define the first direction",
+    "construction-info-direction1-close": "Set the second point to finalize the first direction",
+    "construction-info-direction2": "Set the first point to define the second direction",
+    "construction-info-direction2-close": "Set the second point to finalize the second direction",
+
+    "construction-info-midpoint": "Set the first point for the construction line",
+    "construction-info-midpoint-close": "Set the second point for the construction line",
+
+    "construction-info-arc-3points-point1": "Set the endpoint for the arc",
+    "construction-info-arc-3points-point2": "Define a point on the arc",
+
+    "construction-info-arc-2tangents-point1": "Set the first point to define the second tangent",
+    "construction-info-arc-2tangents-point2": "Set the second point to finalize the second tangent",
+
+    "results-has-changed-warning": "The queried data has changed in location or quantity since the project was saved. The completeness and accuracy of the displayed results can no longer be guaranteed. Please review the results. If the data is still correct, you can avoid this warning by saving the project again with the current results.",
+
+    "viewer-settings": "Settings",
+    "viewer-appearence": "Display / Design",
+    "viewer-color-scheme": "Color scheme",
+    "viewer-layout-template": "Layout template",
+    "viewer-css-style-class": "Styling",
+    "viewer-restart": "Reload map",
+    "viewer-restart-message": "To apply the changes, the map must be reloaded.",
+
+    "sketch-overlapping-segments": "Sketch: Overlapping segments",
+    "sketch-overlapping-segments-message": "Inserting this point would create an invalid segment. If you still want to insert the new point, the previous point will automatically be deleted.",
+    "sketch-overlapping-segements-remove-prev": "Delete previous point",
+
+    "as-preference-scale": "Set as preferred scale.",
+    "preference-scale-info": "When displaying query results, this scale will be used unless the corresponding geometry is too large. Use reset to restore the default value."
+};

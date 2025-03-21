@@ -100,6 +100,7 @@
         <script src="@(apiUrl)/scripts/api/webgis.custom.js"></script>
         <script src="@(apiUrl)/scripts/api/webgis.l10n.js"></script>
         <script src="@(apiUrl)/scripts/api/webgis.l10n.de.js"></script>
+        <script src="@(apiUrl)/scripts/api/webgis.l10n.en.js"></script>
         <script src="@(apiUrl)/scripts/api/webgis.storage.js"></script>
         <script src="@(apiUrl)/scripts/api/webgis.markdown.js"></script>
         <script src="@(apiUrl)/scripts/api/webgis.effects.js"></script>
@@ -188,7 +189,7 @@
             webgis.company='@config.Company()';
             webgis.companyUrl = '@config.CompanyUrl()';
 
-            webgis.l10n.language='@Model.Language' || webgis.l10n.language;
+            webgis.l10n.language='@Model.Language' || webgis.localStorage.get('language') || webgis.l10n.language;
             webgis.l10n.supportedLanguages = @Html.Raw(JSerializer.Serialize(@Model.SupportedLanguages));
 
             webgis.help.url = '@config.MapViewerHelpUrl()';

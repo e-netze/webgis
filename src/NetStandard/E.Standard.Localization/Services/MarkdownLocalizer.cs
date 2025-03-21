@@ -62,7 +62,12 @@ class MarkdownLocalizer : IStringLocalizer
 
         foreach (var fi in diInfo.GetFiles($"*.md"))
         {
-            string fileNameSpace = fi.Name.Replace($".md", "").ToLowerInvariant();
+            string fileNameSpace = $"{fi.Name.Replace($".md", "").ToLowerInvariant()}";
+
+            if(!String.IsNullOrEmpty(fileNameSpace))  // default filename ".md" => no namespace
+            {
+                fileNameSpace += ".";
+            }
 
             var lines = File.ReadAllLines(fi.FullName, Encoding.UTF8);
             string currentKey = "";
@@ -78,7 +83,7 @@ class MarkdownLocalizer : IStringLocalizer
                     // save current entry
                     if (!string.IsNullOrEmpty(currentKey))
                     {
-                        result[$"{fileNameSpace}.{currentKey}"] = (currentHeader, currentBody.ToString().Trim());
+                        result[$"{fileNameSpace}{currentKey}"] = (currentHeader, currentBody.ToString().Trim());
                     }
 
                     // define new entry
@@ -105,7 +110,7 @@ class MarkdownLocalizer : IStringLocalizer
             // save last entry
             if (!string.IsNullOrEmpty(currentKey))
             {
-                result[$"{fileNameSpace}.{currentKey}"] = (currentHeader, currentBody.ToString().Trim());
+                result[$"{fileNameSpace}{currentKey}"] = (currentHeader, currentBody.ToString().Trim());
             }
         }
 

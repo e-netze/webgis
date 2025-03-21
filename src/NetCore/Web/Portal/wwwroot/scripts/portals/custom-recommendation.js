@@ -51,12 +51,13 @@ webgis.usability.useMarkerPopup = false;
 webgis.usability.showSingleResultPopup = true;
 webgis.usability.presentationTocSearch = !webgis.isMobileDevice();
 webgis.usability.useGraphicsMarkerPopups = false;  // Info Container für Grafiken (Redlining) anzeigen
-webgis.usability.allowDarkmode = true;
 webgis.usability.toolSketchOnlyEditableIfToolTabIsActive = true;
 
+webgis.usability.allowDarkmode = true;
 webgis.usability.allowStyleClassSelection = true;
+webgis.usability.allowLanguageSelection = true;
 
-webgis.usability.allowAddCustomServices = true;
+webgis.usability.allowAddCustomServices = false;
 webgis.usability.allowMapContextMenu = true;
 webgis.usability.makePresentationTocGroupCheckboxes = true;
 

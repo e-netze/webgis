@@ -113,7 +113,7 @@
             });
     };
     var showRestartViewerMessage = function ($parent) {
-        $(".webgis-restart-viewer-message").css('display', 'block');
+        $parent.children(".webgis-restart-viewer-message").css('display', 'block');
     };
 
     var addAppearencePage = function ($parent) {
@@ -121,7 +121,36 @@
 
         page.$tab.css("backgroundImage", "url(" + webgis.css.imgResource("colorschema-26.png", "tools") + ")");
 
+        if (webgis.usability.allowLanguageSelection === true &&
+            webgis.l10n.supportedLanguages) {
+            const $content = $("<div>").appendTo(page.$content);
+            $("<div>")
+                .addClass("webgis-property-content-title2")
+                .text(webgis.l10n.get('language'))
+                .appendTo($content);
+            let $select = $("<select>")
+                .addClass('webgis-input')
+                .appendTo($content)
+                .change(function () {
+                    const $this = $(this);
+
+                    webgis.localStorage.set('language', $this.val());
+                    showRestartViewerMessage($this.parent());
+                });
+            for (const language in webgis.l10n.supportedLanguages) {
+                $("<option>")
+                    .attr('value', language)
+                    .text(webgis.l10n.supportedLanguages[language])
+                    .appendTo($select);
+            }
+            $select.val(webgis.l10n.language);
+
+            addRestartViewerMessage($content);
+        }
+
         if (webgis.usability.allowDarkmode === true) {
+            $("<br><br>").appendTo(page.$content);
+
             $("<div>")
                 .addClass("webgis-property-content-title2")
                 .text(webgis.l10n.get('viewer-color-scheme'))
@@ -153,17 +182,18 @@
 
             $("<br><br>").appendTo(page.$content);
 
+            const $content = $("<div>").appendTo(page.$content);
             $("<div>")
                 .addClass('webgis-property-content-title2')
                 .text(webgis.l10n.get('viewer-layout-template'))
-                .appendTo(page.$content);
+                .appendTo($content);
 
             let $select = $("<select>")
                 .addClass('webgis-input')
                 .data('template-width', globals.viewerLayoutTemplates.width)
-                .appendTo(page.$content)
+                .appendTo($content)
                 .change(function () {
-                    var $this=$(this), templateId = $this.val();
+                    const $this=$(this), templateId = $this.val();
 
                     webgis.localStorage.set(globals.viewerLayoutTemplateStorageKey + $this.data('template-width'), templateId);
                     showRestartViewerMessage($this.parent());
@@ -180,7 +210,7 @@
 
             $select.val(webgis.localStorage.get(globals.viewerLayoutTemplateStorageKey + globals.viewerLayoutTemplates.width));
 
-            addRestartViewerMessage(page.$content);
+            addRestartViewerMessage($content);
         }
 
         if (webgis.usability.allowStyleClassSelection === true) {
@@ -252,25 +282,25 @@
         }
     };
     var addAdminPage = function ($parent) {
-        var page = addPropertyPage($parent, { id: 'admin', title: 'Admin' });
+        const page = addPropertyPage($parent, { id: 'admin', title: 'Admin' });
 
         page.$tab.css("backgroundImage", "url(" + webgis.css.imgResource("admin-26.png", "ui") + ")");
 
-        var $adminTools = $('#webgis-info-pane .tab-admin').clone(true);
+        const $adminTools = $('#webgis-info-pane .tab-admin').clone(true);
         $adminTools.appendTo(page.$content).css('display', '');
     };
     var addCreditsAndInfo = function ($parent) {
-        var page = addPropertyPage($parent, { id: 'credits', title: 'Credits & Info' });
+        const page = addPropertyPage($parent, { id: 'credits', title: 'Credits & Info' });
 
         page.$tab.css("backgroundImage", "url(" + webgis.css.imgResource("copyright-26.png", "tools") + ")");
 
-        var $adminTools = $('#webgis-info-pane .tab-credits').clone(true);
+        const $adminTools = $('#webgis-info-pane .tab-credits').clone(true);
         $adminTools.appendTo(page.$content).css('display', '');
     }
 
     var showTabContent = function ($parent, options) {
-        var $tabs = $parent.children('.webgis-properties-tabs'),
-            $contents = $parent.children('.webgis-properties-contents');
+        const $tabs = $parent.children('.webgis-properties-tabs'),
+              $contents = $parent.children('.webgis-properties-contents');
 
         $tabs.children().removeClass('selected');
         $tabs.children(".webgis-property-tab[data-id='" + options.id + "']").addClass('selected');
@@ -281,15 +311,15 @@
 
     var applyColorScheme = function (options) {
         console.log('applyColorScheme');
-        var colorScheme = options.colorScheme || webgis.localStorage.get('map.properties.colorScheme') || 'default';
+        const colorScheme = options.colorScheme || webgis.localStorage.get('map.properties.colorScheme') || 'default';
 
-        var map = options.map;
-        var $container = $(map._webgisContainer);
+        const map = options.map;
+        const $container = $(map._webgisContainer);
 
         $container.removeClass('light').removeClass('dark');
         $('body').removeClass('webgis-light').removeClass('webgis-dark');
 
-        var basemapOpacity = 1.0;
+        let basemapOpacity = 1.0;
 
         if (colorScheme === '_bg-dark') {
             $container.addClass('dark');
@@ -302,14 +332,14 @@
 
         webgis.css.changeColorScheme(colorScheme);
 
-        var services = map.services;
-        for (var s in services) {
+        const services = map.services;
+        for (const s in services) {
             if (services[s].isBasemap === true && services[s].basemapType === "normal") {
                 services[s].setOpacity(Math.min(basemapOpacity, services[s].opacity));
             }
         }
 
-        var basemap = map.getBasemap(map.currentBasemapServiceId());
+        const basemap = map.getBasemap(map.currentBasemapServiceId());
         if (basemap) {
             $(".webgis-presentation_toc-basemap-opacity .webgis-menu-item-imagebutton." + parseInt(basemap.opacity * 100)).trigger('click');
         }
