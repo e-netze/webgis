@@ -160,6 +160,8 @@
         list = $(list).get(0);
 
         var editableList = Sortable.create(list, {
+            animation: 150,
+            ghostClass: 'sorting',
             filter: '.list-remove',
             onFilter: function (evt) {
                 var el = editableList.closest(evt.item); // get dragged item

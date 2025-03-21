@@ -212,6 +212,8 @@ function startEditOrdering() {
             $('.webgis-portal-sortable').each(function (i, e) {
                 //console.log('Sortable.create', e);
                 $(e).data('sortable', Sortable.create(e, {
+                    animation: 150,
+                    ghostClass: 'webgis-sorting',
                     onSort: function (event) {
                         var $sender = $(event.target);
                         var sortedItems = [];

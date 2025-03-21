@@ -396,6 +396,8 @@
         if (reorderAble) {
             webgis.require('sortable', function () {
                 Sortable.create($parent.children('ol.webgis-geojuhu-results').get(0), {
+                    animation: 150,
+                    ghostClass: 'webgis-sorting',
                     handle: '.webgis-reorder-handle',
                     onSort: function (e) {
                         var orderedIds = [];

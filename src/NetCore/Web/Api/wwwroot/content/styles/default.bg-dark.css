@@ -615,3 +615,7 @@ body.webgis-dark .webgis-collapsable-paragraph.collapsed .switcher {
     min-height: 38px;
     border-bottom: 1px solid #4cc2ff;
 }
+
+.webgis-sorting {
+    background-color: #222 !important;
+}

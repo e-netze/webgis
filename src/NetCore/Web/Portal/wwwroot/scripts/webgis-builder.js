@@ -214,14 +214,16 @@ function createSelector(name, id, selectOptions, result, sortable) {
         if (sortable == true) {
             webgis.require('sortable', function () {
                 Sortable.create($parentList.get(0),
-                    {
-                        onSort: function (e) {
-                            var $parent = $parentList.closest('.selector-container').parent();
-                            calcContainerValues($parent, ui.item);
-                            if (window.fireSelectionChanged)
-                                fireSelectionChanged();
-                        }
-                    });
+                {
+                    animation: 150,
+                    ghostClass: 'webgis-sorting',
+                    onSort: function (e) {
+                        var $parent = $parentList.closest('.selector-container').parent();
+                        calcContainerValues($parent, ui.item);
+                        if (window.fireSelectionChanged)
+                            fireSelectionChanged();
+                    }
+                });
             });
             //$parentList.sortable({
             //    update: function (event, ui) {
@@ -239,7 +241,10 @@ function createSelector(name, id, selectOptions, result, sortable) {
 
     if (sortable == true) {
         webgis.require('sortable', function () {
-            Sortable.create($ul.get(0));
+            Sortable.create($ul.get(0), {
+                animation: 150,
+                ghostClass: 'sorting',
+            });
         })
         //$ul.sortable();
     }

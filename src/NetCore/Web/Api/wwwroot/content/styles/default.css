@@ -5257,3 +5257,7 @@ select.webgis-not-valid {
         transition: opacity .5s ease-in;
     }
 
+.webgis-sorting {
+    background-color: #b5dbad !important;
+}
+

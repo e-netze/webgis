@@ -87,6 +87,8 @@
         webgis.require('sortable', function () {
             Sortable.create($list.get(0),
                 {
+                    animation: 150,
+                    ghostClass: 'webgis-sorting',
                     onSort: function (e) {
                         var $items = $list.find('.webgis-static-overlay-control-item');
                         var zIndex = map.maxBackgroundCoveringServiceOrder() + $items.length + 1;
