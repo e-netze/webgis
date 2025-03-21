@@ -2168,6 +2168,8 @@
         webgis.require('sortable', function () {
             var editableList = Sortable.create($list.get(0),
                 {
+                    animation: 150,
+                    ghostClass: 'webgis-sorting',
                     onSort: function (e) {
                         $list.find('.webgis-service-order-item')
                             .each(function (i, item) {

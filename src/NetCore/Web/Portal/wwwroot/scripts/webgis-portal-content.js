@@ -7,6 +7,8 @@ function initEditables() {
 
     webgis.require('sortable', function () {
         Sortable.create($('#page-content-list').get(0), {
+            animation: 150,
+            ghostClass: 'webgis-sorting',
             onSort: function (event) {
                 $.ajax({
                     url: webgis.url.relative(portal + '/sortcontent'),

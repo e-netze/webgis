@@ -572,6 +572,11 @@ CMS
             color: #333;
         }
 
+        .cms-content .node.sorting {
+            background-color: #b5dbad;
+            color: #333;
+        }
+
 tr.cms-form-table.hidden-from-exclusives {
     opacity: .25;
 }
