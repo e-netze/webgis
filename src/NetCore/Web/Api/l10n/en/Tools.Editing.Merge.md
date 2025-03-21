@@ -1,8 +1,8 @@
-﻿# merge: Merge
+﻿# name: Merge objects
 
-# merge-object: Merge objects
+# merge: Merge
 
-# merged-bject: Merged object
+# merged-pbject: Merged object
 
 # polyline-merge-method: Merge method (polylines)
 

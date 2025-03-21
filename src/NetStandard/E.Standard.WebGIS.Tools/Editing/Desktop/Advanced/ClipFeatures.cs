@@ -156,7 +156,7 @@ public class ClipFeatures : IApiServerToolLocalizableAsync<ClipFeatures>,
 
     #region IApiButton Member
 
-    public string Name => L10nKeys.ClipObjects;
+    public string Name => "Clip Features";
 
     public string Container
     {

@@ -28,8 +28,8 @@ public class L10nKeys
     #region Editing Clip
 
     public const string Clip = "clip";
+    public const string ClipDescription = "name:body";
     public const string ClipObjects = "clip-objects";
-    public const string ClipDescription = "clip-objects:body";
     public const string ChooseClipMethod = "choose-clip-method";
     public const string ClipHasNoResult = "clip-has-no-result";
 

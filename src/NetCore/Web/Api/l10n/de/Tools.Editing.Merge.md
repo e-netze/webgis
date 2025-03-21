@@ -1,8 +1,8 @@
-﻿# merge: Zusammenführen
+﻿# name: Objekte zusammenführen
 
-# merge-object: Objekte zusammenführen
+# merge: Zusammenführen
 
-# merged-bject: Zusammengeführtes Objekt
+# merged-object: Zusammengeführtes Objekt
 
 # polyline-merge-method: Merge Methode (Polylinien)
 

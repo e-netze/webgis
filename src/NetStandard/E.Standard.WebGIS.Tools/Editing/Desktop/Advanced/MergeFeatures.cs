@@ -1,5 +1,6 @@
 ﻿using E.Standard.Extensions.Compare;
 using E.Standard.Localization.Abstractions;
+using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
@@ -28,6 +29,7 @@ namespace E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(SelectionInfoDependent = true, MapCrsDependent = true)]
+[LocalizationNamespace("tools.editing.merge")]
 public class MergeFeatures : IApiServerToolLocalizableAsync<MergeFeatures>, IApiChildTool
 {
     const string CurrentFeatureAttributeId = "edit-mergefeature-feature-oid";
