@@ -1,4 +1,4 @@
-webgis.tools = new function () {
+﻿webgis.tools = new function () {
 
     var $ = webgis.$;
 
@@ -418,7 +418,7 @@ webgis.tools = new function () {
                                     data.prints.push(result);
 
                                     if (result.success == false && result.exception) {
-                                        webgis.alert("Errors occurred during printing. The printout may not be complete. Please check if all relevant topics are included in the printout.:\n\n\n\n\n" + result.exception, "Info", function () {
+                                        webgis.alert("Errors occurred during printing. The printout may not be complete. Please check if all relevant topics are included in the printout.:\n\n\n\n\n" + result.exception, "info", function () {
                                             webgis.delayed(function () {
                                                 map.showPrintTasks();
                                             }, 500);
@@ -427,10 +427,10 @@ webgis.tools = new function () {
                                         map.showPrintTasks();
                                     }
                                 } else {
-                                    webgis.alert(result.exception, 'Error');
+                                    webgis.alert(result.exception, 'error');
                                 }
                             } else {
-                                webgis.alert('Unkonwn error!', 'Error');
+                                webgis.alert('Unkonwn error!', 'error');
                             }
                         });
                     }
@@ -455,7 +455,7 @@ webgis.tools = new function () {
                             if (result && result.downloadid) {
                                 window.open(webgis.baseUrl + '/rest/download/' + result.downloadid + "?n=" + result.name);
                             } else if (result.success === false) {
-                                webgis.alert(result.exception || 'Fehler', 'Error');
+                                webgis.alert(result.exception || 'Fehler', 'error');
                             }
                         });
                     }
@@ -751,7 +751,7 @@ webgis.tools = new function () {
                 webgis.tools.handleToolResponse(map, map.getActiveTool(), null, null, result);
             },
             error: function () {
-                webgis.alert('Ein allgemeiner Fehler ist aufgetreten', 'Fehler');
+                webgis.alert('Ein allgemeiner Fehler ist aufgetreten', 'error');
             }
         });
     };
@@ -909,7 +909,7 @@ webgis.tools = new function () {
                     }
                 },
                 error: function () {
-                    webgis.alert('Ein allgemeiner Fehler ist aufgetreten', 'Fehler');
+                    webgis.alert('Ein allgemeiner Fehler ist aufgetreten', 'error');
                 }
             });
         } catch (ex) {
@@ -923,7 +923,7 @@ webgis.tools = new function () {
              customEventStringObject._method.indexOf('_event_handler_') === 0) ? true : false;
 
         if (response.success === false && response.exception) {
-            webgis.alert(response.exception, response.exception_type === 'infoexception' ? 'Info' : 'Fehler');
+            webgis.alert(response.exception, response.exception_type === 'infoexception' ? 'info' : 'error');
         }
 
         var responseWarnings = [], responsWarningIsError = false;
@@ -1473,7 +1473,7 @@ webgis.tools = new function () {
                 });
 
             } else if (responsWarningIsError === true) {
-                webgis.alert(warningText, 'Fehler');
+                webgis.alert(warningText, 'error');
             }
         }
     };
@@ -1695,7 +1695,7 @@ webgis.tools = new function () {
                             }
                             break;
                         default:
-                            webgis.alert(message, 'Hinweis');
+                            webgis.alert(message, 'info');
                             break;
                     }
 
@@ -1779,7 +1779,7 @@ webgis.tools = new function () {
                 case 'sketch2d':
                     var sketch = map.sketch;
                     if (!sketch || sketch.isValid() === false) {
-                        webgis.alert('Sketch nicht gültig', 'Error');
+                        webgis.alert('Sketch nicht gültig', 'error');
                         return;
                     }
 

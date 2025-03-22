@@ -5,11 +5,11 @@
             navigator.geolocation.getCurrentPosition(options.onSuccess, options.onError || this.onError, { timeout: 30000 });
         }
         else {
-            webgis.alert('Ortung wird nicht unterstützt');
+            webgis.alert('Ortung wird nicht unterstützt', 'info');
         }
     };
     this.onError = function (err) {
-        webgis.alert('Fehler beim Ortungsversuch: ' + err.message);
+        webgis.alert('Fehler beim Ortungsversuch: ' + err.message, 'error');
     };
 };
 
@@ -104,7 +104,7 @@ webgis.currentPosition_watch = new function () {
             //this.watchIds.push(options.watchId);
         }
         else {
-            webgis.alert('Ortung wird nicht unterstützt');
+            webgis.alert('Ortung wird nicht unterstützt', 'info');
         }
     };
     this.stopWatch = function (options, bestPosition, lastErr) {
@@ -113,7 +113,7 @@ webgis.currentPosition_watch = new function () {
             if (options.onError)
                 options.onError(lastErr);
             else
-                webgis.alert('Ortung nicht möglich: ' + (lastErr ? lastErr.message + " (Error Code " + lastErr.code + ")" : ""));
+                webgis.alert('Ortung nicht möglich: ' + (lastErr ? lastErr.message + " (Error Code " + lastErr.code + ")" : ""), 'error');
         }
         else
             options.onSuccess(bestPosition);
@@ -139,7 +139,7 @@ webgis.continuousPosition = new function () {
         if (webgis.continuousPosition._map == map)
             return;
         if (webgis.continuousPosition._map != null) {
-            webgis.alert('Verfolgung läuft bereits!');
+            webgis.alert('Verfolgung läuft bereits!', 'info');
             return;
         }
         webgis.continuousPosition._map = map;
@@ -200,7 +200,7 @@ webgis.continuousPosition = new function () {
                     if (isOk) {
                         $.get(webgis.baseUrl + '/rest/Helmert2dTransformation?lng=' + pos.coords.longitude + '&lat=' + pos.coords.latitude, function (result) {
                             if (result) {
-                                //webgis.alert("Lokale Transformation wurde bestimmt: " + result.name, "Info");
+                                //webgis.alert("Lokale Transformation wurde bestimmt: " + result.name, "info");
                                 webgis.toastMessage("GPS:", "Lokale Transformation: " + result.name, webgis.continuousPosition.showInfo);
 
                                 result._request_pos = pos;
@@ -282,7 +282,7 @@ webgis.continuousPosition = new function () {
             webgis.continuousPosition._watchId = navigator.geolocation.watchPosition(this._watcher.newPosition, function () { }, { timeout: 5000, enableHighAccuracy: webgis.isTouchDevice() });
         }
         else {
-            webgis.alert('Ortung wird nicht unterstützt');
+            webgis.alert('Ortung wird nicht unterstützt', 'info');
         }
     };
     this.stop = function () {

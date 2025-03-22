@@ -32,7 +32,8 @@
     <Content Remove="wwwroot\scripts\api\ui\webgis_querybuilder.js" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup>    <None Remove="l10n\en\.md" />
+    <None Remove="l10n\en\Tools.AddToSelection.md" />
     <None Remove="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.LoadMap-label1.txt" />
     <None Remove="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.SaveMap-label1.txt" />
     <None Remove="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.SaveMap-label2.txt" />
@@ -51,7 +52,7 @@
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\OpenSourceProfile_linux64.pubxml" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup>    
     <Content Include="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.LoadMap-label1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -160,47 +161,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="l10n\de\.md">
+     <Content Include="l10n\**\*.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="l10n\de\Tools.Editing.Clip.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="l10n\de\Tools.Editing.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="l10n\de\Tools.Editing.Merge.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="l10n\de\Tools.FullExtent.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="l10n\de\Tools.Identify.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="l10n\de\Tools.ZoomBack.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="l10n\en\.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="l10n\en\Tools.Editing.Clip.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="l10n\en\Tools.Editing.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="l10n\en\Tools.Editing.Merge.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="l10n\en\Tools.FullExtent.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="l10n\en\Tools.Identify.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="l10n\en\Tools.ZoomBack.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
 </Project>

@@ -1468,7 +1468,7 @@
                         if (result.metadata.warnings)
                             msg += '\n\n' + result.metadata.warnings.toString();
                     }
-                    webgis.alert(msg, 'Hinweis');
+                    webgis.alert(msg, 'info');
                 }
                 if ($.webgis_search_result_histories[map] != null) {
                     var $list = $resultHolder.find('.webgis-search-result-list');
@@ -1946,7 +1946,7 @@
 
     this.showBufferDialog = function () {
         if (!$.fn.webgis_modal) {
-            webgis.alert('WebGIS UI library (webis_modal) is available', 'ERROR');
+            webgis.alert('WebGIS UI library (webis_modal) is available', 'error');
             return;
         }
         var map = this._map;

@@ -23,13 +23,13 @@ public class AddToSelection : IApiServerToolAsync, IApiButtonDependency
 {
     #region IApiButton Member
 
-    public string Name => "Selektion erweitern";
+    public string Name => "Selection add";
 
-    public string Container => "Abfragen";
+    public string Container => "Query";
 
     public string Image => "cursor-plus-26-b.png";
 
-    public string ToolTip => "Selektion erweitern";
+    public string ToolTip => "Add item to the current selection";
 
     public bool HasUI => false;
 

@@ -23,13 +23,13 @@ public class RemoveFromSelection : IApiServerToolAsync, IApiButtonDependency
 {
     #region IApiButton Member
 
-    public string Name => "Selektion einschränken";
+    public string Name => "Selection remove";
 
-    public string Container => "Abfragen";
+    public string Container => "Query";
 
     public string Image => "cursor-minus-26-b.png";
 
-    public string ToolTip => "Selektion einschränken";
+    public string ToolTip => "Remove item from current selection";
 
     public bool HasUI => false;
 

@@ -77,13 +77,13 @@ public class RasterIdentify : IApiServerToolAsync, IIdentifyTool, IApiButtonReso
 
     #region IApiButton Member
 
-    public string Name => "Höhenmodell abfragen";
+    public string Name => "Elevation Point";
 
-    public string Container => "Abfragen";
+    public string Container => "Query";
 
     public string Image => UIImageButton.ToolResourceImage(this, "heightabovedatum");
 
-    public string ToolTip => "Höhenmodell abfragen";
+    public string ToolTip => "Query elevations from elevation model";
 
     public bool HasUI => true;
 

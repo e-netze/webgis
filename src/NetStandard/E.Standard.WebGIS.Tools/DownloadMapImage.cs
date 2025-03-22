@@ -32,13 +32,13 @@ public class DownloadMapImage : IApiServerTool, IApiButtonResources
 
     public ToolCursor Cursor => ToolCursor.Crosshair;
 
-    public string Name => "Kartenbild herunterladen";
+    public string Name => "Download Map Image";
 
-    public string Container => "Karte";
+    public string Container => "Map";
 
     public string Image => UIImageButton.ToolResourceImage(this, "downloadmapimage");
 
-    public string ToolTip => "(georeferenziertes) Kartenbild herunterladen";
+    public string ToolTip => "Download (georeferenced) map image of the current frame";
 
     public bool HasUI => true;
 

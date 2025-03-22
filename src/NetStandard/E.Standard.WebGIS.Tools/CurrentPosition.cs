@@ -15,13 +15,13 @@ public class CurrentPosition : IApiClientButton
 
     #region IApiButton Member
 
-    public string Name => "Aktuelle Position";
+    public string Name => "Current Position";
 
     public string Container => "Navigation";
 
     public string Image => "currentpos.png";
 
-    public string ToolTip => "Zoom auf aktuelle Position";
+    public string ToolTip => "Zoom to current (GPS) position";
 
     public bool HasUI => false;
 

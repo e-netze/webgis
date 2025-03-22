@@ -15,13 +15,13 @@ public class ZoomToSketch : IApiClientButton
 
     #region IApiButton Member
 
-    public string Name => "Aktueller Sketch";
+    public string Name => "Current sketch";
 
     public string Container => "Navigation";
 
     public string Image => "zoom2sketch.png";
 
-    public string ToolTip => "Zoom auf aktuellen Sketch";
+    public string ToolTip => "Zoom to current sketch";
 
     public bool HasUI => false;
 

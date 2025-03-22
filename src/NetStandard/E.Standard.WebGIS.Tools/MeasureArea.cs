@@ -71,13 +71,13 @@ public class MeasureArea : IApiServerTool, IApiButtonResources
 
     #region IApiButton Member
 
-    public string Name => "Fläche messen";
+    public string Name => "Measure Area";
 
-    public string Container => "Werkzeuge";
+    public string Container => "Tools";
 
     public string Image => UIImageButton.ToolResourceImage(this, "measure_area");
 
-    public string ToolTip => "Fläche messen";
+    public string ToolTip => "Draw a polygon to measure the area";
 
     public bool HasUI => true;
 

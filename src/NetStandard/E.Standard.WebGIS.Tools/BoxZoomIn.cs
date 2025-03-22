@@ -24,7 +24,7 @@ public class BoxZoomIn : IApiClientButton, IApiButtonResources
     public string Image => UIImageButton.ToolResourceImage(this, "zoomin");
 
 
-    public string ToolTip => "Zoom mit Box";
+    public string ToolTip => "Zoom in with a box";
 
     public bool HasUI => false;
 

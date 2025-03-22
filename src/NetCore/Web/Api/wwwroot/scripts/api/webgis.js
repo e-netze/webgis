@@ -62,12 +62,12 @@
         var height = Math.max(200, message.countChar('\n') * 28);
 
         $('body').webgis_modal({
-            title: title,
+            title: webgis.l10n.get(title),
             onload: function ($content) {
                 var imgUrl = '';
-                if (title.toLowerCase() === 'hinweis' || title.toLowerCase() === 'info') {
+                if (title.toLowerCase() === 'info') {
                     imgUrl = webgis.css.imgResource('info-100.png');
-                } else if (title.toLowerCase() === 'fehler' || title.toLowerCase() === 'error') {
+                } else if (title.toLowerCase() === 'error') {
                     imgUrl = webgis.css.imgResource('error-100.png');
                 }
                 if (imgUrl !== '') {
@@ -493,7 +493,7 @@
             if (webgis.isReady() === true) {
                 webgis.hideProgress('Initialisierung...');
                 if (webgis._initialError) {
-                    webgis.alert('webGIS kann nicht Initialisiert werden!\n\n' + webgis._initialError);
+                    webgis.alert('webGIS kann nicht Initialisiert werden!\n\n' + webgis._initialError, 'error');
                 }
                 else {
                     webgis._executeOnInit();
@@ -650,7 +650,7 @@
                                 //console.log('restart');
                                 counter++;
                                 if (counter > 50) {
-                                    webgis.alert("Sorry, can't load editor", "Error");
+                                    webgis.alert("Sorry, can't load editor", "error");
                                 } else {
                                     timer.start();
                                 }
@@ -919,7 +919,7 @@
                 const serviceInfos = webgis.serviceInfo(options.services, options.custom);
 
                 if (serviceInfos.success === false) {
-                    webgis.alert('Error on webgis.serviceInfo(): ' + (serviceInfos.exception || 'Unknown Error'), "Error");
+                    webgis.alert('Error on webgis.serviceInfo(): ' + (serviceInfos.exception || 'Unknown Error'), "error");
                     return;
                 }
 
@@ -1803,7 +1803,7 @@
                 }
                 else {
                     ret = '';
-                    webgis.alert('Error: ' + textStatus + ' ' + errorThrown);
+                    webgis.alert('Error: ' + textStatus + ' ' + errorThrown, 'error');
                 }
             }
         });
@@ -1867,7 +1867,7 @@
                     if (err.status == 200 && err.statusText.toLowerCase() == 'ok') // if response Type is not json...
                         var msg = err.responseText;
                     else
-                        webgis.alert('Error: ' + textStatus + ' ' + errorThrown);
+                        webgis.alert('Error: ' + textStatus + ' ' + errorThrown, 'error');
                 }
             }
         });
@@ -1939,7 +1939,7 @@
                     error_function(error);
                 }
                 else {
-                    webgis.alert('Error: ' + error.message);
+                    webgis.alert('Error: ' + error.message, 'error');
                 }
             });
     };
@@ -2627,7 +2627,7 @@
     this.showFeatureResultDetails = function (mapGuid, url, callback) {
         var map = this.getMapByGuid(mapGuid);
         if (!map || !map.queryResultFeatures) {
-            webgis.alert('Details können leider nicht abgefragt werden!', "Error");
+            webgis.alert('Details können leider nicht abgefragt werden!', "error");
         }
         webgis.ajax({
             url: webgis.baseUrl + url,
@@ -2658,7 +2658,7 @@
                     if (callback) {
                         callback(false, null);
                     } else {
-                        webgis.alert('Keine weiteren Details für dieses Objekt verfügbar');
+                        webgis.alert('Keine weiteren Details für dieses Objekt verfügbar', 'info');
                     }
                 }
             }
@@ -2707,7 +2707,7 @@
             options = eval("(" + x + ")");
             if (options.success == false) {
                 if (options.exception)
-                    webgis.alert('Exception:\n' + options.exception);
+                    webgis.alert('Exception:\n' + options.exception, 'error');
             }
         }
         return options || {};
@@ -2860,7 +2860,7 @@
     this.initialParameters = {};
     this.checkResult = function (result) {
         if (result.success == false && result.exception) {
-            webgis.alert(result.exception);
+            webgis.alert(result.exception, 'error');
             return false;
         }
         return true;

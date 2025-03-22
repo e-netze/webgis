@@ -9,13 +9,13 @@ public class QueryResultTable : IApiClientButton, IApiButtonDependency
 {
     #region IApiButton Member
 
-    public string Name => "Abfrageergebnisse";
+    public string Name => "Query Results";
 
-    public string Container => "Abfragen";
+    public string Container => "Query";
 
     public string Image => "results.png";
 
-    public string ToolTip => "Abfrageergebnisse";
+    public string ToolTip => "Opens the table with the current query results.";
 
     public bool HasUI => false;
 

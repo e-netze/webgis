@@ -11,13 +11,13 @@ public class ZoomBack : IApiClientButton
 {
     #region IApiButton Member
 
-    public string Name => "Zurück";
+    public string Name => "Back";
 
     public string Container => "Navigation";
 
     public string Image => "back.png";
 
-    public string ToolTip => "Letzter Kartenauschnitt";
+    public string ToolTip => "Zoom to previous extent";
 
     public bool HasUI => false;
 

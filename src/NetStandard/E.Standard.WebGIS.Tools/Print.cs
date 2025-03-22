@@ -109,13 +109,13 @@ public class Print : IApiServerTool, IApiButtonResources
 
     #region IApiButton Member
 
-    public string Name => "Drucken";
+    public string Name => "Pring";
 
-    public string Container => "Karte";
+    public string Container => "Map";
 
     public string Image => UIImageButton.ToolResourceImage(this, "print");
 
-    public string ToolTip => "Karte drucken";
+    public string ToolTip => "Print the current map section in PDF format.";
 
     public bool HasUI => true;
 

@@ -15,13 +15,13 @@ public class QueryResultTableExport : IApiServerButton  // is this tool still in
 {
     #region IApiButton Member
 
-    public string Name => "Abfrageergebnisse Exportiern";
+    public string Name => "Export Query Results";
 
     public string Container => "";
 
     public string Image => "";
 
-    public string ToolTip => "Abfrageergebnisse Exportiern";
+    public string ToolTip => "Export query results as a CSV file";
 
     public bool HasUI => false;
 

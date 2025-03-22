@@ -230,7 +230,7 @@
                 },
                 onError: function (err) {
                     webgis.hideProgress('Aktuelle Position wird abgefragt...');
-                    webgis.alert('Ortung nicht möglich: ' + (err ? err.message + " (Error Code " + err.code + ")" : ""), "Fehler");
+                    webgis.alert('Ortung nicht möglich: ' + (err ? err.message + " (Error Code " + err.code + ")" : ""), "error");
                 }
             });
         }

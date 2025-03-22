@@ -9,13 +9,13 @@ public class RefreshMap : IApiClientButton
 {
     #region IApiButton Member
 
-    public string Name => "Karte aktualisieren";
+    public string Name => "Refresh Map";
 
-    public string Container => "Karte";
+    public string Container => "Map";
 
     public string Image => "refresh.png";
 
-    public string ToolTip => "Karte neu zeichnen";
+    public string ToolTip => "Redraw map (update all services)";
 
     public bool HasUI => false;
 

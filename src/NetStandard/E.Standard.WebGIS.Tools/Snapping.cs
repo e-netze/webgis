@@ -8,13 +8,13 @@ namespace E.Standard.WebGIS.Tools;
 [Export(typeof(IApiButton))]
 public class Snapping : IApiClientButton, IApiButtonResources
 {
-    public string Container => "Werkzeuge";
+    public string Container => "Tools";
 
     public string Image => UIImageButton.ToolResourceImage(this, "snapping");
 
-    public string Name => "Objektfang (Snapping)";
+    public string Name => "Snapping";
 
-    public string ToolTip => "Snapping / Objektfang";
+    public string ToolTip => "Snapping settings";
 
     public ApiClientButtonCommand ClientCommand => ApiClientButtonCommand.snapping;
 

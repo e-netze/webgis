@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
     "use strict";
     $.fn.webgis_topbar = function (method) {
         if (methods[method]) {
@@ -154,7 +154,7 @@
                                     //console.log('map has query...');
 
                                     if (!result.features || result.features.length == 0) {
-                                        webgis.alert("Daten für das Original GIS Element wurden nicht gefunden. Es besteht eventuell ein Schiefstand in den Daten...", "Hinweis");
+                                        webgis.alert("Daten für das Original GIS Element wurden nicht gefunden. Es besteht eventuell ein Schiefstand in den Daten...", "info");
                                     } else {
                                         map.ui.showQueryResults(result, true, false);
                                     }
@@ -356,7 +356,7 @@
                 $form.find('.webgis-detail-search-hourglass').html('');
             },
             error: function () {
-                webgis.alert('unknown error','Fehler');
+                webgis.alert('unknown error', 'error');
                 $form.find('.webgis-detail-search-hourglass').html('');
             }
         });

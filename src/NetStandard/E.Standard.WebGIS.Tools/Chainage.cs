@@ -33,15 +33,15 @@ public class Chainage : IApiServerToolAsync, IApiButtonDependency, IIdentifyTool
 
     #region IApiButton
 
-    public string Container => "Abfragen";
+    public string Container => "Query";
 
     public bool HasUI => true;
 
     public string Image => UIImageButton.ToolResourceImage(this, "chainage");
 
-    public string Name => "Stationierung";
+    public string Name => "Chainage";
 
-    public string ToolTip => "Stationierung abfragen";
+    public string ToolTip => "Query chainage values along a line";
 
     #endregion
 

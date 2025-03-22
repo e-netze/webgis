@@ -173,7 +173,7 @@ webgis.mapInitializer = (function (m) {
 
                 if (mapMessage) {
                     webgis.delayed(function () {  // show delayed...
-                        webgis.alert(mapMessage, 'Hinweis');
+                        webgis.alert(mapMessage, 'info');
                     }, 1000);
                 }
 
@@ -435,7 +435,7 @@ webgis.mapInitializer = (function (m) {
         if (json.success === false) {
             webgis.alert(
                 'Beim Laden der Karte ist ein Fehler aufgetreten: ' + json.exception,
-                'Error',
+                'error',
                 function () {
                     document.location = portalUrl + '/' + mapPortalPage;
                 }

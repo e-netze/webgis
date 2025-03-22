@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
     "use strict";
     $.fn.webgis_bubble = function (method) {
         if (methods[method]) {
@@ -59,7 +59,7 @@
                                     if (options.helpName)
                                         map.ui.showHelp(options.helpName);
                                     else
-                                        webgis.alert('Zum Aktivieren des Werkzeugs, die Kugel ziehen...', 'Hinweis');
+                                        webgis.alert('Zum Aktivieren des Werkzeugs, die Kugel ziehen...', 'info');
                                 }
                                 else if ($(this).data('onclick')) {
                                     $(this).data('onclick').apply(this, [e]);
@@ -170,7 +170,7 @@
                         var $this = $(this);
 
                         if (webgis.is_iOS && !$this.data('moveOffsetXY')) {
-                            applyOffsetXY(pointer);  // offset beim Start merken. Ist nicht sehr genau, aber besser gehts leider nicht f�rs erste
+                            applyOffsetXY(pointer);  // offset beim Start merken. Ist nicht sehr genau, aber besser gehts leider nicht fürs erste
                             $this.data('moveOffsetXY', [pointer.offsetX, pointer.offsetY]);
                         }
 
