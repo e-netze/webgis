@@ -63,9 +63,9 @@ public class MeasureCircle : IApiServerTool, IApiButtonResources
 
     public string Image => UIImageButton.ToolResourceImage(this, "measure_circle");
 
-    public string Name => "Umgebungskreis";
+    public string Name => "Circumference Circle";
 
-    public string ToolTip => "Umgebungskreis zeichnen";
+    public string ToolTip => "Draw circumference circle";
 
     #endregion
 

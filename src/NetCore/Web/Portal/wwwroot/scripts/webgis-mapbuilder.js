@@ -956,13 +956,13 @@ function publishMap(portalId, mapCategory, mapName) {
     }
 
     if ($.fn.webgis_errors && $(null).webgis_errors('hasErrors') === true) {
-        webgis.alert("Die aktuelle Karte enthält Fehler (siehe UI Tab Errors) und kann nicht veröffentlicht werden", "Error");
+        webgis.alert("Die aktuelle Karte enthält Fehler (siehe UI Tab Errors) und kann nicht veröffentlicht werden", "error");
         return;
     }
 
     var $errors = $(".webgis-toolbox-tool-item-group-details .webgis-toolbox-tool-item.webgis-toolbox-tool-item-selected.error");
     if ($errors.length > 0) {
-        webgis.alert("Die aktuelle Konfiguration enthält Fehler und kann nicht veröffentlichet werden: " + $errors.find('.item-title').text(), "Error");
+        webgis.alert("Die aktuelle Konfiguration enthält Fehler und kann nicht veröffentlichet werden: " + $errors.find('.item-title').text(), "error");
         return;
     }
 
@@ -999,7 +999,7 @@ function publishDefaults(portalId) {
                 type: 'post',
                 success: function (result) {
                     if (result.success) {
-                        webgis.alert('Die aktuellen Einstellungen wurden als Standard übernommen');
+                        webgis.alert('Die aktuellen Einstellungen wurden als Standard übernommen', 'info');
                     } else {
                         webgis.alert(result.excption);
                     }
@@ -1205,9 +1205,9 @@ function editMapDescription() {
                                     success: function (result) {
                                         if (result.success) {
                                             webgis.mapBuilder.mapDescription = description;
-                                            webgis.alert('Beschreibung wurde erfolgreich veröffentlicht', 'Info');
+                                            webgis.alert('Beschreibung wurde erfolgreich veröffentlicht', 'info');
                                         } else {
-                                            webgis.alert('Beim Veröffentlichen der Beschreibung sind Fehler aufgetreten', "Error");
+                                            webgis.alert('Beim Veröffentlichen der Beschreibung sind Fehler aufgetreten', "error");
                                         }
                                     }
                                 });
@@ -1283,7 +1283,7 @@ function editHtmlMetaTags() {
 };
 
 function AlertCreateMap() {
-    webgis.alert("Bitte erstellen sie zuerst ein Karte (Ausdehung und mindestens ein Dienst), um diese Funktion aufrufen zu können!");
+    webgis.alert("Bitte erstellen sie zuerst ein Karte (Ausdehung und mindestens ein Dienst), um diese Funktion aufrufen zu können!", "info");
 };
 
 function intersectArray(array1, array2) {

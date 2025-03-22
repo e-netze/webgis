@@ -2,6 +2,9 @@
 webgis.l10n.literals['de'] = {
     "language": "Sprache (Language)",
 
+    "error": "Fehler",
+    "info": "Hinweis",
+
     "redlining-tool-pointer": "Objekt auswählen",
     "redlining-tool-symbol": "Symbol",
     "redlining-tool-line": "Linie",

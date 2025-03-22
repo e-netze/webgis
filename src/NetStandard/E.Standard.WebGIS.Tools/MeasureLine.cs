@@ -89,13 +89,13 @@ public class MeasureLine : IApiServerTool, IApiButtonResources
 
     #region IApiButton Member
 
-    public string Name => "Strecke messen";
+    public string Name => "Measure Length";
 
-    public string Container => "Werkzeuge";
+    public string Container => "Tools";
 
     public string Image => UIImageButton.ToolResourceImage(this, "measure");
 
-    public string ToolTip => "Strecke messen";
+    public string ToolTip => "Draw a line to measure the length.";
 
     public bool HasUI => true;
 

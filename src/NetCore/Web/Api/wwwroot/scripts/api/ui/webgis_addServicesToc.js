@@ -509,7 +509,7 @@
                         },
                         function (err) {
                             $button.prop('disabled', false);
-                            webgis.alert('Unknown Error. Statuscode:' + err.status);
+                            webgis.alert('Unknown Error. Statuscode:' + err.status, "error");
                         }
                     );
                 });

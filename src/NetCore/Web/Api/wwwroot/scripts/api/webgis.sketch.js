@@ -2135,7 +2135,7 @@
             var bbox = this.getBounds(true, { lng: newVertex.x, lat: newVertex.y });
             if (bbox.width > _sketchProperties.maxBBox.width ||
                 bbox.height > _sketchProperties.maxBBox.height) {
-                webgis.alert('Die aktuelle Änderung konnte nicht übernommen werden. Die maximale Größe für den Sketch wurde überschritten.');
+                webgis.alert('Die aktuelle Änderung konnte nicht übernommen werden. Die maximale Größe für den Sketch wurde überschritten.', 'info');
                 return false;
             }
         }

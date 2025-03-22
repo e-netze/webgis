@@ -1187,7 +1187,7 @@
                                     serviceCollection.services,
                                     $(this).closest('.webgis-presentation_toc-title').find('.webgis-presentation_toc-title-text').html());
                             } else {
-                                webgis.alert(webgis.l10n.get('msg-no-legend-available'));
+                                webgis.alert(webgis.l10n.get('msg-no-legend-available'), 'info');
                             }
                         })
                         .contextmenu(function () {
@@ -1200,7 +1200,7 @@
                                     $(this).closest('.webgis-presentation_toc-title').find('.webgis-presentation_toc-title-text').html(),
                                     "1", true);
                             } else {
-                                webgis.alert(webgis.l10n.get('msg-no-services-available'));
+                                webgis.alert(webgis.l10n.get('msg-no-services-available'), 'info');
                             }
 
                             return false;

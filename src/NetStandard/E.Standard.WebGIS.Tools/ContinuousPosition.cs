@@ -17,9 +17,9 @@ public class ContinuousPosition : IApiClientTool, IApiButtonResources
 
     public string Image => UIImageButton.ToolResourceImage(this, "cont_pos");
 
-    public string Name => "Position verfolgen";
+    public string Name => "Track Position";
 
-    public string ToolTip => "Kontinuierliche Anzeige der (GPS) Position";
+    public string ToolTip => "Continuous display of the current (GPS) position";
 
     public ToolType Type => ToolType.watch_position;
 

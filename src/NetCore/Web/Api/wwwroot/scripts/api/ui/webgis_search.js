@@ -1,4 +1,4 @@
-// Old -> use webgis_topbar instead!!
+﻿// Old -> use webgis_topbar instead!!
 (function ($) {
     "use strict";
     $.fn.webgis_topbar = function (method) {
@@ -148,7 +148,7 @@
                 $form.find('.webgis-detail-search-hourglass').html('');
             },
             error: function () {
-                webgis.alert('unknown error', 'Fehler');
+                webgis.alert('unknown error', 'error');
                 $form.find('.webgis-detail-search-hourglass').html('');
             }
         });
@@ -161,7 +161,7 @@
             $resultHolder.get(0).search_term = '';
         $.webgis_search_empty_result_list($resultHolder.find('.webgis-search-result-list'), map);
         if (result && result.features && result.features.length == 0) {
-            webgis.alert('Es wurden keine Ergebnisse gefunden','Hinweis');
+            webgis.alert('Es wurden keine Ergebnisse gefunden', 'info');
         }
         else {
             $.webgis_search_result_list($resultHolder.find('.webgis-search-result-list'), map, result.features, false, dynamicContentQuery);

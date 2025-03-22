@@ -18,11 +18,11 @@ public class MarkerInfo : IApiClientButton, IApiButtonResources, IApiButtonDepen
 
     public string Name => "Marker Info";
 
-    public string Container => "Karte";
+    public string Container => "Map";
 
     public string Image => UIImageButton.ToolResourceImage(this, "markerinfo");
 
-    public string ToolTip => "Information zu Graphic-Markern in der Karte";
+    public string ToolTip => "Information about graphic markers on the map";
 
     public bool HasUI => false;
 

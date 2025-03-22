@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
     "use strict";
     $.fn.webgis_control_upload = function (method) {
         if (methods[method]) {
@@ -58,7 +58,7 @@
                 var progress = $progress.get(0);
                 formData.append(this.name, file);
                 client.onerror = function (e) {
-                    webgis.alert("Error",'Fehler');
+                    webgis.alert("Error",'error');
                 };
                 client.onload = function (e) {
                     progress.value = progress.max;
@@ -71,7 +71,7 @@
                     progress.value = p;
                 };
                 client.onabort = function (e) {
-                    webgis.alert('Upload abgebrochen','Hinweis');
+                    webgis.alert('Upload abgebrochen','info');
                 };
                 client.open("POST", action);
                 client.send(formData);

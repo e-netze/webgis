@@ -1,4 +1,4 @@
-webgis.map = function (felem, crs, initialExtent, name) {
+﻿webgis.map = function (felem, crs, initialExtent, name) {
     "use strict";
 
     var $ = webgis.$;
@@ -1099,7 +1099,7 @@ webgis.map = function (felem, crs, initialExtent, name) {
         for (var s in services) {
             var serviceInfo = services[s];
             if (serviceInfo.supportedCrs && this.crs && $.inArray(this.crs.id, serviceInfo.supportedCrs) < 0) {
-                webgis.alert("Crs " + this.crs.id + " is not supported for service '" + serviceInfo.name + "'");
+                webgis.alert("Crs " + this.crs.id + " is not supported for service '" + serviceInfo.name + "'", "info");
                 continue;
             }
 
@@ -3103,7 +3103,7 @@ webgis.map = function (felem, crs, initialExtent, name) {
                                 map.ui.selectDynamicContentItem( contentDef);
                             } else {
                                 map.refresh();
-                                webgis.alert("Es wurden keine Ergebnisse zum dynamischen Inhalt \"" + contentDef.name + "\" gefunden", "Hinweis");
+                                webgis.alert("Es wurden keine Ergebnisse zum dynamischen Inhalt \"" + contentDef.name + "\" gefunden", "info");
                             }
                         } else {
                             var contentLoadedHook = webgis.hooks["dynamic_content_loaded"][contentDef.name] || webgis.hooks["dynamic_content_loaded"]["default"];

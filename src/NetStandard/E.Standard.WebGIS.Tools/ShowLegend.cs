@@ -9,13 +9,13 @@ public class ShowLegend : IApiClientButton
 {
     #region IApiButton Member
 
-    public string Name => "Legende und Themen";
+    public string Name => "Legend and layers";
 
-    public string Container => "Karte";
+    public string Container => "Map";
 
     public string Image => "legend.png";
 
-    public string ToolTip => "Legende anzeigen";
+    public string ToolTip => "Show legend and layers";
 
     public bool HasUI => false;
 

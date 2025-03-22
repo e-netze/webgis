@@ -24,7 +24,7 @@
 
     var _onError = function (error) {
         if (error && error.errorMessage) {
-            webgis.alert('LiveShare Error: ' + error.errorMessage, "Error");
+            webgis.alert('LiveShare Error: ' + error.errorMessage, "error");
         }
     };
 
@@ -389,7 +389,7 @@
                                 },
                                 onDeniedGroup: function (result) {
                                     webgis.hideProgress(_progressMessage);
-                                    webgis.alert("Zugriff auf Liveshare Session wurde verweigert!", "Hinweis");
+                                    webgis.alert("Zugriff auf Liveshare Session wurde verweigert!", "info");
                                     _sessionId = null;
                                     _setDialogTitle('');
                                 },
@@ -426,7 +426,7 @@
                                     //onLeftGroup();
 
                                     if (isOwner === false) {
-                                        webgis.alert("Liveshare Session wurde geschlossen", "Hinweis");
+                                        webgis.alert("Liveshare Session wurde geschlossen", "info");
                                     }
                                 },
                                 onConfirmJoinGroup: function (result, onAllow, onDeny) {
@@ -450,7 +450,7 @@
                     }, hubUrl);
                 }).catch(function (err) {
                     _connection = null;
-                    return webgis.alert("Liveshare: " + err.toString(), "Error");
+                    return webgis.alert("Liveshare: " + err.toString(), "error");
                 });
 
 
@@ -527,7 +527,7 @@
                 _connection = null;
                 _setDialogTitle('');
             }).catch(function (err) {
-                return webgis.alert("Liveshare: " + err.toString(), "Error");
+                return webgis.alert("Liveshare: " + err.toString(), "error");
             });
         }
     };
@@ -574,7 +574,7 @@
             },
             onError: function (err) {
                 webgis.hideProgress('Aktuelle Position wird abgefragt...');
-                webgis.alert('Ortung nicht möglich: ' + (err ? err.message + " (Error Code " + err.code + ")" : ""), "Fehler");
+                webgis.alert('Ortung nicht möglich: ' + (err ? err.message + " (Error Code " + err.code + ")" : ""), "error");
             }
         });
     };

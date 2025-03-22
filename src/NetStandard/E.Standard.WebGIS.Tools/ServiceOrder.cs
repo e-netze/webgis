@@ -10,13 +10,13 @@ public class ServiceOrder : IApiClientButton, IApiButtonResources
 {
     #region IApiButton Member
 
-    public string Name => "Zeichenreihenfolge (Dienste)";
+    public string Name => "Service Order";
 
-    public string Container => "Karte";
+    public string Container => "Map";
 
     public string Image => UIImageButton.ToolResourceImage(this, "service_order");
 
-    public string ToolTip => "Reihenfolge und Transparenz der Dienste ändern";
+    public string ToolTip => "Set service order and transparency for services.";
 
     public bool HasUI => false;
 

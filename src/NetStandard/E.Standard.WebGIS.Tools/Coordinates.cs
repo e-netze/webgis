@@ -144,28 +144,13 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
 
     #region IApiButton Member
 
-    public string Name
-    {
-        get { return "Koordinaten / Höhe"; }
-    }
+    public string Name => "Coordinates / Elevation";
 
-    public string Image
-    {
-        get
-        {
-            return UIImageButton.ToolResourceImage(this, "coords-xyz");
-        }
-    }
+    public string Image => UIImageButton.ToolResourceImage(this, "coords-xyz");
 
-    public string Container
-    {
-        get { return "Abfragen"; }
-    }
+    public string Container => "Query";
 
-    public string ToolTip
-    {
-        get { return "Koordinaten abfragen"; }
-    }
+    public string ToolTip => "Query coordinates and elevation values";
 
     public bool HasUI { get { return true; } }
 
