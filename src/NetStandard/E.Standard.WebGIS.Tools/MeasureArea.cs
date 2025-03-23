@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -7,17 +8,19 @@ using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Geometry;
+using System.Runtime.Loader;
 
 namespace E.Standard.WebGIS.Tools;
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(MapCrsDependent = true)]
 [ToolHelp("tools/general/measure-area.html")]
-public class MeasureArea : IApiServerTool, IApiButtonResources
+public class MeasureArea : IApiServerToolLocalizable<MeasureArea>, 
+                           IApiButtonResources
 {
     #region IApiServerTool Member
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MeasureArea> localizer)
     {
         var response = new ApiEventResponse();
 
@@ -30,7 +33,7 @@ public class MeasureArea : IApiServerTool, IApiButtonResources
                         css = UICss.ToClass(new string[] { "webgis-info" }),
                         elements = new IUIElement[]
                             {
-                                new UILiteral() { literal="Achtung: Das Koordinatensystem für die Berechnung der Messwerte ist WebMercator. Aufgrund der Längenverzerrungen in dieser Kartenprojektion weichen die Werte stark von der Realität ab!" }
+                                new UILiteral() { literal = localizer.Localize("waring-webmercator") }
                             }
                     }
                 );
@@ -38,23 +41,23 @@ public class MeasureArea : IApiServerTool, IApiButtonResources
 
         response.AddUIElements(
                 new UILabel()
-                    .WithLabel("Umfang (m)"),
+                    .WithLabel(localizer.Localize("circumference-m")),
                 new UIInputText()
                     .WithStyles("webgis-sketch-circumference"),
                 new UILabel()
-                    .WithLabel("Fläche (m²)"),
+                    .WithLabel(localizer.Localize("area-m2")),
                 new UIInputText()
                     .WithStyles("webgis-sketch-area"),
                 new UIButtonContainer(
                     new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removesketch)
                         .WithStyles(UICss.CancelButtonStyle)
-                        .WithText("Sketch entfernen")),
+                        .WithText(localizer.Localize("remove-sketch"))),
                 new UISketchInfoContainer());
 
         return response;
     }
 
-    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<MeasureArea> localizer)
     {
         return null;
     }

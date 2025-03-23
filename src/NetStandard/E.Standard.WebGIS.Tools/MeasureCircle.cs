@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -16,13 +17,14 @@ namespace E.Standard.WebGIS.Tools;
 [ToolCmsConfigParameter(MeasureCircle.CmsRadiiParameter)]
 [ToolHelp("tools/general/circle.html")]
 [ToolConfigurationSection("measure-circle")]
-public class MeasureCircle : IApiServerTool, IApiButtonResources
+public class MeasureCircle : IApiServerToolLocalizable<MeasureCircle>,
+                             IApiButtonResources
 {
     const string CmsRadiiParameter = "markercircleradii";
 
     #region IApiTool
 
-    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e) => null;
+    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<MeasureCircle> localizer) => null;
 
     public ToolType Type => ToolType.circlemarker;
 
@@ -32,7 +34,7 @@ public class MeasureCircle : IApiServerTool, IApiButtonResources
 
     #region ApiButton
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MeasureCircle> localizer)
     {
         List<int> radiiList = new List<int>(e.GetConfigArray<int>("radii") ?? Array.Empty<int>());
 
@@ -46,7 +48,7 @@ public class MeasureCircle : IApiServerTool, IApiButtonResources
 
         return new ApiEventResponse()
             .AddUIElements(
-                new UILabel().WithLabel("Radius (m)"),
+                new UILabel().WithLabel(localizer.Localize("radius-m")),
                 new UIMarkerCircleRadiusCombo()
                 {
                     radii = radiiList.Count > 0 ? radiiList.Distinct().OrderBy(r => r).ToArray() : null
@@ -54,7 +56,7 @@ public class MeasureCircle : IApiServerTool, IApiButtonResources
                 new UIButtonContainer(
                     new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removecirclemarker)
                         .WithStyles(UICss.CancelButtonStyle)
-                        .WithText("Umgebungskreis entfernen")));
+                        .WithText(localizer.Localize("remove-circle"))));
     }
 
     public string Container => "Werkzeuge";

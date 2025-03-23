@@ -1,4 +1,5 @@
-﻿using E.Standard.Platform;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.Platform;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Helpers;
 using E.Standard.WebMapping.Core.Api;
@@ -20,13 +21,14 @@ namespace E.Standard.WebGIS.Tools;
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(MapCrsDependent = true)]
 [ToolHelp("tools/general/measure-line.html")]
-public class MeasureLine : IApiServerTool, IApiButtonResources
+public class MeasureLine : IApiServerToolLocalizable<MeasureLine>, 
+                           IApiButtonResources
 {
     private const string Table3dLengthContainerId = "measureline-3d-length-container";
 
     #region IApiServerTool Member
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MeasureLine> localizer)
     {
         var response = new ApiEventResponse();
 
@@ -39,7 +41,7 @@ public class MeasureLine : IApiServerTool, IApiButtonResources
                         css = UICss.ToClass(new string[] { "webgis-info" }),
                         elements = new IUIElement[]
                             {
-                                new UILiteral() { literal="Achtung: Das Koordinatensystem für die Berechnung der Messwerte ist WebMercator. Aufgrund der Längenverzerrungen in dieser Kartenprojektion weichen die Werte stark von der Realität ab!" }
+                                new UILiteral() { literal = localizer.Localize("waring-webmercator:body") }
                             }
                     }
                 );
@@ -47,13 +49,13 @@ public class MeasureLine : IApiServerTool, IApiButtonResources
 
         response.AddUIElements(
                 new UILabel()
-                    .WithLabel("Länge (m)"),
+                    .WithLabel(localizer.Localize("length-m")),
                 new UIInputText()
                     .WithStyles("webgis-sketch-length"),
                 new UIButtonContainer(
                      new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removesketch)
                         .WithStyles(UICss.CancelButtonStyle)
-                        .WithText("Sketch entfernen")),
+                        .WithText(localizer.Localize("remove-sketch"))),
                 new UISketchInfoContainer()
             );
 
@@ -63,7 +65,7 @@ public class MeasureLine : IApiServerTool, IApiButtonResources
                 .AddUIElements(
                     new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand, "calc-3d-length")
                         .WithStyles(UICss.CancelButtonStyle)
-                        .WithText("3D Länge ermitteln...")),
+                        .WithText(localizer.Localize("3d.determine-3d-length"))),
                     new UITable()
                         .WithId(Table3dLengthContainerId)
                         .WithStyles(UICss.EmptyOnChangeSketch, UICss.TableAlternateRowColor));
@@ -72,7 +74,7 @@ public class MeasureLine : IApiServerTool, IApiButtonResources
         return response;
     }
 
-    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<MeasureLine> localizer)
     {
         return null;
     }
@@ -178,7 +180,7 @@ public class MeasureLine : IApiServerTool, IApiButtonResources
     #endregion
 
     [ServerToolCommand("calc-3d-length")]
-    async public Task<ApiEventResponse> OnCalc3dLength(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnCalc3dLength(IBridge bridge, ApiToolEventArguments e, ILocalizer<MeasureLine> localizer)
     {
         try
         {
@@ -199,7 +201,7 @@ public class MeasureLine : IApiServerTool, IApiButtonResources
 
                     if (results.Count() == 0)
                     {
-                        throw new Exception("Höhenabfrage liefert keine Ergebnisse");
+                        throw new Exception(localizer.Localize("3d.exception-no-results"));
                     }
 
                     var firstResult = results.FirstOrDefault();
@@ -212,7 +214,7 @@ public class MeasureLine : IApiServerTool, IApiButtonResources
                     }
                     else
                     {
-                        throw new Exception($"Kein gültiger Höhenwert: {results.FirstOrDefault().ResultString}");
+                        throw new Exception($"{localizer.Localize("3d.exception-invalid-elevation")}: {results.FirstOrDefault().ResultString}");
                     }
                 }
             }
@@ -225,7 +227,7 @@ public class MeasureLine : IApiServerTool, IApiButtonResources
 
             uiTable.AddRow(new UITableRow(new IUIElement[]
             {
-                new UILiteral { literal = "3D Länge (gesamt)" },
+                new UILiteral { literal = localizer.Localize("3d.length") },
                 new UILiteral { literal = $"{ Math.Round( polyline.Length3D, 2)} m" }
             }));
 
@@ -233,7 +235,7 @@ public class MeasureLine : IApiServerTool, IApiButtonResources
 
             uiTable.AddRow(new UITableRow(new IUIElement[]
             {
-                new UILiteral { literal = "Höhendifferenz (gesamt)" },
+                new UILiteral { literal = localizer.Localize("3d.elevation-difference") },
                 new UILiteral { literal = $"{ Math.Round(allPoints.Max(p=>p.Z) - allPoints.Min(p=>p.Z), 2)} m" }
             }));
 
@@ -253,27 +255,27 @@ public class MeasureLine : IApiServerTool, IApiButtonResources
 
                 uiTable.AddRow(new UITableRow(new IUIElement[]
                 {
-                    new UILiteral { literal = "Segment: Horizontal Distanz" },
+                    new UILiteral { literal = localizer.Localize("3d.segment-horizontal-distance") },
                     new UILiteral { literal = $"{ Math.Round(hDist, 2)} m" }
                 }));
                 uiTable.AddRow(new UITableRow(new IUIElement[]
                 {
-                    new UILiteral { literal = "Segment: Schräg Distanz" },
+                    new UILiteral { literal = localizer.Localize("3d.segment-3d-distance") },
                     new UILiteral { literal = $"{ Math.Round(sDist, 2)} m" }
                 }));
                 uiTable.AddRow(new UITableRow(new IUIElement[]
                 {
-                    new UILiteral { literal = "Segment: Höhendiffernz" },
+                    new UILiteral { literal = localizer.Localize("3d.segment-elevation-difference") },
                     new UILiteral { literal = $"{ Math.Round(dH, 2)} m" }
                 }));
                 uiTable.AddRow(new UITableRow(new IUIElement[]
                 {
-                    new UILiteral { literal = "Segment: Neigungswinkel" },
+                    new UILiteral { literal = localizer.Localize("3d.segment-inclination-angle") },
                     new UILiteral { literal = $"{ Math.Round(Math.Atan(tilt)*180.0/Math.PI, 2) }° = { Math.Round(tilt*100.0) }%" }
                 }));
                 uiTable.AddRow(new UITableRow(new IUIElement[]
                 {
-                    new UILiteral { literal = "Segment: Azimut" },
+                    new UILiteral { literal = localizer.Localize("3d.segment-azimuth") },
                     new UILiteral { literal = $"{ Math.Round(azimut*180.0/Math.PI, 3) }° = { Math.Round(azimut*200.0/Math.PI, 3) }gon" }
                 }));
             }
@@ -284,7 +286,7 @@ public class MeasureLine : IApiServerTool, IApiButtonResources
         }
         catch (Exception ex)
         {
-            throw new Exception($"Höhe kann nicht für alle Punkte ermittelt werden. 3D Messen nicht möglich: {ex.Message}");
+            throw new Exception($"{localizer.Localize("3d.exception-no-valid-results")}: {ex.Message}");
         }
     }
 
