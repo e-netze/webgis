@@ -1,6 +1,7 @@
 ﻿using E.Standard.Extensions.Compare;
 using E.Standard.Extensions.Credentials;
 using E.Standard.Json;
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
@@ -27,7 +28,8 @@ namespace E.Standard.WebGIS.Tools.Serialization;
 [ToolHelp("tools/map/liveshare/index.html")]
 [AdvancedToolProperties(AsideDialogExistsDependent = true, LiveShareClientnameDependent = true)]
 //[InDevelopment]
-public class LiveShareMap : IApiClientTool, IApiButtonResources
+public class LiveShareMap : IApiClientToolLocalizable<LiveShareMap>, 
+                            IApiButtonResources
 {
     private const string DivInitSessionId = "liveshare-init-group-div";
     private const string DivShowSessionDivId = "livshare-show-goup-div";
@@ -44,21 +46,21 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
 
     public string Name => "Live Share";
 
-    public string Container => "Karte";
+    public string Container => "Map";
 
     public string Image => UIImageButton.ToolResourceImage(this, "liveshare");
 
-    public string ToolTip => "Karte live teilen";
+    public string ToolTip => "Share map live";
 
     public bool HasUI => true;
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<LiveShareMap> localizer)
     {
         var clientname = e["_liveshare_clientname"];
 
         if (String.IsNullOrEmpty(clientname?.Trim())/* || clientname.Contains("::")*/) // :: => for debugging
         {
-            return SetClientName(bridge, e);
+            return SetClientName(bridge, e, localizer);
         }
 
         var uiElements = new List<IUIElement>();
@@ -100,21 +102,21 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                                      new UIButton(UIButton.UIButtonType.servertoolcommand_ext, "create-session")
                                      {
                                         css = UICss.ToClass(new string[] {UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
-                                        text = "Neue Session beginnen",
+                                        text = localizer.Localize("start-new-session"),
                                         id = ButtonId,
                                         icon = UIButton.ToolResourceImage(typeof(LiveShareMap), "create-session")
                                     },
                                     new UIButton(UIButton.UIButtonType.servertoolcommand_ext, "join-session")
                                     {
                                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle, UICss.JoinLiveshareSessionButton }),
-                                        text = "an Session teilnehmen",
+                                        text = localizer.Localize("join-session"),
                                         id = ButtonId,
                                         icon = UIButton.ToolResourceImage(typeof(LiveShareMap), "join-session")
                                     },
                                     new UIButton(UIButton.UIButtonType.servertoolcommand_ext, "exit")
                                     {
                                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
-                                        text = "Liveshare schließen",
+                                        text = localizer.Localize("close-live-share"),
                                         id = ButtonId,
                                         icon = UIButton.ToolResourceImage(typeof(LiveShareMap), "exit")
                                     },
@@ -123,7 +125,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                                         css = UICss.ToClass(new string[] { "webgis-info" }),
                                         elements = new IUIElement[]
                                         {
-                                            new UILiteral() { literal="Hier kann eine neue LiveShare Session erstellt werden, um seine Inhalte mit anderen zu teilen. Nach dem Beginnen einer Session, kann in der Folge mit dem Button 'Session teilen' ein Link erzeugt und weiter gegeben werden."}
+                                            new UILiteral() { literal = localizer.Localize("info1:body") }
                                         }
                                     },
                                     new UIBreak(1),
@@ -132,7 +134,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                                         css = UICss.ToClass(new string[] { "webgis-info" }),
                                         elements = new IUIElement[]
                                         {
-                                            new UILiteral() { literal="Um an einer bestehenden Session teilzunehmen, erhalten sie in der Regel von einem Anwender einen Link bzw. eine Session-Id. Möchten sie an einer Session in dieser Karte teilnehmen, verwenden sie den Button 'An Session teilnehmen' und geben dort die Session-Id ein."}
+                                            new UILiteral() { literal = localizer.Localize("info2:body") }
                                         }
                                     }
                                 }
@@ -146,7 +148,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                                         new UIButton(UIButton.UIButtonType.servertoolcommand_ext, "share-session")
                                         {
                                             css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
-                                            text = "Session teilen",
+                                            text = localizer.Localize("share-session"),
                                             id = ButtonId,
                                             icon = UIButton.ToolResourceImage(typeof(LiveShareMap), "share-session"),
                                             VisibilityDependency = VisibilityDependency.IsLiveShareSessionOwner
@@ -154,7 +156,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                                         new UIButton(UIButton.UIButtonType.servertoolcommand_ext, "leave-session")
                                         {
                                             css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
-                                            text = "Session verlassen",
+                                            text = localizer.Localize("leave-session"),
                                             id = ButtonId,
                                             icon = UIButton.ToolResourceImage(typeof(LiveShareMap), "leave-session"),
                                             VisibilityDependency = VisibilityDependency.IsNotLiveShareSessionOwner,
@@ -162,7 +164,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                                         new UIButton(UIButton.UIButtonType.servertoolcommand_ext, "leave-session")
                                         {
                                             css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
-                                            text = "Session beenden",
+                                            text = localizer.Localize("end-session"),
                                             id = ButtonId,
                                             icon = UIButton.ToolResourceImage(typeof(LiveShareMap), "leave-session"),
                                             VisibilityDependency = VisibilityDependency.IsLiveShareSessionOwner
@@ -185,11 +187,11 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                 css = UICss.ToClass(new string[] { "webgis-info" }),
                 elements = new IUIElement[]
                 {
-                    new UILiteral() { literal="Mit LiveShare kann man Karten Live mit anderern Anwendern teilen. Geteilt werden der Karteauschnitt, Sichbarkeit von Datenebenen, Zeichnungen (Redlining). Zum Starten oder zum Teilnehmen an LiveShare verwenden sie das Live Share Connect Fenster (rechts)." }
+                    new UILiteral() { literal = localizer.Localize("info3:body") }
                 }
             },
             new UIBreak(2),
-            new UILabel() { label=$"Hallo, { clientname.PureUsername() }" },
+            new UILabel() { label=$"{localizer.Localize("hello")}, { clientname.PureUsername() }" },
             new UIBreak(),
             new UIImage($"{ bridge.AppRootUrl }/rest/usermarkerimage?id={ HttpUtility.UrlEncode(clientname.PureUsername()) }&width=60"),
             new UIDiv()
@@ -197,7 +199,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                 //css = UICss.ToClass(new string[] { "webgis-info" }),
                 elements = new IUIElement[]
                 {
-                    new UILiteral() { literal="In die Karte klicken, um einen Marker über LiveShare zu teilen" }
+                    new UILiteral() { literal = localizer.Localize("info4:body") }
                 }
             },
             new UIButtonContainer()
@@ -207,11 +209,11 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                      new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removelivesharemarker)
                      {
                          css=UICss.ToClass(new []{ UICss.CancelButtonStyle }),
-                         text="Marker entfernen"
+                         text = localizer.Localize("remove-marker")
                      },
                      new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.currentpos)
                      {
-                         text="Aktuelle Position"
+                         text =localizer.Localize("current-position")
                      }
                  }
             }
@@ -274,7 +276,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
     #region Commands
 
     [ServerToolCommand("create-session")]
-    async public Task<ApiEventResponse> OnCreateSession(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnCreateSession(IBridge bridge, ApiToolEventArguments e, ILocalizer<LiveShareMap> localizer)
     {
         var hubUrl = e.GetConfigValue("hub");
         var simplifySessionIds = e.GetConfigBool("simplify-session-ids");
@@ -291,7 +293,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
 
                 return new ApiEventResponse()
                 {
-                    UIElements = ShareSessionDialog(bridge, e, groupId),
+                    UIElements = ShareSessionDialog(bridge, e, groupId, localizer),
                     UISetters = new IUISetter[] {
                         new UISetter(SessionIdHiddenId, groupId)
                     },
@@ -306,7 +308,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
     }
 
     [ServerToolCommand("join-session")]
-    public ApiEventResponse OnJoinSession(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnJoinSession(IBridge bridge, ApiToolEventArguments e, ILocalizer<LiveShareMap> localizer)
     {
         return new ApiEventResponse()
         {
@@ -314,7 +316,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                 new UIDiv()
                 {
                     target = UIElementTarget.modaldialog.ToString(),
-                    targettitle="Liveshare Session beitreten",
+                    targettitle = localizer.Localize("json-session"),
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                     elements = new IUIElement[]
                     {
@@ -327,7 +329,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                         new UIButton(UIButton.UIButtonType.servertoolcommand_ext, "join-existing-session")
                         {
                             css = UICss.ToClass(new string[] { UICss.DefaultButtonStyle }),
-                            text = "An Session teilnehmen...",
+                            text = localizer.Localize("join-this-session"),
                             id = ButtonId
                         }
                     }
@@ -401,13 +403,13 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
     }
 
     [ServerToolCommand("share-session")]
-    public ApiEventResponse OnShareSession(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnShareSession(IBridge bridge, ApiToolEventArguments e, ILocalizer<LiveShareMap> localizer)
     {
         var sessionId = e[SessionIdHiddenId];
 
         return new ApiEventResponse()
         {
-            UIElements = ShareSessionDialog(bridge, e, sessionId)
+            UIElements = ShareSessionDialog(bridge, e, sessionId, localizer)
         };
     }
 
@@ -425,7 +427,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
         };
     }
 
-    public ApiEventResponse SetClientName(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse SetClientName(IBridge bridge, ApiToolEventArguments e, ILocalizer<LiveShareMap> localizer)
     {
         return new ApiEventResponse()
         {
@@ -434,7 +436,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                 new UIDiv()
                 {
                     target = UIElementTarget.modaldialog.ToString(),
-                    targettitle="Liveshare Benutzername",
+                    targettitle = localizer.Localize("liveshare-username"),
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                     elements = new IUIElement[]
                     {
@@ -443,10 +445,10 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                             css = UICss.ToClass(new string[] { "webgis-info" }),
                             elements = new IUIElement[]
                             {
-                                new UILiteral() { literal="Um an WebGIS LiveShare teilzunemen, ist ein (anonymer) Anzeigename festzulegen. Dieser wird den anderen Benutzern in der Session angezeigt. Der Name kann frei vergeben werden und muss aus mindestens 4 Zeichen bestehen."}
+                                new UILiteral() { literal = localizer.Localize("info5:body") }
                             }
                         },
-                        new UILabel() { label = "Anzeigename:"},
+                        new UILabel() { label = $"{localizer.Localize("display-name")}:"},
                         new UIInputText()
                         {
                             id=ClientNameInputId,
@@ -455,7 +457,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                         new UIButton(UIButton.UIButtonType.servertoolcommand, "set-client-name")
                         {
                             css=UICss.ToClass(new[]{ UICss.DefaultButtonStyle }),
-                            text = "OK"
+                            text = localizer.Localize("ok")
                         }
                     }
                 }
@@ -464,17 +466,17 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
     }
 
     [ServerToolCommand("set-client-name")]
-    public ApiEventResponse OnSetClientName(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnSetClientName(IBridge bridge, ApiToolEventArguments e, ILocalizer<LiveShareMap> localizer)
     {
         var clientName = e[ClientNameInputId];
         if (clientName == null || clientName.Trim().Length < 4)
         {
-            throw new Exception("Benutzername muss aus mindesten 4 Zeichen bestehen");
+            throw new Exception(localizer.Localize("exception-display-name-min-length"));
         }
 
         e["_liveshare_clientname"] = clientName;
 
-        var response = OnButtonClick(bridge, e);
+        var response = OnButtonClick(bridge, e, localizer);
 
         response.SetLiveShareClientname = clientName.Trim();
         response.UIElements.Add(
@@ -488,7 +490,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
 
     #region Helper
 
-    private ICollection<IUIElement> ShareSessionDialog(IBridge bridge, ApiToolEventArguments e, string sessionId)
+    private ICollection<IUIElement> ShareSessionDialog(IBridge bridge, ApiToolEventArguments e, string sessionId, ILocalizer<LiveShareMap> localizer)
     {
         string pageId = e[PageIdHiddenId];
         string mapName = e[MapNameHiddenId];
@@ -513,13 +515,13 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                 new UIDiv()
                 {
                     target = UIElementTarget.modaldialog.ToString(),
-                    targettitle="Liveshare Session teilen",
+                    targettitle = localizer.Localize("share-session"),
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                     elements = new IUIElement[]
                     {
                         new UILabel()
                         {
-                            label="Liveshare Session Id:"
+                            label = $"{localizer.Localize("session-id")}:"
                         },
                         new UIInputText()
                         {
@@ -528,7 +530,7 @@ public class LiveShareMap : IApiClientTool, IApiButtonResources
                         },
                         new UILabel()
                         {
-                            label="Link zur Session:"
+                            label = $"{localizer.Localize("session-link")}:"
                         },
                         new UIInputTextArea(true)
                         {

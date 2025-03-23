@@ -1,5 +1,6 @@
 ﻿using E.Standard.Extensions.Compare;
 using E.Standard.Json;
+using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Abstraction;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Extensions;
@@ -29,6 +30,7 @@ namespace E.Standard.WebGIS.Tools.Georeferencing.Image;
 [AdvancedToolProperties(MapCrsDependent = true, StaticOverlayServicesDependent = true)]
 [ToolHelp("tools/general/georef-image.html")]
 [ToolPolicy(RequireAuthentication = true)]
+[LocalizationNamespace("tools.image.georeference")]
 public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirmation
 {
     const string ToolbarElementId = "image-georef-toolbar";
@@ -43,30 +45,15 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
 
     #region IApiButton
 
-    public string Name
-    {
-        get { return "Bild Georeferenzieren (Beta)"; }
-    }
+    public string Name => "Image Georeferencing";
 
-    public string Container
-    {
-        get { return "Werkzeuge"; }
-    }
+    public string Container => "Tools";
 
-    public string Image
-    {
-        get { return UIImageButton.ToolResourceImage(this, "georef-image"); }
-    }
+    public string Image => UIImageButton.ToolResourceImage(this, "georef-image");
 
-    public string ToolTip
-    {
-        get { return "Bild Georeferenzieren"; }
-    }
+    public string ToolTip => "Upload images to georeference.";
 
-    public bool HasUI
-    {
-        get { return true; }
-    }
+    public bool HasUI => true;
 
     #endregion
 

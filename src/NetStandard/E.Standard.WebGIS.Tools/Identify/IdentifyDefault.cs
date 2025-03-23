@@ -287,12 +287,12 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, 
 
     #region IApiButton Member
 
-    public string Name => "Identifizieren/Auswählen";
+    public string Name => "Identify/Select";
 
-    public string Container => "Abfragen";
+    public string Container => "Query";
     public string Image => UIImageButton.ToolResourceImage(this, "identify");
 
-    public string ToolTip => "Objekte in der Karte identifizieren";
+    public string ToolTip => "Identify or select geo-objects on the map.";
 
     virtual public bool HasUI => true;
 

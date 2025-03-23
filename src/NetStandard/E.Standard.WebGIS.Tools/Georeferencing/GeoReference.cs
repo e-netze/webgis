@@ -53,30 +53,15 @@ public class GeoReference : IApiServerButton, IApiButtonResources
 
     #region IApiButton Member
 
-    public string Name
-    {
-        get { return "Georeferenzieren"; }
-    }
+    public string Name => "Georeference";
 
-    public string Container
-    {
-        get { return "Werkzeuge"; }
-    }
+    public string Container => "Tools";
 
-    public string Image
-    {
-        get { return UIImageButton.ToolResourceImage(this, "georeference"); }
-    }
+    public string Image => UIImageButton.ToolResourceImage(this, "georeference");
 
-    public string ToolTip
-    {
-        get { return "Dokument Georeferenzieren"; }
-    }
+    public string ToolTip => "Upload documents for georeferencing.";
 
-    public bool HasUI
-    {
-        get { return true; }
-    }
+    public bool HasUI => true;
 
     #endregion
 

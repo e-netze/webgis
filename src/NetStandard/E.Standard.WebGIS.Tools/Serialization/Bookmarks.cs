@@ -1,6 +1,8 @@
 ﻿using E.Standard.Json;
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
+using E.Standard.WebGIS.Tools.Serialization.Extensions;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -17,7 +19,9 @@ namespace E.Standard.WebGIS.Tools.Serialization;
 [ToolStorageId("WebGIS.Tools.Serialization/{user}/_bookmarks")]
 [ToolStorageIsolatedUser(isUserIsolated: true)]
 [AdvancedToolProperties(MapBBoxDependent = true, ScaleDependent = true, ClientDeviceDependent = true)]
-public class Bookmarks : IApiButton, IApiServerButton, IApiButtonResources
+public class Bookmarks : IApiButton, 
+                         IApiServerButtonLocalizable<Bookmarks>, 
+                         IApiButtonResources
 {
     const string BookmarkNameTextInputId = "webgis-bookmarks-bookmark-name";
     const string BookmarkDescriptionInputId = "webgis-bookmarks-bookmark-description";
@@ -31,7 +35,7 @@ public class Bookmarks : IApiButton, IApiServerButton, IApiButtonResources
 
     public string Image => UIImageButton.ToolResourceImage(this, "bookmark");
 
-    public string ToolTip => "Bookmarks: Lesezeichen für benutzerdefinerte geographische Ausschnitte.";
+    public string ToolTip => "Bookmarks for custom geographic extents.";
 
     public bool HasUI => true;
 
@@ -39,22 +43,19 @@ public class Bookmarks : IApiButton, IApiServerButton, IApiButtonResources
 
     public ToolCursor Cursor => ToolCursor.Pointer;
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Bookmarks> localizer)
     {
-        if (bridge.CurrentUser.IsAnonymous)
-        {
-            throw new Exception("Bookmarks are not available for anonymous users...");
-        }
+        bridge.CurrentUser.ThrowIfAnonymous(localizer);
 
         var bookmarkNames = bridge.Storage.GetNames();
         var uiMenu = new UIMenu()
-                        .WithHeader("Meine Bookmarks");
+                        .WithHeader(localizer.Localize("my-bookmarks"));
 
         uiMenu.AddChild(
             new UIMenuItem(this, e, UIButton.UIButtonType.servertoolcommand_ext, command: "new-bookmark")
                 .WithId(ButtonId)
-                .WithText("Bookmark erstellen...")
-                .WithSubText("Neues Bookmark erstellen oder bestehendes ersetzen")
+                .WithText(localizer.Localize("create-bookmark"))
+                .WithSubText(localizer.Localize("create-or-replace-bookmark"))
                 .WithValue("_new"));
 
         foreach (var bookmarkName in bookmarkNames)
@@ -121,50 +122,44 @@ public class Bookmarks : IApiButton, IApiServerButton, IApiButtonResources
     }
 
     [ServerToolCommand("new-bookmark")]
-    public ApiEventResponse OnNewBookmark(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnNewBookmark(IBridge bridge, ApiToolEventArguments e, ILocalizer<Bookmarks> localizer)
     {
-        if (bridge.CurrentUser.IsAnonymous)
-        {
-            throw new Exception("Bookmarks are not available for anonymous users...");
-        }
+        bridge.CurrentUser.ThrowIfAnonymous(localizer);
 
         return new ApiEventResponse()
             .AddUIElement(
                 new UIDiv()
                     .AsDialog()
-                    .WithDialogTitle("Bookmark erstellen")
+                    .WithDialogTitle(localizer.Localize("create-bookmark"))
                     .WithStyles(UICss.NarrowFormMarginAuto)
                     .AddChildren(
                         new UILabel()
-                            .WithLabel("Name"),
+                            .WithLabel(localizer.Localize("name")),
                         new UIInputAutocomplete(UIInputAutocomplete.MethodSource(bridge, this.GetType(), "autocomplete-bookmarks"))
                             .WithId(BookmarkNameTextInputId)
                             .AsToolParameter(),
                         new UILabel()
-                            .WithLabel("Beschreibung (optional)"),
+                            .WithLabel(localizer.Localize("description")),
                         new UIInputTextArea()
                             .WithId(BookmarkDescriptionInputId)
                             .AsToolParameter(),
                         new UIButton(UIButton.UIButtonType.servertoolcommand_ext, "set-bookmark")
                             .WithId(ButtonId)
                             .WithStyles(UICss.DefaultButtonStyle)
-                            .WithText("Hinzufügen / Ersetzen")));
+                            .WithText(localizer.Localize("add-or-replace"))));
     }
 
     [ServerToolCommand("set-bookmark")]
-    public ApiEventResponse OnSetBookmark(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnSetBookmark(IBridge bridge, ApiToolEventArguments e, ILocalizer<Bookmarks> localizer)
     {
-        if (bridge.CurrentUser.IsAnonymous)
-        {
-            throw new Exception("Bookmarks are not available for anonymous users...");
-        }
+        bridge.CurrentUser.ThrowIfAnonymous(localizer);
 
         string name = e[BookmarkNameTextInputId],
            description = e[BookmarkDescriptionInputId];
 
         if (String.IsNullOrEmpty(name))
         {
-            throw new Exception("Der Name für Bookmark darf nicht leer sein");
+            throw new Exception(localizer.Localize("exception-name-required"));
         }
 
         var bookmark = new BookmarkModel()
@@ -181,18 +176,15 @@ public class Bookmarks : IApiButton, IApiServerButton, IApiButtonResources
 
         bridge.Storage.Save(name.ToValidEncodedName(), JSerializer.Serialize(bookmark));
 
-        return OnButtonClick(bridge, e)
+        return OnButtonClick(bridge, e, localizer)
             .CloseUIDialog()
             .SetActiveTool(this);
     }
 
     [ServerToolCommand("bookmark")]
-    public ApiEventResponse OnZoomToBookmark(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnZoomToBookmark(IBridge bridge, ApiToolEventArguments e, ILocalizer<Bookmarks> localizer)
     {
-        if (bridge.CurrentUser.IsAnonymous)
-        {
-            throw new Exception("Bookmarks are not available for anonymous users...");
-        }
+        bridge.CurrentUser.ThrowIfAnonymous(localizer);
 
         var bookmarkName = e["menuitem-value"];
         var command = e["menuitem-item-command"];

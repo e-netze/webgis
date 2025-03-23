@@ -279,30 +279,15 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
 
     #region IApiButton Member
 
-    virtual public string Name
-    {
-        get { return "Zeichnen (Redlining)"; }
-    }
+    virtual public string Name => "Drawing (Redlining)";
 
-    public string Container
-    {
-        get { return "Werkzeuge"; }
-    }
+    public string Container => "Tools";
 
-    public string Image
-    {
-        get { return UIImageButton.ToolResourceImage(this, "redlining"); }
-    }
+    public string Image => UIImageButton.ToolResourceImage(this, "redlining");
+    
+    public string ToolTip => "Simple drawing on the map.";
 
-    public string ToolTip
-    {
-        get { return "Einfaches Zeichnen in der Karte"; }
-    }
-
-    public bool HasUI
-    {
-        get { return true; }
-    }
+    public bool HasUI => true;
 
     #endregion
 

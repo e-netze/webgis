@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Compare;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Platform;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebMapping.Core.Api;
@@ -20,7 +21,8 @@ namespace E.Standard.WebGIS.Tools;
 [ToolHelp("tools/map/downloadmapimage.html")]
 [ToolConfigurationSection("print")]
 [AdvancedToolProperties(MapCrsDependent = true, MapBBoxDependent = true, MapImageSizeDependent = true)]
-public class DownloadMapImage : IApiServerTool, IApiButtonResources
+public class DownloadMapImage : IApiServerToolLocalizable<DownloadMapImage>, 
+                                IApiButtonResources
 {
     const string BBoxElementId = "donwloadmapimage-bbox";
     const string ImageSizeElementId = "downloadmapimage-size";
@@ -42,7 +44,7 @@ public class DownloadMapImage : IApiServerTool, IApiButtonResources
 
     public bool HasUI => true;
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<DownloadMapImage> localizer)
     {
         var qualities = e.GetConfigDictionay<int, string>(Print.ConfigQualitiesDpi);
 
@@ -50,14 +52,14 @@ public class DownloadMapImage : IApiServerTool, IApiButtonResources
         {
             qualities = new Dictionary<int, string>()
             {
-                { 120, "Mittel (120 dpi)" },
-                { 150, "Hoch (150 dpi)" }
+                { 120, localizer.Localize("quality-120") },
+                { 150, localizer.Localize("quality-150") }
             };
         }
 
         if (!qualities.ContainsKey(96))
         {
-            qualities.Add(96, "Normal (96 dpi)");
+            qualities.Add(96, localizer.Localize("quality-96"));
         }
 
         int epsg = e.CalcCrs.OrTake(e.MapCrs).OrTake(0).Value;
@@ -70,25 +72,26 @@ public class DownloadMapImage : IApiServerTool, IApiButtonResources
                     .AddChildren(
                          new UIImageButton(this.GetType(), "display", UIButton.UIButtonType.servertoolcommand, "display")
                             .WithValue("display")
-                            .WithText("Aktuellen Ausschnitt übernehmen"),
+                            .WithText(localizer.Localize("current-extent")),
                          new UIImageButton(this.GetType(), "rectangle", UIButton.UIButtonType.servertoolcommand, "rectangle")
                             .WithValue("rectangle")
-                            .WithText("Rechteck aufziehen"),
+                            .WithText(localizer.Localize("select-bbox")),
+                new UIBreak(1),
                 new UILabel()
-                    .WithLabel($"Bounding Box: {(e.MapCrsIsDynamic == false && epsg > 0 ? "[EPSG:" + epsg + "]" : "")}"),
+                    .WithLabel($"{localizer.Localize("bounding-box")}: {(e.MapCrsIsDynamic == false && epsg > 0 ? "[EPSG:" + epsg + "]" : "")}"),
                 new UIBoundBoxInput()
                     .WithId(BBoxElementId)
                     .WithStyles(UICss.DownloadMapImageBBox)
                     .AsReadonly(),
                 new UILabel()
-                    .WithLabel("Bildgröße (Pixel):"),
+                    .WithLabel($"{localizer.Localize("image-size")}:"),
                 new UISizeInput()
                     .WithId(ImageSizeElementId)
                     .WithStyles(UICss.DownloadMapImageSize)
                     .AsReadonly(),
-                new UIBreak(2),
+                //new UIBreak(1),
                 new UILabel()
-                    .WithLabel("Auflösung (DPI):"),
+                    .WithLabel($"{localizer.Localize("resolution")}:"),
                 new UISelect()
                     .WithStyles(UICss.DownloadMapImageDpi)
                     .AddOptions(qualities.Keys
@@ -97,25 +100,25 @@ public class DownloadMapImage : IApiServerTool, IApiButtonResources
                                                     .WithValue(dpi.ToString())
                                                     .WithLabel(qualities[dpi]))),
                 new UILabel()
-                    .WithLabel("Bildformat:"),
+                    .WithLabel($"{localizer.Localize("image-format")}:"),
                 new UISelect()
                     .WithStyles(UICss.DownloadMapImageFormat)
                     .AddOption(new UISelect.Option()
                                            .WithValue("jpg")
-                                           .WithLabel("JPG Datei"))
+                                           .WithLabel(localizer.Localize("jpg-file")))
                     .AddOption(new UISelect.Option()
                                            .WithValue("png")
-                                           .WithLabel("PNG Datei")),
+                                           .WithLabel(localizer.Localize("png-file"))),
                 new UILabel()
-                    .WithLabel("Georeferenzieren:"),
+                    .WithLabel($"{localizer.Localize("georeference")}:"),
                 new UISelect()
                     .WithStyles(UICss.DownloadMapImageWorldfile)
                     .AddOption(new UISelect.Option()
                                            .WithValue("true")
-                                           .WithLabel("Bilddatei + Worldfile (zip)"))
+                                           .WithLabel(localizer.Localize("image-and-worldfile")))
                     .AddOption(new UISelect.Option()
                                            .WithValue("false")
-                                           .WithLabel("Nur Bilddatei")))
+                                           .WithLabel(localizer.Localize("image-only"))))
             );
 
         if (e.CalcCrs.HasValue && !e.CalcCrs.Equals(e.MapCrs))
@@ -126,7 +129,7 @@ public class DownloadMapImage : IApiServerTool, IApiButtonResources
                         .WithStyles("webgis-info")
                         .AddChild(
                             new UILiteral()
-                                .WithLiteral($"Die Karte wird in EPSG:{e.MapCrs.Value} angezeigt. Das Kartenbild wird ebenso in dieser Projektion heruntergeladen."))
+                                .WithLiteral(String.Format(localizer.Localize("info1:body"), e.MapCrs.Value)))
                         );
 
         }
@@ -135,13 +138,13 @@ public class DownloadMapImage : IApiServerTool, IApiButtonResources
             .AddUIElements(
                 new UIBreak(1),
                 new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.downloadmapimage)
-                    .WithText("Kartenbild herunterladen")
+                    .WithText(localizer.Localize("download"))
             );
 
         return AppendMapExtendSetters(response, bridge, e);
     }
 
-    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<DownloadMapImage> localizer)
     {
         return AppendMapExtendSetters(new ApiEventResponse(), bridge, e);
     }

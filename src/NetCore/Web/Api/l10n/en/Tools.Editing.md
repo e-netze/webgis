@@ -1,4 +1,10 @@
-﻿# error-on-insert: Error on INSERT
+﻿# name: Edit
+
+Edit geo-objects on the map
+
+# container: Tools
+
+# error-on-insert: Error on INSERT
 
 # error-on-update: Error on UPDATE
 

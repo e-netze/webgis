@@ -2,6 +2,7 @@
 using E.Standard.WebMapping.Core.Api.Reflection;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace E.Standard.WebMapping.Core.Api;
 
@@ -36,7 +37,7 @@ public class ApiToolConfirmation
                 continue;
             }
 
-            ToolCommandConfirmationAttribute[] confirmAttributes = (ToolCommandConfirmationAttribute[])methodInfo.GetCustomAttributes(typeof(ToolCommandConfirmationAttribute), true);
+            var confirmAttributes = methodInfo.GetCustomAttributes<ToolCommandConfirmationAttribute>(true);
             if (commandAttributes == null || commandAttributes.Length == 0)
             {
                 continue;

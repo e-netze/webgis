@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Reflection;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Models;
@@ -30,6 +31,7 @@ namespace E.Standard.WebGIS.Tools.Editing;
 [ToolHelp("tools/general/editing/index.html")]
 [ToolId("webgis.tools.editing.edit")]
 [ToolConfigurationSection("editing")]
+[LocalizationNamespace("tools.Editing")]
 public class Edit : IApiServerToolAsync,
                     IApiButtonDependency,
                     IApiButtonResources,
@@ -57,47 +59,23 @@ public class Edit : IApiServerToolAsync,
 
     #region IApiTool Member
 
-    public ToolType Type
-    {
-        get { return WebMapping.Core.Api.ToolType.click; }
-    }
+    public ToolType Type => WebMapping.Core.Api.ToolType.click;
 
-    public ToolCursor Cursor
-    {
-        get
-        {
-            return ToolCursor.Custom_Selector_Highlight;
-        }
-    }
+    public ToolCursor Cursor => ToolCursor.Custom_Selector_Highlight;
 
     #endregion
 
     #region IApiButton Member
 
-    public string Name
-    {
-        get { return "Bearbeiten (Edit)"; }
-    }
+    public string Name => "Edit";
 
-    public string Container
-    {
-        get { return "Werkzeuge"; }
-    }
+    public string Container => "Tools";
 
-    public string Image
-    {
-        get { return UIImageButton.ToolResourceImage(this, "edit"); }
-    }
+    public string Image => UIImageButton.ToolResourceImage(this, "edit");
 
-    public string ToolTip
-    {
-        get { return "Objekte in der Karte bearbeiten"; }
-    }
+    public string ToolTip => "Edit geo-objects on the map";
 
-    public bool HasUI
-    {
-        get { return true; }
-    }
+    public bool HasUI => true;
 
     #endregion
 

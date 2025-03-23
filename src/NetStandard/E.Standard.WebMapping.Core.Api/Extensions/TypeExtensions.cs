@@ -9,23 +9,33 @@ static public class TypeExtensions
     {
         return type.ImplementsAnyInterface(
                                 typeof(IApiServerButton),
+                                typeof(IApiServerButtonLocalizable<>),
                                 typeof(IApiServerTool),
                                 typeof(IApiServerToolLocalizable<>),
-                                typeof(IApiClientTool));
+                                typeof(IApiClientTool),
+                                typeof(IApiClientToolLocalizable<>));
     }
 
     static public bool IsApiToolOrButtonAsync(this Type type)
     {
         return type.ImplementsAnyInterface(   
                                 typeof(IApiServerToolAsync),
+                                typeof(IApiServerToolLocalizableAsync<>),
                                 typeof(IApiServerButtonAsync),
-                                typeof(IApiServerToolLocalizableAsync<>));
+                                typeof(IApiServerButtonLocalizableAsync<>));
     }
 
     static public bool IsApiToolOrButton(this Type type)
     {
         return type.IsApiToolOrButtonNonAsync() 
             || type.IsApiToolOrButtonAsync();
+    }
+
+    static public bool IsApiClientTool(this Type type)
+    {
+        return type.ImplementsAnyInterface(
+                                typeof(IApiClientTool),
+                                typeof(IApiClientToolLocalizable<>));
     }
 
     static public bool IsApiServerToolNonAsync(this Type type)
@@ -46,5 +56,14 @@ static public class TypeExtensions
     {
         return type.IsApiServerToolNonAsync()
             || type.IsApiServerToolAsync();
+    }
+
+    static public bool IsApiServerButton(this Type type)
+    {
+        return type.ImplementsAnyInterface(
+                                typeof(IApiServerButton),
+                                typeof(IApiServerButtonLocalizable<>),
+                                typeof(IApiServerButtonAsync),
+                                typeof(IApiServerButtonLocalizableAsync<>));
     }
 }

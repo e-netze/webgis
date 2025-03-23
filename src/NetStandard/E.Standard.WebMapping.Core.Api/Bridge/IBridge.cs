@@ -148,6 +148,7 @@ public interface IBridge : IAppCryptography
     Task<bool> SetUserFavoritesItemAsync(IApiButton tool, string methodName, string item);
     Task<IEnumerable<string>> GetUserFavoriteItemsAsync(IApiButton tool, string methodName, int max = 12);
 
+    [Obsolete]
     string GetCustomTextBlock(IApiButton tool, string name, string defaultTextBlock);
 
     string WebGisPortalUrl { get; }

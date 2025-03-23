@@ -38,7 +38,7 @@ public class Labeling : IApiServerButton, IApiButtonResources
                     .AsPersistantToolParameter(UICss.ToolInitializationParameterImportant));
     }
 
-    public string Container => "Darstellung";
+    public string Container => "Presentation";
 
     public bool HasUI => true;
 
@@ -46,7 +46,7 @@ public class Labeling : IApiServerButton, IApiButtonResources
 
     public string Name => "Themen Beschriften";
 
-    public string ToolTip => "Themen Beschriftung setzen";
+    public string ToolTip => "Label Layers";
 
     #endregion
 
