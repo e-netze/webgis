@@ -155,13 +155,13 @@ public class ThreeD : IApiServerToolAsync, IApiButtonResources
 
     #region IApiButton Member
 
-    public string Name => "3D (Messen)";
+    public string Name => "3D (Measuring)";
 
-    public string Container => "Werkzeuge";
+    public string Container => "Tools";
 
     public string Image => UIImageButton.ToolResourceImage(this, "3d");
 
-    public string ToolTip => "Bereich als 3D Modell anzeigen";
+    public string ToolTip => "display the current map section as a 3D model";
 
     public bool HasUI => true;
 

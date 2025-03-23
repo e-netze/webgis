@@ -41,15 +41,15 @@ public class VisFilter : IApiServerButtonAsync, IApiButtonResources
 
     }
 
-    public string Container => "Darstellung";
+    public string Container => "Presentation";
 
     public bool HasUI => true;
 
     public string Image => UIImageButton.ToolResourceImage(this, "filter");
 
-    public string Name => "Darstellungsfilter";
+    public string Name => "Display Filters";
 
-    public string ToolTip => "Darstellungsfilter setzen";
+    public string ToolTip => "Set display filters to restrict the visibility of geo-objects.";
 
     #endregion
 

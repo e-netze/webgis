@@ -1,4 +1,5 @@
-﻿using E.Standard.Security.Core.Extensions;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.Security.Core.Extensions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebMapping.Core.Api;
@@ -23,21 +24,22 @@ namespace E.Standard.WebGIS.Tools.Serialization;
 [AdvancedToolProperties(AnonymousUserIdDependent = true, ClientDeviceDependent = true)]
 [ToolConfigurationSection("savemap")]
 [ToolHelp("tools/map/save.html")]
-public class SaveMap : IApiServerButton, IApiButtonResources
+public class SaveMap : IApiServerButtonLocalizable<SaveMap>,
+                       IApiButtonResources
 {
     private const string CodeInputId = "webgis-save-map-resoration-code-input";
     private const string ConfigNameMaxLength = "name-maxlength";
 
     #region IApiServerButton Member
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<SaveMap> localizer)
     {
         var response = new ApiEventResponse()
             .AddUIElement(new UIDiv()
-                .WithDialogTitle("Karte speichern")
+                .WithDialogTitle(localizer.Localize("name"))
                 .AddChildren(
                     new UILabel()
-                        .WithLabel("Karten-/Projektnamen"),
+                        .WithLabel($"{localizer.Localize("save-label")}:"),
                     new UIBreak(),
                     new UIInputAutocomplete(UIInputAutocomplete.MethodSource(bridge, this.GetType(), "autocomplete-maps"))
                         .WithId("serialization-save-mapname")
@@ -48,8 +50,8 @@ public class SaveMap : IApiServerButton, IApiButtonResources
                     new UIHidden()
                         .WithId("serialization-save-graphics-geojson")
                         .AsToolParameter(UICss.AutoSetterMapGraphicsGeoJson),
-                    new UIButtonContainer(new UICallbackButton(this, "save-map")
-                        .WithText("Karte speichern..."))
+                    new UIButtonContainer(new UICallbackButton<SaveMap>(this, "save-map")
+                        .WithText(localizer.Localize("save")))
                     ));
 
         if (bridge.CurrentUser.IsAnonymous)
@@ -67,15 +69,15 @@ public class SaveMap : IApiServerButton, IApiButtonResources
             response.AddUIElements(
                 new UIBreak(),
                 new UILabel()
-                    .WithLabel(bridge.GetCustomTextBlock(this, "label1", "Sie sind auf dieser Seite als anonymer Anwender. Um sicher zu gehen, dass sie auf ihre Projekte auch später noch bzw. von einem anderen Gerät aus zugreifen können, speichern sie diesen Wiederherstellungscode:")),
+                    .WithLabel(localizer.Localize("recovery-code-label1:body")),
                 new UIInputText()
                     .WithId(CodeInputId)
                     .WithValue(anonymousUserGuid.GuidToBase64())
                     .AsReadonly(),
                 new UILabel()
-                    .WithLabel(bridge.GetCustomTextBlock(this, "label2", "Falls sie bereits einen anderen Wiederherstellungscode besitzen (von einem anderen Gerät oder aus einer älteren Sitzung), geben sie diesen hier ein:")),
-                new UICallbackButton(this, "restoration-code")
-                    .WithText("Wiederherstellungscode eingeben")
+                    .WithLabel(localizer.Localize("recovery-code-label2:body")),
+                new UICallbackButton<SaveMap>(this, "restoration-code")
+                    .WithText(localizer.Localize("enter-recovery-code"))
                     .WithStyles(UICss.CancelButtonStyle),
                 new UIHidden()   // Immer übergeben -> braucht Autocomplete
                     .WithId("serialization-anonym-user-id")
@@ -91,13 +93,13 @@ public class SaveMap : IApiServerButton, IApiButtonResources
 
     #region IApiButton Member
 
-    public string Name => "Karte speichern";
+    public string Name => "Save Map";
 
-    public string Container => "Karte";
+    public string Container => "Map";
 
     public string Image => UIImageButton.ToolResourceImage(this, "save");
 
-    public string ToolTip => "Karte speichern";
+    public string ToolTip => "Save the current map.  ";
 
     public bool HasUI => true;
 
@@ -147,7 +149,7 @@ public class SaveMap : IApiServerButton, IApiButtonResources
     }
 
     [ServerToolCommand("save-map")]
-    public ApiEventResponse OnSaveMap(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnSaveMap(IBridge bridge, ApiToolEventArguments e, ILocalizer<SaveMap> localizer)
     {
         //if (bridge.CurrentUser.IsAnonymous)
         //{
@@ -170,17 +172,17 @@ public class SaveMap : IApiServerButton, IApiButtonResources
         string name = e["serialization-save-mapname"];
         if (String.IsNullOrWhiteSpace(name))
         {
-            throw new Exception("Die Eingabe eines Karten-/Projektnamens ist erforderlich!");
+            throw new Exception(localizer.Localize("name-required"));
         }
 
         if (name.Length > e.GetConfigInt(ConfigNameMaxLength, 40))
         {
-            throw new Exception($"Name zu lang. Maximal {e.GetConfigInt(ConfigNameMaxLength, 40)} Zeichen erlaubt");
+            throw new Exception($"{localizer.Localize("name-to-long")}: {e.GetConfigInt(ConfigNameMaxLength, 40)}");
         }
 
         if (!name.IsValidProjectName(out string invalidChars))
         {
-            throw new Exception($"Ungültiges Zeichen im Namen. Vermeinden Sie folgende Zeichen: {invalidChars}");
+            throw new Exception($"{localizer.Localize("name-invalid-char")}: {invalidChars}");
         }
 
         string encodedName = name.Trim().ToValidEncodedName();
@@ -213,12 +215,12 @@ public class SaveMap : IApiServerButton, IApiButtonResources
     }
 
     [ServerToolCommand("restoration-code")]
-    public ApiEventResponse RestorationCode(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse RestorationCode(IBridge bridge, ApiToolEventArguments e, ILocalizer<SaveMap> localizer)
     {
-        return RestorationCode(bridge, e, this);
+        return RestorationCode(bridge, e, this, localizer);
     }
 
-    public ApiEventResponse RestorationCode(IBridge bridge, ApiToolEventArguments e, IApiServerButton callback)
+    public ApiEventResponse RestorationCode(IBridge bridge, ApiToolEventArguments e, IApiButton callback, ILocalizer<SaveMap> localizer)
     {
         return new ApiEventResponse()
         {
@@ -226,13 +228,13 @@ public class SaveMap : IApiServerButton, IApiButtonResources
             UIElements = new IUIElement[] {
                 new UIDiv(){
                     target=UIElementTarget.modaldialog.ToString(),
-                    targettitle="Wiederherstellungscode",
+                    targettitle=localizer.Localize("recovery-code"),
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                     elements= new IUIElement[]
                     {
                         new UILabel()
                         {
-                            label="Wiederherstellungscode hier eingeben:"
+                            label=$"{localizer.Localize("enter-recovery-code")}:"
                         },
                         new UIBreak(),
                         new UIInputText()
@@ -243,13 +245,13 @@ public class SaveMap : IApiServerButton, IApiButtonResources
                         new UIBreak(),
                         new UILabel()
                         {
-                            label=bridge.GetCustomTextBlock(this, "restorationcode-label1", "Achtung: Benutzen sie den Wiederherstellungscode nur auf Geräten, auf denen ausschließich sie Zugriff haben, da sonst auch andere Benutzer ihre Projekte sehen könnten.")
+                            label = localizer.Localize("recovery-code-label3:body")
                         },
                         new UIBreak(),
                         new UIBreak(),
                         new UICallbackButton(callback ?? this ,"restoration-code-commit")
                         {
-                            text="Wiederherstellungscode übernehmen"
+                            text = localizer.Localize("apply-recovery-code")
                         }
                     }
                 }

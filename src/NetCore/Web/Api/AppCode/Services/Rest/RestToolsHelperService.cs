@@ -74,7 +74,7 @@ public class RestToolsHelperService
                 command = ((IApiClientButton)apiTool).ClientCommand.ToString().ToLower()
             };
         }
-        else if (apiTool is IApiServerButton || apiTool is IApiServerButtonAsync)
+        else if (apiTool.GetType().IsApiServerButton())
         {
             tool = new ServerButtonToolDTO();
         }
@@ -85,11 +85,11 @@ public class RestToolsHelperService
                 tooltype = ((IApiTool)apiTool).Type.ToString().ToLower()
             };
         }
-        else if (apiTool is IApiClientTool)
+        else if (apiTool.GetType().IsApiClientTool())
         {
             tool = new ClientToolDTO()
             {
-                tooltype = ((IApiClientTool)apiTool).Type.ToString().ToLower()
+                tooltype = ((IApiTool)apiTool).Type.ToString().ToLower()
             };
         }
         else
@@ -159,7 +159,7 @@ public class RestToolsHelperService
                     confirmations.Add(new ToolConfirmMessageDTO()
                     {
                         command = confirmation.Command,
-                        message = confirmation.Message,
+                        message = apiTool.LocalizeButtonProperty(_stringLocalizer, confirmation.Message, () => confirmation.Message),
                         type = confirmation.Type.ToString().ToLower(),
                         eventtype = confirmation.EventType.ToString().ToLower()
                     });

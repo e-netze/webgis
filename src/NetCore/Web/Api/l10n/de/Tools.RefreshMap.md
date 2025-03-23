@@ -2,4 +2,4 @@
 
 Karte neu zeichnen (alle Dienste aktualisieren)
 
-# container: Map
+# container: Karte

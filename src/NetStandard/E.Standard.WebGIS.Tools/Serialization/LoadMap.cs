@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Credentials;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Security.Core.Extensions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
@@ -25,46 +26,33 @@ namespace E.Standard.WebGIS.Tools.Serialization;
 [AdvancedToolProperties(AnonymousUserIdDependent = true, ClientDeviceDependent = true)]
 [ToolConfigurationSection("loadmap")]
 [ToolHelp("tools/map/load.html")]
-public class LoadMap : IApiServerButton, IApiButtonResources, IApiToolConfirmation
+public class LoadMap : IApiServerButtonLocalizable<LoadMap>, 
+                       IApiButtonResources, 
+                       IApiToolConfirmation
 {
     private const string ConfigAllowCollaboration = "allow-collaboration";
     private const string ConfigAllowAnonymousCollaboration = "allow-anonymous-collaboration";
 
     #region IApiServerButton Member
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<LoadMap> localizer)
     {
-        return CreateUI(bridge, e);
+        return CreateUI(bridge, e, localizer);
     }
 
     #endregion
 
     #region IApiButton Member
 
-    public string Name
-    {
-        get { return "Karte laden"; }
-    }
+    public string Name => "Load Map";
 
-    public string Container
-    {
-        get { return "Karte"; }
-    }
+    public string Container => "Map";
 
-    public string Image
-    {
-        get { return UIImageButton.ToolResourceImage(this, "open"); }
-    }
+    public string Image => UIImageButton.ToolResourceImage(this, "open");
 
-    public string ToolTip
-    {
-        get { return "Karte laden"; }
-    }
+    public string ToolTip => "Load saved map.";
 
-    public bool HasUI
-    {
-        get { return true; }
-    }
+    public bool HasUI => true;
 
     #endregion
 
@@ -77,7 +65,7 @@ public class LoadMap : IApiServerButton, IApiButtonResources, IApiToolConfirmati
 
     #endregion
 
-    private ApiEventResponse CreateUI(IBridge bridge, ApiToolEventArguments e)
+    private ApiEventResponse CreateUI(IBridge bridge, ApiToolEventArguments e, ILocalizer<LoadMap> localizer)
     {
         List<IUIElement> uiElements = new List<IUIElement>();
 
@@ -86,9 +74,9 @@ public class LoadMap : IApiServerButton, IApiButtonResources, IApiToolConfirmati
             uiElements.AddRange(new IUIElement[] {
                 new UIDiv(){
                     //target=UIElementTarget.modaldialog.ToString(),
-                    targettitle="Karte laden",
+                    targettitle = localizer.Localize("name"),
                     elements=new UIElement[]{
-                        new UILabel(){label="Karten/Projekt Name"},
+                        new UILabel(){label = localizer.Localize("load-label")},
                         new UIBreak(),
                         new UISelect(bridge.Storage.GetNames(includeDirectories: false)?
                                                    .Select(n => HttpUtility.HtmlEncode( n.FromValidEncodedName()))
@@ -98,11 +86,11 @@ public class LoadMap : IApiServerButton, IApiButtonResources, IApiToolConfirmati
                         },
                         new UIButtonContainer(new UIElement[]{
                             new UICallbackButton(this, "delete-map") {
-                                text="Löschen",
+                                text = localizer.Localize("delete"),
                                 css=UICss.ToClass(new string[]{ UICss.DangerButtonStyle })
                             },
                             new UICallbackButton(this, "load-map") {
-                                text="Laden..."
+                                text = localizer.Localize("load")
                             }
                         })
                     }
@@ -118,13 +106,13 @@ public class LoadMap : IApiServerButton, IApiButtonResources, IApiToolConfirmati
                     elements=new UIElement[]{
                         new UILabel()
                         {
-                            label= bridge.GetCustomTextBlock(this, "label1", "Falls eine gespeicherte Karte nicht in der Liste aufscheint, müssen sie eventuell den Wiederherstellungscode eingeben.")
+                            label= localizer.Localize("recovery-code-label1:body")
                         },
                         new UIBreak(),
                         new UIBreak(),
                         new UICallbackButton(this, "restoration-code")
                         {
-                            text = "Wiederherstellungscode eingeben",
+                            text = localizer.Localize("enter-recovery-code"),
                             css = UICss.ToClass(new string[] { UICss.CancelButtonStyle })
                         }
                     }
@@ -199,8 +187,8 @@ public class LoadMap : IApiServerButton, IApiButtonResources, IApiToolConfirmati
     }
 
     [ServerToolCommand("delete-map")]
-    [ToolCommandConfirmation("Soll das Projekt '{serialization-load-mapname}' wirklich gelöscht werden?", ApiToolConfirmationType.YesNo, ApiToolConfirmationEventType.ButtonClick)]
-    public ApiEventResponse OnDeleteMap(IBridge bridge, ApiToolEventArguments e)
+    [ToolCommandConfirmation("confirm-delete", ApiToolConfirmationType.YesNo, ApiToolConfirmationEventType.ButtonClick)]
+    public ApiEventResponse OnDeleteMap(IBridge bridge, ApiToolEventArguments e, ILocalizer<LoadMap> localizer)
     {
         if (String.IsNullOrWhiteSpace(bridge.CurrentUser.Username))
         {
@@ -226,11 +214,11 @@ public class LoadMap : IApiServerButton, IApiButtonResources, IApiToolConfirmati
             bridge.Storage.Remove($"{name}-graphics", StorageBlobType.Data);
         }
 
-        return CreateUI(bridge, e);
+        return CreateUI(bridge, e, localizer);
     }
 
     [ServerToolCommand("mapjson")]
-    public ApiEventResponse MapJson(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse MapJson(IBridge bridge, ApiToolEventArguments e, ILocalizer<LoadMap> localizer)
     {
         string project = e["project"];
 
@@ -240,11 +228,11 @@ public class LoadMap : IApiServerButton, IApiButtonResources, IApiToolConfirmati
         {
             if (!e.GetConfigBool(ConfigAllowCollaboration, false))
             {
-                throw new Exception("This project is owned by another user. Collaboration of projects is not allowed.");
+                throw new Exception(localizer.Localize("exception-collaboration-forbidden:body"));
             }
             if (bridge.CurrentUser.IsAnonymous && !e.GetConfigBool(ConfigAllowAnonymousCollaboration, false))
             {
-                throw new Exception("This project is owned by another user. Collaboration of projects with anonymous users is not allowed.");
+                throw new Exception(localizer.Localize("exception-anonymous-collaboration-forbidden:body"));
             }
         }
 
@@ -292,9 +280,9 @@ public class LoadMap : IApiServerButton, IApiButtonResources, IApiToolConfirmati
     }
 
     [ServerToolCommand("restoration-code")]
-    public ApiEventResponse RestorationCode(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse RestorationCode(IBridge bridge, ApiToolEventArguments e, ILocalizer<SaveMap> localizer)
     {
-        return new SaveMap().RestorationCode(bridge, e, this);
+        return new SaveMap().RestorationCode(bridge, e, this, localizer);
     }
 
     [ServerToolCommand("restoration-code-commit")]

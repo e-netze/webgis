@@ -1,4 +1,5 @@
 ﻿using E.Standard.Json;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Security.Cryptography.Extensions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Core.Serialization;
@@ -24,17 +25,19 @@ namespace E.Standard.WebGIS.Tools.Serialization;
 [ToolStorageIsolatedUser(false)]
 [ToolHelp("tools/map/share.html")]
 [ToolConfigurationSection("share")]
-public class ShareMap : IApiServerButton, IApiButtonResources, IStorageInteractions
+public class ShareMap : IApiServerButtonLocalizable<ShareMap>, 
+                        IApiButtonResources, 
+                        IStorageInteractions
 {
     #region IApiButton
 
-    public string Name => "Karte teilen";
+    public string Name => "Share Map";
 
-    public string Container => "Karte";
+    public string Container => "Map";
 
     public string Image => UIImageButton.ToolResourceImage(this, "share");
 
-    public string ToolTip => "Karte teilen (share)";
+    public string ToolTip => "Generate link to share the current map.";
 
     public bool HasUI => true;
 
@@ -42,13 +45,13 @@ public class ShareMap : IApiServerButton, IApiButtonResources, IStorageInteracti
 
     #region IApiServerButton
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<ShareMap> localizer)
     {
         var duration = e.GetConfigValue("duration");
 
         if (String.IsNullOrWhiteSpace(duration))
         {
-            duration = "1:Einen Tag,2:Eine Woche,31:ein Monat";
+            duration = localizer.Localize("durations");
         }
 
         var durationSelect = new UISelect()
@@ -83,7 +86,7 @@ public class ShareMap : IApiServerButton, IApiButtonResources, IStorageInteracti
                     {
                         new UILabel()
                         {
-                            label=bridge.GetCustomTextBlock(this, "label1", "Sie können hier einen Link erzeugen, mit dem die aktuelle Karte geteilt werden kann.|Geteilt wird der aktuelle Auschnitt, die sichtbaren Themen und eventuelle Zeichnungen.|Der erzeugte Link ist nur für eine bestimmte Zeit gültig und danach nicht mehr verwendbar.|Bitte wählen Sie den Zeitraum, für den der Link gültig sein sollte:")
+                            label = localizer.Localize("label1:body")
                         },
                         durationSelect,
                         new UIHidden(){
@@ -112,7 +115,7 @@ public class ShareMap : IApiServerButton, IApiButtonResources, IStorageInteracti
                         new UIButtonContainer(new UICallbackButton(this, "share-createlink")
                         {
                             css = UICss.ToClass(new string[] { UICss.DefaultButtonStyle }),
-                            text = "Link erzeugen..."
+                            text = localizer.Localize("generate-link")
                         })
                     }
                 }
@@ -151,7 +154,7 @@ public class ShareMap : IApiServerButton, IApiButtonResources, IStorageInteracti
     #region Commands
 
     [ServerToolCommand("share-createlink")]
-    public ApiEventResponse OnCreateLink(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnCreateLink(IBridge bridge, ApiToolEventArguments e, ILocalizer<ShareMap> localizer)
     {
         string duration = e["serialization-share-duration"];
         string pageId = e["serialization-share-page-id"];
@@ -199,7 +202,7 @@ public class ShareMap : IApiServerButton, IApiButtonResources, IStorageInteracti
                 new UIDiv()
                 {
                     target = UIElementTarget.modaldialog.ToString(),
-                    targettitle="Karte teilen",
+                    targettitle = localizer.Localize("name"),
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                     elements = new IUIElement[]
                     {

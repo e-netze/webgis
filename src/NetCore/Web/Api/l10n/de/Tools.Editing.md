@@ -1,4 +1,10 @@
-﻿# error-on-insert: Fehler beim INSERT
+﻿# name: Bearbeiten (Edit)
+
+Geo-Objekte in der Karte bearbeiten
+
+# container: Werkzeuge
+
+# error-on-insert: Fehler beim INSERT
 
 # error-on-update: Fehler beim UPDATE
 

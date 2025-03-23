@@ -10,13 +10,13 @@ public class VisFilterRemoveAll : IApiClientButton, IApiButtonResources, IApiBut
 {
     #region IApiButton Member
 
-    public string Name => "Darstellungsfilter entfernen";
+    public string Name => "Remove Display Filters";
 
-    public string Container => "Darstellung";
+    public string Container => "Presentation";
 
     public string Image => UIImageButton.ToolResourceImage(this, "filter_remove");
 
-    public string ToolTip => "Alle Darstellungsfilter entfernen";
+    public string ToolTip => "Remove all display filters";
 
     public bool HasUI => false;
 

@@ -1,4 +1,5 @@
-﻿using E.Standard.Web.Extensions;
+﻿using E.Standard.Localization.Reflection;
+using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Profile.QueryEngines;
 using E.Standard.WebMapping.Core.Api;
@@ -21,6 +22,7 @@ namespace E.Standard.WebGIS.Tools.Profile;
 [Export(typeof(IApiButton))]
 [ToolCmsConfigParameter(ProfileEnvironment.CmsConfigParameter)]
 [ToolHelp("tools/general/profile.html")]
+[LocalizationNamespace("tools.profile")]
 public class CreateProfile : IApiServerTool, IApiButtonResources
 {
     #region IApiServerTool Members
@@ -66,13 +68,13 @@ public class CreateProfile : IApiServerTool, IApiButtonResources
 
     #region IApiButton Member
 
-    public string Name => "Höhenprofil";
+    public string Name => "Elevation Profile";
 
-    public string Container => "Werkzeuge";
+    public string Container => "Tools";
 
     public string Image => UIImageButton.ToolResourceImage(this, "profile");
 
-    public string ToolTip => "Höhenprofil entlang einer digitaliserten Strecke erstellen";
+    public string ToolTip => "Create an elevation profile along a digitized route.";
 
     public bool HasUI => true;
 

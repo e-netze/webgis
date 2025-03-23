@@ -3,3 +3,5 @@
 Continuous display of the current (GPS) position
 
 # container: Navigation
+
+# velocity: Velocity

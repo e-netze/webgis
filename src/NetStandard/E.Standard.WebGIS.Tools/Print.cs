@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Collections;
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
@@ -34,7 +35,8 @@ namespace E.Standard.WebGIS.Tools;
         CoordinateMarkersVisibilityDependent = true,
         ChainageMarkersVisibilityDependent = true
     )]
-public class Print : IApiServerTool, IApiButtonResources
+public class Print : IApiServerToolLocalizable<Print>,
+                     IApiButtonResources
 {
     public const string ConfigQualitiesDpi = "qualities-dpi";
     public const string ConfigDefaultQuality = "default-quality";
@@ -42,7 +44,7 @@ public class Print : IApiServerTool, IApiButtonResources
 
     #region IApiServerTool
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Print> localizer)
     {
         var printLayouts = bridge.GetPrintLayouts(e.GetToolOptions<string[]>());
         var printFormats = bridge.GetPrintFormats();
@@ -57,7 +59,7 @@ public class Print : IApiServerTool, IApiButtonResources
                     .WithId("print-map-scales")
                     .AsToolParameter(UICss.AutoSetterMapScales),
                 new UILabel()
-                    .WithLabel("Layout"),
+                    .WithLabel(localizer.Localize("layout")),
                 new UISelect(UIButton.UIButtonType.servertoolcommand, "selectionchanged")
                     .WithId("print-layout-select")
                     .AsPersistantToolParameter(UICss.PrintToolLayout, UICss.ToolInitializationParameterImportant)
@@ -65,13 +67,13 @@ public class Print : IApiServerTool, IApiButtonResources
                                                                 .WithValue(l.Id)
                                                                 .WithLabel(l.Name))),
                 new UILabel()
-                    .WithLabel("Format"),
+                    .WithLabel(localizer.Localize("format")),
                 UISelect.PrintFormats("print-format-select", printFormats, UIButton.UIButtonType.servertoolcommand, "selectionchanged", defaultValue: e.GetConfigValue(ConfigDefaultFormat)),
                 new UILabel()
-                    .WithLabel("Druckmaßstab"),
+                    .WithLabel(localizer.Localize("print-scale")),
                 UISelect.Scales("print-scale-select", UIButton.UIButtonType.servertoolcommand, "selectionchanged", allowAddValues: true, scales: e.GetConfigArray<int>("scales")),
                 new UILabel()
-                    .WithLabel("Qualität"),
+                    .WithLabel(localizer.Localize("print-quality")),
                 UISelect.PrintQuality("print-qualitity-select", qualitites),
 
                 new UIDiv()
@@ -87,9 +89,9 @@ public class Print : IApiServerTool, IApiButtonResources
                     .AddChildren(
                         new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.showprinttasks)
                             .WithStyles(UICss.CancelButtonStyle)
-                            .WithText("Druckaufträge"),
+                            .WithText(localizer.Localize("print-jobs")),
                         new UIButton(UIButton.UIButtonType.servertoolcommand, "print")
-                            .WithText("Drucken"))
+                            .WithText(localizer.Localize("name")))
             )
             .AddUISetter(new UIPersistentParametersSetter(this))
             .AddUISetters(new IUISetter[] {
@@ -99,7 +101,7 @@ public class Print : IApiServerTool, IApiButtonResources
             });
     }
 
-    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e) => null;
+    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<Print> localizer) => null;
 
     public ToolType Type => ToolType.print_preview;
 
@@ -251,7 +253,7 @@ public class Print : IApiServerTool, IApiButtonResources
     }
 
     [ServerToolCommand("print")]
-    async public Task<ApiEventResponse> OnPrint(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnPrint(IBridge bridge, ApiToolEventArguments e, ILocalizer<Print> localizer)
     {
         string layoutId = e["print-layout-select"];
         string layoutFormat = e["print-format-select"];
@@ -346,7 +348,7 @@ public class Print : IApiServerTool, IApiButtonResources
             .AddUIElements(
                 new UIDiv()
                     .AsDialog()
-                    .WithDialogTitle("Drucken")
+                    .WithDialogTitle(localizer.Localize("name"))
                     .WithStyles(UICss.NarrowFormMarginAuto)
                     .AddChildren(
                         new UIHidden()
@@ -398,7 +400,7 @@ public class Print : IApiServerTool, IApiButtonResources
 
                         new UIButtonContainer(
                             new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.print)
-                                .WithText("Druckauftrag starten"))
+                                .WithText(localizer.Localize("start-print-job")))
                     )
                 );
     }

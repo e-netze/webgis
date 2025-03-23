@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -9,7 +10,8 @@ using E.Standard.WebMapping.Core.Api.UI.Elements;
 namespace E.Standard.WebGIS.Tools;
 
 [Export(typeof(IApiButton))]
-public class ContinuousPosition : IApiClientTool, IApiButtonResources
+public class ContinuousPosition : IApiClientToolLocalizable<ContinuousPosition>, 
+                                  IApiButtonResources
 {
     public string Container => "Navigation";
 
@@ -27,12 +29,12 @@ public class ContinuousPosition : IApiClientTool, IApiButtonResources
 
     #region IApiClientTool
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<ContinuousPosition> localizer)
     {
         return new ApiEventResponse()
             .AddUIElements(
                 new UILabel()
-                    .WithLabel("Geschwindigkeit"),
+                    .WithLabel(localizer.Localize("velocity")),
                 new UIInputText()
                     .WithStyles("webgis-continous-position-speed"));
     }
