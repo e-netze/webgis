@@ -38,7 +38,11 @@ namespace E.Standard.WebGIS.Tools.Identify;
 [ToolConfigurationSection("identify")]
 [ToolHelp("tools/identify/identify.html", urlPathDefaultTool: "index.html")]
 [LocalizationNamespace("tools.identify")]
-public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, IApiButtonDependency, IApiButtonResources, IApiToolMarker, IAdvancedSketchTool
+public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, 
+                               IApiButtonDependency, 
+                               IApiButtonResources, 
+                               IApiToolMarker, 
+                               IAdvancedSketchTool
 {
     public const string IdentifyAllQueriesId = "identify-all-queries";
     public const string IdentifyAllServicesId = "identify-all-services";
@@ -72,10 +76,10 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, 
     {
         List<UINameValue> comboCustomItems = new List<UINameValue>(new UINameValue[]{
                         new UINameValue(){
-                            name="Sichtbare Themen", value="#"
+                            name = localizer.Localize("visible-layers"), value="#"
                         },
                         new UINameValue(){
-                            name="Alle Themen", value="*"
+                            name = localizer.Localize("all-layers"), value="*"
                         }
                     });
 
@@ -94,7 +98,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, 
                     {
                         name = query.Name /*+ (service != null ? " (" + service.Name + ") : "")"*/,
                         value = favItem,
-                        category = "Favoriten"
+                        category = localizer.Localize("favorites")
                     });
                 }
             }
@@ -157,24 +161,24 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, 
                 css = UICss.ToClass(new string[] { UICss.OptionContainerWithLabels }),
                 elements = new IUIElement[]{
                         new UIImageButton(this.GetType(),"pointer",UIButton.UIButtonType.servertoolcommand,"pointer"){
-                            value="pointer",
-                            text="Punkt Selektion"
+                            value = "pointer",
+                            text = localizer.Localize("point-selection")
                         },
                         new UIImageButton(this.GetType(),"rectangle",UIButton.UIButtonType.servertoolcommand,"rectangle"){
-                            value="rectangle",
-                            text="Rechtecks Selection"
+                            value = "rectangle",
+                            text = localizer.Localize("box-selection")
                         },
                         new UIImageButton(this.GetType(),"circle",UIButton.UIButtonType.servertoolcommand,"circle"){
-                            value="circle",
-                            text="Abstand Selektion"
+                            value = "circle",
+                            text = localizer.Localize("circle-selection")
                         },
                         new UIImageButton(this.GetType(),"line",UIButton.UIButtonType.servertoolcommand,"line"){
-                            value="line",
-                            text="Linien Selektion"
+                            value = "line",
+                            text = localizer.Localize("select-by-line")
                         },
                         new UIImageButton(this.GetType(),"polygon",UIButton.UIButtonType.servertoolcommand,"polygon"){
-                            value="polygon",
-                            text="Flächen Selektion"
+                            value = "polygon",
+                            text = localizer.Localize("select-by-polygon")
                         }
                     }
             });
@@ -198,7 +202,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, 
                             id = SketchBufferDistanceId,
                             value = e.GetDouble(SketchBufferDistanceId),
                             css = UICss.ToClass(new[]{ UICss.ToolParameter, UICss.ToolParameterPersistent }),
-                            placeholder = "Optional: Bufferdistanz"
+                            placeholder = localizer.Localize("buffer-distance")
                         },
                         new UISelect()
                         {
@@ -206,8 +210,8 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, 
                             css = UICss.ToClass(new[]{ UICss.ToolParameter, UICss.ToolParameterPersistent }),
                             options = new[]
                             {
-                                new UISelect.Option() { label = "Meter", value = "m" },
-                                new UISelect.Option() { label = "Kilometer", value = "km" }
+                                new UISelect.Option() { label = localizer.Localize("meters"), value = "m" },
+                                new UISelect.Option() { label = localizer.Localize("kilometers"), value = "km" }
                             }
                         }
                     }
@@ -228,13 +232,13 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, 
                         {
                             new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removesketch)
                             {
-                                text="Sketch entfernen",
-                                 css=UICss.ToClass(new string[]{UICss.CancelButtonStyle})
+                                text = localizer.Localize("remove-sketch"),
+                                 css = UICss.ToClass(new string[]{UICss.CancelButtonStyle})
                             },
                             new UIButton(UIButton.UIButtonType.servertoolcommand, "apply")
                             {
-                                text="Anwenden",
-                                 css=UICss.ToClass(new string[]{UICss.DefaultButtonStyle})
+                                text = localizer.Localize("apply"),
+                                 css = UICss.ToClass(new string[]{UICss.DefaultButtonStyle})
                             }
                         }
                     }
@@ -432,7 +436,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, 
     }
 
     [ServerToolCommand("sketchfromgeometry")]
-    async public Task<ApiEventResponse> OnSketchFromGeometry(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnSketchFromGeometry(IBridge bridge, ApiToolEventArguments e, ILocalizer<IdentifyDefault> localizer)
     {
         int srsId = e.GetInt("identify-srs");
         double X = e.GetDouble("identify-x");
@@ -569,7 +573,9 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, 
                     {
                         elements = menuItems.ToArray(),
                         target = UIElementTarget.modaldialog.ToString(),
-                        header= menuItems.Count>0 ? "Geometrie übernehmen Ergebnisse" : "Keine Abfrageergebnisse gefunden"
+                        header = menuItems.Count > 0 
+                            ? localizer.Localize("use-results-from-geometry")
+                            : localizer.Localize("no-results-found")
                     }
                 },
         };
@@ -578,7 +584,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, 
     }
 
     [ServerToolCommand("sketchfromgeometry-get")]
-    async public Task<ApiEventResponse> OnSketchFromGeometryGet(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnSketchFromGeometryGet(IBridge bridge, ApiToolEventArguments e, ILocalizer<IdentifyDefault> localizer)
     {
         int srsId = e.GetInt("_identify-srs");
         double X = e.GetDouble("_identify-x");
@@ -658,7 +664,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, 
                 return new WebMapping.Core.Api.EventResponse.Models.NamedSketch()
                 {
                     Name = $"ID: {f.Oid}",
-                    SubText = $"Geometrie übernehmen",
+                    SubText = localizer.Localize("use-geometry"),
                     Sketch = shape,
                     ZoomOnPreview = false
                 };
