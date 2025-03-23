@@ -1,6 +1,7 @@
 ﻿using E.Standard.Extensions.Compare;
 using E.Standard.Extensions.Security;
 using E.Standard.GeoJson.Extensions;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Platform;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Reflection;
@@ -25,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -37,14 +39,16 @@ namespace E.Standard.WebGIS.Tools;
 [AdvancedToolProperties(ClientDeviceDependent = true, MapCrsDependent = true, MapBBoxDependent = true)]
 [ToolConfigurationSection("coordinates")]
 [ToolHelp("tools/identify/coords.html")]
-public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTool
+public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>, 
+                           IApiButtonResources, 
+                           IIdentifyTool
 {
     internal const string CoordinatesTableId = "coordinates-table";
     internal const string CoordinatesCounter = "coordinates-counter";
 
     #region IApiServerTool Member
 
-    public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
         var response = new ApiEventResponse();
 
@@ -64,15 +68,15 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
                     .WithStyles(UICss.ToolParameterPersistent, UICss.ToolParameter, UICss.ToolResultCounter(this.GetType())),
                 new UIButton(UIButton.UIButtonType.servertoolcommand, "inputcoordinates-dialog")
                     .WithStyles(UICss.OptionRectButtonStyle)
-                    .WithText("Koordinaten eingeben")
+                    .WithText(localizer.Localize("enter-coordinates"))
                     .WithIcon(UIButton.ToolResourceImage(this.GetType(), "calculator")),
                 new UIButton(UIButton.UIButtonType.servertoolcommand, "upload")
                     .WithStyles(UICss.OptionRectButtonStyle)
-                    .WithText("Koordinaten hochladen (CSV)")
+                    .WithText(localizer.Localize("upload-coordinates"))
                     .WithIcon(UIButton.ToolResourceImage(this.GetType(), "upload")),
                 new UIButton(UIButton.UIButtonType.servertoolcommand, "download")
                     .WithStyles(UICss.OptionRectButtonStyle)
-                    .WithText("Koordinaten herunterladen (CSV)")
+                    .WithText(localizer.Localize("download-coordinates"))
                     .WithIcon(UIButton.ToolResourceImage(this.GetType(), "download"))
                     .WithVisibilityDependency(VisibilityDependency.HasToolResults));
         }
@@ -82,7 +86,7 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
                 new UIButtonContainer()
                     .AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "inputcoordinates-dialog")
                                     .WithStyles(UICss.DefaultButtonStyle)
-                                    .WithText("Koordinaten eingeben")));
+                                    .WithText(localizer.Localize("enter-coordinates"))));
         }
 
         response.AddUIElement(new UIDiv()
@@ -108,14 +112,17 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
         div.AddChild(new UIButtonContainer()
                 .AddChild(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removetoolqueryresults)
                                 .WithStyles(UICss.CancelButtonStyle)
-                                .WithText("Marker entfernen")));
+                                .WithText(localizer.Localize("remove-markers"))));
 
-        response.AddUIElement(new UICollapsableHelp("Eingabe Tipp", this.HelpContent(bridge)));
+        response.AddUIElement(new UICollapsableHelp(
+                                    localizer.Localize("tip-label"), 
+                                    localizer.Localize("tip:body")
+                              ));
 
         return Task.FromResult(response);
     }
 
-    async public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
         return await ClickEventResponse(bridge, e, e.ToClickEvent());
     }
@@ -159,16 +166,16 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
     #region Server Commands
 
     [ServerEventHandler(ServerEventHandlers.OnVertexAdded)]  // wird aufgerufen wenn ToolType = Sektch0d => beim setzen eines Vertex
-    async public Task<ApiEventResponse> OnVertexAdded(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnVertexAdded(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
-        var response = await OnEvent(bridge, e);
+        var response = await OnEvent(bridge, e, localizer);
         response.RemoveSketch = true;
 
         return response;
     }
 
     [ServerToolCommand("inputcoordinates-dialog")]
-    public ApiEventResponse OnInputCoordinatesDialog(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnInputCoordinatesDialog(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
         var lastTableCoord = e.GetWGSFormCoordinatesTable(bridge)
             .LastOrDefault();
@@ -199,19 +206,19 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
             .AddUIElement(
                 new UIDiv()
                     .WithTarget(UIElementTarget.modaldialog)
-                    .WithTargetTitle("Koordinaten eingeben")
+                    .WithTargetTitle(localizer.Localize("enter-coordinates"))
                     .WithStyles(UICss.NarrowFormMarginAuto)
                     .AddChildren(
-                        new UILabel().WithLabel("Koordinatensystem"),
+                        new UILabel().WithLabel(localizer.Localize("coordinate-system")),
                         projCombo,
                         new UIBreak(),
-                        new UILabel().WithLabel("Rechtswert"),
+                        new UILabel().WithLabel(localizer.Localize("easting")),
                         new UIInputText()
                             .WithId("coordinates-input-x-value")
                             .WithStyles(UICss.ToolParameter/*, UICss.ToolParameterPersistent*/),
                         //.WithValue(e["coordinates-input-x-value"]),
                         new UIBreak(),
-                        new UILabel().WithLabel("Hochwert"),
+                        new UILabel().WithLabel(localizer.Localize("northing")),
                         new UIInputText()
                             .WithId("coordinates-input-y-value")
                             .WithStyles(UICss.ToolParameter/*, UICss.ToolParameterPersistent*/),
@@ -222,7 +229,7 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
                             .WithStyles("webgis-info", "error", "webgis-display-none"),
                         new UIBreak(),
                         new UIButton(UIButton.UIButtonType.servertoolcommand, "showcoordinates")
-                                .WithText("Koordinaten anzeigen"),
+                                .WithText(localizer.Localize("show-coordinates")),
                         new UIHidden()
                                 .AsToolParameter()
                                 .WithId("coordinates-input-current-srs")
@@ -313,23 +320,23 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
     }
 
     [ServerToolCommand("inputcoordinates-sketch-xyabsolute")]
-    public ApiEventResponse OnInputCoordinates(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnInputCoordinates(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
         return new ApiEventResponse()
             .AddUIElements(
                 new UILabel()
-                    .WithLabel("Koordinatensystem"),
+                    .WithLabel(localizer.Localize("coordinate-system")),
                 ProjectionsComboElement(bridge, "coordinates-input-proj"),
                 new UIBreak(),
                 new UILabel()
-                    .WithLabel("Rechtswert"),
+                    .WithLabel(localizer.Localize("easting")),
                 new UIInputText()
                     .WithId("coordinates-input-x-value")
                     .AsPersistantToolParameter()
                     .WithValue(e["coordinates-input-x-value"]),
                 new UIBreak(),
                 new UILabel()
-                    .WithLabel("Hochwert"),
+                    .WithLabel(localizer.Localize("northing")),
                 new UIInputText()
                     .WithId("coordinates-input-y-value")
                     .AsPersistantToolParameter()
@@ -337,7 +344,7 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
                 new UIBreak(2),
                 new UIButton(UIButton.UIButtonType.servertoolcommand_ext, "setsketchvertex")
                     .WithId("webgis.tools.coordinates")
-                    .WithText("Koordinate übernehmen"))
+                    .WithText(localizer.Localize("apply-coordinates")))
             .AddUISetter(
                 new UISetter("coordinates-input-proj",
                              !String.IsNullOrWhiteSpace(e["coordinates-input-proj"]) ? e["coordinates-input-proj"] : e["coordinates-map-srs"]));
@@ -375,7 +382,7 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
     }
 
     [ServerToolCommand("download")]
-    public ApiEventResponse OnDownload(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnDownload(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
         var defaultCrs = !String.IsNullOrWhiteSpace(e["coordinates-default-proj"]) ? e["coordinates-default-proj"] : (e.MapCrs.HasValue ? e.MapCrs.Value : 0).ToString();
         var tableData = e[CoordinatesTableId];
@@ -436,11 +443,11 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
             }
         }
 
-        throw new Exception("Keine Punkte zum herunterladen gefunden");
+        throw new Exception(localizer.Localize("exception-no-points-found"));
     }
 
     [ServerToolCommand("upload")]
-    public ApiEventResponse OnUpload(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnUpload(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
         return new ApiEventResponse()
             .AddUIElement(new UIDiv()
@@ -449,10 +456,10 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
                 .WithStyles(UICss.NarrowFormMarginAuto)
                 .AddChildren(
                     new UILabel()
-                        .WithLabel(bridge.GetCustomTextBlock(this, "label1", "Hier können Koordinaten hochgeladen werden. Die Koordinaten müssen als CSV Dateien vorliegen mit einem Strichpunkt als Trennzeichen. Die Spalten der CSV Datei sollten Punktname/nummer, Rechtswert und Hochwert entsprechen. Die erste Zeile wird als Tabellenüberschrift interpretiert.")),
+                        .WithLabel(localizer.Localize("upload.label1:body")),
                     new UIBreak(2),
                     new UILabel()
-                        .WithLabel("Hier muss das Koordinatensystem angegeben werden, in dem die Koordinaten der CSV Datei vorliegen:"),
+                        .WithLabel($"{localizer.Localize("upload.label2:body")}:"),
                     ProjectionsComboElement(bridge, "coordinates-upload-projection", false),
                     new UIBreak(2),
                     new UIUploadFile(this.GetType(), "upload-file")
@@ -463,7 +470,7 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
     }
 
     [ServerToolCommand("upload-file")]
-    async public Task<ApiEventResponse> OnUploadFile(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnUploadFile(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
         var file = e.GetFile("upload-file");
         int uploadCrs = e.GetInt("coordinates-upload-projection");
@@ -483,7 +490,7 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
             int maxRows = e.GetConfigInt("allow-upload-max-rows", 10);
             if (rows.Length - 1 > maxRows)  // -1 weil erste Zeile Titelzeile
             {
-                throw new Exception($"Es dürfen maximal {maxRows} Koordinatenzeilen hochgeladen werden");
+                throw new Exception(localizer.Localize(String.Format("upload.exception-too-many-points", maxRows)));
             }
 
             var sRef = SRefStore.SpatialReferences.ById(uploadCrs);
@@ -529,7 +536,7 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
                 }
                 else
                 {
-                    throw new Exception($"Ungültige Zeile: {rows[i]}");
+                    throw new Exception(String.Format(localizer.Localize("exception-invalid-row"), rows[i]));
                 }
 
                 if (int.TryParse(number, out int numberCounter))
@@ -607,7 +614,7 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
     }
 
     [ServerToolCommand("upload-sketch")]
-    public ApiEventResponse OnUploadSketch(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnUploadSketch(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
         return new ApiEventResponse()
             .AddUIElements(
@@ -616,7 +623,7 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
                     .AsToolParameter()
                     .WithValue(e["sketch-geometry-type"]),
                 new UILabel()
-                    .WithLabel(bridge.GetCustomTextBlock(this, "label1", "Hier kann GPX oder GeoJson File hochgeladen werden, das als Sketch übernommen wird.")),
+                    .WithLabel(localizer.Localize("upload.sketch.label1")),
                 new UIBreak(2),
                 new UIUploadFile(this.GetType(), "upload-sketch-file")
                     .WithId("upload-sketch-file")
@@ -653,7 +660,7 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
 
         if (geoJsonFeatures?.Features?.Length.OrTake(0) == 0)
         {
-            throw new Exception($"In der Datei wurden keine passenden Sketch Kanditaten ({geometryType}) gefunden.");
+            throw new Exception(String.Format("upload.sketch.exception-no-geometry-candidates", geometryType));
         }
 
         var epsg = geoJsonFeatures.Crs.TryGetEpsg().OrTake(Epsg.WGS84);
@@ -672,7 +679,7 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
     }
 
     [ServerToolCommand("download-sketch")]
-    public ApiEventResponse OnDownloadSketch(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnDownloadSketch(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
         return new ApiEventResponse()
             .AddGraphicsResponse(new GraphicsResponse(bridge)
@@ -688,7 +695,7 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
                         .WithValue("json")
                         .WithLabel("GeoJson Datei")),
                 new UILabel()
-                    .WithLabel(bridge.GetCustomTextBlock(this, "label1", "Hier kann der aktuelle Sketch herunter geladen werden.")),
+                    .WithLabel(localizer.Localize("download.sketch.label1")),
                 new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand_ext, "download-sketch-file")
                     .WithId("webgis.tools.coordinates")
                     .WithStyles(UICss.DefaultButtonStyle)
@@ -824,22 +831,6 @@ public class Coordinates : IApiServerToolAsync, IApiButtonResources, IIdentifyTo
         }
 
         return projections.ToArray();
-    }
-
-    private string HelpContent(IBridge bridge)
-    {
-        FileInfo fi = new FileInfo($"{bridge.AppEtcPath}/coordinates/proj/xy/tip.txt");
-        if (!fi.Exists)
-        {
-            fi = new FileInfo($"{bridge.AppEtcPath}/coordinates/proj/xy/tip_.txt");
-        }
-
-        if (fi.Exists)
-        {
-            return File.ReadAllText(fi.FullName);
-        }
-
-        return String.Empty;
     }
 
     private double ParseCoordinateValue(string val)

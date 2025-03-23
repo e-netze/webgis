@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebGIS.Tools.Helpers;
 using E.Standard.WebGIS.Tools.Identify.Abstractions;
@@ -19,11 +20,11 @@ namespace E.Standard.WebGIS.Tools;
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(ClientDeviceDependent = true)]
-public class RasterIdentify : IApiServerToolAsync, IIdentifyTool, IApiButtonResources
+public class RasterIdentify : IApiServerToolLocalizableAsync<RasterIdentify>, IIdentifyTool, IApiButtonResources
 {
     #region IApiServerTool Member
 
-    public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<RasterIdentify> localizer)
     {
         return Task.FromResult(new ApiEventResponse()
             .AddUIElements(
@@ -34,10 +35,10 @@ public class RasterIdentify : IApiServerToolAsync, IIdentifyTool, IApiButtonReso
                 new UIButtonContainer(
                     new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removetoolqueryresults)
                         .WithStyles(UICss.CancelButtonStyle)
-                        .WithText("Marker entfernen"))));
+                        .WithText(localizer.Localize("remove-markers")))));
     }
 
-    async public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<RasterIdentify> localizer)
     {
         var click = e.ToMapProjectedClickEvent();
         var clickPoint = new Point(click.Longitude, click.Latitude);
@@ -55,7 +56,7 @@ public class RasterIdentify : IApiServerToolAsync, IIdentifyTool, IApiButtonReso
             Shape = clickPoint,
             GlobalOid = Guid.NewGuid().ToString()
         };
-        feature.Attributes.Add(new WebMapping.Core.Attribute("_fulltext", "Höhenabfrage:<br/>" + String.Join(@"\n", results.Select(r => r.ResultString)).Replace(@"\n", "<br/>")));
+        feature.Attributes.Add(new WebMapping.Core.Attribute("_fulltext", $"{localizer.Localize("elevation-query")}:<br/>" + String.Join(@"\n", results.Select(r => r.ResultString)).Replace(@"\n", "<br/>")));
         features.Add(feature);
 
         return new ApiFeaturesEventResponse(this)

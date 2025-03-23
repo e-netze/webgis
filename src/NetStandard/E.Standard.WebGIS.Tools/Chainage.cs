@@ -1,4 +1,5 @@
 ﻿using E.Standard.CMS.Core;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Platform;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.Core.Reflection;
@@ -26,7 +27,10 @@ namespace E.Standard.WebGIS.Tools;
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(ClientDeviceDependent = true)]
 [ToolHelp("tools/identify/stat.html")]
-public class Chainage : IApiServerToolAsync, IApiButtonDependency, IIdentifyTool, IApiButtonResources
+public class Chainage : IApiServerToolLocalizableAsync<Chainage>, 
+                        IApiButtonDependency, 
+                        IIdentifyTool, 
+                        IApiButtonResources
 {
     private const string ChainageTableId = "chainage-table";
     private const string ChainageCounter = "chainage-counter";
@@ -62,7 +66,7 @@ public class Chainage : IApiServerToolAsync, IApiButtonDependency, IIdentifyTool
 
     #region IApiServerTool
 
-    public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Chainage> localizer)
     {
         var response = new ApiEventResponse()
             .AddUIElements(
@@ -91,12 +95,12 @@ public class Chainage : IApiServerToolAsync, IApiButtonDependency, IIdentifyTool
         div.AddChild(new UIButtonContainer(
                     new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removetoolqueryresults)
                         .WithStyles(UICss.CancelButtonStyle)
-                        .WithText("Marker entfernen")));
+                        .WithText(localizer.Localize("remove-markers"))));
 
         return Task.FromResult(response);
     }
 
-    async public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<Chainage> localizer)
     {
         var click = e.ToMapProjectedClickEvent();
 
@@ -480,7 +484,7 @@ public class Chainage : IApiServerToolAsync, IApiButtonDependency, IIdentifyTool
             string messageText = message;
 
             feature.Attributes.Add(new WebMapping.Core.Attribute("_fIndex", counter.ToString()));
-            feature.Attributes.Add(new WebMapping.Core.Attribute("_fulltext", $"<strong>Kilometerwert:</strong><br/>{messageText.Replace("\n", "<br/>")}"));
+            feature.Attributes.Add(new WebMapping.Core.Attribute("_fulltext", $"<strong>{localizer.Localize("chainage-value")}:</strong><br/>{messageText.Replace("\n", "<br/>")}"));
             features.Add(feature);
 
             List<string> values = new List<string>(new string[]
