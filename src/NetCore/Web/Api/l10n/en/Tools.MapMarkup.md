@@ -86,7 +86,8 @@ The selected objects from {0} can be transferred to the Map-Markup tool.
 can be changed individually for each object later.
 |To better distinguish the Map-Markup elements, they can be identified later using the field specified here:
 
-## exception-to-many-objects: A selection of geo-objects with more than {0} vertices cannot be transferred to Map-Markup!
+## exception-to-many-objects: A maximum of {0} objects can be transferred to Map-Markup
+## exception-to-many-vertices: A selection of geo-objects with more than {0} vertices cannot be transferred to Map-Markup!
 
 # io:
 ## exception-invalid-char: Invalid character in the name. Avoid the following characters: {0}
@@ -99,6 +100,10 @@ can be changed individually for each object later.
 ## upload-label1:
 
 Map-Markup objects can be uploaded here. Valid file extensions are *.gpx
+
+## mapmarkup-project: Map-Markup Project (Geo-Json)
+## gpx-file: GPX File
+## shape-file: ESRI Shape File
 
 ## download-label1:
 

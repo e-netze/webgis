@@ -268,15 +268,9 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
     #region IApiTool Member
 
-    public ToolType Type
-    {
-        get { return ToolType.graphics; }
-    }
+    public ToolType Type => ToolType.graphics;
 
-    public ToolCursor Cursor
-    {
-        get { return ToolCursor.Crosshair; }
-    }
+    public ToolCursor Cursor => ToolCursor.Crosshair;
 
     #endregion
 
@@ -345,7 +339,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Pointer },
             UIElements = new IUIElement[] {
                 new UIEmpty() {
-                    target="#"+toolContainerId //UIElementTarget.tool_sidebar_left.ToString()
+                    target = $"#{toolContainerId}" //UIElementTarget.tool_sidebar_left.ToString()
                 }
             }
         };
@@ -451,7 +445,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             UIElements = new IUIElement[]
             {
                 new UIDiv(){
-                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    target = $"#{toolContainerId}", //UIElementTarget.tool_sidebar_left.ToString(),
                     targettitle = localizer.Localize("draw-text"),
                     elements = uiElements.ToArray()
                 }
@@ -484,7 +478,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Freehand },
             UIElements = new IUIElement[] {
                 new UIDiv(){
-                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    target = $"#{toolContainerId}", //UIElementTarget.tool_sidebar_left.ToString(),
                     targettitle = localizer.Localize("draw-freehand"),
                     elements = uiElements.ToArray()
                 }
@@ -529,7 +523,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Line },
             UIElements = new IUIElement[] {
                 new UIDiv(){
-                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    target = $"#{toolContainerId}", //UIElementTarget.tool_sidebar_left.ToString(),
                     targettitle = localizer.Localize("draw-line"),
                     elements = uiElements.ToArray()
                 }
@@ -575,7 +569,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = tool },
             UIElements = new IUIElement[] {
                 new UIDiv(){
-                    target="#"+toolContainerId, // UIElementTarget.tool_sidebar_left.ToString(),
+                    target=$"#{toolContainerId}", // UIElementTarget.tool_sidebar_left.ToString(),
                     targettitle= localizer.Localize("draw-polygon"),
                     elements = new IUIElement[] {
                          new UIDiv(){
@@ -616,7 +610,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Distance_Circle },
             UIElements = new IUIElement[] {
                 new UIDiv(){
-                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    target = $"#{toolContainerId}", //UIElementTarget.tool_sidebar_left.ToString(),
                     targettitle = localizer.Localize("draw-distance-circle"),
                     elements = uiElements.ToArray()
                 }
@@ -634,7 +628,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Compass_Rose },
             UIElements = new IUIElement[] {
                 new UIDiv(){
-                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    target = $"#{toolContainerId}", //UIElementTarget.tool_sidebar_left.ToString(),
                     targettitle = localizer.Localize("draw-compass-rose"),
                     elements = uiElements.ToArray()
                 }
@@ -667,7 +661,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.DimLine },
             UIElements = new IUIElement[] {
                 new UIDiv(){
-                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    target = $"#{toolContainerId}", //UIElementTarget.tool_sidebar_left.ToString(),
                     targettitle = localizer.Localize("draw-dimline"),
                     elements = uiElements.ToArray()
                 }
@@ -700,7 +694,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.HectoLine },
             UIElements = new IUIElement[] {
                 new UIDiv(){
-                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    target = $"#{toolContainerId}", //UIElementTarget.tool_sidebar_left.ToString(),
                     targettitle = localizer.Localize("draw-hectoline"),
                     elements = uiElements.ToArray()
                 }
@@ -828,7 +822,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             UIElements = new IUIElement[]
             {
                 new UIEmpty() {
-                    target="#"+toolContainerId //UIElementTarget.tool_sidebar_left.ToString()
+                    target=$"#{toolContainerId}" //UIElementTarget.tool_sidebar_left.ToString()
                 },
                 new UIDiv()
                 {
@@ -961,7 +955,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             UIElements = new IUIElement[]
             {
                 new UIEmpty() {
-                    target="#"+toolContainerId //UIElementTarget.tool_sidebar_left.ToString()
+                    target=$"#{toolContainerId}" //UIElementTarget.tool_sidebar_left.ToString()
                 },
                 new UIDiv()
                 {
@@ -976,9 +970,9 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             css = UICss.ToClass(new string[]{ UICss.ToolParameter }),
                             options=new UISelect.Option[]
                             {
-                                new UISelect.Option() { value = "json", label = "Map-Markup Projekt (Geo-Json)" },
-                                new UISelect.Option() { value = "gpx", label = "GPX Datei" },
-                                new UISelect.Option() { value = "shp", label = "ESRI Shape Datei" },
+                                new UISelect.Option() { value = "json", label = localizer.Localize("io.mapmarkup-project") },
+                                new UISelect.Option() { value = "gpx", label = localizer.Localize("io.gpx-file") },
+                                new UISelect.Option() { value = "shp", label = localizer.Localize("io.shape-file") },
 
                             }
                         },
@@ -1120,10 +1114,9 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         var maxFeatures = e.GetConfigInt(ConfigAllowAddFromSelectionMaxFeatures);
         if (maxFeatures > 0 && e.SelectionInfo.ObjectIds.Count() > maxFeatures)
         {
-            throw new Exception($"Es dürfen maximal {maxFeatures} ins Map-Markup übernommen werden");
+            throw new Exception(String.Format(localizer.Localize("selection.exception-to-many-objects"), maxFeatures));
         }
 
-        //var query = await bridge.GetFirstLayerQuery(e.SelectionInfo.ServiceId, e.SelectionInfo.LayerId);
         var query = await bridge.GetQuery(e.SelectionInfo.ServiceId, e.SelectionInfo.QueryId);
         if (query == null)
         {
@@ -1219,7 +1212,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
             if (numVertices > maxVertices)
             {
-                throw new Exception(String.Format(localizer.Localize("selection.exception-to-many-objects"), maxVertices));
+                throw new Exception(String.Format(localizer.Localize("selection.exception-to-many-vertices"), maxVertices));
             }
         }
 

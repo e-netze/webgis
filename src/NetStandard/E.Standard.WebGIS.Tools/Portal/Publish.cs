@@ -1,4 +1,4 @@
-using E.Standard.Json;
+﻿using E.Standard.Json;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebMapping.Core.Api;
@@ -307,7 +307,7 @@ public class Publish : IApiServerButton, IStorageInteractions
             throw new Exception("Karte existiert nicht oder Sie sind nicht berechtigt diese Karte anzuzeigen");
         }
 
-        string mapJson = bridge.Storage.LoadString(map);
+        string mapJson = bridge.Storage.LoadString(map).ReplaceLegacyMapJsonItems();
         string geoJson = bridge.Storage.LoadString(
             bridge.Storage.AppendToName(map, ".graphics"), WebMapping.Core.Api.IO.StorageBlobType.Data);
 
@@ -820,7 +820,7 @@ public class Publish : IApiServerButton, IStorageInteractions
     {
         try
         {
-            string mapJson = bridge.Storage.LoadString(map);
+            string mapJson = bridge.Storage.LoadString(map).ReplaceLegacyMapJsonItems();
             MapJsonPropto mapJsonProto = JSerializer.Deserialize<MapJsonPropto>(mapJson);
 
             return mapJsonProto.userdata != null && mapJsonProto.userdata.meta != null &&
