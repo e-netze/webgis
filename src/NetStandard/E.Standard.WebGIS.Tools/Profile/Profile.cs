@@ -1,4 +1,5 @@
-﻿using E.Standard.Localization.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.Localization.Reflection;
 using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Profile.QueryEngines;
@@ -23,11 +24,12 @@ namespace E.Standard.WebGIS.Tools.Profile;
 [ToolCmsConfigParameter(ProfileEnvironment.CmsConfigParameter)]
 [ToolHelp("tools/general/profile.html")]
 [LocalizationNamespace("tools.profile")]
-public class CreateProfile : IApiServerTool, IApiButtonResources
+public class CreateProfile : IApiServerToolLocalizable<CreateProfile>, 
+                             IApiButtonResources
 {
     #region IApiServerTool Members
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<CreateProfile> localizer)
     {
         var profiles = new ProfileEnvironment(bridge).Profiles;
 
@@ -43,15 +45,15 @@ public class CreateProfile : IApiServerTool, IApiButtonResources
                 new UIButtonContainer()
                     .AddChildren(
                         new UIButton(UIButton.UIButtonType.servertoolcommand, "printdialog")
-                            .WithText("Drucken"),
+                            .WithText(localizer.Localize("button-print")),
                         new UIButton(UIButton.UIButtonType.servertoolcommand, "create")
-                            .WithText("Profil erstellen"),
+                            .WithText(localizer.Localize("button-create")),
                         new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removesketch)
-                            .WithText("Sketch entfernen")
+                            .WithText(localizer.Localize("remove-sketch"))
                             .WithStyles(UICss.CancelButtonStyle)));
     }
 
-    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<CreateProfile> localizer)
     {
         return null;
     }
@@ -84,19 +86,19 @@ public class CreateProfile : IApiServerTool, IApiButtonResources
 
     [ServerToolCommand("create")]
     [ServerToolCommand("refreshchart")]
-    async public Task<ApiEventResponse> OnCreateProfileAsync(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnCreateProfileAsync(IBridge bridge, ApiToolEventArguments e, ILocalizer<CreateProfile> localizer)
     {
         var profileEnvironment = new ProfileEnvironment(bridge);
         var profile = profileEnvironment[e["profile_name"]];
         if (profile == null)
         {
-            throw new ArgumentException("Unbekanntes Profil: " + e["profile_name"]);
+            throw new ArgumentException($"{localizer.Localize("exception-unknown-profile")}: {e["profile_name"]}");
         }
 
         var polyline = e.SketchWgs84 as Polyline;
         if (polyline == null || polyline.PathCount != 1)
         {
-            throw new ArgumentException("Invalid Polyline. Only Singlepath...");
+            throw new ArgumentException(localizer.Localize("exception-invalid-polyline"));
         }
 
         using (var transformer = bridge.GeometryTransformer(4326, profile.SrsId))
@@ -262,35 +264,35 @@ public class CreateProfile : IApiServerTool, IApiButtonResources
     }
 
     [ServerToolCommand("printdialog")]
-    public ApiEventResponse OnPrintDialog(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnPrintDialog(IBridge bridge, ApiToolEventArguments e, ILocalizer<CreateProfile> localizer)
     {
         return new ApiEventResponse()
             .AddUIElement(
                 new UIDiv()
                     .AsDialog()
-                    .WithDialogTitle("Profil drucken")
+                    .WithDialogTitle(localizer.Localize("print.profile"))
                     .WithStyles(UICss.NarrowFormMarginAuto)
                     .AddChildren(
                         new UILabel()
-                            .WithLabel("Maßstab auswählen 1 : x"),
+                            .WithLabel(localizer.Localize("print.select-scale")),
                         new UISelect(new string[] { "100", "500", "1000", "2500", "5000" })
                             .WithId("profile_print_scale")
                             .AsToolParameter(),
 
                         new UILabel()
-                            .WithLabel("Überhöhung auswählen 1 : x"),
+                            .WithLabel(localizer.Localize("print.select-superelevation")),
                         new UISelect(new string[] { "1", "2", "3", "0,5" })
                             .WithId("profile_print_superelevation")
                             .AsToolParameter(),
 
                         new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand, "print")
-                            .WithText("Druckauftrag starten"))));
+                            .WithText(localizer.Localize("print.start")))));
     }
 
     [ServerToolCommand("print")]
-    async public Task<ApiEventResponse> OnPrintAsync(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnPrintAsync(IBridge bridge, ApiToolEventArguments e, ILocalizer<CreateProfile> localizer)
     {
-        ApiEventResponse chart = await OnCreateProfileAsync(bridge, e);
+        ApiEventResponse chart = await OnCreateProfileAsync(bridge, e, localizer);
 
         int dpi = 150;
         int scale = Convert.ToInt32(e["profile_print_scale"]);
@@ -320,7 +322,7 @@ public class CreateProfile : IApiServerTool, IApiButtonResources
 
         if (imageWidth_mm > 1189f || imageHeight_mm > 841f)  // A0 841 x 1189
         {
-            throw new Exception("Die Größe des Plans (" + (int)imageWidth_mm + " x " + (int)imageHeight_mm + ")mm übersteigt DIN A0 (1189 x 841)mm.\nWähle einen anderen Maßstab bzw. eine andere Überhöhung.");
+            throw new Exception(String.Format(localizer.Localize("print.exception-print-to-large"), (int)imageWidth_mm, (int)imageHeight_mm));
         }
 
         using (var bitmap = Current.Engine.CreateBitmap(imageWidth, imageHeight))

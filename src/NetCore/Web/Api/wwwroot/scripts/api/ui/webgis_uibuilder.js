@@ -734,10 +734,12 @@
             var labels = element.label.split('|');
             $newElement = $("<div" + elementProperties(element) + "></div>").addClass('webgis-label').appendTo($parent);
             if (labels.length == 1) {
-                $newElement.html(element.label);
+                $newElement.html(webgis.asMarkdownOrText(element.label));
             } else {
                 for (var label in labels) {
-                    $("<p>").html(labels[label]).appendTo($newElement);
+                    $("<p>")
+                        .html(webgis.asMarkdownOrText(labels[label]))
+                        .appendTo($newElement);
                 }
             }
         }

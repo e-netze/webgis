@@ -45,36 +45,37 @@ The coordinate system in which the coordinates of the CSV file are present must 
 # tip-label: Input Tip
 # tip:
 
-There are projected coordinates (GK-M34, Web Mercator, ...) and geographic coordinates (WGS 84, GPS).
+md: There are projected coordinates (GK-M34, Web Mercator, ...) and geographic coordinates (WGS 84, GPS).
 When entering, the coordinate system should always be selected first.
-<br/>
+
 For projected coordinates, the easting and northing values are usually given in meters.
-<strong>GK-M34</strong>
+
+**GK-M34**
 Easting: -67772.43 
 Northing: 215837.13
-<br/>
+
 For geographic coordinates, the easting corresponds to the geographic longitude (values west of the prime meridian must have a negative sign).
 The northing corresponds to the geographic latitude (values south of the equator must have a negative sign).
-<br/>
+
 The following notations are possible:
-<br/>
+
 Easting: 15.439833 
 Northing: 47.078167
-<br/>
-<strong>Degrees/Minutes:</strong>
+
+**Degrees/Minutes:**
 Easting: 15°26.39' 
 Northing: 47°04.69'
-<br/>
-<i>simplified with spaces:</i>
+
+*simplified with spaces:*
 Easting: 15 26.39 
 Northing: 47 04.69
-<br/>
-<strong>Degrees/Minutes/Seconds:</strong>
+
+**Degrees/Minutes/Seconds:**
 Easting: 15°26'23.4'' 
 Northing: 47°04'41.4''
-<br/>
-<i>simplified with spaces:</i>
+
+*simplified with spaces:*
 Easting: 15 26 23.4 
 Northing: 47 04 41.4
-<br/>
+
 For all coordinates: Comma and period are always interpreted as a comma.
