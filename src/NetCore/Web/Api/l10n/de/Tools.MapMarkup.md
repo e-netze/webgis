@@ -87,7 +87,8 @@ können nachher für jedes Objekt wieder einzeln geändert werden.
 |Um die Map-Markup Elemente
 besser zu unterscheiden, können sie später über das hier angegeben Feld identifiziert werden:
 
-## exception-to-many-objects: Eine Auswahl von Geo-Objekten mit mehr als {0} Stützpunkten dürfen nicht ins Map-Markup übernommen werden!
+## exception-to-many-objects: Es dürfen maximal {0} ins Map-Markup übernommen werden
+## exception-to-many-vertices: Eine Auswahl von Geo-Objekten mit mehr als {0} Stützpunkten dürfen nicht ins Map-Markup übernommen werden!
 
 # io:
 ## exception-invalid-char: Ungültiges Zeichen im Namen. Vermeinden Sie folgende Zeichen: {0}
@@ -100,6 +101,10 @@ besser zu unterscheiden, können sie später über das hier angegeben Feld ident
 ## upload-label1:
 
 Hier können Map-Markup Objekte hochgeladen werden. Gültige Dateiendungen sind hier *.gpx
+
+## mapmarkup-project: Map-Markup Projekt (Geo-Json)
+## gpx-file: GPX Datei
+## shape-file: ESRI Shape Datei
 
 ## download-label1:
 
