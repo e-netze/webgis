@@ -85,7 +85,7 @@
 
         if (readOnly === false && hasCurrentElement(elements) === false) {
             var tool = map.graphics.getTool();
-            $("<h2><img style='margin-right:10px' src='" + webgis.css.imgResource('rest/toolresource/webgis-tools-redlining-redlining-' + tool) + "'></h2>")
+            $("<h2><img style='margin-right:10px' src='" + webgis.css.imgResource('rest/toolresource/webgis-tools-mapmarkup-mapmarkup-' + tool) + "'></h2>")
                 .text(headings[0] + translateType(tool) + ":")
                 .appendTo($elem);
             $("<div>")
@@ -111,7 +111,7 @@
 
                     if (headings[f]) {
                         if (f === '0') {
-                            $("<h2><img style='margin-right:10px' src='" + webgis.css.imgResource('rest/toolresource/webgis-tools-redlining-redlining-' + element.type) + "'>" + headings[f] + translateType(element.type) + ":</h2>").appendTo($elem);
+                            $("<h2><img style='margin-right:10px' src='" + webgis.css.imgResource('rest/toolresource/webgis-tools-mapmarkup-mapmarkup-' + element.type) + "'>" + headings[f] + translateType(element.type) + ":</h2>").appendTo($elem);
                         } else {
                             $("<h3>").text(headings[f]).appendTo($elem);
                         }
@@ -201,7 +201,7 @@
                         });
                 } else {
                     $li.css({
-                        backgroundImage: 'url(' + webgis.css.imgResource('rest/toolresource/webgis-tools-redlining-redlining-' + element.type) + ')'
+                        backgroundImage: 'url(' + webgis.css.imgResource('rest/toolresource/webgis-tools-mapmarkup-mapmarkup-' + element.type) + ')'
                     });
 
                     $("<span>")
@@ -272,7 +272,7 @@
     var elementAny = function (element) { return true; };
 
     var translateType = function (type) {
-        return webgis.l10n.get("redlining-tool-" + type);
+        return webgis.l10n.get("mapmarkup-tool-" + type);
     };
 
     var metaTextLabel = function (type) {

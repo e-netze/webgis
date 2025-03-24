@@ -34,7 +34,7 @@
         measureArea: 'webgis.tools.measurearea',
         measureCircle: 'webgis.tools.measurecircle',
         profile: 'webgis.tools.profile.createprofile',
-        redlining: 'webgis.tools.redlining.redlining',
+        mapmarkup: 'webgis.tools.mapmarkup.mapmarkup',
         edit: 'webgis.tools.editing.edit',
         snapping: 'webgis.tools.snapping',
         geocode: 'webgis.tools.georeferencing.georeference',
@@ -1088,7 +1088,7 @@
 
                 if (newVertexAdded) {
                     if (map.getActiveTool() && map.getActiveTool().tooltype === 'graphics') {
-                        // if tool is redlining (graphics) set the symbol (if current graphics tool is symbol)
+                        // if tool is mapmarkup (graphics) set the symbol (if current graphics tool is symbol)
                         map.graphics.tryAddGraphicsSymbolToMap({ lat: response.sketch_addvertex[0], lat: response.sketch_addvertex[1] });
                     }
 

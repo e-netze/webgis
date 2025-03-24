@@ -493,6 +493,16 @@ namespace E.Standard.WebGIS.Tools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] mapmarkup {
+            get {
+                object obj = ResourceManager.GetObject("mapmarkup", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] marker_info {
             get {
                 object obj = ResourceManager.GetObject("marker_info", resourceCulture);
@@ -636,16 +646,6 @@ namespace E.Standard.WebGIS.Tools.Properties {
         internal static byte[] rectangle_binoculars {
             get {
                 object obj = ResourceManager.GetObject("rectangle-binoculars", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] redlining {
-            get {
-                object obj = ResourceManager.GetObject("redlining", resourceCulture);
                 return ((byte[])(obj));
             }
         }

@@ -86,7 +86,7 @@
 
         if (!readOnly && !map.graphics.hasSelectedElements() && !map.graphics.hasStagedElement()) {
             var tool = map.graphics.getTool();
-            $("<h3><img style='margin-right:10px' src='" + webgis.css.imgResource('rest/toolresource/webgis-tools-redlining-redlining-' + tool) + "'></h2>")
+            $("<h3><img style='margin-right:10px' src='" + webgis.css.imgResource('rest/toolresource/webgis-tools-mapmarkup-mapmarkup-' + tool) + "'></h2>")
                 .text(translateType(tool))
                 .appendTo($elem);
             $("<div>")
@@ -190,7 +190,7 @@
                 .addClass('button symbol')
                 .addClass(element.updating ? '' : 'inactive')
                 .css({
-                    backgroundImage: 'url(' + webgis.css.imgResource('rest/toolresource/webgis-tools-redlining-redlining-' + element.type) + ')',
+                    backgroundImage: 'url(' + webgis.css.imgResource('rest/toolresource/webgis-tools-mapmarkup-mapmarkup-' + element.type) + ')',
                 })
                 .appendTo($li);
 
@@ -209,7 +209,7 @@
                         { command: 'show-symbol-selector', type: 'servertoolcommand', map: map },
                         this,
                         null,
-                        { 'redlinig-symbol-type': element.type });
+                        { 'mapmarkup-symbol-type': element.type });
                 });
             }
 
@@ -357,7 +357,7 @@
                             { command: 'show-single-symbol-selector', type: 'servertoolcommand', map: map },
                             this,
                             null,
-                            { 'redlinig-styles': $(this).data('styles') });
+                            { 'mapmarkup-styles': $(this).data('styles') });
                     });
 
                 $('<div>')
@@ -478,6 +478,6 @@
     };
     const elementHasNoLabel = function (element) { return elementIsCurrent(element) === false && elementHasLabel(element) === false; };
     const translateType = function (type) {
-        return webgis.l10n.get("redlining-tool-" + type);
+        return webgis.l10n.get("mapmarkup-tool-" + type);
     };
 })(webgis.$ || jQuery);

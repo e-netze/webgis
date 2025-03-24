@@ -229,8 +229,8 @@
   <data name="rectangle" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\shape-rectangle_26@1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="redlining" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\redlining_26@1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="mapmarkup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mapmarkup_26@1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="save" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\disk-white_26@1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -269,7 +269,7 @@
     <value>..\Resources\filter-remove_26@1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="marker_info" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\redlining-info_26@1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\mapmarkup-info_26@1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="map_64_g" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\map-64.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

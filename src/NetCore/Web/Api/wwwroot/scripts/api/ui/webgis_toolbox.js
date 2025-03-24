@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
     $.fn.webgis_toolbox = function (method) {
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
@@ -34,7 +34,7 @@
                 tools: [webgis.tools.advanced.measureDistance,
                 webgis.tools.advanced.measureArea,
                 webgis.tools.advanced.profile,
-                webgis.tools.advanced.redlining,
+                webgis.tools.advanced.mapmarkup,
                 webgis.tools.advanced.edit]
             }
         ]

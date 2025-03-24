@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace E.Standard.WebGIS.Tools.Redlining.Export;
+namespace E.Standard.WebGIS.Tools.MapMarkup.Export;
 
 class ShapeFileExport : IExport
 {

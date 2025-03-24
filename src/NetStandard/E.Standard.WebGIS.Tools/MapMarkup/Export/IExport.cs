@@ -1,6 +1,6 @@
 ﻿using E.Standard.GeoJson;
 
-namespace E.Standard.WebGIS.Tools.Redlining.Export;
+namespace E.Standard.WebGIS.Tools.MapMarkup.Export;
 
 public interface IExport
 {

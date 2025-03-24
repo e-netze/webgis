@@ -50,7 +50,7 @@ webgis.usability.sketchMarkerPopup = false;
 webgis.usability.useMarkerPopup = false;
 webgis.usability.showSingleResultPopup = true;
 webgis.usability.presentationTocSearch = !webgis.isMobileDevice();
-webgis.usability.useGraphicsMarkerPopups = false;  // Info Container für Grafiken (Redlining) anzeigen
+webgis.usability.useGraphicsMarkerPopups = false;  // Info Container für Grafiken (MapMarkup) anzeigen
 webgis.usability.toolSketchOnlyEditableIfToolTabIsActive = true;
 
 webgis.usability.allowDarkmode = true;

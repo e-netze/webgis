@@ -285,8 +285,8 @@ public static class ApiToolEventFileExtensions
     {
         var dict = new Dictionary<string, object>()
                             {
-                                { "point-color", e?.GetString("redlining-pointcolor") ?? "#ff0000" },
-                                { "point-size", e?.GetDouble("redlining-pointsize") ?? 10 },
+                                { "point-color", e?.GetString("mapmarkup-pointcolor") ?? "#ff0000" },
+                                { "point-size", e?.GetDouble("mapmarkup-pointsize") ?? 10 },
                                 { "_meta",  new
                                         {
                                             tool = "point",
@@ -308,10 +308,10 @@ public static class ApiToolEventFileExtensions
     {
         var dict = new Dictionary<string, object>()
                             {
-                                { "stroke", e?.GetString("redlining-color") ?? "#ff0000" },
-                                { "stroke-opacity", e?.GetDouble("redlining-opacity") ?? 0.8},
-                                { "stroke-width", e?.GetInt("redlining-lineweight") ?? 3 },
-                                { "stroke-style", e?.GetString("redlining-linestyle") ?? "1" },
+                                { "stroke", e?.GetString("mapmarkup-color") ?? "#ff0000" },
+                                { "stroke-opacity", e?.GetDouble("mapmarkup-opacity") ?? 0.8},
+                                { "stroke-width", e?.GetInt("mapmarkup-lineweight") ?? 3 },
+                                { "stroke-style", e?.GetString("mapmarkup-linestyle") ?? "1" },
                                 { "_meta",  new
                                         {
                                             tool = "line",
@@ -333,12 +333,12 @@ public static class ApiToolEventFileExtensions
     {
         var dict = new Dictionary<string, object>()
                             {
-                                { "stroke", e?.GetString("redlining-color").OrTake("#ff0000") },
-                                { "stroke-opacity", e?.GetDouble("redlining-opacity") ?? 0.8 },
-                                { "stroke-width", e?.GetInt("redlining-lineweight") ?? 4 },
-                                { "stroke-style", e?.GetString("redlining-linestyle").OrTake("1") },
-                                { "fill", e?.GetString("redlining-fillcolor").OrTake("#ffff00")  },
-                                { "fill-opacity", e?.GetDouble("redlining-fillopacity") ?? 0.2 },
+                                { "stroke", e?.GetString("mapmarkup-color").OrTake("#ff0000") },
+                                { "stroke-opacity", e?.GetDouble("mapmarkup-opacity") ?? 0.8 },
+                                { "stroke-width", e?.GetInt("mapmarkup-lineweight") ?? 4 },
+                                { "stroke-style", e?.GetString("mapmarkup-linestyle").OrTake("1") },
+                                { "fill", e?.GetString("mapmarkup-fillcolor").OrTake("#ffff00")  },
+                                { "fill-opacity", e?.GetDouble("mapmarkup-fillopacity") ?? 0.2 },
                                 { "_meta",  new
                                         {
                                             tool = "polygon",
@@ -360,7 +360,7 @@ public static class ApiToolEventFileExtensions
     {
         var dict = new Dictionary<string, object>()
                             {
-                                { "symbol", e?.GetString("redlining-symbol").OrTake("graphics/markers/pin1.png") },
+                                { "symbol", e?.GetString("mapmarkup-symbol").OrTake("graphics/markers/pin1.png") },
                                 { "_meta",  new
                                         {
                                             tool = "symbol",
@@ -381,9 +381,9 @@ public static class ApiToolEventFileExtensions
     {
         var dict = new Dictionary<string, object>()
                             {
-                                { "font-color", e?.GetString("redlining-fontcolor").OrTake("#000") },
-                                { "font-style", e?.GetString("redlining-fontstyle").OrTake("regular") },
-                                { "font-size", e?.GetString("redlining-fontsize").OrTake("12") },
+                                { "font-color", e?.GetString("mapmarkup-fontcolor").OrTake("#000") },
+                                { "font-style", e?.GetString("mapmarkup-fontstyle").OrTake("regular") },
+                                { "font-size", e?.GetString("mapmarkup-fontsize").OrTake("12") },
                                 { "_meta",  new
                                         {
                                             tool = "text",

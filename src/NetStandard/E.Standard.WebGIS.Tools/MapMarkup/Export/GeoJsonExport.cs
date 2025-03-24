@@ -3,7 +3,7 @@ using E.Standard.Json;
 using System;
 using System.Text;
 
-namespace E.Standard.WebGIS.Tools.Redlining.Export;
+namespace E.Standard.WebGIS.Tools.MapMarkup.Export;
 
 class GeoJsonExport : IExport
 {

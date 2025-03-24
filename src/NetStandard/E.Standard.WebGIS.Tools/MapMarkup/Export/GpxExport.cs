@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace E.Standard.WebGIS.Tools.Redlining.Export;
+namespace E.Standard.WebGIS.Tools.MapMarkup.Export;
 
 class GpxExport : IExport
 {

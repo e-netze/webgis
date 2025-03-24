@@ -1,9 +1,9 @@
 ﻿using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebMapping.Core.Api;
 
-namespace E.Standard.WebGIS.Tools.Tests.Redlining;
+namespace E.Standard.WebGIS.Tools.Tests.MapMarkup;
 
-public class RedliningUploadTests
+public class MapMarkupUploadTests
 {
     [Theory]
     [InlineData("""

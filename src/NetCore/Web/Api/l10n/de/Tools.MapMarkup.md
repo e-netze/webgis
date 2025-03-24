@@ -1,4 +1,4 @@
-﻿# name: Zeichnen (Redlining)
+﻿# name: Zeichnen (Map Markup)
 
 Einfaches Zeichnen in der Karte.
 
@@ -81,29 +81,29 @@ Einfaches Zeichnen in der Karte.
 ## symbology: Symbolik
 ## label1:
 
-Die ausgewählten Objekte aus {0} können ins Redlining übernommen werden.
-|Die Darstellung (Farben) werden aus den aktuellen Redlining Einstellungen übernommen und 
+Die ausgewählten Objekte aus {0} können ins Map-Markup übernommen werden.
+|Die Darstellung (Farben) werden aus den aktuellen Map-Markup Einstellungen übernommen und 
 können nachher für jedes Objekt wieder einzeln geändert werden.
-|Um die Redlining Element 
+|Um die Map-Markup Elemente
 besser zu unterscheiden, können sie später über das hier angegeben Feld identifiziert werden:
 
-## exception-to-many-objects: Eine Auswahl von Geo-Objekten mit mehr als {0} Stützpunkten dürfen nicht ins Redlining übernommen werden!
+## exception-to-many-objects: Eine Auswahl von Geo-Objekten mit mehr als {0} Stützpunkten dürfen nicht ins Map-Markup übernommen werden!
 
 # io:
 ## exception-invalid-char: Ungültiges Zeichen im Namen. Vermeinden Sie folgende Zeichen: {0}
-## exception-no-projects-found: Unter ihrem Benutzer sind bisher noch keine Redlining Projete gespeichert worden. Speichern sie ein Redlining Projekt, bevor sie dieses Werkzeug verwenden.
-## confirm-delete-project: Soll das Redlining Projekt '{redlining-io-load-name}' wirklich gelöscht werden?
+## exception-no-projects-found: Unter ihrem Benutzer sind bisher noch keine Map-Markup Projete gespeichert worden. Speichern sie ein Map-Markup Projekt, bevor sie dieses Werkzeug verwenden.
+## confirm-delete-project: Soll das Map-Markup Projekt '{mapmarkup-io-load-name}' wirklich gelöscht werden?
 
-## extend-current-session: Bestehendes Redlining erweitern
-## replace-current-session: Bestehendes Redlining ersetzen
+## extend-current-session: Bestehendes Map-Markup erweitern
+## replace-current-session: Bestehendes Map-Markup ersetzen
 
 ## upload-label1:
 
-Hier können Redlining Objekte hochgeladen werden. Gültige Dateiendungen sind hier *.gpx
+Hier können Map-Markup Objekte hochgeladen werden. Gültige Dateiendungen sind hier *.gpx
 
 ## download-label1:
 
-Hier können Redlining Objekte herunter geladen werden.
+Hier können Map-Markup Objekte herunter geladen werden.
 
 ## download-label-gpx:
 
@@ -117,5 +117,5 @@ Für jeden Geometrietyp wird ein Shapefile angelegt und in ein ZIP File verpackt
 
 ## download-label-json:
 
-Bei Redlining Projekten werden alle Objekte (plus Darstellung)
+Bei Map-Markup Projekten werden alle Objekte (plus Darstellung)
 als GeoJSON herunter geladen und können später wieder hochgeladen werden.
