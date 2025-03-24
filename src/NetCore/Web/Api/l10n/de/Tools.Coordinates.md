@@ -45,36 +45,37 @@ Hier muss das Koordinatensystem angegeben werden, in dem die Koordinaten der CSV
 # tip-label: Eingabe Tipp
 # tip:
 
-Es gibt projizierte Koordinaten (GK-M34, Web Mercator, ...) und geographische Koordinaten (WGS 84, GPS).
+md:Es gibt projizierte Koordinaten (GK-M34, Web Mercator, ...) und geographische Koordinaten (WGS 84, GPS).
 Bei der Eingabe sollte daher immer zuerst das Koordinatensystem ausgewählt werden.
-<br/>
+
 Bei projizierten Koordinaten werden die Rechts- und Hochwerte üblicherweise in Metern angegeben.
-<strong>GK-M34</strong>
+
+**GK-M34**
 Rechtswert: -67772,43 
 Hochwert: 215837,13
-<br/>
+
 Bei geographischen Koordinaten entspricht der Rechtswert der geographischen Länge (Werte westlich des Nullmeridians müssen ein negatives Vorzeichen aufweisen).
 Der Hochwert entspricht der geographischen Breite (Werte südlich des Äquators müssen ein negatives Vorzeichen aufweisen).
-<br/>
+
 Folgende Schreibweisen sind möglich:
-<br/>
+
 Rechtswert: 15,439833 
 Hochwert: 47,078167
-<br/>
-<strong>Grad/Minuten:</strong>
+
+**Grad/Minuten:**
 Rechtswert: 15°26,39' 
 Hochwert: 47°04,69'
-<br/>
-<i>vereinfacht mit Leerzeichen:</i>
+
+*vereinfacht mit Leerzeichen:*
 Rechtswert: 15 26,39 
 Hochwert: 47 04,69
-<br/>
-<strong>Grad/Minuten/Sekunden:</strong>
+
+**Grad/Minuten/Sekunden:**
 Rechtswert: 15°26'23,4'' 
 Hochwert: 47°04'41,4''
-<br/>
-<i>vereinfacht mit Leerzeichen:</i>
+
+*vereinfacht mit Leerzeichen:*
 Rechtswert: 15 26 23,4 
 Hochwert: 47 04 41,4
-<br/>
+
 Für alle Koordinaten gilt: Beistrich und Punkt werden immer als Komma interpretiert.

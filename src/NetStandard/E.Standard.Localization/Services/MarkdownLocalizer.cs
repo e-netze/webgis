@@ -89,7 +89,7 @@ class MarkdownLocalizer : IStringLocalizer
                     // define new entry
                     string level = match.Groups[1].Value; // #, ##, ### etc.
                     string keyPart = match.Groups[2].Value.Trim();
-                    string header = match.Groups[3].Value.Trim();
+                    string header = match.Groups[3].Value.Trim().Replace("\\n", "\n");
 
                     currentKey = String.Join(".", currentKey.Split('.').Take(level.Length - 1));
 
@@ -101,9 +101,9 @@ class MarkdownLocalizer : IStringLocalizer
                     currentHeader = header;
                     currentBody.Clear();
                 }
-                else if (!string.IsNullOrWhiteSpace(line))
+                else // if (!string.IsNullOrWhiteSpace(line))
                 {
-                    currentBody.Append($"{line}\n");
+                    currentBody.Append($"{line.Replace("\\n", "\n")}\n");
                 }
             }
 

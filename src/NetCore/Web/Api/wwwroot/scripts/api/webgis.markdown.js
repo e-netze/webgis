@@ -1,8 +1,12 @@
 ﻿webgis.simpleMarkdown = new function() {
     var rules = [
         {
-            regex: /(\*)(.*)\1/g,
+            regex: /(\*\*)(.*.*)\1/g,
             replacement: '<strong>$2</strong>'
+        },
+        {
+            regex: /(\*)(.*)\1/g,
+            replacement: '<i>$2</i>'
         },
         {
             regex: /(_)(.*)\1/g,

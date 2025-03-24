@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Tools.Extensions;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
@@ -11,11 +12,11 @@ namespace E.Standard.WebGIS.Tools.Redlining.Extensions;
 static internal class UIElementExtensions
 {
     #region By Symbol Type (line, point, text)
-    static public List<IUIElement> AddSymbolStyleElements(this List<IUIElement> collection, IBridge bridge, ApiToolEventArguments e, bool stagedOnly = false)
+    static public List<IUIElement> AddSymbolStyleElements(this List<IUIElement> collection, IBridge bridge,  ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false)
     {
         var holder = CreateHolder(e, stagedOnly, new IUIElement[]
         {
-                new UISymbolSelector(bridge, "Symbol",
+                new UISymbolSelector(bridge, localizer.Localize("symbology.symbol"),
                             buttonCommand: ApiClientButtonCommand.setgraphicssymbol,
                             symbolId: (string)e.GetValue("redlining-symbol",null)
                         ) {
@@ -35,18 +36,18 @@ static internal class UIElementExtensions
         return collection;
     }
 
-    static public List<IUIElement> AddPointStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    static public List<IUIElement> AddPointStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
-            new UIColorSelector("Punkt Farbe", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicspointcolor, false)
+            new UIColorSelector(localizer.Localize("symbology.point-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicspointcolor, false)
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
                 value = e.GetValue("redlining-pointcolor","#ff0000"),
                 id = "redlining-point-color"
             },
-            new UILineWieghtSelector("Punkt Größe", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicspointsize){
+            new UILineWieghtSelector(localizer.Localize("symbology.point-size"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicspointsize){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(stagedOnly),
                 value = e.GetValue("redlining-pointsize", 10),
@@ -57,11 +58,11 @@ static internal class UIElementExtensions
         return collection;
     }
 
-    static public List<IUIElement> AddTextStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    static public List<IUIElement> AddTextStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
-            new UIFontSizeSelector("Schriftgröße", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
+            new UIFontSizeSelector(localizer.Localize("symbology.font-size"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
@@ -69,7 +70,7 @@ static internal class UIElementExtensions
                 //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
                 id = "redlining-text-fontsize"
             },
-            new UIFontStyleSelector("Schriftstil", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextstyle)
+            new UIFontStyleSelector(localizer.Localize("symbology.font-style"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextstyle)
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
@@ -77,7 +78,7 @@ static internal class UIElementExtensions
                 //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
                 id = "redlining-text-fontstyle"
             },
-            new UIColorSelector("Schriftfarbe", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextcolor, false)
+            new UIColorSelector(localizer.Localize("symbology.font-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextcolor, false)
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
@@ -90,7 +91,7 @@ static internal class UIElementExtensions
         return collection;
     }
 
-    static public List<IUIElement> AddFreehandStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    static public List<IUIElement> AddFreehandStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
         var lineColor = e.GetValue("redlining-color", "#ff0000")?.ToString();
         if (String.IsNullOrWhiteSpace(lineColor) || lineColor == "none")
@@ -100,14 +101,14 @@ static internal class UIElementExtensions
 
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
-            new UIColorSelector("Linienfarbe", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinecolor, false) {
+            new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinecolor, false) {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=lineColor,
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                 id="redlining-line-linecolor"
             },
-            new UILineWieghtSelector("Linienstärke", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
+            new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("redlining-lineweight",4),
@@ -119,7 +120,7 @@ static internal class UIElementExtensions
         return collection;
     }
 
-    static public List<IUIElement> AddLineStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    static public List<IUIElement> AddLineStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
         var lineColor = e.GetValue("redlining-color", "#ff0000")?.ToString();
         if (String.IsNullOrWhiteSpace(lineColor) || lineColor == "none")
@@ -129,21 +130,21 @@ static internal class UIElementExtensions
 
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
-                new UIColorSelector("Linienfarbe", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinecolor, false) {
+                new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinecolor, false) {
                     CollapseState = IsCollapsed(isCollapsed),
                     ExpandBehavior=ExpandMode(collapseExclusive),
                     value=lineColor,
                     //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                     id="redlining-line-linecolor"
                 },
-                new UILineWieghtSelector("Linienstärke", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
+                new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
                     CollapseState = IsCollapsed(isCollapsed),
                     ExpandBehavior=ExpandMode(collapseExclusive),
                     value=e.GetValue("redlining-lineweight", 4),
                     //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                     id="redlining-line-lineweight"
                 },
-                new UILineStyleSelector("Linienart", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinestyle){
+                new UILineStyleSelector(localizer.Localize("symbology.line-style"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinestyle){
                     CollapseState = IsCollapsed(isCollapsed),
                     ExpandBehavior=ExpandMode(collapseExclusive),
                     //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-linestyle")? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
@@ -155,18 +156,18 @@ static internal class UIElementExtensions
         return collection;
     }
 
-    static public List<IUIElement> Add2DStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    static public List<IUIElement> Add2DStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
-            new UIColorSelector("Füllfarbe", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicsfillcolor, true){
+            new UIColorSelector(localizer.Localize("symbology.fill-color"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicsfillcolor, true){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
                 value=e.GetValue("redlining-fillcolor", "#ffff00"),
                 //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-fillcolor")?UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                 id="redlining-polyline-fillcolor"
             },
-            new UIOpacitySelector("Deckkraft", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsfillopacity)
+            new UIOpacitySelector(localizer.Localize("symbology.fill-opacity"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsfillopacity)
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
@@ -174,21 +175,21 @@ static internal class UIElementExtensions
                 //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-fillcolor")?UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                 id="redlining-polyline-fillopacity"
             },
-            new UIColorSelector("Linienfarbe", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinecolor, true){
+            new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinecolor, true){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("redlining-color","#ff0000"),
                 //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-color")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
                 id="redlining-polyline-linecolor"
             },
-            new UILineWieghtSelector("Linienstärke", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
+            new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("redlining-lineweight",4),
                 //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-lineweight")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
                 id="redlining-polyline-lineweight"
             },
-            new UILineStyleSelector("Linienart", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinestyle){
+            new UILineStyleSelector(localizer.Localize("symbology.line-style"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinestyle){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-linestyle")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
@@ -200,25 +201,25 @@ static internal class UIElementExtensions
         return collection;
     }
 
-    static public List<IUIElement> AddDistanceCircleStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    static public List<IUIElement> AddDistanceCircleStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
-            new UIColorSelector("Linienfarbe", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, true) {
+            new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, true) {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("redlining-color","#ff0000"),
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                 id="redlining-distance_circle-linecolor"
             },
-            new UILineWieghtSelector("Linienstärke", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
+            new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("redlining-lineweight",4),
                 //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-lineweight")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
                 id="redlining-distance_circle-lineweight"
             },
-            new UIColorSelector("Füllfarbe", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicsfillcolor, true){
+            new UIColorSelector(localizer.Localize("symbology.fill-color"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicsfillcolor, true){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("redlining-fillcolor", "#ffff00"),
@@ -227,13 +228,13 @@ static internal class UIElementExtensions
             },
             new UIOptionContainer()
             {
-                title="Eigenschaften (Radius...)",
+                title = localizer.Localize("symbology.properties"),
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 elements = new IUIElement[]
                     {
                         new UILabel(){
-                            label="Anzahl Kreise:"
+                            label = $"{localizer.Localize("symbology.num-circles")}:"
                         },
                         new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsdistancecirclesteps)
                         {
@@ -257,7 +258,7 @@ static internal class UIElementExtensions
                         },
                         new UIBreak(),
                         new UILabel(){
-                            label="Radius (m):"
+                            label=$"{localizer.Localize("symbology.radius")}:"
                         },
                         new UIInputNumber() {
                             MaxValue = double.MaxValue,
@@ -267,7 +268,7 @@ static internal class UIElementExtensions
                         },
                         new UIButtonContainer(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsdistancecircleradius)
                         {
-                            text = "Radius übernehmen",
+                            text = localizer.Localize("symbology.apply-radius"),
                             css = UICss.ToClass(new string[]{ UICss.CancelButtonStyle })
                         })
                     }
@@ -277,18 +278,18 @@ static internal class UIElementExtensions
         return collection;
     }
 
-    static public List<IUIElement> AddCompassRoseStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    static public List<IUIElement> AddCompassRoseStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
-            new UIColorSelector("Linienfarbe", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, true) {
+            new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, true) {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior= ExpandMode(collapseExclusive),
                 value=e.GetValue("redlining-color","#ff0000"),
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistantImportant }),
                 id="redlining-compass-rose-linecolor"
             },
-            new UILineWieghtSelector("Linienstärke", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
+            new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior= ExpandMode(collapseExclusive),
                 value=e.GetValue("redlining-lineweight",4),
@@ -297,13 +298,13 @@ static internal class UIElementExtensions
             },
             new UIOptionContainer()
             {
-                title="Eigenschaften (Radius...)",
+                title = localizer.Localize("symbology.properties"),
                 CollapseState = IsCollapsed(stagedOnly),
                 ExpandBehavior= ExpandMode(stagedOnly),
                 elements = new IUIElement[]
                     {
                         new UILabel(){
-                            label="Anzahl Winkel:"
+                            label = localizer.Localize("symbology.num-angle-segments")
                         },
                         new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsdistancecirclesteps)
                         {
@@ -324,27 +325,27 @@ static internal class UIElementExtensions
         return collection;
     }
 
-    static public List<IUIElement> AddDimLineStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    static public List<IUIElement> AddDimLineStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
         var lineColor = e.GetValue("redlining-color", "#000000")?.ToString();
 
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
-            new UIColorSelector("Linienfarbe", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, false) {
+            new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, false) {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior= ExpandMode(collapseExclusive),
                 value=lineColor,
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                 id="redlining-color"
             },
-            new UILineWieghtSelector("Linienstärke", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslineweight){
+            new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslineweight){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("redlining-lineweight", 2),
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                 id="redlining-lineweight"
             },
-            new UIFontSizeSelector("Schriftgröße", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
+            new UIFontSizeSelector(localizer.Localize("symbology.font-size"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
@@ -357,27 +358,27 @@ static internal class UIElementExtensions
         return collection;
     }
 
-    static public List<IUIElement> AddHectoLineStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    static public List<IUIElement> AddHectoLineStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
         var lineColor = e.GetValue("redlining-color", "#000000")?.ToString();
 
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
-             new UIColorSelector("Linienfarbe", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinecolor, false) {
+             new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinecolor, false) {
                 CollapseState = IsCollapsed(isCollapsed),
                  ExpandBehavior=ExpandMode(collapseExclusive),
                 value=lineColor,
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                 id="redlining-color"
             },
-            new UILineWieghtSelector("Linienstärke", UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
+            new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("redlining-lineweight", 2),
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                 id="redlining-lineweight"
             },
-            new UIFontSizeSelector("Schriftgröße", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
+            new UIFontSizeSelector(localizer.Localize("symbology.font-size"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
@@ -387,26 +388,26 @@ static internal class UIElementExtensions
             },
             new UIOptionContainer()
             {
-                title="Eigenschaften...",
+                title = localizer.Localize("symbology.properties"),
                 CollapseState = IsCollapsed(stagedOnly),
                 elements = new IUIElement[]
                     {
                         new UILabel(){
-                            label="Einheit:"
+                            label = localizer.Localize("symbology.unit")
                         },
                         new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicshectolineunit)
                         {
                             options=new UISelect.Option[]
                             {
-                                new UISelect.Option() { value="m", label="Meter [m]" },
-                                new UISelect.Option() { value="km", label="Kilometer [km]" }
+                                new UISelect.Option() { value="m", label = $"{localizer.Localize("meters")} [m]" },
+                                new UISelect.Option() { value="km", label = $"{localizer.Localize("kilometers")} [m]" }
                             },
                             id="redlining-hectoline-unit",
                             css=UICss.ToClass(new string[]{ UICss.GraphicsHectolineUnit })
                         },
                         new UIBreak(),
                         new UILabel(){
-                            label="Abstand [Einheit]:"
+                            label = $"{localizer.Localize("symbology.segment-unit")}:"
                         },
                         new UIInputNumber() {
                             MinValue = 1,
@@ -417,7 +418,7 @@ static internal class UIElementExtensions
                         },
                         new UIButtonContainer(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicshectolineinterval)
                         {
-                            text = "Abstand übernehmen",
+                            text = localizer.Localize("symbology.apply-segment"),
                             css = UICss.ToClass(new string[]{ UICss.CancelButtonStyle })
                         })
                     }

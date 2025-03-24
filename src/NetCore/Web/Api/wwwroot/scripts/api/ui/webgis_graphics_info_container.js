@@ -87,7 +87,7 @@
         if (!readOnly && !map.graphics.hasSelectedElements() && !map.graphics.hasStagedElement()) {
             var tool = map.graphics.getTool();
             $("<h3><img style='margin-right:10px' src='" + webgis.css.imgResource('rest/toolresource/webgis-tools-redlining-redlining-' + tool) + "'></h2>")
-                .text(translateType(tool) + " erstellen:")
+                .text(translateType(tool))
                 .appendTo($elem);
             $("<div>")
                 .addClass('webgis-info')

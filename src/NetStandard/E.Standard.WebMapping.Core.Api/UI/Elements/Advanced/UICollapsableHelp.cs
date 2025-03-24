@@ -12,12 +12,11 @@ public class UICollapsableHelp : UIDiv
         this.CollapseState = CollapseStatus.Collapsed;
         this.ExpandBehavior = ExpandBehaviorMode.Normal;
 
-        content = content.Replace("\n", "<br/>");
         this.elements = new IUIElement[]
         {
             new UILabel()
             {
-                label=content
+                label = content
             }
         };
 

@@ -22,6 +22,7 @@ using E.Standard.WebMapping.Core.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Redlining;
@@ -30,7 +31,10 @@ namespace E.Standard.WebGIS.Tools.Redlining;
 [AdvancedToolProperties(ClientDeviceDependent = true, SelectionInfoDependent = true, MapCrsDependent = true)]
 [ToolConfigurationSection("redlining")]
 [ToolHelp("tools/general/redlining/index.html")]
-public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IApiToolConfirmation
+public class Redlining : IApiServerToolLocalizable<Redlining>, 
+                         IApiButtonResources, 
+                         IGraphicsTool, 
+                         IApiToolConfirmation
 {
     protected string toolContainerId = "webgis-redlining-tool-container";
 
@@ -45,7 +49,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
 
     #region IApiServerTool Member
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
         List<IUIElement> uiImageButtons = new List<IUIElement>();
 
@@ -53,65 +57,65 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
 
         uiImageButtons.AddRange(new IUIElement[]{
                         new UIImageButton(this.GetType(),"pointer",UIButton.UIButtonType.servertoolcommand,"pointer"){
-                            value="pointer",
-                            text="Auswählen"
+                            value = "pointer",
+                            text = localizer.Localize("tools.select")
                         },
                         new UIImageButton(this.GetType(),"symbol",UIButton.UIButtonType.servertoolcommand,"symbol"){
-                            value="symbol",
-                            text="Symbol"
+                            value = "symbol",
+                            text = localizer.Localize("tools.symbol")
                         },
                         new UIImageButton(this.GetType(), "text", UIButton.UIButtonType.servertoolcommand, "text")
                         {
                             value = "text",
-                            text="Text"
+                            text = localizer.Localize("tools.text")
                         },
                         new UIImageButton(this.GetType(), "point", UIButton.UIButtonType.servertoolcommand, "point")
                         {
-                            value ="point",
-                            text = "Punkt"
+                            value = "point",
+                            text = localizer.Localize("tools.point")
                         },
                         new UIImageButton(this.GetType(), "freehand", UIButton.UIButtonType.servertoolcommand, "freehand")
                         {
                             value = "freehand",
-                            text="Freihand"
+                            text = localizer.Localize("tools.freehand")
                         },
                         new UIImageButton(this.GetType(),"line",UIButton.UIButtonType.servertoolcommand,"line"){
-                            value="line",
-                            text="Linie"
+                            value = "line",
+                            text = localizer.Localize("tools.line")
                         },
                         new UIImageButton(this.GetType(),"polygon",UIButton.UIButtonType.servertoolcommand,"polygon"){
-                            value="polygon",
-                            text="Fläche"
+                            value = "polygon",
+                            text = localizer.Localize("tools.polygon")
                         },
                         new UIImageButton(this.GetType(),"rectangle", UIButton.UIButtonType.servertoolcommand,"rectangle")
                         {
-                            value="rectangle",
-                            text="Rechteck"
+                            value = "rectangle",
+                            text = localizer.Localize("tools.rectangle")
                         },
                         new UIImageButton(this.GetType(),"circle", UIButton.UIButtonType.servertoolcommand,"circle")
                         {
-                            value="circle",
-                            text="Kreis"
+                            value = "circle",
+                            text = localizer.Localize("tools.circle")
                         },
                         new UIImageButton(this.GetType(),"distance_circle", UIButton.UIButtonType.servertoolcommand,"distance_circle")
                         {
-                            value="distance_circle",
-                            text="Umgebungs kreis"
+                            value = "distance_circle",
+                            text = localizer.Localize("tools.distance-circle")
                         },
                         new UIImageButton(this.GetType(),"compass", UIButton.UIButtonType.servertoolcommand,"compass_rose")
                         {
-                            value="compass_rose",
-                            text="Kompass Rose"
+                            value = "compass_rose",
+                            text = localizer.Localize("tools.compass-rose")
                         },
                         new UIImageButton(this.GetType(),"dimline", UIButton.UIButtonType.servertoolcommand,"dimline")
                         {
-                            value="dimline",
-                            text="Bemaßung"
+                            value = "dimline",
+                            text = localizer.Localize("tools.dimline")
                         },
                         new UIImageButton(this.GetType(),"hectoline", UIButton.UIButtonType.servertoolcommand,"hectoline")
                         {
-                            value="hectoline",
-                            text="Hektometrierungslinine"
+                            value = "hectoline",
+                            text = localizer.Localize("tools.hectoline")
                         }
                         //,new UIBreak()
 
@@ -125,16 +129,16 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                                !AdvancedTools.Contains(((UIImageButton)b).value?.ToString())));
         }
 
-        if (bridge.CurrentUser != null && !bridge.CurrentUser.IsAnonymous)
+        if (bridge.CurrentUser?.IsAnonymous == false)
         {
             uiImageButtons.AddRange(new IUIElement[]{
                         new UIImageButton(this.GetType(),"save",UIButton.UIButtonType.servertoolcommand,"save"){
-                            value="save",
-                            text="Zeichnung speichern"
+                            value = "save",
+                            text = localizer.Localize("tools.save")
                         },
                         new UIImageButton(this.GetType(),"open",UIButton.UIButtonType.servertoolcommand,"open"){
-                            value="open",
-                            text="Zeichnung laden"
+                            value = "open",
+                            text = localizer.Localize("tools.open")
                         }
                         //,new UIHidden(){
                         //    id="redlining-tool",
@@ -145,16 +149,16 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
 
         uiImageButtons.AddRange(new IUIElement[]{
                         new UIImageButton(this.GetType(),"share",UIButton.UIButtonType.servertoolcommand,"share"){
-                            value="share",
-                            text="Teilen"
+                            value = "share",
+                            text = localizer.Localize("tools.share")
                         },
                         new UIImageButton(this.GetType(),"upload",UIButton.UIButtonType.servertoolcommand,"upload"){
-                            value="upload",
-                            text="Hochladen (GPX, ...)"
+                            value = "upload",
+                            text = localizer.Localize("tools.upload")
                         },
                         new UIImageButton(this.GetType(),"download",UIButton.UIButtonType.servertoolcommand,"download"){
-                            value="download",
-                            text="Herunterladen (GPX, ...)"
+                            value = "download",
+                            text = localizer.Localize("tools.download")
                         }
                         //,new UIHidden(){
                         //    id="redlining-tool",
@@ -256,7 +260,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
         };
     }
 
-    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
         return new ApiEventResponse();
     }
@@ -349,9 +353,9 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
     }
 
     [ServerToolCommand("symbol")]
-    async public Task<ApiEventResponse> OnSymbolToolClick(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnSymbolToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
-        var uiElements = new List<IUIElement>().AddSymbolStyleElements(bridge, e, true);
+        var uiElements = new List<IUIElement>().AddSymbolStyleElements(bridge, e, localizer, true);
 
         if (e.UseMobileBehavior())
         {
@@ -359,11 +363,11 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             {
                         new UIBreak(),
                         new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.removecurrentgraphicselement){
-                            text="Sketch entfernen",
-                            css=UICss.ToClass(new string[] { UICss.CancelButtonStyle })
+                            text = localizer.Localize("remove-sketch"),
+                            css = UICss.ToClass(new string[] { UICss.CancelButtonStyle })
                         },
                         new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.assumecurrentgraphicselement){
-                            text="Symbol übernehmen"
+                            text = localizer.Localize("apply-symbol")
                         }
             });
         }
@@ -374,7 +378,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             {
                 uiElements.Add(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection-dialog")
                 {
-                    text = $"Symbole aus Selektion {await e.SelectionInfo.GetQueryName(bridge)} übernehmen...",
+                    text = String.Format(localizer.Localize("text.symbols-from-selection"), await e.SelectionInfo.GetQueryName(bridge)),
                     css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.LineBreakButton })
                 });
             }
@@ -387,17 +391,17 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             {
                 new UIDiv(){
                     target= $"#{toolContainerId}", //UIElementTarget.tool_sidebar_left.ToString(),
-                    targettitle="Symbol setzen",
-                    elements=uiElements.ToArray()
+                    targettitle = localizer.Localize("draw-symbol"),
+                    elements = uiElements.ToArray()
                 }
             }
         };
     }
 
     [ServerToolCommand("point")]
-    async public Task<ApiEventResponse> OnPointToolClick(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnPointToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
-        var uiElements = new List<IUIElement>().AddPointStyleElements(e, true).AsStagedStyleElements(e);
+        var uiElements = new List<IUIElement>().AddPointStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
         if (e.SelectionInfo != null)
         {
@@ -405,7 +409,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             {
                 uiElements.Add(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection-dialog")
                 {
-                    text = $"Punkte aus Selektion {await e.SelectionInfo.GetQueryName(bridge)} übernehmen...",
+                    text = String.Format(localizer.Localize("text.points-from-selection"), await e.SelectionInfo.GetQueryName(bridge)),
                     css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.LineBreakButton })
                 });
             }
@@ -418,7 +422,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             {
                 new UIDiv(){
                     target = $"#{toolContainerId}",
-                    targettitle = "Punkt setzen",
+                    targettitle = localizer.Localize("draw-point"),
                     elements = uiElements.ToArray()
                 }
             }
@@ -426,9 +430,9 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
     }
 
     [ServerToolCommand("text")]
-    async public Task<ApiEventResponse> OnTextToolClick(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnTextToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
-        var uiElements = new List<IUIElement>().AddTextStyleElements(e, true).AsStagedStyleElements(e);
+        var uiElements = new List<IUIElement>().AddTextStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
         if (e.GetConfigBool(ConfigAllowAddFromSelection, false))
         {
@@ -436,7 +440,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             {
                 uiElements.Add(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection-dialog")
                 {
-                    text = $"Texte aus Selektion {await e.SelectionInfo.GetQueryName(bridge)} übernehmen...",
+                    text = String.Format(localizer.Localize("text.text-from-selection"), await e.SelectionInfo.GetQueryName(bridge)),
                     css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.LineBreakButton })
                 });
             }
@@ -448,18 +452,18 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             UIElements = new IUIElement[]
             {
                 new UIDiv(){
-                    target= "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
-                    targettitle="Text setzen",
-                    elements= uiElements.ToArray()
+                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    targettitle = localizer.Localize("draw-text"),
+                    elements = uiElements.ToArray()
                 }
             }
         };
     }
 
     [ServerToolCommand("freehand")]
-    public ApiEventResponse OnFreehandToolClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnFreehandToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
-        var uiElements = new List<IUIElement>().AddFreehandStyleElements(e, true).AsStagedStyleElements(e);
+        var uiElements = new List<IUIElement>().AddFreehandStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
         if (e.UseMobileBehavior())
         {
@@ -467,11 +471,11 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             {
                         new UIBreak(),
                         new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.removecurrentgraphicselement){
-                            text="Sketch entfernen",
+                            text = localizer.Localize("remove-sketch"),
                             css=UICss.ToClass(new string[] { UICss.CancelButtonStyle })
                         },
                         new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.assumecurrentgraphicselement){
-                            text="Linie übernehmen"
+                            text = localizer.Localize("apply-line")
                         }
             });
         }
@@ -481,18 +485,18 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Freehand },
             UIElements = new IUIElement[] {
                 new UIDiv(){
-                    target="#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
-                    targettitle="Freihand zeichnen",
-                    elements= uiElements.ToArray()
+                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    targettitle = localizer.Localize("draw-freehand"),
+                    elements = uiElements.ToArray()
                 }
             }
         };
     }
 
     [ServerToolCommand("line")]
-    async public Task<ApiEventResponse> OnLineToolClick(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
-        var uiElements = new List<IUIElement>().AddLineStyleElements(e, true).AsStagedStyleElements(e);
+        var uiElements = new List<IUIElement>().AddLineStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
         if (e.UseMobileBehavior())
         {
@@ -500,11 +504,11 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             {
                         new UIBreak(),
                         new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.removecurrentgraphicselement){
-                            text="Sketch entfernen",
-                            css=UICss.ToClass(new string[] { UICss.CancelButtonStyle })
+                            text = localizer.Localize("remove-sketch"),
+                            css = UICss.ToClass(new string[] { UICss.CancelButtonStyle })
                         },
                         new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.assumecurrentgraphicselement){
-                            text="Linie übernehmen"
+                            text = localizer.Localize("apply-line")
                         }
             });
         }
@@ -515,7 +519,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             {
                 uiElements.Add(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection-dialog")
                 {
-                    text = $"Linien aus Selektion {await e.SelectionInfo.GetQueryName(bridge)} übernehmen...",
+                    text = String.Format(localizer.Localize("text.line-from-selection"), await e.SelectionInfo.GetQueryName(bridge)),
                     css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.LineBreakButton })
                 });
             }
@@ -526,17 +530,17 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Line },
             UIElements = new IUIElement[] {
                 new UIDiv(){
-                    target="#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
-                    targettitle="Linie zeichnen",
-                    elements= uiElements.ToArray()
+                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    targettitle = localizer.Localize("draw-line"),
+                    elements = uiElements.ToArray()
                 }
             }
         };
     }
 
-    async public Task<ApiEventResponse> On2DToolClick(IBridge bridge, ApiToolEventArguments e, GraphicsTool tool)
+    async public Task<ApiEventResponse> On2DToolClick(IBridge bridge, ApiToolEventArguments e, GraphicsTool tool, ILocalizer<Redlining> localizer)
     {
-        var uiElements = new List<IUIElement>().Add2DStyleElements(e, true).AsStagedStyleElements(e);
+        var uiElements = new List<IUIElement>().Add2DStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
         if (e.UseMobileBehavior())
         {
@@ -544,11 +548,11 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             {
                                 new UIBreak(),
                                 new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.removecurrentgraphicselement){
-                                    text="Sketch entfernen",
+                                    text = localizer.Localize("remove-sketch"),
                                     css=UICss.ToClass(new string[] { UICss.CancelButtonStyle })
                                 },
                                 new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.assumecurrentgraphicselement){
-                                    text="Polygon übernehmen"
+                                    text = localizer.Localize("apply-polygon"),
                                 }
             });
         }
@@ -560,7 +564,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                 {
                     uiElements.Add(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection-dialog")
                     {
-                        text = $"Flächen aus Selektion {await e.SelectionInfo.GetQueryName(bridge)} übernehmen...",
+                        text = String.Format(localizer.Localize("text.polygon-from-selection"), await e.SelectionInfo.GetQueryName(bridge)),
                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.LineBreakButton })
                     });
                 }
@@ -573,7 +577,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             UIElements = new IUIElement[] {
                 new UIDiv(){
                     target="#"+toolContainerId, // UIElementTarget.tool_sidebar_left.ToString(),
-                    targettitle="Polygon zeichnen",
+                    targettitle= localizer.Localize("draw-polygon"),
                     elements = new IUIElement[] {
                          new UIDiv(){
                             //target=UIElementTarget.tool_sidebar_left.ToString(),
@@ -586,63 +590,63 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
     }
 
     [ServerToolCommand("polygon")]
-    public Task<ApiEventResponse> OnPolygonToolClick(IBridge bridge, ApiToolEventArguments e)
+    public Task<ApiEventResponse> OnPolygonToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
-        return On2DToolClick(bridge, e, GraphicsTool.Polygon);
+        return On2DToolClick(bridge, e, GraphicsTool.Polygon, localizer);
     }
 
     [ServerToolCommand("rectangle")]
-    public Task<ApiEventResponse> OnRectangleToolClick(IBridge bridge, ApiToolEventArguments e)
+    public Task<ApiEventResponse> OnRectangleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
-        return On2DToolClick(bridge, e, GraphicsTool.Rectangle);
+        return On2DToolClick(bridge, e, GraphicsTool.Rectangle, localizer);
     }
 
     [ServerToolCommand("circle")]
-    public Task<ApiEventResponse> OnCircleToolClick(IBridge bridge, ApiToolEventArguments e)
+    public Task<ApiEventResponse> OnCircleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
-        return On2DToolClick(bridge, e, GraphicsTool.Circle);
+        return On2DToolClick(bridge, e, GraphicsTool.Circle, localizer);
     }
 
     [ServerToolCommand("distance_circle")]
-    public ApiEventResponse OnDistanceCircleClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnDistanceCircleClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
-        var uiElements = new List<IUIElement>().AddDistanceCircleStyleElements(e, true).AsStagedStyleElements(e);
+        var uiElements = new List<IUIElement>().AddDistanceCircleStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
         return new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Distance_Circle },
             UIElements = new IUIElement[] {
                 new UIDiv(){
-                    target="#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
-                    targettitle="Umgebungskreis zeichnen",
-                    elements= uiElements.ToArray()
+                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    targettitle = localizer.Localize("draw-distance-circle"),
+                    elements = uiElements.ToArray()
                 }
             }
         };
     }
 
     [ServerToolCommand("compass_rose")]
-    public ApiEventResponse OnCompassRoseClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnCompassRoseClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
-        var uiElements = new List<IUIElement>().AddCompassRoseStyleElements(e, true).AsStagedStyleElements(e);
+        var uiElements = new List<IUIElement>().AddCompassRoseStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
         return new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Compass_Rose },
             UIElements = new IUIElement[] {
                 new UIDiv(){
-                    target="#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
-                    targettitle="Kompass Rose zeichnen",
-                    elements= uiElements.ToArray()
+                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    targettitle = localizer.Localize("draw-compass-rose"),
+                    elements = uiElements.ToArray()
                 }
             }
         };
     }
 
     [ServerToolCommand("dimline")]
-    public ApiEventResponse OnDimLineToolClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnDimLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
-        var uiElements = new List<IUIElement>().AddDimLineStyleElements(e, true).AsStagedStyleElements(e);
+        var uiElements = new List<IUIElement>().AddDimLineStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
         if (e.UseMobileBehavior())
         {
@@ -650,11 +654,11 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             {
                         new UIBreak(),
                         new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.removecurrentgraphicselement){
-                            text="Sketch entfernen",
+                            text = localizer.Localize("remove-sketch"),
                             css=UICss.ToClass(new string[] { UICss.CancelButtonStyle })
                         },
                         new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.assumecurrentgraphicselement){
-                            text="Linie übernehmen"
+                            text = localizer.Localize("apply-line")
                         }
             });
         }
@@ -664,18 +668,18 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.DimLine },
             UIElements = new IUIElement[] {
                 new UIDiv(){
-                    target="#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
-                    targettitle="Bemaßung zeichnen",
-                    elements= uiElements.ToArray()
+                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    targettitle = localizer.Localize("draw-dimline"),
+                    elements = uiElements.ToArray()
                 }
             }
         };
     }
 
     [ServerToolCommand("hectoline")]
-    public ApiEventResponse OnHectoLineToolClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnHectoLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
-        var uiElements = new List<IUIElement>().AddHectoLineStyleElements(e).AsStagedStyleElements(e);
+        var uiElements = new List<IUIElement>().AddHectoLineStyleElements(e, localizer).AsStagedStyleElements(e);
 
         if (e.UseMobileBehavior())
         {
@@ -683,11 +687,11 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             {
                         new UIBreak(),
                         new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.removecurrentgraphicselement){
-                            text="Sketch entfernen",
+                            text = localizer.Localize("remove-sketch"),
                             css=UICss.ToClass(new string[] { UICss.CancelButtonStyle })
                         },
                         new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.assumecurrentgraphicselement){
-                            text="Linie übernehmen"
+                            text = localizer.Localize("apply-line")
                         }
             });
         }
@@ -697,55 +701,55 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.HectoLine },
             UIElements = new IUIElement[] {
                 new UIDiv(){
-                    target="#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
-                    targettitle="Hektometrierungslinie zeichnen",
-                    elements= uiElements.ToArray()
+                    target = "#"+toolContainerId, //UIElementTarget.tool_sidebar_left.ToString(),
+                    targettitle = localizer.Localize("draw-hectoline"),
+                    elements = uiElements.ToArray()
                 }
             }
         };
     }
 
     [ServerToolCommand("element-selected")]
-    async public Task<ApiEventResponse> OnElementClick(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnElementClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
         ApiEventResponse resp = null;
         switch (e["redlining-tool"])
         {
             case "symbol":
-                resp = await OnSymbolToolClick(bridge, e);
+                resp = await OnSymbolToolClick(bridge, e, localizer);
                 break;
             case "point":
-                resp = await OnPointToolClick(bridge, e);
+                resp = await OnPointToolClick(bridge, e, localizer);
                 break;
             case "line":
-                resp = await OnLineToolClick(bridge, e);
+                resp = await OnLineToolClick(bridge, e, localizer);
                 break;
             case "polygon":
-                resp = await OnPolygonToolClick(bridge, e);
+                resp = await OnPolygonToolClick(bridge, e, localizer);
                 break;
             case "freehand":
-                resp = OnFreehandToolClick(bridge, e);
+                resp = OnFreehandToolClick(bridge, e, localizer);
                 break;
             case "distance_circle":
-                resp = OnDistanceCircleClick(bridge, e);
+                resp = OnDistanceCircleClick(bridge, e, localizer);
                 break;
             case "compass_rose":
-                resp = OnCompassRoseClick(bridge, e);
+                resp = OnCompassRoseClick(bridge, e, localizer);
                 break;
             case "circle":
-                resp = await OnCircleToolClick(bridge, e);
+                resp = await OnCircleToolClick(bridge, e, localizer);
                 break;
             case "rectangle":
-                resp = await OnRectangleToolClick(bridge, e);
+                resp = await OnRectangleToolClick(bridge, e, localizer);
                 break;
             case "text":
-                resp = await OnTextToolClick(bridge, e);
+                resp = await OnTextToolClick(bridge, e, localizer);
                 break;
             case "dimline":
-                resp = OnDimLineToolClick(bridge, e);
+                resp = OnDimLineToolClick(bridge, e, localizer);
                 break;
             case "hectoline":
-                resp = OnHectoLineToolClick(bridge, e);
+                resp = OnHectoLineToolClick(bridge, e, localizer);
                 break;
         }
 
@@ -765,22 +769,22 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
             .AddUIElements(
                 new UIDiv()
                     .WithTarget(UIElementTarget.tool_modaldialog_noblocking_closable.ToString())
-                        .WithTargetTitle($"Symbolik änderen: {localizer.Localize(e["redlinig-symbol-type"])}")
+                        .WithTargetTitle($"{localizer.Localize("symbology.set")}: {localizer.Localize($"tools.{e["redlinig-symbol-type"]}")}")
                         .WithTargetOnClose(ApiClientButtonCommand.refreshgraphicsui.ToString())
                         .AddChildren(e["redlinig-symbol-type"] switch
                         {
-                            "symbol" => new List<IUIElement>().AddSymbolStyleElements(bridge, e),
-                            "text" => new List<IUIElement>().AddTextStyleElements(e, collapseExclusive: false, isCollapsed: false),
-                            "point" => new List<IUIElement>().AddPointStyleElements(e, collapseExclusive: false, isCollapsed: false),
-                            "freehand" => new List<IUIElement>().AddFreehandStyleElements(e, collapseExclusive: false, isCollapsed: false),
-                            "line" => new List<IUIElement>().AddLineStyleElements(e, collapseExclusive: false, isCollapsed: false),
-                            "polygon" => new List<IUIElement>().Add2DStyleElements(e, collapseExclusive: false, isCollapsed: false),
-                            "rectangle" => new List<IUIElement>().Add2DStyleElements(e, collapseExclusive: false, isCollapsed: false),
-                            "circle" => new List<IUIElement>().Add2DStyleElements(e, collapseExclusive: false, isCollapsed: false),
-                            "distance_circle" => new List<IUIElement>().AddDistanceCircleStyleElements(e, collapseExclusive: false, isCollapsed: false),
-                            "compass_rose" => new List<IUIElement>().AddCompassRoseStyleElements(e, collapseExclusive: false, isCollapsed: false),
-                            "dimline" => new List<IUIElement>().AddDimLineStyleElements(e, collapseExclusive: false, isCollapsed: false),
-                            "hectoline" => new List<IUIElement>().AddHectoLineStyleElements(e, collapseExclusive: false, isCollapsed: false),
+                            "symbol" => new List<IUIElement>().AddSymbolStyleElements(bridge, e, localizer),
+                            "text" => new List<IUIElement>().AddTextStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "point" => new List<IUIElement>().AddPointStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "freehand" => new List<IUIElement>().AddFreehandStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "line" => new List<IUIElement>().AddLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "polygon" => new List<IUIElement>().Add2DStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "rectangle" => new List<IUIElement>().Add2DStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "circle" => new List<IUIElement>().Add2DStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "distance_circle" => new List<IUIElement>().AddDistanceCircleStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "compass_rose" => new List<IUIElement>().AddCompassRoseStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "dimline" => new List<IUIElement>().AddDimLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "hectoline" => new List<IUIElement>().AddHectoLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             _ => new()
                         })
             );
@@ -817,7 +821,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
     #region Upload / Download
 
     [ServerToolCommand("upload")]
-    public ApiEventResponse OnUploadClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnUploadClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
         return new ApiEventResponse()
         {
@@ -830,13 +834,13 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                 new UIDiv()
                 {
                     target = UIElementTarget.modaldialog.ToString(),
-                    targettitle="Hochladen (Gpx, ...)",
+                    targettitle = localizer.Localize("tools.upload"),
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                     elements = new IUIElement[]
                     {
                         new UILabel()
                         {
-                            label=bridge.GetCustomTextBlock(this, "label2", "Hier können Redlining Objekte hochgeladen werden. Gültige Dateiendungen sind hier *.gpx")
+                            label = localizer.Localize("io.upload-label1:body")
                         },
                         new UIBreak(2),
                         new UISelect()
@@ -845,8 +849,8 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                             css = UICss.ToClass(new string[]{ UICss.ToolParameter }),
                             options=new UISelect.Option[]
                             {
-                                new UISelect.Option() { value = "false", label = "Bestehendes Redlining erweitern" },
-                                new UISelect.Option() { value = "true", label = "Bestehendes Redlining ersetzen" }
+                                new UISelect.Option() { value = "false", label = localizer.Localize("io.extend-current-session") },
+                                new UISelect.Option() { value = "true", label = localizer.Localize("io.replace-current-session") }
                             }
                         },
                         new UIBreak(2),
@@ -923,7 +927,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
     }
 
     [ServerToolCommand("download")]
-    public ApiEventResponse OnDownloadClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnDownloadClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
         #region Prj Files für Shape download
 
@@ -963,7 +967,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                 new UIDiv()
                 {
                     target = UIElementTarget.modaldialog.ToString(),
-                    targettitle="Herunterladen (Gpx, Shape)",
+                    targettitle = localizer.Localize("tools.download"),
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                     elements = new IUIElement[]
                     {
@@ -997,12 +1001,12 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                         },
                         new UILabel()
                         {
-                            label=bridge.GetCustomTextBlock(this, "label1", "Hier können Redlining Objekte herunter geladen werden.")
+                            label = localizer.Localize("io.download-label1:body")
                         },
                         new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand, "download-objects")
                         {
                             css = UICss.ToClass(new string[] { UICss.DefaultButtonStyle }),
-                            text = "Herunterladen"
+                            text = localizer.Localize("download")
                         }),
                         new UIConditionDiv()
                         {
@@ -1014,7 +1018,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                             {
                                 new UILabel()
                                 {
-                                    label=bridge.GetCustomTextBlock(this, "label-gpx", "Bei GPX werden nur die gezeichneten Linien als 'Tracks' und die Texte bzw. Symbole als 'Waypoints' exportiert.")
+                                    label = localizer.Localize("io.download-label-gpx:body")
                                 }
                             }
                         },
@@ -1028,7 +1032,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                             {
                                 new UILabel()
                                 {
-                                    label=bridge.GetCustomTextBlock(this, "label-shp", "Für ESRI Shape Dateien muss noch zusätzlich die Zielprojektion angegeben werden. Für jeden Geometrietyp wird ein Shapefile angelegt und in ein ZIP File verpackt.")
+                                    label = localizer.Localize("io.download-label-shape:body")
                                 }
                             }
                         },
@@ -1042,13 +1046,13 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                             {
                                 new UILabel()
                                 {
-                                    label=bridge.GetCustomTextBlock(this, "label-json", "Bei Redlining Projekten werden alle Objekte (plus Darstellung) als GeoJSON herunter geladen und können später wieder hochgeladen werden.")
+                                    label = localizer.Localize("io.download-label-json:body")
                                 }
                             }
                         },
                         new UIHidden(){
-                            id="redlining-download-geojson",
-                            css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsGeoJson})
+                            id = "redlining-download-geojson",
+                            css = UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsGeoJson})
                         }
                     }
                 }
@@ -1107,7 +1111,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
     #region From Selection
 
     [ServerToolCommand("add-from-selection-dialog")]
-    async public Task<ApiEventResponse> AddFromSelectionDialog(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> AddFromSelectionDialog(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
         if (!e.GetConfigBool(ConfigAllowAddFromSelection, false))
         {
@@ -1134,7 +1138,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                 new UIDiv()
                 {
                     target = UIElementTarget.modaldialog.ToString(),
-                    targettitle="Aus Selektion übernehmen",
+                    targettitle = $"{localizer.Localize("selection")}: {query.Name}",
                     css = UICss.ToClass(new string[]{  }),
                     targetwidth = "800px",
                     elements = new IUIElement[]
@@ -1149,7 +1153,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                                     {
                                         new UILabel()
                                         {
-                                            label=bridge.GetCustomTextBlock(this, "label1", $"Die selektierten Objekte aus { query.Name } können ins Redlining übernommen werden.|Die Darstellung (Farben) werden aus den aktuellen Redlining Einstellungen übernommen und können nachher für jedes Objekt wieder einzeln geändert werden.|Um die Redlining Element besser zu unterscheiden, können sie später über das hier angegeben Feld identifiziert werden:")
+                                            label = String.Format(localizer.Localize("selection.label1:body"), query.Name) 
                                         },
                                         new UISelect()
                                         {
@@ -1163,7 +1167,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                                         new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection")
                                         {
                                             css = UICss.ToClass(new string[] { UICss.DefaultButtonStyle }),
-                                            text = "Aus Selektion übernehmen"
+                                            text = localizer.Localize("selection.take-from")
                                         })
                                     }
                                 },
@@ -1171,17 +1175,17 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                                 {
                                     elements = new IUIElement[]
                                     {
-                                        new UILabel() {label = "Symbolik:"},
+                                        new UILabel() {label = $"{localizer.Localize("selection.symbology")}:"},
                                         new UIDiv() {
                                             elements = e["redlining-tool"] switch
                                             {
-                                                "symbol" => new List<IUIElement>().AddSymbolStyleElements(bridge, e),
-                                                "text" => new List<IUIElement>().AddTextStyleElements(e),
-                                                "point" => new List<IUIElement>().AddPointStyleElements(e),
-                                                "line" => new List<IUIElement>().AddLineStyleElements(e),
-                                                "polygon" => new List<IUIElement>().Add2DStyleElements(e),
-                                                "dimline" => new List<IUIElement>().AddDimLineStyleElements(e),
-                                                "hectoline" => new List<IUIElement>().AddHectoLineStyleElements(e),
+                                                "symbol" => new List<IUIElement>().AddSymbolStyleElements(bridge, e, localizer),
+                                                "text" => new List<IUIElement>().AddTextStyleElements(e, localizer),
+                                                "point" => new List<IUIElement>().AddPointStyleElements(e, localizer),
+                                                "line" => new List<IUIElement>().AddLineStyleElements(e, localizer),
+                                                "polygon" => new List<IUIElement>().Add2DStyleElements(e, localizer),
+                                                "dimline" => new List<IUIElement>().AddDimLineStyleElements(e, localizer),
+                                                "hectoline" => new List<IUIElement>().AddHectoLineStyleElements(e, localizer),
                                                 _ => new()
                                             }
                                         },
@@ -1196,7 +1200,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
     }
 
     [ServerToolCommand("add-from-selection")]
-    async public Task<ApiEventResponse> AddFromSelection(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> AddFromSelection(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
         if (!e.GetConfigBool(ConfigAllowAddFromSelection, false))
         {
@@ -1216,7 +1220,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
 
             if (numVertices > maxVertices)
             {
-                throw new Exception($"Selectionen mit Objekten mit mehr als {maxVertices} Stützpunkten dürfen nicht ins Redlining übernommen werden.");
+                throw new Exception(String.Format(localizer.Localize("selection.exception-to-many-objects"), maxVertices));
             }
         }
 
@@ -1280,7 +1284,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
     #region IO
 
     [ServerToolCommand("save")]
-    public ApiEventResponse OnSaveClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnSaveClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
         return new ApiEventResponse()
         {
@@ -1291,17 +1295,17 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                 },
                 new UIDiv(){
                     target=UIElementTarget.modaldialog.ToString(),
-                    targettitle="Zeichnung speichern",
+                    targettitle = localizer.Localize("tools.save"),
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                     elements=new UIElement[]{
-                        new UILabel(){label="Name"},
+                        new UILabel(){ label = localizer.Localize("label-name") },
                         new UIBreak(),
                         new UIInputAutocomplete(UIInputAutocomplete.MethodSource(bridge,this.GetType(),"autocomplete-projects"),0){
                             id="redlining-io-save-name",
                             css=UICss.ToClass(new string[]{UICss.ToolParameter}),
                         },
                         new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand,"save-project") {
-                            text="Speichern..."
+                            text = localizer.Localize("save")
                         }),
                         new UIHidden(){
                             id="redlining-geojson",
@@ -1337,13 +1341,13 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
     }
 
     [ServerToolCommand("save-project")]
-    public ApiEventResponse OnSaveProject(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnSaveProject(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
         string name = e["redlining-io-save-name"];
 
         if (!name.IsValidFilename(out string invalidChars))
         {
-            throw new Exception($"Ungültiges Zeichen im Namen. Vermeinden Sie folgende Zeichen: {invalidChars}");
+            throw new Exception(String.Format(localizer.Localize("io.exception-invalid-char"), invalidChars));
         }
 
         bridge.Storage.Save(name, e["redlining-geojson"]);
@@ -1359,13 +1363,13 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
     }
 
     [ServerToolCommand("open")]
-    public ApiEventResponse OnOpenClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnOpenClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
     {
         var names = bridge.Storage.GetNames();
 
         if (names == null || names.Length == 0)
         {
-            throw new Exception("Unter ihrem Benutzer sind bisher noch keine Redlining Projete gespeichert worden. Speichern sie ein Redlining Projekt, bevor sie dieses Werkzeug verwenden.");
+            throw new Exception(localizer.Localize("io.exception-no-projects-found"));
         }
 
         return new ApiEventResponse()
@@ -1377,10 +1381,10 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                 },
                 new UIDiv(){
                     target=UIElementTarget.modaldialog.ToString(),
-                    targettitle="Zeichnung laden",
+                    targettitle = localizer.Localize("tools.open"),
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                     elements=new UIElement[]{
-                        new UILabel(){label="Name"},
+                        new UILabel(){ label = localizer.Localize("label-name") },
                         new UIBreak(),
                         new UISelect(names){
                               id="redlining-io-load-name",
@@ -1391,10 +1395,10 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
                             {
                                 new UIButton(UIButton.UIButtonType.servertoolcommand,"delete-project") {
                                     css = UICss.ToClass(new []{ UICss.DangerButtonStyle }),
-                                    text="Löschen..."
+                                    text = localizer.Localize("delete")
                                 },
                                 new UIButton(UIButton.UIButtonType.servertoolcommand,"load-project") {
-                                    text="Laden..."
+                                    text = localizer.Localize("open")
                                 }
                             })
                     }
@@ -1425,7 +1429,7 @@ public class Redlining : IApiServerTool, IApiButtonResources, IGraphicsTool, IAp
     }
 
     [ServerToolCommand("delete-project")]
-    [ToolCommandConfirmation("Soll das Redlining Projekt '{redlining-io-load-name}' wirklich gelöscht werden?", ApiToolConfirmationType.YesNo, ApiToolConfirmationEventType.ButtonClick)]
+    [ToolCommandConfirmation("io.confirm-delete-project", ApiToolConfirmationType.YesNo, ApiToolConfirmationEventType.ButtonClick)]
     public ApiEventResponse OnDeleteProject(IBridge bridge, ApiToolEventArguments e)
     {
         string name = e["redlining-io-load-name"];

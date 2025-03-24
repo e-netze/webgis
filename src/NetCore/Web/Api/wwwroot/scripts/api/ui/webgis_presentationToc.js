@@ -839,7 +839,7 @@
 
                                 if (service.servicedescription.indexOf('md:') === 0) {
                                     $("<p>")
-                                        .html(webgis.simpleMarkdown.render(service.servicedescription.substr(3)))
+                                        .html(webgis.asMarkdownOrText(service.servicedescription))
                                         .appendTo($descr);
                                 } else {
                                     $.each(service.servicedescription.split('\n'), function (i, paragraph) {
