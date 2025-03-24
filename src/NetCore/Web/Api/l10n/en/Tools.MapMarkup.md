@@ -1,4 +1,4 @@
-﻿# name: Drawing (Redlining)
+﻿# name: Drawing (Map-Markup)
 
 Simple drawing on the map.
 
@@ -81,28 +81,28 @@ Simple drawing on the map.
 ## symbology: Symbology
 ## label1:
 
-The selected objects from {0} can be transferred to redlining.
-|The representation (colors) will be taken from the current redlining settings and 
+The selected objects from {0} can be transferred to the Map-Markup tool.
+|The representation (colors) will be taken from the current Map-Markup settings and 
 can be changed individually for each object later.
-|To better distinguish the redlining elements, they can be identified later using the field specified here:
+|To better distinguish the Map-Markup elements, they can be identified later using the field specified here:
 
-## exception-to-many-objects: A selection of geo-objects with more than {0} vertices cannot be transferred to redlining!
+## exception-to-many-objects: A selection of geo-objects with more than {0} vertices cannot be transferred to Map-Markup!
 
 # io:
 ## exception-invalid-char: Invalid character in the name. Avoid the following characters: {0}
-## exception-no-projects-found: No redlining projects have been saved under your user yet. Save a redlining project before using this tool.
-## confirm-delete-project: Should the redlining project '{redlining-io-load-name}' really be deleted?
+## exception-no-projects-found: No Map-Markup projects have been saved under your user yet. Save a Map-Markup project before using this tool.
+## confirm-delete-project: Should the Map-Markup project '{mapmarkup-io-load-name}' really be deleted?
 
-## extend-current-session: Extend existing redlining
-## replace-current-session: Replace existing redlining
+## extend-current-session: Extend existing Map-Markup
+## replace-current-session: Replace existing Map-Markup
 
 ## upload-label1:
 
-Redlining objects can be uploaded here. Valid file extensions are *.gpx
+Map-Markup objects can be uploaded here. Valid file extensions are *.gpx
 
 ## download-label1:
 
-Redlining objects can be downloaded here.
+Map-Markup objects can be downloaded here.
 
 ## download-label-gpx:
 
@@ -115,5 +115,5 @@ A Shapefile is created for each geometry type and packed into a ZIP file.
 
 ## download-label-json:
 
-In redlining projects, all objects (plus representation) are downloaded 
+In Map-Markup projects, all objects (plus representation) are downloaded 
 as GeoJSON and can be uploaded again later.

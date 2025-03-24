@@ -39,7 +39,7 @@ public class QueryResultTableExport : IApiServerButton  // is this tool still in
                     .WithStyles(UICss.NarrowFormMarginAuto)
                     .AddChildren(
                         new UISelect()
-                            .WithId("redlining-download-format")
+                            .WithId("mapmarkup-download-format")
                             .AsToolParameter()
                             .AddOption(new UISelect.Option()
                                 .WithValue("csv")

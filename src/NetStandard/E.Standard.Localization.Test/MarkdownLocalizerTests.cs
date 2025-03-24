@@ -19,8 +19,8 @@ public class MarkdownLocalizerTests
             }
         }
 
-        File.WriteAllText(Path.Combine(_testDirectory, "de", "tools.redlining.md"), @"
-# name: Redlining
+        File.WriteAllText(Path.Combine(_testDirectory, "de", "tools.mapmarkup.md"), @"
+# name: MapMarkup
 # tools: Werkzeuge
 ## drawline: Linie Zeichnen
 ### note1: Hinweis
@@ -30,8 +30,8 @@ Zeichnen Sie bitte eine Linie mit mindestens zwei Stützpunkten.
 Die Linie darf sich nicht selbst überschneiden.
         ");
 
-        File.WriteAllText(Path.Combine(_testDirectory, "en", "tools.redlining.md"), @"
-# name: Redlining
+        File.WriteAllText(Path.Combine(_testDirectory, "en", "tools.mapmarkup.md"), @"
+# name: Map-Markup
 # tools: Tools
 ## drawline: Draw Line
 ###note1: Notice
@@ -52,8 +52,8 @@ The line must not intersect itself.
     {
         var localizer = CreateLocalizer("de");
 
-        Assert.Equal("Linie Zeichnen", localizer["tools.redlining.tools.drawline"].Value);
-        Assert.Equal("Hinweis", localizer["tools.redlining.tools.drawline.note1"].Value);
+        Assert.Equal("Linie Zeichnen", localizer["tools.mapmarkup.tools.drawline"].Value);
+        Assert.Equal("Hinweis", localizer["tools.mapmarkup.tools.drawline.note1"].Value);
     }
 
     [Fact]
@@ -62,10 +62,10 @@ The line must not intersect itself.
         var localizer = CreateLocalizer("de");
 
         Assert.Equal("Zeichnen Sie bitte eine Linie mit mindestens zwei Stützpunkten.",
-            localizer["tools.redlining.tools.drawline.note1:body"].Value);
+            localizer["tools.mapmarkup.tools.drawline.note1:body"].Value);
 
         Assert.Equal("Die Linie darf sich nicht selbst überschneiden.",
-            localizer["tools.redlining.tools.drawline.note2:body"].Value);
+            localizer["tools.mapmarkup.tools.drawline.note2:body"].Value);
     }
 
     [Fact]
@@ -82,11 +82,11 @@ The line must not intersect itself.
     {
         var localizer = CreateLocalizer("en");
 
-        Assert.Equal("Redlining", localizer["tools.redlining.name"].Value);
-        Assert.Equal("Draw Line", localizer["tools.redlining.tools.drawline"].Value);
-        Assert.Equal("Notice", localizer["tools.redlining.tools.drawline.note1"].Value);
+        Assert.Equal("Map-Markup", localizer["tools.mapmarkup.name"].Value);
+        Assert.Equal("Draw Line", localizer["tools.mapmarkup.tools.drawline"].Value);
+        Assert.Equal("Notice", localizer["tools.mapmarkup.tools.drawline.note1"].Value);
         Assert.Equal("Please draw a line with at least two support points.",
-            localizer["tools.redlining.tools.drawline.note1:body"].Value);
+            localizer["tools.mapmarkup.tools.drawline.note1:body"].Value);
     }
 
     [Fact]
@@ -95,10 +95,10 @@ The line must not intersect itself.
         var localizerDe = CreateLocalizer("de");
         var localizerEn = CreateLocalizer("en");
 
-        Assert.NotEqual(localizerDe["tools.redlining.tools.drawline"].Value,
-                        localizerEn["tools.redlining.tools.drawline"].Value);
+        Assert.NotEqual(localizerDe["tools.mapmarkup.tools.drawline"].Value,
+                        localizerEn["tools.mapmarkup.tools.drawline"].Value);
 
-        Assert.NotEqual(localizerDe["tools.redlining.tools.drawline.note1:body"].Value,
-                        localizerEn["tools.redlining.tools.drawline.note1:body"].Value);
+        Assert.NotEqual(localizerDe["tools.mapmarkup.tools.drawline.note1:body"].Value,
+                        localizerEn["tools.mapmarkup.tools.drawline.note1:body"].Value);
     }
 }

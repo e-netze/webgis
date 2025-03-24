@@ -355,7 +355,7 @@
                                 onClientJoinedGroup: function (result) {
                                     //console.log('onClientJoinedGroup', result);
                                     if (_isSessionOwner) {
-                                        // Owner Syncs (Extent, Layers, Redlining, ...)
+                                        // Owner Syncs (Extent, Layers, MapMarkup, ...)
                                         webgis.liveshare.sync(result.connectionId);
                                     }
 
@@ -399,7 +399,7 @@
                                         if (currentGraphics && currentGraphics.features && currentGraphics.features.length > 0) {
                                             webgis.confirm({
                                                 title: 'Liveshare',
-                                                message: "Vor der LiveShare Session befanden sich in der aktuellen Karte Zeichnungselement aus Redlining. Möchten Sie die Zeichnungs- (Redlining-) Objekte aus der Live Share Session behalten, oder die ursprüglichen Element wieder herstellen?",
+                                                message: "Vor der LiveShare Session befanden sich in der aktuellen Karte Zeichnungselement aus Map-Markup. Möchten Sie die Zeichnungs- (Map-Markup) Objekte aus der Live Share Session behalten, oder die ursprüglichen Element wieder herstellen?",
                                                 cancelText: 'LiveShare Objekte behalten',
                                                 onCancel: function () { _clientGraphics = null; },
                                                 okText: 'Ursprügliche Element wiederherstellen',

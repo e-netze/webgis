@@ -44,7 +44,7 @@ use the 'Join session' button and enter the session ID there.
 # info3:
 
 With LiveShare, you can share maps live with other users. 
-The shared content includes the map section, visibility of data layers, and drawings (redlining). 
+The shared content includes the map section, visibility of data layers, and drawings (Map-Markup). 
 To start or join LiveShare, use the Live Share Connect window (on the right).
 
 # info4:

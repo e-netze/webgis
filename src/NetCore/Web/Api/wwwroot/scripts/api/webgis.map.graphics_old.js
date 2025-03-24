@@ -141,7 +141,7 @@
     };
 
     this.getToolDescription = function (tool) {
-        return webgis.l10n.get("redlining-" + (tool || this._tool)) || '';
+        return webgis.l10n.get("mapmarkup-" + (tool || this._tool)) || '';
     };
 
     this.setColor = function (col) {
@@ -606,7 +606,7 @@
                 break;
             case 'point':
                 //label = 'EPSG ' + properties.srs + ': ' + Math.round(properties.posX * 100) / 100 + ' ' + Math.round(properties.posY * 100) / 100;
-                label = element.metaText || webgis.l10n.get("redlining-tool-point");
+                label = element.metaText || webgis.l10n.get("mapmarkup-tool-point");
                 break;
         }
 

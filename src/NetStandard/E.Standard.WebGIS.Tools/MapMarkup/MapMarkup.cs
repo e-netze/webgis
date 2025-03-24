@@ -7,8 +7,8 @@ using E.Standard.WebGIS.Core.Extensions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Extensions;
-using E.Standard.WebGIS.Tools.Redlining.Export;
-using E.Standard.WebGIS.Tools.Redlining.Extensions;
+using E.Standard.WebGIS.Tools.MapMarkup.Export;
+using E.Standard.WebGIS.Tools.MapMarkup.Extensions;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -22,21 +22,20 @@ using E.Standard.WebMapping.Core.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
-namespace E.Standard.WebGIS.Tools.Redlining;
+namespace E.Standard.WebGIS.Tools.MapMarkup;
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(ClientDeviceDependent = true, SelectionInfoDependent = true, MapCrsDependent = true)]
-[ToolConfigurationSection("redlining")]
-[ToolHelp("tools/general/redlining/index.html")]
-public class Redlining : IApiServerToolLocalizable<Redlining>, 
-                         IApiButtonResources, 
-                         IGraphicsTool, 
+[ToolConfigurationSection("mapmarkup")]
+[ToolHelp("tools/general/mapmarkup/index.html")]
+public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
+                         IApiButtonResources,
+                         IGraphicsTool,
                          IApiToolConfirmation
 {
-    protected string toolContainerId = "webgis-redlining-tool-container";
+    protected string toolContainerId = "webgis-mapmarkup-tool-container";
 
     private const string ConfigAllowAddFromSelection = "allow-add-from-selection";
     private const string ConfigAllowAddFromSelectionMaxFeatures = "allow-add-from-selection-max-features";
@@ -49,7 +48,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
 
     #region IApiServerTool Member
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         List<IUIElement> uiImageButtons = new List<IUIElement>();
 
@@ -141,7 +140,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                             text = localizer.Localize("tools.open")
                         }
                         //,new UIHidden(){
-                        //    id="redlining-tool",
+                        //    id="mapmarkup-tool",
                         //    css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsTool})
                         //}
             });
@@ -161,7 +160,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                             text = localizer.Localize("tools.download")
                         }
                         //,new UIHidden(){
-                        //    id="redlining-tool",
+                        //    id="mapmarkup-tool",
                         //    css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsTool})
                         //}
             });
@@ -170,7 +169,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
 
         uiElements.Add(new UIOptionContainer()
         {
-            id = "webgis-redlining-tool",
+            id = "webgis-mapmarkup-tool",
             css = UICss.ToClass(new string[] { UICss.OptionContainerWithLabels }),
             style = "width:300px",
             elements = e.UseMobileBehavior() ?
@@ -183,55 +182,55 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
         uiElements.AddRange(
             new IUIElement[]{
                 new UIHidden(){
-                    id="redlining-tool",
+                    id="mapmarkup-tool",
                     css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsTool})
                 },
                 new UIHidden(){
-                    id="redlining-color",
+                    id="mapmarkup-color",
                     css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsColor})
                 },
                 new UIHidden(){
-                    id="redlining-opacity",
+                    id="mapmarkup-opacity",
                     css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsOpacity})
                 },
                 new UIHidden(){
-                    id="redlining-fillcolor",
+                    id="mapmarkup-fillcolor",
                     css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsFillColor})
                 },
                 new UIHidden(){
-                    id="redlining-fillopacity",
+                    id="mapmarkup-fillopacity",
                     css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsFillOpacity})
                 },
                 new UIHidden(){
-                    id="redlining-lineweight",
+                    id="mapmarkup-lineweight",
                     css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsLineWeight})
                 },
                 new UIHidden(){
-                    id="redlining-linestyle",
+                    id="mapmarkup-linestyle",
                     css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsLineStyle})
                 },
                 new UIHidden(){
-                    id="redlining-symbol",
+                    id="mapmarkup-symbol",
                     css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsSymbol})
                 },
                 new UIHidden(){
-                    id="redlining-fontsize",
+                    id="mapmarkup-fontsize",
                     css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsFontSize})
                 },
                 new UIHidden(){
-                    id="redlining-fontstyle",
+                    id="mapmarkup-fontstyle",
                     css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsFontStyle})
                 },
                 new UIHidden(){
-                    id="redlining-fontcolor",
+                    id="mapmarkup-fontcolor",
                     css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsFontColor})
                 },
                 new UIHidden(){
-                    id = "redlining-pointcolor",
+                    id = "mapmarkup-pointcolor",
                     css = UICss.ToClass(new []{ UICss.ToolParameter, UICss.AutoSetterMapGraphicsPointColor })
                 },
                 new UIHidden(){
-                    id = "redlining-pointsize",
+                    id = "mapmarkup-pointsize",
                     css = UICss.ToClass(new []{ UICss.ToolParameter, UICss.AutoSetterMapGraphicsPointSize })
                 }
         });
@@ -260,7 +259,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
         };
     }
 
-    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         return new ApiEventResponse();
     }
@@ -283,12 +282,12 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
 
     #region IApiButton Member
 
-    virtual public string Name => "Drawing (Redlining)";
+    virtual public string Name => "Drawing (Map Markup & Annotation)";
 
     public string Container => "Tools";
 
-    public string Image => UIImageButton.ToolResourceImage(this, "redlining");
-    
+    public string Image => UIImageButton.ToolResourceImage(this, "mapmarkup");
+
     public string ToolTip => "Simple drawing on the map.";
 
     public bool HasUI => true;
@@ -299,7 +298,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
 
     public void RegisterToolResources(IToolResouceManager toolResourceManager)
     {
-        toolResourceManager.AddImageResource("redlining", Properties.Resources.redlining);
+        toolResourceManager.AddImageResource("mapmarkup", Properties.Resources.mapmarkup);
         toolResourceManager.AddImageResource("pointer", Properties.Resources.pointer);
         toolResourceManager.AddImageResource("symbol", Properties.Resources.symbol);
         toolResourceManager.AddImageResource("point", Properties.Resources.point);
@@ -329,7 +328,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
         get
         {
             List<ApiToolConfirmation> confirmations = new List<ApiToolConfirmation>();
-            confirmations.AddRange(ApiToolConfirmation.CommandComfirmations(typeof(Redlining)));
+            confirmations.AddRange(ApiToolConfirmation.CommandComfirmations(typeof(MapMarkup)));
             return confirmations.ToArray();
         }
     }
@@ -353,7 +352,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("symbol")]
-    async public Task<ApiEventResponse> OnSymbolToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    async public Task<ApiEventResponse> OnSymbolToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddSymbolStyleElements(bridge, e, localizer, true);
 
@@ -399,7 +398,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("point")]
-    async public Task<ApiEventResponse> OnPointToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    async public Task<ApiEventResponse> OnPointToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddPointStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
@@ -430,7 +429,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("text")]
-    async public Task<ApiEventResponse> OnTextToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    async public Task<ApiEventResponse> OnTextToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddTextStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
@@ -461,7 +460,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("freehand")]
-    public ApiEventResponse OnFreehandToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public ApiEventResponse OnFreehandToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddFreehandStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
@@ -494,7 +493,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("line")]
-    async public Task<ApiEventResponse> OnLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    async public Task<ApiEventResponse> OnLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddLineStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
@@ -538,7 +537,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
         };
     }
 
-    async public Task<ApiEventResponse> On2DToolClick(IBridge bridge, ApiToolEventArguments e, GraphicsTool tool, ILocalizer<Redlining> localizer)
+    async public Task<ApiEventResponse> On2DToolClick(IBridge bridge, ApiToolEventArguments e, GraphicsTool tool, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().Add2DStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
@@ -590,25 +589,25 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("polygon")]
-    public Task<ApiEventResponse> OnPolygonToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public Task<ApiEventResponse> OnPolygonToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         return On2DToolClick(bridge, e, GraphicsTool.Polygon, localizer);
     }
 
     [ServerToolCommand("rectangle")]
-    public Task<ApiEventResponse> OnRectangleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public Task<ApiEventResponse> OnRectangleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         return On2DToolClick(bridge, e, GraphicsTool.Rectangle, localizer);
     }
 
     [ServerToolCommand("circle")]
-    public Task<ApiEventResponse> OnCircleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public Task<ApiEventResponse> OnCircleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         return On2DToolClick(bridge, e, GraphicsTool.Circle, localizer);
     }
 
     [ServerToolCommand("distance_circle")]
-    public ApiEventResponse OnDistanceCircleClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public ApiEventResponse OnDistanceCircleClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddDistanceCircleStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
@@ -626,7 +625,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("compass_rose")]
-    public ApiEventResponse OnCompassRoseClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public ApiEventResponse OnCompassRoseClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddCompassRoseStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
@@ -644,7 +643,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("dimline")]
-    public ApiEventResponse OnDimLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public ApiEventResponse OnDimLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddDimLineStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
@@ -677,7 +676,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("hectoline")]
-    public ApiEventResponse OnHectoLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public ApiEventResponse OnHectoLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddHectoLineStyleElements(e, localizer).AsStagedStyleElements(e);
 
@@ -710,10 +709,10 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("element-selected")]
-    async public Task<ApiEventResponse> OnElementClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    async public Task<ApiEventResponse> OnElementClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         ApiEventResponse resp = null;
-        switch (e["redlining-tool"])
+        switch (e["mapmarkup-tool"])
         {
             case "symbol":
                 resp = await OnSymbolToolClick(bridge, e, localizer);
@@ -756,7 +755,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
         if (resp != null)
         {
             resp.UISetters = new IUISetter[]{
-                new UISetter("webgis-redlining-tool", e["redlining-tool"])
+                new UISetter("webgis-mapmarkup-tool", e["mapmarkup-tool"])
             };
         }
 
@@ -764,14 +763,14 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("show-symbol-selector")]
-    public ApiEventResponse OnShowSymbolSelector(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public ApiEventResponse OnShowSymbolSelector(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
         => new ApiEventResponse()
             .AddUIElements(
                 new UIDiv()
                     .WithTarget(UIElementTarget.tool_modaldialog_noblocking_closable.ToString())
-                        .WithTargetTitle($"{localizer.Localize("symbology.set")}: {localizer.Localize($"tools.{e["redlinig-symbol-type"]}")}")
+                        .WithTargetTitle($"{localizer.Localize("symbology.set")}: {localizer.Localize($"tools.{e["mapmarkup-symbol-type"]}")}")
                         .WithTargetOnClose(ApiClientButtonCommand.refreshgraphicsui.ToString())
-                        .AddChildren(e["redlinig-symbol-type"] switch
+                        .AddChildren(e["mapmarkup-symbol-type"] switch
                         {
                             "symbol" => new List<IUIElement>().AddSymbolStyleElements(bridge, e, localizer),
                             "text" => new List<IUIElement>().AddTextStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
@@ -792,7 +791,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     [ServerToolCommand("show-single-symbol-selector")]
     public ApiEventResponse OnShowSelectedSymbolSelector(IBridge bridge, ApiToolEventArguments e)
     {
-        var styles = e.GetArray<string>("redlinig-styles");
+        var styles = e.GetArray<string>("mapmarkup-styles");
         bool expanded = styles.Length <= 3;
 
         return new ApiEventResponse()
@@ -821,7 +820,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     #region Upload / Download
 
     [ServerToolCommand("upload")]
-    public ApiEventResponse OnUploadClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public ApiEventResponse OnUploadClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         return new ApiEventResponse()
         {
@@ -845,7 +844,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                         new UIBreak(2),
                         new UISelect()
                         {
-                            id="redlining-upload-replaceelements",
+                            id="mapmarkup-upload-replaceelements",
                             css = UICss.ToClass(new string[]{ UICss.ToolParameter }),
                             options=new UISelect.Option[]
                             {
@@ -863,7 +862,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
             },
             UISetters = new IUISetter[]  // select/highlight tool
             {
-                 new UISetter("webgis-redlining-tool", "pointer")
+                 new UISetter("webgis-mapmarkup-tool", "pointer")
             }
         };
     }
@@ -872,9 +871,9 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     [ServerToolCommand("upload-objects")]
     public ApiEventResponse OnUploadObject(IBridge bridge, ApiToolEventArguments e)
     {
-        var format = e["redlining-upload-format"];
+        var format = e["mapmarkup-upload-format"];
         var file = e.GetFile("upload-file");
-        var replaceExistingRedlining = e["redlining-upload-replaceelements"] == "true";
+        var replaceExistingMapMarkup = e["mapmarkup-upload-replaceelements"] == "true";
 
         GeoJsonFeatures geoJsonFeatures = file.GetFeatures(e);
 
@@ -896,7 +895,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
 
             #endregion
 
-            #region add default properties (if not redlining features => only normal geoJson features
+            #region add default properties (if not mapmarkup features => only normal geoJson features
 
             foreach (var geoJsonFeature in geoJsonFeatures?.Features.Where(f => f["_meta.tool"] is null))
             {
@@ -912,7 +911,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
             {
                 Elements = geoJsonFeatures,
                 ActiveGraphicsTool = GraphicsTool.Pointer,
-                ReplaceElements = replaceExistingRedlining
+                ReplaceElements = replaceExistingMapMarkup
             },
             UIElements = new IUIElement[] {
                 new UIEmpty(){
@@ -921,13 +920,13 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
             },
             UISetters = new IUISetter[]  // select/highlight tool
             {
-                 new UISetter("webgis-redlining-tool", "pointer")
+                 new UISetter("webgis-mapmarkup-tool", "pointer")
             }
         };
     }
 
     [ServerToolCommand("download")]
-    public ApiEventResponse OnDownloadClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public ApiEventResponse OnDownloadClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         #region Prj Files für Shape download
 
@@ -973,11 +972,11 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                     {
                         new UISelect()
                         {
-                            id="redlining-download-format",
+                            id="mapmarkup-download-format",
                             css = UICss.ToClass(new string[]{ UICss.ToolParameter }),
                             options=new UISelect.Option[]
                             {
-                                new UISelect.Option() { value = "json", label = "Redlining Projekt (Geo-Json)" },
+                                new UISelect.Option() { value = "json", label = "Map-Markup Projekt (Geo-Json)" },
                                 new UISelect.Option() { value = "gpx", label = "GPX Datei" },
                                 new UISelect.Option() { value = "shp", label = "ESRI Shape Datei" },
 
@@ -986,14 +985,14 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                         new UIConditionDiv()
                         {
                             ConditionType = UIConditionDiv.ConditionTypes.ElementValue,
-                            ContitionElementId = "redlining-download-format",
+                            ContitionElementId = "mapmarkup-download-format",
                             ConditionArguments = new string[] { "shp" },
                             ConditionResult = true,
                             elements=new IUIElement[]
                             {
                                 new UISelect()
                                 {
-                                    id = "redlining-download-prj",
+                                    id = "mapmarkup-download-prj",
                                     css = UICss.ToClass(new string[]{UICss.ToolParameter}),
                                     options = prjOptions
                                 }
@@ -1011,7 +1010,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                         new UIConditionDiv()
                         {
                             ConditionType = UIConditionDiv.ConditionTypes.ElementValue,
-                            ContitionElementId = "redlining-download-format",
+                            ContitionElementId = "mapmarkup-download-format",
                             ConditionArguments = new string[] { "gpx" },
                             ConditionResult = true,
                             elements=new IUIElement[]
@@ -1025,7 +1024,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                         new UIConditionDiv()
                         {
                             ConditionType = UIConditionDiv.ConditionTypes.ElementValue,
-                            ContitionElementId = "redlining-download-format",
+                            ContitionElementId = "mapmarkup-download-format",
                             ConditionArguments = new string[] { "shp" },
                             ConditionResult = true,
                             elements=new IUIElement[]
@@ -1039,7 +1038,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                         new UIConditionDiv()
                         {
                             ConditionType = UIConditionDiv.ConditionTypes.ElementValue,
-                            ContitionElementId = "redlining-download-format",
+                            ContitionElementId = "mapmarkup-download-format",
                             ConditionArguments = new string[] { "json" },
                             ConditionResult = true,
                             elements=new IUIElement[]
@@ -1051,7 +1050,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                             }
                         },
                         new UIHidden(){
-                            id = "redlining-download-geojson",
+                            id = "mapmarkup-download-geojson",
                             css = UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsGeoJson})
                         }
                     }
@@ -1059,8 +1058,8 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
             },
             UISetters = new IUISetter[]  // select/highlight tool
             {
-                 new UISetter("webgis-redlining-tool", "pointer"),
-                 new UISetter("redlining-download-prj", defaultEpsgCode)
+                 new UISetter("webgis-mapmarkup-tool", "pointer"),
+                 new UISetter("mapmarkup-download-prj", defaultEpsgCode)
             }
         };
     }
@@ -1068,9 +1067,9 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     [ServerToolCommand("download-objects")]
     public ApiEventResponse OnDownloadObjects(IBridge bridge, ApiToolEventArguments e)
     {
-        string format = e["redlining-download-format"];
-        string redliningGeoJson = e["redlining-download-geojson"];
-        var features = JSerializer.Deserialize<GeoJsonFeatures>(redliningGeoJson);
+        string format = e["mapmarkup-download-format"];
+        string mapmarkupGeoJson = e["mapmarkup-download-geojson"];
+        var features = JSerializer.Deserialize<GeoJsonFeatures>(mapmarkupGeoJson);
 
         if (!e.GetConfigBool(ConfigAllowDownloadFromSelection, false))
         {
@@ -1084,17 +1083,17 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
         if (format == "gpx")
         {
             export = new GpxExport();
-            name = "redlining.gpx";
+            name = "mapmarkup.gpx";
         }
         else if (format == "shp")
         {
-            export = new ShapeFileExport(bridge, e.GetInt("redlining-download-prj"));
-            name = "redlining.zip";
+            export = new ShapeFileExport(bridge, e.GetInt("mapmarkup-download-prj"));
+            name = "mapmarkup.zip";
         }
         else if (format == "json")
         {
             export = new GeoJsonExport();
-            name = "redlining.json";
+            name = "mapmarkup.json";
         }
         else
         {
@@ -1111,7 +1110,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     #region From Selection
 
     [ServerToolCommand("add-from-selection-dialog")]
-    async public Task<ApiEventResponse> AddFromSelectionDialog(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    async public Task<ApiEventResponse> AddFromSelectionDialog(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         if (!e.GetConfigBool(ConfigAllowAddFromSelection, false))
         {
@@ -1121,7 +1120,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
         var maxFeatures = e.GetConfigInt(ConfigAllowAddFromSelectionMaxFeatures);
         if (maxFeatures > 0 && e.SelectionInfo.ObjectIds.Count() > maxFeatures)
         {
-            throw new Exception($"Es dürfen maximal {maxFeatures} ins Redlining übernommen werden");
+            throw new Exception($"Es dürfen maximal {maxFeatures} ins Map-Markup übernommen werden");
         }
 
         //var query = await bridge.GetFirstLayerQuery(e.SelectionInfo.ServiceId, e.SelectionInfo.LayerId);
@@ -1153,11 +1152,11 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                                     {
                                         new UILabel()
                                         {
-                                            label = String.Format(localizer.Localize("selection.label1:body"), query.Name) 
+                                            label = String.Format(localizer.Localize("selection.label1:body"), query.Name)
                                         },
                                         new UISelect()
                                         {
-                                            id="redlining-from-selection-textfield",
+                                            id="mapmarkup-from-selection-textfield",
                                             css = UICss.ToClass(new string[]{ UICss.ToolParameter }),
                                             options = query.GetSimpleTableFields()
                                                            .Select(keyValuePair => new UISelect.Option(){ value=keyValuePair.Key, label=keyValuePair.Value })
@@ -1177,7 +1176,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                                     {
                                         new UILabel() {label = $"{localizer.Localize("selection.symbology")}:"},
                                         new UIDiv() {
-                                            elements = e["redlining-tool"] switch
+                                            elements = e["mapmarkup-tool"] switch
                                             {
                                                 "symbol" => new List<IUIElement>().AddSymbolStyleElements(bridge, e, localizer),
                                                 "text" => new List<IUIElement>().AddTextStyleElements(e, localizer),
@@ -1200,7 +1199,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("add-from-selection")]
-    async public Task<ApiEventResponse> AddFromSelection(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    async public Task<ApiEventResponse> AddFromSelection(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         if (!e.GetConfigBool(ConfigAllowAddFromSelection, false))
         {
@@ -1226,8 +1225,8 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
 
         GeoJsonFeatures geoJsonFeatures = new GeoJsonFeatures();
 
-        string textFieldName = e["redlining-from-selection-textfield"];
-        var redliningTool = e["redlining-tool"];
+        string textFieldName = e["mapmarkup-from-selection-textfield"];
+        var mapmarkupTool = e["mapmarkup-tool"];
 
         geoJsonFeatures.Features = selectedFeatures
                                             .Select(selectedFeature =>
@@ -1235,7 +1234,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                                                 var geoJsonFeature = new GeoJsonFeature();
                                                 var selectedFeatureShape = selectedFeature.Shape;
 
-                                                switch (redliningTool)
+                                                switch (mapmarkupTool)
                                                 {
                                                     case "symbol":
                                                         selectedFeatureShape = selectedFeatureShape.ShapeToPoint(sRef: sRef4326);
@@ -1268,7 +1267,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
             Graphics = new GraphicsResponse(bridge)
             {
                 Elements = geoJsonFeatures,
-                ActiveGraphicsTool = e["redlining-tool"].ParseOrDefault(GraphicsTool.Pointer),
+                ActiveGraphicsTool = e["mapmarkup-tool"].ParseOrDefault(GraphicsTool.Pointer),
                 ReplaceElements = false
             },
             UIElements = new IUIElement[] {
@@ -1284,7 +1283,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     #region IO
 
     [ServerToolCommand("save")]
-    public ApiEventResponse OnSaveClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public ApiEventResponse OnSaveClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         return new ApiEventResponse()
         {
@@ -1301,14 +1300,14 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                         new UILabel(){ label = localizer.Localize("label-name") },
                         new UIBreak(),
                         new UIInputAutocomplete(UIInputAutocomplete.MethodSource(bridge,this.GetType(),"autocomplete-projects"),0){
-                            id="redlining-io-save-name",
+                            id="mapmarkup-io-save-name",
                             css=UICss.ToClass(new string[]{UICss.ToolParameter}),
                         },
                         new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand,"save-project") {
                             text = localizer.Localize("save")
                         }),
                         new UIHidden(){
-                            id="redlining-geojson",
+                            id="mapmarkup-geojson",
                             css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsGeoJson})
                         }
                     }
@@ -1316,7 +1315,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
             },
             UISetters = new IUISetter[]  // select/highlight tool
             {
-                 new UISetter("webgis-redlining-tool", "pointer")
+                 new UISetter("webgis-mapmarkup-tool", "pointer")
             }
         };
     }
@@ -1341,16 +1340,16 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("save-project")]
-    public ApiEventResponse OnSaveProject(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public ApiEventResponse OnSaveProject(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
-        string name = e["redlining-io-save-name"];
+        string name = e["mapmarkup-io-save-name"];
 
         if (!name.IsValidFilename(out string invalidChars))
         {
             throw new Exception(String.Format(localizer.Localize("io.exception-invalid-char"), invalidChars));
         }
 
-        bridge.Storage.Save(name, e["redlining-geojson"]);
+        bridge.Storage.Save(name, e["mapmarkup-geojson"]);
 
         return new ApiEventResponse()
         {
@@ -1363,7 +1362,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     }
 
     [ServerToolCommand("open")]
-    public ApiEventResponse OnOpenClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Redlining> localizer)
+    public ApiEventResponse OnOpenClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var names = bridge.Storage.GetNames();
 
@@ -1387,7 +1386,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
                         new UILabel(){ label = localizer.Localize("label-name") },
                         new UIBreak(),
                         new UISelect(names){
-                              id="redlining-io-load-name",
+                              id="mapmarkup-io-load-name",
                               css=UICss.ToClass(new []{ UICss.ToolParameter }),
                         },
                         new UIButtonContainer(
@@ -1406,7 +1405,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
             },
             UISetters = new IUISetter[]  // select/highlight tool
             {
-                 new UISetter("webgis-redlining-tool", "pointer")
+                 new UISetter("webgis-mapmarkup-tool", "pointer")
             }
         };
     }
@@ -1414,7 +1413,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     [ServerToolCommand("load-project")]
     public ApiEventResponse OnLoadProject(IBridge bridge, ApiToolEventArguments e)
     {
-        string name = e["redlining-io-load-name"];
+        string name = e["mapmarkup-io-load-name"];
 
         string geoJson = bridge.Storage.LoadString(name);
         return new ApiEventResponse()
@@ -1432,7 +1431,7 @@ public class Redlining : IApiServerToolLocalizable<Redlining>,
     [ToolCommandConfirmation("io.confirm-delete-project", ApiToolConfirmationType.YesNo, ApiToolConfirmationEventType.ButtonClick)]
     public ApiEventResponse OnDeleteProject(IBridge bridge, ApiToolEventArguments e)
     {
-        string name = e["redlining-io-load-name"];
+        string name = e["mapmarkup-io-load-name"];
 
         if (!String.IsNullOrEmpty(name))
         {

@@ -1,4 +1,4 @@
-{
+﻿{
   "crs": {
     "epsg": 3857,
     "id": "web_mercator_at@default"
@@ -150,7 +150,7 @@
         "webgis.tools.advanced.measureArea": true,
         "webgis.tools.advanced.measureCircle": true,
         "webgis.tools.advanced.profile": true,
-        "webgis.tools.advanced.redlining": true,
+        "webgis.tools.advanced.mapmarkup": true,
         "webgis.tools.advanced.edit": true,
         "webgis.tools.advanced.snapping": true,
         "webgis.tools.advanced.geocode": true,
@@ -286,7 +286,7 @@
                   "webgis.tools.measurearea",
                   "webgis.tools.measurecircle",
                   "webgis.tools.profile.createprofile",
-                  "webgis.tools.redlining.redlining",
+                  "webgis.tools.mapmarkup.mapmarkup",
                   "webgis.tools.editing.edit",
                   "webgis.tools.snapping",
                   "webgis.tools.georeferencing.georeference",

@@ -8,7 +8,7 @@ using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using System;
 using System.Collections.Generic;
 
-namespace E.Standard.WebGIS.Tools.Redlining.Extensions;
+namespace E.Standard.WebGIS.Tools.MapMarkup.Extensions;
 static internal class UIElementExtensions
 {
     #region By Symbol Type (line, point, text)
@@ -18,10 +18,10 @@ static internal class UIElementExtensions
         {
                 new UISymbolSelector(bridge, localizer.Localize("symbology.symbol"),
                             buttonCommand: ApiClientButtonCommand.setgraphicssymbol,
-                            symbolId: (string)e.GetValue("redlining-symbol",null)
+                            symbolId: (string)e.GetValue("mapmarkup-symbol",null)
                         ) {
                     //css=UICss.ToClass(new string[]{UICss.ToolParameterPersistent}),
-                    id="redlining-symbol-symbol",
+                    id="mapmarkup-symbol-symbol",
                 }
         });
 
@@ -44,14 +44,14 @@ static internal class UIElementExtensions
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
-                value = e.GetValue("redlining-pointcolor","#ff0000"),
-                id = "redlining-point-color"
+                value = e.GetValue("mapmarkup-pointcolor","#ff0000"),
+                id = "mapmarkup-point-color"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.point-size"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicspointsize){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(stagedOnly),
-                value = e.GetValue("redlining-pointsize", 10),
-                id = "redlining-point-size"
+                value = e.GetValue("mapmarkup-pointsize", 10),
+                id = "mapmarkup-point-size"
             },
         }));
 
@@ -66,25 +66,25 @@ static internal class UIElementExtensions
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
-                value = e.GetValue("redlining-fontsize", 12),
+                value = e.GetValue("mapmarkup-fontsize", 12),
                 //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
-                id = "redlining-text-fontsize"
+                id = "mapmarkup-text-fontsize"
             },
             new UIFontStyleSelector(localizer.Localize("symbology.font-style"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextstyle)
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
-                value = e.GetValue("redlining-fontstyle","regular"),
+                value = e.GetValue("mapmarkup-fontstyle","regular"),
                 //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
-                id = "redlining-text-fontstyle"
+                id = "mapmarkup-text-fontstyle"
             },
             new UIColorSelector(localizer.Localize("symbology.font-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextcolor, false)
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
-                value = e.GetValue("redlining-fontcolor","#000000"),
+                value = e.GetValue("mapmarkup-fontcolor","#000000"),
                 //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
-                id = "redlining-text-fontcolor"
+                id = "mapmarkup-text-fontcolor"
             }
         }));
 
@@ -93,7 +93,7 @@ static internal class UIElementExtensions
 
     static public List<IUIElement> AddFreehandStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
-        var lineColor = e.GetValue("redlining-color", "#ff0000")?.ToString();
+        var lineColor = e.GetValue("mapmarkup-color", "#ff0000")?.ToString();
         if (String.IsNullOrWhiteSpace(lineColor) || lineColor == "none")
         {
             lineColor = "#ff0000";
@@ -105,15 +105,15 @@ static internal class UIElementExtensions
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=lineColor,
-                //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
-                id="redlining-line-linecolor"
+                //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-line-linecolor"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
-                value=e.GetValue("redlining-lineweight",4),
-                //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
-                id="redlining-line-lineweight"
+                value=e.GetValue("mapmarkup-lineweight",4),
+                //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-line-lineweight"
             }
         }));
 
@@ -122,7 +122,7 @@ static internal class UIElementExtensions
 
     static public List<IUIElement> AddLineStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
-        var lineColor = e.GetValue("redlining-color", "#ff0000")?.ToString();
+        var lineColor = e.GetValue("mapmarkup-color", "#ff0000")?.ToString();
         if (String.IsNullOrWhiteSpace(lineColor) || lineColor == "none")
         {
             lineColor = "#ff0000";
@@ -134,22 +134,22 @@ static internal class UIElementExtensions
                     CollapseState = IsCollapsed(isCollapsed),
                     ExpandBehavior=ExpandMode(collapseExclusive),
                     value=lineColor,
-                    //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
-                    id="redlining-line-linecolor"
+                    //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                    id="mapmarkup-line-linecolor"
                 },
                 new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
                     CollapseState = IsCollapsed(isCollapsed),
                     ExpandBehavior=ExpandMode(collapseExclusive),
-                    value=e.GetValue("redlining-lineweight", 4),
-                    //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
-                    id="redlining-line-lineweight"
+                    value=e.GetValue("mapmarkup-lineweight", 4),
+                    //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                    id="mapmarkup-line-lineweight"
                 },
                 new UILineStyleSelector(localizer.Localize("symbology.line-style"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinestyle){
                     CollapseState = IsCollapsed(isCollapsed),
                     ExpandBehavior=ExpandMode(collapseExclusive),
-                    //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-linestyle")? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
-                    id="redlining-line-linestyle",
-                    value=e.GetValue("redlining-linestyle", "1")
+                    //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-linestyle")? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                    id="mapmarkup-line-linestyle",
+                    value=e.GetValue("mapmarkup-linestyle", "1")
                 }
         }));
 
@@ -163,38 +163,38 @@ static internal class UIElementExtensions
             new UIColorSelector(localizer.Localize("symbology.fill-color"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicsfillcolor, true){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
-                value=e.GetValue("redlining-fillcolor", "#ffff00"),
-                //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-fillcolor")?UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
-                id="redlining-polyline-fillcolor"
+                value=e.GetValue("mapmarkup-fillcolor", "#ffff00"),
+                //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-fillcolor")?UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-polyline-fillcolor"
             },
             new UIOpacitySelector(localizer.Localize("symbology.fill-opacity"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsfillopacity)
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
-                value=e.GetValue("redlining-fillopacity", "20"),
-                //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-fillcolor")?UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
-                id="redlining-polyline-fillopacity"
+                value=e.GetValue("mapmarkup-fillopacity", "20"),
+                //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-fillcolor")?UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-polyline-fillopacity"
             },
             new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinecolor, true){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
-                value=e.GetValue("redlining-color","#ff0000"),
-                //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-color")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
-                id="redlining-polyline-linecolor"
+                value=e.GetValue("mapmarkup-color","#ff0000"),
+                //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-color")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
+                id="mapmarkup-polyline-linecolor"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
-                value=e.GetValue("redlining-lineweight",4),
-                //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-lineweight")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
-                id="redlining-polyline-lineweight"
+                value=e.GetValue("mapmarkup-lineweight",4),
+                //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-lineweight")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
+                id="mapmarkup-polyline-lineweight"
             },
             new UILineStyleSelector(localizer.Localize("symbology.line-style"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinestyle){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
-                //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-linestyle")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
-                id="redlining-polyline-linestyle",
-                value=e.GetValue("redlining-linestyle","1")
+                //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-linestyle")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
+                id="mapmarkup-polyline-linestyle",
+                value=e.GetValue("mapmarkup-linestyle","1")
             }
         }));
 
@@ -208,23 +208,23 @@ static internal class UIElementExtensions
             new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, true) {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
-                value=e.GetValue("redlining-color","#ff0000"),
-                //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
-                id="redlining-distance_circle-linecolor"
+                value=e.GetValue("mapmarkup-color","#ff0000"),
+                //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-distance_circle-linecolor"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
-                value=e.GetValue("redlining-lineweight",4),
-                //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-lineweight")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
-                id="redlining-distance_circle-lineweight"
+                value=e.GetValue("mapmarkup-lineweight",4),
+                //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-lineweight")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
+                id="mapmarkup-distance_circle-lineweight"
             },
             new UIColorSelector(localizer.Localize("symbology.fill-color"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicsfillcolor, true){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
-                value=e.GetValue("redlining-fillcolor", "#ffff00"),
-                //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-fillcolor")?UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
-                id="redlining-distance_circle-fillcolor"
+                value=e.GetValue("mapmarkup-fillcolor", "#ffff00"),
+                //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-fillcolor")?UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-distance_circle-fillcolor"
             },
             new UIOptionContainer()
             {
@@ -253,7 +253,7 @@ static internal class UIElementExtensions
                                 new UISelect.Option() { value="15", label="15" },
                                 new UISelect.Option() { value="20", label="20" },
                             },
-                            id="redlining-distance_circle-steps",
+                            id="mapmarkup-distance_circle-steps",
                             css=UICss.ToClass(new string[]{ UICss.GraphicsDistanceCircleSteps })
                         },
                         new UIBreak(),
@@ -262,8 +262,8 @@ static internal class UIElementExtensions
                         },
                         new UIInputNumber() {
                             MaxValue = double.MaxValue,
-                            id = "redlining-distance_circle-radius",
-                            value = e.GetValue("redlining-distance_circle-radius", "1000"),
+                            id = "mapmarkup-distance_circle-radius",
+                            value = e.GetValue("mapmarkup-distance_circle-radius", "1000"),
                             css = UICss.ToClass(new string[]{ UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.GraphicsDistanceCircleRadius })
                         },
                         new UIButtonContainer(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsdistancecircleradius)
@@ -285,16 +285,16 @@ static internal class UIElementExtensions
             new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, true) {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior= ExpandMode(collapseExclusive),
-                value=e.GetValue("redlining-color","#ff0000"),
-                //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistantImportant }),
-                id="redlining-compass-rose-linecolor"
+                value=e.GetValue("mapmarkup-color","#ff0000"),
+                //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistantImportant }),
+                id="mapmarkup-compass-rose-linecolor"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior= ExpandMode(collapseExclusive),
-                value=e.GetValue("redlining-lineweight",4),
-                //css=UICss.ToClass(new string[]{e.IsEmpty("redlining-lineweight")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistantImportant}),
-                id="redlining-compass-rose-lineweight"
+                value=e.GetValue("mapmarkup-lineweight",4),
+                //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-lineweight")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistantImportant}),
+                id="mapmarkup-compass-rose-lineweight"
             },
             new UIOptionContainer()
             {
@@ -315,7 +315,7 @@ static internal class UIElementExtensions
                                 new UISelect.Option() { value="32", label="32" },
                                 new UISelect.Option() { value="36", label="36" }
                             },
-                            id="redlining-compass-rose-steps",
+                            id="mapmarkup-compass-rose-steps",
                             css=UICss.ToClass(new string[]{ UICss.GraphicsCompassRoseSteps })
                         }
                     }
@@ -327,7 +327,7 @@ static internal class UIElementExtensions
 
     static public List<IUIElement> AddDimLineStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
-        var lineColor = e.GetValue("redlining-color", "#000000")?.ToString();
+        var lineColor = e.GetValue("mapmarkup-color", "#000000")?.ToString();
 
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
@@ -335,23 +335,23 @@ static internal class UIElementExtensions
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior= ExpandMode(collapseExclusive),
                 value=lineColor,
-                //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
-                id="redlining-color"
+                //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-color"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslineweight){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
-                value=e.GetValue("redlining-lineweight", 2),
-                //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
-                id="redlining-lineweight"
+                value=e.GetValue("mapmarkup-lineweight", 2),
+                //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-lineweight"
             },
             new UIFontSizeSelector(localizer.Localize("symbology.font-size"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
-                value = e.GetValue("redlining-fontsize", 14),
+                value = e.GetValue("mapmarkup-fontsize", 14),
                 //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
-                id = "redlining-fontsize"
+                id = "mapmarkup-fontsize"
             },
         }));
 
@@ -360,7 +360,7 @@ static internal class UIElementExtensions
 
     static public List<IUIElement> AddHectoLineStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
-        var lineColor = e.GetValue("redlining-color", "#000000")?.ToString();
+        var lineColor = e.GetValue("mapmarkup-color", "#000000")?.ToString();
 
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
@@ -368,23 +368,23 @@ static internal class UIElementExtensions
                 CollapseState = IsCollapsed(isCollapsed),
                  ExpandBehavior=ExpandMode(collapseExclusive),
                 value=lineColor,
-                //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
-                id="redlining-color"
+                //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-color"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior=ExpandMode(collapseExclusive),
-                value=e.GetValue("redlining-lineweight", 2),
-                //css=UICss.ToClass(new string[]{ e.IsEmpty("redlining-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
-                id="redlining-lineweight"
+                value=e.GetValue("mapmarkup-lineweight", 2),
+                //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-lineweight"
             },
             new UIFontSizeSelector(localizer.Localize("symbology.font-size"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
             {
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
-                value = e.GetValue("redlining-fontsize", 14),
+                value = e.GetValue("mapmarkup-fontsize", 14),
                 //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
-                id = "redlining-fontsize"
+                id = "mapmarkup-fontsize"
             },
             new UIOptionContainer()
             {
@@ -402,7 +402,7 @@ static internal class UIElementExtensions
                                 new UISelect.Option() { value="m", label = $"{localizer.Localize("meters")} [m]" },
                                 new UISelect.Option() { value="km", label = $"{localizer.Localize("kilometers")} [m]" }
                             },
-                            id="redlining-hectoline-unit",
+                            id="mapmarkup-hectoline-unit",
                             css=UICss.ToClass(new string[]{ UICss.GraphicsHectolineUnit })
                         },
                         new UIBreak(),
@@ -412,8 +412,8 @@ static internal class UIElementExtensions
                         new UIInputNumber() {
                             MinValue = 1,
                             MaxValue = double.MaxValue,
-                            id = "redlining-hectoline-interval",
-                            value = e.GetValue("redlining-hectoline-interval", "100"),
+                            id = "mapmarkup-hectoline-interval",
+                            value = e.GetValue("mapmarkup-hectoline-interval", "100"),
                             css = UICss.ToClass(new string[]{ UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.GraphicsHectolineInterval })
                         },
                         new UIButtonContainer(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicshectolineinterval)
@@ -469,7 +469,7 @@ static internal class UIElementExtensions
                     buttonCommand: ApiClientButtonCommand.setgraphics_symbol_and_apply_to_selected,
                     symbolId: null)
             {
-                id = "redlining-symbol-symbol",
+                id = "mapmarkup-symbol-symbol",
                 AllowNullValues = true,
             }
         );
@@ -490,7 +490,7 @@ static internal class UIElementExtensions
                 AllowNullValues = true,
                 CollapseState = expanded ? UICollapsableElement.CollapseStatus.Expanded : UICollapsableElement.CollapseStatus.Collapsed,
                 value = null,
-                id = "redlining-point-color"
+                id = "mapmarkup-point-color"
             }
         );
 
@@ -509,7 +509,7 @@ static internal class UIElementExtensions
                 AllowNullValues = true,
                 CollapseState = expanded ? UICollapsableElement.CollapseStatus.Expanded : UICollapsableElement.CollapseStatus.Collapsed,
                 value = null,
-                id = "redlining-point-size"
+                id = "mapmarkup-point-size"
             }
         );
 
@@ -529,7 +529,7 @@ static internal class UIElementExtensions
                 AllowNullValues = true,
                 CollapseState = expanded ? UICollapsableElement.CollapseStatus.Expanded : UICollapsableElement.CollapseStatus.Collapsed,
                 value = null,
-                id = "redlining-text-fontcolor"
+                id = "mapmarkup-text-fontcolor"
             }
         );
 
@@ -548,7 +548,7 @@ static internal class UIElementExtensions
                AllowNullValues = true,
                CollapseState = expanded ? UICollapsableElement.CollapseStatus.Expanded : UICollapsableElement.CollapseStatus.Collapsed,
                value = null,
-               id = "redlining-text-fontsize"
+               id = "mapmarkup-text-fontsize"
            }
         );
 
@@ -568,7 +568,7 @@ static internal class UIElementExtensions
                AllowNullValues = true,
                CollapseState = expanded ? UICollapsableElement.CollapseStatus.Expanded : UICollapsableElement.CollapseStatus.Collapsed,
                value = null,
-               id = "redlining-line-linecolor"
+               id = "mapmarkup-line-linecolor"
            }
         );
 
@@ -587,7 +587,7 @@ static internal class UIElementExtensions
                 AllowNullValues = true,
                 CollapseState = expanded ? UICollapsableElement.CollapseStatus.Expanded : UICollapsableElement.CollapseStatus.Collapsed,
                 value = null,
-                id = "redlining-line-lineweight"
+                id = "mapmarkup-line-lineweight"
             }
         );
 
@@ -605,7 +605,7 @@ static internal class UIElementExtensions
             {
                 AllowNullValues = true,
                 CollapseState = expanded ? UICollapsableElement.CollapseStatus.Expanded : UICollapsableElement.CollapseStatus.Collapsed,
-                id = "redlining-line-linestyle",
+                id = "mapmarkup-line-linestyle",
                 value = null
             }
         );
@@ -626,7 +626,7 @@ static internal class UIElementExtensions
                 AllowNullValues = true,
                 CollapseState = expanded ? UICollapsableElement.CollapseStatus.Expanded : UICollapsableElement.CollapseStatus.Collapsed,
                 value = null,
-                id = "redlining-polyline-fillcolor"
+                id = "mapmarkup-polyline-fillcolor"
             }
         );
 
@@ -645,7 +645,7 @@ static internal class UIElementExtensions
                 AllowNullValues = true,
                 CollapseState = expanded ? UICollapsableElement.CollapseStatus.Expanded : UICollapsableElement.CollapseStatus.Collapsed,
                 value = null,
-                id = "redlining-polyline-fillopacity"
+                id = "mapmarkup-polyline-fillopacity"
             }
         );
 

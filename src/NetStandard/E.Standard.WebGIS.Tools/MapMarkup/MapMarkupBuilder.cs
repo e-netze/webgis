@@ -1,16 +1,16 @@
 ﻿using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 
-namespace E.Standard.WebGIS.Tools.Redlining;
+namespace E.Standard.WebGIS.Tools.MapMarkup;
 
 [Export(typeof(IApiButton))]
 [ToolClient("mapbuilder")]
-public class RedliningMapBuilder : Redlining
+public class MapMarkupBuilder : MapMarkup
 {
-    public RedliningMapBuilder()
+    public MapMarkupBuilder()
     {
         base.toolContainerId = base.toolContainerId + "_mapbuilder";
     }
 
-    public override string Name => "Redlining";
+    public override string Name => "Map-Markup";
 }

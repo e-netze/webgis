@@ -1,7 +1,7 @@
 ﻿using E.Standard.Esri.Shapefile;
 using System.Collections.Generic;
 
-namespace E.Standard.WebGIS.Tools.Redlining.Export;
+namespace E.Standard.WebGIS.Tools.MapMarkup.Export;
 
 static class Mapping
 {

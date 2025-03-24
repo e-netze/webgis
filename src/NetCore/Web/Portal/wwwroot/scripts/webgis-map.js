@@ -1031,16 +1031,16 @@ webgis.mapInitializer = (function (m) {
                                                             if (countGraphicsElements > 0) {
                                                                 webgis.confirm({
                                                                     title: "Karte wechseln...",
-                                                                    message: "In der altuellen Karte befinden sich " + countGraphicsElements + " Redlining Element(e). Diese werden beim Wechseln einer Karte standardmäßig nicht übernommen.\n\nMöchten Sie das Redlining dennoch in die neue Karte übernehmen? Dazu müssen die Objekte lokal im Browser temporär zwischengespeichert werden.\n\nTipp: Um Redlining dauerhaft zu erhalten, kann es auch als Redlining-Projekt (JSON) herunter geladen und in einer anderen Karte hochgeladen werden.",
+                                                                    message: "In der altuellen Karte befinden sich " + countGraphicsElements + " Map-Markup Element(e). Diese werden beim Wechseln einer Karte standardmäßig nicht übernommen.\n\nMöchten Sie das Map-Markup dennoch in die neue Karte übernehmen? Dazu müssen die Objekte lokal im Browser temporär zwischengespeichert werden.\n\nTipp: Um Map-Markup Objekte dauerhaft zu erhalten, kann es auch als Map-Markup-Projekt (JSON) herunter geladen und in einer anderen Karte hochgeladen werden.",
                                                                     iconUrl: webgis.css.imgResource('drawing-100.png'),
-                                                                    okText: 'Redlining in neue Karte übernehmen',
+                                                                    okText: 'Map-Markup in neue Karte übernehmen',
                                                                     onOk: function () {
                                                                         var grGuid = webgis.guid(), pwGuid = webgis.guid();
                                                                         mapLocationUrl += '&_temp_graphics=' + grGuid + '&_temp_graphics_x=' + pwGuid;
                                                                         webgis.localStorage.set('_temp_graphics_' + grGuid, webgis.cryptoJS.simpleEcrypt(pwGuid, JSON.stringify(map.graphics.toGeoJson())));
                                                                         changeMap();
                                                                     },
-                                                                    cancelText: 'Redlining verwerfen',
+                                                                    cancelText: 'Map-Markup verwerfen',
                                                                     onCancel: function() {
                                                                         changeMap();
                                                                     }

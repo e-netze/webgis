@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 /// and bodies.
 /// 
 /// Example of a Markdown file: redlinig.en.md
-/// #redlining: Redlining
+/// #mapmarkup: Map-Markup
 /// ##tools: Tools
 /// ###drawline: Draw Line
 /// ####note1: Notice
@@ -21,12 +21,12 @@ using System.Text.RegularExpressions;
 /// usage:
 /// Inject IStringLocalizer _localizer into your service.
 /// 
-/// _localizer["redlining.tools.drawline"] returns "Draw Line"
-/// _localizer["redlining.tools.drawline.note1:body"] returns "Please draw a line with at least two support points."
+/// _localizer["mapmarkup.tools.drawline"] returns "Draw Line"
+/// _localizer["mapmarkup.tools.drawline.note1:body"] returns "Please draw a line with at least two support points."
 /// 
 /// </summary>
 
-class MarkdownLocalizer : IStringLocalizer
+public class MarkdownLocalizer : IStringLocalizer
 {
     private static ConcurrentDictionary<string, Translations> LanguageDictionaries = new();
 

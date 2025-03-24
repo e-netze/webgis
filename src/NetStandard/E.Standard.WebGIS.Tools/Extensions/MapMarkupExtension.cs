@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace E.Standard.WebGIS.Tools.Extensions;
 
-static internal class RedliningExtension
+static internal class MapMarkupExtension
 {
     static public string ToValidHexColor(this string hex, string defaultValue)
     {

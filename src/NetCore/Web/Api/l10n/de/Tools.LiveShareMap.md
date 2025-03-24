@@ -45,7 +45,7 @@ verwenden sie den Button 'An Session teilnehmen' und geben dort die Session-Id e
 # info3:
 
 Mit LiveShare kann man Karten Live mit anderern Anwendern teilen. 
-Geteilt werden der Karteauschnitt, Sichbarkeit von Datenebenen, Zeichnungen (Redlining). 
+Geteilt werden der Karteauschnitt, Sichbarkeit von Datenebenen, Zeichnungen (Map-Markup). 
 Zum Starten oder zum Teilnehmen an LiveShare verwenden sie das Live Share Connect Fenster (rechts).
 
 # info4:

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace E.Standard.WebGIS.CMS;
 
@@ -95,7 +95,7 @@ public enum DefaultToolId
     Select = 6,
     Measure = 7,
     XY = 8,
-    Redlining = 9,
+    MapMarkup = 9,
     Email = 10,
     Editing = 11
 }

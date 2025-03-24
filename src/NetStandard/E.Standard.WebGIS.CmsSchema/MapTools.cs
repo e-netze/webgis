@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core.IO.Abstractions;
+ï»¿using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.Security.Reflection;
@@ -37,7 +37,7 @@ public class MapTools : SchemaNode, IEditable
     private bool _measure3d = false;
     private bool _xy = true;
     private bool _mapoverlay = true;
-    private bool _redlining = true;
+    private bool _mapMarkup = true;
     private bool _email = false;
     private bool _editing = true;
     private bool _snapping = true;
@@ -125,7 +125,7 @@ public class MapTools : SchemaNode, IEditable
     }
     [Browsable(true)]
     [DisplayName("Karte Aktualisieren")]
-    [Category("Maßstab/Atkualisierung")]
+    [Category("MaÃŸstab/Atkualisierung")]
     public bool Refresh
     {
         get { return _refresh; }
@@ -140,7 +140,7 @@ public class MapTools : SchemaNode, IEditable
         set { _fullextent = value; }
     }
     [Browsable(true)]
-    [DisplayName("Zoom Zurück")]
+    [DisplayName("Zoom ZurÃ¼ck")]
     [Category("Kartennavigation")]
     public bool ZoomBack
     {
@@ -148,7 +148,7 @@ public class MapTools : SchemaNode, IEditable
         set { _zoomback = value; }
     }
     [Browsable(true)]
-    [DisplayName("Zoom Vorwärts")]
+    [DisplayName("Zoom VorwÃ¤rts")]
     [Category("Kartennavigation")]
     public bool ZoomForward
     {
@@ -164,8 +164,8 @@ public class MapTools : SchemaNode, IEditable
         set { _maprotation = value; }
     }
     [Browsable(true)]
-    [DisplayName("Referenzmaßstab setzen")]
-    [Category("Maßstab/Darstellung")]
+    [DisplayName("ReferenzmaÃŸstab setzen")]
+    [Category("MaÃŸstab/Darstellung")]
     [AuthorizablePropertyAttribute("refscale", false)]
     public bool RefScale
     {
@@ -173,7 +173,7 @@ public class MapTools : SchemaNode, IEditable
         set { _refscale = value; }
     }
     [DisplayName("Darstellungsfilter setzen")]
-    [Category("Maßstab/Darstellung")]
+    [Category("MaÃŸstab/Darstellung")]
     [AuthorizablePropertyAttribute("visfilter", false)]
     public bool VisFilter
     {
@@ -181,7 +181,7 @@ public class MapTools : SchemaNode, IEditable
         set { _visfilter = value; }
     }
     [DisplayName("Themen beschriften")]
-    [Category("Maßstab/Darstellung")]
+    [Category("MaÃŸstab/Darstellung")]
     [AuthorizablePropertyAttribute("labelling", false)]
     public bool Labelling
     {
@@ -281,7 +281,7 @@ public class MapTools : SchemaNode, IEditable
         set { _chainage = value; }
     }
     [Browsable(false)]
-    [DisplayName("Räumliche Abfrage")]
+    [DisplayName("RÃ¤umliche Abfrage")]
     [Category("Abfragewerkzeuge")]
     [AuthorizablePropertyAttribute("spatialidentify", false)]
     public bool SpatialIdentify
@@ -290,7 +290,7 @@ public class MapTools : SchemaNode, IEditable
         set { _spatialidentify = value; }
     }
     [Browsable(true)]
-    [DisplayName("Auswählen")]
+    [DisplayName("AuswÃ¤hlen")]
     [Category("Auswahlwerkzeuge")]
     [AuthorizablePropertyAttribute("select", false)]
     public bool Select
@@ -309,7 +309,7 @@ public class MapTools : SchemaNode, IEditable
     }
     [Browsable(true)]
     [DisplayName("Nachbarschaftsberechnung (Puffern) - max. Distance")]
-    [Description("0 = keine Einschränkung für den Benutzer.")]
+    [Description("0 = keine EinschrÃ¤nkung fÃ¼r den Benutzer.")]
     [Category("Auswahlwerkzeuge")]
     public int MaxBufferDist
     {
@@ -344,7 +344,7 @@ public class MapTools : SchemaNode, IEditable
         set { _xy = value; }
     }
     [Browsable(true)]
-    [DisplayName("Karte Überblenden")]
+    [DisplayName("Karte Ãœberblenden")]
     [Category("Werkzeuge")]
     [AuthorizablePropertyAttribute("mapoverlay", false)]
     public bool MapOverlay
@@ -362,13 +362,13 @@ public class MapTools : SchemaNode, IEditable
         set { _magnifier = value; }
     }
     [Browsable(true)]
-    [DisplayName("Redlining")]
+    [DisplayName("Map-Markup")]
     [Category("Werkzeuge Pro")]
-    [AuthorizablePropertyAttribute("redlining", false)]
-    public bool Redlining
+    [AuthorizablePropertyAttribute("mapmarkup", false)]
+    public bool MapMarkup
     {
-        get { return _redlining; }
-        set { _redlining = value; }
+        get { return _mapMarkup; }
+        set { _mapMarkup = value; }
     }
     [Browsable(true)]
     [DisplayName("Email/Treffpunkt")]
@@ -380,7 +380,7 @@ public class MapTools : SchemaNode, IEditable
         set { _email = value; }
     }
     [Browsable(true)]
-    [DisplayName("Service hinzufügen")]
+    [DisplayName("Service hinzufÃ¼gen")]
     [Category("Werkzeuge")]
     [AuthorizablePropertyAttribute("addservice", false)]
     public bool AddService
@@ -480,8 +480,8 @@ public class MapTools : SchemaNode, IEditable
         set { _saveimage = value; }
     }
     [Browsable(true)]
-    [DisplayName("Höhenprofil")]
-    [Category("Höhenprofil")]
+    [DisplayName("HÃ¶henprofil")]
+    [Category("HÃ¶henprofil")]
     [AuthorizablePropertyAttribute("verticalalignment", false)]
     public bool VerticalAlignment
     {
@@ -489,8 +489,8 @@ public class MapTools : SchemaNode, IEditable
         set { _verticalAlignment = value; }
     }
     [Browsable(true)]
-    [DisplayName("Höhenprofil-Konfiguration")]
-    [Category("Höhenprofil")]
+    [DisplayName("HÃ¶henprofil-Konfiguration")]
+    [Category("HÃ¶henprofil")]
     [Editor(typeof(ProfilesConfigEditor),
         typeof(ITypeEditor))]
     public string VerticalAlignmentConfig
@@ -499,8 +499,8 @@ public class MapTools : SchemaNode, IEditable
         set { _verticalAlignmentConfig = value; }
     }
     [Browsable(true)]
-    [DisplayName("Höhenkoten Werkzeug")]
-    [Category("Höhenkote")]
+    [DisplayName("HÃ¶henkoten Werkzeug")]
+    [Category("HÃ¶henkote")]
     [AuthorizablePropertyAttribute("had", false)]
     public bool HeightAboveDatum
     {
@@ -508,8 +508,8 @@ public class MapTools : SchemaNode, IEditable
         set { _heightAboveDatum = value; }
     }
     [Browsable(true)]
-    [DisplayName("Höhenkoten-Konfiguration")]
-    [Category("Höhenkote")]
+    [DisplayName("HÃ¶henkoten-Konfiguration")]
+    [Category("HÃ¶henkote")]
     //[Editor(typeof(HeightAboveDatumConfigEditor),
     //        typeof(ITypeEditor))]
     public string HeightAboveDatumConfig
@@ -698,7 +698,7 @@ public class MapTools : SchemaNode, IEditable
         _measure3d = (bool)stream.Load("measure3d", false);
         _xy = (bool)stream.Load("xy", true);
         _mapoverlay = (bool)stream.Load("mapoverlay", true);
-        _redlining = (bool)stream.Load("redlining", true);
+        _mapMarkup = (bool)stream.Load("mapmarkup", true);
         _email = (bool)stream.Load("email", true);
         _editing = (bool)stream.Load("edit", true);
         _snapping = (bool)stream.Load("snapping", true);
@@ -786,7 +786,7 @@ public class MapTools : SchemaNode, IEditable
         stream.Save("measure3d", _measure3d, false);
         stream.Save("xy", _xy, false);
         stream.Save("mapoverlay", _mapoverlay, false);
-        stream.Save("redlining", _redlining, false);
+        stream.Save("mapmarkup", _mapMarkup, false);
         stream.Save("email", _email, false);
         stream.Save("edit", _editing, false);
         stream.Save("snapping", _snapping, false);

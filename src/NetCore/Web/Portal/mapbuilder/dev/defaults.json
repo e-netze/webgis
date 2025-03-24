@@ -1,4 +1,4 @@
-{
+﻿{
  "map": {
   "options": {
    "extent": "stmk_m34@ccgis_default",
@@ -44,7 +44,7 @@
   "webgis.tools.advanced.measureArea": true,
   "webgis.tools.advanced.measureCircle": true,
   "webgis.tools.advanced.profile": true,
-  "webgis.tools.advanced.redlining": true,
+  "webgis.tools.advanced.mapmarkup": true,
   "webgis.tools.advanced.edit": true,
   "webgis.tools.advanced.snapping": true,
   "webgis.tools.advanced.geocode": true,

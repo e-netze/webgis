@@ -257,12 +257,12 @@ ul.toc li {
     font-size: 1.4em;
 }
 
-#webgis-redlining-tool-container .webgis-ui-collapsable-content {
+#webgis-mapmarkup-tool-container .webgis-ui-collapsable-content {
     padding-left: 32px;
 }
 
-    #webgis-redlining-tool-container .webgis-ui-collapsable-content .webgis-input,
-    #webgis-redlining-tool-container .webgis-ui-collapsable-content .webgis-select {
+    #webgis-mapmarkup-tool-container .webgis-ui-collapsable-content .webgis-input,
+    #webgis-mapmarkup-tool-container .webgis-ui-collapsable-content .webgis-select {
         width: 257px;
     }
 
@@ -4192,7 +4192,7 @@ div.webgis-copy {
 
 
 /***** Graphics Info Container *********/
-.webgis-tooldialog-content.webgis-tools-redlining-redlining {
+.webgis-tooldialog-content.webgis-tools-mapmarkup-mapmarkup {
     /*display: flex;
     flex-direction: column;
     height: calc(100vh - 245px);*/ /* Vollständige Höhe des Viewports */

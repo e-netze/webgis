@@ -741,7 +741,7 @@ function selectionChanged() {
         }, _map);
         _map.events.on('beforechangeactivetool', function (channel, sender, newTool) {
             var activeTool = this.getActiveTool();
-            if (activeTool && activeTool.id === 'webgis.tools.redlining.redliningmapbuilder') {
+            if (activeTool && activeTool.id === 'webgis.tools.mapmarkup.mapmarkupmapbuilder') {
                 if (newTool && newTool.id === activeTool.id) {
                     // Do Nothing -> same tool
                 } else {
