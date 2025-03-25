@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Compare;
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebMapping.Core.Api;
@@ -22,15 +23,16 @@ namespace E.Standard.WebGIS.Tools.Presentation;
 [Export(typeof(IApiButton))]
 [ToolHelp("tools/presentation/visfilter.html")]
 [AdvancedToolProperties(VisFilterDependent = true, ClientDeviceDependent = true)]
-public class VisFilter : IApiServerButtonAsync, IApiButtonResources
+public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
+                         IApiButtonResources
 {
     #region IApiServer Button
 
-    async public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<VisFilter> localizer)
     {
         if (!String.IsNullOrEmpty(e["visfilter-filter"]))
         {
-            return await OnVisFilterChanged(bridge, e);
+            return await OnVisFilterChanged(bridge, e, localizer);
         }
 
         return new ApiEventResponse()
@@ -57,12 +59,12 @@ public class VisFilter : IApiServerButtonAsync, IApiButtonResources
 
     [ServerToolCommand("init")]
     [ServerToolCommand("visfilterchanged")]
-    async public Task<ApiEventResponse> OnVisFilterChanged(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnVisFilterChanged(IBridge bridge, ApiToolEventArguments e, ILocalizer<VisFilter> localizer)
     {
         string visFilterParameter = e["visfilter-filter"];
 
         ApiEventResponse uiResponse = new ApiEventResponse();
-        await AppendUI(bridge, uiResponse, visFilterParameter, bridge.GetVisFilters().Select(f => f.Id).ToArray());
+        await AppendUI(bridge, uiResponse, localizer, visFilterParameter, bridge.GetVisFilters().Select(f => f.Id).ToArray());
 
         return uiResponse;
     }
@@ -100,7 +102,7 @@ public class VisFilter : IApiServerButtonAsync, IApiButtonResources
         return new ApiRawJsonEventResponse(values.Keys.ToAutocompleteItems().ToArray());
     }
 
-    async private Task AppendUI(IBridge bridge, ApiEventResponse apiResponse, string visFilterParameter, IEnumerable<string> activeVisFilters)
+    async private Task AppendUI(IBridge bridge, ApiEventResponse apiResponse, ILocalizer<VisFilter> localizer, string visFilterParameter, IEnumerable<string> activeVisFilters)
     {
         var serviceId = visFilterParameter.Contains("~") ? visFilterParameter.Split('~')[0] : "";
         var service = await bridge.GetService(serviceId);
@@ -203,12 +205,14 @@ public class VisFilter : IApiServerButtonAsync, IApiButtonResources
             {
                 buttonContainer.AddChild(
                     new UICallbackButton(this, "unsetfilter")
-                        .WithText("Filter entfernen")
+                        .WithText(localizer.Localize("remove-filter"))
                         .WithStyles(UICss.CancelButtonStyle));
             }
             buttonContainer.AddChild(
                 new UICallbackButton(this, "setfilter")
-                    .WithText(visFilterIsActive ? "Änderungen übernehmen" : "Filter setzen"));
+                    .WithText(visFilterIsActive
+                        ? localizer.Localize("apply-changes") 
+                        : localizer.Localize("apply-filter")));
 
             apiResponse.AddUIElement(buttonContainer);
         }
@@ -223,14 +227,14 @@ public class VisFilter : IApiServerButtonAsync, IApiButtonResources
                 {
                     buttonContainer.AddChild(
                         new UICallbackButton(this, "unsetfilter") { buttoncommand_argument = activeVisFilter }
-                            .WithText($"{activeFilter.Name} entfernen")
+                            .WithText(String.Format(localizer.Localize("filter-remove"), activeFilter.Name))
                             .WithStyles(UICss.CancelButtonStyle));
                 }
             }
 
             buttonContainer.AddChild(
                 new UICallbackButton(this, "unsetfilter") { buttoncommand_argument = "#" }
-                    .WithText("Alle Filter entfernen")
+                    .WithText(localizer.Localize("remove-all-filter"))
                     .WithStyles(UICss.CancelButtonStyle));
 
             apiResponse.AddUIElement(buttonContainer);
@@ -238,7 +242,7 @@ public class VisFilter : IApiServerButtonAsync, IApiButtonResources
     }
 
     [ServerToolCommand("setfilter")]
-    async public Task<ApiEventResponse> SetFilter(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> SetFilter(IBridge bridge, ApiToolEventArguments e, ILocalizer<VisFilter> localizer)
     {
         string visFilterParameter = e["visfilter-filter"];
 
@@ -291,7 +295,7 @@ public class VisFilter : IApiServerButtonAsync, IApiButtonResources
                 visFilterParameter
             };
 
-            await AppendUI(bridge, response, visFilterParameter, activeVisFilters);
+            await AppendUI(bridge, response, localizer, visFilterParameter, activeVisFilters);
 
             response.RemoveSecondaryToolUI = e.UseSimpleToolsBehaviour();
 
@@ -302,7 +306,7 @@ public class VisFilter : IApiServerButtonAsync, IApiButtonResources
     }
 
     [ServerToolCommand("unsetfilter")]
-    async public Task<ApiEventResponse> UnsetFilter(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> UnsetFilter(IBridge bridge, ApiToolEventArguments e, ILocalizer<VisFilter> localizer)
     {
         string visFilterParameter = e.ServerCommandArgument.OrTake(e["visfilter-filter"]);
 
@@ -319,7 +323,7 @@ public class VisFilter : IApiServerButtonAsync, IApiButtonResources
         var activeVisFilters = visFilterParameter == "#" ? new List<string>() : new List<string>(bridge.GetVisFilters().Select(f => f.Id));
         activeVisFilters.Remove(visFilterParameter);
 
-        await AppendUI(bridge, response, e["visfilter-filter"], activeVisFilters);
+        await AppendUI(bridge, response, localizer, e["visfilter-filter"], activeVisFilters);
 
         response.RemoveSecondaryToolUI = e.UseSimpleToolsBehaviour() && (e["visfilter-filter"] != "#" || e.ServerCommandArgument == "#");  // Wenn einzelen Filter entfernt oder alle entfernt werden => Dialog schließen
 

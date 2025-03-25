@@ -1,5 +1,6 @@
 ﻿using E.Standard.Drawing.Models;
 using E.Standard.Extensions.Compare;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Platform;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Helpers;
@@ -24,7 +25,8 @@ namespace E.Standard.WebGIS.Tools.ThreeD;
 [AdvancedToolProperties(ClientDeviceDependent = true, MapBBoxDependent = true, ScaleDependent = true, MapImageSizeDependent = true, MapCrsDependent = true)]
 [ToolConfigurationSection("threed")]
 [ToolHelp("tools/general/measure-3d.html")]
-public class ThreeD : IApiServerToolAsync, IApiButtonResources
+public class ThreeD : IApiServerToolLocalizableAsync<ThreeD>,
+                      IApiButtonResources
 {
     const string BBoxElementId = "threed-bbox";
     const string ImageSizeElementId = "threed-size";
@@ -35,17 +37,17 @@ public class ThreeD : IApiServerToolAsync, IApiButtonResources
 
     #region IApiServerTool Member
 
-    public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<ThreeD> localizer)
     {
         var textureOptions = new List<UISelect.Option>();
 
         textureOptions.AddRange(new UISelect.Option[]
         {
-            new UISelect.Option() { value="0", label = "Monochrome" },
-            new UISelect.Option() { value="1", label= "aktuelle Kartendarstellung" },
+            new UISelect.Option() { value="0", label = localizer.Localize("texture-monochrome") },
+            new UISelect.Option() { value="1", label = localizer.Localize("texture-current-map") },
 
-            new UISelect.Option() { value="2", label= "Luftbild" },
-            new UISelect.Option() { value="3", label= "Luftbild mit Straßennamen" }
+            new UISelect.Option() { value="2", label= localizer.Localize("texture-orhtophoto") },
+            new UISelect.Option() { value="3", label= localizer.Localize("texture-orhtophoto-with-streets") }
         });
 
         var texturePreviewDict = new Dictionary<string, string>
@@ -65,19 +67,19 @@ public class ThreeD : IApiServerToolAsync, IApiButtonResources
                     .WithStyles("webgis-info")
                     .AddChild(
                          new UILiteral()
-                            .WithLiteral("Mit diesem Werkzeug kann für den aktuellen (oder aufgezogenen) Bereich ein 3D Modell erzeugt werden. Dieses Modell kann auch für das Messen von 3D Strecken/Entfernungen verwendet werden.")),
+                            .WithLiteral(localizer.Localize("description:body"))),
                 new UIOptionContainer()
                     .WithId(OptionsContanerId)
                     .WithStyles(UICss.OptionContainerWithLabels)
                     .AddChildren(
                         new UIImageButton(this.GetType(), "display", UIButton.UIButtonType.servertoolcommand, "display")
                             .WithValue("display")
-                            .WithText("Aktuellen Ausschnitt übernehmen"),
+                            .WithText(localizer.Localize("current-extent")),
                         new UIImageButton(this.GetType(), "rectangle", UIButton.UIButtonType.servertoolcommand, "rectangle")
                             .WithValue("rectangle")
-                            .WithText("Rechteck aufziehen")),
+                            .WithText(localizer.Localize("select-box"))),
                 new UILabel()
-                    .WithLabel($"Bounding Box: {(e.MapCrsIsDynamic == false && epsg > 0 ? "[EPSG:" + epsg + "]" : "")}"),
+                    .WithLabel($"{localizer.Localize("bbox")}: {(e.MapCrsIsDynamic == false && epsg > 0 ? "[EPSG:" + epsg + "]" : "")}"),
                 new UIBoundBoxInput()
                     .WithId(BBoxElementId)
                     .AsReadonly()
@@ -87,7 +89,7 @@ public class ThreeD : IApiServerToolAsync, IApiButtonResources
                     .AsReadonly()
                     .WithStyles(UICss.DownloadMapImageSize),
                 new UILabel()
-                    .WithLabel("Höhenmodel:"),
+                    .WithLabel($"{localizer.Localize("elevation-model")}:"),
                 new UISelect()
                     .WithId(TerrainModelNameId)
                     .AsToolParameter()
@@ -97,7 +99,7 @@ public class ThreeD : IApiServerToolAsync, IApiButtonResources
                                                              .WithValue(n)
                                                              .WithLabel(n))),
                 new UILabel()
-                    .WithLabel("Auflösung [m]:"),
+                    .WithLabel($"{localizer.Localize("resolution-m")}:"),
                 new UIInputNumber()
                 {
                     MinValue = e.GetConfigDouble("min-resolution", 1D),
@@ -107,15 +109,15 @@ public class ThreeD : IApiServerToolAsync, IApiButtonResources
                 new UIDiv()
                     .WithStyles("webgis-info")
                     .AddChild(new UILiteral()
-                                  .WithLiteral("Je kleiner dieser Wert ist, desto detailreicher wird das 3D Model.")),
+                                  .WithLiteral(localizer.Localize("resolution-info"))),
                 new UILabel()
-                    .WithLabel("Darstellung (Textur):"),
+                    .WithLabel($"{localizer.Localize("label-texture")}:"),
                 new UISelect()
                     .WithId(TextureElementId)
                     .AsToolParameter()
                     .AddOptions(textureOptions),
                 new UILabel()
-                    .WithLabel("Vorschau (Beispiel):"),
+                    .WithLabel($"{localizer.Localize("preview")}:"),
                 new UIDiv()
                     .AddChildren(texturePreviewDict.Keys.Select(k =>
                     {
@@ -133,13 +135,13 @@ public class ThreeD : IApiServerToolAsync, IApiButtonResources
                     })),
                 new UIBreak(2),
                 new UIButton(UIButton.UIButtonType.servertoolcommand, "build-threed-model")
-                    .WithText("3D Modell erzeugen...")
+                    .WithText(localizer.Localize("create-3d-model"))
             );
 
         return Task.FromResult(AppendMapExtendSetters(response, bridge, e));
     }
 
-    public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e)
+    public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<ThreeD> localizer)
         => Task.FromResult(AppendMapExtendSetters(new ApiEventResponse(), bridge, e));
 
 
@@ -199,7 +201,7 @@ public class ThreeD : IApiServerToolAsync, IApiButtonResources
 
 
     [ServerToolCommand("build-threed-model")]
-    public async Task<ApiEventResponse> OnBuildModel(IBridge bridge, ApiToolEventArguments e)
+    public async Task<ApiEventResponse> OnBuildModel(IBridge bridge, ApiToolEventArguments e, ILocalizer<ThreeD> localizer)
     {
         var bbox = new Envelope(e.GetArray<double>(BBoxElementId));
 
@@ -233,7 +235,7 @@ public class ThreeD : IApiServerToolAsync, IApiButtonResources
         var maxSize = e.GetConfigInt("max-model-size");
         if (Math.Max(size.Width, size.Height) > maxSize * 1.01)   // 1% Spatzi
         {
-            throw new Exception("Der aktuell gewählte Bereich überschreitet die maximale Größe. Bitte verkleinern sie den Bereich und versuchen sie es danach erneut");
+            throw new Exception(localizer.Localize("exception-area-to-large"));
         }
 
         var result = await new RasterQueryHelper().PerformHeightQueryAsync(

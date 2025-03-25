@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -19,11 +20,12 @@ namespace E.Standard.WebGIS.Tools.GeoReferencing;
 [Export(typeof(IApiButton))]
 [ToolStorageIsolatedUser(isUserIsolated: false)]
 [ToolHelp("tools/general/georeference.html")]
-public class GeoReference : IApiServerButton, IApiButtonResources
+public class GeoReference : IApiServerButtonLocalizable<GeoReference>, 
+                            IApiButtonResources
 {
     #region IApiServerButton Member
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<GeoReference> localizer)
     {
         return new ApiEventResponse
         {
@@ -31,17 +33,17 @@ public class GeoReference : IApiServerButton, IApiButtonResources
                 new UIDiv()
                 {
                     //target=UIElementTarget.modaldialog.ToString(),
-                    targettitle="Dokument georeferenzieren",
+                    targettitle = localizer.Localize("georeference-document"),
                     elements=new IUIElement[]
                     {
                         new UILabel()
                         {
-                            label="Mit diesem Werkzeug können Dateien hochgeladen und verortet werden.|Diese Dateien können dabei MS-Excel, CSV oder Textdaten sein. Bei MS-Excel und CSV wird versucht jede Zeile zu verorten.|In der ersten Zeile muss dabei der Spaltenname stehen. Bei einfachen Textdateien wird versucht jede Zeile zu verorten.|Verortet werden beispielsweise Adressen oder Ortsnamen. Mit diesem Werkzeug werden keine Koordinaten verortet. Koordinaten können in Form von CSV Dateien über das Koordinaten Abfragewerkzeug hochgeladen werden."
+                            label = localizer.Localize("label1:body")
                         },
                         new UIBreak(2),
                         new UIUploadFile(this.GetType(), "upload-file") {
-                            id="upload-file",
-                            css=UICss.ToClass(new string[]{UICss.ToolParameter})
+                            id = "upload-file",
+                            css = UICss.ToClass(new string[]{UICss.ToolParameter})
                         }
                     }
                 }
@@ -68,7 +70,7 @@ public class GeoReference : IApiServerButton, IApiButtonResources
     #region Server Commands
 
     [ServerToolCommand("upload-file")]
-    public ApiEventResponse OnUploadFile(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnUploadFile(IBridge bridge, ApiToolEventArguments e, ILocalizer<GeoReference> localizer)
     {
         var file = e.GetFile("upload-file");
         if (file != null)
@@ -85,8 +87,8 @@ public class GeoReference : IApiServerButton, IApiButtonResources
                 List<string> tables = new List<string>();
                 List<string> fields1 = new List<string>(), fields2 = new List<string>();
 
-                fields1.Add("-- Feld wählen --");
-                fields2.Add("-- weiteres Feld (optional) --");
+                fields1.Add(localizer.Localize("choose-field"));
+                fields2.Add(localizer.Localize("choose-another-field"));
                 foreach (DataTable table in dataset.Tables)
                 {
                     tables.Add(table.TableName);
@@ -108,7 +110,7 @@ public class GeoReference : IApiServerButton, IApiButtonResources
                         new UIDiv()
                         {
                             target=UIElementTarget.modaldialog.ToString(),
-                            targettitle="Dokument georeferenzieren",
+                            targettitle = localizer.Localize("georeference-document"),
                             css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                             elements=new IUIElement[]
                             {
@@ -120,7 +122,7 @@ public class GeoReference : IApiServerButton, IApiButtonResources
                                 },
                                 new UILabel()
                                 {
-                                    label="Name:"
+                                    label = $"{localizer.Localize("label-name")}:"
                                 },
                                 new UIBreak(),
                                 new UIInputText()
@@ -138,7 +140,7 @@ public class GeoReference : IApiServerButton, IApiButtonResources
                                         new UIBreak(2),
                                         new UILabel()
                                         {
-                                            label="Tabelle/Datenblatt:",
+                                            label = $"{localizer.Localize("data-sheet")}:",
                                         },
                                         new UIBreak(),
                                         new UISelect(tables.ToArray())
@@ -157,7 +159,7 @@ public class GeoReference : IApiServerButton, IApiButtonResources
                                         new UIBreak(2),
                                         new UILabel()
                                         {
-                                            label="Feld(er) mit Geobezug:"
+                                            label = $"{localizer.Localize("geo-fields")}:"
                                         },
                                         new UIBreak(),
                                         new UISelect(fields1.ToArray())
@@ -184,7 +186,7 @@ public class GeoReference : IApiServerButton, IApiButtonResources
                                 new UIBreak(2),
                                 new UICallbackButton(this, "georef")
                                 {
-                                    text="Übernemen"
+                                    text = localizer.Localize("apply")
                                 }
                             }
                         }

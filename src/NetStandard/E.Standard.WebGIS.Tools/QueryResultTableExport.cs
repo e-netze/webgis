@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -11,7 +12,7 @@ namespace E.Standard.WebGIS.Tools;
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(SelectionInfoDependent = true, ClientDeviceDependent = true)]
-public class QueryResultTableExport : IApiServerButton  // is this tool still in use?
+public class QueryResultTableExport : IApiServerButtonLocalizable<QueryResultTableExport>  // is this tool still in use?
 {
     #region IApiButton Member
 
@@ -29,7 +30,7 @@ public class QueryResultTableExport : IApiServerButton  // is this tool still in
 
     #region IApiServerButton
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<QueryResultTableExport> localizer)
     {
         return new ApiEventResponse()
             .AddUIElements(
@@ -46,11 +47,11 @@ public class QueryResultTableExport : IApiServerButton  // is this tool still in
                                 .WithLabel("CSV Datei")),
 
                         new UILabel()
-                            .WithLabel(bridge.GetCustomTextBlock(this, "label1", "Hier kann die Tabelle heruntergeladen werden.")),
+                            .WithLabel(localizer.Localize("label1")),
                         new UIButtonContainer(
                             new UIButton(UIButton.UIButtonType.servertoolcommand, "export")
                                 .WithStyles(UICss.DefaultButtonStyle)
-                                .WithText("Exportieren"))));
+                                .WithText(localizer.Localize("export")))));
     }
 
     #endregion

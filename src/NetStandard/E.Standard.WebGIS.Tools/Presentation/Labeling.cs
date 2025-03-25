@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
@@ -20,15 +21,16 @@ namespace E.Standard.WebGIS.Tools.Presentation;
 [Export(typeof(IApiButton))]
 [ToolHelp("tools/presentation/labeling.html")]
 [AdvancedToolProperties(LabelingDependent = true, ClientDeviceDependent = true)]
-public class Labeling : IApiServerButton, IApiButtonResources
+public class Labeling : IApiServerButtonLocalizable<Labeling>, 
+                        IApiButtonResources
 {
     #region ApiServerButton
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Labeling> localizer)
     {
         if (!String.IsNullOrEmpty(e["labeling-theme"]))
         {
-            return OnLabelingThemeChanged(bridge, e);
+            return OnLabelingThemeChanged(bridge, e, localizer);
         }
 
         return new ApiEventResponse()
@@ -54,17 +56,17 @@ public class Labeling : IApiServerButton, IApiButtonResources
 
     [ServerToolCommand("init")]
     [ServerToolCommand("labelingthemechanged")]
-    public ApiEventResponse OnLabelingThemeChanged(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnLabelingThemeChanged(IBridge bridge, ApiToolEventArguments e, ILocalizer<Labeling> localizer)
     {
         string labelingParameter = e["labeling-theme"];
         //string[] activeLabelings = e.GetArrayOrEmtpy<string>("labeling-active-labelings");
 
         var labeling = bridge.GetLabeling();
 
-        return AppendUI(bridge, new ApiEventResponse(), labelingParameter, labeling.Where(l => l.Id == labelingParameter).Count() > 0);
+        return AppendUI(bridge, new ApiEventResponse(), localizer, labelingParameter, labeling.Where(l => l.Id == labelingParameter).Count() > 0);
     }
 
-    private ApiEventResponse AppendUI(IBridge bridge, ApiEventResponse apiResponse, string labelingParameter, bool labelingIsActive)
+    private ApiEventResponse AppendUI(IBridge bridge, ApiEventResponse apiResponse, ILocalizer<Labeling> localizer, string labelingParameter, bool labelingIsActive)
     {
         var labeling = labelingParameter.Contains("~") ? bridge.ServiceLabeling(labelingParameter.Split('~')[0], labelingParameter.Split('~')[1]) : null;
 
@@ -79,7 +81,7 @@ public class Labeling : IApiServerButton, IApiButtonResources
 
             apiResponse.AddUIElement(
                 new UILabel()
-                    .WithLabel("Beschriftungsfeld"));
+                    .WithLabel(localizer.Localize("labeling-field")));
 
             var fieldOptions = new List<UISelect.Option>();
             var fieldAliases = labeling.FieldAliases;
@@ -99,40 +101,40 @@ public class Labeling : IApiServerButton, IApiButtonResources
 
             apiResponse.AddUIElements(
                 new UILabel()
-                    .WithLabel("Beschriftungsmethode"),
+                    .WithLabel(localizer.Localize("labeling-method")),
                 new UISelect()
                     .WithId("labeling-howmanylabels")
                     .AsPersistantToolParameter()
                     .AddOptions(
                         new UISelect.Option()
                             .WithValue("one_label_per_part")
-                            .WithLabel("Alles"),
+                            .WithLabel(localizer.Localize("one_label_per_part")),
                         new UISelect.Option()
                             .WithValue("one_label_per_name")
-                            .WithLabel("pro Name 1x"),
+                            .WithLabel(localizer.Localize("one_label_per_name")),
                         new UISelect.Option()
                             .WithValue("one_label_per_shape")
-                            .WithLabel("pro Objekt 1x")),
+                            .WithLabel(localizer.Localize("one_label_per_shape"))),
 
-                new UIFontSizeSelector("Schriftgröße", UIButton.UIButtonType.clientbutton)
+                new UIFontSizeSelector(localizer.Localize("font-size"), UIButton.UIButtonType.clientbutton)
                     .WithExpandBehavior(UICollapsableElement.ExpandBehaviorMode.Exclusive)
                     .WithId("labeling-fontsize")
                     .AsPersistantToolParameter()
                     .WithValue(12),
 
-                new UIFontStyleSelector("Schriftstil", UIButton.UIButtonType.clientbutton)
+                new UIFontStyleSelector(localizer.Localize("font-style"), UIButton.UIButtonType.clientbutton)
                     .WithExpandBehavior(UICollapsableElement.ExpandBehaviorMode.Exclusive)
                     .WithId("labeling-fontstyle")
                     .AsPersistantToolParameter()
                     .WithValue("regular"),
 
-                new UIColorSelector("Schriftfarbe", UIButton.UIButtonType.clientbutton, allowNoColor: false)
+                new UIColorSelector(localizer.Localize("font-color"), UIButton.UIButtonType.clientbutton, allowNoColor: false)
                     .WithExpandBehavior(UICollapsableElement.ExpandBehaviorMode.Exclusive)
                     .WithId("labeling-fontcolor")
                     .AsPersistantToolParameter()
                     .WithValue("#000000"),
 
-                new UIColorSelector("Rahmenfarbe", UIButton.UIButtonType.clientbutton, allowNoColor: false)
+                new UIColorSelector(localizer.Localize("border-color"), UIButton.UIButtonType.clientbutton, allowNoColor: false)
                     .WithExpandBehavior(UICollapsableElement.ExpandBehaviorMode.Exclusive)
                     .WithId("labeling-bordercolor")
                     .AsPersistantToolParameter()
@@ -144,12 +146,12 @@ public class Labeling : IApiServerButton, IApiButtonResources
             {
                 buttonContainer.AddChild(
                     new UICallbackButton(this, "unsetlabel")
-                        .WithText("Entfernen")
+                        .WithText(localizer.Localize("remove"))
                         .WithStyles(UICss.CancelButtonStyle));
             }
             buttonContainer.AddChild(
                 new UICallbackButton(this, "setlabel")
-                    .WithText("Übernehmen")
+                    .WithText(localizer.Localize("apply"))
                     .WithId(this.GetType().ToToolId()));
 
             apiResponse.AddUIElement(buttonContainer);
@@ -159,7 +161,7 @@ public class Labeling : IApiServerButton, IApiButtonResources
     }
 
     [ServerToolCommand("setlabel")]
-    public ApiEventResponse SetLabel(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse SetLabel(IBridge bridge, ApiToolEventArguments e, ILocalizer<Labeling> localizer)
     {
         string labelingParameter = e["labeling-theme"];
         var labeling = labelingParameter.Contains("~") ? bridge.ServiceLabeling(labelingParameter.Split('~')[0], labelingParameter.Split('~')[1]) : null;
@@ -181,14 +183,14 @@ public class Labeling : IApiServerButton, IApiButtonResources
                 .DoRefreshServices(labelingParameter.Contains("~") ? labelingParameter.Split('~')[0] : "*")
                 .AddLabeling(new LabelingDefinitionDTO[] { labelingDefintion });
 
-            return AppendUI(bridge, response, labelingParameter, true);
+            return AppendUI(bridge, response, localizer, labelingParameter, true);
         }
 
         return null;
     }
 
     [ServerToolCommand("unsetlabel")]
-    public ApiEventResponse UnsetLabel(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse UnsetLabel(IBridge bridge, ApiToolEventArguments e, ILocalizer<Labeling> localizer)
     {
         string labelingParameter = e["labeling-theme"];
 
@@ -199,7 +201,7 @@ public class Labeling : IApiServerButton, IApiButtonResources
                 Id = labelingParameter == "#" ? "" : labelingParameter
             });
 
-        return AppendUI(bridge, response, labelingParameter, false);
+        return AppendUI(bridge, response, localizer, labelingParameter, false);
     }
 
     #endregion
