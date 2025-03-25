@@ -56,6 +56,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
@@ -1865,6 +1866,10 @@ public class RestController : ApiBaseController
         }
         catch (Exception ex)
         {
+            if(ex is TargetInvocationException tie)
+            {
+                ex = tie.InnerException ?? tie;
+            }
             _logger.LogError(ex.Message);
 
             _mapServiceInitializer.LogException(_requestContext, ex, $"{CurrentControllerName}.{CurrentActionName}",

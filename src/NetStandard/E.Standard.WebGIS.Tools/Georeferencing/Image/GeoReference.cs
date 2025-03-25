@@ -1,5 +1,7 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using E.Standard.Extensions.Collections;
+using E.Standard.Extensions.Compare;
 using E.Standard.Json;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Abstraction;
@@ -21,6 +23,7 @@ using MathNet.Numerics.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image;
 
@@ -31,7 +34,9 @@ namespace E.Standard.WebGIS.Tools.Georeferencing.Image;
 [ToolHelp("tools/general/georef-image.html")]
 [ToolPolicy(RequireAuthentication = true)]
 [LocalizationNamespace("tools.image.georeference")]
-public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirmation
+public class GeoReference : IApiServerToolLocalizable<GeoReference>, 
+                            IApiButtonResources, 
+                            IApiToolConfirmation
 {
     const string ToolbarElementId = "image-georef-toolbar";
     const string GeorefImageNameSelectId = "image-georef-imagename";
@@ -59,11 +64,11 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
 
     #region IApiServerButton
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<GeoReference> localizer)
     {
         var apiResponse = new ApiEventResponse();
 
-        AddUI(apiResponse, bridge, e);
+        AddUI(apiResponse, bridge, e, localizer);
 
         return apiResponse;
     }
@@ -76,7 +81,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
 
     public ToolCursor Cursor => ToolCursor.Crosshair;
 
-    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<GeoReference> localizer)
     {
         var georefImageMetadata = bridge.GetGeorefImageMetata(e[GeorefImageNameSelectId]);
         if (georefImageMetadata == null)
@@ -275,7 +280,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
     #region Server Commands
 
     [ServerToolCommand("add-image-dialog")]
-    public ApiEventResponse OnAddImageDilaog(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnAddImageDilaog(IBridge bridge, ApiToolEventArguments e, ILocalizer<GeoReference> localizer)
     {
         CleanupStorage(bridge);
 
@@ -289,7 +294,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
         {
             uiElements.AddRange(new IUIElement[]
             {
-                new UITitle() { label = "Bestehendes Bild auswählen:" },
+                new UITitle() { label = $"{localizer.Localize("choose-existing-image")}:" },
                 new UISelect()
                 {
                     options = options.OrderBy(o => o.label).ToArray(),
@@ -299,7 +304,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
                 new UIBreak(1),
                 new UIButton(UIButton.UIButtonType.servertoolcommand, "load-image")
                 {
-                    text = "Bild in die Karte laden",
+                    text = localizer.Localize("load-image-to-map"),
                     css = UICss.ToClass(new[] { UICss.OkButtonStyle })
                 }
             });
@@ -308,7 +313,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
         uiElements.AddRange(new IUIElement[]
         {
             new UIBreak(1),
-            new UITitle() { label = "oder hochladen (png, jpg, pdf):" },
+            new UITitle() { label = $"{localizer.Localize("or-upload-image")}:" },
             new UIUploadFile(this.GetType(), "upload-file") {
                 id = "upload-file",
                 css = UICss.ToClass(new string[]{ UICss.ToolParameter })
@@ -328,7 +333,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
                 new UIDiv()
                 {
                     target = UIElementTarget.modaldialog.ToString(),
-                    targettitle = "Bild der Karte hinzufügen",
+                    targettitle = localizer.Localize("add-image-to-map"),
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                     elements = uiElements.ToArray()
                 }
@@ -338,7 +343,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
     }
 
     [ServerToolCommand("upload-file")]
-    public ApiEventResponse OnUploadFile(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnUploadFile(IBridge bridge, ApiToolEventArguments e, ILocalizer<GeoReference> localizer)
     {
         var file = e.GetFile("upload-file");
         if (file == null)
@@ -347,7 +352,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
         }
 
 
-        var imageExtension = file.FileName.Split('.').Last().ToLower(); ;
+        var imageExtension = file.FileName.Split('.').Last().ToLower();
         var data = file.Data;
 
         var importers = new IImportImage[]
@@ -366,7 +371,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
 
         if (imagePackages.Where(p => p.ImageData != null).Any() == false)
         {
-            throw new Exception("Es konnte leider kein Bild ausgelesen werden. Eventuell wird das PDF Format nicht unterstützt. Versuchen Sie stattdessen einen Screenshot des Bildes anzufertigen und laden Sie eine JPG oder PNG Datei hoch.");
+            throw new Exception(localizer.Localize("exception-cant-read-image:body"));
         }
 
         List<string> imageUrls = new List<string>();
@@ -408,11 +413,11 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
                     new UIDiv()
                     {
                         target = UIElementTarget.modaldialog.ToString(),
-                        targettitle = "Bilder auswählen",
+                        targettitle = localizer.Localize("choose-image"),
                         targetwidth = "80%",
                         elements = new IUIElement[]
                         {
-                            new UILabel() { label = "Name:"},
+                            new UILabel() { label = $"{localizer.Localize("label-name")}:"},
                             new UIBreak(),
                             new UIInputText()
                             {
@@ -420,18 +425,18 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
                                 css = UICss.ToClass(new string[]{ UICss.ToolParameter, UICss.ToolParameterRequiredClientside }),
                                 style="width:100%",
                                 value = file.FileName.Substring(0, file.FileName.Length - imageExtension.Length - 1),
-                                required_message = "Name ist erforderlich"
+                                required_message = localizer.Localize("name-required")
                             },
                             new UIImageSelector()
                             {
                                 id = GeorefImageSelectedImagesId,
                                 ImageUrls = imageUrls,
                                 css = UICss.ToClass(new []{ UICss.ToolParameter, UICss.ToolParameterRequiredClientside }),
-                                required_message = "Bitte mindesttens ein Bild durch anklicken auswählen"
+                                required_message = localizer.Localize("image-required")
                             },
                             new UIButton(UIButton.UIButtonType.servertoolcommand, "store-selected-images")
                             {
-                                text="Bild(er) übernehmen"
+                                text = localizer.Localize("apply-images")
                             }
                         }
                     }
@@ -443,11 +448,11 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
 
         e[GeorefImageLoadId] = firstImageId;
 
-        return OnAddImageDilaog(bridge, e);
+        return OnAddImageDilaog(bridge, e, localizer);
     }
 
     [ServerToolCommand("store-selected-images")]
-    public ApiEventResponse OnStoreSelectedImages(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnStoreSelectedImages(IBridge bridge, ApiToolEventArguments e, ILocalizer<GeoReference> localizer)
     {
         var imagesData = e[GeorefImageSelectedImagesId]
             .Split(',')
@@ -482,11 +487,11 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
 
         e[GeorefImageLoadId] = firstImageId;
 
-        return OnAddImageDilaog(bridge, e);
+        return OnAddImageDilaog(bridge, e, localizer);
     }
 
     [ServerToolCommand("download")]
-    public ApiEventResponse OnDownload(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnDownload(IBridge bridge, ApiToolEventArguments e, ILocalizer<GeoReference> localizer)
     {
         var id = e.ServerCommandArgument;
         if (String.IsNullOrEmpty(id))
@@ -531,7 +536,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
                     new UIDiv()
                     {
                         target = UIElementTarget.modaldialog.ToString(),
-                        targettitle="Bild herunterladen",
+                        targettitle = localizer.Localize("download-image"),
                         css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                         elements = new IUIElement[]
                         {
@@ -541,7 +546,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
                                 css = UICss.ToClass(new string[]{ UICss.ToolParameter }),
                                 value = id,
                             },
-                            new UILabel() { label="Name (optional):"},
+                            new UILabel() { label = $"{localizer.Localize("label-name-optional")}:" },
                             new UIInputText()
                             {
                                 id = GeorefImageDownloadNameId,
@@ -555,8 +560,8 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
                                 css = UICss.ToClass(new string[] { UICss.ToolParameter }),
                                 options=new UISelect.Option[]
                                 {
-                                    new UISelect.Option(){ value= "worldfile", label = "Worldfile" },
-                                    new UISelect.Option(){ value= "passpoints", label= "Worldfile + Passpunkte"}
+                                    new UISelect.Option(){ value= "worldfile", label = localizer.Localize("worldfile") },
+                                    new UISelect.Option(){ value= "passpoints", label= localizer.Localize("worldfile-and-passpoints") }
                                 }
                             },
                             new UISelect()
@@ -568,7 +573,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
                             new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand, "download-file")
                             {
                                 css = UICss.ToClass(new string[] { UICss.DefaultButtonStyle }),
-                                text = "Herunterladen"
+                                text = localizer.Localize("download")
                             }),
 
                         }
@@ -617,7 +622,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
     }
 
     [ServerToolCommand("load-image")]
-    public ApiEventResponse LoadImage(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse LoadImage(IBridge bridge, ApiToolEventArguments e, ILocalizer<GeoReference> localizer)
     {
         var id = e[GeorefImageLoadId];
         if (String.IsNullOrEmpty(id))
@@ -645,7 +650,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
         {
             if (!String.IsNullOrEmpty(unreferencedImageName) && georefImageMetadata.IsGeoreferenced() == false)
             {
-                throw new Exception($"Das Bild kann nicht in die Karte geladen werden! Es darf sich nur ein nicht vollständig georeferenziertes Bild gleichzeitig in der Karte befinden. Bitte zuerst das nicht georeferenzierten Bild \"{unreferencedImageName}\" aus der Karte entfernen, bevor ein neues Bild zum Georeferenzieren in die Karte eingefügt wird.");
+                throw new Exception(String.Format(localizer.Localize("exception-cant-add-image-to-map:body"), unreferencedImageName));
             }
 
             var overlayServiceDefinition = new StaticOverlayServiceDefinitionDTO()
@@ -694,7 +699,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
             };
 
             e.MapOverlayServices.Add(id);
-            AddUI(apiEventResponse, bridge, e);
+            AddUI(apiEventResponse, bridge, e, localizer);
 
             // close dialog
             apiEventResponse.UIElements.Add(new UIEmpty()
@@ -709,8 +714,8 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
     }
 
     [ServerToolCommand("delete-image")]
-    [ToolCommandConfirmation("Bild unwiederruflich löschen?", ApiToolConfirmationType.YesNo, ApiToolConfirmationEventType.ButtonClick)]
-    public ApiEventResponse DeleteImage(IBridge bridge, ApiToolEventArguments e)
+    [ToolCommandConfirmation("confirm-delete-image", ApiToolConfirmationType.YesNo, ApiToolConfirmationEventType.ButtonClick)]
+    public ApiEventResponse DeleteImage(IBridge bridge, ApiToolEventArguments e, ILocalizer<GeoReference> localizer)
     {
         var id = e.ServerCommandArgument;
         if (String.IsNullOrEmpty(id))
@@ -744,7 +749,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
 
         e.MapOverlayServices.Remove(id);
         e[GeorefImageNameSelectId] = String.Empty;
-        AddUI(apiResponse, bridge, e);
+        AddUI(apiResponse, bridge, e, localizer);
 
         return apiResponse;
     }
@@ -768,16 +773,16 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
 
     #region Helper
 
-    private void AddUI(ApiEventResponse apiResponse, IBridge bridge, ApiToolEventArguments e)
+    private void AddUI(ApiEventResponse apiResponse, IBridge bridge, ApiToolEventArguments e, ILocalizer<GeoReference> localizer)
     {
         var uiElements = new List<IUIElement>();
 
-        uiElements.Add(CreateToolbarUI(bridge, e));
+        uiElements.Add(CreateToolbarUI(bridge, e, localizer));
         if (e.MapOverlayServices.Count() == 0)
         {
             uiElements.Add(new UILabel()
             {
-                label = "Mit diesem Werkzeug können Bilder hochgeladen und verortet werden."
+                label = localizer.Localize("label1:body")
             });
         }
         uiElements.Add(new UIStaticOverlayControl()
@@ -796,7 +801,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
                 new UIDiv()
                 {
                     //target=UIElementTarget.modaldialog.ToString(),
-                    targettitle="Dokument georeferenzieren",
+                    targettitle = localizer.Localize("georeference-document"),
                     elements = uiElements.ToArray()
                 }
             });
@@ -810,7 +815,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
         }
     }
 
-    private IUIElement CreateToolbarUI(IBridge bridge, ApiToolEventArguments e, bool replace = false)
+    private IUIElement CreateToolbarUI(IBridge bridge, ApiToolEventArguments e, ILocalizer<GeoReference> localizer, bool replace = false)
     {
         var id = e[GeorefImageNameSelectId];
 
@@ -819,7 +824,7 @@ public class GeoReference : IApiServerTool, IApiButtonResources, IApiToolConfirm
         uiImageButtons.Add(
             new UIButton(UIButton.UIButtonType.servertoolcommand, "add-image-dialog")
             {
-                text = "Bild hinzufügen",
+                text = localizer.Localize("add-image"),
                 css = UICss.ToClass(new[] { UICss.OptionRectButtonStyle, UICss.Width_25Percent }),
                 icon = UIButton.ToolResourceImage(this.GetType(), "upload")
             });
