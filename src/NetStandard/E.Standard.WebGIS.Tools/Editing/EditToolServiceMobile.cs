@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Mobile.Advanced;
@@ -23,10 +24,12 @@ namespace E.Standard.WebGIS.Tools.Editing;
 public class EditToolServiceMobile : IEditToolService
 {
     private readonly IApiTool _sender;
+    private readonly ILocalizer _localizer;
 
-    public EditToolServiceMobile(IApiTool sender)
+    public EditToolServiceMobile(IApiTool sender, ILocalizer localizer)
     {
         _sender = sender;
+        _localizer = localizer;
     }
 
     #region IEditService
@@ -36,18 +39,18 @@ public class EditToolServiceMobile : IEditToolService
         List<IUIElement> uiElements = new List<IUIElement>(
             new IUIElement[] {
                 new UIButton(UIButton.UIButtonType.servertoolcommand,"newfeature") {
-                    text="Neues Objekt anlegen",
-                    css=UICss.ToClass(new string[]{ UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
+                    text = _localizer.Localize("mobile.new-feature"),
+                    css = UICss.ToClass(new string[]{ UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
                     icon = UIButton.ToolResourceImage(typeof(Edit), "insert")
                 },
                 new UIButton(UIButton.UIButtonType.servertoolcommand,"updatefeature") {
-                    text="Bestehendes Objekt bearbeiten",
-                    css=UICss.ToClass(new string[]{  UICss.CancelButtonStyle, UICss.OptionRectButtonStyle}),
+                    text = _localizer.Localize("mobile.edit-feature"),
+                    css = UICss.ToClass(new string[]{  UICss.CancelButtonStyle, UICss.OptionRectButtonStyle}),
                     icon = UIButton.ToolResourceImage(typeof(Edit), "update")
                 },
                 new UIButton(UIButton.UIButtonType.servertoolcommand,"deletefeature") {
-                    text="Bestehendes Objekt löschen",
-                    css=UICss.ToClass(new string[]{  UICss.CancelButtonStyle, UICss.OptionRectButtonStyle}),
+                    text = _localizer.Localize("mobile.delete-feature"),
+                    css = UICss.ToClass(new string[]{  UICss.CancelButtonStyle, UICss.OptionRectButtonStyle}),
                     icon = UIButton.ToolResourceImage(typeof(Edit), "delete")
                 },
                 new UIHidden(){
@@ -92,7 +95,7 @@ public class EditToolServiceMobile : IEditToolService
                     {
                         if (features.Count > 0)
                         {
-                            selectionDiv.AddChild(new UITitle() { label = "Ausgewählte Objekte" });
+                            selectionDiv.AddChild(new UITitle() { label = _localizer.Localize("mobile.selected-features") });
 
                             var editThemeDef = e.EditFeatureDefinitionFromSelection(bridge, features[0]);
                             if (!String.IsNullOrWhiteSpace(editThemeDef?.EditThemeName))
@@ -104,13 +107,13 @@ public class EditToolServiceMobile : IEditToolService
 
                         selectionDiv.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "updateselectedfeature")
                         {
-                            text = "Objekt bearbeiten",
+                            text = _localizer.Localize("mobile.edit-selected-feature"),
                             css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
                             icon = UIButton.ToolResourceImage(typeof(Edit), "update")
                         });
                         selectionDiv.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "deleteselectedfeature")
                         {
-                            text = "Objekt löschen",
+                            text = _localizer.Localize("mobile.delete-selected-feature"),
                             css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
                             icon = UIButton.ToolResourceImage(typeof(Edit), "delete")
                         });
@@ -124,7 +127,7 @@ public class EditToolServiceMobile : IEditToolService
 
                     if (features.Count > 0)
                     {
-                        selectionDiv.AddChild(new UITitle() { label = "Ausgewählte Objekte" });
+                        selectionDiv.AddChild(new UITitle() { label = _localizer.Localize("mobile.selected-features") });
 
                         var editThemeDef = e.EditFeatureDefinitionFromSelection(bridge, features[0]);
                         if (!String.IsNullOrWhiteSpace(editThemeDef?.EditThemeName))
@@ -138,13 +141,13 @@ public class EditToolServiceMobile : IEditToolService
                     {
                         selectionDiv.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "updateselectedfeature")
                         {
-                            text = "Objekt bearbeiten",
+                            text = _localizer.Localize("mobile.edit-selected-feature"),
                             css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
                             icon = UIButton.ToolResourceImage(typeof(Edit), "update")
                         });
                         selectionDiv.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "deleteselectedfeature")
                         {
-                            text = "Objekt löschen",
+                            text = _localizer.Localize("mobile.delete-selected-feature"),
                             css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
                             icon = UIButton.ToolResourceImage(typeof(Edit), "delete")
                         });
@@ -154,20 +157,20 @@ public class EditToolServiceMobile : IEditToolService
                         {
                             selectionDiv.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "explodefeature")
                             {
-                                text = "Multipart auftrennen (explode)",
+                                text = _localizer.Localize("mobile.explode-multipart-feature"),
                                 css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
                                 icon = UIButton.ToolResourceImage(typeof(Edit), "explode")
                             });
                         }
                         selectionDiv.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "cutfeature")
                         {
-                            text = "Objekt teilen (cut)",
+                            text = _localizer.Localize("mobile.cut-feature"),
                             css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
                             icon = UIButton.ToolResourceImage(typeof(Edit), "cut")
                         });
                         selectionDiv.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "clipfeature")
                         {
-                            text = "Objekt Ausschneiden (clip)",
+                            text = _localizer.Localize("mobile.clip-feature"),
                             css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
                             icon = UIButton.ToolResourceImage(typeof(Edit), "clip")
                         });
@@ -176,7 +179,7 @@ public class EditToolServiceMobile : IEditToolService
                     {
                         selectionDiv.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "mergefeatures")
                         {
-                            text = "Zusammenführen (merge)",
+                            text = _localizer.Localize("mobile.merge-features"),
                             css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
                             icon = UIButton.ToolResourceImage(typeof(Edit), "merge")
                         });
@@ -189,7 +192,7 @@ public class EditToolServiceMobile : IEditToolService
                 {
                     selectionDiv.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "massattributation")
                     {
-                        text = "Massenattributierung",
+                        text = _localizer.Localize("mobile.massattribution"),
                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
                         icon = UIButton.ToolResourceImage(typeof(Edit), "mass")
                     });
@@ -201,7 +204,7 @@ public class EditToolServiceMobile : IEditToolService
         {
             selectionDiv.AddChild(new UILabel()
             {
-                label = "Zur Zeit sind keine Objekte ausgewählt. Für ausgwählte Objekte stehen noch weitere Bearbeitunsfunktionen zur Verfügung (merge, explode, cut)",
+                label = _localizer.Localize("mobile.selection-label1:body"),
                 style = "padding:5px"
             });
         }
@@ -209,18 +212,18 @@ public class EditToolServiceMobile : IEditToolService
         selectionDiv.AddChild(new UIBreak(2));
         selectionDiv.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "selection-tool")
         {
-            text = "mit Auswahlwerkzeug auswählen...",
+            text = _localizer.Localize("mobile.use-selection-tool"),
             css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionRectButtonStyle }),
             icon = UIButton.ToolResourceImage(typeof(Edit), "selecteiontool")
         });
         selectionDiv.AddChild(new UIBreak());
         selectionDiv.AddChild(new UILabel()
         {
-            label = "Oder einfach in die Karte klicken, um ein Objekt auszuwählen",
+            label = _localizer.Localize("mobile.selection-label2:body"),
             style = "padding:5px"
         });
 
-        uiElements.Add(new UIToolUndoButton(this.GetType(), "Rückgängig: Bearbeitungsschritt")
+        uiElements.Add(new UIToolUndoButton(this.GetType(), _localizer.Localize("mobile.undo"))
         {
             id = "webgis-edit-undo-button"
         });
@@ -333,7 +336,7 @@ public class EditToolServiceMobile : IEditToolService
     }
 
     [ServerToolCommand("updateselectedfeature")]
-    async public Task<ApiEventResponse> OnUpdateSelectedFeature(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnUpdateSelectedFeature(IBridge bridge, ApiToolEventArguments e, ILocalizer<Edit> localizer)
     {
         int crsId = e.GetInt(Edit.EditMapCrsId);
 
@@ -341,7 +344,7 @@ public class EditToolServiceMobile : IEditToolService
 
         var response = new ApiEventResponse();
         var tool = new Mobile.UpdateFeature();
-        await Mobile.UpdateFeature.InitAsync(tool, bridge, e, editFeatureDef, response, crsId);
+        await Mobile.UpdateFeature.InitAsync(tool, bridge, e, editFeatureDef, response, localizer, crsId);
         tool.ParentTool = _sender;
         response.ActiveTool = tool;
 
@@ -361,7 +364,7 @@ public class EditToolServiceMobile : IEditToolService
     }
 
     [ServerToolCommand("deleteselectedfeature")]
-    async public Task<ApiEventResponse> OnDeleteSelectedFeature(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnDeleteSelectedFeature(IBridge bridge, ApiToolEventArguments e, ILocalizer<Edit> localizer)
     {
         int crsId = e.GetInt(Edit.EditMapCrsId);
 
@@ -369,7 +372,7 @@ public class EditToolServiceMobile : IEditToolService
 
         var response = new ApiEventResponse();
         var tool = new Mobile.DeleteFeature();
-        await Mobile.DeleteFeature.InitAsync(tool, bridge, e, editFeatureDef, response, crsId);
+        await Mobile.DeleteFeature.InitAsync(tool, bridge, e, editFeatureDef, response, localizer, crsId);
         tool.ParentTool = _sender;
         response.ActiveTool = tool;
 

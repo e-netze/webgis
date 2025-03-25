@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Compare;
+using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
@@ -21,6 +22,7 @@ namespace E.Standard.WebGIS.Tools.Editing.Mobile.Advanced;
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(SelectionInfoDependent = true, MapCrsDependent = true)]
+[LocalizationNamespace("tools.editing.clip")]
 public class ClipFeature : IApiServerToolAsync, IApiChildTool, IApiButtonResources
 {
     const string EditClipFeatureMethodId = "editing-clip-feature-method";

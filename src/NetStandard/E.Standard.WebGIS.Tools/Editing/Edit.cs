@@ -1,4 +1,5 @@
-﻿using E.Standard.Localization.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
@@ -31,13 +32,13 @@ namespace E.Standard.WebGIS.Tools.Editing;
 [ToolHelp("tools/general/editing/index.html")]
 [ToolId("webgis.tools.editing.edit")]
 [ToolConfigurationSection("editing")]
-[LocalizationNamespace("tools.Editing")]
-public class Edit : IApiServerToolAsync,
+[LocalizationNamespace("tools.editing")]
+public class Edit : IApiServerToolLocalizableAsync<Edit>,
                     IApiButtonDependency,
                     IApiButtonResources,
                     IApiUndoTool,
                     IApiPostRequestEvent,
-                    IServerCommandInstanceProvider
+                    IServerCommandInstanceProvider<Edit>
 {
     public const string EditAllThemesId = "edit-all-themes";
     public const string EditMapScaleId = "edit-map-scale";
@@ -45,14 +46,14 @@ public class Edit : IApiServerToolAsync,
 
     #region IApiServerTool Member
 
-    public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Edit> localizer)
     {
-        return e.EditToolServiceInstance(this).OnButtonClick(bridge, e);
+        return e.EditToolServiceInstance(this, localizer).OnButtonClick(bridge, e);
     }
 
-    public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e)
+    public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<Edit> localizer)
     {
-        return e.EditToolServiceInstance(this).OnEvent(bridge, e);
+        return e.EditToolServiceInstance(this, localizer).OnEvent(bridge, e);
     }
 
     #endregion
@@ -248,9 +249,9 @@ public class Edit : IApiServerToolAsync,
 
     #region IServerCommandInstanceProvider
 
-    public object ServerCommandInstance(IBridge bridge, ApiToolEventArguments e)
+    public object ServerCommandInstance(IBridge bridge, ApiToolEventArguments e, ILocalizer<Edit> localizer)
     {
-        return e.EditToolServiceInstance(this);
+        return e.EditToolServiceInstance(this, localizer);
     }
 
     #endregion

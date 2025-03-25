@@ -1,4 +1,6 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.Localization.Reflection;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Services;
 using E.Standard.WebMapping.Core.Api;
@@ -18,6 +20,7 @@ namespace E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(SelectionInfoDependent = true, MapCrsDependent = true)]
+[LocalizationNamespace("tools.editing.deletefeatures")]
 public class DeleteSelectedFeatures : IApiServerTool, IApiChildTool
 {
     private readonly UpdateFeatureService _updateFeatureService;
@@ -41,7 +44,7 @@ public class DeleteSelectedFeatures : IApiServerTool, IApiChildTool
 
     #endregion
 
-    public async Task<ApiEventResponse> InitResponse(IBridge bridge, ApiToolEventArguments e, IApiTool sender)
+    public async Task<ApiEventResponse> InitResponse(IBridge bridge, ApiToolEventArguments e, IApiTool sender, ILocalizer<DeleteSelectedFeatures> localizer)
     {
         var features = await e.FeaturesFromSelectionAsync(bridge);
         if (features == null || features.Count == 0)
@@ -68,7 +71,7 @@ public class DeleteSelectedFeatures : IApiServerTool, IApiChildTool
         return new ApiEventResponse()
             .AddUIElement(new UIDiv()
                 .AsDialog(UIElementTarget.tool_modaldialog)
-                .WithTargetTitle("Features löschen")
+                .WithTargetTitle(localizer.Localize("name"))
                 .AddChildren(
                     new UIHidden()
                         .WithId(editTheme.EditEnvironment.EditThemeElementId)
@@ -86,10 +89,12 @@ public class DeleteSelectedFeatures : IApiServerTool, IApiChildTool
                     new UIImage(Convert.ToBase64String(previewData), true),
 
                     new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
-                        .WithText("Abbrechen")
+                        .WithText(localizer.Localize("cancel"))
                         .WithStyles(UICss.CancelButtonStyle, UICss.OptionButtonStyle),
                     new UIButton(UIButton.UIButtonType.servertoolcommand, "delete-selected")
-                        .WithText(features.Count > 1 ? $"{features.Count} Objekte löschen" : "Objekt löschen")
+                        .WithText(features.Count > 1 
+                            ? String.Format(localizer.Localize("delete-features"), features.Count)
+                            : localizer.Localize("delete-feature"))
                         .WithStyles(UICss.DangerButtonStyle, UICss.OptionButtonStyle)))
             .SetActiveTool(new DeleteSelectedFeatures()
             {

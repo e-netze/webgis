@@ -4,10 +4,12 @@ using E.Standard.Api.App;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Tools.Editing;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.EventResponse;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Specialized;
 using System.Text;
@@ -30,7 +32,14 @@ public class RestEditingHelperService
         _cache = cache;
     }
 
-    async public Task<IActionResult> PerformEditServiceRequest(ApiBaseController controller, string serviceId, string themeIds, string command, CmsDocument.UserIdentification ui, NameValueCollection form = null)
+    async public Task<IActionResult> PerformEditServiceRequest(
+                            ApiBaseController controller, 
+                            string serviceId, 
+                            string themeIds, 
+                            string command, 
+                            CmsDocument.UserIdentification ui, 
+                            IStringLocalizer stringLocalizer,
+                            NameValueCollection form = null)
     {
         StringBuilder editThemeId = new StringBuilder();
 
@@ -86,7 +95,7 @@ public class RestEditingHelperService
             nvc.Add("_editfield_edittheme_def", ApiToolEventArguments.ToArgument(editThemeDefinition));
 
             var e = new ApiToolEventArguments(bridge, nvc);
-            response = await new EditToolServiceMobile(editTool).OnEditServiceGetCapabilities(bridge, e);
+            response = await new EditToolServiceMobile(editTool, ToolDependencyProvider.GetLocalizer<Edit>(stringLocalizer)).OnEditServiceGetCapabilities(bridge, e);
         }
         else if (command == "insert")
         {

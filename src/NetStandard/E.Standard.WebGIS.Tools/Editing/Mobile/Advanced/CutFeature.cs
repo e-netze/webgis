@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Reflection;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
@@ -18,6 +19,7 @@ namespace E.Standard.WebGIS.Tools.Editing.Mobile.Advanced;
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(SelectionInfoDependent = true, MapCrsDependent = true)]
+[LocalizationNamespace("tools.editing.cut")]
 public class CutFeature : IApiServerToolAsync, IApiChildTool
 {
     #region IApiServerTool Member

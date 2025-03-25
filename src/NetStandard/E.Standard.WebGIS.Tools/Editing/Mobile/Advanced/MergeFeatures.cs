@@ -1,4 +1,6 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.Localization.Reflection;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
@@ -21,19 +23,21 @@ namespace E.Standard.WebGIS.Tools.Editing.Mobile.Advanced;
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(SelectionInfoDependent = true, MapCrsDependent = true)]
-public class MergeFeatures : IApiServerToolAsync, IApiChildTool
+[LocalizationNamespace("tools.editing.merge")]
+public class MergeFeatures : IApiServerToolLocalizableAsync<MergeFeatures>, 
+                             IApiChildTool
 {
     const string CurrentFeatureAttributeId = "edit-mergefeature-feature-oid";
     const int _cancelationTokenTimeoutMilliseconds = 10000;
 
     #region IApiServerTool Member
 
-    async public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MergeFeatures> localizer)
     {
-        return await OnChangeFeature(bridge, e);
+        return await OnChangeFeature(bridge, e, localizer);
     }
 
-    public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e)
+    public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<MergeFeatures> localizer)
     {
         return Task.FromResult<ApiEventResponse>(null);
     }
@@ -199,7 +203,7 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
     }
 
     [ServerToolCommand("changefeature")]
-    async public Task<ApiEventResponse> OnChangeFeature(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnChangeFeature(IBridge bridge, ApiToolEventArguments e, ILocalizer<MergeFeatures> localizer)
     {
         string featureOid = e[CurrentFeatureAttributeId];
 
@@ -241,7 +245,7 @@ public class MergeFeatures : IApiServerToolAsync, IApiChildTool
             {
                 new UITitle()
                 {
-                    label="Attribute aus diesem Objekt übernehmen:"
+                    label=$"{localizer.Localize("label-attributes-from")}:"
                 },
                 new UISelect(UIButton.UIButtonType.servertoolcommand,"changefeature")
                 {

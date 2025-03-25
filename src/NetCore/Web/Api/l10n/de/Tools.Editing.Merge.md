@@ -27,3 +27,5 @@ Teile aus den Ausgangsobjekten verloren (Artifakte).
 Es gibt in der Regel mehrere Lösungen, die im nächsten Schritt angeboten werden. 
 Die Methode ist nur erfolgreich, wen ein neuens Objekte zusammengesetzt wird, in dem mindesten ein Teil aus jedem
 Ausgangsobjekt enthalten ist.
+
+# label-attributes-from: Attribute aus diesem Objekt übernehmen

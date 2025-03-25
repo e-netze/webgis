@@ -29,3 +29,5 @@ process. There are usually several solutions offered in the next step.
 The method is only successful if a new object is created that contains 
 at least one part from each original object.
 
+# label-attributes-from: Take attributes from this object
+

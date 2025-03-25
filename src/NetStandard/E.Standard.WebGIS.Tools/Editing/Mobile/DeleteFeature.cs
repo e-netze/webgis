@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebMapping.Core.Api;
@@ -24,21 +25,28 @@ public class DeleteFeature : UpdateFeature
         this.Operation = EditOperation.Delete;
     }
 
-    async internal static Task InitAsync(DeleteFeature tool, IBridge bridge, ApiToolEventArguments e, EditFeatureDefinition editFeatureDef, ApiEventResponse response, int mapCrsId = 4326)
+    async internal static Task InitAsync(
+                    DeleteFeature tool, 
+                    IBridge bridge, 
+                    ApiToolEventArguments e, 
+                    EditFeatureDefinition editFeatureDef,
+                    ApiEventResponse response,
+                    ILocalizer<Edit> localizer,
+                    int mapCrsId = 4326)
     {
-        await UpdateFeature.InitAsync(tool, bridge, e, editFeatureDef, response, mapCrsId, EditOperation.Delete);
+        await UpdateFeature.InitAsync(tool, bridge, e, editFeatureDef, response, localizer, mapCrsId, EditOperation.Delete);
 
-        tool.Name = editFeatureDef.EditThemeName + " löschen";
+        tool.Name = string.Format(localizer.Localize("delete-in-layer"), editFeatureDef.EditThemeName);
     }
 
     #region Overrides
 
-    protected override void AddUIElements(List<IUIElement> uiElements)
+    protected override void AddUIElements(List<IUIElement> uiElements, ILocalizer<Edit> localizer)
     {
         uiElements.AddRange(new IUIElement[]
         {
             new UIButton(UIButton.UIButtonType.servertoolcommand, "delete") {
-                    text="Löschen"
+                    text = localizer.Localize("delete")
                 }
         });
     }

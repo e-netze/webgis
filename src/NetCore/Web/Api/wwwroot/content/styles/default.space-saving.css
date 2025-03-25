@@ -4,7 +4,7 @@
     margin: 0px -5px;
 }
 
-.webgis-toolbox-tool-item span img {
+.webgis-container.webgis-space-saving .webgis-toolbox-tool-item span img {
     width: 20px;
 }
 

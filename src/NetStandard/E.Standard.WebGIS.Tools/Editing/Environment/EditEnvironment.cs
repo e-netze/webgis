@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core.Extensions;
+﻿using E.Standard.CMS.Core.Extensions;
 using E.Standard.DbConnector;
 using E.Standard.DbConnector.Exceptions;
 using E.Standard.Extensions;
@@ -6,6 +6,7 @@ using E.Standard.Extensions.Compare;
 using E.Standard.Extensions.ErrorHandling;
 using E.Standard.Extensions.IO;
 using E.Standard.Json;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Platform;
 using E.Standard.Security.Core;
 using E.Standard.WebGIS.CMS;
@@ -138,25 +139,28 @@ class EditEnvironment
                 }
             }
 
-            DirectoryInfo di = new DirectoryInfo(EditRootPath + @"/themes");
-            foreach (FileInfo fi in di.GetFiles("*.xml"))
+            DirectoryInfo di = new DirectoryInfo(System.IO.Path.Combine(EditRootPath, "themes"));
+            if (di.Exists)
             {
-                try
+                foreach (FileInfo fi in di.GetFiles("*.xml"))
                 {
-                    XmlDocument doc = new XmlDocument();
-                    doc.Load(fi.FullName);
-                    XmlNamespaceManager ns = new XmlNamespaceManager(doc.NameTable);
-                    ns.AddNamespace("webgis", "http://www.e-steiermark.com/webgis");
-                    ns.AddNamespace("edit", "http://www.e-steiermark.com/webgis/edit");
-
-                    XmlNode node = doc.SelectSingleNode("editthemes/edit:edittheme[@id='" + themeId + "']", ns);
-                    // node = node.CloneNode(true);  
-                    if (node != null)
+                    try
                     {
-                        return new EditTheme(this, node, ns);
+                        XmlDocument doc = new XmlDocument();
+                        doc.Load(fi.FullName);
+                        XmlNamespaceManager ns = new XmlNamespaceManager(doc.NameTable);
+                        ns.AddNamespace("webgis", "http://www.e-steiermark.com/webgis");
+                        ns.AddNamespace("edit", "http://www.e-steiermark.com/webgis/edit");
+
+                        XmlNode node = doc.SelectSingleNode("editthemes/edit:edittheme[@id='" + themeId + "']", ns);
+                        // node = node.CloneNode(true);  
+                        if (node != null)
+                        {
+                            return new EditTheme(this, node, ns);
+                        }
                     }
+                    catch { }
                 }
-                catch { }
             }
 
             return null;
@@ -1064,6 +1068,7 @@ class EditEnvironment
         {
             var target = UIElementTarget.tool_modaldialog;
             string targetTitle = null, targetWidth = null;
+            var localizer = bridge.GetLocalizer<Edit>();
 
             switch (editOperation)
             {
@@ -1073,7 +1078,7 @@ class EditEnvironment
                     break;
                 case EditOperation.UpdateAttribures:
                     target = UIElementTarget.modaldialog;
-                    targetTitle = "Attribute bearbeiten";
+                    targetTitle = localizer.Localize("mask.edit-attributes");
                     targetWidth = "640px";
                     break;
             }
@@ -1181,10 +1186,10 @@ class EditEnvironment
 
                 if ((editOperation == EditOperation.Insert || editOperation == EditOperation.Update) && useMobileBehavoir == true)
                 {
-                    parentElement.AddChild(new UILabel() { label = "Geographie:" });
+                    parentElement.AddChild(new UILabel() { label = $"{localizer.Localize("mask.label-geometry")}:" });
                     parentElement.AddChild(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.hidetoolmodaldialog)
                     {
-                        text = "bearbeiten »",
+                        text = $"{localizer.Localize("mask.button-geometry")} »",
                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionButtonStyle, UICss.ModalCloseElement }),
                         style = "max-width:300px"
                     });
@@ -1745,7 +1750,7 @@ class EditEnvironment
             var buttonGroup = new UIButtonGroup();
             parentElement.AddChild(buttonGroup);
 
-            #region Leere Kategorien entfernen
+            #region Remove empty categories
 
             if (editOperation == EditOperation.MassAttributation)
             {
@@ -1770,12 +1775,12 @@ class EditEnvironment
             {
                 buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
                 {
-                    text = "Abbrechen",
+                    text = localizer.Localize("cancel"),
                     css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionButtonStyle })
                 });
                 buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "save")
                 {
-                    text = "Attribute übernemhen",
+                    text = localizer.Localize("mask.apply-attributes"),
                     css = UICss.ToClass(new string[] { UICss.DefaultButtonStyle, UICss.OptionButtonStyle, UICss.ValidateInputButton })
                 });
 
@@ -1784,7 +1789,7 @@ class EditEnvironment
                     css = UICss.ToClass(new string[] { "webgis-info" }),
                     elements = new IUIElement[]
                             {
-                                new UILiteral() { literal="Alle ausgewähten Attribute werden übernommen. Für diese Operation ist KEIN Undo möglich!" }
+                                new UILiteral() { literal = localizer.Localize("mask.warning-massattribution1") }
                             }
                 });
             }
@@ -1800,7 +1805,7 @@ class EditEnvironment
                         {
                             parentElement.InsertChildBefore(buttonGroup, new UIButton(UIButton.UIButtonType.servertoolcommand, "saveandselect")
                             {
-                                text = "Speichern und Auswählen",
+                                text = localizer.Localize("mask.save-and-select"),
                                 css = UICss.ToClass(new string[] { UICss.OptionButtonStyle })
                             });
                         }
@@ -1817,7 +1822,7 @@ class EditEnvironment
 
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
                     {
-                        text = useMobileBehavoir ? "Abbrechen" : "Beenden",
+                        text = useMobileBehavoir ? localizer.Localize("cancel") : localizer.Localize("mask.stop-editing"),
                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.ButtonIcon })
                     });
 
@@ -1825,7 +1830,7 @@ class EditEnvironment
                     {
                         buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "save")
                         {
-                            text = "Speichern",
+                            text = localizer.Localize("save"),
                             css = UICss.ToClass(new string[] { UICss.OkButtonStyle, UICss.ButtonIcon, UICss.ValidateInputButton }),
                             ctrl_shortcut = "s"
                         });
@@ -1846,14 +1851,14 @@ class EditEnvironment
                     {
                         //text = "Bearbeitung abbrechen",
                         //css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionButtonStyle })
-                        text = "Abbrechen",
+                        text = localizer.Localize("cancel"),
                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.ButtonIcon })
                     });
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "save")
                     {
                         //text = "Änderungen Speichern",
                         //css = UICss.ToClass(new string[] { UICss.DefaultButtonStyle, UICss.OptionButtonStyle })
-                        text = "Speichern",
+                        text = localizer.Localize("save"),
                         css = UICss.ToClass(new string[] { UICss.OkButtonStyle, UICss.ButtonIcon, UICss.ValidateInputButton }),
                         ctrl_shortcut = "s"
                     });
@@ -1865,7 +1870,7 @@ class EditEnvironment
                         //text = "Änderungen Speichern",
                         //css = UICss.ToClass(new string[] { UICss.DefaultButtonStyle, UICss.OptionButtonStyle })
                         id = "webgis.tools.editing.updatefeature",  // Callback tool für servertoolcommand_ext
-                        text = "Speichern",
+                        text = localizer.Localize("save"),
                         css = UICss.ToClass(new string[] { UICss.OkButtonStyle, UICss.ButtonIcon, UICss.ValidateInputButton }),
                         ctrl_shortcut = "s"
                     });
@@ -1874,12 +1879,12 @@ class EditEnvironment
                 {
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
                     {
-                        text = "Abbrechen",
+                        text =localizer.Localize("cancel"),
                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.ButtonIcon })
                     });
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "delete")
                     {
-                        text = "Löschen",
+                        text = localizer.Localize("delete"),
                         css = UICss.ToClass(new string[] { UICss.DangerButtonStyle, UICss.ButtonIcon })
                     });
                 }
@@ -1887,12 +1892,12 @@ class EditEnvironment
                 {
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
                     {
-                        text = "Abbrechen",
+                        text = localizer.Localize("cancel"),
                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.ButtonIcon })
                     });
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "explode")
                     {
-                        text = "Auftrennen",
+                        text = localizer.Localize("mask.explode"),
                         css = UICss.ToClass(new string[] { UICss.OkButtonStyle, UICss.ButtonIcon })
                     });
                 }
@@ -1900,12 +1905,12 @@ class EditEnvironment
                 {
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
                     {
-                        text = "Abbrechen",
+                        text = localizer.Localize("cancel"),
                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.ButtonIcon })
                     });
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "merge")
                     {
-                        text = "Zusammenführen",
+                        text = localizer.Localize("mask.merge"),
                         css = UICss.ToClass(new string[] { UICss.OkButtonStyle, UICss.ButtonIcon })
                     });
                 }
@@ -1913,18 +1918,20 @@ class EditEnvironment
                 {
                     parentElement.InsertChildBefore(buttonGroup, new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removesketch)
                     {
-                        text = "Sketch entfernen",
+                        text = localizer.Localize("remove-sketch"),
                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.OptionButtonStyle })
                     });
 
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
                     {
-                        text = "Abbrechen",
+                        text = localizer.Localize("cancel"),
                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.ButtonIcon })
                     });
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, editOperation == EditOperation.Cut ? "cut" : "clip")
                     {
-                        text = editOperation == EditOperation.Cut ? "Teilen" : "Clip",
+                        text = editOperation == EditOperation.Cut 
+                            ? localizer.Localize("mask.cut") 
+                            : localizer.Localize("mask.clip"),
                         css = UICss.ToClass(new string[] { UICss.OkButtonStyle, UICss.ButtonIcon })
                     });
                 }
@@ -1960,7 +1967,7 @@ class EditEnvironment
 
             if (editOperation == EditOperation.Insert)
             {
-                AppendLayerWarnings(maskDiv, editThemeDef);
+                AppendLayerWarnings(maskDiv, editThemeDef, localizer);
             }
 
             return new UIEditMask()
@@ -3472,7 +3479,7 @@ class EditEnvironment
 
     #region Static Members
 
-    static internal void AppendLayerWarnings(IUIElement parentElement, EditThemeDefinition editThemeDef)
+    static internal void AppendLayerWarnings(IUIElement parentElement, EditThemeDefinition editThemeDef, ILocalizer<Edit> localizer)
     {
         var globalLayerId = $"{editThemeDef.ServiceId}:{editThemeDef.LayerId}";
         // Check if layer is in scale
@@ -3489,7 +3496,7 @@ class EditEnvironment
             css = UICss.ToClass(new string[] { "webgis-info" }),
             elements = new IUIElement[]
             {
-                        new UILiteral() { literal="Achtung: Der betroffene Layer wird im aktuellen Kartenmaßstab nicht dargestellt."}
+                        new UILiteral() { literal = localizer.Localize("warning-affected-layer1") }
             }
         });
 
@@ -3511,13 +3518,13 @@ class EditEnvironment
             css = UICss.ToClass(new string[] { "webgis-info" }),
             elements = new IUIElement[]
             {
-                        new UILiteral() { literal="Achtung: Der betroffene Layer ist momentan nicht sichtbar geschalten. Bereits bestehende Objekte werden nicht angezeigt." }
+                        new UILiteral() { literal = localizer.Localize("warning-affected-layer2") }
             }
         });
         conditionDivVisiblity.AddChild(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setlayersvisible)
         {
             //text = $"Layer { editThemeDef.EditThemeName } sichtbar schalten",
-            text = "Betroffenen Layer sichtbar schalten!",
+            text = localizer.Localize("button-affected-layer-visible"),
             buttoncommand_argument = globalLayerId,
             css = UICss.ToClass(new string[] { UICss.DangerButtonStyle })
         });
