@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Collections;
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
 using E.Standard.WebGIS.Tools.Identify;
@@ -34,10 +35,12 @@ internal class EditToolServiceDesktop : IEditToolService
     public const string SelectionFeatureLimit = "selection-feature-limit";
 
     private readonly IApiTool _sender;
+    private readonly ILocalizer _localizer;
 
-    public EditToolServiceDesktop(IApiTool sender)
+    public EditToolServiceDesktop(IApiTool sender, ILocalizer localizer)
     {
         _sender = sender;
+        _localizer = localizer;
     }
 
     #region IEditToolService
@@ -75,24 +78,23 @@ internal class EditToolServiceDesktop : IEditToolService
             {
                 new UIImageButton(_sender.GetType(), "pointer", UIButton.UIButtonType.servertoolcommand, "pointer"){
                     value = SelectionToolIdPointer,
-                    text = "Punkt Selektion"
+                    text = _localizer.Localize("desktop.point-selection")
                 },
                 new UIImageButton(_sender.GetType(), "rectangle", UIButton.UIButtonType.servertoolcommand, "rectangle"){
                     value = SelectionToolIdRectangle,
-                    text = "Rechtecks Selection"
+                    text = _localizer.Localize("desktop.rectangle-selection")
                 },
                 new UIImageButton(_sender.GetType(), "rectangle-binoculars", UIButton.UIButtonType.servertoolcommand, "rectangle_querybuilder"){
                     value = SelectionToolIdRectangleQueryBuilder,
-                    text = "Rechtecks Selection/QueryBuilder"
+                    text = _localizer.Localize("desktop.rectangle-selection-querybuilder")
                 },
                 new UIImageButton(_sender.GetType(), "insert", UIButton.UIButtonType.servertoolcommand, "newfeature"){
                     value = "newfeature",
-                    text = "Neues Objekt anlegen"//,
-                    //css = UICss.ToClass(new[]{ "webgis-dependencies", "webgis-dependency-edittheme-selected" })
+                    text = _localizer.Localize("desktop.new-feature")
                 },
                 new UIImageToolUndoButton(_sender.GetType(), "undo"){
                     id = "webgis-edit-undo-button",
-                    text = "Rückgängig: Bearbeitungsschritt"
+                    text = _localizer.Localize("desktop.undo")
                 },
             }
         });
@@ -155,7 +157,7 @@ internal class EditToolServiceDesktop : IEditToolService
                     new UIDiv()
                     {
                         target =  UIElementTarget.modaldialog.ToString(),
-                        targettitle = "Query Builder",
+                        targettitle = _localizer.Localize("desktop.querybuilder"),
                         targetwidth = "600px",
                         targetheight = "400px",
                         elements = new IUIElement[] { uiQueryBuilder }
@@ -317,7 +319,7 @@ internal class EditToolServiceDesktop : IEditToolService
 
         if (String.IsNullOrEmpty(editThemeDef?.LayerId))
         {
-            throw new InfoException("Zum Erstellen eines neuen Objektes zuerst ein Thema aus der Liste auswählen und erneut auf den Button 'Neues Objekt' klicken.");
+            throw new InfoException(_localizer.Localize("desktop.exception-select-edit-theme"));
         }
 
         return new ApiEventResponse()
@@ -389,9 +391,9 @@ internal class EditToolServiceDesktop : IEditToolService
     }
 
     [ServerToolCommand("deleteselectedfeatures")]
-    async public Task<ApiEventResponse> OnDeleteSelectedFeatures(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnDeleteSelectedFeatures(IBridge bridge, ApiToolEventArguments e, ILocalizer<DeleteSelectedFeatures> localizer)
     {
-        return await (new Desktop.Advanced.DeleteSelectedFeatures()).InitResponse(bridge, e, _sender);
+        return await (new Desktop.Advanced.DeleteSelectedFeatures()).InitResponse(bridge, e, _sender, localizer);
     }
 
     [ServerToolCommand("massattributation")]

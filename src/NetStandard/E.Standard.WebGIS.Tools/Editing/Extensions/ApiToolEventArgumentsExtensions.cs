@@ -1,5 +1,6 @@
 ﻿using E.Standard.Extensions.Compare;
 using E.Standard.Json;
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebGIS.Tools.Extensions;
@@ -25,14 +26,14 @@ static internal class ApiToolEventArgumentsExtensions
         return e.HasElement("div", new[] { "query-results-tab-control-container" });
     }
 
-    public static IEditToolService EditToolServiceInstance(this ApiToolEventArguments e, IApiTool sender)
+    public static IEditToolService EditToolServiceInstance(this ApiToolEventArguments e, IApiTool sender, ILocalizer localizer)
     {
         if (e.UseDesktopBehavior())
         {
-            return new EditToolServiceDesktop(sender);
+            return new EditToolServiceDesktop(sender, localizer);
         }
 
-        return new EditToolServiceMobile(sender);
+        return new EditToolServiceMobile(sender, localizer);
     }
 
     #region Selection

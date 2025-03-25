@@ -48,6 +48,11 @@ public class ToolDependencyProvider : IDependencyProvider
         throw new ArgumentException($"ToolDependencyProvider: Can't resolve dependency {dependencyType}");
     }
 
+    public static ILocalizer<T> GetLocalizer<T>(IStringLocalizer stringLocalizer)
+    {
+        return new Localizer<T>(stringLocalizer);
+    }
+
     private class Localizer<T> : ILocalizer<T>
     {
         private readonly IStringLocalizer _stringLocalizer;

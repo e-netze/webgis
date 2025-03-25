@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Reflection;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Services;
 using E.Standard.WebMapping.Core.Api;
@@ -21,6 +22,7 @@ namespace E.Standard.WebGIS.Tools.Editing.Desktop;
                         MapCrsDependent = true,
                         MapImageSizeDependent = true)]
 [ToolId("webgis.tools.editing.desktop.deletefeature")]
+[LocalizationNamespace("tools.editing.deletefeature")]
 internal class DeleteFeature : IApiServerTool, IApiChildTool, IApiToolConfirmation, IApiPostRequestEvent
 {
     private readonly UpdateFeatureService _updateFeatureService;

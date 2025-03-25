@@ -1,4 +1,6 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.Localization.Reflection;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebGIS.Tools.Editing.Sorting;
 using E.Standard.WebGIS.Tools.Extensions;
@@ -23,7 +25,10 @@ using static E.Standard.WebMapping.Core.CoreApiGlobals;
 namespace E.Standard.WebGIS.Tools.Editing.Mobile;
 
 [AdvancedToolProperties(MapCrsDependent = true)]
-public abstract class EditSelectFeature<T> : IApiServerToolAsync, IApiChildTool, IApiToolPersistenceContext, IApiPostRequestEvent
+public abstract class EditSelectFeature<T> : IApiServerToolLocalizableAsync<Edit>, 
+                                             IApiChildTool, 
+                                             IApiToolPersistenceContext, 
+                                             IApiPostRequestEvent
 {
     internal readonly string EditMaskContainerId = "webgis-edit-update-delete-edit-mask-holder";
     internal readonly string EditWarningsContainerId = "webgis-edit-upate-edit-warnings-holder";
@@ -31,7 +36,7 @@ public abstract class EditSelectFeature<T> : IApiServerToolAsync, IApiChildTool,
 
     #region IApiServerTool Member
 
-    async public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Edit> localizer)
     {
         List<UINameValue> customItems = new List<UINameValue>(new UINameValue[]{
                         new UINameValue(){
@@ -52,7 +57,7 @@ public abstract class EditSelectFeature<T> : IApiServerToolAsync, IApiChildTool,
                     {
                         value = favItem.Split(',')[0] + "," + editTheme.LayerId + "," + favItem.Split(',')[2],
                         name = editTheme.Name,
-                        category = "Favoriten"
+                        category = localizer.Localize("favorites")
                     });
                 }
             }
@@ -69,7 +74,7 @@ public abstract class EditSelectFeature<T> : IApiServerToolAsync, IApiChildTool,
         {
             EditThemeDefinition editThemeDef = ApiToolEventArguments.FromArgument<EditThemeDefinition>(editThemeId);
             editThemeDef.Init(bridge);
-            Environment.EditEnvironment.AppendLayerWarnings(editWarnings, editThemeDef);
+            Environment.EditEnvironment.AppendLayerWarnings(editWarnings, editThemeDef, localizer);
         }
 
         List<IUIElement> uiElements = new List<IUIElement>();
@@ -97,11 +102,11 @@ public abstract class EditSelectFeature<T> : IApiServerToolAsync, IApiChildTool,
                 editWarnings,
                 new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
                 {
-                    text = "Beenden",
+                    text = localizer.Localize("cancel"),
                     css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.ButtonIcon, UICss.OptionButtonStyle }),
                     style="width:300px;margin-top:10px"
                 },
-                new UIToolUndoButton(new Edit().GetType(), "Rückgängig: Bearbeitungsschritt")
+                new UIToolUndoButton(new Edit().GetType(), localizer.Localize("mobile.undo"))
                 {
                     id="webgis-edit-undo-button"
                 }
@@ -129,7 +134,7 @@ public abstract class EditSelectFeature<T> : IApiServerToolAsync, IApiChildTool,
         };
     }
 
-    async public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<Edit> localizer)
     {
         int crsId = e.GetInt(Edit.EditMapCrsId);
         var eventResult = await DoOnEventAsync(this, bridge, e);
@@ -146,14 +151,14 @@ public abstract class EditSelectFeature<T> : IApiServerToolAsync, IApiChildTool,
             if (typeof(T) == typeof(DeleteFeature))
             {
                 var tool = new DeleteFeature();
-                await DeleteFeature.InitAsync(tool, bridge, e, editFeatureDef, response, crsId);
+                await DeleteFeature.InitAsync(tool, bridge, e, editFeatureDef, response, localizer, crsId);
                 tool.ParentTool = this;
                 response.ActiveTool = tool;
             }
             else if (typeof(T) == typeof(UpdateFeature))
             {
                 var tool = new UpdateFeature();
-                await UpdateFeature.InitAsync(tool, bridge, e, editFeatureDef, response, crsId);
+                await UpdateFeature.InitAsync(tool, bridge, e, editFeatureDef, response, localizer, crsId);
                 tool.ParentTool = this;
                 response.ActiveTool = tool;
             }
@@ -251,7 +256,7 @@ public abstract class EditSelectFeature<T> : IApiServerToolAsync, IApiChildTool,
 
     [ServerToolCommand("init")]
     [ServerToolCommand("editthemechanged")]
-    public ApiEventResponse OnEditThemeChanged(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnEditThemeChanged(IBridge bridge, ApiToolEventArguments e, ILocalizer<Edit> localizer)
     {
         string editThemeId = e["edit-theme-select"];
 
@@ -266,7 +271,7 @@ public abstract class EditSelectFeature<T> : IApiServerToolAsync, IApiChildTool,
 
         if (editThemeId != "#")
         {
-            Environment.EditEnvironment.AppendLayerWarnings(editWarnings, editThemeDef);
+            Environment.EditEnvironment.AppendLayerWarnings(editWarnings, editThemeDef, localizer);
         }
 
         return new ApiEventResponse()
@@ -576,17 +581,19 @@ public abstract class EditSelectFeature<T> : IApiServerToolAsync, IApiChildTool,
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(VisFilterDependent = true, ClientDeviceDependent = true, MapCrsDependent = true)]
 [ToolId("webgis.tools.editing.editselectupdatefeature")]
+[LocalizationNamespace("tools.editing.updatefeature")]
 public class EditSelectUpdateFeature : EditSelectFeature<UpdateFeature>
 {
-    public override string Name => "Best. Objekt bearbeiten";
-    public override string ToolTip => "Objekte in der Karte bearbeiten";
+    public override string Name => "Update Existing Object";
+    public override string ToolTip => "Edit objects on the map";
 }
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(VisFilterDependent = true, ClientDeviceDependent = true, MapCrsDependent = true)]
 [ToolId("webgis.tools.editing.editselectdeletefeature")]
+[LocalizationNamespace("tools.editing.deletefeature")]
 public class EditSelectDeleteFeature : EditSelectFeature<DeleteFeature>
 {
-    public override string Name => "Best. Objekt löschen";
-    public override string ToolTip => "Objekte in der Karte löschen";
+    public override string Name => "Delete Existing Object";
+    public override string ToolTip => "Delete objects on the map";
 }

@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Reflection;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
@@ -25,6 +26,7 @@ namespace E.Standard.WebGIS.Tools.Editing.Desktop;
                         MapImageSizeDependent = true,
                         UIElementFocus = Core.FocusableUIElements.TabPresentions | Core.FocusableUIElements.TabTools)]
 [ToolId("webgis.tools.editing.desktop.updatefeature")]
+[LocalizationNamespace("tools.editing.updatefeature")]
 public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolPersistenceContext, IApiPostRequestEvent
 {
     private readonly UpdateFeatureService _updateFeatureService;

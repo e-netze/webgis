@@ -532,7 +532,7 @@ public class RestController : ApiBaseController
                     return await ApiObject(query);
 
                 case "edit":
-                    return await _restService.Editing.PerformEditServiceRequest(this, serviceId, objectId, command, ui);
+                    return await _restService.Editing.PerformEditServiceRequest(this, serviceId, objectId, command, ui, _stringLocalizer);
             }
             return await JsonViewSuccess(false, "Unknown request: " + request);
         }, authTypes: authTypes);
@@ -565,7 +565,7 @@ public class RestController : ApiBaseController
                     }
 
                 case "edit":
-                    return await _restService.Editing.PerformEditServiceRequest(this, serviceId, objectId, command, ui, form.ToCollection());
+                    return await _restService.Editing.PerformEditServiceRequest(this, serviceId, objectId, command, ui, _stringLocalizer, form.ToCollection());
             }
             return await JsonViewSuccess(false, "Unknown request: " + request);
         });
@@ -953,7 +953,7 @@ public class RestController : ApiBaseController
                 }
                 else if (eventType == "servertoolcommand" && e["_method"] != null)
                 {
-                    var serverCommandInstance = button.ServerCommandInstance(bridge, e);
+                    var serverCommandInstance = button.ServerCommandInstance(bridge, e, dependencyProvider);
 
                     foreach (string command in e["_method"].Split(','))
                     {
@@ -1085,7 +1085,7 @@ public class RestController : ApiBaseController
             }
 
             var restToolHelper = _restService.Tools;
-            var serverCommandInstance = button.ServerCommandInstance(bridge, e);
+            var serverCommandInstance = button.ServerCommandInstance(bridge, e, dependencyProvider);
 
             foreach (var methodInfo in serverCommandInstance.GetType().GetMethods())
             {

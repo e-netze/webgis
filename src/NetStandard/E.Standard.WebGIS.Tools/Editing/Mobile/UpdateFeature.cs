@@ -1,4 +1,6 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.Localization.Reflection;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebGIS.Tools.Editing.Services;
@@ -26,7 +28,11 @@ namespace E.Standard.WebGIS.Tools.Editing.Mobile;
                         MapCrsDependent = true,
                         MapImageSizeDependent = true)]
 [ToolId("webgis.tools.editing.updatefeature")]
-public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolConfirmation, IApiToolPersistenceContext, IApiPostRequestEvent
+public class UpdateFeature : IApiServerToolLocalizable<Edit>, 
+                             IApiChildTool, 
+                             IApiToolConfirmation, 
+                             IApiToolPersistenceContext, 
+                             IApiPostRequestEvent
 {
     internal static readonly string EditMaskContainerId = "webgis-edit-update-delete-edit-mask-holder";
     private readonly UpdateFeatureService _updateFeatureService;
@@ -42,6 +48,7 @@ public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolConfirmation
                                          ApiToolEventArguments e,
                                          EditFeatureDefinition editFeatureDef,
                                          ApiEventResponse response,
+                                         ILocalizer<Edit> localizer,
                                          int mapCrsId = 4326,
                                          EditOperation editOperation = EditOperation.Update)
     {
@@ -142,7 +149,7 @@ public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolConfirmation
             throw new ArgumentException("Can't query edit feature");
         }
 
-        tool.Name = editFeatureDef.EditThemeName + " bearbeiten";
+        tool.Name = String.Format(localizer.Localize("update-in-layer"), editFeatureDef.EditThemeName);
 
         #endregion
     }
@@ -151,7 +158,7 @@ public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolConfirmation
 
     #region IApiServerTool Member
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Edit> localizer)
     {
         //EditFeatureDefinition editFeatureDef = ApiToolEvent.FromArgument<EditFeatureDefinition>(e.InitalAgrument);
 
@@ -171,7 +178,7 @@ public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolConfirmation
                 }
             });
 
-        AddUIElements(uiElements);
+        AddUIElements(uiElements, localizer);
 
         return new ApiEventResponse()
         {
@@ -179,7 +186,7 @@ public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolConfirmation
         };
     }
 
-    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<Edit> localizer)
     {
         return null;
     }
@@ -206,7 +213,7 @@ public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolConfirmation
 
     #region Virtual Memebers
 
-    protected virtual void AddUIElements(List<IUIElement> uiElements)
+    protected virtual void AddUIElements(List<IUIElement> uiElements, ILocalizer<Edit> localizer)
     {
         uiElements.AddRange(new IUIElement[]
         {
@@ -214,7 +221,7 @@ public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolConfirmation
                 //    text="Löschen"
                 //},
                 new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.showtoolmodaldialog) {
-                    text="Sachdaten & Speichern...",
+                    text = localizer.Localize("mobile.attributes_and_save"),
                     css=UICss.ToClass(new string[]{UICss.DefaultButtonStyle})
                 }
         });
@@ -274,7 +281,7 @@ public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolConfirmation
     }
 
     [ServerToolCommand("delete")]
-    [ToolCommandConfirmation("Soll das Objekt wirklich gelöscht werden?", ApiToolConfirmationType.YesNo, ApiToolConfirmationEventType.ButtonClick)]
+    [ToolCommandConfirmation("confirm-delete-object", ApiToolConfirmationType.YesNo, ApiToolConfirmationEventType.ButtonClick)]
     async public Task<ApiEventResponse> OnDelete(IBridge bridge, ApiToolEventArguments e)
     {
         var response = await _updateFeatureService.DeleteFeature(bridge, e, new EditSelectUpdateFeature()

@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Collections;
+using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
@@ -24,6 +25,7 @@ namespace E.Standard.WebGIS.Tools.Editing.Desktop;
                         MapCrsDependent = true,
                         UIElementFocus = Core.FocusableUIElements.TabPresentions | Core.FocusableUIElements.TabTools)]
 [ToolId("webgis.tools.editing.desktop.insertfeature")]
+[LocalizationNamespace("tools.editing.insertfeature")]
 internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersistenceContext, IApiPostRequestEvent
 {
     private readonly NewFeatureService _newFeatureService;
@@ -81,30 +83,15 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
 
     #region IApiButton Member
 
-    public string Name
-    {
-        get { return "Neues Objekt erstellen"; }
-    }
+    public string Name => "create-new-object";
 
-    public string Container
-    {
-        get { return String.Empty; }
-    }
+    public string Container => String.Empty;
 
-    public string Image
-    {
-        get { return String.Empty; }
-    }
+    public string Image => String.Empty;
 
-    public string ToolTip
-    {
-        get { return "Objekte in der Karte erstellen"; }
-    }
+    public string ToolTip => "";
 
-    public bool HasUI
-    {
-        get { return true; }
-    }
+    public bool HasUI => true;
 
     #endregion
 
