@@ -116,7 +116,8 @@
                 $input.attr('required', 'required');
             }
         }
-        $("<br/><br/><div><div style='display:inline;margin-right:20px' class='webgis-detail-search-hourglass'></div><button type='submit' class='webgis-button webgis-detail-search-button'>Suchen</button></div>").appendTo($form);
+        $("<br/><br/><div><div style='display:inline;margin-right:20px' class='webgis-detail-search-hourglass'></div><button type='submit' class='webgis-button webgis-detail-search-button'>" + webgis.l10n.get("search") + "</button></div>")
+            .appendTo($form);
         webgis._appendAutocomplete($form);
     };
     $.webgis_search_fire_detail = function (formId, path) {

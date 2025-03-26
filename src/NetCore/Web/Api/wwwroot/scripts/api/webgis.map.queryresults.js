@@ -863,7 +863,7 @@
                     map.queryResultFeatures.setMarkerVisibility($(this).toggleClass('selected').hasClass('selected'), $(this))
                 });
 
-            $selectButton = createToolbarButton($selectionBlock, "Objekte Selektieren", webgis.css.imgResource('select_features.png', 'tools'))
+            $selectButton = createToolbarButton($selectionBlock, webgis.l10n.get("button-select"), webgis.css.imgResource('select_features.png', 'tools'))
                 .addClass('webgis-selection-button webgis-toggle-button')
                 .click(function () {
                     map.queryResultFeatures.setSelection($(this).toggleClass('selected').hasClass('selected'), $(this))
@@ -939,7 +939,7 @@
             }
 
             if (map.queryResultFeatures.supportsBufferFeatures()) {
-                createToolbarButton($toolBlock = $toolBlock || createToolbarButtonBlock('Tools'), "Nachbarschaft (Puffern)", webgis.css.imgResource('buffer.png', 'tools'))
+                createToolbarButton($toolBlock = $toolBlock || createToolbarButtonBlock('Tools'), webgis.l10n.get("buffer-buffer"), webgis.css.imgResource('buffer.png', 'tools'))
                     .click(function () {
                         map.ui.showBufferDialog();
                     });
@@ -1461,7 +1461,7 @@
 
         if ($.inArray(queryToolId, ["webgis.tools.coordinates", "webgis.tools.rasteridentify"]) < 0 && webgis.featureHasTableProperties(feature) && isCurrentQueryFeature) {
             if (!webgis.useMobileCurrent()) {   // show Button Table
-                $("<div><div class='webgis-ui-imagebutton-text'>Tabelle</div></div>")
+                $("<div><div class='webgis-ui-imagebutton-text'>"+webgis.l10n.get("button-table")+"</div></div>")
                     .addClass('webgis-ui-imagebutton')
                     .attr('data-id', feature.oid)
                     .css('background-image', 'url(' + webgis.css.imgResource('results.png', 'tools') + ')')
@@ -1499,7 +1499,7 @@
                         map.ui.refreshUIElements();
                     });
 
-                $("<div><div class='webgis-ui-imagebutton-text'>Objekte Selektieren</div></div>")
+                $("<div><div class='webgis-ui-imagebutton-text'>"+webgis.l10n.get("button-select")+"</div></div>")
                     .addClass('webgis-ui-imagebutton webgis-toggle-button')
                     .addClass('webgis-dependencies webgis-dependency-hasselection')
                     .css('background-image', 'url(' + webgis.css.imgResource('select_features.png', 'tools') + ')')

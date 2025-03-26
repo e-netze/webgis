@@ -118,7 +118,10 @@
 
 
         var $tools = $("<div class='tools' style='left:" + (left - 4) + "px;right:" + (right - 4) + "px;top:" + (top - 30) + "px;height:30px'></div>").appendTo($lense);
-        $("<div class='text'>Druckbereich</div>").appendTo($tools);
+        $("<div>")
+            .addClass("text")
+            .text(webgis.l10n.get("print-extent"))
+            .appendTo($tools);
 
         var me = this;
         $('<div>')

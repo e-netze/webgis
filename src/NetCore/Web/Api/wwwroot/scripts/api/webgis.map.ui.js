@@ -1279,7 +1279,7 @@
         if (map && $.fn.webgis_modal) {
             $('body').webgis_modal({
                 id: 'setscale-modal',
-                title: 'Maßstab',
+                title: webgis.l10n.get("mapscale"),
                 width: '340px',
                 height: '300px',
                 onload: function ($content) {

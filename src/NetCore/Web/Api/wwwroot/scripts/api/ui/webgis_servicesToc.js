@@ -122,7 +122,7 @@
         var $content_ul = $("<ul>").appendTo($div);
         if (parent.options && parent.options.themes) {
             var $themes_li = $("<li class='webgis-services_toc-item-group webgis-services_toc-collapsable'>").appendTo($content_ul);
-            $("<div><span style='position:absolute' class='webgis-api-icon webgis-api-icon-triangle-1-s'></span><span style='margin-left:14px'>&nbsp;Themen</span></div>").appendTo($themes_li)
+            $("<div><span style='position:absolute' class='webgis-api-icon webgis-api-icon-triangle-1-s'></span><span style='margin-left:14px'>&nbsp;" + webgis.l10n.get("layers") + "</span></div>").appendTo($themes_li)
                 .click(function () {
                     var $this = $(this);
                     if ($this.children('.webgis-api-icon-triangle-1-e').length > 0) {

@@ -684,7 +684,8 @@
             $parent = $parent.children('.webgis-tooldialog-content');
 
         if ($parent.find('.webgis-ctrl-bbox-info').length == 0)
-            $("<div><strong>Tipp:&nbsp;</strong>Mit diesem Werkzeug kannst du bei gedrückter Strg(Ctrl)-Taste mit der Maus immer ein Rechteck aufziehen.</div>").addClass("webgis-info webgis-ctrl-bbox-info")
+            $("<div><strong>" + webgis.l10n.get("tip") + ":&nbsp;</strong>" + webgis.l10n.get("tip-bbox-tool") + "</div>")
+                .addClass("webgis-info webgis-ctrl-bbox-info")
                 .appendTo($parent);
     };
     var insertElement = function (map, parent, element, options) {
@@ -1397,7 +1398,7 @@
             });
         }
         else if (element.type === 'upload-file') {
-            $newElement = $("<button>" + (element.text ? element.text : "Datei hochladen") + "</button>").addClass('webgis-button').appendTo($parent)
+            $newElement = $("<button>" + (element.text ? element.text : webgis.l10n.get("file-upload")) + "</button>").addClass('webgis-button').appendTo($parent)
                 .attr('id', element.id)
                 .click(function (event) {
                 event.stopPropagation();
@@ -2271,13 +2272,14 @@
 
         
         if (map.services) {
-            $("<li style='font-weight:bold'><i>Karten Dienste</i></li>").appendTo($menu);
+            $("<li style='font-weight:bold'><i>" + webgis.l10n.get("map-services") + "</i></li>")
+                .appendTo($menu);
 
             var sortedServices = map.sortedServices("name");
 
             // Background
             var $menuItem = $("<li>")
-                .text('Hintergrund (Basemap)')
+                .text(webgis.l10n.get("basemaps"))
                 .addClass('basemap')
                 .css('background-image', 'url(' + webgis.css.imgResource('tile-service.png') + ')')
                 .appendTo($menu)
@@ -2471,7 +2473,7 @@
         }
 
         $basemapOpacityItem = $("<li>")
-            .text('Deckkraft')
+            .text(webgis.l10n.get("opacity"))
             .css('background-image', 'url(' + webgis.css.imgResource('opacity_0-26.png', 'tools') + ')')
             .addClass('webgis-submenu-item service basemap')
             .data('service', service)
@@ -2485,7 +2487,7 @@
             return;
 
         $("<li>")
-            .text('Dienst aus Karte entfernen')
+            .text(webgis.l10n.get("remove-service"))
             .css('background-image', 'url(' + webgis.css.imgResource('remove.png', 'tools') + ')')
             .addClass('webgis-submenu-item service')
             .addClass(service.guid)
@@ -2504,7 +2506,7 @@
             })
 
         $("<li>")
-            .text('Zeichenreihenfolge')
+            .text(webgis.l10n.get("service-order"))
             .css('background-image', 'url(' + webgis.css.imgResource('rest/toolresource/webgis-tools-serviceorder-service_order', 'tools') + ')')
             .addClass('webgis-submenu-item service')
             .addClass(service.guid)
@@ -2512,14 +2514,14 @@
             .appendTo($menu)
             .click(function () {
                 var service = $(this).data('service');
-                webgis.modalDialog('Dienste: Zeichenreihenfolge',
+                webgis.modalDialog(webgis.l10n.get("services") + ": " + webgis.l10n.get("service-order"),
                     function ($context) {
                         $context.webgis_serviceOrder({ map: service.map, selected: service.id });
                     });
             });
 
         $("<li>")
-            .text('Legende')
+            .text(webgis.l10n.get("legend"))
             .css('background-image', 'url(' + webgis.css.imgResource('legend.png', 'tools') + ')')
             .addClass('webgis-submenu-item service')
             .addClass(service.guid)
@@ -2531,7 +2533,7 @@
             });
 
         var $focusItem = $("<li>")
-            .text('Dienst hervorheben (Focus)')
+            .text(webgis.l10n.get("focus-service"))
             .css('background-image', 'url(' + webgis.css.imgResource('focus-26.png', 'tools') + ')')
             .addClass('webgis-submenu-item service')
             .addClass(service.guid)
@@ -2539,7 +2541,7 @@
         addFocusImageContainer($focusItem, service);
 
         var $opacityItem = $("<li>")
-            .text('Deckkraft')
+            .text(webgis.l10n.get("opacity"))
             .css('background-image', 'url(' + webgis.css.imgResource('opacity_0-26.png', 'tools') + ')')
             .addClass('webgis-submenu-item service')
             .addClass(service.guid)

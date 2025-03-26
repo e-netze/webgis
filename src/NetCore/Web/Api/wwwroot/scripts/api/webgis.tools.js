@@ -478,7 +478,7 @@
                 case 'snapping':
                     if (map) {
                         $('body').webgis_modal({
-                            title: 'Objektfang (Snapping)',
+                            title: webgis.l10n.get("snapping"),
                             onload: function ($content) {
                                 $content.css('padding', '10px');
                                 $content.webgis_snapping({ map: map });
@@ -528,7 +528,7 @@
                         $.presentationToc.showLegend(null, map, map.services, " Darstellung, ©,...");
                     break;
                 case 'serviceorder':
-                    webgis.modalDialog('Dienste: Zeichenreihenfolge',
+                    webgis.modalDialog(webgis.l10n.get("service-order") + ": " + webgis.l10n.get("service-order"),
                         function ($context) {
                             $context.webgis_serviceOrder({ map: map });
                         });

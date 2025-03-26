@@ -140,7 +140,7 @@
 
             // Result Menu
             if (selectable) {
-                var $selectButton = $("<li><span><img src='" + webgis.css.imgResource('select_features.png', 'tools') + "'><div class='webgis-toolbox-tool-item-label'>Objekte Selektieren</div></span></li>")
+                var $selectButton = $("<li><span><img src='" + webgis.css.imgResource('select_features.png', 'tools') + "'><div class='webgis-toolbox-tool-item-label'>"+webgis.l10n.get("button-select")+"</div></span></li>")
                     .addClass('webgis-toolbox-tool-item webgis-selection-button webgis-toggle-button')
                     .appendTo($toolbar)
                     .click(function () {
@@ -150,7 +150,7 @@
                         }
                     });
                 if (map.queryResultFeatures.supportsBufferFeatures()) {
-                    $("<li><span><img src='" + webgis.css.imgResource('buffer.png', 'tools') + "'><div class='webgis-toolbox-tool-item-label'>Nachbarschaft (Puffern)</div></span></li>").addClass('webgis-toolbox-tool-item').appendTo($toolbar)
+                    $("<li><span><img src='" + webgis.css.imgResource('buffer.png', 'tools') + "'><div class='webgis-toolbox-tool-item-label'>"+webgis.l10n.get("button-buffer")+"</div></span></li>").addClass('webgis-toolbox-tool-item').appendTo($toolbar)
                         .click(function () {
                             var map = $(this).closest('.webgis-search-result-holder').data('map');
                             if (map) {
@@ -160,7 +160,7 @@
                 }
             }
 
-            $("<li><span><img src='" + webgis.css.imgResource('results.png', 'tools') + "'><div class='webgis-toolbox-tool-item-label'>Tabelle</div></span></li>")
+            $("<li><span><img src='" + webgis.css.imgResource('results.png', 'tools') + "'><div class='webgis-toolbox-tool-item-label'>"+webgis.l10n.get("button-table")+"</div></span></li>")
                 .addClass('webgis-toolbox-tool-item webgis-dependencies webgis-dependency-queryfeatureshastableproperties')
                 .appendTo($toolbar)
                 .click(function () {
@@ -170,7 +170,7 @@
                     }
                 });
 
-            var $removeButton = $("<li><span><img src='" + webgis.css.imgResource('remove.png', 'tools') + "'><div class='webgis-toolbox-tool-item-label'>Ergebnisse entfernen</div></span></li>")
+            var $removeButton = $("<li><span><img src='" + webgis.css.imgResource('remove.png', 'tools') + "'><div class='webgis-toolbox-tool-item-label'>"+webgis.l10n.get("button-remove-results")+"</div></span></li>")
                 .addClass('webgis-toolbox-tool-item remove-queryresults')
                 .appendTo($toolbar)
                 .click(function () {
