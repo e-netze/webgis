@@ -106,7 +106,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                 new UISetter(CoordinatesCounter,
                              !String.IsNullOrWhiteSpace(e[CoordinatesCounter]) ? (int.Parse(e[CoordinatesCounter]) + 1).ToString() : "0"));
 
-            div.AddChild(CreateTable(bridge, e));
+            div.AddChild(CreateTable(bridge, e, localizer));
         }
 
         div.AddChild(new UIButtonContainer()
@@ -374,11 +374,11 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
     }
 
     [ServerToolCommand("change-default-projection")]
-    public ApiEventResponse OnChangeDefaultProjection(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnChangeDefaultProjection(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
         return new ApiEventResponse()
             .UIElementsBehavoir(AppendUIElementsMode.Append)
-            .AddUIElement(CreateTable(bridge, e));
+            .AddUIElement(CreateTable(bridge, e, localizer));
     }
 
     [ServerToolCommand("download")]
@@ -599,7 +599,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
 
             e[CoordinatesTableId] = tableData.ToString();
 
-            var tableElement = CreateTable(bridge, e);
+            var tableElement = CreateTable(bridge, e, localizer);
             tableElement.InsertTypeValue = UITable.TableInsertType.Replace;
 
             return new ApiFeaturesEventResponse(this)
@@ -749,7 +749,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
     }
 
     [ServerToolCommand("remove-feature")]
-    public ApiEventResponse OnRemove(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnRemove(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
         var featureOid = e["feature-oid"];
         var counter = featureOid.GetCounterFromCoordiantesGlobalOid();
@@ -757,7 +757,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
 
         var response = new ApiEventResponse()
             .UIElementsBehavoir(AppendUIElementsMode.Append)
-            .AddUIElement(CreateTable(bridge, e, new int[] { counter }));
+            .AddUIElement(CreateTable(bridge, e, localizer, new int[] { counter }));
 
         if (currentCounter == counter)
         {
@@ -1124,7 +1124,11 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
         return projCombo;
     }
 
-    private UITable CreateTable(IBridge bridge, ApiToolEventArguments e, IEnumerable<int> removeRows = null)
+    private UITable CreateTable(
+                IBridge bridge, 
+                ApiToolEventArguments e,
+                ILocalizer<Coordinates> localizer,
+                IEnumerable<int> removeRows = null)
     {
         var defaultCrs = !String.IsNullOrWhiteSpace(e["coordinates-default-proj"]) ? e["coordinates-default-proj"] : (e.MapCrs.HasValue ? e.MapCrs.Value : 0).ToString();
         var tableData = e[CoordinatesTableId];
@@ -1132,8 +1136,8 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
         List<IUIElement> header = new List<IUIElement>(new IUIElement[]
             {
                 new UILiteral() { literal = "#" },
-                new UILiteral() { literal = "Rechtswert" },
-                new UILiteral() { literal = "Hochwert" },
+                new UILiteral() { literal = localizer.Localize("easting") },
+                new UILiteral() { literal = localizer.Localize("northing") },
             });
 
         var heightColumns = new RasterQueryHelper().HeightNameNodes($"{bridge.AppEtcPath}/coordinates/h.xml");

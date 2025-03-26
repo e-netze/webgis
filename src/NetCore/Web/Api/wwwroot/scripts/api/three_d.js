@@ -215,7 +215,7 @@ webgis.threeD = function (map, targetId, terrainData) {
         $infoCurrent = $("<div>")
             .addClass('box webgis-threed-info-current')
             .appendTo($info);
-        $("<table class='current'><tr><td>Rechtswert:</td><td class='current-x'></td></tr><tr><td>Hochwert:</td><td class='current-z'></td></tr><tr><td>Höhe:</td><td class='current-y'></td></tr></table>")
+        $("<table class='current'><tr><td>"+webgis.l10n.get("easting")+":</td><td class='current-x'></td></tr><tr><td>"+webgis.l10n.get("northing")+":</td><td class='current-z'></td></tr><tr><td>Höhe:</td><td class='current-y'></td></tr></table>")
             .appendTo($infoCurrent);
 
         container.addEventListener('mousemove', onMouseMove, false);

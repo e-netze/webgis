@@ -125,7 +125,7 @@
                 .addClass("webgis-tabs-tab-header")
                 .css("display", "none")
                 .attr("id", "tab-presentations-header")
-                .text("Darstellung" + (currentBranch ? '[' + currentBranch + ']' : ''))
+                .text(webgis.l10n.get("content") + (currentBranch ? '[' + currentBranch + ']' : ''))
                 .appendTo($tab_content);
 
             addHeaderButtons($header, options, "presentations");
@@ -183,14 +183,14 @@
                                 case "pointidentify":
                                 case "lineidentify":
                                 case "polygonidentify":
-                                    $("#tab-queryresults-header").text("Abfrage-Ergebnisse");
+                                    $("#tab-queryresults-header").text(webgis.l10n.get("query-results"));
                                     break;
                                 case "search":
                                 case "query":
-                                    $("#tab-queryresults-header").text("Suchergebnisse");
+                                    $("#tab-queryresults-header").text(webgis.l10n.get("search-results"));
                                     break;
                                 case "buffer":
-                                    $("#tab-queryresults-header").text("Nachbarschaftsberechnung");
+                                    $("#tab-queryresults-header").text(webgis.l10n.get("buffer-results"));
                                     break;
                             }
                         } else {
@@ -259,7 +259,7 @@
         }
         if (options.add_tools === true || options.add_tool_content === true) {
             var $tab = $("<div id='tab-tools' class='webgis-tabs-tab' style='position:relative'><img src='" + webgis.css.imgResource('tools.png', 'toolbar') + "' /><div style='display:none' class='webgis-tabs-tab-text' id='tab-tools-content-activetool'></div><div style='display:none' class='webgis-tabs-tab-close'>✖</div></div>").appendTo($div);
-            var $header = $("<div id='tab-tools-header' class='webgis-tabs-tab-header' style='display:none'>Werkzeuge<div class='webgis-tabs-close'></div></div>")
+            var $header = $("<div id='tab-tools-header' class='webgis-tabs-tab-header' style='display:none'>"+webgis.l10n.get("current-tool")+":<div class='webgis-tabs-close'></div></div>")
                 .appendTo($tab_content);
 
             addHeaderButtons($header, options, "tools");

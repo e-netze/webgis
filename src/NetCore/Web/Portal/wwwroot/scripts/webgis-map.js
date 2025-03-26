@@ -941,7 +941,7 @@ webgis.mapInitializer = (function (m) {
 
 
                         $('body').webgis_modal({
-                            title: 'Weitere Karten...',
+                            title: webgis.l10n.get("more-maps"),
                             onload: function ($target) {
                                 var $ul = $("<ul class='webgis-page-category-list'>")
                                     .css({
@@ -1149,7 +1149,7 @@ webgis.mapInitializer = (function (m) {
 
             var $ul = new $("<ul>").addClass('webgis-map-app-menu').appendTo($target);
             
-            $("<li>Karteninfo & Copyright<div style='font-size:.9em; color:#777; margin-top: 6px' class='webgis-map-title'></div></li>")
+            $("<li>"+webgis.l10n.get("mapinfo-and-copyright")+"...<div style='font-size:.9em; color:#777; margin-top: 6px' class='webgis-map-title'></div></li>")
                 .addClass('copyright')
                 .css("backgroundImage","url("+webgis.css.imgResource("copyright-26.png","tools")+")")
                 .appendTo($ul)
@@ -1158,7 +1158,8 @@ webgis.mapInitializer = (function (m) {
                 });
 
             if (mapPortalPageName) {
-                $("<li>Portal: " + mapPortalPageName + "</li>")
+                $("<li>")
+                    .text(webgis.l10n.get("portal") + ": " + mapPortalPageName)
                     .addClass('portal')
                     .css("backgroundImage", "url(" + webgis.css.imgResource("portal-26.png", "tools") + ")")
                     .appendTo($ul)
@@ -1167,7 +1168,8 @@ webgis.mapInitializer = (function (m) {
                     });
             }
 
-            $("<li>Weitere Karten</li>")
+            $("<li>")
+                .text(webgis.l10n.get("more-maps")+"...")
                 .addClass('maps')
                 .css("backgroundImage", "url(" + webgis.css.imgResource("maps-26.png", "tools") + ")")
                 .appendTo($ul)
@@ -1176,7 +1178,8 @@ webgis.mapInitializer = (function (m) {
                 });
 
             if (webgis.usability.allowMapContextMenu === true) {
-                $("<li>Karten Context Menü...</li>")
+                $("<li>")
+                    .text(webgis.l10n.get("map-context-menu")+"...")
                     .css("backgroundImage", "url(" + webgis.css.imgResource("context_menu-26.png", "ui") + ")")
                     .appendTo($ul)
                     .click(function (e) {
@@ -1189,8 +1192,8 @@ webgis.mapInitializer = (function (m) {
                     });
             }
 
-            $("<li></li>")
-                .text(webgis.l10n.get('viewer-settings'))
+            $("<li>")
+                .text(webgis.l10n.get('viewer-settings')+"...")
                 .css("backgroundImage", "url(" + webgis.css.imgResource("admin-26.png", "ui") + ")")
                 .appendTo($ul)
                 .click(function (e) {

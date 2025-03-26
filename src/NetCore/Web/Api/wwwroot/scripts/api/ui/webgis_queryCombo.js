@@ -400,7 +400,8 @@
 
         if (!webgis.isMobileDevice() && $.fn.typeahead) {
             if (!$combo.hasClass('allow-filter')) {
-                var $filterInput = $("<input type='text' placeholder='Themen suchen...'>")
+                var $filterInput = $("<input type='text'>")
+                    .attr('placeholder', webgis.l10n.get("find-layers"))
                     .addClass('webgis-input webgis-cat-combo-filter')
                     .insertBefore($combo);
 
@@ -518,8 +519,12 @@
         $combo.addClass('webgis-cat-combo-target');
 
         $catCombo.empty();
-        $("<option value=''>Kategorie w&auml;hlen (optional)</option>").appendTo($catCombo);
-        $("<option value=''>--- Alle ---</option>").appendTo($catCombo);
+        $("<option value=''>")
+            .text(webgis.l10n.get("query-choose-category"))
+            .appendTo($catCombo);
+        $("<option value=''>")
+            .text("--- " + webgis.l10n.get("query-all") + " ---")
+            .appendTo($catCombo);
 
         if (options.classFilters) {
             for (var cf in options.classFilters) {

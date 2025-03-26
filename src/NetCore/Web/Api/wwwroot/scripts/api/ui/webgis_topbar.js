@@ -110,7 +110,7 @@
         }
         if (options.quick_search === true) {
             var $inputContainer = $("<div style='position:absolute;top:0px;bottom:0px;right:" + (right + 35) + "px;background-color:white;left:0px'></div>").appendTo($elem);
-            var $input = $("<input style='width:100%' class='webgis-search-input' type='text' placeholder='Schnellsuche...' />")
+            var $input = $("<input style='width:100%' class='webgis-search-input' type='text' placeholder='"+webgis.l10n.get("quick-search")+"...' />")
                 .appendTo($inputContainer)
                 .data('autocomplete-onenter', function (e) {
                     webgis_search_query(this)
@@ -304,7 +304,8 @@
                 });
             });
         }
-        $("<br/><br/><div><div style='display:inline;margin-right:20px' class='webgis-detail-search-hourglass'></div><button type='submit' class='webgis-button webgis-detail-search-button'>Suchen</button></div>").appendTo($form);
+        $("<br/><br/><div><div style='display:inline;margin-right:20px' class='webgis-detail-search-hourglass'></div><button type='submit' class='webgis-button webgis-detail-search-button'>" + webgis.l10n.get("search") + "</button></div>")
+            .appendTo($form);
 
         webgis._appendAutocomplete($form);
     };
@@ -409,7 +410,7 @@
             if (!$tab) {
                 $tabControl.webgis_tab_control('add', {
                     id: tabId,
-                    title: 'Schnellsuche...',
+                    title: webgis.l10n.get("quick-search") + "...",
                     select: true,
                     pinable: false,
                     counter: 5,

@@ -487,18 +487,21 @@
                     var $tabsTable = $("<table>").css('width', '100%').addClass('webgis-modal-content-fill').appendTo($content);
                     var $tabsTableTr = $("<tr>").css('white-space', 'nowrap').appendTo($tabsTable);
                     if (hasLegend) {
-                        $("<td>Legende</td>")
+                        $("<td>")
+                            .text(webgis.l10n.get("legend"))
                             .addClass('webgis-tab-header')
                             .attr('data-tab', '0')
                             .attr('data-name', 'legend')
                             .appendTo($tabsTableTr);
                     }
-                    $("<td>Themen</td>")
+                    $("<td>")
+                        .text(webgis.l10n.get("layers"))
                         .addClass('webgis-tab-header')
                         .attr('data-tab', '1')
                         .attr('data-name', 'themes')
                         .appendTo($tabsTableTr);
-                    $("<td>Info & Copyright</td>")
+                    $("<td>")
+                        .text(webgis.l10n.get("info-and-copyright"))
                         .addClass('webgis-tab-header')
                         .attr('data-tab', '2')
                         .attr('data-name', 'copyright')
@@ -561,7 +564,8 @@
                                 });
                             }
                             if (count === 0) {
-                                $("<div>In diesem Ausschnitt/Maßstab bzw. bei dieser Layerschaltung wird für die gewählten Dienste keine Legende angeboten.</div>")
+                                $("<div>")
+                                    .text(webgis.l10n.get("info-no-legend"))
                                     .addClass('webgis-info')
                                     .appendTo($tabContent);
                             }
@@ -580,7 +584,7 @@
                         $("<div></div>")
                             .appendTo($themesTabContent)
                             .webgis_contentsearch({
-                                placeholder: 'Themen suchen...',
+                                placeholder: webgis.l10n.get("find-layers"),
                                 container_selectors: ["li", "ul", ".webgis-service-toc-container"],
                                 onChanged: function (sender, val) {
                                     // Hide empty Lists (uls)
@@ -676,7 +680,7 @@
 
                         $("<div>")
                             .addClass('webgis-presentation_toc-menu-item')
-                            .text("Dienst aus Karte entfernen...")
+                            .text(webgis.l10n.get("remove-service"))
                             .css('background-image', 'url(' + webgis.css.imgResource('remove.png', 'tools') + ')')
                             .data('serviceId', service.id)
                             .appendTo($menu_container)
@@ -695,13 +699,13 @@
 
                         $("<div>")
                             .addClass('webgis-presentation_toc-menu-item')
-                            .text("Zeichenreihenfolge...")
+                            .text(webgis.l10n.get("service-order")+"..")
                             .css('background-image', 'url(' + webgis.css.imgResource('rest/toolresource/webgis-tools-serviceorder-service_order', 'tools') + ')')
                             .data('serviceId', service.id)
                             .appendTo($menu_container)
                             .click(function () {
                                 var $this = $(this);
-                                webgis.modalDialog('Dienste: Zeichenreihenfolge',
+                                webgis.modalDialog(webgis.l10n.get("services") + ": " + webgis.l10n.get("service-order"),
                                     function ($context) {
                                         $context.webgis_serviceOrder({ map: map, selected: $this.data('serviceId') });
                                     });
@@ -710,7 +714,7 @@
                         var $focusItem = $("<div>")
                             .addClass('webgis-presentation_toc-menu-item noicon nohover')
                             .addClass('webgis-presentation_toc-basemap-opacity-title')
-                            .text("Dienst hervorheben (Focus)")
+                            .text(webgis.l10n.get("focus-service"))
                             .appendTo($menu_container);
 
                         $("<div>").appendTo($focusItem).webgis_focusservice_control({ service: service });
@@ -718,7 +722,7 @@
                         var $opacityItem = $("<div>")
                             .addClass('webgis-presentation_toc-menu-item noicon nohover')
                             .addClass('webgis-presentation_toc-basemap-opacity-title')
-                            .text("Deckkraft")
+                            .text(webgis.l10n.get("opacity"))
                             .appendTo($menu_container);
 
                         $("<div>").appendTo($opacityItem).webgis_opacity_control({ service: service });
@@ -985,17 +989,18 @@
             }
         }
         if (options.gdi_button === true) {
-            $("<button>Dienste suchen/hinzufügen...</button>")
+            $("<button></button>")
+                .text(webgis.l10n.get("add-services")+'...')
                 .addClass('webgis-button light')
                 .addClass('webgis-add-service-button')
                 .addClass('webgis-search-content-alt-text')
-                .attr('data-content-search-alt-text', 'In Diensten suchen...')
-                .attr('data-content-search-text', 'Dienste suchen/hinzufügen...')
+                .attr('data-content-search-alt-text', webgis.l10n.get("search-in-services"))
+                .attr('data-content-search-text', webgis.l10n.get("add-services"))
                 .appendTo($elem)
                 .click(function () {
                     var map = this.parentNode._map, $button = $(this);
                     $('body').webgis_modal({
-                        title: 'Dienste hinzufügen',
+                        title: webgis.l10n.get("add-services"),
                         onload: function ($content) {
                             $content.css('padding', '0px');
                             $content.webgis_addServicesToc({ map: map, searchTag: $button.attr('data-search-tag'), allowCustomServices: webgis.usability.allowAddCustomServices === true });
@@ -1176,7 +1181,10 @@
                         return { map: map, services: services };
                     };
 
-                    $("<div class='webgis-presentation_toc-title-legend-icon' alt='Legende' title='Legende'></div>").appendTo($li) // Legend icon
+                    $("<div class='webgis-presentation_toc-title-legend-icon'></div>")
+                        .attr("title", webgis.l10n.get("legend"))
+                        .attr("alt", webgis.l10n.get("legend"))
+                        .appendTo($li) // Legend icon
                         .css('background-image', 'url(' + webgis.css.imgResource('legend-24.png', 'toc') + ')')
                         .click(function () {
                             var serviceCollection = collectServices($(this));
@@ -1513,7 +1521,7 @@
 
         var $elem = $(parent);
         var $ul = $elem.children('#webgis-presentation_toc-list'), $li = null, $item_ul = null, $item_li = null;
-        var containerName = "Dynamischer Inhalt";
+        var containerName = webgis.l10n.get("dynamic-content");
         $ul.find('.webgis-presentation_toc-title-text').each(function (i, obj) {
             if ($(obj).text() == containerName) {
                 $li = $(obj.parentNode);
@@ -1631,7 +1639,7 @@
     var addBasemap = function (e, service, parent) {
         var $elem = $(parent);
         var $ul = $elem.children('#webgis-presentation_toc-list'), $li = null, $item_ul = null, $item_li = null;
-        var containerName = "Hintergrund (Basemap)";
+        var containerName = webgis.l10n.get("basemaps");
         $ul.find('.webgis-presentation_toc-title-text').each(function (i, obj) {
             if ($(obj).text() == containerName) {
                 $li = $(obj.parentNode);
@@ -1743,7 +1751,7 @@
                 .appendTo($item_ul);
             $("<div>")
                 .addClass('label')
-                .text('Deckkraft:')
+                .text(webgis.l10n.get("opacity")+":")
                 .appendTo($opacity_container);
             $("<div>")
                 .addClass('buttons')
@@ -2101,12 +2109,12 @@
         var $parent = $(parent), map = options.map, serviceIds = map.serviceIds();
 
         $("<div>")
-            .addClass('webgis-info')
-            .text(webgis.l10n.get('service-order'))
+            .addClass("webgis-info")
+            .text(webgis.l10n.get("info-service-order"))
             .appendTo($parent);
 
         var $list = $("<ul>")
-            .addClass('webgis-service-order-list')
+            .addClass("webgis-service-order-list")
             .appendTo($parent);
 
         // Get sortable Services
@@ -2146,7 +2154,7 @@
             if (service.id === options.selected)
                 $li.addClass('selected');
 
-            var $opacityContainer = $("<div><span>Deckkraft:&nbsp;</span></div>")
+            var $opacityContainer = $("<div><span>" + webgis.l10n.get("opacity") + ":&nbsp;</span></div>")
                 .addClass('opacity-container')
                 .appendTo($li);
             var $opacity = $("<select></select>")

@@ -1,10 +1,37 @@
-﻿// könnte in Zunkuft aus einer eigenen Datei oder Request geladen werden.
-webgis.l10n.literals['de'] = {
+﻿webgis.l10n.literals['de'] = {
     "language": "Sprache (Language)",
 
     "error": "Fehler",
     "info": "Hinweis",
 
+    // sidebar
+    "content": "Inhalt/Darstellung",
+    "dynamic-content": "Dynamischer Inhalt",
+    "basemaps": "Hintergrund (Basemaps)",
+    "add-services": "Dienste suchen/hinzufügen",
+    "search-in-services": "In Diensten suchen",
+    "remove-service": "Dienst aus Karte entfernen",
+
+    "tool": "Werkzeug",
+    "tools": "Werkzeuge",
+    "current-tool": "Aktives Werkzeug",
+
+    "query-results": "Abfrageergebnisse",
+    "search-results": "Suchergebnisse",
+    "buffer-results": "Nachbarschaftsberechnung",
+    "button-select": "Objekte selektieren",
+    "button-buffer": "Nachbarschaft (Puffern)",
+    "button-table": "Tabelle",
+    "button-remove-results": "Ergebnisse entfernen",
+
+    // legend panel
+    "legend": "Legende",
+    "layers": "Themen", 
+    "info-and-copyright": "Info & Copyright",
+    "info-no-legend": "In diesem Ausschnitt/Maßstab bzw. bei dieser Layerschaltung wird für die gewählten Dienste keine Legende angeboten.",
+    "find-layers": "Themen suchen...",
+
+    // tool MapMarkup
     "mapmarkup-tool-pointer": "Objekt auswählen",
     "mapmarkup-tool-symbol": "Symbol",
     "mapmarkup-tool-line": "Linie",
@@ -33,15 +60,16 @@ webgis.l10n.literals['de'] = {
     "mapmarkup-dimline": "In die Karte klicken, um mindestens zwei Stützpunkte der Linie zu definieren. Die einzelnen Segemente werden mit der jeweiligen Länge [m] beschriftet.",
     "mapmarkup-hectoline": "In die Karte klicken, um mindestens zwei Stützpunkte der Linie zu definieren. Die Zwischenpunkte werden je nach eingestelltem Abstand (unter Eigenschaften) markiert und beschriftet.",
 
-    "service-order": "Hier kann die Zeichenreihenfolge der Kartendienste geändert werden. Dienste, die weiter oben liegen überdecken die darunter liegenden Dienste. Die Reihenfolge kann durch Ziehen der Dienste geändert werden. Zusätzlich kann auch die Deckkraft der einzelnen Dienste angepasst werden.",
+    "service-order": "Zeichenreihenfolge",
+    "info-service-order": "Hier kann die Zeichenreihenfolge der Kartendienste geändert werden. Dienste, die weiter oben liegen überdecken die darunter liegenden Dienste. Die Reihenfolge kann durch Ziehen der Dienste geändert werden. Zusätzlich kann auch die Deckkraft der einzelnen Dienste angepasst werden.",
+    "opacity": "Deckkraft",
+    "services": "Dienste",
+    "focus-service": "Dienst hervorheben (Focus)",
+    "map-services": "Karten Dienste",
 
     "point": "Punkt",
     "polyline": "(Poly)Linie",
     "polygon": "Fläche (Polygon)",
-
-    "node": "Knoten",
-    "edge": "Kante",
-    "endpoint": "Endpunkt",
 
     "angle": "Winkel",
     "cancel": "Abbrechen",
@@ -50,6 +78,13 @@ webgis.l10n.literals['de'] = {
     "yes": "Ja",
     "no": "Nein",
     "discard-changes": "Änderungen verwerfen",
+    "file-upload": "Datei hochladen",
+
+    "northing": "Hochwert",
+    "easting": "Rechtswert",
+    "latitude": "Breitengrad",
+    "longitude": "Längengrad",
+    "elevation": "Höhe",
 
     "select-field": "Feld wählen",
 
@@ -65,6 +100,7 @@ webgis.l10n.literals['de'] = {
     "later": "Später",
     "tip-desktop-boxzoomin": "md:Dieses Werkzeug ist eigentlich für das Zoomen auf *Touch Geräten* konzipiert.\n\n Mit diesem Werkzeug kann einmalig ein Fenster aufgezogen und bestmöglich zum aufgezogenen Bereich gezoomt werden. Danach wird automatisch wieder zum aktuellen Werkzeug gewechselt.\n\nVerwendet man Maus und Tastatur gibt es für das Zoomen *bessere Methoden*:\n\n*Mausrad:* Mit dem Mausrad kann immer in bzw. aus der Karte gezoomt werden.\n\n*Shift Taste:* Bei gedrückte Shift Taste (Umschalttaste) kann mit der linken Maustaste ein Fenster aufgezogen werden, egal welches Werkzeug gearde aktiv ist. Nach dem Loslassen der Maustaste wird bestmöglich zum augezogenen Bereich gezoomt.",
     "tip-desktop-navigation": "md:*Navigation in er Karte*:\n\nDie Navigation in der Karte erfolgt auf Destop Geräten *mit der linken Maustaste und mit dem Mausrad*. Die rechte Maustaste ist für die Naviation in der Karte nicht notwendig und für das Kontext Menü (zB beim Zeichnen) reserviert.\n\n*Kartenausschnitt verschieben:* Dazu muss mit der linken Maustaste in die Karte geklickt und bei gedrückt gehaltener Maustaste die Karte verschoben werden. Durch das Loslassen der Maustaste wird der Vorgang beendet.\n\n*Kartenausschnitt vergrößern/verkleinern:* Dies kann mithilfe des Mausrades erfolgen. Das nach Vorne drehen des Mausrads verkleinert den Ausschnitt und umgekehrt.\n\nDie Navigation in der Karte ist immer möglich, egal welches Werkzeug aktiv ist.",
+    "tip-bbox-tool": "Mit diesem Werkzeug kannst du bei gedrückter Strg(Ctrl)-Taste mit der Maus immer ein Rechteck aufziehen.",
 
     "copied": "In die Zwischenablage kopiert",
     "close-selected-tabs": "Ausgewählte Tabs schließen",
@@ -131,6 +167,36 @@ webgis.l10n.literals['de'] = {
 
     "results-has-changed-warning": "Die abgefragen Daten haben sich seit dem Speichern des Projektes in der Lage bzw. Anzahl geändert. Eine Vollständigkeit und Richtigkeit der angezeigten Ergebnisse kann nicht mehr garantiert werden. Bitte überprüfen sie die Ergebnisse. Sind die Daten immer noch korrekt, können sie diese Warnung vermeiden, indem sie das Projekt mit den aktuellen Ergebnissen noch einmal speichern.",
 
+    // print
+    "print-extent": "Druckbereich",
+
+    // snapping
+    "snapping": "Objektfang (Snapping)",
+    "scheme": "Schema",
+    "nodes": "Knoten",
+    "edges": "Kanten",
+    "endpoints": "Endpunkte",
+    "node": "Knoten",
+    "edge": "Kante",
+    "endpoint": "Endpunkt",
+    "sketch": "Sketch",
+    "current-sketch": "Aktueller Sketch",
+    "all-scales": "Alle Maßstäbe",
+    "mapscale": "Maßstab",
+
+    // query combos
+    "query-choose-category": "Kategorie wählen (optional)",
+    "query-all": "Alle",
+
+    // topbar
+    "quick-search": "Schnellsuche",
+    "search": "Suche",
+
+    // burger menu
+    "mapinfo-and-copyright": "Karteninfo & Copyright",
+    "portal": "Portal",
+    "more-maps": "Weitere Karten",
+    "map-context-menu": "Karten Kontext Menü",
     "viewer-settings": "Einstellungen",
     "viewer-appearence": "Anzeige / Design",
     "viewer-color-scheme": "Farbschema",

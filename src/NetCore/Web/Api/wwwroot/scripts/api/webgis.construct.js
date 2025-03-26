@@ -461,7 +461,7 @@ var webgis_construct = function (map) {
                 if (sketchDistance <= dist2 && snappedVertex) {
                     return {
                         result: snappedVertex,
-                        meta: { name: "Aktueller Sketch" },
+                        meta: { name: webgis.l10n.get("current-sketch") },
                         type: snapType
                     };
                 } else {
@@ -494,7 +494,7 @@ var webgis_construct = function (map) {
                     if (sketchDistance <= dist && snappedVertex) {
                         return {
                             result: snappedVertex,
-                            meta: { name: "Aktueller Sketch" },
+                            meta: { name: webgis.l10n.get("current-sketch") },
                             type: 'edge',
                             vertices: result_edge_vertices
                         };

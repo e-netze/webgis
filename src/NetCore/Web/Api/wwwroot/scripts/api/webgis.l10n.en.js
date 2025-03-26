@@ -4,6 +4,34 @@
     "error": "Error",
     "info": "Information",
 
+    // sidebar
+    "content": "Content/Presentation",
+    "dynamic-content": "Dynamic content", 
+    "basemaps": "Basemaps",
+    "add-services": "Search/Add services",
+    "search-in-services": "Search in services",
+    "remove-service": "Remove service from map",
+
+    "tool": "Tool",
+    "tools": "Tools",
+    "current-tool": "Current tool",
+
+    "query-results": "Query results",
+    "search-results": "Search results",
+    "buffer-results": "Buffer results",
+    "button-select": "Select Objects",
+    "button-buffer": "Buffer Objects",
+    "button-table": "Show Table",
+    "button-remove-results": "Remove Results",
+
+    // legend panel
+    "legend": "Legend",
+    "layers": "Layers",
+    "info-and-copyright": "Info & Copyright",
+    "info-no-legend": "At this map extent/scale or with the current layer configuration, no legend is available for the selected services.",
+    "find-layers": "Find layers...",
+
+    // tool MapMarkup
     "mapmarkup-tool-pointer": "Select object",
     "mapmarkup-tool-symbol": "Symbol",
     "mapmarkup-tool-line": "Line",
@@ -32,15 +60,16 @@
     "mapmarkup-dimline": "Click on the map to define at least two vertices of the line. Each segment will be labeled with its length [m].",
     "mapmarkup-hectoline": "Click on the map to define at least two vertices of the line. Intermediate points will be marked and labeled depending on the configured distance (under Properties).",
 
-    "service-order": "Here you can change the drawing order of map services. Services higher in the list will overlay those below. The order can be changed by dragging. Additionally, you can adjust the opacity of each service.",
+    "service-order": "Service Order",
+    "info-service-order": "Here you can change the drawing order of map services. Services higher in the list will overlay those below. The order can be changed by dragging. Additionally, you can adjust the opacity of each service.",
+    "opacity": "Opacity",
+    "services": "Services",
+    "focus-service": "Focus service",
+    "map-services": "Map services",
 
     "point": "Point",
     "polyline": "(Poly)line",
     "polygon": "Polygon (area)",
-
-    "node": "Node",
-    "edge": "Edge",
-    "endpoint": "Endpoint",
 
     "angle": "Angle",
     "cancel": "Cancel",
@@ -49,7 +78,14 @@
     "yes": "Yes",
     "no": "No",
     "discard-changes": "Discard changes",
+    "file-upload": "File upload",
 
+    "northing": "Northing",
+    "easting": "Easting",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "elevation": "Elevation",
+    
     "select-field": "Select field",
 
     "pan": "Pan",
@@ -64,6 +100,7 @@
     "later": "Later",
     "tip-desktop-boxzoomin": "md:This tool is primarily designed for *touch devices*.\n\nWith this tool you can draw a rectangle once and zoom to the best fitting extent. After that, the tool automatically switches back to the current tool.\n\nIf you use a mouse and keyboard, there are *better methods* for zooming:\n\n*Mouse wheel:* Use the mouse wheel to zoom in and out at any time.\n\n*Shift key:* While holding the Shift key, you can draw a rectangle with the left mouse button, regardless of the active tool. Releasing the button will zoom to the selected extent.",
     "tip-desktop-navigation": "md:*Navigation in the map*:\n\nOn desktop devices, navigation is done using the *left mouse button and the mouse wheel*. The right mouse button is not needed for map navigation and is reserved for the context menu (e.g., during drawing).\n\n*Move map extent:* Click and hold the left mouse button and drag to move the map. Releasing the button finishes the operation.\n\n*Zoom in/out:* Use the mouse wheel. Scrolling forward zooms out, scrolling backward zooms in.\n\nMap navigation is always possible, regardless of the active tool.",
+    "tip-bbox-tool": "With this tool, you can always draw a rectangle with the mouse while holding down the Ctrl key.",
 
     "copied": "Copied to clipboard",
     "close-selected-tabs": "Close selected tabs",
@@ -130,6 +167,36 @@
 
     "results-has-changed-warning": "The queried data has changed in location or quantity since the project was saved. The completeness and accuracy of the displayed results can no longer be guaranteed. Please review the results. If the data is still correct, you can avoid this warning by saving the project again with the current results.",
 
+    // print
+    "print-extent": "Print extent",
+
+    // snapping
+    "snapping": "Snapping",
+    "scheme": "Scheme",
+    "nodes": "Nodes",
+    "edges": "Edges",
+    "endpoints": "Endpoints",
+    "node": "Node",
+    "edge": "Edge",
+    "endpoint": "Endpoint",
+    "sketch": "Sketch",
+    "current-sketch": "Current sketch",
+    "all-scales": "All scales",
+    "mapscale": "Mapscale",
+
+    // query combos
+    "query-choose-category": "Choose category (optional)",
+    "query-all": "All",
+
+    // topbar
+    "quick-search": "Quick search",
+    "search": "Search",
+
+    // burger menu
+    "mapinfo-and-copyright": "Map Info & Copyright",
+    "portal": "Portal",
+    "more-maps": "More Maps",
+    "map-context-menu": "Map Context Menu",
     "viewer-settings": "Settings",
     "viewer-appearence": "Display / Design",
     "viewer-color-scheme": "Color scheme",

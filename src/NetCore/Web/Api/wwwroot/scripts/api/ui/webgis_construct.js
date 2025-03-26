@@ -30,7 +30,16 @@
             width: '100%',
             borderSpacing: '0px'
         }).appendTo($parent);
-        $("<tr style='text-align:left'><th>Schema</th><th>Knoten</th><th>Kanten</th><th>Endpunkt</th></tr>").appendTo($table);
+        $("<tr style='text-align:left'><th>"
+            + webgis.l10n.get("scheme") +
+            "</th><th>" 
+            + webgis.l10n.get("nodes") +
+            "</th><th>"
+            + webgis.l10n.get("edges") +
+            "</th><th>"
+            + webgis.l10n.get("endpoints") +
+            "</th></tr>")
+            .appendTo($table);
 
         // Sketch
         var snappingTypes = map.getSnappingTypes(webgis.sketchSnappingSchemeId);
@@ -44,8 +53,9 @@
                 $(this).closest('tr').find('.checkbox-snapping.detail').prop('checked', $(this).is(':checked'));
                 refresh(this);
             });
-        var $label = $("<label for='" + webgis.sketchSnappingSchemeId + "'>&nbsp;Aktueller Sketch</label>").appendTo($td);
-        $("<div style='padding-left:25px;color:#aaa'>").html("Alle Maßstäbe").appendTo($label);
+        var $label = $("<label for='" + webgis.sketchSnappingSchemeId + "'>&nbsp;" + webgis.l10n.get("current-sketch") + "h</label>")
+            .appendTo($td);
+        $("<div style='padding-left:25px;color:#aaa'>").text(webgis.l10n.get("all-scales")).appendTo($label);
         $("<input type='checkbox'>").addClass('checkbox-snapping detail').attr('data-type', 'nodes').appendTo($("<td style='text-align:center'>").appendTo($tr))
             .change(function () {
                 refresh(this);
