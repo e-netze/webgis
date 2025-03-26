@@ -14,4 +14,6 @@ public interface IMapServiceAuthentication : IMapService
     int TokenExpiration { get; set; }
 
     public ICredentials? HttpCredentials { get; set; }
+
+    public string ServiceUrl { get; }
 }
