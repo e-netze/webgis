@@ -7,7 +7,7 @@ Polygon zeichnen, um Fläche zu messen
 # circumference-m: Umfang (m)
 # area-m2: Fläche (m²)
 
-# waring-webmercator: 
+# warning-webmercator: 
 
 Achtung: 
 Das Koordinatensystem für die Berechnung der Messwerte ist WebMercator. 

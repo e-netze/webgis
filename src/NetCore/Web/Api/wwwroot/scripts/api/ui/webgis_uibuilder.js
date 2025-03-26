@@ -2386,7 +2386,7 @@
         $menuItem = $("<li>")
             .addClass('webgis-submenu-item service basemap')
             .addClass(!map.currentBasemapServiceId() ? 'selected' : '')
-            .text('Kein Hintergrund')
+            .text(webgis.l10n.get("no-basemap"))
             //.css('background-image', 'url(' + webgis.css.imgResource('tile-service.png') + ')')
             .css({
                 paddingLeft: '48px'
@@ -2514,7 +2514,7 @@
             .appendTo($menu)
             .click(function () {
                 var service = $(this).data('service');
-                webgis.modalDialog(webgis.l10n.get("services") + ": " + webgis.l10n.get("service-order"),
+                webgis.modalDialog(webgis.l10n.get("service-order"),
                     function ($context) {
                         $context.webgis_serviceOrder({ map: service.map, selected: service.id });
                     });

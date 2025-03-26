@@ -362,7 +362,9 @@
             suppressConstructionForms = false;
 
             var $header = $("<li style='font-weight:bold'>").appendTo($menu);
-            $("<i>").text('Sketch').appendTo($header); 
+            $("<i>")
+                .text(webgis.l10n.get("sketch"))
+                .appendTo($header); 
             $("<div class='webgis-close-button'>").appendTo($header);
             $("<div class='webgis-help-button'>")
                 .appendTo($header)
@@ -383,7 +385,7 @@
             
             if (sketch.isReadOnly() !== true) {
                 if (sketch.canUndo()) {
-                    $("<li>Rückgängig/Undo<br/><span style='color:#aaa;font-size:.8em'>" + sketch.undoText() + "</span></li>")
+                    $("<li>" + webgis.l10n.get("sketch-undo") + "<br/><span style='color:#aaa;font-size:.8em'>" + sketch.undoText() + "</span></li>")
                         .css('background-image', 'url(' + webgis.css.imgResource('sketch_undo-26.png', 'tools') + ')')
                         .appendTo($menu)
                         .click(function () {
@@ -394,24 +396,26 @@
                 }
 
                 if (hasSelectedVertices) {
-                    $("<li>Selektierte Vertices</li>").addClass('header').appendTo($menu);
+                    $("<li>Selektierte Vertices</li>")
+                        .text(webgis.l10n.get("sketch-selected-vertices"))
+                        .addClass('header').appendTo($menu);
                     $container = $_menuContainer($menu);
 
-                    $_menuItem($container, "Aufheben", webgis.css.imgResource('sketch_unselect_vertices-26.png', 'tools'))
+                    $_menuItem($container, webgis.l10n.get("sketch-unselect-vertices"), webgis.css.imgResource('sketch_unselect_vertices-26.png', 'tools'))
                         .click(function () {
                             var sketch = map.toolSketch();
                             if (sketch)
                                 sketch.unselectAllVertices();
                         });
 
-                    $_menuItem($container, "Umkehren", webgis.css.imgResource('sketch_toggle_selected_vertices-26.png', 'tools'))
+                    $_menuItem($container, webgis.l10n.get("sketch-toggle-vertices-selection"), webgis.css.imgResource('sketch_toggle_selected_vertices-26.png', 'tools'))
                         .click(function () {
                             var sketch = map.toolSketch();
                             if (sketch)
                                 sketch.toggleVertexSelection(); 
                         });
 
-                    $_menuItem($container, "Entfernen", webgis.css.imgResource('sketch_remove_selected_vertices-26.png', 'tools'))
+                    $_menuItem($container, webgis.l10n.get("sketch-remove-selected-vertices"), webgis.css.imgResource('sketch_remove_selected_vertices-26.png', 'tools'))
                         .click(function () {
                             var sketch = map.toolSketch();
                             if (sketch)
@@ -421,7 +425,7 @@
 
                 var $container = $_menuContainer($menu);
                 if (closestVertex != null && closestVertex.dist < 15) {
-                    $_menuItem($container, "Vertex (" + (parseInt(closestVertex.index) + 1) + ") entfernen", webgis.css.imgResource('sketch_remove_marker-26.png', 'tools'))
+                    $_menuItem($container, webgis.l10n.get("sketch-remove-vertex"), webgis.css.imgResource('sketch_remove_marker-26.png', 'tools'))
                         .data('vertex-index', closestVertex.index)
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
@@ -429,9 +433,9 @@
                                 sketch.removeVertex($(this).data('vertex-index'));
                         });
 
-                    var fixText = closestVertex.vertex.fixed === true ?
-                        "Vertex (" + (parseInt(closestVertex.index) + 1) + "): Fixierung aufheben" :
-                        "Vertex(" + (parseInt(closestVertex.index) + 1) + ") fixieren/anschließen";
+                    var fixText = closestVertex.vertex.fixed === true
+                        ? webgis.l10n.get("sketch-unfix-vertex")
+                        : webgis.l10n.get("sketch-fix-vertex")
 
                     $_menuItem($container, fixText, webgis.css.imgResource('sketch_fix_marker-26.png', 'tools'))
                         .data('vertex-index', closestVertex.index)
@@ -443,7 +447,7 @@
                         });
 
                     if (map.ui.isClickBubbleActive()) {
-                        $_menuItem($container, "Vertex (" + (parseInt(closestVertex.index) + 1) + ") verschieben", '')
+                        $_menuItem($container, webgis.l10n.get("sketch-move-vertex"), '')
                             .data('vertex-index', closestVertex.index)
                             .click(function () {
                                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();

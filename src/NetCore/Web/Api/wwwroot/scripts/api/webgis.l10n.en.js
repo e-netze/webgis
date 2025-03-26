@@ -8,6 +8,7 @@
     "content": "Content/Presentation",
     "dynamic-content": "Dynamic content", 
     "basemaps": "Basemaps",
+    "no-basemap": "No basemap",
     "add-services": "Search/Add services",
     "search-in-services": "Search in services",
     "remove-service": "Remove service from map",
@@ -179,10 +180,32 @@
     "node": "Node",
     "edge": "Edge",
     "endpoint": "Endpoint",
-    "sketch": "Sketch",
     "current-sketch": "Current sketch",
     "all-scales": "All scales",
     "mapscale": "Mapscale",
+
+    // sketch tools
+    "sketch": "Sketch",
+    "sketch-undo": "Undo",
+    "sketch-selected-vertices": "Selected Vertices",
+    "sketch-unselect-vertices": "Cancel",
+    "sketch-toggle-vertices-selection": "Toggle",
+    "sketch-remove-selected-vertices": "Remove",
+    "sketch-remove-vertex": "Remove vertex",
+    "sketch-fix-vertex": "Fix vertex",
+    "sketch-unfix-vertex": "Unfix vertex",
+    "sketch-move-vertex": "Move vertex",
+    
+    // sketch info
+    "geometry-type": "Geometry type",
+    "segment": "Segment",
+    "segment-length": "Segment length",
+    "segment-azimuth": "Segment azimuth",
+    "snap-to": "Snap to",
+    "snap-to-layer": "Layer",
+    "sketch-ortho-off": "End orthogonal mode",
+    "sketch-trace-off": "End trace mode",
+    "sketch-fan-off": "End fan mode",
 
     // query combos
     "query-choose-category": "Choose category (optional)",

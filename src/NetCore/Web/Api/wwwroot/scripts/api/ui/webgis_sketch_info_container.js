@@ -33,17 +33,21 @@
         var $elem = $(elem).addClass('webgis-sketch-info-container-holder');
         $elem.data('map', options.map);
 
-        var $tabGeneral = $("<table><tr><th colspan=2>Sketch</th></tr></table>")
+        var $tabGeneral = $("<table><tr><th colspan=2>" + webgis.l10n.get("sketch") + "</th></tr></table>")
             .appendTo($elem);
 
-        $("<tr><td>Geometrie-Typ:</td><td class='sketch-info-item sketch-geometrytype'></td>").appendTo($tabGeneral);
+        $("<tr><td>" + webgis.l10n.get("geometry-type") + ":</td><td class='sketch-info-item sketch-geometrytype'></td>")
+            .appendTo($tabGeneral);
 
-        var $tabSegment = $("<table><tr><th colspan=2>Segment</th></tr></table>")
+        var $tabSegment = $("<table><tr><th colspan=2>" + webgis.l10n.get("segment") + "</th></tr></table>")
             .appendTo($elem);
 
-        $("<tr><td>Segment Länge:</td><td class='sketch-info-item segment-length'></td>").appendTo($tabSegment);
-        $("<tr><td>Segment Azimut:</td><td class='sketch-info-item segment-azimut-deg'></td>").appendTo($tabSegment);
-        $("<tr><td></td><td class='sketch-info-item segment-azimut-grad'></td>").appendTo($tabSegment);
+        $("<tr><td>" + webgis.l10n.get("segment-length") + ":</td><td class='sketch-info-item segment-length'></td>")
+            .appendTo($tabSegment);
+        $("<tr><td>" + webgis.l10n.get("segment-azimuth") + ":</td><td class='sketch-info-item segment-azimut-deg'></td>")
+            .appendTo($tabSegment);
+        $("<tr><td></td><td class='sketch-info-item segment-azimut-grad'></td>")
+            .appendTo($tabSegment);
 
         var $divConstruction = $("<div>")
             .css('display', 'none')
@@ -57,8 +61,10 @@
         var $tabSnapping = $("<table><tr><th colspan=2>Snapping</th></tr></table>")
             .appendTo($elem);
 
-        $("<tr><td>Snappen auf:</td><td class='sketch-info-item snap-result-type'></td>").appendTo($tabSnapping);
-        $("<tr><td>Thema:</td><td class='sketch-info-item snap-result-name'></td>").appendTo($tabSnapping);
+        $("<tr><td>" + webgis.l10n.get("snap-to") + ":</td><td class='sketch-info-item snap-result-type'></td>")
+            .appendTo($tabSnapping);
+        $("<tr><td>" + webgis.l10n.get("snap-to-layer") + ":</td><td class='sketch-info-item snap-result-name'></td>")
+            .appendTo($tabSnapping);
 
         var sketch = options.map.toolSketch();
 
@@ -81,7 +87,8 @@
             .data('sketch', sketch)
             .appendTo($elem);
 
-        $("<li>Orthogonal-Modus beenden</li>")
+        $("<li>")
+            .text(webgis.l10n.get("sketch-ortho-off"))
             .addClass('ortho-off')
             .css('background-image', 'url(' + webgis.css.imgResource('sketch_ortho_off-26.png', 'tools') + ')')
             .appendTo($menu)
@@ -93,7 +100,8 @@
                 }
             });
 
-        $("<li>Trace-Modus beenden</li>")
+        $("<li>")
+            .text(webgis.l10n.get("sketch-trace-off"))
             .addClass('trace-off')
             .css('background-image', 'url(' + webgis.css.imgResource('sketch_trace_off-26.png', 'tools') + ')')
             .appendTo($menu)
@@ -105,7 +113,8 @@
                 }
             });
 
-        $("<li>Fan-Modus beenden</li>")
+        $("<li>")
+            .text(webgis.l10n.get("sketch-fan-off"))
             .addClass('fan-off')
             .css('background-image', 'url(' + webgis.css.imgResource('sketch_fan_off-26.png', 'tools') + ')')
             .appendTo($menu)
