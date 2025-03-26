@@ -292,8 +292,6 @@ public class RestController : ApiBaseController
                             && !String.IsNullOrEmpty(serviceInitialException.InitialException?.ErrorMessage))
                         {
                             exceptions.Add($"{id}: {serviceInitialException.InitialException.ErrorMessage}");
-
-                            continue;
                         }
 
                         try
