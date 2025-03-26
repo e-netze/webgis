@@ -41,7 +41,7 @@ public class MeasureLine : IApiServerToolLocalizable<MeasureLine>,
                         css = UICss.ToClass(new string[] { "webgis-info" }),
                         elements = new IUIElement[]
                             {
-                                new UILiteral() { literal = localizer.Localize("waring-webmercator:body") }
+                                new UILiteral() { literal = localizer.Localize("warning-webmercator:body") }
                             }
                     }
                 );

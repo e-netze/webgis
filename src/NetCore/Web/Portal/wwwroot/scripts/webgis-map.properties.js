@@ -351,9 +351,11 @@
         var map = options.map;
         var $container = $(map._webgisContainer);
 
+        $('body').removeClass('webgis-space-saving');
         $container.removeClass('webgis-space-saving');
 
         if (colorScheme == '_space-saving') {
+            $('body').addClass('webgis-space-saving');
             $container.addClass('webgis-space-saving');
         }
     };

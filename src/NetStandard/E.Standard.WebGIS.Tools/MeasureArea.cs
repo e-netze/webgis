@@ -33,7 +33,7 @@ public class MeasureArea : IApiServerToolLocalizable<MeasureArea>,
                         css = UICss.ToClass(new string[] { "webgis-info" }),
                         elements = new IUIElement[]
                             {
-                                new UILiteral() { literal = localizer.Localize("waring-webmercator") }
+                                new UILiteral() { literal = localizer.Localize("warning-webmercator:body") }
                             }
                     }
                 );

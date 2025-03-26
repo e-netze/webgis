@@ -705,7 +705,7 @@
                             .appendTo($menu_container)
                             .click(function () {
                                 var $this = $(this);
-                                webgis.modalDialog(webgis.l10n.get("services") + ": " + webgis.l10n.get("service-order"),
+                                webgis.modalDialog(webgis.l10n.get("service-order"),
                                     function ($context) {
                                         $context.webgis_serviceOrder({ map: map, selected: $this.data('serviceId') });
                                     });
@@ -1716,7 +1716,7 @@
             $item_li.get(0).map = map;
             $("<div>")
                 .addClass('webgis-presentation_toc-basemap-item-label')
-                .text('Kein Hintergrund')
+                .text(webgis.l10n.get("no-basemap"))
                 .appendTo(
                     $("<div>")
                         .addClass('webgis-presentation_toc-basemap-item-img')

@@ -7,7 +7,7 @@ Draw a polygon to measure the area
 # circumference-m: Circumference (m)
 # area-m2: Area (m²)
 
-# waring-webmercator: 
+# warning-webmercator: 
 
 Warning: 
 The coordinate system for calculating the measurements is WebMercator. 

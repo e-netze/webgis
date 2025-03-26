@@ -4,7 +4,7 @@ Draw a line to measure the length.
 
 # container: Tools
 
-# waring-webmercator: 
+# warning-webmercator: 
 
 Warning: 
 The coordinate system for calculating the measurements is WebMercator. 

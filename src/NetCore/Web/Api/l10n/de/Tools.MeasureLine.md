@@ -4,7 +4,7 @@ Linie zeichnen, um die Länge zu messen.
 
 # container: Werkzeuge
 
-# waring-webmercator: 
+# warning-webmercator: 
 
 Achtung: 
 Das Koordinatensystem für die Berechnung der Messwerte ist WebMercator. 

@@ -8,6 +8,7 @@
     "content": "Inhalt/Darstellung",
     "dynamic-content": "Dynamischer Inhalt",
     "basemaps": "Hintergrund (Basemaps)",
+    "no-basemap": "Kein Hintergrund",
     "add-services": "Dienste suchen/hinzufügen",
     "search-in-services": "In Diensten suchen",
     "remove-service": "Dienst aus Karte entfernen",
@@ -179,10 +180,32 @@
     "node": "Knoten",
     "edge": "Kante",
     "endpoint": "Endpunkt",
-    "sketch": "Sketch",
     "current-sketch": "Aktueller Sketch",
     "all-scales": "Alle Maßstäbe",
     "mapscale": "Maßstab",
+
+    // sketch tools
+    "sketch": "Sketch",
+    "sketch-undo": "Rückgängig/Undo",
+    "sketch-selected-vertices": "Ausgewählte Stützpunkte",
+    "sketch-unselect-vertices": "Aufheben",
+    "sketch-toggle-vertices-selection": "Umkehren",
+    "sketch-remove-selected-vertices": "Entfernen",
+    "sketch-remove-vertex": "Stützpunkt Entfernen",
+    "sketch-fix-vertex": "Stützpunkt Fixieren/anschließen",
+    "sketch-unfix-vertex": "Stützpunkt Fixierung lösen",
+    "sketch-move-vertex": "Stützpunkt Verschieben",
+
+    // sketch info
+    "geometry-type": "Geometrie-Typ",
+    "segment": "Segment",
+    "segment-length": "Segment Länge",
+    "segment-azimuth": "Segment Azimut",
+    "snap-to": "Snappen auf",
+    "snap-to-layer": "Thema",
+    "sketch-ortho-off": "Orthogonal-Modus beenden",
+    "sketch-trace-off": "Trace-Modus beenden",
+    "sketch-fan-off": "Fan-Modus beenden",
 
     // query combos
     "query-choose-category": "Kategorie wählen (optional)",
