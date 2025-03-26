@@ -1509,6 +1509,8 @@ public class MapService : IMapService2,
 
     public ICredentials HttpCredentials { get; set; }
 
+    public string ServiceUrl => this.Service;
+
     #endregion
 
     public AGSExportMapFormat ExportMapFormat { get; set; }

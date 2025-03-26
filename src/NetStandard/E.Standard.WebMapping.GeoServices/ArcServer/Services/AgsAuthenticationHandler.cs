@@ -302,7 +302,7 @@ internal class AgsAuthenticationHandler
                 return;
             }
 
-            var serviceUrl = mapService.Service.OrTake(mapService.Server);
+            var serviceUrl = mapService.ServiceUrl; //mapService.Service.OrTake(mapService.Server);
             int pos = serviceUrl.IndexOf("/rest/", StringComparison.OrdinalIgnoreCase);
             if (pos < 0)
             {

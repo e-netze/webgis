@@ -56,6 +56,8 @@ public class WmtsService : BaseWmtsService, IMapServiceAuthentication
 
     public ICredentials HttpCredentials { get; set; }
 
+    public string ServiceUrl => this.Server;
+
     #endregion
 
     #region IClone Member

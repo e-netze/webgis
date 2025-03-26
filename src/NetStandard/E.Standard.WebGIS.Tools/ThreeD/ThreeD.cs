@@ -129,7 +129,7 @@ public class ThreeD : IApiServerToolLocalizableAsync<ThreeD>,
                             ConditionResult = true,
                             elements = new IUIElement[]
                             {
-                                new UIImage(texturePreviewDict[k]) { style="max-width:299px;border-radius:7px" }
+                                new UIImage(texturePreviewDict[k]) { style="max-width:125px;border-radius:7px" }
                             }
                         };
                     })),
