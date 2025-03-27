@@ -15,4 +15,11 @@
         
         return id;
     }
+
+    this.set = function (id, value) {
+        if (!this.literals[this.language]) {
+            this.literals[this.language] = {};
+        }
+        this.literals[this.language][id] = value;
+    };
 };

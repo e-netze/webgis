@@ -649,7 +649,15 @@
 
         var service = this.firstService(features.features),
             query = this.firstQuery(features.features);
-        var editToolId = 'webgis.tools.editing.edit';
+
+        const editToolId = 'webgis.tools.editing.edit';
+        const editToolMergeId = 'webgis.tools.editing.desktop.advanced.mergefeatures';
+        const editToolClipId = 'webgis.tools.editing.desktop.advanced.clipfeatures';
+        const editToolCutId = 'webgis.tools.editing.desktop.advanced.cutfeatures';
+        const editToolDeleteSelectedId = 'webgis.tools.editing.desktop.advanced.deleteselectedfeatures';
+        const editToolMassattributionId = 'webgis.tools.editing.desktop.advanced.massattributation';
+        const selectionToolAddId = 'webgis.tools.addtoselection';
+        const selectionToolRemoveId = 'webgis.tools.removefromselection';
 
         if (!useTabControl) {
             this._map.ui.webgisContainer().webgis_dockPanel({
@@ -714,6 +722,8 @@
         // Toolbar Functions
         var $selectButton, $addButton, $removeButton;
         var createToolbarButtonBlock = function (label, classes, elementType) {
+            label = webgis.l10n.get(label);
+
             let $li = $("<li>")
                 .addClass('webgis-toolbox-tool-block' + (classes ? ' ' + classes : ''))
                 .appendTo($tabTools);
@@ -729,6 +739,9 @@
         }
 
         var createToolbarButton = function ($parent, label, img, title) {
+            label = webgis.l10n.get(label);
+            title = webgis.l10n.get(title);
+
             let $li = $("<li>")
                 .attr('title', title || label)
                 .addClass("webgis-toolbox-tool-item")
@@ -779,24 +792,24 @@
 
             
             if($tabTools.find('.webgis-toolbox-tool-item.webgis-dependency-activetool.webgis-tools-editing-edit').length > 0) {
-               createToolbarButtonBlock('Tipp: Bearbeiten','webgis-tips webgis-dependencies webgis-dependency-not-activetool webgis-tools-editing-edit', 'div')
-                    .text('Noch mehr Werkzeuge werden angezeigt, wenn der Bearbeitungsmodus gestartet wird')
+               createToolbarButtonBlock('tip-edit','webgis-tips webgis-dependencies webgis-dependency-not-activetool webgis-tools-editing-edit', 'div')
+                    .text(webgis.l10n.get("tip-edit-content"))
                     .click(function(e) {
                         e.stopPropagation();
                         $(this).closest('.webgis-result-table-tools').find('.webgis-selection-edittool-shortcut').trigger('click');
                     });
             }
             else if($tabTools.find('.webgis-toolbox-tool-item.webgis-dependencies.webgis-dependency-hasselection').length > 0) {
-               createToolbarButtonBlock('Tipp: Selektieren','webgis-tips webgis-dependencies webgis-dependency-hasnoselection', 'div')
-                    .text('Mehr Werkzeuge werden angezeigt, wenn die Objekte selektiert werden')
-                    .click(function(e) {
+                createToolbarButtonBlock('tip-select', 'webgis-tips webgis-dependencies webgis-dependency-hasnoselection', 'div')
+                    .text(webgis.l10n.get("tip-select-content"))
+                    .click(function (e) {
                         e.stopPropagation();
                         $(this).closest('.webgis-result-table-tools').find('.webgis-selection-button').trigger('click');
                     });
             }
 
-            createToolbarButtonBlock('Tipp','webgis-tips', 'div')
-                .text('Tools für einzelne Ergebnisse: Klicke mit der rechten Maustaste auf eine Zeile');
+            createToolbarButtonBlock('tip-tools','webgis-tips', 'div')
+                .text(webgis.l10n.get("tip-tools-content"));
                 
         }; 
 
@@ -852,18 +865,18 @@
         let $removeUnchecked = null, $removeChecked = null;
         // Result Menu
 
-        let $selectionBlock = createToolbarButtonBlock("Auswahl"), $toolBlock = null;
+        let $selectionBlock = createToolbarButtonBlock("selection"), $toolBlock = null;
 
         if (selectable) {
             var printToolIdClass = 'webgis-tools-print';
 
-            $markerButton = createToolbarButton($selectionBlock, "Marker anzeigen", webgis.css.imgResource('marker-26.png', 'tools'))
+            $markerButton = createToolbarButton($selectionBlock, "button-show-markers", webgis.css.imgResource('marker-26.png', 'tools'))
                 .addClass('webgis-marker-button webgis-toggle-button selected webgis-dependencies webgis-dependency-not-activetool ' + printToolIdClass)
                 .click(function () {
                     map.queryResultFeatures.setMarkerVisibility($(this).toggleClass('selected').hasClass('selected'), $(this))
                 });
 
-            $selectButton = createToolbarButton($selectionBlock, webgis.l10n.get("button-select"), webgis.css.imgResource('select_features.png', 'tools'))
+            $selectButton = createToolbarButton($selectionBlock, "button-select", webgis.css.imgResource('select_features.png', 'tools'))
                 .addClass('webgis-selection-button webgis-toggle-button')
                 .click(function () {
                     map.queryResultFeatures.setSelection($(this).toggleClass('selected').hasClass('selected'), $(this))
@@ -874,7 +887,7 @@
                 var editToolIdClass = 'webgis-tools-editing-edit';
 
                 if (useTabControl) {
-                    createToolbarButton($selectionBlock, "Bearbeiten (Edit)", webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-edit', 'tools'))
+                    createToolbarButton($selectionBlock, editToolId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-edit', 'tools'), editToolId + '.tooltip')
                         .css('display', 'none')
                         .data('selectionButton', $selectButton)
                         .addClass('webgis-selection-edittool-shortcut webgis-dependencies webgis-dependency-not-activetool ' + editToolIdClass)
@@ -887,11 +900,11 @@
                         });
 
 
-                    let $editingBlock = createToolbarButtonBlock('Edit', 'webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass);
+                    let $editingBlock = createToolbarButtonBlock('edit', 'webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass);
 
                     if (service.hasEditLayerPermissions(query.layerid, ['insert', 'update', 'delete', 'geometry'])) {
                         if (features.features.length > 1) {
-                            createToolbarButton($editingBlock, "Zusammenführen", webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-merge', 'tools'), "Zusammenführen (merge - selektierte Objekte)")
+                            createToolbarButton($editingBlock, editToolMergeId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-merge', 'tools'), editToolMergeId+'.tooltip')
                                 .css('display', 'none')
                                 .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
                                 .click(function () {
@@ -899,7 +912,7 @@
                                     webgis.tools.onButtonClick(map, { command: 'mergefeatures', type: 'servertoolcommand', map: map }, this, null, args);
                                 });
                         }
-                        createToolbarButton($editingBlock, "Objekte teilen", webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-cut', 'tools'), "Objekte teilen (cut - selektierte Objekte)")
+                        createToolbarButton($editingBlock, editToolCutId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-cut', 'tools'), editToolCutId + '.tooltip')
                             .css('display', 'none')
                             .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
                             .click(function () {
@@ -907,7 +920,7 @@
                                 webgis.tools.onButtonClick(map, { command: 'cutfeatures', type: 'servertoolcommand', map: map }, this, null, args);
                             });
 
-                        createToolbarButton($editingBlock, "Objekte Ausschneiden", webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-clip', 'tools'), "Objekte Ausschneiden (clip - selektierte Objekte)")
+                        createToolbarButton($editingBlock, editToolClipId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-clip', 'tools'), editToolClipId + '.tooltip')
                             .css('display', 'none')
                             .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
                             .click(function () {
@@ -917,7 +930,7 @@
                     }
 
                     if (service.hasEditLayerPermission(query.layerid, 'delete')) {
-                        createToolbarButton($editingBlock, "Objekte löschen", webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-delete', 'tools'), "Ausgewählte Objekte löschen!!!")
+                        createToolbarButton($editingBlock, editToolDeleteSelectedId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-delete', 'tools'), editToolDeleteSelectedId + '.tooltip')
                             .css('display', 'none')
                             .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
                             .click(function () {
@@ -927,7 +940,7 @@
                     }
 
                     if (service.hasEditLayerPermission(query.layerid, 'massattributation')) {
-                        createToolbarButton($editingBlock, "Massenattributierung", webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-mass', 'tools'), "Maßenattributierung (selektierte Objete)")
+                        createToolbarButton($editingBlock, webgis.l10n.get(editToolMassattributionId), webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-mass', 'tools'), webgis.l10n.get(editToolMassattributionId + '.tooltip'))
                             .css('display', 'none')
                             .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
                             .click(function () {
@@ -939,14 +952,14 @@
             }
 
             if (map.queryResultFeatures.supportsBufferFeatures()) {
-                createToolbarButton($toolBlock = $toolBlock || createToolbarButtonBlock('Tools'), webgis.l10n.get("buffer-buffer"), webgis.css.imgResource('buffer.png', 'tools'))
+                createToolbarButton($toolBlock = $toolBlock || createToolbarButtonBlock('tools'), "buffer-results", webgis.css.imgResource('buffer.png', 'tools'))
                     .click(function () {
                         map.ui.showBufferDialog();
                     });
             }
 
             if (map.getTool('webgis.tools.addtoselection')) {
-                $addButton = createToolbarButton($selectionBlock, "Selektion erweitern", webgis.css.imgResource('cursor-plus-26-b.png', 'tools'))
+                $addButton = createToolbarButton($selectionBlock, selectionToolAddId, webgis.css.imgResource('cursor-plus-26-b.png', 'tools'), selectionToolAddId + ".tooltip")
                     .attr('data-toolid', 'webgis.tools.addtoselection')
                     .click(function () {
                         if ($(this).hasClass('selected')) {
@@ -959,7 +972,7 @@
                     });
             }
             if (map.getTool('webgis.tools.removefromselection')) {
-                $removeButton = createToolbarButton($selectionBlock, "Selektion einschränken", webgis.css.imgResource('cursor-minus-26-b.png', 'tools'))
+                $removeButton = createToolbarButton($selectionBlock, selectionToolRemoveId, webgis.css.imgResource('cursor-minus-26-b.png', 'tools'), selectionToolRemoveId + ".tooltip")
                     .attr('data-toolid', 'webgis.tools.removefromselection')
                     .click(function () {
                         if ($(this).hasClass('selected')) {
@@ -992,14 +1005,14 @@
                 });
         }
 
-        createToolbarButton($selectionBlock, "Marker entfernen", webgis.css.imgResource('marker-remove-26.png', 'tools'))
+        createToolbarButton($selectionBlock, "button-remove-markers", webgis.css.imgResource('marker-remove-26.png', 'tools'))
             .addClass('webgis-dependencies webgis-dependency-not-activetool ' + printToolIdClass)
             .click(function () {
                 map.queryResultFeatures.removeMarkersAndSelection();
             });
 
         if (webgis.usability.tsp && webgis.usability.tsp.allowOrderFeatures === true && !map.queryResultFeatures.isExtentDependent()) {
-            createToolbarButton($toolBlock = $toolBlock || createToolbarButtonBlock('Tools'), "Rundreise", webgis.css.imgResource('roundtrip-26.png', 'tools'))
+            createToolbarButton($toolBlock = $toolBlock || createToolbarButtonBlock('tools'), "Rundreise", webgis.css.imgResource('roundtrip-26.png', 'tools'))
                 .addClass('webgis-dependencies webgis-dependency-calc-tsp')
                 .click(function () {
                     webgis.tsp.orderFeaturesWithUI(map);
@@ -1008,7 +1021,7 @@
 
         if ($toolBlock) $toolBlock.addClass('webgis-dependencies webgis-dependency-not-activetool ' + printToolIdClass);
 
-        let $exportBlock = createToolbarButtonBlock('Export/Transfer').addClass('webgis-dependencies webgis-dependency-not-activetool ' + printToolIdClass);
+        let $exportBlock = createToolbarButtonBlock('export-transfer').addClass('webgis-dependencies webgis-dependency-not-activetool ' + printToolIdClass);
 
         if (service && service.hasQueryFeatureTransfers(query.id)) {
             createToolbarButton($exportBlock, "Objekt Transfer", webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-move', 'tools'), "Objekte in andere Featureklasse kopieren/verschieben")

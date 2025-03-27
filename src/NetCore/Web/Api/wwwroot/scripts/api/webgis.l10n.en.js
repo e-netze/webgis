@@ -17,13 +17,15 @@
     "tools": "Tools",
     "current-tool": "Current tool",
 
-    "query-results": "Query results",
-    "search-results": "Search results",
-    "buffer-results": "Buffer results",
+    "query-results": "Query Results",
+    "search-results": "Search Results",
+    "buffer-results": "Buffer Results",
     "button-select": "Select Objects",
     "button-buffer": "Buffer Objects",
     "button-table": "Show Table",
     "button-remove-results": "Remove Results",
+    "button-remove-markers": "Remove Markers",
+    "button-show-markers": "Show Markers",
 
     // legend panel
     "legend": "Legend",
@@ -92,17 +94,32 @@
     "area": "Area",
     "circumference": "Circumference",
     "sections": "Sections", 
-    
+
+    "selection": "Selection",
     "select-field": "Select field",
 
+    "zoom-to": "Zoom to",
     "pan": "Pan",
     "pan-tool-description": "Move the map by holding down the mouse button",
     "rotate": "Rotate",
     "rotate-tool-description": "Rotate the map by holding down the mouse button (plus SHIFT or CTRL key => 5° or 10° steps).",
+    "edit": "Edit",
+    "edit-attributes": "Edit attributes",
+    "edit-geometry-and-attributes": "Edit geometry and attributes",
+    "edit-delete": "Delete object",
+    "export-transfer": "Export/Transfer",
+    "center": "Center",
 
     "content-search-info": "In addition to the quick search (find places), you can also search for content (topics) in the current map. If the desired content is not shown there either, you can also search in map services. If a topic is found in services, it can be added to the current map.",
 
     "tip": "Tip",
+    "tip-tools": "Tipp: Tools",
+    "tip-select": "Tipp: Selection",
+    "tip-edit": "Tipp: Edit",
+    "tip-tools-content": "Tools for  results: Right-click on a row",
+    "tip-select-content": "More tools will be displayed when objects are selected",
+    "tip-edit-content": "Even more tools will be displayed when the edit mode is started",
+
     "understood": "Understood",
     "later": "Later",
     "tip-desktop-boxzoomin": "md:This tool is primarily designed for *touch devices*.\n\nWith this tool you can draw a rectangle once and zoom to the best fitting extent. After that, the tool automatically switches back to the current tool.\n\nIf you use a mouse and keyboard, there are *better methods* for zooming:\n\n*Mouse wheel:* Use the mouse wheel to zoom in and out at any time.\n\n*Shift key:* While holding the Shift key, you can draw a rectangle with the left mouse button, regardless of the active tool. Releasing the button will zoom to the selected extent.",
