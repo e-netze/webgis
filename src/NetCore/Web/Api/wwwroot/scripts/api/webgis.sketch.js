@@ -298,7 +298,7 @@
     this.getGeometryType = function () { return _geometryType; };
     this.remove = function (silent) {
         if (!silent)
-            this.addUndo('Sketch entferen');
+            this.addUndo(webgis.l10n.get("sketch-remove-sketch"));
         if (webgis.mapFramework === "leaflet" && _frameworkElements) {
             for (var i in _frameworkElements) {
                 this.map.frameworkElement.removeLayer(_frameworkElements[i]);
@@ -422,7 +422,7 @@
                 this.sketch._isMarkerDragging = false;
                 return;
             }
-            this.sketch.addUndo('Vertex verschieben');
+            this.sketch.addUndo(webgis.l10n.get("sketch-move-vertex"));
             if (this.sketch._moverMarker && this.sketch._moverMarker.snapResult) {
                 var result = this.sketch._moverMarker.snapResult.result;
                 if (!this.sketch_vertex_coords)
@@ -918,7 +918,7 @@
 
         var addAddVertexUndo = function (sketch, geometryType) {
             if (geometryType === 'polygon' || geometryType === 'polyline' || geometryType === 'dimline' || geometryType === 'hectoline') {
-                sketch.addUndo('Vertex hinzufügen');
+                sketch.addUndo(webgis.l10n.get("sketch-add-vertex"));
             }
         }
 
@@ -973,7 +973,7 @@
                             if (vertex && vertex_wgs84) {
                                 if (firstNode) {
                                     firstNode = false;
-                                    this.addUndo('Trace-Punkte hinzufügen');
+                                    this.addUndo(webgis.l10n.get("sketch-add-trace-vertices"));
                                     this.startSuppressUndo();
                                 }
                                 this.addVertex({ x: vertex_wgs84[0], y: vertex_wgs84[1], X: vertex[0], Y: vertex[1], projEvent: 'snapped' });
@@ -1025,7 +1025,7 @@
         if (vertexIndex !== null) {
             var vertices = this._getRawVertices();
             if (vertices.length > vertexIndex) {
-                this.addUndo('Vertex verschieben');
+                this.addUndo(webgis.l10n.get("sketch-move-vertex"));
 
                 if (!vertex.X || !vertex.Y) {
                     // if X,Y not set, eg after changing an existing point with Absolute XY Tool
@@ -1559,7 +1559,7 @@
     };
     this.reverse = function () {
         if (this.canReverse()) {
-            this.addUndo('Reihenfolge umkehren');
+            this.addUndo(webgis.l10n.get("sketch-tool-reverse"));
 
             var vertices = _vertices;
             vertices.reverse();
@@ -1582,7 +1582,7 @@
 
             if (vertices != null) {
                 //console.log('merged', vertices);
-                this.addUndo('Abschnitte zusammenführen (merge)');
+                this.addUndo(webgis.l10n.get("sketch-merge-sections"));
 
                 _vertices = [];
                 this.remove(true);
@@ -1597,15 +1597,15 @@
         var infoText = [];
 
         if (_partIndex.length > 1) {
-            infoText.push("Multipart: " + _partIndex.length + " Abschnitte");
+            infoText.push("Multipart: " + _partIndex.length + " " + webgis.l10n.get("sections"));
         }
 
         if (_geometryType === 'polygon') {
-            infoText.push("Fläche: " + (Math.round(properties.area * 100) / 100) + 'm²');
-            infoText.push("Umfang:" + (Math.round(properties.circumference * 100) / 100) + 'm');
+            infoText.push(webgis.l10n.get("area") + ": " + (Math.round(properties.area * 100) / 100) + 'm²');
+            infoText.push(webgis.l10n.get("circumference") + ": " + (Math.round(properties.circumference * 100) / 100) + 'm');
         }
         else if (_geometryType === 'polyline') {
-            infoText.push("Länge: " + (Math.round)(properties.length * 100) / 100 + 'm');
+            infoText.push(webgis.l10n.get("length") + ": " + (Math.round)(properties.length * 100) / 100 + 'm');
         }
 
         return infoText;
@@ -2550,7 +2550,7 @@
     this.moveSketch = function (latlng) {
         if (_sketchMovingVertexIndex >= 0 && _sketchMovingVertexIndex < _vertices.length) {
 
-            this.addUndo('Sketch verschieben');
+            this.addUndo(webgis.l10n.get("sketch-tool-move"));
 
             var vertex = _vertices[_sketchMovingVertexIndex];
 
@@ -2694,7 +2694,7 @@
     };
     this.rotateSketch = function(latlng) {
         if (_sketchRotatingVertexIndex >= 0 && _sketchRotatingVertexIndex < _vertices.length) {
-            this.addUndo('Sketch rotieren');
+            this.addUndo(webgis.l10n.get("sketch-tool-rotate"));
 
             var crs = this.map.calcCrs();
 
@@ -2747,7 +2747,7 @@
     this.removeVertex = function (index, suppressUndo) {
         this.hide();
         if (suppressUndo !== true) {
-            this.addUndo('Vertex entfernen');
+            this.addUndo(webgis.l10n.get("sketch-remove-vertex"));
         }
         var vertexFrameworkElements = [];
         for (var i = 0; i < _vertices.length; i++) {
@@ -2867,7 +2867,7 @@
         this.redrawMarkers();
     };
     this.removeSelectedVertices = function () {
-        this.addUndo('Selektierte Vertices entfernen');
+        this.addUndo(webgis.l10n.get("sketch-remove-selected-vertices"));
 
         while (this.hasSelectedVertices()) {
             for (var i in _vertices) {
@@ -2893,7 +2893,7 @@
 
     /********************************************/
     this.addPrevVertex = function (index) {
-        this.addUndo('Vertex hinzufügen');
+        this.addUndo(webgis.l10n.get("sketch-add-vertex"));
         var vertices = _cloneArray(_vertices),
             partIndex = _cloneArray(_partIndex);
         this.remove(true);
@@ -2919,7 +2919,7 @@
         this.events.fire('onchanged', this);
     };
     this.addPostVertex = function (index, t) {
-        this.addUndo('Vertex hinzufügen');
+        this.addUndo(webgis.l10n.get("sketch-add-vertex"));
         _suppressUndo = true;
 
         var vertices = _cloneArray(_vertices),    // clone
@@ -3007,7 +3007,7 @@
     };
     this.appendPart = function (latLngs, silent) {
         if (!silent) {
-            this.addUndo('Abschnitt schließen/neuen beginnen');
+            this.addUndo(webgis.l10n.get("sketch-close-section"));
         }
         if (_vertices.length === 0) {
             _frameworkElements = [this._createFrameworkElement(latLngs)];

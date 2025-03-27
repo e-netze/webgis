@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
     "use strict";
     $.fn.webgis_snapping = function (method) {
         if (methods[method]) {
@@ -53,7 +53,7 @@
                 $(this).closest('tr').find('.checkbox-snapping.detail').prop('checked', $(this).is(':checked'));
                 refresh(this);
             });
-        var $label = $("<label for='" + webgis.sketchSnappingSchemeId + "'>&nbsp;" + webgis.l10n.get("current-sketch") + "h</label>")
+        var $label = $("<label for='" + webgis.sketchSnappingSchemeId + "'>&nbsp;" + webgis.l10n.get("current-sketch") + "</label>")
             .appendTo($td);
         $("<div style='padding-left:25px;color:#aaa'>").text(webgis.l10n.get("all-scales")).appendTo($label);
         $("<input type='checkbox'>").addClass('checkbox-snapping detail').attr('data-type', 'nodes').appendTo($("<td style='text-align:center'>").appendTo($tr))

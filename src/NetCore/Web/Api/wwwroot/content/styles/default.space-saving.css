@@ -46,6 +46,10 @@ body.webgis-space-saving .webgis-ui-imagebutton .webgis-ui-imagebutton-text {
     padding: 5px;
 }
 
+.webgis-container.webgis-space-saving .webgis-contextmenu.icons li {
+    padding-left: 34px;
+}
+
 .webgis-container.webgis-space-saving .webgis-result-table-tools-container .webgis-result-table-tools .webgis-toolbox-tool-item {
     width: 38px;
 }
