@@ -78,6 +78,7 @@
     "apply": "Apply",
     "yes": "Yes",
     "no": "No",
+    "off": "Off",
     "discard-changes": "Discard changes",
     "file-upload": "File upload",
 
@@ -86,6 +87,11 @@
     "latitude": "Latitude",
     "longitude": "Longitude",
     "elevation": "Elevation",
+
+    "length": "Length",
+    "area": "Area",
+    "circumference": "Circumference",
+    "sections": "Sections", 
     
     "select-field": "Select field",
 
@@ -123,6 +129,73 @@
     "msg-no-legend-available": "Unfortunately, there is no legend available for this topic group",
     "msg-no-services-available": "Unfortunately, there is no service available for this topic group",
 
+    "results-has-changed-warning": "The queried data has changed in location or quantity since the project was saved. The completeness and accuracy of the displayed results can no longer be guaranteed. Please review the results. If the data is still correct, you can avoid this warning by saving the project again with the current results.",
+
+    // print
+    "print-extent": "Print extent",
+
+    // snapping
+    "snapping": "Snapping",
+    "scheme": "Scheme",
+    "nodes": "Nodes",
+    "edges": "Edges",
+    "endpoints": "Endpoints",
+    "node": "Node",
+    "edge": "Edge",
+    "endpoint": "Endpoint",
+    "current-sketch": "Current sketch",
+    "all-scales": "All scales",
+    "mapscale": "Mapscale",
+
+    // sketch tools
+    "sketch": "Sketch",
+    "sketch-undo": "Undo",
+    "sketch-selected-vertices": "Selected Vertices",
+    "sketch-unselect-vertices": "Cancel",
+    "sketch-toggle-vertices-selection": "Toggle",
+    "sketch-remove-selected-vertices": "Remove",
+    "sketch-remove-vertex": "Remove vertex",
+    "sketch-fix-vertex": "Fix vertex",
+    "sketch-unfix-vertex": "Unfix vertex",
+    "sketch-move-vertex": "Move vertex",
+    "sketch-move-vertex-to-gps": "Move vertex to GPS Position",
+    "sketch-add-vertex": "Add vertex",
+    "sketch-add-trace-vertices": "Add trace vertices",
+    "sketch-remove-sketch": "Remove sketch", 
+    "sketch-close-section": "Close section/start new",
+    "sketch-merge-sections": "Merge sections",
+    "sketch-from-feature-geometry": "From geo-object geometry",
+    "sketch-upload": "Upload sketch (GPX, GeoJson)",
+    "sketch-download": "Download sketch (GPX, GeoJson)",
+
+    "sketch-segment-createion-mode": "Segment creation mode",
+    "sketch-mode-normal": "Normal",
+    "sketch-mode-ortho": "Orthogonal",
+    "sketch-mode-trace": "Trace",
+    "sketch-mode-fan": "Fan",
+
+    "sketch-tools": "Sketch tools",
+    "sketch-tool-reverse": "Reverse vertices",
+    "sketch-tool-move": "Move sketch",
+    "sketch-tool-rotate": "Rotate sketch",
+    "sketch-tool-offset": "Parallel offset sketch",
+    "sketch-tool-offset-no-possible": "Parallel offset for this geometry not possible",
+    "sketch-tool-extend": "Extend sketch line",
+
+    "sketch-snapping-intersect-edge": "Intersect edge",
+    "sketch-snapping-edge-middle": "Edge middle point",
+    "sketch-snapping-fix-direction": "Fix direction",
+    "sketch-snapping-fix-direction-parallel": "Fix direction (parallel)",
+    "sketch-snapping-fix-direction-orthogonal": "Fix direction (orthogonal)",
+    "sketch-snapping-fix-distance": "Fix distance",
+
+    "sketch-construct-current-vertex": "Construct current vertex",
+    "sketch-construct-new-vertices": "Construct new vertex/vertices",
+    "sketch-construct-coordiantes": "Coordinates (absolute)",
+    "sketch-construct-direction-distance": "Direction/Distance",
+    "sketch-appearance": "Appearance",
+    // sketch advanced construction tools
+    "construction-mode": "Construction mode",
     "construction-mode-circle": "Construct circle",
     "construction-mode-rectangle": "Construct rectangle",
     "construction-mode-direction-distance": "Intersection: line with circle",
@@ -135,6 +208,10 @@
     "construction-mode-vertex-perpendicular": "Right angle",
     "construction-mode-arc-3points": "Circular arc (3 points)",
     "construction-mode-arc-2tangents": "Circular arc (2 tangents)",
+
+    "construction-close-polygon-ortho": "Close polygon (orthogonal)",
+    "construction-close-polygon-ortho-info1": "Polygon section must consist of at least three vertices.",
+    "construction-close-polygon-ortho-info2": "No solution found to close the polygon orthogonally.",
 
     "construction-info-apply-vertex": "Click on the construction point to apply the vertex",
     "construction-info-apply-vertices": "Click on the corresponding shape to apply the vertices",
@@ -166,36 +243,19 @@
     "construction-info-arc-2tangents-point1": "Set the first point to define the second tangent",
     "construction-info-arc-2tangents-point2": "Set the second point to finalize the second tangent",
 
-    "results-has-changed-warning": "The queried data has changed in location or quantity since the project was saved. The completeness and accuracy of the displayed results can no longer be guaranteed. Please review the results. If the data is still correct, you can avoid this warning by saving the project again with the current results.",
+    "construction-button-apply-point": "Apply point",
+    "construction-button-more": "More options",
 
-    // print
-    "print-extent": "Print extent",
+    "construction-label-radius": "Radius [m]",
+    "cunstruction-label-apply-distance": "Apply distance",
+    "construction-label-azimuth": "Direction (Azimuth)",
+    "construction-label-unit-deg": "degree [°]",
+    "construction-label-unit-gon": "centesimal degree [gon]",
+    "construction-label-apply-direction": "Apply direction",
+    "construction-label-distance": "Distance [m]",
+    "construction-label-azimuth": "Azimuth [°, degree]",
+    "construction-label-angle": "Angle [°, degree]",
 
-    // snapping
-    "snapping": "Snapping",
-    "scheme": "Scheme",
-    "nodes": "Nodes",
-    "edges": "Edges",
-    "endpoints": "Endpoints",
-    "node": "Node",
-    "edge": "Edge",
-    "endpoint": "Endpoint",
-    "current-sketch": "Current sketch",
-    "all-scales": "All scales",
-    "mapscale": "Mapscale",
-
-    // sketch tools
-    "sketch": "Sketch",
-    "sketch-undo": "Undo",
-    "sketch-selected-vertices": "Selected Vertices",
-    "sketch-unselect-vertices": "Cancel",
-    "sketch-toggle-vertices-selection": "Toggle",
-    "sketch-remove-selected-vertices": "Remove",
-    "sketch-remove-vertex": "Remove vertex",
-    "sketch-fix-vertex": "Fix vertex",
-    "sketch-unfix-vertex": "Unfix vertex",
-    "sketch-move-vertex": "Move vertex",
-    
     // sketch info
     "geometry-type": "Geometry type",
     "segment": "Segment",

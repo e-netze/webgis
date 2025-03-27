@@ -78,6 +78,7 @@
     "apply": "Anwenden",
     "yes": "Ja",
     "no": "Nein",
+    "off": "Beenden",
     "discard-changes": "Änderungen verwerfen",
     "file-upload": "Datei hochladen",
 
@@ -86,6 +87,11 @@
     "latitude": "Breitengrad",
     "longitude": "Längengrad",
     "elevation": "Höhe",
+
+    "length": "Länge",
+    "area": "Fläche",
+    "circumference": "Umfang",
+    "sections": "Abschnitte",
 
     "select-field": "Feld wählen",
 
@@ -123,6 +129,73 @@
     "msg-no-legend-available": "Für diese Themengruppe ist leider keine Legende verfügbar",
     "msg-no-services-available": "Für diese Themengruppe ist leider keine Dienst verfügbar",
 
+    "results-has-changed-warning": "Die abgefragen Daten haben sich seit dem Speichern des Projektes in der Lage bzw. Anzahl geändert. Eine Vollständigkeit und Richtigkeit der angezeigten Ergebnisse kann nicht mehr garantiert werden. Bitte überprüfen sie die Ergebnisse. Sind die Daten immer noch korrekt, können sie diese Warnung vermeiden, indem sie das Projekt mit den aktuellen Ergebnissen noch einmal speichern.",
+
+    // print
+    "print-extent": "Druckbereich",
+
+    // snapping
+    "snapping": "Objektfang (Snapping)",
+    "scheme": "Schema",
+    "nodes": "Knoten",
+    "edges": "Kanten",
+    "endpoints": "Endpunkte",
+    "node": "Knoten",
+    "edge": "Kante",
+    "endpoint": "Endpunkt",
+    "current-sketch": "Aktueller Sketch",
+    "all-scales": "Alle Maßstäbe",
+    "mapscale": "Maßstab",
+
+    // sketch tools
+    "sketch": "Sketch",
+    "sketch-undo": "Rückgängig/Undo",
+    "sketch-selected-vertices": "Ausgewählte Stützpunkte",
+    "sketch-unselect-vertices": "Aufheben",
+    "sketch-toggle-vertices-selection": "Umkehren",
+    "sketch-remove-selected-vertices": "Entfernen",
+    "sketch-remove-vertex": "Stützpunkt Entfernen",
+    "sketch-fix-vertex": "Stützpunkt Fixieren/anschließen",
+    "sketch-unfix-vertex": "Stützpunkt Fixierung lösen",
+    "sketch-move-vertex": "Stützpunkt Verschieben",
+    "sketch-move-vertex-to-gps": "Stützpunkt auf GPS Position verschieben", 
+    "sketch-add-vertex": "Stützpunkt Hinzufügen",
+    "sketch-add-trace-vertices": "Trace-Punkte hinzufügen",
+    "sketch-remove-sketch": "Sketch entfernen",
+    "sketch-close-section": "Abschnitt schließen/neuen beginnen",
+    "sketch-merge-sections": "Abschnitte zusammenführen (merge)",
+    "sketch-from-feature-geometry": "Aus Geo-Objekt Geometrie übernehmen",
+    "sketch-upload": "Sketch hochladen (GPX, GeoJson)",
+    "sketch-download": "Sketch herunterladen (GPX, GeoJson)",
+
+    "sketch-segment-createion-mode": "Segmenterstellungs Modus",
+    "sketch-mode-normal": "Gerade",
+    "sketch-mode-ortho": "Orthogonal",
+    "sketch-mode-trace": "Trace",
+    "sketch-mode-fan": "Fan",
+
+    "sketch-tools": "Sketch Werkzeuge",
+    "sketch-tool-reverse": "Richtung umkehren",
+    "sketch-tool-move": "Sketch verschieben",
+    "sketch-tool-rotate": "Sketch drehen",
+    "sketch-tool-offset": "Sketch parallel versetzen",
+    "sketch-tool-offset-no-possible": "Versetzen dieser Geometrie leider nicht möglich",
+    "sketch-tool-extend": "Sketch(linie) verlängern",
+
+    "sketch-snapping-intersect-edge": "Mit Kante verschneiden",
+    "sketch-snapping-edge-middle": "Mittelpunkt Kante",
+    "sketch-snapping-fix-direction": "Richtung fixieren",
+    "sketch-snapping-fix-direction-parallel": "Richtung fixieren: Parallel",
+    "sketch-snapping-fix-direction-orthogonal": "Richtung fixieren: Rechtwicklig",
+    "sketch-snapping-fix-distance": "Abstand fixieren",
+
+    "sketch-construct-current-vertex": "Aktuellen Stützpunkt kunstruieren",
+    "sketch-construct-new-vertices": "Neue(n) Stützpunkt(e) konstruieren",
+    "sketch-construct-coordiantes": "Koordinaten (absolute)",
+    "sketch-construct-direction-distance": "Richtung/Abstand",
+    "sketch-appearance": "Darstellung",
+    // sketch advanced construction tools
+    "construction-mode": "Konstruktionsmodus",
     "construction-mode-circle": "Kreis konstruieren",
     "construction-mode-rectangle": "Rechteck konstruieren",
     "construction-mode-direction-distance": "Schnittpunkt Linie mit Kreis",
@@ -135,6 +208,10 @@
     "construction-mode-vertex-perpendicular": "Rechter Winkel",
     "construction-mode-arc-3points": "Kreisbogen (3 Punkte)",
     "construction-mode-arc-2tangents": "Kreisbogen (2 Tangenten)",
+
+    "construction-close-polygon-ortho": "Polygon rechtwinkelig abschließen",
+    "construction-close-polygon-ortho-info1": "Polygonabschnitt muss aus mindestens drei Stützpunkten bestehen",
+    "construction-close-polygon-ortho-info2": "Keine Lösung gefunden, um das Polygon rechtwicklig abzuschließen",
 
     "construction-info-apply-vertex": "Zum Übernehmen des Vertex auf den Konstruktions-Punkt klicken",
     "construction-info-apply-vertices": "Zum Übernehmen der Vertices auf die entsprechende Figur klicken",
@@ -166,35 +243,18 @@
     "construction-info-arc-2tangents-point1": "Ersten Punkt setzen, um die zweite Tangente zu definieren",
     "construction-info-arc-2tangents-point2": "Zweiten Punkt setzen, um die zweite Tangente festzulegen",
 
-    "results-has-changed-warning": "Die abgefragen Daten haben sich seit dem Speichern des Projektes in der Lage bzw. Anzahl geändert. Eine Vollständigkeit und Richtigkeit der angezeigten Ergebnisse kann nicht mehr garantiert werden. Bitte überprüfen sie die Ergebnisse. Sind die Daten immer noch korrekt, können sie diese Warnung vermeiden, indem sie das Projekt mit den aktuellen Ergebnissen noch einmal speichern.",
+    "construction-button-apply-point": "Punkt übernehmen",
+    "construction-button-more": "Weitere Funktionen",
 
-    // print
-    "print-extent": "Druckbereich",
-
-    // snapping
-    "snapping": "Objektfang (Snapping)",
-    "scheme": "Schema",
-    "nodes": "Knoten",
-    "edges": "Kanten",
-    "endpoints": "Endpunkte",
-    "node": "Knoten",
-    "edge": "Kante",
-    "endpoint": "Endpunkt",
-    "current-sketch": "Aktueller Sketch",
-    "all-scales": "Alle Maßstäbe",
-    "mapscale": "Maßstab",
-
-    // sketch tools
-    "sketch": "Sketch",
-    "sketch-undo": "Rückgängig/Undo",
-    "sketch-selected-vertices": "Ausgewählte Stützpunkte",
-    "sketch-unselect-vertices": "Aufheben",
-    "sketch-toggle-vertices-selection": "Umkehren",
-    "sketch-remove-selected-vertices": "Entfernen",
-    "sketch-remove-vertex": "Stützpunkt Entfernen",
-    "sketch-fix-vertex": "Stützpunkt Fixieren/anschließen",
-    "sketch-unfix-vertex": "Stützpunkt Fixierung lösen",
-    "sketch-move-vertex": "Stützpunkt Verschieben",
+    "construction-label-radius": "Radius [m]",
+    "cunstruction-label-apply-distance": "Abstand übernehmen",
+    "construction-label-azimuth": "Richtung (Azimut)",
+    "construction-label-unit-deg": "(Alt)Grad [°]",
+    "construction-label-unit-gon": "Neugrad [gon]",
+    "construction-label-apply-direction": "Richtung übernehmen",
+    "construction-label-distance": "Distanz [m]",
+    "construction-label-azimuth": "Azimut [°, deg]",
+    "construction-label-angle": "Winkel [°, deg]",
 
     // sketch info
     "geometry-type": "Geometrie-Typ",

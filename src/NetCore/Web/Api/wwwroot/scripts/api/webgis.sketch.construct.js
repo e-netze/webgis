@@ -187,13 +187,13 @@
                     name: 'construct_distance',
                     input: [
                         {
-                            label: 'Radius [m]',
+                            label: webgis.l10n.get("construction-label-radius"),
                             name: 'radius',
                             type: 'number',
                             required: true
                         }
                     ],
-                    submitText: 'Distanz übernehmen',
+                    submitText: webgis.l10n.get("cunstruction-label-apply-distance"),
                     onSubmit: function (result) {
                         var sketch = webgis.sketch.construct._sketchFromContextMenuItem(this);
                         var radius = result.radius;
@@ -224,7 +224,7 @@
                     name: 'construct_direction',
                     input: [
                         {
-                            label: 'Richtung (Azimut)',
+                            label: webgis.l10n.get("construction-label-azimuth"),
                             name: 'azimut',
                             type: 'number',
                             value: 0
@@ -232,10 +232,13 @@
                         {
                             name: 'unit',
                             type: 'select',
-                            options: [{ text: '(Alt)Grad', value: 'deg' }, { text: 'Neugrad (gon)', value: 'gon' }]
+                            options: [
+                                { text: webgis.l10n.get("construction-label-unit-deg"), value: 'deg' },
+                                { text: webgis.l10n.get("construction-label-unit-gon"), value: 'gon' }
+                            ]
                         }
                     ],
-                    submitText: 'Richtung übernehmen',
+                    submitText: webgis.l10n.get("construction-label-apply-direction"),
                     onSubmit: function (result) {
                         var sketch = webgis.sketch.construct._sketchFromContextMenuItem(this);
                         var azimut = result.azimut;

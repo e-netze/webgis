@@ -69,7 +69,8 @@
             $("<li style='font-weight:bold'><i>Konstruktionsmodus: " + webgis.l10n.get("construction-mode-" + constructionMode) + "&nbsp;&nbsp;</i><div class='webgis-close-button'></div></li>")
                 .appendTo($menu);
 
-            $("<li>Konstruktionsmodus abbrechen</li>")
+            $("<li>")  // construction mode: off
+                .text(webgis.l10n.get("construction-mode") + ": " + webgis.l10n.get("off"))
                 .css('background-image', 'url(' + webgis.css.imgResource('sketch_remove_fix-26.png', 'tools') + ')')
                 .appendTo($menu)
                 .click(function () {
@@ -82,12 +83,13 @@
             webgis.sketch.construct.createContextMenuUI(sketch, $menu);
         }
         else if (sketch._fixedDirectionVector && !sketch._fixedDistance && !_isSimplePoint() && !suppressConstructionForms) {
-            $("<li style='font-weight:bold'><i>Konstruktionsmodus:</i><div class='webgis-close-button'></div></li>")
+            $("<li style='font-weight:bold'><i>" + webgis.l10n.get("construction-mode") + ":</i><div class='webgis-close-button'></div></li>")
                 .appendTo($menu);
 
             if (sketch.isInOrthoMode()) {
                 if (_isPolygon()) {
-                    $("<li>Polygon rechtwinkelig abschließen</li>")
+                    $("<li>")
+                        .text(webgis.l10n.get("construction-close-polygon-ortho"))
                         .css('background-image', 'url(' + webgis.css.imgResource('sketch_ortho_close-26.png', 'tools') + ')')
                         .appendTo($menu)
                         .click(function () {
@@ -97,7 +99,7 @@
                                     pointCount = partVertices.length;
 
                                 if (pointCount < 3) {
-                                    webgis.alert("Polygonabschnitt muss aus mindestens drei Stützpunkten bestehen", "Error");
+                                    webgis.alert(webgis.l10n.get("construction-close-polygon-ortho-info1"), "info");
                                     return;
                                 }
 
@@ -119,13 +121,14 @@
                                     sketch.addVertex(result);
                                     sketch.close();
                                 } else {
-                                    webgis.alert("Keine Lösung gefunden, um das Polygon rechtwicklig abzuschließen", "Error");
+                                    webgis.alert(webgis.l10n.get("construction-close-polygon-ortho-info2"), "info");
                                 }
                             }
                         });
                 }
 
-                $("<li>Orthogonal-Modus beenden</li>")
+                $("<li>")  // ortho mode: off
+                    .text(webgis.l10n.get("sketch-mode-ortho") + ": " + webgis.l10n.get("off"))
                     .css('background-image', 'url(' + webgis.css.imgResource('sketch_ortho_off-26.png', 'tools') + ')')
                     .appendTo($menu)
                     .click(function () {
@@ -136,7 +139,8 @@
                     });
             }
 
-            $("<li>Richtung fixieren: aus</li>")
+            $("<li>")  // fix direction: off
+                .text(webgis.l10n.get("sketch-snapping-fix-direction") + ": " + webgis.l10n.get("off"))
                 .css('background-image', 'url(' + webgis.css.imgResource('sketch_remove_fix-26.png', 'tools') + ')')
                 .appendTo($menu)
                 .click(function () {
@@ -152,13 +156,13 @@
                     name: 'set_distance',
                     input: [
                         {
-                            label: 'Distanz [m]',
+                            label: webgis.l10n.get("construction-label-distance"),
                             name: 'distance',
                             type: 'number',
                             required: true
                         }
                     ],
-                    submitText: 'Punkt setzen',
+                    submitText: webgis.l10n.get("construction-button-apply-point"),
                     onSubmit: function (result) {
                         var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                         if (sketch) {
@@ -192,7 +196,8 @@
             $("<li style='font-weight:bold'><i>Konstruktionsmodus:</i><div class='webgis-close-button'></div></li>")
                 .appendTo($menu);
 
-            $("<li>Distanz fixieren: aus</li>")
+            $("<li>")  // fix distance: off
+                .text(webgis.l10n.get("sketch-snapping-fix-distance") + ": " + webgis.l10n.get("off"))
                 .css('background-image', 'url(' + webgis.css.imgResource('sketch_remove_fix-26.png', 'tools') + ')')
                 .appendTo($menu)
                 .click(function () {
@@ -207,13 +212,13 @@
                     name: 'set_azimut',
                     input: [
                         {
-                            label: 'Azimut [deg]',
+                            label: webgis.l10n.get("construction-label-azimuth"),
                             name: 'azimut',
                             type: 'number',
                             required: true
                         }
                     ],
-                    submitText: 'Punkt setzen',
+                    submitText: webgis.l10n.get("construction-button-apply-point"),
                     onSubmit: function (result) {
                         var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                         if (sketch) {
@@ -234,10 +239,11 @@
             _addMoreFunctionsMenuItem($menu, clickEvent);
         }
         else if (sketch.isSketchMoving() && !suppressConstructionForms) {
-            $("<li style='font-weight:bold'><i>Konstruktionsmodus:</i><div class='webgis-close-button'></div></li>")
+            $("<li style='font-weight:bold'><i>" + webgis.l10n.get("construction-mode") + ":</i><div class='webgis-close-button'></div></li>")
                 .appendTo($menu);
 
-            $("<li>Sketch verschieben beenden</li>")
+            $("<li>")  // sketch moving: off
+                .text(webgis.l10n.get("sketch-tool-move") + ": " + webgis.l10n.get("off"))
                 .css('background-image', 'url(' + webgis.css.imgResource('sketch_move_off-26.png', 'tools') + ')')
                 .appendTo($menu)
                 .click(function () {
@@ -264,7 +270,7 @@
                             value: deltaXY[1],
                         }
                     ],
-                    submitText: 'Übernehmen',
+                    submitText: webgis.l10n.get("apply"),
                     onSubmit: function (result) {
                         var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                         if (sketch) {
@@ -297,7 +303,8 @@
             $("<li style='font-weight:bold'><i>Konstruktionsmodus:</i><div class='webgis-close-button'></div></li>")
                 .appendTo($menu);
 
-            $("<li>Sketch drehen beenden</li>")
+            $("<li>")  // sketch rotating: off
+                .text(webgis.l10n.get("sketch-tool-rotate") + ": " + webgis.l10n.get("off"))
                 .css('background-image', 'url(' + webgis.css.imgResource('sketch_rotate_off-26.png', 'tools') + ')')
                 .appendTo($menu)
                 .click(function () {
@@ -312,13 +319,13 @@
                     name: 'set_angle',
                     input: [
                         {
-                            label: 'Winkel [deg]',
-                            name: 'angle',
-                            type: 'number',
+                            label: webgis.l10n.get("construction-label-angle"),
+                            name: "angle",
+                            type: "number",
                             value: (90 - azimut + 360.0) % 360.0,
                         }
                     ],
-                    submitText: 'Übernehmen',
+                    submitText: webgis.l10n.get("apply"),
                     onSubmit: function (result) {
                         var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                         if (sketch) {
@@ -349,7 +356,8 @@
             $("<li style='font-weight:bold'><i>Konstruktionsmodus:</i><div class='webgis-close-button'></div></li>")
                 .appendTo($menu);
 
-            $("<li>Fan Modus beenden</li>")
+            $("<li>")  // fan mode: off
+                .text(webgis.l10n.get("sketch-mode-fan") + ": " + webgis.l10n.get("off"))
                 .css('background-image', 'url(' + webgis.css.imgResource('sketch_fan_off-26.png', 'tools') + ')')
                 .appendTo($menu)
                 .click(function () {
@@ -458,7 +466,8 @@
 
                     if (webgis.currentPosition.canUsedWithSketchTool && map.ui.isQuickAccessButtonActive('webgis-gps')) {
                         if (webgis.continuousPosition.current && webgis.continuousPosition.current.status === 'ok') {
-                            $("<li>Vertex (" + (parseInt(closestVertex.index) + 1) + ") auf GPS Position verschieben</li>")
+                            $("<li>")
+                                .text(webgis.l10n.get("sketch-move-vertex-to-gps"))
                                 .appendTo($menu)
                                 .data('vertex-index', closestVertex.index)
                                 .click(function () {
@@ -497,7 +506,7 @@
                     }
                 }
                 else if (closestEdge != null && closestEdge.dist < 10) {
-                    $_menuItem($container, "Vertex hinzufügen", webgis.css.imgResource('sketch_add_marker-26.png', 'tools'))
+                    $_menuItem($container, webgis.l10n.get("sketch-add-vertex"), webgis.css.imgResource('sketch_add_marker-26.png', 'tools'))
                         .data('edge', closestEdge)
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch(), edge = $(this).data('edge');
@@ -505,7 +514,7 @@
                         });
                 }
                 if (vertices.length > 0) {
-                    $_menuItem($container, "Sketch entfernen", webgis.css.imgResource('sketch_remove-26.png', 'tools'))
+                    $_menuItem($container, webgis.l10n.get("sketch-remove-sketch"), webgis.css.imgResource('sketch_remove-26.png', 'tools'))
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                             if (sketch)
@@ -513,7 +522,7 @@
                         });
                 }
                 if (_allowMultipart() && !sketch.isLastPartClosed()) {
-                    $_menuItem($container, "Abschnitt schließen/neuen beginnen", webgis.css.imgResource('sketch_new_section-26.png', 'tools'))
+                    $_menuItem($container, webgis.l10n.get("sketch-close-section"), webgis.css.imgResource('sketch_new_section-26.png', 'tools'))
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                             if (sketch)
@@ -521,7 +530,7 @@
                         });
                 }
                 if (sketch.canMergeParts() === true) {
-                    $_menuItem($container, "Abschnitte zusammenführen (merge)", webgis.css.imgResource('sketch_merge_sections-26.png', 'tools'))
+                    $_menuItem($container, webgis.l10n.get("sketch-merge-sections"), webgis.css.imgResource('sketch_merge_sections-26.png', 'tools'))
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                             if (sketch)
@@ -530,7 +539,7 @@
                 }
                 
                 if (vertices.length === 0 && !_isSimplePoint()) {
-                    $_menuItem($container, "Aus Geo-Objektgeometrie übernehmen...", webgis.css.imgResource('sketch_fromgeometry-26.png', 'tools'))
+                    $_menuItem($container, webgis.l10n.get("sketch-from-feature-geometry"), webgis.css.imgResource('sketch_fromgeometry-26.png', 'tools'))
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
 
@@ -538,11 +547,11 @@
                         });
                 }
                 if (/*vertices.length === 0 && */_isLineOrPolygon()) {
-                    $_menuItem($container, "Sketch hochladen (GPX, GeoJson)", webgis.css.imgResource('sketch_upload-26.png', 'tools'))
+                    $_menuItem($container, webgis.l10n.get("sketch-upload"), webgis.css.imgResource('sketch_upload-26.png', 'tools'))
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                             $('body').webgis_modal({
-                                title: 'Sketch hochladen',
+                                title: webgis.l10n.get("sketch-upload"),
                                 width: '340px',
                                 height: '400px',
                                 onload: function ($content) {
@@ -552,11 +561,11 @@
                         });
                 }
                 if (sketch.isValid() && _isLineOrPolygon()) {
-                    $_menuItem($container, "Sketch herunterladen (GPX, GeoJson)", webgis.css.imgResource('sketch_download-26.png', 'tools'))
+                    $_menuItem($container, webgis.l10n.get("sketch-download"), webgis.css.imgResource('sketch_download-26.png', 'tools'))
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                             $('body').webgis_modal({
-                                title: 'Sketch herunterladen',
+                                title: webgis.l10n.get("sketch-download"),
                                 width: '340px',
                                 height: '400px',
                                 onload: function ($content) {
@@ -567,11 +576,14 @@
                 }
 
                 if (webgis.usability.constructionTools === true) {
-                    $("<li>Segmenterstellungs Modus</li>").addClass('header').appendTo($menu);
+                    $("<li>")
+                        .text(webgis.l10n.get("sketch-segment-createion-mode"))
+                        .addClass('header')
+                        .appendTo($menu);
                     $container = $_menuContainer($menu);
 
                     if (!_isSimplePoint()) {
-                        $_menuItem($container, "Gerade", webgis.css.imgResource('sketch_mode_default-26.png', 'tools'))
+                        $_menuItem($container, webgis.l10n.get("sketch-mode-normal"), webgis.css.imgResource('sketch_mode_default-26.png', 'tools'))
                             .addClass(sketch.isInDefaultMode() ? 'selected' : '')
                             .click(function () {
                                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
@@ -580,7 +592,7 @@
                                 }
                             });
 
-                        $_menuItem($container, "Orthogonal-Modus", webgis.css.imgResource('sketch_ortho-26.png', 'tools'))
+                        $_menuItem($container, webgis.l10n.get("sketch-mode-ortho"), webgis.css.imgResource('sketch_ortho-26.png', 'tools'))
                             .addClass(sketch.isInOrthoMode() ? 'selected' : '')
                             .click(function () {
                                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
@@ -590,7 +602,7 @@
                             });
 
                         if (map.construct.hasSnapping()) {
-                            $_menuItem($container, "Trace-Modus", webgis.css.imgResource('sketch_trace-26.png', 'tools'))
+                            $_menuItem($container, webgis.l10n.get("sketch-mode-trace"), webgis.css.imgResource('sketch_trace-26.png', 'tools'))
                                 .addClass(sketch.isInTraceMode() ? 'selected' : '')
                                 .click(function () {
                                     var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
@@ -601,7 +613,7 @@
                         }
 
                         if (sketch.getGeometryType() === "polyline") {
-                            $_menuItem($container, "Fan-Modus", webgis.css.imgResource('sketch_fan-26.png', 'tools'))
+                            $_menuItem($container, webgis.l10n.get("sketch-mode-fan"), webgis.css.imgResource('sketch_fan-26.png', 'tools'))
                                 .addClass(sketch.isInFanMode() ? 'selected' : '')
                                 .click(function () {
                                     var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
@@ -612,11 +624,14 @@
                         };
                     }
 
-                    $("<li>Sketch Werkzeuge</li>").addClass('header').appendTo($menu);
+                    $("<li>")
+                        .text(webgis.l10n.get("sketch-tools"))
+                        .addClass('header')
+                        .appendTo($menu);
                     var $container = $_menuContainer($menu);
 
                     if (sketch.canReverse() === true) {
-                        $_menuItem($container, "Vertexreihenfolge umkehren", webgis.css.imgResource('sketch_reverse-26.png', 'tools'))
+                        $_menuItem($container, webgis.l10n.get("sketch-tool-reverse"), webgis.css.imgResource('sketch_reverse-26.png', 'tools'))
                             .click(function () {
                                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                                 if (sketch)
@@ -625,7 +640,7 @@
                     }
 
                     if (closestVertex != null && closestVertex.dist < 15) {
-                        $_menuItem($container, "Sketch verschieben", webgis.css.imgResource('sketch_move-26.png', 'tools'))
+                        $_menuItem($container, webgis.l10n.get("sketch-tool-move"), webgis.css.imgResource('sketch_move-26.png', 'tools'))
                             .data('vertex-index', closestVertex.index)
                             .click(function () {
                                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
@@ -633,7 +648,7 @@
                                     sketch.startSketchMoving($(this).data('vertex-index'));
                             });
 
-                        $_menuItem($container, "Sketch drehen", webgis.css.imgResource('sketch_rotate-26.png', 'tools'))
+                        $_menuItem($container, webgis.l10n.get("sketch-tool-rotate"), webgis.css.imgResource('sketch_rotate-26.png', 'tools'))
                             .data('vertex-index', closestVertex.index)
                             .click(function () {
                                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
@@ -642,7 +657,7 @@
                             });
                     }
                     else if (closestEdge != null && closestEdge.dist < 10) {
-                        $_menuItem($container, "Sketch drehen", webgis.css.imgResource('sketch_rotate-26.png', 'tools'))
+                        $_menuItem($container, webgis.l10n.get("sketch-tool-rotate"), webgis.css.imgResource('sketch_rotate-26.png', 'tools'))
                             .data('edge', closestEdge)
                             .click(function () {
                                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch(), edge = $(this).data('edge');
@@ -661,7 +676,7 @@
                     }
 
                     if (vertices.length > 1 && !sketch.isMultiPart()) { // not for multipart features!!
-                        $_menuItem($container, "Sketch parallel versetzen...", webgis.css.imgResource('sketch_sketch_parallel-26.png', 'tools'))
+                        $_menuItem($container, webgis.l10n.get("sketch-tool-offset"), webgis.css.imgResource('sketch_sketch_parallel-26.png', 'tools'))
                             .click(function () {
                                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                                 if (sketch) {
@@ -681,7 +696,7 @@
                                         // Do Nothing
                                     }
                                     $('body').webgis_modal({
-                                        title: 'Parallel versetzen',
+                                        title: webgis.l10n.get("sketch-tool-offset"),
                                         id: 'webgis-sketch-offset-modal',
                                         width: '320',
                                         height: '220px',
@@ -706,7 +721,7 @@
                                                     // Calc offset
                                                     var offsetVertices = map.construct.offset(vertices, result.offset_m);
                                                     if (offsetVertices == null || offsetVertices.length === 0) {
-                                                        webgis.alert("Versetzen diese Geometrie leider nicht möglich", "Hinweis");
+                                                        webgis.alert(webgis.l10n.get("sketch-tool-offset-no-possible"), "info");
                                                         return;
                                                     }
 
@@ -733,7 +748,7 @@
                                                         }
                                                     }
 
-                                                    sketch.addUndo('Parallel versetzen');
+                                                    sketch.addUndo(webgis.l10n.get("sketch-tool-offset"));
                                                     sketch.remove(true);
                                                     sketch.addVertices(offsetVertices);
                                                     $('body').webgis_modal('close', { id: 'webgis-sketch-offset-modal' });
@@ -746,13 +761,13 @@
                     }
 
                     if (vertices.length > 1 && _isLine() && !sketch.isMultiPart()) {
-                        $_menuItem($container, "Sketch(linie) verlängern", webgis.css.imgResource('sketch_extend_line-26.png', 'tools'))
+                        $_menuItem($container, webgis.l10n.get("sketch-tool-extend"), webgis.css.imgResource('sketch_extend_line-26.png', 'tools'))
                             .click(function () {
                                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                                 $('body').webgis_modal({
-                                    title: 'Sketchlinie verlängern',
-                                    width: '340px',
-                                    height: '220px',
+                                    title: webgis.l10n.get("sketch-tool-extend"),
+                                    width: "340px",
+                                    height: "220px",
                                     id: 'webgis-sketch-extend-line-modal',
                                     onload: function ($content) {
                                         $content.webgis_extendLineSketchControl({
@@ -762,7 +777,7 @@
                                                 if (result.extend_m) {
                                                     var vertices = sketch._getRawVertices();
 
-                                                    sketch.addUndo('Sketch verlängern');
+                                                    sketch.addUndo(webgis.l10n.get("sketch-tool-extend"));
 
                                                     if (result.ends == 0 || result.ends == -1) { //  extend begin
                                                         var dX = vertices[0].X - vertices[1].X,
@@ -799,7 +814,10 @@
                             });
                     }
 
-                    $("<li>Snapping</li>").addClass('header').appendTo($menu);
+                    $("<li>")
+                        .text(webgis.l10n.get("snapping"))
+                        .addClass('header')
+                        .appendTo($menu);
                     $container = $_menuContainer($menu);
 
                     this._addSnapppingMenuItem($container);
@@ -813,7 +831,7 @@
                     }
 
                     if (vertices.length > 0 && sketch._snappedVertex && !_isSimplePoint()) {
-                        $_menuItem($container, "Distanz fixieren", webgis.css.imgResource('sketch_distance_fix-26.png', 'tools'))
+                        $_menuItem($container, webgis.l10n.get("sketch-snapping-fix-distance"), webgis.css.imgResource('sketch_distance_fix-26.png', 'tools'))
                             .click(function () {
                                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                                 if (sketch) {
@@ -824,7 +842,12 @@
                             });
                     }
 
-                    $("<li>" + (sketch._contextVertexIndex !== null ? "Stützpunkt " + (parseInt(sketch._contextVertexIndex) + 1) + " konstruieren" : "Stützpunkt(e) konstruieren") + "</li>").addClass('header').appendTo($menu);
+                    $("<li>")
+                        .text(sketch._contextVertexIndex !== null
+                            ? webgis.l10n.get("sketch-construct-current-vertex") + " ["+ (parseInt(sketch._contextVertexIndex) + 1) + "]"
+                            : webgis.l10n.get("sketch-construct-new-vertices"))
+                        .addClass('header')
+                        .appendTo($menu);
                     $container = $_menuContainer($menu);
 
                     if (!sketch.isInOrthoMode() || vertices.length < 2) {
@@ -832,13 +855,13 @@
                     }
 
                     if (vertices.length > 0 && !_isSimplePoint() && sketch._contextVertexIndex == null) {
-                        $_menuItem($container, "Richtung/Entfernung", webgis.css.imgResource('sketch_polar-26.png', 'tools'))
+                        $_menuItem($container, webgis.l10n.get("sketch-construct-direction-distance"), webgis.css.imgResource('sketch_polar-26.png', 'tools'))
                             .click(function () {
                                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                                 if (sketch) {
                                     $('body').webgis_modal({
-                                        title: 'Richtung/Entfernung',
-                                        id: 'webgis-sketch-dir-dist-modal',
+                                        title: webgis.l10n.get("sketch-construct-direction-distance"),
+                                        id: "webgis-sketch-dir-dist-modal",
                                         onload: function ($content) {
                                             $content.webgis_dirDistControl({
                                                 azimut: azimut,
@@ -884,9 +907,12 @@
                 }
             }
 
-            /* Darstellung */
+            /* Appearance */
             if (allowChangePresentation === true && _isLineOrPolygon()) {
-                $("<li>Darstellung</li>").addClass('header').appendTo($menu);
+                $("<li>")
+                    .text(webgis.l10n.get("sketch-appearance"))
+                    .addClass('header')
+                    .appendTo($menu);
 
                 var $colors = $("<li></li>").css({ padding: 2 }).appendTo($menu);
                 $.each(['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ffffff', '#000000'], function (index, col) {
@@ -964,11 +990,11 @@
     //};
 
     this._addXYMenuItem = function ($container) {
-        $_menuItem($container, "Koordinaten (absolut)", webgis.css.imgResource('sketch_xy-26.png', 'tools'))
+        $_menuItem($container, webgis.l10n.get("sketch-construct-coordiantes"), webgis.css.imgResource('sketch_xy-26.png', 'tools'))
             .click(function () {
                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                 $('body').webgis_modal({
-                    title: 'Koordinaten (absolut)',
+                    title: webgis.l10n.get("sketch-construct-coordiantes"),
                     //id: 'webgis-sketch-xy-aboslute',
                     width: '340px',
                     height: '400px',
@@ -980,7 +1006,7 @@
     };
 
     this._addSnapppingMenuItem = function ($container) {
-        $_menuItem($container, "Snapping...", webgis.css.imgResource('sketch_snapping-26.png', 'tools'))
+        $_menuItem($container, webgis.l10n.get("snapping")+"...", webgis.css.imgResource('sketch_snapping-26.png', 'tools'))
             .click(function () {
                 var map = $(this).closest('.webgis-contextmenu').data('map');
                 webgis.tools.onButtonClick(map, { type: 'clientbutton', command: 'snapping' });
@@ -1020,7 +1046,7 @@
         if (sketch._moverMarker && sketch._moverMarker.snapResult) {
             if (sketch._moverMarker.snapResult.vertices && sketch._moverMarker.snapResult.vertices.length === 2) {
                 if (sketch._fixedDirectionVector && !sketch._fixedDistance) {
-                    $_menuItem($container, "Mit Kante verschneiden", webgis.css.imgResource('sketch_intersect_lines-26.png', 'tools'))
+                    $_menuItem($container, webgis.l10n.get("sketch-snapping-intersect-edge"), webgis.css.imgResource('sketch_intersect_lines-26.png', 'tools'))
                         .data('vertices', sketch._moverMarker.snapResult.vertices)
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch(), vertices = $(this).data('vertices');
@@ -1037,7 +1063,7 @@
                         });
                 }
                 else if (!sketch._fixedDirectionVector && sketch._fixedDistance) {
-                    $_menuItem($container, "Mit Kante verschneiden", webgis.css.imgResource('sketch_intersect_lines-26.png', 'tools'))
+                    $_menuItem($container, webgis.l10n.get("sketch-snapping-intersect-edge"), webgis.css.imgResource('sketch_intersect_lines-26.png', 'tools'))
                         .data('vertices', sketch._moverMarker.snapResult.vertices)
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch(), vertices = $(this).data('vertices');
@@ -1055,7 +1081,7 @@
                         });
                 }
 
-                $_menuItem($container, "Mittelpunkt Kante", webgis.css.imgResource('sketch_edge_center-26.png', 'tools'))
+                $_menuItem($container, webgis.l10n.get("sketch-snapping-edge-middle"), webgis.css.imgResource('sketch_edge_center-26.png', 'tools'))
                     .data('vertices', sketch._moverMarker.snapResult.vertices)
                     .click(function () {
                         var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch(), vertices = $(this).data('vertices');
@@ -1095,7 +1121,8 @@
     };
 
     var _addMoreFunctionsMenuItem = function ($menu, clickEvent) {
-        $("<li>Weitere Funktionen...</li>")
+        $("<li>")
+            .text(webgis.l10n.get("construction-button-more") + "...")
             .css('background-image', 'url(' + webgis.css.imgResource('enter-26.png', 'ui') + ')')
             .appendTo($menu)
             .click(function (e) {
@@ -1111,7 +1138,7 @@
         var vertices = sketch._getRawVertices();
 
         if (vertices.length > 0 && !_isSimplePoint()) {
-            $_menuItem($container, "Richtung fixieren: Parallel", webgis.css.imgResource('sketch_parallel_lines-26.png', 'tools'))
+            $_menuItem($container, webgis.l10n.get("sketch-snapping-fix-direction-parallel"), webgis.css.imgResource('sketch_parallel_lines-26.png', 'tools'))
                 .data('vertices', sketch._moverMarker.snapResult.vertices)
                 .click(function () {
                     var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch(), vertices = $(this).data('vertices');
@@ -1123,7 +1150,7 @@
                     }
                 });
 
-            $_menuItem($container, "Richtung fixieren: Rechtwicklig", webgis.css.imgResource('sketch_orthogonal_lines-26.png', 'tools'))
+            $_menuItem($container, webgis.l10n.get("sketch-snapping-fix-direction-orthogonal"), webgis.css.imgResource('sketch_orthogonal_lines-26.png', 'tools'))
                 .data('vertices', sketch._moverMarker.snapResult.vertices)
                 .click(function () {
                     var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch(), vertices = $(this).data('vertices');
