@@ -24,6 +24,8 @@
     "button-buffer": "Nachbarschaft (Puffern)",
     "button-table": "Tabelle",
     "button-remove-results": "Ergebnisse entfernen",
+    "button-remove-markers": "Marker entfernen",
+    "button-show-markers": "Marker anzeigen",
 
     // legend panel
     "legend": "Legende",
@@ -93,16 +95,31 @@
     "circumference": "Umfang",
     "sections": "Abschnitte",
 
+    "selection": "Auswahl",
     "select-field": "Feld wählen",
 
+    "zoom-to": "Zoomen auf",
     "pan": "verschieben",
     "pan-tool-description": "Mit gedrücker Maustaste Karte verschieben",
     "rotate": "drehen",
     "rotate-tool-description": "Mit gedrücker Maustaste Karte drehen (plus SHIFT oder STRG Taste => 5° bzw. 10° Schritte).",
+    "edit": "Bearbeiten",
+    "edit-attributes": "Sachdaten bearbeiten",
+    "edit-geometry-and-attributes": "Geometrie und Sachdaten bearbeiten",
+    "edit-delete": "Objekt löschen",
+    "export-transfer": "Export/Transfer",
+    "center": "Zentrieren",
 
     "content-search-info": "Neben der Schnellsuche (Orte finden) kann auch nach Inhalten (Themen) in der aktuellen Karte gesucht werden. Werden die gewünschten Inhalte auch dort nicht angezeigt, kann auch noch in Karten-Diensten gesucht werden. Wird ein Thema in Diensten gefunden, kann dieser auch in die aktuelle Karte eingebunden werden.",
 
     "tip": "Tipp",
+    "tip-tools": "Tipp: Werkzeuge",
+    "tip-select": "Tipp: Auswählen",
+    "tip-edit": "Tipp: Bearbeiten",
+    "tip-tools-content": "Tools für einzelne Ergebnisse: Klicke mit der rechten Maustaste auf eine Zeile",
+    "tip-select-content": "Mehr Werkzeuge werden angezeigt, wenn die Objekte selektiert werden", 
+    "tip-edit-content": "Noch mehr Werkzeuge werden angezeigt, wenn der Bearbeitungsmodus gestartet wird",
+
     "understood": "Verstanden",
     "later": "Später",
     "tip-desktop-boxzoomin": "md:Dieses Werkzeug ist eigentlich für das Zoomen auf *Touch Geräten* konzipiert.\n\n Mit diesem Werkzeug kann einmalig ein Fenster aufgezogen und bestmöglich zum aufgezogenen Bereich gezoomt werden. Danach wird automatisch wieder zum aktuellen Werkzeug gewechselt.\n\nVerwendet man Maus und Tastatur gibt es für das Zoomen *bessere Methoden*:\n\n*Mausrad:* Mit dem Mausrad kann immer in bzw. aus der Karte gezoomt werden.\n\n*Shift Taste:* Bei gedrückte Shift Taste (Umschalttaste) kann mit der linken Maustaste ein Fenster aufgezogen werden, egal welches Werkzeug gearde aktiv ist. Nach dem Loslassen der Maustaste wird bestmöglich zum augezogenen Bereich gezoomt.",

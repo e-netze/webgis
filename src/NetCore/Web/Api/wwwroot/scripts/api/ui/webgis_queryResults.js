@@ -773,13 +773,13 @@
                             $("<div>")
                                 .addClass('menubutton inline zoom')
                                 .attr('shortcut', 'z')
-                                .attr('title', 'Zoom to...')
+                                .attr('title', webgis.l10n.get("zoom-to") + "...")
                                 .appendTo($td);
 
                             $("<div>")
                                 .addClass('menubutton pan')
                                 .attr('shortcut', 'c')
-                                .attr('title', 'Zentrieren...')
+                                .attr('title', webgis.l10n.get("center") + "...")
                                 .appendTo($td);
                         }
 
@@ -795,7 +795,7 @@
                                         // edit attributes
                                         $("<div>")
                                             .addClass('menubutton inline webgis-dependencies webgis-dependency-not-activetool ' + editToolIdClass)
-                                            .attr('title', edittheme.name + ': Sachdaten bearbeiten')
+                                            .attr('title', edittheme.name + ': ' + webgis.l10n.get("edit-attributes"))
                                             .attr('shortcut', 'e')
                                             .data('edittheme', edittheme)
                                             .data('map', map)
@@ -815,7 +815,7 @@
                                         //edit update
                                         $("<div>")
                                             .addClass('menubutton inline webgis-dependencies webgis-dependency-activetool ' + editToolIdClass)
-                                            .attr('title', edittheme.name + ': Sachdaten und Geometrie bearbeiten')
+                                            .attr('title', edittheme.name + ": " + webgis.l10n.get("edit-geometry-and-attributes"))
                                             .attr('shortcut', 'e')
                                             .data('edittheme', edittheme)
                                             .data('map', map)
@@ -836,7 +836,7 @@
                                         //edit delete
                                         $("<div>")
                                             .addClass('menubutton webgis-dependencies webgis-dependency-activetool ' + editToolIdClass)
-                                            .attr('title', edittheme.name + ': Objekt Löschen')
+                                            .attr('title', edittheme.name + ": " + webgis.l10n.get("edit-delete"))
                                             .attr('shortcut', 'd')
                                             .data('edittheme', edittheme)
                                             .data('map', map)

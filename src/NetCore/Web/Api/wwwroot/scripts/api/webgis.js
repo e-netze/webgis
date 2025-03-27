@@ -2013,7 +2013,7 @@
                     webgis._toolInfos[client] = result.tools;
 
                     // overriede custom properties
-                    var overrideProperties = ["name", "container","tooltip", "image", "cursor", "help_urlpath"]
+                    var overrideProperties = ["name", "container", "tooltip", "image", "cursor", "help_urlpath"]
 
                     for (let t in result.tools) {
                         let tool = result.tools[t];
@@ -2023,6 +2023,8 @@
                                 tool[prop] = webgis.usability.toolProperties[tool.id][prop] || tool[prop];
                             }
                         }
+                        webgis.l10n.set(tool.id, tool.name);
+                        webgis.l10n.set(tool.id + ".tooltip", tool.tooltip);
                     }
                     if (callback)
                         callback(result.tools);

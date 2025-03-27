@@ -1,6 +1,6 @@
 ﻿# name: Objekte löschen
 
-Objekte in der Karte löschen
+Ausgewählte Objekte in der Karte löschen
 
 # container:
 

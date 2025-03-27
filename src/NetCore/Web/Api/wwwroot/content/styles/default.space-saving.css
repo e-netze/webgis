@@ -12,6 +12,11 @@ body.webgis-space-saving .webgis-ui-imagebutton .webgis-ui-imagebutton-text {
     width: 20px;
 }
 
+.webgis-container.webgis-space-saving .webgis-result-table-tools .webgis-toolbox-tool-item span img {
+    width: 20px;
+    margin-left: 3px;
+}
+
 .webgis-container.webgis-space-saving .webgis-presentation_toc-item,
 .webgis-container.webgis-space-saving .webgis-presentation_toc-legend,
 .webgis-container.webgis-space-saving .webgis-presentation_toc-item-group {

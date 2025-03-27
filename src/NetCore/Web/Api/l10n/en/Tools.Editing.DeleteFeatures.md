@@ -1,6 +1,6 @@
 ﻿# name: Delete Objects
 
-Delete objects on the map
+Delete selected objects on the map
 
 # container:
 
