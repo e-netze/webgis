@@ -80,6 +80,7 @@ webgis.usability = {
     allowMapContextMenu: false,
 
     makePresentationTocGroupCheckboxes: false,
+    orderPresentationTocContainsByServiceOrder: false,
 
     allowSelectSketchVertices: false,
     allowSketchShortcuts: false,
