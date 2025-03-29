@@ -101,6 +101,10 @@ body.webgis-space-saving .webgis-ui-imagebutton .webgis-ui-imagebutton-text {
     font-size: 1em;
 }
 
+.webgis-container.webgis-space-saving #edit-editmask-container .webgis-label {
+    font-size: 12px;
+}
+
 .webgis-container.webgis-space-saving .webgis-tooldialog-content .webgis-ui-optionscontainer.contains-lables .webgis-ui-imagebutton {
     width: 38px;
     height: 50px;

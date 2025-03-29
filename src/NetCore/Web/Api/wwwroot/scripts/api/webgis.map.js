@@ -2521,10 +2521,12 @@
         let params = this.getPersistentToolParameters(tool);
         for (let id in params) {
             let $e = $('#' + id);
-            $e.val(params[id]);
+            if ($e.hasClass('webgis-tool-parameter-persistent')) {
+                $e.val(params[id]);
 
-            if (callbackAfterChanged) {
-                callbackAfterChanged($e);
+                if (callbackAfterChanged) {
+                    callbackAfterChanged($e);
+                }
             }
         }
     };
