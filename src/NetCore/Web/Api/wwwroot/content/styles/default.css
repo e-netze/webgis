@@ -308,7 +308,8 @@ ul.toc li {
         display:none;
     }
 
-    .webgis-ui-holder .webgis-tooldialog-header h2 {
+    .webgis-ui-holder .webgis-tooldialog-header h2,
+    .webgis-ui-collapsable .webgis-ui-collapsable-title h2 {
         margin: 0px;
         font-size: 16px;
         font-weight: normal;
