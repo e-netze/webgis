@@ -1,15 +1,16 @@
-﻿using E.Standard.Json;
-using E.Standard.Platform;
+﻿#nullable enable
+
+using E.Standard.Json;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Editing;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Exceptions;
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.FeatureServer;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.Geometry;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,21 +26,13 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
                               IFeatureWorkspaceUndo,
                               IFeatureWorkspaceGeometryOperations
 {
-    //private string _service = String.Empty;
     private string _errMsg = String.Empty;
-    private IDictionary<string, string> _fieldTypes;
-    // ESRI Feldtypen, die "" (Leerstring) als Wert annehmen (vgl. andere: null)
-    // mögliche Feldtypen: "esriFieldTypeBlob" | "esriFieldTypeDate" | "esriFieldTypeDouble" | "esriFieldTypeGeometry" | "esriFieldTypeGlobalID" | "esriFieldTypeGUID" | 
-    // "esriFieldTypeInteger" | "esriFieldTypeOID" | "esriFieldTypeRaster" | "esriFieldTypeSingle" | "esriFieldTypeSmallInteger" | "esriFieldTypeString" | "esriFieldTypeXML"
-    private bool _hasZ = false, _hasM = false;
-    private List<string> _emptyStringFieldTypes = new List<string> { "esriFieldTypeGlobalID", "esriFieldTypeGUID", "esriFieldTypeString", "esriFieldTypeXML" };
-    private string _idFieldName = "OBJECTID";
-    private string _shapeFieldName = "SHAPE";
+    private JsonFeatureLayer? _featureLayer;
     private EsriFeature _currentFeature;
     private List<EsriFeature> _addFeatures = new List<EsriFeature>();
     private List<EsriFeature> _updateFeatures = new List<EsriFeature>();
     private List<string> _deleteFeatureIds = new List<string>();
-    private IRequestContext _requestContext;
+    private IRequestContext? _requestContext;
     private readonly IMapServiceAuthentication _mapServiceAuth;
 
     public FeatureService(MapService mapService)
@@ -49,7 +42,7 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
             TokenExpiration = mapService.TokenExpiration
         };
 
-        ResetCurrentFeature();
+        _currentFeature = new EsriFeature();
     }
 
     private void ResetCurrentFeature()
@@ -65,10 +58,6 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
         {
             string[] conn = value.Split(';');
             string service = ExtractValue(value, "service");
-
-            //_user = ExtractValue(value, "user");
-            //_pwd = ExtractValue(value, "pwd");
-            //Server = new Uri(service).Host;
 
             if (String.IsNullOrEmpty(service))
             {
@@ -104,20 +93,29 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
         }
     }
 
-    public string CurrentFeatureGeometry
+    public string? CurrentFeatureGeometry
     {
         get
         {
-            return _currentFeature.Geometry.ToString();
+            return _currentFeature.Geometry?.ToString();
         }
 
         set
         {
+            ArgumentNullException.ThrowIfNull(_featureLayer, nameof(_featureLayer));
+
             XmlDocument doc = new XmlDocument();
+
+            if (String.IsNullOrEmpty(value))
+            {
+                _currentFeature.Geometry = null;
+                return;
+            }
+
             doc.LoadXml(value);
 
             Shape shape = Shape.FromArcXML(doc.ChildNodes[0], null);
-            string jsonGeometry = RestHelper.ConvertGeometryToJson(shape, this.SrsId, _hasZ, _hasM);
+            string jsonGeometry = RestHelper.ConvertGeometryToJson(shape, this.SrsId, _featureLayer.HasZ, _featureLayer.HasM);
             _currentFeature.Geometry = JSerializer.Deserialize<JsonGeometry>(jsonGeometry);
         }
     }
@@ -157,36 +155,34 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
 
     public Task<bool> DeleteCurrentFeature()
     {
-        if (_currentFeature.Attributes.ContainsKey(_idFieldName) && !String.IsNullOrEmpty(_currentFeature.Attributes[_idFieldName]?.ToString()))
+        ArgumentNullException.ThrowIfNull(_featureLayer, nameof(_featureLayer));
+
+        if (_currentFeature.Attributes.ContainsKey(_featureLayer.IdFieldName())
+            && !String.IsNullOrEmpty(_currentFeature.Attributes[_featureLayer.IdFieldName()]?.ToString()))
         {
-            //return await SendRequest("deleteFeatures", "f=json&objectIds=" + _currentFeature.Attributes[_idFieldName]);
-            _deleteFeatureIds.Add(_currentFeature.Attributes[_idFieldName]?.ToString());
+            _deleteFeatureIds.Add(_currentFeature.Attributes[_featureLayer.IdFieldName()]?.ToString()!);
+
             return Task.FromResult(true);
         }
         else
         {
-            _errMsg = "Keine ObjectID für das zu löschende Feature vorhanden.";
+            _errMsg = "No ObjectID available for the feature to be deleted.";
+
             return Task.FromResult(false);
         }
     }
 
-    //public Task<bool> Delete(string where)
-    //{
-    //    throw new NotImplementedException();
-    //}
-
     public void DisConnect()
     {
-        //throw new NotImplementedException();
     }
 
-    public string GetCurrentFeatureAttributValue(string name)
+    public string? GetCurrentFeatureAttributValue(string name)
     {
         string fieldname = name.Substring(name.LastIndexOf(".") + 1);
 
-        if (_currentFeature.Attributes.ContainsKey(fieldname))
+        if (_currentFeature?.Attributes?.ContainsKey(fieldname) == true)
         {
-            return _currentFeature.Attributes[fieldname].ToString();
+            return _currentFeature.Attributes[fieldname]?.ToString();
         }
         else
         {
@@ -203,14 +199,16 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
     {
         if (ID >= 0)
         {
-            //_myFeature.Attributes[this.LayerIdFieldname] = ID + 1;
+            ArgumentNullException.ThrowIfNull(_featureLayer, nameof(_featureLayer));
 
-            _currentFeature.Attributes[_idFieldName] = ID;
+            _currentFeature.Attributes[_featureLayer.IdFieldName()] = ID;
+
             return true;
         }
         else
         {
-            _errMsg = "Kein Feature zum Updaten gefunden";
+            _errMsg = "No Feature found to update";
+
             return false;
         }
     }
@@ -221,38 +219,18 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
         {
             string fieldname = name.Substring(name.LastIndexOf(".") + 1);
 
-            // Wenn nichts eingetragen wurde und kein Autovalue => "" wird übergeben
-            // "" darf aber nur bei Text und GUID sein. Date, Long, etc. liefert Fehler => richtig: Feld weglassen
-            if (String.IsNullOrEmpty(value))
+            var layerField = _featureLayer?
+                            .Fields?
+                            .FirstOrDefault(f => fieldname.Equals(f.Name, StringComparison.OrdinalIgnoreCase));
+
+            if (layerField == null)
             {
-                if (_fieldTypes.ContainsKey(fieldname.ToLower()) && _emptyStringFieldTypes.Any(ft => _fieldTypes[fieldname.ToLower()].Contains(ft)))
-                {
-                    _currentFeature.Attributes[fieldname] = value;
-                }
+                throw new Exception($"Layer does not contails a fileld {fieldname}");
             }
-            else
-            {
-                object typedValue = value;
-                if (_fieldTypes.ContainsKey(fieldname.ToLower()))
-                {
-                    switch (_fieldTypes[fieldname.ToLower()])
-                    {
-                        case "esriFieldTypeDouble":
-                            typedValue = value.ToPlatformDouble();
-                            break;
-                        case "esriFieldTypeSingle":
-                            typedValue = value.ToPlatformFloat();
-                            break;
-                        case "esriFieldTypeSmallInteger":
-                            typedValue = Convert.ToInt16(value.Replace(",", "."));
-                            break;
-                        case "esriFieldTypeInteger":
-                            typedValue = Convert.ToInt32(value.Replace(",", "."));
-                            break;
-                    }
-                }
-                _currentFeature.Attributes[fieldname] = typedValue;
-            }
+
+            object? typedValue = layerField.TypedValueOrDefault(value);
+
+            _currentFeature.Attributes[fieldname] = typedValue;
 
             return true;
         }
@@ -265,7 +243,9 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
 
     public Task<bool> StoreCurrentFeature()
     {
-        if (_currentFeature.Attributes.ContainsKey(_idFieldName))
+        ArgumentNullException.ThrowIfNull(_featureLayer, nameof(_featureLayer));
+
+        if (_currentFeature.Attributes.ContainsKey(_featureLayer.IdFieldName()))
         {
             _updateFeatures.Add(_currentFeature);
         }
@@ -278,26 +258,6 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
 
         return Task.FromResult(true);
     }
-
-    //async public Task<bool> Update(string where)
-    //{
-    //    List<EsriFeature> features = new List<EsriFeature>();
-
-    //    // where = "OBJECTID in (3545,3547)"
-    //    string objectIds = System.Text.RegularExpressions.Regex.Match(where, @"\(([^)]*)\)").Groups[1].Value;
-
-    //    foreach (string objectId in objectIds.Split(','))
-    //    {
-    //        EsriFeature updateFeature = _currentFeature.Clone();
-    //        updateFeature.Attributes[_idFieldName] = Convert.ToInt64(objectId);
-    //        features.Add(updateFeature);
-    //    }
-
-    //    string jsonFeatures = Convert2JsonObject(features);
-    //    string postData = "f=json&features=" + System.Net.WebUtility.UrlEncode(jsonFeatures);
-
-    //    return await SendRequest("updateFeatures", postData);
-    //}
 
     async public Task<bool> Commit()
     {
@@ -335,52 +295,33 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
         }
     }
 
-    async public Task<bool> GetFieldAndGeometryTypes()
+    private async Task<bool> GetFieldAndGeometryTypes()
     {
         try
         {
+            ArgumentNullException.ThrowIfNull(_requestContext, nameof(_requestContext));
+
             var authHandler = _requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
             // Feldtypen auslesen
             string response = await authHandler.TryPostAsync(
                         _mapServiceAuth,
                         _mapServiceAuth.Service, "f=json");
-            JObject responseJson = (JObject)JsonConvert.DeserializeObject(response);
-            if (responseJson["error"] != null)
-            {
-                _errMsg = String.Format("{0}. Details: {1}", responseJson["error"]["message"], responseJson["error"]["details"]);
-                throw new ArgumentException("Layerinfo konnte nicht ausgelesen werden: " + _errMsg);
-            }
-            if (responseJson["fields"] == null)
-            {
-                throw new ArgumentException("Feldtypen aus Layerinfo konnten nicht ausgelesen werden.");
-            }
-            else
-            {
-                _fieldTypes = new Dictionary<string, string>();
 
-                _shapeFieldName = responseJson["geometryField"]?["name"]?.ToString();
+            _featureLayer = JSerializer.Deserialize<JsonFeatureLayer>(response);
 
-                foreach (var field in responseJson["fields"])
+            if (_featureLayer?.Fields is null)
+            {
+                var error = JSerializer.Deserialize<JsonError>(response);
+
+                if (error?.error is not null)
                 {
-                    if (field["name"] != null && field["type"] != null)
-                    {
-                        _fieldTypes[field["name"].ToString().ToLower()] = field["type"].ToString();
-                        if (field["type"].ToString() == "esriFieldTypeOID")
-                        {
-                            _idFieldName = field["name"].ToString();
-                        }
-                        if (String.IsNullOrEmpty(_shapeFieldName) && field["type"].ToString() == "esriFieldTypeGeometry")
-                        {
-                            _shapeFieldName = field["name"].ToString();
-                        }
-                    }
-
+                    _errMsg = String.Format("{0}. Details: {1}", error.error.message, error.error.details);
+                    throw new Exception("Internal Server Error: Can't get edit layer information: " + _errMsg);
                 }
-            }
 
-            _hasM = responseJson["hasM"]?.ToString().ToLower() == "true";
-            _hasZ = responseJson["hasZ"]?.ToString().ToLower() == "true";
+                throw new Exception("Internal Server Error: Can't get get layer field information!");
+            }
 
             return true;
         }
@@ -428,11 +369,13 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
 
     #region IFeatureWorkspaceUndo
 
-    async public Task<EditUndoableDTO> CreateUndo(IAppCryptography crypto,
+    async public Task<EditUndoableDTO?> CreateUndo(IAppCryptography crypto,
                                                IEnumerable<long> objectIds,
                                                SqlCommand command,
-                                               string[] fields = null)
+                                               string[]? fields = null)
     {
+        ArgumentNullException.ThrowIfNull(_featureLayer, nameof(_featureLayer));
+
         string outFields = "*";
         bool returnGeometry = true;
 
@@ -440,12 +383,12 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
         {
             var outFieldsList = new List<string>(fields);
 
-            if (!outFieldsList.Contains(_idFieldName))
+            if (!outFieldsList.Contains(_featureLayer.IdFieldName()))
             {
-                outFieldsList.Insert(0, _idFieldName);
+                outFieldsList.Insert(0, _featureLayer.IdFieldName());
             }
 
-            if (!outFieldsList.Contains(_shapeFieldName))
+            if (!outFieldsList.Contains(_featureLayer.ShapeFileName()))
             {
                 returnGeometry = false;
             }
@@ -453,12 +396,12 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
             outFields = String.Join(",", outFieldsList);
         }
 
-        string where = $"{_idFieldName} in ({String.Join(",", objectIds)})";
+        string where = $"{_featureLayer.IdFieldName()} in ({String.Join(",", objectIds)})";
 
         var postData = new StringBuilder($"f=json&where={where}&outFields={outFields}&returnGeometry={returnGeometry.ToString().ToLower()}");
         if (returnGeometry)
         {
-            postData.Append($"&returnM={(_hasM ? "true" : "")}&returnZ={(_hasZ ? "true" : "")}");
+            postData.Append($"&returnM={(_featureLayer.HasM ? "true" : "")}&returnZ={(_featureLayer.HasZ ? "true" : "")}");
         }
 
         if (this.SrsId > 0)
@@ -471,7 +414,7 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
         if (sendRequestResult.success)
         {
             string response = sendRequestResult.response;
-            var esriFeatures = JSerializer.Deserialize<EsriFeatures>(response);
+            var esriFeatures = JSerializer.Deserialize<EsriFeatures>(response)!;
 
             if (esriFeatures.Features != null)
             {
@@ -486,22 +429,17 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
                     {
                         //
                         // Undo eines Deletes ist später ein Insert:
-                        // Darum sollte man hier das OBJECTID Feld nicht speichern, weil man das später beim Insert nicht übergeben darf
+                        // Darum sollte man hier das OBJECTID Feld nicht speichern,
+                        // weil man das später beim Insert nicht übergeben darf
                         //
 
-                        feature.Attributes.Remove(_idFieldName);
+                        feature.Attributes.Remove(_featureLayer.IdFieldName());
                     }
 
-                    //foreach(var attributeName in feature.Attributes.Keys.ToArray())  // FeatureServer should not return Function Fields (STArea, STLength)
-                    //{
-                    //    if(attributeName.Contains("(") && attributeName.Contains(")"))
-                    //    {
-                    //        feature.Attributes.Remove(attributeName);
-                    //    }
-                    //}
-
                     //
-                    // Spatial Reference auf Feature setzten, damit später beim speichern die richtige Projektion an den FeatureServer übergeben wird.
+                    // Spatial Reference auf Feature setzten,
+                    // damit später beim speichern die richtige Projektion an den
+                    // FeatureServer übergeben wird.
                     //
                     if (feature.Geometry != null && feature.Geometry.SpatialReference == null)
                     {
@@ -510,11 +448,13 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
                 }
             }
 
-            var shape = esriFeatures?.GetShape(this.SrsId, _hasZ, _hasM);
+            var shape = esriFeatures?.GetShape(this.SrsId, _featureLayer.HasZ, _featureLayer.HasM);
             return new EditUndoableDTO(command, shape)
             {
                 FeatureCount = esriFeatures?.Features?.Count() ?? 0,
-                Data = crypto.SecurityEncryptString(JsonConvert.SerializeObject(esriFeatures.Features)/*, CryptoResultStringType.Base64*/)
+                Data = crypto.SecurityEncryptString(
+                            JSerializer.Serialize(esriFeatures!.Features)/*, CryptoResultStringType.Base64*/
+                        )
             };
         }
         else
@@ -523,12 +463,12 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
         }
     }
 
-    async public Task<(bool success, EditUndoableDTO newEditundoable, long[] affectedObjectIds)> PerformUndo(IAppCryptography crypto, EditUndoableDTO editUndoable)
+    async public Task<(bool success, EditUndoableDTO? newEditundoable, long[] affectedObjectIds)> PerformUndo(IAppCryptography crypto, EditUndoableDTO editUndoable)
     {
-        EditUndoableDTO newEditUndoable = null;
+        EditUndoableDTO? newEditUndoable = null;
         var data = crypto.SecurityDecryptString(editUndoable.Data);
         string action = "";
-        long[] objectIds = null;
+        long[]? objectIds = null;
 
         switch (editUndoable.Command)
         {
@@ -539,14 +479,17 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
             case SqlCommand.update:
                 await GetFieldAndGeometryTypes();
                 var features = JSerializer.Deserialize<IEnumerable<EsriFeature>>(data);
-                if (features == null)
+
+                if (features is null)
                 {
                     throw new Exception("Unknown Error: No feature stored inside this undo entity");
                 }
 
-                objectIds = features?.Select(f => Convert.ToInt64(f.Attributes[_idFieldName])).ToArray();
+                objectIds = features?
+                                .Select(f => Convert.ToInt64(f.Attributes[_featureLayer.IdFieldName()]))
+                                .ToArray() ?? [];
 
-                if (features.FirstOrDefault().Geometry == null)
+                if (features!.FirstOrDefault()?.Geometry == null)
                 {
                     // ToDo: No Geometry => undo form mass attributatiom
                     // is there a reason to craete an undo from the undo?
@@ -567,10 +510,12 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
 
         string postData = "f=json&features=" + System.Net.WebUtility.UrlEncode(data);
 
-        return (success: await SendRequest(action, postData), newEditundoable: newEditUndoable, affectedObjectIds: objectIds);
+        return (success: await SendRequest(action, postData),
+                newEditundoable: newEditUndoable,
+                affectedObjectIds: objectIds ?? []);
     }
 
-    public IEnumerable<int> CommitedObjectIds { get; set; }
+    public IEnumerable<int> CommitedObjectIds { get; set; } = [];
 
     #endregion
 
@@ -578,19 +523,8 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
 
     private string Convert2JsonObject(object obj)
     {
-        return JsonConvert.SerializeObject(obj);
-
-        //System.IO.MemoryStream ms = new System.IO.MemoryStream();
-        //var jw = new JsonTextWriter(new System.IO.StreamWriter(ms));
-        //jw.Formatting = Newtonsoft.Json.Formatting.Indented;
-        //var serializer = new JsonSerializer();
-        //serializer.Serialize(jw, obj);
-        //jw.Flush();
-        //ms.Position = 0;
-
-        //string json = System.Text.Encoding.UTF8.GetString(ms.GetBuffer());
-        //json = json.Trim('\0');
-        //return json;
+        //return JsonConvert.SerializeObject(obj);
+        return JSerializer.Serialize(obj);
     }
 
     async private Task<bool> SendRequest(string action, string postData)
@@ -600,12 +534,12 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
 
     async private Task<(bool success, string response)> SendRequestPro(string action, string postData)
     {
-        var authHandler = _requestContext?.GetRequiredService<AgsAuthenticationHandler>();
-        //Request request = new Request();
-        //string response = request.DoPost(_server + action, postData);
+        ArgumentNullException.ThrowIfNull(_requestContext, nameof(_requestContext));
+
+        var authHandler = _requestContext.GetRequiredService<AgsAuthenticationHandler>();
         string response = await authHandler.TryPostAsync(_mapServiceAuth, _mapServiceAuth.Service + action, postData);
 
-        var jsonResponse = JSerializer.Deserialize<JsonFeatureServerResponse>(response);
+        var jsonResponse = JSerializer.Deserialize<JsonFeatureServerResponse>(response)!;
 
         if (jsonResponse.CheckSuccess(response) == true)
         {
@@ -803,183 +737,6 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
     //        //    _credentials = System.Net.CredentialCache.DefaultNetworkCredentials;
     //    }
     //}
-
-    #endregion
-}
-
-public class EsriFeature
-{
-    public EsriFeature()
-    {
-        Attributes = new Dictionary<string, object>();
-    }
-
-    [JsonProperty(PropertyName = "attributes", NullValueHandling = NullValueHandling.Ignore)]
-    [System.Text.Json.Serialization.JsonPropertyName("attributes")]
-    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-    public Dictionary<string, object> Attributes { get; set; }
-
-    [JsonProperty(PropertyName = "geometry", NullValueHandling = NullValueHandling.Ignore)]
-    [System.Text.Json.Serialization.JsonPropertyName("geometry")]
-    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-    public JsonGeometry Geometry { get; set; }
-
-    public EsriFeature Clone()
-    {
-        var clone = new EsriFeature()
-        {
-            Attributes = new Dictionary<string, object>(this.Attributes),
-            Geometry = this.Geometry
-        };
-        return clone;
-    }
-}
-
-public class EsriFeatures
-{
-    [JsonProperty(PropertyName = "features", NullValueHandling = NullValueHandling.Ignore)]
-    [System.Text.Json.Serialization.JsonPropertyName("features")]
-    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-    public IEnumerable<EsriFeature> Features { get; set; }
-
-    [JsonProperty("spatialReference", NullValueHandling = NullValueHandling.Ignore)]
-    [System.Text.Json.Serialization.JsonPropertyName("spatialReference")]
-    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-    public JsonSpatialReference SpatialReference { get; set; }
-
-    public Shape GetShape(int srsId, bool hasZ, bool hasM)
-    {
-        if (Features == null || Features.Count() == 0 || Features.First().Geometry == null)
-        {
-            return null;
-        }
-
-        Shape shape = null;
-
-        #region Geometry Type aus erstem Feature
-
-        var firstShape = Features.First().Geometry;
-        if (firstShape.Rings != null)
-        {
-            shape = new Polygon()
-            {
-                SrsId = srsId
-            };
-        }
-        else if (firstShape.Paths != null)
-        {
-            shape = new Polyline()
-            {
-                SrsId = srsId
-            };
-        }
-        else if (firstShape.X.HasValue && firstShape.Y.HasValue)
-        {
-            shape = new Point()
-            {
-                SrsId = srsId
-            };
-        }
-
-        #endregion
-
-        if (shape is Point)
-        {
-            ((Point)shape).X = firstShape.X.Value;
-            ((Point)shape).Y = firstShape.Y.Value;
-            if (hasZ)
-            {
-                ((Point)shape).Z = firstShape.Z.HasValue ? firstShape.Z.Value : 0;
-            }
-            if (hasM)
-            {
-                shape = new PointM((Point)shape, firstShape.M);
-            }
-        }
-        else if (shape is Polyline)
-        {
-            foreach (var feature in Features)
-            {
-                var geometry = feature.Geometry;
-                if (geometry == null || geometry.Paths == null)
-                {
-                    continue;
-                }
-
-                for (var p = 0; p < geometry.Paths.Length; p++)
-                {
-                    var path = geometry.Paths[p];
-                    var shapePath = new Path();
-                    for (int i = 0; i < path.GetLength(0); i++)
-                    {
-                        if (!path[i, 0].HasValue || !path[i, 1].HasValue)
-                        {
-                            throw new Exception("Invalid geometry");
-                        }
-
-                        //shapePath.AddPoint(new Point(path[i, 0].Value, path[i, 1].Value));
-                        shapePath.AddPoint(CreatePoint(path, i, hasZ, hasM));
-                    }
-                    ((Polyline)shape).AddPath(shapePath);
-                }
-            }
-        }
-        else if (shape is Polygon)
-        {
-            foreach (var feature in Features)
-            {
-                var geometry = feature.Geometry;
-                if (geometry == null || geometry.Rings == null)
-                {
-                    continue;
-                }
-
-                for (var p = 0; p < geometry.Rings.Length; p++)
-                {
-                    var ring = geometry.Rings[p];
-                    var shapeRing = new Ring();
-                    for (int i = 0; i < ring.GetLength(0); i++)
-                    {
-                        if (!ring[i, 0].HasValue || !ring[i, 1].HasValue)
-                        {
-                            throw new Exception("Invalid geometry");
-                        }
-
-                        //shapeRing.AddPoint(new Point(ring[i, 0].Value, ring[i, 1].Value));
-                        shapeRing.AddPoint(CreatePoint(ring, i, hasZ, hasM));
-                    }
-                    ((Polygon)shape).AddRing(shapeRing);
-                }
-            }
-        }
-
-        return shape;
-    }
-
-    #region Helper
-
-    private Point CreatePoint(double?[,] coords, int coordIndex, bool hasZ, bool hasM)
-    {
-        int index = 0;
-
-        var point = new Point(coords[coordIndex, index++].Value, coords[coordIndex, index++].Value);
-
-        if (hasZ && index < coords.GetLength(1))
-        {
-            point.Z = coords[coordIndex, index].HasValue
-                ? coords[coordIndex, index].Value
-                : 0D;
-
-            index++;
-        }
-
-        if (hasM && index < coords.GetLength(1))
-        {
-            point = new PointM(point, coords[coordIndex, index++]);
-        }
-
-        return point;
-    }
 
     #endregion
 }
