@@ -189,7 +189,7 @@
             webgis.company='@config.Company()';
             webgis.companyUrl = '@config.CompanyUrl()';
 
-            webgis.l10n.language='@Model.Language' || webgis.localStorage.get('language') || webgis.l10n.language;
+            webgis.l10n.language='@Model.Language' || webgis.localStorage.get('map.properties.language') || webgis.l10n.language;
             webgis.l10n.supportedLanguages = @Html.Raw(JSerializer.Serialize(@Model.SupportedLanguages));
 
             webgis.help.url = '@config.MapViewerHelpUrl()';

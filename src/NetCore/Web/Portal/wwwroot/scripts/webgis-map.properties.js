@@ -126,7 +126,7 @@
             const $content = $("<div>").appendTo(page.$content);
             $("<div>")
                 .addClass("webgis-property-content-title2")
-                .text(webgis.l10n.get('language'))
+                .text(webgis.l10n.get('map.properties.language'))
                 .appendTo($content);
             let $select = $("<select>")
                 .addClass('webgis-input')
@@ -134,7 +134,7 @@
                 .change(function () {
                     const $this = $(this);
 
-                    webgis.localStorage.set('language', $this.val());
+                    webgis.localStorage.set('map.properties.language', $this.val());
                     showRestartViewerMessage($this.parent());
                 });
             for (const language in webgis.l10n.supportedLanguages) {
@@ -346,7 +346,7 @@
     };
 
     var applyCssClass = function (options) {
-        let colorScheme = options.cssClass || webgis.localStorage.get('map.properties.cssClass') || 'default';
+        let cssClass = options.cssClass || webgis.localStorage.get('map.properties.cssClass') || 'default';
 
         var map = options.map;
         var $container = $(map._webgisContainer);
@@ -354,7 +354,7 @@
         $('body').removeClass('webgis-space-saving');
         $container.removeClass('webgis-space-saving');
 
-        if (colorScheme == '_space-saving') {
+        if (cssClass == '_space-saving') {
             $('body').addClass('webgis-space-saving');
             $container.addClass('webgis-space-saving');
         }

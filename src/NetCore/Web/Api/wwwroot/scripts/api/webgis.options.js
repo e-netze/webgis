@@ -108,6 +108,15 @@ webgis.usability = {
 
 webgis.colorScheme = 'default';
 
+webgis.defaults = {
+    /*
+    'map.properties.language': 'en',
+    'map.properties.template.1200': 'desktop',
+    'map.properties.cssClass': '_space-saving',
+    'map.properties.colorScheme': '_bg-light'
+    */
+}
+
 webgis.leaflet = {
     tilePane: null,
     onePanePerService: false
