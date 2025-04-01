@@ -299,6 +299,7 @@
 
     export class ToolbarOptions {
         tools: ToolbarItem[];
+        orderable: boolean;
     }
 
     export class Toolbar {
@@ -317,16 +318,27 @@
             if (!this.options.tools)
                 return;
 
-            for (var i = 0; i < this.options.tools.length; i++) {
-                var tool = this.options.tools[i];
+            if (this.options.orderable)
+            {
+                let $orderTool = $("<div>")
+                    .addClass('tool order asc')
+                    .appendTo(this.element);
+                $("<div>")
+                    .text('AZ')
+                    .addClass('text')
+                    .appendTo($orderTool);
 
-                var $tool = $("<div>")
+            }
+            for (let i = 0; i < this.options.tools.length; i++) {
+                let tool = this.options.tools[i];
+
+                let $tool = $("<div>")
                     .addClass('tool ' + tool.action)
                     .attr('data-path', tool.path)
                     .attr('data-name', tool.name)
                     .attr('data-action', tool.action)
                     .appendTo(this.element);
-                $("<div></div>")
+                $("<div>")
                     .text(tool.prompt)
                     .addClass('text')
                     .appendTo($tool);

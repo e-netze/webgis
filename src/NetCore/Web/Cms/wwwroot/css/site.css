@@ -335,6 +335,22 @@ CMS
             background-image: url('../images/cut-26.png');
         }
 
+        .cms-toolbar .tool.order {
+            float: right;
+            background-color: #b4dbff;
+            background-image: url('../images/arrow-up-down-26.png');
+            border-color: #6ebaff;
+        }
+            .cms-toolbar .tool.order.asc {
+                background-image: url('../images/arrow-down-26.png');
+            }
+            .cms-toolbar .tool.order.desc {
+                background-image: url('../images/arrow-up-26.png');
+            }
+            .cms-toolbar .tool.order.refresh {
+                background-image: url('../images/refresh-26.png');
+            }
+
         .cms-toolbar .tool.empty-clipboard {
             background-color: #ffb0b0;
             border-color: #f00;
@@ -577,9 +593,15 @@ CMS
             color: #333;
         }
 
-tr.cms-form-table.hidden-from-exclusives {
-    opacity: .25;
-}
+    .cms-content .sortable > .node {
+        border-radius: 12px;
+        border-color: #6ebaff;
+        font-style: italic;
+    }
+
+    tr.cms-form-table.hidden-from-exclusives {
+        background-color: #b5dbad;
+    }
 
 tr.cms-form-table.exclusive {
     background-color: #fee !important;

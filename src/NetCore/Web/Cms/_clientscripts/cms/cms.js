@@ -157,7 +157,7 @@
     };
 
     this.makeSortable = function (list) {
-        list = $(list).get(0);
+        list = $(list).addClass("sortable").get(0);
 
         var editableList = Sortable.create(list, {
             animation: 150,
@@ -186,7 +186,34 @@
                 );
             }
         });
+
+        $(list).data('sortable', editableList);
     };
+
+    this.destroySortable = function (list) {
+        var sortable = $(list).data('sortable');
+        if (sortable) {
+            sortable.destroy();
+            $(list).data('sortable', null).removeClass("sortable");
+        }   
+    }
+
+    this.sortAlphabetic = function (list, descending) {
+        var items = $(list).children('li[data-path]');
+        items.sort(function (a, b) {
+            let $a = $(a), $b = $(b);
+
+            //console.log("up", $a.hasClass('up'), $b.hasClass('up'));
+
+            if ($a.hasClass('node up')) return -1;
+            if ($b.hasClass('node up')) return 1;
+
+            let aText = $a.text();
+            let bText = $b.text();
+            return aText.localeCompare(bText) * (descending ? -1 : 1);
+        });
+        $(list).append(items);
+    }
 
     this.updateContent = function (path) {
         updateContent(path);
