@@ -1349,8 +1349,9 @@ tr.webgis-border-bottom td{
 
 .webgis-presentation_toc-item-group {
     /*margin-left: 14px;*/
-    font-style: italic;
-    text-shadow: 1px 1px #ccc;
+    /*font-style: italic;
+    text-shadow: 1px 1px #ccc;*/
+    font-weight:600;
 }
 
     .webgis-presentation_toc-item-group ul {
@@ -1410,7 +1411,7 @@ tr.webgis-border-bottom td{
     text-shadow: none;
 }
 .webgis-presentation_toc-item-group.checkbox .webgis-presentation_toc-item {
-    left:7px;
+    left:17px;
 }
 
 .webgis-presentation_toc-basemap-item {
