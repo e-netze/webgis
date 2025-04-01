@@ -84,6 +84,7 @@ static public class DynamicServiceExtensions
 
             Dictionary<string, PresentationDTO> groupPresentations = new Dictionary<string, PresentationDTO>();
 
+            int order = 0;
             foreach (var layer in layers)
             {
                 var presentation = new PresentationDTO();
@@ -187,7 +188,8 @@ static public class DynamicServiceExtensions
                             metadata = layer.metadata,
                             metadata_button_style = String.IsNullOrEmpty(layer.metadata) ? null : layer.MetadataButtonStyle.ToString().ToLower(),
                             metadata_target = String.IsNullOrEmpty(layer.metadata) ? null :  layer.MetadataTarget.ToString().ToLower(),
-                            metadata_title =  String.IsNullOrEmpty(layer.metadata) ? null : layer.MetadataTitle?.ToString().ToLower()
+                            metadata_title =  String.IsNullOrEmpty(layer.metadata) ? null : layer.MetadataTitle?.ToString().ToLower(),
+                            item_order = ++order
                         }
                     };
 
