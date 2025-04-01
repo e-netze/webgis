@@ -152,7 +152,7 @@ public class DeleteCurrentOriginal : IApiServerTool, IApiChildTool
             UndoTool = !editEnvironment.HasUndoables ? null : new Edit(),
             ToolUndos = !editEnvironment.HasUndoables ?
                 null :
-                editEnvironment.Undoables.Select(u => new ToolUndoDTO(u, u.Shape)
+                editEnvironment.Undoables.Select(u => new ToolUndoDTO(u, u.PreviewShape)
                 {
                     Title = u.ToTitle(editTheme)
                 }).ToArray()
