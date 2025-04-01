@@ -766,9 +766,9 @@ public class RestToolsHelperService
         {
             foreach (var undos in apiResponse.ToolUndos)
             {
-                if (undos.Shape != null)
+                if (undos.PreviewShape != null)
                 {
-                    undos.Preview = E.Standard.Api.App.DTOs.Geometry.GeometryDTO.FromShape(undos.Shape);
+                    undos.Preview = E.Standard.Api.App.DTOs.Geometry.GeometryDTO.FromShape(undos.PreviewShape);
                 }
             }
             response.ToolUndos = apiResponse.ToolUndos;
