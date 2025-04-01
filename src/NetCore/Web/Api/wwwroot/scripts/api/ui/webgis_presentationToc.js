@@ -150,7 +150,7 @@
             let map = $elem.get(0)._map;
             if (map == null)
                 return;
-            for (i = 0; i < ids.length; i++) {
+            for (let i = 0; i < ids.length; i++) {
                 let p = $.presentationToc.findItem(map, ids[i]);
                 if (p && p.presentation && p.item) {
                     let layerids = p.presentation.service.getLayerIdsFromNames(p.presentation.layers);
@@ -963,7 +963,7 @@
                 }
             }
         },
-        _calcDataOrderByServiceOrder(service) {
+        _calcDataOrderByServiceOrder: function(service) {
             return service
                 ? 999999 - service.getOrder()
                 : 0;

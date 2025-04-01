@@ -206,7 +206,7 @@ internal class UpdateFeatureService
             UndoTool = !editEnvironment.HasUndoables ? null : new Edit(),
             ToolUndos = !editEnvironment.HasUndoables ?
                 null :
-                editEnvironment.Undoables.Select(u => new ToolUndoDTO(u, AddSrsP4Parameters(bridge, u.Shape))
+                editEnvironment.Undoables.Select(u => new ToolUndoDTO(u, AddSrsP4Parameters(bridge, u.PreviewShape))
                 {
                     Title = u.ToTitle(editTheme)
                 }).ToArray(),
@@ -249,7 +249,7 @@ internal class UpdateFeatureService
             UndoTool = !editEnvironment.HasUndoables ? null : new Edit(),
             ToolUndos = !editEnvironment.HasUndoables ?
                 null :
-                editEnvironment.Undoables.Select(u => new ToolUndoDTO(u, AddSrsP4Parameters(bridge, u.Shape))
+                editEnvironment.Undoables.Select(u => new ToolUndoDTO(u, AddSrsP4Parameters(bridge, u.PreviewShape))
                 {
                     Title = u.ToTitle(editTheme)
                 }).ToArray()
@@ -304,7 +304,7 @@ internal class UpdateFeatureService
             UndoTool = !editEnvironment.HasUndoables ? null : new Edit(),
             ToolUndos = !editEnvironment.HasUndoables ?
                 null :
-                editEnvironment.Undoables.Select(u => new ToolUndoDTO(u, AddSrsP4Parameters(bridge, u.Shape))
+                editEnvironment.Undoables.Select(u => new ToolUndoDTO(u, AddSrsP4Parameters(bridge, u.PreviewShape))
                 {
                     Title = u.ToTitle(editTheme)
                 }).ToArray(),
