@@ -312,4 +312,3 @@ keys.config
 /src/NetCore/Web/Api/wwwroot/scripts/leaflet/plugins/leaflet-plugins-gesture-handling.min.js
 
 /src/NetCore/Web/Api/wwwroot/scripts/signalr/
-/src/NetCore/Web/Api/wwwroot/scripts/signalr/dist/browser/signalr.min.js
