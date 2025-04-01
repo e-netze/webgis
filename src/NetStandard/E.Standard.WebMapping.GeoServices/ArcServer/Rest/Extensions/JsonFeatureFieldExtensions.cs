@@ -13,20 +13,35 @@ static internal class JsonFeatureFieldExtensions
         // "esriFieldTypeBlob" | "esriFieldTypeDate" | "esriFieldTypeDouble" | "esriFieldTypeGeometry" | "esriFieldTypeGlobalID" | "esriFieldTypeGUID" | 
         // "esriFieldTypeInteger" | "esriFieldTypeOID" | "esriFieldTypeRaster" | "esriFieldTypeSingle" | "esriFieldTypeSmallInteger" | "esriFieldTypeString" | "esriFieldTypeXML"
 
-        object? typedValue = field.Type switch
+        try
         {
-            "esriFieldTypeDouble"
-                => field.ValueTypeOrDefault(value, (v) => v.ToPlatformDouble()),
-            "esriFieldTypeSingle"
-                => field.ValueTypeOrDefault(value, (v) => v.ToPlatformFloat()),
-            "esriFieldTypeSmallInteger"
-                => field.ValueTypeOrDefault(value, (v) => Convert.ToInt16(v.Replace(",", "."))),
-            "esriFieldTypeInteger"
-                => field.ValueTypeOrDefault(value, (v) => Convert.ToInt32(value.Replace(",", "."))),
-            _ => value
-        };
+            object? typedValue = field.Type switch
+            {
+                "esriFieldTypeDouble"
+                    => field.ValueTypeOrDefault(value, (v) => v.ToPlatformDouble()),
+                "esriFieldTypeSingle"
+                    => field.ValueTypeOrDefault(value, (v) => v.ToPlatformFloat()),
+                "esriFieldTypeSmallInteger"
+                    => field.ValueTypeOrDefault(value, (v) => Convert.ToInt16(v.Replace(",", "."))),
+                "esriFieldTypeInteger"
+                    => field.ValueTypeOrDefault(value, (v) => Convert.ToInt32(value.Replace(",", "."))),
+                _ => value
+            };
 
-        return typedValue;
+            return typedValue;
+        }
+        catch (FormatException ex)
+        {
+            var type = field.Type switch
+            {
+                "esriFieldTypeDouble" => typeof(double),
+                "esriFieldTypeSingle" => typeof(float),
+                "esriFieldTypeSmallInteger" => typeof(short),
+                "esriFieldTypeInteger" => typeof(int),
+                _ => typeof(object)
+            };
+            throw new Exception($"Can't format input '{value}' to a correct {type.Name}!", ex);
+        }
     }
 
     static private object? ValueTypeOrDefault<T>(

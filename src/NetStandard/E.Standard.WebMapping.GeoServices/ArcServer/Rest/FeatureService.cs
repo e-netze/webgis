@@ -268,7 +268,7 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
 
         if (_addFeatures.Count > 0)
         {
-            string jsonFeature = Convert2JsonObject(_addFeatures.ToArray());
+            string jsonFeature = ConvertFeatures2JsonString(_addFeatures.ToArray());
             string postData = "f=json&features=" + System.Net.WebUtility.UrlEncode(jsonFeature);
             _addFeatures.Clear();
 
@@ -276,7 +276,7 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
         }
         else if (_updateFeatures.Count > 0)
         {
-            string jsonFeature = Convert2JsonObject(_updateFeatures.ToArray());
+            string jsonFeature = ConvertFeatures2JsonString(_updateFeatures.ToArray());
             string postData = "f=json&features=" + System.Net.WebUtility.UrlEncode(jsonFeature);
             _updateFeatures.Clear();
 
@@ -448,8 +448,8 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
                 }
             }
 
-            var shape = esriFeatures?.GetShape(this.SrsId, _featureLayer.HasZ, _featureLayer.HasM);
-            return new EditUndoableDTO(command, shape)
+            var previewShape = esriFeatures?.AsAggregatedShape(this.SrsId, _featureLayer.HasZ, _featureLayer.HasM);
+            return new EditUndoableDTO(command, previewShape)
             {
                 FeatureCount = esriFeatures?.Features?.Count() ?? 0,
                 Data = crypto.SecurityEncryptString(
@@ -521,10 +521,10 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
 
     #region Helpers
 
-    private string Convert2JsonObject(object obj)
+    private string ConvertFeatures2JsonString(EsriFeature[] features)
     {
         //return JsonConvert.SerializeObject(obj);
-        return JSerializer.Serialize(obj);
+        return JSerializer.Serialize(features);
     }
 
     async private Task<bool> SendRequest(string action, string postData)

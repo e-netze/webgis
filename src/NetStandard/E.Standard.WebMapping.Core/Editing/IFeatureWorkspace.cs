@@ -1,4 +1,4 @@
-using E.Standard.Security.Cryptography.Abstractions;
+﻿using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebMapping.Core.Abstraction;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -93,10 +93,10 @@ public interface IFeatureWorkspaceUndo
 
 public class EditUndoableDTO
 {
-    public EditUndoableDTO(SqlCommand command, Geometry.Shape shape)
+    public EditUndoableDTO(SqlCommand command, Geometry.Shape previewShape)
     {
         this.Command = command;
-        this.Shape = shape;
+        this.PreviewShape = previewShape;
     }
 
     [JsonProperty(PropertyName = "count")]
@@ -117,7 +117,7 @@ public class EditUndoableDTO
 
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
-    public Geometry.Shape Shape { get; set; }
+    public Geometry.Shape PreviewShape { get; set; }
 }
 
 public interface IFeatureLayerConnectionString
