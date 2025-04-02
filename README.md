@@ -1,4 +1,4 @@
-<p align="center">
+﻿<p align="center">
   <img src="docs/img/eNetzeLogo.jpg" alt="E-Netze Logo" width="150"">
 </p>
 
@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg">
-  <img src="https://img.shields.io/badge/Version-7.25.1201-brightgreen">
+  <img src="https://img.shields.io/badge/Version-7.25.1401-brightgreen">
   <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey">
 </p><br>
 

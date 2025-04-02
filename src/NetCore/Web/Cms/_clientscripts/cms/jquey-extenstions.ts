@@ -318,17 +318,6 @@
             if (!this.options.tools)
                 return;
 
-            if (this.options.orderable)
-            {
-                let $orderTool = $("<div>")
-                    .addClass('tool order asc')
-                    .appendTo(this.element);
-                $("<div>")
-                    .text('AZ')
-                    .addClass('text')
-                    .appendTo($orderTool);
-
-            }
             for (let i = 0; i < this.options.tools.length; i++) {
                 let tool = this.options.tools[i];
 

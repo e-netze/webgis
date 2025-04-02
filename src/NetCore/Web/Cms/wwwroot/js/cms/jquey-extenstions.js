@@ -263,15 +263,6 @@ var UI;
             $(this.element).empty().addClass('cms-toolbar');
             if (!this.options.tools)
                 return;
-            if (this.options.orderable) {
-                var $orderTool = $("<div>")
-                    .addClass('tool order asc')
-                    .appendTo(this.element);
-                $("<div>")
-                    .text('AZ')
-                    .addClass('text')
-                    .appendTo($orderTool);
-            }
             for (var i = 0; i < this.options.tools.length; i++) {
                 var tool = this.options.tools[i];
                 var $tool = $("<div>")

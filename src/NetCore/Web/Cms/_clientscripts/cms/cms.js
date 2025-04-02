@@ -205,11 +205,11 @@
 
             //console.log("up", $a.hasClass('up'), $b.hasClass('up'));
 
-            if ($a.hasClass('node up')) return -1;
-            if ($b.hasClass('node up')) return 1;
+            if ($a.hasClass('up')) return -1;
+            if ($b.hasClass('up')) return 1;
 
-            let aText = $a.text();
-            let bText = $b.text();
+            let aText = $a.children('.title').text();
+            let bText = $b.children('.title').text();
             return aText.localeCompare(bText) * (descending ? -1 : 1);
         });
         $(list).append(items);
