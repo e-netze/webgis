@@ -1340,8 +1340,9 @@
 
                 let hasMetadata_iButton = (prop.group_metadata || prop.metadata) && prop.metadata_button_style == 'i_button';
 
-                if (prop.group_metadata && $group_li != null && $group_li.find('.webgis-api-icon.webgis-api-icon-info').length == 0) {
-                    const $metadataButton = $("<span style='position:absolute;left:5px;' class='webgis-api-icon webgis-api-icon-info'></span>")
+                if (prop.group_metadata && $group_li != null
+                    && $group_li.find('.webgis-api-icon.webgis-api-icon-info').length === 0) {
+                    $("<span style='position:absolute;left:5px;' class='webgis-api-icon webgis-api-icon-info'></span>")
                         .prependTo($group_li.children('div'))
                         .data('metadata', prop.group_metadata)
                         .data('metadata_target', prop.group_metadata_target)
@@ -1860,7 +1861,7 @@
             item_li.resetPreviewTimer = new webgis.timer(function (item) {
                 let service = item.service;
                 if (!$(item).hasClass('webgis-presentation_toc-hidden')) {
-                    let img = $(item).find('.webgis-presentation_toc-basemap-item-img').each(function (i, e) {
+                    $(item).find('.webgis-presentation_toc-basemap-item-img').each(function (i, e) {
                         let previewUrl = service.getPreviewUrl({ width: $(e).width(), height: $(e).height() });
                         $(e).css('background', 'url(' + previewUrl + ')');
                     });

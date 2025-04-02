@@ -116,11 +116,13 @@ public class MapParameters
                         new Point(mapParameters.Center[0],
                                   mapParameters.Center[1])));
 
-                    if (projResult != null)
+                    if (projResult?.Point is null)
                     {
-                        mapParameters.Center[0] = projResult.Point.X;
-                        mapParameters.Center[1] = projResult.Point.Y;
+                        throw new Exception($"Internal Error: Can't project coordinates to {request.Query["srs"]}");
                     }
+
+                    mapParameters.Center[0] = projResult.Point.X;
+                    mapParameters.Center[1] = projResult.Point.Y;
                 }
             }
         }
@@ -417,11 +419,13 @@ public class MapParameters
                                                    new ProjectionServiceArgumentDTO(mapMarker.Srs, 4326,
                                                    new Point(mapMarker.X, mapMarker.Y)));
 
-                if (projResult != null)
+                if (projResult?.Point is null)
                 {
-                    mapMarker.Lng = projResult.Point.X;
-                    mapMarker.Lat = projResult.Point.Y;
+                    throw new Exception($"Internal Error: Can't project coordinates to {mapMarker.Srs}");
                 }
+
+                mapMarker.Lng = projResult.Point.X;
+                mapMarker.Lat = projResult.Point.Y;
             }
 
             if (!String.IsNullOrWhiteSpace(mapMarker.Text))
