@@ -184,12 +184,12 @@ var CMS = new function () {
         items.sort(function (a, b) {
             var $a = $(a), $b = $(b);
             //console.log("up", $a.hasClass('up'), $b.hasClass('up'));
-            if ($a.hasClass('node up'))
+            if ($a.hasClass('up'))
                 return -1;
-            if ($b.hasClass('node up'))
+            if ($b.hasClass('up'))
                 return 1;
-            var aText = $a.text();
-            var bText = $b.text();
+            var aText = $a.children('.title').text();
+            var bText = $b.children('.title').text();
             return aText.localeCompare(bText) * (descending ? -1 : 1);
         });
         $(list).append(items);

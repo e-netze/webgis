@@ -335,22 +335,6 @@ CMS
             background-image: url('../images/cut-26.png');
         }
 
-        .cms-toolbar .tool.order {
-            float: right;
-            background-color: #b4dbff;
-            background-image: url('../images/arrow-up-down-26.png');
-            border-color: #6ebaff;
-        }
-            .cms-toolbar .tool.order.asc {
-                background-image: url('../images/arrow-down-26.png');
-            }
-            .cms-toolbar .tool.order.desc {
-                background-image: url('../images/arrow-up-26.png');
-            }
-            .cms-toolbar .tool.order.refresh {
-                background-image: url('../images/refresh-26.png');
-            }
-
         .cms-toolbar .tool.empty-clipboard {
             background-color: #ffb0b0;
             border-color: #f00;
@@ -1304,6 +1288,34 @@ input.cms-search {
     background-position: center;
     background-repeat: no-repeat;
 }
+
+.navbar-header .tool.order {
+    background-color: #fff;
+    background-image: url('../images/arrow-up-down-26.png');
+    background-repeat: no-repeat;
+    background-position: 3px center;
+    /*border: 1px solid #6ebaff;*/
+    border: none;
+    color: #1978d0;
+    width: 78px;
+    padding: 5px 25px;
+}
+.navbar-header .tool:hover {
+    background-color: #b4dbff;
+   /* color: #fff;*/
+}
+
+    .navbar-header .tool.order.asc {
+        background-image: url('../images/arrow-down-26.png');
+    }
+
+    .navbar-header .tool.order.desc {
+        background-image: url('../images/arrow-up-26.png');
+    }
+
+    .navbar-header .tool.order.refresh {
+        background-image: url('../images/refresh-26.png');
+    }
 
 .error-message {
     border: 1px solid #f00;

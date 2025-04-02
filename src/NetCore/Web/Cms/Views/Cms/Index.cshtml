@@ -36,6 +36,26 @@
                 }
             });
 
+        $('.navbar-header .tool.order')
+            .click(function() {
+                let $tool = $(this);
+                let $list = $(".cms-content").children("ul");
+
+                if ($tool.hasClass("refresh")) {
+                    CMS.updateContent(document.currentPath);
+                    return;
+                }
+                CMS.sortAlphabetic(
+                    $list,
+                    $tool.hasClass("desc")
+                );
+
+                CMS.destroySortable($list);
+
+                if ($tool.hasClass("desc")) $tool.removeClass("desc").addClass("asc");
+                else if ($tool.hasClass("asc")) $tool.removeClass("asc").addClass("refresh");
+            });
+
     </script>
 }
 

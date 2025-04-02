@@ -29,6 +29,9 @@
             });
         }
 
+        $('.navbar-header .tool.order')
+            .removeClass('asc refresh').addClass('desc');
+
         $('#main-navbar').navbar({
             items: result.navItems
         }).find('.item').each(function (i, e) {
@@ -51,27 +54,6 @@
 
             $tool.click(function () {
                 var $tool = $(this);
-
-                let isOrderTool = $tool.hasClass('order');
-                if (isOrderTool) {
-                    let $list = $(".cms-content.orderable").children("ul");
-
-                    if ($tool.hasClass("refresh")) {
-                        CMS.updateContent(document.currentPath);
-                        return;
-                    }
-                    CMS.sortAlphabetic(
-                        $list,
-                        $tool.hasClass("desc")
-                    );
-
-                    CMS.destroySortable($list); 
-
-                    if ($tool.hasClass("asc")) $tool.removeClass("asc").addClass("desc");
-                    else if ($tool.hasClass("desc")) $tool.removeClass("desc").addClass("refresh");
-                    
-                    return;
-                }
 
                 CMS.api('toolclick', { action: $tool.attr('data-action'), path: $tool.attr('data-path'), name: $tool.attr('data-name') }, function (result) {
                     if (result.controls) {
