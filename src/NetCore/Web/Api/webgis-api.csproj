@@ -91,9 +91,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  <!--
+
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
-  -->
+
     <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.3" />
   
     <PackageReference Include="System.Text.Encodings.Web" Version="9.0.3" />

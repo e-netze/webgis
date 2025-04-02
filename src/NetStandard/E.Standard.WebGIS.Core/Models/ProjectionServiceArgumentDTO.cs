@@ -1,4 +1,4 @@
-using E.Standard.WebMapping.Core.Geometry;
+﻿using E.Standard.WebMapping.Core.Geometry;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
@@ -25,7 +25,7 @@ public class ProjectionServiceResultDTO
     {
         get
         {
-            if (Coordinates.GetLength(0) >= 1)
+            if (Coordinates?.GetLength(0) >= 1)
             {
                 return new Point(Coordinates[0, 0], Coordinates[0, 1]);
             }
@@ -94,6 +94,7 @@ public class ProjectionServiceResultDTO
 
 public class ProjectionServiceArgumentDTO : ProjectionServiceResultDTO
 {
+    public ProjectionServiceArgumentDTO() { }  // needed for deserialization
     public ProjectionServiceArgumentDTO(int from, int to, Point point)
     {
         this.Srs = from;
