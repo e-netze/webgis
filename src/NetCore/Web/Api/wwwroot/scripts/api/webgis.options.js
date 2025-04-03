@@ -109,6 +109,7 @@ webgis.usability = {
 webgis.colorScheme = 'default';
 
 webgis.defaults = {
+    "__dummy": 0, // dummy => otherwise minimizer removes the whole object, if there are no properties
     /*
     'map.properties.language': 'en',
     'map.properties.template.1200': 'desktop',

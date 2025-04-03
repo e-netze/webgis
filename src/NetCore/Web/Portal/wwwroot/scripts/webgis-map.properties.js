@@ -126,7 +126,7 @@
             const $content = $("<div>").appendTo(page.$content);
             $("<div>")
                 .addClass("webgis-property-content-title2")
-                .text(webgis.l10n.get('map.properties.language'))
+                .text(webgis.l10n.get('language'))
                 .appendTo($content);
             let $select = $("<select>")
                 .addClass('webgis-input')
