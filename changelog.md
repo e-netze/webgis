@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-## Unreleased
+## 7.25.1402
 
 ### Fixed
 
