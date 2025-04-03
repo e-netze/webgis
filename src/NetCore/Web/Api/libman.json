@@ -6,15 +6,6 @@
       "library": "leaflet-minimap@3.6.1",
       "destination": "wwwroot/scripts/leaflet/leaflet-minimap/"
     },
-    { 
-      "provider": "unpkg",
-      "library": "@microsoft/signalr@latest",
-      "destination": "wwwroot/scripts/signalr",
-      "files": [
-        "dist/browser/signalr.js",
-        "dist/browser/signalr.min.js"
-      ]
-    },
     {
       "library": "Sortable@1.15.0",
       "destination": "wwwroot/lib/sortable/"
@@ -40,6 +31,16 @@
       "provider": "unpkg",
       "library": "@jugstalt/jextend@0.2.1",
       "destination": "wwwroot/lib/jextend/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "@microsoft/signalr@8.0.7",
+      "destination": "wwwroot/scripts/signalr/"
+      //,
+      //"files": [
+      //  "dist/browser/signalr.js",
+      //  "dist/browser/signalr.min.js"
+      //]
     }
   ]
 } 
