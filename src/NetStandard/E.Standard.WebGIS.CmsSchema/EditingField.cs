@@ -38,12 +38,12 @@ public class EditingField : CopyableXml, IUI, IEditable, IDisplayName
     public EditingFieldType FieldType { get; set; }
 
     [DisplayName("Sichtbar")]
-    [Description("Gibt an, ob das Feld für den Anwender sichtbar ist. Unsichtbare Felder können praktisch sein, wenn diese eventuell erst später über einen AutoValue berechnet werden.")]
+    [Description("Gibt an, ob das Feld für den Anwender sichtbar ist. Unsichtbare Felder können praktisch sein, wenn diese eventuell erst später über einen AutoValue berechnet werden oder bereits über Url übergeben werde und verändert werden dürfen.")]
     public bool Visible { get; set; }
 
-    [DisplayName("Schreibgeschützt (Readonly)")]
-    [Description("Ähnlich wie beim 'Sichtbar'. Hier wird das Feld zwar angezeigt, kann vom Anwender aber nicht geändert werden.")]
-    public bool Readonly { get; set; }
+    [DisplayName("Gesperrt (nicht veränderbar)")]
+    [Description("Wie bei 'nicht Sichtbar'. Hier wird das Feld allergings angezeigt, kann vom Anwender aber nicht geändert werden. Locked Felder werden beim Speichern auch in die Datenbank geschreiben. Kann nützlich sein, wenn ein Wert (ID) schon über Url Aufruf übergeben wird und der Anwender diesen nicht mehr ändern sollte.")]
+    public bool Locked { get; set; }
 
     [DisplayName("Feld bestimmt die Legende")]
     [Description("Besitzt das Editierthema in der Karte eine Legende mit unterschiedlichen Symbolen und ist das Symbol abhängig vom Wert dieses Feldes, kann diese Option gesetzt werden. Der Anwender hat dann über die Auswahlliste die Möglichkeit, neben dem Tabellenwert auch das (Legenden) Symbol auszuwählen.")]
@@ -56,6 +56,10 @@ public class EditingField : CopyableXml, IUI, IEditable, IDisplayName
     [DisplayName("Feld für Massen-Attributierung")]
     [Description("Wird Massen-Attributierung (alle ausgewählten Objekte ändern) erlaubt, kann hier angegeben werden, ob das Feld über Massen-Attributierung gesetzt werden darf.")]
     public bool MassAttributable { get; set; }
+
+    [DisplayName("Schreibgeschützt (Readonly)")]
+    [Description("Hier wird das Feld zwar angezeigt, kann vom Anwender aber nicht geändert werden. Readonly Felder werden beim Speichern NICHT in die Datenbank geschrieben und dienen nur informativen Zwecken. Ausnahme: Readonly Felder, für die ein AutoValue angegeben wird, werden beim Speichern auch in die Datenbank geschrieben.")]
+    public bool Readonly { get; set; }
 
     [Category("~Validierung")]
     [DisplayName("Clientseitige Validierung")]
@@ -150,6 +154,7 @@ Mit dem Prefix mask-insert-default:: wird der Wert vom System gesetzt, sondern e
         this.FieldType = (EditingFieldType)(int)stream.Load("type", (int)EditingFieldType.Text);
         this.Visible = (bool)stream.Load("visible", true);
         this.Readonly = (bool)stream.Load("readonly", false);
+        this.Locked = (bool)stream.Load("locked", false);
         this.LegendField = (bool)stream.Load("legendfield", false);
         this.Resistant = (bool)stream.Load("resistant", false);
         this.MassAttributable = (bool)stream.Load("massattributable", false);
@@ -185,6 +190,7 @@ Mit dem Prefix mask-insert-default:: wird der Wert vom System gesetzt, sondern e
         stream.Save("type", (int)this.FieldType);
         stream.Save("visible", this.Visible);
         stream.Save("readonly", this.Readonly);
+        stream.Save("locked", this.Locked);
         stream.Save("legendfield", this.LegendField);
         stream.Save("resistant", this.Resistant);
         stream.Save("massattributable", this.MassAttributable);

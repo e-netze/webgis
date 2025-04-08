@@ -1,4 +1,4 @@
-using E.Standard.Api.App.Extensions;
+﻿using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Models.Abstractions;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
@@ -127,6 +127,7 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
 
                 xml.Append($@" visible=""{editField.Visible}""");
                 xml.Append($@" readonly=""{editField.Readonly}""");
+                xml.Append($@" locked=""{editField.Locked}""");
 
                 if (editField.Resistant)
                 {
@@ -307,6 +308,7 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
 
             this.Visible = (bool)cmsNode.Load("visible", true);
             this.Readonly = (bool)cmsNode.Load("readonly", false);
+            this.Locked = (bool)cmsNode.Load("locked", false);
             this.LegendField = (bool)cmsNode.Load("legendfield", false);
             this.MassAttributable = (bool)cmsNode.Load("massattributable", false);
             this.Resistant = (bool)cmsNode.Load("resistant", false);
@@ -367,6 +369,7 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
 
         public bool Visible { get; set; }
         public bool Readonly { get; set; }
+        public bool Locked { get; set; }
         public bool LegendField { get; set; }
         public bool MassAttributable { get; set; }
         public bool Resistant { get; set; }
