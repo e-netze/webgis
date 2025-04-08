@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Editing: Field Type "Locked": Shown as readonly field in the edit mask, an will be written to the database
+           Useful for fields that are not editable in the frontend, which are passed via a URL parameter.
+           (Readonly fields are not written to the database, only if they are also "AutoValues")
+
 ### Fixed
 
 ## 7.25.1401

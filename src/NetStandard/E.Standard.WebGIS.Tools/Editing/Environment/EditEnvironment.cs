@@ -473,32 +473,33 @@ class EditEnvironment
                         // auch alle Autovalues schreiben, falls sich diese nicht ändnern (zB create_user bei einem Update)
 
                         // Autovalues die der Anwender nicht schreiben kann "readonly=true" "visible=false" auch nicht schreiben...
-                        if (attribute.Attributes["autovalue"] != null && !String.IsNullOrEmpty(attribute.Attributes["autovalue"].Value))
+                        if (!String.IsNullOrEmpty(attribute.Attributes["autovalue"]?.Value))
                         {
-                            if (attribute.Attributes["readonly"] != null && attribute.Attributes["readonly"].Value.ToLower() == "true")
+                            if (attribute.Attributes["readonly"]?.Value?.ToLower() == "true")
                             {
                                 continue;
                             }
 
-                            if (attribute.Attributes["visible"] != null && attribute.Attributes["visible"].Value.ToLower() == "false")
+                            if (attribute.Attributes["visible"]?.Value?.ToLower() == "false")
                             {
                                 continue;
                             }
                         }
                         else
                         {
-                            if (attribute.Attributes["readonly"] != null && attribute.Attributes["readonly"].Value.ToLower() == "true")
+                            // do not write readonly values to the database
+                            if (attribute.Attributes["readonly"]?.Value?.ToLower() == "true")
                             {
                                 continue;
                             }
                         }
 
-                        var fieldAttribute = feature.Attributes[attribute.Attributes["field"].Value];
+                        var fieldAttribute = feature.Attributes[attribute.Attributes["field"]?.Value];
                         if (fieldAttribute != null)
                         {
                             if (!ws.SetCurrentFeatureAttribute(fieldAttribute.Name, StringFormatAttributeValue(attribute, fieldAttribute.Value)))
                             {
-                                throw new Exception("Field " + fieldAttribute.Name + ": " + ws.LastErrorMessage);
+                                throw new Exception($"Field {fieldAttribute.Name}: {ws.LastErrorMessage}");
                             }
                         }
                     }
@@ -1246,14 +1247,13 @@ class EditEnvironment
                         parameterType += fieldNode.IsRequiredField() && !editOperation.IsMassOrTransfer() ? " " + UICss.ToolParameterRequired
                                                                      : String.Empty;
 
-                        if (fieldNode.Attributes["readonly"] != null &&
-                            fieldNode.Attributes["readonly"].Value.ToLower() == "true")
+                        if (fieldNode.Attributes["readonly"]?.Value?.ToLower() == "true" ||
+                            fieldNode.Attributes["locked"]?.Value?.ToLower() == "true")
                         {
                             @readonly = true;
                         }
 
-                        if (fieldNode.Attributes["visible"] != null &&
-                            fieldNode.Attributes["visible"].Value.ToLower() == "false")
+                        if (fieldNode.Attributes["visible"]?.Value?.ToLower() == "false")
                         {
                             #region Hidden
 
@@ -1265,8 +1265,7 @@ class EditEnvironment
 
                             #endregion
                         }
-                        else if (fieldNode.Attributes["type"] != null &&
-                                 fieldNode.Attributes["type"].Value.ToLower() == "domain")
+                        else if (fieldNode.Attributes["type"]?.Value?.ToLower() == "domain")
                         {
                             #region Combobox
 
@@ -1510,8 +1509,7 @@ class EditEnvironment
 
                             #endregion
                         }
-                        else if (fieldNode.Attributes["type"] != null &&
-                                 fieldNode.Attributes["type"].Value.ToLower() == "autocomplete")
+                        else if (fieldNode.Attributes["type"]?.Value?.ToLower() == "autocomplete")
                         {
                             #region Autocomplete
 
@@ -1549,8 +1547,7 @@ class EditEnvironment
 
                             #endregion
                         }
-                        else if (fieldNode.Attributes["type"] != null &&
-                                 fieldNode.Attributes["type"].Value.ToLower() == "date")
+                        else if (fieldNode.Attributes["type"]?.Value?.ToLower() == "date")
                         {
                             #region Datepicker
 
@@ -1582,8 +1579,7 @@ class EditEnvironment
 
                             #endregion
                         }
-                        else if (fieldNode.Attributes["type"] != null &&
-                                 fieldNode.Attributes["type"].Value.ToLower() == "drop-list")
+                        else if (fieldNode.Attributes["type"]?.Value?.ToLower() == "drop-list")
                         {
                             #region drop-list
 
@@ -1611,8 +1607,7 @@ class EditEnvironment
 
                             #endregion
                         }
-                        else if (fieldNode.Attributes["type"] != null &&
-                                 fieldNode.Attributes["type"].Value.ToLower() == "file")
+                        else if (fieldNode.Attributes["type"]?.Value?.ToLower() == "file")
                         {
                             var fieldContainer = CreateEditFieldContainer(fieldNode, editOperation, fieldPrefix);
                             parentElement.AddChild(fieldContainer);
@@ -1639,7 +1634,7 @@ class EditEnvironment
                             }
                             parentElement.AddChild(new UIBreak());
                         }
-                        else if (fieldNode.Attributes["type"]?.Value.ToLower() == "textarea")
+                        else if (fieldNode.Attributes["type"]?.Value?.ToLower() == "textarea")
                         {
                             #region textarea
 
@@ -1696,9 +1691,8 @@ class EditEnvironment
                     }
                     else
                     {
-                        if (fieldNode.Attributes["type"] != null &&
-                                 fieldNode.Attributes["type"].Value.ToLower() == "info" &&
-                                 fieldNode.Attributes["label"] != null)
+                        if (fieldNode.Attributes["type"]?.Value?.ToLower() == "info" &&
+                            fieldNode.Attributes["label"] != null)
                         {
                             #region Freier Text
 
