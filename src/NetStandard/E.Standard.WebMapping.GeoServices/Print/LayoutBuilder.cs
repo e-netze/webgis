@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core;
+ï»¿using E.Standard.CMS.Core;
 using E.Standard.DbConnector;
 using E.Standard.Platform;
 using E.Standard.Web.Abstractions;
@@ -74,7 +74,8 @@ public class LayoutBuilder
 
             FileInfo fi = new FileInfo(filename);
             _doc = new XmlDocument();
-            _doc.Load(filename);
+            var xml = File.ReadAllText(filename);
+            _doc.LoadXml(xml);
 
             _root = _doc.SelectSingleNode("//layout");
 
@@ -1140,8 +1141,8 @@ public class LayoutBuilder
             digs += "0";
         }
 
-        return String.Format("{0}°{1:00}'{2:00" + digs + "}''", g, m, s);
-        //return g.ToString()+"°"+m.ToString()+"'"+s.ToString()+"''";
+        return String.Format("{0}Â°{1:00}'{2:00" + digs + "}''", g, m, s);
+        //return g.ToString()+"Â°"+m.ToString()+"'"+s.ToString()+"''";
     }
     private string deg2GM(double deg, int digits)
     {
@@ -1162,7 +1163,7 @@ public class LayoutBuilder
             digs += "0";
         }
 
-        return String.Format("{0}°{1:00" + digs + "}'", g, m);
+        return String.Format("{0}Â°{1:00" + digs + "}'", g, m);
     }
     private string Coord2String(double c, int digits)
     {
@@ -1183,6 +1184,8 @@ public class LayoutBuilder
         text = text.Replace("[DATE]", DateTime.Now.ToShortDateString());
         text = text.Replace("[TIME]", DateTime.Now.ToShortTimeString());
         text = text.Replace("[EPSG]", _map?.SpatialReference?.Id.ToString() ?? "");
+        text = text.Replace("[MAP_SRS_NAME]", $"{_map?.SpatialReference?.Name}"); 
+        text = text.Replace("[PAGE_SIZE]", _pageSize.ToString());
 
         //   ul---------------------ur
         //   |                       |
@@ -1234,7 +1237,8 @@ public class LayoutBuilder
         text = text.Replace("[COORD_CENTER_EASTING_3]", Coord2String(p0.X, 3));
         text = text.Replace("[COORD_CENTER_NORTHING_3]", Coord2String(p0.Y, 3));
 
-        #region New (gedreht möglich)
+        #region New (gedreht mÃ¶glich)
+
         text = text.Replace("[COORD_LL_NORTHING_0]", Coord2String(ll.Y, 0));
         text = text.Replace("[COORD_LL_NORTHING_1]", Coord2String(ll.Y, 1));
         text = text.Replace("[COORD_LL_NORTHING_2]", Coord2String(ll.Y, 2));
@@ -1277,6 +1281,7 @@ public class LayoutBuilder
         #endregion
 
         #region Old
+
         if (_map.DisplayRotation == 0.0)
         {
             text = text.Replace("[COORD_LEFT_0]", Coord2String(minx, 0));
@@ -2044,6 +2049,25 @@ internal class LayoutPanel
                     format.Alignment = StringAlignment.Near;
                     format.LineAlignment = StringAlignment.Near;
 
+                    if (textNode.Attributes["halocolor"] != null)
+                    {
+                        using (var haloBrush = this.Brush(textNode.Attributes["halocolor"]))
+                        {
+                            for (int i = -2; i <= 2; i++)
+                            {
+                                for (int j = -2; j <= 2; j++)
+                                {
+                                    canvas.DrawText(
+                                        text,
+                                        font,
+                                        haloBrush,
+                                        _origin.X + x + i, _origin.Y + y + j,
+                                        format);
+                                }
+                            }
+                        }
+                    }
+
                     canvas.DrawText(
                         text,
                         font,
@@ -2350,7 +2374,7 @@ internal class LayoutPanel
         IBitmap legend = null, shrink = null;
         try
         {
-            // DPI nicht mehr umrechnen. Sollte schon richtig übergeben werden!
+            // DPI nicht mehr umrechnen. Sollte schon richtig Ã¼bergeben werden!
             /*
             FileInfo fi = new FileInfo(layoutPath);
             if (_builder.DotsPerInch != 96.0 && !fi.Name.ToLower().Contains("_dpi_"))
