@@ -2488,7 +2488,7 @@
             tool.options = options;
     };
     this._toolPersistence = [];
-    this.setPersistentToolParameter = function (tool, paramId, val) {
+    this.setPersistentToolParameter = function (tool, paramId, val, prefix) {
 
         //if (val === null) {
         //    console.trace('set val to NULL');
@@ -2499,29 +2499,48 @@
         var context = (typeof tool === 'string' || tool instanceof String) ?
             tool :
             tool.persistencecontext || tool.id;
+        if (prefix) context = prefix + ":" + context;
+
         if (!this._toolPersistence[context])
             this._toolPersistence[context] = [];
         this._toolPersistence[context][paramId] = val;
     };
-    this.getPersistentToolParameter = function (tool, paramId) {
-        var params = this.getPersistentToolParameters(tool);
+    this.getPersistentToolParameter = function (tool, paramId, prefix) {
+        var params = this.getPersistentToolParameters(tool, prefix);
         return params[paramId];
     };
-    this.getPersistentToolParameters = function (tool) {
+    this.getPersistentToolParameters = function (tool, prefix) {
         if (!tool)
             return [];
         var context = (typeof tool === 'string' || tool instanceof String) ?
             tool :
             tool.persistencecontext || tool.id;
+
+        if (prefix) context = prefix + ":" + context;
         var params = this._toolPersistence[context];
 
         return params || [];
     };
     this.applyPersistentToolParameters = function (tool, callbackAfterChanged) {
         let params = this.getPersistentToolParameters(tool);
+        //console.log('persistant parameters: ', params)
         for (let id in params) {
             let $e = $('#' + id);
-            if ($e.hasClass('webgis-tool-parameter-persistent')) {
+            if ($e.hasClass('webgis-tool-parameter-persistent') || true) {
+                $e.val(params[id]);
+
+                if (callbackAfterChanged) {
+                    callbackAfterChanged($e);
+                }
+            }
+        }
+        params = this.getPersistentToolParameters(tool, "force-set");  // force this values. They come eg from URL Parameters (ed_EDITFIELD, ...). Should also be set, if the editfield is not an resistant field
+        //console.log('persistant parameters, force-set', params)
+        for (let id in params) {
+            let $e = $('#' + id);
+            if ($e.length > 0) {
+
+                //console.log('set an force-set parameter', id, params[id], $e.length)
                 $e.val(params[id]);
 
                 if (callbackAfterChanged) {
