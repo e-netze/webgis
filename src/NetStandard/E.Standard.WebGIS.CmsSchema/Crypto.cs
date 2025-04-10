@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -6,21 +6,6 @@ namespace E.Standard.WebGIS.CmsSchema;
 
 class Crypto
 {
-    static public string HashString(string password)
-    {
-        if (String.IsNullOrEmpty(password))
-        {
-            return String.Empty;
-        }
-
-        using var md5 = MD5.Create();
-        byte[] byteValue = UTF8Encoding.UTF8.GetBytes(password);
-        byte[] byteHash = md5.ComputeHash(byteValue);
-        md5.Clear();
-
-        return Convert.ToBase64String(byteHash);
-    }
-
     static public string GetID()
     {
         //return "i" + Guid.NewGuid().ToString("N");
