@@ -1066,7 +1066,14 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
             {
                 foreach (var subFolder in jsonServices.Folders)
                 {
-                    services.AddRange(await GetServicesAsync(type, !String.IsNullOrEmpty(folder) ? folder + "/" + subFolder : subFolder));
+                    try
+                    {
+                        services.AddRange(await GetServicesAsync(type, !String.IsNullOrEmpty(folder) ? folder + "/" + subFolder : subFolder));
+                    }
+                    catch (Exception)
+                    {
+                        // ignore Errors here. A folder can be authorized => not an error, just dont list services if user not authorized
+                    }
                 }
             }
         }

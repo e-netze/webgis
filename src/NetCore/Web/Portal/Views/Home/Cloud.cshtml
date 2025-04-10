@@ -15,11 +15,12 @@
     var request = this.Context.Request;
 
     string apiUrl = urlHelper.ApiUrl(request, E.Standard.WebGIS.Core.HttpSchema.Current);
+    string portalUrl = ViewData["portalRootUrl"]?.ToString().RemoveEndingSlashes();
     string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
 }
 
-<link href="~/lib/webportal-layout/webportal-layout.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
-<script src="~/lib/webportal-layout/webportal-layout.js?@(WebGISVersion.CssVersion)"></script>
+<link href="@(portalUrl)/lib/webportal-layout/webportal-layout.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+<script src="@(portalUrl)/lib/webportal-layout/webportal-layout.js?@(WebGISVersion.CssVersion)"></script>
 
 <script src="@(apiUrl)/scripts/api/api.min.js?@(WebGISVersion.CssVersion)" id="webgis-api-script"></script>
 <script src="@(apiUrl)/scripts/api/api-ui.min.js?@(WebGISVersion.CssVersion)"></script>
@@ -30,7 +31,7 @@
 {
     <script src="@((request.Uri().ToString().Split('?')[0].EndsWith("/") ? "../":"") +Url.Content("Scripts/webgis-portal-content.js"))"></script>
 
-    <script src="~/scripts/tinymce/4/tinymce.js"></script>
+    <script src="@(portalUrl)/scripts/tinymce/4/tinymce.js"></script>
     <script src="@(apiUrl)/scripts/typeahead/typeahead.jquery.min.js"></script>
 
     <script src="@(apiUrl)/scripts/api/ui/webgis_modal.js?@(WebGISVersion.CssVersion)"></script>
@@ -94,15 +95,15 @@
             @if (Model.IsMapAuthor)
             {
                 <li class="webportal-layout-sidebar-item resource">
-                    <img src="~/content/img/help-26-w.png" />
+                    <img src="@(portalUrl)/content/img/help-26-w.png" />
                     <a href="https://docs.webgiscloud.com/de/webgis/apps/viewer/index.html" target="_blank">Help/Tutorials</a>
                 </li>
                 <li class="webportal-layout-sidebar-item">
-                    <img src="~/content/img/sidebar/builder-26-w.png" />
+                    <img src="@(portalUrl)/content/img/sidebar/builder-26-w.png" />
                     <a href="@urlHelper.PortalUrl()/@(Model.PortalPageId)/MapBuilder">MapBuilder</a>
                 </li>
                 <li class="webportal-layout-sidebar-item">
-                    <img src="~/content/img/sidebar/builder-26-w.png" />
+                    <img src="@(portalUrl)/content/img/sidebar/builder-26-w.png" />
                     <a href="@urlHelper.PortalUrl()/@(Model.PortalPageId)/AppBuilder">AppBuilder</a>
                 </li>
             }
@@ -123,7 +124,7 @@
                 @if (Model.AllowLogout)
                 {
                     <li class="webportal-layout-sidebar-item logout">
-                        <img src="~/content/img/sidebar/logout-26-w.png" />
+                        <img src="@(portalUrl)/content/img/sidebar/logout-26-w.png" />
                         <a asp-area="" asp-controller="Auth" asp-action="Logout" asp-route-id="@Model.PortalPageId">Abmelden</a>
                     </li>
                 }
