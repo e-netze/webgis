@@ -401,7 +401,7 @@
                 let $collapsable = $(collapsable), foundVisibleLayers = false;
 
                 if ($collapsable.hasClass('webgis-basemap-toc-container')) {
-                    foundVisibleLayers = map.currentBasemapServiceId() || map.currentBasemapOverlayServiceId() ? true : false;
+                    foundVisibleLayers = map.currentBasemapServiceId() || map.currentBasemapOverlayServiceIds().length > 0 ? true : false;
                 } else if ($collapsable.hasClass('webgis-dynamiccontent-toc-container')) {
                     foundVisibleLayers = map.hasCurrentDynamicContent() && map.isCurrentDynamicContentFromTocTheme() === false;
                 } else if ($collapsable.hasClass('webgis-presentation_toc-custom-container')) {
@@ -1775,26 +1775,39 @@
             $("<div>")
                 .addClass('buttons')
                 .appendTo($opacity_container).webgis_opacity_control({
-                service: function () { return map.getService(map.currentBasemapServiceId()) || map.getService(map.currentBasemapOverlayServiceId()); }
-            });
-
-            service.map.events.on('basemap_changed', function (e, sender, basemapService) {
-                $(this).webgis_opacity_control('refresh');
-                //$(this).css('display', sender.currentBasemapServiceId() || sender.currentBasemapOverlayServiceId() ? '' : 'none');
-                sender.ui.refreshUIElements();
-            }, $opacity_container);
-            service.map.events.on('basemap_changed', function (e, sender, basemapService) {
-                $(this).find('.webgis-presentation_toc-basemap-item').each(function (i, e) {
-                    if (basemapService && basemapService.id === $(e).attr('id')) {
-                        $(e).children('.webgis-presentation_toc-basemap-item-img').addClass('selected');
-                    } else {
-                        $(e).children('.webgis-presentation_toc-basemap-item-img').removeClass('selected');
+                    service: function () {  // should be a function, because it changes alway after a basemap is selected
+                        return map.getService(map.currentBasemapServiceId()) ||
+                            (
+                                map.currentBasemapOverlayServiceIds().length > 0
+                                    ? map.getService(map.currentBasemapOverlayServiceIds()[0])
+                                    : null
+                            )
                     }
                 });
 
-                $(this).find('.webgis-presentation_toc-basemap-overlay').each(function (i, e) {
-                    $(e).find('img').attr('src', webgis.css.imgResource(sender.currentBasemapOverlayServiceId() === $(e).attr('id') ? "check1.png" : "check0.png", "toc"))
-                });
+            service.map.events.on('basemap_changed', function (e, sender, basemapService) {
+                $(this).webgis_opacity_control('refresh');
+                sender.ui.refreshUIElements();
+            }, $opacity_container);
+            service.map.events.on('basemap_changed', function (e, sender, basemapService) {
+                $(this)
+                    .find('.webgis-presentation_toc-basemap-item')
+                    .each(function (i, e) {
+                        if (basemapService && basemapService.id === $(e).attr('id')) {
+                            $(e).children('.webgis-presentation_toc-basemap-item-img').addClass('selected');
+                        } else {
+                            $(e).children('.webgis-presentation_toc-basemap-item-img').removeClass('selected');
+                        }
+                    });
+
+                $(this)
+                    .find('.webgis-presentation_toc-basemap-overlay')
+                    .each(function (i, e) {
+                        $(e).find('img')
+                            .attr('src', webgis.css.imgResource(sender.currentBasemapOverlayServiceIds().includes($(e).attr('id'))
+                                ? "check1.png"
+                                : "check0.png", "toc"));
+                    });
 
                 $.presentationToc.checkContainerVisibility();
             }, $li);
@@ -1803,47 +1816,39 @@
             $item_ul = $li.find('.webgis-presentation_toc-content').children('ul');
         }
         if (service.basemapType === 'overlay') {
-            $item_li = $("<li id='" + service.id + "'class='webgis-presentation_toc-item webgis-presentation_toc-basemap-item webgis-presentation_toc-basemap-overlay' style='width:100%;height:20px;display:none'></li>");
-            $item_li.insertBefore($item_ul.find('.webgis-presentation_toc-basemap-collapse'));
-            let item_li = $item_li.get(0);
-            item_li.service = service;
-            let isChecked = service.map.currentBasemapOverlayServiceId() === service.id;
-            if (isChecked === true) {
-                $item_li.addClass('checked');
-            }
+            $item_li = $("<li style='width:100%;height:20px;display:none'></li>")
+                .attr("id", service.id)
+                .data("service", service)
+                .addClass("webgis-presentation_toc-item webgis-presentation_toc-basemap-item webgis-presentation_toc-basemap-overlay")
+                .insertBefore($item_ul.find('.webgis-presentation_toc-basemap-collapse'));
+
+            let isChecked = service.map.currentBasemapOverlayServiceIds().includes(service.id);
             let chk = "<img style='width:16px' src=" + webgis.css.imgResource(isChecked ? "check1.png" : "check0.png", "toc") + ">";
             $("<span>" + chk + "&nbsp;" + webgis.encodeHtmlString(service.name) + "</span>").appendTo($item_li);
+
             $item_li.click(function () {
-                let service = this.service;
-                let $li = $(this);
-                $li.toggleClass('checked');
-                let checked = $li.hasClass('checked');
-                $li.parent().find('.webgis-presentation_toc-basemap-overlay').removeClass('checked').find('img').attr('src', webgis.css.imgResource("check0.png", "toc"));
-                if (checked) {
-                    $li.addClass('checked').find('img').attr('src', webgis.css.imgResource("check1.png", "toc"));
-                    service.map.setBasemap(service.id, true);
-                }
-                else {
-                    $li.find('img').attr('src', webgis.css.imgResource("check0.png", "toc"));
-                    service.map.setBasemap(null, true);
-                }
+                const service = $(this).data("service");
+                service.map.setBasemap(service.id, true);
             });
         }
         else {
-            $item_li = $("<li id='" + service.id + "' class='webgis-presentation_toc-item webgis-presentation_toc-basemap-item webgis-presentation_toc-basemap-item-block webgis-presentation_toc-hidden'></li>");
+            $item_li = $("<li>")
+                .attr("id", service.id)
+                .data("service", service)
+                .addClass("webgis-presentation_toc-item webgis-presentation_toc-basemap-item webgis-presentation_toc-basemap-item-block webgis-presentation_toc-hidden")
+                .insertBefore($item_ul.find('.webgis-no-basemap'));
+
             if ($item_ul.closest('.webgis-presentation_toc-collapsable').hasClass('webgis-expanded')) {
-                //console.log('remove hidden');
                 $item_li.removeClass('webgis-presentation_toc-hidden');
             }
-            $item_li.insertBefore($item_ul.find('.webgis-no-basemap')); //.appendTo($item_ul);
-            let item_li = $item_li.get(0);
-            item_li.service = service;
+
             let $imgDiv = $("<div class='webgis-presentation_toc-basemap-item-img" + (service.map.currentBasemapServiceId() == service.id ? " selected" : "") + "'></div>").appendTo($item_li);
             $("<div class='webgis-presentation_toc-basemap-item-label'></div>")
                 .text(service.name)
                 .appendTo($imgDiv);
+
             $item_li.click(function () {
-                let service = this.service;
+                const service = $(this).data("service");
                 service.map.setBasemap(service.id);
                 $(this).parent().find('.webgis-presentation_toc-basemap-item-img').removeClass('selected');
                 $(this).find('.webgis-presentation_toc-basemap-item-img').addClass('selected');
@@ -1855,32 +1860,33 @@
                 if ($collapse.hasClass('expanded'))
                     $collapse.trigger('click');
             });
-            item_li.resetPreview = function () {
-                this.resetPreviewTimer.Start();
-            };
-            item_li.resetPreviewTimer = new webgis.timer(function (item) {
-                let service = item.service;
-                if (!$(item).hasClass('webgis-presentation_toc-hidden')) {
-                    $(item).find('.webgis-presentation_toc-basemap-item-img').each(function (i, e) {
+            $item_li.data("resetPreview", function () {
+                this.data("resetPreviewTimer").Start();
+            });
+            $item_li.data("resetPreviewTimer", new webgis.timer(function ($item) {
+                let service = $item.data("service");
+                if (!$item.hasClass('webgis-presentation_toc-hidden')) {
+                    $item.find('.webgis-presentation_toc-basemap-item-img').each(function (i, e) {
                         let previewUrl = service.getPreviewUrl({ width: $(e).width(), height: $(e).height() });
                         $(e).css('background', 'url(' + previewUrl + ')');
                     });
                 }
-            }, 300, item_li);
+            }, 300, $item_li));
 
             service.map.events.on('refresh', function (e) {
-                let scale = Math.round(this.service.map.scale());
-                if ($(this).data('last-refresh-scale') === scale)
+                let service = this.data("service");
+                let scale = Math.round(service.map.scale());
+                if (this.data('last-refresh-scale') === scale)
                     return;
 
                 $(this).data('last-refresh-scale', scale);
-                this.resetPreview.apply(this);
-            }, item_li);
+                this.data("resetPreview").apply(this);
+            }, $item_li);
 
             if (!$item_li.hasClass('webgis-presentation_toc-hidden')) {
-                webgis.delayed(function () {
-                    item_li.resetPreview.apply(item_li);
-                }, 100, item_li);
+                webgis.delayed(function ($item) {
+                    $item.data("resetPreview").apply($item);
+                }, 100, $item_li);
             }
         }
 

@@ -2448,7 +2448,7 @@
             if (service.isBasemap === true && service.basemapType === 'overlay') {
                 $menuItem = $("<li>")
                     .addClass('webgis-submenu-item service basemap')
-                    .addClass(service.id === map.currentBasemapOverlayServiceId() ? 'checked' : 'unchecked')
+                    .addClass(map.currentBasemapOverlayServiceIds().includes(service.id) ? 'checked' : 'unchecked')
                     .css({
                         backgroundPosition: '13px center',
                         paddingLeft: '48px'
@@ -2697,24 +2697,29 @@
     };
 
     var setServiceOpacity = function (button, opacity) {
-        var $button = $(button), $holder = $button.closest('.webgis-opacity-control-holder');
+        const $button = $(button), $holder = $button.closest('.webgis-opacity-control-holder');
         if ($button.hasClass('disabled'))
             return;
 
-        var service = getService($holder.data('service'));
+        const service = getService($holder.data('service'));
 
+        applyServiceOpacity(service, opacity);
+
+        $button.parent().children().removeClass('selected');
+        $button.addClass('selected');
+    };
+
+    var applyServiceOpacity = function (service, opacity) {
         if (service) {
             service.setOpacity(opacity);
             if (service.map && service.isBasemap === true) {
-                if (service.map.currentBasemapOverlayServiceId()) {
-                    var service = service.map.getService(service.map.currentBasemapOverlayServiceId());
-                    if (service)
-                        service.setOpacity(opacity);
+                for (let overlayId of service.map.currentBasemapOverlayServiceIds()) {
+                    const overlayService = service.map.getService(overlayId);
+                    if (overlayService) {
+                        overlayService.setOpacity(opacity);
+                    }
                 }
             }
-
-            $button.parent().children().removeClass('selected');
-            $button.addClass('selected');
         }
     };
 
@@ -2763,6 +2768,10 @@
                         .removeClass('selected');
                     $holder.children('.webgis-menu-item-imagebutton.' + service.opacity * 100)
                         .addClass('selected');
+                }
+
+                if (service.isBasemap) {
+                    applyServiceOpacity(service, service.opacity);  // set all overlay basemap to the same opacity
                 }
             }
         });

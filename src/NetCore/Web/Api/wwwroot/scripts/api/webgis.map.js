@@ -162,7 +162,7 @@
 
         this._baseMaps = {
             current: null,
-            currentOverlay: null,
+            currentOverlays: [],
             services: []
         };
         if (webgis.mapFramework === 'leaflet') {
@@ -1128,7 +1128,7 @@
 
                         if (layerVisibilities != null && layerVisibilities[service.id] != null) {
                             if ($.grep(layerVisibilities[service.id], function (l) { return l.visible !== false }).length > 0) {
-                                this._baseMaps.currentOverlay = service;
+                                this._baseMaps.currentOverlays.push(service);
                                 service.setLayerVisibility(["*"], true);
                             } else {
                                 service.setLayerVisibility(["*"], false);
@@ -1176,7 +1176,7 @@
                     });
                     this._leafletLayers[uniqueServiceIndex] = layer;
                     if (serviceInfo.isbasemap) {
-                        if (this._baseMaps.current === service || this._baseMaps.currentOverlay === service) {
+                        if (this._baseMaps.current === service || this._baseMaps.currentOverlays.includes(service)) {
                             layer.addTo(this.frameworkElement);
                         }
                     }
@@ -1210,7 +1210,7 @@
                     }
 
                     if (serviceInfo.isbasemap) {
-                        if (this._baseMaps.current === service || this._baseMaps.currentOverlay === service) {
+                        if (this._baseMaps.current === service || this._baseMaps.currentOverlays.includes(service)) {
                             layer.addTo(this.frameworkElement);
                         }
                     }
@@ -2907,7 +2907,7 @@
         }
 
         var service = this.getBasemap(!overlay ? serviceId : (this._baseMaps.current ? this._baseMaps.current.id : ''));
-        var overlayService = this.getBasemap(overlay ? serviceId : (this._baseMaps.currentOverlay ? this._baseMaps.currentOverlay.id : ''));
+        var overlayService = overlay ? this.getBasemap(serviceId) : null;
         var basemapTypes = ['tile', 'vtc', 'custom'];
 
         if (this._baseMaps.current != null) {
@@ -2918,14 +2918,6 @@
             this._baseMaps.current.setLayerVisibility(["*"], false, fireLiveshareEvent);
             this._baseMaps.current = null;
         }
-        if (this._baseMaps.currentOverlay != null) {
-            if (webgis.mapFramework === "leaflet" && $.inArray(this._baseMaps.currentOverlay.serviceInfo.type, basemapTypes) >= 0) {
-                this.frameworkElement.removeLayer(this._baseMaps.currentOverlay.frameworkElement);
-                this._baseMaps.currentOverlay._fireCustomOnRemove();
-            }
-            this._baseMaps.currentOverlay.setLayerVisibility(["*"], false);
-            this._baseMaps.currentOverlay = null;
-        }
         if (service) {
             if (webgis.mapFramework === "leaflet" && $.inArray(service.serviceInfo.type, basemapTypes) >= 0) {
                 this.frameworkElement.addLayer(service.frameworkElement);
@@ -2935,15 +2927,24 @@
             service.setLayerVisibility(["*"], true, fireLiveshareEvent);
         }
         if (overlayService) {
-            if (webgis.mapFramework === "leaflet" && $.inArray(overlayService.serviceInfo.type, basemapTypes) >= 0) {
-                this.frameworkElement.addLayer(overlayService.frameworkElement);
-                overlayService._fireCustomOnAdd();
+            if (this._baseMaps.currentOverlays.includes(overlayService)) {  // if included: turn off
+                if (webgis.mapFramework === "leaflet" && $.inArray(overlayService.serviceInfo.type, basemapTypes) >= 0) {
+                    this.frameworkElement.removeLayer(overlayService.frameworkElement);
+                    overlayService._fireCustomOnRemove();
+                }
+                overlayService.setLayerVisibility(["*"], false);
+                this._baseMaps.currentOverlays = this._baseMaps.currentOverlays.filter((s) => s != overlayService);
+            } else {   // otherwise: turn on
+                if (webgis.mapFramework === "leaflet" && $.inArray(overlayService.serviceInfo.type, basemapTypes) >= 0) {
+                    this.frameworkElement.addLayer(overlayService.frameworkElement);
+                    overlayService._fireCustomOnAdd();
+                }
+                this._baseMaps.currentOverlays.push(overlayService);
+                if (service) {
+                    overlayService.setOpacity(service.opacity);
+                }
+                overlayService.setLayerVisibility(["*"], true, fireLiveshareEvent);
             }
-            this._baseMaps.currentOverlay = overlayService;
-            if (service) {
-                overlayService.setOpacity(service.opacity);
-            }
-            overlayService.setLayerVisibility(["*"], true, fireLiveshareEvent);
         }
         if (service || overlayService) {
             this.events.fire('basemap_changed', this, this._baseMaps.current);
@@ -2956,10 +2957,11 @@
             return '';
         return this._baseMaps.current.id;
     };
-    this.currentBasemapOverlayServiceId = function () {
-        if (this._baseMaps.currentOverlay == null)
-            return '';
-        return this._baseMaps.currentOverlay.id;
+    this.currentBasemapOverlayServiceIds = function () {
+        if (this._baseMaps.currentOverlays == null)
+            return [];
+
+        return this._baseMaps.currentOverlays.map((s) => s.id);
     };
     this.getBasemap = function (serviceId) {
         if (!this._baseMaps.services)
