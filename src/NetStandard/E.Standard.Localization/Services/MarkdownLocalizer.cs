@@ -30,7 +30,7 @@ public class MarkdownLocalizer : IStringLocalizer
 {
     private static ConcurrentDictionary<string, Translations> LanguageDictionaries = new();
 
-    private Translations _translations;
+    private Translations? _translations;
 
     public MarkdownLocalizer(string language, string resourcePath = "")
     {
@@ -130,7 +130,7 @@ public class MarkdownLocalizer : IStringLocalizer
             bool isBodyRequest = lookupKey.EndsWith(":body");
             string actualKey = isBodyRequest ? lookupKey.Replace(":body", "") : lookupKey;
 
-            if (_translations.TryGetValue(actualKey, out var value))
+            if (_translations?.TryGetValue(actualKey, out var value) == true)
             {
                 return new LocalizedString(name, isBodyRequest ? value.Body : value.Header);
             }
@@ -143,6 +143,6 @@ public class MarkdownLocalizer : IStringLocalizer
 
     public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
     {
-        return _translations.Select(t => new LocalizedString(t.Key, t.Value.Header));
+        return _translations?.Select(t => new LocalizedString(t.Key, t.Value.Header)) ?? [];
     }
 }
