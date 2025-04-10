@@ -93,6 +93,7 @@ public class WfsService : IMapService, IServiceSupportedCrs, IServiceCopyrightIn
 
         }
     }
+    public float OpacityFactor { get; set; } = 1f;
 
     public bool ShowInToc { get; set; }
 

@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core.IO.Abstractions;
+﻿using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.OGC.Schema;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
@@ -145,6 +145,7 @@ public class UserService : IUserService, IPersistable
             }
         }
     }
+    public float OpacityFactor { get; set; } = 1f;
 
     public bool ShowInToc { get; set; }
 

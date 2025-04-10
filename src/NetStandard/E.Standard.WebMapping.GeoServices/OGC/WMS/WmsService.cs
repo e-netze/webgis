@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core;
+ï»¿using E.Standard.CMS.Core;
 using E.Standard.Extensions.Compare;
 using E.Standard.OGC.Schema;
 using E.Standard.OGC.Schema.wms;
@@ -133,6 +133,7 @@ public class WmsService : IMapService2,
             _opacity = value;
         }
     }
+    public float OpacityFactor { get; set; } = 1f;
 
     public bool ShowInToc { get; set; }
 
@@ -288,8 +289,8 @@ public class WmsService : IMapService2,
 
                 #region Layers
 
-                // Temporäre Liste => Falls Init mehrfach/gleichzeitg aufgerufen wird
-                // Am schluss dann an LayerCollection übergeben
+                // TemporÃ¤re Liste => Falls Init mehrfach/gleichzeitg aufgerufen wird
+                // Am schluss dann an LayerCollection Ã¼bergeben
                 List<Core.Layer> layers = new List<Core.Layer>();
 
                 foreach (CapabilitiesHelper.WMSLayer wmslayer in capsHelper.LayersWithStyle)
@@ -785,6 +786,7 @@ public class WmsService : IMapService2,
         clone._initialExtent = new Envelope(_initialExtent);
         clone._isDirty = _isDirty;
         clone._opacity = _opacity;
+        clone.OpacityFactor = this.OpacityFactor;
         clone._dpi = _dpi;
         clone._authUser = _authUser;
         clone._authPassword = _authPassword;
@@ -855,10 +857,10 @@ public class WmsService : IMapService2,
     internal string AppendToUrl(string url, string parameters, bool replaceKeys = true)
     {
         //
-        // Wird beim WMS für Gemeinden verwendet. Hier wird der Username für den Filter als URL Parameter übergeben
+        // Wird beim WMS fÃ¼r Gemeinden verwendet. Hier wird der Username fÃ¼r den Filter als URL Parameter Ã¼bergeben
         // zB &ogc_username=[role-parameter:GEM]
-        // Die Ersetzung sollte nicht beim GetCapabilites erfolgen, weil sonst schon der ersetzte String als Onlineparamter zurückkommt... Sollte aber nicht sein,
-        // weil Service (Clone) ja öferter verwendet wird...
+        // Die Ersetzung sollte nicht beim GetCapabilites erfolgen, weil sonst schon der ersetzte String als Onlineparamter zurÃ¼ckkommt... Sollte aber nicht sein,
+        // weil Service (Clone) ja Ã¶ferter verwendet wird...
         //
         if (replaceKeys && url.Contains("[") && url.Contains("]"))
         {

@@ -102,6 +102,7 @@ public class RestHelperService
                 id = service.Url,
                 type = serviceType.ToString().ToLower(),
                 opacity = service.Opacity,
+                opacity_factor = service.OpacityFactor,
                 properties = new ServiceInfoDTO.TileProperties()
                 {
                     extent = new double[] { extent.MinX, extent.MinY, extent.MaxX, extent.MaxY },
@@ -146,6 +147,7 @@ public class RestHelperService
                 id = service.Url,
                 type = serviceType.ToString().ToLower(),
                 opacity = service.Opacity,
+                opacity_factor = service.OpacityFactor,
 
                 OverlayUrl = overlayService.OverlayImageUrl,
                 WidthHeightRatio = overlayService.WidthHeightRatio,
@@ -167,7 +169,8 @@ public class RestHelperService
                 name = service.Name,
                 id = service.Url,
                 type = serviceType.ToString().ToLower(),
-                opacity = service.Opacity
+                opacity = service.Opacity,
+                opacity_factor = service.OpacityFactor,
             };
 
             if (service.IsBaseMap)

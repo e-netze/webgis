@@ -187,6 +187,8 @@ public class ImageServerService : IMapService2,
         }
     }
 
+    public float OpacityFactor { get; set; } = 1f;
+
     public bool CanBuffer
     {
         get { return false; }
@@ -466,6 +468,7 @@ public class ImageServerService : IMapService2,
         }
         clone._isDirty = _isDirty;
         clone._opacity = _opacity;
+        clone.OpacityFactor = this.OpacityFactor;
         clone.Username = this.Username;
         clone.Password = this.Password;
         clone.StaticToken = this.StaticToken;

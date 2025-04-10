@@ -77,6 +77,7 @@ public class CollectionService : IMapService, IEnumerable<IMapService>, IPrintab
             _opacity = value;
         }
     }
+    public float OpacityFactor { get; set; } = 1f;
 
     public bool CanBuffer
     {
@@ -491,6 +492,7 @@ public class CollectionService : IMapService, IEnumerable<IMapService>, IPrintab
         clone._name = _name;
         clone._id = _id;
         clone._opacity = _opacity;
+        clone.OpacityFactor = OpacityFactor;
         clone._useToc = _useToc;
         clone._url = _url;
 

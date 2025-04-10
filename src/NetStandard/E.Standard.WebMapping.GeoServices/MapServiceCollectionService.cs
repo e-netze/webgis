@@ -25,6 +25,7 @@ public class MapServiceCollectionService : IMapService, IMapServiceCollection
     public string ID => "";
 
     public float Opacity { get; set; }
+    public float OpacityFactor { get; set; } = 1f;
 
     public bool CanBuffer => false;
 

@@ -101,6 +101,8 @@ public class MapService : IMapService2,
         set;
     }
 
+    public float OpacityFactor { get; set; } = 1f;
+
     public bool CanBuffer
     {
         get { return false; }
@@ -1123,6 +1125,7 @@ public class MapService : IMapService2,
         clone.UseToc = this.UseToc;
         clone.InitialExtent = this.InitialExtent;
         clone.Opacity = this.Opacity;
+        clone.OpacityFactor = this.OpacityFactor;
         clone.ShowInToc = this.ShowInToc;
 
         clone.MinScale = this.MinScale;

@@ -1,4 +1,4 @@
-using E.Standard.ArcXml;
+ï»¿using E.Standard.ArcXml;
 using E.Standard.ArcXml.Extensions;
 using E.Standard.Platform;
 using E.Standard.Web.Abstractions;
@@ -126,6 +126,8 @@ public class AxlService : IMapService2,
             }
         }
     }
+
+    public float OpacityFactor { get; set; } = 1f;
 
     public bool ShowInToc { get; set; }
 
@@ -322,8 +324,8 @@ public class AxlService : IMapService2,
 
                 #region Layers
 
-                // Temporäre Liste => Falls Init mehrfach/gleichzeitg aufgerufen wird
-                // Am schluss dann an LayerCollection übergeben
+                // TemporÃ¤re Liste => Falls Init mehrfach/gleichzeitg aufgerufen wird
+                // Am schluss dann an LayerCollection Ã¼bergeben
                 List<Layer> layers = new List<Layer>();
 
                 foreach (XmlNode layerNode in xmldoc.SelectNodes("//LAYERINFO[@name and @id and @type]"))
@@ -380,7 +382,7 @@ public class AxlService : IMapService2,
 
                         string renderer = getRendererFromAXLFile(layerNode);
 
-                        // Rastermarkersymbol nicht hier übernehmen bzw. Modifizieren, da die Pfade nicht mehr passen!!!
+                        // Rastermarkersymbol nicht hier Ã¼bernehmen bzw. Modifizieren, da die Pfade nicht mehr passen!!!
                         if (renderer.Contains("<RASTERMARKERSYMBOL"))
                         {
                             renderer = String.Empty;
@@ -862,7 +864,7 @@ public class AxlService : IMapService2,
                 #region Beim ArcMapServer is alles anders
                 if (_arcmapserver == true)
                 {
-                    // Beim ArcMap Server müssen die Layer die Selektiert werden Visible=true sein!!!!
+                    // Beim ArcMap Server mÃ¼ssen die Layer die Selektiert werden Visible=true sein!!!!
                     foreach (Selection selection in selections)
                     {
                         if (selection.Layer == layer)
@@ -905,7 +907,7 @@ public class AxlService : IMapService2,
                     if (selection.Filter.Buffer != null)
                     {
                         #region Buffer
-                        // für Pufferdarstellung im AXL den Targetlayer nicht angeben
+                        // fÃ¼r Pufferdarstellung im AXL den Targetlayer nicht angeben
                         QueryFilter bQuery = selection.Filter.Clone();
                         bQuery.Where = WebGIS.CMS.Globals.EncUmlaute(bQuery.Where, _umlaute2wildcard);
                         bQuery.Buffer.TargetLayer = null;
@@ -1142,7 +1144,7 @@ public class AxlService : IMapService2,
 
             // Bild nicht downloaden!!
             // Original Url verwnden!!
-            // ausser für ArcMapServer!!!
+            // ausser fÃ¼r ArcMapServer!!!
             if (_arcmapserver == true)
             {
                 //using (Bitmap bm = dotNETConnector.DownloadImage(imageUrl, _connector.GetProxy(imageUrl)) /* ASHelper.DownloadImage(mapImg.ImageURL)*/)
@@ -1839,8 +1841,8 @@ public class AxlService : IMapService2,
         if (where != "")
         {
             //
-            // Achtung sonderzeichen sind noch nicht berücksichtigt
-            // könnte zu Fehlern in der Legende führen...
+            // Achtung sonderzeichen sind noch nicht berÃ¼cksichtigt
+            // kÃ¶nnte zu Fehlern in der Legende fÃ¼hren...
             //
             xWriter.WriteAttributeString("where", where);
         }
@@ -1884,7 +1886,7 @@ public class AxlService : IMapService2,
         try
         {
             XmlDocument xmldoc = new XmlDocument();
-            // beim Laden können fehler auftreten, wenn im in Ergebnisfeldern < > auftritt 
+            // beim Laden kÃ¶nnen fehler auftreten, wenn im in Ergebnisfeldern < > auftritt 
             // zb. Einwohner < 5000
             xmldoc.LoadXml(resp);
             //xmldoc.Load(xml);
@@ -2146,6 +2148,7 @@ public class AxlService : IMapService2,
         clone._SelectionRenderers_Template = _SelectionRenderers_Template;
         clone._isDirty = _isDirty;
         clone._opacity = _opacity;
+        clone.OpacityFactor = this.OpacityFactor;
         clone._dpi = _dpi;
         clone._errMsg = _errMsg;
         clone._encoding = _encoding;
@@ -2408,7 +2411,7 @@ public class AxlService : IMapService2,
                         }
                     }
 
-                    if (!show)  // Layer ausschließen
+                    if (!show)  // Layer ausschlieÃŸen
                     {
                         xWriter.WriteStartElement("LAYER");
                         xWriter.WriteAttributeString("id", layer.ID);

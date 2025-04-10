@@ -1,4 +1,4 @@
-webgis.service = function (map, serviceInfo) {
+ï»¿webgis.service = function (map, serviceInfo) {
     "use strict";
 
     let $ = webgis.$;
@@ -293,7 +293,7 @@ webgis.service = function (map, serviceInfo) {
 
     this._setTileCacheVisibility = function (visible) {
         //
-        // Falls Dienst ein Tilecache aber keine Basemap ist => hier hinzufügen/entfernen
+        // Falls Dienst ein Tilecache aber keine Basemap ist => hier hinzufÃ¼gen/entfernen
         //
         if (this.serviceInfo && this.serviceInfo.type === 'tile' && this.isBasemap === false &&
             this.frameworkElement &&
@@ -633,6 +633,8 @@ webgis.service = function (map, serviceInfo) {
     };
 
     this.setOpacity = function (opacity) {
+        opacity = opacity * this.serviceInfo.opacity_factor;
+
         if (this.isWatermark()) {  // watermark services shoud not unfocused!!!
             opacity = this.serviceInfo.opacity || 1.0;
         }
@@ -793,7 +795,7 @@ webgis.service = function (map, serviceInfo) {
 
             //console.log(x, y);
 
-            // Hex Darstellung für AGS TileCaches
+            // Hex Darstellung fÃ¼r AGS TileCaches
             let x_ = x.toString(16).lpad('0', 8);
             let y_ = y.toString(16).lpad('0', 8);
             let z_ = level.toString().lpad('0', 2);

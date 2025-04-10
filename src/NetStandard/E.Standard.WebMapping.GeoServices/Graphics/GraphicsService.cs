@@ -77,6 +77,7 @@ public class GraphicsService : IGraphicsService
             _opacity = value;
         }
     }
+    public float OpacityFactor { get; set; } = 1f;
 
     public bool ShowInToc { get; set; }
 
@@ -326,6 +327,7 @@ public class GraphicsService : IGraphicsService
         clone._map = parent;
         clone._name = _name;
         clone._opacity = _opacity;
+        clone.OpacityFactor = this.OpacityFactor;
         clone.ShowInToc = this.ShowInToc;
         clone._isDirty = _isDirty;
         clone._supportedCrs = _supportedCrs;

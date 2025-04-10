@@ -48,6 +48,7 @@ public class GeneralVectorTileService : IMapService, IServiceSupportedCrs
     public string ID { get; }
 
     public float Opacity { get; set; }
+    public float OpacityFactor { get; set; } = 1f;
 
     public bool CanBuffer => false;
 

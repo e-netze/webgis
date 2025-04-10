@@ -380,8 +380,10 @@ public class MapServiceInitializerService
                 return null;
             }
 
-            double opacity = (double)serviceLink.Load("opacity", 100.0);
-            service.Opacity = (float)Math.Max(0.0, Math.Min(1.0, opacity / 100.0));
+            double opacity = Math.Clamp((double)serviceLink.Load("opacity", 100.0), 0D, 100D);
+            double opacityFactor = Math.Clamp((double)serviceLink.Load("opacity_factor", 1.0), 0D, 1D);
+            service.Opacity = (float)(opacity / 100.0);
+            service.OpacityFactor = (float)opacityFactor;
 
             service.DiagnosticsWaringLevel = (ServiceDiagnosticsWarningLevel)serviceLink.Load("warninglevel", (int)ServiceDiagnosticsWarningLevel.Never);
 

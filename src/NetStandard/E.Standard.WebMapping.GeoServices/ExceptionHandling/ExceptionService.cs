@@ -1,4 +1,4 @@
-using E.Standard.WebMapping.Core;
+﻿using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
@@ -71,6 +71,7 @@ public class ExceptionService : IMapService
 
         }
     }
+    public float OpacityFactor { get; set; } = 1f;
 
     public bool ShowInToc { get; set; }
 

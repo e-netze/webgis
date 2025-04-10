@@ -1,4 +1,4 @@
-using E.Standard.Web.Extensions;
+﻿using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -75,6 +75,7 @@ public class WatermarkService : IMapService, IPrintableService
             _opacity = value;
         }
     }
+    public float OpacityFactor { get; set; } = 1f;
 
     public bool ShowInToc { get; set; }
 

@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core;
+Ôªøusing E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
@@ -53,7 +53,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     #region Properties
 
     [Browsable(true)]
-    [DisplayName("Durchl‰ssigkeit/Transparenz")]
+    [DisplayName("Initiale Deckkraft")]
     [Description("Gibt an, ob der Dienst nach den Starten der Karte transparent dargestellt werden soll. Der Wert muss zwischen 0 (100% transparent) und 100 (nicht transparent) liegen.")]
     [Category("Allgemein")]
     public double Opacity
@@ -61,6 +61,12 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
         get { return _opacity; }
         set { _opacity = value; }
     }
+
+    [Browsable(true)]
+    [DisplayName("Transparenz Factor")]
+    [Description("Ein Factor, mit den die vom Anwender eingestellte Transparenz immer multipliziert wird. Sollte der Dienst beispielsweise immer hab durchl√§ssig dargestellt werden, kann hier ein Wert von 0.5 eingestellt werden. Stellt der Anwender den Dienst auf 100% Deckkraft, bleibt der Dienst immer noch zu 50% durchl√§ssig. Ein Wert von 1 bedeutet, dass der dienst bei 100% Deckkraft keine Transparenz aufwei√üt.")]
+    [Category("Allgemein")]
+    public double OpacityFactor{ get; set; }
 
     [Browsable(true)]
     [DisplayName("Zeitverhalten: Timeout")]
@@ -75,7 +81,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
 
     [Browsable(true)]
     [DisplayName("Image Format")]
-    [Description("Gibt an, in welchen Format das Kartenbild von Dienst abgeholt wird. Diese Eigenschaft wird nur f¸r ArcIMS- und AGS Dienste ber¸cksichtigt!")]
+    [Description("Gibt an, in welchen Format das Kartenbild von Dienst abgeholt wird. Diese Eigenschaft wird nur f√ºr ArcIMS- und AGS Dienste ber√ºcksichtigt!")]
     [Category("Allgemein")]
     public ServiceImageFormat ImageFormat
     {
@@ -92,7 +98,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("Standardm‰ﬂig sichbar")]
+    [DisplayName("Standardm√§√üig sichbar")]
     [Description("Gibt an, ob der Dienst beim Kartenaufruf sichtbar ist...")]
     [Category("TOC")]
     public bool Visible
@@ -152,7 +158,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
 
     [Browsable(true)]
     [Category("Kartenprojektion")]
-    [Description("ESRI Datumstransformationen (Array), die bei Projection-On-The-Fly f¸r diese Karte verwendet werden sollen. Nur f¸r REST Services ab AGS 10.5. Es muss immer ein Array angegeben werden, zB [1618, ...] oder [1618]. Beim Abfragen (Query) kann nur eine Transformation ¸bergeben werden; hier wird immer die erste hier angef¸hrte Transformation verwendet.")]
+    [Description("ESRI Datumstransformationen (Array), die bei Projection-On-The-Fly f√ºr diese Karte verwendet werden sollen. Nur f√ºr REST Services ab AGS 10.5. Es muss immer ein Array angegeben werden, zB [1618, ...] oder [1618]. Beim Abfragen (Query) kann nur eine Transformation √ºbergeben werden; hier wird immer die erste hier angef√ºhrte Transformation verwendet.")]
     public int[] DatumTransformations
     {
         get; set;
@@ -177,8 +183,8 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
         set { _legendOpt = value; }
     }
     [Browsable(true)]
-    [DisplayName("Symboloptimierung ab einem Maﬂstab von 1:")]
-    [Description("Gibt an, ab welchem Maﬂstab die Symbole in der Legende optimiert werden (nur wenn Optimierungsgrad=Symbols).")]
+    [DisplayName("Symboloptimierung ab einem Ma√üstab von 1:")]
+    [Description("Gibt an, ab welchem Ma√üstab die Symbole in der Legende optimiert werden (nur wenn Optimierungsgrad=Symbols).")]
     [Category("Legende")]
     public double LegendOptSymbolScale
     {
@@ -186,7 +192,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
         set { _legendOptSymbolScale = value; }
     }
     [Browsable(true)]
-    [DisplayName("Url f¸r fixe Legende")]
+    [DisplayName("Url f√ºr fixe Legende")]
     [Description("Bei Angabe einer fixen Legende, wird immer nur diese angezeigt. Alle anderen Legendeneigenschaften werden ignoriert")]
     [Category("Legende")]
     public string LegendUrl
@@ -196,18 +202,18 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("Fixen Referenzmaﬂstab verwenden")]
-    [Description("Gilt nur f¸r ArcIMS (AXL) Dienste. Ist diese Eigenschaft auf 'true' gesetzt, wird auf diesen Kartendienst immer ein fester Referenzmaﬂstab angewendet. Dieser kann auch von Kartenbenutzer nicht ¸berschreiben werden!")]
-    [Category("~~Referenzmaﬂstab")]
+    [DisplayName("Fixen Referenzma√üstab verwenden")]
+    [Description("Gilt nur f√ºr ArcIMS (AXL) Dienste. Ist diese Eigenschaft auf 'true' gesetzt, wird auf diesen Kartendienst immer ein fester Referenzma√üstab angewendet. Dieser kann auch von Kartenbenutzer nicht √ºberschreiben werden!")]
+    [Category("~~Referenzma√üstab")]
     public bool UseFixRefScale
     {
         get { return _useFixRefScale; }
         set { _useFixRefScale = value; }
     }
     [Browsable(true)]
-    [DisplayName("Fixer Referenzmaﬂstab 1:")]
-    [Description("Gilt nur f¸r ArcIMS (AXL) Dienste. Gibt einen fixen Referenzmaﬂstab an, der auf diensen Dienst angewendet wird. Dieser kann auch von Kartenbenutzer nicht ¸berschreiben werden!")]
-    [Category("Referenzmaﬂstab")]
+    [DisplayName("Fixer Referenzma√üstab 1:")]
+    [Description("Gilt nur f√ºr ArcIMS (AXL) Dienste. Gibt einen fixen Referenzma√üstab an, der auf diensen Dienst angewendet wird. Dieser kann auch von Kartenbenutzer nicht √ºberschreiben werden!")]
+    [Category("Referenzma√üstab")]
     public double FixRefScale
     {
         get { return _fixRefScale; }
@@ -217,7 +223,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     [Browsable(true)]
     [DisplayName("MinScale: Dienst ist sichtbar bis 1:")]
     [Description("Bei Eingabe von 0 (default) wird dieser Wert ignoriert!")]
-    [Category("~Maﬂstabsgrenzen")]
+    [Category("~Ma√üstabsgrenzen")]
     public double MinScale
     {
         get { return _minScale; }
@@ -226,7 +232,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     [Browsable(true)]
     [DisplayName("MaxScale: Dienst ist sichtbar ab 1:")]
     [Description("Bei Eingabe von 0 (default) wird dieser Wert ignoriert!")]
-    [Category("Maﬂstabsgrenzen")]
+    [Category("Ma√üstabsgrenzen")]
     public double MaxScale
     {
         get { return _maxScale; }
@@ -234,9 +240,9 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("R‰umliche Einschr‰nkung verwenden")]
-    [Description("Dienst nur abfragen, wenn r‰umliche Einschr‰nkung f¸r diesen Dienst zutrifft")]
-    [Category("~R‰umliche Einschr‰nkung")]
+    [DisplayName("R√§umliche Einschr√§nkung verwenden")]
+    [Description("Dienst nur abfragen, wenn r√§umliche Einschr√§nkung f√ºr diesen Dienst zutrifft")]
+    [Category("~R√§umliche Einschr√§nkung")]
     public bool UseWithSpatialConstraintService
     {
         get { return _useWithSpatialConstraintService; }
@@ -253,7 +259,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [DisplayName("(Hinter)Grundkarten-Typ")]
-    [Description("Normal=Beim schalten dieser Hintergrundkarte werden alle anderen mit dem Typ normal ausgeschalten. Overlay=Diese Hintergrundkarte kann optional dazugeschalten werden (Beispiel: Ortsplanstraﬂen ¸ber ein Orthophoto)")]
+    [Description("Normal=Beim schalten dieser Hintergrundkarte werden alle anderen mit dem Typ normal ausgeschalten. Overlay=Diese Hintergrundkarte kann optional dazugeschalten werden (Beispiel: Ortsplanstra√üen √ºber ein Orthophoto)")]
     [Category("Basemap")]
     public BasemapType BasemapType
     {
@@ -262,7 +268,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Category("Basemap")]
-    [Description("Die Url zu einem Bild, dass f¸r die Kachel im Viewer als Vorschaubild angezeigt wird. Notwendig zB. f¸r WMS Dienste")]
+    [Description("Die Url zu einem Bild, dass f√ºr die Kachel im Viewer als Vorschaubild angezeigt wird. Notwendig zB. f√ºr WMS Dienste")]
     [DisplayName("Preview Image Url (Optional)")]
     public string BasemapPreviewImageUrl { get; set; } = "";
 
@@ -305,7 +311,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
 
     [Browsable(true)]
     [DisplayName("Copyright Info")]
-    [Description("Gibt die Copyright Info an, die f¸r diesen Dienst hinterlegt ist. Die Info muss unnter Sonstiges/Copyright definiert sein.")]
+    [Description("Gibt die Copyright Info an, die f√ºr diesen Dienst hinterlegt ist. Die Info muss unnter Sonstiges/Copyright definiert sein.")]
     [Category("Allgemein")]
     [Editor(typeof(TypeEditor.CopyrightInfoEditor), typeof(TypeEditor.ITypeEditor))]
     public string CopyrightInfo
@@ -334,6 +340,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
         }
 
         _opacity = (double)stream.Load("opacity", 100.0);
+        OpacityFactor = Math.Clamp((double)stream.Load("opacity_factor", 1.0), 0f, 1);   
         _timeout = (int)stream.Load("timeout", 20);
         _visible = (bool)stream.Load("visible", true);
         _imageFormat = (ServiceImageFormat)stream.Load("imageformat", (int)ServiceImageFormat.Default);
@@ -392,6 +399,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
                 null);
 
         stream.Save("opacity", _opacity);
+        stream.Save("opacity_factor", Math.Clamp(OpacityFactor, 0, 1));
         stream.Save("timeout", _timeout);
         stream.Save("visible", _visible);
         stream.Save("imageformat", (int)_imageFormat);

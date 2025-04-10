@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Show more than one Overlay Basemap [discussion #264](https://github.com/e-netze/webgis-community/discussions/264)
+  
+
 ## Fixed
 
 ## 7.25.1502
@@ -22,7 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Editing: Handling nullable ``esriFieldTypeDate`` Fields
-  https://github.com/e-netze/webgis-community/discussions/254
+  [discussion #254](https://github.com/e-netze/webgis-community/discussions/254)
 
 - CMS: List AGS services without user/password if any ``folder`` has restricted access.
 

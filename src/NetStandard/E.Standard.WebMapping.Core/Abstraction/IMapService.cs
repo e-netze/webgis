@@ -1,4 +1,4 @@
-using E.Standard.WebMapping.Core.Collections;
+﻿using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using System.Threading.Tasks;
@@ -17,6 +17,7 @@ public interface IMapService : IClone<IMapService, IMap>
     string ID { get; }
 
     float Opacity { get; set; }
+    float OpacityFactor { get; set; }
     bool CanBuffer { get; }
     bool UseToc { get; set; }
 

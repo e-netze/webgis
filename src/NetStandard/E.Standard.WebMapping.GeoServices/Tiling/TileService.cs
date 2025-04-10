@@ -1,4 +1,4 @@
-using E.Standard.Web.Extensions;
+﻿using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -154,6 +154,7 @@ public abstract class TileService : IMapService, IPrintableService, IServiceLege
             _opacity = value;
         }
     }
+    public float OpacityFactor { get; set; } = 1f;
 
     public bool ShowInToc { get; set; }
 
@@ -334,6 +335,7 @@ public abstract class TileService : IMapService, IPrintableService, IServiceLege
 
         clone._isDirty = _isDirty;
         clone._opacity = _opacity;
+        clone.OpacityFactor = this.OpacityFactor;
         clone.ShowInToc = this.ShowInToc;
 
         clone._minScale = _minScale;

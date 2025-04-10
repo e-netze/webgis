@@ -1,4 +1,4 @@
-using E.Standard.Api.App.Models.Abstractions;
+﻿using E.Standard.Api.App.Models.Abstractions;
 using E.Standard.CMS.Core;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
@@ -20,6 +20,7 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
     public int[] supportedCrs { get; set; }
 
     public double opacity { get; set; }
+    public float opacity_factor { get; set; } = 1f;
 
     public bool isbasemap { get; set; }
     public bool show_in_toc { get; set; }
