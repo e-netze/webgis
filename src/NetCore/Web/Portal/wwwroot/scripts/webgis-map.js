@@ -878,7 +878,7 @@ webgis.mapInitializer = (function (m) {
                 for (var id in webgis.initialParameters.editfieldvalues) {
                     //console.log(id);
                     //console.log(webgis.initialParameters.editfieldvalues[id]);
-                    map.setPersistentToolParameter('webgis.tools.editing.edit', 'editfield_' + id, webgis.initialParameters.editfieldvalues[id]);
+                    map.setPersistentToolParameter('webgis.tools.editing.edit', 'editfield_' + id, webgis.initialParameters.editfieldvalues[id], "force-set");
                 }
             }
 

@@ -25,8 +25,14 @@ static internal class JsonFeatureFieldExtensions
                     => field.ValueTypeOrDefault(value, (v) => Convert.ToInt16(v.Replace(",", "."))),
                 "esriFieldTypeInteger"
                     => field.ValueTypeOrDefault(value, (v) => Convert.ToInt32(value.Replace(",", "."))),
+                "esriFieldTypeDate"
+                    => field.ValueTypeOrDefault(value, (v) => v),
                 _ => value
             };
+
+            // TODO: Date Fields
+            // Convert them to DateTime and than to ESRI Datum (Milliseconds since 1970..)
+            // to ensure the Date is interpreted correctly (UTM?!) 
 
             return typedValue;
         }
@@ -38,6 +44,7 @@ static internal class JsonFeatureFieldExtensions
                 "esriFieldTypeSingle" => typeof(float),
                 "esriFieldTypeSmallInteger" => typeof(short),
                 "esriFieldTypeInteger" => typeof(int),
+                "esriFieldTypeDate" => typeof(DateTime),
                 _ => typeof(object)
             };
             throw new Exception($"Can't format input '{value}' to a correct {type.Name}!", ex);

@@ -16,11 +16,12 @@
     var request = this.Context.Request;
 
     string apiUrl = urlHelper.ApiUrl(request, E.Standard.WebGIS.Core.HttpSchema.Current);
+    string portalUrl = ViewData["portalRootUrl"]?.ToString().RemoveEndingSlashes();
     string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
 }
 
-<link href="~/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />
-<script src="~/lib/webportal-layout/webportal-layout.js"></script>
+<link href="@(portalUrl)/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />
+<script src="@(portalUrl)/lib/webportal-layout/webportal-layout.js"></script>
 
 <link href="@(apiUrl)/content/styles/default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 @if (customContent.PageMapDefaultCssExists(Model.PortalId))
@@ -183,31 +184,31 @@
     <div class="webportal-layout-sidebar">
         <ul class="webportal-layout-sidebar-items top">
             <li class="webportal-layout-sidebar-item resource">
-                <img src="~/content/img/help-26-w.png" />
+                <img src="@(portalUrl)/content/img/help-26-w.png" />
                 <a href="https://docs.webgiscloud.com/de/webgis/apps/map_builder/index.html" target="_blank">Help/Tutorials</a>
             </li>
 
             <!--
             <li class="webportal-layout-sidebar-item">
-                <img src="~/content/img/sidebar/edit-26-w.png" />
+                <img src="@(portalUrl)/content/img/sidebar/edit-26-w.png" />
                 <a href="" onclick="$('body').addClass('sidebar-collapsed'); return false;">Karte bearbeiten</a>
             </li>
             -->
             
             <li class="webportal-layout-sidebar-item">
-                <img src="~/content/img/sidebar/description-26-w.png" />
+                <img src="@(portalUrl)/content/img/sidebar/description-26-w.png" />
                 <a href="" onclick="editMapDescription(); return false;">Karte beschreiben...</a>
             </li>
 
             @if (!String.IsNullOrWhiteSpace(Model.PortalId))
             {
                 <li class="webportal-layout-sidebar-item">
-                    <img src="~/content/img/sidebar/deploy-26-w.png" />
+                    <img src="@(portalUrl)/content/img/sidebar/deploy-26-w.png" />
                     <a href="" onclick="publishMap('@(Model.PortalId)', '@(Model.PortalCategory)', '@(Model.MapName)'); return false;">Karte veröffentlichen</a>
                 </li>
                 @*
             <li class="webportal-layout-sidebar-item">
-                <img src="~/content/img/sidebar/html-26-w.png" />
+                <img src="@(portalUrl)/content/img/sidebar/html-26-w.png" />
                 <a href="" onclick="editHtmlMetaTags(); return false;">Html Meta Tags</a>
             </li>
                 *@
@@ -216,23 +217,23 @@
                     if (!String.IsNullOrWhiteSpace(Model.PortalCategory) && config.AllowMapUIMaster())
                     {
                         <li class="webportal-layout-sidebar-item">
-                            <img src="~/content/img/sidebar/master-26-w.png" />
+                            <img src="@(portalUrl)/content/img/sidebar/master-26-w.png" />
                             <a href="" onclick="emptyUIMaster('@(Model.PortalId)', '@(Model.PortalCategory)'); return false;">Leere UI Master Vorlage</a>
                         </li>
                         <li class="webportal-layout-sidebar-item">
-                            <img src="~/content/img/sidebar/master-26-w.png" />
+                            <img src="@(portalUrl)/content/img/sidebar/master-26-w.png" />
                             <a href="" onclick="manageUIMaster('@(Model.PortalId)', '@(Model.PortalCategory)'); return false;">UI Master verwalten</a>
                         </li>
                     }
 
                     <li class="webportal-layout-sidebar-item">
-                        <img src="~/content/img/sidebar/default-26-w.png" />
+                        <img src="@(portalUrl)/content/img/sidebar/default-26-w.png" />
                         <a href="" onclick="publishDefaults('@(Model.PortalId)'); return false;">Als Standard definieren</a>
                     </li>
                 }
 
                 <li class="webportal-layout-sidebar-item">
-                    <img src="~/content/img/sidebar/portal-26-w.png" />
+                    <img src="@(portalUrl)/content/img/sidebar/portal-26-w.png" />
                     <a href="@Url.Action("Index", "Home", new { id = Model.PortalId })">Map Portal</a>
                 </li>
             }
@@ -246,7 +247,7 @@
             @foreach (string template in Model.Templates)
             {
                 <li class="webportal-layout-sidebar-item">
-                    <img src="~/content/img/sidebar/html-26-w.png" />
+                    <img src="@(portalUrl)/content/img/sidebar/html-26-w.png" />
                     <a href="" onclick="createTemplate('@(template)'); return false;">Erstellen: @(template)</a>
                 </li>
             }
