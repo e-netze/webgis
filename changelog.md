@@ -9,11 +9,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+## Fixed
+
+## Unreleased
+
+### Added
+
 - Editing: Field Type "Locked": Shown as readonly field in the edit mask, an will be written to the database
            Useful for fields that are not editable in the frontend, which are passed via a URL parameter.
            (Readonly fields are not written to the database, only if they are also "AutoValues")
 
 ### Fixed
+
+- Editing: Handling nullable ``esriFieldTypeDate`` Fields
+  https://github.com/e-netze/webgis-community/discussions/254
+
+- CMS: List AGS services without user/password if any ``folder`` has restricted access.
+
+- Reverser Proxy Access: Fixed some hard coded (relative) Urls for load script and stylesheeds in portal pages and MapBuilder
 
 ## 7.25.1401
 
