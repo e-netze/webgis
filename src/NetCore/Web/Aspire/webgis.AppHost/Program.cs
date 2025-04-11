@@ -106,7 +106,8 @@ var webgisPortal = builder.AddProject<Projects.webgis_portal>("webgis-portal")
                           ;
 
 var webgisCms = builder.AddProject<Projects.webgis_cms>("webgis-cms")
-                       .WaitFor(webgisPortal);
+                       .WaitFor(webgisPortal)
+                       .WaitFor(webgisApi);
 
 #endregion
 
