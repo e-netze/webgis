@@ -9,10 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+## Fixed
+
+## 7.25.1502
+
+### Added
+
 - Show more than one Overlay Basemap [discussion #264](https://github.com/e-netze/webgis-community/discussions/264)
   
-
-## Fixed
+- Setting an opacity facor in CMS. Make services always transparent, even if the user sets them to 100% opacity.
+  [discussion #268](https://github.com/e-netze/webgis-community/discussions/268)
 
 ## 7.25.1502
 
