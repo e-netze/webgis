@@ -51,7 +51,7 @@ internal class PrintImageService : IStaticOverlayService, IPrintableService
 
     public string ID { get; set; }
 
-    public float Opacity { get; set; }
+    public float InitialOpacity { get; set; }
     public float OpacityFactor { get; set; }
 
     public bool CanBuffer => false;

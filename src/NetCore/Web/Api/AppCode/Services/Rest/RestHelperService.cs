@@ -101,7 +101,7 @@ public class RestHelperService
                 name = service.Name,
                 id = service.Url,
                 type = serviceType.ToString().ToLower(),
-                opacity = service.Opacity,
+                opacity = service.InitialOpacity,
                 opacity_factor = service.OpacityFactor,
                 properties = new ServiceInfoDTO.TileProperties()
                 {
@@ -125,7 +125,7 @@ public class RestHelperService
                 name = vtcService.Name,
                 id = vtcService.Url,
                 type = serviceType.ToString().ToLower(),
-                opacity = vtcService.Opacity,
+                opacity = vtcService.InitialOpacity,
                 properties = new ServiceInfoDTO.VectorTileProperties()
                 {
                     basemap_type = vtcService.BasemapType.ToString().ToLower(),
@@ -146,7 +146,7 @@ public class RestHelperService
                 name = service.Name,
                 id = service.Url,
                 type = serviceType.ToString().ToLower(),
-                opacity = service.Opacity,
+                opacity = service.InitialOpacity,
                 opacity_factor = service.OpacityFactor,
 
                 OverlayUrl = overlayService.OverlayImageUrl,
@@ -169,7 +169,7 @@ public class RestHelperService
                 name = service.Name,
                 id = service.Url,
                 type = serviceType.ToString().ToLower(),
-                opacity = service.Opacity,
+                opacity = service.InitialOpacity,
                 opacity_factor = service.OpacityFactor,
             };
 

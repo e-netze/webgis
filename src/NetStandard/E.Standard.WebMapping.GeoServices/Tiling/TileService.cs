@@ -143,7 +143,7 @@ public abstract class TileService : IMapService, IPrintableService, IServiceLege
         get { return _id; }
     }
 
-    public float Opacity
+    public float InitialOpacity
     {
         get
         {

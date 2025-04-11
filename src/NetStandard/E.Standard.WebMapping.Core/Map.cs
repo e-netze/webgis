@@ -434,7 +434,7 @@ public class Map : Display, IMap
 
                     merger.Add(imagePath,
                                service is IGraphicsService ? int.MaxValue : _services.IndexOf(service),   // Graphics immer ganz oben, noch über Selektion zeichnen!!
-                               service.Opacity);
+                               service.InitialOpacity * service.OpacityFactor);
                     responseCount++;
                 }
 

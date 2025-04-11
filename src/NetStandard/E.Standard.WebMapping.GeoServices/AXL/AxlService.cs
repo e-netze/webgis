@@ -107,7 +107,7 @@ public class AxlService : IMapService2,
         get { return _id; }
     }
 
-    public float Opacity
+    public float InitialOpacity
     {
         get { return _opacity; }
         set

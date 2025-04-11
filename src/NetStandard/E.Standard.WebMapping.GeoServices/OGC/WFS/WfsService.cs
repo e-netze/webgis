@@ -82,7 +82,7 @@ public class WfsService : IMapService, IServiceSupportedCrs, IServiceCopyrightIn
         get { return _id; }
     }
 
-    public float Opacity
+    public float InitialOpacity
     {
         get
         {

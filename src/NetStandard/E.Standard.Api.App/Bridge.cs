@@ -279,7 +279,7 @@ public class Bridge : IBridge
             name = service.Name,
             id = service.Url,
             type = ServiceDTO.GetServiceType(service).ToString().ToLower(),
-            opacity = service.Opacity
+            opacity = service.InitialOpacity
         };
 
         List<ServiceInfoDTO.LayerInfo> layers = new List<ServiceInfoDTO.LayerInfo>();

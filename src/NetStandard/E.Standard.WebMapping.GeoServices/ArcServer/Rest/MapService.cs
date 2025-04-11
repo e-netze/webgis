@@ -95,7 +95,7 @@ public class MapService : IMapService2,
         private set;
     }
 
-    public float Opacity
+    public float InitialOpacity
     {
         get;
         set;
@@ -1124,7 +1124,7 @@ public class MapService : IMapService2,
         clone.ID = this.ID;
         clone.UseToc = this.UseToc;
         clone.InitialExtent = this.InitialExtent;
-        clone.Opacity = this.Opacity;
+        clone.InitialOpacity = this.InitialOpacity;
         clone.OpacityFactor = this.OpacityFactor;
         clone.ShowInToc = this.ShowInToc;
 

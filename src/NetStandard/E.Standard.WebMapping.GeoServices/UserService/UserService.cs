@@ -126,7 +126,7 @@ public class UserService : IUserService, IPersistable
         }
     }
 
-    public float Opacity
+    public float InitialOpacity
     {
         get
         {
@@ -135,13 +135,13 @@ public class UserService : IUserService, IPersistable
                 return 0f;
             }
 
-            return _service.Opacity;
+            return _service.InitialOpacity;
         }
         set
         {
             if (_service != null)
             {
-                _service.Opacity = value;
+                _service.InitialOpacity = value;
             }
         }
     }

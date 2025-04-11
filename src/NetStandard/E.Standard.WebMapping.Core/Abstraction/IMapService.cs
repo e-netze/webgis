@@ -16,7 +16,7 @@ public interface IMapService : IClone<IMapService, IMap>
 
     string ID { get; }
 
-    float Opacity { get; set; }
+    float InitialOpacity { get; set; }
     float OpacityFactor { get; set; }
     bool CanBuffer { get; }
     bool UseToc { get; set; }

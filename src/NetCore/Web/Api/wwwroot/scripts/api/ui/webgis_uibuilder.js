@@ -2689,7 +2689,7 @@
             });
 
         $opacityItemButtonContainer
-            .find('.webgis-menu-item-imagebutton.' + Math.round(service.opacity * 100))
+            .find('.webgis-menu-item-imagebutton.' + Math.round(service.getOpacity() * 100))
             .addClass('selected');
 
         checkMapFocusSettings();
@@ -2751,7 +2751,7 @@
                 if (focusedServices) {
                     $holder.css('opacity', .8);
 
-                    var serviceOpacity = focusedServices.ids && $.inArray(service.id, focusedServices.ids) >= 0 ? 1.0 : focusedServices.opacity;
+                    var serviceOpacity = focusedServices.ids && $.inArray(service.id, focusedServices.ids) >= 0 ? 1.0 : focusedServices.getOpacity();
 
                     $holder.children('.webgis-menu-item-imagebutton')
                         .css('display', 'none')
@@ -2766,12 +2766,12 @@
                         .css('display', '')
                         .removeClass('disabled')
                         .removeClass('selected');
-                    $holder.children('.webgis-menu-item-imagebutton.' + service.opacity * 100)
+                    $holder.children('.webgis-menu-item-imagebutton.' + service.getOpacity() * 100)
                         .addClass('selected');
                 }
 
                 if (service.isBasemap) {
-                    applyServiceOpacity(service, service.opacity);  // set all overlay basemap to the same opacity
+                    applyServiceOpacity(service, service.getOpacity());  // set all overlay basemap to the same opacity
                 }
             }
         });

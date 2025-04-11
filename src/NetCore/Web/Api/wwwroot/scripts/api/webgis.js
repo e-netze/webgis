@@ -810,7 +810,7 @@
 
         // Focus Services
         if (mapJson.focused_services && mapJson.focused_services.ids && mapJson.focused_services.ids.length > 0) {
-            map.focusServices(mapJson.focused_services.ids, mapJson.focused_services.opacity);
+            map.focusServices(mapJson.focused_services.ids, mapJson.focused_services.getOpacity());
         }
 
         var mapIsReady = false;

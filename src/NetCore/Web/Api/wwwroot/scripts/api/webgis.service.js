@@ -71,7 +71,7 @@
         if (this.serviceInfo.insertOrder) {
             this.setOrder(this.serviceInfo.insertOrder);
         }
-        this.setOpacity(this.opacity);
+        this.setOpacity(this.getOpacity());
 
         if (this.serviceInfo.type === 'tile' && this.isBasemap === false) {
             if (this.layers.length > 0 && this.layers[0]) {
@@ -105,7 +105,7 @@
     
         let o = {
             id: id,
-            opacity: this.opacity,
+            opacity: this.getOpacity(),
             order: this.getOrder(),
             layers: [],
             queries: []
@@ -633,21 +633,31 @@
     };
 
     this.setOpacity = function (opacity) {
-        opacity = opacity * this.serviceInfo.opacity_factor;
+        
+        opacity = Math.min(Math.max(opacity, 0.0), 1.0);
 
         if (this.isWatermark()) {  // watermark services shoud not unfocused!!!
             opacity = this.serviceInfo.opacity || 1.0;
         }
 
+        this.opacity = opacity
+        opacity = Math.round(opacity * this.serviceInfo.opacity_factor * 100) / 100;
+
+        //console.log(this.id + ".setOpacity: ", opacity, this.opacity);
+
         if (this.frameworkElement && this.frameworkElement.setOpacity) {
             //console.trace('setopacity', this.name, opacity);
-            this.frameworkElement.setOpacity(this.opacity = opacity);
+            this.frameworkElement.setOpacity(opacity);
         } else if(this.serviceInfo.type === "vtc") {
             //console.log(this.frameworkElement);
             if (this.frameworkElement._container) {
                 $(this.frameworkElement._container).css('opacity', opacity);
             }
         }
+    };
+    this.getOpacity = function () {
+        //console.log(this.id + ".getOpacity() =>", this.opacity);
+        return this.opacity;
     };
     this.focus = function () {
         if (this.frameworkElement && this.frameworkElement.setOpacity)
@@ -662,7 +672,7 @@
             this.frameworkElement.setOpacity(opacity);
     };
     this.resetFocus = function () {
-        this.setOpacity(this.opacity);
+        this.setOpacity(this.getOpacity());
     };
     this.hide = function (opacity) {
         if (this.isWatermark()) {  // watermark services can't be hidden!!!
@@ -680,14 +690,14 @@
         }
 
         if (this.frameworkElement && this.frameworkElement.setOpacity) {
-            let opacity = this.opacity;
+            let opacity = this.getOpacity();
 
             let focusedServices = this.map.focusedServices();
             if (focusedServices && focusedServices.ids) {
                 if ($.inArray(this.id, focusedServices.ids) >= 0) {
                     opacity = 1.0;
                 } else {
-                    opacity = focusedServices.opacity;
+                    opacity = focusedServices.getOpacity();
                 }
             }
 

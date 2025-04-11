@@ -66,7 +66,7 @@ public class CollectionService : IMapService, IEnumerable<IMapService>, IPrintab
         get { return _id; }
     }
 
-    public float Opacity
+    public float InitialOpacity
     {
         get
         {
@@ -317,7 +317,7 @@ public class CollectionService : IMapService, IEnumerable<IMapService>, IPrintab
                         continue;
                     }
 
-                    merger.Add(imagePath, _services.IndexOf(service), service.Opacity);
+                    merger.Add(imagePath, _services.IndexOf(service), service.InitialOpacity * service.OpacityFactor);
                     responseCount++;
                 }
             }

@@ -1032,7 +1032,7 @@
 
         // Focus Services
         if (mapJson.focused_services && mapJson.focused_services.ids && mapJson.focused_services.ids.length > 0) {
-            this.focusServices(mapJson.focused_services.ids, mapJson.focused_services.opacity);
+            this.focusServices(mapJson.focused_services.ids, mapJson.focused_services.getOpacity());
         }
 
         //debugger;
@@ -1502,7 +1502,7 @@
     };
 
     this.hasFocusedServices = function () { return _focusedServices !== null };
-    this.focusedServices = function () { return _focusedServices ? { ids: _focusedServices.ids, opacity: _focusedServices.opacity } : null };
+    this.focusedServices = function () { return _focusedServices ? { ids: _focusedServices.ids, opacity: _focusedServices.getOpacity() } : null };
 
     this.showServiceExclusive = function (serviceId, opacity) {
         for (var s in this.services) {
@@ -2941,7 +2941,7 @@
                 }
                 this._baseMaps.currentOverlays.push(overlayService);
                 if (service) {
-                    overlayService.setOpacity(service.opacity);
+                    overlayService.setOpacity(service.getOpacity());
                 }
                 overlayService.setLayerVisibility(["*"], true, fireLiveshareEvent);
             }

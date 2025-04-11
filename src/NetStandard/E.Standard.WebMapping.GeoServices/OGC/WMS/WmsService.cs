@@ -122,7 +122,7 @@ public class WmsService : IMapService2,
         get { return _id; }
     }
 
-    public float Opacity
+    public float InitialOpacity
     {
         get
         {

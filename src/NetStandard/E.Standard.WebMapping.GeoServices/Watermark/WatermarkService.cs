@@ -64,7 +64,7 @@ public class WatermarkService : IMapService, IPrintableService
         get { return "_watermark"; }
     }
 
-    public float Opacity
+    public float InitialOpacity
     {
         get
         {

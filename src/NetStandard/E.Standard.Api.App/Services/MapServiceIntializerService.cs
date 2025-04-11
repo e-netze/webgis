@@ -382,7 +382,7 @@ public class MapServiceInitializerService
 
             double opacity = Math.Clamp((double)serviceLink.Load("opacity", 100.0), 0D, 100D);
             double opacityFactor = Math.Clamp((double)serviceLink.Load("opacity_factor", 1.0), 0D, 1D);
-            service.Opacity = (float)(opacity / 100.0);
+            service.InitialOpacity = (float)(opacity / 100.0);
             service.OpacityFactor = (float)opacityFactor;
 
             service.DiagnosticsWaringLevel = (ServiceDiagnosticsWarningLevel)serviceLink.Load("warninglevel", (int)ServiceDiagnosticsWarningLevel.Never);

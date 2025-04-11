@@ -211,7 +211,7 @@ public class RestController : ApiBaseController
                     container = container,
                     supportedCrs = (service is IServiceSupportedCrs ? ((IServiceSupportedCrs)service).SupportedCrs : null),
                     isbasemap = service.IsBaseMap,
-                    opacity = service.Opacity,
+                    opacity = service.InitialOpacity,
                     childServices = service is IMapServiceCollection
                         ? service.ResolveCollectionServiceUrls(_cache, ui)
                         : null
@@ -380,7 +380,7 @@ public class RestController : ApiBaseController
                     supportedCrs = (service is IServiceSupportedCrs ? ((IServiceSupportedCrs)service).SupportedCrs : null),
                     isbasemap = service.IsBaseMap,
                     queries = queries.queries,
-                    opacity = service.Opacity
+                    opacity = service.InitialOpacity
                 });
             }
 
@@ -616,7 +616,7 @@ public class RestController : ApiBaseController
                     container = container,
                     supportedCrs = (service is IServiceSupportedCrs ? ((IServiceSupportedCrs)service).SupportedCrs : null),
                     isbasemap = service.IsBaseMap,
-                    opacity = service.Opacity
+                    opacity = service.InitialOpacity
                 });
             }
 

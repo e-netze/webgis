@@ -66,7 +66,7 @@ public class GraphicsService : IGraphicsService
         get { return "graphics"; }
     }
 
-    public float Opacity
+    public float InitialOpacity
     {
         get
         {

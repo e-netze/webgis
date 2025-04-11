@@ -60,7 +60,7 @@ public class ExceptionService : IMapService
         get { return _id; }
     }
 
-    public float Opacity
+    public float InitialOpacity
     {
         get
         {
