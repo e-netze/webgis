@@ -1,4 +1,5 @@
-﻿using System;
+﻿using E.Standard.Platform;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -458,10 +459,7 @@ public class Envelope : Shape
 
         #endregion
 
-        return MinX.ToString().Replace(",", ".") + "," +
-               MinY.ToString().Replace(",", ".") + "," +
-               MaxX.ToString().Replace(",", ".") + "," +
-               MaxY.ToString().Replace(",", ".");
+        return $"{MinX.ToPlatformNumberString()},{MinY.ToPlatformNumberString()},{MaxX.ToPlatformNumberString()},{MaxY.ToPlatformNumberString()}";
     }
     public void FromBBox(string bbox)
     {

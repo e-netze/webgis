@@ -72,7 +72,7 @@ public class BaseRequestBuilder<T> where T : BaseRequestBuilder<T>
     {
         if (map.DisplayRotation != 0D)
         {
-            return Append($"rotation={map.DisplayRotation.ToString().ToPlatformDouble()}");
+            return Append($"rotation={map.DisplayRotation.ToPlatformNumberString()}");
         }
 
         return _self;

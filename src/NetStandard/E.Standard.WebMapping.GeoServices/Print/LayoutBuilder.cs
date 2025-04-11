@@ -74,8 +74,12 @@ public class LayoutBuilder
 
             FileInfo fi = new FileInfo(filename);
             _doc = new XmlDocument();
-            var xml = File.ReadAllText(filename);
-            _doc.LoadXml(xml);
+            
+            //var xml = File.ReadAllText(filename);
+            //_doc.LoadXml(xml);
+
+            // use XmlDocument.Load because it respects the encoding from xml header
+            _doc.Load(fi.FullName);
 
             _root = _doc.SelectSingleNode("//layout");
 
