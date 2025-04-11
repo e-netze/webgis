@@ -1594,8 +1594,9 @@
                             .find('.webgis-presentation_toc-item')
                             .removeClass('webgis-presentation_toc-hidden')
                             .each(function (i, e) {
-                                if (e.resetPreview) {
-                                    e.resetPreview.apply(e);
+                                let resetPreview = $(e).data('resetPreview');
+                                if (resetPreview) {
+                                    resetPreview.apply($(e));
                                 }
                             });
                         $li.children('.webgis-presentation_toc-plus')
@@ -1714,8 +1715,9 @@
                             .find('.webgis-presentation_toc-item')
                             .removeClass('webgis-presentation_toc-hidden')
                             .each(function (i, e) {
-                                if (e.resetPreview) {
-                                    e.resetPreview.apply(e);
+                                let resetPreview = $(e).data('resetPreview');
+                                if (resetPreview) {
+                                    resetPreview.apply($(e));
                                 }
                             });
                         $li.children('.webgis-presentation_toc-plus').removeClass('webgis-api-icon-triangle-1-s').addClass('webgis-api-icon-triangle-1-e');
@@ -2007,8 +2009,9 @@
                             .find('.webgis-presentation_toc-item')
                             .removeClass('webgis-presentation_toc-hidden')
                             .each(function (i, e) {
-                                if (e.resetPreview) {
-                                    e.resetPreview.apply(e);
+                                let resetPreview = $(e).data('resetPreview');
+                                if (resetPreview) {
+                                    resetPreview.apply($(e));
                                 }
                             });
                         $li.children('.webgis-presentation_toc-plus').removeClass('webgis-api-icon-triangle-1-s').addClass('webgis-api-icon-triangle-1-e');
