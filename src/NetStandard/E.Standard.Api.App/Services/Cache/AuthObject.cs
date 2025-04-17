@@ -20,7 +20,7 @@ public class AuthObject<T>
         //if (cmsui == null && _authNode != null)
         //    return default(T);
 
-        if (!CmsDocument.CheckAuthorization(cmsui, _authNode, CmsDocument.CheckAuthTarget.WebGIS5))
+        if (!CmsDocument.CheckAuthorization(cmsui, _authNode))
         {
             return default(T);
         }
@@ -66,9 +66,11 @@ public class AuthProperty<T>
         _propertyValue = propertyValue;
         _unauthorizedValue = unauthorizedValue;
 
-        if (appendEveryoneAllowedIfEmpty == true && authNode.Users.Count == 0 && authNode.Roles.Count == 0)
+        if (appendEveryoneAllowedIfEmpty == true 
+            && authNode.Users.Count == 0 
+            && authNode.Roles.Count == 0)
         {
-            authNode.Users.Add(new CmsUser(CmsDocument.Everyone, true));
+            authNode.Append(new CmsDocument.AuthNode(CmsUserList.Everyone, CmsUserList.Empty));
         }
     }
 
@@ -76,7 +78,7 @@ public class AuthProperty<T>
 
     public T AuthorizedPropertyValue(CmsDocument.UserIdentification cmsui)
     {
-        if (!CmsDocument.CheckAuthorization(cmsui, _authNode, CmsDocument.CheckAuthTarget.WebGIS5))
+        if (!CmsDocument.CheckAuthorization(cmsui, _authNode))
         {
             return _unauthorizedValue;
         }

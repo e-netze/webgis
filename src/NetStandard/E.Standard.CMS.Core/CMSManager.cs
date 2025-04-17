@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core.Abstractions;
+ï»¿using E.Standard.CMS.Core.Abstractions;
 using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
@@ -9,6 +9,8 @@ using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.Security;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.Extensions.ErrorHandling;
+using E.Standard.Extensions.Formatting;
+using Microsoft.AspNetCore.Authorization.Policy;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -1023,7 +1025,7 @@ public partial class CMSManager
                             }
                             catch { }
                         }
-                        warnings.Add(new Warning($"{path} => {linkUri.InnerText} ({targetName})", "Link ist ungültig") { Level = Warning.WaringLevel.Warning });
+                        warnings.Add(new Warning($"{path} => {linkUri.InnerText} ({targetName})", "Link ist ungÃ¼ltig") { Level = Warning.WaringLevel.Warning });
                     }
                 }
             }
@@ -1414,7 +1416,7 @@ public partial class CMSManager
                         xWriter.WriteAttributeString("type", "directory");
                         if (recursive)
                         {
-                            #region Bei Filter kann mit der Recursion aufgehört werden, wenn Filtertype gefunden wurde (Beschleunigt suche...)
+                            #region Bei Filter kann mit der Recursion aufgehÃ¶rt werden, wenn Filtertype gefunden wurde (Beschleunigt suche...)
                             bool found = false;
                             if (filters != null && schemaNode != null && schemaNode.Attributes["filtertype"] != null)
                             {
@@ -1678,7 +1680,7 @@ public partial class CMSManager
         List<ExportAuthNode> authNodes = new List<ExportAuthNode>();
         ExportAppendAcl(this.Root + @"\root.acl", authNodes);
 
-        var xmlStream = (XmlFileStreamDocument)DocumentFactory.New(String.Empty/*this.ConnectionString*/);  // DoTo: soll auch für andere Typen funktioneren -> Hardcoded Casting
+        var xmlStream = (XmlFileStreamDocument)DocumentFactory.New(String.Empty/*this.ConnectionString*/);  // DoTo: soll auch fÃ¼r andere Typen funktioneren -> Hardcoded Casting
 
         if (onParseBeforeEncryptValue != null)
         {
@@ -1692,7 +1694,7 @@ public partial class CMSManager
         if (ignoreAuthentification)
         {
             authNodes.Clear();
-            // Wenn kein rootAuth Node -> Jeder darf standardmaßig alles
+            // Wenn kein rootAuth Node -> Jeder darf standardmaÃŸig alles
             authNodes.Add(new ExportAuthNode(String.Empty, new CmsUser(CmsDocument.Everyone, true)));
         }
         else
@@ -1706,7 +1708,7 @@ public partial class CMSManager
                     break;
                 }
             }
-            if (!hasRootAuthNode)  // Wenn kein rootAuth Node -> Jeder darf standardmaßig alles
+            if (!hasRootAuthNode)  // Wenn kein rootAuth Node -> Jeder darf standardmaÃŸig alles
             {
                 authNodes.Add(new ExportAuthNode(String.Empty, new CmsUser(CmsDocument.Everyone, true)));
             }
@@ -1760,7 +1762,7 @@ public partial class CMSManager
                 if (itemName.StartsWith(".") &&
                     itemName.ToLower() != ".linktemplate")
                 {
-                    // .linktemplate schreiben! wichtig für GDI, wo nur Dienste parameteriert werden!
+                    // .linktemplate schreiben! wichtig fÃ¼r GDI, wo nur Dienste parameteriert werden!
                     continue;
                 }
 
@@ -1919,6 +1921,8 @@ public partial class CMSManager
 
             AuthPath = path;
             NodeAuth = new NodeAuthorization();
+            var userListBuilder = new CmsUserList.UniqueItemListBuilder();
+            var roleListBuilder = new CmsUserList.UniqueItemListBuilder();  
 
             try
             {
@@ -1927,22 +1931,26 @@ public partial class CMSManager
 
                 foreach (XmlNode userNode in doc.SelectNodes("acl/user[@name and @allowed]"))
                 {
-                    NodeAuth.Users.Add(new CmsUser(userNode.Attributes["name"].Value, userNode.Attributes["allowed"].Value.ToLower() == "true"));
+                    userListBuilder.Add(new CmsUser(userNode.Attributes["name"].Value, userNode.Attributes["allowed"].Value.ToLower() == "true"));
                 }
 
                 foreach (XmlNode roleNode in doc.SelectNodes("acl/role[@name and @allowed]"))
                 {
-                    NodeAuth.Roles.Add(new CmsRole(roleNode.Attributes["name"].Value, roleNode.Attributes["allowed"].Value.ToLower() == "true"));
+                    roleListBuilder.Add(new CmsRole(roleNode.Attributes["name"].Value, roleNode.Attributes["allowed"].Value.ToLower() == "true"));
                 }
 
             }
             catch { }
+
+            NodeAuth.Users = new CmsUserList(userListBuilder.Build());
+            NodeAuth.Roles = new CmsUserList(roleListBuilder.Build());
+
         }
         public ExportAuthNode(string path, CmsUser user)
         {
             AuthPath = path;
             NodeAuth = new NodeAuthorization();
-            NodeAuth.Users.Add(user);
+            NodeAuth.Users = new CmsUserList([user]);
         }
 
         async public Task Save(XmlNode parentNode)
@@ -1957,8 +1965,13 @@ public partial class CMSManager
             attr.Value = AuthPath;
             authNode.Attributes.Append(attr);
 
-            var users = NodeAuth.Users;
-            var roles = NodeAuth.Roles;
+            //var users = NodeAuth.Users;
+            //var roles = NodeAuth.Roles;
+
+            var users = new CmsUserList.UniqueItemListBuilder();
+            var roles = new CmsUserList.UniqueItemListBuilder();
+            users.AddRange(NodeAuth.Users.Items);
+            roles.AddRange(NodeAuth.Roles.Items);
 
             if (CmsDocument.UseAuthExclusives && NodeAuth.HasExclusiveRestriction)
             {
@@ -1966,43 +1979,47 @@ public partial class CMSManager
 
                 _cmsManager.OnMessage?.Invoke(_cmsManager, new ParseEventArgs("Modify exclusive authorization", this.AuthPath));
 
-                #region Exclusive Benutzer übernehmen
+                #region Exclusive Benutzer Ã¼bernehmen
 
-                users = new CmsUserList(
-                    users.Where(u => u.HasExclusivePostfix())
+                users.Clear();
+                users.AddRange(
+                    NodeAuth.Users.Items
+                         .Where(u => u.HasExclusivePostfix())
                          .Select(u => u.RemoveExclusivePostfixAndSetProperty()));
 
-                foreach (var user in users)
+                users.ForEeach(user =>
                 {
                     _cmsManager.OnMessage?.Invoke(_cmsManager, new ParseEventArgs($"exclusive {(user.Allowed ? "allow" : "deny")} user", user.Name));
-                }
+                });
 
-                roles = new CmsUserList(
-                    roles.Where(r => r.HasExclusivePostfix())
+                roles.Clear();
+                roles.AddRange(
+                    NodeAuth.Roles.Items
+                         .Where(r => r.HasExclusivePostfix())
                          .Select(r => r.RemoveExclusivePostfixAndSetProperty()));
 
-                foreach (var role in roles)
+                roles.ForEeach(role =>
                 {
                     _cmsManager.OnMessage?.Invoke(_cmsManager, new ParseEventArgs($"exclusive {(role.Allowed ? "allow" : "deny")} role", role.Name));
-                }
+                });
 
                 #endregion
 
-                #region aller Vererbten und gesetzten user außschließen 
-                // (ignore == true) werden beim CheckAuthnode im WebGIS nicht mehr berücksichtigt
-                // Müssen aber trotzdem gesetzt werden, damit die Vererbung aufgebrochen wird
+                #region aller Vererbten und gesetzten user auÃŸschlieÃŸen 
+                // (ignore == true) werden beim CheckAuthnode im WebGIS nicht mehr berÃ¼cksichtigt
+                // MÃ¼ssen aber trotzdem gesetzt werden, damit die Vererbung aufgebrochen wird
 
                 // Nur User/Rollen mit allowed=true auf ignored setzen. 
-                // => Ausschließungen sollten trotzdem erhalten bleiben
+                // => AusschlieÃŸungen sollten trotzdem erhalten bleiben
 
-                // ist eigentlich obsolet, weil in der API dann für jeden AuthNode IgnoreAllowedIfHasExclusives
+                // ist eigentlich obsolet, weil in der API dann fÃ¼r jeden AuthNode IgnoreAllowedIfHasExclusives
                 // aufgerufen wird, und somit alle nicht exklusiven Knoten auf ignore gesetzt werden.
-                // Dieser Schritt wird noch aus Kompatibilitätsgründen gemacht: In älteren Versionen
+                // Dieser Schritt wird noch aus KompatibilitÃ¤tsgrÃ¼nden gemacht: In Ã¤lteren Versionen
                 // wurde ReduceToExclusives nicht aufgerufen und auch das "exclusive" Attribute im XML gesetht.
-                // => man sollte aber trotzdem noch auf alte (zB stable) version publiziern können und 
+                // => man sollte aber trotzdem noch auf alte (zB stable) version publiziern kÃ¶nnen und 
                 // das gleiche Ergebnis erhalten.
 
-                foreach (var user in fullNode.Users.Where(u => u.IsAllowedAndNotExclusive()))
+                foreach (var user in fullNode.Users.Items.Where(u => u.IsAllowedAndNotExclusive()))
                 {
                     if (users.Any(u => u.Name.Equals(user.Name)) == false)
                     {
@@ -2011,7 +2028,7 @@ public partial class CMSManager
                     }
                 }
 
-                foreach (var role in fullNode.Roles.Where(r => r.IsAllowedAndNotExclusive()))
+                foreach (var role in fullNode.Roles.Items.Where(r => r.IsAllowedAndNotExclusive()))
                 {
                     if (roles.Any(r => r.Name.Equals(role.Name)) == false)
                     {
@@ -2023,7 +2040,7 @@ public partial class CMSManager
                 #endregion
             }
 
-            foreach (CmsUser user in users)
+            foreach (CmsUser user in users.Build())
             {
                 XmlNode userNode = parentNode.OwnerDocument.CreateElement("user");
 
@@ -2052,7 +2069,7 @@ public partial class CMSManager
                 authNode.AppendChild(userNode);
             }
 
-            foreach (CmsUser role in roles)
+            foreach (CmsUser role in roles.Build())
             {
                 XmlNode roleNode = parentNode.OwnerDocument.CreateElement("role");
 
@@ -2113,16 +2130,17 @@ public partial class CMSManager
 
     public class NodeAuthorization
     {
-        public CmsUserList Users = new CmsUserList();
-        public CmsUserList Roles = new CmsUserList();
+        public CmsUserList Users = new CmsUserList([]);
+        public CmsUserList Roles = new CmsUserList([]);
+
         public string TargetAclPath { get; set; }
 
         public bool HasRestrictions
         {
             get
             {
-                return (this.Users != null && this.Users.Any(u => u.Allowed == false)) ||
-                       (this.Roles != null && this.Roles.Any(r => r.Allowed == false));
+                return (this.Users != null && this.Users.Items.Any(u => u.Allowed == false)) ||
+                       (this.Roles != null && this.Roles.Items.Any(r => r.Allowed == false));
             }
         }
 
@@ -2130,8 +2148,8 @@ public partial class CMSManager
         {
             get
             {
-                return (this.Users != null && this.Users.Any(u => u.HasExclusivePostfix())) ||
-                       (this.Roles != null && this.Roles.Any(r => r.HasExclusivePostfix()));
+                return (this.Users != null && this.Users.Items.Any(u => u.HasExclusivePostfix())) ||
+                       (this.Roles != null && this.Roles.Items.Any(r => r.HasExclusivePostfix()));
             }
         }
 
@@ -2143,12 +2161,12 @@ public partial class CMSManager
             {
                 if (this.Users != null)
                 {
-                    ret.AddRange(this.Users.Where(u => u.IsAllowedAndNotExclusive()).Select(u => u.Name));
+                    ret.AddRange(this.Users.Items.Where(u => u.IsAllowedAndNotExclusive()).Select(u => u.Name));
                 }
 
                 if (this.Roles != null)
                 {
-                    ret.AddRange(this.Roles.Where(r => r.IsAllowedAndNotExclusive()).Select(r => r.Name));
+                    ret.AddRange(this.Roles.Items.Where(r => r.IsAllowedAndNotExclusive()).Select(r => r.Name));
                 }
             }
 
@@ -2163,12 +2181,12 @@ public partial class CMSManager
             {
                 if (this.Users != null)
                 {
-                    ret.AddRange(this.Users.Where(u => u.HasExclusivePostfix()).Select(u => u.Name));
+                    ret.AddRange(this.Users.Items.Where(u => u.HasExclusivePostfix()).Select(u => u.Name));
                 }
 
                 if (this.Roles != null)
                 {
-                    ret.AddRange(this.Roles.Where(r => r.HasExclusivePostfix()).Select(r => r.Name));
+                    ret.AddRange(this.Roles.Items.Where(r => r.HasExclusivePostfix()).Select(r => r.Name));
                 }
             }
 
@@ -2179,8 +2197,8 @@ public partial class CMSManager
         {
             get
             {
-                return (this.Users != null && this.Users.Where(u => String.IsNullOrEmpty(u.InheritFrom)).Count() > 0) ||
-                       (this.Roles != null && this.Roles.Where(r => String.IsNullOrEmpty(r.InheritFrom)).Count() > 0);
+                return (this.Users != null && this.Users.Items.Where(u => String.IsNullOrEmpty(u.InheritFrom)).Count() > 0) ||
+                       (this.Roles != null && this.Roles.Items.Where(r => String.IsNullOrEmpty(r.InheritFrom)).Count() > 0);
             }
         }
     }
@@ -2188,6 +2206,7 @@ public partial class CMSManager
     async public Task<NodeAuthorization> GetNodeAuthorization(string relPath, string propertyTagName = "", Func<NodeAuthorization, string, string, Task> onLoaded = null)
     {
         NodeAuthorization auth = new NodeAuthorization();
+
         if (String.IsNullOrEmpty(relPath))
         {
             return auth;
@@ -2200,12 +2219,15 @@ public partial class CMSManager
         {
             relPath = Helper.TrimPathRight(relPath, 1) + "/" + Helper.TrimPathLeft(relPath, 1) + "@" + propertyTagName;
         }
+        
         auth.TargetAclPath = relPath;
-
         bool first = true;
+        var userListBuilder = new CmsUserList.UniqueItemListBuilder();
+        var roleListBuilder = new CmsUserList.UniqueItemListBuilder();
+
         while (!String.IsNullOrEmpty(relPath))
         {
-            GetAclUsers(relPath, auth.Users, auth.Roles, !first);
+            GetAclUsers(relPath, userListBuilder, roleListBuilder, !first);
             if (onLoaded != null)
             {
                 await onLoaded(auth, nodePath, !first ? relPath : "");
@@ -2221,15 +2243,19 @@ public partial class CMSManager
             relPath = relPath.Substring(0, pos);
         }
 
-        GetAclUsers("root", auth.Users, auth.Roles, !first);
+        GetAclUsers("root", userListBuilder, roleListBuilder, !first);
         if (onLoaded != null)
         {
             await onLoaded(auth, nodePath, !first ? "root" : "");
         }
+
+        auth.Users = new CmsUserList(userListBuilder.Build());
+        auth.Roles = new CmsUserList(roleListBuilder.Build());
+
         return auth;
     }
 
-    private void GetAclUsers(string aclPath, CmsUserList users, CmsUserList roles, bool storeInherit)
+    private void GetAclUsers(string aclPath, CmsUserList.UniqueItemListBuilder users, CmsUserList.UniqueItemListBuilder roles, bool storeInherit)
     {
         try
         {

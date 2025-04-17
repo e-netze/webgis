@@ -13,12 +13,12 @@ static public class AuthNodeExtensions
     {
         if (authNode != null)
         {
-            if (authNode.Users != null && authNode.Users.Where(user => user.Allowed == false).Count() > 0)
+            if (authNode.Users != null && authNode.Users?.Items.Where(user => user.Allowed == false).Count() > 0)
             {
                 return true;
             }
 
-            if (authNode.Roles != null && authNode.Roles.Where(role => role.Allowed == false).Count() > 0)
+            if (authNode.Roles != null && authNode.Roles?.Items.Where(role => role.Allowed == false).Count() > 0)
             {
                 return true;
             }
@@ -93,7 +93,7 @@ static public class AuthNodeExtensions
         {
             var reducedAuthNode = authNode.Clone();
 
-            reducedAuthNode.Users.EachIfNotNull((user) =>
+            reducedAuthNode.Users?.Items.EachIfNotNull((user) =>
             {
                 if (user.IsExclusive == false && user.Allowed == true)
                 {
@@ -101,7 +101,7 @@ static public class AuthNodeExtensions
                 }
             });
 
-            reducedAuthNode.Roles.EachIfNotNull((role) =>
+            reducedAuthNode.Roles?.Items.EachIfNotNull((role) =>
             {
                 if (role.IsExclusive == false && role.Allowed == true)
                 {
@@ -118,13 +118,13 @@ static public class AuthNodeExtensions
     static public bool HasExclusivePostfixes(this AuthNode authNode)
     {
         if (authNode?.Users != null &&
-            authNode.Users.Any(u => u.HasExclusivePostfix()))
+            authNode.Users.Items.Any(u => u.HasExclusivePostfix()))
         {
             return true;
         }
 
         if (authNode?.Roles != null &&
-            authNode.Roles.Any(r => r.HasExclusivePostfix()))
+            authNode.Roles.Items.Any(r => r.HasExclusivePostfix()))
         {
             return true;
         }
@@ -135,13 +135,13 @@ static public class AuthNodeExtensions
     static public bool HasExclusives(this AuthNode authNode)
     {
         if (authNode?.Users != null &&
-            authNode.Users.Any(u => u?.IsExclusive == true))
+            authNode.Users.Items.Any(u => u?.IsExclusive == true))
         {
             return true;
         }
 
         if (authNode?.Roles != null &&
-            authNode.Roles.Any(r => r?.IsExclusive == true))
+            authNode.Roles.Items.Any(r => r?.IsExclusive == true))
         {
             return true;
         }
@@ -149,8 +149,8 @@ static public class AuthNodeExtensions
         return false;
     }
 
-    static public IEnumerable<CmsUser> RemoveIgnored(this CmsUserList userlist)
+    static public IEnumerable<CmsUser> RemoveIgnored(this IEnumerable<CmsUser> items)
     {
-        return userlist?.Where(u => u.Ignore == false) ?? Array.Empty<CmsUser>();
+        return items?.Where(u => u.Ignore == false) ?? Array.Empty<CmsUser>();
     }
 }

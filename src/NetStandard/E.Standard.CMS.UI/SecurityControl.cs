@@ -61,7 +61,7 @@ public class SecurityControl : UserControl
 
         if (nodeAuth.Users != null)
         {
-            foreach (var user in nodeAuth.Users)
+            foreach (var user in nodeAuth.Users?.Items ?? [])
             {
                 var row = new Table.Row(user.Name);
 
@@ -102,7 +102,7 @@ public class SecurityControl : UserControl
 
         if (nodeAuth.Roles != null)
         {
-            foreach (var role in nodeAuth.Roles)
+            foreach (var role in nodeAuth.Roles?.Items ?? [])
             {
                 var row = new Table.Row(role.Name);
 

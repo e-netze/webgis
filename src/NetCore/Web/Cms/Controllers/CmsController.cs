@@ -1,4 +1,4 @@
-using Cms.AppCode.Extensions;
+﻿using Cms.AppCode.Extensions;
 using Cms.AppCode.Mvc;
 using Cms.AppCode.Services;
 using Cms.Models;
@@ -846,61 +846,64 @@ public class CmsController : ApplicationSecurityController
 
             #endregion
 
+            var users = new CmsUserList.UniqueItemListBuilder(nodeAuth.Users.Items);
+            var roles = new CmsUserList.UniqueItemListBuilder(nodeAuth.Roles.Items);
+
             foreach (var nv in securityData)
             {
                 if (nv.Name.StartsWith(SecurityControl.CheckBoxUserPrefix))
                 {
                     string userName = nv.Name.Substring(SecurityControl.CheckBoxUserPrefix.Length);
-                    var user = nodeAuth.Users.Where(u => u.Name == userName).FirstOrDefault();
+                    var user = nodeAuth.Users.Items.Where(u => u.Name == userName).FirstOrDefault();
                     if (String.IsNullOrWhiteSpace(user.InheritFrom))
                     {
                         user.Allowed = bool.Parse(nv.Value);
                     }
                     else if (nv.Name == btn)
                     {
-                        nodeAuth.Users.Remove(user);
-                        nodeAuth.Users.Add(new CmsUser(user.Name, bool.Parse(nv.Value)));
+                        users.Remove(user);
+                        users.Add(new CmsUser(user.Name, bool.Parse(nv.Value)));
                     }
                 }
                 else if (nv.Name.StartsWith(SecurityControl.CheckBoxRolePrefix))
                 {
                     string roleName = nv.Name.Substring(SecurityControl.CheckBoxRolePrefix.Length);
-                    var role = nodeAuth.Roles.Where(r => r.Name == roleName).FirstOrDefault();
+                    var role = nodeAuth.Roles.Items.Where(r => r.Name == roleName).FirstOrDefault();
                     if (String.IsNullOrWhiteSpace(role.InheritFrom))
                     {
                         role.Allowed = bool.Parse(nv.Value);
                     }
                     else if (nv.Name == btn)
                     {
-                        nodeAuth.Roles.Remove(role);
-                        nodeAuth.Roles.Add(new CmsRole(role.Name, bool.Parse(nv.Value)));
+                        roles.Remove(role);
+                        roles.Add(new CmsRole(role.Name, bool.Parse(nv.Value)));
                     }
                 }
             }
 
             if (btn == SecurityControl.ButtonRemoveUserName)
             {
-                var user = nodeAuth.Users.Where(u => u.Name == name).FirstOrDefault();
+                var user = nodeAuth.Users.Items.Where(u => u.Name == name).FirstOrDefault();
                 if (String.IsNullOrWhiteSpace(user.InheritFrom))
                 {
-                    nodeAuth.Users.Remove(user);
+                    users.Remove(user);
                 }
             }
             else if (btn == SecurityControl.ButtonRemoveRoleName)
             {
-                var role = nodeAuth.Roles.Where(r => r.Name == name).FirstOrDefault();
+                var role = nodeAuth.Roles.Items.Where(r => r.Name == name).FirstOrDefault();
                 if (String.IsNullOrWhiteSpace(role.InheritFrom))
                 {
-                    nodeAuth.Roles.Remove(role);
+                    roles.Remove(role);
                 }
             }
             else if (btn == SecurityControl.ButtonAddUser && !String.IsNullOrWhiteSpace(control.NewUserName))
             {
-                nodeAuth.Users.Add(new CmsUser(control.NewUserName, true));
+                users.Add(new CmsUser(control.NewUserName, true));
             }
             else if (btn == SecurityControl.ButtonAddRole && !String.IsNullOrWhiteSpace(control.NewRoleName))
             {
-                nodeAuth.Roles.Add(new CmsRole(control.NewRoleName, true));
+                roles.Add(new CmsRole(control.NewRoleName, true));
             }
             else
             {
@@ -913,6 +916,9 @@ public class CmsController : ApplicationSecurityController
                     return Json(new { controls = dirtyControls });
                 }
             }
+
+            nodeAuth.Users = new CmsUserList(users.Build());
+            nodeAuth.Roles = new CmsUserList(roles.Build());
 
             foreach (var customSecurityService in _customSecurityServices)
             {
@@ -941,7 +947,7 @@ public class CmsController : ApplicationSecurityController
         XmlNode aclNode = doc.CreateElement("acl");
         doc.AppendChild(aclNode);
 
-        foreach (var user in nodeAuth.Users.Where(u => String.IsNullOrWhiteSpace(u.InheritFrom)))
+        foreach (var user in nodeAuth.Users.Items.Where(u => String.IsNullOrWhiteSpace(u.InheritFrom)))
         {
             XmlNode userNode = doc.CreateElement("user");
 
@@ -955,7 +961,7 @@ public class CmsController : ApplicationSecurityController
 
             aclNode.AppendChild(userNode);
         }
-        foreach (var rolw in nodeAuth.Roles.Where(r => String.IsNullOrWhiteSpace(r.InheritFrom)))
+        foreach (var rolw in nodeAuth.Roles.Items.Where(r => String.IsNullOrWhiteSpace(r.InheritFrom)))
         {
             XmlNode userNode = doc.CreateElement("role");
 
