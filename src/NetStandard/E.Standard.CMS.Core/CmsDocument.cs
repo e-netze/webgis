@@ -4,6 +4,7 @@ using E.Standard.CMS.Core.Security;
 using E.Standard.Configuration;
 using E.Standard.Extensions.Collections;
 using E.Standard.Extensions.Compare;
+using E.Standard.Extensions.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -27,6 +28,7 @@ public class CmsDocument : IDisposable
     private readonly string _name;
     private Dictionary<string, AuthNode> _cachedAuthNodes = null;
     private readonly IEnumerable<ICustomCmsDocumentAclProviderService> _aclProviders;
+    private bool _useStrictAuthComparing = false;
 
     private CmsDocument(CmsDocument cms)
     {
@@ -502,6 +504,18 @@ public class CmsDocument : IDisposable
                 }
             });
         });
+
+        // if every authItem (except EverOne) has an AuthPrefix, usse the (faster) strict mode for this CMS
+        _useStrictAuthComparing =
+            _cachedAuthNodes.SelectMany(n => n.Value.Users.Items)
+                            .Select(i => i.Name)
+                            .Distinct()
+                            .Where(name => !name.Equals(Everyone, StringComparison.OrdinalIgnoreCase))
+                            .Any(name => HasNoAuthNamePrefix(name)) == false &&
+            _cachedAuthNodes.SelectMany(n => n.Value.Roles.Items)
+                            .Select(i => i.Name)
+                            .Distinct()
+                            .Any(name => HasNoAuthNamePrefix(name)) == false;
     }
 
     private AuthNode GetAuthNode(string xPath, bool exactPathOnly = false)
@@ -589,6 +603,8 @@ public class CmsDocument : IDisposable
         return authName.Contains(AuthCategoryPrefix);
     }
 
+    private static bool HasNoAuthNamePrefix(string authName) => HasAuthNamePrefix(authName) == false;
+
     private static bool IsEqualAuthName(string userName, string authName)
     {
         if (userName.Equals(authName, StringComparison.OrdinalIgnoreCase))
@@ -596,17 +612,19 @@ public class CmsDocument : IDisposable
             return true;
         }
 
-
-        /*
-            Falls im CMS die Prefixes noch nicht parametriert sind, dann einfache vom aktuellen Usernamen/Rolle abschneiden
-        */
-        if (HasAuthNamePrefix(userName) 
-            && !HasAuthNamePrefix(authName) 
-            && userName.EndsWith(authName, StringComparison.OrdinalIgnoreCase))
+        //if (_useStrictAuthComparing == false)
         {
-            if (RemoveAuthNamePrefix(userName).Equals(authName, StringComparison.OrdinalIgnoreCase))
+            /*
+                Falls im CMS die Prefixes noch nicht parametriert sind, dann einfache vom aktuellen Usernamen/Rolle abschneiden
+            */
+            if (HasAuthNamePrefix(userName)
+                && !HasAuthNamePrefix(authName)
+                && userName.EndsWith(authName, StringComparison.OrdinalIgnoreCase))
             {
-                return true;
+                if (RemoveAuthNamePrefix(userName).Equals(authName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
             }
         }
 
