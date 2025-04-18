@@ -149,7 +149,7 @@ static public class AuthNodeExtensions
         return false;
     }
 
-    static public IEnumerable<CmsUser> RemoveIgnored(this IEnumerable<CmsUser> items)
+    static public IEnumerable<CmsAuthItem> RemoveIgnored(this IEnumerable<CmsAuthItem> items)
     {
         return items?.Where(u => u.Ignore == false) ?? Array.Empty<CmsUser>();
     }

@@ -70,7 +70,7 @@ public class AuthProperty<T>
             && authNode.Users.Count == 0 
             && authNode.Roles.Count == 0)
         {
-            authNode.Append(new CmsDocument.AuthNode(CmsUserList.Everyone, CmsUserList.Empty));
+            authNode.Append(new CmsDocument.AuthNode(CmsAuthItemList.Everyone, CmsAuthItemList.Empty));
         }
     }
 

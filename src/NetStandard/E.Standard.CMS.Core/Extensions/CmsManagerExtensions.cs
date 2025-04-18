@@ -5,26 +5,26 @@ namespace E.Standard.CMS.Core.Extensions;
 
 static internal class CmsManagerExtensions
 {
-    static public bool HasExclusivePostfix(this CmsUser user)
-        => user?.Name != null
-        && user.Name.EndsWith(CmsDocument.AuthExclusivePostfix, StringComparison.InvariantCultureIgnoreCase);
+    static public bool HasExclusivePostfix(this CmsAuthItem authItem)
+        => authItem?.Name != null
+        && authItem.Name.EndsWith(CmsDocument.AuthExclusivePostfix, StringComparison.InvariantCultureIgnoreCase);
 
-    static public CmsUser RemoveExclusivePostfixAndSetProperty(this CmsUser user)
+    static public CmsAuthItem RemoveExclusivePostfixAndSetProperty(this CmsAuthItem authItem)
     {
-        if (!user.HasExclusivePostfix())
+        if (!authItem.HasExclusivePostfix())
         {
-            return user;
+            return authItem;
         }
 
-        var clone = user.Clone();
+        var clone = authItem.Clone();
         clone.Name = clone.Name.Substring(0, clone.Name.Length - CmsDocument.AuthExclusivePostfix.Length);
         clone.IsExclusive = true;
         return clone;
     }
 
-    static public bool IsAllowedAndNotExclusive(this CmsUser user)
-        => user != null
-        && user.Allowed == true
-        && user.HasExclusivePostfix() == false
-        && user.IsExclusive == false;
+    static public bool IsAllowedAndNotExclusive(this CmsAuthItem authItem)
+        => authItem != null
+        && authItem.Allowed == true
+        && authItem.HasExclusivePostfix() == false
+        && authItem.IsExclusive == false;
 }

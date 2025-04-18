@@ -525,8 +525,8 @@ public class CmsDocument : IDisposable
             ReadAuthNodes(_aclNode);
         }
 
-        var userListBuilder = new CmsUserList.UniqueItemListBuilder();
-        var roleListBuilder = new CmsUserList.UniqueItemListBuilder();
+        var userListBuilder = new CmsAuthItemList.UniqueItemListBuilder();
+        var roleListBuilder = new CmsAuthItemList.UniqueItemListBuilder();
 
         while (true)
         {
@@ -567,8 +567,8 @@ public class CmsDocument : IDisposable
         }
 
         var resultAuthNode = new AuthNode(
-            new CmsUserList(userListBuilder.Build()),
-            new CmsUserList(roleListBuilder.Build()));
+            new CmsAuthItemList(userListBuilder.Build()),
+            new CmsAuthItemList(roleListBuilder.Build()));
 
         return resultAuthNode.IgnoreAllowedIfHasExclusives(); //.ReduceToExclusives();
     }
@@ -598,6 +598,21 @@ public class CmsDocument : IDisposable
         return authName;
     }
 
+    private static bool RemoveAuthNamePrefixAndCompare(string authName, string candidate)
+    {
+        int prefixIndex = authName.IndexOf(AuthCategoryPrefix, StringComparison.Ordinal);
+        
+        if (prefixIndex > 0)
+        {
+            int startIndex = prefixIndex + AuthCategoryPrefix.Length;
+
+            return authName.Length == startIndex + candidate.Length
+                && authName.EndsWith(candidate, StringComparison.OrdinalIgnoreCase);
+        }
+
+        return false;
+    }
+
     private static bool HasAuthNamePrefix(string authName)
     {
         return authName.Contains(AuthCategoryPrefix);
@@ -621,10 +636,17 @@ public class CmsDocument : IDisposable
                 && !HasAuthNamePrefix(authName)
                 && userName.EndsWith(authName, StringComparison.OrdinalIgnoreCase))
             {
-                if (RemoveAuthNamePrefix(userName).Equals(authName, StringComparison.OrdinalIgnoreCase))
+                int prefixIndex = authName.IndexOf(AuthCategoryPrefix, StringComparison.Ordinal);
+
+                if(authName.Length == prefixIndex + AuthCategoryPrefix.Length + authName.Length)
                 {
                     return true;
                 }
+
+                //if (RemoveAuthNamePrefix(userName).Equals(authName, StringComparison.OrdinalIgnoreCase))
+                //{
+                //    return true;
+                //}
             }
         }
 
@@ -645,7 +667,9 @@ public class CmsDocument : IDisposable
         string[] instanceRoles = ui.InstanceRoles;
 
         bool allowed = false;
-        // erst alle erlaubten Benutzer testen
+
+        #region Test all allowed users
+
         foreach (CmsUser user in authNode.Users.AllowedItems.RemoveIgnored())
         {
             if (user.Name.ToLower() == Everyone)
@@ -659,7 +683,11 @@ public class CmsDocument : IDisposable
                 return true;
             }
         }
-        // sonst die Rollen testen
+
+        #endregion
+
+        #region Test all roles
+
         bool allowedFromRole = false;
         if (userroles != null)
         {
@@ -679,7 +707,11 @@ public class CmsDocument : IDisposable
                 }
             }
         }
-        // sonst Instanz Rollen testen
+
+        #endregion
+
+        #region Test instance roles
+
         bool allowedFromInstance = false;
         if (!allowed && instanceRoles != null)
         {
@@ -699,66 +731,72 @@ public class CmsDocument : IDisposable
                 }
             }
         }
-        // falls keine positive übereinstimmung -> return false
+
+        #endregion
+
+        // if not allowed => return false
         if (!allowed)
         {
             return false;
         }
 
-        // Verweigerungen prüfen
-        if (allowed)
+        #region Other test denials
+
+        // Directy return false, if user is a denied user
+        foreach (CmsUser user in authNode.Users.DeniedItems.RemoveIgnored())
         {
-            foreach (CmsUser user in authNode.Users.DeniedItems.RemoveIgnored())
+            if (IsEqualAuthName(username, user.Name))
             {
-                // Wenn verweigert, direkt false zurückgeben
-                if (IsEqualAuthName(username, user.Name))
-                {
-                    return false;
-                }
+                return false;
             }
-            // Rolenauschluss nur dann, wenn user nicht in einer anderen Rolle ist, die darf!
-            if (allowedFromRole == false && userroles != null)
+        }
+
+        // Only deny from a role, if user is not in an allowed role!
+        if (allowedFromRole == false && userroles != null)
+        {
+            foreach (CmsRole role in authNode.Roles.DeniedItems.RemoveIgnored())
             {
-                foreach (CmsRole role in authNode.Roles.DeniedItems.RemoveIgnored())
+                foreach (string r in userroles)
                 {
-                    foreach (string r in userroles)
+                    if (IsEqualAuthName(r, role.Name))
                     {
-                        if (IsEqualAuthName(r, role.Name))
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-            // Instance-Rolenauschluss nur dann, wenn user nicht in einer anderen Rolle ist, die darf!
-            if (allowedFromInstance == false && instanceRoles != null)
-            {
-                foreach (CmsRole role in authNode.Roles.DeniedItems.RemoveIgnored())
-                {
-                    foreach (string r in instanceRoles)
-                    {
-                        if (IsEqualAuthName(r, role.Name))
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
             }
         }
-        return allowed;
+
+        // Only deny from instance, if user is not in an allowed instance role!
+        if (allowedFromInstance == false && instanceRoles != null)
+        {
+            foreach (CmsRole role in authNode.Roles.DeniedItems.RemoveIgnored())
+            {
+                foreach (string r in instanceRoles)
+                {
+                    if (IsEqualAuthName(r, role.Name))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        return true;
     }
 
     #endregion
 
     public class AuthNode
     {
-        public CmsUserList _users;
-        public CmsUserList _roles;
+        public CmsAuthItemList _users;
+        public CmsAuthItemList _roles;
 
-        public AuthNode(CmsUserList users, CmsUserList roles)
+        public AuthNode(CmsAuthItemList users, CmsAuthItemList roles)
         {
-            _users = users ?? CmsUserList.Empty;
-            _roles = roles ?? CmsUserList.Empty;
+            _users = users ?? CmsAuthItemList.Empty;
+            _roles = roles ?? CmsAuthItemList.Empty;
         }
 
         /*
@@ -833,8 +871,8 @@ public class CmsDocument : IDisposable
                 roles.Add(RoleFromXmlNode(n));
             }
 
-            _users = new CmsUserList(users);
-            _roles = new CmsUserList(roles); 
+            _users = new CmsAuthItemList(users);
+            _roles = new CmsAuthItemList(roles); 
         }
 
         public AuthNode Clone()
@@ -844,27 +882,27 @@ public class CmsDocument : IDisposable
             return clone;
         }
 
-        public CmsUserList Users => _users;
-        public CmsUserList Roles => _roles;
+        public CmsAuthItemList Users => _users;
+        public CmsAuthItemList Roles => _roles;
 
         public void Append(AuthNode authNode)
         {
             if (authNode?.Users?.Count > 0)
             {
-                var userListBuilder = new CmsUserList.UniqueItemListBuilder();
+                var userListBuilder = new CmsAuthItemList.UniqueItemListBuilder();
                 userListBuilder.AddRange(this.Users.Items);
                 userListBuilder.AddRange(authNode.Users.Items);
 
-                _users = new CmsUserList(userListBuilder.Build());
+                _users = new CmsAuthItemList(userListBuilder.Build());
             }
 
             if (authNode.Roles?.Count > 0)
             {
-                var roleListBuilder = new CmsUserList.UniqueItemListBuilder();
+                var roleListBuilder = new CmsAuthItemList.UniqueItemListBuilder();
                 roleListBuilder.AddRange(this.Roles.Items);
                 roleListBuilder.AddRange(authNode.Roles.Items);
 
-                _roles = new CmsUserList(roleListBuilder.Build());
+                _roles = new CmsAuthItemList(roleListBuilder.Build());
             }
         }
 

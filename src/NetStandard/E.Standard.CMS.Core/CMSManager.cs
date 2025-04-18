@@ -1921,8 +1921,8 @@ public partial class CMSManager
 
             AuthPath = path;
             NodeAuth = new NodeAuthorization();
-            var userListBuilder = new CmsUserList.UniqueItemListBuilder();
-            var roleListBuilder = new CmsUserList.UniqueItemListBuilder();  
+            var userListBuilder = new CmsAuthItemList.UniqueItemListBuilder();
+            var roleListBuilder = new CmsAuthItemList.UniqueItemListBuilder();  
 
             try
             {
@@ -1942,15 +1942,15 @@ public partial class CMSManager
             }
             catch { }
 
-            NodeAuth.Users = new CmsUserList(userListBuilder.Build());
-            NodeAuth.Roles = new CmsUserList(roleListBuilder.Build());
+            NodeAuth.Users = new CmsAuthItemList(userListBuilder.Build());
+            NodeAuth.Roles = new CmsAuthItemList(roleListBuilder.Build());
 
         }
         public ExportAuthNode(string path, CmsUser user)
         {
             AuthPath = path;
             NodeAuth = new NodeAuthorization();
-            NodeAuth.Users = new CmsUserList([user]);
+            NodeAuth.Users = new CmsAuthItemList([user]);
         }
 
         async public Task Save(XmlNode parentNode)
@@ -1968,8 +1968,8 @@ public partial class CMSManager
             //var users = NodeAuth.Users;
             //var roles = NodeAuth.Roles;
 
-            var users = new CmsUserList.UniqueItemListBuilder();
-            var roles = new CmsUserList.UniqueItemListBuilder();
+            var users = new CmsAuthItemList.UniqueItemListBuilder();
+            var roles = new CmsAuthItemList.UniqueItemListBuilder();
             users.AddRange(NodeAuth.Users.Items);
             roles.AddRange(NodeAuth.Roles.Items);
 
@@ -2130,8 +2130,8 @@ public partial class CMSManager
 
     public class NodeAuthorization
     {
-        public CmsUserList Users = new CmsUserList([]);
-        public CmsUserList Roles = new CmsUserList([]);
+        public CmsAuthItemList Users = new CmsAuthItemList([]);
+        public CmsAuthItemList Roles = new CmsAuthItemList([]);
 
         public string TargetAclPath { get; set; }
 
@@ -2222,8 +2222,8 @@ public partial class CMSManager
         
         auth.TargetAclPath = relPath;
         bool first = true;
-        var userListBuilder = new CmsUserList.UniqueItemListBuilder();
-        var roleListBuilder = new CmsUserList.UniqueItemListBuilder();
+        var userListBuilder = new CmsAuthItemList.UniqueItemListBuilder();
+        var roleListBuilder = new CmsAuthItemList.UniqueItemListBuilder();
 
         while (!String.IsNullOrEmpty(relPath))
         {
@@ -2249,13 +2249,13 @@ public partial class CMSManager
             await onLoaded(auth, nodePath, !first ? "root" : "");
         }
 
-        auth.Users = new CmsUserList(userListBuilder.Build());
-        auth.Roles = new CmsUserList(roleListBuilder.Build());
+        auth.Users = new CmsAuthItemList(userListBuilder.Build());
+        auth.Roles = new CmsAuthItemList(roleListBuilder.Build());
 
         return auth;
     }
 
-    private void GetAclUsers(string aclPath, CmsUserList.UniqueItemListBuilder users, CmsUserList.UniqueItemListBuilder roles, bool storeInherit)
+    private void GetAclUsers(string aclPath, CmsAuthItemList.UniqueItemListBuilder users, CmsAuthItemList.UniqueItemListBuilder roles, bool storeInherit)
     {
         try
         {

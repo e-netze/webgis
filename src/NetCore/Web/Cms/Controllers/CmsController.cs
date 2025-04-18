@@ -846,8 +846,8 @@ public class CmsController : ApplicationSecurityController
 
             #endregion
 
-            var users = new CmsUserList.UniqueItemListBuilder(nodeAuth.Users.Items);
-            var roles = new CmsUserList.UniqueItemListBuilder(nodeAuth.Roles.Items);
+            var users = new CmsAuthItemList.UniqueItemListBuilder(nodeAuth.Users.Items);
+            var roles = new CmsAuthItemList.UniqueItemListBuilder(nodeAuth.Roles.Items);
 
             foreach (var nv in securityData)
             {
@@ -917,8 +917,8 @@ public class CmsController : ApplicationSecurityController
                 }
             }
 
-            nodeAuth.Users = new CmsUserList(users.Build());
-            nodeAuth.Roles = new CmsUserList(roles.Build());
+            nodeAuth.Users = new CmsAuthItemList(users.Build());
+            nodeAuth.Roles = new CmsAuthItemList(roles.Build());
 
             foreach (var customSecurityService in _customSecurityServices)
             {

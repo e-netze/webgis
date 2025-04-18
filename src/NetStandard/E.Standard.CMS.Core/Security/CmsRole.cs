@@ -1,6 +1,6 @@
 ﻿namespace E.Standard.CMS.Core.Security;
 
-public class CmsRole : CmsUser
+public class CmsRole : CmsAuthItem
 {
     public CmsRole(string name, bool allowed)
         : base(name, allowed)
