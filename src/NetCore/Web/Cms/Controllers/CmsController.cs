@@ -883,7 +883,7 @@ public class CmsController : ApplicationSecurityController
 
             if (btn == SecurityControl.ButtonRemoveUserName)
             {
-                var user = nodeAuth.Users.Items.Where(u => u.Name == name).FirstOrDefault();
+                var user = users.FirstOfDefault(u => u.Name == name);
                 if (String.IsNullOrWhiteSpace(user.InheritFrom))
                 {
                     users.Remove(user);
@@ -891,7 +891,7 @@ public class CmsController : ApplicationSecurityController
             }
             else if (btn == SecurityControl.ButtonRemoveRoleName)
             {
-                var role = nodeAuth.Roles.Items.Where(r => r.Name == name).FirstOrDefault();
+                var role = roles.FirstOfDefault(r => r.Name == name);
                 if (String.IsNullOrWhiteSpace(role.InheritFrom))
                 {
                     roles.Remove(role);

@@ -2040,7 +2040,7 @@ public partial class CMSManager
                 #endregion
             }
 
-            foreach (CmsUser user in users.Build())
+            foreach (CmsAuthItem user in users.Build())
             {
                 XmlNode userNode = parentNode.OwnerDocument.CreateElement("user");
 
@@ -2069,7 +2069,7 @@ public partial class CMSManager
                 authNode.AppendChild(userNode);
             }
 
-            foreach (CmsUser role in roles.Build())
+            foreach (CmsAuthItem role in roles.Build())
             {
                 XmlNode roleNode = parentNode.OwnerDocument.CreateElement("role");
 

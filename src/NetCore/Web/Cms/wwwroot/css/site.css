@@ -583,9 +583,10 @@ CMS
         font-style: italic;
     }
 
-    tr.cms-form-table.hidden-from-exclusives {
-        background-color: #b5dbad;
-    }
+tr.cms-form-table.hidden-from-exclusives {
+    background-color: #fff !important;
+    opacity: .5 !important;
+}
 
 tr.cms-form-table.exclusive {
     background-color: #fee !important;

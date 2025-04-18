@@ -7,12 +7,10 @@ namespace E.Standard.CMS.Core.Security;
 
 public class CmsAuthItemList
 {
-    private CmsAuthItem[] _cmsAuthItems;
+    private readonly CmsAuthItem[] _cmsAuthItems;
+    private readonly CmsAuthItem[] _cmsAllowedAuthItems;
+    private readonly CmsAuthItem[] _cmsDeniedAuthItems;
     private int _count;
-
-    private CmsAuthItemList()
-    {
-    }
 
     public CmsAuthItemList(IEnumerable<CmsAuthItem> cmsUsers)
     {
@@ -20,24 +18,24 @@ public class CmsAuthItemList
 
         builder.AddRange(cmsUsers);
 
-        _cmsAuthItems = builder.Build();
+        _cmsAuthItems = builder.Build() ?? [];
         _count = _cmsAuthItems.Length;
+
+        _cmsAllowedAuthItems = _cmsAuthItems?.Where(u => u.Allowed).ToArray();
+        _cmsDeniedAuthItems = _cmsAuthItems?.Where(u => !u.Allowed).ToArray();
     }
 
     public CmsAuthItem[] Items => _cmsAuthItems ?? [];
 
-    public CmsAuthItem[] AllowedItems
-        => _cmsAuthItems?.Where(u => u.Allowed).ToArray() ?? [];
+    public CmsAuthItem[] AllowedItems => _cmsAllowedAuthItems;
 
-    public CmsAuthItem[] DeniedItems
-        => _cmsAuthItems?.Where(u => !u.Allowed).ToArray() ?? [];
+    public CmsAuthItem[] DeniedItems => _cmsDeniedAuthItems;
 
     public int Count => _count;
 
     public CmsAuthItemList Clone()
     {
-        CmsAuthItemList clone = new CmsAuthItemList();
-        clone._cmsAuthItems = _cmsAuthItems.Select(u => u.Clone()).ToArray();
+        CmsAuthItemList clone = new CmsAuthItemList(_cmsAuthItems.Select(u => u.Clone()));
 
         return clone;
     }
@@ -102,6 +100,19 @@ public class CmsAuthItemList
                 }
             }
             return false;
+        }
+
+        public CmsAuthItem FirstOfDefault(Func<CmsAuthItem, bool> predicate)
+        {
+            foreach (var item in _builder.GetList())
+            {
+                if (predicate(item))
+                {
+                    return item;
+                }
+            }
+
+            return default;
         }
 
         public CmsAuthItem[] Build() => _builder.GetList().ToArray();

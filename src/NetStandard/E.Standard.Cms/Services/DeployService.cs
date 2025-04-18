@@ -390,7 +390,9 @@ public class DeployService : ICmsTool
             console.WriteLine("---------------------------------------------------------------------------");
             console.WriteLines("EXCEPTION:");
             console.WriteLines(ex.FullMessage());
+#if !DEBUG
             if (ex is NullReferenceException)
+#endif
             {
                 console.WriteLine("Stacktrace:");
                 foreach (string stacktrace in ex.StackTrace?.Replace("\r", "").Split("\n") ?? [])

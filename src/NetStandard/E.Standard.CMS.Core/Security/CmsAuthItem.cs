@@ -32,9 +32,9 @@ public abstract class CmsAuthItem
 
     public override bool Equals(object obj)
     {
-        if (obj is CmsUser)
+        if (obj is CmsAuthItem)
         {
-            var user = (CmsUser)obj;
+            var user = (CmsAuthItem)obj;
 
             return user.Name == Name &&
                    user.Allowed == Allowed &&

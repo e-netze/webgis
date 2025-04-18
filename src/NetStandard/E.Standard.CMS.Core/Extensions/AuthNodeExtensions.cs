@@ -115,6 +115,23 @@ static public class AuthNodeExtensions
         return authNode;
     }
 
+    static public AuthNode RemoveIgnoredItems(this AuthNode authNode)
+    {
+        if (authNode != null && authNode.HasIgnored())
+        {
+            var userListBuilder = new CmsAuthItemList.UniqueItemListBuilder();
+            var roleListBuilder = new CmsAuthItemList.UniqueItemListBuilder();
+
+            userListBuilder.AddRange(authNode.Users?.Items.Where(user => user != null && user.Ignore != true));
+            roleListBuilder.AddRange(authNode.Roles?.Items.Where(role => role != null && role.Ignore != true));
+
+            return new AuthNode(
+                new CmsAuthItemList(userListBuilder.Build()),
+                new CmsAuthItemList(roleListBuilder.Build()));
+        }
+        return authNode;
+    }
+
     static public bool HasExclusivePostfixes(this AuthNode authNode)
     {
         if (authNode?.Users != null &&
@@ -149,8 +166,25 @@ static public class AuthNodeExtensions
         return false;
     }
 
-    static public IEnumerable<CmsAuthItem> RemoveIgnored(this IEnumerable<CmsAuthItem> items)
+    static public bool HasIgnored(this AuthNode authNode)
     {
-        return items?.Where(u => u.Ignore == false) ?? Array.Empty<CmsUser>();
+        if (authNode?.Users != null &&
+            authNode.Users.Items.Any(u => u?.Ignore == true))
+        {
+            return true;
+        }
+
+        if (authNode?.Roles != null &&
+            authNode.Roles.Items.Any(r => r?.Ignore == true))
+        {
+            return true;
+        }
+
+        return false;
     }
+
+    //static public IEnumerable<CmsAuthItem> RemoveIgnored(this IEnumerable<CmsAuthItem> items)
+    //{
+    //    return items?.Where(u => u.Ignore == false) ?? Array.Empty<CmsUser>();
+    //}
 }
