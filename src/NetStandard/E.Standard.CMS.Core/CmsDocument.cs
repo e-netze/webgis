@@ -547,7 +547,7 @@ public class CmsDocument : IDisposable
         string[] currentUserInstanceRoles = ui.InstanceRoles;
 
         bool allowed = false;
-        bool useSctAuthComparing = authNode.UseScrictAuthComparing;
+        bool useSctAuthComparing = authNode.UseScrictAuthNameComparing;
 
         #region Test all allowed users
 
@@ -674,7 +674,7 @@ public class CmsDocument : IDisposable
     {
         private CmsAuthItemList _users;
         private CmsAuthItemList _roles;
-        private bool _useStrictAuthComparing = false;
+        private bool _useStrictAuthNameComparing = false;
 
         public AuthNode(CmsAuthItemList users, CmsAuthItemList roles)
         {
@@ -722,7 +722,7 @@ public class CmsDocument : IDisposable
         public CmsAuthItemList Users => _users;
         public CmsAuthItemList Roles => _roles;
 
-        public bool UseScrictAuthComparing => _useStrictAuthComparing;
+        public bool UseScrictAuthNameComparing => _useStrictAuthNameComparing;
 
         public void Append(AuthNode authNode)
         {
@@ -815,7 +815,7 @@ public class CmsDocument : IDisposable
             // if every authItem (except EverOne) has an AuthPrefix,
             // use the (faster) strict mode for this CMS
 
-            _useStrictAuthComparing =
+            _useStrictAuthNameComparing =
                 _users.Items.Select(i => i.Name)
                             .Distinct()
                             .Where(name => !name.Equals(Everyone, StringComparison.OrdinalIgnoreCase))

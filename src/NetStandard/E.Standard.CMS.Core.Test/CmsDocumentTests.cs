@@ -191,10 +191,10 @@ public class CmsDocumentTests
 
 
     private static AuthNode MakeAuthNode(
-        IEnumerable<CmsUser> allowedUsers = null!,
-        IEnumerable<CmsUser> deniedUsers = null!,
-        IEnumerable<CmsRole> allowedRoles = null!,
-        IEnumerable<CmsRole> deniedRoles = null!)
+        IEnumerable<CmsAuthItem> allowedUsers = null!,
+        IEnumerable<CmsAuthItem> deniedUsers = null!,
+        IEnumerable<CmsAuthItem> allowedRoles = null!,
+        IEnumerable<CmsAuthItem> deniedRoles = null!)
     {
         var users = new CmsAuthItemList.UniqueItemListBuilder();
         users.AddRange(allowedUsers?.ToArray() ?? []);
@@ -445,6 +445,123 @@ public class CmsDocumentTests
         var ui = MakeUser("frank",
                           instanceRoles: new[] { "restricted","instance::writers" });
         Assert.False(InvokeCheckAuthorization(ui, auth));
+    }
+
+    #endregion
+
+    #region AuthNode Tests
+
+    private static AuthNode MakeAuthNode(
+        IEnumerable<CmsAuthItem> userItems,
+        IEnumerable<CmsAuthItem> roleItems)
+    {
+        var users = new CmsAuthItemList.UniqueItemListBuilder();
+        users.AddRange(userItems?.ToArray() ?? []);
+
+        var roles = new CmsAuthItemList.UniqueItemListBuilder();
+        roles.AddRange(roleItems?.ToArray() ?? []);
+
+        return new AuthNode(
+            new CmsAuthItemList(users.Build()),
+            new CmsAuthItemList(roles.Build()));
+    }
+
+    /* -----------------------------------------------------------
+    *  1. Verify splitting into Items / Allowed / Denied
+    * -----------------------------------------------------------
+    */
+    [Fact]
+    public void Users_collections_are_split_into_allowed_and_denied_correctly()
+    {
+        // 2 allowed + 1 denied user
+        var users = new CmsAuthItem[] {
+            new CmsUser("alice", true),
+            new CmsUser("bob", true),
+            new CmsUser("mallory", false)
+        };
+
+        // 2 allowed + 1 denied user
+        var roles = new CmsAuthItem[] {
+            new CmsRole("editors", true),
+            new CmsRole("banned", false),
+            new CmsRole("readonly", false)
+        };
+
+        var node = MakeAuthNode(users, roles);
+
+        // Users
+        Assert.Equal(3, node.Users.Items.Count());          // Items = 3
+        Assert.Equal(2, node.Users.AllowedItems.Count());   // AllowedItems = 2
+        Assert.Equal(1, node.Users.DeniedItems.Count());    // DeniedItems = 1
+
+        // Roles
+        Assert.Equal(3, node.Roles.Items.Count());
+        Assert.Single(node.Roles.AllowedItems);             // exakt 1 erlaubt
+        Assert.Equal(2, node.Roles.DeniedItems.Count());
+    }
+
+    /* -----------------------------------------------------------
+         *  2. Strict mode is TRUE when every name (except "Everyone")
+         *     contains a prefix ("::").
+         * -----------------------------------------------------------
+         */
+    [Fact]
+    public void Strict_mode_is_true_when_every_item_has_a_prefix()
+    {
+        var users = new CmsAuthItem[]
+        {
+                new CmsUser("nt-user::alice", true),
+                new CmsUser(CmsDocument.Everyone, true)  // ignored by the algorithm
+        };
+
+        var roles = new CmsAuthItem[]
+        {
+                new CmsRole("nt-role::editors",  true),
+                new CmsRole("nt-role::moderator",false)
+        };
+
+        var node = MakeAuthNode(users, roles);
+
+        Assert.True(node.UseScrictAuthNameComparing);
+    }
+
+    /* -----------------------------------------------------------
+     *  3. Strict mode is FALSE when at least one name lacks a
+     *     prefix.
+     * -----------------------------------------------------------
+     */
+    [Fact]
+    public void Strict_mode_is_false_when_any_item_lacks_prefix()
+    {
+        var users = new CmsAuthItem[]
+        {
+                new CmsUser("alice",           true),   // no "::" prefix
+                new CmsUser("nt-user::bob",    true)
+        };
+
+        var roles = new CmsAuthItem[]
+        {
+                new CmsRole("nt-role::editors", true)
+        };
+
+        var node = MakeAuthNode(users, roles);
+
+        Assert.False(node.UseScrictAuthNameComparing);
+    }
+
+    /* -----------------------------------------------------------
+     *  4. Strict mode defaults to TRUE for empty lists
+     *     (no item without prefix can exist).
+     * -----------------------------------------------------------
+     */
+    [Fact]
+    public void Strict_mode_defaults_to_true_for_empty_node()
+    {
+        var node = MakeAuthNode(
+            userItems: Array.Empty<CmsAuthItem>(),
+            roleItems: Array.Empty<CmsAuthItem>());
+
+        Assert.True(node.UseScrictAuthNameComparing);
     }
 
     #endregion
