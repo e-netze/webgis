@@ -150,7 +150,7 @@ public class SubscribersController : ApiBaseController
         {
             return RedirectToActionResult("Index", "Home");
         }
-        var db = _subscriberDb.CreateInstance();
+        var db = _subscriberDb.CreateInstance(_logger);
         try
         {
             #region Bot Detection
@@ -171,14 +171,18 @@ public class SubscribersController : ApiBaseController
                 {
                     _botDetection.RemoveSuspiciousUser(login.Username);
 
+                    _logger.LogInformation("Successfully logged in subscriber {name}", subscriber.Name);
+
                     if (!String.IsNullOrWhiteSpace(login.Redirect))
                     {
                         //string credentials = id + "|" + subscriber.FullName + "|" + DateTime.UtcNow.Ticks;
                         //credentials = _crypto.EncryptTextDefault(credentials, CryptoResultStringType.Hex);
 
+                        _logger.LogInformation("Gernerate JWT Token for {fullname}", subscriber.FullName);
                         var credentialToken = _jwtAccessTokenService.GenerateToken(subscriber.FullName, 1);
 
                         var accessTokenInstance = new AccessToken(_crypto);
+                        _logger.LogInformation("Create JWT Token for {fullname}", subscriber.FullName);
                         string accessToken = accessTokenInstance.Create(
                             new E.Standard.Security.Cryptography.Token.Models.Header()
                             {
@@ -209,6 +213,7 @@ public class SubscribersController : ApiBaseController
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Login error: {0}", ex.Message);
             _botDetection.AddSuspiciousUser(login.Username);
 
             var captchaCode = Captcha.GenerateCaptchaCode(login.Username);
@@ -309,6 +314,7 @@ public class SubscribersController : ApiBaseController
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Register error: {0}", ex.Message);
             registerSubscriber.ErrorMessage = ex.Message;
             return ViewResult(registerSubscriber);
         }
@@ -377,6 +383,7 @@ public class SubscribersController : ApiBaseController
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Update error: {0}", ex.Message);
             updateSubscriber.ErrorMessage = ex.Message;
             return ViewResult(updateSubscriber);
         }
@@ -422,6 +429,7 @@ public class SubscribersController : ApiBaseController
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Change password error: {0}", ex.Message);
             updateSubscriber.ErrorMessage = ex.Message;
             return ViewResult("Update", updateSubscriber);
         }
@@ -556,6 +564,7 @@ public class SubscribersController : ApiBaseController
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Update client error: {0}", ex.Message);
             client.ErrorMessage = ex.Message;
             return ViewResult(client);
         }
@@ -729,6 +738,8 @@ public class SubscribersController : ApiBaseController
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Update portal page error: {0}", ex.Message);
+
             AddViewData("security-prefixes", (await _portal.SecurityPrefixes(HttpContext)).ToJavascriptStringArray());
 
             page.ErrorMessage = ex.Message;
@@ -781,8 +792,10 @@ public class SubscribersController : ApiBaseController
         {
             return RedirectToActionResult("Login");
         }
-        catch (Exception /*ex*/)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Admin subscribers error: {0}", ex.Message);
+
             return RedirectToActionResult("Index");
         }
     }

@@ -1,0 +1,4 @@
+<config>
+  <name type="System.String">default</name>
+  <checkmode type="System.Int32">2</checkmode>
+</config>

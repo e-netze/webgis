@@ -1,0 +1,20 @@
+﻿<xml>
+<!--	
+<heightabovedatum 
+		  type="voibos" srs="31256"
+                  server="http://voibos.rechenraum.com/voibos/voibos" 
+				  service="hoehenservice" 
+				  rastertheme="hoeheDTM,hoeheDSM"
+                  expression="DTM: +{0:0.00}\nDSM: +{1:0.00}\nEinheit: [einheit]\nQuelle: [datengrundlage]\nFlugjahr: [flugjahr]"
+                  />		
+-->
+<heightabovedatum type="ims" 
+	              srs="31287"
+                  server_="https://gis3.esn.at/gview5"
+				  server="https://gview.webgiscloud.com/servlet/com.esri.esrimap.Esrimap?"
+                  service="sys/dhm_at_lamb_10m_2018"
+                  rastertheme="dhm_at_lamb_10m_2018.tif"
+                  expression="+{0:.00} müA"
+                  />            		  
+				  	
+</xml>

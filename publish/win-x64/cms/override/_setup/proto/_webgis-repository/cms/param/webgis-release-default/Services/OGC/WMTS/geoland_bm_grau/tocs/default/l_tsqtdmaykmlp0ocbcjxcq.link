@@ -1,0 +1,18 @@
+<config>
+  <_linkuri type="System.String">services/ogc/wmts/geoland_bm_grau/themes/il5kjgmt9dumkpgziobtglw</_linkuri>
+  <aliasname type="System.String">google3857</aliasname>
+  <metadata type="System.String">
+  </metadata>
+  <metadataformat type="System.String">text/html</metadataformat>
+  <visible type="System.Boolean">True</visible>
+  <locked type="System.Boolean">False</locked>
+  <legend type="System.Boolean">True</legend>
+  <legendaliasname type="System.String">
+  </legendaliasname>
+  <refscale type="System.Boolean">True</refscale>
+  <downloadable type="System.Boolean">False</downloadable>
+  <labeling_fields type="System.String">
+  </labeling_fields>
+  <labeling_fieldsalias type="System.String">
+  </labeling_fieldsalias>
+</config>

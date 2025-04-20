@@ -1,0 +1,34 @@
+﻿Es gibt projizierte Koordinaten (GK-M34, Web Mercator, ...) und geographische Koordinaten (WGS 84, GPS).
+Bei der Eingabe sollte daher immer zuerst das Koordinatensystem ausgewählt werden.
+
+Bei projizierten Koordinaten werden die Rechts- und Hochwerte üblicherweise in Metern angegeben.
+<strong>GK-M34</strong>
+Rechtswert: -67772,43 
+Hochwert: 215837,13
+
+
+Bei geographischen Koordinaten entspricht der Rechtswert der geographischen Länge (Werte westlich des Nullmeridians müssen ein negatives Vorzeichen aufweisen).
+Der Hochwert entspricht der geographischen Breite (Werte südlich des Äquators müssen ein negatives Vorzeichen aufweisen).
+
+Folgende Schreibweisen sind möglich:
+
+Rechtswert: 15,439833 
+Hochwert: 47,078167
+
+<strong>Grad/Minuten:</strong>
+Rechtswert: 15°26,39' 
+Hochwert: 47°04,69'
+
+<i>vereinfacht mit Leerzeichen:</i>
+Rechtswert: 15 26,39 
+Hochwert: 47 04,69
+
+<strong>Grad/Minuten/Sekunden:</strong>
+Rechtswert: 15°26'23,4'' 
+Hochwert: 47°04'41,4''
+
+<i>vereinfacht mit Leerzeichen:</i>
+Rechtswert: 15 26 23,4 
+Hochwert: 47 04 41,4
+
+Für alle Koordinaten gilt: Beistrich und Punkt werden immer als Komma interpretiert.

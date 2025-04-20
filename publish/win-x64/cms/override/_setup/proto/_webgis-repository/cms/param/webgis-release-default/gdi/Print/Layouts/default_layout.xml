@@ -1,0 +1,7 @@
+<config>
+  <name type="System.String">Default Layout</name>
+  <url type="System.String">default_layout</url>
+  <layoutfile type="System.String">layout_default.xml</layoutfile>
+  <parameters type="System.String">
+  </parameters>
+</config>

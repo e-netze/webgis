@@ -1,0 +1,34 @@
+<config>
+  <minx type="System.Double">-20037508.3427892</minx>
+  <miny type="System.Double">-20037508.3427892</miny>
+  <maxx type="System.Double">20037508.3427892</maxx>
+  <maxy type="System.Double">20037508.3427892</maxy>
+  <res0 type="System.Double">156543.033928041</res0>
+  <res1 type="System.Double">78271.5169640206</res1>
+  <res2 type="System.Double">39135.7584820103</res2>
+  <res3 type="System.Double">19567.8792410051</res3>
+  <res4 type="System.Double">9783.93962050256</res4>
+  <res5 type="System.Double">4891.96981025127</res5>
+  <res6 type="System.Double">2445.98490512564</res6>
+  <res7 type="System.Double">1222.99245256282</res7>
+  <res8 type="System.Double">611.496226281409</res8>
+  <res9 type="System.Double">305.748113140706</res9>
+  <res10 type="System.Double">152.874056570352</res10>
+  <res11 type="System.Double">76.4370282851762</res11>
+  <res12 type="System.Double">38.2185141425882</res12>
+  <res13 type="System.Double">19.1092570712941</res13>
+  <res14 type="System.Double">9.55462853564703</res14>
+  <res15 type="System.Double">4.77731426782352</res15>
+  <res16 type="System.Double">2.38865713391176</res16>
+  <res17 type="System.Double">1.19432856695588</res17>
+  <res18 type="System.Double">0.597164283477941</res18>
+  <res19 type="System.Double">0.298582141738971</res19>
+  <origin type="System.Int32">1</origin>
+  <tileurl type="System.String">https://{0}.tile.openstreetmap.de/[LEVEL]/[COL]/[ROW].png</tileurl>
+  <tilepath type="System.String">
+  </tilepath>
+  <tilewidth type="System.Int32">256</tilewidth>
+  <tileheight type="System.Int32">256</tileheight>
+  <domains type="System.String">a|b|c</domains>
+  <projid type="System.Int32">-1</projid>
+</config>

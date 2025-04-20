@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<projections>
+  
+  <projection id="31254" displayname="GK M28" minx="-200000" maxx="200000"/>
+  <projection id="31255" displayname="GK M31" minx="-200000" maxx="200000"/>
+  <projection id="31256" displayname="GK M34" minx="-200000" maxx="200000"/>
+  <projection id="31287" displayname="Lambert (neu)" />
+   
+  <projection id="31257" displayname="BMN M28" maxx="300000"/>
+  <projection id="31258" displayname="BMN M31" minx="300000" maxx="600000"/>
+  <projection id="31259" displayname="BMN M34" minx="600000"/>
+  <projection id="4326" displayname="WGS84" digits="6" />
+  <projection id="4326" displayname="WGS84(GM)" displaystyle="dm" digits="2"/>
+  <projection id="4326" displayname="WGS84(GMS)" displaystyle="dms" digits="1"/>
+  <projection id="32632" displayname="UTM 32N" minx="-150000" maxx="850000" />
+  <projection id="32633" displayname="UTM 33N" minx="-150000" maxx="850000" />
+
+  <projection id="3857" displayname="web"  />
+   
+
+  <!-- geoland -->
+<!--  <projection id="3857" displayname="Web Mercator, EPSG:3857" />
+  <projection id="4326" displayname="WGS84, EPSG:4326" digits="6" />
+  <projection id="31287" displayname="Austria Lambert, EPSG:31287"/>
+  <projection id="31257" displayname="BMN M28, EPSG:31257" maxx="300000"/>
+  <projection id="31258" displayname="BMN M31, EPSG:31258" minx="300000" maxx="600000"/>
+  <projection id="31259" displayname="BMN M34, EPSG:31259" minx="600000"/>
+-->
+</projections>

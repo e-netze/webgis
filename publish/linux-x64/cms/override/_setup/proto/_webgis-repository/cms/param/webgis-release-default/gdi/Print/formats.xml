@@ -1,0 +1,19 @@
+<config>
+  <a4port type="System.Boolean">True</a4port>
+  <a4land type="System.Boolean">True</a4land>
+  <a3port type="System.Boolean">True</a3port>
+  <a3land type="System.Boolean">True</a3land>
+  <a2port type="System.Boolean">False</a2port>
+  <a2land type="System.Boolean">False</a2land>
+  <a1port type="System.Boolean">False</a1port>
+  <a1land type="System.Boolean">False</a1land>
+  <a0port type="System.Boolean">False</a0port>
+  <a0land type="System.Boolean">False</a0land>
+  <a4a3 type="System.Boolean">False</a4a3>
+  <a4a2 type="System.Boolean">False</a4a2>
+  <a4a1 type="System.Boolean">False</a4a1>
+  <a4a0 type="System.Boolean">False</a4a0>
+  <a3a2 type="System.Boolean">False</a3a2>
+  <a3a1 type="System.Boolean">False</a3a1>
+  <a2a1 type="System.Boolean">False</a2a1>
+</config>

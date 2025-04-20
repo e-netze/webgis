@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<layout>
+  <panel dock="fill" border="all" bordercolor="0,0,0" fillcolor="255,255,255">
+      <panel dock="top" height="6" border="bottom" bordercolor="0,0,0">
+      	      	
+      	<panel dock="right" width="30" >
+      		<panel dock="bottom" height="6" border="top" bordercolor="0,0,0">
+      			<text string="Gedruckt am:" x="2" y="2" font="Arial" fontcolor="0,0,0" fontstyle="bold" fontsize="2.0"/>
+      			<text string="[DATE]" x="20" y="2" font="Arial" fontcolor="0,0,0" fontsize="2.0"/>      			
+      		</panel>  
+      	  		
+      	</panel>
+      	<panel dock="fill" border="all" bordercolor="0,0,0" fillcolor="255,255,255">
+      		<text string="[TITLE]" x="2" y="1" font="Arial" fontcolor="0,0,0" fontstyle="bold" fontsize="3.5"/>
+      	</panel>  
+      	
+      	
+      	
+      	
+      </panel>
+      
+      <panel dock="top" height="4,5" >
+          <!-- Massstab, Koordinatenmarken -->
+          
+          <panel dock="left" width="1,5">
+             <!--<panel dock="bottom" height="1,5" border="bottom,right" />-->
+             <line x1="0"   y1="4.5" x2="1.5" y2="4.5" color="0,0,0" />
+             <line x1="1.5"   y1="4.5" x2="1.5" y2="3.0" color="0,0,0" />
+          </panel>
+          <panel dock="right" width="1,5">
+             <!--<panel dock="bottom" height="1,5" border="bottom,left" />-->
+             <line x1="0"   y1="4.5" x2="1.5" y2="4.5" color="0,0,0" />
+             <line x1="0"   y1="4.5" x2="0" y2="3.0" color="0,0,0" />
+          </panel>
+          
+          <panel dock="fill">
+              <text string="Mittelpunkt rechts: [COORD_CENTER_X_0]; hoch: [COORD_CENTER_Y_0]" align="center" y="0" x="20" font="Arial" fontcolor="0,0,0" />
+              <text string="rechts: [COORD_LEFT_0]; hoch: [COORD_TOP_0]" align="left" y="0" font="Arial" fontcolor="0,0,0" />
+              <text string="rechts: [COORD_RIGHT_0]; hoch: [COORD_TOP_0]" align="right" y="0" font="Arial" fontcolor="0,0,0" />
+          </panel>
+      </panel>
+      
+      <panel dock="fill">      	
+        <panel dock="bottom" height="4,5" >
+          <!-- Koordinatenmarken -->
+          <panel dock="left" width="1,5">
+             <!--<panel dock="top" height="1,5" border="top,right" />-->
+             <line x1="0"   y1="0" x2="1.5" y2="0" color="0,0,0" />
+             <line x1="1.5"   y1="0" x2="1.5" y2="1.5" color="0,0,0" />
+          </panel>
+          <panel dock="right" width="1,5">
+             <!--<panel dock="top" height="1,5" border="top,left" />-->
+             <line x1="0"   y1="0" x2="1.5" y2="0" color="0,0,0" />
+             <line x1="0"   y1="0" x2="0" y2="1.5" color="0,0,0" />
+          </panel>
+          
+          <panel dock="fill">
+             <text string="rechts: [COORD_LEFT_0]; hoch: [COORD_BOTTOM_0]" align="left" y="1" font="Arial" fontcolor="0,0,0" />
+             <text string="rechts: [COORD_RIGHT_0]; hoch: [COORD_BOTTOM_0]" align="right" y="1" font="Arial" fontcolor="0,0,0" />
+          </panel>
+         </panel>
+         <panel dock="fill">
+      	 	   <panel dock="left" width="1,5" />
+        	<panel dock="right" width="1,5" />
+        	<map dock="fill" >      		
+      		</map>
+        	<panel dock="bottom" height="8">
+        		<scalebar dock="left" width="65" fillcolor="225,225,225" />      	
+        	</panel>
+      	 </panel>
+               	
+      </panel>
+           
+  </panel>
+  
+  <variables>    
+    <variable name="TITLE" alias="Karten-Titel" />    
+  </variables>
+  
+</layout>

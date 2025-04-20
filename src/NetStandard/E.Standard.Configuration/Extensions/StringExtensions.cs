@@ -18,6 +18,6 @@ static public class StringExtensions
             };
         }
 
-        return Array.Empty<string>();
+        return new[] { path };
     }
 }

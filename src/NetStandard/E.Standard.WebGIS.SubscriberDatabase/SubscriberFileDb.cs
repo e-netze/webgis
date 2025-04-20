@@ -1,20 +1,26 @@
-﻿using E.Standard.Extensions.RegEx;
+﻿#nullable enable
+
+using E.Standard.Extensions.RegEx;
 using E.Standard.Json;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static E.Standard.WebGIS.SubscriberDatabase.SubscriberDb;
 
 namespace E.Standard.WebGIS.SubscriberDatabase;
 
 public class SubscriberFileDb : ISubscriberDb
 {
-    private string _rootPath;
+    private readonly string _rootPath;
+    private readonly ILogger? _logger;
 
-    internal SubscriberFileDb(string rootPath)
+    internal SubscriberFileDb(string rootPath, ILogger? logger)
     {
         _rootPath = rootPath;
+        _logger = logger;
     }
 
     #region ISubscriberDb
@@ -35,7 +41,7 @@ public class SubscriberFileDb : ISubscriberDb
         return true;
     }
 
-    public SubscriberDb.Subscriber GetSubscriberById(string id)
+    public SubscriberDb.Subscriber? GetSubscriberById(string id)
     {
         string path = Path.Combine(SubscribersRootPath, $"{id}.json");
 
@@ -47,20 +53,28 @@ public class SubscriberFileDb : ISubscriberDb
         return null;
     }
 
-    public SubscriberDb.Subscriber GetSubscriberByName(string name)
+    public SubscriberDb.Subscriber? GetSubscriberByName(string name)
     {
+        _logger?.LogInformation("GetSubscriberByName: {name} from {path}", name, SubscribersRootPath);
+
         foreach (var fileInfo in new DirectoryInfo(SubscribersRootPath).GetFiles("*.json"))
         {
             try
             {
                 var subscriber = JSerializer.Deserialize<SubscriberDb.Subscriber>(File.ReadAllText(fileInfo.FullName));
 
-                if (subscriber.Name == name.ToLower())
+                _logger?.LogInformation("Loaded Subscriber: {name}, File: {filename}", subscriber?.Name, fileInfo.FullName);
+
+                if (name.Equals(subscriber?.Name,  StringComparison.OrdinalIgnoreCase))
                 {
                     return subscriber;
                 }
             }
-            catch { }
+            catch(Exception ex) 
+            {
+                // Log exception if needed
+                _logger?.LogError(ex, "Error deserializing subscriber file: {name}, File: {filename}", name, fileInfo.FullName);
+            }
         }
 
         return null;
@@ -75,7 +89,11 @@ public class SubscriberFileDb : ISubscriberDb
             try
             {
                 var subscriber = JSerializer.Deserialize<SubscriberDb.Subscriber>(File.ReadAllText(fileInfo.FullName));
-                subscribers.Add(subscriber);
+
+                if (subscriber is not null)
+                {
+                    subscribers.Add(subscriber);
+                }
             }
             catch { }
         }
@@ -131,9 +149,9 @@ public class SubscriberFileDb : ISubscriberDb
 
     public Task<bool> SetFavItemAsync(string username, string task, string tool, string toolItem) => Task.FromResult(false);
 
-    public Task<IEnumerable<string>> GetFavItemsAsync(string username, string task, string tool) => Task.FromResult<IEnumerable<string>>(null);
+    public Task<IEnumerable<string>> GetFavItemsAsync(string username, string task, string tool) => Task.FromResult<IEnumerable<string>>(null!);
 
-    public Task<bool> DeteleUserFavorites(string username, string task = null, string tool = null) => Task.FromResult(false);
+    public Task<bool> DeteleUserFavorites(string username, string? task = null, string? tool = null) => Task.FromResult(false);
 
     #endregion
 
@@ -161,7 +179,7 @@ public class SubscriberFileDb : ISubscriberDb
             try
             {
                 var client = JSerializer.Deserialize<SubscriberDb.Client>(File.ReadAllText(fileInfo.FullName));
-                if (client.Subscriber == subscriber)
+                if (client?.Subscriber == subscriber)
                 {
                     clients.Add(client);
                 }
@@ -195,7 +213,7 @@ public class SubscriberFileDb : ISubscriberDb
         return true;
     }
 
-    public SubscriberDb.Client GetClientByClientId(string clientId)
+    public SubscriberDb.Client? GetClientByClientId(string clientId)
     {
         string path = ClientsRootPath;
 
@@ -204,7 +222,7 @@ public class SubscriberFileDb : ISubscriberDb
             try
             {
                 var client = JSerializer.Deserialize<SubscriberDb.Client>(File.ReadAllText(fileInfo.FullName));
-                if (client.ClientId == clientId)
+                if (client?.ClientId == clientId)
                 {
                     return client;
                 }
@@ -215,7 +233,7 @@ public class SubscriberFileDb : ISubscriberDb
         return null;
     }
 
-    public SubscriberDb.Client GetClientByName(SubscriberDb.Subscriber subscriber, string clientName)
+    public SubscriberDb.Client? GetClientByName(SubscriberDb.Subscriber subscriber, string clientName)
     {
         return GetSubriptionClients(subscriber.Id).Where(c => c.ClientName == clientName.ToLower()).FirstOrDefault();
     }

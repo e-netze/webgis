@@ -1,0 +1,3 @@
+dotnet --info
+
+pause

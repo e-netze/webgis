@@ -48,8 +48,6 @@
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile.pubxml" />
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile_linux64.pubxml" />
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile_win64.pubxml" />
-    <_WebToolingArtifacts Remove="Properties\PublishProfiles\OpenSourceProfile.pubxml" />
-    <_WebToolingArtifacts Remove="Properties\PublishProfiles\OpenSourceProfile_linux64.pubxml" />
   </ItemGroup>
 
   <ItemGroup>    

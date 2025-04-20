@@ -1,0 +1,12 @@
+﻿<xml>
+		
+			
+<heightabovedatum type="gview-image" 
+			name="DGM 10m"
+	            srs="31287"
+                  server="gview.webgiscloud.com"
+                  service="https://gview.webgiscloud.com/geoservices/rest/services/sys/dhm_at_lamb_10m_2018_3d/MapServer"
+                  rastertheme="0"
+                  />							  
+				  
+</xml>

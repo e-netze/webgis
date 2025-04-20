@@ -1,0 +1,7 @@
+<config>
+  <name type="System.String">Layout with Logos</name>
+  <url type="System.String">layout_with_logos</url>
+  <layoutfile type="System.String">layout_logos.xml</layoutfile>
+  <parameters type="System.String">
+  </parameters>
+</config>

@@ -1,0 +1,5 @@
+<config>
+  <name type="System.String">google3857</name>
+  <id type="System.String">0</id>
+  <visible type="System.Boolean">True</visible>
+</config>

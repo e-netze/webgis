@@ -161,6 +161,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E.Standard.DependencyInject
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E.Standard.CMS.Core.Test", "NetStandard\E.Standard.CMS.Core.Test\E.Standard.CMS.Core.Test.csproj", "{1A7A9117-0B20-7DB2-F557-321BAF0063F3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "..\build\_build.csproj", "{C7C24709-0C2B-401D-A53D-22D01AF73E00}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_Internal|Any CPU = Debug_Internal|Any CPU
@@ -753,6 +755,12 @@ Global
 		{1A7A9117-0B20-7DB2-F557-321BAF0063F3}.Release_Internal|Any CPU.Build.0 = Release|Any CPU
 		{1A7A9117-0B20-7DB2-F557-321BAF0063F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A7A9117-0B20-7DB2-F557-321BAF0063F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7C24709-0C2B-401D-A53D-22D01AF73E00}.Debug_Internal|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7C24709-0C2B-401D-A53D-22D01AF73E00}.Debug_Internal|Any CPU.Build.0 = Debug|Any CPU
+		{C7C24709-0C2B-401D-A53D-22D01AF73E00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7C24709-0C2B-401D-A53D-22D01AF73E00}.Release_Internal|Any CPU.ActiveCfg = Release|Any CPU
+		{C7C24709-0C2B-401D-A53D-22D01AF73E00}.Release_Internal|Any CPU.Build.0 = Release|Any CPU
+		{C7C24709-0C2B-401D-A53D-22D01AF73E00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

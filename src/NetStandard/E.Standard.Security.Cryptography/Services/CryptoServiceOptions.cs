@@ -99,13 +99,18 @@ public class CryptoServiceOptions
                              byte[] customLegacySalt = null,
                              string legacyDataLinqDefaultPassword = null)
     {
+        Console.WriteLine("Load or create security keys");
+
         if (!_sealed && sharedKeysPaths != null)
         {
             for (int i = 0; i < sharedKeysPaths.Length; i++)
             {
                 var sharedKeysPath = sharedKeysPaths[i];
 
-                var fi = new FileInfo($"{sharedKeysPath}/keys.config");
+                var fi = new FileInfo(Path.Combine(sharedKeysPath, "keys.config"));
+
+                Console.WriteLine($"{fi.FullName} exists: {fi.Exists}");
+
                 KeysModel keysModel = null;
                 if (fi.Exists)
                 {

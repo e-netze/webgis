@@ -1,6 +1,7 @@
 using E.Standard.DbConnector;
 using E.Standard.DbConnector.Schema;
 using E.Standard.Security.Cryptography.Extensions;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using System;
@@ -1021,11 +1022,11 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
 
     #region Static Members
 
-    static public ISubscriberDb Create(string connectionString)
+    static public ISubscriberDb Create(string connectionString, ILogger logger = null)
     {
         if (connectionString.ToLower().StartsWith("fs:"))
         {
-            return new SubscriberFileDb(connectionString.Substring("fs:".Length));
+            return new SubscriberFileDb(connectionString.Substring("fs:".Length), logger);
         }
         else if (connectionString.ToLower().StartsWith("mongo:"))
         {

@@ -1,0 +1,318 @@
+{
+  "crs": {
+    "epsg": 3857,
+    "id": "web_mercator_at@default"
+  },
+  "scale": 2049694,
+  "center": [
+    13.028248599279738,
+    47.571275932543664
+  ],
+  "bounds": [
+    10.166903523401608,
+    46.210310516916465,
+    15.891799940600011,
+    48.89715178899081
+  ],
+  "initialbounds": [
+    8.750255620634388,
+    45.913122791582026,
+    17.30624157792509,
+    49.17854367705402
+  ],
+  "services": [
+    {
+      "id": "geoland_bm@default",
+      "opacity": 1,
+      "order": 10,
+      "layers": [
+        {
+          "id": "0",
+          "name": "_alllayers",
+          "visible": true
+        }
+      ],
+      "queries": []
+    },
+    {
+      "id": "geoland_bm_of@default",
+      "opacity": 1,
+      "order": 20,
+      "layers": [
+        {
+          "id": "0",
+          "name": "_alllayers",
+          "visible": false
+        }
+      ],
+      "queries": []
+    },
+    {
+      "id": "geoland_bm_grau@default",
+      "opacity": 1,
+      "order": 30,
+      "layers": [
+        {
+          "id": "0",
+          "name": "_alllayers",
+          "visible": false
+        }
+      ],
+      "queries": []
+    },
+    {
+      "id": "geoland_bm_oberfl@default",
+      "opacity": 1,
+      "order": 40,
+      "layers": [
+        {
+          "id": "0",
+          "name": "_alllayers",
+          "visible": false
+        }
+      ],
+      "queries": []
+    },
+    {
+      "id": "geoland_bm_gel@default",
+      "opacity": 1,
+      "order": 50,
+      "layers": [
+        {
+          "id": "0",
+          "name": "_alllayers",
+          "visible": false
+        }
+      ],
+      "queries": []
+    },
+    {
+      "id": "geoland_bm_ov@default",
+      "opacity": 1,
+      "order": 60,
+      "layers": [
+        {
+          "id": "0",
+          "name": "_alllayers",
+          "visible": true
+        }
+      ],
+      "queries": []
+    }
+  ],
+  "dynamiccontent": [],
+  "userdata": {
+    "mapbuilder": {
+      "map": {
+        "options": {
+          "extent": "web_mercator_at@default",
+          "services": "geoland_bm@default,geoland_bm_of@default,geoland_bm_grau@default,geoland_bm_oberfl@default,geoland_bm_gel@default,geoland_bm_ov@default"
+        }
+      },
+      "ui": {
+        "appmenu": true,
+        "search": true,
+        "search-service-webgis_cloud_allgemein@default": true,
+        "tabs-presentation": true,
+        "tabs-presentation-addservices": true,
+        "tabs-queryresults": true,
+        "tabs-tools": true
+      },
+      "tools": {
+        "webgis.tools.navigation.fullExtent": true,
+        "webgis.tools.navigation.zoomBack": true,
+        "webgis.tools.navigation.currentPos": true,
+        "webgis.tools.navigation.continuousPos": true,
+        "webgis.tools.navigation.bookmarks": true,
+        "webgis.tools.navigation.zoomIn": true,
+        "webgis.tools.navigation.zoomToSketch": true,
+        "webgis.tools.navigation.refreshMap": true,
+        "webgis.tools.navigation.showlegend": true,
+        "webgis.tools.navigation.serviceOrder": true,
+        "webgis.tools.navigation.saveMap": true,
+        "webgis.tools.navigation.loadMap": true,
+        "webgis.tools.navigation.shareMap": true,
+        "webgis.tools.navigation.liveshareMap": true,
+        "webgis.tools.info.markerInfo": true,
+        "webgis.tools.io.print": true,
+        "default_layout@default": true,
+        "layout_with_logos@default": true,
+        "layout_with_logos__restrictions@default": true,
+        "webgis.tools.io.downloadmapimage": true,
+        "webgis.tools.info.identify": true,
+        "webgis.tools.info.coordinates": true,
+        "webgis.tools.info.rasteridentify": true,
+        "webgis.tools.info.chainage": true,
+        "webgis.tools.info.queryResults": true,
+        "webgis.tools.info.addtoselection": true,
+        "webgis.tools.info.removefromselection": true,
+        "webgis.tools.advanced.measureDistance": true,
+        "webgis.tools.advanced.measureArea": true,
+        "webgis.tools.advanced.measureCircle": true,
+        "webgis.tools.advanced.profile": true,
+        "webgis.tools.advanced.redlining": true,
+        "webgis.tools.advanced.edit": true,
+        "webgis.tools.advanced.snapping": true,
+        "webgis.tools.advanced.geocode": true,
+        "webgis.tools.advanced.treed": true,
+        "webgis.tools.presenation.labeling": true,
+        "webgis.tools.presenation.filter": true,
+        "webgis.tools.presenation.filterRemove": true
+      },
+      "defaulttool": [
+        {
+          "id": "none",
+          "selected": false
+        },
+        {
+          "id": "webgis.tools.identify",
+          "selected": true,
+          "options": []
+        }
+      ],
+      "actions": {},
+      "tools-quick-access": {
+        "webgis.tools.navigation.fullExtent": true,
+        "webgis.tools.navigation.zoomBack": true,
+        "webgis.tools.navigation.currentPos": true
+      },
+      "queries": null,
+      "dyncontent": [],
+      "initialDefaults": {
+        "initial-tool": "",
+        "initial-query": "",
+        "initial-edittheme": ""
+      }
+    },
+    "meta": {
+      "author": "subscriber::author"
+    }
+  },
+  "selections": [],
+  "ui": {
+    "options": [
+      {
+        "element": "hourglass",
+        "selector": "#hourglass"
+      },
+      {
+        "element": "topbar",
+        "selector": "#topbar",
+        "options": {
+          "quick_search_service": "webgis_cloud_allgemein@default",
+          "quick_search": true,
+          "detail_search": false,
+          "app_menu": true
+        }
+      },
+      {
+        "element": "tabs",
+        "selector": "#webgis-container",
+        "options": {
+          "left": null,
+          "right": 0,
+          "bottom": 24,
+          "top": null,
+          "width": 320,
+          "add_presentations": true,
+          "add_settings": false,
+          "add_tools": true,
+          "add_queryResults": true,
+          "options_presentations": {
+            "gdi_button": true
+          },
+          "options_settings": {
+            "gdi_button": false,
+            "themes": false
+          },
+          "options_tools": {
+            "containers": [
+              {
+                "name": "Navigation",
+                "tools": [
+                  "webgis.tools.fullextent",
+                  "webgis.tools.zoomback",
+                  "webgis.tools.currentposition",
+                  "webgis.tools.continuousposition",
+                  "webgis.tools.serialization.bookmarks",
+                  "webgis.tools.boxzoomin",
+                  "webgis.tools.zoomtosketch"
+                ]
+              },
+              {
+                "name": "Karte",
+                "tools": [
+                  "webgis.tools.refreshmap",
+                  "webgis.tools.showlegend",
+                  "webgis.tools.serviceorder",
+                  "webgis.tools.serialization.savemap",
+                  "webgis.tools.serialization.loadmap",
+                  "webgis.tools.serialization.sharemap",
+                  "webgis.tools.serialization.livesharemap",
+                  "webgis.tools.markerinfo",
+                  "webgis.tools.print"
+                ]
+              },
+              {
+                "name": "webgis.tools.io.print",
+                "options": [
+                  "default_layout@default",
+                  "layout_with_logos@default",
+                  "layout_with_logos__restrictions@default"
+                ]
+              },
+              {
+                "name": "Karte",
+                "tools": [
+                  "webgis.tools.downloadmapimage"
+                ]
+              },
+              {
+                "name": "Abfragen",
+                "tools": [
+                  "webgis.tools.identify",
+                  "webgis.tools.coordinates",
+                  "webgis.tools.rasteridentify",
+                  "webgis.tools.chainage",
+                  "webgis.tools.queryresulttable",
+                  "webgis.tools.addtoselection",
+                  "webgis.tools.removefromselection"
+                ]
+              },
+              {
+                "name": "Werkzeuge",
+                "tools": [
+                  "webgis.tools.measureline",
+                  "webgis.tools.measurearea",
+                  "webgis.tools.measurecircle",
+                  "webgis.tools.profile.createprofile",
+                  "webgis.tools.redlining.redlining",
+                  "webgis.tools.editing.edit",
+                  "webgis.tools.snapping",
+                  "webgis.tools.georeferencing.georeference",
+                  "webgis.tools.threed.threed"
+                ]
+              },
+              {
+                "name": "Darstellung",
+                "tools": [
+                  "webgis.tools.presentation.labeling",
+                  "webgis.tools.presentation.visfilter",
+                  "webgis.tools.presentation.visfilterremoveall"
+                ]
+              }
+            ]
+          },
+          "content_size": null
+        }
+      }
+    ]
+  },
+  "toolbars": [
+    {
+      "cls": "webgis-tool-button-bar shadow webgis-ui-trans",
+      "style": "position: absolute; left: 3px; top: 119px; width: 41px; height: 132px;",
+      "data-tools": "webgis.tools.navigation.fullExtent,webgis.tools.navigation.zoomBack,webgis.tools.navigation.currentPos"
+    }
+  ]
+}
