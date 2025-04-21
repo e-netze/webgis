@@ -5,7 +5,7 @@ namespace webgis.deploy.Services;
 
 internal class DeployVersionService
 {
-    public static readonly Version DeployToolVersion = new Version(7, 25, 1201);
+    public static readonly Version DeployToolVersion = new Version(7, 25, 1701);
 
     private const string zipPrefix = "webgis";
 

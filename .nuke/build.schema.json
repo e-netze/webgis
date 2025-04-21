@@ -26,8 +26,8 @@
       "enum": [
         "Clean",
         "Compile",
-        "Package",
-        "PackageCleanIt",
+        "Deploy",
+        "DeployCleanIt",
         "Restore",
         "Test"
       ]

@@ -160,35 +160,36 @@ internal class IOService
         int counter = 0;
         var rootEntry = zipArchive.GetEntry(relativeSourcePath);
 
-        if (rootEntry != null)
+        relativeSourcePath = rootEntry is not null
+            ? rootEntry.FullName
+            : relativeSourcePath;
+
+        var entries = zipArchive.Entries.Where(e => e.FullName.StartsWith(relativeSourcePath));
+        int entriesLength = entries.Count();
+
+        foreach (var entry in entries)
         {
-            var entries = zipArchive.Entries.Where(e => e.FullName.StartsWith(rootEntry.FullName));
-            int entriesLength = entries.Count();
+            counter++;
 
-            foreach (var entry in entries)
+            if (entry.IsDirectory())
             {
-                counter++;
-
-                if (entry.IsDirectory())
+                //Console.WriteLine($"Got ZipArchiveDirectory: {entry.FullName} - {entry.Name}");
+                DirectoryInfo di = new DirectoryInfo($"{targetPath}/{entry.FullName.Substring(relativeSourcePath.Length)}");
+                di.Create();
+            }
+            else
+            {
+                FileInfo fi = new FileInfo($"{targetPath}/{entry.FullName.Substring(relativeSourcePath.Length)}");
+                if (!fi.Directory?.Exists == true)
                 {
-                    //Console.WriteLine($"Got ZipArchiveDirectory: {entry.FullName} - {entry.Name}");
-                    DirectoryInfo di = new DirectoryInfo($"{targetPath}/{entry.FullName.Substring(rootEntry.FullName.Length)}");
-                    di.Create();
+                    fi.Directory?.Create();
                 }
-                else
-                {
-                    FileInfo fi = new FileInfo($"{targetPath}/{entry.FullName.Substring(rootEntry.FullName.Length)}");
-                    if (!fi.Directory?.Exists == true)
-                    {
-                        fi.Directory?.Create();
-                    }
 
-                    ClearCurrentConsoleLine();
-                    var message = $"{(int)(counter * 100.0 / entriesLength)}% {counter}/{entriesLength} Extract {entry.FullName}";
-                    Console.Write(message.Substring(0, Math.Min(message.Length, Console.WindowWidth)));
+                ClearCurrentConsoleLine();
+                var message = $"{(int)(counter * 100.0 / entriesLength)}% {counter}/{entriesLength} Extract {entry.FullName}";
+                Console.Write(message.Substring(0, Math.Min(message.Length, Console.WindowWidth)));
 
-                    entry.ExtractToFile($"{targetPath}/{entry.FullName.Substring(rootEntry.FullName.Length)}");
-                }
+                entry.ExtractToFile($"{targetPath}/{entry.FullName.Substring(relativeSourcePath.Length)}");
             }
         }
 

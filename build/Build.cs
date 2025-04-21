@@ -1,5 +1,6 @@
 ﻿// build.cs
 using E.Standard.WebGIS.Core;
+using Microsoft.Build.Logging;
 using NuGet.Common;
 using Nuke.Common;
 using Nuke.Common.IO;
@@ -70,7 +71,7 @@ class Build : NukeBuild
         });
 
     Target Compile => _ => _
-        .Before(PackageCleanIt)
+        .Before(DeployCleanIt)
         .DependsOn(Restore)
         .Executes(() =>
         {
@@ -127,7 +128,7 @@ class Build : NukeBuild
             );
         });
 
-    Target PackageCleanIt => _ => _
+    Target DeployCleanIt => _ => _
         .Executes(() =>
         {
             var globs = new[]
@@ -181,16 +182,65 @@ class Build : NukeBuild
     AbsolutePath DeployDir => DeployRoot / Version;
     AbsolutePath DownloadDir => DeployRoot / "download";
 
-    Target Package => _ => _
+    Target Deploy => _ => _
         .DependsOn(Test)
         .DependsOn(Compile)
-        .DependsOn(PackageCleanIt)
+        .DependsOn(DeployCleanIt)
         .Executes(() =>
         {
             if(Platform.Equals("linux-x64", StringComparison.Ordinal))
             {
                 Log.Information($"Builder docker images: {Version}");
 
+                ProcessTasks.StartProcess("docker",
+                    $"build -t webgis-cms:{Version} -f Dockerfile .",
+                    workingDirectory: RootDirectory / "publish" / Platform / "cms",
+                    logger: (oType, txt) =>
+                    {
+                        Log.Information($"{txt}");
+                    })
+                    .AssertZeroExitCode();
+                ProcessTasks.StartProcess("docker",
+                    $"build -t webgis-api:{Version} -f Dockerfile .",
+                    workingDirectory: RootDirectory / "publish" / Platform / "api",
+                    logger: (oType, txt) =>
+                    {
+                        Log.Information($"{txt}");
+                    })
+                    .AssertZeroExitCode();
+                ProcessTasks.StartProcess("docker",
+                    $"build -t webgis-portal:{Version} -f Dockerfile .",
+                    workingDirectory: RootDirectory / "publish" / Platform / "portal",
+                    logger: (oType, txt) =>
+                    {
+                        Log.Information($"{txt}");
+                    })
+                    .AssertZeroExitCode();
+
+                // tag to latest
+                ProcessTasks.StartProcess("docker",
+                    $"tag webgis-cms:{Version} webgis-cms:latest",
+                    logger: (oType, txt) =>
+                    {
+                        Log.Information($"{txt}");
+                    })
+                    .AssertZeroExitCode();
+                ProcessTasks.StartProcess("docker",
+                    $"tag webgis-api:{Version} webgis-api:latest",
+                    logger: (oType, txt) =>
+                    {
+                        Log.Information($"{txt}");
+                    })
+                    .AssertZeroExitCode();
+                ProcessTasks.StartProcess("docker",
+                    $"tag webgis-portal:{Version} webgis-portal:latest",
+                    logger: (oType, txt) =>
+                    {
+                        Log.Information($"{txt}");
+                    })
+                    .AssertZeroExitCode();
+
+                /*
                 ProcessTasks.StartProcess(
                     (RootDirectory / "publish" / Platform / "docker" / "build-images.bat").ToString(),
                     arguments: Version,
@@ -200,11 +250,11 @@ class Build : NukeBuild
                         Log.Information($"{txt}");
                     })
                    .AssertZeroExitCode();
-
+                */
                 return;
             } 
             
-            Log.Information($"Package ZIP File: {Version}");
+            Log.Information($"Deploy ZIP File: {Version}");
 
             // 1. Mirror Source (ROBOMIRROR‑Äquivalent)
             Log.Information("Copy webgis-api");
@@ -287,9 +337,14 @@ class Build : NukeBuild
             //    .AddPath(DeployDir));
 
             // Starte 7z.exe mit Argumenten
-            ProcessTasks.StartProcess("7z",
-                $"a -tzip \"{zipFile}\" \"{DeployDir}\\*\"")
-                .AssertZeroExitCode();
+            //ProcessTasks.StartProcess("7z",
+            //    $"a -tzip \"{zipFile}\" \"{DeployDir}\\*\"")
+            //    .AssertZeroExitCode();
+
+            DeployDir.ZipTo(
+                zipFile,
+                compressionLevel: CompressionLevel.SmallestSize,
+                fileMode: FileMode.CreateNew);
 
             // 6. temporäres Deploy‑Verzeichnis aufräumen (rmdir /s /q)
             DeployDir.DeleteDirectory();
