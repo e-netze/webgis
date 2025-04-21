@@ -182,8 +182,8 @@ class Build : NukeBuild
     AbsolutePath DownloadDir => DeployRoot / "download";
 
     Target Package => _ => _
-        //.DependsOn(Test)
-        //.DependsOn(Compile)
+        .DependsOn(Test)
+        .DependsOn(Compile)
         .DependsOn(PackageCleanIt)
         .Executes(() =>
         {
