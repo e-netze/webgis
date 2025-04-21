@@ -28,7 +28,8 @@
         "Compile",
         "Package",
         "PackageCleanIt",
-        "Restore"
+        "Restore",
+        "Test"
       ]
     },
     "Verbosity": {

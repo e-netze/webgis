@@ -1,13 +1,15 @@
 ﻿// build.cs
-using System;
-using System.IO;
-using System.IO.Compression;
+using E.Standard.WebGIS.Core;
+using NuGet.Common;
 using Nuke.Common;
 using Nuke.Common.IO;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Utilities.Collections;
 using Serilog;
+using System;
+using System.IO;
+using System.IO.Compression;
 using static Nuke.Common.IO.PathConstruction;
 
 class Build : NukeBuild
@@ -18,7 +20,10 @@ class Build : NukeBuild
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
 
-    public static int Main () => Execute<Build>(x => x.Compile);
+    public static int Main()
+    { 
+        return Execute<Build>(x => x.Compile);
+    }
 
     [Parameter("Configuration to build - Default is 'Release'")]
     readonly Configuration Configuration = Configuration.Release; //IsLocalBuild ? Configuration.Debug : Configuration.Release;
@@ -65,6 +70,7 @@ class Build : NukeBuild
         });
 
     Target Compile => _ => _
+        .Before(PackageCleanIt)
         .DependsOn(Restore)
         .Executes(() =>
         {
@@ -148,21 +154,57 @@ class Build : NukeBuild
                     globFile.DeleteFile();
                 }
             }
+
+            Log.Information($"Set Version {Version} to webgis.js");
+            var jsGlobs = new[]
+            {
+                "api/artifacts/wwwroot/scripts/api/webgis.js",
+                "api/artifacts/wwwroot/scripts/api/api.min.js"
+            };
+
+            foreach (var pattern in jsGlobs)
+            {
+                foreach (var globFile in (RootDirectory / "publish" / Platform).GlobFiles(pattern))
+                {
+                    Log.Information($"Modifing {globFile}");
+                    globFile.WriteAllText(globFile.ReadAllText()
+                        .Replace("{{currentJavascriptVersion}}", Version),
+                        System.Text.Encoding.UTF8);
+                }
+            }
         });
 
     [Parameter("Versions‑/Build‑Label")]
-    readonly string Version = DateTime.Now.ToString("yyyyMMddHHmmss");
+    readonly string Version = WebGISVersion.Version.ToString();
 
     AbsolutePath DeployRoot => (AbsolutePath)@"c:\deploy\webgis";
     AbsolutePath DeployDir => DeployRoot / Version;
     AbsolutePath DownloadDir => DeployRoot / "download";
 
     Target Package => _ => _
+        //.DependsOn(Test)
+        //.DependsOn(Compile)
         .DependsOn(PackageCleanIt)
-        .Before(Compile)
         .Executes(() =>
         {
-            Log.Information("Package ZIP File");
+            if(Platform.Equals("linux-x64", StringComparison.Ordinal))
+            {
+                Log.Information($"Builder docker images: {Version}");
+
+                ProcessTasks.StartProcess(
+                    (RootDirectory / "publish" / Platform / "docker" / "build-images.bat").ToString(),
+                    arguments: Version,
+                    workingDirectory: (RootDirectory / "publish" / Platform / "docker").ToString(),
+                    logger: (oType, txt) =>
+                    {
+                        Log.Information($"{txt}");
+                    })
+                   .AssertZeroExitCode();
+
+                return;
+            } 
+            
+            Log.Information($"Package ZIP File: {Version}");
 
             // 1. Mirror Source (ROBOMIRROR‑Äquivalent)
             Log.Information("Copy webgis-api");
@@ -251,5 +293,44 @@ class Build : NukeBuild
 
             // 6. temporäres Deploy‑Verzeichnis aufräumen (rmdir /s /q)
             DeployDir.DeleteDirectory();
+        });
+
+    Target Test => _ => _
+        .Before(Compile)
+        .Executes(() =>
+        {
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.CMS.Core.Test" / "E.Standard.CMS.Core.Test.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+                .SetVerbosity(DotNetVerbosity.minimal)
+            );
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.Extensions.Test" / "E.Standard.Extensions.Test.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.Json.Test" / "E.Standard.Json.Test.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.Localization.Test" / "E.Standard.Localization.Test.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.Web.Test" / "E.Standard.Web.Test.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebGIS.Tools.Tests" / "E.Standard.WebGIS.Tools.Tests.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebGIS.Tools.Tests" / "E.Standard.WebGIS.Tools.Tests.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebMapping.GeoServices.Tests" / "E.Standard.WebMapping.GeoServices.Tests.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
         });
 }

@@ -1,15 +1,15 @@
 call _clean.bat
 
-set /P version=version eg 7.25.1001: 
+:: set /P version=version eg 7.25.1001: 
 
 cd ..\api
-docker build -t webgis-api:%version% .
-docker tag webgis-api:%version% webgis-api:latest
+docker build -t webgis-api:%1 .
+docker tag webgis-api:%1 webgis-api:latest
 
 cd ..\portal
-docker build -t webgis-portal:%version% .
-docker tag webgis-portal:%version% webgis-portal:latest
+docker build -t webgis-portal:%1 .
+docker tag webgis-portal:%1 webgis-portal:latest
 
 cd ..\cms
-docker build -t webgis-cms:%version% .
-docker tag webgis-cms:%version% webgis-cms:latest
+docker build -t webgis-cms:%1% .
+docker tag webgis-cms:%1 webgis-cms:latest
