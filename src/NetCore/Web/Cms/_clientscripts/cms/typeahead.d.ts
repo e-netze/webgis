@@ -3,7 +3,7 @@
 // Definitions by: Ivaylo Gochkov <https://github.com/igochkov/>, Gidon Junge <https://github.com/gjunge/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-/// <reference path="jquery.d.ts"/>
+/// <reference path="JQuery.d.ts"/>
 
 interface JQuery {
 
