@@ -1,4 +1,4 @@
-version: "3.8"
+﻿version: "3.8"
 
 services:
     webgis-cms:
@@ -6,7 +6,7 @@ services:
         ports:
             - "5003:8080"
         volumes:
-            - cms-config:/app/_config
+            - ${WEBGIS_HOST_ROOT_PATH}/cms/_config:/app/_config
             - webgis-repository:/etc/webgis-repository
         networks:
             - webgis-network
@@ -18,7 +18,7 @@ services:
         ports:
             - "5001:8080"
         volumes:
-            - api-config:/app/_config
+            - ${WEBGIS_HOST_ROOT_PATH}/api/_config:/app/_config
             - webgis-repository:/etc/webgis-repository
         networks:
             - webgis-network
@@ -30,7 +30,7 @@ services:
         ports:
             - "5002:8080"
         volumes:
-            - portal-config:/app/_config
+            - ${WEBGIS_HOST_ROOT_PATH}/portal/_config:/app/_config
             - webgis-repository:/etc/webgis-repository
         networks:
             - webgis-network
@@ -42,25 +42,7 @@ volumes:
         driver: local
         driver_opts:
             type: none         
-            device: ${WEBGIS_HOST_ROOT_PATH}/webgis/webgis-repository   # host directory
-            o: bind
-    api-config: 
-        driver: local
-        driver_opts:
-            type: none         
-            device: ${WEBGIS_HOST_ROOT_PATH}/webgis/api/_config   # host directory
-            o: bind
-    cms-config: 
-        driver: local
-        driver_opts:
-            type: none         
-            device: ${WEBGIS_HOST_ROOT_PATH}/webgis/cms/_config   # host directory
-            o: bind
-    portal-config: 
-        driver: local
-        driver_opts:
-            type: none         
-            device: ${WEBGIS_HOST_ROOT_PATH}/webgis/portal/_config   # host directory
+            device: ${WEBGIS_HOST_ROOT_PATH}/webgis-repository   # host directory
             o: bind
 
 networks:

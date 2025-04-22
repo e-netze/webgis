@@ -2,7 +2,6 @@
 using E.Standard.Platform;
 using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
-using E.Standard.WebGIS.Core;
 using Microsoft.AspNetCore.Http;
 using Portal.Core.AppCode.Configuration;
 using Portal.Core.AppCode.Extensions;

@@ -603,12 +603,12 @@ Global
 		{4DDB5382-D18A-4E59-B850-5197D5216D21}.Release_Internal|Any CPU.Build.0 = Release|Any CPU
 		{4DDB5382-D18A-4E59-B850-5197D5216D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DDB5382-D18A-4E59-B850-5197D5216D21}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4B6CFAF5-5A45-4915-859A-67F08208DDE7}.Debug_Internal|Any CPU.ActiveCfg = Debug|Any CPU
-		{4B6CFAF5-5A45-4915-859A-67F08208DDE7}.Debug_Internal|Any CPU.Build.0 = Debug|Any CPU
+		{4B6CFAF5-5A45-4915-859A-67F08208DDE7}.Debug_Internal|Any CPU.ActiveCfg = Debug_Internal|Any CPU
+		{4B6CFAF5-5A45-4915-859A-67F08208DDE7}.Debug_Internal|Any CPU.Build.0 = Debug_Internal|Any CPU
 		{4B6CFAF5-5A45-4915-859A-67F08208DDE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4B6CFAF5-5A45-4915-859A-67F08208DDE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4B6CFAF5-5A45-4915-859A-67F08208DDE7}.Release_Internal|Any CPU.ActiveCfg = Release|Any CPU
-		{4B6CFAF5-5A45-4915-859A-67F08208DDE7}.Release_Internal|Any CPU.Build.0 = Release|Any CPU
+		{4B6CFAF5-5A45-4915-859A-67F08208DDE7}.Release_Internal|Any CPU.ActiveCfg = Release_Internal|Any CPU
+		{4B6CFAF5-5A45-4915-859A-67F08208DDE7}.Release_Internal|Any CPU.Build.0 = Release_Internal|Any CPU
 		{4B6CFAF5-5A45-4915-859A-67F08208DDE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B6CFAF5-5A45-4915-859A-67F08208DDE7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{347A5902-B632-47D5-86F5-C24EAC69F8C0}.Debug_Internal|Any CPU.ActiveCfg = Debug|Any CPU

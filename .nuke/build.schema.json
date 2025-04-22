@@ -105,15 +105,11 @@
       "properties": {
         "Configuration": {
           "type": "string",
-          "description": "Configuration to build - Default is 'Release'",
-          "enum": [
-            "Debug",
-            "Release"
-          ]
+          "description": "Configuration to build - Default is 'Release'"
         },
         "Platform": {
           "type": "string",
-          "description": "Platform to build - Default is 'win-x64'"
+          "description": "Platform to build - win-x64/linux-x64"
         },
         "Version": {
           "type": "string",

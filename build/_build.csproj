@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\NetStandard\E.Standard.WebGIS.Core\E.Standard.WebGIS.Core.csproj" />
+    <ProjectReference Include="..\src\NetStandard\E.Standard.Platform\E.Standard.Platform.csproj" />
   </ItemGroup>
 
 </Project>

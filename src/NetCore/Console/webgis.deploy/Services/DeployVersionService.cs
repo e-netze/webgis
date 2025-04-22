@@ -7,7 +7,11 @@ internal class DeployVersionService
 {
     public static readonly Version DeployToolVersion = new Version(7, 25, 1701);
 
+#if INTERNAL
+    private const string zipPrefix = "webgis_internal";
+#else
     private const string zipPrefix = "webgis";
+#endif
 
     private readonly string _versionsDirectory;
     private readonly DeployRepositoryService _deployRepositoryService;
@@ -60,7 +64,10 @@ internal class DeployVersionService
 
     public void ExtractZipFolderRecursive(string version, string relativeSourcePath, string targetPath)
     {
-        using (var fileStream = new FileStream(Path.Combine(_versionsDirectory, $"{ZipFile(version)}"), FileMode.Open))
+        string path = Path.Combine(_versionsDirectory, $"{ZipFile(version)}");
+        Console.WriteLine($"Extracting files from {path} to {targetPath}");
+
+        using (var fileStream = new FileStream(path, FileMode.Open))
         using (ZipArchive zipArchive = new ZipArchive(fileStream, ZipArchiveMode.Read))
         {
             _ioService.ExtractZipFolderRecursive(zipArchive, $"{version}/{relativeSourcePath}", targetPath);

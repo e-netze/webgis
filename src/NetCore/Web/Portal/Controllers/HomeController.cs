@@ -3,6 +3,7 @@ using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Exceptions;
 using E.Standard.Json;
 using E.Standard.OpenIdConnect.Extensions;
+using E.Standard.Platform;
 using E.Standard.Security.App.Exceptions;
 using E.Standard.Security.App.Extensions;
 using E.Standard.Security.App.Json;

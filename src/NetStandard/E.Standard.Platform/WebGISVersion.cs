@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace E.Standard.WebGIS.Core;
+namespace E.Standard.Platform;
 
 public class WebGISVersion
 {

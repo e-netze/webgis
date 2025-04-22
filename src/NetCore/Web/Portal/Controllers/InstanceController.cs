@@ -1,10 +1,10 @@
 ﻿using E.Standard.Caching.Services;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Platform;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Security.Cryptography.Services;
-using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

@@ -1,17 +1,13 @@
 ﻿// build.cs
-using E.Standard.WebGIS.Core;
-using Microsoft.Build.Logging;
-using NuGet.Common;
+using E.Standard.Platform;
 using Nuke.Common;
 using Nuke.Common.IO;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Utilities.Collections;
 using Serilog;
 using System;
 using System.IO;
 using System.IO.Compression;
-using static Nuke.Common.IO.PathConstruction;
 
 class Build : NukeBuild
 {
@@ -22,15 +18,15 @@ class Build : NukeBuild
     ///   - Microsoft VSCode           https://nuke.build/vscode
 
     public static int Main()
-    { 
+    {
         return Execute<Build>(x => x.Compile);
     }
 
     [Parameter("Configuration to build - Default is 'Release'")]
-    readonly Configuration Configuration = Configuration.Release; //IsLocalBuild ? Configuration.Debug : Configuration.Release;
+    readonly string Configuration = "Release"; //IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter("Platform to build - Default is 'win-x64'")]
-    readonly string Platform = "win-x64";
+    [Parameter("Platform to build - win-x64/linux-x64")]
+    readonly string Platform = SystemInfo.IsLinux ? "linux-x64" : "win-x64";
 
     Target Clean => _ => _
         .Before(Restore)
@@ -75,8 +71,9 @@ class Build : NukeBuild
         .DependsOn(Restore)
         .Executes(() =>
         {
-            
-            Log.Information("Build WebGIS CMS");
+            Log.Information($"Compile WebGIS {Version} for platform {Platform}");
+
+            Log.Information("Compile WebGIS CMS");
 
             (RootDirectory / "publish" / Platform / "cms" / "artifacts").DeleteDirectory();
             DotNetTasks.DotNetBuild(s => s
@@ -88,8 +85,8 @@ class Build : NukeBuild
                 .SetRuntime(Platform)
             //.EnableNoRestore()
             );
-            
-            Log.Information("Build WebGIS API");
+
+            Log.Information("Compile WebGIS API");
 
             (RootDirectory / "publish" / Platform / "api" / "artifacts").DeleteDirectory();
             DotNetTasks.DotNetBuild(s => s
@@ -102,7 +99,7 @@ class Build : NukeBuild
             //.EnableNoRestore()
             );
 
-            Log.Information("Build WebGIS Portal");
+            Log.Information("Compile WebGIS Portal");
 
             (RootDirectory / "publish" / Platform / "portal" / "artifacts").DeleteDirectory();
             DotNetTasks.DotNetBuild(s => s
@@ -114,8 +111,8 @@ class Build : NukeBuild
                 .SetRuntime(Platform)
             //.EnableNoRestore()
             );
-            
-            Log.Information("Build WebGIS Tools");
+
+            Log.Information("Compile WebGIS Tools");
 
             (RootDirectory / "publish" / Platform / "tools" / "cms.tools" / "artifacts").DeleteDirectory();
             DotNetTasks.DotNetBuild(s => s
@@ -124,7 +121,7 @@ class Build : NukeBuild
                 .SetProperty("DeployOnBuild", "true")
                 .SetOutputDirectory(RootDirectory / "publish" / Platform / "tools" / "cms.tools" / "artifacts")
                 .SetPublishProfile(Platform)
-                //.EnableNoRestore()
+            //.EnableNoRestore()
             );
         });
 
@@ -149,7 +146,7 @@ class Build : NukeBuild
 
             foreach (var pattern in globs)
             {
-                foreach(var globFile in (RootDirectory / "publish" / Platform).GlobFiles(pattern))
+                foreach (var globFile in (RootDirectory / "publish" / Platform).GlobFiles(pattern))
                 {
                     Log.Information($"Deleting {globFile}");
                     globFile.DeleteFile();
@@ -178,7 +175,7 @@ class Build : NukeBuild
     [Parameter("Versions‑/Build‑Label")]
     readonly string Version = WebGISVersion.Version.ToString();
 
-    AbsolutePath DeployRoot => (AbsolutePath)@"c:\deploy\webgis";
+    AbsolutePath DeployRoot => (AbsolutePath)(SystemInfo.IsLinux ? "~/deploy/webgis" : @"c:\deploy\webgis");
     AbsolutePath DeployDir => DeployRoot / Version;
     AbsolutePath DownloadDir => DeployRoot / "download";
 
@@ -188,7 +185,9 @@ class Build : NukeBuild
         .DependsOn(DeployCleanIt)
         .Executes(() =>
         {
-            if(Platform.Equals("linux-x64", StringComparison.Ordinal))
+            Log.Information($"Deploy WebGIS {Version} for platform {Platform}");
+
+            if (Platform.Equals("linux-x64", StringComparison.Ordinal))
             {
                 Log.Information($"Builder docker images: {Version}");
 
@@ -252,8 +251,8 @@ class Build : NukeBuild
                    .AssertZeroExitCode();
                 */
                 return;
-            } 
-            
+            }
+
             Log.Information($"Deploy ZIP File: {Version}");
 
             // 1. Mirror Source (ROBOMIRROR‑Äquivalent)
@@ -276,13 +275,13 @@ class Build : NukeBuild
                 ExistsPolicy.MergeAndOverwrite);
             (DeployDir / Version / "artifacts").Rename("webgis-cms");
 
-            
+
             Log.Information("Copy webgis-tools");
             (DeployDir / Version / "webgis-tools").CreateOrCleanDirectory();
             (RootDirectory / "publish" / Platform / "tools" / "cms.tools" / "artifacts").CopyToDirectory(
                 DeployDir / Version / "webgis-tools",
                 ExistsPolicy.MergeAndOverwrite);
-            (DeployDir / Version / "webgis-tools"/ "artifacts").Rename("cms.tools");
+            (DeployDir / Version / "webgis-tools" / "artifacts").Rename("cms.tools");
 
             // 2. Overrides
             Log.Information("Copy api overrides");
@@ -316,15 +315,22 @@ class Build : NukeBuild
             (RootDirectory / "publish" / Platform / "start-webgis.bat").CopyToDirectory(DeployDir / Version);
             Log.Information("Copy start-webgis-cms.bat");
             (RootDirectory / "publish" / Platform / "start-webgis-cms.bat").CopyToDirectory(DeployDir / Version);
-            
+
             // 5. ZIP‑Archiv erstellen
-            if(!Directory.Exists(DownloadDir)) DownloadDir.CreateDirectory();
+            if (!Directory.Exists(DownloadDir))
+            {
+                DownloadDir.CreateDirectory();
+            }
 
             var platform = Platform.Replace("-x64", "64");
-            var zipFile = DownloadDir / $"webgis-{platform}-{Version}.zip";
+            var configPostfix = Configuration.Contains("_") ? Configuration.Substring(Configuration.IndexOf("_")).ToLower() : "";
+            var zipFile = DownloadDir / $"webgis{configPostfix}-{platform}-{Version}.zip";
 
             Log.Information($"Zip Directory: {DeployDir} => {zipFile}");
-            if (File.Exists(zipFile)) File.Delete(zipFile);
+            if (File.Exists(zipFile))
+            {
+                File.Delete(zipFile);
+            }
             //ZipFile.CreateFromDirectory(DeployDir, zipFile,
             //                            CompressionLevel.Fastest,
             //                            includeBaseDirectory: false);
@@ -354,6 +360,8 @@ class Build : NukeBuild
         .Before(Compile)
         .Executes(() =>
         {
+            Log.Information($"Run tests for WebGIS {Version} on platform {Platform}");
+
             DotNetTasks.DotNetTest(s => s
                 .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.CMS.Core.Test" / "E.Standard.CMS.Core.Test.csproj")
                 .SetProcessWorkingDirectory(RootDirectory)

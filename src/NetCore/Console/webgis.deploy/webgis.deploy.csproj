@@ -5,8 +5,17 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>13</LangVersion>
+	 <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
   </PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)'=='Release_Internal'">
+		<DefineConstants>INTERNAL</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Debug_Internal'">
+		<DefineConstants>INTERNAL;DEBUG_INTERNAL</DefineConstants>
+	</PropertyGroup>	
+	
   <ItemGroup>
     <None Remove="usage.txt" />
   </ItemGroup>

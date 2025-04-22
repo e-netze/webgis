@@ -1,7 +1,7 @@
 ﻿using webgis.deploy.Extensions;
 using webgis.deploy.Services;
 
-#if DEBUG
+#if DEBUG || DEBUG_INTERNAL
 string workDirectory = @"C:\deploy\webgis";
 #else
 string workDirectory = Environment.CurrentDirectory; // Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -12,6 +12,11 @@ string workDirectory = Environment.CurrentDirectory; // Path.GetDirectoryName(As
 Console.WriteLine($"******************************************");
 Console.WriteLine($"*                                        *");
 Console.WriteLine($"*      WebGIS.Deploy Tool {DeployVersionService.DeployToolVersion}      *");
+#if INTERNAL
+Console.WriteLine($"*             !!!!!!!!!!!!!!             *");
+Console.WriteLine($"*             !! INTERNAL !!             *");
+Console.WriteLine($"*             !!!!!!!!!!!!!!             *");
+#endif
 Console.WriteLine($"*                                        *");
 Console.WriteLine($"******************************************");
 
@@ -84,6 +89,7 @@ try
         repoService.CreateProfile(profile);
     }
 
+#if !INTERNAL
     if (downloadLatest || consoleService.DoYouWant("to download the latest version from GitHub"))
     {
         var githubReleaseService = new GitHubReleaseService("e-netze", "webgis");
@@ -119,6 +125,7 @@ try
             }
         }
     }
+#endif
 
     if (String.IsNullOrEmpty(version))
     {
@@ -204,7 +211,7 @@ try
             versionService.ExtractZipFolderRecursive(version, "webgis-cms", Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version), "webgis-cms"));
         }
 
-        if (profile == "local")
+        if (profile == "local" || profile == "local_internal")
         {
             Console.WriteLine("Deploy WebGIS Scripts:");
             versionService.ExtractZipFolderRecursive(version, "_scripts", Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version), "_scripts"));

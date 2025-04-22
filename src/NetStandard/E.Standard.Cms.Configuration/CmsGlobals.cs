@@ -1,4 +1,4 @@
-﻿using E.Standard.WebGIS.Core;
+﻿using E.Standard.Platform;
 using System;
 
 namespace E.Standard.Cms.Configuration;
