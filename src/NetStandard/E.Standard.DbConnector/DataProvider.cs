@@ -1,4 +1,4 @@
-using Microsoft.Data.SqlClient;
+ï»¿using Microsoft.Data.SqlClient;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Data;
@@ -10,15 +10,15 @@ using System.Xml;
 namespace E.Standard.DbConnector;
 
 /// <summary>
-/// Zusammenfassung für DataProvider.
+/// Zusammenfassung fÃ¼r DataProvider.
 /// </summary>
 public class DataProvider
 {
-    private SqlConnection sqlConnection = null;
-    private OracleConnection oracleConnection = null;
-    private Npgsql.NpgsqlConnection npgsqlConnection = null;
-    private SQLiteConnection sqliteConnection = null;
-    private string _errMsg = "";
+    private SqlConnection _sqlConnection = null;
+    private OracleConnection _oracleConnection = null;
+    private Npgsql.NpgsqlConnection _npgsqlConnection = null;
+    private SQLiteConnection _sqliteConnection = null;
+    private string _lastErrorMessage = "";
 
     public DataProvider()
     {
@@ -29,9 +29,9 @@ public class DataProvider
         Close();
     }
 
-    public string lastErrorMessage
+    public string LastErrorMessage
     {
-        get { return _errMsg; }
+        get { return _lastErrorMessage; }
     }
     public bool Open(string connectionString)
     {
@@ -49,41 +49,43 @@ public class DataProvider
         {
             Close();
 
-            string type = connectionString.Substring(0, pos);
-            string connStr = connectionString.Substring(pos + 1, connectionString.Length - pos - 1);
+            string dbType = connectionString.Substring(0, pos);
+            connectionString = connectionString
+                .Substring(pos + 1, connectionString.Length - pos - 1)
+                .AddRequiredConnectionStringParameters(dbType);
 
-            switch (type.ToLower())
+            switch (dbType.ToLower())
             {
                 case "oracle":
-                    oracleConnection = new OracleConnection(connStr);
+                    _oracleConnection = new OracleConnection(connectionString);
                     if (testIt)
                     {
-                        oracleConnection.Open();
-                        oracleConnection.Close();
+                        _oracleConnection.Open();
+                        _oracleConnection.Close();
                     }
                     break;
                 case "sql":
-                    sqlConnection = new SqlConnection(connStr);
+                    _sqlConnection = new SqlConnection(connectionString);
                     if (testIt)
                     {
-                        sqlConnection.Open();
-                        sqlConnection.Close();
+                        _sqlConnection.Open();
+                        _sqlConnection.Close();
                     }
                     break;
                 case "postgres":
-                    npgsqlConnection = new Npgsql.NpgsqlConnection(connStr);
+                    _npgsqlConnection = new Npgsql.NpgsqlConnection(connectionString);
                     if (testIt)
                     {
-                        npgsqlConnection.Open();
-                        npgsqlConnection.Close();
+                        _npgsqlConnection.Open();
+                        _npgsqlConnection.Close();
                     }
                     break;
                 case "sqlite":
-                    sqliteConnection = new SQLiteConnection(connStr);
+                    _sqliteConnection = new SQLiteConnection(connectionString);
                     if (testIt)
                     {
-                        sqliteConnection.Open();
-                        sqliteConnection.Close();
+                        _sqliteConnection.Open();
+                        _sqliteConnection.Close();
                     }
                     break;
             }
@@ -92,76 +94,76 @@ public class DataProvider
         }
         catch (Exception ex)
         {
-            _errMsg = ex.Message;
+            _lastErrorMessage = ex.Message;
             return false;
         }
     }
     public void Close()
     {
-        if (oracleConnection != null)
+        if (_oracleConnection != null)
         {
-            oracleConnection.Close();
-            oracleConnection.Dispose();
+            _oracleConnection.Close();
+            _oracleConnection.Dispose();
         }
-        if (sqlConnection != null)
+        if (_sqlConnection != null)
         {
-            sqlConnection.Close();
-            sqlConnection.Dispose();
+            _sqlConnection.Close();
+            _sqlConnection.Dispose();
         }
-        if (npgsqlConnection != null)
+        if (_npgsqlConnection != null)
         {
-            npgsqlConnection.Close();
-            npgsqlConnection.Dispose();
+            _npgsqlConnection.Close();
+            _npgsqlConnection.Dispose();
         }
-        if (sqliteConnection != null)
+        if (_sqliteConnection != null)
         {
-            sqliteConnection.Close();
-            sqliteConnection.Dispose();
+            _sqliteConnection.Close();
+            _sqliteConnection.Dispose();
         }
-        oracleConnection = null;
-        sqlConnection = null;
-        npgsqlConnection = null;
-        sqliteConnection = null;
+        _oracleConnection = null;
+        _sqlConnection = null;
+        _npgsqlConnection = null;
+        _sqliteConnection = null;
     }
 
-    public DataTable ExecuteQuery(string sql)
+    public DataTable ExecuteQuery(string selectCommandText)
     {
         try
         {
             DataSet ds = new DataSet();
 
-            if (oracleConnection != null)
+            if (_oracleConnection != null)
             {
-                oracleConnection.Open();
-                OracleDataAdapter adapter = new OracleDataAdapter(sql, oracleConnection);
+                _oracleConnection.Open();
+                OracleDataAdapter adapter = new OracleDataAdapter(selectCommandText, _oracleConnection);
                 adapter.Fill(ds);
-                oracleConnection.Close();
+                _oracleConnection.Close();
             }
-            else if (sqlConnection != null)
+            else if (_sqlConnection != null)
             {
-                sqlConnection.Open();
-                SqlDataAdapter adapter = new SqlDataAdapter(sql, sqlConnection);
+                _sqlConnection.Open();
+                SqlDataAdapter adapter = new SqlDataAdapter(selectCommandText, _sqlConnection);
                 adapter.Fill(ds);
-                sqlConnection.Close();
+                _sqlConnection.Close();
             }
-            else if (npgsqlConnection != null)
+            else if (_npgsqlConnection != null)
             {
-                npgsqlConnection.Open();
-                Npgsql.NpgsqlDataAdapter adapter = new Npgsql.NpgsqlDataAdapter(sql, npgsqlConnection);
+                _npgsqlConnection.Open();
+                Npgsql.NpgsqlDataAdapter adapter = new Npgsql.NpgsqlDataAdapter(selectCommandText, _npgsqlConnection);
                 adapter.Fill(ds);
-                npgsqlConnection.Close();
+                _npgsqlConnection.Close();
             }
-            else if (sqliteConnection != null)
+            else if (_sqliteConnection != null)
             {
                 //sqliteConnection.Open();
                 //SqliteDataAdapter adapter = new System.Data.SQLite.SQLiteDataAdapter(sql, sqliteConnection);
                 //adapter.Fill(ds);
                 //sqliteConnection.Close();
 
-                sqliteConnection.Open();
-                var command = new SQLiteCommand(sql, sqliteConnection);
+                _sqliteConnection.Open();
+                var command = new SQLiteCommand(selectCommandText, _sqliteConnection);
                 ds = ToDataset(command);
-                sqliteConnection.Close();
+                _sqliteConnection.Close();
             }
             if (ds.Tables.Count == 0)
             {
@@ -172,27 +174,27 @@ public class DataProvider
         }
         catch (Exception ex)
         {
-            if (oracleConnection != null)
+            if (_oracleConnection != null)
             {
-                oracleConnection.Close();
+                _oracleConnection.Close();
             }
 
-            if (sqlConnection != null)
+            if (_sqlConnection != null)
             {
-                sqlConnection.Close();
+                _sqlConnection.Close();
             }
 
-            if (npgsqlConnection != null)
+            if (_npgsqlConnection != null)
             {
-                npgsqlConnection.Close();
+                _npgsqlConnection.Close();
             }
 
-            if (sqliteConnection != null)
+            if (_sqliteConnection != null)
             {
-                sqliteConnection.Close();
+                _sqliteConnection.Close();
             }
 
-            _errMsg = ex.Message;
+            _lastErrorMessage = ex.Message;
             return null;
         }
     }
@@ -202,17 +204,17 @@ public class DataProvider
     }
     public bool Join(string sql, XmlNode feature, bool one2n)
     {
-        string field = DBConnection.getFieldPlacehoder(sql);
+        string field = DBConnection.GetFieldPlacehoder(sql);
         while (field != "")
         {
-            string val = DBConnection.getFieldValue(feature, field);
+            string val = DBConnection.GetFieldValue(feature, field);
             if (val == "" && field == "BFL")
             {
-                val = " "; // return false;  nur für die Schulung
+                val = " "; // return false;  nur fÃ¼r die Schulung
             }
 
             sql = sql.Replace("[" + field + "]", val);
-            field = DBConnection.getFieldPlacehoder(sql);
+            field = DBConnection.GetFieldPlacehoder(sql);
         }
 
         DataTable table = ExecuteQuery(sql);

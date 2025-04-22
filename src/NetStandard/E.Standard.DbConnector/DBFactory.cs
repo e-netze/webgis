@@ -140,7 +140,7 @@ public class DBFactory : IDisposable
 
         string fieldType = String.Empty;
 
-        switch (_connection.dbType)
+        switch (_connection.DatabaseType)
         {
             case DBType.sql:
                 switch (dbType)
@@ -395,7 +395,7 @@ public class DBFactory : IDisposable
 
         if (isSerial)
         {
-            switch (_connection.dbType)
+            switch (_connection.DatabaseType)
             {
                 case DBType.sql:
                     fieldType += " IDENTITY(1,1)";
@@ -462,7 +462,7 @@ public class DBFactory : IDisposable
 
     public string[] AfterCreateTableCommands(string tableName, string[] serialFieldNames)
     {
-        if (_connection.dbType == DBType.oracle)
+        if (_connection.DatabaseType == DBType.oracle)
         {
             List<string> commands = new List<string>();
 

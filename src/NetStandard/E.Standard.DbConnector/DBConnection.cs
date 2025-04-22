@@ -1,4 +1,4 @@
-using E.Standard.DbConnector.Exceptions;
+﻿using E.Standard.DbConnector.Exceptions;
 using Microsoft.Data.SqlClient;
 using Oracle.ManagedDataAccess.Client;
 using System;
@@ -15,14 +15,15 @@ public enum DBType { sql, oracle, postgres, sqlite, microsoftsql }
 public enum dataType { integer, real, date, text, boolean, currency, unknown }
 
 /// <summary>
-/// Zusammenfassung f�r DBConnection.
+/// Zusammenfassung für DBConnection.
 /// </summary>
 public class DBConnection : IDisposable
 {
-    protected string m_connStr = "", m_errMsg = "";
-    protected DBType m_dbtype = DBType.sql;
-    protected DataTable m_schemaTable = null;
-    protected DbDataAdapter m_updateAdapter = null;
+    protected string _connectionString = "";
+    protected string _lastErrorMessage = "";
+    protected DBType _dbType = DBType.sql;
+    protected DataTable _schemaTable = null;
+    protected DbDataAdapter _updateAdapter = null;
 
     public DBConnection()
     {
@@ -30,15 +31,15 @@ public class DBConnection : IDisposable
 
     public void Dispose()
     {
-        if (m_updateAdapter != null)
+        if (_updateAdapter != null)
         {
-            m_updateAdapter.Dispose();
-            m_updateAdapter = null;
+            _updateAdapter.Dispose();
+            _updateAdapter = null;
         }
-        if (m_schemaTable != null)
+        if (_schemaTable != null)
         {
-            m_schemaTable.Dispose();
-            m_schemaTable = null;
+            _schemaTable.Dispose();
+            _schemaTable = null;
         }
         //GC.Collect(0);
     }
@@ -48,33 +49,35 @@ public class DBConnection : IDisposable
         {
             if (value.ToLower().IndexOf("sql:") == 0)
             {
-                m_connStr = value.Substring(4, value.Length - 4);
-                m_dbtype = DBType.sql;
+                _connectionString = value.Substring(4, value.Length - 4);
+                _dbType = DBType.sql;
             }
             else if (value.ToLower().IndexOf("mssql:") == 0)
             {
-                m_connStr = value.Substring(6, value.Length - 6);
-                m_dbtype = DBType.microsoftsql;
+                _connectionString = value.Substring(6, value.Length - 6);
+                _dbType = DBType.microsoftsql;
             }
             else if (value.ToLower().IndexOf("oracle:") == 0)
             {
-                m_connStr = value.Substring(7, value.Length - 7);
-                m_dbtype = DBType.oracle;
+                _connectionString = value.Substring(7, value.Length - 7);
+                _dbType = DBType.oracle;
             }
             else if (value.ToLower().IndexOf("postgres:") == 0)
             {
-                m_connStr = value.Substring(9, value.Length - 9);
-                m_dbtype = DBType.postgres;
+                _connectionString = value.Substring(9, value.Length - 9);
+                _dbType = DBType.postgres;
             }
             else if (value.ToLower().IndexOf("sqlite:") == 0)
             {
-                m_connStr = value.Substring(7, value.Length - 7);
-                m_dbtype = DBType.sqlite;
+                _connectionString = value.Substring(7, value.Length - 7);
+                _dbType = DBType.sqlite;
             }
             else
             {
                 throw new DatabaseException($"Unsupported DBType: {value.Substring(0, Math.Min(value.Length, 5))}");
             }
+
+            _connectionString = _connectionString.AddRequiredConnectionStringParameters(_dbType);
         }
     }
 
@@ -83,13 +86,13 @@ public class DBConnection : IDisposable
         this.OleDbConnectionMDB = connectionString;
     }
 
-    public DBType dbType
+    public DBType DatabaseType
     {
-        get { return m_dbtype; }
-        set { m_dbtype = value; }
+        get { return _dbType; }
+        set { _dbType = value; }
     }
 
-    public string errorMessage { get { return m_errMsg; } }
+    public string errorMessage { get { return _lastErrorMessage; } }
 
     public DataTable Select(string sql)
     {
@@ -106,26 +109,26 @@ public class DBConnection : IDisposable
         DbConnection connection = null;
         try
         {
-            switch (m_dbtype)
+            switch (_dbType)
             {
                 case DBType.sql:
-                    connection = new SqlConnection(m_connStr);
+                    connection = new SqlConnection(_connectionString);
                     adapter = new SqlDataAdapter(sql, (SqlConnection)connection);
                     break;
                 case DBType.microsoftsql:
-                    connection = new Microsoft.Data.SqlClient.SqlConnection(m_connStr);
+                    connection = new Microsoft.Data.SqlClient.SqlConnection(_connectionString);
                     adapter = new Microsoft.Data.SqlClient.SqlDataAdapter(sql, (Microsoft.Data.SqlClient.SqlConnection)connection);
                     break;
                 case DBType.oracle:
-                    connection = new OracleConnection(m_connStr);
+                    connection = new OracleConnection(_connectionString);
                     adapter = new OracleDataAdapter(sql, (OracleConnection)connection);
                     break;
                 case DBType.postgres:
-                    connection = new Npgsql.NpgsqlConnection(m_connStr);
+                    connection = new Npgsql.NpgsqlConnection(_connectionString);
                     adapter = new Npgsql.NpgsqlDataAdapter(sql, (Npgsql.NpgsqlConnection)connection);
                     break;
                 case DBType.sqlite:
-                    using (var sqliteConnection = new SQLiteConnection(m_connStr))
+                    using (var sqliteConnection = new SQLiteConnection(_connectionString))
                     {
                         sqliteConnection.Open();
                         var sqliteCommand = new SQLiteCommand(sql, sqliteConnection);
@@ -143,7 +146,7 @@ public class DBConnection : IDisposable
         catch (Exception e)
         {
             //if (adapter != null) adapter.Dispose();
-            m_errMsg = "QUERY (" + sql + "): " + e.Message;
+            _lastErrorMessage = "QUERY (" + sql + "): " + e.Message;
             WriteEventlogMessage(e);
             return false;
         }
@@ -172,7 +175,7 @@ public class DBConnection : IDisposable
         return true;
     }
 
-    internal static string getFieldPlacehoder(string str)
+    internal static string GetFieldPlacehoder(string str)
     {
         int pos = str.IndexOf("[");
         if (pos == -1)
@@ -189,7 +192,7 @@ public class DBConnection : IDisposable
         return str.Substring(pos + 1, pos2 - pos - 1);
     }
 
-    internal static string getFieldValue(XmlNode feature, string name)
+    internal static string GetFieldValue(XmlNode feature, string name)
     {
         XmlNodeList fields = feature.SelectNodes("FIELDS/FIELD");
         name = name.ToUpper();
@@ -220,7 +223,7 @@ public class DBConnection : IDisposable
 
     public object ExecuteScalar(string sql)
     {
-        switch (m_dbtype)
+        switch (_dbType)
         {
             case DBType.sql:
                 return ExecuteScalarSql(sql);
@@ -231,14 +234,14 @@ public class DBConnection : IDisposable
             case DBType.sqlite:
                 return ExecuteScalarSQLite(sql);
         }
-        m_errMsg = "Not Implemented...";
-        WriteEventlogMessage(new Exception(m_errMsg));
+        _lastErrorMessage = "Not Implemented...";
+        WriteEventlogMessage(new Exception(_lastErrorMessage));
         return null;
     }
 
     private object ExecuteScalarSql(string sql)
     {
-        if (m_dbtype != DBType.sql)
+        if (_dbType != DBType.sql)
         {
             return false;
         }
@@ -247,7 +250,7 @@ public class DBConnection : IDisposable
         SqlCommand command = null;
         try
         {
-            using (connection = new SqlConnection(m_connStr))
+            using (connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
 
@@ -271,21 +274,21 @@ public class DBConnection : IDisposable
                 connection.Close();
                 connection.Dispose();
             }
-            m_errMsg = e.Message;
+            _lastErrorMessage = e.Message;
             WriteEventlogMessage(e);
             return null;
         }
     }
     private object ExecuteScalarOracle(string sql)
     {
-        if (m_dbtype != DBType.oracle)
+        if (_dbType != DBType.oracle)
         {
             return false;
         }
 
         try
         {
-            using (OracleConnection connection = new OracleConnection(m_connStr))
+            using (OracleConnection connection = new OracleConnection(_connectionString))
             {
                 OracleCommand command = new OracleCommand(sql, connection);
                 connection.Open();
@@ -297,7 +300,7 @@ public class DBConnection : IDisposable
         }
         catch (Exception e)
         {
-            m_errMsg = e.Message;
+            _lastErrorMessage = e.Message;
             WriteEventlogMessage(e);
             return null;
         }
@@ -305,7 +308,7 @@ public class DBConnection : IDisposable
 
     private object ExecuteScalarNpgsql(string sql)
     {
-        if (m_dbtype != DBType.postgres)
+        if (_dbType != DBType.postgres)
         {
             return false;
         }
@@ -314,7 +317,7 @@ public class DBConnection : IDisposable
         Npgsql.NpgsqlCommand command = null;
         try
         {
-            using (connection = new Npgsql.NpgsqlConnection(m_connStr))
+            using (connection = new Npgsql.NpgsqlConnection(_connectionString))
             {
                 connection.Open();
 
@@ -338,14 +341,14 @@ public class DBConnection : IDisposable
                 connection.Close();
                 connection.Dispose();
             }
-            m_errMsg = e.Message;
+            _lastErrorMessage = e.Message;
             WriteEventlogMessage(e);
             return null;
         }
     }
     private object ExecuteScalarSQLite(string sql)
     {
-        if (m_dbtype != DBType.sqlite)
+        if (_dbType != DBType.sqlite)
         {
             return false;
         }
@@ -354,7 +357,7 @@ public class DBConnection : IDisposable
         SQLiteCommand command = null;
         try
         {
-            using (connection = new SQLiteConnection(m_connStr))
+            using (connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
 
@@ -378,7 +381,7 @@ public class DBConnection : IDisposable
                 connection.Close();
                 connection.Dispose();
             }
-            m_errMsg = e.Message;
+            _lastErrorMessage = e.Message;
             WriteEventlogMessage(e);
             return null;
         }
@@ -440,25 +443,25 @@ public class DBConnection : IDisposable
     #region Factory
     public DbConnection GetConnection()
     {
-        switch (m_dbtype)
+        switch (_dbType)
         {
             case DBType.sql:
-                return new SqlConnection(m_connStr);
+                return new SqlConnection(_connectionString);
             case DBType.microsoftsql:
-                return new Microsoft.Data.SqlClient.SqlConnection(m_connStr);
+                return new Microsoft.Data.SqlClient.SqlConnection(_connectionString);
             case DBType.oracle:
-                return new OracleConnection(m_connStr);
+                return new OracleConnection(_connectionString);
             case DBType.postgres:
-                return new Npgsql.NpgsqlConnection(m_connStr);
+                return new Npgsql.NpgsqlConnection(_connectionString);
             case DBType.sqlite:
-                return new SQLiteConnection(m_connStr);
+                return new SQLiteConnection(_connectionString);
         }
         return null;
     }
 
     public DbCommand GetCommand()
     {
-        switch (m_dbtype)
+        switch (_dbType)
         {
             case DBType.sql:
                 return new SqlCommand();
@@ -476,7 +479,7 @@ public class DBConnection : IDisposable
 
     public DbParameter GetParameter(string name, object value)
     {
-        switch (m_dbtype)
+        switch (_dbType)
         {
             case DBType.sql:
                 return new SqlParameter(ParaName(name), value);
@@ -506,7 +509,7 @@ public class DBConnection : IDisposable
     public string ParaName(string name)
     {
         name = name.Trim().Replace(" ", "");
-        if (m_dbtype == DBType.oracle)
+        if (_dbType == DBType.oracle)
         {
             return ":" + name.Replace(":", "").Replace(",", ",:");
         }
@@ -541,7 +544,7 @@ public class DBConnection : IDisposable
                 sb.Append(".");
             }
 
-            switch (m_dbtype)
+            switch (_dbType)
             {
                 case DBType.postgres:
                     sb.Append("\"" + t/*.ToLower()*/ + "\"");
@@ -560,7 +563,7 @@ public class DBConnection : IDisposable
 
     public string ColumnNames2(string columns)
     {
-        switch (m_dbtype)
+        switch (_dbType)
         {
             case DBType.postgres:
                 return "\"" + columns/*.ToLower()*/.Replace(" ", "").Replace(",", "\",\"") + "\"";
