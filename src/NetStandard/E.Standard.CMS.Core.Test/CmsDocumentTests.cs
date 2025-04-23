@@ -492,7 +492,7 @@ public class CmsDocumentTests
         // Users
         Assert.Equal(3, node.Users.Items.Count());          // Items = 3
         Assert.Equal(2, node.Users.AllowedItems.Count());   // AllowedItems = 2
-        Assert.Equal(1, node.Users.DeniedItems.Count());    // DeniedItems = 1
+        Assert.Single(node.Users.DeniedItems);    // DeniedItems = 1
 
         // Roles
         Assert.Equal(3, node.Roles.Items.Count());

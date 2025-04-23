@@ -82,9 +82,9 @@
   <ItemGroup>
 	  <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="BundlerMinifier.Core" Version="3.2.449" />
-    <PackageReference Include="E.DataLinq.Code" Version="7.25.1110" />
-    <PackageReference Include="E.DataLinq.Core" Version="7.25.1110" />
-    <PackageReference Include="E.DataLinq.Web.Api.Client" Version="7.25.1110" />
+    <PackageReference Include="E.DataLinq.Code" Version="7.25.1701" />
+    <PackageReference Include="E.DataLinq.Core" Version="7.25.1701" />
+    <PackageReference Include="E.DataLinq.Web.Api.Client" Version="7.25.1701" />
     <PackageReference Include="jquery.TypeScript.DefinitelyTyped" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.4" />

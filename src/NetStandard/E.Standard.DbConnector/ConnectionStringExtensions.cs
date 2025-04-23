@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace E.Standard.DbConnector;
-internal static class ConnectionStringExtensions
+public static class ConnectionStringExtensions
 {
     static public string AddRequiredConnectionStringParameters(this string connectionString, DBType dbType)
     {

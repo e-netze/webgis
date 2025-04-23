@@ -68,13 +68,13 @@
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="BundlerMinifier.Core" Version="3.2.449" />
-    <PackageReference Include="E.DataLinq.Core" Version="7.25.1110" />
-    <PackageReference Include="E.DataLinq.Engine.MsSqlServer" Version="7.25.1110" />
-    <PackageReference Include="E.DataLinq.Engine.OracleClient" Version="7.25.1110" />
+    <PackageReference Include="E.DataLinq.Core" Version="7.25.1701" />
+    <PackageReference Include="E.DataLinq.Engine.MsSqlServer" Version="7.25.1701" />
+    <PackageReference Include="E.DataLinq.Engine.OracleClient" Version="7.25.1701" />
     <PackageReference Include="E.DataLinq.Engine.Postgres" Version="7.25.1110" />
-    <PackageReference Include="E.DataLinq.Engine.SQLite" Version="7.25.1110" />
-    <PackageReference Include="E.DataLinq.Engine.SqlServer-legacy" Version="7.25.1110" />
-    <PackageReference Include="E.DataLinq.Web" Version="7.25.1110" />
+    <PackageReference Include="E.DataLinq.Engine.SQLite" Version="7.25.1701" />
+    <PackageReference Include="E.DataLinq.Engine.SqlServer-legacy" Version="7.25.1701" />
+    <PackageReference Include="E.DataLinq.Web" Version="7.25.1701" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.AzureStorage" Version="3.1.24" />
     <!--<PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.0" />
@@ -85,18 +85,18 @@
   
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.4" />
   
+<!--
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+-->
 <!--
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
 -->
     <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.4" />
   
     <PackageReference Include="System.Text.Encodings.Web" Version="9.0.4" />
-    
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
   </ItemGroup>
 
   <ItemGroup>

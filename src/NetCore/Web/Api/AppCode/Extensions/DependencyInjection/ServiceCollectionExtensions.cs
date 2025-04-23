@@ -9,6 +9,7 @@ using Api.Core.AppCode.Services.Ogc;
 using Api.Core.AppCode.Services.Rest;
 using Api.Core.Models.DataLinq;
 using E.DataLinq.Core;
+using E.DataLinq.Core.Engines.Abstraction;
 using E.DataLinq.Core.Services.Abstraction;
 using E.DataLinq.Core.Services.Persistance;
 using E.DataLinq.Web;
@@ -356,6 +357,8 @@ static public class ServiceCollectionExtensions
         services.AddDataLinqDbFactoryProvider<E.DataLinq.Engine.Postgres.DbFactoryProvider>();
         services.AddDataLinqDbFactoryProvider<E.DataLinq.Engine.SQLite.DbFactoryProvider>();
         services.AddDataLinqDbFactoryProvider<E.DataLinq.Engine.OracleClient.DbFactoryProvider>();
+
+        services.AddSingleton<IDbFactoryProviderConnectionStringModifyService, DataLinqDbFactoryProviderConnectionStringModifyService>();
 
         services.AddTransient<IEngineFieldParserService, DataLinqLocationFieldParserService>();
         services.AddTransient<ISelectResultProvider, DataLinqGeoJsonSelectResultProvider>();

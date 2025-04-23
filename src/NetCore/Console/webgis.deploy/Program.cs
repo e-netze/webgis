@@ -168,7 +168,11 @@ try
         repoService.SetDeployVersionModel(profile, deployVersionModel);
     }
 
-    var webgisRepoPath = new DirectoryInfo(deployVersionModel.RepositoryPath);
+    var webgisRepoPath = new DirectoryInfo(
+        deployVersionModel.RepositoryPath.EndsWith("!")
+            ? deployVersionModel.RepositoryPath.Substring(0, deployVersionModel.RepositoryPath.Length - 1)
+            : deployVersionModel.RepositoryPath
+        );
 
     if (!webgisRepoPath.Exists)
     {
