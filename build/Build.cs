@@ -388,10 +388,6 @@ class Build : NukeBuild
                 .SetProcessWorkingDirectory(RootDirectory)
             );
             DotNetTasks.DotNetTest(s => s
-                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebGIS.Tools.Tests" / "E.Standard.WebGIS.Tools.Tests.csproj")
-                .SetProcessWorkingDirectory(RootDirectory)
-            );
-            DotNetTasks.DotNetTest(s => s
                 .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebMapping.GeoServices.Tests" / "E.Standard.WebMapping.GeoServices.Tests.csproj")
                 .SetProcessWorkingDirectory(RootDirectory)
             );

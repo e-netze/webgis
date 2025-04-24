@@ -178,7 +178,7 @@ internal class DeployVersionService
                     }
                     
                     """);
-                File.WriteAllText(Path.Combine(di.FullName, "append.css"), "/* append.css * /");
+                File.WriteAllText(Path.Combine(di.FullName, "append.css"), "/* append.css */");
             }
         }
     }
