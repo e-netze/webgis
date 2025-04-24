@@ -219,6 +219,17 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
         {
             string fieldname = name.Substring(name.LastIndexOf(".") + 1);
 
+            if (fieldname.Contains("(") && fieldname.Contains(")"))
+            {
+                // ignore functions like STLengt(), STArea(), etc
+                // can't be set, and are not included in the _featureLayer.Fields
+                //
+                // EditEnvironment sometimes send this field, because MapService lists them as fields (featureserver do not list them)
+                // => so only return true here and ignore this fields, don't throw an error
+
+                return true;
+            }
+
             var layerField = _featureLayer?
                             .Fields?
                             .FirstOrDefault(f => fieldname.Equals(f.Name, StringComparison.OrdinalIgnoreCase));

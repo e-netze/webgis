@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Fixed
 
+- Bug: AGS FeatureService Editing - Can't transfer line and polygon features because STLength() and STArea() Fields
+  => Fields will be ignored and not set on INSERT/UPDATE.
+
 ## 7.25.1503
 
 ### Added
