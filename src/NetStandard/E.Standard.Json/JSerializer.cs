@@ -39,7 +39,7 @@ public class JSerializer
     public static string Serialize<TValue>(TValue value, bool pretty = false)
         => SerializerInstance.Serialize(value, pretty);
 
-    public static bool IsJsonElement(object element)
+    public static bool IsJsonElement(object? element)
         => element is null
             ? false
             : SerializerInstance.IsJsonElement(element);
@@ -47,7 +47,7 @@ public class JSerializer
     public static object? GetJsonElementValue(object element, string propertyName)
         => SerializerInstance.GetJsonElementValue(element, propertyName);
 
-    public static object? AsValueIfJsonValueType(object element)
+    public static object? AsValueIfJsonValueType(object? element)
         => IsJsonElement(element)
                 ? SerializerInstance.AsValueIfJsonValueType(element)
                 : element;

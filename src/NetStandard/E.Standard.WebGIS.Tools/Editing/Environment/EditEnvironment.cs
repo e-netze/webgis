@@ -3383,7 +3383,7 @@ class EditEnvironment
                         if (firstElement != null)
                         {
                             string labelProperty = "name";  // DoTo: this is hardcoded...
-                            firstElementValue = ((JObject)firstElement).GetValue(labelProperty)?.ToString();
+                            firstElementValue = JSerializer.GetJsonElementValue(firstElement, labelProperty)?.ToString();
                         }
 
                         return (value: firstElementValue, setIt: true);

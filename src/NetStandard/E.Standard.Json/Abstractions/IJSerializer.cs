@@ -13,5 +13,5 @@ internal interface IJSerializer
     object? GetJsonElementValue<T>(object element);
     object? GetJsonElementValue(object element, string propertyName);
 
-    object? AsValueIfJsonValueType(object element);
+    object? AsValueIfJsonValueType(object? element);
 }

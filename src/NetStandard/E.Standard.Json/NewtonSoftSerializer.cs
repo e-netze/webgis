@@ -86,7 +86,12 @@ internal class NewtonSoftSerializer : IJSerializer
         return result;
     }
 
-    public object? AsValueIfJsonValueType(object element)
+    //public IEnumerable<string> GetJsonElementProperties(object element)
+    //{
+
+    //}
+
+    public object? AsValueIfJsonValueType(object? element)
         => element is JValue jVal
             ? jVal.Value
             : element;

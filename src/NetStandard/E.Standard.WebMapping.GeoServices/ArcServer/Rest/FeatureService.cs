@@ -497,7 +497,7 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
                 }
 
                 objectIds = features?
-                                .Select(f => Convert.ToInt64(f.Attributes[_featureLayer.IdFieldName()]))
+                                .Select(f => Convert.ToInt64(JSerializer.AsValueIfJsonValueType(f.Attributes[_featureLayer.IdFieldName()])))
                                 .ToArray() ?? [];
 
                 if (features!.FirstOrDefault()?.Geometry == null)

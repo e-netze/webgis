@@ -136,7 +136,7 @@ internal class SystemTextJsonSerializer : IJSerializer
         return result;
     }
 
-    public object? AsValueIfJsonValueType(object element)
+    public object? AsValueIfJsonValueType(object? element)
         => element is JsonElement jsonElement
             ? jsonElement.ValueKind switch
             {
