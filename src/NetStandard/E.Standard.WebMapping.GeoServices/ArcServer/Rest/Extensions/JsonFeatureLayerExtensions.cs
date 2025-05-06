@@ -9,7 +9,7 @@ namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 
 static internal class JsonFeatureLayerExtensions
 {
-    static public string IdFieldName(this JsonFeatureLayer layer)
+    static public string IdFieldName(this JsonFeatureServerLayer layer)
     {
         var idFieldName = layer.Fields.FirstOrDefault(f => f.Type == "esriFieldTypeOID").Name;
 
@@ -21,9 +21,11 @@ static internal class JsonFeatureLayerExtensions
         return idFieldName;
     }
 
-    static public string ShapeFileName(this JsonFeatureLayer layer)
+    static public string ShapeFileName(this JsonFeatureServerLayer layer)
     {
-        var shapeFieldName = layer.Fields.FirstOrDefault(f => f.Type == "esriFieldTypeGeometry").Name;
+        var shapeFieldName = 
+            layer.GeometryField?.Name ??
+            layer.Fields?.FirstOrDefault(f => f.Type == "esriFieldTypeGeometry")?.Name;
 
         if (String.IsNullOrEmpty(shapeFieldName))
         {
