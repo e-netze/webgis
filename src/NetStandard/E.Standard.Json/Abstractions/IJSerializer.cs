@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace E.Standard.Json.Abstractions;
@@ -12,6 +13,8 @@ internal interface IJSerializer
     bool IsJsonElement(object element);
     object? GetJsonElementValue<T>(object element);
     object? GetJsonElementValue(object element, string propertyName);
+
+    IEnumerable<string> GetJsonElementProperties(object? element);
 
     object? AsValueIfJsonValueType(object? element);
 }

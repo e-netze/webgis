@@ -134,14 +134,22 @@ internal class EditService
             var domains = JSerializer.Deserialize<object[]>(jsonResult);
             foreach (var domain in domains)
             {
-                if (domain is JObject)
-                {
-                    var value = ((JObject)domain).Values().FirstOrDefault()?.ToString();
+                var properties = JSerializer.IsJsonElement(domain)
+                    ? JSerializer.GetJsonElementProperties(domain)?.ToArray()
+                    : Array.Empty<string>();
 
+                if (properties?.Length >= 1)
+                {
+                    var value = JSerializer.GetJsonElementValue(domain, properties.First());
                     StringBuilder subText = new StringBuilder();
-                    foreach (var jValue in ((JObject)domain).Values().Skip(1).Where(v => v is JValue))
+
+                    foreach (var propertyName in properties.Skip(1))
                     {
-                        subText.Append($"{jValue.Path}: {jValue}\n");
+                        var subValue = JSerializer.GetJsonElementValue(domain, propertyName)?.ToString();
+                        if (!String.IsNullOrEmpty(subValue))
+                        {
+                            subText.Append($"{propertyName}: {subValue}\n");
+                        }
                     }
 
                     values.Add(new

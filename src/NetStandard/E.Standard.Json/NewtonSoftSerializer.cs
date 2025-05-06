@@ -86,10 +86,19 @@ internal class NewtonSoftSerializer : IJSerializer
         return result;
     }
 
-    //public IEnumerable<string> GetJsonElementProperties(object element)
-    //{
+    public IEnumerable<string> GetJsonElementProperties(object? element)
+    {
+        if (element is JObject jObject)
+        {
+            return ((JObject)element).Values().Select(v => v.Path);
+        }
+        else if (element is IDictionary<string, object> dict)
+        {
+            return dict.Keys;
+        }
 
-    //}
+        return [];
+    }
 
     public object? AsValueIfJsonValueType(object? element)
         => element is JValue jVal

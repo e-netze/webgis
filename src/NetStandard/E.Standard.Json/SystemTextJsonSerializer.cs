@@ -136,6 +136,21 @@ internal class SystemTextJsonSerializer : IJSerializer
         return result;
     }
 
+    public IEnumerable<string> GetJsonElementProperties(object? element)
+    {
+        if (element is JsonElement jsonElement 
+            && jsonElement.ValueKind == JsonValueKind.Object)
+        {
+            return jsonElement.EnumerateObject().Select(p => p.Name);
+        }
+        else if (element is IDictionary<string, object> dict)
+        {
+            return dict.Keys;
+        }
+
+        return [];
+    }
+
     public object? AsValueIfJsonValueType(object? element)
         => element is JsonElement jsonElement
             ? jsonElement.ValueKind switch
