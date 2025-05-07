@@ -27,6 +27,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     private ServiceProjection _projMethode = ServiceProjection.none;
     private int _projId = -1;
     private double _opacity = 100.0;
+    private double _opacityFactor = 1.0;
     private bool _showInLegend = true;
     private LegendOptimization _legendOpt = LegendOptimization.None;
     private double _legendOptSymbolScale = 1000.0;
@@ -63,10 +64,16 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("Transparenz Factor")]
-    [Description("Ein Factor, mit den die vom Anwender eingestellte Transparenz immer multipliziert wird. Sollte der Dienst beispielsweise immer hab durchlässig dargestellt werden, kann hier ein Wert von 0.5 eingestellt werden. Stellt der Anwender den Dienst auf 100% Deckkraft, bleibt der Dienst immer noch zu 50% durchlässig. Ein Wert von 1 bedeutet, dass der dienst bei 100% Deckkraft keine Transparenz aufweißt.")]
+    [DisplayName("Transparenz Faktor")]
+    [Description("Ein Factor, mit den die vom Anwender eingestellte Transparenz immer multipliziert wird. Sollte der Dienst beispielsweise immer hab durchlässig dargestellt werden, kann hier ein Wert von 0.5 eingestellt werden. Stellt der Anwender den Dienst auf 100% Deckkraft, bleibt der Dienst immer noch zu 50% durchlässig. Ein Wert von 1 bedeutet, dass der dienst bei 100% Deckkraft keine Transparenz aufweißt. 0 kann hier nicht eingegeben werden, da der Dienst dann überhaupt nicht angezeigt werden könnte!")]
     [Category("Allgemein")]
-    public double OpacityFactor{ get; set; }
+    public double OpacityFactor { get => _opacityFactor; 
+        set 
+        { 
+            if(value <= 0.001) value = 1.0;  // null is not allowed here => Service shoud always be visible
+            _opacityFactor = Math.Clamp(value, 0.0, 1.0); 
+        } 
+    }
 
     [Browsable(true)]
     [DisplayName("Zeitverhalten: Timeout")]
@@ -340,7 +347,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
         }
 
         _opacity = (double)stream.Load("opacity", 100.0);
-        OpacityFactor = Math.Clamp((double)stream.Load("opacity_factor", 1.0), 0f, 1);   
+        this.OpacityFactor = Math.Clamp((double)stream.Load("opacity_factor", 1.0), 0f, 1);   
         _timeout = (int)stream.Load("timeout", 20);
         _visible = (bool)stream.Load("visible", true);
         _imageFormat = (ServiceImageFormat)stream.Load("imageformat", (int)ServiceImageFormat.Default);
@@ -399,7 +406,12 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
                 null);
 
         stream.Save("opacity", _opacity);
-        stream.Save("opacity_factor", Math.Clamp(OpacityFactor, 0, 1));
+        stream.Save("opacity_factor", 
+            Math.Clamp(
+                _opacityFactor <= 0.001   // avoid 0 here => service will be invisible forever
+                    ? 1.0 : 
+                    _opacityFactor, 
+                0.0, 1.0));
         stream.Save("timeout", _timeout);
         stream.Save("visible", _visible);
         stream.Save("imageformat", (int)_imageFormat);

@@ -2751,7 +2751,7 @@
                 if (focusedServices) {
                     $holder.css('opacity', .8);
 
-                    var serviceOpacity = focusedServices.ids && $.inArray(service.id, focusedServices.ids) >= 0 ? 1.0 : focusedServices.getOpacity();
+                    var serviceOpacity = focusedServices.ids && $.inArray(service.id, focusedServices.ids) >= 0 ? 1.0 : focusedServices.opacity;
 
                     $holder.children('.webgis-menu-item-imagebutton')
                         .css('display', 'none')
@@ -2768,10 +2768,10 @@
                         .removeClass('selected');
                     $holder.children('.webgis-menu-item-imagebutton.' + service.getOpacity() * 100)
                         .addClass('selected');
-                }
 
-                if (service.isBasemap) {
-                    applyServiceOpacity(service, service.getOpacity());  // set all overlay basemap to the same opacity
+                    if (service.isBasemap) {
+                        applyServiceOpacity(service, service.getOpacity());  // set all overlay basemap to the same opacity
+                    }
                 }
             }
         });

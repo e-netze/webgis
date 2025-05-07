@@ -643,8 +643,6 @@
         this.opacity = opacity
         opacity = Math.round(opacity * this.serviceInfo.opacity_factor * 100) / 100;
 
-        //console.log(this.id + ".setOpacity: ", opacity, this.opacity);
-
         if (this.frameworkElement && this.frameworkElement.setOpacity) {
             //console.trace('setopacity', this.name, opacity);
             this.frameworkElement.setOpacity(opacity);
@@ -660,6 +658,7 @@
         return this.opacity;
     };
     this.focus = function () {
+        //console.log(this.id + ".focus()");
         if (this.frameworkElement && this.frameworkElement.setOpacity)
             this.frameworkElement.setOpacity(1.0);
     };
@@ -668,8 +667,17 @@
             return;
         }
 
-        if (this.frameworkElement && this.frameworkElement.setOpacity)
+        opacity = Math.round(opacity * this.serviceInfo.opacity_factor * 100) / 100;
+        //console.log(this.id + ".unfocus()", opacity, this.frameworkElement.setOpacity);
+        if (this.frameworkElement && this.frameworkElement.setOpacity) {
+            //console.log('set opacity', this.name, opacity); 
             this.frameworkElement.setOpacity(opacity);
+        } else if (this.serviceInfo.type === "vtc") {
+            //console.log(this.frameworkElement);
+            if (this.frameworkElement._container) {
+                $(this.frameworkElement._container).css('opacity', opacity);
+            }
+        }
     };
     this.resetFocus = function () {
         this.setOpacity(this.getOpacity());
@@ -680,6 +688,7 @@
         }
 
         opacity = opacity || 0.01;
+        opacity = Math.round(opacity * this.serviceInfo.opacity_factor * 100) / 100;
 
         if (this.frameworkElement && this.frameworkElement.setOpacity)
             this.frameworkElement.setOpacity(opacity);
@@ -697,11 +706,18 @@
                 if ($.inArray(this.id, focusedServices.ids) >= 0) {
                     opacity = 1.0;
                 } else {
-                    opacity = focusedServices.getOpacity();
+                    opacity = focusedServices.opacity;
                 }
             }
 
-            this.frameworkElement.setOpacity(opacity);
+            opacity = Math.round(opacity * this.serviceInfo.opacity_factor * 100) / 100;
+            if (this.frameworkElement && this.frameworkElement.setOpacity) {
+                this.frameworkElement.setOpacity(opacity);
+            } else if (this.serviceInfo.type === "vtc") {
+                if (this.frameworkElement._container) {
+                    $(this.frameworkElement._container).css('opacity', opacity);
+                }
+            }
         }
     };
 
