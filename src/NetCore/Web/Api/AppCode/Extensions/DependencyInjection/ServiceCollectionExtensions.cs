@@ -257,17 +257,17 @@ static public class ServiceCollectionExtensions
             {
                 List<string> customCssUrls = new List<string>(new[]
                 {
-                    $"~/content/styles/default.css?{ WebGISVersion.CssVersion }",
-                    $"~/content/Site.css?{ WebGISVersion.CssVersion }"
-                });
+                $"~/content/styles/default.css?{WebGISVersion.CssVersion}",
+                $"~/content/Site.css?{WebGISVersion.CssVersion}"
+            });
                 customCssUrls.AddRange(configuration.DataLinqCustomCssUrls(WebGISVersion.CssVersion));
 
                 var customReportJavascriptUrls = new List<string>(new[]
                 {
-                    $"src=~/scripts/api/api.min.js?{ WebGISVersion.JsVersion };id=webgis-api-script",
-                    $"~/scripts/api/api-ui.min.js?{ WebGISVersion.JsVersion }",
-                    $"~/scripts/api/datalinq-overrides.js?{ WebGISVersion.JsVersion }"
-                });
+                $"src=~/scripts/api/api.min.js?{WebGISVersion.JsVersion};id=webgis-api-script",
+                $"~/scripts/api/api-ui.min.js?{WebGISVersion.JsVersion}",
+                $"~/scripts/api/datalinq-overrides.js?{WebGISVersion.JsVersion}"
+            });
                 customReportJavascriptUrls.AddRange(configuration.DataLinqCustomJavaScriptUrls(WebGISVersion.JsVersion));
 
                 config.CustomReportCssUrls = customCssUrls.ToArray();
@@ -293,6 +293,11 @@ static public class ServiceCollectionExtensions
                     // add assemblies to use DataLinqHelper Extensions
                     config.AddAssemblyReferene(typeof(IDataLinqHelper).Assembly);
                     config.AddAssemblyReferene(typeof(DataLinqHelperExtensions).Assembly);
+
+                    var tempPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "datalinq");
+                    config.TempPath = tempPath;
+
+                    Console.WriteLine($"Datalinq Cache TempPath: {tempPath}");
                 }
 
                 config.AddRazorNamespace("Api.Core.AppCode.Extensions.Razor");

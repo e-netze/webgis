@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Fixed
 
+## 7.25.1904
+
+### Added
+
+- Filebased caching for datalinq view-compilations
+
 ## 7.25.1902
 
 ### Added
