@@ -462,6 +462,7 @@ public class Startup
 
         app.UseRouting();
 
+        app.AddApiExceptionMiddleware();
         app.AddEtagHandling();
         app.AddOriginalUrlParametersMiddleware();
 

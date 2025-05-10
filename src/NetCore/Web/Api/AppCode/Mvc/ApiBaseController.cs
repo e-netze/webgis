@@ -1,6 +1,7 @@
 ﻿#pragma warning disable CA1416
 
 using Api.AppCode.Mvc.Wrapper;
+using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Services;
 using E.Standard.Api.App;
 using E.Standard.Api.App.Exceptions;
@@ -332,9 +333,7 @@ public class ApiBaseController : Controller
 
         try
         {
-            Response.Headers.Append("Access-Control-Allow-Headers", "*");
-            Response.Headers.Append("Access-Control-Allow-Origin", (string)Request.Headers["Origin"] != null ? (string)Request.Headers["Origin"] : "*");
-            Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+            Response.AddApiCorsHeaders(Request);
         }
         catch { }
 
@@ -367,7 +366,7 @@ public class ApiBaseController : Controller
 
     #region Result Classes
 
-    private class JsonResponse
+    internal class JsonResponse
     {
         public bool success { get; set; }
     }
@@ -387,7 +386,7 @@ public class ApiBaseController : Controller
         public string title { get; set; }
     }
 
-    private class JsonException : JsonResponse
+    internal class JsonException : JsonResponse
     {
         public string exception { get; set; }
         public string exception_type { get; set; }
@@ -773,11 +772,9 @@ public class ApiBaseController : Controller
     {
         json = json ?? String.Empty;
 
-        Response.Headers.TryAdd("Pragma", "no-cache");
-        Response.Headers.TryAdd("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
-        Response.Headers.TryAdd("Access-Control-Allow-Headers", "*");
-        Response.Headers.TryAdd("Access-Control-Allow-Origin", (string)Request.Headers["Origin"] != null ? (string)Request.Headers["Origin"] : "*");
-        Response.Headers.TryAdd("Access-Control-Allow-Credentials", "true");
+        Response
+            .AddNoCacheHeaders()
+            .AddApiCorsHeaders(Request);
 
         return BinaryResultStream(Encoding.UTF8.GetBytes(json), "application/json; charset=utf-8");
     }
