@@ -28,7 +28,7 @@ namespace E.Standard.WebGIS.Tools.Serialization;
 [ToolHelp("tools/map/liveshare/index.html")]
 [AdvancedToolProperties(AsideDialogExistsDependent = true, LiveShareClientnameDependent = true)]
 //[InDevelopment]
-public class LiveShareMap : IApiClientToolLocalizable<LiveShareMap>, 
+public class LiveShareMap : IApiClientToolLocalizable<LiveShareMap>,
                             IApiButtonResources
 {
     private const string DivInitSessionId = "liveshare-init-group-div";

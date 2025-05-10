@@ -1338,8 +1338,8 @@ public class RestPrintHelperService
 
                 if (mapDefinition.FocusedServices?.Ids != null && mapDefinition.FocusedServices.Ids.Length > 0)
                 {
-                    service.InitialOpacity = mapDefinition.FocusedServices.Ids.Contains(service.Url) 
-                        ? 1.0f 
+                    service.InitialOpacity = mapDefinition.FocusedServices.Ids.Contains(service.Url)
+                        ? 1.0f
                         : mapDefinition.FocusedServices.Opacity;
                 }
                 else

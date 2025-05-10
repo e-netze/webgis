@@ -1,9 +1,6 @@
 ﻿using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 
@@ -23,7 +20,7 @@ static internal class JsonFeatureLayerExtensions
 
     static public string ShapeFileName(this JsonFeatureServerLayer layer)
     {
-        var shapeFieldName = 
+        var shapeFieldName =
             layer.GeometryField?.Name ??
             layer.Fields?.FirstOrDefault(f => f.Type == "esriFieldTypeGeometry")?.Name;
 

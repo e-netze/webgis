@@ -4,7 +4,6 @@ using E.Standard.Api.App;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
-using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Tools.Editing;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.EventResponse;
@@ -33,11 +32,11 @@ public class RestEditingHelperService
     }
 
     async public Task<IActionResult> PerformEditServiceRequest(
-                            ApiBaseController controller, 
-                            string serviceId, 
-                            string themeIds, 
-                            string command, 
-                            CmsDocument.UserIdentification ui, 
+                            ApiBaseController controller,
+                            string serviceId,
+                            string themeIds,
+                            string command,
+                            CmsDocument.UserIdentification ui,
                             IStringLocalizer stringLocalizer,
                             NameValueCollection form = null)
     {

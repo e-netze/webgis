@@ -21,7 +21,7 @@ namespace E.Standard.WebGIS.Tools.Presentation;
 [Export(typeof(IApiButton))]
 [ToolHelp("tools/presentation/labeling.html")]
 [AdvancedToolProperties(LabelingDependent = true, ClientDeviceDependent = true)]
-public class Labeling : IApiServerButtonLocalizable<Labeling>, 
+public class Labeling : IApiServerButtonLocalizable<Labeling>,
                         IApiButtonResources
 {
     #region ApiServerButton

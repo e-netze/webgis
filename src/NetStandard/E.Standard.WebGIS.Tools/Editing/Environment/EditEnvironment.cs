@@ -27,7 +27,6 @@ using E.Standard.WebMapping.Core.Editing;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -1873,7 +1872,7 @@ class EditEnvironment
                 {
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
                     {
-                        text =localizer.Localize("cancel"),
+                        text = localizer.Localize("cancel"),
                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.ButtonIcon })
                     });
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, "delete")
@@ -1923,8 +1922,8 @@ class EditEnvironment
                     });
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.servertoolcommand, editOperation == EditOperation.Cut ? "cut" : "clip")
                     {
-                        text = editOperation == EditOperation.Cut 
-                            ? localizer.Localize("mask.cut") 
+                        text = editOperation == EditOperation.Cut
+                            ? localizer.Localize("mask.cut")
                             : localizer.Localize("mask.clip"),
                         css = UICss.ToClass(new string[] { UICss.OkButtonStyle, UICss.ButtonIcon })
                     });

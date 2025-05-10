@@ -1,7 +1,6 @@
 ﻿using E.Standard.Extensions.Collections;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
-using E.Standard.OGC.Schema.wfs_1_0_0;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
@@ -29,9 +28,9 @@ namespace E.Standard.WebGIS.Tools.Editing.Mobile;
 [AdvancedToolProperties(SelectionInfoDependent = true, ClientDeviceDependent = true, MapCrsDependent = true)]
 [ToolId("webgis.tools.editing.insertfeature")]
 [LocalizationNamespace("tools.editing.insertfeature")]
-public class InsertFeature : IApiServerToolLocalizableAsync<InsertFeature>, 
-                             IApiChildTool, 
-                             IApiToolPersistenceContext, 
+public class InsertFeature : IApiServerToolLocalizableAsync<InsertFeature>,
+                             IApiChildTool,
+                             IApiToolPersistenceContext,
                              IApiPostRequestEvent
 {
     private readonly string EditMaskContainerId = "webgis-edit-insert-edit-mask-holder";

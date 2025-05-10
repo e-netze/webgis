@@ -138,7 +138,7 @@ internal class SystemTextJsonSerializer : IJSerializer
 
     public IEnumerable<string> GetJsonElementProperties(object? element)
     {
-        if (element is JsonElement jsonElement 
+        if (element is JsonElement jsonElement
             && jsonElement.ValueKind == JsonValueKind.Object)
         {
             return jsonElement.EnumerateObject().Select(p => p.Name);

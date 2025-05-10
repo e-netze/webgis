@@ -26,8 +26,8 @@ namespace E.Standard.WebGIS.Tools.Serialization;
 [AdvancedToolProperties(AnonymousUserIdDependent = true, ClientDeviceDependent = true)]
 [ToolConfigurationSection("loadmap")]
 [ToolHelp("tools/map/load.html")]
-public class LoadMap : IApiServerButtonLocalizable<LoadMap>, 
-                       IApiButtonResources, 
+public class LoadMap : IApiServerButtonLocalizable<LoadMap>,
+                       IApiButtonResources,
                        IApiToolConfirmation
 {
     private const string ConfigAllowCollaboration = "allow-collaboration";

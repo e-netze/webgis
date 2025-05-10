@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace E.Standard.CMS.Core.Collections;
 
@@ -10,7 +9,7 @@ public class UniqueListBuilder<T>
 
     public bool Add(T item, Func<T, bool> equalityPredicate)
     {
-        foreach(var candidate in _list)
+        foreach (var candidate in _list)
         {
             if (equalityPredicate(candidate) == true)
             {
@@ -26,7 +25,7 @@ public class UniqueListBuilder<T>
     {
         int counter = 0;
 
-        foreach(var item in items)
+        foreach (var item in items)
         {
             if (Add(item, equalityPredicate))
             {

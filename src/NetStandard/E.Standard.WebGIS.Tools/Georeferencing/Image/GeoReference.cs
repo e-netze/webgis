@@ -1,5 +1,4 @@
-﻿using E.Standard.Extensions.Collections;
-using E.Standard.Extensions.Compare;
+﻿using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
@@ -23,7 +22,6 @@ using MathNet.Numerics.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image;
 
@@ -34,8 +32,8 @@ namespace E.Standard.WebGIS.Tools.Georeferencing.Image;
 [ToolHelp("tools/general/georef-image.html")]
 [ToolPolicy(RequireAuthentication = true)]
 [LocalizationNamespace("tools.image.georeference")]
-public class GeoReference : IApiServerToolLocalizable<GeoReference>, 
-                            IApiButtonResources, 
+public class GeoReference : IApiServerToolLocalizable<GeoReference>,
+                            IApiButtonResources,
                             IApiToolConfirmation
 {
     const string ToolbarElementId = "image-georef-toolbar";

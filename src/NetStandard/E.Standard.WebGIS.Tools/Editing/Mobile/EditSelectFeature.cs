@@ -25,9 +25,9 @@ using static E.Standard.WebMapping.Core.CoreApiGlobals;
 namespace E.Standard.WebGIS.Tools.Editing.Mobile;
 
 [AdvancedToolProperties(MapCrsDependent = true)]
-public abstract class EditSelectFeature<T> : IApiServerToolLocalizableAsync<Edit>, 
-                                             IApiChildTool, 
-                                             IApiToolPersistenceContext, 
+public abstract class EditSelectFeature<T> : IApiServerToolLocalizableAsync<Edit>,
+                                             IApiChildTool,
+                                             IApiToolPersistenceContext,
                                              IApiPostRequestEvent
 {
     internal readonly string EditMaskContainerId = "webgis-edit-update-delete-edit-mask-holder";

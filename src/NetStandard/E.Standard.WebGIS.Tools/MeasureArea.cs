@@ -8,14 +8,13 @@ using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Geometry;
-using System.Runtime.Loader;
 
 namespace E.Standard.WebGIS.Tools;
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(MapCrsDependent = true)]
 [ToolHelp("tools/general/measure-area.html")]
-public class MeasureArea : IApiServerToolLocalizable<MeasureArea>, 
+public class MeasureArea : IApiServerToolLocalizable<MeasureArea>,
                            IApiButtonResources
 {
     #region IApiServerTool Member

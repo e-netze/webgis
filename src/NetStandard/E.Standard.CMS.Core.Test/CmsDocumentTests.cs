@@ -201,9 +201,9 @@ public class CmsDocumentTests
         users.AddRange(deniedUsers?.ToArray() ?? []);
 
         var roles = new CmsAuthItemList.UniqueItemListBuilder();
-        roles.AddRange(allowedRoles?.ToArray() ?? []); 
+        roles.AddRange(allowedRoles?.ToArray() ?? []);
         roles.AddRange(deniedRoles?.ToArray() ?? []);
-       
+
         return new AuthNode(
             new CmsAuthItemList(users.Build()),
             new CmsAuthItemList(roles.Build()));
@@ -443,7 +443,7 @@ public class CmsDocumentTests
             deniedRoles: new[] { new CmsRole("instance::restricted", false) }
         );
         var ui = MakeUser("frank",
-                          instanceRoles: new[] { "restricted","instance::writers" });
+                          instanceRoles: new[] { "restricted", "instance::writers" });
         Assert.False(InvokeCheckAuthorization(ui, auth));
     }
 

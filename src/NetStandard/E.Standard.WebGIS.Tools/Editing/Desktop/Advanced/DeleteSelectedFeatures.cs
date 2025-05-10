@@ -92,7 +92,7 @@ public class DeleteSelectedFeatures : IApiServerTool, IApiChildTool
                         .WithText(localizer.Localize("cancel"))
                         .WithStyles(UICss.CancelButtonStyle, UICss.OptionButtonStyle),
                     new UIButton(UIButton.UIButtonType.servertoolcommand, "delete-selected")
-                        .WithText(features.Count > 1 
+                        .WithText(features.Count > 1
                             ? String.Format(localizer.Localize("delete-features"), features.Count)
                             : localizer.Localize("delete-feature"))
                         .WithStyles(UICss.DangerButtonStyle, UICss.OptionButtonStyle)))

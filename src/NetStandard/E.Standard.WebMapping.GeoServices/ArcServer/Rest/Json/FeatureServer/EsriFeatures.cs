@@ -1,8 +1,5 @@
-﻿using E.Standard.WebMapping.Core.Geometry;
-using Newtonsoft.Json;
-using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.FeatureServer;
 

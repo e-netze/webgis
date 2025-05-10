@@ -27,7 +27,7 @@ public class ApiExceptionMiddleware
         catch (Exception ex)
         {
             //context.Response.StatusCode = StatusCodes.Status400BadRequest;
-           
+
             context.Response
                 .AddNoCacheHeaders()
                 .AddApiCorsHeaders(context.Request);

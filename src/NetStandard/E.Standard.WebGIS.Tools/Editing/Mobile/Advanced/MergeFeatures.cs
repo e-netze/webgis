@@ -24,7 +24,7 @@ namespace E.Standard.WebGIS.Tools.Editing.Mobile.Advanced;
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(SelectionInfoDependent = true, MapCrsDependent = true)]
 [LocalizationNamespace("tools.editing.merge")]
-public class MergeFeatures : IApiServerToolLocalizableAsync<MergeFeatures>, 
+public class MergeFeatures : IApiServerToolLocalizableAsync<MergeFeatures>,
                              IApiChildTool
 {
     const string CurrentFeatureAttributeId = "edit-mergefeature-feature-oid";

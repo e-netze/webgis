@@ -74,7 +74,7 @@ public class LayoutBuilder
 
             FileInfo fi = new FileInfo(filename);
             _doc = new XmlDocument();
-            
+
             //var xml = File.ReadAllText(filename);
             //_doc.LoadXml(xml);
 
@@ -1188,7 +1188,7 @@ public class LayoutBuilder
         text = text.Replace("[DATE]", DateTime.Now.ToShortDateString());
         text = text.Replace("[TIME]", DateTime.Now.ToShortTimeString());
         text = text.Replace("[EPSG]", _map?.SpatialReference?.Id.ToString() ?? "");
-        text = text.Replace("[MAP_SRS_NAME]", $"{_map?.SpatialReference?.Name}"); 
+        text = text.Replace("[MAP_SRS_NAME]", $"{_map?.SpatialReference?.Name}");
         text = text.Replace("[PAGE_SIZE]", _pageSize.ToString());
 
         //   ul---------------------ur

@@ -64,7 +64,7 @@ public class MarkdownLocalizer : IStringLocalizer
         {
             string fileNameSpace = $"{fi.Name.Replace($".md", "").ToLowerInvariant()}";
 
-            if(!String.IsNullOrEmpty(fileNameSpace))  // default filename ".md" => no namespace
+            if (!String.IsNullOrEmpty(fileNameSpace))  // default filename ".md" => no namespace
             {
                 fileNameSpace += ".";
             }

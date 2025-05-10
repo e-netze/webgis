@@ -9,8 +9,6 @@ using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.Security;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.Extensions.ErrorHandling;
-using E.Standard.Extensions.Formatting;
-using Microsoft.AspNetCore.Authorization.Policy;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -1922,7 +1920,7 @@ public partial class CMSManager
             AuthPath = path;
             NodeAuth = new NodeAuthorization();
             var userListBuilder = new CmsAuthItemList.UniqueItemListBuilder();
-            var roleListBuilder = new CmsAuthItemList.UniqueItemListBuilder();  
+            var roleListBuilder = new CmsAuthItemList.UniqueItemListBuilder();
 
             try
             {
@@ -2219,7 +2217,7 @@ public partial class CMSManager
         {
             relPath = Helper.TrimPathRight(relPath, 1) + "/" + Helper.TrimPathLeft(relPath, 1) + "@" + propertyTagName;
         }
-        
+
         auth.TargetAclPath = relPath;
         bool first = true;
         var userListBuilder = new CmsAuthItemList.UniqueItemListBuilder();

@@ -10,7 +10,7 @@ using E.Standard.WebMapping.Core.Api.UI.Elements;
 namespace E.Standard.WebGIS.Tools;
 
 [Export(typeof(IApiButton))]
-public class ContinuousPosition : IApiClientToolLocalizable<ContinuousPosition>, 
+public class ContinuousPosition : IApiClientToolLocalizable<ContinuousPosition>,
                                   IApiButtonResources
 {
     public string Container => "Navigation";

@@ -25,7 +25,6 @@ using E.Standard.Custom.Core.Extensions;
 using E.Standard.DependencyInjection;
 using E.Standard.Extensions.Collections;
 using E.Standard.Extensions.Compare;
-using E.Standard.Extensions.Reflection;
 using E.Standard.Json;
 using E.Standard.Platform;
 using E.Standard.Security.Cryptography;
@@ -1864,7 +1863,7 @@ public class RestController : ApiBaseController
         }
         catch (Exception ex)
         {
-            if(ex is TargetInvocationException tie)
+            if (ex is TargetInvocationException tie)
             {
                 ex = tie.InnerException ?? tie;
             }
