@@ -20,7 +20,7 @@ namespace E.Standard.WebGIS.Tools.GeoReferencing;
 [Export(typeof(IApiButton))]
 [ToolStorageIsolatedUser(isUserIsolated: false)]
 [ToolHelp("tools/general/georeference.html")]
-public class GeoReference : IApiServerButtonLocalizable<GeoReference>, 
+public class GeoReference : IApiServerButtonLocalizable<GeoReference>,
                             IApiButtonResources
 {
     #region IApiServerButton Member

@@ -21,7 +21,7 @@ namespace E.Standard.WebGIS.Tools;
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(MapCrsDependent = true)]
 [ToolHelp("tools/general/measure-line.html")]
-public class MeasureLine : IApiServerToolLocalizable<MeasureLine>, 
+public class MeasureLine : IApiServerToolLocalizable<MeasureLine>,
                            IApiButtonResources
 {
     private const string Table3dLengthContainerId = "measureline-3d-length-container";

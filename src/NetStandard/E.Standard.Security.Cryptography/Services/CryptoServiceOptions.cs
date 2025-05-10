@@ -132,6 +132,10 @@ public class CryptoServiceOptions
                         Custom_LicensePassword = CryptoImpl.GetRandomAlphanumericString(256),
                         Custom_PortalProxyRequests = CryptoImpl.GetRandomAlphanumericString(128),
 
+                        DefaultPasswordDataLinq = String.IsNullOrWhiteSpace(legacyDataLinqDefaultPassword)
+                                ? null
+                                : legacyDataLinqDefaultPassword,
+
                         Custom_ApiBridgeUserCryptoPassword =
                               customLegacyPasswords?.ContainsKey((int)CustomPasswords.ApiBridgeUserCryptoPassword) == true
                                 ? customLegacyPasswords[(int)CustomPasswords.ApiBridgeUserCryptoPassword]

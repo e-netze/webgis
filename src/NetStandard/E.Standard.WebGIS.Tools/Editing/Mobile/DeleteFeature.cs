@@ -26,9 +26,9 @@ public class DeleteFeature : UpdateFeature
     }
 
     async internal static Task InitAsync(
-                    DeleteFeature tool, 
-                    IBridge bridge, 
-                    ApiToolEventArguments e, 
+                    DeleteFeature tool,
+                    IBridge bridge,
+                    ApiToolEventArguments e,
                     EditFeatureDefinition editFeatureDef,
                     ApiEventResponse response,
                     ILocalizer<Edit> localizer,

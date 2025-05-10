@@ -66,8 +66,8 @@ public class AuthProperty<T>
         _propertyValue = propertyValue;
         _unauthorizedValue = unauthorizedValue;
 
-        if (appendEveryoneAllowedIfEmpty == true 
-            && authNode.Users.Count == 0 
+        if (appendEveryoneAllowedIfEmpty == true
+            && authNode.Users.Count == 0
             && authNode.Roles.Count == 0)
         {
             authNode.Append(new CmsDocument.AuthNode(CmsAuthItemList.Everyone, CmsAuthItemList.Empty));

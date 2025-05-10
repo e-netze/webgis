@@ -1,5 +1,6 @@
 ﻿using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
 
@@ -31,7 +32,9 @@ public class BlockoutLabelElement : IGraphicElement
         Point point = map.WorldToImage(_point);
 
         using (var brush = Current.Engine.CreateSolidBrush(_color))
-        using (var bkbrush = Current.Engine.CreateSolidBrush(_bkcolor))
+        using (var outlinebrush = Current.Engine.CreateSolidBrush(_bkcolor))
+        using (var boxBrush = Current.Engine.CreateSolidBrush(ArgbColor.FromArgb(_bkcolor.A / 5, _bkcolor)))
+        using (var boxPen = Current.Engine.CreatePen(ArgbColor.FromArgb((int)(_bkcolor.A / 2f), _bkcolor), 1.5f))
         using (var font = Current.Engine.CreateFont(_fontName, _size))
         {
             var oldHint = canvas.TextRenderingHint;
@@ -39,20 +42,22 @@ public class BlockoutLabelElement : IGraphicElement
 
             var sizeF = canvas.MeasureText(_text, font);
             var rectF = new CanvasRectangleF(
-                (float)point.X /*- sizeF.Width / 2f*/, (float)point.Y - sizeF.Height /*- sizeF.Height / 2f*/, sizeF.Width, sizeF.Height);
+                (float)point.X /*- sizeF.Width / 2f*/- 1f, (float)point.Y - sizeF.Height - 1f /*- sizeF.Height / 2f*/, sizeF.Width + 2f, sizeF.Height + 2f);
 
             canvas.TranslateTransform(new CanvasPointF(_offset.Left, _offset.Top));
 
             if (_bkcolor.A > 0)
             {
-                canvas.FillRectangle(bkbrush, rectF);
+                canvas.FillRectangle(boxBrush, rectF);
+                canvas.DrawRectangle(boxPen, rectF);
             }
 
             var format = Current.Engine.CreateDrawTextFormat();
-            format.Alignment = StringAlignment.Center;
-            format.LineAlignment = StringAlignment.Center;
+            format.Alignment = StringAlignment.Near;
+            format.LineAlignment = StringAlignment.Near;
 
-            canvas.DrawText(_text, font, brush, rectF.Center, format);
+            var centerPoint = new Point(rectF.Left + 1f, rectF.Top + 1.5f);
+            canvas.DrawOutlineLabel(map, _text, centerPoint, font, brush, outlinebrush, format);
 
             canvas.ResetTransform();
 

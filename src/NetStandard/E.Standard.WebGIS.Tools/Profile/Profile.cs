@@ -24,7 +24,7 @@ namespace E.Standard.WebGIS.Tools.Profile;
 [ToolCmsConfigParameter(ProfileEnvironment.CmsConfigParameter)]
 [ToolHelp("tools/general/profile.html")]
 [LocalizationNamespace("tools.profile")]
-public class CreateProfile : IApiServerToolLocalizable<CreateProfile>, 
+public class CreateProfile : IApiServerToolLocalizable<CreateProfile>,
                              IApiButtonResources
 {
     #region IApiServerTool Members

@@ -18,7 +18,7 @@ static public class TypeExtensions
 
     static public bool IsApiToolOrButtonAsync(this Type type)
     {
-        return type.ImplementsAnyInterface(   
+        return type.ImplementsAnyInterface(
                                 typeof(IApiServerToolAsync),
                                 typeof(IApiServerToolLocalizableAsync<>),
                                 typeof(IApiServerButtonAsync),
@@ -27,7 +27,7 @@ static public class TypeExtensions
 
     static public bool IsApiToolOrButton(this Type type)
     {
-        return type.IsApiToolOrButtonNonAsync() 
+        return type.IsApiToolOrButtonNonAsync()
             || type.IsApiToolOrButtonAsync();
     }
 

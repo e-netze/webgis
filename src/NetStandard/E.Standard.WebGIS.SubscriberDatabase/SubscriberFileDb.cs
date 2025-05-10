@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using static E.Standard.WebGIS.SubscriberDatabase.SubscriberDb;
 
 namespace E.Standard.WebGIS.SubscriberDatabase;
 
@@ -65,12 +64,12 @@ public class SubscriberFileDb : ISubscriberDb
 
                 _logger?.LogInformation("Loaded Subscriber: {name}, File: {filename}", subscriber?.Name, fileInfo.FullName);
 
-                if (name.Equals(subscriber?.Name,  StringComparison.OrdinalIgnoreCase))
+                if (name.Equals(subscriber?.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     return subscriber;
                 }
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 // Log exception if needed
                 _logger?.LogError(ex, "Error deserializing subscriber file: {name}, File: {filename}", name, fileInfo.FullName);

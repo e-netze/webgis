@@ -21,7 +21,7 @@ namespace E.Standard.WebGIS.Tools;
 [ToolHelp("tools/map/downloadmapimage.html")]
 [ToolConfigurationSection("print")]
 [AdvancedToolProperties(MapCrsDependent = true, MapBBoxDependent = true, MapImageSizeDependent = true)]
-public class DownloadMapImage : IApiServerToolLocalizable<DownloadMapImage>, 
+public class DownloadMapImage : IApiServerToolLocalizable<DownloadMapImage>,
                                 IApiButtonResources
 {
     const string BBoxElementId = "donwloadmapimage-bbox";

@@ -510,9 +510,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
     {
         try
         {
-            Response.Headers.Append("Access-Control-Allow-Headers", "*");
-            Response.Headers.Append("Access-Control-Allow-Origin", (string)Request.Headers["Origin"] != null ? (string)Request.Headers["Origin"] : "*");
-            Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+            Response.AddPortalCorsHeaders(Request);
         }
         catch { }
 
@@ -599,11 +597,9 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
     {
         json = json ?? String.Empty;
 
-        Response.Headers.Append("Pragma", "no-cache");
-        Response.Headers.Append("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
-        Response.Headers.Append("Access-Control-Allow-Headers", "*");
-        Response.Headers.Append("Access-Control-Allow-Origin", (string)Request.Headers["Origin"] != null ? (string)Request.Headers["Origin"] : "*");
-        Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+        Response
+            .AddNoCacheHeaders()
+            .AddPortalCorsHeaders(Request);
 
         return BinaryResultStream(System.Text.Encoding.UTF8.GetBytes(json), "application/json; charset=utf-8");
     }

@@ -211,7 +211,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
             buttonContainer.AddChild(
                 new UICallbackButton(this, "setfilter")
                     .WithText(visFilterIsActive
-                        ? localizer.Localize("apply-changes") 
+                        ? localizer.Localize("apply-changes")
                         : localizer.Localize("apply-filter")));
 
             apiResponse.AddUIElement(buttonContainer);

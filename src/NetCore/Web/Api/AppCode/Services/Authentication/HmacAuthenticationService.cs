@@ -6,6 +6,7 @@ using E.Standard.CMS.Core;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Security.App.Exceptions;
 using E.Standard.Security.Cryptography.Abstractions;
+using E.Standard.Security.Cryptography.Exceptions;
 using E.Standard.WebGIS.Core.Extensions;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -116,6 +117,10 @@ public class HmacAuthenticationService
             }
 
             return ui;
+        }
+        catch (CryptographyException ex)
+        {
+            throw new NotAuthorizedException($"Forbidden: {ex.Message}");
         }
         finally
         {

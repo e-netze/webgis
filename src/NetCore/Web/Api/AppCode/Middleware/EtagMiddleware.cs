@@ -50,8 +50,6 @@ public class EtagMiddleware
             }
 
             await _next(context);
-
-
         }
     }
 }

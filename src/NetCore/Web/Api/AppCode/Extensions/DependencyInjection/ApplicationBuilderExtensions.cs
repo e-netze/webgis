@@ -6,16 +6,12 @@ namespace Api.Core.AppCode.Extensions.DependencyInjection;
 static public class ApplicationBuilderExtensions
 {
     static public IApplicationBuilder AddEtagHandling(this IApplicationBuilder app)
-    {
-        app.UseMiddleware<EtagMiddleware>();
-
-        return app;
-    }
+        => app.UseMiddleware<EtagMiddleware>();
 
     static public IApplicationBuilder AddOriginalUrlParametersMiddleware(this IApplicationBuilder app)
-    {
-        app.UseMiddleware<OriginalUrlParamterMiddleware>();
+        => app.UseMiddleware<OriginalUrlParamterMiddleware>();
 
-        return app;
-    }
+    static public IApplicationBuilder AddApiExceptionMiddleware(this IApplicationBuilder app)
+        => app.UseMiddleware<ApiExceptionMiddleware>();
+
 }

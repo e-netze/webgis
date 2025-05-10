@@ -153,7 +153,7 @@ public class CmsDocument : IDisposable
     }
 
     #region Query
-    
+
     public CmsNodeCollection SelectNodes(UserIdentification ui, string xPath)
     {
         try
@@ -376,11 +376,11 @@ public class CmsDocument : IDisposable
 
         return xPath;
     }
-    
+
     #endregion
 
     #region Authorization
-    
+
     public const string Everyone = "jeder";
 
     internal bool CheckAuth(UserIdentification ui, string path)
@@ -443,8 +443,8 @@ public class CmsDocument : IDisposable
 
         while (true)
         {
-            AuthNode cachedAuthNode = _cachedAuthNodes.ContainsKey(xPath) 
-                ? _cachedAuthNodes[xPath] 
+            AuthNode cachedAuthNode = _cachedAuthNodes.ContainsKey(xPath)
+                ? _cachedAuthNodes[xPath]
                 : null;
 
             if (cachedAuthNode is not null)
@@ -473,7 +473,7 @@ public class CmsDocument : IDisposable
             else
             {
                 // to authorize a property, the syntax is path+"@gdipriperities_id-of-the-item"
-                var posAttribute = xPath.IndexOf("@", pos);  
+                var posAttribute = xPath.IndexOf("@", pos);
                 if (posAttribute > 0)
                 {
                     pos = Math.Max(posAttribute, xPath.IndexOf("_", posAttribute));
@@ -918,7 +918,7 @@ public class CmsDocument : IDisposable
 
         #endregion
     }
-    
+
     #endregion
 
     public CmsDocument Copy()

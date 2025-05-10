@@ -1,5 +1,4 @@
 ﻿using E.Standard.Localization.Abstractions;
-using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Models;
@@ -28,10 +27,10 @@ namespace E.Standard.WebGIS.Tools.Editing.Mobile;
                         MapCrsDependent = true,
                         MapImageSizeDependent = true)]
 [ToolId("webgis.tools.editing.updatefeature")]
-public class UpdateFeature : IApiServerToolLocalizable<Edit>, 
-                             IApiChildTool, 
-                             IApiToolConfirmation, 
-                             IApiToolPersistenceContext, 
+public class UpdateFeature : IApiServerToolLocalizable<Edit>,
+                             IApiChildTool,
+                             IApiToolConfirmation,
+                             IApiToolPersistenceContext,
                              IApiPostRequestEvent
 {
     internal static readonly string EditMaskContainerId = "webgis-edit-update-delete-edit-mask-holder";

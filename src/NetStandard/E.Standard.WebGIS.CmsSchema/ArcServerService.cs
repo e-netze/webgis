@@ -843,7 +843,10 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
 
     private bool ParentLayerVisibility(JsonLayer layer, IEnumerable<JsonLayer> layers, bool layerDefaultVisiblity)
     {
-        if (layerDefaultVisiblity == false) return false;
+        if (layerDefaultVisiblity == false)
+        {
+            return false;
+        }
 
         if (layer?.ParentLayer == null)
         {

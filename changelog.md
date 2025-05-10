@@ -9,10 +9,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Improved Block out text printed maps (Labels for markers, Coordinates, etc.) [discussion #277](https://github.com/e-netze/webgis-community/discussions/277)
+
+## Fixed
+
+## 7.25.1904
+
+### Added
+
+- Filebased caching for datalinq view-compilations
+
+## 7.25.1902
+
+### Added
+
+- Deployment: using NUKE to create deployment zip files and docker images
+
 ## Fixed
 
 - Bug: AGS FeatureService Editing - Can't transfer line and polygon features because STLength() and STArea() Fields
   => Fields will be ignored and not set on INSERT/UPDATE.
+
+- Bug: Editing Autocomplete not worked with System.Text.Json
+
+- Bug: Massatributation (Can't determine Shape field name)
 
 ## 7.25.1503
 

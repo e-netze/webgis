@@ -12,7 +12,7 @@ namespace E.Standard.WebGIS.Tools.MapMarkup.Extensions;
 static internal class UIElementExtensions
 {
     #region By Symbol Type (line, point, text)
-    static public List<IUIElement> AddSymbolStyleElements(this List<IUIElement> collection, IBridge bridge,  ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false)
+    static public List<IUIElement> AddSymbolStyleElements(this List<IUIElement> collection, IBridge bridge, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false)
     {
         var holder = CreateHolder(e, stagedOnly, new IUIElement[]
         {

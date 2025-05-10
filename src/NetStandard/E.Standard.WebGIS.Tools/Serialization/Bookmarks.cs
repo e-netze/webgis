@@ -19,8 +19,8 @@ namespace E.Standard.WebGIS.Tools.Serialization;
 [ToolStorageId("WebGIS.Tools.Serialization/{user}/_bookmarks")]
 [ToolStorageIsolatedUser(isUserIsolated: true)]
 [AdvancedToolProperties(MapBBoxDependent = true, ScaleDependent = true, ClientDeviceDependent = true)]
-public class Bookmarks : IApiButton, 
-                         IApiServerButtonLocalizable<Bookmarks>, 
+public class Bookmarks : IApiButton,
+                         IApiServerButtonLocalizable<Bookmarks>,
                          IApiButtonResources
 {
     const string BookmarkNameTextInputId = "webgis-bookmarks-bookmark-name";

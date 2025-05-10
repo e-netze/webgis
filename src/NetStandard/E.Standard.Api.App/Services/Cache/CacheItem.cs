@@ -1468,7 +1468,11 @@ public class CmsCacheItem
             catch (Exception ex)
             {
                 _isCorrupt = true;
+#if DEBUG
+                this.ErrorMessage = ex.Message + $"{System.Environment.NewLine} {ex.StackTrace}";
+#else
                 this.ErrorMessage = ex.Message + (ex is NullReferenceException ? $"{System.Environment.NewLine} {ex.StackTrace}" : String.Empty);
+#endif
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using E.Standard.Json.Abstractions;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace E.Standard.Json;
@@ -39,7 +40,7 @@ public class JSerializer
     public static string Serialize<TValue>(TValue value, bool pretty = false)
         => SerializerInstance.Serialize(value, pretty);
 
-    public static bool IsJsonElement(object element)
+    public static bool IsJsonElement(object? element)
         => element is null
             ? false
             : SerializerInstance.IsJsonElement(element);
@@ -47,7 +48,11 @@ public class JSerializer
     public static object? GetJsonElementValue(object element, string propertyName)
         => SerializerInstance.GetJsonElementValue(element, propertyName);
 
-    public static object? AsValueIfJsonValueType(object element)
+
+    public static IEnumerable<string> GetJsonElementProperties(object? element)
+        => SerializerInstance.GetJsonElementProperties(element);
+
+    public static object? AsValueIfJsonValueType(object? element)
         => IsJsonElement(element)
                 ? SerializerInstance.AsValueIfJsonValueType(element)
                 : element;

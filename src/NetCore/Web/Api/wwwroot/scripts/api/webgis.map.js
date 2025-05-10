@@ -1502,7 +1502,7 @@
     };
 
     this.hasFocusedServices = function () { return _focusedServices !== null };
-    this.focusedServices = function () { return _focusedServices ? { ids: _focusedServices.ids, opacity: _focusedServices.getOpacity() } : null };
+    this.focusedServices = function () { return _focusedServices ? { ids: _focusedServices.ids, opacity: _focusedServices.opacity } : null };
 
     this.showServiceExclusive = function (serviceId, opacity) {
         for (var s in this.services) {

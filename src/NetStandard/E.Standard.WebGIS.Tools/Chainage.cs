@@ -27,9 +27,9 @@ namespace E.Standard.WebGIS.Tools;
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(ClientDeviceDependent = true)]
 [ToolHelp("tools/identify/stat.html")]
-public class Chainage : IApiServerToolLocalizableAsync<Chainage>, 
-                        IApiButtonDependency, 
-                        IIdentifyTool, 
+public class Chainage : IApiServerToolLocalizableAsync<Chainage>,
+                        IApiButtonDependency,
+                        IIdentifyTool,
                         IApiButtonResources
 {
     private const string ChainageTableId = "chainage-table";

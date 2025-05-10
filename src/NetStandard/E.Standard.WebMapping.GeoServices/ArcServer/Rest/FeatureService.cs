@@ -27,7 +27,7 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
                               IFeatureWorkspaceGeometryOperations
 {
     private string _errMsg = String.Empty;
-    private JsonFeatureLayer? _featureLayer;
+    private JsonFeatureServerLayer? _featureLayer;
     private EsriFeature _currentFeature;
     private List<EsriFeature> _addFeatures = new List<EsriFeature>();
     private List<EsriFeature> _updateFeatures = new List<EsriFeature>();
@@ -319,7 +319,7 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
                         _mapServiceAuth,
                         _mapServiceAuth.Service, "f=json");
 
-            _featureLayer = JSerializer.Deserialize<JsonFeatureLayer>(response);
+            _featureLayer = JSerializer.Deserialize<JsonFeatureServerLayer>(response);
 
             if (_featureLayer?.Fields is null)
             {
@@ -497,7 +497,7 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
                 }
 
                 objectIds = features?
-                                .Select(f => Convert.ToInt64(f.Attributes[_featureLayer.IdFieldName()]))
+                                .Select(f => Convert.ToInt64(JSerializer.AsValueIfJsonValueType(f.Attributes[_featureLayer.IdFieldName()])))
                                 .ToArray() ?? [];
 
                 if (features!.FirstOrDefault()?.Geometry == null)

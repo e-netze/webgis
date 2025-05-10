@@ -1,5 +1,6 @@
 ﻿#pragma warning disable CA1416
 
+using Api.Core.AppCode.Extensions;
 using E.Standard.Api.App;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services;
@@ -169,11 +170,9 @@ public class ExtendedControllerService : IExtendedControllerService
     {
         json = json ?? String.Empty;
 
-        _context.Response.Headers.Append("Pragma", "no-cache");
-        _context.Response.Headers.Append("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
-        _context.Response.Headers.Append("Access-Control-Allow-Headers", "*");
-        _context.Response.Headers.Append("Access-Control-Allow-Origin", (string)_context.Request.Headers["Origin"] != null ? (string)_context.Request.Headers["Origin"] : "*");
-        _context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+        _context.Response
+            .AddNoCacheHeaders()
+            .AddApiCorsHeaders(_context.Request);
 
         return BinaryResultStream(controller, Encoding.UTF8.GetBytes(json), "application/json; charset=utf-8");
     }

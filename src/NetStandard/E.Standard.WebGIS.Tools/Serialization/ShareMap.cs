@@ -25,8 +25,8 @@ namespace E.Standard.WebGIS.Tools.Serialization;
 [ToolStorageIsolatedUser(false)]
 [ToolHelp("tools/map/share.html")]
 [ToolConfigurationSection("share")]
-public class ShareMap : IApiServerButtonLocalizable<ShareMap>, 
-                        IApiButtonResources, 
+public class ShareMap : IApiServerButtonLocalizable<ShareMap>,
+                        IApiButtonResources,
                         IStorageInteractions
 {
     #region IApiButton

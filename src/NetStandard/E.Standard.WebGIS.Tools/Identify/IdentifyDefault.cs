@@ -38,10 +38,10 @@ namespace E.Standard.WebGIS.Tools.Identify;
 [ToolConfigurationSection("identify")]
 [ToolHelp("tools/identify/identify.html", urlPathDefaultTool: "index.html")]
 [LocalizationNamespace("tools.identify")]
-public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>, 
-                               IApiButtonDependency, 
-                               IApiButtonResources, 
-                               IApiToolMarker, 
+public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
+                               IApiButtonDependency,
+                               IApiButtonResources,
+                               IApiToolMarker,
                                IAdvancedSketchTool
 {
     public const string IdentifyAllQueriesId = "identify-all-queries";
@@ -573,7 +573,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
                     {
                         elements = menuItems.ToArray(),
                         target = UIElementTarget.modaldialog.ToString(),
-                        header = menuItems.Count > 0 
+                        header = menuItems.Count > 0
                             ? localizer.Localize("use-results-from-geometry")
                             : localizer.Localize("no-results-found")
                     }

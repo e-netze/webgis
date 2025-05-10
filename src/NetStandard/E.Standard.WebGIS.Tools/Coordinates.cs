@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -39,8 +38,8 @@ namespace E.Standard.WebGIS.Tools;
 [AdvancedToolProperties(ClientDeviceDependent = true, MapCrsDependent = true, MapBBoxDependent = true)]
 [ToolConfigurationSection("coordinates")]
 [ToolHelp("tools/identify/coords.html")]
-public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>, 
-                           IApiButtonResources, 
+public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
+                           IApiButtonResources,
                            IIdentifyTool
 {
     internal const string CoordinatesTableId = "coordinates-table";
@@ -115,7 +114,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                                 .WithText(localizer.Localize("remove-markers"))));
 
         response.AddUIElement(new UICollapsableHelp(
-                                    localizer.Localize("tip-label"), 
+                                    localizer.Localize("tip-label"),
                                     localizer.Localize("tip:body")
                               ));
 
@@ -1125,7 +1124,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
     }
 
     private UITable CreateTable(
-                IBridge bridge, 
+                IBridge bridge,
                 ApiToolEventArguments e,
                 ILocalizer<Coordinates> localizer,
                 IEnumerable<int> removeRows = null)
