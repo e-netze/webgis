@@ -1392,7 +1392,17 @@
         }
 
         if (response.zoom_to_4326) {
-            map.zoomTo(response.zoom_to_4326);
+            const bounds = response.zoom_to_4326;
+            if (/*!webgis.usability.zoom.allowsFreeZooming() &&*/ response.zoom_to_scale) {
+                // bookmarks: zoom to center with this scale
+                map.setScale(response.zoom_to_scale,
+                    [
+                        (bounds[0] + bounds[2]) / 2.0,
+                        (bounds[1] + bounds[3]) / 2.0
+                    ]);
+            } else {
+                map.zoomTo(bounds);
+            }
         }
 
         if (response.named_sketches && response.named_sketches.length > 0 &&

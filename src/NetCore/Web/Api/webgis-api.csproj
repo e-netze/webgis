@@ -71,7 +71,7 @@
     <PackageReference Include="E.DataLinq.Core" Version="7.25.1701" />
     <PackageReference Include="E.DataLinq.Engine.MsSqlServer" Version="7.25.1701" />
     <PackageReference Include="E.DataLinq.Engine.OracleClient" Version="7.25.1701" />
-    <PackageReference Include="E.DataLinq.Engine.Postgres" Version="7.25.1110" />
+    <PackageReference Include="E.DataLinq.Engine.Postgres" Version="7.25.1701" />
     <PackageReference Include="E.DataLinq.Engine.SQLite" Version="7.25.1701" />
     <PackageReference Include="E.DataLinq.Engine.SqlServer-legacy" Version="7.25.1701" />
     <PackageReference Include="E.DataLinq.Web" Version="7.25.1701" />

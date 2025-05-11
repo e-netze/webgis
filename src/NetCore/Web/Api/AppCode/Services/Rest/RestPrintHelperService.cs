@@ -1552,7 +1552,7 @@ public class RestPrintHelperService
 
                                 labels.AddRange(coordinateLabels);
                             }
-                            map.GraphicsContainer.Add(new BlockoutLabelElement(
+                            map.GraphicsContainer.Add(new GlassBlockoutLabelElement(
                                     point,
                                     String.Join('\n', labels),
                                     ArgbColor.Black,
@@ -1592,7 +1592,7 @@ public class RestPrintHelperService
                             var label = chainageFeature.GetAttributeLabel(chainageFeaturesLabelField, LabelUnionMode.DistinctCounter)
                                                        .StripHTMLFromLabel();
 
-                            map.GraphicsContainer.Add(new BlockoutLabelElement(
+                            map.GraphicsContainer.Add(new GlassBlockoutLabelElement(
                                 point,
                                 label,
                                 ArgbColor.Black,
@@ -1648,7 +1648,7 @@ public class RestPrintHelperService
                                 labels.Add(label);
                             }
 
-                            map.GraphicsContainer.Add(new BlockoutLabelElement(
+                            map.GraphicsContainer.Add(new GlassBlockoutLabelElement(
                                 point,
                                 String.Join('\n', labels),
                                 ArgbColor.Black,

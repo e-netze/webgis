@@ -456,29 +456,37 @@ function selectionChanged() {
         }, _map);
 
         _map.events.on('onmapserialized', function (e, serializedMap) {
-            const serializeMapServices = [];
-            const serviceIds = services.split(',');
+            if (!serializedMap) return;
 
-            // only add the services, that are in the ordered services list
-            // In the map can be different services, that are not in the ordered services list
-            // eg. Services that are items of a collection service,
-            //     collection services are not serialized directly, but the items are serialized
-            for (const serviceId of serviceIds) {
-                let serializedMapService = serializedMap.services.find(s => s.id === serviceId);
-                if (!serializedMapService) {  // maybe a collection services (not directly in the map)
-                    serializedMapService = {
-                        id: serviceId,
-                        layers: [],
-                        order: serializeMapServices.length === 0
-                            ? 1
-                            : (serializeMapServices[serializeMapServices.length - 1].order + 1)
-                    };
+            if (serializedMap.services) {
+                // only if map is serialized with services (==saved)
+                // sometimes eg. for createing an UI Master Template map are only
+                // serialized temporary only with UI Elements
+                // => serializedMap.services is undefined then
+                const serializeMapServices = [];
+                const serviceIds = services.split(',');
+
+                // only add the services, that are in the ordered services list
+                // In the map can be different services, that are not in the ordered services list
+                // eg. Services that are items of a collection service,
+                //     collection services are not serialized directly, but the items are serialized
+                for (const serviceId of serviceIds) {
+                    let serializedMapService = serializedMap.services.find(s => s.id === serviceId);
+                    if (!serializedMapService) {  // maybe a collection services (not directly in the map)
+                        serializedMapService = {
+                            id: serviceId,
+                            layers: [],
+                            order: serializeMapServices.length === 0
+                                ? 1
+                                : (serializeMapServices[serializeMapServices.length - 1].order + 1)
+                        };
+                    }
+
+                    serializeMapServices.push(serializedMapService);
                 }
 
-                serializeMapServices.push(serializedMapService);
+                serializedMap.services = serializeMapServices;
             }
-
-            serializedMap.services = serializeMapServices;
         }, _map);
 
         if (_initial && _initial.center && _initial.scale) {
@@ -1067,6 +1075,15 @@ function manageUIMaster(portalId, mapCategory) {
                                 ui: true,
                                 asMaster: true
                             });
+
+                            // delete unnessssary elements from masterJson
+                            if (masterJson?.ui?.options) {
+                                const tabElement = masterJson.ui.options.find(e => e.element === "tabs");
+                                if (tabElement && tabElement.options && tabElement.options.header_buttons) {
+                                    delete tabElement.options.header_buttons;
+                                };
+                            }
+
                             editor.setValue(JSON.stringify({
                                 ui: masterJson.ui
                             }, null, 2));
