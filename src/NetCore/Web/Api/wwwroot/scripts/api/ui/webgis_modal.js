@@ -132,11 +132,14 @@
                     });
             }
             else {
-                $modalBody.css({
-                    width: contentWidth,
-                    height: contentHeight + 60,
-                    maxHeight: 'calc(100% - ' + $modalBody.position().top + 'px)'
-                });
+                const position = $modalBody.position();
+                if (position) {  // if model is closed, position is null/undefined
+                    $modalBody.css({
+                        width: contentWidth,
+                        height: contentHeight + 60,
+                        maxHeight: 'calc(100% - ' + $modalBody.position().top + 'px)'
+                    });
+                }
             }
         }
     };

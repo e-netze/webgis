@@ -1,3 +1,4 @@
+using E.Standard.Json;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
@@ -54,7 +55,7 @@ abstract public class UserFavoritiesPresentations : IApiButton, IStorageInteract
             presentations.Add(new Presentation()
             {
                 Name = name.FromValidEncodedName(),
-                Visiblity = JsonConvert.DeserializeObject(bridge.Storage.LoadString(name))
+                Visiblity = JSerializer.Deserialize<object>(bridge.Storage.LoadString(name))
             });
         }
 

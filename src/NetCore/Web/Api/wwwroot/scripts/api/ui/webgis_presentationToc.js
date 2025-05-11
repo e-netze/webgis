@@ -1523,7 +1523,12 @@
         $.presentationToc.checkItemScaleVisibility(null, service.map, parent);
         $.presentationToc.checkContainerVisibility(parent);
 
-        service.events.on(['onchangevisibility','onchangevisibility-delayed'], $.presentationToc.checkItemVisibility, parent);
+        service.events.on(['onchangevisibility', 'onchangevisibility-delayed'],
+            function () {
+                $.presentationToc.checkItemVisibility();  // no parameter here
+                $.presentationToc.checkContainerVisibility();
+            },
+            parent);
         sortToc(parent);
 
         webgis.addTitleToEllipsis();
@@ -1909,7 +1914,7 @@
                 }
             });
         }
-        $.presentationToc.checkItemVisibility(service, parent);
+        $.presentationToc.checkItemVisibility(null, service, parent);
     };
 
     let sortToc = function (parent) {

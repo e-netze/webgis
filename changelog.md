@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Improved Block out text printed maps (Labels for markers, Coordinates, etc.) [discussion #277](https://github.com/e-netze/webgis-community/discussions/277)
 
+- Bookmarks: Pan to center point and scale instead of zoom to extent [discussion #276](https://github.com/e-netze/webgis-community/discussions/276)
+
 ## Fixed
 
 ## 7.25.1904

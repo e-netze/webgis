@@ -456,10 +456,8 @@ function selectionChanged() {
         }, _map);
 
         _map.events.on('onmapserialized', function (e, serializedMap) {
-            if (!serializedMap) return;
-
-            if (serializedMap.services) {
-                // only if map is serialized with services (==saved)
+            if (serializedMap?.services) {
+                // only if map is serialized with services (==saved/published)
                 // sometimes eg. for createing an UI Master Template map are only
                 // serialized temporary only with UI Elements
                 // => serializedMap.services is undefined then

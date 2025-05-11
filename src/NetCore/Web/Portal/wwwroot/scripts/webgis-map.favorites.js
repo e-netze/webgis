@@ -55,6 +55,8 @@
         var $parentList = $(parent).empty();
         $parentList.data('options', options);
 
+        //console.log('initUI', presentations);
+
         if (!$parentList.hasClass('webgis-user-favorites-presentation-holder')) {
             options.map.events.on('refresh-user-favorite-presenation', function () {
                 refresh(this)
@@ -94,7 +96,7 @@
                     var presentation = $(this).data('pesentation');
                     var map = $(this).data('map');
 
-                    // Alle Dienste ausschalten
+                    // set all services layer visibility to false
                     var allServiceIds = map.serviceIds();
                     for (var s in allServiceIds) {
                         var service = map.getService(allServiceIds[s]);
