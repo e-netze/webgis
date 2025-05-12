@@ -648,7 +648,11 @@
             // Falls Druckwerkzeug aktiv war
             map.viewLense.hide();
 
-            var uiElements = [{ type: 'label', label: tool.description || '' }];
+            var uiElements = [{
+                type: 'label',
+                label: tool.description || '',
+                is_trusted: true
+            }];
             if (tool.uiElements) {
                 for (var i in tool.uiElements) {
                     var uiElement = tool.uiElements[i];

@@ -1,3 +1,4 @@
+using E.Standard.Json.Converters;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Specialized;
@@ -8,7 +9,8 @@ public class ApiPortalPageDTO
 {
     [JsonProperty("id")]
     [System.Text.Json.Serialization.JsonPropertyName("id")]
-    public string Id { get; set; }
+	[System.Text.Json.Serialization.JsonConverter(typeof(StringConverter))]
+	public string Id { get; set; }
     [JsonProperty("name")]
     [System.Text.Json.Serialization.JsonPropertyName("name")]
     public string Name { get; set; }
@@ -28,7 +30,8 @@ public class ApiPortalPageDTO
 
     [JsonProperty("bannerId")]
     [System.Text.Json.Serialization.JsonPropertyName("bannerId")]
-    public string BannerId { get; set; }
+	[System.Text.Json.Serialization.JsonConverter(typeof(StringConverter))]
+	public string BannerId { get; set; }
 
     [JsonProperty("created")]
     [System.Text.Json.Serialization.JsonPropertyName("created")]
@@ -38,11 +41,13 @@ public class ApiPortalPageDTO
     public string Subscriber { get; set; }
     [JsonProperty("subscriber-id")]
     [System.Text.Json.Serialization.JsonPropertyName("subscriber-id")]
-    public string SubscriberId { get; set; }
+	[System.Text.Json.Serialization.JsonConverter(typeof(StringConverter))]
+	public string SubscriberId { get; set; }
 
     [JsonProperty("subscriber-clientid")]
     [System.Text.Json.Serialization.JsonPropertyName("subscriber-clientid")]
-    public string SubscriberClientId { get; set; }
+	[System.Text.Json.Serialization.JsonConverter(typeof(StringConverter))]
+	public string SubscriberClientId { get; set; }
 
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]

@@ -734,12 +734,17 @@
         if (element.type === 'label') {
             var labels = element.label.split('|');
             $newElement = $("<div" + elementProperties(element) + "></div>").addClass('webgis-label').appendTo($parent);
+
+            const toTxtFunc = element.is_trusted === true
+                ? webgis.asMarkdownOrRawHtml
+                : webgis.asMarkdownOrText;
+
             if (labels.length == 1) {
-                $newElement.html(webgis.asMarkdownOrText(element.label));
+                $newElement.html(toTxtFunc(element.label));
             } else {
                 for (var label in labels) {
                     $("<p>")
-                        .html(webgis.asMarkdownOrText(labels[label]))
+                        .html(toTxtFunc(labels[label]))
                         .appendTo($newElement);
                 }
             }

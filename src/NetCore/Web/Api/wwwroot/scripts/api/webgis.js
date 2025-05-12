@@ -52,6 +52,16 @@
 
         return webgis.encodeUntrustedHtml(txt, isMarkdown);
     };
+    this.asMarkdownOrRawHtml = function (txt) {
+        txt = webgis.emptyIfSuspiciousHtml(txt);
+
+        let isMarkdown = txt.indexOf('md:') === 0;
+        if (isMarkdown) {
+            return webgis.simpleMarkdown.render(txt.substr(3));
+        }
+
+        return txt;
+    };
     this.isSuspiciousHtml = function (html) {
         // script-tag case insensitiv
         var regex = /<\s*script[^>]*>/gi; // /<\s*script[^>]*>(.*?)<\s*\/\s*script>/gi;

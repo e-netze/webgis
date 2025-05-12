@@ -54,6 +54,7 @@ internal class SystemTextJsonSerializer : IJSerializer
             new Array2DConverter(),
             new DBNullConverter(),
             new ExpandoObjectConverter(),
+            //new NumberToStringConverter(),  // obsolete
             new DictionaryStringObjectJsonConverter(),
             new JsonStringEnumConverter()
         }

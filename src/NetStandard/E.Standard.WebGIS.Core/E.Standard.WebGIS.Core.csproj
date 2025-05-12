@@ -13,15 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Models\ApiPortalPageDTO" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Models\Json\Geometry\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.4" />
+   <PackageReference Include="System.Text.Encodings.Web" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
