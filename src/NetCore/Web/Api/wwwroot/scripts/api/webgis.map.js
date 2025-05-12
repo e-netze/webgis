@@ -2657,16 +2657,18 @@
     };
     this._mapToolsToServerContainers = function (containers) {
 
-        // 
-        //  Hier werden bestehende Tools in die Container übertragen die Serverseitig im C# definiert wurden. Ansonsten bleiben diese immer so wie beim Erstellen einer Karte mit dem MapBuilder (zB Speicher und Laden => "Karte") 
+        //
+        //  Hier werden bestehende Tools in die Container übertragen die Serverseitig im C# definiert wurden.
+        // Ansonsten bleiben diese immer so wie beim Erstellen einer Karte mit dem MapBuilder(zB Speicher und Laden => "Karte")
         //
 
-        var serverContainers = [];
+        console.log('_mapToolsToServerContainers', containers);
+        let serverContainers = [];
 
         //console.log('containers', containers);
 
-        for (var c in containers) {
-            var container = containers[c];
+        for (let c in containers) {
+            let container = containers[c];
             if (!container.tools || container.tools.length === 0) {
                 if (container.options && container.options.length > 0) {  // Tool Options übernehmen: zB Drucklayouts, ...
                     serverContainers.push(container);
@@ -2674,25 +2676,54 @@
                 continue;
             }
 
-            for (var t in container.tools) {
-                var tool = this._tools[container.tools[t]];
+            for (let t in container.tools) {
+                const tool = this._tools[container.tools[t]];
                 if (!tool)
                     continue;
 
-                //console.log('container tool', tool.id);
+                // if tool.container is an array => take arry otherwise [ tool.container ]
+                // so a tool can be in multiple containers (eg, Start and Query)
+                const currentToolContainers = Array.isArray(tool.container) ? tool.container : [tool.container];    
 
-                var toolContainer = $.firstOrDefault($.grep(serverContainers, function (c) { return c.name === tool.container; }));
+                for (let currentToolContainer of currentToolContainers) {
+                    let toolContainer = $.firstOrDefault($.grep(serverContainers, function (c) { return c.name === currentToolContainer; }));
 
-                if (!toolContainer) {
-                    toolContainer = { name: tool.container, tools: [] };
-                    serverContainers.push(toolContainer);
+                    if (!toolContainer) {
+                        toolContainer = { name: currentToolContainer, tools: [] };
+                        serverContainers.push(toolContainer);
+                    }
+
+                    toolContainer.tools.push(container.tools[t]);
                 }
-
-                toolContainer.tools.push(container.tools[t]);
             }
         }
 
         //console.log('serverContainers', serverContainers);
+
+        var toolContainerOrder = webgis.usability.toolContainerOrder || [];
+        if (toolContainerOrder.length > 0) { 
+            // sort serverContainers by name using an existing array toolContainerOrder
+            // serverContinaer witch is not in the list => order at the end...
+            serverContainers.sort(function (a, b) {
+                var indexA = toolContainerOrder.indexOf(a.name);
+                var indexB = toolContainerOrder.indexOf(b.name);
+
+                // If both containers are in the toolContainerOrder array, sort by their order
+                if (indexA >= 0 && indexB >= 0) {
+                    return indexA - indexB;
+                }
+                // If only a is in the array, it comes first
+                else if (indexA >= 0) {
+                    return -1;
+                }
+                // If only b is in the array, it comes first
+                else if (indexB >= 0) {
+                    return 1;
+                }
+                // If neither is in the array, maintain their relative order
+                return 0;
+            });
+        }
 
         return serverContainers;
     };

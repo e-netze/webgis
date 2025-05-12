@@ -9,11 +9,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Tool Properties: custom.js [Docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#toolbox)
+  [discussion #279](https://github.com/e-netze/webgis-community/discussions/279)
+
+## Fixed
+
+## 7.25.2001
+
+### Added
+
 - Improved Block out text printed maps (Labels for markers, Coordinates, etc.) [discussion #277](https://github.com/e-netze/webgis-community/discussions/277)
 
 - Bookmarks: Pan to center point and scale instead of zoom to extent [discussion #276](https://github.com/e-netze/webgis-community/discussions/276)
-
-## Fixed
 
 ## 7.25.1904
 
