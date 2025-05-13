@@ -1740,8 +1740,10 @@ class EditEnvironment
             parentElement = maskDiv;
             parentElement.AddChild(new UIBreak());
 
+            var stickyButtonContainer = new UIStickyBottomButtonContainer();
+            parentElement.AddChild(stickyButtonContainer);
             var buttonGroup = new UIButtonGroup();
-            parentElement.AddChild(buttonGroup);
+            stickyButtonContainer.AddChild(buttonGroup);
 
             #region Remove empty categories
 
@@ -1777,7 +1779,7 @@ class EditEnvironment
                     css = UICss.ToClass(new string[] { UICss.DefaultButtonStyle, UICss.OptionButtonStyle, UICss.ValidateInputButton })
                 });
 
-                parentElement.AddChild(new UIDiv()
+                stickyButtonContainer.AddChild(new UIDiv()
                 {
                     css = UICss.ToClass(new string[] { "webgis-info" }),
                     elements = new IUIElement[]
@@ -1796,7 +1798,7 @@ class EditEnvironment
                     {
                         if (insertActionHelper.HasDefaultSaveAndSelectButton)
                         {
-                            parentElement.InsertChildBefore(buttonGroup, new UIButton(UIButton.UIButtonType.servertoolcommand, "saveandselect")
+                            stickyButtonContainer.InsertChildBefore(buttonGroup, new UIButton(UIButton.UIButtonType.servertoolcommand, "saveandselect")
                             {
                                 text = localizer.Localize("mask.save-and-select"),
                                 css = UICss.ToClass(new string[] { UICss.OptionButtonStyle })
@@ -1805,7 +1807,7 @@ class EditEnvironment
 
                         foreach (var customInserActions in insertActionHelper.GetCustomInsertActions())
                         {
-                            parentElement.InsertChildBefore(buttonGroup, new UIButton(UIButton.UIButtonType.servertoolcommand, insertActionHelper.ServerCommand(customInserActions.action))
+                            stickyButtonContainer.InsertChildBefore(buttonGroup, new UIButton(UIButton.UIButtonType.servertoolcommand, insertActionHelper.ServerCommand(customInserActions.action))
                             {
                                 text = customInserActions.text,
                                 css = UICss.ToClass(new string[] { UICss.OptionButtonStyle })

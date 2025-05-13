@@ -111,3 +111,7 @@ body.webgis-space-saving .webgis-ui-imagebutton .webgis-ui-imagebutton-text {
     padding: 1px;
     background-size: 20px;
 }
+
+.webgis-container.webgis-space-saving .webgis-edittheme-tree .webgis-edittheme-tree-theme-list {
+    height: calc(100vh - 390px); /* empiric => no scolling of the sidebar*/
+}

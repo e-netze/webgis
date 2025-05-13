@@ -108,7 +108,7 @@ body.webgis-light .webgis-textarea,
 .webgis-container.light .webgis-detail-search-combo {
     background-color: #fff !important;
     color: #000 !important;
-    border: 1px solid #777;
+    border: 1px solid #ddd;
 }
 
 .webgis-container.light .webgis-input-element-stack .webgis-input,
@@ -324,6 +324,11 @@ body.webgis-light .webgis-result-table tr,
         background-color: #aaa;
         color: #0078d4;
     }
+
+body.webgis-light .webgis-result-table tr:hover,
+.webgis-container.light .webgis-result-table tr:hover {
+    background-color: #ffa;
+}
 
 .webgis-container.light .webgis-tooldialog-header {
     background-color: #dcdcdc;
@@ -566,5 +571,23 @@ body.webgis-light .webgis-collapsable-paragraph.collapsed .switcher {
 
 .webgis-sorting {
     background-color: #ccc !important;
+}
+
+/************ General Table ***************/
+
+body.webgis-light .webgis-table th {
+    background: #ccc;
+}
+
+body.webgis-light .webgis-table tr:nth-child(even) {
+    background-color: #fff;
+}
+
+body.webgis-light .webgis-table tr:nth-child(odd) {
+    background-color: #efefef;
+}
+
+body.webgis-light .webgis-table tr:hover {
+    background-color: #ffffaa;
 }
 

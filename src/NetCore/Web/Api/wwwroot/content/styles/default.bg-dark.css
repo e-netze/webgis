@@ -324,6 +324,11 @@ body.webgis-dark .webgis-result-table tr,
         background-color: #555;
     }
 
+    body.webgis-dark .webgis-result-table tr:hover,
+    .webgis-container.dark .webgis-result-table tr:hover {
+        background-color: #333;
+    }
+
     body.webgis-dark .webgis-result-table tr.webgis-table-result-selected,
     .webgis-container.dark .webgis-result-table tr.webgis-table-result-selected {
         background-color: #222;
@@ -619,3 +624,31 @@ body.webgis-dark .webgis-collapsable-paragraph.collapsed .switcher {
 .webgis-sorting {
     background-color: #222 !important;
 }
+
+.webgis-container.dark .webgis-toolbox-tool-block .webgis-toolbox-tool-block-title {
+    background-color:#222;
+}
+
+.webgis-container.dark .webgis-toolbox-tool-block.webgis-tips .webgis-toolbox-tool-block-content {
+    background-color: #000;
+}
+
+/************ General Table ***************/
+body.webgis-dark .webgis-table {
+    color: #fff;
+}
+    body.webgis-dark .webgis-table th {
+        background: #222;
+    }
+
+    body.webgis-dark .webgis-table tr:nth-child(even) {
+        background-color: #444;
+    }
+
+    body.webgis-dark .webgis-table tr:nth-child(odd) {
+        background-color: #555;
+    }
+
+    body.webgis-dark .webgis-table tr:hover {
+        background-color: #ffffaa;
+    }

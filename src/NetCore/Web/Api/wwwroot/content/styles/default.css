@@ -234,7 +234,7 @@ ul.toc li {
         justify-content: flex-start;
         align-items: center;
         flex-wrap: wrap;
-        border-bottom:1px solid #eee;
+        /*border-bottom:1px solid #eee;*/
     }
 
         #edit-editmask-container .webgis-editfield-container .webgis-input,
@@ -993,6 +993,34 @@ tr.webgis-border-bottom td{
 .webgis-singleresultbutton {
     display:inline;
 }
+/************ General Table ***************/
+.webgis-table {}
+    .webgis-table th {
+        position: sticky;
+        top: 0px;
+        height: 40px;
+        background: #ccc;
+        z-index: 1;
+        padding: 0px 4px;
+    }
+
+    .webgis-table td {
+        position: sticky;
+        top: 0px;
+        padding: 3px 4px;
+    }
+
+    .webgis-table tr:nth-child(even) {
+        background-color: #fff;
+    }
+    .webgis-table tr:nth-child(odd) {
+        background-color: #fafafa;
+    }
+
+    .webgis-table tr:hover {
+        background-color: #ffffaa;
+    }
+
 /************ GeoJuhu Results ****************/
 .webgis-geojuhu-results {
     padding: 2px;
@@ -2301,12 +2329,16 @@ td.webgis-tab-header {
 
 }
 
+    .webgis-edittheme-tree .webgis-edittheme-tree-theme-list {
+        height: calc(100vh - 420px); /* empiric => no scolling of the sidebar*/
+        overflow: auto;
+    }
     .webgis-edittheme-tree .webgis-edittheme-tree-theme-list .webgis-edittheme-tree-theme-list-item {
         display: block;
         text-align: left !important;
         width: 100% !important;
         box-sizing: border-box;
-        border-bottom: 1px solid #eee;
+        /*border-bottom: 1px solid #eee;*/
         margin: 0px;
         position: relative;
         height: 32px;
@@ -5261,5 +5293,16 @@ select.webgis-not-valid {
 
 .webgis-sorting {
     background-color: #b5dbad !important;
+}
+
+.webgis-sticky-bottom-button-container {
+    padding: 15px 6px;
+    position: sticky;
+    bottom: 0px;
+    border-radius: 15px;
+    backdrop-filter: blur(2px);
+    border: 2px solid #0202020f;
+    margin: 0px -6px;
+    background: #cccccc1f;
 }
 

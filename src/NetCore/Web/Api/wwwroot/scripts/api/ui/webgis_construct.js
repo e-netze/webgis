@@ -27,23 +27,25 @@
         var map = options.map;
         var $parent = $(parent).addClass('snapping-holder').data('map', map);
         var $table = $("<table>").css({
-            width: '100%',
-            borderSpacing: '0px'
-        }).appendTo($parent);
+                width: '100%',
+                borderSpacing: '0px'
+        })
+            .addClass('webgis-table')
+            .appendTo($parent);
         $("<tr style='text-align:left'><th>"
             + webgis.l10n.get("scheme") +
-            "</th><th>" 
+            "</th><th style='text-align:center'>" 
             + webgis.l10n.get("nodes") +
-            "</th><th>"
+            "</th><th style='text-align:center'>"
             + webgis.l10n.get("edges") +
-            "</th><th>"
+            "</th><th style='text-align:center'>"
             + webgis.l10n.get("endpoints") +
             "</th></tr>")
             .appendTo($table);
 
         // Sketch
         var snappingTypes = map.getSnappingTypes(webgis.sketchSnappingSchemeId);
-        var $tr = $("<tr>").attr('data-id', webgis.sketchSnappingSchemeId).addClass('webgis-border-top').appendTo($table);
+        var $tr = $("<tr>").attr('data-id', webgis.sketchSnappingSchemeId).appendTo($table);
         var $td = $("<td>").appendTo($tr);
         $("<input type='checkbox' id='" + webgis.sketchSnappingSchemeId + "'>").addClass('checkbox-snapping schema').prop('checked', snappingTypes && snappingTypes.length > 0)
             .css({
@@ -80,7 +82,7 @@
                 var snappingId = service.id + '~' + snapping.id;
                 var snappingTypes = map.getSnappingTypes(snappingId);
 
-                var $tr = $("<tr>").attr('data-id', snappingId).addClass('webgis-border-top').appendTo($table);
+                var $tr = $("<tr>").attr('data-id', snappingId).appendTo($table);
                 var $td = $("<td>").appendTo($tr);
                 $("<input type='checkbox' id='" + snapping.id + "'>").addClass('checkbox-snapping schema').prop('checked', snappingTypes && snappingTypes.length > 0)
                     .css({
