@@ -22,7 +22,7 @@ webgis.custom = new function () {
             for (var i in customTool.uiElements) {
                 var uiElement = customTool.uiElements[i];
                 if (uiElement.id) {
-                    uiElement.css = customTool.id;
+                    uiElement.css = customTool.id.replaceAll('.', '-');
                 }
             }
 

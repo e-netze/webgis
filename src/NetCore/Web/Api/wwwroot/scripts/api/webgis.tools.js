@@ -1830,7 +1830,7 @@
             }
 
             // uiElements
-            $(map._webgisContainer).find('.' + tool.id).each(function (i, input) {
+            $(map._webgisContainer).find('.' + tool.id.replaceAll('.', '-')).each(function (i, input) {
                 var $input = $(input);
                 //console.log($input.attr('id'), $input.val());
                 command = command.replaceAll('{' + $input.attr('id') + '}', $input.val());
