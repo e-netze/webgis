@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Text;
 
@@ -78,6 +78,10 @@ public class JsonLayer
     [JsonProperty("description")]
     [System.Text.Json.Serialization.JsonPropertyName("description")]
     public string Description { get; set; }
+
+    [JsonProperty("hasAttachments")]
+    [System.Text.Json.Serialization.JsonPropertyName("hasAttachments")]
+    public bool HasAttachments { get; set; } = false;
 
     public string FullName
     {

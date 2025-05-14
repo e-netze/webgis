@@ -19,7 +19,15 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 
-class FeatureLayer : RestLayer, ILayer2, ILayer3, ILayerDistinctQuery, ILabelableLayer, ILegendRendererHelper, ILayerFieldDomains, ILayerGeometryDefintion
+class FeatureLayer : RestLayer, 
+                     ILayer2,
+                     ILayer3,
+                     ILayerDistinctQuery, 
+                     ILabelableLayer, 
+                     ILegendRendererHelper, 
+                     ILayerFieldDomains, 
+                     ILayerGeometryDefintion,
+                     IAttachmentContainer
 {
     private string _definitionExpression = String.Empty;
     private new readonly MapService _service;
@@ -301,6 +309,20 @@ class FeatureLayer : RestLayer, ILayer2, ILayer3, ILayerDistinctQuery, ILabelabl
             features.Add(feature);
         }
 
+        //if (this.HasAttachments)
+        //{
+        //    string attachmentReqUrl = $"{_service.Service}/{this._id}/queryAttachments?returnUrl=true&f=pjson&objectIds={String.Join(",",features.Select(f=>f.Oid))}";
+
+        //    string attachmentResponse = await requestContext.LogRequest(
+        //        _service.Server,
+        //        _service.ServiceShortname,
+        //        requestBuilder.Build(),
+        //        "getattachments",
+        //        (requestBody) => authHandler.TryGetAsync(
+        //            _service,
+        //            attachmentReqUrl));
+        //}
+
         features.Query = filter;
         features.Layer = this;
 
@@ -332,6 +354,7 @@ class FeatureLayer : RestLayer, ILayer2, ILayer3, ILayerDistinctQuery, ILabelabl
 
         clone.HasM = this.HasM;
         clone.HasZ = this.HasZ;
+        clone.HasAttachments = this.HasAttachments;
 
         base.CloneParentLayerIdsTo(clone);
         return clone;
@@ -374,6 +397,17 @@ class FeatureLayer : RestLayer, ILayer2, ILayer3, ILayerDistinctQuery, ILabelabl
 
         return value;
     }
+
+    #endregion
+
+    #region IAttachmentContainer
+
+    public bool HasAttachments
+    {
+        get; set;
+    }
+
+    public object GetAttachmentsFor(int id) => null;
 
     #endregion
 

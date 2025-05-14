@@ -728,6 +728,14 @@ public class RestHelperService
 
                 #endregion
 
+                #region Attachments
+
+                returnFeatures.HasAttachments = 
+                    queryFeatures.Layer is IAttachmentContainer attachmentContainer
+                    && attachmentContainer.HasAttachments == true;
+
+                #endregion
+
                 #region Warnings/Information
 
                 if (queryFeatures.Warnings != null)

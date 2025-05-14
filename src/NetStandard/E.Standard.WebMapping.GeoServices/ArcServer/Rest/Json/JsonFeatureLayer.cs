@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 
@@ -68,4 +68,8 @@ public class JsonFeatureLayer
     [JsonProperty("capabilities")]
     [System.Text.Json.Serialization.JsonPropertyName("capabilities")]
     public string Capabilities { get; set; }
+
+    [JsonProperty("hasAttachments")]
+    [System.Text.Json.Serialization.JsonPropertyName("hasAttachments")]
+    public bool HasAttachments { get; set; } = false;
 }

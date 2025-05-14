@@ -245,6 +245,8 @@ public class FeatureCollection : ThreadSafeList<Feature>, IClone<FeatureCollecti
 
     public IEnumerable<TableFieldDefintion> TableFieldDefintions = null;
 
+    public bool HasAttachments { get; set; }
+
     public void AddWarning(string warning)
     {
         if (_warnings == null)

@@ -66,6 +66,7 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
                                         ImageWidth = f.ImageSize?.width,
                                         ImageHeight = f.ImageSize?.height
                                     }),
+                HasAttachments= features.HasAttachments == true ? true : null,
                 Warnings = features.Warnings?.ToArray(),
                 Informations = features.Informations?.ToArray(),
             };
@@ -371,6 +372,11 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
         [System.Text.Json.Serialization.JsonPropertyName("table_fields")]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public IEnumerable<TableFieldDefintion> TableFields { get; set; }
+
+        [JsonProperty("has_attachments", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonPropertyName("has_attachments")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public bool? HasAttachments { get; set; }
 
         [JsonProperty("warnings", NullValueHandling = NullValueHandling.Ignore)]
         [System.Text.Json.Serialization.JsonPropertyName("warnings")]

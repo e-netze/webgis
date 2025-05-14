@@ -253,7 +253,8 @@ public class MapService : IMapService2,
                             {
                                 HasM = jsonLayer.HasM,
                                 HasZ = jsonLayer.HasZ,
-                                Visible = jsonLayer.DefaultVisbilityIncludesGroups() // .DefaultVisibility
+                                Visible = jsonLayer.DefaultVisbilityIncludesGroups(), // .DefaultVisibility
+                                HasAttachments = jsonLayer.HasAttachments
                             };
 
                             if (jsonLayer.Fields != null)
