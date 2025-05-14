@@ -1116,8 +1116,10 @@ public class CmsCacheItem
                             {
                                 var lineThemeNode = cms.SelectSingleNode(null, chainageNode.NodeXPath + "/chainagelinetheme/*") as CmsLink;
                                 var pointThemeNode = cms.SelectSingleNode(null, chainageNode.NodeXPath + "/chainagepointtheme/*") as CmsLink;
+                                var apiServiceUrl = chainageNode.LoadString("serviceurl");
 
-                                if (lineThemeNode?.Target != null /*&& pointThemeNode?.Target != null*/)
+                                if (lineThemeNode?.Target != null /*&& pointThemeNode?.Target != null*/
+                                    || !String.IsNullOrEmpty(apiServiceUrl))
                                 {
                                     var chainageTheme = new ChainageThemeDTO()
                                     {
@@ -1125,10 +1127,11 @@ public class CmsCacheItem
                                         Name = chainageNode.Name,
                                         ServiceId = serviceUrlKey,
                                         PointLayerId = pointThemeNode?.Target.Id,
-                                        LineLayerId = lineThemeNode.Target.Id,
+                                        LineLayerId = lineThemeNode?.Target.Id,
                                         Expression = chainageNode.LoadString("expression"),
                                         PointLineRelation = chainageNode.LoadString("pointlinerelation"),
                                         PointStatField = chainageNode.LoadString("pointstatfield"),
+                                        ApiServiceUrl = apiServiceUrl,
                                         Unit = ((LengthUnit)chainageNode.Load("unit", (int)LengthUnit.m)).ToString(),
                                         CalcSrefId = (int)chainageNode.Load("calcsrefid", 0)
                                     };

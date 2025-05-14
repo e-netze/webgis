@@ -1,4 +1,6 @@
 ﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Schema;
+using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Platform;
 using E.Standard.WebGIS.CMS;
@@ -15,8 +17,10 @@ using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Geometry;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -100,15 +104,166 @@ public class Chainage : IApiServerToolLocalizableAsync<Chainage>,
         return Task.FromResult(response);
     }
 
-    async public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<Chainage> localizer)
+    public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<Chainage> localizer)
     {
-        var click = e.ToMapProjectedClickEvent();
-
         var chainageTheme = bridge.ChainageTheme(e["chainage-theme-id"]);
         if (chainageTheme == null)
         {
             throw new Exception($"Unknown theme: id={e["chainage-theme-id"]}");
         }
+
+        if (!String.IsNullOrEmpty(chainageTheme.LineLayerId))
+        {
+            return CalcChainageFromLineAndPointFeatures(chainageTheme, bridge, e, localizer);
+        }
+
+        if (!String.IsNullOrEmpty(chainageTheme.ApiServiceUrl))
+        {
+            return CalcChainageFromApiService(chainageTheme, bridge, e, localizer);
+        }
+
+        throw new Exception($"No line layer or API service defined for theme: id={e["chainage-theme-id"]}");
+    }
+
+    #endregion
+
+    #region Server Commands
+
+    [ServerToolCommand("remove-feature")]
+    public ApiEventResponse OnRemove(IBridge bridge, ApiToolEventArguments e)
+    {
+        var featureOid = e["feature-oid"];
+        var counter = featureOid.GetCounterFromCoordiantesGlobalOid();
+
+        int.TryParse(e[ChainageCounter], out int currentCounter);
+
+        var response = new ApiEventResponse()
+            .UIElementsBehavoir(AppendUIElementsMode.Append)
+            .AddUIElement(CreateTable(bridge, e, new int[] { counter }));
+
+        if (currentCounter == counter)
+        {
+            response.AddUISetter(new UISetter(ChainageCounter, (--counter).ToString()));
+        }
+
+        return response;
+    }
+
+    #endregion
+
+    #region IApiButtonResources Member
+
+    public void RegisterToolResources(IToolResouceManager toolResourceManager)
+    {
+        toolResourceManager.AddImageResource("chainage", E.Standard.WebGIS.Tools.Properties.Resources.chainage);
+    }
+
+    #endregion
+
+    #region IIdenfify 
+
+    async public Task<IEnumerable<CanIdentifyResult>> CanIdentifyAsync(IBridge bridge, Point point, double scale, string[] availableServiceIds = null, string[] availableQueryIds = null)
+    {
+        if (availableServiceIds != null)
+        {
+            List<CanIdentifyResult> result = new List<CanIdentifyResult>();
+
+            double tol = 20.0 * scale / (96D / 0.0254), R = 6378137;
+            tol = tol / R * 180D / Math.PI;  // Tolerance to 
+
+            ApiSpatialFilter filter = new ApiSpatialFilter()
+            {
+                QueryShape = new Envelope(point.X - tol, point.Y - tol, point.X + tol, point.Y + tol),
+                FilterSpatialReference = bridge.CreateSpatialReference(SpatialReference.ID_WGS84),
+                QueryGeometry = false,
+                Fields = QueryFields.Id
+            };
+            foreach (var serviceId in availableServiceIds)
+            {
+                foreach (var chainageTheme in bridge.ServiceChainageThemes(serviceId))
+                {
+                    var lineFeatures = await bridge.QueryLayerAsync(serviceId, chainageTheme.LineLayerId, filter);
+                    if (lineFeatures.Count > 0)
+                    {
+                        result.Add(new CanIdentifyResult()
+                        {
+                            Name = chainageTheme.Name,
+                            ToolParameters = "chainage-theme-id=" + chainageTheme.Id + ";chainage-map-scale=" + (int)scale,
+                            Count = 1
+                        });
+                    }
+                }
+            }
+
+            return result.Count > 0 ? result : null;
+        }
+
+        return null;
+    }
+
+    #endregion
+
+    #region Helper
+
+    private UITable CreateTable(IBridge bridge, ApiToolEventArguments e, IEnumerable<int> removeRows = null)
+    {
+        var tableData = e[ChainageTableId];
+
+        List<IUIElement> header = new List<IUIElement>(new IUIElement[]
+            {
+                new UILiteral().WithLiteral("#"),
+                new UILiteral().WithLiteral("Kilometerwert")
+            });
+
+        var table = new UITable(new UITableRow(header.ToArray(), isHeader: true))
+        {
+            InsertTypeValue = UITable.TableInsertType.Replace
+        }.WithId(ChainageTableId)
+         .WithStyles(UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.TableAlternateRowColor);
+
+        int colCount = header.Count();
+
+        if (!String.IsNullOrWhiteSpace(tableData))
+        {
+            var data = tableData.Split(';');
+
+            for (int row = 0; row < data.Length - (colCount - 1); row += colCount)
+            {
+                var number = data[row];
+                var textBase64 = data[row + 1];
+
+                if (removeRows != null && removeRows.Contains(int.Parse(number)))
+                {
+                    continue;
+                }
+
+                var cols = new List<IUIElement>(new UIElement[]
+                {
+                        new UILiteral()
+                            .WithLiteral(number),
+                        new UILiteral()
+                            .WithLiteral(Encoding.UTF8.GetString(Convert.FromBase64String(textBase64)), true)
+                });
+                var values = new List<string>(new string[]{
+                        number,
+                        textBase64
+                    });
+
+                table.AddRow(new UITableRow(cols.ToArray(), values: values.ToArray())
+                                    .WithStyles(UICss.ToolResultElement(this.GetType())));
+            }
+        }
+
+        return table;
+    }
+
+    async private Task<ApiEventResponse> CalcChainageFromLineAndPointFeatures(
+                IChainageThemeBridge chainageTheme,
+                IBridge bridge,
+                ApiToolEventArguments e,
+                ILocalizer<Chainage> localizer)
+    {
+        var click = e.ToMapProjectedClickEvent();
 
         var clickPointProjected = new Point(click.WorldX, click.WorldY);
         var featureSRef = chainageTheme.CalcSrefId > 0
@@ -468,185 +623,173 @@ public class Chainage : IApiServerToolLocalizableAsync<Chainage>,
 
             #endregion
 
-            int counter = 0;
-            int.TryParse(e[ChainageCounter], out counter);
-            counter++;
+            return ChainageResultToApiResponse(
+                message,
+                snappedClickPoint,
+                e,
+                localizer);
+        }
 
-            var features = new WebMapping.Core.Collections.FeatureCollection();
+        return null;
+    }
 
+    async private Task<ApiEventResponse> CalcChainageFromApiService(
+        IChainageThemeBridge chainageTheme,
+                IBridge bridge,
+                ApiToolEventArguments e,
+                ILocalizer<Chainage> localizer)
+    {
+        string apiResponse = "", apiServiceUrl = chainageTheme.ApiServiceUrl;
 
-            var feature = new WebMapping.Core.Feature()
+        try
+        {
+            var click = e.ToClickEvent();
+
+            #region Replace {x} and {y}
+
+            apiServiceUrl = apiServiceUrl
+                .Replace("{x}", click.Longitude.ToPlatformNumberString())
+                .Replace("{y}", click.Latitude.ToPlatformNumberString());
+
+            #endregion
+
+            #region Replace {x:epsgCode} and {y:epsgCode}
+
+            var epsgCodes =
+                Globals
+                    .KeyParameters(chainageTheme.ApiServiceUrl, "{", "}")
+                    .Where(p => p.StartsWith("x:")
+                             || p.StartsWith("y:"))
+                    .Select(p => p.Substring(2))
+                    .Where(p => int.TryParse(p, out _) == true)
+                    .Distinct()
+                    .ToArray();
+
+            foreach (var epsgCode in epsgCodes)
             {
-                Shape = snappedClickPoint,
-                GlobalOid = counter.ToCoordinatesGlobalOid()
-            };
+                using (var geometricTransformer = bridge.GeometryTransformer(4326, int.Parse(epsgCode)))
+                {
+                    var point = new Point(click.Longitude, click.Latitude);
+                    geometricTransformer.Transform(point);
 
-            string messageText = message;
+                    apiServiceUrl = apiServiceUrl
+                        .Replace($"{{x:{epsgCode}}}", point.X.ToPlatformNumberString())
+                        .Replace($"{{y:{epsgCode}}}", point.Y.ToPlatformNumberString());
+                }
+            }
 
-            feature.Attributes.Add(new WebMapping.Core.Attribute("_fIndex", counter.ToString()));
-            feature.Attributes.Add(new WebMapping.Core.Attribute("_fulltext", $"<strong>{localizer.Localize("chainage-value")}:</strong><br/>{messageText.Replace("\n", "<br/>")}"));
-            features.Add(feature);
+            #endregion
 
-            List<string> values = new List<string>(new string[]
+            #region replce {mapscale}
+
+            apiServiceUrl = apiServiceUrl
+                .Replace("{mapscale}", e.GetDouble("chainage-map-scale").ToPlatformNumberString());
+
+            #endregion
+
+            apiResponse = await bridge.HttpService.GetStringAsync(apiServiceUrl);
+            var apiResult = JSerializer.Deserialize<Dictionary<string, object>>(apiResponse);
+
+            #region Determine snapped point && project
+
+            if (!apiResult.ContainsKey("x") || !apiResult.ContainsKey("y"))
             {
+                return null;
+            }
+            
+            var snappedPoint = new Point(
+                apiResult["x"].ToString().ToPlatformDouble(),
+                apiResult["y"].ToString().ToPlatformDouble());
+
+            if(snappedPoint.X == 0D && snappedPoint.Y == 0D)
+            {
+                return null;
+            }
+
+            if (chainageTheme.CalcSrefId != 4326)
+            {
+                using (var transformer = bridge.GeometryTransformer(chainageTheme.CalcSrefId, 4326))
+                {
+                    transformer.Transform(snappedPoint);
+                }
+            }
+
+            #endregion
+
+            var expression = chainageTheme.Expression;
+            var expressionParameters = Globals.KeyParameters(expression, "{", "}");
+
+            foreach (var expressionParameter in expressionParameters)
+            {
+                if (apiResult.ContainsKey(expressionParameter))
+                {
+                    expression = expression.Replace($"{{{expressionParameter}}}", apiResult[expressionParameter]?.ToString());
+                }
+            }
+
+            return ChainageResultToApiResponse(
+                expression,
+                snappedPoint,
+                e,
+                localizer);
+        }
+        catch (Exception ex)
+        {
+            var logger = bridge.RequestContext.GetRequiredService<ILogger<Chainage>>();
+            logger.LogError("CalcChainageFromApiService: {message} - Service Url {api-url}, Service Response {api-response}", ex.Message, apiServiceUrl, apiResponse);
+
+            throw new Exception("Error on query underlying api service...");
+        }
+    }
+
+    private ApiEventResponse ChainageResultToApiResponse(
+                string message,
+                Point snappedClickPoint,
+                ApiToolEventArguments e,
+                ILocalizer<Chainage> localizer)
+    {
+        string messageText = message;
+
+        int counter = 0;
+        int.TryParse(e[ChainageCounter], out counter);
+        counter++;
+
+        var features = new WebMapping.Core.Collections.FeatureCollection();
+        var feature = new WebMapping.Core.Feature()
+        {
+            Shape = snappedClickPoint,
+            GlobalOid = counter.ToCoordinatesGlobalOid()
+        };
+
+        feature.Attributes.Add(new WebMapping.Core.Attribute("_fIndex", counter.ToString()));
+        feature.Attributes.Add(new WebMapping.Core.Attribute("_fulltext", $"<strong>{localizer.Localize("chainage-value")}:</strong><br/>{messageText.Replace(@"\n", "<br/>")}"));
+        features.Add(feature);
+
+        List<string> values = new List<string>(new string[]
+        {
                 counter.ToString(),
                 Convert.ToBase64String(Encoding.UTF8.GetBytes(messageText))
-            });
-            List<IUIElement> cols = new List<IUIElement>(new IUIElement[]
-            {
+        });
+        List<IUIElement> cols = new List<IUIElement>(new IUIElement[]
+        {
                 new UILiteral()
                     .WithLiteral(counter.ToString()),
-                new UILiteral()
-                    .WithLiteral(messageText, true)
-            });
+                new UILabel() { IsTrusted = true }
+                    .WithLabel(messageText.Replace(@"\n", "<br/>"))
+        });
 
-            return new ApiFeaturesEventResponse(this)
-                .AddFeatures(features, FeatureResponseType.Append)
-                .AddClickEvent(click)
-                .ZoomToFeaturesResult(false)
-                .UIElementsBehavoir(AppendUIElementsMode.Append)
-                .AddUIElement(
-                    new UITable(new UITableRow(cols.ToArray(), values: values.ToArray())
-                                        .WithStyles(UICss.ToolResultElement(this.GetType())))
-                    {
-                        InsertTypeValue = UITable.TableInsertType.Append
-                    }.WithId(ChainageTableId))
-                .AddUISetter(new UISetter(ChainageCounter, counter.ToString()));
-        }
-
-        return null;
-    }
-
-    #endregion
-
-    #region Server Commands
-
-    [ServerToolCommand("remove-feature")]
-    public ApiEventResponse OnRemove(IBridge bridge, ApiToolEventArguments e)
-    {
-        var featureOid = e["feature-oid"];
-        var counter = featureOid.GetCounterFromCoordiantesGlobalOid();
-
-        int.TryParse(e[ChainageCounter], out int currentCounter);
-
-        var response = new ApiEventResponse()
+        return new ApiFeaturesEventResponse(this)
+            .AddFeatures(features, FeatureResponseType.Append)
+            .AddClickEvent(e.ToMapProjectedClickEvent())
+            .ZoomToFeaturesResult(false)
             .UIElementsBehavoir(AppendUIElementsMode.Append)
-            .AddUIElement(CreateTable(bridge, e, new int[] { counter }));
-
-        if (currentCounter == counter)
-        {
-            response.AddUISetter(new UISetter(ChainageCounter, (--counter).ToString()));
-        }
-
-        return response;
-    }
-
-    #endregion
-
-    #region IApiButtonResources Member
-
-    public void RegisterToolResources(IToolResouceManager toolResourceManager)
-    {
-        toolResourceManager.AddImageResource("chainage", E.Standard.WebGIS.Tools.Properties.Resources.chainage);
-    }
-
-    #endregion
-
-    #region IIdenfify 
-
-    async public Task<IEnumerable<CanIdentifyResult>> CanIdentifyAsync(IBridge bridge, Point point, double scale, string[] availableServiceIds = null, string[] availableQueryIds = null)
-    {
-        if (availableServiceIds != null)
-        {
-            List<CanIdentifyResult> result = new List<CanIdentifyResult>();
-
-            double tol = 20.0 * scale / (96D / 0.0254), R = 6378137;
-            tol = tol / R * 180D / Math.PI;  // Tolerance to 
-
-            ApiSpatialFilter filter = new ApiSpatialFilter()
-            {
-                QueryShape = new Envelope(point.X - tol, point.Y - tol, point.X + tol, point.Y + tol),
-                FilterSpatialReference = bridge.CreateSpatialReference(SpatialReference.ID_WGS84),
-                QueryGeometry = false,
-                Fields = QueryFields.Id
-            };
-            foreach (var serviceId in availableServiceIds)
-            {
-                foreach (var chainageTheme in bridge.ServiceChainageThemes(serviceId))
+            .AddUIElement(
+                new UITable(new UITableRow(cols.ToArray(), values: values.ToArray())
+                                    .WithStyles(UICss.ToolResultElement(this.GetType())))
                 {
-                    var lineFeatures = await bridge.QueryLayerAsync(serviceId, chainageTheme.LineLayerId, filter);
-                    if (lineFeatures.Count > 0)
-                    {
-                        result.Add(new CanIdentifyResult()
-                        {
-                            Name = chainageTheme.Name,
-                            ToolParameters = "chainage-theme-id=" + chainageTheme.Id + ";chainage-map-scale=" + (int)scale,
-                            Count = 1
-                        });
-                    }
-                }
-            }
-
-            return result.Count > 0 ? result : null;
-        }
-
-        return null;
-    }
-
-    #endregion
-
-    #region Helper
-
-    private UITable CreateTable(IBridge bridge, ApiToolEventArguments e, IEnumerable<int> removeRows = null)
-    {
-        var tableData = e[ChainageTableId];
-
-        List<IUIElement> header = new List<IUIElement>(new IUIElement[]
-            {
-                new UILiteral().WithLiteral("#"),
-                new UILiteral().WithLiteral("Kilometerwert")
-            });
-
-        var table = new UITable(new UITableRow(header.ToArray(), isHeader: true))
-        {
-            InsertTypeValue = UITable.TableInsertType.Replace
-        }.WithId(ChainageTableId)
-         .WithStyles(UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.TableAlternateRowColor);
-
-        int colCount = header.Count();
-
-        if (!String.IsNullOrWhiteSpace(tableData))
-        {
-            var data = tableData.Split(';');
-
-            for (int row = 0; row < data.Length - (colCount - 1); row += colCount)
-            {
-                var number = data[row];
-                var textBase64 = data[row + 1];
-
-                if (removeRows != null && removeRows.Contains(int.Parse(number)))
-                {
-                    continue;
-                }
-
-                var cols = new List<IUIElement>(new UIElement[]
-                {
-                        new UILiteral()
-                            .WithLiteral(number),
-                        new UILiteral()
-                            .WithLiteral(Encoding.UTF8.GetString(Convert.FromBase64String(textBase64)), true)
-                });
-                var values = new List<string>(new string[]{
-                        number,
-                        textBase64
-                    });
-
-                table.AddRow(new UITableRow(cols.ToArray(), values: values.ToArray())
-                                    .WithStyles(UICss.ToolResultElement(this.GetType())));
-            }
-        }
-
-        return table;
+                    InsertTypeValue = UITable.TableInsertType.Append
+                }.WithId(ChainageTableId))
+            .AddUISetter(new UISetter(ChainageCounter, counter.ToString()));
     }
 
     #endregion

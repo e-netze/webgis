@@ -1,4 +1,4 @@
-using E.Standard.WebMapping.Core.Api.Bridge;
+﻿using E.Standard.WebMapping.Core.Api.Bridge;
 using Newtonsoft.Json;
 
 namespace E.Standard.Api.App.DTOs;
@@ -33,6 +33,9 @@ public sealed class ChainageThemeDTO : IChainageThemeBridge
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
     public string PointStatField { get; set; }
+    [JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
+    public string ApiServiceUrl { get; set; }
 
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]

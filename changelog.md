@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Tool Properties: custom.js [Docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#toolbox)
   [discussion #279](https://github.com/e-netze/webgis-community/discussions/279)
 
+- Chainage: a api service can be used to calculate the chainage of a point on a line
+  [discussion #261](https://github.com/e-netze/webgis-community/discussions/261)
+
+- Feature: 1:n links from results table will be openend in dialog, if target is ``dialog``. Until now, this only worked for single result links. 
+
 ## Fixed
 
 ## 7.25.2001

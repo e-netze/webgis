@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core.IO.Abstractions;
+ï»¿using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
@@ -25,7 +25,7 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Längeneinheit")]
+    [DisplayName("LÃ¤ngeneinheit")]
     [Category("Darstellung")]
     public LengthUnit Unit
     {
@@ -40,9 +40,10 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
         get { return _expression; }
         set { _expression = value; }
     }
+    
     [Browsable(true)]
     [DisplayName("Punkt-Linien Beziehung (SQL)")]
-    [Category("Verknüfung mit Punkt-Linienthema")]
+    [Category("~VerknÃ¼fung mit Punkt-Linienthema")]
     public string PointLineRelation
     {
         get { return _pointlinerelation; }
@@ -50,7 +51,7 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
     }
     [Browsable(true)]
     [DisplayName("Stationierungsfeld des Punktthemas")]
-    [Category("Verknüfung mit Punkt-Linienthema")]
+    [Category("~VerknÃ¼fung mit Punkt-Linienthema")]
     public string PointStatField
     {
         get { return _pointstatfield; }
@@ -58,9 +59,14 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
     }
 
     [Browsable(true)]
+    [DisplayName("Service URL")]
+    [Category("~Oder Abfrage-Service-API")]
+    public string ServiceUrl { get; set; } = String.Empty; 
+
+    [Browsable(true)]
     [Category("Berechnung")]
     [DisplayName("Koordinatensystem, in dem gerechnet werden soll (EPSG-Code)")]
-    [Description("Um die Genauigkeit der Ergebnisse zu gewährleisten, sollte in einer Abbildungsebene mit möglichst geringer Längenverzerrung gerechnet werden. Wird hier kein Wert oder 0 angeführt, wird in der Kartenprojektion rechnert. Das kann bei WebMercator oder geographischen Projektionen zu Verzerrungen führen. Hier ist beispielsweise ein Projeziertes Koordinatensystem wie Gauß-Krüger ideal.")]
+    [Description("Um die Genauigkeit der Ergebnisse zu gewÃ¤hrleisten, sollte in einer Abbildungsebene mit mÃ¶glichst geringer LÃ¤ngenverzerrung gerechnet werden. Wird hier kein Wert oder 0 angefÃ¼hrt, wird in der Kartenprojektion rechnert. Das kann bei WebMercator oder geographischen Projektionen zu Verzerrungen fÃ¼hren. Hier ist beispielsweise ein Projeziertes Koordinatensystem wie GauÃŸ-KrÃ¼ger ideal.")]
     public int CalcSrefId { get; set; }
 
     #endregion
@@ -119,6 +125,7 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
         _pointlinerelation = (string)stream.Load("pointlinerelation", String.Empty);
         _pointstatfield = (string)stream.Load("pointstatfield", String.Empty);
         this.CalcSrefId = (int)stream.Load("calcsrefid", 0);
+        this.ServiceUrl = (string)stream.Load("serviceurl", String.Empty);
     }
     public override void Save(IStreamDocument stream)
     {
@@ -129,6 +136,7 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
         stream.Save("pointlinerelation", _pointlinerelation);
         stream.Save("pointstatfield", _pointstatfield);
         stream.Save("calcsrefid", this.CalcSrefId);
+        stream.Save("serviceurl", this.ServiceUrl);
     }
 
     #endregion

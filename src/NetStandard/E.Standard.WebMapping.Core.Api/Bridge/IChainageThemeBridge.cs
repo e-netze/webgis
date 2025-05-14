@@ -9,6 +9,8 @@ public interface IChainageThemeBridge : IApiObjectBridge
     string PointLayerId { get; }
     string LineLayerId { get; }
 
+    string ApiServiceUrl { get; }
+
     int CalcSrefId { get; }
 
     string Expression { get; set; }
