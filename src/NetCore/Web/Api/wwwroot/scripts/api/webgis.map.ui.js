@@ -723,7 +723,7 @@
                         }
                         else if ($e.hasClass('webgis-dependency-layersvisible')) {
                             var layer = service.getLayer(layerId);
-                            visible = layer.visible;
+                            visible = layer ? layer.visible : false;
                         }
                         else if ($e.hasClass('webgis-dependency-layersinscale')) {
                             visible = service.layerInScale(layerId, currentScale);

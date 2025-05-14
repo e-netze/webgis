@@ -1048,7 +1048,13 @@
                     .click(function () {
                         let featureMetadata = $(this).closest('.webgis-result-table-tools').data('feature.metadata');
                         if (featureMetadata) {
-                            window.open(featureMetadata.links[$(this).data('linkname')]);
+                            const linkname = $(this).data('linkname');
+                            const linktarget = featureMetadata.linktargets[linkname];
+                            if (linktarget === 'dialog') {
+                                webgis.iFrameDialog(featureMetadata.links[linkname], linkname);
+                            } else {
+                                window.open(featureMetadata.links[linkname]);
+                            }
                         }
                     });
             }

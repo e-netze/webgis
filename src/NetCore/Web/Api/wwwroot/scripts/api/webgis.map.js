@@ -2662,7 +2662,7 @@
         // Ansonsten bleiben diese immer so wie beim Erstellen einer Karte mit dem MapBuilder(zB Speicher und Laden => "Karte")
         //
 
-        console.log('_mapToolsToServerContainers', containers);
+        //console.log('_mapToolsToServerContainers', containers);
         let serverContainers = [];
 
         //console.log('containers', containers);

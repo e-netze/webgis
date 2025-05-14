@@ -34,15 +34,15 @@ static public class FeatureCollectionExtensions
                                          hotlinkField.HotlinkUrl.ReplaceUrlHeaderPlaceholders(requestHeaders),
                                          null);
 
+                    
                     if (!String.IsNullOrEmpty(hotLinkUrl))
                     {
-                        if (returnFeatures.Links == null)
-                        {
-                            returnFeatures.Links = new Dictionary<string, string>();
-                        }
+                        returnFeatures.Links ??= new();
+                        returnFeatures.LinkTargets ??= new();
 
                         var colName = hotlinkField.HotlinkName.OrTake(hotlinkField.ColumnName);
                         returnFeatures.Links[colName] = hotLinkUrl;
+                        returnFeatures.LinkTargets[colName] = hotlinkField.Target.ToString().ToLowerInvariant();
                     }
                 }
                 catch { }

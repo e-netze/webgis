@@ -1,4 +1,4 @@
-using E.Standard.Api.App.Extensions;
+﻿using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Models.Abstractions;
 using E.Standard.Web.Abstractions;
 using E.Standard.WebMapping.Core.Api.EventResponse;
@@ -55,6 +55,7 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
                 Selected = select,
                 CustomSelection = customSelection,
                 Links = features.Links,
+                LinkTargets = features.LinkTargets,
                 TableFields = features.TableFieldDefintions == null ?
                                     null :
                                     features.TableFieldDefintions.Select(f => new TableFieldDefintion()
@@ -351,6 +352,11 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
         [System.Text.Json.Serialization.JsonPropertyName("links")]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public Dictionary<string, string> Links { get; set; }
+
+        [JsonProperty(PropertyName = "linktargets", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonPropertyName("linktargets")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public Dictionary<string, string> LinkTargets { get; set; }
 
         [JsonProperty(PropertyName = "service_id", NullValueHandling = NullValueHandling.Ignore)]
         [System.Text.Json.Serialization.JsonPropertyName("service_id")]
