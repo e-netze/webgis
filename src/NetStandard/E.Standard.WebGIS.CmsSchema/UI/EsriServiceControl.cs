@@ -3,9 +3,11 @@ using E.Standard.ArcXml.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
+using E.Standard.Extensions.Compare;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Specialized;
+using System.Linq;
 
 namespace E.Standard.WebGIS.CmsSchema.UI;
 
@@ -349,8 +351,12 @@ public class EsriServiceControl : NameUrlUserConrol, IInitParameter, ISubmit
                     _serviceDescription.Value = "Keine weiteren Informationen zu diesem Dienst";
                 }
 
-                string mapName = (descriptionResult.mapName?.ToLower() == "layers" || descriptionResult.mapName?.ToLower() == "layer" ? String.Empty : descriptionResult.mapName) ?? String.Empty;
-                _nameUrlControl.SetName(mapName, true);
+                string mapName = (
+                    descriptionResult.mapName?.ToLower() == "layers" || descriptionResult.mapName?.ToLower() == "layer"
+                        ? String.Empty 
+                        : descriptionResult.mapName
+                    ) ?? String.Empty;
+                _nameUrlControl.SetName(mapName.OrTake(_agsService.Service?.Split("/").Last()), true);
 
                 var jsonLayers = _agsService.GetLayersWithGroupLayernamesAsync().Result;
                 _lstLayers.Options.Clear();
@@ -454,6 +460,12 @@ public class EsriServiceControl : NameUrlUserConrol, IInitParameter, ISubmit
             _agsImageService.Server = _txtServer.Value;
         }
 
+        //if (!String.IsNullOrEmpty(_cmbService.Value))
+        //{
+        //    _nameUrlControl.SetName(_cmbService.Value, true);
+        //    _nameUrlControl.SetDirty(true); 
+        //}
+
         OnChanged?.Invoke(this, new EventArgs());
     }
 
@@ -475,6 +487,12 @@ public class EsriServiceControl : NameUrlUserConrol, IInitParameter, ISubmit
         {
             _agsImageService.Service = _cmbService.Value;
         }
+
+        //if(!String.IsNullOrEmpty(_cmbService.Value))
+        //{
+        //    _nameUrlControl.SetName(_cmbService.Value, true);
+        //    _nameUrlControl.SetDirty(true);
+        //}
 
         OnChanged?.Invoke(this, new EventArgs());
     }

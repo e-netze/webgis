@@ -500,7 +500,7 @@ public class CmsDocument : IDisposable
 
     public static AuthNode GetPropertyAuthNodeFast(CmsDocument cms, string xPath, string propertyName)
     {
-        return cms.GetAuthNode($"{xPath}@{propertyName}", true);
+        return cms.GetAuthNode($"{xPath}@{propertyName}"/*, true*/);
     }
 
     #region Check Names / Category Prefix

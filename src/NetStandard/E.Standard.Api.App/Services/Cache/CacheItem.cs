@@ -3,6 +3,7 @@ using E.Standard.Api.App.Exceptions;
 using E.Standard.Api.App.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
+using E.Standard.Extensions.Compare;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -634,6 +635,21 @@ public class CmsCacheItem
                                     if (featureTransfers.Count > 0)
                                     {
                                         query.AuthFeatureTransfers = featureTransfers.ToArray();
+                                    }
+
+                                    #endregion
+
+                                    #region Attachments
+
+                                    if ((bool)queryNode.Load("show_attachments", false) == true)
+                                    {
+                                        CmsDocument.AuthNode showAttachementsAuthNode = CmsDocument.GetPropertyAuthNodeFast(cms, queryNode.NodeXPath, "show_attachments");
+
+                                        _authBoolProperties.Add(new AuthProperty<bool>(
+                                            $"{serviceUrlKey}::{query.id}::show_attachments",
+                                            true,
+                                            false,
+                                            showAttachementsAuthNode));
                                     }
 
                                     #endregion

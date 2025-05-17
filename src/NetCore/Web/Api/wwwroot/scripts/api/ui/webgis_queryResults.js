@@ -648,6 +648,7 @@
         var editAttributesToolId = 'webgis.tools.editing.updatefeature';
         var editToolId = 'webgis.tools.editing.edit'
         var editToolIdClass = 'webgis-tools-editing-edit';
+        var identityToolId = 'webgis.tools.identify';
 
         var reorderable = options.reorderable === true && hasUnionFeatures === false;
 
@@ -671,6 +672,27 @@
             }
             if (options.addZoomTo) {
                 $("<div class='menubutton inline zoom'></div>").appendTo($td);
+            }
+            if (features.metadata && features.metadata.has_attachments) {
+                $("<div class='menubutton inline attachments has-attachments trigger-click'></div>")
+                    .data('map', map)
+                    .data('oids', features.features.map(function (f) { return f.oid; }))
+                    //.css('background-image', 'url(' + webgis.css.imgResource('attachments-26-b.png', 'tools') + ')')
+                    .appendTo($td)
+                    .click(function () {
+                        var args = [], map = $(this).data('map');
+                        args["feature-oids"] = $(this).data('oids');
+
+                        $(this)
+                            .closest('table')
+                            .find('.menubutton.attachments')
+                            .removeClass('has-attachments')
+                            .addClass('query-has-attachments'); 
+
+                        webgis.tools.onButtonClick(map, { command: 'query_has_attachments', type: 'servertoolcommand_ext', id: identityToolId, map: map }, this, null, args);
+
+                        $(this).remove();
+                    });
             }
 
             if (options.appendAdvancedFeatureButtons) {
@@ -903,6 +925,23 @@
                                     });
                             }
 
+                            if (features.metadata && features.metadata.has_attachments) {
+                                $("<div>")
+                                    .addClass('menubutton inline attachments')
+                                    .attr("id", 'attachments-' + feature.oid.replaceAll('@','-').replaceAll(':', '-'))
+                                    .attr('title', 'Attachements')
+                                    .data('map', map)
+                                    .data('oid', feature.oid)
+                                    //.css('background-image', 'url(' + webgis.css.imgResource('attachments-26-b.png', 'tools') + ')')
+                                    .appendTo($td)
+                                    .click(function () {
+                                        var args = [], map = $(this).data('map');
+                                        args["feature-oid"] = $(this).data('oid');
+
+                                        webgis.tools.onButtonClick(map, { command: 'show_attachments', type: 'servertoolcommand_ext', id: identityToolId, map: map }, this, null, args);
+                                    });
+                            }
+
                             // custom buttons, eg. google navigation
                             if (webgis.usability.singleResultButtons) {
                                 for (var b in webgis.usability.singleResultButtons) {
@@ -1010,6 +1049,13 @@
                     });
                 });
             }
+        }
+
+        var $triggerClickItems = $tab.find('.trigger-click');
+        if ($triggerClickItems.length > 0) {
+            webgis.delayed(function ($triggerClickItems) {
+                $triggerClickItems.trigger('click');
+            }, 500, $triggerClickItems)
         }
     };
 

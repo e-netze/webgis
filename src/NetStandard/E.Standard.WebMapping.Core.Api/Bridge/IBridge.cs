@@ -75,6 +75,9 @@ public interface IBridge : IAppCryptography
     Task<IEnumerable<T>> QueryLayerDistinctAsync<T>(string serviceId, string layerId, string distinctField,
                                                     string whereClause = "", string orderBy = "", int limit = 0);
 
+    Task<IEnumerable<string>> GetHasFeatureAttachments(string serviceId, string layerId, IEnumerable<string> objectIds);
+    Task<IFeatureAttachments> GetFeatureAttachments(string serviceId, string layerId, string objectId);
+
     IEnumerable<IChainageThemeBridge> ServiceChainageThemes(string serviceId);
     IChainageThemeBridge ChainageTheme(string id);
 

@@ -3,6 +3,7 @@ using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
+using E.Standard.CMS.Core.Security.Reflection;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.CmsSchema.Extensions;
@@ -76,6 +77,11 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     [Description("WebGIS 5: Das Ergebnis kann aus der Liste in eine andere Anwendung (zB Datalinq) gezogen werden.")]
     public bool Draggable { get; set; }
 
+    [Category("Allgemein")]
+    [DisplayName("Show Attachments")]
+    [AuthorizableProperty("show_attachments", false)]
+    public bool ShowAttachments { get; set; }
+
     [Category("Erweiterte Eigenschaften")]
     [DisplayName("Distinct")]
     [Description("Gibt es Objekte mit idententer Geometie (zB gleicher Punkt) und sind ebenso die in der Abfrage abgeholten Attributewerte ident, wird ein Objekt in der Erebnisliste nur einmal angef�hrt.")]
@@ -96,7 +102,7 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     [Description("Maximale Anzahl an Features, die bei eine Abfrage abgeholt werden sollten. Ein Wert <= 0 gibt an, dass die maximale Anzahl von Features abgeholt wird, die vom FeatureServer bei einem Request zur�ck gegeben werden k�nnen.")]
     public int MaxFeatures { get; set; }
 
-    [Category("~Sonder")]
+    [Category("~~Sonder")]
     [DisplayName("Netzwerk Tracer")]
     [Editor(typeof(TypeEditor.NetworkTracersTypeEditor), typeof(TypeEditor.ITypeEditor))]
     public string NetworkTracer
@@ -306,6 +312,8 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
 
         _networktracer = (string)stream.Load("networktracer", String.Empty);
 
+        this.ShowAttachments = (bool)stream.Load("show_attachments", false);
+
         this.Draggable = (bool)stream.Load("draggable", false);
         this.Distict = (bool)stream.Load("distinct", false);
         this.Union = (bool)stream.Load("union", false);
@@ -340,6 +348,11 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
         if (!String.IsNullOrEmpty(_networktracer))
         {
             stream.Save("networktracer", _networktracer);
+        }
+
+        if (this.ShowAttachments == true)
+        {
+            stream.Save("show_attachments", this.ShowAttachments);
         }
 
         if (this.Draggable == true)

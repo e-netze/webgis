@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Feature: 1:n links from results table will be openend in dialog, if target is ``dialog``. Until now, this only worked for single result links. 
 
+- Feature: Feature Results with (AGS) Attachments. The attachments are shown in a separate
+  dialog after click on the icon in the table.
+  In CMS, Attachment must be allowed and authorized for the user.
+  [discussion #272](https://github.com/e-netze/webgis-community/discussions/272)
+
 ## Fixed
 
 ## 7.25.2001

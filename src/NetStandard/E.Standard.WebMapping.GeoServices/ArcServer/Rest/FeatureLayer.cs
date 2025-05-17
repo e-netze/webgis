@@ -19,15 +19,15 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 
-class FeatureLayer : RestLayer, 
+class FeatureLayer : RestLayer,
                      ILayer2,
                      ILayer3,
-                     ILayerDistinctQuery, 
-                     ILabelableLayer, 
-                     ILegendRendererHelper, 
-                     ILayerFieldDomains, 
+                     ILayerDistinctQuery,
+                     ILabelableLayer,
+                     ILegendRendererHelper,
+                     ILayerFieldDomains,
                      ILayerGeometryDefintion,
-                     IAttachmentContainer
+                     IFeatureAttachmentProvider
 {
     private string _definitionExpression = String.Empty;
     private new readonly MapService _service;
@@ -309,20 +309,6 @@ class FeatureLayer : RestLayer,
             features.Add(feature);
         }
 
-        //if (this.HasAttachments)
-        //{
-        //    string attachmentReqUrl = $"{_service.Service}/{this._id}/queryAttachments?returnUrl=true&f=pjson&objectIds={String.Join(",",features.Select(f=>f.Oid))}";
-
-        //    string attachmentResponse = await requestContext.LogRequest(
-        //        _service.Server,
-        //        _service.ServiceShortname,
-        //        requestBuilder.Build(),
-        //        "getattachments",
-        //        (requestBody) => authHandler.TryGetAsync(
-        //            _service,
-        //            attachmentReqUrl));
-        //}
-
         features.Query = filter;
         features.Layer = this;
 
@@ -407,7 +393,74 @@ class FeatureLayer : RestLayer,
         get; set;
     }
 
-    public object GetAttachmentsFor(int id) => null;
+    async public Task<IEnumerable<string>> HasAttachmentsFor(IRequestContext requestContext, IEnumerable<string> ids)
+    {
+        if (!this.HasAttachments) return [];
+
+        string attachmentReqUrl = $"{_service.Service}/{this._id}/queryAttachments?returnUrl=true&f=pjson&objectIds={String.Join(",", ids)}";
+        var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
+
+        string attachmentResponseString = await requestContext.LogRequest(
+            _service.Server,
+            _service.ServiceShortname,
+            attachmentReqUrl,
+            "gethasattachmentsfor",
+            (requestBody) => authHandler.TryGetAsync(
+                _service,
+                attachmentReqUrl));
+
+        var attachmentResponse = JSerializer.Deserialize<JsonAttachmentResponse>(attachmentResponseString);
+
+        return attachmentResponse.AttachmentGroups
+            ?.Select(a => a.ParentObjectId.ToString())
+            .Distinct()
+            .ToArray() ?? [];
+    }
+
+    async public Task<IFeatureAttachments> GetAttachmentsFor(IRequestContext requestContext, string id)
+    {
+        if (!this.HasAttachments) return null;
+
+        var result = new FeatureAttachements();
+
+        string attachmentReqUrl = $"{_service.Service}/{this._id}/queryAttachments?returnUrl=true&f=pjson&objectIds={id}";
+        var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
+
+        string attachmentResponseString = await requestContext.LogRequest(
+            _service.Server,
+            _service.ServiceShortname,
+            attachmentReqUrl,
+            "getattachmentsfor",
+            (requestBody) => authHandler.TryGetAsync(
+                _service,
+                attachmentReqUrl));
+
+        var attachmentResponse = JSerializer.Deserialize<JsonAttachmentResponse>(attachmentResponseString);
+
+        foreach (var attachment in attachmentResponse
+                                    ?.AttachmentGroups
+                                    ?.SelectMany(g => g.AttachmentInfos)
+                                    .Where(i => (i.ContentType == "image/jpeg"
+                                             || i.ContentType == "image/jpg"
+                                             || i.ContentType == "image/gif"
+                                             || i.ContentType == "image/png")
+                                             && !String.IsNullOrEmpty(i.Url)) ?? [])
+        {
+            var data = await authHandler.TryGetRawAsync(_service, attachment.Url);
+
+            if (data is not null && data.Length > 0)
+            {
+                result.Add(new FeatureAttachment()
+                {
+                    Name = attachment.Name,
+                    Type = attachment.ContentType,
+                    Data = data
+                });
+            }
+        }
+
+        return result;
+    }
 
     #endregion
 

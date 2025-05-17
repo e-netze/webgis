@@ -66,7 +66,9 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
                                         ImageWidth = f.ImageSize?.width,
                                         ImageHeight = f.ImageSize?.height
                                     }),
-                HasAttachments= features.HasAttachments == true ? true : null,
+                HasAttachments = features.HasAttachments == true 
+                    ? true 
+                    : null,
                 Warnings = features.Warnings?.ToArray(),
                 Informations = features.Informations?.ToArray(),
             };

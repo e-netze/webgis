@@ -172,7 +172,7 @@ public class RestQueryHelperService
             queryFeatures.OrderByPointDistance(orderByDistancePoint);
         }
 
-        FeatureCollection returnFeatures = await _restHelper.PrepareFeatureCollection(queryFeatures, query, sRef, null, geometryType, renderFields,
+        FeatureCollection returnFeatures = await _restHelper.PrepareFeatureCollection(queryFeatures, query, sRef, ui, null, geometryType, renderFields,
             targetSRefId: targetSRefId, appendHoverShape: appendHoverShape);
 
         var resultFeatures = new FeaturesDTO(returnFeatures, FeaturesDTO.Meta.Tool.Query, sortColumns: query.AutoSortFields, select: select);
@@ -352,7 +352,7 @@ public class RestQueryHelperService
                 count = engine.FeatureCount
             }));
         }
-        FeatureCollection returnFeatures = await _restHelper.PrepareFeatureCollection(queryFeatures, query, sRef, null, geometryType, renderFields);
+        FeatureCollection returnFeatures = await _restHelper.PrepareFeatureCollection(queryFeatures, query, sRef, ui, null, geometryType, renderFields);
 
         if (json)
         {
@@ -534,7 +534,7 @@ public class RestQueryHelperService
 
         #endregion
 
-        FeatureCollection returnFeatures = await _restHelper.PrepareFeatureCollection(queryFeatures, query, targetSref, null, QueryGeometryType.Simple, renderFields);
+        FeatureCollection returnFeatures = await _restHelper.PrepareFeatureCollection(queryFeatures, query, targetSref, ui, null, QueryGeometryType.Simple, renderFields);
 
         if (json)
         {

@@ -1,4 +1,5 @@
 ﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
@@ -18,7 +19,7 @@ public class NewQueryControl : NameUrlUserConrol, IInitParameter, ISubmit
 
     private GroupBox _gbQuery = new GroupBox() { Label = "Abfrage" };
     private NameUrlControl _nameUrlControl = new NameUrlControl("nameUrlControl");
-    private ComboBox _cmbQueryTheme = new ComboBox("cmbQueryTheme") { Label = "Abfragethema" };
+    private ComboBox _cmbQueryTheme = new ComboBox("cmbQueryTheme") { Label = "Abfragethema", TriggerClientChangeEvent = true };
     private ComboBox _cmbImportTable = new ComboBox("cmbImportTable") { Label = "Tabelle" };
 
     private readonly CmsItemTransistantInjectionServicePack _servicePack;
@@ -44,14 +45,13 @@ public class NewQueryControl : NameUrlUserConrol, IInitParameter, ISubmit
         this.AddControl(_gbQuery);
         this.AddControl(_nameUrlControl);
 
-        _cmbImportTable.Options.Add(new ComboBox.Option(((int)ImportQueryTable.None).ToString(), "Nichts importieren"));
-        _cmbImportTable.Options.Add(new ComboBox.Option(((int)ImportQueryTable.Dynamic).ToString(), "Felder Dynamisch (*) importiern"));
-        if (schemaNode.CanImportFieldNames())
-        {
-            _cmbImportTable.Options.Add(new ComboBox.Option(((int)ImportQueryTable.Fields).ToString(), "einzelne Felder importieren"));
-        }
+        #region Events
 
-        FillCombo();
+        _cmbQueryTheme.OnClick += CmbQueryTheme_OnClick;
+
+        #endregion
+
+        FillCombos(schemaNode);
     }
 
     public override NameUrlControl NameUrlControlInstance => _nameUrlControl;
@@ -74,17 +74,36 @@ public class NewQueryControl : NameUrlUserConrol, IInitParameter, ISubmit
     {
         if (_node is Query)
         {
-            ((Query)_node).QueryThemeId = _cmbQueryTheme.SelectedItem?.ToString();
+            ((Query)_node).QueryThemeId = _cmbQueryTheme.SelectedItem?.ToString().Split(":").First();
             ((Query)_node).AutoImportAllFields = (ImportQueryTable)int.Parse(_cmbImportTable.SelectedItem?.ToString() ?? "0");
         }
     }
 
     #endregion
 
-    private void FillCombo()
+    #region Handlers
+
+    private void CmbQueryTheme_OnClick(object sender, EventArgs e)
     {
-        if (_cms != null || !String.IsNullOrEmpty(_relPath))
+        if (_cmbQueryTheme.Value != null)
         {
+            _nameUrlControl.SetName(_cmbQueryTheme.Value.Split(":").Last(), true);
+        }
+    }
+
+    #endregion
+
+    private void FillCombos(ISchemaNode schemaNode)
+    {
+        if (_cms != null && !String.IsNullOrEmpty(_relPath))
+        {
+            _cmbImportTable.Options.Add(new ComboBox.Option(((int)ImportQueryTable.None).ToString(), "Nichts importieren"));
+            _cmbImportTable.Options.Add(new ComboBox.Option(((int)ImportQueryTable.Dynamic).ToString(), "Felder Dynamisch (*) importiern"));
+            if (schemaNode.CanImportFieldNames())
+            {
+                _cmbImportTable.Options.Add(new ComboBox.Option(((int)ImportQueryTable.Fields).ToString(), "einzelne Felder importieren"));
+            }
+
             #region Themen aus Dienst auslesen
 
             object[] objects = null;
@@ -95,9 +114,14 @@ public class NewQueryControl : NameUrlUserConrol, IInitParameter, ISubmit
 
             if (objects != null)
             {
+                _cmbQueryTheme.Options.Add(new ComboBox.Option("", "--- Select Query Theme ---"));
+
                 foreach (object obj in objects.Where(o => o is ServiceLayer).OrderBy(l => ((ServiceLayer)l).Name))
                 {
-                    _cmbQueryTheme.Options.Add(new ComboBox.Option(((ServiceLayer)obj).Id, ((ServiceLayer)obj).Name));
+                    _cmbQueryTheme.Options.Add(
+                        new ComboBox.Option(
+                            $"{((ServiceLayer)obj).Id}:{((ServiceLayer)obj).Name.Split(@"\").Last()}",
+                            ((ServiceLayer)obj).Name));
                 }
             }
 

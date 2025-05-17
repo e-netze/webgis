@@ -33,6 +33,8 @@ using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
 using Microsoft.Extensions.Localization;
+using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -979,6 +981,32 @@ public class Bridge : IBridge
 
         return (await ((ILayerDistinctQuery)layer).QueryDistinctValues(_requestContext, distinctField, whereClause, orderBy, limit))
             .Select(v => (T)Convert.ChangeType(v, typeof(T)));
+    }
+
+    async public Task<IEnumerable<string>> GetHasFeatureAttachments(string serviceId, string layerId, IEnumerable<string> objectIds)
+    {
+        var service = await TryGetOriginalService(serviceId).ThrowIfNull(() => $"Unknown Service: {serviceId}");
+        var layer = service.Layers?.FindByLayerId(layerId).ThrowIfNull(() => $"Unknown Layer: {layerId}");
+
+        if (layer is IFeatureAttachmentProvider attachmentContainer)
+        {
+            return await attachmentContainer.HasAttachmentsFor(_requestContext, objectIds);
+        }
+
+        return [];
+    }
+
+    async public Task<IFeatureAttachments> GetFeatureAttachments(string serviceId, string layerId, string objectId)
+    {
+        var service = await TryGetOriginalService(serviceId).ThrowIfNull(() => $"Unknown Service: {serviceId}");
+        var layer = service.Layers?.FindByLayerId(layerId).ThrowIfNull(() => $"Unknown Layer: {layerId}");
+
+        if(layer is IFeatureAttachmentProvider attachmentContainer)
+        {
+            return await attachmentContainer.GetAttachmentsFor(_requestContext, objectId);
+        }
+
+        return null;
     }
 
     public SpatialReference CreateSpatialReference(int sRefId)

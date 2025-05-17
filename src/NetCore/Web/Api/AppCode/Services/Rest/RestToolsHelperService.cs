@@ -392,6 +392,7 @@ public class RestToolsHelperService
                             featuresResponse.Features,
                             featuresResponse.Query as QueryDTO,
                             featuresResponse.FeatureSpatialReference,
+                            ui,
                             featuresResponse.ClickEvent,
                             appendHoverShape: featuresResponse.AppendHoverShapes);
 
@@ -790,7 +791,8 @@ public class RestToolsHelperService
                         await _restHelper.PrepareFeatureCollection(
                                 apiResponse.ReplaceQueryFeatures,
                                 replaceFeatureQuery as QueryDTO,
-                                apiResponse.ReplaceFeatureSpatialReference
+                                apiResponse.ReplaceFeatureSpatialReference,
+                                ui
                             ));
                 if (replaceQueryFeatures == null)
                 {

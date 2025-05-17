@@ -123,6 +123,8 @@ public class NameUrlControl : UserControl, IInitParameter
 
     public string NameToUrl(string name)
     {
+        if (String.IsNullOrEmpty(name)) return "";
+
         name = name.ToLower();
         if (txtUrl.RegexReplace != null)
         {

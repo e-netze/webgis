@@ -47,7 +47,10 @@ public class RestHelperService
 
     #region Services
 
-    public ServiceInfoDTO CreateServiceInfo(ApiBaseController controller, IMapService service, CmsDocument.UserIdentification ui)
+    public ServiceInfoDTO CreateServiceInfo(
+                ApiBaseController controller, 
+                IMapService service, 
+                CmsDocument.UserIdentification ui)
     {
         string id = service.Url;
 
@@ -446,15 +449,17 @@ public class RestHelperService
 
     #region FeatureCollections
 
-    async public Task<FeatureCollection> PrepareFeatureCollection(FeatureCollection queryFeatures,
-                                                                  QueryDTO query,
-                                                                  SpatialReference sRef,
-                                                                  ApiToolEventArguments.ApiToolEventClick clickEvent = null,
-                                                                  QueryGeometryType geometryType = QueryGeometryType.Simple,
-                                                                  bool renderFields = true,
-                                                                  bool select = false,
-                                                                  int targetSRefId = 4326,
-                                                                  bool appendHoverShape = true)
+    async public Task<FeatureCollection> PrepareFeatureCollection(
+                FeatureCollection queryFeatures,
+                QueryDTO query,
+                SpatialReference sRef,
+                CmsDocument.UserIdentification ui,
+                ApiToolEventArguments.ApiToolEventClick clickEvent = null,
+                QueryGeometryType geometryType = QueryGeometryType.Simple,
+                bool renderFields = true,
+                bool select = false,
+                int targetSRefId = 4326,
+                bool appendHoverShape = true)
     {
         FeatureCollection returnFeatures = new FeatureCollection();
 
@@ -730,9 +735,11 @@ public class RestHelperService
 
                 #region Attachments
 
-                returnFeatures.HasAttachments = 
-                    queryFeatures.Layer is IAttachmentContainer attachmentContainer
-                    && attachmentContainer.HasAttachments == true;
+                returnFeatures.HasAttachments =
+                    queryFeatures.Layer is IFeatureAttachmentProvider attachmentContainer
+                    && attachmentContainer.HasAttachments
+                    ? _cache.IsQueryShowAttachmentsAllowed(query.Service.Url, query.id, ui)
+                    : false;
 
                 #endregion
 

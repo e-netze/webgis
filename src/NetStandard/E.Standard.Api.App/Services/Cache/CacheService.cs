@@ -1061,6 +1061,17 @@ public class CacheService
         return null;
     }
 
+    public bool IsQueryShowAttachmentsAllowed(string serviceUrl, string queryId, CmsDocument.UserIdentification ui)
+    {
+        var auth = GetBoolPropertyAuthorization($"{serviceUrl}::{queryId}::show_attachments", ui);
+        if (auth == null)
+        {
+            return false;
+        }
+
+        return auth.AuthorizedPropertyValue(ui);
+    }
+
     #endregion
 
     #region EditThemes

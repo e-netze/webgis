@@ -851,6 +851,19 @@ img.tile {
             background-image: url('../api/img/tools/pan.png');
         }
 
+        .webgis-result-table-menucell .menubutton.attachments {
+            visibility: hidden;
+        }
+
+            .webgis-result-table-menucell .menubutton.attachments.query-has-attachments {
+                visibility: visible;
+                background-image: url('../api/img/hourglass/loader1.gif');
+            }
+            .webgis-result-table-menucell .menubutton.attachments.has-attachments {
+                visibility: visible;
+                background-image: url('../api/img/tools/attachments-26-b.png');
+            }
+
 .webgis-result-table.features tr {
     cursor:pointer;
 }

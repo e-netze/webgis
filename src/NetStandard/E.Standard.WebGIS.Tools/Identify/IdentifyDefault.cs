@@ -1,4 +1,5 @@
 ﻿using E.Standard.Drawing.Models;
+using E.Standard.Extensions.Collections;
 using E.Standard.Extensions.Compare;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
@@ -6,6 +7,7 @@ using E.Standard.ThreadSafe;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebGIS.Tools.Identify.Extensions;
+using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -18,8 +20,10 @@ using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Reflection;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using static E.Standard.WebMapping.Core.CoreApiGlobals;
@@ -717,6 +721,81 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
                             .AddSetter(new UISetter(commandArguments[3], f[commandArguments[2]]))
                             .WithShape(f.Shape)
                             .WithName($"{query.Name} - {f[commandArguments[2]]}")));
+    }
+
+    [ServerToolCommand("query_has_attachments")]
+    async public Task<ApiEventResponse> OnQueryAttachments(IBridge bridge, ApiToolEventArguments e, ILocalizer<IdentifyDefault> localizer)
+    {
+        var oids = e.GetArray<string>("feature-oids");
+        var oidParts = oids.Select(o => o.Split(":")).ToArray();
+        var serviceIds = oidParts.Select(o => o[0]).Distinct().ToArray();
+        var queryIds = oidParts.Select(o => o.Length >= 1 ?  o[1] : "").Distinct().ToArray();
+        var objectIds = oidParts.Select(o => o.Length >= 2 ? o[2]: "").Distinct().ToArray();
+
+        if(serviceIds.Length != 1 || queryIds.Length != 1)
+        {
+            throw new Exception("Can't query attachments for multiple service queries...");
+        }
+
+        var query = (await bridge.GetQuery(serviceIds[0], queryIds[0])).ThrowIfNull(() => $"Unkown query {queryIds[0]} in service {serviceIds[0]}");
+
+        var ids = (await bridge.GetHasFeatureAttachments(serviceIds[0], query.GetLayerId(), objectIds)).ToImmutableArray();
+        var response = new ApiEventResponse();
+
+        foreach (var objectId in objectIds)
+        {
+            response.AddUISetter(new UICssSetter(
+                ids.Contains(objectId)
+                    ? UICssSetter.SetterType.AddClass
+                    : UICssSetter.SetterType.RemoveClass,
+                $"attachments-{serviceIds[0].Replace("@", "-")}-{queryIds[0]}-{objectId}",
+                "has-attachments"
+                )
+            );
+            response.AddUISetter(new UICssSetter(
+                UICssSetter.SetterType.RemoveClass,
+                $"attachments-{serviceIds[0].Replace("@", "-")}-{queryIds[0]}-{objectId}",
+                "query-has-attachments"
+                )
+            );
+        }
+
+        return response;
+    }
+
+    [ServerToolCommand("show_attachments")]
+    async public Task<ApiEventResponse> OnShowAttachments(IBridge bridge, ApiToolEventArguments e, ILocalizer<IdentifyDefault> localizer)
+    {
+        string[] oidParts = e["feature-oid"]?.Split(":");
+        if (oidParts?.Length != 3)
+        {
+            throw new ArgumentException($"Invalid OID format. Expected format: <serviceId>:<layerId>:<oid> not {e["feature-oid"]?.Split(":")}");
+        }
+
+        var query = (await bridge.GetQuery(oidParts[0], oidParts[1])).ThrowIfNull(() => $"Unknown query {oidParts[1]} in service {oidParts[0]}");
+        var attachments = await bridge.GetFeatureAttachments(oidParts[0], query.GetLayerId(), oidParts[2]);
+
+        if (attachments?.Attachements?.Any() != true)
+        {
+            throw new Exception($"No attachments found for this feature (oid={oidParts[2]})");
+        }
+
+        var dialog = new UIDiv()
+            .AsDialog(UIElementTarget.tool_sidebar_left)
+            .WithStyles(UICss.NarrowForm)
+            .WithDialogTitle(localizer.Localize("attachments"));
+
+        foreach (var attachment in attachments.Attachements)
+        {
+            dialog.AddChild(new UILiteralBold() { literal = attachment.Name });
+            dialog.AddChild(new UIBreak());
+            dialog.AddChild(new UIImage(
+                Convert.ToBase64String(attachment.Data),
+                true));
+        }
+
+        return new ApiEventResponse().
+            AddUIElements(dialog);     
     }
 
     #endregion

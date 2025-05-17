@@ -1607,7 +1607,7 @@ public class RestController : ApiBaseController
 
                     fileTitle = $"{queryId}_{Guid.NewGuid():N}";
 
-                    FeatureCollection features = await _restService.Helper.PrepareFeatureCollection(engine.Features, query, null, null, renderFields: tableExportFormat == null);
+                    FeatureCollection features = await _restService.Helper.PrepareFeatureCollection(engine.Features, query, null, ui, null, renderFields: tableExportFormat == null);
                     features.OrderByIds(oids);
 
                     if (tableExportFormat != null)
