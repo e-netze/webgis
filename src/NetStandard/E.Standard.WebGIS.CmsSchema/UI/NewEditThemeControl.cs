@@ -47,10 +47,13 @@ public class NewEditThemeControl : NameUrlUserConrol, IInitParameter, ISubmit
         this.AddControl(_gbEditTheme);
         this.AddControl(_nameUrlControl);
 
-        _cmbImportFields.Options.Add(new ComboBox.Option(((int)ImportEditFields.None).ToString(), "Nichts importieren"));
-        _cmbImportFields.Options.Add(new ComboBox.Option(((int)ImportEditFields.Fields).ToString(), "einzelne Felder importieren (Kategorie Allgemein)"));
+        #region Events
 
-        FillCombo();
+        _cmbEditTheme.OnClick += CmbEditTheme_OnClick;
+
+        #endregion
+
+        FillCombos();
     }
 
     public override NameUrlControl NameUrlControlInstance => _nameUrlControl;
@@ -73,7 +76,7 @@ public class NewEditThemeControl : NameUrlUserConrol, IInitParameter, ISubmit
     {
         if (_node is EditingTheme)
         {
-            ((EditingTheme)_node).EditingThemeId = _cmbEditTheme.SelectedItem?.ToString();
+            ((EditingTheme)_node).EditingThemeId = _cmbEditTheme.SelectedItem?.ToString().Split(":").First();
             ((EditingTheme)_node).Srs = int.Parse(_txtSrs.Value);
             ((EditingTheme)_node).AutoImportEditFields = (ImportEditFields)int.Parse(_cmbImportFields.SelectedItem?.ToString() ?? "0");
         }
@@ -81,10 +84,25 @@ public class NewEditThemeControl : NameUrlUserConrol, IInitParameter, ISubmit
 
     #endregion
 
-    private void FillCombo()
+    #region Event Handlers
+
+    private void CmbEditTheme_OnClick(object sender, EventArgs e)
     {
-        if (_cms != null || !String.IsNullOrEmpty(_relPath))
+        if (_cmbEditTheme.Value != null)
         {
+            _nameUrlControl.SetName(_cmbEditTheme.Value.Split(":").Last(), true);
+        }
+    }
+
+    #endregion
+
+    private void FillCombos()
+    {
+        if (_cms != null && !String.IsNullOrEmpty(_relPath))
+        {
+            _cmbImportFields.Options.Add(new ComboBox.Option(((int)ImportEditFields.None).ToString(), "Nichts importieren"));
+            _cmbImportFields.Options.Add(new ComboBox.Option(((int)ImportEditFields.Fields).ToString(), "einzelne Felder importieren (Kategorie Allgemein)"));
+
             #region Themen aus Dienst auslesen
 
             object[] objects = null;
@@ -95,9 +113,13 @@ public class NewEditThemeControl : NameUrlUserConrol, IInitParameter, ISubmit
 
             if (objects != null)
             {
+                _cmbEditTheme.Options.Add(new ComboBox.Option("", "--- Select Edit Theme ---"));
+
                 foreach (object obj in objects.Where(o => o is ServiceLayer).OrderBy(l => ((ServiceLayer)l).Name))
                 {
-                    _cmbEditTheme.Options.Add(new ComboBox.Option(((ServiceLayer)obj).Id, ((ServiceLayer)obj).Name));
+                    _cmbEditTheme.Options.Add(new ComboBox.Option(
+                        $"{((ServiceLayer)obj).Id}:{((ServiceLayer)obj).Name.Split(@"\").Last()}",
+                        ((ServiceLayer)obj).Name));
                 }
             }
             #endregion

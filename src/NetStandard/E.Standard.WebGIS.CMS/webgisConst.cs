@@ -85,10 +85,6 @@ public class Globals
 
     public static string SolveExpression(Feature feature, string expression)
     {
-        return SolveExpression(feature, expression, null);
-    }
-    public static string SolveExpression(Feature feature, string expression, HotlinkTabColumn hotlink)
-    {
         string[] keys = Helper.GetKeyParameters(expression);
         if (keys == null || feature == null)
         {
@@ -163,22 +159,22 @@ public class Globals
                         expression = expression.Replace($"[{key}]", String.Format("{0:" + format + "}", feature[key2]));
                     }
                 }
-                else if (key.StartsWith("~") && hotlink != null && hotlink.One2N && !String.IsNullOrEmpty(hotlink.HotlinkId))
-                {
-                    string fKey = key.Substring(1, key.Length - 1);
-                    string val = feature[fKey];
-                    if (val.Length < 100)
-                    {
-                        expression = expression.Replace($"[{key}]", val);
-                    }
-                    else
-                    {
-                        string valId = hotlink.HotlinkId + "~" + fKey;
-                        expression = expression.Replace($"[{key}]", "~" + valId);
-                        hotlink[fKey] = val;
-                    }
-                }
-                else if (key.StartsWith("~") && hotlink == null)
+                //else if (key.StartsWith("~") && hotlink != null && hotlink.One2N && !String.IsNullOrEmpty(hotlink.HotlinkId))
+                //{
+                //    string fKey = key.Substring(1, key.Length - 1);
+                //    string val = feature[fKey];
+                //    if (val.Length < 100)
+                //    {
+                //        expression = expression.Replace($"[{key}]", val);
+                //    }
+                //    else
+                //    {
+                //        string valId = hotlink.HotlinkId + "~" + fKey;
+                //        expression = expression.Replace($"[{key}]", "~" + valId);
+                //        hotlink[fKey] = val;
+                //    }
+                //}
+                else if (key.StartsWith("~")/* && hotlink == null*/)
                 {
                     string fKey = key.Substring(1, key.Length - 1);
                     expression = expression.Replace($"[{key}]", feature[fKey]);

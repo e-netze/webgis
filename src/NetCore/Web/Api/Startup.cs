@@ -5,6 +5,7 @@ using Api.Core.AppCode.Middleware.Authentication;
 using Api.Core.AppCode.Services;
 using Api.Core.AppCode.Services.Worker;
 using E.DataLinq.Web.Extensions.DependencyInjection;
+using E.Standard.Api.App;
 using E.Standard.Api.App.Configuration;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Extensions.DependencyInjection;
@@ -260,14 +261,28 @@ public class Startup
 
 #pragma warning disable SYSLIB0039 // allow old protocols (tls, tls11)
 
-        services.AddHttpClient("default").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
+        services.AddHttpClient("default", client =>
+        {
+            if(ApiGlobals.HttpClientDefaultTimeoutSeconds > 0)
+            {
+                client.Timeout = TimeSpan.FromSeconds(ApiGlobals.HttpClientDefaultTimeoutSeconds);
+            }
+        })
+        .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
         {
             SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13 | SslProtocols.Tls | SslProtocols.Tls11,
             ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
         });
         if (webProxy != null)
         {
-            services.AddHttpClient("default-proxy").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
+            services.AddHttpClient("default-proxy", client =>
+        {
+            if(ApiGlobals.HttpClientDefaultTimeoutSeconds > 0)
+            {
+                client.Timeout = TimeSpan.FromSeconds(ApiGlobals.HttpClientDefaultTimeoutSeconds);
+            }
+        })
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
             {
                 SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13 | SslProtocols.Tls | SslProtocols.Tls11,
                 ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,

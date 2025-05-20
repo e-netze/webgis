@@ -53,9 +53,10 @@ public sealed class TableFieldData : TableFieldDTO
             _simpleDomainValue.IsValidHttpUrl() &&
             _simpleDomainNextRefresh < DateTime.UtcNow)
         {
+            string httpResponse = "";
             try
             {
-                var httpResponse = await httpService.GetStringAsync(_simpleDomainValue);
+                httpResponse = await httpService.GetStringAsync(_simpleDomainValue);
 
                 var jsonObjectArray = JSerializer.Deserialize<object[]>(httpResponse);
                 string valueProperty = "value";
@@ -74,7 +75,13 @@ public sealed class TableFieldData : TableFieldDTO
 
                 _simpleDomains = domains;
             }
-            catch { }
+            catch(Exception ex) 
+            {
+                Console.WriteLine("Exception@TableFieldData.InitRendering");
+                Console.WriteLine($"  SimpleDomainValue: {_simpleDomainValue}");
+                Console.WriteLine($"  Response: {httpResponse}");
+                Console.WriteLine($"  {ex.Message}");
+            }
             finally { _simpleDomainNextRefresh = DateTime.UtcNow.AddSeconds(SimpleDomainRefreshSeconds); }
         }
     }

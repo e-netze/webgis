@@ -31,8 +31,7 @@ static public class FeatureCollectionExtensions
 
                     hotLinkUrl = SolveExpression(query,
                                          collFeature,
-                                         hotlinkField.HotlinkUrl.ReplaceUrlHeaderPlaceholders(requestHeaders),
-                                         null);
+                                         hotlinkField.HotlinkUrl.ReplaceUrlHeaderPlaceholders(requestHeaders));
 
                     
                     if (!String.IsNullOrEmpty(hotLinkUrl))
@@ -54,11 +53,10 @@ static public class FeatureCollectionExtensions
     static private string SolveExpression(
             QueryDTO query,
             E.Standard.WebMapping.Core.Feature feature,
-            string expression,
-            HotlinkTabColumn hotlink
+            string expression
         )
     {
-        string expr = Globals.SolveExpression(feature, expression, hotlink);
+        string expr = Globals.SolveExpression(feature, expression);
 
         if (query != null)
         {

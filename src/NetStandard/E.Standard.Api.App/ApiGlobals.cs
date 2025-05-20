@@ -30,6 +30,8 @@ static public class ApiGlobals
     public const string MessageQueuePrefix = "webgis-api-queue-";
     static public string MessageQueueName = $"{MessageQueuePrefix}{Guid.NewGuid().ToString("N").ToLower()}";
 
+    public static int HttpClientDefaultTimeoutSeconds = 0;
+
     #endregion
 
     static public bool IsInDeveloperMode

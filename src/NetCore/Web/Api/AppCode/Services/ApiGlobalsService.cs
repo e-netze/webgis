@@ -48,8 +48,9 @@ public class ApiGlobalsService
         ApiGlobals.AppPluginsPath = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);    //  
         ApiGlobals.AppAssemblyPath = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);   // ist in development umgebung nicht gleich dem AppRootPath (produktiv sollte es das gleiche sein)
         ApiGlobals.WWWRootPath = environment.WebRootPath;
-
+        
         SpatialReferenceCollection.p4DatabaseConnection = config.Pro4DatabaseConnectionString();
+        ApiGlobals.HttpClientDefaultTimeoutSeconds = config.HttpClientDefaultTimeoutSeconds();
 
         WebApp.ConsoleLogging = config.UseConsoleLogging();
 

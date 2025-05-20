@@ -72,10 +72,10 @@ public class NewQueryControl : NameUrlUserConrol, IInitParameter, ISubmit
 
     public void Submit(NameValueCollection secrets)
     {
-        if (_node is Query)
+        if (_node is Query query)
         {
-            ((Query)_node).QueryThemeId = _cmbQueryTheme.SelectedItem?.ToString().Split(":").First();
-            ((Query)_node).AutoImportAllFields = (ImportQueryTable)int.Parse(_cmbImportTable.SelectedItem?.ToString() ?? "0");
+            query.QueryThemeId = _cmbQueryTheme.SelectedItem?.ToString().Split(":").First();
+            query.AutoImportAllFields = (ImportQueryTable)int.Parse(_cmbImportTable.SelectedItem?.ToString() ?? "0");
         }
     }
 

@@ -703,4 +703,18 @@ static public class ConfigurationServiceExtensions
     }
 
     #endregion
+
+    #region Section HttpClient
+
+    static public int HttpClientDefaultTimeoutSeconds(this ConfigurationService config)
+    {
+        if (int.TryParse(config[ApiConfigKeys.HttpClientDefaultTimeoutSeconds], out int seconds))
+        {
+            return seconds;
+        }
+
+        return 0;
+    }
+
+    #endregion
 }

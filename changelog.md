@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   In CMS, Attachment must be allowed and authorized for the user.
   [discussion #272](https://github.com/e-netze/webgis-community/discussions/272)
 
+- Feature: HttpClient Default-Timeout-Seconds for all requests. This can be set in the api.config file.
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#httpclient)
+- 
 ## Fixed
 
 ## 7.25.2001

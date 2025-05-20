@@ -2366,7 +2366,6 @@ td.webgis-tab-header {
     }
         .webgis-edittheme-tree .webgis-edittheme-tree-theme-list .webgis-edittheme-tree-theme-list-item:hover {
             background-color: #efefef;
-            #b5dbad
         }
 
         .webgis-edittheme-tree .webgis-edittheme-tree-theme-list .webgis-edittheme-tree-theme-list-item.selected {
@@ -3274,7 +3273,7 @@ body.webgis-ui-holder {
     overflow: hidden;
     border-radius: 5px 5px 0px 0px;
     text-overflow: ellipsis;
-    padding-right: 32px;
+    padding-right: 3px;
 }
 
 .webgis-modal-body {

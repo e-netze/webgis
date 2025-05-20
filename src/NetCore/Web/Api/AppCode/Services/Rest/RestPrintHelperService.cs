@@ -1421,7 +1421,8 @@ public class RestPrintHelperService
 
                 #region Increase Timeout, when printing, because bigger plans need often more time!
 
-                service.Timeout = Math.Max(service.Timeout, 120);  // max 2 minutes (empirical)
+                service.Timeout = Math.Max(service.Timeout, 
+                    ApiGlobals.HttpClientDefaultTimeoutSeconds.OrTake(100));  // wait as long as possible for printing
 
                 #endregion
 

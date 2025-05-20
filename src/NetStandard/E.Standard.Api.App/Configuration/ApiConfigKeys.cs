@@ -86,6 +86,8 @@ public class ApiConfigKeys
 
     public const string DefaultUserLanguage = ConfigurationSectionName + ":default-user-language";
 
+    public const string HttpClientDefaultTimeoutSeconds = ConfigurationSectionName + ":httpclient:default-timeout-seconds";
+
     public const string GraphicsEninge = ConfigurationSectionName + ":graphics-engine";
 
     public const string UseDeChunkerMiddleware = ConfigurationSectionName + ":use-dechunker-middleware";
