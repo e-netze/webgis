@@ -177,7 +177,7 @@
                         if (webgis.usability.useMarkerPopup) {
                             marker.openPopup();
                         } else {
-                            marker.fire('click');
+                            marker.fire('click', { suppressScrollResultRowTo: true });
                         }
                     }
 

@@ -377,7 +377,9 @@
                     .find('.' + $.fn.webgis_queryResultsList.selectedItemClass)
                     .removeClass($.fn.webgis_queryResultsList.selectedItemClass);
 
-                map.queryResultFeatures.handlers.featureResultClick(feature, removeSelection, $(this).hasClass('webgis-result-suppresszoom'));
+                map.queryResultFeatures.handlers.featureResultClick(feature,
+                    removeSelection,
+                    $(this).hasClass('webgis-result-suppresszoom'));
 
                 if (/*$(window).width() < 1024*/ map.ui.tabsInSidebar() === false) {
                     map.events.fire('hidequeryresults');

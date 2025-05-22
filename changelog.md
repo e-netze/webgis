@@ -24,7 +24,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Feature: HttpClient Default-Timeout-Seconds for all requests. This can be set in the api.config file.
   [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#httpclient)
-- 
+
+- Usability: Click row in result table don't fire an autoscroll to this row. Autoscroll is only fired, if a result-map-marker is clicked.
+
 ## Fixed
 
 ## 7.25.2001
