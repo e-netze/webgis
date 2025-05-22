@@ -27,6 +27,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Usability: Click row in result table don't fire an autoscroll to this row. Autoscroll is only fired, if a result-map-marker is clicked.
 
+- Usability: Enhance result table scrolling. Tables remembers scroll position on switch between tabs.
+
 ## Fixed
 
 ## 7.25.2001

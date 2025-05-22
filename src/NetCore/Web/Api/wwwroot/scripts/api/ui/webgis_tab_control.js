@@ -53,7 +53,7 @@
         refresh: function (options) {
             var $control = $(this),
                 $tabBar = $control
-                .children('.webgis-tab-control-tabbar');
+                    .children('.webgis-tab-control-tabbar');
 
             $tabBar.children(".webgis-tab-control-tab").each(function (i, tab) {
                 var tabOptions = $tab2tabOptions($(tab));
@@ -85,7 +85,7 @@
             var $tabBar = $(this)
                 .children('.webgis-tab-control-tabbar');
 
-            var tabs=[];
+            var tabs = [];
             $tabBar.children(".webgis-tab-control-tab").each(function (i, tab) {
                 tabs.push($tab2tabOptions($(tab)));
             });
@@ -414,17 +414,17 @@
     }
 
     var selectTab = function ($control, options) {
-        var $tabBar = $control
+        const $tabBar = $control
             .children('.webgis-tab-control-tabbar');
 
         // unselect current
-        if (options.id == null) {  
+        if (options.id == null) {
             $control.children('.webgis-tab-control-tab-content').css('display', 'none');
             $tabBar.children(".webgis-tab-control-tab").removeClass('selected');
             return;
         }
 
-        var $tab = $tabBar
+        const $tab = $tabBar
             .children(".webgis-tab-control-tab[tab-id='" + options.id + "']");
 
         if ($tab.length === 0)
@@ -441,21 +441,28 @@
 
         _setOrAddCounter($tab, options);
 
-        var $tabContent = $control
+        const $tabContent = $control
             .children(".webgis-tab-control-tab-content[tab-id='" + options.id + "']");
 
         if ($tabContent.length === 0)
             return null;
 
-        $control.children('.webgis-tab-control-tab-content').css('display', 'none');
+        $control.children(".webgis-tab-control-tab-content").css("display", "none");
 
-        if ($tab.data('onSelected')) {
-            $tab.data('onSelected')($control, $tab, $tab2tabOptions($tab));
+        if ($tab.data("onSelected")) {
+            $tab.data("onSelected")($control, $tab, $tab2tabOptions($tab));
         }
 
         _checkSize($tabBar);
 
-        return $tabContent.css('display', 'block');
+        return $tabContent
+            .css("display", "block")
+            .data("$tab", $tab)
+            .on('scroll', function () {   // make sure scroll position is saved
+                const $this = $(this);
+                $this.data("_scrollTop", $this.scrollTop());
+            })
+            .scrollTop($tabContent.data("_scrollTop") || 0);  // and restore scroll position after reopening tab
     };
 
     var $tab2tabOptions = function ($tab) {
