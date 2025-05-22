@@ -78,7 +78,7 @@ public class DownloadMapImage : IApiServerToolLocalizable<DownloadMapImage>,
                             .WithText(localizer.Localize("select-bbox")),
                 new UIBreak(1),
                 new UILabel()
-                    .WithLabel($"{localizer.Localize("bounding-box")}: {(e.MapCrsIsDynamic == false && epsg > 0 ? "[EPSG:" + epsg + "]" : "")}"),
+                    .WithLabel($"{localizer.Localize("bounding-box")}: {(e.CalcCrsIsDynamic == false && epsg > 0 ? "[EPSG:" + epsg + "]" : "")}"),
                 new UIBoundBoxInput()
                     .WithId(BBoxElementId)
                     .WithStyles(UICss.DownloadMapImageBBox)

@@ -1,4 +1,5 @@
 ﻿using E.Standard.WebGIS.Tools.Editing.Environment;
+using E.Standard.WebGIS.Tools.Editing.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebMapping.Core.Api;
@@ -76,7 +77,7 @@ internal class NewFeatureService
         int srsId = editTheme.SrsId(mapCrsId);
 
         sketch.SrsId = srsId;
-        if (srsId != mapCrsId || e.MapCrsIsDynamic == true)
+        if (e.RequireCrsP4Parameters(srsId))
         {
             var sRef = bridge.CreateSpatialReference(srsId);
             if (sRef != null)

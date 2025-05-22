@@ -129,7 +129,7 @@ internal class UpdateFeatureService
                 //    response.Sketch.SrsP4Parameters = filter.FeatureSpatialReference.Proj4;
                 //}
 
-                if (srsId != mapCrsId || e.MapCrsIsDynamic)
+                if (e.RequireCrsP4Parameters(srsId))
                 {
                     AddSrsP4Parameters(bridge, response.Sketch);
                 }

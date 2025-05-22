@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Usability: Enhance result table scrolling. Tables remembers scroll position on switch between tabs.
 
+- Bug: Can't save edit features if calc-CRS differs from map-CRS
+
 ## Fixed
 
 ## 7.25.2001

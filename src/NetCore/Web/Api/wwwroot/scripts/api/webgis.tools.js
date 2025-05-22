@@ -1570,7 +1570,7 @@
         if (tool.mapcrs_dependent) {
             eventStr += (eventStr ? '|' : '') + '_mapcrs=' + map.crsId() + '|_calccrs=' + map.calcCrsId();
             if (map.hasDynamicCalcCrs()) {
-                eventStr += '|_mapcrs_is_dynamic=true';
+                eventStr += '|_calccrs_is_dynamic=true';
             }
         }
         if (tool.mapbbox_dependent) {

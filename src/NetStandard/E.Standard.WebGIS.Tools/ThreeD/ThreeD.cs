@@ -79,7 +79,7 @@ public class ThreeD : IApiServerToolLocalizableAsync<ThreeD>,
                             .WithValue("rectangle")
                             .WithText(localizer.Localize("select-box"))),
                 new UILabel()
-                    .WithLabel($"{localizer.Localize("bbox")}: {(e.MapCrsIsDynamic == false && epsg > 0 ? "[EPSG:" + epsg + "]" : "")}"),
+                    .WithLabel($"{localizer.Localize("bbox")}: {(e.CalcCrsIsDynamic == false && epsg > 0 ? "[EPSG:" + epsg + "]" : "")}"),
                 new UIBoundBoxInput()
                     .WithId(BBoxElementId)
                     .AsReadonly()

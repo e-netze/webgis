@@ -345,4 +345,11 @@ static internal class ApiToolEventArgumentsExtensions
     }
 
     #endregion
+
+    public static bool RequireCrsP4Parameters(this ApiToolEventArguments e, int sketchCrsId)
+    {
+        return sketchCrsId != e.MapCrs ||
+               sketchCrsId != e.CalcCrs ||
+               e.CalcCrsIsDynamic == true;
+    }
 }

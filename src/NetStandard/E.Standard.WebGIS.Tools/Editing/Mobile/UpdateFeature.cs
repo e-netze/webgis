@@ -1,6 +1,7 @@
 ﻿using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Environment;
+using E.Standard.WebGIS.Tools.Editing.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebGIS.Tools.Editing.Services;
 using E.Standard.WebGIS.Tools.Extensions;
@@ -105,7 +106,7 @@ public class UpdateFeature : IApiServerToolLocalizable<Edit>,
                     response.SketchReadonly = true;
                 }
 
-                if ((srsId != mapCrsId || e.MapCrsIsDynamic) && filter.FeatureSpatialReference != null)
+                if (e.RequireCrsP4Parameters(srsId) && filter.FeatureSpatialReference != null)
                 {
                     response.Sketch.SrsP4Parameters = filter.FeatureSpatialReference.Proj4;
                 }

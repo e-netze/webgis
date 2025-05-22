@@ -196,11 +196,11 @@ public class ApiToolEventArguments
                             }
                             catch { }
                         }
-                        if (key == "_mapcrs_is_dynamic")
+                        if (key == "_calccrs_is_dynamic")
                         {
                             try
                             {
-                                this.MapCrsIsDynamic = bool.Parse(val);
+                                this.CalcCrsIsDynamic = bool.Parse(val);
                             }
                             catch { }
                         }
@@ -626,7 +626,7 @@ public class ApiToolEventArguments
     public double? MapScale { get; set; }
     public int? MapCrs { get; set; }
     public int? CalcCrs { get; set; }
-    public bool MapCrsIsDynamic { get; set; }
+    public bool CalcCrsIsDynamic { get; set; }
 
     public double[] MapBBox() => this.GetArray<double>("_mapbbox");
     public int[] MapSize() => this.GetArray<int>("_mapsize");
