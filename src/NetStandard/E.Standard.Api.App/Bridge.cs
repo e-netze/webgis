@@ -1024,13 +1024,13 @@ public class Bridge : IBridge
         if (query is QueryDTO && ((QueryDTO)query).Service != null)
         {
             var service = ((QueryDTO)query).Service;
-            if (service is IServiceSupportedCrs &&
-                ((IServiceSupportedCrs)service).SupportedCrs != null &&
-                ((IServiceSupportedCrs)service).SupportedCrs.Length > 0)
+            if (service is IMapServiceSupportedCrs &&
+                ((IMapServiceSupportedCrs)service).SupportedCrs != null &&
+                ((IMapServiceSupportedCrs)service).SupportedCrs.Length > 0)
             {
-                if (!((IServiceSupportedCrs)service).SupportedCrs.Contains(4326))
+                if (!((IMapServiceSupportedCrs)service).SupportedCrs.Contains(4326))
                 {
-                    defaultSrefId = ((IServiceSupportedCrs)service).SupportedCrs[0];
+                    defaultSrefId = ((IMapServiceSupportedCrs)service).SupportedCrs[0];
                 }
             }
         }
@@ -1348,9 +1348,9 @@ public class Bridge : IBridge
         IMapService service = await TryGetOriginalService(serviceId);
 
         var layer = service?.Layers.FindByLayerId(layerId);
-        if (layer != null && service is IServiceLegend2)
+        if (layer != null && service is IMapServiceLegend2)
         {
-            return await ((IServiceLegend2)service).GetLayerLegendItemsAsync(layerId, _requestContext);
+            return await ((IMapServiceLegend2)service).GetLayerLegendItemsAsync(layerId, _requestContext);
         }
 
         return new LayerLegendItem[0];

@@ -1231,8 +1231,8 @@ tr.webgis-border-bottom td{
 }
 
 .webgis-presentation_toc-title-text {
-    margin:-5px 8px -5px 20px;
-    padding:5px;
+    margin: -5px 8px -5px 20px;
+    padding: 5px 20px 5px 5px;
 }
 
 .webgis-presentation_toc-title-legend-icon {
@@ -1250,7 +1250,7 @@ tr.webgis-border-bottom td{
 .webgis-expanded .webgis-presentation_toc-title-text {
     background: #b5dbad;
     margin: -5px -5px -5px -5px;
-    padding: 5px 16px 5px 30px;
+    padding: 5px 20px 5px 30px;
     /*border-radius: 0px 0px 0px 16px;
     border-left: 1px solid #aaa;*/
     border-bottom: 1px solid #ddd;

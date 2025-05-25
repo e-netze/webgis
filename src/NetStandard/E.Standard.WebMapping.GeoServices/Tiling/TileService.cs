@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.Tiling;
 
-public abstract class TileService : IMapService, IPrintableService, IServiceLegend, IServiceSupportedCrs, IExportableOgcService, IServiceCopyrightInfo, IServiceInitialException
+public abstract class TileService : IMapService, IPrintableMapService, IMapServiceLegend, IMapServiceSupportedCrs, IExportableOgcService, IMapServiceMetadataInfo, IMapServiceInitialException
 {
     private IMap _map;
     private string _name = String.Empty, _logName = String.Empty;
@@ -366,6 +366,7 @@ public abstract class TileService : IMapService, IPrintableService, IServiceLege
         clone.Diagnostics = this.Diagnostics;
         clone.DiagnosticsWaringLevel = this.DiagnosticsWaringLevel;
         clone.CopyrightInfoId = this.CopyrightInfoId;
+        clone.MetadataLink = this.MetadataLink;
 
         clone._initErrorResponse = _initErrorResponse;
         clone._diagnosticsErrorResponse = _diagnosticsErrorResponse;
@@ -958,6 +959,7 @@ public abstract class TileService : IMapService, IPrintableService, IServiceLege
     #region IServiceCopyrightInfo 
 
     public string CopyrightInfoId { get; set; }
+    public string MetadataLink { get; set; }
 
     #endregion
 

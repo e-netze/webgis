@@ -1,6 +1,6 @@
 ﻿namespace E.Standard.WebMapping.Core.Abstraction;
 
-public interface IServiceProjection
+public interface IMapServiceProjection
 {
     ServiceProjectionMethode ProjectionMethode { get; set; }
     int ProjectionId { get; set; }

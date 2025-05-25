@@ -52,9 +52,11 @@ body {
 }
 
 .webgis-api-icon-info {
-	background-image: url(img/ui/info-16.png);
+    background-image: url(img/ui/info-26.png);
+    background-size: 16px 16px;
 }
 
 .webgis-api-icon-help {
-	background-image: url(img/ui/help-16.png);
+    background-image: url(img/ui/help-26.png);
+    background-size: 16px 16px;
 }

@@ -1,6 +1,6 @@
 ﻿namespace E.Standard.WebMapping.Core.Abstraction;
 
-public interface IServiceDatumTransformations
+public interface IMapServiceDatumTransformations
 {
     int[] DatumTransformations { get; set; }
 }

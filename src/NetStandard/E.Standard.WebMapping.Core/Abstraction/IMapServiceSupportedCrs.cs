@@ -1,6 +1,6 @@
 ﻿namespace E.Standard.WebMapping.Core.Abstraction;
 
-public interface IServiceSupportedCrs
+public interface IMapServiceSupportedCrs
 {
     int[] SupportedCrs { get; set; }
 }

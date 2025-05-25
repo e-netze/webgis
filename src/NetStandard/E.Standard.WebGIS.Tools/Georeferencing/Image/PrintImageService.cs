@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image;
 
-internal class PrintImageService : IStaticOverlayService, IPrintableService
+internal class PrintImageService : IStaticOverlayService, IPrintableMapService
 {
     private readonly IBridge _bridge;
     private readonly GeorefImageMetadata _georefImageMetadata;

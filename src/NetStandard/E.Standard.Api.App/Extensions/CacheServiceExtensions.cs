@@ -84,7 +84,7 @@ public static class CacheServiceExtensions
     static public bool HasInitialzationErrors(this IMapService service)
     {
         return
-            (service is IServiceInitialException && ((IServiceInitialException)service).InitialException != null) ||
+            (service is IMapServiceInitialException && ((IMapServiceInitialException)service).InitialException != null) ||
             (service.HasDiagnosticWarnings());
     }
 
@@ -109,9 +109,9 @@ public static class CacheServiceExtensions
 
         StringBuilder sb = new StringBuilder();
 
-        if (service is IServiceInitialException && ((IServiceInitialException)service).InitialException != null)
+        if (service is IMapServiceInitialException && ((IMapServiceInitialException)service).InitialException != null)
         {
-            sb.Append($"Service Initialization Diagnostic: {((IServiceInitialException)service).InitialException.ErrorMessage}");
+            sb.Append($"Service Initialization Diagnostic: {((IMapServiceInitialException)service).InitialException.ErrorMessage}");
         }
 
         sb.Append(service.DiagnosticMessage());

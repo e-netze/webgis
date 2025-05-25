@@ -20,12 +20,12 @@ using System.Web;
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 
 public class ImageServerService : IMapService2,
-                                  IServiceSupportedCrs,
+                                  IMapServiceSupportedCrs,
                                   IImageServiceType,
-                                  IServiceLegend,
+                                  IMapServiceLegend,
                                   IDynamicService,
-                                  IServiceDescription,
-                                  IServiceInitialException,
+                                  IMapServiceDescription,
+                                  IMapServiceInitialException,
                                   IMapServiceAuthentication
 {
     private IMap _map;

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.Watermark;
 
-public class WatermarkService : IMapService, IPrintableService
+public class WatermarkService : IMapService, IPrintableMapService
 {
     private bool _isDirty = true;
     private IMap _map = null;

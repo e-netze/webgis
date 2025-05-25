@@ -22,7 +22,7 @@ static class ServiceExtensions
 {
     async public static Task<ServiceResponse> RenderRestLegendResponse(this IMapService2 service, IRequestContext requestContext, string jsonResponse)
     {
-        var serviceLegend = service as IServiceLegend;
+        var serviceLegend = service as IMapServiceLegend;
         if (serviceLegend == null)
         {
             throw new ArgumentException("Service do not implement IServiceLegend");

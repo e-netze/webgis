@@ -102,13 +102,13 @@ public class RestQueryHelperService
         #endregion
 
         int srefId = srs.OrTake(_config.DefaultQuerySrefId());
-        if (service is IServiceSupportedCrs &&
-            ((IServiceSupportedCrs)service).SupportedCrs != null &&
-            ((IServiceSupportedCrs)service).SupportedCrs.Length > 0)
+        if (service is IMapServiceSupportedCrs &&
+            ((IMapServiceSupportedCrs)service).SupportedCrs != null &&
+            ((IMapServiceSupportedCrs)service).SupportedCrs.Length > 0)
         {
-            if (!((IServiceSupportedCrs)service).SupportedCrs.Contains(srefId))
+            if (!((IMapServiceSupportedCrs)service).SupportedCrs.Contains(srefId))
             {
-                srefId = ((IServiceSupportedCrs)service).SupportedCrs[0];
+                srefId = ((IMapServiceSupportedCrs)service).SupportedCrs[0];
             }
         }
 
@@ -269,13 +269,13 @@ public class RestQueryHelperService
         int srefId = !String.IsNullOrWhiteSpace(form["calc_srs"]) ? int.Parse(form["calc_srs"]) : 4326;
         bool transformToSref = false;
 
-        if (service is IServiceSupportedCrs &&
-            ((IServiceSupportedCrs)service).SupportedCrs != null &&
-            ((IServiceSupportedCrs)service).SupportedCrs.Length > 0)
+        if (service is IMapServiceSupportedCrs &&
+            ((IMapServiceSupportedCrs)service).SupportedCrs != null &&
+            ((IMapServiceSupportedCrs)service).SupportedCrs.Length > 0)
         {
-            if (!((IServiceSupportedCrs)service).SupportedCrs.Contains(4326))
+            if (!((IMapServiceSupportedCrs)service).SupportedCrs.Contains(4326))
             {
-                srefId = ((IServiceSupportedCrs)service).SupportedCrs[0];
+                srefId = ((IMapServiceSupportedCrs)service).SupportedCrs[0];
                 transformToSref = true;
             }
         }
@@ -400,13 +400,13 @@ public class RestQueryHelperService
 
 
         int srefId = 4326;
-        if (service is IServiceSupportedCrs &&
-            ((IServiceSupportedCrs)service).SupportedCrs != null &&
-            ((IServiceSupportedCrs)service).SupportedCrs.Length > 0)
+        if (service is IMapServiceSupportedCrs &&
+            ((IMapServiceSupportedCrs)service).SupportedCrs != null &&
+            ((IMapServiceSupportedCrs)service).SupportedCrs.Length > 0)
         {
-            if (!((IServiceSupportedCrs)service).SupportedCrs.Contains(4326))
+            if (!((IMapServiceSupportedCrs)service).SupportedCrs.Contains(4326))
             {
-                srefId = ((IServiceSupportedCrs)service).SupportedCrs[0];
+                srefId = ((IMapServiceSupportedCrs)service).SupportedCrs[0];
             }
         }
 

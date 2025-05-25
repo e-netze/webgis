@@ -514,7 +514,7 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
 
     async public Task<string> LegendItemImageUrlAsync(IRequestContext requestContext, ApiQueryFilter apiFilter)
     {
-        if (!(this.Service is IServiceLegend2))
+        if (!(this.Service is IMapServiceLegend2))
         {
             return null;
         }
@@ -539,7 +539,7 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
 
         try
         {
-            if (!(this.Service is IServiceLegend2))
+            if (!(this.Service is IMapServiceLegend2))
             {
                 return Task.FromResult<string>(null);
             }

@@ -2,7 +2,7 @@
 
 namespace E.Standard.WebMapping.Core.Abstraction;
 
-public interface IServiceInitialException
+public interface IMapServiceInitialException
 {
     ErrorResponse InitialException { get; }
 }

@@ -2,7 +2,7 @@
 
 namespace E.Standard.WebMapping.Core.Abstraction;
 
-public interface IServiceDescription
+public interface IMapServiceDescription
 {
     string ServiceDescription { get; }
     string CopyrightText { get; }

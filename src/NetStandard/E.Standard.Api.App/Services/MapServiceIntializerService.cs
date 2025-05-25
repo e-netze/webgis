@@ -387,7 +387,7 @@ public class MapServiceInitializerService
 
             service.DiagnosticsWaringLevel = (ServiceDiagnosticsWarningLevel)serviceLink.Load("warninglevel", (int)ServiceDiagnosticsWarningLevel.Never);
 
-            if (service is IServiceLegend serviceLegend)
+            if (service is IMapServiceLegend serviceLegend)
             {
                 serviceLegend.FixLegendUrl = (string)serviceLink.Load("legendurl", String.Empty);
                 serviceLegend.LegendOptMethod = (LegendOptimization)serviceLink.Load("legendopt", LegendOptimization.None);
@@ -407,7 +407,7 @@ public class MapServiceInitializerService
             service.CheckSpatialConstraints = (bool)serviceLink.Load("usewithspatialconstraintservice", false);
             service.ShowInToc = (bool)serviceLink.Load("showintoc", true);
 
-            if (service is IServiceSupportedCrs serviceSupportedCrs)
+            if (service is IMapServiceSupportedCrs serviceSupportedCrs)
             {
                 string supportedCrs = serviceLink.LoadString("supportedcrs");
                 if (!String.IsNullOrWhiteSpace(supportedCrs))
@@ -428,12 +428,12 @@ public class MapServiceInitializerService
             service.BasemapType = (BasemapType)serviceLink.Load("basemaptype", (int)BasemapType.Normal);
             service.BasemapPreviewImage = serviceLink.LoadString("basemap_previewimageurl");
 
-            if (service is IServiceProjection serviceProjection)
+            if (service is IMapServiceProjection serviceProjection)
             {
                 serviceProjection.ProjectionId = (int)serviceLink.Load("projid", -1);
                 serviceProjection.ProjectionMethode = (ServiceProjectionMethode)serviceLink.Load("projmethode", (int)ServiceProjectionMethode.none);
             }
-            if (service is IServiceDatumTransformations serviceDatumTransformations)
+            if (service is IMapServiceDatumTransformations serviceDatumTransformations)
             {
                 string datums = serviceLink.LoadString("datums");
 
@@ -443,12 +443,14 @@ public class MapServiceInitializerService
                 }
             }
 
-            if (service is IServiceCopyrightInfo serviceCopyrightInfo)
+            if (service is IMapServiceMetadataInfo serviceMetadataInfo)
             {
-                serviceCopyrightInfo.CopyrightInfoId = serviceLink.LoadString("copyright");
-                if (!String.IsNullOrWhiteSpace(((IServiceCopyrightInfo)service).CopyrightInfoId) && !String.IsNullOrWhiteSpace(cmsName) && cmsName != "cms")
+                serviceMetadataInfo.MetadataLink = serviceLink.LoadString("metadata");
+                serviceMetadataInfo.CopyrightInfoId = serviceLink.LoadString("copyright");
+                
+                if (!String.IsNullOrWhiteSpace(((IMapServiceMetadataInfo)service).CopyrightInfoId) && !String.IsNullOrWhiteSpace(cmsName) && cmsName != "cms")
                 {
-                    serviceCopyrightInfo.CopyrightInfoId += "@" + cmsName;
+                    serviceMetadataInfo.CopyrightInfoId += $"@{cmsName}";
                 }
             }
 

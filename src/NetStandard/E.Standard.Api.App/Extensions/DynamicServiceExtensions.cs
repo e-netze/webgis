@@ -188,7 +188,7 @@ static public class DynamicServiceExtensions
                             metadata = layer.metadata,
                             metadata_button_style = String.IsNullOrEmpty(layer.metadata) ? null : layer.MetadataButtonStyle.ToString().ToLower(),
                             metadata_target = String.IsNullOrEmpty(layer.metadata) ? null :  layer.MetadataTarget.ToString().ToLower(),
-                            metadata_title =  String.IsNullOrEmpty(layer.metadata) ? null : layer.MetadataTitle?.ToString().ToLower(),
+                            metadata_title =  String.IsNullOrEmpty(layer.metadata) ? null : layer.MetadataTitle?.ToString(),
                             item_order = ++order
                         }
                     };

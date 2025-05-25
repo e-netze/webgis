@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.Tiling;
 
-public class GeneralVectorTileService : IMapService, IServiceSupportedCrs
+public class GeneralVectorTileService : IMapService, IMapServiceSupportedCrs
 {
     private const string DefaultLayerName = "_tilecache";
     private LayerCollection _layers;

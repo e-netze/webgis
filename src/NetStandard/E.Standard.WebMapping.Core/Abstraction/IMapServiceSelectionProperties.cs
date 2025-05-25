@@ -1,6 +1,6 @@
 ﻿namespace E.Standard.WebMapping.Core.Abstraction;
 
-public interface IServiceSelectionProperties
+public interface IMapServiceSelectionProperties
 {
     bool CanMultipleSelections { get; }
 }

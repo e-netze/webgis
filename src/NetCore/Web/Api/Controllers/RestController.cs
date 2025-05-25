@@ -208,7 +208,7 @@ public class RestController : ApiBaseController
                     name = service.Name,
                     type = ServiceDTO.GetServiceType(service).ToString().ToLower(),
                     container = container,
-                    supportedCrs = (service is IServiceSupportedCrs ? ((IServiceSupportedCrs)service).SupportedCrs : null),
+                    supportedCrs = (service is IMapServiceSupportedCrs ? ((IMapServiceSupportedCrs)service).SupportedCrs : null),
                     isbasemap = service.IsBaseMap,
                     opacity = service.InitialOpacity,
                     childServices = service is IMapServiceCollection
@@ -287,7 +287,7 @@ public class RestController : ApiBaseController
 
                             continue;
                         }
-                        else if (service.Value is IServiceInitialException serviceInitialException
+                        else if (service.Value is IMapServiceInitialException serviceInitialException
                             && !String.IsNullOrEmpty(serviceInitialException.InitialException?.ErrorMessage))
                         {
                             exceptions.Add($"{id}: {serviceInitialException.InitialException.ErrorMessage}");
@@ -376,7 +376,7 @@ public class RestController : ApiBaseController
                     name = service.Name,
                     type = ServiceDTO.GetServiceType(service).ToString().ToLower(),
                     container = container,
-                    supportedCrs = (service is IServiceSupportedCrs ? ((IServiceSupportedCrs)service).SupportedCrs : null),
+                    supportedCrs = (service is IMapServiceSupportedCrs ? ((IMapServiceSupportedCrs)service).SupportedCrs : null),
                     isbasemap = service.IsBaseMap,
                     queries = queries.queries,
                     opacity = service.InitialOpacity
@@ -613,7 +613,7 @@ public class RestController : ApiBaseController
                     name = service.Name,
                     type = ServiceDTO.GetServiceType(service).ToString().ToLower(),
                     container = container,
-                    supportedCrs = (service is IServiceSupportedCrs ? ((IServiceSupportedCrs)service).SupportedCrs : null),
+                    supportedCrs = (service is IMapServiceSupportedCrs ? ((IMapServiceSupportedCrs)service).SupportedCrs : null),
                     isbasemap = service.IsBaseMap,
                     opacity = service.InitialOpacity
                 });

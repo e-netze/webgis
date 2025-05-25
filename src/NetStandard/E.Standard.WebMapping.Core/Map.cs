@@ -279,7 +279,7 @@ public class Map : Display, IMap
             }
 
             if (service.ResponseType == ServiceResponseType.Image ||
-                (service is IPrintableService))
+                (service is IPrintableMapService))
             {
                 GetMapThread st = new GetMapThread(service, serviceResponses);
                 st.ThreadFinisched += new EventHandler(st_ThreadFinisched);
@@ -319,8 +319,8 @@ public class Map : Display, IMap
             foreach (IMapService service in _services)
             {
                 // zB. mit AGS kann immer nur eine Selektion gezeichnet werden...
-                bool canMultipleSelection = service is IServiceSelectionProperties ?
-                            ((IServiceSelectionProperties)service).CanMultipleSelections : true;
+                bool canMultipleSelection = service is IMapServiceSelectionProperties ?
+                            ((IMapServiceSelectionProperties)service).CanMultipleSelections : true;
 
                 if (service.Layers.Contains(selection.Layer))
                 {
@@ -560,8 +560,8 @@ public class Map : Display, IMap
         //int requestCount = 0;
         foreach (IMapService service in ListOps<IMapService>.Reverse(_services))
         {
-            if (!(service is IServiceLegend) ||
-                ((IServiceLegend)service).ShowServiceLegendInMap == false)
+            if (!(service is IMapServiceLegend) ||
+                ((IMapServiceLegend)service).ShowServiceLegendInMap == false)
             {
                 continue;
             }
@@ -827,9 +827,9 @@ public class Map : Display, IMap
                         {
                             _response = await _service.GetMapAsync(requestContext);
                         }
-                        else if (_service is IPrintableService)
+                        else if (_service is IPrintableMapService)
                         {
-                            _response = await ((IPrintableService)_service).GetPrintMapAsync(requestContext);
+                            _response = await ((IPrintableMapService)_service).GetPrintMapAsync(requestContext);
                         }
                     }
 
@@ -935,9 +935,9 @@ public class Map : Display, IMap
             {
                 try
                 {
-                    if (_service is IServiceLegend)
+                    if (_service is IMapServiceLegend)
                     {
-                        _response = await ((IServiceLegend)_service).GetLegendAsync(requestContext);
+                        _response = await ((IMapServiceLegend)_service).GetLegendAsync(requestContext);
                     }
 
                     if (_serviceResponses != null)

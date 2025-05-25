@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.Core;
 
-public class CollectionService : IMapService, IEnumerable<IMapService>, IPrintableService, IServiceSupportedCrs
+public class CollectionService : IMapService, IEnumerable<IMapService>, IPrintableMapService, IMapServiceSupportedCrs
 {
     private string _name = "CollectionService";
     private string _id = String.Empty;
@@ -224,7 +224,7 @@ public class CollectionService : IMapService, IEnumerable<IMapService>, IPrintab
             foreach (IMapService service in _services)
             {
                 if (service.ResponseType == ServiceResponseType.Image ||
-                    (service is IPrintableService))
+                    (service is IPrintableMapService))
                 {
                     GetMapThread st = new GetMapThread(service, serviceResponses);
                     st.ThreadFinisched += new EventHandler(st_ThreadFinisched);
@@ -599,9 +599,9 @@ public class CollectionService : IMapService, IEnumerable<IMapService>, IPrintab
                         {
                             _response = await _service.GetMapAsync(requestContext);
                         }
-                        else if (_service is IPrintableService)
+                        else if (_service is IPrintableMapService)
                         {
-                            _response = await ((IPrintableService)_service).GetPrintMapAsync(requestContext);
+                            _response = await ((IPrintableMapService)_service).GetPrintMapAsync(requestContext);
                         }
                     }
 

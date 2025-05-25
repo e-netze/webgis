@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.Tiling;
 
-public abstract class BaseWmtsService : TileService, IServiceDescription, IServiceSecuredDownload
+public abstract class BaseWmtsService : TileService, IMapServiceDescription, IServiceSecuredDownload
 {
     protected readonly string _url;
     protected readonly string _layer;

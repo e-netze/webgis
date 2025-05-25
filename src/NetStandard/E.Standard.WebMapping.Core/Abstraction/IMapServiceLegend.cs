@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.Core.Abstraction;
 
-public interface IServiceLegend
+public interface IMapServiceLegend
 {
     bool ShowServiceLegendInMap { get; set; }
     bool LegendVisible { get; set; }

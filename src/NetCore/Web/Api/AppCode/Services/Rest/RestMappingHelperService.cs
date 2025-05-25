@@ -95,10 +95,10 @@ public class RestMappingHelperService /*: IDisposable*/
             }
 
             map.SpatialReference = E.Standard.Api.App.ApiGlobals.SRefStore.SpatialReferences.ById(int.Parse(crsId));
-            if (service is IServiceProjection)
+            if (service is IMapServiceProjection)
             {
-                ((IServiceProjection)service).ProjectionMethode = ServiceProjectionMethode.Map;
-                ((IServiceProjection)service).RefreshSpatialReference();
+                ((IMapServiceProjection)service).ProjectionMethode = ServiceProjectionMethode.Map;
+                ((IMapServiceProjection)service).RefreshSpatialReference();
             }
         }
 
@@ -173,9 +173,9 @@ public class RestMappingHelperService /*: IDisposable*/
                 response = await service.GetMapAsync(_requestContext);
                 break;
             case ServiceResponseType.Html:
-                if (service is IPrintableService)
+                if (service is IPrintableMapService)
                 {
-                    response = await ((IPrintableService)service).GetPrintMapAsync(_requestContext);
+                    response = await ((IPrintableMapService)service).GetPrintMapAsync(_requestContext);
                 }
 
                 break;
@@ -249,9 +249,9 @@ public class RestMappingHelperService /*: IDisposable*/
             }
 
             map.SpatialReference = E.Standard.Api.App.ApiGlobals.SRefStore.SpatialReferences.ById(int.Parse(crsId));
-            if (service is IServiceProjection)
+            if (service is IMapServiceProjection)
             {
-                ((IServiceProjection)service).ProjectionMethode = ServiceProjectionMethode.Map;
+                ((IMapServiceProjection)service).ProjectionMethode = ServiceProjectionMethode.Map;
             }
         }
 
@@ -415,9 +415,9 @@ public class RestMappingHelperService /*: IDisposable*/
 
         string requestid = request.FormOrQuery("requestid");
 
-        if (service is IServiceLegend)
+        if (service is IMapServiceLegend)
         {
-            ((IServiceLegend)service).LegendVisible = true;
+            ((IMapServiceLegend)service).LegendVisible = true;
 
             map.ImageWidth = int.Parse(request.FormOrQuery("width"));
             map.ImageHeight = int.Parse(request.FormOrQuery("height"));
@@ -433,10 +433,10 @@ public class RestMappingHelperService /*: IDisposable*/
                 }
 
                 map.SpatialReference = E.Standard.Api.App.ApiGlobals.SRefStore.SpatialReferences.ById(int.Parse(crsId));
-                if (service is IServiceProjection)
+                if (service is IMapServiceProjection)
                 {
-                    ((IServiceProjection)service).ProjectionMethode = ServiceProjectionMethode.Map;
-                    ((IServiceProjection)service).RefreshSpatialReference();
+                    ((IMapServiceProjection)service).ProjectionMethode = ServiceProjectionMethode.Map;
+                    ((IMapServiceProjection)service).RefreshSpatialReference();
                 }
             }
 
@@ -481,7 +481,7 @@ public class RestMappingHelperService /*: IDisposable*/
                 map.SetScale(request.FormOrQuery("scale").ToPlatformDouble(), map.ImageWidth, map.ImageHeight);
             }
 
-            ServiceResponse response = await ((IServiceLegend)service).GetLegendAsync(_requestContext);
+            ServiceResponse response = await ((IMapServiceLegend)service).GetLegendAsync(_requestContext);
 
             if (response is ImageLocation)
             {
@@ -538,9 +538,9 @@ public class RestMappingHelperService /*: IDisposable*/
             throw new Exception("Unknown service: " + id);
         }
 
-        if (service is IServiceLegend2)
+        if (service is IMapServiceLegend2)
         {
-            var items = await ((IServiceLegend2)service).GetLayerLegendItemsAsync(request.Query["layer"], _requestContext);
+            var items = await ((IMapServiceLegend2)service).GetLayerLegendItemsAsync(request.Query["layer"], _requestContext);
 
             if (items != null)
             {

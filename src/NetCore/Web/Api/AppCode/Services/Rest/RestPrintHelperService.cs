@@ -1347,17 +1347,17 @@ public class RestPrintHelperService
                     service.InitialOpacity = serviceDefintion.Opacity;
                 }
 
-                if (service is IServiceLegend)
+                if (service is IMapServiceLegend)
                 {
-                    ((IServiceLegend)service).LegendVisible = true;
+                    ((IMapServiceLegend)service).LegendVisible = true;
                 }
 
                 #region Spatial References (always use map)
 
-                if (service is IServiceProjection)
+                if (service is IMapServiceProjection)
                 {
-                    ((IServiceProjection)service).ProjectionMethode = ServiceProjectionMethode.Map;
-                    ((IServiceProjection)service).RefreshSpatialReference();
+                    ((IMapServiceProjection)service).ProjectionMethode = ServiceProjectionMethode.Map;
+                    ((IMapServiceProjection)service).RefreshSpatialReference();
                 }
 
                 #endregion

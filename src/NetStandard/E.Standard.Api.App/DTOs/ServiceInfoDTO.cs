@@ -63,6 +63,11 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
 
     public double[] extent { get; set; }
 
+    [JsonProperty("metadata_link", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("metadata_link")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string MetadataLink { get; set; }
+
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string copyright { get; set; }

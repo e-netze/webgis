@@ -29,12 +29,12 @@ using System.Threading.Tasks;
 namespace E.Standard.WebMapping.GeoServices.OGC.WMS;
 
 public class WmsService : IMapService2,
-                          IServiceLegend, /*IServiceLegend2,*/
-                          IServiceSupportedCrs,
+                          IMapServiceLegend, /*IServiceLegend2,*/
+                          IMapServiceSupportedCrs,
                           IExportableOgcService,
-                          IServiceCopyrightInfo,
-                          IServiceDescription,
-                          IServiceInitialException,
+                          IMapServiceMetadataInfo,
+                          IMapServiceDescription,
+                          IMapServiceInitialException,
                           IDynamicService,
                           IImageServiceType
 {
@@ -826,6 +826,7 @@ public class WmsService : IMapService2,
         clone.Diagnostics = this.Diagnostics;
         clone.DiagnosticsWaringLevel = this.DiagnosticsWaringLevel;
         clone.CopyrightInfoId = this.CopyrightInfoId;
+        clone.MetadataLink = this.MetadataLink;
 
         clone._exportWms = _exportWms;
         clone._ogcEnvelope = _ogcEnvelope != null ? new Envelope(_ogcEnvelope) : null;
@@ -1312,6 +1313,7 @@ public class WmsService : IMapService2,
     #region IServiceCopyrightInfo 
 
     public string CopyrightInfoId { get; set; }
+    public string MetadataLink { get; set; }
 
     #endregion
 

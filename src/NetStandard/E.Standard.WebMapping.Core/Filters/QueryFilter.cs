@@ -270,9 +270,9 @@ public class QueryFilter
 
     private static void SetFeatureFilterCoordsys(IMap map, IMapService service, QueryFilter filter)
     {
-        if (service is IServiceProjection)
+        if (service is IMapServiceProjection)
         {
-            switch (((IServiceProjection)service).ProjectionMethode)
+            switch (((IMapServiceProjection)service).ProjectionMethode)
             {
                 case ServiceProjectionMethode.Map:
                     filter.FeatureSpatialReference = map.SpatialReference;
@@ -283,7 +283,7 @@ public class QueryFilter
 
                     break;
                 case ServiceProjectionMethode.Userdefined:
-                    filter.FeatureSpatialReference = CoreApiGlobals.SRefStore.SpatialReferences.ById(((IServiceProjection)service).ProjectionId);
+                    filter.FeatureSpatialReference = CoreApiGlobals.SRefStore.SpatialReferences.ById(((IMapServiceProjection)service).ProjectionId);
                     if (filter is SpatialFilter)
                     {
                         ((SpatialFilter)filter).FilterSpatialReference = filter.FeatureSpatialReference;

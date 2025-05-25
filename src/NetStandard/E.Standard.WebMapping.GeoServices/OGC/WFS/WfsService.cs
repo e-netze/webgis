@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.WFS;
 
-public class WfsService : IMapService, IServiceSupportedCrs, IServiceCopyrightInfo
+public class WfsService : IMapService, IMapServiceSupportedCrs, IMapServiceMetadataInfo
 {
     internal IMap _map;
     internal WFS_Version _version = WFS_Version.version_1_0_0;
@@ -451,6 +451,7 @@ public class WfsService : IMapService, IServiceSupportedCrs, IServiceCopyrightIn
         clone.Diagnostics = this.Diagnostics;
         clone.DiagnosticsWaringLevel = this.DiagnosticsWaringLevel;
         clone.CopyrightInfoId = this.CopyrightInfoId;
+        clone.MetadataLink = this.MetadataLink;
 
         return clone;
     }
@@ -460,6 +461,7 @@ public class WfsService : IMapService, IServiceSupportedCrs, IServiceCopyrightIn
     #region IServiceCopyrightInfo 
 
     public string CopyrightInfoId { get; set; }
+    public string MetadataLink { get; set; }
 
     #endregion
 

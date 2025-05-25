@@ -1468,8 +1468,10 @@
                     }
                 }
 
-                let metadata_prefix = prop.groupstyle !== 'dropdown' ? 'group_' : '';
-
+                let metadata_prefix = prop.groupstyle && prop.groupstyle !== 'dropdown'
+                    ? 'group_'
+                    : '';
+                
                 if (prop[metadata_prefix + 'metadata']
                     && $item_li.find('.webgis-api-icon.webgis-api-icon-info').length === 0
                     && $item_li.next('.webgis-presentation_toc-item.link-button').length === 0) {

@@ -26,13 +26,13 @@ using System.Xml;
 namespace E.Standard.WebMapping.GeoServices.AXL;
 
 public class AxlService : IMapService2,
-                          IServiceLegend,
-                          IServiceProjection,
+                          IMapServiceLegend,
+                          IMapServiceProjection,
                           ICacheServicePrefix,
-                          IServiceSupportedCrs,
+                          IMapServiceSupportedCrs,
                           IExportableOgcService,
-                          IServiceCopyrightInfo,
-                          IServiceInitialException,
+                          IMapServiceMetadataInfo,
+                          IMapServiceInitialException,
                           IDynamicService,
                           IImageServiceType
 {
@@ -2197,6 +2197,7 @@ public class AxlService : IMapService2,
         clone.DiagnosticsWaringLevel = this.DiagnosticsWaringLevel;
 
         clone.CopyrightInfoId = this.CopyrightInfoId;
+        clone.MetadataLink = this.MetadataLink;
 
         clone._exportWms = _exportWms;
         clone._ogcEnvelope = _ogcEnvelope != null ? new Envelope(_ogcEnvelope) : null;
@@ -2635,6 +2636,7 @@ public class AxlService : IMapService2,
     #region IServiceCopyrightInfo 
 
     public string CopyrightInfoId { get; set; }
+    public string MetadataLink { get; set; }
 
     #endregion
 

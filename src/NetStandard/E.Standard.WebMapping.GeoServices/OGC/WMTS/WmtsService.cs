@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.WMTS;
 
-public class WmtsService : BaseWmtsService, IServiceDescription
+public class WmtsService : BaseWmtsService, IMapServiceDescription
 {
     private string _authUser;
     private string _authPassword;

@@ -31,17 +31,17 @@ namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 
 public class MapService : IMapService2,
                           IMapServiceFuzzyLayerNames,
-                          IServiceLegend,
-                          IServiceLegend2,
-                          IServiceProjection,
-                          IServiceDatumTransformations,
-                          IServiceSelectionProperties,
+                          IMapServiceLegend,
+                          IMapServiceLegend2,
+                          IMapServiceProjection,
+                          IMapServiceDatumTransformations,
+                          IMapServiceSelectionProperties,
                           IExportableOgcService,
-                          IServiceSupportedCrs,
-                          IServiceCopyrightInfo,
+                          IMapServiceSupportedCrs,
+                          IMapServiceMetadataInfo,
                           IFeatureWorkspaceProvider,
-                          IServiceDescription,
-                          IServiceInitialException,
+                          IMapServiceDescription,
+                          IMapServiceInitialException,
                           IDynamicService,
                           IImageServiceType,
                           IMapServiceAuthentication
@@ -1182,6 +1182,7 @@ public class MapService : IMapService2,
         clone.DiagnosticsWaringLevel = this.DiagnosticsWaringLevel;
 
         clone.CopyrightInfoId = this.CopyrightInfoId;
+        clone.MetadataLink = this.MetadataLink;
 
         clone.ServiceDescription = this.ServiceDescription;
         clone.CopyrightText = this.CopyrightText;
@@ -1445,6 +1446,7 @@ public class MapService : IMapService2,
     #region IServiceCopyrightInfo 
 
     public string CopyrightInfoId { get; set; }
+    public string MetadataLink { get; set; }
 
     #endregion
 

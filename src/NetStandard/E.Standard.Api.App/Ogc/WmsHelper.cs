@@ -681,10 +681,10 @@ public class WmsHelper
 
             foreach (var service in services)
             {
-                if (service is IServiceProjection)
+                if (service is IMapServiceProjection)
                 {
-                    ((IServiceProjection)service).ProjectionMethode = ServiceProjectionMethode.Map;
-                    ((IServiceProjection)service).RefreshSpatialReference();
+                    ((IMapServiceProjection)service).ProjectionMethode = ServiceProjectionMethode.Map;
+                    ((IMapServiceProjection)service).RefreshSpatialReference();
                 }
             }
         }
@@ -842,9 +842,9 @@ public class WmsHelper
                     serviceResponse = await map.Services[0].GetMapAsync(requestContext);
                     break;
                 case WebMapping.Core.ServiceResponseType.Html:
-                    if (map.Services[0] is IPrintableService)
+                    if (map.Services[0] is IPrintableMapService)
                     {
-                        serviceResponse = await ((IPrintableService)map.Services[0]).GetPrintMapAsync(requestContext);
+                        serviceResponse = await ((IPrintableMapService)map.Services[0]).GetPrintMapAsync(requestContext);
                     }
 
                     break;
@@ -1006,10 +1006,10 @@ public class WmsHelper
             map.SpatialReference = ApiGlobals.SRefStore.SpatialReferences.ById(int.Parse(crsId));
             foreach (var service in services)
             {
-                if (service is IServiceProjection)
+                if (service is IMapServiceProjection)
                 {
-                    ((IServiceProjection)service).ProjectionMethode = ServiceProjectionMethode.Map;
-                    ((IServiceProjection)service).RefreshSpatialReference();
+                    ((IMapServiceProjection)service).ProjectionMethode = ServiceProjectionMethode.Map;
+                    ((IMapServiceProjection)service).RefreshSpatialReference();
                 }
             }
         }
@@ -1257,11 +1257,11 @@ public class WmsHelper
 
         ServiceResponse serviceResponse = null;
 
-        if (legendService is IServiceLegend)
+        if (legendService is IMapServiceLegend)
         {
-            ((IServiceLegend)legendService).LegendVisible = true;
-            ((IServiceLegend)legendService).LegendOptMethod = LegendOptimization.None;
-            serviceResponse = await ((IServiceLegend)legendService).GetLegendAsync(requestContext);
+            ((IMapServiceLegend)legendService).LegendVisible = true;
+            ((IMapServiceLegend)legendService).LegendOptMethod = LegendOptimization.None;
+            serviceResponse = await ((IMapServiceLegend)legendService).GetLegendAsync(requestContext);
         }
 
         if (serviceResponse is ImageLocation)

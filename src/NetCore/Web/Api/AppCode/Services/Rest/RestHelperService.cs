@@ -188,9 +188,9 @@ public class RestHelperService
             #endregion
         }
 
-        if (service is IServiceSupportedCrs)
+        if (service is IMapServiceSupportedCrs)
         {
-            info.supportedCrs = ((IServiceSupportedCrs)service).SupportedCrs;
+            info.supportedCrs = ((IMapServiceSupportedCrs)service).SupportedCrs;
         }
         info.isbasemap = service.IsBaseMap;
         info.show_in_toc = service.ShowInToc;
@@ -390,20 +390,21 @@ public class RestHelperService
             info.Snapping = null;
         }
 
-        if (service is IServiceLegend)
+        if (service is IMapServiceLegend mapServiceLegend)
         {
-            info.HasLegend = ((IServiceLegend)service).ShowServiceLegendInMap;
+            info.HasLegend = mapServiceLegend.ShowServiceLegendInMap;
         }
 
-        if (service is IServiceCopyrightInfo)
+        if (service is IMapServiceMetadataInfo mapServiceMetadata)
         {
-            info.copyright = ((IServiceCopyrightInfo)service).CopyrightInfoId;
+            info.MetadataLink = mapServiceMetadata.MetadataLink;
+            info.copyright = mapServiceMetadata.CopyrightInfoId;
         }
 
-        if (service is IServiceDescription)
+        if (service is IMapServiceDescription mapServiceDecription)
         {
-            info.CopyrightText = ((IServiceDescription)service).CopyrightText;
-            info.ServiceDescription = ((IServiceDescription)service).ServiceDescription;
+            info.CopyrightText = mapServiceDecription.CopyrightText;
+            info.ServiceDescription = mapServiceDecription.ServiceDescription;
 
             if (info.CopyrightText == "...")
             {
@@ -434,9 +435,9 @@ public class RestHelperService
 
         #region Exceptions
 
-        if (service is IServiceInitialException && !String.IsNullOrEmpty(((IServiceInitialException)service).InitialException?.ErrorMessage))
+        if (service is IMapServiceInitialException && !String.IsNullOrEmpty(((IMapServiceInitialException)service).InitialException?.ErrorMessage))
         {
-            info.InitialException = ((IServiceInitialException)service).InitialException?.ErrorMessage;
+            info.InitialException = ((IMapServiceInitialException)service).InitialException?.ErrorMessage;
         }
 
         #endregion
