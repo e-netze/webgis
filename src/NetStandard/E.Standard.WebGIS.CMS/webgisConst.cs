@@ -144,6 +144,10 @@ public class Globals
                 {
                     expression = expression.Replace($"[{key}]", Uri.EscapeDataString(feature[key.RemovePrefixIfPresent("url-encode:")]));
                 }
+                else if (key.StartsWith("url-encode-latin1:"))
+                {
+                    expression = expression.Replace($"[{key}]", feature[key.RemovePrefixIfPresent("url-encode-latin1:")].ToLatin1UrlEncoded());
+                }
                 else if (key.Contains(":"))
                 {
                     int pos = key.IndexOf(":");
