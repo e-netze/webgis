@@ -1,8 +1,10 @@
 ﻿using E.Standard.Api.App.DTOs;
 using E.Standard.Extensions.Compare;
+using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Extensions;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +23,8 @@ static public class DynamicServiceExtensions
     static public PresentationDTO[] DynamicPresentations(
                 this IDynamicService service,
                 IMapService originalService,
-                IEnumerable<ServiceInfoDTO.LayerInfo> layers)
+                IEnumerable<ServiceInfoDTO.LayerInfo> layers,
+                IStringLocalizer stringLocalizer)
     {
         List<PresentationDTO> presentations = new List<PresentationDTO>();
         char groupSeparator = service.DynamicGroupSeparator();
@@ -43,6 +46,31 @@ static public class DynamicServiceExtensions
                     break;
             }
 
+            var serviceMetadata = service as IMapServiceMetadataInfo;
+
+            if (!String.IsNullOrEmpty(serviceMetadata?.MetadataLink))
+            {
+                presentations.Add(new PresentationDTO()
+                {
+                    id = $"dv_{service.Name}-metadata".ToValidCmsUrl(),
+                    name = service.DynamicName($"{service.Name} Metadata"),
+                    layers = new string[0],
+                    items = new PresentationDTO.GdiProperties[]
+                    {
+                        new PresentationDTO.GdiProperties()
+                        {
+                            container = service.Name,
+                            name = service.DynamicName($"{stringLocalizer.GetString("metadata")}: {service.Name}..."),
+                            visible = true,
+                            visible_with_service = true,
+                            style = "info",
+                            metadata = serviceMetadata.MetadataLink,
+                            metadata_target = BrowserWindowTarget2.dialog.ToString().ToLowerInvariant(),
+                        }
+                    }
+                });
+            }
+
             presentations.Add(new PresentationDTO()
             {
                 id = $"dv_{service.Name}-off".ToValidCmsUrl(),
@@ -53,10 +81,10 @@ static public class DynamicServiceExtensions
                     new PresentationDTO.GdiProperties()
                     {
                         container = service.Name,
-                        name = $"alle aus: {service.Name}",
+                        name = $"{stringLocalizer.GetString("all-off")}: {service.Name}",
                         visible = true,
                         visible_with_service = true,
-                        style = "button"
+                        style = "button",
                     }
                 }
             });
@@ -76,7 +104,7 @@ static public class DynamicServiceExtensions
                             name = $"Standard: {service.Name}",
                             visible = true,
                             visible_with_service = true,
-                            style = "button"
+                            style = "button",
                         }
                     }
                 });

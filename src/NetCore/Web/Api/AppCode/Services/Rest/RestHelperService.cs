@@ -1,4 +1,5 @@
-﻿using Api.Core.AppCode.Extensions;
+﻿using Api.Controllers;
+using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Mvc;
 using Api.Core.AppCode.Sorting;
 using E.Standard.Api.App.DTOs;
@@ -16,6 +17,7 @@ using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Geometry.Extensions;
 using E.Standard.WebMapping.GeoServices.Tiling;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,18 +33,21 @@ public class RestHelperService
     private readonly CacheService _cache;
     private readonly IRequestContext _requestContext;
     private readonly IHttpContextAccessor _contextAccessor;
+    private readonly IStringLocalizer _stringLocalizer;
 
     public RestHelperService(UrlHelperService urlHelper,
                              UploadFilesService upload,
                              CacheService cache,
                              IRequestContext requestContext,
-                             IHttpContextAccessor httpContextAccessor)
+                             IHttpContextAccessor httpContextAccessor,
+                             IStringLocalizerFactory stringLocalizerFactory)
     {
         _urlHelper = urlHelper;
         _upload = upload;
         _cache = cache;
         _requestContext = requestContext;
         _contextAccessor = httpContextAccessor;
+        _stringLocalizer = stringLocalizerFactory.Create(typeof(RestController));
     }
 
     #region Services
@@ -324,7 +329,7 @@ public class RestHelperService
             if (service.UseDynamicPresentations())
             {
                 var originalService = _cache.GetOriginalService(id, ui, _urlHelper).Result;
-                info.presentations = (service as IDynamicService).DynamicPresentations(originalService, layers);
+                info.presentations = (service as IDynamicService).DynamicPresentations(originalService, layers, _stringLocalizer);
             }
             else
             {

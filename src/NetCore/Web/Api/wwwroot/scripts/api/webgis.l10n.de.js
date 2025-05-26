@@ -13,6 +13,9 @@
     "search-in-services": "In Diensten suchen",
     "remove-service": "Dienst aus Karte entfernen",
 
+    "metadata": "Metadaten",
+    "metadata-link": "Link zu den Metadaten...",
+
     "tool": "Werkzeug",
     "tools": "Werkzeuge",
     "current-tool": "Aktives Werkzeug",

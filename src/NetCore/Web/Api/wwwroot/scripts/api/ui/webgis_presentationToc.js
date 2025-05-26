@@ -181,7 +181,7 @@
                                 if (!service || !service.presentations)
                                     continue;
 
-                              
+
                                 for (let sp in service.presentations) {
                                     let presentation = service.presentations[sp];
                                     if (!presentation) continue;
@@ -192,7 +192,7 @@
                                             if (presentation.service.id === p.presentation.service.id)  //       than continue only if its the same service
                                                 continue;
                                         } else { continue; }                                            //    otherwise continue               
-                                    } 
+                                    }
 
                                     // uncheck if its an optionbox in the the same group
                                     for (let it in presentation.items) {
@@ -208,6 +208,20 @@
                                         }
                                     }
                                 }
+                            }
+                        }
+                    }
+                    else if (p.item.style === 'info') {
+                        // open link in new tab
+                        const url = p.item.metadata;
+                        if (url && url.length > 0) {
+                            if (url.indexOf('http') !== 0) {
+                                url = webgis.globals.portal.baseUrl + url;
+                            }
+                            if (p.item.metadata_target === "dialog") {
+                                webgis.iFrameDialog(url, p.item.metadata_title || p.item.name || "Metadaten")
+                            } else {
+                                window.open(url, '_blank');
                             }
                         }
                     }
@@ -832,13 +846,23 @@
                     for (let s in services) {
                         let service = services[s];
 
-                        if (service.servicedescription || service.copyrighttext || service.copyrightId) {
+                        if (service.metadata_link || service.servicedescription || service.copyrighttext || service.copyrightId) {
                             descriptionCount++;
                             $("<h2></h2>")
                                 .text(service.name)
                                 .appendTo($descriptionTabContent);
 
-                            // ToDo: Javascript injekction: sollte am Server geparsed werden...
+                            if (service.metadata_link) {
+                                let $metadata = $("<div>")
+                                    .addClass('webgis-service-metadata-link')
+                                    .appendTo($descriptionTabContent);
+                                $("<a>")
+                                    .attr('href', service.metadata_link)
+                                    .attr('target', '_blank')
+                                    .text(webgis.l10n.get("metadata-link"))
+                                    .appendTo($metadata);
+                            }
+
                             if (service.servicedescription) {
                                 let $descr = $("<div></div>")
                                     .addClass('webgis-service-description')
@@ -1338,7 +1362,10 @@
                     $parentUl.parent().data('serviceGuids').push(service.guid);
                 }
 
-                let hasMetadata_iButton = (prop.group_metadata || prop.metadata) && prop.metadata_button_style == 'i_button';
+                let hasMetadata_iButton =
+                    prop.style !== 'info' &&
+                    (prop.group_metadata || prop.metadata) &&
+                    prop.metadata_button_style == 'i_button';
 
                 if (prop.group_metadata && $group_li != null
                     && $group_li.find('.webgis-api-icon.webgis-api-icon-info').length === 0) {
@@ -1445,7 +1472,7 @@
                         }
                     }
                     else {
-                        let btn = "<img style='width:16px' src=" + webgis.css.imgResource("layers-16.png", "toc") + ">";
+                        let btn = "<img class='toc-icon' src=" + webgis.css.imgResource(prop.style === "info" ? "info-26.png" :  "layers-16.png", "toc") + ">";
                         $("<span class='webgis-search-content'>" + btn + "&nbsp;<span class='webgis-text-span nowrap'>" + webgis.encodeHtmlString(itemname) + "<span></span>").appendTo($item_li);
                         $item_li.click(function () {
                             let c = $.presentationToc.process(this, this.presIds);
@@ -1472,7 +1499,8 @@
                     ? 'group_'
                     : '';
                 
-                if (prop[metadata_prefix + 'metadata']
+                if (prop.style !== 'info'
+                    && prop[metadata_prefix + 'metadata']
                     && $item_li.find('.webgis-api-icon.webgis-api-icon-info').length === 0
                     && $item_li.next('.webgis-presentation_toc-item.link-button').length === 0) {
                     let $metadataButton = $("<span></span>")
@@ -1496,7 +1524,7 @@
                         default:
                             hasMetadata_iButton = true;
                             $metadataButton
-                                .css({ position: 'absolute', left: '26px' })
+                                .css({ position: 'absolute', left: '26px', 'marginTop': '2px' })
                                 .addClass('webgis-api-icon webgis-api-icon-info').prependTo($item_li)
                                 .attr('title', prop.metadata_title);
                             break;
@@ -1661,7 +1689,7 @@
 
         let img = content.map.ui.dynamicContentIcon(content);
 
-        $("<span class='webgis-search-content'><img style='width:16px' src=" + img + ">&nbsp;" + webgis.encodeHtmlString(content.name) + "</span>").appendTo($item_li);
+        $("<span class='webgis-search-content'><img class='toc-icon' src=" + img + ">&nbsp;" + webgis.encodeHtmlString(content.name) + "</span>").appendTo($item_li);
     };
     let addBasemap = function (e, service, parent) {
         let $elem = $(parent);
@@ -1832,7 +1860,7 @@
                 .insertBefore($item_ul.find('.webgis-presentation_toc-basemap-collapse'));
 
             let isChecked = service.map.currentBasemapOverlayServiceIds().includes(service.id);
-            let chk = "<img style='width:16px' src=" + webgis.css.imgResource(isChecked ? "check1.png" : "check0.png", "toc") + ">";
+            let chk = "<img class='toc-icon' src=" + webgis.css.imgResource(isChecked ? "check1.png" : "check0.png", "toc") + ">";
             $("<span>" + chk + "&nbsp;" + webgis.encodeHtmlString(service.name) + "</span>").appendTo($item_li);
 
             $item_li.click(function () {

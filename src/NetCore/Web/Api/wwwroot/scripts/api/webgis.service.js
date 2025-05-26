@@ -25,6 +25,7 @@
     this.copyrightId = serviceInfo.copyright;
     this.servicedescription = serviceInfo.servicedescription;
     this.copyrighttext = serviceInfo.copyrighttext;
+    this.metadata_link = serviceInfo.metadata_link || null;
     this.guid = webgis.guid();
 
     let _order = 0;

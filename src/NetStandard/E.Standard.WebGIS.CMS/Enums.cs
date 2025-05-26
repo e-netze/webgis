@@ -183,14 +183,14 @@ public enum PresentationGroupStyle
 {
     Button = 0,
     Checkbox = 1,
-    Dropdown = 2
+    Dropdown = 2,
 }
 
 public enum PresentationCheckMode
 {
     Button = 0,
     CheckBox = 1,
-    OptionBox = 2
+    OptionBox = 2,
 }
 
 public enum PresentationLinkCheckMode
@@ -198,7 +198,8 @@ public enum PresentationLinkCheckMode
     Button = 0,
     CheckBox = 1,
     OptionBox = 2,
-    DynamicContentMarker = 3
+    DynamicContentMarker = 3,
+    Info = 4
 }
 
 public enum PresentationAffecting

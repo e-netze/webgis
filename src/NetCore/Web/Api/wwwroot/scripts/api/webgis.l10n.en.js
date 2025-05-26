@@ -13,6 +13,9 @@
     "search-in-services": "Search in services",
     "remove-service": "Remove service from map",
 
+    "metadata": "Metadata", 
+    "metadata-link": "Link to metadata...",
+
     "tool": "Tool",
     "tools": "Tools",
     "current-tool": "Current tool",

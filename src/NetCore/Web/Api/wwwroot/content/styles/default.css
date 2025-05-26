@@ -1455,6 +1455,12 @@ tr.webgis-border-bottom td{
     left:17px;
 }
 
+.webgis-presentation_toc-item img.toc-icon {
+    position: relative;
+    top: 2px;
+    width: 16px;
+}
+
 .webgis-presentation_toc-basemap-item {
     display: inline-block;
     width: calc(33% - 16px);

@@ -31,6 +31,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Bug: Can't save edit features if calc-CRS differs from map-CRS
 
+- Metadata: Enhance metadata 
+  - Bug: Metadata button not shown in TOC for services with dynamic TOC sometimes 
+  - nicer Button
+  - Metadata for hole service as button in TOC. 
+  - Presentation type ``Info`` shows list item with i-button and opens metadata in dialog.
+  - Shows service metadata link in service copyright & description dialog
+
 ## Fixed
 
 ## 7.25.2001
