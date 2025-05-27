@@ -35,6 +35,14 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
     private IRequestContext? _requestContext;
     private readonly IMapServiceAuthentication _mapServiceAuth;
 
+    // IFeatureWorkspace requires a parameterless constructor,
+    // so we need to provide a default MapService instance
+    // (if created from an legacy workspaces.xml file, see EditEnvironment.cs:967 FeatureWorkspace(...))
+    public FeatureService()
+        : this(new MapService() { TokenExpiration = 30 })
+    {
+    }
+
     public FeatureService(MapService mapService)
     {
         _mapServiceAuth = new MapService()
