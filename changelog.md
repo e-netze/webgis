@@ -27,11 +27,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Usability: Click row in result table don't fire an autoscroll to this row. Autoscroll is only fired, if a result-map-marker is clicked.
 
-- Usability: Enhance result table scrolling. Tables remembers scroll position on switch between tabs.
+- Usability: Enhance result-table scrolling. Tables remembers scroll position on switch between tabs.
 
 - Bug: Can't save edit features if calc-CRS differs from map-CRS
 
-- Metadata: Enhance metadata 
+- Metadata: Enhance metadata behavior
   - Bug: Metadata button not shown in TOC for services with dynamic TOC sometimes 
   - nicer Button
   - Metadata for hole service as button in TOC. 

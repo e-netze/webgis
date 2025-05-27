@@ -33,6 +33,9 @@
                     $(this).val(firstValue).trigger('change');
                 }
             }
+        },
+        refresh: function (options) {
+            
         }
     };
 
@@ -47,6 +50,8 @@
         var isInitialized = $elem.hasClass('initialized');
 
         if (options.customitems) {
+            console.log('querycombo.cutomitems', options.customitems);
+
             for (var i in options.customitems) {
                 var item = options.customitems[i];
                 var $parent = $elem;
@@ -56,7 +61,9 @@
                         $parent = $("<optgroup label='" + item.category + "' />").addClass('webgis-custom-option').appendTo($elem);
                 }
                 var $opt = $("<option value='" + item.value + "'>" + item.name + "</option>").addClass('webgis-custom-option').appendTo($parent);
-
+                if (item.value === '#') {
+                    $opt.css('font-weight', 'bold');
+                }
                 if (!isInitialized && (item.value === webgis.initialParameters.querythemeid)) {
                     $elem.addClass('initialized').val(item.value).trigger('change');
                     isInitialized = true;
@@ -65,8 +72,8 @@
         }
 
         if (options.map !== null) {
-            for (var serviceId in options.map.services) {
-                var service = options.map.services[serviceId];
+            for (let serviceId in options.map.services) {
+                const service = options.map.services[serviceId];
                 addService({}, service, elem);
             }
         }
@@ -129,6 +136,27 @@
         });
         $elem.trigger('change');
     };
+    var addVisibleQueries = function (e, map, elem) {
+        const $elem = $(elem || this);
+
+        $elem.children('.scale-dependent').remove();
+        const visiableQueriesOption = $elem.children("[value='#']")
+        if (!map || visiableQueriesOption.length !== 1) return;
+       
+        for (let serviceId in map.services) {
+            const service = map.services[serviceId];
+
+            for (const query of service.queries) {
+                if (service.layerVisibleAndInScale(query.layerid)) {
+                    $("<option>")
+                        .addClass('scale-dependent')
+                        .attr('value', service.id + ':' + query.id)
+                        .text('* ' + query.name)
+                        .insertAfter(visiableQueriesOption);
+                }
+            }
+        }
+    }
 })(webgis.$ || jQuery);
 
 (function ($) {

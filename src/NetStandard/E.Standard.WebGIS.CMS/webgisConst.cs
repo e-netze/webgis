@@ -183,7 +183,7 @@ public class Globals
                     string fKey = key.Substring(1, key.Length - 1);
                     expression = expression.Replace($"[{key}]", feature[fKey]);
                 }
-                else if (key.StartsWith("!")) // Zwingender Parameter
+                else if (key.StartsWith("!")) // Required Parameter
                 {
                     string fKey = key.Substring(1, key.Length - 1);
                     if (String.IsNullOrEmpty(feature[fKey]))
