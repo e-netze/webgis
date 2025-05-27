@@ -213,7 +213,7 @@
                     }
                     else if (p.item.style === 'info') {
                         // open link in new tab
-                        const url = p.item.metadata;
+                        let url = p.item.metadata;
                         if (url && url.length > 0) {
                             if (url.indexOf('http') !== 0) {
                                 url = webgis.globals.portal.baseUrl + url;
