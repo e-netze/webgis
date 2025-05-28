@@ -308,7 +308,7 @@
     };
 
     this.refreshUIElements = function (servercommand) {
-        //console.log('refrshUIElements', servercommand);
+        //console.log('refreshUIElements', servercommand);
 
         var me = this, qString = '', eString = '', tString = '', sString = '', vfString = '', lString = '';
         var currentScale = this._map.scale();
@@ -830,6 +830,9 @@
             $('.webgis-graphics-hectoline-unit').val(map.graphics.getHectolineUnit());
             $('.webgis-graphics-hectoline-interval').val(map.graphics.getHectolineInterval());
         }
+        $('.webgis-query-combo.require-ui-refresh').each(function (i, e) {
+            $(e).webgis_queryCombo('refresh');
+        });
         this._map.events.fire('onrefreshuielements', this._map);
     };
     this._cloneOptions = function (options) {

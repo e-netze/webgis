@@ -1264,7 +1264,7 @@
                     this._hourglassCounter.dec(sender.name);
                     this._hourglassCounterGuid.dec(sender.guid);
                 }, this);
-                service.events.on('onchangevisibility', function (e, sender) {
+                service.events.on(['onchangevisibility','onchangevisibility-delayed'], function (e, sender) {
                     this.ui.refreshUIElements();
                     this.events.fire('onservice-changevisibility', this, sender);
                 }, this);
