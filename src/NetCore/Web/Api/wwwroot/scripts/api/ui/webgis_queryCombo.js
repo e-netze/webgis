@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
     "use strict";
     $.fn.webgis_queryCombo = function (method) {
         if (methods[method]) {
@@ -33,11 +33,21 @@
                     $(this).val(firstValue).trigger('change');
                 }
             }
+        },
+        refresh: function (options) { 
+            var $this = $(this);
+            if ($this.hasClass('refreshing')) return;
+
+            $this.addClass('refreshing');
+            webgis.delayed(function () {
+                addVisibleQueries({}, this.get(0)._map, this);
+                this.removeClass('refreshing');
+            }.bind(this), 300, $this);
         }
     };
 
     var initUI = function (elem, options) {
-        var $elem = $(elem);
+        var $elem = $(elem).addClass('webgis-query-combo');
         elem._map = options.map;
         elem._opt = options;
         if (options.onchange) {
@@ -47,6 +57,8 @@
         var isInitialized = $elem.hasClass('initialized');
 
         if (options.customitems) {
+            //console.log('querycombo.cutomitems', options.customitems);
+
             for (var i in options.customitems) {
                 var item = options.customitems[i];
                 var $parent = $elem;
@@ -56,7 +68,11 @@
                         $parent = $("<optgroup label='" + item.category + "' />").addClass('webgis-custom-option').appendTo($elem);
                 }
                 var $opt = $("<option value='" + item.value + "'>" + item.name + "</option>").addClass('webgis-custom-option').appendTo($parent);
-
+                if (webgis.usability?.listVisibleQueriesInQueryCombo === true
+                    && item.value === '#') {
+                    $opt.css('font-weight', 'bold');
+                    $elem.addClass('require-ui-refresh');
+                }
                 if (!isInitialized && (item.value === webgis.initialParameters.querythemeid)) {
                     $elem.addClass('initialized').val(item.value).trigger('change');
                     isInitialized = true;
@@ -65,8 +81,8 @@
         }
 
         if (options.map !== null) {
-            for (var serviceId in options.map.services) {
-                var service = options.map.services[serviceId];
+            for (let serviceId in options.map.services) {
+                const service = options.map.services[serviceId];
                 addService({}, service, elem);
             }
         }
@@ -129,6 +145,40 @@
         });
         $elem.trigger('change');
     };
+    var addVisibleQueries = function (e, map, elem) {
+        //console.log('webgis_queryCombo.addVisibleQueries', e, map, elem);
+        if (webgis.usability?.listVisibleQueriesInQueryCombo !== true) return;
+
+        const $elem = $(elem || this);
+
+        $elem.children('.scale-dependent').addClass('check-visibility');
+        const visiableQueriesOption = $elem.children("[value='#']")
+        if (!map || visiableQueriesOption.length !== 1) return;
+       
+        for (let serviceId in map.services) {
+            const service = map.services[serviceId];
+
+            for (const query of service.queries) {
+                if (service.layerVisibleAndInScale(query.layerid)) {
+                    const $existingOption = $elem.find("option.scale-dependent[value='" + service.id + ':' + query.id + "']");
+
+                    if ($existingOption.length > 0) {
+                        $existingOption.removeClass('check-visibility');
+                        continue;
+                    }
+
+                    $("<option>")
+                        .addClass('scale-dependent')
+                        .css('fontStyle', 'italic')
+                        .attr('value', service.id + ':' + query.id)
+                        .text('☑ ' + query.name)
+                        .insertAfter(visiableQueriesOption);
+                }
+            }
+        }
+
+        $elem.children('.scale-dependent.check-visibility').remove();
+    }
 })(webgis.$ || jQuery);
 
 (function ($) {
@@ -614,7 +664,7 @@
             }
 
             // 
-            // Wenn Anwender alle ausw�hlt automatisch auf erstes nicht gruppiertes element
+            // Wenn Anwender alle auswählt automatisch auf erstes nicht gruppiertes element
             // => in der Regel "alle sichtbaren Themen"
             //
             if ($catCombo.hasClass('triggered')) {

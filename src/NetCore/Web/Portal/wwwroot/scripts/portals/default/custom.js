@@ -15,6 +15,7 @@ webgis.usability.showTips = true;
 webgis.usability.allowAddCustomServices = true;
 webgis.usability.makePresentationTocGroupCheckboxes = true;
 
+webgis.usability.listVisibleQueriesInQueryCombo = true;
 //webgis.usability.zoom.useDefaultZooming();
 
 calcCrs = 31256; // webgis.calc.crs_BestAustria_GK;
