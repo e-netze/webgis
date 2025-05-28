@@ -28,20 +28,12 @@
     <None Remove="system\proj\**" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Remove="wwwroot\scripts\api\ui\webgis_querybuilder.js" />
-  </ItemGroup>
-
   <ItemGroup>    <None Remove="l10n\en\.md" />
     <None Remove="l10n\en\Tools.AddToSelection.md" />
     <None Remove="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.LoadMap-label1.txt" />
     <None Remove="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.SaveMap-label1.txt" />
     <None Remove="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.SaveMap-label2.txt" />
     <None Remove="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.SaveMap-restorationcode-label1.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\scripts\api\ui\webgis_querybuilder.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -130,10 +122,6 @@
     <Folder Include="wwwroot\content\api\img\tools\akt\" />
     <Folder Include="_config\" />
   </ItemGroup>	
-	
-  <ItemGroup>
-    <None Include="wwwroot\scripts\api\ui\webgis_queryBuilder.js" />
-  </ItemGroup>
 
   <ItemGroup>
     <Content Update="wwwroot\scripts\leaflet-1.6.0\leaflet.label-src.js">
