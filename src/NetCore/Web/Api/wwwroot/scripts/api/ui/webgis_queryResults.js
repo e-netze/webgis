@@ -826,7 +826,8 @@
                                             .data('oid', feature.oid)
                                             .css('background-image', 'url(' + webgis.css.imgResource('edit-attributes-26.png', 'tools') + ')')
                                             .appendTo($td)
-                                            .click(function () {
+                                            .click(function (e) {
+                                                e.stopPropagation();
                                                 var args = [], map = $(this).data('map');
                                                 args["feature-oid"] = $(this).data('oid')
                                                 args["edittheme"] = $(this).data('edittheme').themeid;
@@ -834,6 +835,7 @@
                                                 args["edit-map-crsid"] = map.calcCrs().id;
 
                                                 map.setViewFocus($(this).closest('tr').data('feature-bbox'), 0.3);
+
                                                 webgis.tools.onButtonClick(map, { command: 'editattributes', type: 'servertoolcommand_ext', id: editAttributesToolId, map: map }, this, null, args);
                                             });
                                         //edit update
@@ -846,7 +848,8 @@
                                             .data('oid', feature.oid)
                                             .css('background-image', 'url(' + webgis.css.imgResource('webgis-tools-editing-edit-update.png', 'tools') + ')')
                                             .appendTo($td)
-                                            .click(function () {
+                                            .click(function (e) {
+                                                e.stopPropagation();
                                                 var args = [], map = $(this).data('map');
                                                 args["feature-oid"] = $(this).data('oid')
                                                 args["edittheme"] = $(this).data('edittheme').themeid;
@@ -867,7 +870,8 @@
                                             .data('oid', feature.oid)
                                             .css('background-image', 'url(' + webgis.css.imgResource('webgis-tools-editing-edit-delete.png', 'tools') + ')')
                                             .appendTo($td)
-                                            .click(function () {
+                                            .click(function (e) {
+                                                e.stopPropagation();
                                                 var args = [], map = $(this).data('map');
                                                 args["feature-oid"] = $(this).data('oid')
                                                 args["edittheme"] = $(this).data('edittheme').themeid;

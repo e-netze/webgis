@@ -1705,6 +1705,7 @@
         this.refreshSnapping();
     };
     this.zoomTo = function (bounds, project) {
+        //console.trace('zoomTo', bounds);
         if (webgis.mapFramework === "leaflet") {
             if (bounds && bounds.length === 4) {
                 if (project) {
@@ -1726,7 +1727,7 @@
         }
     };
     this.zoomToBoundsOrScale = function (bounds, scale, resizePercent) {
-
+        //console.trace('zoomTo', bounds);
         if (webgis.usability.zoom.allowsFreeZooming() && resizePercent !== 0) {
             resizePercent = resizePercent || 10.0;
             bounds = webgis.calc.resizeBounds(bounds, 1.0 + resizePercent / 100.0);
@@ -1851,16 +1852,28 @@
         console.log('verticesBbox', verticesBbox);
         console.log('center', mapCenter);
 
-        let ratio = webgis.calc.bboxSizeRatio(mapBbox, verticesBbox);
-        if (ratio > 5) {
+        const ratio = webgis.calc.bboxSizeRatio(mapBbox, verticesBbox);
+        console.log('ratio', ratio);
+
+        const innerMapBbox = webgis.calc.bboxResizePerRatio(mapBbox, 0.6),
+            fVertex = [focusVertex.x, focusVertex.y];
+        const featureMinScale = webgis.featureZoomMinScale(this.queryResultFeatures?.first()) || 250;
+
+        if (/*ratio == 'Infinity' ||*/ ratio > 100) {  // point => 'Infinity' alway > 100
+            
+            if (!webgis.calc.bboxContains(innerMapBbox, fVertex)
+                || this.scale() > featureMinScale) {
+                this.setScale(webgis.usability.zoom.minFeatureZoom > 1
+                    ? Math.max(featureMinScale, webgis.usability.zoom.minFeatureZoom)
+                    : featureMinScale, fVertex);
+            }
+        }
+        else if (ratio > 5) {
             this.zoomTo(webgis.calc.bboxResizePerRatio(verticesBbox, 1.2));
         } 
         else if (focusVertex) {
-            let innerMapBbox = webgis.calc.bboxResizePerRatio(mapBbox, 0.6),
-                vertex = [focusVertex.x, focusVertex.y];
-
-            if (!webgis.calc.bboxContains(innerMapBbox, vertex)) {
-                this.setCenter(vertex, duration);
+            if (!webgis.calc.bboxContains(innerMapBbox, fVertex)) {
+                this.setCenter(fVertex, duration);
             }
         }
     };

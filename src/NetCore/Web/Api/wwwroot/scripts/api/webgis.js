@@ -3122,6 +3122,7 @@
             }
         };
 
+        //console.log('featuresZoomMinScale', minScale);
         return minScale;
     };
     this.featureZoomMinScale = function (feature) {
@@ -3131,9 +3132,9 @@
                 feature &&
                     feature.properties &&
                     feature.properties._zoomscale &&
-                    parseInt(feature.properties._zoomscale) > 1 ?
-                    parseInt(feature.properties._zoomscale) :
-                    webgis.usability.zoom.minFeatureZoom;
+                    parseInt(feature.properties._zoomscale) > 1
+                    ? parseInt(feature.properties._zoomscale)
+                    : webgis.usability.zoom.minFeatureZoom;
 
         //console.log('minScale', minScale, this._userPreferencedMinScale);
         //if (webgis._userPreferencedMinScale > 0 && webgis._userPreferencedMinScale > minScale) {
