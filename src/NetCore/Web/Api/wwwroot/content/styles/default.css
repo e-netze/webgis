@@ -2178,6 +2178,11 @@ tr.webgis-border-bottom td{
                     opacity: .5;
                 }
 
+            .webgis-tab-control .webgis-tab-control-tabbar .webgis-tab-control-tab.loading .pin {
+                background-image: url(../api/img/hourglass/loader1.gif);
+                opacity: 1.0;
+            }
+
             .webgis-tab-control .webgis-tab-control-tabbar .webgis-tab-control-tab .pin:hover,
             .webgis-tab-control .webgis-tab-control-tabbar .webgis-tab-control-tab.pinned .pin {
                 opacity: 1.0;

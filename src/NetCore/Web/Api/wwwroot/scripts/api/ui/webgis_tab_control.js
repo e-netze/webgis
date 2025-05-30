@@ -286,6 +286,10 @@
                 .addClass('webgis-tab-control-tab-content')
                 .attr('tab-id', tab.id)
                 .css('display', 'none')
+                .on('scroll', function () {   // make sure scroll position is saved
+                    const $this = $(this);
+                    $this.data("_scrollTop", $this.scrollTop());
+                })
                 .appendTo($control);
         }
 
@@ -447,22 +451,30 @@
         if ($tabContent.length === 0)
             return null;
 
-        $control.children(".webgis-tab-control-tab-content").css("display", "none");
+        $tab.addClass('loading');
 
-        if ($tab.data("onSelected")) {
-            $tab.data("onSelected")($control, $tab, $tab2tabOptions($tab));
-        }
+        webgis.delayed(function () {  // run this in a new "thread" to let ui thread show loading icon
+            $control.children(".webgis-tab-control-tab-content").css("display", "none");
 
-        _checkSize($tabBar);
+            if ($tab.data("onSelected")) {
+                $tab.data("onSelected")($control, $tab, $tab2tabOptions($tab));
+            }
 
-        return $tabContent
-            .css("display", "block")
-            .data("$tab", $tab)
-            .on('scroll', function () {   // make sure scroll position is saved
-                const $this = $(this);
-                $this.data("_scrollTop", $this.scrollTop());
-            })
-            .scrollTop($tabContent.data("_scrollTop") || 0);  // and restore scroll position after reopening tab
+            _checkSize($tabBar);
+            
+            $tabContent
+                .css("display", "block")
+                .data("$tab", $tab)
+                //.on('scroll', function () {   // make sure scroll position is saved
+                //    const $this = $(this);
+                //    $this.data("_scrollTop", $this.scrollTop());
+                //})
+                .scrollTop($tabContent.data("_scrollTop") || 0);  // and restore scroll position after reopening tab
+
+            $tab.removeClass('loading');
+        }, 1);
+
+        return $tabContent;
     };
 
     var $tab2tabOptions = function ($tab) {

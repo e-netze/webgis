@@ -596,7 +596,7 @@
             }
             if (vis === true && $e.hasClass("webgis-dependency-hasselection")) {
                 var selection = me._map.getSelection("selection");
-                if ((selection && selection.isActive() && selection.count() > 0) || me._map.queryResultFeatures.selected()) {
+                if ((selection && selection.isActive() && selection.count() > 0) || me._map.queryResultFeatures.isSelected()) {
                     if ($e.hasClass('webgis-toggle-button')) {
                         $e.addClass('selected');
                     } else {

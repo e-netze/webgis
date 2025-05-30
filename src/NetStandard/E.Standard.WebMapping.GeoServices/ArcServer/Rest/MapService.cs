@@ -772,8 +772,9 @@ public class MapService : IMapService2,
 
                         int[] selectionColor = new int[4] { selection.Color.R, selection.Color.G, selection.Color.B, selection.Color.A };
                         int[] selectionColor80 = new int[4] { selection.Color.R, selection.Color.G, selection.Color.B, selection.Color.A * 8 / 10 };
+                        int[] selectionColor66 = new int[4] { selection.Color.R, selection.Color.G, selection.Color.B, selection.Color.A * 2 / 3 };
                         int[] selectionColor33 = new int[4] { selection.Color.R, selection.Color.G, selection.Color.B, selection.Color.A / 3 };
-
+                        
                         object symbol = selection.Layer.Type switch
                         {
                             LayerType.point =>
@@ -781,8 +782,8 @@ public class MapService : IMapService2,
                                 {
                                     Type = "esriSMS",
                                     Style = "esriSMSCircle",
-                                    Color = selectionColor,
-                                    Size = 8,
+                                    Color = selectionColor33,
+                                    Size = 10,
                                     Angle = 0,
                                     Xoffset = 0,
                                     Yoffset = 0,
@@ -790,8 +791,8 @@ public class MapService : IMapService2,
                                     {
                                         Type = "",
                                         Style = "",
-                                        Color = selectionColor,
-                                        Width = 10 * (float)dpiFactor
+                                        Color = selectionColor80,
+                                        Width = 1.5f * (float)dpiFactor
                                     }
                                 },
                             LayerType.line =>
@@ -799,7 +800,7 @@ public class MapService : IMapService2,
                                 {
                                     Type = "esriSLS",
                                     Style = "esriSLSSolid",
-                                    Color = selectionColor80,
+                                    Color = selectionColor66,
                                     Width = 4 * (float)dpiFactor
                                 },
                             LayerType.polygon =>
@@ -813,7 +814,7 @@ public class MapService : IMapService2,
                                         Type = "esriSFS",
                                         Style = "esriSLSSolid", // Border
                                         Color = selectionColor80,
-                                        Width = 2 * (float)dpiFactor
+                                        Width = 1.5f * (float)dpiFactor
                                     }
                                 },
                             _ => throw new NotImplementedException($"Type {selection.Layer.Type} is not implemented.")
@@ -837,6 +838,7 @@ public class MapService : IMapService2,
                                     symbol = symbol
                                 },
                                 transparency = 0,
+                                scaleSymbols = false
                             }
                         });
                     }

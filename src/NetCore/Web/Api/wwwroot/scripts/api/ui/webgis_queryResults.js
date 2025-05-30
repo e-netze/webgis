@@ -390,7 +390,7 @@
                 }
             });
         }
-        if (map.queryResultFeatures.selected()) {
+        if (map.queryResultFeatures.isSelected()) {
             if ($selectButton) {
                 $selectButton.trigger('click');
             }

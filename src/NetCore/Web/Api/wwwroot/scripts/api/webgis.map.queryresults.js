@@ -1281,9 +1281,15 @@
             webgis.scrollTo($content, $row);
         }
 
-        if (map.queryResultFeatures.selected()) {
+        if (map.queryResultFeatures.isSelected()) {
             if ($selectButton) {
                 $selectButton.trigger('click');
+            }
+        }
+
+        if (map.queryResultFeatures.doShowMarkers() === false) {
+            if ($markerButton) {
+                $markerButton.trigger('click');
             }
         }
 
@@ -1785,7 +1791,7 @@
             bgPos: bgPos
         };
     };
-    this.selected = function () {
+    this.isSelected = function () {
         return this._queryResultFeatures && this._queryResultFeatures.metadata && this._queryResultFeatures.metadata.selected;
     };
     this.setSelected = function (selected) {
@@ -1796,7 +1802,7 @@
     this.setSelection = function (select, $senderButton) {
         var map = this._map;
 
-        map.queryResultFeatures.setSelected(select, $senderButton);
+        map.queryResultFeatures.setSelected(select);
         if (select) {
             var editShortCutDisplayStyle = 'none';
             if (map.queryResultFeatures.count() > 0) {
@@ -1841,11 +1847,20 @@
 
         return this._map.frameworkElement.hasLayer(this._queryResultLayer);
     };
+    this.doShowMarkers = function () {
+        return this._queryResultFeatures && this._queryResultFeatures.metadata && this._queryResultFeatures.metadata.showMarkers;
+    };
+    this.setDoShowMarkers = function (show) {
+        if (!this._queryResultFeatures.metadata)
+            this._queryResultFeatures.metadata = {};
+        this._queryResultFeatures.metadata.showMarkers = show;
+    };
     this.setMarkerVisibility = function (show, $markerButton) {
         if (this._queryResultLayer == null) {
             return;
         }
 
+        this._map.queryResultFeatures.setDoShowMarkers(show);
         if (show && !this.markersVisible()) {
             this._queryResultLayer.addTo(this._map.frameworkElement);
         } else if (!show && this.markersVisible()) {
