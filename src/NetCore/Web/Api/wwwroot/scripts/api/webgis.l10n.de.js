@@ -83,6 +83,7 @@
     "apply": "Anwenden",
     "yes": "Ja",
     "no": "Nein",
+    "default": "Standard",
     "off": "Beenden",
     "discard-changes": "Änderungen verwerfen",
     "file-upload": "Datei hochladen",
@@ -313,5 +314,11 @@
     "sketch-overlapping-segements-remove-prev": "Vorgänger-Punkt löschen",
 
     "as-preference-scale": "Als bevorzugten Maßstab festlegen.",
-    "preference-scale-info": "Bei der Anzeige von Abfrageergebnissen wird immer auf diesen Maßstab gezoomt, außer das entsprechende Geo-Objekt ist zu groß. Mit Reset kann der letzte hier festgelegte Wert auf den Standardwert zurückgesetzt werden."
+    "preference-scale-info": "Bei der Anzeige von Abfrageergebnissen wird immer auf diesen Maßstab gezoomt, außer das entsprechende Geo-Objekt ist zu groß. Mit Reset kann der letzte hier festgelegte Wert auf den Standardwert zurückgesetzt werden.",
+
+    "user-preferences": "Benutzer Einstellungen",
+    "show-markers-on-new-queries": "Marker bei neuen Abfragen anzeigen",
+    "show-markers-on-new-queries-info": "Wenn diese Methode angewendet wird, werden bei jeder neuen Abfrage automatisch Kartenmarken in der Karte angezeigt. Das Defaultverhalten ist, das Marker automatisch dargestellt werden.",
+    "select-new-query-results": "Neue Abfragen in der Karte auswählen/selektieren",
+    "select-new-query-results-info": "Wenn diese Methode angewendet wird, werden Abfrageergebnisse in der Karte automatisch selektiert dargestellt."
 };

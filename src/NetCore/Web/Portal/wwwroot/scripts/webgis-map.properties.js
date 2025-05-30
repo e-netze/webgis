@@ -29,7 +29,7 @@
         }
     };
 
-    var initUI = function ($parent, options) {
+    let initUI = function ($parent, options) {
         $parent.webgis_modal({
             title: webgis.l10n.get('viewer-settings'),
             width: '800px',
@@ -57,6 +57,8 @@
                     addAppearencePage($modalContent);
                 }
 
+                addUserPreferencesPage($modalContent);
+
                 if (webgis.hmac) {
                     if (webgis.hmac.favoritesProgramAvailable() || webgis.hmac.favoritesProgramActive()) {
                         addFavoritesPage($modalContent);
@@ -74,7 +76,7 @@
         });
     };
 
-    var addPropertyPage = function($parent, options) {
+    let addPropertyPage = function($parent, options) {
         var $tab = $("<div>")
             .attr('data-id', options.id)
             .addClass('webgis-property-tab')
@@ -92,7 +94,7 @@
 
         return { $tab: $tab, $content: $content };
     };
-    var addRestartViewerMessage = function ($parent) {
+    let addRestartViewerMessage = function ($parent) {
         var $div = $("<div>")
             .addClass('webgis-restart-viewer-message')
             .css('display', 'none')
@@ -112,12 +114,12 @@
                 window.location.reload();
             });
     };
-    var showRestartViewerMessage = function ($parent) {
+    let showRestartViewerMessage = function ($parent) {
         $parent.children(".webgis-restart-viewer-message").css('display', 'block');
     };
 
-    var addAppearencePage = function ($parent) {
-        let page = addPropertyPage($parent, { id: 'appearence', title: webgis.l10n.get('viewer-appearence') });
+    let addAppearencePage = function ($parent) {
+        const page = addPropertyPage($parent, { id: 'appearence', title: webgis.l10n.get('viewer-appearence') });
 
         page.$tab.css("backgroundImage", "url(" + webgis.css.imgResource("colorschema-26.png", "tools") + ")");
 
@@ -239,7 +241,42 @@
             $select.val(webgis.localStorage.get("map.properties.cssClass") || 'default');
         }
     };
-    var addFavoritesPage = function ($parent) {
+
+    let addUserPreferencesPage = function ($parent) {
+        const page = addPropertyPage($parent, { id: 'preferences', title: webgis.l10n.get('user-preferences') });
+        const $content = $("<div>").appendTo(page.$content);
+
+        page.$tab.css("backgroundImage", "url(" + webgis.css.imgResource("admin-26.png", "ui") + ")");
+
+        for (var key in webgis.usability.userPreferences.all) {
+            const pref = webgis.usability.userPreferences.all[key];
+
+            $("<div>")
+                .addClass("webgis-property-content-title2")
+                .text(webgis.l10n.get(key))
+                .appendTo($content);
+
+            if (pref.type === 'boolean') {
+                createDefaultTrueFalseCombo()
+                    .data('key', key)
+                    .appendTo($content)
+                    .change(function () {
+                        const $this = $(this);
+                        webgis.usability.userPreferences.set($this.data('key'), $this.val());
+                    })
+                    .val(webgis.usability.userPreferences.get(key));
+            }
+
+            $("<div>")
+                .text(webgis.l10n.get(key + '-info'))
+                .css({ "fontSize": "0.9em", "margin": "7px 2px", "color": "#777" })
+                .appendTo($content);
+
+            $("<br><br>").appendTo($content);
+        }
+    };
+
+    let addFavoritesPage = function ($parent) {
         var page = addPropertyPage($parent, { id: 'favorites', title: 'Favorites' });
 
         page.$tab.css("backgroundImage", "url(" + webgis.css.imgResource("favorites-26.png", "tools") + ")");
@@ -281,7 +318,7 @@
                 });
         }
     };
-    var addAdminPage = function ($parent) {
+    let addAdminPage = function ($parent) {
         const page = addPropertyPage($parent, { id: 'admin', title: 'Admin' });
 
         page.$tab.css("backgroundImage", "url(" + webgis.css.imgResource("admin-26.png", "ui") + ")");
@@ -289,7 +326,7 @@
         const $adminTools = $('#webgis-info-pane .tab-admin').clone(true);
         $adminTools.appendTo(page.$content).css('display', '');
     };
-    var addCreditsAndInfo = function ($parent) {
+    let addCreditsAndInfo = function ($parent) {
         const page = addPropertyPage($parent, { id: 'credits', title: 'Credits & Info' });
 
         page.$tab.css("backgroundImage", "url(" + webgis.css.imgResource("copyright-26.png", "tools") + ")");
@@ -298,7 +335,8 @@
         $adminTools.appendTo(page.$content).css('display', '');
     }
 
-    var showTabContent = function ($parent, options) {
+
+    let showTabContent = function ($parent, options) {
         const $tabs = $parent.children('.webgis-properties-tabs'),
               $contents = $parent.children('.webgis-properties-contents');
 
@@ -309,7 +347,7 @@
         $contents.children(".webgis-property-content[data-id='" + options.id + "']").css('display', 'block');
     };
 
-    var applyColorScheme = function (options) {
+    let applyColorScheme = function (options) {
         console.log('applyColorScheme');
         const colorScheme = options.colorScheme || webgis.localStorage.get('map.properties.colorScheme') || 'default';
 
@@ -345,7 +383,7 @@
         }
     };
 
-    var applyCssClass = function (options) {
+    let applyCssClass = function (options) {
         let cssClass = options.cssClass || webgis.localStorage.get('map.properties.cssClass') || 'default';
 
         var map = options.map;
@@ -359,7 +397,36 @@
             $container.addClass('webgis-space-saving');
         }
     };
+
+    let createDefaultTrueFalseCombo = function () {
+        const $select = $("<select>")
+            .addClass('webgis-input');
+
+        $("<option>").attr('value', '').text(webgis.l10n.get('default')).appendTo($select);
+        $("<option>").attr('value', 'true').text(webgis.l10n.get('yes')).appendTo($select);
+        $("<option>").attr('value', 'false').text(webgis.l10n.get('no')).appendTo($select);
+
+        return $select;
+    };
 })(webgis.$ || jQuery);
+
+webgis.usability.userPreferences = webgis.usability.userPreferences ||
+{
+    get: function (key, defaultValue) {
+        return webgis.localStorage.get('user.preferences.' + key, defaultValue);
+    },
+    set: function (key, value) {
+        webgis.localStorage.set('user.preferences.' + key, value);
+    },
+    has: function (key) {
+        const val = webgis.localStorage.get('user.preferences.' + key)
+        return val !== undefined && val !== null && val !== '';
+    },
+    all: {
+        "show-markers-on-new-queries": { type: "boolean" },
+        "select-new-query-results": { type: "boolean" }, 
+    }
+};
 
 
 

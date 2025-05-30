@@ -25,9 +25,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Feature: HttpClient Default-Timeout-Seconds for all requests. This can be set in the api.config file.
   [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#httpclient)
 
-- Usability: Click row in result table don't fire an autoscroll to this row. Autoscroll is only fired, if a result-map-marker is clicked.
-
-- Usability: Enhance result-table scrolling. Tables remembers scroll position on switch between tabs.
+- Usability: 
+  - Click row in result table don't fire an autoscroll to this row. Autoscroll is only fired, if a result-map-marker is clicked.
+  - Enhance result-table scrolling. Tables remembers scroll position on switch between tabs.
+  - Enhance result-table loading state
+  - Improved selection symbology (smaller transparent selection markers for points, thinner lines with polygons, more transparent lines for line selections)
+  - User Preferences: User can set some settings like: Show Markers on new query results, Select new query results
 
 - Bug: Can't save edit features if calc-CRS differs from map-CRS
 

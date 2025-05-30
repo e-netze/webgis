@@ -242,8 +242,6 @@ webgis.mapInitializer = (function (m) {
         }, 500);
     });
 
-    
-
     webgis.$(document).on("keyup", function (e) {
         if (e.key === "Escape") {
 
@@ -1209,6 +1207,18 @@ webgis.mapInitializer = (function (m) {
 
             map.ui.setMapTitle();  // Titel übernehmen
         }, map);
+
+        map.events.on('onnewfeatureresponse', function (sender, features) {
+            if (features && features.metadata) {
+                if (webgis.usability.userPreferences.has("show-markers-on-new-queries")) {
+                    features.metadata.showMarkers = webgis.usability.userPreferences.get("show-markers-on-new-queries") === 'true';
+                }
+                if (webgis.usability.userPreferences.has("select-new-query-results")) {
+                    features.metadata.selected = webgis.usability.userPreferences.get("select-new-query-results") === 'true';
+                }
+            };
+            console.log('onnewfeatureresponse', features);
+        });
 
         $('#webgis-info-pane-portal').html("<a href='" + webgis.url.relative(relPathPrefix + '../' + mapPortalPage) + "' >" + mapPortalPageName + "</a>");
         $('#webgis-info-pane-category').html(mapCategory);

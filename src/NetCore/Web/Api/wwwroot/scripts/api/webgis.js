@@ -1070,16 +1070,22 @@
 
                                 // Check if Hashcodes changed and set a warning if so
                                 if (query_result.hashcodes && query_result.hashcodes.length === query_result.oids.length) {
-                                    var hasChanged = false;
+                                    let hasChanged = false;
 
                                     for (var i in query_result.oids) {
-                                        var oid = query_result.metadata.service + ":" + query_result.metadata.query + ":" + query_result.oids[i].toString(),
-                                            hashCode = query_result.hashcodes[i];
+                                        const oid = query_result.metadata.service + ":" + query_result.metadata.query + ":" + query_result.oids[i].toString();
+                                        const hashCode = query_result.hashcodes[i];
+                                        let found = false;
 
-                                        for (var f in result.features) {
-                                            var feature = result.features[f], found = false;
+                                        for (let f in result.features) {
+                                            const feature = result.features[f];
+                                            
                                             if (feature.oid == oid) {
-                                                hasChanged |= (hashCode != webgis.hmac._featureGeoHashCode(feature)) ? true : false;
+                                                const featureHashCode = webgis.hmac._featureGeoHashCode(feature);
+                                                if (hashCode != featureHashCode) {
+                                                    console.log('hashCode not ident', hashCode, featureHashCode);
+                                                }
+                                                hasChanged |= (hashCode != featureHashCode) ? true : false;
                                                 found = true;
                                                 break;
                                             }
@@ -1097,7 +1103,7 @@
                                     }
                                 }
 
-                                map.events.fire('onnewfeatureresponse');
+                                map.events.fire('onnewfeatureresponse', result);
 
                                 if (map.ui && map.ui.appliesQueryResultsUI()) {
                                     map.ui.showQueryResults(result, true);

@@ -465,10 +465,6 @@
             $tabContent
                 .css("display", "block")
                 .data("$tab", $tab)
-                //.on('scroll', function () {   // make sure scroll position is saved
-                //    const $this = $(this);
-                //    $this.data("_scrollTop", $this.scrollTop());
-                //})
                 .scrollTop($tabContent.data("_scrollTop") || 0);  // and restore scroll position after reopening tab
 
             $tab.removeClass('loading');

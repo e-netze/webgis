@@ -83,6 +83,7 @@
     "apply": "Apply",
     "yes": "Yes",
     "no": "No",
+    "default": "Default", 
     "off": "Off",
     "discard-changes": "Discard changes",
     "file-upload": "File upload",
@@ -313,5 +314,11 @@
     "sketch-overlapping-segements-remove-prev": "Delete previous point",
 
     "as-preference-scale": "Set as preferred scale.",
-    "preference-scale-info": "When displaying query results, this scale will be used unless the corresponding geometry is too large. Use reset to restore the default value."
+    "preference-scale-info": "When displaying query results, this scale will be used unless the corresponding geometry is too large. Use reset to restore the default value.",
+
+    "user-preferences": "User Preferences",
+    "show-markers-on-new-queries": "Show markers on new queries", 
+    "show-markers-on-new-queries-info": "If this option is enabled, markers will be displayed on the map for new query results. If disabled, only the results will be shown in the table without markers on the map.",
+    "select-new-query-results": "Select new query results", 
+    "select-new-query-results-info": "If this option is enabled, new query results will be automatically selected in the map."
 };

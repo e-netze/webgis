@@ -650,6 +650,7 @@ MapCollection new
         width: 180px;
         overflow-x: hidden;
         overflow-y: auto;
+        box-sizing: border-box;
     }
 
         .webgis-properties .webgis-properties-tabs .webgis-property-tab {
@@ -660,6 +661,7 @@ MapCollection new
             font-size: 14px;
             background-position: 4px center;
             background-repeat: no-repeat;
+            box-sizing: border-box;
         }
 
             .webgis-properties .webgis-properties-tabs .webgis-property-tab:hover {

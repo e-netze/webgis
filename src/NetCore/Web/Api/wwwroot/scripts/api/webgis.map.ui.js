@@ -1998,7 +1998,7 @@
                                 if (webgis.checkResult(result)) {
                                     map.getSelection('selection').remove();
                                     map.getSelection('query').remove();
-                                    map.events.fire('onnewfeatureresponse');  // close dock panel...
+                                    map.events.fire('onnewfeatureresponse', result);  // close dock panel...
 
                                     map.ui.showQueryResults(result, true);
                                 }

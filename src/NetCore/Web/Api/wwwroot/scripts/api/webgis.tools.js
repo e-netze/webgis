@@ -963,7 +963,7 @@
                     }
                 }
             } else {
-                map.events.fire('onnewfeatureresponse');
+                map.events.fire('onnewfeatureresponse', response.features);
                 if (map.ui.appliesQueryResultsUI()) { 
                     map.ui.showQueryResults(response.features, response.zoomtoresults);
                 }
