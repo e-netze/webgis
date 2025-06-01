@@ -1069,8 +1069,9 @@
                                 }
 
                                 // Check if Hashcodes changed and set a warning if so
-                                if (query_result.hashcodes && query_result.hashcodes.length === query_result.oids.length) {
-                                    let hasChanged = false;
+                                if (query_result.hashcodes
+                                    && query_result.hashcodes.length === query_result.oids.length) {
+                                    let hasChanged = query_result.hashcodes.length !== result.features.length;
 
                                     for (var i in query_result.oids) {
                                         const oid = query_result.metadata.service + ":" + query_result.metadata.query + ":" + query_result.oids[i].toString();

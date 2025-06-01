@@ -2354,7 +2354,7 @@ td.webgis-tab-header {
 }
 
     .webgis-edittheme-tree .webgis-edittheme-tree-theme-list {
-        height: calc(100vh - 420px); /* empiric => no scolling of the sidebar*/
+        height: calc(100vh - 424px); /* empiric => no scolling of the sidebar*/
         overflow: auto;
     }
     .webgis-edittheme-tree .webgis-edittheme-tree-theme-list .webgis-edittheme-tree-theme-list-item {

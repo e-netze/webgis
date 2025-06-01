@@ -68,7 +68,12 @@
                 this._map.frameworkElement.removeLayer(this._queryResultLayer);
             }
 
-            showSinglePopup = showSinglePopup && features.features.length === 1;
+            // show pop or highlight features
+            showSinglePopup =
+                showSinglePopup
+                && features.features.length === 1
+                && features.metadata?.selected !== true;  // if the feature already will be hightlighted, there is no need to highlight it.
+
             var singleMarker = null;
             this._queryResultLayer = new L.MarkerClusterGroup(webgis.markerClusterOptions);
 
