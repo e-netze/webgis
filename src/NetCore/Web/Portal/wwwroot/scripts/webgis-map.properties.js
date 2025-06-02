@@ -57,7 +57,7 @@
                     addAppearencePage($modalContent);
                 }
 
-                addUserPreferencesPage($modalContent);
+                addUserPreferencesPage($modalContent, options);
 
                 if (webgis.hmac) {
                     if (webgis.hmac.favoritesProgramAvailable() || webgis.hmac.favoritesProgramActive()) {
@@ -242,7 +242,7 @@
         }
     };
 
-    let addUserPreferencesPage = function ($parent) {
+    let addUserPreferencesPage = function ($parent, options) {
         const page = addPropertyPage($parent, { id: 'preferences', title: webgis.l10n.get('user-preferences') });
         const $content = $("<div>").appendTo(page.$content);
 
@@ -256,8 +256,18 @@
                 .text(webgis.l10n.get(key))
                 .appendTo($content);
 
-            if (pref.type === 'boolean') {
-                createDefaultTrueFalseCombo()
+            if (pref.available && !pref.available(options.map)) {
+                $("<div>")
+                    .text(webgis.l10n.get("user-perferences-no-available"))
+                    .css({ "fontSize": "0.9em", "margin": "7px 2px", "color": "#a00" })
+                    .appendTo($content);
+                $("<br><br>").appendTo($content);
+
+                continue;
+            }
+
+            if (pref.type === 'yes_no') {
+                createDefaultYesNoCombo()
                     .data('key', key)
                     .appendTo($content)
                     .change(function () {
@@ -398,13 +408,13 @@
         }
     };
 
-    let createDefaultTrueFalseCombo = function () {
+    let createDefaultYesNoCombo = function () {
         const $select = $("<select>")
             .addClass('webgis-input');
 
-        $("<option>").attr('value', '').text(webgis.l10n.get('default')).appendTo($select);
-        $("<option>").attr('value', 'true').text(webgis.l10n.get('yes')).appendTo($select);
-        $("<option>").attr('value', 'false').text(webgis.l10n.get('no')).appendTo($select);
+        $("<option>").attr('value', 'default').text(webgis.l10n.get('default')).appendTo($select);
+        $("<option>").attr('value', 'yes').text(webgis.l10n.get('yes')).appendTo($select);
+        $("<option>").attr('value', 'no').text(webgis.l10n.get('no')).appendTo($select);
 
         return $select;
     };
@@ -413,18 +423,30 @@
 webgis.usability.userPreferences = webgis.usability.userPreferences ||
 {
     get: function (key, defaultValue) {
+        console.log('get user preference', key, webgis.localStorage.get('user.preferences.' + key, defaultValue));
         return webgis.localStorage.get('user.preferences.' + key, defaultValue);
     },
     set: function (key, value) {
         webgis.localStorage.set('user.preferences.' + key, value);
     },
     has: function (key) {
-        const val = webgis.localStorage.get('user.preferences.' + key)
-        return val !== undefined && val !== null && val !== '';
+        const val = webgis.localStorage.get('user.preferences.' + key);
+        console.log('has user preference', key, val);
+        return val !== undefined && val !== null && val !== '' && val !== 'default';
     },
     all: {
-        "show-markers-on-new-queries": { type: "boolean" },
-        "select-new-query-results": { type: "boolean" }, 
+        "show-markers-on-new-queries": {
+            type: "yes_no",
+            available: function (map) {
+                return map && map.ui.getQueryResultTabControl() !== null
+            },
+        },
+        "select-new-query-results": {
+            type: "yes_no",
+            available: function (map) {
+                return map && map.ui.getQueryResultTabControl() !== null
+            },
+        }, 
     }
 };
 

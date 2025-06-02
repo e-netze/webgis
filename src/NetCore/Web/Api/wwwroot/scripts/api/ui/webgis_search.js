@@ -143,7 +143,7 @@
             type: 'post',
             data: webgis.hmac.appendHMACData(args),
             success: function (result) {
-                //alert(JSON.stringify(result));
+                //console.log('search result: ', result);
                 $.webgis_search_showresults(map, result, true);
                 $holder.find('.webgis-detail-search-holder').slideUp();
                 $form.find('.webgis-detail-search-hourglass').html('');

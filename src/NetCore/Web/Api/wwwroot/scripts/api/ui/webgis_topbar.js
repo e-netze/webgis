@@ -349,8 +349,9 @@
             type: 'post',
             data: webgis.hmac.appendHMACData(args, true),
             success: function (result) {
-                //alert(JSON.stringify(result));
+                //console.log('search result: ', result);
                 if (webgis.checkResult(result)) {
+                    map.events.fire('onnewfeatureresponse', result);
                     map.ui.showQueryResults(result, true);
                     $holder.find('.webgis-detail-search-holder').slideUp();
                 }

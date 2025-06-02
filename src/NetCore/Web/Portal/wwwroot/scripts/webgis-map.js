@@ -1211,13 +1211,20 @@ webgis.mapInitializer = (function (m) {
         map.events.on('onnewfeatureresponse', function (sender, features) {
             if (features && features.metadata) {
                 if (webgis.usability.userPreferences.has("show-markers-on-new-queries")) {
-                    features.metadata.showMarkers = webgis.usability.userPreferences.get("show-markers-on-new-queries") === 'true';
+                    features.metadata.showMarkers = webgis.usability.userPreferences.get("show-markers-on-new-queries") === 'yes';
                 }
+                else if (webgis.defaults["user.preferences.show-markers-on-new-queries"]) {
+                    features.metadata.showMarkers = webgis.defaults["user.preferences.show-markers-on-new-queries"] === 'yes';
+                }
+
                 if (webgis.usability.userPreferences.has("select-new-query-results")) {
-                    features.metadata.selected = webgis.usability.userPreferences.get("select-new-query-results") === 'true';
+                    features.metadata.selected ||= webgis.usability.userPreferences.get("select-new-query-results") === 'yes';
+                }
+                else if (webgis.defaults["user.preferences.select-new-query-results"]) {
+                    features.metadata.selected ||= webgis.defaults["user.preferences.select-new-query-results"] === 'yes';
                 }
             };
-            console.log('onnewfeatureresponse', features);
+            //console.trace('onnewfeatureresponse', features);
         });
 
         $('#webgis-info-pane-portal').html("<a href='" + webgis.url.relative(relPathPrefix + '../' + mapPortalPage) + "' >" + mapPortalPageName + "</a>");

@@ -6,7 +6,7 @@ public class WebGISVersion
 {
     public static Version Version
     {
-        get { return new Version(7, 25, 2203); }
+        get { return new Version(7, 25, 2301); }
     }
 
     public static string JsVersion

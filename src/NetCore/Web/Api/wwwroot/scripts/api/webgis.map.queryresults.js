@@ -1123,7 +1123,7 @@
 
                         //console.log('enter:' + feature.oid);
 
-                        if (feature.hover_geometry) {
+                        if (feature && feature.hover_geometry) {
                             map.hoverSketch.fromJson(feature.hover_geometry, false, true);  // append = false, readonly = true
                         }
                     }

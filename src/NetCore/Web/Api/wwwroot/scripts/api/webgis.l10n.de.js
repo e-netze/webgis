@@ -317,6 +317,7 @@
     "preference-scale-info": "Bei der Anzeige von Abfrageergebnissen wird immer auf diesen Maßstab gezoomt, außer das entsprechende Geo-Objekt ist zu groß. Mit Reset kann der letzte hier festgelegte Wert auf den Standardwert zurückgesetzt werden.",
 
     "user-preferences": "Benutzer Einstellungen",
+    "user-perferences-no-available": "Keine Benutzereinstellungen verfügbar. Diese Einstellung ist nicht in diesem Viewer/Layout möglich. Wechsle zum Desktop/Professional Layout",
     "show-markers-on-new-queries": "Marker bei neuen Abfragen anzeigen",
     "show-markers-on-new-queries-info": "Wenn diese Methode angewendet wird, werden bei jeder neuen Abfrage automatisch Kartenmarken in der Karte angezeigt. Das Defaultverhalten ist, das Marker automatisch dargestellt werden.",
     "select-new-query-results": "Neue Abfragen in der Karte auswählen/selektieren",
