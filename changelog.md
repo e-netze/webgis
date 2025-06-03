@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+### Fixed
+
+## 7.25.2302
+
+### Added
+
 - Tool Properties: custom.js [Docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#toolbox)
   [discussion #279](https://github.com/e-netze/webgis-community/discussions/279)
 
@@ -32,16 +38,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Improved selection symbology (smaller transparent selection markers for points, thinner lines with polygons, more transparent lines for line selections)
   - User Preferences: User can set some settings like: Show Markers on new query results, Select new query results
 
-- Bug: Can't save edit features if calc-CRS differs from map-CRS
-
 - Metadata: Enhance metadata behavior
-  - Bug: Metadata button not shown in TOC for services with dynamic TOC sometimes 
   - nicer Button
   - Metadata for hole service as button in TOC. 
   - Presentation type ``Info`` shows list item with i-button and opens metadata in dialog.
   - Shows service metadata link in service copyright & description dialog
 
 ## Fixed
+
+- Bug: Can't save edit features if calc-CRS differs from map-CRS
+- 
+- Metadata:
+  - Bug: Metadata button not shown in TOC for services with dynamic TOC sometimes 
 
 ## 7.25.2001
 
