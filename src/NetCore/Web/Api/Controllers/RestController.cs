@@ -266,10 +266,20 @@ public class RestController : ApiBaseController
 
                     foreach (var service in services)
                     {
-                        if (infos.Any(infos => infos.id == service.Key))
+                        var countServiceWithSameId = infos.Where(info => info.id == service.Key).Count();
+                        if (countServiceWithSameId > 0)
                         {
-                            // already added (e.g. collection service item)
-                            continue;
+                            // in service side-by-side the same service is orderd multiple times
+                            // e.g. ids=basemap,serviceX,serviceX
+                            var countServiceIdsFromInputParameter = ids
+                                        .Split(',')
+                                        .Where(s => s == service.Key)
+                                        .Count();
+                            if(countServiceIdsFromInputParameter <= countServiceWithSameId)
+                            {
+                                // already added x times (e.g. collection service items, avoid recursive ...)
+                                continue;
+                            }
                         }
 
                         if (service.Value is null)

@@ -1545,6 +1545,9 @@
             return serviceId;
         }
 
+        // sometimes it a service is added multiple times => give it another id (service:1, service:2, ...)
+        // eg. Service-side-by-side app: the same services is added and shown with different 
+        //     layer visibility
         var count = 1;
         while (true) {
             var uniqueServiceIndex = serviceId + ":" + (count++);
