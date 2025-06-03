@@ -31,6 +31,10 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
     [System.Text.Json.Serialization.JsonPropertyName("visible")]
     public bool Visible { get; set; }
 
+    [JsonProperty(PropertyName = "tags")]
+    [System.Text.Json.Serialization.JsonPropertyName("tags")]
+    public string[] Tags { get; set; }
+
     [JsonProperty(PropertyName = "snapping")]
     [System.Text.Json.Serialization.JsonPropertyName("snapping")]
     public IEnumerable<SnappingScheme> Snapping { get; set; }

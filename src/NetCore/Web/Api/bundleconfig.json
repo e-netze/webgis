@@ -75,6 +75,7 @@
       "wwwroot/scripts/api/ui/webgis_tab_control.js",
       "wwwroot/scripts/api/ui/webgis_querycombo.js",
       "wwwroot/scripts/api/ui/webgis_editthemeCombo.js",
+      "wwwroot/scripts/api/ui/webgis_tags_selector.js",
       "wwwroot/scripts/api/ui/webgis_editthemeTree.js",
       "wwwroot/scripts/api/ui/webgis_dockpanel.js",
       "wwwroot/scripts/api/ui/webgis_control_search.js",

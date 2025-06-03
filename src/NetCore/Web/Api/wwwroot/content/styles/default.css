@@ -5329,3 +5329,42 @@ select.webgis-not-valid {
     background: #cccccc1f;
 }
 
+.webgis-tags-selector .webgis-tags-main-btn {
+    border-radius: 20px;
+    background-color: #b5dbad;
+    display: inline-block;
+    padding: 3px;
+}
+    .webgis-tags-selector  .webgis-tags-main-btn .has-tags-button {
+        border-radius: 10px 0px 0px 10px;
+        border: 1px solid #efefef;
+        width: 13px;
+        height: 18px;
+    }
+
+    .webgis-tags-selector .webgis-tags-main-btn.has-tags .has-tags-button {
+        background-color: #b5dbad;
+    }
+
+    .webgis-tags-selector .webgis-tags-main-btn .add-tags-button {
+        border-radius: 0px 10px 10px 0px;
+        border: 1px solid #efefef;
+        background-color: #fff;
+        padding: -19px;
+        width: 13px;
+        height: 18px;
+    }
+
+.webgis-tags-selector .webgis-tags-popup {
+
+}
+
+    .webgis-tags-selector .webgis-tags-popup .webgis-tag-btn {
+        border-radius: 10px;
+        border: 1px solid #efefef;
+        background-color: #fff;
+    }
+    .webgis-tags-selector .webgis-tags-popup .webgis-tag-btn.active {
+        background-color: #b5dbad;
+    }
+

@@ -52,6 +52,10 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
     [Description("Hier muss das Koordinatensystem angeben werden, in dem die Daten in der Datenbank vorliegen! Wenn kein Bezugssystem angegeben wird, kann das Editthema nicht im Viewer ausgewählt werden.")]
     public int Srs { get; set; }
 
+    [DisplayName("Tags (optional)")]
+    [Description("Tags, über die ein Editthema klassifiziert werden kann. Mit Beistrich getrennte Liste anführen.")]
+    public string Tags { get; set; }
+
     [Category("~Rechte")]
     [DisplayName("INSERT (neu anlegen) erlauben")]
     public bool AllowInsert { get; set; }
@@ -174,6 +178,7 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
         this.Visible = (bool)stream.Load("visible", true);
         this.EnableEditServer = (bool)stream.Load("editservice", false);
         this.Srs = (int)stream.Load("srs", 0);
+        this.Tags = (string)stream.Load("tags", String.Empty);
 
         this.AllowInsert = (bool)stream.Load("allow_insert", true);
         this.AllowUpdate = (bool)stream.Load("allow_update", true);
@@ -208,6 +213,7 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
         stream.Save("visible", this.Visible);
         stream.Save("editservice", this.EnableEditServer);
         stream.Save("srs", this.Srs);
+        stream.Save("tags", this.Tags);
 
         stream.Save("allow_insert", this.AllowInsert);
         stream.Save("allow_update", this.AllowUpdate);

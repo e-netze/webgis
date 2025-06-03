@@ -79,7 +79,8 @@
                 setValue($parent, $this.val());
             });
 
-        var $themeList = $("<ul>")
+        const $tagSelector = $("<div>").appendTo($parent)
+        const $themeList = $("<ul>")
             .addClass('webgis-edittheme-tree-theme-list')
             .appendTo($parent);
 
@@ -109,6 +110,10 @@
                 $serviceCombo.val($serviceCombo.children().first().attr('value')).trigger('change');
             }
         }
+
+        $tagSelector.webgis_tags_selector({
+            selector: '.webgis-edittheme-tree-theme-list'
+        });
     };
 
     var addService = function (e, service, parent) {
@@ -150,6 +155,7 @@
                 })
                 .attr('data-edittheme', val)
                 .attr('data-serviceId', service.serviceInfo.id)
+                .attr('tags', edittheme.tags)
                 .text(edittheme.name)
                 .appendTo($themeList)
                 .click(function (e) {

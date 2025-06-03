@@ -739,7 +739,8 @@ public class CmsCacheItem
                                     Visible = (bool)cmsEditingTheme.Load("visible", true),
                                     IsEditServiceTheme = (bool)cmsEditingTheme.Load("editservice", false),
                                     Srs = editThemeSrs,
-                                    CanGenerateMaskXml = true
+                                    CanGenerateMaskXml = true,
+                                    Tags = ((string)cmsEditingTheme.Load("tags", String.Empty)).Split(",").Select(x => x.Trim()).Where(x => !String.IsNullOrEmpty(x)).ToArray(),
                                 };
 
                                 #region Rights
