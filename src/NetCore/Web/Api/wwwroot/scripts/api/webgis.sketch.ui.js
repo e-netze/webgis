@@ -695,6 +695,11 @@
                                     else {
                                         // Do Nothing
                                     }
+
+                                    if (offset != 0 && webgis.usability.sketchTools?.offset?.defaultOffset) {
+                                        offset = offset / Math.abs(offset) * webgis.usability.sketchTools.offset.defaultOffset;
+                                    }
+
                                     $('body').webgis_modal({
                                         title: webgis.l10n.get("sketch-tool-offset"),
                                         id: 'webgis-sketch-offset-modal',

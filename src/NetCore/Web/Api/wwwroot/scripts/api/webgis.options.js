@@ -103,6 +103,12 @@ webgis.usability = {
             default: true,
             geocodes: false
         }
+    },
+
+    sketchTools: {
+        offset: {
+            defaultOffset: 0
+        }
     }
 };
 
