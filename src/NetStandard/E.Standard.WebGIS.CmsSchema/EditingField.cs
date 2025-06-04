@@ -130,11 +130,11 @@ Mit dem Prefix mask-insert-default:: wird der Wert vom System gesetzt, sondern e
 
     [Category("~optional: Attribute Picker")]
     [DisplayName("Attribute Picker Abfrage")]
-    [Description("Die Abfrage vor dem ein Attribute geholt werden soll. Format service-id@query-id")]
+    [Description("Die Abfrage, von der ein Attribute geholt werden soll. Format service-id@query-id")]
     public string AttributePickerQuery { get; set; }
     [Category("~optional: Attribute Picker")]
     [DisplayName("Attribute Picker Feld")]
-    [Description("Das Feld aus aus der Abfrage, das beim Attribute Picking übernommen werden soll.")]
+    [Description("Das Feld aus der Abfrage, das beim Attribute Picking übernommen werden soll.")]
     public string AttributePickerField { get; set; }
 
     //[Category("~optional: Default Value")]

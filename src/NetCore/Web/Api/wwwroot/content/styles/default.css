@@ -3217,6 +3217,38 @@ body.webgis-ui-holder {
         cursor:pointer;
     }
 
+.webgis-tags-combo {
+    background-image: url(../api/img/plus-26.png);
+    background-repeat: no-repeat;
+    background-position: center right 26px;
+    background-size: 20px;
+}
+
+    .webgis-tags-combo.focus-extend {
+        cursor: pointer;
+    }
+.webgis-tags-combo-popup {
+    background: #fff;
+    padding: 5px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    z-index: 1000;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+}
+
+    .webgis-tags-combo-popup .webgis-tag-button {
+        border-radius: 10px;
+        border: 1px solid #efefef;
+        background-color: #fff;
+        margin: 0px 2px 2px 0px;
+        cursor:pointer;
+    }
+
+        .webgis-tags-combo-popup .webgis-tag-button.active {
+            background-color: #b5dbad;
+        }
+
 /*.webgis-input{
     width:289px;
 }*/
@@ -5328,43 +5360,4 @@ select.webgis-not-valid {
     margin: 0px -6px;
     background: #cccccc1f;
 }
-
-.webgis-tags-selector .webgis-tags-main-btn {
-    border-radius: 20px;
-    background-color: #b5dbad;
-    display: inline-block;
-    padding: 3px;
-}
-    .webgis-tags-selector  .webgis-tags-main-btn .has-tags-button {
-        border-radius: 10px 0px 0px 10px;
-        border: 1px solid #efefef;
-        width: 13px;
-        height: 18px;
-    }
-
-    .webgis-tags-selector .webgis-tags-main-btn.has-tags .has-tags-button {
-        background-color: #b5dbad;
-    }
-
-    .webgis-tags-selector .webgis-tags-main-btn .add-tags-button {
-        border-radius: 0px 10px 10px 0px;
-        border: 1px solid #efefef;
-        background-color: #fff;
-        padding: -19px;
-        width: 13px;
-        height: 18px;
-    }
-
-.webgis-tags-selector .webgis-tags-popup {
-
-}
-
-    .webgis-tags-selector .webgis-tags-popup .webgis-tag-btn {
-        border-radius: 10px;
-        border: 1px solid #efefef;
-        background-color: #fff;
-    }
-    .webgis-tags-selector .webgis-tags-popup .webgis-tag-btn.active {
-        background-color: #b5dbad;
-    }
 

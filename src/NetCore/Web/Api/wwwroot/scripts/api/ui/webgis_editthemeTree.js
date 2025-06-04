@@ -68,18 +68,33 @@
 
                 var serviceId = $this.val();
 
-                $themesList.children('li').each(function (i, item) {
-                    var $item = $(item);
+                let tagsSet = new Set();
+                $themesList.children('li').removeClass('webgis-tag-item').each(function (i, item) {
+                    const $item = $(item);
+                    const display = $item.attr('data-serviceId') === serviceId ? 'block' : 'none'
 
                     $item
                         .removeClass('selected')
-                        .css('display', $item.attr('data-serviceId') === serviceId ? 'block' : 'none');
+                        .css('display', display);
+
+                    if (display != 'none') {
+                        var tagsAttr = $item.addClass('webgis-tag-item').attr('tags');
+                        if (tagsAttr) {
+                            tagsAttr.split(',').map(function (t) { return t.trim(); }).forEach(function (t) {
+                                if (t) tagsSet.add(t);
+                            });
+                        }
+                    }
                 });
 
                 setValue($parent, $this.val());
+                $this.webgis_tagsCombo('set_tags', { tags: Array.from(tagsSet) });
+            })
+            .webgis_tagsCombo({
+                itemContainer: $parent,
+                itemSelector: '.webgis-tag-item'
             });
 
-        const $tagSelector = $("<div>").appendTo($parent)
         const $themeList = $("<ul>")
             .addClass('webgis-edittheme-tree-theme-list')
             .appendTo($parent);
@@ -110,10 +125,6 @@
                 $serviceCombo.val($serviceCombo.children().first().attr('value')).trigger('change');
             }
         }
-
-        $tagSelector.webgis_tags_selector({
-            selector: '.webgis-edittheme-tree-theme-list'
-        });
     };
 
     var addService = function (e, service, parent) {
