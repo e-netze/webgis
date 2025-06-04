@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Editing - Autovalues: Introcuded ``guid_v7`` and ``guid_v7_sql`` [Docs](https://docs.webgiscloud.com/de/webgis/apps/cms/editing/fields_autovalues.html)_
+
 ### Fixed
 
 ## 7.25.2302
@@ -21,6 +23,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Chainage: a api service can be used to calculate the chainage of a point on a line
   [discussion #261](https://github.com/e-netze/webgis-community/discussions/261)
 
+- Usability Identify (alpha): Show current visible querythemes in Identify-Combobox on top:
+  [discussion #278](https://github.com/e-netze/webgis-community/discussions/278)
+  Must be enabled in ``custom.js``: ``webgis.usability.listVisibleQueriesInQueryCombo = true;``   
+
 - Feature: 1:n links from results table will be openend in dialog, if target is ``dialog``. Until now, this only worked for single result links. 
 
 - Feature: Feature Results with (AGS) Attachments. The attachments are shown in a separate
@@ -31,7 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Feature: HttpClient Default-Timeout-Seconds for all requests. This can be set in the api.config file.
   [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#httpclient)
 
-- Usability: 
+- Usability Result Table: 
   - Click row in result table don't fire an autoscroll to this row. Autoscroll is only fired, if a result-map-marker is clicked.
   - Enhance result-table scrolling. Tables remembers scroll position on switch between tabs.
   - Enhance result-table loading state

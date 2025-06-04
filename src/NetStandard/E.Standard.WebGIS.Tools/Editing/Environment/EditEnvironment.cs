@@ -3198,16 +3198,28 @@ class EditEnvironment
                     return (value: this.Bridge.CurrentUser.Username.UsernameDomain(), setIt: true);
                 }
                 break;
-            case "guid":
+            case "guid":   // 4b2dd0dfeb1b40188b2583167886e886
                 if (editTask == EditFeatureCommand.Insert)
                 {
                     return (value: System.Guid.NewGuid().ToString("N"), setIt: true);
                 }
                 break;
-            case "guid_sql":
+            case "guid_sql":  // {9e2702e4-169f-41ec-b3e3-fcf786182885}
                 if (editTask == EditFeatureCommand.Insert)
                 {
                     return (value: System.Guid.NewGuid().ToString("B"), setIt: true);
+                }
+                break;
+            case "guid_v7":  
+                if (editTask == EditFeatureCommand.Insert)
+                {
+                    return (value: System.Guid.CreateVersion7().ToString("N"), setIt: true);
+                }
+                break;
+            case "guid_v7_sql":
+                if (editTask == EditFeatureCommand.Insert)
+                {
+                    return (value: System.Guid.CreateVersion7().ToString("B"), setIt: true);
                 }
                 break;
             case "sessionid":

@@ -35,6 +35,7 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
     [Browsable(true)]
     [DisplayName("Ausdruck")]
     [Category("Darstellung")]
+    [Description("Hier kann ein Ausdruck angegeben werden, der die Stationierung berechnet. Der Ausdruck muss einen Parameter enthalten, der die Länge in Metern angibt. Beispiel: {0} m, {json-property1} {json-property2} ... wenn eine API abgefragt wird, können hier die JSON Parameter des Responses als Platzhalter eingesetzt werden. Zeilenumbrüche können mit \n erzwungen werden.")]
     public string Expression
     {
         get { return _expression; }
@@ -61,6 +62,7 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
     [Browsable(true)]
     [DisplayName("Service URL")]
     [Category("~Oder Abfrage-Service-API")]
+    [Description("Hier kann eine URL zu einem Service angegeben werden, der die Stationierung berechnet. Wird hier kein Wert angegeben, wird die Stationierung aus den Punkt- und Linienthemen berechnet. Folgende Patzhalter sind möglich: {x}, {y} ... x,y in WGS84, {x:espgCode}, {y:epsgCode} ... x,y konvertiert nach EPSG-Code, {mapscale} ... current map scale")]
     public string ServiceUrl { get; set; } = String.Empty; 
 
     [Browsable(true)]
