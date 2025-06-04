@@ -325,6 +325,8 @@ public enum EditingFieldAutoValue
 
     guid = 101,
     guid_sql = 102,
+    guid_v7 = 103,
+    guid_v7_sql = 104,
 
     create_login = 201,
     create_login_full = 202,
