@@ -2776,6 +2776,10 @@
             $(document).scroll(function () {
                 refreshAutocomplete();
             });
+            $('.webgis-container').click(function () {
+                // eg webgis-tags-combo-popup
+                $('.webgis-hide-on-click-outside').css('display', 'none');
+            });
         }
         else {
             $(element).scroll(function () {
@@ -3416,6 +3420,7 @@ webgis.help = {};
 
 (window.jExt || window.jQuery)(document).ready(function () {
     webgis.registerUIEvents(null);
+    $('webgis-c')
 });
 
 if (!webgis.api_version || webgis.api_version.indexOf('{{') === 0) {

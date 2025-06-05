@@ -886,26 +886,25 @@
             });
 
         $("<div>")
-            .addClass('webgis-tags-combo-popup')
-            .text("Hier sind die Tags")
+            .addClass('webgis-tags-combo-popup webgis-hide-on-click-outside')
             .css({
                 "display": "none",
                 "position": "absolute",
             })
-            .insertAfter($combo)
-            .on('mouseleave', function () {
-                const $this = $(this);  
+            .insertAfter($combo);
+            //.on('mouseleave', function () {
+            //    const $this = $(this);  
 
-                $this.addClass('disappear');
-                webgis.delayed(function ($this) {
-                    if ($this.hasClass('disappear')) {
-                        $this.css('display', 'none');
-                    }
-                }, 1000, $this);
-            })
-            .on('mouseenter', function () {
-                $(this).remoClass('disappear');
-            });
+            //    $this.addClass('disappear');
+            //    webgis.delayed(function ($this) {
+            //        if ($this.hasClass('disappear')) {
+            //            $this.css('display', 'none');
+            //        }
+            //    }, 1000, $this);
+            //})
+            //.on('mouseenter', function () {
+            //    $(this).removeClass('disappear');
+            //});
 
         setTags(combo, options);
 
