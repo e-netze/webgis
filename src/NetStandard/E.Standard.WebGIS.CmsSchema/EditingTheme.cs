@@ -213,7 +213,10 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
         stream.Save("visible", this.Visible);
         stream.Save("editservice", this.EnableEditServer);
         stream.Save("srs", this.Srs);
-        stream.Save("tags", this.Tags);
+        stream.Save("tags", String.IsNullOrWhiteSpace(this.Tags)
+            ? ""
+            : String.Join(",", this.Tags.Split(",").Select(t => t.Trim()).Where(t => !String.IsNullOrEmpty(t)))
+        );
 
         stream.Save("allow_insert", this.AllowInsert);
         stream.Save("allow_update", this.AllowUpdate);
@@ -341,7 +344,12 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
     [Browsable(false)]
     public string DisplayName
     {
-        get { return Name; }
+        get 
+        {
+            return String.IsNullOrWhiteSpace(this.Tags) 
+                ? $"{Name}" 
+                : $"{Name} ({String.Join(", ", this.Tags.Split(',').Select(t => $"#{t.Trim()}"))})";
+        }
     }
 
     #endregion
