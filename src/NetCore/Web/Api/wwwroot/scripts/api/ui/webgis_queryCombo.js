@@ -820,22 +820,29 @@
         }
     };
 
-    var defaults = {
+    let defaults = {
        itemSelector: '.webgis-tag-item',
        itemTagsAttr: 'tags',
        tags:[]
     };
-    var methods = {
+    let methods = {
         init: function (options) {
-            var $this = $(this), options = $.extend({}, defaults, options);
+            options = $.extend({}, defaults, options);
             return this.each(function () {
                 new initUI(this, options);
             });
         },
         set_tags: function (options) {
-            var $this = $(this), options = $.extend({}, defaults, options);
+
+            options = $.extend({}, defaults, options);
             return this.each(function () {
                 new setTags(this, options);
+            });
+        },
+        restore: function (options) {
+            options = $.extend({}, defaults, options);
+            return this.each(function () {
+                new loadTags($(this), options);
             });
         }
     };
@@ -868,7 +875,7 @@
                     console.log('stop prop');
                     e.stopPropagation();
                     $this.blur();
-                    var $popup = $this.next();
+                    var $popup = $this.next('.webgis-tags-combo-popup');
                     $popup.css('top', $this.offset());
                     $popup.css('width', $this.outerWidth());
                     $popup.toggle();
@@ -885,6 +892,8 @@
             .insertAfter($combo);
 
         setTags(combo, options);
+
+        return combo;
     };
 
     let setTags = function (combo, options) {
@@ -893,48 +902,117 @@
         $combo.data('tags', options.tags);
         if (options.tags.length > 0) {
             $combo.addClass('webgis-tags-combo');
+            $("<button>")
+                .addClass("webgis-tag-button all")
+                .text(webgis.l10n.get("show-all"))
+                .appendTo($combo.next('.webgis-tags-combo-popup'))
+                .click(function (e) {
+                    e.stopPropagation();
+
+                    const $this = $(this);
+                    const $combo = $this.parent().prev('.webgis-tags-combo');
+                    const $container = $combo.data("item-container");
+                    const itemSelector = $combo.data("item-selector");
+
+                    $this.parent().children().removeClass('active');
+                    $container.find(itemSelector).removeClass('webgis-tag-item-hidden');
+                    $combo.removeClass("has-tags").next('.webgis-tags-combo-popup').removeClass("has-tags");
+
+                    storeTags($combo, []);
+                });
+
             for (var tag of options.tags) {
                 $("<button>")
                     .addClass("webgis-tag-button")
+                    .attr('tag', tag.toLowerCase())
                     .text('#' + tag)
-                    .appendTo($combo.next())
+                    .appendTo($combo.next('.webgis-tags-combo-popup'))
                     .click(function (e) {
                         e.stopPropagation();
 
                         const $this = $(this);
                         const $combo = $this.parent().prev('.webgis-tags-combo');
-                        const $container = $combo.data("item-container");
-                        const itemSelector = $combo.data("item-selector");
-                        const itemTagsAttr = $combo.data("item-tags-attr");
 
                         $this.toggleClass('active');
 
-                        const activeTags = Array.from($this.parent().find('button.active').map((i,e) => $(e).text().substr(1).toLowerCase()));
-                        //console.log("activeTags", activeTags);
-                        if (activeTags.length === 0) {
-                            $container.find(itemSelector).css('display', '');
-                        }
-                        else {
-                            $container.find(itemSelector).each(function (i, e) {
-                                const $e = $(e);
-                                var tags = $e.attr(itemTagsAttr).toLowerCase().split(',');
-
-                                let found = false;
-                                for (var activeTag of activeTags) {
-                                    if (tags.includes(activeTag)) {
-                                        found = true;
-                                        break;
-                                    }
-                                }
-
-                                $e.css('display', found ? '' : 'none');
-                            });
-                            
-                        }
+                        refreshItemVisibility($combo, true);
                     });
             }
         } else {
-            $combo.removeClass('webgis-tags-combo').next().empty();
+            $combo.removeClass('webgis-tags-combo').next('.webgis-tags-combo-popup').empty();
         }
     }
+
+    let storeTags = function ($combo, tags) {
+        const key = "webgis-tags." + $combo.attr('id') + '.' + $combo.val();
+        webgis.localStorage.set(key, tags.join(','));
+    }
+
+    let loadTags = function ($combo) {
+        const key = "webgis-tags." + $combo.attr('id') + '.' + $combo.val();
+        const tags = webgis.localStorage.get(key);
+        const $popup = $combo.next('.webgis-tags-combo-popup');
+
+        $popup.removeClass("has-tags");
+        $combo.removeClass("has-tags");
+
+        if (tags) {
+            const activeTags = tags.split(',').map(t => t.trim()).filter(t => t.length > 0);
+
+            if (activeTags.length > 0) {
+                $popup.addClass("has-tags");
+                $combo.addClass("has-tags");
+                $popup.children('.webgis-tag-button').removeClass('active').each(function (i, e) {
+                    const $e = $(e);
+                    if (activeTags.includes($e.attr("tag"))) {
+                        $e.addClass('active');
+                    } else {
+                        $e.removeClass('active');
+                    }
+                });
+            }
+        }
+
+        refreshItemVisibility($combo, false);
+
+        return $combo;
+    }
+
+    let refreshItemVisibility = function ($combo, store) {
+        const $container = $combo.data("item-container");
+        const itemSelector = $combo.data("item-selector");
+        const itemTagsAttr = $combo.data("item-tags-attr");
+
+        const activeTags = Array.from($combo.next('.webgis-tags-combo-popup').find('button.active').map((i, e) => $(e).attr('tag')));
+
+        $container.find(itemSelector).removeClass('webgis-tag-item-hidden');
+        if (activeTags.length === 0) {
+            $combo.removeClass("has-tags").next('.webgis-tags-combo-popup').removeClass("has-tags");
+        }
+        else {
+            $container.find(itemSelector).each(function (i, e) {
+                $combo.addClass("has-tags").next('.webgis-tags-combo-popup').addClass("has-tags");
+
+                const $e = $(e);
+                var tags = $e.attr(itemTagsAttr).toLowerCase().split(',');
+
+                let found = false;
+                for (var activeTag of activeTags) {
+                    if (tags.includes(activeTag)) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    $e.addClass('webgis-tag-item-hidden')
+                }
+            });
+        }
+
+        if (store) {
+            storeTags($combo, activeTags);
+        }
+    }
+
 })(webgis.$ || jQuery);

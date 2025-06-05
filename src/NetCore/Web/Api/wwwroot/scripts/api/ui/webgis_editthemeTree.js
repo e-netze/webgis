@@ -58,6 +58,7 @@
 
         var $serviceCombo = $("<select>")
             .addClass('webgis-edittheme-tree-service-combo webgis-input')
+            .attr("id", "webgis-edittheme-tree-service-combo")
             .appendTo($parent)
             .change(function (e) {
                 e.stopPropagation();
@@ -89,6 +90,7 @@
 
                 setValue($parent, $this.val());
                 $this.webgis_tagsCombo('set_tags', { tags: Array.from(tagsSet) });
+                $this.webgis_tagsCombo('restore');
             })
             .webgis_tagsCombo({
                 itemContainer: $parent,

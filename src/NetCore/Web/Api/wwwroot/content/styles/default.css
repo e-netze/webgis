@@ -3218,11 +3218,15 @@ body.webgis-ui-holder {
     }
 
 .webgis-tags-combo {
-    background-image: url(../api/img/plus-26.png);
+    background-image: url(../api/img/tools/hash.png);
     background-repeat: no-repeat;
     background-position: center right 26px;
     background-size: 20px;
 }
+
+    .webgis-tags-combo.has-tags {
+        background-image: url(../api/img/tools/round-hash.png);
+    }
 
     .webgis-tags-combo.focus-extend {
         cursor: pointer;
@@ -3245,9 +3249,22 @@ body.webgis-ui-holder {
         cursor:pointer;
     }
 
+        .webgis-tags-combo-popup .webgis-tag-button.all {
+            background-color: #b5dbad;
+        }
+
+    .webgis-tags-combo-popup.has-tags .webgis-tag-button.all {
+       background-color: unset;
+    }
+
         .webgis-tags-combo-popup .webgis-tag-button.active {
             background-color: #b5dbad;
         }
+
+.webgis-tag-item-hidden {
+    display: none !important;
+}
+        
 
 /*.webgis-input{
     width:289px;

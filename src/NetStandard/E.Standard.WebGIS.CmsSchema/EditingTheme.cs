@@ -61,7 +61,7 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
     public bool AllowInsert { get; set; }
 
     [Category("~Rechte")]
-    [DisplayName("UPDDATE (bestehendes bearbeiten) erlauben")]
+    [DisplayName("UPDATE (bestehendes bearbeiten) erlauben")]
     public bool AllowUpdate { get; set; }
 
     [Category("~Rechte")]
