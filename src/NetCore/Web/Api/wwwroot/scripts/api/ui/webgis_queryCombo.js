@@ -869,16 +869,19 @@
                 }
             })
             .click(function (e) {
-                var $this = $(this);
+                const $this = $(this);
+                const $popup = $this.next('.webgis-tags-combo-popup');
+
                 if ($this.hasClass('focus-extend')) {
                     $this.removeClass('focus-extend');
                     console.log('stop prop');
                     e.stopPropagation();
                     $this.blur();
-                    var $popup = $this.next('.webgis-tags-combo-popup');
                     $popup.css('top', $this.offset());
                     $popup.css('width', $this.outerWidth());
                     $popup.toggle();
+                } else {
+                    $popup.css('display', 'none');
                 }
             });
 
@@ -889,7 +892,20 @@
                 "display": "none",
                 "position": "absolute",
             })
-            .insertAfter($combo);
+            .insertAfter($combo)
+            .on('mouseleave', function () {
+                const $this = $(this);  
+
+                $this.addClass('disappear');
+                webgis.delayed(function ($this) {
+                    if ($this.hasClass('disappear')) {
+                        $this.css('display', 'none');
+                    }
+                }, 1000, $this);
+            })
+            .on('mouseenter', function () {
+                $(this).remoClass('disappear');
+            });
 
         setTags(combo, options);
 
