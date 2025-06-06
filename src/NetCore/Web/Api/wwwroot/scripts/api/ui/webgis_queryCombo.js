@@ -940,7 +940,7 @@
                 $("<button>")
                     .addClass("webgis-tag-button")
                     .attr('tag', tag.toLowerCase())
-                    .text('#' + tag)
+                    .text(tag)
                     .appendTo($combo.next('.webgis-tags-combo-popup'))
                     .click(function (e) {
                         e.stopPropagation();

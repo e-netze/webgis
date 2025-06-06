@@ -190,6 +190,10 @@
                     setValue($parent, val);
                 });
 
+            if (edittheme.tags) {
+                $item.attr('title', "Tags: " + edittheme.tags.map(t => "#" + t).join(', '));
+            }
+
             $("<div>")
                 .data('layerIds', layerIds)
                 .addClass('checkbox')

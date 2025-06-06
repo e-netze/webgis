@@ -168,6 +168,8 @@
     "all-scales": "All scales",
     "mapscale": "Mapscale",
 
+    "show-all": "Show all",
+
     // sketch tools
     "sketch": "Sketch",
     "sketch-undo": "Undo",

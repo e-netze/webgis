@@ -168,6 +168,8 @@
     "all-scales": "Alle Maßstäbe",
     "mapscale": "Maßstab",
 
+    "show-all": "Alle anzeigen",
+
     // sketch tools
     "sketch": "Sketch",
     "sketch-undo": "Rückgängig/Undo",

@@ -3243,13 +3243,19 @@ body.webgis-ui-holder {
 
     .webgis-tags-combo-popup .webgis-tag-button {
         border-radius: 10px;
-        border: 1px solid #efefef;
+        border: 1px solid #ccc;
         background-color: #fff;
-        margin: 0px 2px 2px 0px;
-        cursor:pointer;
+        margin: 0px 4px 6px 0px;
+        cursor: pointer;
+        background-image: url(../api/img/tools/round-hash.png);
+        background-size: 16px;
+        background-position: 2px center;
+        background-repeat: no-repeat;
+        padding: 2px 6px 2px 20px;
     }
 
         .webgis-tags-combo-popup .webgis-tag-button.all {
+            background-image: url(../api/img/tools/hash.png);
             background-color: #b5dbad;
         }
 
