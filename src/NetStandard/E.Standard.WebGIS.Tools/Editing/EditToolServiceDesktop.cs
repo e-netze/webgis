@@ -24,6 +24,7 @@ internal class EditToolServiceDesktop : IEditToolService
 {
     public const string WebGisEditSelectionToolId = "webgis-edit-selection-tool";
     public const string WebGisEditSelectionThemeId = "webgis-edit-selection-theme";
+    public const string WebGisEditSelectionThemeTags = "webgis-edit-selection-theme-tags";
     public const string WebGisCurrentSelectionToolId = "webgis-edit-current-selection-tool";
     public const string WebGisQueryBuilderId = "webgis-edit-querybuilder";
 
@@ -315,7 +316,7 @@ internal class EditToolServiceDesktop : IEditToolService
     [ServerToolCommand("newfeature")]
     public ApiEventResponse OnNewFeatureClick(IBridge bridge, ApiToolEventArguments e)
     {
-        var editThemeDef = e.GetSelectedEditThemeDefintion();
+        var editThemeDef = e.GetSelectedEditThemeDefinition();
 
         if (String.IsNullOrEmpty(editThemeDef?.LayerId))
         {

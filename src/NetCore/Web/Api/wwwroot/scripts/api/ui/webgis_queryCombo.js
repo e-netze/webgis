@@ -851,12 +851,11 @@
         if (!options || !options.itemContainer)
             return;
 
-        var $combo = $(combo);
+        const $combo = $(combo);
         $combo
             .data('item-container', $(options.itemContainer))
             .data('item-selector', options.itemSelector)
             .data('item-tags-attr', options.itemTagsAttr)
-            .addClass('webgis-tags-combo')
             .mousemove(function (e) {
                 var width = $(this).outerWidth();
                 var offset = $(this).offset();
@@ -874,7 +873,7 @@
 
                 if ($this.hasClass('focus-extend')) {
                     $this.removeClass('focus-extend');
-                    console.log('stop prop');
+
                     e.stopPropagation();
                     $this.blur();
                     $popup.css('top', $this.offset());
@@ -885,26 +884,39 @@
                 }
             });
 
-        $("<div>")
-            .addClass('webgis-tags-combo-popup webgis-hide-on-click-outside')
+        const $popup = $("<div>")
+            .addClass('webgis-tags-combo-popup')
+            //.addClass('webgis-hide-on-click-outside')
             .css({
                 "display": "none",
                 "position": "absolute",
             })
-            .insertAfter($combo);
-            //.on('mouseleave', function () {
-            //    const $this = $(this);  
+            .insertAfter($combo)
+            .on('mouseleave', function () {
+                const $this = $(this);  
 
-            //    $this.addClass('disappear');
-            //    webgis.delayed(function ($this) {
-            //        if ($this.hasClass('disappear')) {
-            //            $this.css('display', 'none');
-            //        }
-            //    }, 1000, $this);
-            //})
-            //.on('mouseenter', function () {
-            //    $(this).removeClass('disappear');
-            //});
+                $this.addClass('disappearing');
+                webgis.delayed(function ($this) {
+                    if ($this.hasClass('disappearing')) {
+                        $this.css('display', 'none').removeClass('disappearing');
+                    }
+                }, 1000, $this);
+            })
+            .on('mouseenter', function () {
+                $(this).removeClass('disappearing');
+            });
+
+        const $valueElement = $("<input>")
+            .addClass('webgis-tags-combo-value')
+            .attr('type', 'hidden')
+            .insertAfter($popup);
+
+        if (options.id) {
+            $valueElement.attr('id', options.id);
+        }
+        if (options.addClasses) {
+            $valueElement.addClass(options.addClasses);
+        }
 
         setTags(combo, options);
 
@@ -916,7 +928,7 @@
 
         $combo.data('tags', options.tags);
         if (options.tags.length > 0) {
-            $combo.addClass('webgis-tags-combo');
+            $combo.addClass('webgis-tags-combo')
             $("<button>")
                 .addClass("webgis-tag-button all")
                 .text(webgis.l10n.get("show-all"))
@@ -930,10 +942,10 @@
                     const itemSelector = $combo.data("item-selector");
 
                     $this.parent().children().removeClass('active');
-                    $container.find(itemSelector).removeClass('webgis-tag-item-hidden');
-                    $combo.removeClass("has-tags").next('.webgis-tags-combo-popup').removeClass("has-tags");
+                    //$container.find(itemSelector).removeClass('webgis-tag-item-hidden');
+                    //$combo.removeClass("has-tags").next('.webgis-tags-combo-popup').removeClass("has-tags");
 
-                    storeTags($combo, []);
+                    refreshItemVisibility($combo, true);
                 });
 
             for (var tag of options.tags) {
@@ -1028,6 +1040,11 @@
         if (store) {
             storeTags($combo, activeTags);
         }
+
+        $combo
+            //.next('.webgis-tags-combo-popup')
+            .nextAll('.webgis-tags-combo-value')
+            .val(activeTags.join(','));
     }
 
 })(webgis.$ || jQuery);

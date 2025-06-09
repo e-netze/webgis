@@ -39,7 +39,7 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
 
     async public Task<ApiEventResponse> OnButtonClick(IBridge bridge, ApiToolEventArguments e)
     {
-        var editThemeDef = e.GetSelectedEditThemeDefintion();
+        var editThemeDef = e.GetSelectedEditThemeDefinition();
         var mapCrsId = (int)e.MapCrs;
 
         if (String.IsNullOrEmpty(editThemeDef?.LayerId))

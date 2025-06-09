@@ -3239,7 +3239,12 @@ body.webgis-ui-holder {
     border-radius: 8px;
     z-index: 1000;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    transition: opacity 1s ease;
 }
+
+    .webgis-tags-combo-popup.disappearing {
+        opacity: 0.5;
+    }
 
     .webgis-tags-combo-popup .webgis-tag-button {
         border-radius: 10px;

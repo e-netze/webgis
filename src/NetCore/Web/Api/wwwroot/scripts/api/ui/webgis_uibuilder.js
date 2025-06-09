@@ -1194,7 +1194,7 @@
         }
         else if (element.type === 'editthemetree') {
             $newElement = $("<div " + elementProperties(element, options) + "></div>").appendTo($parent);
-            $newElement.webgis_editthemeTree({ map: options.map, customitems: element.customitems, dbrights: element.dbrights });
+            $newElement.webgis_editthemeTree({ id: element.id, map: options.map, customitems: element.customitems, dbrights: element.dbrights });
         }
         else if (element.type === 'chainagethemecombo') {
             $newElement = $("<select " + elementProperties(element, options) + "></select>").appendTo($parent);

@@ -2776,10 +2776,10 @@
             $(document).scroll(function () {
                 refreshAutocomplete();
             });
-            $('.webgis-container').click(function () {
-                // eg webgis-tags-combo-popup
-                $('.webgis-hide-on-click-outside').css('display', 'none');
-            });
+            //$('.webgis-container').click(function () {
+            //    // eg webgis-tags-combo-popup
+            //    $('.webgis-hide-on-click-outside').css('display', 'none');
+            //});
         }
         else {
             $(element).scroll(function () {

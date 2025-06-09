@@ -129,11 +129,18 @@ static internal class ApiToolEventArgumentsExtensions
         var visibleQueries = await e.GetVisibleQueries(bridge, ServiceLayerVisibility.Visible);
         var invisibleQueries = await e.GetVisibleQueries(bridge, ServiceLayerVisibility.Invisible);
 
-        var selectedEditTheme = e.GetSelectedEditThemeDefintion();
+        var selectedEditTheme = e.GetSelectedEditThemeDefinition();
         if (!String.IsNullOrEmpty(selectedEditTheme?.ServiceId))
         {
             visibleQueries = visibleQueries.Where(q => q.GetServiceId() == selectedEditTheme.ServiceId);
             invisibleQueries = invisibleQueries.Where(q => q.GetServiceId() == selectedEditTheme.ServiceId);
+        }
+
+        var tags = e.GetSelectedEditThemeTags();
+        if (tags?.Any() == true)
+        {
+            visibleQueries = visibleQueries.FilterByEditThemeTags(bridge, tags);
+            invisibleQueries = invisibleQueries.FilterByEditThemeTags(bridge, tags);
         }
 
         if (scale.HasValue)
@@ -159,33 +166,41 @@ static internal class ApiToolEventArgumentsExtensions
             #endregion
         }
 
-        var visibleQueryiesString = String.Join(";", visibleQueries.Select(query => $"{query.QueryGlobalId.Replace(":", ",")},1").ToArray());
-        var invisibleQueryiesString = String.Join(";", invisibleQueries.Select(query => $"{query.QueryGlobalId.Replace(":", ",")},0").ToArray());
+        var visibleQueriesString = String.Join(";", visibleQueries.Select(query => $"{query.QueryGlobalId.Replace(":", ",")},1").ToArray());
+        var invisibleQueriesString = String.Join(";", invisibleQueries.Select(query => $"{query.QueryGlobalId.Replace(":", ",")},0").ToArray());
 
-        if (String.IsNullOrEmpty(invisibleQueryiesString))
+        if (String.IsNullOrEmpty(invisibleQueriesString))
         {
-            return visibleQueryiesString;
+            return visibleQueriesString;
         }
 
-        if (String.IsNullOrEmpty(visibleQueryiesString))
+        if (String.IsNullOrEmpty(visibleQueriesString))
         {
-            return invisibleQueryiesString;
+            return invisibleQueriesString;
         }
 
-        return String.Join(";", new[] { visibleQueryiesString, invisibleQueryiesString });
+        return String.Join(";", new[] { visibleQueriesString, invisibleQueriesString });
     }
 
-    static public EditThemeDefinition GetSelectedEditThemeDefintion(this ApiToolEventArguments e)
+    static public EditThemeDefinition GetSelectedEditThemeDefinition(this ApiToolEventArguments e)
     {
         var selectedThemeString = e[EditToolServiceDesktop.WebGisEditSelectionThemeId];
-        var selectedTheme = !String.IsNullOrEmpty(selectedThemeString) ? ApiToolEventArguments.FromArgument<EditThemeDefinition>(selectedThemeString) : null;
+        var selectedTheme = !String.IsNullOrEmpty(selectedThemeString) 
+            ? ApiToolEventArguments.FromArgument<EditThemeDefinition>(selectedThemeString) 
+            : null;
 
         return selectedTheme;
     }
 
+    static public string[] GetSelectedEditThemeTags(this ApiToolEventArguments e)
+        => e[EditToolServiceDesktop.WebGisEditSelectionThemeTags]?
+                .Split(',')
+                .Where(t => !string.IsNullOrEmpty(t))
+                .ToArray();
+
     async static public Task<IQueryBridge> GetSelectedEditThemeQuery(this ApiToolEventArguments e, IBridge bridge)
     {
-        var selectedEditTheme = e.GetSelectedEditThemeDefintion();
+        var selectedEditTheme = e.GetSelectedEditThemeDefinition();
 
         if (String.IsNullOrEmpty(selectedEditTheme?.LayerId))
         {

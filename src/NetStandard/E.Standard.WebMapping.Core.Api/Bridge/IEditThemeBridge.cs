@@ -8,4 +8,5 @@ public interface IEditThemeBridge : IApiObjectBridge
     string ThemeId { get; }
     string LayerId { get; }
     EditingRights DbRights { get; }
+    string[] Tags { get; }
 }

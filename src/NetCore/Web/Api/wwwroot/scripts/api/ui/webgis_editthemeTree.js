@@ -94,7 +94,9 @@
             })
             .webgis_tagsCombo({
                 itemContainer: $parent,
-                itemSelector: '.webgis-tag-item'
+                itemSelector: '.webgis-tag-item',
+                id: options.id + '-tags',
+                addClasses: 'webgis-tool-parameter'
             });
 
         const $themeList = $("<ul>")
