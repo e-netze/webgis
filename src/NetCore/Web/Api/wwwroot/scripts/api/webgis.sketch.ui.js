@@ -696,7 +696,10 @@
                                         // Do Nothing
                                     }
 
-                                    if (offset != 0 && webgis.usability.sketchTools?.offset?.defaultOffset) {
+                                    if (offset != 0
+                                        && webgis.usability.sketchTools
+                                        && webgis.usability.sketchTools.offset
+                                        && webgis.usability.sketchTools.offset.defaultOffset) {
                                         offset = offset / Math.abs(offset) * webgis.usability.sketchTools.offset.defaultOffset;
                                     }
 

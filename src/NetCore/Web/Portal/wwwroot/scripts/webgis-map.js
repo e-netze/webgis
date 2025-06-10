@@ -1218,10 +1218,10 @@ webgis.mapInitializer = (function (m) {
                 }
 
                 if (webgis.usability.userPreferences.has("select-new-query-results")) {
-                    features.metadata.selected ||= webgis.usability.userPreferences.get("select-new-query-results") === 'yes';
+                    features.metadata.selected = features.metadata.selected || webgis.usability.userPreferences.get("select-new-query-results") === 'yes';
                 }
                 else if (webgis.defaults["user.preferences.select-new-query-results"]) {
-                    features.metadata.selected ||= webgis.defaults["user.preferences.select-new-query-results"] === 'yes';
+                    features.metadata.selected = features.metadata.selected || webgis.defaults["user.preferences.select-new-query-results"] === 'yes';
                 }
             };
             //console.trace('onnewfeatureresponse', features);

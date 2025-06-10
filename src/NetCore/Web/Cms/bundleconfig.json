@@ -1,16 +1,5 @@
 [
   {
-    "outputFileName": "wwwroot/js/site.min.js",
-    "inputFiles": [
-      "wwwroot/js/site.js"
-    ],
-    "minify": {
-      "enabled": true,
-      "renameLocals": true
-    },
-    "sourceMap": true
-  },
-  {
     "outputFileName": "wwwroot/js/cms/cms.min.js",
     "inputFiles": [
       "wwwroot/js/cms/cms.js",

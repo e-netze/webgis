@@ -1860,7 +1860,9 @@
 
         const innerMapBbox = webgis.calc.bboxResizePerRatio(mapBbox, 0.6),
             fVertex = [focusVertex.x, focusVertex.y];
-        const featureMinScale = webgis.featureZoomMinScale(this.queryResultFeatures?.first()) || 250;
+        const featureMinScale = this.queryResultFeatures
+            ? webgis.featureZoomMinScale(this.queryResultFeatures.first()) || 250
+            : 250;
 
         if (/*ratio == 'Infinity' ||*/ ratio > 100) {  // point => 'Infinity' alway > 100
             

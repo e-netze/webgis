@@ -68,7 +68,8 @@
                         $parent = $("<optgroup label='" + item.category + "' />").addClass('webgis-custom-option').appendTo($elem);
                 }
                 var $opt = $("<option value='" + item.value + "'>" + item.name + "</option>").addClass('webgis-custom-option').appendTo($parent);
-                if (webgis.usability?.listVisibleQueriesInQueryCombo === true
+                if (webgis.usability
+                    && webgis.usability.listVisibleQueriesInQueryCombo === true
                     && item.value === '#') {
                     $opt.css('font-weight', 'bold');
                     $elem.addClass('require-ui-refresh');
@@ -147,7 +148,7 @@
     };
     var addVisibleQueries = function (e, map, elem) {
         //console.log('webgis_queryCombo.addVisibleQueries', e, map, elem);
-        if (webgis.usability?.listVisibleQueriesInQueryCombo !== true) return;
+        if (webgis.usability && webgis.usability.listVisibleQueriesInQueryCombo !== true) return;
 
         const $elem = $(elem || this);
 

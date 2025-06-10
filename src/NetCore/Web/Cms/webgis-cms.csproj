@@ -27,11 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\js\cms\cms.min.js" />
-    <_ContentIncludedByDefault Remove="wwwroot\js\cms\cms.min.js.map" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile.pubxml" />
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile_linux64.pubxml" />
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile_win64.pubxml" />
@@ -127,11 +122,6 @@
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug_Internal' or '$(Configuration)' == 'Release_Internal'">
 	  <ProjectReference Include="$(WEBGIS_CUSTOM_LIBRARIES)\E.Standard.Custom.Cms\E.Standard.Custom.Cms.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\js\cms\cms.min.js" />
-    <None Include="wwwroot\js\cms\cms.min.js.map" />
   </ItemGroup>
 
   <ItemGroup>

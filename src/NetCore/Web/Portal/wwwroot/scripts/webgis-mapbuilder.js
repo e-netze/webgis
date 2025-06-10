@@ -456,7 +456,7 @@ function selectionChanged() {
         }, _map);
 
         _map.events.on('onmapserialized', function (e, serializedMap) {
-            if (serializedMap?.services) {
+            if (serializedMap && serializedMap.services) {
                 // only if map is serialized with services (==saved/published)
                 // sometimes eg. for createing an UI Master Template map are only
                 // serialized temporary only with UI Elements
@@ -1075,7 +1075,7 @@ function manageUIMaster(portalId, mapCategory) {
                             });
 
                             // delete unnessssary elements from masterJson
-                            if (masterJson?.ui?.options) {
+                            if (masterJson && masterJson.ui && masterJson.ui.options) {
                                 const tabElement = masterJson.ui.options.find(e => e.element === "tabs");
                                 if (tabElement && tabElement.options && tabElement.options.header_buttons) {
                                     delete tabElement.options.header_buttons;

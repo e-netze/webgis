@@ -72,7 +72,8 @@
             showSinglePopup =
                 showSinglePopup
                 && features.features.length === 1
-                && features.metadata?.selected !== true;  // if the feature already will be hightlighted, there is no need to highlight it.
+                && features.metadata
+                && features.metadata.selected !== true;  // if the feature already will be hightlighted, there is no need to highlight it.
 
             var singleMarker = null;
             this._queryResultLayer = new L.MarkerClusterGroup(webgis.markerClusterOptions);
