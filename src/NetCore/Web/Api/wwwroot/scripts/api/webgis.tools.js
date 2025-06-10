@@ -1161,6 +1161,7 @@
                         type: 'static_overlay',
                         overlay_url: overlayDef.overlay_url,
                         opacity: overlayDef.opacity,
+                        opacity_factor: overlayDef.opacity_factor || 1.0,
                         widthHeightRatio: overlayDef.widthHeightRatio,
                         layers: [{ name: overlayDef.name, id: "0", selectable: false, visible: true }],
                         affinePoints: [overlayDef.topLeft, overlayDef.topRight, overlayDef.bottomLeft],
