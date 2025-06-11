@@ -9,9 +9,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Editing - Autovalues: Introcuded ``guid_v7`` and ``guid_v7_sql`` [Docs](https://docs.webgiscloud.com/de/webgis/apps/cms/editing/fields_autovalues.html)_
-
 ### Fixed
+
+## 7.25.2403
+
+### Added
+
+- Editing 
+  - AutoValues: Introduced ``guid_v7`` and ``guid_v7_sql`` [Docs](https://docs.webgiscloud.com/de/webgis/apps/cms/editing/fields_autovalues.html)
+  - FeatureTransfer: Allow empty values for "mass attribution fields".
+
+- Cache Db: If KeyValue Cache is a database, the webgis_cache table name depends on the current crypto keys
+  to avoid errors, when instances with different crypto keys accessing same table.
+  
+- !!
+  !! Important: if you already use DB as KeyValue Cache:
+  !! -  API: Login as admin => run setup 
+  !!
+- 
+### Fixed
+
+- Image Georeferencing: Transparency not worked with PNG Images (alway 100% transparent, becaus opacity_factor was 0.0)
 
 ## 7.25.2302
 

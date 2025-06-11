@@ -7,6 +7,8 @@ using E.Standard.Api.App.Services.Cache;
 using E.Standard.Caching.Services;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Security.Cryptography.Abstractions;
+using E.Standard.Security.Cryptography.Exceptions;
 using E.Standard.Web.Abstractions;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -21,6 +23,7 @@ public class SetupController : ApiBaseController
 {
     private readonly ILogger<SetupController> _logger;
     private readonly CacheService _cache;
+    private readonly ICryptoService _crypto;
     private readonly KeyValueCacheService _keyValueCache;
     private readonly SubscriberDatabaseService _subscriberDb;
     private readonly ConfigurationService _config;
@@ -28,6 +31,7 @@ public class SetupController : ApiBaseController
 
     public SetupController(ILogger<SetupController> logger,
                            CacheService cache,
+                           ICryptoService crypto,
                            KeyValueCacheService keyValueCache,
                            SubscriberDatabaseService subscriberDb,
                            UrlHelperService urlHelper,
@@ -39,13 +43,14 @@ public class SetupController : ApiBaseController
     {
         _logger = logger;
         _cache = cache;
+        _crypto = crypto;
         _keyValueCache = keyValueCache;
         _subscriberDb = subscriberDb;
         _config = config;
         _expectableUserRolesNamesProviders = expectableUserRolesNamesProviders;
     }
 
-    public IActionResult Index(string pwd)
+    public IActionResult Index(string token)
     {
         var setupPassword = _config.SecuritySetupPassword();
 
@@ -54,16 +59,30 @@ public class SetupController : ApiBaseController
             return StatusCode(403);
         }
 
-        if ((!String.IsNullOrEmpty(setupPassword) && setupPassword == pwd) ||
-            new Uri(Request.GetDisplayUrl()).Host == "localhost")
+        try
         {
+            string decryptedToken = String.IsNullOrEmpty(token)
+                ? token
+                : _crypto.DecryptTextDefault(token);
+
+            if (token != "{B69E8A3B-B6CE-4E06-841B-6574861D1920}"
+               && new Uri(Request.GetDisplayUrl()).Host != "localhost")
+            {
+                return StatusCode(403);
+            }
 
             var setup = new Setup();
             string setupResponse = setup.Start(_cache, _keyValueCache, _subscriberDb, _expectableUserRolesNamesProviders);
 
             return PlainView(setupResponse, "text/plain");
         }
-
-        return StatusCode(403);
+        catch (CryptographyException)
+        {
+            return StatusCode(500);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }

@@ -42,6 +42,11 @@ internal class DeployVersionModel
                    Placeholder = "portal-internal-url")]
     public string PortalInternalUrl { get; set; }
 
+    [ModelProperty(Prompt = "Default Calc Crs",
+                   DefaultValue = "3857",
+                   Placeholder = "default-calc-crs")]
+    public string DefaultCalcCrs { get; set; } 
+
     //[ModelProperty(Prompt = "UI Color Code (light color)",
     //               DefaultValue = "#b5dbad",
     //               Placeholder = "color1")]

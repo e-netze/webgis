@@ -368,7 +368,7 @@ public class TransferFeatures : IApiServerToolAsync,
                     }
 
                     string value = e[$"{editThemeBridge.ThemeId}_{targetField.Name}"];
-                    // dont check for null or empty, because this is a mass attribute tool
+                    // don't check for null or empty, because this is a mass attribute tool
                     // and empty strings/null is allowed
                     targetFeature.Attributes.SetOrAdd(targetField.Name, value);
                 }

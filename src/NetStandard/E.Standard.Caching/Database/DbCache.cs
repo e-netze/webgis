@@ -1,6 +1,7 @@
 ﻿using E.Standard.Caching.Abstraction;
 using E.Standard.DbConnector;
 using E.Standard.DbConnector.Schema;
+using E.Standard.Security.Cryptography.Abstractions;
 using System;
 using System.Data;
 using System.Data.Common;
@@ -10,6 +11,17 @@ namespace E.Standard.Caching.Database;
 public class DbCache : IKeyValueCache, IDbSchemaProvider
 {
     private string _connectionString = String.Empty;
+    private readonly string _tableName = String.Empty;
+
+    public DbCache(ICryptoService crypto)
+    {
+        var tablePostfix = crypto
+                .StaticDefaultEncrypt("webgis_cache", Security.Cryptography.CryptoResultStringType.Hex)
+                .Substring(2, 12)
+                .ToLower();
+
+        _tableName = $"{"webgis_cache"}_{tablePostfix}";
+    }
 
     #region IDbSchemaProvider
 
@@ -19,7 +31,7 @@ public class DbCache : IKeyValueCache, IDbSchemaProvider
         {
             DataSet dataset = new DataSet();
 
-            DataTable table = new DataTable("webgis_cache");
+            DataTable table = new DataTable(_tableName);
 
             table.Columns.Add(new DataColumn("#cache_key:256", typeof(string)));
             table.Columns.Add(new DataColumn("cache_val:4000", typeof(string)));
@@ -38,9 +50,9 @@ public class DbCache : IKeyValueCache, IDbSchemaProvider
 
     #region IKeyValueCache Member
 
-    public bool Init(string initalParameter)
+    public bool Init(string initialParameter)
     {
-        _connectionString = initalParameter;
+        _connectionString = initialParameter;
         return true;
     }
 
@@ -50,19 +62,19 @@ public class DbCache : IKeyValueCache, IDbSchemaProvider
         {
             conn.OleDbConnectionMDB = _connectionString;
 
-            using (DbConnection dbconn = conn.GetConnection())
+            using (DbConnection connection = conn.GetConnection())
             {
                 DbCommand command = conn.GetCommand();
-                command.CommandText = "select " + conn.ColumnNames2("cache_val") + " from " + conn.TableName2("webgis_cache") + " where " + conn.ColumnNames2("cache_key") + "=" + conn.ParaName("key");
+                command.CommandText = $"select {conn.ColumnNames2("cache_val")} from {conn.TableName2(_tableName)} where {conn.ColumnNames2("cache_key")}={conn.ParaName("key")}";
 
                 DbParameter keyParam = conn.GetParameter("key", key);
                 command.Parameters.Add(keyParam);
 
-                command.Connection = dbconn;
-                dbconn.Open();
+                command.Connection = connection;
+                connection.Open();
 
                 object ret = command.ExecuteScalar();
-                dbconn.Close();
+                connection.Close();
 
                 return ret != null && ret != DBNull.Value ? ret.ToString() : null;
             }
@@ -83,11 +95,11 @@ public class DbCache : IKeyValueCache, IDbSchemaProvider
         {
             conn.OleDbConnectionMDB = _connectionString;
 
-            using (DbConnection dbconn = conn.GetConnection())
+            using (DbConnection connection = conn.GetConnection())
             {
                 DbCommand command = conn.GetCommand();
 
-                command.CommandText = "insert into " + conn.TableName2("webgis_cache") + " (" + conn.ColumnNames2("cache_key,cache_val,created,expires") + ") values (" + conn.ParaName("key,val,created,expires") + ")";
+                command.CommandText = $"insert into {conn.TableName2(_tableName)} ({conn.ColumnNames2("cache_key,cache_val,created,expires")}) values ({conn.ParaName("key,val,created,expires")})";
 
                 DbParameter keyParam = conn.GetParameter("key", key);
                 DbParameter valParam = conn.GetParameter("val", o.ToString());
@@ -99,11 +111,11 @@ public class DbCache : IKeyValueCache, IDbSchemaProvider
                 command.Parameters.Add(crParam);
                 command.Parameters.Add(exParam);
 
-                command.Connection = dbconn;
-                dbconn.Open();
+                command.Connection = connection;
+                connection.Open();
 
                 command.ExecuteNonQuery();
-                dbconn.Close();
+                connection.Close();
             }
         }
     }
@@ -114,19 +126,19 @@ public class DbCache : IKeyValueCache, IDbSchemaProvider
         {
             conn.OleDbConnectionMDB = _connectionString;
 
-            using (DbConnection dbconn = conn.GetConnection())
+            using (DbConnection connection = conn.GetConnection())
             {
                 DbCommand command = conn.GetCommand();
-                command.CommandText = "delete from " + conn.TableName2("webgis_cache") + " where " + conn.ColumnNames2("cache_key") + "=" + conn.ParaName("key");
+                command.CommandText = $"delete from {conn.TableName2(_tableName)} where {conn.ColumnNames2("cache_key")}={conn.ParaName("key")}";
 
                 DbParameter keyParam = conn.GetParameter("key", key);
                 command.Parameters.Add(keyParam);
 
-                command.Connection = dbconn;
-                dbconn.Open();
+                command.Connection = connection;
+                connection.Open();
 
                 command.ExecuteNonQuery();
-                dbconn.Close();
+                connection.Close();
             }
         }
     }

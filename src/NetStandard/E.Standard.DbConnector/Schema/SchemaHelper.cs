@@ -161,7 +161,7 @@ public class SchemaHelper
 
         if (dataset == null)
         {
-            throw new Exception("No schema definied");
+            throw new Exception("No schema defined");
         }
 
         var dbFactory = new DBFactory(schemaProvider.DbConnectionString);

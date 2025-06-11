@@ -2,6 +2,7 @@
 using E.Standard.Caching.Extensions;
 using E.Standard.Extensions.Compare;
 using E.Standard.Security.App.Services.Abstraction;
+using E.Standard.Security.Cryptography.Abstractions;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -14,15 +15,18 @@ public class KeyValueCacheService : IKeyValueCache
     private const double DefaultAsideCacheExpirationSeconds = 300;  // 5 min;
 
     private readonly ISecurityConfigurationService _config;
+    private readonly ICryptoService _crypto;
     private readonly KeyValueCacheServiceOptions _options;
-
+    
     private IKeyValueCache _keyValueCache = null;
     private IKeyValueCache _asideKeyValueCache = null;
 
     public KeyValueCacheService(ISecurityConfigurationService config,
+                                ICryptoService crypto,
                                 IOptionsMonitor<KeyValueCacheServiceOptions> optionsMonitor)
     {
         _config = config;
+        _crypto = crypto;
         _options = optionsMonitor.CurrentValue;
 
         Init(String.Empty);
@@ -188,7 +192,7 @@ public class KeyValueCacheService : IKeyValueCache
                     keyValueCache.Init(connectionString);
                     break;
                 case CacheProviderTypes.Db:
-                    keyValueCache = new Database.DbCache();
+                    keyValueCache = new Database.DbCache(_crypto);
                     keyValueCache.Init(connectionString);
                     break;
                 case CacheProviderTypes.Fs:

@@ -1,6 +1,7 @@
 ﻿@using E.Standard.Api.App.Extensions 
 @model E.Standard.WebGIS.SubscriberDatabase.SubscriberDb.Subscriber
 @inject E.Standard.Configuration.Services.ConfigurationService config
+@inject E.Standard.Security.Cryptography.Abstractions.ICryptoService crypto
 
 @{
     ViewBag.Title = "Api Clients";
@@ -26,6 +27,14 @@
         <span class="webgis-api-tile-title">Admin Subscribers</span>
         <span class="webgis-api-tile-description">
             Manage API Subscribers
+        </span>
+    </div>
+
+    <div class="webgis-api-tile" onclick="document.location='@Url.Action("index","setup", new { token=crypto.EncryptTextDefault("{B69E8A3B-B6CE-4E06-841B-6574861D1920}", E.Standard.Security.Cryptography.CryptoResultStringType.Hex) })'">
+        <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+        <span class="webgis-api-tile-title">Setup</span>
+        <span class="webgis-api-tile-description">
+            Setup Database(s) or check Database state...
         </span>
     </div>
 }
