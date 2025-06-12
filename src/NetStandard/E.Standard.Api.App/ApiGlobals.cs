@@ -32,6 +32,8 @@ static public class ApiGlobals
 
     public static int HttpClientDefaultTimeoutSeconds = 0;
 
+    public static int MaxFeatureHoverHighlightVerticesCount = 1000;
+
     #endregion
 
     static public bool IsInDeveloperMode

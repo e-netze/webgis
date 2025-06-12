@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Identify: Show **Hover Hightlight** in map (on hover table row) only if every features in response
+  have less then 1000 Vertices. [discussion #293](https://github.com/e-netze/webgis-community/discussions/293)
+  Workaround for User: Click on a table row to show yellow highlight in map. 
+  
+  The maximum number of vertices can be set in the `api.config` file (``max-vertices-for-hover-highlighting``:
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#werkzeug-identify)
+
 ### Fixed
 
 ## 7.25.2403

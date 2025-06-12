@@ -2,6 +2,7 @@
 using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Mvc;
 using Api.Core.AppCode.Sorting;
+using E.Standard.Api.App;
 using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Models;
@@ -471,7 +472,7 @@ public class RestHelperService
 
         if (queryFeatures != null)
         {
-            int srefId = sRef != null ? sRef.Id : 4326;
+            int sRefId = sRef != null ? sRef.Id : 4326;
             var service = query?.Service;
             var layer = query != null ? service?.Layers?.FindById(query.LayerId) : null;
 
@@ -526,12 +527,18 @@ public class RestHelperService
 
             using (GeometricTransformer transformer = new GeometricTransformer())
             {
-                if (srefId != targetSRefId)
+                if (sRefId != targetSRefId)
                 {
                     transformer.FromSpatialReference(sRef.Proj4, !sRef.IsProjective);
                     var targetSRef = E.Standard.Api.App.ApiGlobals.SRefStore.SpatialReferences.ById(targetSRefId);
                     transformer.ToSpatialReference(targetSRef.Proj4, !targetSRef.IsProjective);
                 }
+
+                bool addHoverShapes = (geometryType, targetSRefId) switch
+                {
+                    (QueryGeometryType.Simple, Epsg.WGS84) => queryFeatures.All(f => f.Shape != null && f.Shape.CountPoints() < ApiGlobals.MaxFeatureHoverHighlightVerticesCount),
+                    (_, _) => false
+                };
 
                 foreach (E.Standard.WebMapping.Core.Feature queryFeature in queryFeatures)
                 {
@@ -551,8 +558,7 @@ public class RestHelperService
                         {
                             returnFeature.ZoomEnvelope = shape.ShapeEnvelope;
 
-                            if (appendHoverShape && targetSRefId == Epsg.WGS84
-                                && shape.CountPoints() <= 1000)
+                            if (addHoverShapes)
                             {
                                 returnFeature.HoverShape = shape;
                             }

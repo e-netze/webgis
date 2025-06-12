@@ -70,6 +70,11 @@ public class ApiGlobalsService
         ApiGlobals.LogPath = config.LogPath();
         ApiGlobals.LogPerformanceColumns = config.LogPerformanceColumns();
 
+        if(int.TryParse(config[ApiConfigKeys.ToKey("tool-identify:max-vertices-for-hover-highlighting")], out int max))
+        {
+            ApiGlobals.MaxFeatureHoverHighlightVerticesCount = max;
+        }
+
         GraphicsEngines.Init(
                 config.GraphicsEngine()?.ToLower() switch
                 {
