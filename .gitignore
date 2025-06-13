@@ -309,10 +309,10 @@ keys.config
 /src/NetCore/Web/Cms/wwwroot/lib/showdown/
 /src/NetCore/Web/Cms/wwwroot/lib/sortable/
 /src/NetCore/Web/Cms/wwwroot/css/site.min.css
-/src/NetCore/Web/Cms/wwwroot/js/cms/cms.min.js
-/src/NetCore/Web/Cms/wwwroot/js/cms/cms.min.js.map
-
 
 /src/NetCore/Web/Api/wwwroot/scripts/leaflet/plugins/leaflet-plugins-gesture-handling.min.js
 
 /src/NetCore/Web/Api/wwwroot/scripts/signalr/
+
+/src/NetCore/Web/Cms/wwwroot/js/cms/cms.min.js
+/src/NetCore/Web/Cms/wwwroot/js/cms/cms.min.js.map

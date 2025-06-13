@@ -135,16 +135,16 @@ public class UnitTests_StringExtensions
     }
 
     [Theory]
-    [InlineData("api///", "endpoint///", '/', "api/endpoint///")]
-    [InlineData("api", "endpoint", '/', "api/endpoint")]
-    [InlineData("api\\", "endpoint\\", '/', "api/endpoint\\")]
-    [InlineData("", "endpoint", '/', "endpoint")]
-    [InlineData("api", "", '/', "api")]
-    [InlineData(null, "endpoint", '/', "endpoint")]
-    [InlineData("api", null, '/', "api")]
-    public void AddUriPath_Works(string str1, string str2, char sep, string expected)
+    [InlineData("api///", "endpoint///", "api/endpoint///")]
+    [InlineData("api", "endpoint", "api/endpoint")]
+    [InlineData("api\\", "endpoint\\", "api\\endpoint\\")]
+    [InlineData("", "endpoint", "endpoint")]
+    [InlineData("api", "", "api")]
+    [InlineData(null, "endpoint", "endpoint")]
+    [InlineData("api", null, "api")]
+    public void AddUriPath_Works(string str1, string str2, string expected)
     {
-        Assert.Equal(expected, str1.AddUriPath(str2, sep));
+        Assert.Equal(expected, str1.AddUriPath(str2));
     }
 
     [Theory]
@@ -177,18 +177,18 @@ public class UnitTests_StringExtensions
     }
 
     [Theory]
-    [InlineData("api", "endpoint", '/', "api/endpoint")]
-    [InlineData("api///", "///endpoint", '/', "api/endpoint")]
-    [InlineData("api/", "", '/', "api")]
-    [InlineData("", "endpoint/", '/', "endpoint/")]
-    [InlineData("", "", '/', "")]
-    [InlineData(null, "endpoint", '/', "endpoint")]
-    [InlineData("api", null, '/', "api")]
-    [InlineData(null, null, '/', null)]
-    [InlineData("/api/", "/endpoint/", '/', "/api/endpoint/")]
-    [InlineData("/api\\", "\\endpoint/", '/', "/api/endpoint/")]
-    public void AddUriPath_RemovesEndingsAndConcatsCorrectly(string str1, string str2, char sep, string expected)
+    [InlineData("api", "endpoint", "api/endpoint")]
+    [InlineData("api///", "///endpoint", "api/endpoint")]
+    [InlineData("api/", "", "api")]
+    [InlineData("", "endpoint/", "endpoint/")]
+    [InlineData("", "", "")]
+    [InlineData(null, "endpoint", "endpoint")]
+    [InlineData("api", null, "api")]
+    [InlineData(null, null, null)]
+    [InlineData("/api/", "/endpoint/", "/api/endpoint/")]
+    [InlineData("/api\\", "\\endpoint/", "/api\\endpoint/")]
+    public void AddUriPath_RemovesEndingsAndConcatsCorrectly(string str1, string str2, string expected)
     {
-        Assert.Equal(expected, str1.AddUriPath(str2, sep));
+        Assert.Equal(expected, str1.AddUriPath(str2));
     }
 }
