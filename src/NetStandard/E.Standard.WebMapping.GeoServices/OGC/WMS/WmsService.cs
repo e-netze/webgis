@@ -17,6 +17,7 @@ using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.Core.Proxy;
 using E.Standard.WebMapping.Core.ServiceResponses;
+using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using E.Standard.WebMapping.GeoServices.OGC.Extensions;
 using gView.GraphicsEngine;
 using System;
@@ -598,8 +599,8 @@ public class WmsService : IMapService2,
                 }
 
                 string filename = $"wms{Guid.NewGuid().ToString("N").ToLower()}.{_imgExtension}";
-                string filePath = $"{_map.Environment.UserString(webgisConst.OutputPath)}/{filename}";
-                string fileUrl = $"{_map.Environment.UserString(webgisConst.OutputUrl)}/{filename}";
+                string filePath = _map.AsOutputFilename(filename);
+                string fileUrl = _map.AsOutputUrl(filename);
 
                 var imageData = await httpService.GetDataAsync(_ticketHttpService.ModifyUrl(httpService, url),
                                                                _requestAuthorization,
@@ -621,10 +622,9 @@ public class WmsService : IMapService2,
                     using (var sourceImg = Current.Engine.CreateBitmap(fileBytes))
                     using (var bm = Display.TransformImage(sourceImg, display, _map))
                     {
-                        filename = $"rot_{Guid.NewGuid():N}.png";
-                        filePath = $"{_map.Environment.UserString(webgisConst.OutputPath)}/{filename}";
-                        fileUrl = $"{_map.Environment.UserString(webgisConst.OutputUrl)}/{filename}";
-
+                        filename = $"rot_{Guid.NewGuid():N}.{_imgExtension}";
+                        filePath = _map.AsOutputFilename(filename);
+                        fileUrl = _map.AsOutputUrl(filename);
                         var imageFormat = _imgExtension == "png"
                                             ? ImageFormat.Png
                                             : ImageFormat.Jpeg;
@@ -1032,7 +1032,7 @@ public class WmsService : IMapService2,
             Dictionary<string, byte[]> imageData = new Dictionary<string, byte[]>();
             Dictionary<string, string> layerLabels = new Dictionary<string, string>();
 
-            using (var font = Current.Engine.CreateFont(SystemInfo.DefaultFontName, 8.25f, FontStyle.Bold))
+            using (var font = Current.Engine.CreateFont(SystemInfo.DefaultFontName, 10))
             using (var bitmap = Current.Engine.CreateBitmap(1, 1))
             using (var canvas = bitmap.CreateCanvas())
             {
@@ -1090,9 +1090,6 @@ public class WmsService : IMapService2,
                                                                                         _requestAuthorization,
                                                                                         timeOutSeconds: this.Timeout.ToTimeoutSecondOrDefault()));
 
-                        string filename = $"leg{Guid.NewGuid().ToString("N").ToLower()}.{_imgExtension}";
-                        string fileUri = $"{_map.Environment.UserValue(webgisConst.OutputPath, String.Empty)}/{filename}";
-
                         try
                         {
                             using (var lImage = Current.Engine.CreateBitmap(fileBytes))
@@ -1109,7 +1106,7 @@ public class WmsService : IMapService2,
                                     legendHeight += (int)Math.Max(20f, lImage.Height);
                                     legendWidth = Math.Max(legendWidth, lImage.Width);
 
-                                    legendWidth = Math.Max(legendWidth, (int)(canvas.MeasureText(layerLabel, font).Width + 20f));
+                                    legendWidth = Math.Max(legendWidth, (int)(canvas.MeasureText(layerLabel, font).Width + 35f));
                                 }
 
                                 imageData.Add(layer.Name, fileBytes.ToArray());
@@ -1120,7 +1117,8 @@ public class WmsService : IMapService2,
                     }
                     catch (System.Exception ex)
                     {
-                        requestContext.GetRequiredService<IExceptionLogger>()
+                        requestContext
+                            .GetRequiredService<IExceptionLogger>()
                             .LogException(_map, this.Server, this.Service, "GetLegend", ex);
 
                         return new ExceptionResponse(_map.Services.IndexOf(this), _id, ex);
@@ -1139,7 +1137,7 @@ public class WmsService : IMapService2,
 
             using (var bitmap = Current.Engine.CreateBitmap(legendWidth, legendHeight))
             using (var canvas = bitmap.CreateCanvas())
-            using (var font = Current.Engine.CreateFont(SystemInfo.DefaultFontName, 8.25f, FontStyle.Bold))
+            using (var font = Current.Engine.CreateFont(SystemInfo.DefaultFontName, 10))
             using (var blackBrush = Current.Engine.CreateSolidBrush(ArgbColor.Black))
             {
                 canvas.Clear(ArgbColor.White);
@@ -1165,7 +1163,7 @@ public class WmsService : IMapService2,
                         {
                             if (lImage.Width <= lImage.Height * 2)  // Problem bei Kunden: hier wird der Text immer schon in der Legendgraphic angedruckt -> wenn Bild aus eine gewisse Breite hat, kein Text schreiben 
                             {
-                                canvas.DrawText(label, font, blackBrush, new CanvasPointF(20f, y + 3f), stringFormat);
+                                canvas.DrawText(label, font, blackBrush, new CanvasPointF(30f, y + 3f), stringFormat);
                             }
                             canvas.DrawBitmap(lImage, new CanvasPointF(3f, y + Math.Max(0f, (20f - lImage.Height) / 2f)));
 
@@ -1174,9 +1172,9 @@ public class WmsService : IMapService2,
                     }
                 }
 
-                string filetitle = $"legend_{System.Guid.NewGuid():N}.png";
-                string filePath = $"{_map.Environment.UserValue(webgisConst.OutputPath, String.Empty)}/{filetitle}";
-                string fileUrl = $"{_map.Environment.UserValue(webgisConst.OutputUrl, String.Empty)}/{filetitle}";
+                string fileTitle = $"legend_{System.Guid.NewGuid():N}.png";
+                string filePath = _map.AsOutputFilename(fileTitle);
+                string fileUrl = _map.AsOutputUrl(fileTitle);
 
                 await bitmap.SaveOrUpload(filePath, ImageFormat.Png);
 

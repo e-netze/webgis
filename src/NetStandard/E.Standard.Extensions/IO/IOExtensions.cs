@@ -22,4 +22,16 @@ static public class IOExtensions
         }
         return false;
     }
+
+    static public bool HasHttpUrlSchema(this string s)
+    {
+        if (string.IsNullOrEmpty(s))
+        {
+            return false;
+        }
+
+        return
+         s.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase)
+         || s.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase);
+    }
 }

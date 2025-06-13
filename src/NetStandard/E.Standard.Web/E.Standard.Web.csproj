@@ -25,5 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\E.Standard.Extensions\E.Standard.Extensions.csproj" />
+    <ProjectReference Include="..\E.Standard.Platform\E.Standard.Platform.csproj" />
   </ItemGroup>
 </Project>

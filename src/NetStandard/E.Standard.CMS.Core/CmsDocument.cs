@@ -547,7 +547,7 @@ public class CmsDocument : IDisposable
         string[] currentUserInstanceRoles = ui.InstanceRoles;
 
         bool allowed = false;
-        bool useSctAuthComparing = authNode.UseScrictAuthNameComparing;
+        bool useStrictAuthComparing = authNode.UseStrictAuthNameComparing;
 
         #region Test all allowed users
 
@@ -559,7 +559,7 @@ public class CmsDocument : IDisposable
                 continue;
             }
             // if username ist directly allowed by username => return true
-            if (currentUsername.IsEqualAuthName(authNodeUser.Name, useSctAuthComparing))
+            if (currentUsername.IsEqualAuthName(authNodeUser.Name, useStrictAuthComparing))
             {
                 return true;
             }
@@ -576,7 +576,7 @@ public class CmsDocument : IDisposable
             {
                 foreach (string currentUserRole in currentUserRoles)
                 {
-                    if (currentUserRole.IsEqualAuthName(authNodeRole.Name, useSctAuthComparing))
+                    if (currentUserRole.IsEqualAuthName(authNodeRole.Name, useStrictAuthComparing))
                     {
                         allowedFromRole = allowed = true;
                         break;
@@ -600,7 +600,7 @@ public class CmsDocument : IDisposable
             {
                 foreach (string currentUserInstanceRole in currentUserInstanceRoles)
                 {
-                    if ($"instance::{currentUserInstanceRole}".IsEqualAuthName(authNodeRole.Name, useSctAuthComparing))
+                    if ($"instance::{currentUserInstanceRole}".IsEqualAuthName(authNodeRole.Name, useStrictAuthComparing))
                     {
                         allowedFromInstance = allowed = true;
                         break;
@@ -626,7 +626,7 @@ public class CmsDocument : IDisposable
         // Directy return false, if user is a denied user
         foreach (CmsUser authNodeUser in authNode.Users.DeniedItems)
         {
-            if (currentUsername.IsEqualAuthName(authNodeUser.Name, useSctAuthComparing))
+            if (currentUsername.IsEqualAuthName(authNodeUser.Name, useStrictAuthComparing))
             {
                 return false;
             }
@@ -639,7 +639,7 @@ public class CmsDocument : IDisposable
             {
                 foreach (string currentUserRole in currentUserRoles)
                 {
-                    if (currentUserRole.IsEqualAuthName(authNodeRole.Name, useSctAuthComparing))
+                    if (currentUserRole.IsEqualAuthName(authNodeRole.Name, useStrictAuthComparing))
                     {
                         return false;
                     }
@@ -654,7 +654,7 @@ public class CmsDocument : IDisposable
             {
                 foreach (string currentUserInstanceRole in currentUserInstanceRoles)
                 {
-                    if ($"instance::{currentUserInstanceRole}".IsEqualAuthName(authNodeRole.Name, useSctAuthComparing))
+                    if ($"instance::{currentUserInstanceRole}".IsEqualAuthName(authNodeRole.Name, useStrictAuthComparing))
                     {
                         return false;
                     }
@@ -722,7 +722,7 @@ public class CmsDocument : IDisposable
         public CmsAuthItemList Users => _users;
         public CmsAuthItemList Roles => _roles;
 
-        public bool UseScrictAuthNameComparing => _useStrictAuthNameComparing;
+        public bool UseStrictAuthNameComparing => _useStrictAuthNameComparing;
 
         public void Append(AuthNode authNode)
         {

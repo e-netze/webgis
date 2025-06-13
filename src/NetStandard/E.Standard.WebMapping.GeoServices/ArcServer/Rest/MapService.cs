@@ -19,6 +19,7 @@ using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Renderers;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.RequestBuilders;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
 using E.Standard.WebMapping.GeoServices.Extensions;
+using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -631,9 +632,9 @@ public class MapService : IMapService2,
                     {
                         imageExtension = "jpg";
                     }
-                    string filename = $"ags{Guid.NewGuid().ToString("N").ToLower()}.{imageExtension}";
-                    string filePath = System.IO.Path.Combine(this.Map.Environment.UserString(webgisConst.OutputPath), filename);
-                    string fileUrl = $"{(string)this.Map.Environment.UserValue(webgisConst.OutputUrl, String.Empty)}/{filename}";
+                    string fileTitle = $"ags{Guid.NewGuid().ToString("N").ToLower()}.{imageExtension}";
+                    string filePath = this.Map.AsOutputFilename(fileTitle);
+                    string fileUrl = this.Map.AsOutputUrl(fileTitle);
 
                     await result.SaveOrUpload(filePath);
 
@@ -685,8 +686,8 @@ public class MapService : IMapService2,
                     }
                     else if (!String.IsNullOrEmpty(jsonResult.ImageData))
                     {
-                        string fileName = $"ags_{Guid.NewGuid().ToString("N").ToLower()}.{(jsonResult.ContentType == "image/png" ? "png" : "jpg")}";
-                        using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(this.Map.Environment.UserString(webgisConst.OutputPath), fileName)))
+                        string fileTitle = $"ags_{Guid.NewGuid().ToString("N").ToLower()}.{(jsonResult.ContentType == "image/png" ? "png" : "jpg")}";
+                        using (StreamWriter sw = new StreamWriter(this.Map.AsOutputFilename(fileTitle)))
                         {
                             BinaryWriter bw = new BinaryWriter(sw.BaseStream);
                             bw.Write(Convert.FromBase64String(jsonResult.ImageData));
@@ -696,8 +697,8 @@ public class MapService : IMapService2,
                         return new ImageLocation(
                             this.Map.Services.IndexOf(this),
                             this.ID,
-                            System.IO.Path.Combine(this.Map.Environment.UserString(webgisConst.OutputPath), fileName),
-                            $"{this.Map.Environment.UserString(webgisConst.OutputUrl)}/{fileName}")
+                            this.Map.AsOutputFilename(fileTitle),
+                            this.Map.AsOutputUrl(fileTitle))
                         {
                             InnerErrorResponse = innerErrorResponse.HasErrors ? innerErrorResponse : null,
                             Extent = extent,
@@ -886,9 +887,9 @@ public class MapService : IMapService2,
                     {
                         imageExtension = "jpg";
                     }
-                    string filename = $"ags{Guid.NewGuid().ToString("N").ToLower()}.{imageExtension}";
-                    string filePath = System.IO.Path.Combine(this.Map.Environment.UserString(webgisConst.OutputPath), filename);
-                    string fileUrl = $"{(string)this.Map.Environment.UserValue(webgisConst.OutputUrl, String.Empty)}/{filename}";
+                    string fileTitle = $"ags{Guid.NewGuid().ToString("N").ToLower()}.{imageExtension}";
+                    string filePath = this.Map.AsOutputFilename(fileTitle);
+                    string fileUrl = this.Map.AsOutputUrl(fileTitle);
 
                     await result.SaveOrUpload(filePath);
 
@@ -940,7 +941,7 @@ public class MapService : IMapService2,
                     else if (!String.IsNullOrEmpty(jsonResult.ImageData))
                     {
                         string fileName = $"ags_selection_{Guid.NewGuid().ToString("N").ToLower()}.{(jsonResult.ContentType == "image/png" ? "png" : "jpg")}";
-                        using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(this.Map.Environment.UserString(webgisConst.OutputPath), fileName)))
+                        using (StreamWriter sw = new StreamWriter(this.Map.AsOutputFilename(fileName)))
                         {
                             BinaryWriter bw = new BinaryWriter(sw.BaseStream);
                             bw.Write(Convert.FromBase64String(jsonResult.ImageData));
@@ -952,8 +953,8 @@ public class MapService : IMapService2,
                         return new ImageLocation(
                             this.Map.Services.IndexOf(this),
                             this.ID,
-                            System.IO.Path.Combine(this.Map.Environment.UserString(webgisConst.OutputPath), fileName),
-                            $"{this.Map.Environment.UserString(webgisConst.OutputUrl)}/{fileName}")
+                            this.Map.AsOutputFilename(fileName),
+                            this.Map.AsOutputUrl(fileName))
                         {
                             Extent = extent,
                             Scale = scale

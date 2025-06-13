@@ -8,6 +8,7 @@ using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.ServiceResponses;
+using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using gView.GraphicsEngine;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ static class ServiceExtensions
             throw new ArgumentException("Service do not implement IServiceLegend");
         }
 
-        string fileName = "legend_" + Guid.NewGuid().ToString("N").ToLower() + ".png";
+        string fileTitle = "legend_" + Guid.NewGuid().ToString("N").ToLower() + ".png";
 
         #region ImageProcessing Variables
 
@@ -264,11 +265,11 @@ static class ServiceExtensions
                 }
             }
 
-            await bitmap.SaveOrUpload($"{service.Map.Environment.UserString(webgisConst.OutputPath)}/{fileName}", ImageFormat.Png);
+            await bitmap.SaveOrUpload(service.Map.AsOutputFilename(fileTitle), ImageFormat.Png);
         }
 
         return new ImageLocation(service.Map.Services.IndexOf(service), service.ID.ToString(),
-                           service.Map.Environment.UserString(webgisConst.OutputPath) + @"/" + fileName,
-                           service.Map.Environment.UserString(webgisConst.OutputUrl) + "/" + fileName);
+                           service.Map.AsOutputFilename(fileTitle),
+                           service.Map.AsOutputUrl(fileTitle));
     }
 }

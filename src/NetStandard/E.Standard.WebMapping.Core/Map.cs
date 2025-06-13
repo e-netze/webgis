@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Compare;
+using E.Standard.Extensions.Text;
 using E.Standard.Platform;
 using E.Standard.Web.Extensions;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -508,14 +509,14 @@ public class Map : Display, IMap
                     throw new DrawMapException(errorMessage);
                 }
 
-                using (var errpic = Current.Engine.CreateBitmap(this._iWidth, this._iHeight, PixelFormat.Rgba32))
-                using (var canvas = errpic.CreateCanvas())
+                using (var errPic = Current.Engine.CreateBitmap(this._iWidth, this._iHeight, PixelFormat.Rgba32))
+                using (var canvas = errPic.CreateCanvas())
                 using (var font = Current.Engine.CreateFont(SystemInfo.DefaultFontName, 10))
                 using (var redBrush = Current.Engine.CreateSolidBrush(ArgbColor.Red))
                 using (var whiteBrush = Current.Engine.CreateSolidBrush(ArgbColor.White))
                 using (var blackPen = Current.Engine.CreatePen(ArgbColor.Red, 1))
                 {
-                    errpic.MakeTransparent();
+                    errPic.MakeTransparent();
                     var size = canvas.MeasureText(errorMessage, font);
                     size = new CanvasSizeF((float)Math.Min(size.Width, this._iWidth * 0.8), (float)Math.Min(size.Height, this._iHeight * 0.8));
                     canvas.TranslateTransform(new CanvasPointF(this._iWidth / 2f - size.Width / 2f, this._iHeight / 2f - size.Height / 2f));
@@ -523,9 +524,9 @@ public class Map : Display, IMap
                     canvas.DrawRectangle(blackPen, new CanvasRectangle(-10, -10, (int)size.Width + 10, (int)size.Height + 10));
                     canvas.DrawText(errorMessage, font, redBrush, new CanvasRectangleF(0f, 0f, size.Width, size.Height));
 
-                    string errpic_filename = $"{this.OutputPath}/err_{Guid.NewGuid().ToString("N").ToLower()}.png";
-                    await errpic.SaveOrUpload(errpic_filename, ImageFormat.Png);
-                    merger.Add(errpic_filename, _services.Count + 100, 1f);
+                    string errPic_filename = this.OutputPath.AddUriPath($"err_{Guid.NewGuid().ToString("N").ToLower()}.png");
+                    await errPic.SaveOrUpload(errPic_filename, ImageFormat.Png);
+                    merger.Add(errPic_filename, _services.Count + 100, 1f);
                 }
             }
 
@@ -1208,7 +1209,7 @@ public class Map : Display, IMap
     {
         Map clone = new Map(_name);
         // UserData
-        clone._environment?.CopyData(clone._environment);
+        clone._environment?.CopyData(this._environment);
 
         foreach (IMapService service in _services)
         {

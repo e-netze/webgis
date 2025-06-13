@@ -42,7 +42,7 @@ static public class ApiGlobals
         {
             try
             {
-                var path = AppEtcPath + @"/developer-mode.xml";
+                var path = Path.Combine(AppEtcPath, "developer-mode.xml");
                 if (!new System.IO.FileInfo(path).Exists)
                 {
                     return false;

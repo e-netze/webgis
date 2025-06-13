@@ -33,8 +33,6 @@ using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
 using Microsoft.Extensions.Localization;
-using Microsoft.IdentityModel.Tokens;
-using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -689,7 +687,7 @@ public class Bridge : IBridge
 
         var layoutBuilder = new E.Standard.WebMapping.GeoServices.Print.LayoutBuilder(map,
             _http,
-            ApiGlobals.AppEtcPath + @"/layouts/" + printLayout.LayoutFile,
+            System.IO.Path.Combine(ApiGlobals.AppEtcPath, "layouts", printLayout.LayoutFile),
             E.Standard.WebMapping.GeoServices.Print.PageSize.A4,
             E.Standard.WebMapping.GeoServices.Print.PageOrientation.Landscape,
             96D);
@@ -723,7 +721,7 @@ public class Bridge : IBridge
         }
 
         var layoutBuilder = new E.Standard.WebMapping.GeoServices.Print.LayoutBuilder(map, _http,
-            ApiGlobals.AppEtcPath + @"/layouts/" + printLayout.LayoutFile,
+            System.IO.Path.Combine(ApiGlobals.AppEtcPath, "layouts", printLayout.LayoutFile),
             E.Standard.WebMapping.GeoServices.Print.PageSize.A4,
             E.Standard.WebMapping.GeoServices.Print.PageOrientation.Landscape,
             96D);
@@ -755,7 +753,7 @@ public class Bridge : IBridge
         }
 
         var layoutBuilder = new E.Standard.WebMapping.GeoServices.Print.LayoutBuilder(map, _http,
-            ApiGlobals.AppEtcPath + @"/layouts/" + printLayout.LayoutFile,
+            System.IO.Path.Combine(ApiGlobals.AppEtcPath, "layouts", printLayout.LayoutFile),
             E.Standard.WebMapping.GeoServices.Print.PageSize.A4,
             E.Standard.WebMapping.GeoServices.Print.PageOrientation.Landscape,
             96D);
@@ -792,7 +790,7 @@ public class Bridge : IBridge
         }
 
         var layoutBuilder = new E.Standard.WebMapping.GeoServices.Print.LayoutBuilder(map, _http,
-            ApiGlobals.AppEtcPath + @"/layouts/" + printLayout.LayoutFile,
+            System.IO.Path.Combine(ApiGlobals.AppEtcPath, "layouts", printLayout.LayoutFile),
             (E.Standard.WebMapping.GeoServices.Print.PageSize)pageSize,
             (E.Standard.WebMapping.GeoServices.Print.PageOrientation)pageOrientation,
             96D);
@@ -827,7 +825,7 @@ public class Bridge : IBridge
         }
 
         var layoutBuilder = new E.Standard.WebMapping.GeoServices.Print.LayoutBuilder(map, _http,
-            ApiGlobals.AppEtcPath + @"/layouts/" + printLayout.LayoutFile,
+            System.IO.Path.Combine(ApiGlobals.AppEtcPath, "layouts", printLayout.LayoutFile),
             E.Standard.WebMapping.GeoServices.Print.PageSize.A4,
             E.Standard.WebMapping.GeoServices.Print.PageOrientation.Landscape,
             96D);
@@ -841,11 +839,11 @@ public class Bridge : IBridge
         var printLayout = _cacheService.GetPrintLayouts(this.GdiCustomGdiScheme, _userIdentification).Where(l => l.Id == layoutId).FirstOrDefault();
 
         var layoutBuilder = new E.Standard.WebMapping.GeoServices.Print.LayoutBuilder(map, _http,
-            ApiGlobals.AppEtcPath + "/layouts/" + printLayout.LayoutFile,
+            System.IO.Path.Combine(ApiGlobals.AppEtcPath, "layouts", printLayout.LayoutFile),
             E.Standard.WebMapping.GeoServices.Print.PageSize.A4,
             E.Standard.WebMapping.GeoServices.Print.PageOrientation.Landscape,
             96D,
-            ApiGlobals.AppEtcPath + "/layouts/data");
+            System.IO.Path.Combine(ApiGlobals.AppEtcPath, "layouts", "data"));
 
         List<IPrintLayoutTextBridge> ret = new List<IPrintLayoutTextBridge>();
         foreach (var layoutText in layoutBuilder.UserText ?? new List<E.Standard.WebMapping.GeoServices.Print.LayoutUserText>())
@@ -1001,7 +999,7 @@ public class Bridge : IBridge
         var service = await TryGetOriginalService(serviceId).ThrowIfNull(() => $"Unknown Service: {serviceId}");
         var layer = service.Layers?.FindByLayerId(layerId).ThrowIfNull(() => $"Unknown Layer: {layerId}");
 
-        if(layer is IFeatureAttachmentProvider attachmentContainer)
+        if (layer is IFeatureAttachmentProvider attachmentContainer)
         {
             return await attachmentContainer.GetAttachmentsFor(_requestContext, objectId);
         }

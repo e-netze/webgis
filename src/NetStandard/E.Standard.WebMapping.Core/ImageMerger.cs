@@ -1,3 +1,4 @@
+using E.Standard.Extensions.Text;
 using E.Standard.Web.Extensions;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
@@ -261,8 +262,8 @@ class ImageMerger : IDisposable
                     catch { }
                 }
 
-                imageUrl = m_outputUrl + "/" + fileName;
-                fileName = m_outputPath + @"/" + fileName;
+                imageUrl = m_outputUrl.AddUriPath(fileName);
+                fileName = m_outputPath.AddUriPath(fileName);
 
                 await image.SaveOrUpload(fileName, _imageFormat);
                 return (fileName, imageUrl, exceptions);

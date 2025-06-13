@@ -305,7 +305,7 @@ public class CacheInstance
 
                 try
                 {
-                    var fi = new FileInfo($"{ApiGlobals.AppEtcPath}/trafo/helmert2d.json");
+                    var fi = new FileInfo(Path.Combine(ApiGlobals.AppEtcPath, "trafo", "helmert2d.json"));
                     if (fi.Exists)
                     {
                         _cacheService.Log(LogLevel.Information, "Init Transformations");

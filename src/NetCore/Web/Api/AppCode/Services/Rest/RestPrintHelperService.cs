@@ -28,6 +28,7 @@ using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements;
+using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using E.Standard.WebMapping.GeoServices.Print;
 using E.Standard.WebMapping.GeoServices.Tiling;
 using gView.GraphicsEngine;
@@ -492,7 +493,7 @@ public class RestPrintHelperService
 
                 #endregion
 
-                string outputPath = map.Environment.UserString(webgisConst.OutputPath) + @"/print_" + Guid.NewGuid().ToString("N").ToLower() + ".png";
+                string outputPath = map.AsOutputFilename(@"print_" + Guid.NewGuid().ToString("N").ToLower() + ".png");
                 if (await layoutBuilder.Draw(outputPath))
                 {
                     images.Add(layoutBuilder, outputPath);
@@ -512,8 +513,7 @@ public class RestPrintHelperService
             if (images.Count > 0)
             {
                 byte[] previewData = E.Standard.Drawing.Pro.ImageOperations.Scaledown(await images.Values.First().BytesFromUri(_requestContext.Http), 300);
-                //System.IO.File.WriteAllBytes(map.Environment.UserString(WebGIS.CMS.webgisConst.OutputPath) + @"/" + (previewFileName = fileName + "_preview.jpg"), previewData);
-                await previewData.SaveOrUpload(map.Environment.UserString(webgisConst.OutputPath) + @"/" + (previewFileName = fileName + "_preview.jpg"));
+                await previewData.SaveOrUpload(map.AsOutputFilename(previewFileName = fileName + "_preview.jpg"));
             }
 
             #endregion
@@ -661,12 +661,12 @@ public class RestPrintHelperService
                 });
             }
 
-            await outputFileBytes.SaveOrUpload($"{map.Environment.UserString(webgisConst.OutputPath)}/{fileName}");
+            await outputFileBytes.SaveOrUpload(map.AsOutputFilename(fileName));
 
             return await controller.JsonObject(new
             {
-                url = map.Environment.UserString(webgisConst.OutputUrl) + "/" + fileName,
-                preview = map.Environment.UserString(webgisConst.OutputUrl) + "/" + previewFileName,
+                url = map.AsOutputUrl(fileName),
+                preview = map.AsOutputUrl(previewFileName),
                 downloadid = _crypto.EncryptTextDefault(fileName, CryptoResultStringType.Hex),
                 n = fileName,
                 length = outputFileBytes.Length,

@@ -25,6 +25,7 @@ using E.Standard.Custom.Core.Extensions;
 using E.Standard.DependencyInjection;
 using E.Standard.Extensions.Collections;
 using E.Standard.Extensions.Compare;
+using E.Standard.Extensions.Text;
 using E.Standard.Json;
 using E.Standard.Platform;
 using E.Standard.Security.Cryptography;
@@ -1705,7 +1706,7 @@ public class RestController : ApiBaseController
                 throw new IOException("Not allowed");
             }
 
-            string filePath = $"{_urlHelper.OutputPath()}/{fileName}";
+            string filePath = _urlHelper.OutputPath().AddUriPath(fileName);
 
             // ToDo: Wird nicht in der Cloud funktionieren, weil es da keine Output Verzeichnis gibt...
             if (fileName.ToLower().EndsWith(".pdf"))

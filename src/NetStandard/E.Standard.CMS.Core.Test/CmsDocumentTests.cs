@@ -522,7 +522,7 @@ public class CmsDocumentTests
 
         var node = MakeAuthNode(users, roles);
 
-        Assert.True(node.UseScrictAuthNameComparing);
+        Assert.True(node.UseStrictAuthNameComparing);
     }
 
     /* -----------------------------------------------------------
@@ -546,7 +546,7 @@ public class CmsDocumentTests
 
         var node = MakeAuthNode(users, roles);
 
-        Assert.False(node.UseScrictAuthNameComparing);
+        Assert.False(node.UseStrictAuthNameComparing);
     }
 
     /* -----------------------------------------------------------
@@ -561,7 +561,7 @@ public class CmsDocumentTests
             userItems: Array.Empty<CmsAuthItem>(),
             roleItems: Array.Empty<CmsAuthItem>());
 
-        Assert.True(node.UseScrictAuthNameComparing);
+        Assert.True(node.UseStrictAuthNameComparing);
     }
 
     #endregion

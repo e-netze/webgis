@@ -5,6 +5,7 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.ServiceResponses;
+using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using E.Standard.WebMapping.GeoServices.Tiling.Models;
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
@@ -549,9 +550,9 @@ public abstract class TileService : IMapService, IPrintableMapService, IMapServi
                     imageFormat = ImageFormat.Jpeg;
                 }
 
-                string filetitle = "tile_" + System.Guid.NewGuid().ToString("N").ToLower() + (imageFormat == ImageFormat.Jpeg ? ".jpg" : ".png");
-                string filename = (string)_map.Environment.UserValue(webgisConst.OutputPath, String.Empty) + @"/" + filetitle;
-                string fileurl = (string)_map.Environment.UserValue(webgisConst.OutputUrl, String.Empty) + "/" + filetitle;
+                string filetitle = $"tile_{System.Guid.NewGuid().ToString("N").ToLower()}{(imageFormat == ImageFormat.Jpeg ? ".jpg" : ".png")}";
+                string filename = _map.AsOutputFilename(filetitle);
+                string fileUrl = _map.AsOutputUrl(filetitle);
 
                 double displayRot = _map.DisplayRotation;
 
@@ -735,7 +736,7 @@ public abstract class TileService : IMapService, IPrintableMapService, IMapServi
                     await bitmap.SaveOrUpload(filename, imageFormat);
                 }
 
-                return new ImageLocation(_map.Services.IndexOf(this), this.ID, filename, fileurl);
+                return new ImageLocation(_map.Services.IndexOf(this), this.ID, filename, fileUrl);
             }
             finally
             {

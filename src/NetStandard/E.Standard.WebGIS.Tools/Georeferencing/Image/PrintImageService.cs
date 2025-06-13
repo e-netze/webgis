@@ -9,6 +9,7 @@ using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.ServiceResponses;
+using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using gView.GraphicsEngine;
 using System;
 using System.IO;
@@ -123,8 +124,8 @@ internal class PrintImageService : IStaticOverlayService, IPrintableMapService
         }
 
         string filetitle = $"georefimage_{System.Guid.NewGuid().ToString("N").ToLower()}.png";
-        string filename = $"{(string)this.Map.Environment.UserValue(webgisConst.OutputPath, String.Empty)}/{filetitle}";
-        string fileurl = $"{(string)this.Map.Environment.UserValue(webgisConst.OutputUrl, String.Empty)}/{filetitle}";
+        string filename = Map.AsOutputFilename(filetitle);
+        string fileurl = Map.AsOutputUrl(filetitle);
 
         using (var ms = new MemoryStream(_bridge.GetGeorefImageData(_ower, _georefImageMetadata)))
         using (var sourceBitmap = Current.Engine.CreateBitmap(ms))

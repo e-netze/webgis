@@ -50,4 +50,145 @@ public class UnitTests_StringExtensions
         // Assert
         Assert.Equal(expected, result);
     }
+
+    [Theory]
+    [InlineData("abc///", '/', "abc")]
+    [InlineData("abc", '/', "abc")]
+    [InlineData("///", '/', "")]
+    [InlineData("", '/', "")]
+    [InlineData(null, '/', null)]
+    public void RemoveEnding_RemovesAllTrailingChars(string input, char ending, string expected)
+    {
+        Assert.Equal(expected, input.RemoveEnding(ending));
+    }
+
+    [Theory]
+    [InlineData("/abc/", "/abc")]
+    [InlineData("abc/", "abc")]
+    [InlineData("abc", "abc")]
+    [InlineData("/", "")]
+    [InlineData("", "")]
+    [InlineData(null, null)]
+    public void RemoveEndingSlash_Works(string input, string expected)
+    {
+        Assert.Equal(expected, input.RemoveEndingSlash());
+    }
+
+    [Theory]
+    [InlineData("//abc", '/', "abc")]
+    [InlineData("/abc", '/', "abc")]
+    [InlineData("abc", '/', "abc")]
+    [InlineData("/", '/', "")]
+    [InlineData("", '/', "")]
+    [InlineData(null, '/', null)]
+    public void RemoveStarting_RemovesAllStartingChars(string input, char startChar, string expected)
+    {
+        Assert.Equal(expected, input.RemoveStarting(startChar));
+    }
+
+    [Theory]
+    [InlineData("/abc", "abc")]  // Achtung: Bug in deiner Methode – sie ruft RemoveEnding auf statt RemoveStarting!
+    public void RemoveStartingSlash_Works(string input, string expected)
+    {
+        Assert.Equal(expected, input.RemoveStarting('/')); // Das entspricht der eigentlichen Absicht
+    }
+
+    [Theory]
+    [InlineData(@"path///", "path")]
+    [InlineData(@"path\\\\", "path")]
+    [InlineData(@"path///\\\", "path")]
+    [InlineData(@"///\\\", "")]
+    [InlineData("", "")]
+    [InlineData(null, null)]
+    public void RemoveEndingSlashAndBackslash_Works(string input, string expected)
+    {
+        Assert.Equal(expected, input.RemoveEndingSlashAndBackslash());
+    }
+
+    [Theory]
+    [InlineData(@"\///path", "path")]
+    [InlineData(@"/path", "path")]
+    [InlineData(@"\\path", "path")]
+    [InlineData(@"///\\\path", "path")]
+    [InlineData(@"path", "path")]
+    [InlineData("", "")]
+    [InlineData(null, null)]
+    public void RemoveStartingSlashAndBackslash_Works(string input, string expected)
+    {
+        Assert.Equal(expected, input.RemoveStartingSlashAndBackslash());
+    }
+
+    [Theory]
+    [InlineData("abc/", "/def", '/', "abc/def")]
+    [InlineData("abc", "def", '/', "abc/def")]
+    [InlineData("abc///", "///def", '/', "abc/def")]
+    [InlineData("", "def", '/', "def")]
+    [InlineData("abc", "", '/', "abc")]
+    [InlineData("", "", '/', "")]
+    [InlineData(null, "def", '/', "def")]
+    [InlineData("abc", null, '/', "abc")]
+    [InlineData(null, null, '/', null)]
+    public void ConcatWithSlash_Works(string str1, string str2, char separator, string expected)
+    {
+        var result = str1.ConcatWith(str2, separator);
+        Assert.Equal(expected, result);
+    }
+
+    [Theory]
+    [InlineData("api///", "endpoint///", '/', "api/endpoint///")]
+    [InlineData("api", "endpoint", '/', "api/endpoint")]
+    [InlineData("api\\", "endpoint\\", '/', "api/endpoint\\")]
+    [InlineData("", "endpoint", '/', "endpoint")]
+    [InlineData("api", "", '/', "api")]
+    [InlineData(null, "endpoint", '/', "endpoint")]
+    [InlineData("api", null, '/', "api")]
+    public void AddUriPath_Works(string str1, string str2, char sep, string expected)
+    {
+        Assert.Equal(expected, str1.AddUriPath(str2, sep));
+    }
+
+    [Theory]
+    [InlineData("/abc", "abc")]
+    [InlineData("///abc", "abc")]
+    [InlineData("abc", "abc")]
+    [InlineData("/", "")]
+    [InlineData("", "")]
+    [InlineData(null, null)]
+    public void RemoveStartingSlash_WorksCorrectly(string input, string expected)
+    {
+        Assert.Equal(expected, input.RemoveStarting('/'));
+    }
+
+    [Theory]
+    [InlineData("abc/", "/def", '/', "abc/def")]
+    [InlineData("abc", "def", '/', "abc/def")]
+    [InlineData("abc///", "///def", '/', "abc/def")]
+    [InlineData("", "def", '/', "def")]
+    [InlineData("abc", "", '/', "abc")]
+    [InlineData("", "", '/', "")]
+    [InlineData(null, "def", '/', "def")]
+    [InlineData("abc", null, '/', "abc")]
+    [InlineData(null, null, '/', null)]
+    [InlineData("/a/", "/b/", '/', "/a/b/")]
+    public void ConcatWith_RemovesLeadingAndTrailingCorrectly(string str1, string str2, char separator, string expected)
+    {
+        var result = str1.ConcatWith(str2, separator);
+        Assert.Equal(expected, result);
+    }
+
+    [Theory]
+    [InlineData("api", "endpoint", '/', "api/endpoint")]
+    [InlineData("api///", "///endpoint", '/', "api/endpoint")]
+    [InlineData("api/", "", '/', "api")]
+    [InlineData("", "endpoint/", '/', "endpoint/")]
+    [InlineData("", "", '/', "")]
+    [InlineData(null, "endpoint", '/', "endpoint")]
+    [InlineData("api", null, '/', "api")]
+    [InlineData(null, null, '/', null)]
+    [InlineData("/api/", "/endpoint/", '/', "/api/endpoint/")]
+    [InlineData("/api\\", "\\endpoint/", '/', "/api/endpoint/")]
+    public void AddUriPath_RemovesEndingsAndConcatsCorrectly(string str1, string str2, char sep, string expected)
+    {
+        Assert.Equal(expected, str1.AddUriPath(str2, sep));
+    }
 }

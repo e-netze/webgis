@@ -1,4 +1,5 @@
-﻿using E.Standard.Web.Extensions;
+﻿using E.Standard.Extensions.Text;
+using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -7,6 +8,7 @@ using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
+using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using E.Standard.WebMapping.GeoServices.Graphics.Renderer;
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
@@ -203,13 +205,13 @@ public class GraphicsService : IGraphicsService
 
             if (bm != null)
             {
-                string outputPath = (string)_map.Environment.UserValue(webgisConst.OutputPath, String.Empty);
-                string outputUrl = (string)_map.Environment.UserValue(webgisConst.OutputUrl, String.Empty);
-                string title = "gr_" + Guid.NewGuid().ToString("N") + ".png";
+                string fileTitle = $"gr_{Guid.NewGuid().ToString("N")}.png";
+                string filePath = _map.AsOutputFilename(fileTitle);
+                string fileUrl = _map.AsOutputUrl(fileTitle);
 
                 try
                 {
-                    bm.SaveOrUpload($"{outputPath}/{title}", ImageFormat.Png);
+                    bm.SaveOrUpload(filePath, ImageFormat.Png);
                 }
                 catch (Exception ex)
                 {
@@ -217,8 +219,7 @@ public class GraphicsService : IGraphicsService
                 }
 
                 return Task.FromResult<ServiceResponse>((new ImageLocation(_map.Services.IndexOf(this), this.ID,
-                    $"{outputPath}/{title}",
-                    $"{outputUrl}/{title}")));
+                    filePath, fileUrl)));
             }
             else
             {

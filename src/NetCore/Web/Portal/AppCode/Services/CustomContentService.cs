@@ -27,7 +27,7 @@ public class CustomContentService
         _crypto = crypto;
         _request = httpContextAccessor?.HttpContext?.Request;
 
-        PortalCustomContentRootPath = config[PortalConfigKeys.PortalCustomContentRootPath];
+        PortalCustomContentRootPath = config[PortalConfigKeys.PortalCustomContentRootPath].ToPlatformPath();
     }
 
     public string PortalCustomContentRootPath { get; }
@@ -57,14 +57,14 @@ public class CustomContentService
 
     public bool PageMapDefaultCssExists(string pageId)
     {
-        return File.Exists((_urlHelper.WWWRootPath() + "/content/portals/" + pageId + "/map-default.css").ToPlatformPath());
+        return File.Exists(Path.Combine(_urlHelper.WWWRootPath(), "content", "portals", pageId, "map-default.css").ToPlatformPath());
     }
 
     public string PageCustomJsVersion(string pageId)
     {
-        var path = String.IsNullOrWhiteSpace(PortalCustomContentRootPath) ?
-            ($"{_urlHelper.WWWRootPath()}/scripts/portals/{pageId}/custom.js").ToPlatformPath() :
-            ($"{PortalCustomContentRootPath}/{pageId}/custom.js").ToPlatformPath();
+        var path = String.IsNullOrWhiteSpace(PortalCustomContentRootPath)
+            ? Path.Combine(_urlHelper.WWWRootPath(), "scripts", "portals", pageId, "custom.js").ToPlatformPath()
+            : Path.Combine(PortalCustomContentRootPath, pageId, "custom.js").ToPlatformPath();
 
         var fi = new FileInfo(path);
         if (fi.Exists)
@@ -82,16 +82,16 @@ public class CustomContentService
             return true;
         }
 
-        string path = ($"{PortalCustomContentRootPath}/{pageId}/default.css").ToPlatformPath();
+        string path = Path.Combine(PortalCustomContentRootPath, pageId, "default.css").ToPlatformPath();
 
         return File.Exists(path);
     }
 
     public string PagePortalCssVersion(string pageId)
     {
-        string path = String.IsNullOrWhiteSpace(PortalCustomContentRootPath) ?
-            ($"{_urlHelper.WWWRootPath()}/content/portals/{pageId}/portal.css").ToPlatformPath() :
-            ($"{PortalCustomContentRootPath}/{pageId}/portal.css").ToPlatformPath();
+        string path = String.IsNullOrWhiteSpace(PortalCustomContentRootPath)
+            ? Path.Combine(_urlHelper.WWWRootPath(), "content", "companies", pageId, "portal.css").ToPlatformPath()
+            : Path.Combine(PortalCustomContentRootPath, pageId, "portal.css").ToPlatformPath();
 
         var fi = new FileInfo(path);
         if (fi.Exists)
@@ -104,22 +104,22 @@ public class CustomContentService
 
     public bool PagePortalCssExists(string pageId)
     {
-        string path = String.IsNullOrWhiteSpace(PortalCustomContentRootPath) ?
-            ($"{_urlHelper.WWWRootPath()}/content/portals/{pageId}/portal.css").ToPlatformPath() :
-            ($"{PortalCustomContentRootPath}/{pageId}/portal.css").ToPlatformPath();
+        string path = String.IsNullOrWhiteSpace(PortalCustomContentRootPath)
+            ? Path.Combine(_urlHelper.WWWRootPath(), "content", "portals", pageId, "portal.css").ToPlatformPath()
+            : Path.Combine(PortalCustomContentRootPath, pageId, "portal.css").ToPlatformPath();
 
         return File.Exists(path);
     }
 
     public bool CompanyPortalCssExists()
     {
-        return File.Exists(($"{_urlHelper.WWWRootPath()}/content/companies/{_config.Company()}/portal.css").ToPlatformPath()) ||
-               File.Exists(($"{_urlHelper.WWWRootPath()}/content/companies/__default/portal.css").ToPlatformPath());
+        return File.Exists(Path.Combine(_urlHelper.WWWRootPath(), "content", "companies", _config.Company(), "portal.css").ToPlatformPath()) ||
+               File.Exists(Path.Combine(_urlHelper.WWWRootPath(), "content", "companies", "__default", "portal.css").ToPlatformPath());
     }
 
     public string CompanyPortalCssFolder()
     {
-        if (File.Exists(($"{_urlHelper.WWWRootPath()}/content/companies/{_config.Company()}/portal.css").ToPlatformPath()))
+        if (File.Exists(Path.Combine(_urlHelper.WWWRootPath(), "content", "companies", _config.Company(), "portal.css").ToPlatformPath()))
         {
             return _config.Company();
         }
@@ -129,7 +129,7 @@ public class CustomContentService
 
     public bool PageMapBuilderCssExists(string pageId)
     {
-        return File.Exists(($"{_urlHelper.WWWRootPath()}/content/portals/{pageId}/mapbuilder.css").ToPlatformPath());
+        return File.Exists(Path.Combine(_urlHelper.WWWRootPath(), "content", "portals", pageId, "mapbuilder.css").ToPlatformPath());
     }
 
     public (string pageId, string username) FromTempPortalToken(string token)
@@ -149,7 +149,7 @@ public class CustomContentService
 
     public string HtmlMetaTags()
     {
-        FileInfo fi = new FileInfo($"{_urlHelper.WWWRootPath()}/_config/meta.config");
+        FileInfo fi = new FileInfo(Path.Combine(_urlHelper.WWWRootPath(), "_config", "meta.config"));
 
         if (fi.Exists)
         {

@@ -1,4 +1,5 @@
-﻿using E.Standard.Localization.Abstractions;
+﻿using E.Standard.Extensions.Text;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
 using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.Core.Reflection;
@@ -475,12 +476,11 @@ public class CreateProfile : IApiServerToolLocalizable<CreateProfile>,
 
             //gr.DrawLine(pen, distanceH/2, -70, distanceH/2, distanceV + 20);    // Mittelstrich
 
-            string filename = "profile_" + Guid.NewGuid().ToString("N").ToLower();
+            string filename = $"profile_{Guid.NewGuid().ToString("N").ToLower()}";
 
-            await bitmap.SaveOrUpload(bridge.OutputPath + @"/" + filename + ".png", ImageFormat.Png);
-            byte[] previewData = Drawing.Pro.ImageOperations.Scaledown(System.IO.File.ReadAllBytes(bridge.OutputPath + @"\" + filename + ".png"), 300);
-            //File.WriteAllBytes(bridge.OutputPath + @"/preview_" + filename + ".png", previewData);
-            await previewData.SaveOrUpload(bridge.OutputPath + @"/preview_" + filename + ".png");
+            await bitmap.SaveOrUpload(bridge.OutputPath.AddUriPath($"{filename}.png"), ImageFormat.Png);
+            byte[] previewData = Drawing.Pro.ImageOperations.Scaledown(System.IO.File.ReadAllBytes(bridge.OutputPath.AddUriPath($"{filename}.png")), 300);
+            await previewData.SaveOrUpload(bridge.OutputPath.AddUriPath($"preview_{filename}.png"));
 
             #region Create Pdf
 

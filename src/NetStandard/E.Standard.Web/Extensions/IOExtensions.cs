@@ -1,4 +1,5 @@
-﻿using E.Standard.Web.Abstractions;
+﻿using E.Standard.Platform;
+using E.Standard.Web.Abstractions;
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
 using System;
@@ -65,7 +66,7 @@ static public class IOExtensions
         }
         else
         {
-            File.WriteAllBytes(fileUri, stream.ToArray());
+            File.WriteAllBytes(fileUri.ToPlatformPath(), stream.ToArray());
         }
     }
 
@@ -98,7 +99,7 @@ static public class IOExtensions
         }
         else
         {
-            return Current.Engine.CreateBitmap(imageUri);
+            return Current.Engine.CreateBitmap(imageUri.ToPlatformPath());
         }
     }
 
@@ -115,7 +116,7 @@ static public class IOExtensions
         }
         else
         {
-            return new MemoryStream(File.ReadAllBytes(uri));
+            return new MemoryStream(File.ReadAllBytes(uri.ToPlatformPath()));
         }
     }
 
@@ -144,7 +145,7 @@ static public class IOExtensions
             }
             else
             {
-                File.Delete(uri);
+                File.Delete(uri.ToPlatformPath());
             }
         }
         catch { }

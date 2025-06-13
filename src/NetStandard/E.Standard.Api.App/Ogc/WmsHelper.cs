@@ -1584,13 +1584,13 @@ ex.Message +
 
     private FileInfo GetInspireConfigFile(string serviceName, string fileTitle)
     {
-        FileInfo fi = new FileInfo(ApiGlobals.AppEtcPath + "/ogc/wms/inspire/" + serviceName + @"/" + fileTitle);
+        FileInfo fi = new FileInfo(System.IO.Path.Combine(ApiGlobals.AppEtcPath, "ogc", "wms", "inspire", serviceName, fileTitle));
         if (fi.Exists)
         {
             return fi;
         }
 
-        fi = new FileInfo(ApiGlobals.AppEtcPath + "/ogc/wms/inspire/default/" + fileTitle);
+        fi = new FileInfo(System.IO.Path.Combine(ApiGlobals.AppEtcPath, "ogc", "wms", "inspire", "default", fileTitle));
         if (fi.Exists)
         {
             return fi;
@@ -1648,13 +1648,13 @@ ex.Message +
     private string GetWatermarkImage(string serviceName)
     {
         foreach (string path in new string[]{
-                @"/ogc/wms/watermark/" + serviceName + @".png",
-                @"/ogc/wms/watermark/" + serviceName + @".gif",
-                @"/ogc/wms/watermark/default.png",
-                @"/ogc/wms/watermark/default.gif"
+                $"ogc/wms/watermark/{serviceName}.png",
+                $"ogc/wms/watermark/{serviceName}.gif",
+                "ogc/wms/watermark/default.png",
+                "ogc/wms/watermark/default.gif"
         })
         {
-            FileInfo fi = new FileInfo(ApiGlobals.AppEtcPath + path);
+            FileInfo fi = new FileInfo(System.IO.Path.Combine([ApiGlobals.AppEtcPath, ..path.Split('/')]));
             if (fi.Exists)
             {
                 return fi.FullName;

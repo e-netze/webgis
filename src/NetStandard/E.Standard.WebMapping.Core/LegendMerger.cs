@@ -1,4 +1,5 @@
-﻿using E.Standard.Platform;
+﻿using E.Standard.Extensions.Text;
+using E.Standard.Platform;
 using E.Standard.Web.Extensions;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
@@ -126,8 +127,8 @@ class LegendMerger : IDisposable
 
                 string fileName = "legend_" + Guid.NewGuid().ToString("N") + ".png";
 
-                imageUrl = _outputUrl + "/" + fileName;
-                fileName = _outputPath + @"/" + fileName;
+                imageUrl = _outputUrl.AddUriPath(fileName);
+                fileName = _outputPath.AddUriPath(fileName);
 
                 await bm.SaveOrUpload(fileName, ImageFormat.Png);
                 return (fileName, imageUrl);

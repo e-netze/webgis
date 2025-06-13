@@ -1,5 +1,7 @@
 ﻿using E.Standard.Api.App.Configuration;
 using E.Standard.Configuration.Services;
+using E.Standard.Extensions.IO;
+using E.Standard.Platform;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,15 +16,21 @@ public class ApiConfigurationService
     {
         this.InstanceRoles = GetInstanceRoles(config).ToArray();
         this.AllowBranches = GetAllowBranches(config);
-        this.ServiceSideConfigurationPath = GetServiceSideConfigurationPath(config);
+        this.ServiceSideConfigurationPath = GetServiceSideConfigurationPath(config).ToPlatformPath();
 
-        this.StorageRootPath = GetStorageRootPath(config);
-        this.StorageRootPath2 = GetStorageRootPath2(config);
+        this.StorageRootPath = GetStorageRootPath(config).HasHttpUrlSchema()
+            ? GetStorageRootPath(config)
+            : GetStorageRootPath(config).ToPlatformPath();
+        this.StorageRootPath2 = GetStorageRootPath2(config).HasHttpUrlSchema()
+            ? GetStorageRootPath2(config) 
+            : GetStorageRootPath2(config).ToPlatformPath();
 
         this.UseClearOuputBackgroundTask = GetUseClearOuputBackgroundTask(config);
         this.UseClearSharedMapsBackgroundTask = GetUseClearSharedMapsBackgroundTask(config);
 
-        this.OutputPath = GetOutputPath(config);
+        this.OutputPath = GetOutputPath(config).HasHttpUrlSchema()
+            ? GetOutputPath(config)
+            : GetOutputPath(config).ToPlatformPath();
     }
 
     public string[] InstanceRoles { get; private set; }

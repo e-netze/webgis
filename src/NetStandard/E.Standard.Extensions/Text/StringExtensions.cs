@@ -115,4 +115,78 @@ static public class StringExtensions
 
         return str;
     }
+
+    public static string RemoveEnding(this string str, char ending)
+    {
+        if (String.IsNullOrEmpty(str)) return str;
+
+        while (str.EndsWith(ending))
+        {
+            str = str.Substring(0, str.Length - 1);
+        }
+
+        return str;
+    }
+
+    public static string RemoveEndingSlash(this string str) => str.RemoveEnding('/');
+
+    public static string RemoveStarting(this string str, char ending)
+    {
+        if (String.IsNullOrEmpty(str)) return str;
+
+        while (str.StartsWith(ending))
+        {
+            str = str.Substring(1);
+        }
+
+        return str;
+    }
+
+    public static string RemoveStartingSlash(this string str) 
+        => str.RemoveStarting('/');
+
+
+    public static string RemoveEndingSlashAndBackslash(this string str)
+    {
+        if (String.IsNullOrEmpty(str)) return str;
+
+        while (str.EndsWith('/') || str.EndsWith('\\'))
+        {
+            str = str.Substring(0, str.Length - 1);
+        }
+        return str;
+    }
+    public static string RemoveStartingSlashAndBackslash(this string str)
+    {
+        if (String.IsNullOrEmpty(str)) return str;
+
+        while (str.StartsWith('/') || str.StartsWith('\\'))
+        {
+            str = str.Substring(1);
+        }
+        return str;
+    }
+
+    public static string ConcatWith(this string str1, string str2, char concatChar)
+    {
+        if (String.IsNullOrEmpty(str1)) return str2;
+        if (String.IsNullOrEmpty(str2)) return str1;
+
+        return $"{str1.RemoveEnding(concatChar)}{concatChar}{str2.RemoveStarting(concatChar)}";
+    }
+
+    public static string ConcatWithSlash(this string str1, string str2)
+        => str1.ConcatWith(str2, '/');
+    
+    public static string AddUriPath(this string str1, string str2)
+    {
+        if (String.IsNullOrEmpty(str1)) return str2?.RemoveStartingSlashAndBackslash();
+        if (String.IsNullOrEmpty(str2)) return str1.RemoveEndingSlashAndBackslash();
+
+        char uriSeparator = str1.Contains('\\')
+            ? '\\'
+            : '/';
+
+        return $"{str1.RemoveEndingSlashAndBackslash()}{uriSeparator}{str2.RemoveStartingSlashAndBackslash()}";
+    }
 }

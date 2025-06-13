@@ -5,6 +5,7 @@ using E.Standard.CMS.Core;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
+using E.Standard.Extensions.Compare;
 using E.Standard.ThreadsafeClasses;
 using E.Standard.WebGIS.Api.Abstractions;
 using E.Standard.WebGIS.CMS;
@@ -316,7 +317,6 @@ public class CacheService
                 map.Environment.SetUserValue(webgisConst.EtcPath, ApiGlobals.AppEtcPath);
                 map.Environment.SetUserValue(webgisConst.OutputPath, urlHelper?.OutputPath());
                 map.Environment.SetUserValue(webgisConst.OutputUrl, urlHelper?.OutputUrl());
-                //map.SetUserValue(webgisConst.UserIdentification, ui);
 
                 using (var serviceProviderScope = this.ServiceProvider.CreateScope())
                 {

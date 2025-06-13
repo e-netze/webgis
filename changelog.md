@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Print: if output has multiple pages, webgis looses path to output path and stores images temporarily in default folder for AppPool user.
+  [discussion #305](https://github.com/e-netze/webgis-community/discussions/305)
+
 ## 7.25.2403
 
 ### Added

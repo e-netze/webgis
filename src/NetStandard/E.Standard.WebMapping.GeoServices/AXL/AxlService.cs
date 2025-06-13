@@ -1,5 +1,6 @@
 ﻿using E.Standard.ArcXml;
 using E.Standard.ArcXml.Extensions;
+using E.Standard.Extensions.Text;
 using E.Standard.Platform;
 using E.Standard.Web.Abstractions;
 using E.Standard.Web.Extensions;
@@ -12,6 +13,7 @@ using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.Core.ServiceResponses;
+using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using gView.GraphicsEngine;
 using System;
 using System.Collections.Generic;
@@ -745,8 +747,8 @@ public class AxlService : IMapService2,
                 using (var bm = Display.TransformImage(sourceImg, display, _map))
                 {
                     string filename = "rot_" + Guid.NewGuid().ToString("N") + ".png";
-                    imagePath = _map.Environment.UserValue(webgisConst.OutputPath, String.Empty) + @"/" + filename;
-                    imageUrl = _map.Environment.UserValue(webgisConst.OutputUrl, String.Empty) + "/" + filename;
+                    imagePath = _map.AsOutputFilename(filename);
+                    imageUrl = _map.AsOutputUrl(filename);
                     await bm.SaveOrUpload(imagePath, ImageFormat.Png);
                 }
             }
@@ -1154,14 +1156,14 @@ public class AxlService : IMapService2,
                     {
                         ArcServer.ASHelper.CleanSelectionBitmap(bm, ArgbColor.Cyan);
                         string title = "sel_" + Guid.NewGuid().ToString("N") + ".png";
-                        await bm.SaveOrUpload(_map.Environment.UserValue(webgisConst.OutputPath, String.Empty) + @"/" + title, ImageFormat.Png);
+                        await bm.SaveOrUpload(_map.AsOutputFilename(title), ImageFormat.Png);
 
                         pLogger.Success = true;
                         return new ImageLocation(
                                             _map.Services.IndexOf(this),
                                             this.ID,
-                                            (string)_map.Environment.UserValue(webgisConst.OutputPath, String.Empty) + @"/" + title,
-                                            (string)_map.Environment.UserValue(webgisConst.OutputUrl, String.Empty) + "/" + title)
+                                            _map.AsOutputFilename(title),
+                                            _map.AsOutputUrl(title))
                         {
                             Extent = new Envelope(_map.Extent),
                             Scale = _map.MapScale
@@ -1179,8 +1181,8 @@ public class AxlService : IMapService2,
                 using (var bm = Display.TransformImage(sourceImg, display, _map))
                 {
                     string filename = "rot_" + Guid.NewGuid().ToString("N") + ".png";
-                    imagePath = _map.Environment.UserValue(webgisConst.OutputPath, String.Empty) + @"/" + filename;
-                    imageUrl = _map.Environment.UserValue(webgisConst.OutputUrl, String.Empty) + "/" + filename;
+                    imagePath = _map.AsOutputFilename(filename);
+                    imageUrl = _map.AsOutputUrl(filename);
                     await bm.SaveOrUpload(imagePath, ImageFormat.Png);
                 }
             }
@@ -2559,8 +2561,8 @@ public class AxlService : IMapService2,
                     {
                         canvas.DrawBitmap(legendPic, new CanvasPoint(0, 0));
                         string filename = "legend_" + System.Guid.NewGuid().ToString("N") + ".png";
-                        await bitmap.SaveOrUpload(imagePath = this.OutputPath + @"/" + filename, ImageFormat.Png);
-                        imageUrl = this.OutputUrl + "/" + filename;
+                        await bitmap.SaveOrUpload(imagePath = this.OutputPath.AddUriPath(filename), ImageFormat.Png);
+                        imageUrl = this.OutputUrl.AddUriPath(filename);
                     }
                 }
             }

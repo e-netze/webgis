@@ -5,6 +5,7 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.ServiceResponses;
+using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using gView.GraphicsEngine;
 using System;
 using System.Text;
@@ -340,14 +341,12 @@ public class WatermarkService : IMapService, IPrintableMapService
                 }
 
                 string filename = "wm_" + Guid.NewGuid().ToString("N") + ".png";
-                string outputPath = (string)_map.Environment.UserValue(webgisConst.OutputPath, String.Empty);
-                string outputUrl = (string)_map.Environment.UserValue(webgisConst.OutputUrl, String.Empty);
 
-                bitmap.Save(extraMessage = $"{outputPath}/{filename}", ImageFormat.Png);
+                bitmap.Save(extraMessage = _map.AsOutputFilename(filename), ImageFormat.Png);
                 return new ImageLocation(
                     _map.Services.IndexOf(this), this.ID,
-                    $"{outputPath}/{filename}",
-                    $"{outputUrl}/{filename}");
+                    _map.AsOutputFilename(filename),
+                    _map.AsOutputUrl(filename));
             }
         }
         catch (Exception ex)
