@@ -61,8 +61,8 @@ public sealed class QueryFeatureDTO
         }
     }
 
-    [JsonProperty("_findex")]
-    [System.Text.Json.Serialization.JsonPropertyName("_findex")]
+    [JsonProperty("_fIndex")]
+    [System.Text.Json.Serialization.JsonPropertyName("_fIndex")]
     public int MarkerIndex { get; set; }
 
     public E.Standard.WebMapping.Core.Feature ToFeature()

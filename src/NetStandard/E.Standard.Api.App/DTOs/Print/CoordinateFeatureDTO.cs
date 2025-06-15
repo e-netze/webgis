@@ -25,8 +25,8 @@ public sealed class CoordinateFeatureDTO
     [System.Text.Json.Serialization.JsonPropertyName("properties")]
     public Dictionary<string, object> Properties { get; set; }
 
-    [JsonProperty("_findex")]
-    [System.Text.Json.Serialization.JsonPropertyName("_findex")]
+    [JsonProperty("_fIndex")]
+    [System.Text.Json.Serialization.JsonPropertyName("_fIndex")]
     public int MarkerIndex { get; set; }
 
     public E.Standard.WebMapping.Core.Feature ToFeature(string coordinateField)

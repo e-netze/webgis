@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+### Fixed
+
+## 7.25.2501
+
+### Added
+
 - Identify: Show **Hover Hightlight** in map (on hover table row) only if every features in response
   have less then 1000 Vertices. [discussion #293](https://github.com/e-netze/webgis-community/discussions/293)
   Workaround for User: Click on a table row to show yellow highlight in map. 
@@ -21,6 +27,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Print: if output has multiple pages, webgis looses path to output path and stores images temporarily in default folder for AppPool user.
   [discussion #305](https://github.com/e-netze/webgis-community/discussions/305)
 
+- Print: Marker (Queryresults, Coordinates) numbers are alway **1**
+- 
 ## 7.25.2403
 
 ### Added

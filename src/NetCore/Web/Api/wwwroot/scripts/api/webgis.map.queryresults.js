@@ -595,7 +595,7 @@
                 properties: $.extend({}, feature.properties),
                 __queryId: feature.__queryId,
                 __serviceId: feature.__serviceId,
-                _findex: i
+                _fIndex: i
             });
         }
 
