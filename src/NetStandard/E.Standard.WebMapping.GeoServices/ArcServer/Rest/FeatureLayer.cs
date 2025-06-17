@@ -7,6 +7,7 @@ using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Renderer;
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.RequestBuilders;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
@@ -265,26 +266,14 @@ class FeatureLayer : RestLayer,
 
                 if (dateColumns.Contains(name))
                 {
-                    try
-                    {
-                        long esriDate = Convert.ToInt64(value);
-                        DateTime td = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(esriDate);
-                        feature.Attributes.Add(new Core.Attribute(
-                            name,
-                            fieldAliases.ContainsKey(name) ? fieldAliases[name] : name,
-                            td.ToString()));
-                    }
-                    catch // Wenn Datum kein long?
-                    {
-                        feature.Attributes.Add(new Core.Attribute(
-                            name,
-                            fieldAliases.ContainsKey(name) ? fieldAliases[name] : name,
-                            value?.ToString()));
-                    }
+                    feature.Attributes.Add(new Core.Attribute(
+                                name,
+                                fieldAliases.ContainsKey(name) ? fieldAliases[name] : name,
+                                value.EsriDateToString()));
                 }
                 else
                 {
-                    if (!filter.SuppressResolveAttributeDomains && _domains != null && _domains.ContainsKey(name))
+                    if (!filter.SuppressResolveAttributeDomains && _domains?.ContainsKey(name) == true)
                     {
                         value = DomainValue(name, value?.ToString());
                     }

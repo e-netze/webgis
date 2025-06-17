@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- AGS results with dates: 
+  - don't show NULL als 01/01/1970, but as empty string. 
+  - don't show time part, if date is not set to a time.                          
+
 ### Fixed
 
 ## 7.25.2501
