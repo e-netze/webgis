@@ -6,13 +6,16 @@ using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
 using E.Standard.Drawing;
+using E.Standard.Extensions.Compare;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 
@@ -73,6 +76,13 @@ public class ApiGlobalsService
         if(int.TryParse(config[ApiConfigKeys.ToKey("tool-identify:max-vertices-for-hover-highlighting")], out int max))
         {
             ApiGlobals.MaxFeatureHoverHighlightVerticesCount = max;
+        }
+
+        EsriDateExtensions.DateFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-date-format")].OrTake(EsriDateExtensions.DateFormatString);
+        EsriDateExtensions.TimeFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-time-format")].OrTake(EsriDateExtensions.TimeFormatString);
+        if(!String.IsNullOrEmpty(config[ApiConfigKeys.ToKey("tool-identify:result-date-time-culture")]))
+        {
+            EsriDateExtensions.CultureInfo = CultureInfo.CreateSpecificCulture(config[ApiConfigKeys.ToKey("tool-identify:result-date-time-culture")]);
         }
 
         GraphicsEngines.Init(

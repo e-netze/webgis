@@ -1,12 +1,14 @@
 ﻿#nullable enable
 
 using System;
+using System.Globalization;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 static public class EsriDateExtensions
 {
     static public string DateFormatString = "dd.MM.yyyy";
     static public string TimeFormatString = "HH:mm:ss";
+    static public CultureInfo CultureInfo = CultureInfo.CurrentCulture;
 
     static public string EsriDateToString(this object? dateValue, string? dateFormat = null, string? timeFormat = null)
     {
@@ -35,10 +37,10 @@ static public class EsriDateExtensions
     static private string ToDateString(this DateTime dt, string? format)
         => String.IsNullOrEmpty(format)
                 ? dt.ToShortDateString()
-                : dt.ToString(format);
+                : dt.ToString(format, CultureInfo);
 
     static private string ToTimeString(this DateTime dt, string? format)
         => String.IsNullOrEmpty(format)
                 ? dt.ToShortDateString()
-                : dt.ToString(format);
+                : dt.ToString(format, CultureInfo);
 }
