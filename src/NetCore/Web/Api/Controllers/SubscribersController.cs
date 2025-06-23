@@ -449,7 +449,7 @@ public class SubscribersController : ApiBaseController
 
             return ViewResult(new ApiClients()
             {
-                Clients = db.GetSubriptionClients(subscriber.Id)
+                Clients = db.GetSubscriptionClients(subscriber.Id)
             });
         }
         catch (NotAuthorizedException)
@@ -465,7 +465,7 @@ public class SubscribersController : ApiBaseController
             var subscriber = CurrentAuthSubscriber();
 
             var db = _subscriberDb.CreateInstance();
-            var clients = db.GetSubriptionClients(subscriber.Id);
+            var clients = db.GetSubscriptionClients(subscriber.Id);
 
             int i = 1;
             string name = "client" + i;

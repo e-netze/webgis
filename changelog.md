@@ -11,7 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - AGS results with dates: 
   - don't show NULL als 01/01/1970, but as empty string. 
-  - don't show time part, if date is not set to a time.                          
+  - don't show time part, if date is not set to a time.            
+  - configurable time/date format and culture in `api.config` file: 
+    [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#werkzeug-identify) 
 
 ### Fixed
 

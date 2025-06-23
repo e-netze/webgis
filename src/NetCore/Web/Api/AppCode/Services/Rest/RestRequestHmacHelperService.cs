@@ -97,7 +97,7 @@ public class RestRequestHmacHelperService
                     throw new Exception("Unknown subscriber");
                 }
 
-                usernamePrefix = subscriber.Name + "@";
+                usernamePrefix = $"{subscriber.Name}@";
             }
 
             if (!String.IsNullOrWhiteSpace(clientSecret))

@@ -3,9 +3,12 @@ using Api.Core.AppCode.Services;
 using E.Standard.Api.App.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.Custom.Core;
+using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Custom.Core.Extensions;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 
@@ -22,9 +25,10 @@ public class ClientIdAndSecretAuthenticationMiddleware
 
     async public Task Invoke(HttpContext httpContext,
                              RoutingEndPointReflectionService endpointReflection,
-                             SubscriberDatabaseService subscriberDbService)
+                             SubscriberDatabaseService subscriberDbService,
+                             IEnumerable<ICustomApiSubscriberClientnameService> customSubscriberClientnameServices = null)
     {
-        if (httpContext.User.ApplyAuthenticationMiddleware(endpointReflection, ApiAuthenticationTypes.ClientIdAndSecret))
+        if (httpContext.User.ApplyAuthenticationMiddleware(endpointReflection, ApiAuthenticationTypes.ClientIdAndSecret) || true)
         {
 
             //
@@ -48,13 +52,27 @@ public class ClientIdAndSecretAuthenticationMiddleware
                     throw new Exception("Wrong client secret");
                 }
 
-                var subscriber = subscriberDb.GetSubscriberById(client.Subscriber);
-                if (subscriber == null)
+                string usernamePrefix = String.Empty, clientName = client.ClientName;
+
+                var customScriberClientname = customSubscriberClientnameServices.GetCustomClientname(client);
+                if (customScriberClientname != null)
                 {
-                    throw new Exception("Unknown Subscriber");
+                    usernamePrefix = customScriberClientname.UsernamePrefix;
+                    clientName = customScriberClientname.ClientName;
+                }
+                else
+                {
+                    var subscriber = subscriberDb.GetSubscriberById(client.Subscriber);
+                    if (subscriber == null)
+                    {
+                        throw new Exception("Unknown Subscriber");
+                    }
+
+                    usernamePrefix = usernamePrefix = $"{subscriber.Name}@";
                 }
 
-                var ui = new CmsDocument.UserIdentification(subscriber.FullName + "@" + client.ClientName, null, null, null);
+
+                var ui = new CmsDocument.UserIdentification($"{usernamePrefix}{clientName}", null, null, null);
                 httpContext.User = ui.ToClaimsPrincipal(ApiAuthenticationTypes.ClientIdAndSecret);
             }
         }

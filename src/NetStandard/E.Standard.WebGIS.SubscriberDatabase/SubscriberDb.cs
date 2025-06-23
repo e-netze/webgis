@@ -464,7 +464,7 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
         }
     }
 
-    public Client[] GetSubriptionClients(string subscriber)
+    public Client[] GetSubscriptionClients(string subscriber)
     {
         using (DBConnection conn = new DBConnection())
         {
@@ -524,7 +524,7 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
         }
     }
 
-    async public Task<bool> SetFavUserSatusAsync(string username, UserFavoriteStatus status)
+    async public Task<bool> SetFavUserStatusAsync(string username, UserFavoriteStatus status)
     {
         var usernameHash = ToAnonymFavUsername(username);
 
@@ -648,7 +648,7 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
         }
     }
 
-    async public Task<bool> DeteleUserFavorites(string username, string task = null, string tool = null)
+    async public Task<bool> DeleteUserFavorites(string username, string task = null, string tool = null)
     {
         var favUser = await GetFavUserAsync(username);
         if (favUser == null || favUser.Status != (int)UserFavoriteStatus.Active)
@@ -1030,7 +1030,7 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
         }
         else if (connectionString.ToLower().StartsWith("mongo:"))
         {
-            return new SubscriberMonboDb(connectionString.Substring("mongo:".Length));
+            return new SubscriberMongoDb(connectionString.Substring("mongo:".Length));
         }
         return new SubscriberDb(connectionString);
     }

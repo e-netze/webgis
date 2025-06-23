@@ -1,4 +1,5 @@
 ﻿using E.Standard.Caching.Extensions;
+using E.Standard.WebGIS.SubscriberDatabase.Extensions;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
@@ -9,15 +10,15 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.SubscriberDatabase;
 
-public class SubscriberMonboDb : ISubscriberDb2
+public class SubscriberMongoDb : ISubscriberDb2
 {
     private string _connectionString;
 
-    internal SubscriberMonboDb(string connectionString)
+    internal SubscriberMongoDb(string connectionString)
     {
         _connectionString = connectionString;
 
-        //var client = new MongoClient(_connectionString.GetMongoConnetion());
+        //var client = new MongoClient(_connectionString.GetMongoConnection());
         //var database = client.GetDatabase(_connectionString.GetMongoDatabase());
         //database.DropCollection("Subscribers");
     }
@@ -53,7 +54,7 @@ public class SubscriberMonboDb : ISubscriberDb2
 
         subscriber.Password = newPassword;
         var item = collection.FindOneAndUpdate(
-            filter: Builders<SubscriberDocument>.Filter.Eq("_id", ObjectId.Parse(subscriber.Id)),
+            filter: Builders<SubscriberDocument>.Filter.EqId(subscriber.Id),
             update: Builders<SubscriberDocument>.Update.Set(i => i.PasswordHash, subscriber.PasswordHash)
             );
 
@@ -66,7 +67,7 @@ public class SubscriberMonboDb : ISubscriberDb2
 
 
         var item = collection.FindOneAndUpdate<SubscriberDocument>(
-            filter: Builders<SubscriberDocument>.Filter.Eq("_id", ObjectId.Parse(subscriber.Id)),
+            filter: Builders<SubscriberDocument>.Filter.EqId(subscriber.Id),
             update: Builders<SubscriberDocument>.Update
                         .Set(i => i.FirstName, subscriber.FirstName)
                         .Set(i => i.LastName, subscriber.LastName)
@@ -80,7 +81,7 @@ public class SubscriberMonboDb : ISubscriberDb2
     {
         var collection = SubscriberCollection();
 
-        var filter = Builders<SubscriberDocument>.Filter.Eq("_id", ObjectId.Parse(id));
+        var filter = Builders<SubscriberDocument>.Filter.EqId(id);
         var item = collection.Find(filter).FirstOrDefault();
 
         return item?.ToSubscriber();
@@ -103,7 +104,7 @@ public class SubscriberMonboDb : ISubscriberDb2
         var collection = SubscriberCollection();
 
         var item = collection.FindOneAndUpdate(
-            filter: Builders<SubscriberDocument>.Filter.Eq("_id", ObjectId.Parse(id)),
+            filter: Builders<SubscriberDocument>.Filter.EqId(id),
             update: Builders<SubscriberDocument>.Update.Set(i => i.LastLogin, DateTime.UtcNow)
             );
 
@@ -132,11 +133,11 @@ public class SubscriberMonboDb : ISubscriberDb2
 
     #region Favorites
 
-    public Task<bool> DeteleUserFavorites(string username, string task = null, string tool = null) => Task.FromResult(false);
+    public Task<bool> DeleteUserFavorites(string username, string task = null, string tool = null) => Task.FromResult(false);
 
     public Task<bool> SetFavItemAsync(string username, string task, string tool, string toolItem) => Task.FromResult(false);
 
-    public Task<bool> SetFavUserSatusAsync(string username, UserFavoriteStatus status) => Task.FromResult(false);
+    public Task<bool> SetFavUserStatusAsync(string username, UserFavoriteStatus status) => Task.FromResult(false);
 
     public Task<IEnumerable<string>> GetFavItemsAsync(string username, string task, string tool) => Task.FromResult<IEnumerable<string>>(null);
 
@@ -163,7 +164,7 @@ public class SubscriberMonboDb : ISubscriberDb2
         var item = collection.Find(filter).FirstOrDefault();
         if (item != null)
         {
-            throw new Exception("Allready exists");
+            throw new Exception("Already exists");
         }
 
         item = new ClientDocument(client)
@@ -179,7 +180,7 @@ public class SubscriberMonboDb : ISubscriberDb2
     {
         var collection = ClientCollection();
 
-        var filter = Builders<ClientDocument>.Filter.Eq("_id", ClientDocument.ToId(clientId));
+        var filter = Builders<ClientDocument>.Filter.EqId(clientId);
         var item = collection.Find(filter).FirstOrDefault();
 
         return item?.ToClient();
@@ -198,7 +199,7 @@ public class SubscriberMonboDb : ISubscriberDb2
         return item?.ToClient();
     }
 
-    public SubscriberDb.Client[] GetSubriptionClients(string subscriber)
+    public SubscriberDb.Client[] GetSubscriptionClients(string subscriber)
     {
         var collection = ClientCollection();
 
@@ -215,7 +216,7 @@ public class SubscriberMonboDb : ISubscriberDb2
         var collection = ClientCollection();
 
         var item = collection.FindOneAndUpdate<ClientDocument>(
-            filter: Builders<ClientDocument>.Filter.Eq("_id", ClientDocument.ToId(client.ClientId)),
+            filter: Builders<ClientDocument>.Filter.EqId(client.ClientId),
             update: Builders<ClientDocument>.Update
                         .Set(i => i.ClientName, client.ClientName)
                         .Set(i => i.ClientId, client.ClientId)
@@ -230,7 +231,6 @@ public class SubscriberMonboDb : ISubscriberDb2
     {
         var collection = ClientCollection();
 
-        //var filter = Builders<ClientDocument>.Filter.Eq("_id", ClientDocument.ToId(client.ClientId));
         var documentId = ClientDocument.ToId(client.ClientId);
 
         var result = collection.DeleteOne<ClientDocument>(c => c.Id == documentId);
@@ -263,7 +263,7 @@ public class SubscriberMonboDb : ISubscriberDb2
         if (store)
         {
             var item = await collection.FindOneAndUpdateAsync<ClientDocument>(
-                filter: Builders<ClientDocument>.Filter.Eq("_id", ClientDocument.ToId(client.ClientId)),
+                filter: Builders<ClientDocument>.Filter.EqId(client.ClientId),
                 update: Builders<ClientDocument>.Update
                             .Set(i => i.Roles, roles.ToArray())
                 );

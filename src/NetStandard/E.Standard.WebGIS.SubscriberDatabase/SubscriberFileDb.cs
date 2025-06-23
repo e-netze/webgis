@@ -144,13 +144,13 @@ public class SubscriberFileDb : ISubscriberDb
 
     public Task<UserFavoriteStatus> GetFavUserStatusAsync(string username) => Task.FromResult(UserFavoriteStatus.Inactive);
 
-    public Task<bool> SetFavUserSatusAsync(string username, UserFavoriteStatus status) => Task.FromResult(false);
+    public Task<bool> SetFavUserStatusAsync(string username, UserFavoriteStatus status) => Task.FromResult(false);
 
     public Task<bool> SetFavItemAsync(string username, string task, string tool, string toolItem) => Task.FromResult(false);
 
     public Task<IEnumerable<string>> GetFavItemsAsync(string username, string task, string tool) => Task.FromResult<IEnumerable<string>>(null!);
 
-    public Task<bool> DeteleUserFavorites(string username, string? task = null, string? tool = null) => Task.FromResult(false);
+    public Task<bool> DeleteUserFavorites(string username, string? task = null, string? tool = null) => Task.FromResult(false);
 
     #endregion
 
@@ -168,7 +168,7 @@ public class SubscriberFileDb : ISubscriberDb
         return true;
     }
 
-    public SubscriberDb.Client[] GetSubriptionClients(string subscriber)
+    public SubscriberDb.Client[] GetSubscriptionClients(string subscriber)
     {
         string path = ClientsRootPath;
 
@@ -234,7 +234,7 @@ public class SubscriberFileDb : ISubscriberDb
 
     public SubscriberDb.Client? GetClientByName(SubscriberDb.Subscriber subscriber, string clientName)
     {
-        return GetSubriptionClients(subscriber.Id).Where(c => c.ClientName == clientName.ToLower()).FirstOrDefault();
+        return GetSubscriptionClients(subscriber.Id).Where(c => c.ClientName == clientName.ToLower()).FirstOrDefault();
     }
 
     #endregion

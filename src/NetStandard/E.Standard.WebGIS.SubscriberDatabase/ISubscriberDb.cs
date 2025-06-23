@@ -29,7 +29,7 @@ public interface ISubscriberDb
 
     SubscriberDb.Client GetClientByName(SubscriberDb.Subscriber subscriber, string clientName);
 
-    SubscriberDb.Client[] GetSubriptionClients(string subscriber);
+    SubscriberDb.Client[] GetSubscriptionClients(string subscriber);
 
     bool DeleteApiClient(SubscriberDb.Client client);
 
@@ -37,13 +37,13 @@ public interface ISubscriberDb
 
     Task<UserFavoriteStatus> GetFavUserStatusAsync(string username);
 
-    Task<bool> SetFavUserSatusAsync(string username, UserFavoriteStatus status);
+    Task<bool> SetFavUserStatusAsync(string username, UserFavoriteStatus status);
 
     Task<bool> SetFavItemAsync(string username, string task, string tool, string toolItem);
 
     Task<IEnumerable<string>> GetFavItemsAsync(string username, string task, string tool);
 
-    Task<bool> DeteleUserFavorites(string username, string task = null, string tool = null);
+    Task<bool> DeleteUserFavorites(string username, string task = null, string tool = null);
 
     #endregion
 }

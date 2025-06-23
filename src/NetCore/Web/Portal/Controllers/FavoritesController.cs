@@ -81,7 +81,7 @@ public class FavoritesController : PortalBaseController
             }
 
             var subscriberDb = _subscriberDb.CreateInstance();
-            if (!await subscriberDb.SetFavUserSatusAsync(portalUser.Username, join == true ? UserFavoriteStatus.Active : UserFavoriteStatus.Inactive))
+            if (!await subscriberDb.SetFavUserStatusAsync(portalUser.Username, join == true ? UserFavoriteStatus.Active : UserFavoriteStatus.Inactive))
             {
                 throw new Exception("Can't set users favorite status");
             }
@@ -112,7 +112,7 @@ public class FavoritesController : PortalBaseController
 
             var subscriberDb = _subscriberDb.CreateInstance();
 
-            return JsonViewSuccess(await subscriberDb.DeteleUserFavorites(username, this.Request.Query["hmac_ft"]));
+            return JsonViewSuccess(await subscriberDb.DeleteUserFavorites(username, this.Request.Query["hmac_ft"]));
         }
         catch (Exception /*ex*/)
         {
