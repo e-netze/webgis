@@ -1859,7 +1859,7 @@ public class RestController : ApiBaseController
         }
         catch (ReportExceptionException ree)
         {
-            _logger.LogError($"{ree.Message} User: {ui?.Username}");
+            _logger.LogError($"{ree.Message} User: {ui?.Username} ({String.Join(", ", ui.Userroles ?? [])})");
 
             _apiLogging.LogReportException(ree, ui);
             _mapServiceInitializer.LogException(_requestContext, ree, $"{CurrentControllerName}.{CurrentActionName}");
@@ -1868,7 +1868,7 @@ public class RestController : ApiBaseController
         }
         catch (ReportWarningException rwe)
         {
-            _logger.LogWarning($"{rwe.Message} User: {ui?.Username}");
+            _logger.LogWarning($"{rwe.Message} User: {ui?.Username} ({String.Join(", ", ui.Userroles ?? [])})");
 
             _apiLogging.LogReportException(rwe, ui);
             return await ThrowJsonException(rwe);
@@ -1879,7 +1879,7 @@ public class RestController : ApiBaseController
             {
                 ex = tie.InnerException ?? tie;
             }
-            _logger.LogError($"{ex.Message} User: {ui?.Username}");
+            _logger.LogError($"{ex.Message} User: {ui?.Username} ({String.Join(", ",ui.Userroles ?? [])})");
 
             _mapServiceInitializer.LogException(_requestContext, ex, $"{CurrentControllerName}.{CurrentActionName}",
                 service: Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(this.Request));

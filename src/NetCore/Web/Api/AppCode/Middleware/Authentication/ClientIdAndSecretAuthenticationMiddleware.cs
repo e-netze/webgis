@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Api.Core.AppCode.Middleware.Authentication;
@@ -71,8 +72,7 @@ public class ClientIdAndSecretAuthenticationMiddleware
                     usernamePrefix = usernamePrefix = $"{subscriber.Name}@";
                 }
 
-
-                var ui = new CmsDocument.UserIdentification($"{usernamePrefix}{clientName}", null, null, null);
+                var ui = new CmsDocument.UserIdentification($"{usernamePrefix}{clientName}", client.Roles?.ToArray(), null, null);
                 httpContext.User = ui.ToClaimsPrincipal(ApiAuthenticationTypes.ClientIdAndSecret);
             }
         }

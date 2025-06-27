@@ -5,7 +5,6 @@ using E.Standard.CMS.Core;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
-using E.Standard.Extensions.Compare;
 using E.Standard.ThreadsafeClasses;
 using E.Standard.WebGIS.Api.Abstractions;
 using E.Standard.WebGIS.CMS;
@@ -992,38 +991,48 @@ public class CacheService
     {
         var cmsCacheItem = GetCmsCacheItem(serviceUrl, ui);
 
-        if (cmsCacheItem != null)
+        if (cmsCacheItem is null)
         {
-            if (cmsCacheItem._queries.ContainsKey(serviceUrl))
+            throw new Exception($"No cache item found for service URL: {serviceUrl}");
+            //return null;
+        }
+
+        if (cmsCacheItem._queries.ContainsKey(serviceUrl))
+        {
+            foreach (var query in AuthObject<QueryDTO>.QueryObjectArray(cmsCacheItem._queries[serviceUrl], ui))
             {
-                foreach (var query in AuthObject<QueryDTO>.QueryObjectArray(cmsCacheItem._queries[serviceUrl], ui))
+                if (query != null && query.id == queryId)
                 {
-                    if (query != null && query.id == queryId)
+                    if (query.Service == null)
                     {
-                        if (query.Service == null)
+                        IMapService service = await GetOriginalService(serviceUrl, ui, urlHelper: urlHelper);
+                        if (service != null)
                         {
-                            IMapService service = await GetOriginalService(serviceUrl, ui, urlHelper: urlHelper);
-                            if (service != null)
-                            {
-                                query.Init(service);
-                            }
+                            query.Init(service);
                         }
-
-                        var clone = query.AuthClone(ui);  // ToDo: AuthClone is alread be done in AuthObject<Query>.QueryObjectArray, why here again?!
-                        clone.Service = query.Service;    // because it shoud not be changable inside customers/callers => makes sense...
-
-                        return clone;
                     }
+
+                    var clone = query.AuthClone(ui);  // ToDo: AuthClone is alread be done in AuthObject<Query>.QueryObjectArray, why here again?!
+                    clone.Service = query.Service;    // because it shoud not be changable inside customers/callers => makes sense...
+
+                    return clone;
                 }
             }
-            else
-            {
-                var service = await this.GetOriginalService(serviceUrl, ui, urlHelper);
 
-                if (service is IDynamicService && ((IDynamicService)service).CreateQueriesDynamic != ServiceDynamicQueries.Manually)
-                {
-                    return ((IDynamicService)service).GetDynamicQuery(queryId);
-                }
+            throw new Exception($"Query with Id '{queryId}' not found in service '{serviceUrl}'.");
+        }
+        else
+        {
+            var service = await this.GetOriginalService(serviceUrl, ui, urlHelper);
+
+            if(service is null)
+            {
+                throw new Exception($"Service with URL '{serviceUrl}' not found.");
+            }
+
+            if (service is IDynamicService && ((IDynamicService)service).CreateQueriesDynamic != ServiceDynamicQueries.Manually)
+            {
+                return ((IDynamicService)service).GetDynamicQuery(queryId);
             }
         }
 
