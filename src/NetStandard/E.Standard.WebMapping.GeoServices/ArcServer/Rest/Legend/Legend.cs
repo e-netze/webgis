@@ -1,3 +1,4 @@
+using E.Standard.Json.Converters;
 using Newtonsoft.Json;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Legend;
@@ -30,5 +31,6 @@ class Legend
 
     [JsonProperty("values")]
     [System.Text.Json.Serialization.JsonPropertyName("values")]
+    [System.Text.Json.Serialization.JsonConverter(typeof(StringArrayConverter))]
     public string[] Values { get; set; }
 }

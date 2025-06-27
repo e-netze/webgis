@@ -17,6 +17,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- AGS Legend: legend not shown, if values in json aren't string values.
+  ``getLegend`` Response:
+
+  ```json
+  {
+      "exception": "The JSON value could not be converted to System.String. Path: $.layers[79].legend[0].values[0] | LineNumber: 0 | BytePositionInLine: 170399.\n",
+      // ...
+      "success": false
+  }
+  ```
+
 ## 7.25.2501
 
 ### Added

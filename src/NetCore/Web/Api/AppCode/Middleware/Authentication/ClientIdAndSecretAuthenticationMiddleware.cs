@@ -28,7 +28,7 @@ public class ClientIdAndSecretAuthenticationMiddleware
                              SubscriberDatabaseService subscriberDbService,
                              IEnumerable<ICustomApiSubscriberClientnameService> customSubscriberClientnameServices = null)
     {
-        if (httpContext.User.ApplyAuthenticationMiddleware(endpointReflection, ApiAuthenticationTypes.ClientIdAndSecret) || true)
+        if (httpContext.User.ApplyAuthenticationMiddleware(endpointReflection, ApiAuthenticationTypes.ClientIdAndSecret))
         {
 
             //
