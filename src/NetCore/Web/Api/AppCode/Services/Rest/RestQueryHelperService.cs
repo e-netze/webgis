@@ -837,10 +837,10 @@ public class RestQueryHelperService
     {
         if (_mapServiceInitializer.IsCustomService(serviceId))
         {
-            var service = await _mapServiceInitializer.GetCustomServiceByUrlAsync(serviceId, _mapServiceInitializer.Map(_requestContext, ui), ui, _httpContextAccessor?.HttpContext?.Request?.FormCollection());
-            if (service is IDynamicService && ((IDynamicService)service).CreateQueriesDynamic != ServiceDynamicQueries.Manually)
+            var customService = await _mapServiceInitializer.GetCustomServiceByUrlAsync(serviceId, _mapServiceInitializer.Map(_requestContext, ui), ui, _httpContextAccessor?.HttpContext?.Request?.FormCollection());
+            if (customService is IDynamicService && ((IDynamicService)customService).CreateQueriesDynamic != ServiceDynamicQueries.Manually)
             {
-                return ((IDynamicService)service).GetDynamicQuery(queryId);
+                return ((IDynamicService)customService).GetDynamicQuery(queryId);
             }
         }
 

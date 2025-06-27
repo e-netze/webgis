@@ -5,6 +5,7 @@ using Api.Core.AppCode.Reflection;
 using Api.Core.AppCode.Services;
 using Api.Core.AppCode.Services.Authentication;
 using Api.Core.AppCode.Services.Rest;
+using E.DataLinq.Core.Models.AccessTree;
 using E.Standard.Api.App;
 using E.Standard.Api.App.Configuration;
 using E.Standard.Api.App.DTOs;
@@ -1858,7 +1859,7 @@ public class RestController : ApiBaseController
         }
         catch (ReportExceptionException ree)
         {
-            _logger.LogError(ree.Message);
+            _logger.LogError($"{ree.Message} User: {ui?.Username}");
 
             _apiLogging.LogReportException(ree, ui);
             _mapServiceInitializer.LogException(_requestContext, ree, $"{CurrentControllerName}.{CurrentActionName}");
@@ -1867,7 +1868,7 @@ public class RestController : ApiBaseController
         }
         catch (ReportWarningException rwe)
         {
-            _logger.LogWarning(rwe.Message);
+            _logger.LogWarning($"{rwe.Message} User: {ui?.Username}");
 
             _apiLogging.LogReportException(rwe, ui);
             return await ThrowJsonException(rwe);
@@ -1878,7 +1879,7 @@ public class RestController : ApiBaseController
             {
                 ex = tie.InnerException ?? tie;
             }
-            _logger.LogError(ex.Message);
+            _logger.LogError($"{ex.Message} User: {ui?.Username}");
 
             _mapServiceInitializer.LogException(_requestContext, ex, $"{CurrentControllerName}.{CurrentActionName}",
                 service: Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(this.Request));

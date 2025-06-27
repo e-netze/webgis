@@ -75,13 +75,15 @@ class Build : NukeBuild
 
             Log.Information("Compile WebGIS CMS");
 
+            bool isInternal = Configuration.Contains("Internal", StringComparison.OrdinalIgnoreCase);
+
             (RootDirectory / "publish" / Platform / "cms" / "artifacts").DeleteDirectory();
             DotNetTasks.DotNetBuild(s => s
                 .SetProjectFile(RootDirectory / "src" / "NetCore" / "Web" / "Cms" / "webgis-cms.csproj")
                 .SetConfiguration(Configuration)
                 .SetProperty("DeployOnBuild", "true")
                 //.SetOutputDirectory(RootDirectory / "publish" / Platform / "cms" / "artifacts")
-                .SetPublishProfile(Platform)
+                .SetPublishProfile(isInternal ? $"{Platform}_internal" : Platform)
                 .SetRuntime(Platform)
             //.EnableNoRestore()
             );
@@ -94,7 +96,7 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetProperty("DeployOnBuild", "true")
                 //.SetOutputDirectory(RootDirectory / "publish" / Platform / "api" / "artifacts")
-                .SetPublishProfile(Platform)
+                .SetPublishProfile(isInternal ? $"{Platform}_internal" : Platform)
                 .SetRuntime(Platform)
             //.EnableNoRestore()
             );
@@ -107,7 +109,7 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetProperty("DeployOnBuild", "true")
                 //.SetOutputDirectory(RootDirectory / "publish" / Platform / "portal" / "artifacts")
-                .SetPublishProfile(Platform)
+                .SetPublishProfile(isInternal ? $"{Platform}_internal" : Platform)
                 .SetRuntime(Platform)
             //.EnableNoRestore()
             );
@@ -185,31 +187,38 @@ class Build : NukeBuild
         .DependsOn(DeployCleanIt)
         .Executes(() =>
         {
+            bool isInternal = Configuration.Contains("Internal", StringComparison.OrdinalIgnoreCase);
+
             Log.Information($"Deploy WebGIS {Version} for platform {Platform}");
 
             if (Platform.Equals("linux-x64", StringComparison.Ordinal))
             {
                 Log.Information($"Builder docker images: {Version}");
 
+                string platformDir = isInternal
+                    ? @"R:\core\web\webgis7\linux64"
+                    : RootDirectory / "publish" / Platform;
+                string imagePostfix = isInternal ? "-internal" : "";
+
                 ProcessTasks.StartProcess("docker",
-                    $"build -t webgis-cms:{Version} -f Dockerfile .",
-                    workingDirectory: RootDirectory / "publish" / Platform / "cms",
+                    $"build -t webgis-cms{imagePostfix}:{Version} -f Dockerfile .",
+                    workingDirectory: Path.Combine(platformDir, "cms"),
                     logger: (oType, txt) =>
                     {
                         Log.Information($"{txt}");
                     })
                     .AssertZeroExitCode();
                 ProcessTasks.StartProcess("docker",
-                    $"build -t webgis-api:{Version} -f Dockerfile .",
-                    workingDirectory: RootDirectory / "publish" / Platform / "api",
+                    $"build -t webgis-api{imagePostfix}:{Version} -f Dockerfile .",
+                    workingDirectory: Path.Combine(platformDir, "api"),
                     logger: (oType, txt) =>
                     {
                         Log.Information($"{txt}");
                     })
                     .AssertZeroExitCode();
                 ProcessTasks.StartProcess("docker",
-                    $"build -t webgis-portal:{Version} -f Dockerfile .",
-                    workingDirectory: RootDirectory / "publish" / Platform / "portal",
+                    $"build -t webgis-portal{imagePostfix}:{Version} -f Dockerfile .",
+                    workingDirectory: Path.Combine(platformDir, "portal"),
                     logger: (oType, txt) =>
                     {
                         Log.Information($"{txt}");
@@ -218,21 +227,21 @@ class Build : NukeBuild
 
                 // tag to latest
                 ProcessTasks.StartProcess("docker",
-                    $"tag webgis-cms:{Version} webgis-cms:latest",
+                    $"tag webgis-cms{imagePostfix}:{Version} webgis-cms{imagePostfix}:latest",
                     logger: (oType, txt) =>
                     {
                         Log.Information($"{txt}");
                     })
                     .AssertZeroExitCode();
                 ProcessTasks.StartProcess("docker",
-                    $"tag webgis-api:{Version} webgis-api:latest",
+                    $"tag webgis-api{imagePostfix}:{Version} webgis-api{imagePostfix}:latest",
                     logger: (oType, txt) =>
                     {
                         Log.Information($"{txt}");
                     })
                     .AssertZeroExitCode();
                 ProcessTasks.StartProcess("docker",
-                    $"tag webgis-portal:{Version} webgis-portal:latest",
+                    $"tag webgis-portal{imagePostfix}:{Version} webgis-portal{imagePostfix}:latest",
                     logger: (oType, txt) =>
                     {
                         Log.Information($"{txt}");

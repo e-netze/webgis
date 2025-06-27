@@ -36,12 +36,6 @@
     <None Remove="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.SaveMap-restorationcode-label1.txt" />
   </ItemGroup>
 
-  <ItemGroup>
-    <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile.pubxml" />
-    <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile_linux64.pubxml" />
-    <_WebToolingArtifacts Remove="Properties\PublishProfiles\InternalProfile_win64.pubxml" />
-  </ItemGroup>
-
   <ItemGroup>    
     <Content Include="system\ui\labels\_E.Standard.WebGIS.Tools.Serialization.LoadMap-label1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

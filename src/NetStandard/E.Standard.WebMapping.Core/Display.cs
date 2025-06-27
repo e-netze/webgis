@@ -215,7 +215,7 @@ public class Display : IDisplay
         IBitmap target = null;
         try
         {
-            target = Current.Engine.CreateBitmap(targetDisplay.ImageWidth, targetDisplay.ImageHeight);
+            target = Current.Engine.CreateBitmap(targetDisplay.ImageWidth, targetDisplay.ImageHeight, PixelFormat.Rgba32);
             using (var canvas = target.CreateCanvas())
             {
                 canvas.DrawBitmap(source, destPoints, sourceRect);

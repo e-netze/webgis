@@ -1096,7 +1096,7 @@ public class WmsService : IMapService2,
                             {
                                 if (lImage.Height > 25)
                                 {
-                                    legendHeight += (int)Math.Max(20f, lImage.Height + 15f + 4f);
+                                    legendHeight += (int)Math.Max(20f, lImage.Height + 20f + 4f);
                                     legendWidth = Math.Max(legendWidth, lImage.Width + 20);
 
                                     legendWidth = Math.Max(legendWidth, (int)canvas.MeasureText($"{layerLabel}:", font).Width);
@@ -1154,7 +1154,7 @@ public class WmsService : IMapService2,
                         if (lImage.Height > 25)
                         {
                             canvas.DrawText($"{label}:", font, blackBrush, new CanvasPointF(3f, y + 1f), stringFormat);
-                            y += 15f;
+                            y += 20f;
                             canvas.DrawBitmap(lImage, new CanvasPointF(20f, y + Math.Max(0f, (20f - lImage.Height) / 2f)));
 
                             y += lImage.Height + 4f;
