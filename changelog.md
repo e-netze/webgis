@@ -15,9 +15,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - configurable time/date format and culture in `api.config` file: 
     [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#werkzeug-identify) 
 
+- Editing: Extened **Markdown** for links in Info-Field-Blocks: [docs](https://docs.webgiscloud.com/de/webgis/apps/cms/editing/fields.html)
+
+- Header Authentication: Added  ``extended-role-parameters-from-headers-prefix``, ``extended-role-parameters-from-headers`` config parameters
+  [docs](https://docs.webgiscloud.com/de/webgis/config/authentication/header-auth.html)
+
 ### Fixed
 
-- AGS Legend: legend not shown, if values in json aren't string values.
+- AGS Legend: legend not shown, if values in **json** aren't string values.
   ``getLegend`` Response:
 
   ```json
@@ -27,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
       "success": false
   }
   ```
+- Identify: Use all identify tools (coordinates, etc) with the identify default tool, if set in map builder
 
 ## 7.25.2501
 

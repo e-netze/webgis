@@ -233,7 +233,7 @@ class RasterQueryHelper
 
                 var agsService = new E.Standard.WebMapping.GeoServices.ArcServer.Rest.MapService()
                 {
-                    TokenExpiration = hadNode.Attributes["tokenExpiration"] != null ? int.Parse(hadNode.Attributes["tokenExpiration"].Value) : 3600
+                    TokenExpiration = hadNode.Attributes["tokenExpiration"] != null ? int.Parse(hadNode.Attributes["tokenExpiration"].Value) : 60
                 };
                 agsService.PreInit(String.Empty, server, service, user, pwd, token, map.Environment.UserString(webgisConst.AppConfigPath), null);
                 await agsService.InitAsync(map, bridge.RequestContext);

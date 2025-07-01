@@ -1,4 +1,5 @@
-﻿using E.Standard.Localization.Abstractions;
+﻿using E.Standard.DependencyInjection;
+using E.Standard.Localization.Abstractions;
 using E.Standard.ThreadSafe;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebGIS.Tools.Identify.Abstractions;
@@ -16,6 +17,7 @@ using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Geometry;
 using System;
 using System.Collections.Generic;
+using System.DirectoryServices.Protocols;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -118,18 +120,22 @@ internal class IdentifyServiceMobile
             e.ClearMenuItemValue();
 
             IApiTool button = (IApiTool)bridge.TryGetFriendApiButton(tool, toolId);
-            if (button is IApiServerTool && !button.GetType().Equals(tool.GetType())) // dont call yourself
+            if(button?.GetType().Equals(tool.GetType()) == true)
             {
-                return ((IApiServerTool)button).OnEvent(bridge, e);
-            }
-            else if (button is IApiServerToolAsync && !button.GetType().Equals(tool.GetType())) // dont call yourself
-            {
-                return await ((IApiServerToolAsync)button).OnEvent(bridge, e);
-            }
-            else
-            {
+                // do not call yourself
                 return null;
             }
+
+            var dependencyProvider = new ToolDependencyProvider(bridge, e, localizer);
+
+            return button switch
+            {
+                { } when button.GetType().IsApiServerToolNonAsync()
+                    => Invoker.Invoke<ApiEventResponse>(button, "OnEvent", dependencyProvider),
+                { } when button.GetType().IsApiServerToolAsync()
+                    => await Invoker.InvokeAsync<ApiEventResponse>(button, "OnEvent", dependencyProvider),
+                _ => null
+            };
         }
         else
         {
@@ -146,7 +152,9 @@ internal class IdentifyServiceMobile
 
         #endregion
 
-        if (queries == null || queries.Count() == 0)
+        if (queries == null 
+            || (queries.Count() == 0 && !e.UseAllIdentifyTools(isMultiQuery, identifyOptions))
+           )
         {
             throw new InfoException(localizer.Localize("no-query-found"));
         }
@@ -256,7 +264,7 @@ internal class IdentifyServiceMobile
                 }
             }
 
-            if (e.AsDefaultTool == true && isMultiQuery == true && !String.IsNullOrWhiteSpace(e["identify-map-tools"]) && identifyOptions.Contains("all-identify-tools"))
+            if (e.UseAllIdentifyTools(isMultiQuery, identifyOptions))
             {
                 #region Query all other "IdentiyTools" also
 
@@ -266,7 +274,8 @@ internal class IdentifyServiceMobile
                 foreach (var toolId in e["identify-map-tools"].Split(','))
                 {
                     var button = bridge.TryGetFriendApiButton(tool, toolId);
-                    if (button is IIdentifyTool && (button is IApiServerTool || button is IApiServerToolAsync))
+                    if (button is IIdentifyTool 
+                        && button.GetType().IsApiServerTool())
                     {
                         var canIdentifyResults = await ((IIdentifyTool)button).CanIdentifyAsync(bridge, new Point(click.Longitude, click.Latitude), mapScale, availableServiceIds, availableQueryIds);
                         if (canIdentifyResults != null)

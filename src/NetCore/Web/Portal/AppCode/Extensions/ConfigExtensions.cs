@@ -344,6 +344,25 @@ static public class ConfigExtensions
         return separator[0];
     }
 
+    static public string[] HeaderAuthenticationExtendedRoleParametersFromHeaders(this ConfigurationService config)
+    {
+        string roleParameters = config[PortalConfigKeys.HeaderAuthenticationExtendedRoleParametersFromHeaders];
+        
+        if (String.IsNullOrWhiteSpace(roleParameters))
+        {
+            return Array.Empty<string>();
+        }
+        
+        return roleParameters.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                             .Select(s => s.Trim())
+                             .ToArray();
+    }
+
+    static public string HeaderAuthenticationExtendedRoleParametersFromHeadersPrefix(this ConfigurationService config)
+    {
+        return config[PortalConfigKeys.HeaderAuthenticationExtendedRoleParametersFromHeadersPrefix] ?? String.Empty;
+    }
+
     #endregion
 
     #region Extended Role Parameters

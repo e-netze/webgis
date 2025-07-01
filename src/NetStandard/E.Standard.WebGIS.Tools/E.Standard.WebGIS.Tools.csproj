@@ -31,11 +31,13 @@
   <ItemGroup>
     <ProjectReference Include="..\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
     <ProjectReference Include="..\E.Standard.DbConnector\E.Standard.DbConnector.csproj" />
+    <ProjectReference Include="..\E.Standard.DependencyInjection\E.Standard.DependencyInjection.csproj" />
     <ProjectReference Include="..\E.Standard.DocumentReader\E.Standard.DocumentReader.csproj" />
     <ProjectReference Include="..\E.Standard.Drawing\E.Standard.Drawing.csproj" />
     <ProjectReference Include="..\E.Standard.Esri.Shapefile\E.Standard.Esri.Shapefile.csproj" />
     <ProjectReference Include="..\E.Standard.GeoJson\E.Standard.GeoJson.csproj" />
     <ProjectReference Include="..\E.Standard.Gpx\E.Standard.Gpx.csproj" />
+    <ProjectReference Include="..\E.Standard.Localization.Extensions\E.Standard.Localization.Extensions.csproj" />
     <ProjectReference Include="..\E.Standard.Localization\E.Standard.Localization.csproj" />
     <ProjectReference Include="..\E.Standard.Plot\E.Standard.Plot.csproj" />
     <ProjectReference Include="..\E.Standard.ThreadsafeClasses\E.Standard.ThreadsafeClasses.csproj" />

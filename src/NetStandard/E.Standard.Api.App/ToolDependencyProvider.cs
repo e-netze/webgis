@@ -65,6 +65,11 @@ public class ToolDependencyProvider : IDependencyProvider
             _localizationNamespace = typeof(T).GetLocalizationNamespace();
         }
 
+        public ILocalizer<TClass> CreateFor<TClass>()
+        {
+            return new Localizer<TClass>(_stringLocalizer);
+        }
+
         public string Localize(string key)
         {
             var val = _stringLocalizer[$"{_localizationNamespace}.{key}"];

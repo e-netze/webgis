@@ -82,6 +82,44 @@ public class HeaderAuthenticationService
             }
         }
 
+        #region Add extended role parameters from headers
+
+        // some headers should be used as role parameters
+        // config: 
+        //      <add key="extended-role-parameters-from-headers-prefix" value="X-AUTHENTICATE-" /> <!-- optional -->
+        //      <add key="extended-role-parameters-from-headers" value="roleparam1,roleparam2" />
+        // request headers:
+        //      X-AUTHENTICATE-roleparam1=12345
+        // role parameters:
+        //  =>  roleparam1=12345
+
+        var extendedRoleParametersFromHeaders = _config.HeaderAuthenticationExtendedRoleParametersFromHeaders();
+
+        if (extendedRoleParametersFromHeaders?.Any() == true)
+        {
+            var extendedRoleParametersFromHeadersPrefix = _config.HeaderAuthenticationExtendedRoleParametersFromHeadersPrefix();
+
+            foreach (var extendedRoleParameter in extendedRoleParametersFromHeaders)
+            {
+                var headerValues = headers.GetValues($"{extendedRoleParametersFromHeadersPrefix}{extendedRoleParameter}");
+                
+                if (headerValues != null)
+                {
+                    foreach (var value in headerValues.Where(h => !String.IsNullOrEmpty(h)))
+                    {
+                        var roleParameter = $"{extendedRoleParameter}={value}";
+
+                        if (!allrolesParams.Contains(roleParameter))
+                        {
+                            allrolesParams.Add(roleParameter);
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
+
         var userRoles = allroles.ToArray();
         var userRoleParameters = (allrolesParams.Count > 0 ? allrolesParams.ToArray() : null);
 

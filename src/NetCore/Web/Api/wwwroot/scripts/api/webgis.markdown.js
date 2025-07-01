@@ -54,6 +54,28 @@
             let placeholderIndex = 0;
 
             // extract all link and replace it with placheholders => reason: placeholders should not be touched by roles
+
+            text = text.replace(/\{\[([^}]+)\]\}\(([^)]+)\)/g, function (match, linkText, url) {
+                const placeholder = `###LINK_${placeholderIndex}###`;
+                linkPlaceholders[placeholder] = `<button onclick="webgis.iFrameDialog('${url}','${linkText}')" class="webgis-button">${linkText}</button>`;
+                placeholderIndex++;
+                return placeholder;
+            });
+
+            text = text.replace(/\{([^}]+)\}\(([^)]+)\)/g, function (match, linkText, url) {
+                const placeholder = `###LINK_${placeholderIndex}###`;
+                linkPlaceholders[placeholder] = `<a onclick="webgis.iFrameDialog('${url}','${linkText}');return false;"" href="${url}">${linkText}</a>`;
+                placeholderIndex++;
+                return placeholder;
+            });
+
+            text = text.replace(/\[\[([^\]]+)\]\]\(([^)]+)\)/g, function (match, linkText, url) {
+                const placeholder = `###LINK_${placeholderIndex}###`;
+                linkPlaceholders[placeholder] = `<button onclick="window.open('${url}')" class="webgis-button">${linkText}</button>`;
+                placeholderIndex++;
+                return placeholder;
+            });
+
             text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (match, linkText, url) {
                 const placeholder = `###LINK_${placeholderIndex}###`;
                 linkPlaceholders[placeholder] = `<a target="_blank" href="${url}">${linkText}</a>`;

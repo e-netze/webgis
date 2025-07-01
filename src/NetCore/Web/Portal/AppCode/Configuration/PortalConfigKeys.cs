@@ -84,6 +84,8 @@ public class PortalConfigKeys
     public const string HeaderAuthenticationRolePrefix = ConfigurationSectionName + ":header-authentication:role-prefix";
     public const string HeaderAuthenticationRoleSeparator = ConfigurationSectionName + ":header-authentication:role-separator";
     public const string HeaderAuthenticationRoleParametersSeparator = ConfigurationSectionName + ":header-authentication:role-parameters-separator";
+    public const string HeaderAuthenticationExtendedRoleParametersFromHeaders = ConfigurationSectionName + ":header-authentication:extended-role-parameters-from-headers";
+    public const string HeaderAuthenticationExtendedRoleParametersFromHeadersPrefix = ConfigurationSectionName + ":header-authentication:extended-role-parameters-from-headers-prefix";
 
     public const string ExtendedRoleParametersSource = ConfigurationSectionName + ":portal_extended_role_parameters_source";
     public const string ExtendedRoleParametersStatement = ConfigurationSectionName + ":portal_extended_role_parameters_statement";
