@@ -167,6 +167,7 @@
     "current-sketch": "Aktueller Sketch",
     "all-scales": "Alle Maßstäbe",
     "mapscale": "Maßstab",
+    "snapping-tolerance-pixel": "Fang Toleranz (Pixel)",
 
     "show-all": "Alle anzeigen",
 

@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Header Authentication: Added  ``extended-role-parameters-from-headers-prefix``, ``extended-role-parameters-from-headers`` config parameters
   [docs](https://docs.webgiscloud.com/de/webgis/config/authentication/header-auth.html)
 
+- Snapping: 
+  - adding configurable snapping tolerance in custom.js: ``webgis.usability.defaultSnapPixelTolerance=15;``
+  - user can set snapping tolerance in snapping dialog         
+
 ### Fixed
 
 - AGS Legend: legend not shown, if values in **json** aren't string values.

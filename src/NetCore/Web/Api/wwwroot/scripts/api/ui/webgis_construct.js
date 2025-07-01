@@ -24,9 +24,28 @@
         }
     };
     var initUI = function (parent, options) {
-        var map = options.map;
-        var $parent = $(parent).addClass('snapping-holder').data('map', map);
-        var $table = $("<table>").css({
+        const map = options.map;
+        const $parent = $(parent).addClass('snapping-holder').data('map', map);
+
+        const $toleranceInput = $("<input type='number' min='0' step='2'>")
+            .addClass('webgis-input')
+            .css({ width: '50px', height:'10px', marginRight: '10px' })
+            .val(map.construct.snapPixelTolerance)
+            .change(function () {
+                const tolerance = parseFloat($(this).val());
+                if (isNaN(tolerance) || tolerance < 0) {
+                    $(this).val(map.construct.snapPixelTolerance);
+                } else {
+                    map.construct.snapPixelTolerance = tolerance;
+                }
+            })
+            .appendTo($("<label>")
+                .text(webgis.l10n.get("snapping-tolerance-pixel") + ':')
+                .appendTo($("<div>")
+                    .css({ textAlign: 'right', paddingBottom: 4 })
+                    .appendTo($parent)));
+
+        const $table = $("<table>").css({
                 width: '100%',
                 borderSpacing: '0px'
         })
@@ -44,9 +63,9 @@
             .appendTo($table);
 
         // Sketch
-        var snappingTypes = map.getSnappingTypes(webgis.sketchSnappingSchemeId);
-        var $tr = $("<tr>").attr('data-id', webgis.sketchSnappingSchemeId).appendTo($table);
-        var $td = $("<td>").appendTo($tr);
+        let snappingTypes = map.getSnappingTypes(webgis.sketchSnappingSchemeId);
+        const $tr = $("<tr>").attr('data-id', webgis.sketchSnappingSchemeId).appendTo($table);
+        const $td = $("<td>").appendTo($tr);
         $("<input type='checkbox' id='" + webgis.sketchSnappingSchemeId + "'>").addClass('checkbox-snapping schema').prop('checked', snappingTypes && snappingTypes.length > 0)
             .css({
                 position: 'relative', top: '7px'
@@ -55,7 +74,7 @@
                 $(this).closest('tr').find('.checkbox-snapping.detail').prop('checked', $(this).is(':checked'));
                 refresh(this);
             });
-        var $label = $("<label for='" + webgis.sketchSnappingSchemeId + "'>&nbsp;" + webgis.l10n.get("current-sketch") + "</label>")
+        const $label = $("<label for='" + webgis.sketchSnappingSchemeId + "'>&nbsp;" + webgis.l10n.get("current-sketch") + "</label>")
             .appendTo($td);
         $("<div style='padding-left:25px;color:#aaa'>").text(webgis.l10n.get("all-scales")).appendTo($label);
         $("<input type='checkbox'>").addClass('checkbox-snapping detail').attr('data-type', 'nodes').appendTo($("<td style='text-align:center'>").appendTo($tr))
@@ -75,15 +94,15 @@
         });
 
         // Services
-        for (var i in map.services) {
-            var service = map.services[i];
-            for (var s in service.snapping) {
-                var snapping = service.snapping[s];
-                var snappingId = service.id + '~' + snapping.id;
-                var snappingTypes = map.getSnappingTypes(snappingId);
+        for (let i in map.services) {
+            const service = map.services[i];
+            for (let s in service.snapping) {
+                const snapping = service.snapping[s];
+                const snappingId = service.id + '~' + snapping.id;
+                const snappingTypes = map.getSnappingTypes(snappingId);
 
-                var $tr = $("<tr>").attr('data-id', snappingId).appendTo($table);
-                var $td = $("<td>").appendTo($tr);
+                const $tr = $("<tr>").attr('data-id', snappingId).appendTo($table);
+                const $td = $("<td>").appendTo($tr);
                 $("<input type='checkbox' id='" + snapping.id + "'>").addClass('checkbox-snapping schema').prop('checked', snappingTypes && snappingTypes.length > 0)
                     .css({
                     position: 'relative', top: '7px'
@@ -92,7 +111,7 @@
                     $(this).closest('tr').find('.checkbox-snapping.detail').prop('checked', $(this).is(':checked'));
                     refresh(this);
                 });
-                var $label = $("<label for='" + snapping.id + "'>&nbsp;" + snapping.name + "</label>").appendTo($td);
+                const $label = $("<label for='" + snapping.id + "'>&nbsp;" + snapping.name + "</label>").appendTo($td);
                 $("<div style='padding-left:25px;color:#aaa'>").html("ab 1:" + snapping.min_scale).appendTo($label);
                 $("<input type='checkbox'>").addClass('checkbox-snapping detail').attr('data-type', 'nodes').appendTo($("<td style='text-align:center'>").appendTo($tr))
                     .change(function () {
@@ -112,6 +131,7 @@
             }
         }
     };
+
     var refresh = function (elem) {
         var $elem = baseElement(elem);
         var map = $elem.data('map');

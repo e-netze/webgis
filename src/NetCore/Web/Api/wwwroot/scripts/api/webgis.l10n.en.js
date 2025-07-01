@@ -167,6 +167,7 @@
     "current-sketch": "Current sketch",
     "all-scales": "All scales",
     "mapscale": "Mapscale",
+    "snapping-tolerance-pixel": "Snapping tolerance (pixel)",
 
     "show-all": "Show all",
 

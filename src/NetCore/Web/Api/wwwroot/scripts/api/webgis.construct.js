@@ -394,7 +394,7 @@ var webgis_construct = function (map) {
             }
         }
     };
-    this.snapPixelTolerance = 15;
+    this.snapPixelTolerance = webgis.usability.defaultSnapPixelTolerance || 15;
     this.performSnap = function (lng, lat, options, sketch) {
         if ((this._topology == null || this._topology.vertices_wgs84 == null || this._topology.shapes == null) && !sketch) {
             return null;
@@ -421,6 +421,10 @@ var webgis_construct = function (map) {
             envEpsilon += dist;
         }
         var dist2 = dist * dist;
+
+        //console.log('options', options);
+        //console.log('this.snapPixelTolerance', this.snapPixelTolerance);
+        //console.log('dist', dist, 'envEpsilon', envEpsilon);
         
         if (sketch && sketch.map && sketch.isSketchMoving() === false && sketch.isSketchRotating() === false) {
             //Snap to Sketch
