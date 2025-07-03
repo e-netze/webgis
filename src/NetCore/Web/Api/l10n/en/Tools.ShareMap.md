@@ -14,3 +14,5 @@ You can generate a link here to share the current map.
 |Please select the period for which the link should be valid:
 
 # generate-link: Generate Link
+
+# confirm-not-saveable-tabs: Not all query result tabs can be stored or recovered: ({::not-saveable-tabs}). Would you like to share the map anyway?

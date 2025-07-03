@@ -25,7 +25,8 @@ namespace E.Standard.WebGIS.Tools.Serialization;
 [ToolConfigurationSection("savemap")]
 [ToolHelp("tools/map/save.html")]
 public class SaveMap : IApiServerButtonLocalizable<SaveMap>,
-                       IApiButtonResources
+                       IApiButtonResources,
+                       IApiToolConfirmation
 {
     private const string CodeInputId = "webgis-save-map-resoration-code-input";
     private const string ConfigNameMaxLength = "name-maxlength";
@@ -114,6 +115,20 @@ public class SaveMap : IApiServerButtonLocalizable<SaveMap>,
 
     #endregion
 
+    #region IApiToolConfirmation Member
+
+    public ApiToolConfirmation[] ToolConfirmations
+    {
+        get
+        {
+            List<ApiToolConfirmation> confirmations = new List<ApiToolConfirmation>();
+            confirmations.AddRange(ApiToolConfirmation.CommandComfirmations(typeof(SaveMap)));
+            return confirmations.ToArray();
+        }
+    }
+
+    #endregion
+
     #region Commands
 
     [ServerToolCommand("autocomplete-maps")]
@@ -149,6 +164,7 @@ public class SaveMap : IApiServerButtonLocalizable<SaveMap>,
     }
 
     [ServerToolCommand("save-map")]
+    [ToolCommandConfirmation("confirm-not-saveable-tabs", ApiToolConfirmationType.YesNo, ApiToolConfirmationEventType.ButtonClick)]
     public ApiEventResponse OnSaveMap(IBridge bridge, ApiToolEventArguments e, ILocalizer<SaveMap> localizer)
     {
         //if (bridge.CurrentUser.IsAnonymous)

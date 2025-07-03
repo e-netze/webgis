@@ -409,12 +409,20 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
     [System.Text.Json.Serialization.JsonDerivedType(typeof(VectorTileProperties))]
     public class ServiceInfoProperties : IHtml
     {
-        public string basemap_type { get; set; }
+        [JsonProperty("basemap_type", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonPropertyName("basemap_type")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public string BasemapType { get; set; }
 
         [JsonProperty("preview_url", NullValueHandling = NullValueHandling.Ignore)]
         [System.Text.Json.Serialization.JsonPropertyName("preview_url")]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-        public string preview_url { get; set; }
+        public string PreviewUrl { get; set; }
+
+        [JsonProperty("capabilities", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonPropertyName("capabilities")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public string[] Capabilities { get; set; }
 
         #region IHtml Member
 
@@ -422,7 +430,7 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
         {
             return HtmlHelper.ToTable(
                 new string[] { "BasemapType" },
-                new object[] { this.basemap_type }
+                new object[] { this.BasemapType }
             );
         }
 
@@ -445,7 +453,7 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
         {
             return HtmlHelper.ToTable(
                 new string[] { "Origin", "Resolutions", "TileUrl", "TileSize", "BasemapType", "HideBeyondMaxLevel" },
-                new object[] { this.origin, this.resolutions, this.tileurl, this.tilesize, this.basemap_type, this.hide_beyond_maxlevel }
+                new object[] { this.origin, this.resolutions, this.tileurl, this.tilesize, this.BasemapType, this.hide_beyond_maxlevel }
             );
         }
 

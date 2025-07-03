@@ -27,7 +27,8 @@ namespace E.Standard.WebGIS.Tools.Serialization;
 [ToolConfigurationSection("share")]
 public class ShareMap : IApiServerButtonLocalizable<ShareMap>,
                         IApiButtonResources,
-                        IStorageInteractions
+                        IStorageInteractions,
+                        IApiToolConfirmation
 {
     #region IApiButton
 
@@ -81,7 +82,7 @@ public class ShareMap : IApiServerButtonLocalizable<ShareMap>,
                 new UIDiv()
                 {
                     //target = UIElementTarget.modaldialog.ToString(),
-                    targettitle="Karte teilen",
+                    targettitle = localizer.Localize("name"),
                     elements = new IUIElement[]
                     {
                         new UILabel()
@@ -154,6 +155,7 @@ public class ShareMap : IApiServerButtonLocalizable<ShareMap>,
     #region Commands
 
     [ServerToolCommand("share-createlink")]
+    [ToolCommandConfirmation("confirm-not-saveable-tabs", ApiToolConfirmationType.YesNo, ApiToolConfirmationEventType.ButtonClick)]
     public ApiEventResponse OnCreateLink(IBridge bridge, ApiToolEventArguments e, ILocalizer<ShareMap> localizer)
     {
         string duration = e["serialization-share-duration"];
@@ -234,6 +236,20 @@ public class ShareMap : IApiServerButtonLocalizable<ShareMap>,
         var meta = bridge.Storage.LoadString(name + ".meta", StorageBlobType.Metadata);
 
         return new ApiRawStringEventResponse(meta, "text/plain");
+    }
+
+    #endregion
+
+    #region IApiToolConfirmation Member
+
+    public ApiToolConfirmation[] ToolConfirmations
+    {
+        get
+        {
+            List<ApiToolConfirmation> confirmations = new List<ApiToolConfirmation>();
+            confirmations.AddRange(ApiToolConfirmation.CommandComfirmations(typeof(ShareMap)));
+            return confirmations.ToArray();
+        }
     }
 
     #endregion

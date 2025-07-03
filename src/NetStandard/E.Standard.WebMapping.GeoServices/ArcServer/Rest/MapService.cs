@@ -45,7 +45,8 @@ public class MapService : IMapService2,
                           IMapServiceInitialException,
                           IDynamicService,
                           IImageServiceType,
-                          IMapServiceAuthentication
+                          IMapServiceAuthentication,
+                          IMapServiceCapabilities
 {
     private readonly LayerCollection _layers;
     private string _errMsg = "", _mapServiceName = String.Empty;
@@ -775,7 +776,7 @@ public class MapService : IMapService2,
                         int[] selectionColor80 = new int[4] { selection.Color.R, selection.Color.G, selection.Color.B, selection.Color.A * 8 / 10 };
                         int[] selectionColor66 = new int[4] { selection.Color.R, selection.Color.G, selection.Color.B, selection.Color.A * 2 / 3 };
                         int[] selectionColor33 = new int[4] { selection.Color.R, selection.Color.G, selection.Color.B, selection.Color.A / 3 };
-                        
+
                         object symbol = selection.Layer.Type switch
                         {
                             LayerType.point =>
@@ -1546,6 +1547,15 @@ public class MapService : IMapService2,
     #region IServiceInitialException
 
     public ErrorResponse InitialException => _initErrorResponse;
+
+    #endregion
+
+    #region IMapServiceCapabilities
+
+    private static MapServiceCapability[] _capabilities =
+       [MapServiceCapability.Map, MapServiceCapability.Query, MapServiceCapability.Identify, MapServiceCapability.Legend ];
+
+    public MapServiceCapability[] Capabilities => _capabilities;
 
     #endregion
 

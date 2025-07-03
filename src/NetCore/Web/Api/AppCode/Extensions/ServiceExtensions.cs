@@ -1,4 +1,6 @@
-﻿using E.Standard.Api.App.Services.Cache;
+﻿#nullable enable
+
+using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
@@ -86,5 +88,15 @@ static public class ServiceExtensions
                 layer.LabelRenderer = labelRenderer;
             }
         }
+    }
+
+    static public string[]? ServiceCapabilities(this IMapService service)
+    {
+        if (service is IMapServiceCapabilities mapServiceCapabilities)
+        {
+            return mapServiceCapabilities.Capabilities?.Select(c => c.ToString().ToLower()).ToArray();
+        }
+
+        return null;
     }
 }

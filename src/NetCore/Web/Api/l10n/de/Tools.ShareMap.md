@@ -14,3 +14,5 @@ Sie können hier einen Link erzeugen, mit dem die aktuelle Karte geteilt werden 
 |Bitte wählen Sie den Zeitraum, für den der Link gültig sein sollte:
 
 # generate-link: Link erzeugen
+
+# confirm-not-saveable-tabs: Nicht alle Abfrage Ergebnisse können mit dem Speichern der Karte wieder hergestellt werden: ({::not-saveable-tabs}). Möchten Sie die Karte trotzdem teilen?

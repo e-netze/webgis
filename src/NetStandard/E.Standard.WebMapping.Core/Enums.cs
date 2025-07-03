@@ -157,3 +157,11 @@ public enum MapServiceLayerVisibility
     AllInvisible = 1,
     AllVisible = 2,
 }
+
+public enum MapServiceCapability
+{
+    Map,
+    Query,
+    Identify,
+    Legend
+}

@@ -1698,6 +1698,45 @@
                         message = message.replaceAll("{" + $e.attr('id') + "}", val);
                     });
 
+
+                    // Extract all placeholders in the message, e.g. {placeholder1}, {xyz}, and loop over them
+                    const placeholderMatches = message.match(/{([^}]+)}/g);
+                    if (placeholderMatches) {
+                        let suppressConfirm = false;
+                        placeholderMatches.forEach(function (placeholder) {
+                            const key = placeholder.substring(1, placeholder.length - 1);
+
+                            if (key == '::not-saveable-tabs') {
+                                const $tabControl = map.ui.getQueryResultTabControl();
+                                if (!$tabControl) return true;  // if not in destkop ui mode => ignore this confirmation
+
+                                const unstorableTabs = [];
+                                const tabsOptions = $tabControl.webgis_tab_control('getTabsOptions');
+                                for (var t in tabsOptions) {
+                                    const tabOptions = tabsOptions[t];
+                                    if (!tabOptions.pinned)
+                                        continue;
+
+                                    const ser = map.queryResultFeatures.serialize(tabOptions.payload.features);
+                                    if (ser) {
+                                        const queryServiceId = ser.metadata?.service;
+                                        const queryService = map.getService(queryServiceId);
+
+                                        if (!queryService?.serviceInfo?.properties?.capabilities?.includes('query')) {
+                                            unstorableTabs.push(tabOptions.title);
+                                        }
+                                    }
+                                }
+
+                                if (unstorableTabs.length === 0) suppressConfirm = true; // ignore this confirmation if all tabs are storable (no WMS services)
+
+                                message = message.replaceAll(placeholder, unstorableTabs.toString());
+                            }
+                        });
+
+                        if (suppressConfirm) return true;
+                    }
+
                     if (confirmations[message] === true || confirmations[message] === false) {
                         return confirmations[message];
                     }

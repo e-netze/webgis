@@ -36,7 +36,8 @@ public class AxlService : IMapService2,
                           IMapServiceMetadataInfo,
                           IMapServiceInitialException,
                           IDynamicService,
-                          IImageServiceType
+                          IImageServiceType,
+                          IMapServiceCapabilities
 {
     private IMap _map;
     private string _name = String.Empty;
@@ -2835,6 +2836,15 @@ public class AxlService : IMapService2,
     #region IServiceInitialException
 
     public ErrorResponse InitialException => _initErrorResponse;
+
+    #endregion
+
+    #region IMapServiceCapabilities
+
+    private static MapServiceCapability[] _capabilities =
+       [MapServiceCapability.Map, MapServiceCapability.Query, MapServiceCapability.Identify, MapServiceCapability.Legend];
+
+    public MapServiceCapability[] Capabilities => _capabilities;
 
     #endregion
 }

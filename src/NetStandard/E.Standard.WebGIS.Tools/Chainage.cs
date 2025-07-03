@@ -63,7 +63,7 @@ public class Chainage : IApiServerToolLocalizableAsync<Chainage>,
 
     #region IButtonDependencies
 
-    public VisibilityDependency ButtonDependencies => VisibilityDependency.ChainagethemestExists;
+    public VisibilityDependency ButtonDependencies => VisibilityDependency.ChainagethemesExists;
 
 
     #endregion

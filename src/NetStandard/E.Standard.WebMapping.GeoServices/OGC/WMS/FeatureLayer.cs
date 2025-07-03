@@ -165,6 +165,9 @@ class OgcWmsLayer : Layer, ILayer2
                 // Achenrichtung hier nicht berücksichtigen! Wurde mit Kagis Wasser Profile Dienst getestet und funktioniert!!
                 req.Append("&X=" + (int)imagePoint.X);
                 req.Append("&Y=" + (int)imagePoint.Y);
+                // some services required (i,j) (intergraph)
+                //req.Append("&i=" + (int)imagePoint.X);
+                //req.Append("&j=" + (int)imagePoint.Y);
             }
             else
             {
@@ -189,6 +192,7 @@ class OgcWmsLayer : Layer, ILayer2
             }
 
             req.Append("&INFO_FORMAT=" + infoFormat);
+            //req.Append("&INFO_FORMAT=application/json");
 
             #endregion
 
@@ -299,6 +303,8 @@ class OgcWmsLayer : Layer, ILayer2
                         XmlNamespaceManager ns = new XmlNamespaceManager(doc.NameTable);
                         ns.AddNamespace("gml", "http://www.opengis.net/gml");
                         ns.AddNamespace("wfs", "http://www.opengis.net/wfs");
+                        //ns.AddNamespace("intergraph", "http://www.intergraph.com/geomedia/gml");
+
                         string featureNameSpace = String.Empty;
                         foreach (XmlNode nsNode in doc.SelectNodes(@"//namespace::*[not(. = ../../namespace::*)]"))
                         {
@@ -353,7 +359,16 @@ class OgcWmsLayer : Layer, ILayer2
                             xmlFeatures = doc.SelectNodes("//" + layerId + "_layer/" + layerId + "_feature");
                         }
 
-                        if (xmlFeatures == null || xmlFeatures.Count == 0)  // für Disy
+                        //if(xmlFeatures == null || xmlFeatures.Count == 0)  // for intergraph
+                        //{
+                        //    try
+                        //    {
+                        //        xmlFeatures = doc.SelectNodes("//intergraph:FeatureCollection/gml:featureMember/intergraph:Layer", ns);
+                        //    }
+                        //    catch { }
+                        //}
+
+                        if (xmlFeatures == null || xmlFeatures.Count == 0)  // for Disy
                         {
                             try
                             {
@@ -636,7 +651,8 @@ class OgcWmsLayer : Layer, ILayer2
             }
         }
         if ("application/json".Equals(((WmsService)_service).GetFeatureInfoFormat, StringComparison.InvariantCultureIgnoreCase) ||
-            "application/geojson".Equals(((WmsService)_service).GetFeatureInfoFormat, StringComparison.InvariantCultureIgnoreCase))
+            "application/geojson".Equals(((WmsService)_service).GetFeatureInfoFormat, StringComparison.InvariantCultureIgnoreCase) ||
+            "text/xml".Equals(((WmsService)_service).GetFeatureInfoFormat, StringComparison.InvariantCultureIgnoreCase))
         {
             FeatureCollection features = new FeatureCollection();
 

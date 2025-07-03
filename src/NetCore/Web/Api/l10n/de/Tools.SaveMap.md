@@ -38,3 +38,5 @@ geben sie diesen hier ein:
 Achtung: Benutzen sie den Wiederherstellungscode nur auf Geräten,
 auf denen ausschließich sie Zugriff haben, da sonst auch andere Benutzer 
 ihre Projekte sehen könnten.
+
+# confirm-not-saveable-tabs: Nicht alle Abfrage Ergebnisse können mit dem Speichern der Karte wieder hergestellt werden: ({::not-saveable-tabs}). Möchten Sie die Karte trotzdem speichern?

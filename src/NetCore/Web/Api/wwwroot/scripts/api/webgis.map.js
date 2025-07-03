@@ -831,6 +831,13 @@
 
                 var ser = this.queryResultFeatures.serialize(tabOptions.payload.features);
                 if (ser) {
+                    var queryServiceId = ser.metadata?.service;
+                    var queryService = this.getService(queryServiceId);
+
+                    if (!queryService?.serviceInfo?.properties?.capabilities?.includes('query')) {
+                        continue;  // dont store, if service does not support query (eg. WMS)
+                    }
+
                     ser.tab = { id: tabOptions.id, title: tabOptions.title, selected: tabOptions.selected, pinned: tabOptions.pinned };
                     query_results.push(ser);
                 }

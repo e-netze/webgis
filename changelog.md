@@ -22,7 +22,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Snapping: 
   - adding configurable snapping tolerance in custom.js: ``webgis.usability.defaultSnapPixelTolerance=15;``
-  - user can set snapping tolerance in snapping dialog         
+  - user can set snapping tolerance in snapping dialog    
+
+- Save/Share Map: 
+  - Show a warning, if not all query result tabs can be saved or recovered (eg. for WMS Services).
 
 ### Fixed
 
@@ -37,6 +40,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   }
   ```
 - Identify: Use all identify tools (coordinates, etc) with the identify default tool, if set in map builder
+
+- Usability: Only show the **Chainage** tool, if the map has a valid chainage themes. 
+  [discussion #291](https://github.com/e-netze/webgis-community/discussions/291)
 
 ## 7.25.2501
 

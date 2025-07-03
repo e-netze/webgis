@@ -37,3 +37,5 @@ enter it here:
 Attention: Use the recovery code only on devices that only you have access to, 
 as otherwise other users could see your projects.
 
+# confirm-not-saveable-tabs: Not all query result tabs can be stored or recovered: ({::not-saveable-tabs}). Would you like to save the map anyway?
+

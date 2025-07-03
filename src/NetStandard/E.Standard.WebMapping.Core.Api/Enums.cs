@@ -70,7 +70,7 @@ public enum VisibilityDependency
     QueriesExists = 2,
     QueryResultsExists = 4,
     EditthemesExists = 8,
-    ChainagethemestExists = 16,
+    ChainagethemesExists = 16,
     HasSelection = 32,
     HasMoreThanOneSelected = 64,
     HasToolResults = 128,

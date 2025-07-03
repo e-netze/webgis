@@ -37,7 +37,8 @@ public class WmsService : IMapService2,
                           IMapServiceDescription,
                           IMapServiceInitialException,
                           IDynamicService,
-                          IImageServiceType
+                          IImageServiceType,
+                          IMapServiceCapabilities
 {
     internal IMap _map;
     private string _name = String.Empty;
@@ -1343,6 +1344,15 @@ public class WmsService : IMapService2,
         get { return _ogcEnvelope; }
         set { _ogcEnvelope = value; }
     }
+
+    #endregion
+
+    #region IMapServiceCapabilities
+
+    private static MapServiceCapability[] _capabilities =
+       [MapServiceCapability.Map, MapServiceCapability.Identify, MapServiceCapability.Legend];
+
+    public MapServiceCapability[] Capabilities => _capabilities;
 
     #endregion
 }

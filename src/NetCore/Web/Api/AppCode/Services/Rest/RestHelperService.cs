@@ -120,7 +120,7 @@ public class RestHelperService
                     resolutions = tileGrid.GridResolutions,
                     tileurl = tileUrl,
                     domains = domains,
-                    basemap_type = tileService.BasemapType.ToString().ToLower(),
+                    BasemapType = tileService.BasemapType.ToString().ToLower(),
                     hide_beyond_maxlevel = tileService.HideBeyondMaxLevel
                 }
             };
@@ -137,10 +137,11 @@ public class RestHelperService
                 opacity = vtcService.InitialOpacity,
                 properties = new ServiceInfoDTO.VectorTileProperties()
                 {
-                    basemap_type = vtcService.BasemapType.ToString().ToLower(),
+                    BasemapType = vtcService.BasemapType.ToString().ToLower(),
                     vtc_styles_url = vtcService.Server,
                     fallback = vtcService.FallbackService,
-                    preview_url = vtcService.PreviewImageUrl
+                    PreviewUrl = vtcService.PreviewImageUrl,
+                    Capabilities = vtcService.ServiceCapabilities(),
                 }
             };
         }
@@ -180,14 +181,27 @@ public class RestHelperService
                 type = serviceType.ToString().ToLower(),
                 opacity = service.InitialOpacity,
                 opacity_factor = service.OpacityFactor,
+                properties = service.IsBaseMap switch
+                {
+                    true => new ServiceInfoDTO.ServiceInfoProperties()
+                    {
+                        BasemapType = service.BasemapType.ToString().ToLower(),
+                        PreviewUrl = service.BasemapPreviewImage,
+                        Capabilities = service.ServiceCapabilities(),
+                    },
+                    false => new ServiceInfoDTO.ServiceInfoProperties()
+                    {
+                        Capabilities = service.ServiceCapabilities()
+                    }
+                }
             };
 
             if (service.IsBaseMap)
             {
                 info.properties = new ServiceInfoDTO.ServiceInfoProperties()
                 {
-                    basemap_type = service.BasemapType.ToString().ToLower(),
-                    preview_url = service.BasemapPreviewImage
+                    BasemapType = service.BasemapType.ToString().ToLower(),
+                    PreviewUrl = service.BasemapPreviewImage
                 };
             }
 
