@@ -1707,30 +1707,11 @@
                             const key = placeholder.substring(1, placeholder.length - 1);
 
                             if (key == '::not-saveable-tabs') {
-                                const $tabControl = map.ui.getQueryResultTabControl();
-                                if (!$tabControl) return true;  // if not in destkop ui mode => ignore this confirmation
+                                const notSaveableTabs = map.ui.getNotSaveableTabs();
 
-                                const unstorableTabs = [];
-                                const tabsOptions = $tabControl.webgis_tab_control('getTabsOptions');
-                                for (var t in tabsOptions) {
-                                    const tabOptions = tabsOptions[t];
-                                    if (!tabOptions.pinned)
-                                        continue;
+                                if (notSaveableTabs.length === 0) suppressConfirm = true; // ignore this confirmation if all tabs are storable (no WMS services)
 
-                                    const ser = map.queryResultFeatures.serialize(tabOptions.payload.features);
-                                    if (ser) {
-                                        const queryServiceId = ser.metadata?.service;
-                                        const queryService = map.getService(queryServiceId);
-
-                                        if (!queryService?.serviceInfo?.properties?.capabilities?.includes('query')) {
-                                            unstorableTabs.push(tabOptions.title);
-                                        }
-                                    }
-                                }
-
-                                if (unstorableTabs.length === 0) suppressConfirm = true; // ignore this confirmation if all tabs are storable (no WMS services)
-
-                                message = message.replaceAll(placeholder, unstorableTabs.toString());
+                                message = message.replaceAll(placeholder, notSaveableTabs.map(t => t.title).toString());
                             }
                         });
 

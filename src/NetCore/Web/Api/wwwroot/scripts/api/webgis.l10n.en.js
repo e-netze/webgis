@@ -29,6 +29,7 @@
     "button-remove-results": "Remove Results",
     "button-remove-markers": "Remove Markers",
     "button-show-markers": "Show Markers",
+    "button-minimize-tab": "Minimize tab",
 
     // legend panel
     "legend": "Legend",

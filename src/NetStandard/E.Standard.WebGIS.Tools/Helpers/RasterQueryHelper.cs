@@ -5,6 +5,7 @@ using E.Standard.Drawing.Models;
 using E.Standard.Json;
 using E.Standard.Platform;
 using E.Standard.WebGIS.CMS;
+using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
@@ -164,7 +165,6 @@ class RasterQueryHelper
 
     async private Task<HeightQueryResult> PerformHeightQueryAsync(IBridge bridge, WebMapping.Core.Abstraction.IMap map, XmlNode hadNode, Point point)
     {
-
         string type = hadNode.Attributes["type"].Value;
         string server = hadNode.Attributes["server"].Value;
         string service = hadNode.Attributes["service"]?.Value;
@@ -230,11 +230,14 @@ class RasterQueryHelper
                 string user = hadNode.Attributes["user"] != null ? hadNode.Attributes["user"].Value : String.Empty;
                 string pwd = hadNode.Attributes["pwd"] != null ? hadNode.Attributes["pwd"].Value : String.Empty;
                 string token = hadNode.Attributes["token"] != null ? hadNode.Attributes["token"].Value : String.Empty;
+                int tokenExpiration = hadNode.Attributes["tokenExpiration"] != null ? int.Parse(hadNode.Attributes["tokenExpiration"].Value) : 60;
 
                 var agsService = new E.Standard.WebMapping.GeoServices.ArcServer.Rest.MapService()
                 {
-                    TokenExpiration = hadNode.Attributes["tokenExpiration"] != null ? int.Parse(hadNode.Attributes["tokenExpiration"].Value) : 60
+                    TokenExpiration = tokenExpiration
                 };
+
+
                 agsService.PreInit(String.Empty, server, service, user, pwd, token, map.Environment.UserString(webgisConst.AppConfigPath), null);
                 await agsService.InitAsync(map, bridge.RequestContext);
 
@@ -302,6 +305,45 @@ class RasterQueryHelper
                                 text.Append(m);
                             }
                             catch { }
+                        }
+                    }
+                }
+            }
+            if (type.ToLower() == "ags-imageserver")
+            {
+                string user = hadNode.Attributes["user"] != null ? hadNode.Attributes["user"].Value : String.Empty;
+                string pwd = hadNode.Attributes["pwd"] != null ? hadNode.Attributes["pwd"].Value : String.Empty;
+                string token = hadNode.Attributes["token"] != null ? hadNode.Attributes["token"].Value : String.Empty;
+                int tokenExpiration = hadNode.Attributes["tokenExpiration"] != null ? int.Parse(hadNode.Attributes["tokenExpiration"].Value) : 60;
+
+                var imageService = new WebMapping.GeoServices.ArcServer.Rest.ImageServerService()
+                {
+                    ServiceUrl = service,
+                    TokenExpiration = tokenExpiration
+                };
+
+                imageService.PreInit(String.Empty, server, service, user, pwd, token, map.Environment.UserString(webgisConst.AppConfigPath), null);
+                await imageService.InitAsync(map, bridge.RequestContext);
+
+                var layer = imageService?.Layers.FirstOrDefault();
+
+                if (layer is not null)
+                {
+                    var features = new WebMapping.Core.Collections.FeatureCollection();
+                    var filter = new WebMapping.Core.Filters.SpatialFilter(layer.IdFieldName, point, 1, 1);
+                    await layer.GetFeaturesAsync(filter, features, bridge.RequestContext);
+
+                    if (features.Count == 1 && hadNode.Attributes["expression"] != null)
+                    {
+                        var pixelValue = features[0].Attributes?
+                            .Where(a => "pixel".Equals(a.Name, StringComparison.OrdinalIgnoreCase))
+                            .FirstOrDefault()?
+                            .Value;
+
+                        if(pixelValue is not null)
+                        {
+                            res = new double[] { ToDouble(pixelValue) };
+                            text.Append(string.Format(hadNode.Attributes["expression"].Value, res[0]));
                         }
                     }
                 }

@@ -1400,6 +1400,31 @@
         return null;
     }
 
+    this.getNotSaveableTabs = function () {
+        const $tabControl = this._map.ui.getQueryResultTabControl();
+        if (!$tabControl) return [];  // if not in destkop ui mode => ignore this confirmation
+
+        const notSaveableTabs = [];
+        const tabsOptions = $tabControl.webgis_tab_control('getTabsOptions');
+        for (let t in tabsOptions) {
+            const tabOptions = tabsOptions[t];
+            if (!tabOptions.pinned)
+                continue;
+
+            const ser = this._map.queryResultFeatures.serialize(tabOptions.payload.features);
+            if (ser) {
+                const queryServiceId = ser.metadata?.service;
+                const queryService = this._map.getService(queryServiceId);
+
+                if (!queryService?.serviceInfo?.properties?.capabilities?.includes('query')) {
+                    notSaveableTabs.push({ id: tabOptions.id, title: tabOptions.title });
+                }
+            }
+        }
+
+        return notSaveableTabs;
+    }
+
     var _mapTitle;
     this.setMapTitle = function (title) {
         title = title || _mapTitle;
@@ -1730,6 +1755,10 @@
                         counter: map.queryResultFeatures.countFeatures()
                     });
                 }
+            }
+
+            if (map.queryResultFeatures.doShowMarkers() === false) {
+                map.queryResultFeatures.setMarkerVisibility(false);
             }
         }
     }, this);

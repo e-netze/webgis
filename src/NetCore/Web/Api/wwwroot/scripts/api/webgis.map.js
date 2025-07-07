@@ -820,24 +820,19 @@
 
         var query_results = [];
 
-        var $tabControl = this.ui.getQueryResultTabControl();
+        const $tabControl = this.ui.getQueryResultTabControl();
         if ($tabControl) {
             // store pinned results in modern-result-behavoir
-            var tabsOptions = $tabControl.webgis_tab_control('getTabsOptions');
+            const tabsOptions = $tabControl.webgis_tab_control('getTabsOptions');
+            const notSaveableTabs = this.ui.getNotSaveableTabs();
+
             for (var t in tabsOptions) {
                 var tabOptions = tabsOptions[t];
                 if (!tabOptions.pinned)
                     continue;
 
                 var ser = this.queryResultFeatures.serialize(tabOptions.payload.features);
-                if (ser) {
-                    var queryServiceId = ser.metadata?.service;
-                    var queryService = this.getService(queryServiceId);
-
-                    if (!queryService?.serviceInfo?.properties?.capabilities?.includes('query')) {
-                        continue;  // dont store, if service does not support query (eg. WMS)
-                    }
-
+                if (ser && notSaveableTabs.filter(t => t.id === tabOptions.id).length === 0) {
                     ser.tab = { id: tabOptions.id, title: tabOptions.title, selected: tabOptions.selected, pinned: tabOptions.pinned };
                     query_results.push(ser);
                 }

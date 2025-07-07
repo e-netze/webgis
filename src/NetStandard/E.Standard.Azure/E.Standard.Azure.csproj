@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.7.0" />
-    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.51.0" />
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.8.0" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.52.0" />
     <!--<PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.22.0" />-->
     <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.2.3" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.5" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.6" />
     <!--
 	<PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.3.0" />
 	-->

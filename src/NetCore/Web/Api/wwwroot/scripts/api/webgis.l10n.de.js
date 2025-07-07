@@ -29,6 +29,7 @@
     "button-remove-results": "Ergebnisse entfernen",
     "button-remove-markers": "Marker entfernen",
     "button-show-markers": "Marker anzeigen",
+    "button-minimize-tab": "Tab verkleinern",
 
     // legend panel
     "legend": "Legende",

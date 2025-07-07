@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+### Fixed
+
+## 7.25.2801
+
+### Added
 
 - AGS results with dates: 
   - don't show NULL als 01/01/1970, but as empty string. 
@@ -40,6 +45,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   }
   ```
 - Identify: Use all identify tools (coordinates, etc) with the identify default tool, if set in map builder
+
+- Identify: **Selection remove button** shows markers, even if the button **Show Markers** is not selected
 
 - Usability: Only show the **Chainage** tool, if the map has a valid chainage themes. 
   [discussion #291](https://github.com/e-netze/webgis-community/discussions/291)
