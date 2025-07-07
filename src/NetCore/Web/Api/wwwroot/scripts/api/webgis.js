@@ -603,7 +603,7 @@
         else if (lib === "leaflet-minimap") {
             if (!L.Control.MiniMap) {
                 loading = true;
-                this.loadScript(webgis.baseUrl + '/scripts/leaflet/leaflet-minimap/Control.MiniMap.min.js', webgis.baseUrl + '/scripts/leaflet/leaflet-minimap/Control.MiniMap.css', callback, arg);
+                this.loadScript(webgis.baseUrl + '/scripts/leaflet/leaflet-minimap/control.minimap.min.js', webgis.baseUrl + '/scripts/leaflet/leaflet-minimap/control.minimap.css', callback, arg);
             }
         }
         else if (lib === "leaflet-side-by-side") {
@@ -640,7 +640,7 @@
         else if (lib == "sortable") {
             if (!window.Sortable) {
                 loading = true;
-                this.loadScript(webgis.baseUrl + '/lib/sortable/Sortable.min.js', '', callback, arg);
+                this.loadScript(webgis.baseUrl + '/lib/sortable/sortable.min.js', '', callback, arg);
             }
         }
         else if (lib == "monaco-editor") {
