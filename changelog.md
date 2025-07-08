@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Fixed
 
+## 7.25.2803
+
+### Fixed
+
+- query via url parameters behavior: 
+  - features will displayed as selected per default. To avoid selection use the url parameter ``&mode=noselect`` 
+    [discussion #313](https://github.com/e-netze/webgis-community/discussions/313)
+  
 ## 7.25.2801
 
 ### Added

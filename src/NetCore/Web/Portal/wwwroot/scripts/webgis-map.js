@@ -620,14 +620,22 @@ webgis.mapInitializer = (function (m) {
 
                                 if (result && result.features) {
                                     var noselect = webgis.initialParameters.original["mode"] === "noselect";
-                                    var nohighlight = webgis.initialParameters.original["mode"] === "nohighlight";
+                                    var nohighlight = webgis.initialParameters.original["mode"] === "nohighlight";  // deprecated
 
-                                    if (!noselect && !nohighlight) {
+                                    if ((noselect && $('.webgis-selection-button').hasClass('selected')) ||
+                                        (!noselect && !$('.webgis-selection-button').hasClass('selected')))
+                                    {
                                         $('.webgis-selection-button').trigger('click'); // Select (quick & drity)
                                     }
-                                    else if (!nohighlight && result.features && result.features.length === 1) {
+
+                                    // deprecated: only works in special situations, (viewer layout etc.)
+                                    // this is only for legacy compatibility
+                                    // default: features will selecteded except: mode = noselect
+                                    if (noselect && !nohighlight && result.features && result.features.length === 1) {
                                         webgis.delayed(function () {
-                                            $('.webgis-toggle-button.webgis-dependencies.webgis-dependency-ishighlighted').trigger('click'); // Select (quick & drity)
+                                            if (!$('.webgis-toggle-button.webgis-dependencies.webgis-dependency-ishighlighted').hasClass('selected')) {
+                                                $('.webgis-toggle-button.webgis-dependencies.webgis-dependency-ishighlighted').trigger('click'); // Select (quick & drity)
+                                            }
                                         }, 500);
                                     }
                                 }
