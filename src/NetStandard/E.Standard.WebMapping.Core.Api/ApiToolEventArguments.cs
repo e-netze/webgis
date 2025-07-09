@@ -589,6 +589,8 @@ public class ApiToolEventArguments
 
     public DeviceInfoClass DeviceInfo { get; set; }
 
+    public string CurrentKeyPressed => this["_current_key_pressed"];
+
     #region UIElements
 
     public ICollection<UIElementsClass> UIElements { get; set; }

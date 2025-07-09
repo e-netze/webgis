@@ -1327,6 +1327,16 @@
                     $this.closest('.webgis-result-warning-panel').remove();
                 });
         }
+
+        if (useTabControl && features.features.length === 1 && webgis.currentKey) {
+            var $btn = $content.find(".webgis-result-table-menucell > .menubutton:not(.webgis-dependency-not-activetool)[shortcut='" + webgis.currentKey + "']");
+            if ($btn.length === 1) {
+                webgis.delayed(function ($btn) {
+                    $btn.trigger('click');
+                }, 50, $btn);
+            }
+            console.log('shortcut button', $btn, webgis.currentKey);
+        }
     };
     this.showFeatureTable = function (feature, queryToolId, $target, featureMetadata) {
         var me = this;

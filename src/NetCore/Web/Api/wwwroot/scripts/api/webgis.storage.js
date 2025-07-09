@@ -1,6 +1,6 @@
 ﻿webgis.localStorage = new function () {
     this.get = function (key) {
-        console.log('storage default', key, webgis.defaults[key]);
+        //console.log('storage default', key, webgis.defaults[key]);
         if (this.usable) {
             return localStorage.getItem(key) || webgis.defaults[key] || '';
         }

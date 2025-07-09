@@ -116,6 +116,7 @@ internal class EditToolServiceDesktop : IEditToolService
     async public Task<ApiEventResponse> OnEvent(IBridge bridge, ApiToolEventArguments e)
     {
         var currentSelectionToolId = e[WebGisCurrentSelectionToolId];
+        var currentKeyPressed = e.CurrentKeyPressed;
         var editThemeQuery = await e.GetSelectedEditThemeQuery(bridge);
 
         if (currentSelectionToolId == SelectionToolIdRectangleQueryBuilder)
@@ -195,6 +196,14 @@ internal class EditToolServiceDesktop : IEditToolService
         catch
         {
             response = new ApiEventResponse();
+        }
+
+        if (response is ApiFeaturesEventResponse featureResponse)
+        {
+            if ("e".Equals(currentKeyPressed, StringComparison.OrdinalIgnoreCase))
+            {
+                // reduce to one closest feature
+            }
         }
 
         response.ToolCursor = ToolCursor.Custom_Selector_Highlight;

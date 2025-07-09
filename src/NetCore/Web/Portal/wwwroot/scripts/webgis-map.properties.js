@@ -423,7 +423,7 @@
 webgis.usability.userPreferences = webgis.usability.userPreferences ||
 {
     get: function (key, defaultValue) {
-        console.log('get user preference', key, webgis.localStorage.get('user.preferences.' + key, defaultValue));
+        //console.log('get user preference', key, webgis.localStorage.get('user.preferences.' + key, defaultValue));
         return webgis.localStorage.get('user.preferences.' + key, defaultValue);
     },
     set: function (key, value) {
@@ -431,7 +431,7 @@ webgis.usability.userPreferences = webgis.usability.userPreferences ||
     },
     has: function (key) {
         const val = webgis.localStorage.get('user.preferences.' + key);
-        console.log('has user preference', key, val);
+        //console.log('has user preference', key, val);
         return val !== undefined && val !== null && val !== '' && val !== 'default';
     },
     all: {

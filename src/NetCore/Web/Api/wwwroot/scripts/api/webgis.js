@@ -3437,4 +3437,15 @@ if (!webgis.api_version || webgis.api_version.indexOf('{{') === 0) {
     });
 }
 
+
+$(window)
+    .on('keypress', function (e) {
+        webgis.currentKey = e.key;
+        console.log('webgis.currentKey', webgis.currentKey);
+    })
+    .on('keyup', function (e) {
+        webgis.currentKey = null;
+        console.log('webgis.currentKey', webgis.currentKey);
+    });
+
 console.log('webgis api version:' + webgis.api_version);
