@@ -244,6 +244,52 @@ static public class ApiEventResponseExtensions
         return eventResponse;
     }
 
+    static public void ReduceToClosest(this ApiFeaturesEventResponse featureResponse, IBridge bridge)
+    {
+        if (featureResponse?.Features?.Any() != true)
+        {
+            // if there are no features, nothing to reduce
+            return;
+        }
+
+        if (featureResponse.Features.Count == 1)
+        {
+            // If there is only one feature, no need to reduce
+            return;
+        }
+
+        var spatialFilter = featureResponse.Filter as ApiSpatialFilter;
+        if (spatialFilter?.QueryShape == null)
+        {
+            // If there is no spatial filter or query shape, nothing to reduce
+            return;
+        }
+
+        var centerPoint = spatialFilter.QueryShape.ShapeEnvelope.CenterPoint;
+
+        if (spatialFilter.FilterSpatialReference?.Id > 0
+            && spatialFilter.FeatureSpatialReference?.Id > 0
+            && spatialFilter.FilterSpatialReference.Id != spatialFilter.FeatureSpatialReference.Id)
+        {
+            using (var transformer = bridge.GeometryTransformer(spatialFilter.FilterSpatialReference.Id, spatialFilter.FeatureSpatialReference.Id))
+            {
+                transformer.Transform(centerPoint);
+            }
+        }
+
+        var closestFeature = featureResponse.Features
+            .Where(f => f.Shape != null)
+            .OrderBy(f => SpatialAlgorithms.Point2ShapeDistance(f.Shape, centerPoint))
+            .FirstOrDefault();
+
+        if (closestFeature != null)
+        {
+            featureResponse.Features.UnCheckAll();
+            closestFeature.Checked = true;
+            featureResponse.Features.RemoveUnchecked();
+        }
+    }
+
     #endregion
 
     #region Lense

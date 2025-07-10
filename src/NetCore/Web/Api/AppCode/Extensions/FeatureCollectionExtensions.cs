@@ -5,7 +5,6 @@ using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Collections;
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 
@@ -33,7 +32,7 @@ static public class FeatureCollectionExtensions
                                          collFeature,
                                          hotlinkField.HotlinkUrl.ReplaceUrlHeaderPlaceholders(requestHeaders));
 
-                    
+
                     if (!String.IsNullOrEmpty(hotLinkUrl))
                     {
                         returnFeatures.Links ??= new();

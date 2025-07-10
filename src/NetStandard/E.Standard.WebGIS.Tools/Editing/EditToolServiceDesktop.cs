@@ -7,6 +7,7 @@ using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse;
+using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
@@ -34,6 +35,16 @@ internal class EditToolServiceDesktop : IEditToolService
 
     public const string IdentifyBoxUiPrefix = "editor";
     public const string SelectionFeatureLimit = "selection-feature-limit";
+
+    public static string[] ShortCutKeys = [
+        "e", // edit
+        "d", // delete
+        //"m", // merge
+        //"c", // cut
+        //"x", // clip
+        //"a", // mass attributation
+        //"f"  // features transfer
+    ];
 
     private readonly IApiTool _sender;
     private readonly ILocalizer _localizer;
@@ -198,11 +209,12 @@ internal class EditToolServiceDesktop : IEditToolService
             response = new ApiEventResponse();
         }
 
-        if (response is ApiFeaturesEventResponse featureResponse)
+        if (response is ApiFeaturesEventResponse featureResponse
+            && featureResponse.Filter is ApiSpatialFilter spatialFilter)
         {
-            if ("e".Equals(currentKeyPressed, StringComparison.OrdinalIgnoreCase))
+            if (ShortCutKeys.Any(s => s.Equals(currentKeyPressed, StringComparison.OrdinalIgnoreCase)))
             {
-                // reduce to one closest feature
+                featureResponse.ReduceToClosest(bridge);
             }
         }
 

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
 	  <TargetFramework>net9.0</TargetFramework>
-	  <LangVersion>11</LangVersion>
+	  <LangVersion>12</LangVersion>
     <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
   </PropertyGroup>
 
