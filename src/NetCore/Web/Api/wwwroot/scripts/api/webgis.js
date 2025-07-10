@@ -3325,6 +3325,26 @@ webgis.firstOrDefault = function (array, f) {
     return null;
 };
 
+webgis.setCurrentKeyCodeFromEvent = function (e) {
+    if (!e) {
+        webgis.currentKey = null;
+    } else {
+        let key = '';
+
+        if (e.altKey === true) key += 'alt+';
+        if (e.ctrlKey === true) key += 'ctrl+';
+        if (e.shiftKey === true) key += 'shift+';
+
+        if (e.key.length == 1) {
+            key += e.key || e.code || '';
+        }
+
+        webgis.currentKey = key
+    }
+
+    //console.log('webgis.currentKey', webgis.currentKey);
+}
+
 if (!Array.prototype.includes) {  // incoude not supported by IE
     Array.prototype.includes = function (searchElement, fromIndex) {
         return this.indexOf(searchElement, fromIndex) !== -1;
@@ -3436,16 +3456,5 @@ if (!webgis.api_version || webgis.api_version.indexOf('{{') === 0) {
         }
     });
 }
-
-
-$(window)
-    .on('keypress', function (e) {
-        webgis.currentKey = e.key;
-        console.log('webgis.currentKey', webgis.currentKey);
-    })
-    .on('keyup', function (e) {
-        webgis.currentKey = null;
-        console.log('webgis.currentKey', webgis.currentKey);
-    });
 
 console.log('webgis api version:' + webgis.api_version);

@@ -78,3 +78,23 @@ Oder einfach in die Karte klicken, um ein Objekt auszuwählen
 
 # update-in-layer: {0} bearbeiten
 # delete-in-layer: {0} löschen
+
+# shortcuts: Tastenkürzel
+ 
+md:
+Für das **Bearbeiten-Selektionswerkzeug** stehen folgende Tastenkürzel zur Verfügung:
+
+- **Leertaste**: Nur ein Objekt selektieren. Es wird das Objekt ausgeählt, dass dem geklickten Punkt am nächsten ist.
+- **E**: Wie oben, nur dass sofort die Bearbeiten Maske geöffnet wird. 
+- **D**: Wie oben, nur dass sofort die Löschen Maske geöffnet wird.
+
+**Voraussetzung**: das Selektionswerkzeug muss aktiv sein (Punkt Selektion) und ein Thema aus der Liste muss ausgeählt sein.
+
+**Vorgehensweise**: Die entsprechende Taste drücken, dann in die Karte klicken, um das Objekt auszuwählen. 
+Taste so lange gedrückt halten, bis das Objekt ausgewählt ist. Danach die Taste loslassen.
+
+Weitere wichtige Tastenkürzel:
+
+- **ESC**:
+  Bearbeitung abbrechen. Das aktuelle Werkzeug (z.B. Insert/Update/Delete Maske) wird geschlossen. Wurden in der Maske Änderungen vorgenommen, muss das Abbrechen mit **Änderugen verwerfen** bestätigt werden.
+- 

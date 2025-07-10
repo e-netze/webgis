@@ -37,6 +37,7 @@ internal class EditToolServiceDesktop : IEditToolService
     public const string SelectionFeatureLimit = "selection-feature-limit";
 
     public static string[] ShortCutKeys = [
+        " ", // only select single result
         "e", // edit
         "d", // delete
         //"m", // merge
@@ -107,7 +108,7 @@ internal class EditToolServiceDesktop : IEditToolService
                 new UIImageToolUndoButton(_sender.GetType(), "undo"){
                     id = "webgis-edit-undo-button",
                     text = _localizer.Localize("desktop.undo")
-                },
+                }
             }
         });
 
@@ -440,6 +441,21 @@ internal class EditToolServiceDesktop : IEditToolService
                 ParentTool = _sender
             }
         };
+    }
+
+    [ServerToolCommand("show-shortcuts")]
+    public ApiEventResponse OnShortcutsHelp(IBridge bridge, ApiToolEventArguments e)
+    {
+        return new ApiEventResponse()
+            .AddUIElements(
+                new UIDiv() { targetwidth="640px" }
+                    .AsDialog(UIElementTarget.modaldialog)
+                    .WithTargetTitle(_localizer.Localize("shortcuts"))
+                    .AddChild(new UILabel()
+                    {
+                        label = _localizer.Localize("shortcuts:body")
+                    })
+            );
     }
 
     #endregion

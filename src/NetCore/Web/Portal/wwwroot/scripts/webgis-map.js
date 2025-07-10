@@ -265,6 +265,8 @@ webgis.mapInitializer = (function (m) {
                 //console.log(selector + " => " + $element.length);
             }
         }
+
+        webgis.setCurrentKeyCodeFromEvent(null);
     });
     webgis.$(document).on('keydown', function (e) {
         if (e.ctrlKey === true) {
@@ -287,6 +289,8 @@ webgis.mapInitializer = (function (m) {
                 //console.log(selector + " => " + $element.length);
             }
         }
+
+        webgis.setCurrentKeyCodeFromEvent(e);
     });
 
     function MapUiOptions(target, master) {

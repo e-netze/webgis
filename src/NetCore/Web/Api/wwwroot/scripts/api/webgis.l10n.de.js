@@ -3,6 +3,7 @@
 
     "error": "Fehler",
     "info": "Hinweis",
+    "shortcuts": "Tastaturkürzel",
 
     // sidebar
     "content": "Inhalt/Darstellung",

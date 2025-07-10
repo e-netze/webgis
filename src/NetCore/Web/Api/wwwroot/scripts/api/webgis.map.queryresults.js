@@ -927,7 +927,7 @@
                                     webgis.tools.onButtonClick(map, { command: 'cutfeatures', type: 'servertoolcommand', map: map }, this, null, args);
                                 });
 
-                            createToolbarButton($editingBlock, editToolClipId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-clip', 'tools'), editToolClipId + '.tooltip')
+                            createToolbarButton($editingBlock, editToolClipId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-clip', ''), editToolClipId + '.tooltip')
                                 .css('display', 'none')
                                 .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
                                 .click(function () {
@@ -955,6 +955,15 @@
                                     webgis.tools.onButtonClick(map, { command: 'massattributation', type: 'servertoolcommand', map: map }, this, null, args);
                                 });
                         }
+
+                        createToolbarButton($editingBlock, 'shortcuts', webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/tips-100', ''), '')
+                            .css('display', 'none')
+                            .css('background-color', '#ffc')
+                            .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
+                            .click(function () {
+                                var args = [];
+                                webgis.tools.onButtonClick(map, { command: 'show-shortcuts', type: 'servertoolcommand', map: map }, this, null, args);
+                            });
                     }
                 }
 

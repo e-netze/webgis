@@ -80,3 +80,22 @@ Or simply click on the map to select an object
 
 # update-in-layer: Edit {0}
 # delete-in-layer: Delete {0}
+
+# shortcuts: Shortcuts
+ 
+md:
+For the **editing selection tool**, the following keyboard shortcuts are available:
+
+- **Spacebar**: Select only one object. The object closest to the clicked point will be selected.
+- **E**: As above, but the edit mask opens immediately.
+- **D**: As above, but the delete mask opens immediately.
+
+**Requirement**: The selection tool must be active (point selection), and a theme must be selected from the list.
+
+**Procedure**: Press the corresponding key, then click on the map to select the object. 
+Hold the key down until the object is selected. Then release the key.
+
+Other important keyboard shortcuts:
+
+- **ESC**:
+  Cancel editing. The current tool (e.g., insert/update/delete mask) will be closed. If changes have been made in the mask, canceling must be confirmed with **Discard changes**.

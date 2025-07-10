@@ -3,6 +3,7 @@
 
     "error": "Error",
     "info": "Information",
+    "shortcuts": "Shortcuts",
 
     // sidebar
     "content": "Content/Presentation",
