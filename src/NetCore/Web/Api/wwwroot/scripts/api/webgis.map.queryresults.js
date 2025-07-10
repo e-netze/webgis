@@ -956,7 +956,7 @@
                                 });
                         }
 
-                        createToolbarButton($editingBlock, 'shortcuts', webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/tips-100', ''), '')
+                        createToolbarButton($editingBlock, 'shortcuts', webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/tips-26', ''), '')
                             .css('display', 'none')
                             .css('background-color', '#ffc')
                             .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
