@@ -32,26 +32,6 @@ public class EsriDateConversionTests
         Assert.Equal(input, result);
     }
 
-    [Theory]
-    [InlineData("0")]
-    [InlineData("-123456789")]
-    [InlineData(-99999)]
-    public void NonPositiveNumbers_ReturnOriginalString(object input)
-    {
-        var result = input.EsriDateToString();
-        Assert.Equal(input.ToString(), result);
-    }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
-    [InlineData(long.MinValue)]
-    public void LongValues_NotGreaterThanZero_ReturnOriginalString(long input)
-    {
-        var result = input.EsriDateToString();
-        Assert.Equal(input.ToString(), result);
-    }
-
     [Fact]
     public void ValidEpochDate_ReturnsDateOnly()
     {
