@@ -17,7 +17,7 @@ static public class EsriDateExtensions
             return string.Empty;
         }
 
-        if (long.TryParse(dateValue.ToString(), out long esriDate) && esriDate > 0)
+        if (long.TryParse(dateValue.ToString(), out long esriDate) /*&& esriDate > 0*/)  // there can be dates before 1.1.1970
         {
             DateTime td = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(esriDate);
 
@@ -32,6 +32,25 @@ static public class EsriDateExtensions
         }
 
         return dateValue.ToString() ?? String.Empty;
+    }
+
+    static public bool TryParseExactEsriDate(this string dateValue, out DateTime dateTime, string? dateFormat = null, string? timeFormat = null)
+    {
+        if (DateTime.TryParseExact(dateValue, $"{dateFormat ?? DateFormatString} {timeFormat ?? TimeFormatString}", CultureInfo, DateTimeStyles.None, out dateTime))
+        {
+            return true;
+        }
+        else if (DateTime.TryParseExact(dateValue, dateFormat ?? DateFormatString, CultureInfo, DateTimeStyles.None, out dateTime))
+        {
+            return true;
+        }
+        else if (DateTime.TryParseExact(dateValue, timeFormat ?? TimeFormatString, CultureInfo, DateTimeStyles.None, out dateTime))
+        {
+            return true;
+        }
+
+        dateTime = default;
+        return false;
     }
 
     static private string ToDateString(this DateTime dt, string? format)

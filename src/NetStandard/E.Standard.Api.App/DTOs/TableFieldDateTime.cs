@@ -1,5 +1,6 @@
 ﻿using E.Standard.Web.Abstractions;
 using E.Standard.WebGIS.CMS;
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -28,8 +29,12 @@ public sealed class TableFieldDateTime : TableFieldDTO
                 return String.Empty;
             }
 
-            DateTime td = Convert.ToDateTime(value);
-
+            DateTime td = default;
+            if (!value.TryParseExactEsriDate(out td))
+            {
+                td = Convert.ToDateTime(value);
+            }
+            
             switch (DisplayType)
             {
                 case DateFieldDisplayType.ShortDate:
