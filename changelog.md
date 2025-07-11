@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Fixed
 
+## 7.25.2807
+
+### Fixed
+
+- allow ESRI Dates before 1.1.1970 [discussion #315](https://github.com/e-netze/webgis-community/discussions/313)
+
 ## 7.25.2803
 
 ### Fixed
