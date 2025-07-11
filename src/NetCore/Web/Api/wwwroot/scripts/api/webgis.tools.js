@@ -1555,6 +1555,10 @@
             ret += (ret !== '' ? '|' : '');
             ret += '_as-default-tool=true';
         }
+        if (webgis.currentKey) {
+            ret += (ret !== '' ? '|' : '');
+            ret += '_current_key_pressed=' + webgis.currentKey;
+        }
         return ret;
     };
     this.toolDependencyString = function (map, tool, eventStr) {
@@ -1954,9 +1958,7 @@ webgis.tools.mouseEvent = function (map, e) {
         if (map) {
             ret += (ret !== '' ? '|' : '') + 'mapcrs=' + map.crsId();
         }
-        if (webgis.currentKey) {
-            ret += (ret !== '' ? '|' : '') + '_current_key_pressed=' + webgis.currentKey;
-        }
+     
         var toolParameters = webgis.tools.toolParameterString(map, tool);
         if (toolParameters && toolParameters !== '') {
             ret += (ret !== '' ? '|' : '');
@@ -2000,9 +2002,7 @@ webgis.tools.boxEvent = function (map, e, box, crs) {
         ret += "box=" + box[0] + "," + box[1] + "," + box[2] + "," + box[3] + "|crs=" + (crs ? crs : "4326") + "|";
         ret += "boxsize=" + Math.abs((p2.y - p1.y)) + "," + Math.abs((p2.x - p1.x)) + "|";
         ret += 'mapcrs=' + map.crsId();
-        if (webgis.currentKey) {
-            ret += '_current_key_pressed=' + webgis.currentKey;
-        }
+   
         var toolParameters = webgis.tools.toolParameterString(map, tool);
         if (toolParameters && toolParameters !== '') {
             ret += (ret !== '' ? '|' : '');

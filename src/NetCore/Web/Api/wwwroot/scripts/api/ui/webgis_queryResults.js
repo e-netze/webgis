@@ -834,8 +834,9 @@
                                                 args["edit-map-scale"] = map.scale();
                                                 args["edit-map-crsid"] = map.calcCrs().id;
 
-                                                map.setViewFocus($(this).closest('tr').data('feature-bbox'), 0.3);
-
+                                                if (!$(this).hasClass('webgis-triggered-by-shortcut')) {
+                                                    map.setViewFocus($(this).closest('tr').data('feature-bbox'), 0.3);
+                                                }
                                                 webgis.tools.onButtonClick(map, { command: 'editattributes', type: 'servertoolcommand_ext', id: editAttributesToolId, map: map }, this, null, args);
                                             });
                                         //edit update
@@ -878,7 +879,9 @@
                                                 args["edit-map-scale"] = map.scale();
                                                 args["edit-map-crsid"] = map.calcCrs().id;
 
-                                                map.setViewFocus($(this).closest('tr').data('feature-bbox'), 0.3);
+                                                if (!$(this).hasClass('webgis-triggered-by-shortcut')) {
+                                                    map.setViewFocus($(this).closest('tr').data('feature-bbox'), 0.3);
+                                                }
                                                 webgis.tools.onButtonClick(map, { command: 'deletefeature', type: 'servertoolcommand', id: editToolId, map: map }, this, null, args);
                                             });
                                     }

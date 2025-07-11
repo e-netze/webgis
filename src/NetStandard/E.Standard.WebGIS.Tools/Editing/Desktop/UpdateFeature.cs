@@ -30,6 +30,10 @@ namespace E.Standard.WebGIS.Tools.Editing.Desktop;
 public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolPersistenceContext, IApiPostRequestEvent
 {
     private readonly UpdateFeatureService _updateFeatureService;
+    public static string[] ShortCutKeys = [
+        " ", // Space
+        "e"
+    ];
 
     public UpdateFeature()
     {
@@ -110,7 +114,7 @@ public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolPersistenceC
 
         response.ToolCursor = ToolCursor.Custom_Pen;
         response.ActiveToolType = ToolType.sketchany;
-        response.FocusSketch = true;
+        response.FocusSketch = ShortCutKeys.Any(k => k.Equals(e.CurrentKeyPressed, StringComparison.OrdinalIgnoreCase)) == false;  // if shortcut key is pressed, focus is not needed
 
         response.ActiveTool = new UpdateFeature()
         {

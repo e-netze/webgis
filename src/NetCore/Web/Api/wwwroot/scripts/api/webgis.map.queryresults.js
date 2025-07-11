@@ -1341,10 +1341,12 @@
             var $btn = $content.find(".webgis-result-table-menucell > .menubutton:not(.webgis-dependency-not-activetool)[shortcut='" + webgis.currentKey + "']");
             if ($btn.length === 1) {
                 webgis.delayed(function ($btn) {
-                    $btn.trigger('click');
+                    $btn.addClass('webgis-triggered-by-shortcuts')
+                        .trigger('click')
+                        .removeClass('webgis-triggered-by-shortcut');
                 }, 50, $btn);
             }
-            console.log('shortcut button', $btn, webgis.currentKey);
+            //console.log('shortcut button', $btn, webgis.currentKey);
         }
     };
     this.showFeatureTable = function (feature, queryToolId, $target, featureMetadata) {
