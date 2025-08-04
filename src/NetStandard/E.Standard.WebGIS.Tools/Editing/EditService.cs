@@ -179,7 +179,7 @@ internal class EditService
 
             using (DBFactory dbFactory = new DBFactory(connectionString))
             using (var dbConnection = dbFactory.GetConnection())
-            using (var dbCommand = dbFactory.GetCommand())
+            using (var dbCommand = dbFactory.GetCommand(dbConnection))
             {
                 await dbConnection.OpenAsync();
 

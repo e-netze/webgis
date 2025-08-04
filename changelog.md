@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Fixed
 
+-- Edit Mask: Autocomplete not worked with Database queieries
+  [discussion #316](https://github.com/e-netze/webgis-community/discussions/316)
+
 ## 7.25.2807
 
 ### Fixed
