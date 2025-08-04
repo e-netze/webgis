@@ -83,7 +83,7 @@ public class DBFactory : IDisposable
     {
         return _connection.GetConnection();
     }
-    public DbCommand GetCommand(DbConnection connection = null)
+    public DbCommand GetCommand(DbConnection connection)
     {
         DbCommand command = _connection.GetCommand();
         if (command != null && connection != null)
