@@ -99,12 +99,12 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                         new UIImageButton(this.GetType(),"distance_circle", UIButton.UIButtonType.servertoolcommand,"distance_circle")
                         {
                             value = "distance_circle",
-                            text = localizer.Localize("tools.distance-circle")
+                            text = localizer.Localize("tools.distance_circle")
                         },
                         new UIImageButton(this.GetType(),"compass", UIButton.UIButtonType.servertoolcommand,"compass_rose")
                         {
                             value = "compass_rose",
-                            text = localizer.Localize("tools.compass-rose")
+                            text = localizer.Localize("tools.compass_rose")
                         },
                         new UIImageButton(this.GetType(),"dimline", UIButton.UIButtonType.servertoolcommand,"dimline")
                         {
