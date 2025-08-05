@@ -1967,7 +1967,7 @@ webgis.tools.mouseEvent = function (map, e) {
         return ret;
     };
     this.toEventString = function (map, tool) {
-        console.log('event', webgis.currentKey);
+        //console.log('event', webgis.currentKey);
         if (tool.tooltype === 'click') {
             return this.toClickString(map, tool);
         }

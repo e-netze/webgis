@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ExCSS" Version="4.3.0" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.6" />
+    <PackageReference Include="ExCSS" Version="4.3.1" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.7" />
   </ItemGroup>
 
   <ItemGroup>

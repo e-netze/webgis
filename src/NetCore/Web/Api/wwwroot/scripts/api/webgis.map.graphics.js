@@ -105,13 +105,14 @@
         if (tool === this._tool)
             return;
 
-        this._sketchMetaText = null;
-
         this.hideContextMenu(true);
         if (this._sketch.isValid()) {
             this.commitCurrentElement(this._sketch && this._sketch.isValid());
         }
         this._sketch.remove(true);
+
+        this._sketchMetaText = null;
+
         if (tool === 'pointer') {
             this._appendClickEvents();
             this._map._disableSketchClickHandling();
@@ -483,6 +484,10 @@
             if (element) {
                 this.map.graphics.clearElementSelection();
                 element.selected = element.updating = true;
+
+                this._sketchMetaText = element.metaText || null;
+            } else {
+                this._sketchMetaText = null;
             }
         } else {
             var frameworkElement = e.originalElement ? e.originalElement.frameworkElement : e.target;
@@ -656,7 +661,7 @@
         return this._elements.filter(e => e.updating === true).length > 0;
     }
     this.commitCurrentElement = function (silent) {
-        //console.log('commitCurrentElement-valid-sketch', this._sketch.isValid());
+        //console.log('commitCurrentElement-valid-sketch', this);
         if (!this._sketch || !this._sketch.isValid())
             return;
 
@@ -697,9 +702,14 @@
         this._currentMarker = null;
         this._currentPointMarker = null;
 
-        if (this._tool !== "text") {
-            this._sketchMetaText = null;
-        }
+        // old...
+        //if (this._tool !== "text") {
+        //    this._sketchMetaText = null;
+        //}
+        // unset text always instead of only if tool is not text
+        this._sketch.setText('');
+        this._sketchMetaText = null;
+
         this._sketchMetaSouce = null;
 
         this._unstageElement();

@@ -8,7 +8,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+
 ### Fixed
+
+- removed tag ``<strong>`` from result [discussion #244](https://github.com/e-netze/webgis-community/discussions/244)
+
+## 7.25.3202
+
+### Added
+### Fixed
+
+- Edit Mask: Autocomplete not worked with Database queieries
+  [discussion #316](https://github.com/e-netze/webgis-community/discussions/316)
+
+- Map Markup: Text and Labels get lost when changing tool (instead of apply tool button)
+  [discussion #319](https://github.com/e-netze/webgis-community/discussions/319)
+
+## 7.25.2807
+
+### Fixed
+
+- allow ESRI Dates before 1.1.1970 [discussion #315](https://github.com/e-netze/webgis-community/discussions/313)
 
 ## 7.25.2803
 

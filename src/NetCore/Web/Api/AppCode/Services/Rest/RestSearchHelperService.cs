@@ -96,7 +96,7 @@ public class RestSearchHelperService
             }
             if (metaCounter > 10)
             {
-                sb.Append(" + <strong>" + (metaCounter - 10) + " weitere Themen...");
+                sb.Append($" + {(metaCounter - 10)} weitere Themen...");
             }
 
             if (!String.IsNullOrWhiteSpace(sb.ToString()))
