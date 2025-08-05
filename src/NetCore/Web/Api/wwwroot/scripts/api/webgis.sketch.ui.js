@@ -639,7 +639,7 @@
                             });
                     }
 
-                    if (closestVertex != null && closestVertex.dist < 15) {
+                    if (closestVertex != null && closestVertex.dist < 15 && _isLineOrPolygon()) {  // just for lines and polygons (https://github.com/e-netze/webgis-community/discussions/323)
                         $_menuItem($container, webgis.l10n.get("sketch-tool-move"), webgis.css.imgResource('sketch_move-26.png', 'tools'))
                             .data('vertex-index', closestVertex.index)
                             .click(function () {
