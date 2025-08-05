@@ -10,8 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Fixed
 
--- Edit Mask: Autocomplete not worked with Database queieries
+- Edit Mask: Autocomplete not worked with Database queieries
   [discussion #316](https://github.com/e-netze/webgis-community/discussions/316)
+
+- Map Markup: Text and Labels get lost when changing tool (instead of apply tool button)
+  [discussion #319](https://github.com/e-netze/webgis-community/discussions/319)
 
 ## 7.25.2807
 
