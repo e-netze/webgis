@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+### Fixed
+
+- removed tag ``<strong>`` from result [discussion #244](https://github.com/e-netze/webgis-community/discussions/244)
+
 ## 7.25.3202
 
 ### Added
