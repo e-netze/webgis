@@ -91,6 +91,8 @@ webgis.usability = {
 
     tableToolsContainerExtended: true,
 
+    useAdvancedKeyShortcutHandling: false,
+
     tsp: {
         allowOrderFeatures: false,
         maxFeatures: 50

@@ -956,14 +956,16 @@
                                 });
                         }
 
-                        createToolbarButton($editingBlock, 'shortcuts', webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/tips-26', ''), '')
-                            .css('display', 'none')
-                            .css('background-color', '#ffc')
-                            .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
-                            .click(function () {
-                                var args = [];
-                                webgis.tools.onButtonClick(map, { command: 'show-shortcuts', type: 'servertoolcommand', map: map }, this, null, args);
-                            });
+                        if (webgis.usability.useAdvancedKeyShortcutHandling === true) {
+                            createToolbarButton($editingBlock, 'shortcuts', webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/tips-26', ''), '')
+                                .css('display', 'none')
+                                .css('background-color', '#ffc')
+                                .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
+                                .click(function () {
+                                    var args = [];
+                                    webgis.tools.onButtonClick(map, { command: 'show-shortcuts', type: 'servertoolcommand', map: map }, this, null, args);
+                                });
+                        }
                     }
                 }
 

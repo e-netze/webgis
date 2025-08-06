@@ -72,6 +72,8 @@ webgis.usability.highlightFeatureOnMarkerClick = true;
 webgis.usability.allowViewerLayoutTemplateSelection = true;
 webgis.usability.quickSearch.displayMetadata.geocodes = true;
 
+webgis.usability.useAdvancedKeyShortcutHandling = true;
+
 if (webgis.isMobileDevice() === false) {
     webgis.usability.optionContainerDefault.push({
         id: 'webgis-identify-tool',

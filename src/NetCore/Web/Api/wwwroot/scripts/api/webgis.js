@@ -3326,7 +3326,7 @@ webgis.firstOrDefault = function (array, f) {
 };
 
 webgis.setCurrentKeyCodeFromEvent = function (e) {
-    if (!e) {
+    if (!e || webgis.usability.useAdvancedKeyShortcutHandling !== true) {
         webgis.currentKey = null;
     } else {
         let key = '';
