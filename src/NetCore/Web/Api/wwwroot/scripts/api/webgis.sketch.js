@@ -308,6 +308,8 @@
             }
         }
 
+        const isValidBeforeRemove = this.isValid();
+
         _vertexFrameworkElements = [];
         _currentFrameworkIndex = 0;
         //_vertices = [];
@@ -322,6 +324,10 @@
         this.events.fire('onremoved', this);
         this.events.fire('onchanged', this);
         this._isDirty = false;
+
+        if (isValidBeforeRemove === true && this.isValid() === false) {
+            this.events.fire('ongetsinvalid', this);
+        }
     };
     this.show = function () {
         if (_frameworkElements === null || this.map === null)
@@ -1679,17 +1685,25 @@
     this.undo = function () {
         if (!this.canUndo())
             return;
-        var undo = _undos[_undos.length - 1];
-        var u = new Array();
-        for (var i = 0; i < _undos.length - 1; i++)
+
+        const isValidBeforeUndo = this.isValid();
+
+        const undo = _undos[_undos.length - 1];
+        const u = new Array();
+
+        for (let i = 0; i < _undos.length - 1; i++)
             u.push(_undos[i]);
+
         _undos = u;
         this.remove(true);
-        for (var i = 0; i < undo.partIndex.length; i++) {
+
+        for (let i = 0; i < undo.partIndex.length; i++) {
             if (i > 0)
                 this.appendPart(null, true);
-            var vertices = [];
-            for (var v = undo.partIndex[i], to = i == undo.partIndex.length - 1 ? undo.vertices.length : undo.partIndex[i + 1]; v < to; v++) {
+
+            const vertices = [];
+
+            for (let v = undo.partIndex[i], to = i == undo.partIndex.length - 1 ? undo.vertices.length : undo.partIndex[i + 1]; v < to; v++) {
                 vertices.push({
                     x: undo.vertices[v].x, y: undo.vertices[v].y,
                     X: undo.vertices[v].X, Y: undo.vertices[v].Y,
@@ -1701,19 +1715,13 @@
                 });
             }
             if (vertices.length > 0)
-                this.addVertices(vertices);
+                this.addVertices(vertices);  // here gets invalid is fired
         }
-        //for (var i = 0, to = undo.vertices.length; i < to; i++) {
-        //    _vertices.push({
-        //        x: undo.vertices[i].x, y: undo.vertices[i].y,
-        //        X: undo.vertices[i].X, Y: undo.vertices[i].Y,
-        //        projEvent: undo.vertices[i].projEvent
-        //    });
-        //}
-        //this.redraw();
-        //this.redrawMarkers();
-        //this.hide();
-        //this.show();
+
+        // fire gets invalid event
+        if (isValidBeforeUndo === true && this.isValid() === false) {
+            this.events.fire('ongetsinvalid', this);
+        }
     };
     this.canUndo = function () { return _undos.length > 0; };
     this.undoText = function () {
@@ -2749,6 +2757,8 @@
         if (suppressUndo !== true) {
             this.addUndo(webgis.l10n.get("sketch-remove-vertex"));
         }
+        const isValidBeforeRemove = this.isValid();
+
         var vertexFrameworkElements = [];
         for (var i = 0; i < _vertices.length; i++) {
             if (i == index)
@@ -2769,6 +2779,10 @@
         }
         this.redraw(true);
         this.redrawMarkers();
+
+        if (isValidBeforeRemove === true && this.isValid() === false) {
+            this.events.fire('ongetsinvalid', this);
+        }
     };
     /******** Fix Vertices **********************/
     this.fixVertex = function (index, fix) {

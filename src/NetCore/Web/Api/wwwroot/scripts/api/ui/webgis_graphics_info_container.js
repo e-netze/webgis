@@ -221,13 +221,15 @@
                     .val(hasLabel ? txt : '');
                 if (element.type === 'text') {
                     $labelInput.keyup(function () {
-                        let map = $(this).closest('.webgis-graphics-info-container-holder').data('map');
-                        map.graphics.setMetaText($(this).val());
+                        const $this = $(this);
+                        const map = $this.closest('.webgis-graphics-info-container-holder').data('map');
+                        map.graphics.setMetaText($this.val());
                     });
                 } else {
                     $labelInput.change(function () {
-                        let map = $(this).closest('.webgis-graphics-info-container-holder').data('map');
-                        map.graphics.setMetaText($(this).val());
+                        const $this = $(this);
+                        const map = $this.closest('.webgis-graphics-info-container-holder').data('map');
+                        map.graphics.setMetaText($this.val());
                     });
                 }
 

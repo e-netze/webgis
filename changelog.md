@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - removed tag ``<strong>`` from result [discussion #244](https://github.com/e-netze/webgis-community/discussions/244)
 
+- Some/More Map Markup Bugs
+  [discussion #319](https://github.com/e-netze/webgis-community/discussions/319)
+
 ## 7.25.3202
 
 ### Added
