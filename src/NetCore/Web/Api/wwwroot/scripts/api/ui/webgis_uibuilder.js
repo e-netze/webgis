@@ -1356,7 +1356,7 @@
                 });
             }
 
-            if (webgis.usability.webgis.usability.useAdvancedKeyShortcutHandling === true) {
+            if (webgis.usability.useAdvancedKeyShortcutHandling === true) {
                 $newElement.on('keydown', function (e) {
                     //console.log('keydown', e);
 
