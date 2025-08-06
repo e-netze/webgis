@@ -1355,6 +1355,39 @@
                     map.queryResultFeatures.setToolMarkerVisibility('webgis.tools.chainage',$(this).val() === 'show' ? true : false);
                 });
             }
+
+            if (webgis.usability.webgis.usability.useAdvancedKeyShortcutHandling === true) {
+                $newElement.on('keydown', function (e) {
+                    //console.log('keydown', e);
+
+                    // check for STRG (oder CMD auf Mac) + V 
+                    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "v") {
+                        e.preventDefault(); // prevent default paste action
+                        const $this = $(this);
+
+                        navigator.clipboard.readText().then(function (clipboardText) {
+                            const cleanText = clipboardText.trim().toLowerCase();
+
+                            const $optionToSelect = $newElement.find("option").filter(function () {
+                                const value = ($(this).val() || "").toLowerCase();
+                                const text = $(this).text().trim().toLowerCase();
+
+                                return value === cleanText || text === cleanText;
+                            });
+
+                            //console.log($optionToSelect, $optionToSelect.val());
+
+                            if ($optionToSelect.length) {
+                                $this.val($optionToSelect.val()).trigger("change");
+                            } else {
+                                alert("Kein passender Eintrag für @" + $this.attr('id') + " gefunden: " + clipboardText);
+                            }
+                        }).catch(function (err) {
+                            console.error("Error on reading clipboard data:", err);
+                        });
+                    }
+                });
+            }
         }
         else if (element.type === 'optionscontainer') {
             $newElement = $("<div " + elementProperties(element, options) + ">").appendTo($parent).addClass('webgis-ui-optionscontainer');
