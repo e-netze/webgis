@@ -637,13 +637,22 @@
                 this.loadScript(webgis.baseUrl + '/lib/nav-compass/src/js/nav-compass.js', webgis.baseUrl + '/lib/nav-compass/src/css/nav-compass.css', callback, arg);
             }
         }
-        else if (lib == "sortable") {
+        else if (lib === "sortable") {
             if (!window.Sortable) {
                 loading = true;
                 this.loadScript(webgis.baseUrl + '/lib/sortable/sortable.min.js', '', callback, arg);
             }
         }
-        else if (lib == "monaco-editor") {
+        else if (lib === "select2") {
+            if(!$.fn.select2) {
+                loading = true;
+                this.loadScript(webgis.baseUrl + '/lib/select2/dist/js/select2.min.js', webgis.baseUrl + '/lib/select2/dist/css/select2.min.css', function () {
+                    //$.fn.select2.defaults.set('theme', 'webgis');
+                    callback(arg);
+                }, arg);
+            }
+        }
+        else if (lib === "monaco-editor") {
             if (!window.monaco) {
                 loading = true;
                 //window.require = window.require || {};

@@ -93,7 +93,7 @@ internal class NewFeatureService
         EditEnvironment.UIEditMask mask = await editTheme.ParseMask(bridge,
                                                                     editThemeDef,
                                                                     EditOperation.Insert,
-                                                                    useMobileBehavoir: e.UseMobileBehavior());
+                                                                    useMobileBehaviour: e.UseMobileBehavior());
 
         if (!String.IsNullOrEmpty(uiTarget))
         {

@@ -484,6 +484,16 @@ input, textarea, select {
     font-size: 13px;
 }
 
+.select2-container.select2-container--open {
+        z-index: 999999 !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    font-size: 14px;
+}
+.select2-container {
+    max-width: 385px;
+}
+
 .webgis-button {
     background-repeat: no-repeat;
     background-position: center;

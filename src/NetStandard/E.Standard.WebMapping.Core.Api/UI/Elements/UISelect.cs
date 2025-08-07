@@ -69,6 +69,10 @@ public class UISelect : UIValidation
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public bool? allow_addvalues { get; set; }
 
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public bool? allow_pro_behaviour { get; set; }
+
     #region Options
 
     public ICollection<Option> options { get; set; }

@@ -243,7 +243,7 @@ public class TransferFeatures : IApiServerToolAsync,
             EditEnvironment.UIEditMask mask = await editTheme.ParseMask(bridge,
                                                                         editEnvironment.EditThemeDefinition,
                                                                         EditOperation.FeatureTransfer,
-                                                                        useMobileBehavoir: false,
+                                                                        useMobileBehaviour: false,
                                                                         editThemeNameAsCategory: true,
                                                                         ignoreFields: ignoreFields);
 

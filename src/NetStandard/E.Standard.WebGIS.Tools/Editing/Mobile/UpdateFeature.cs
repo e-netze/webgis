@@ -128,7 +128,7 @@ public class UpdateFeature : IApiServerToolLocalizable<Edit>,
                                                                         editFeatureDef.ToEditThemeDefinition(),
                                                                         tool.Operation,
                                                                         editFeature,
-                                                                        useMobileBehavoir: e.UseMobileBehavior());
+                                                                        useMobileBehaviour: e.UseMobileBehavior());
 
             // For PostEvent!!
             e["_edittheme_oid"] = editFeature.Oid.ToString();

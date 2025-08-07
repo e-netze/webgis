@@ -17,7 +17,7 @@ public class FeatureServiceTests
     {
         // Arrange & Act: create it like in old legacy code with workspaces.xml
         Assembly assembly = typeof(FeatureService).Assembly;
-        IFeatureWorkspace? ws = assembly.CreateInstance(typeof(FeatureService).FullName, false) as IFeatureWorkspace;
+        IFeatureWorkspace? ws = assembly.CreateInstance(typeof(FeatureService).FullName!, false) as IFeatureWorkspace;
 
         // Assert
         Assert.NotNull(ws);

@@ -26,7 +26,7 @@
             });
         },
         validate: function (options) {
-            console.log('validate ' + $(this).attr('id'));
+            //console.log('validate ' + $(this).attr('id'));
             var $this = $(this).removeClass('validated-parameter');
 
             var val = $(this).val(), error;
@@ -44,7 +44,8 @@
             if (error) {
                 let $errorCtrl = $(this)
                     .addClass('webgis-not-valid')
-                    .next('.webgis-validation-error');
+                    //.next('.webgis-validation-error');
+                    .data('errorMessageElement');
 
                 let message = ($this.attr('webgis-validation-error') || error);
                 $errorCtrl
@@ -61,13 +62,13 @@
                             $this.css('white-space', $this.css('white-space') === 'nowrap' ? 'normal' : 'nowrap');
                         });
                 }
-
             } else {
                 //console.log('parameter is valid!', val);
                 $(this)
                     .removeClass('webgis-not-valid')
                     .addClass('validated-parameter')
-                    .next('.webgis-validation-error')
+                    //.next('.webgis-validation-error')
+                    .data('errorMessageElement')
                     .text('')
                     .removeClass('haserror');
             }
@@ -91,9 +92,10 @@
             $elem.attr('webgis-validation-error', options.error)
         }
 
-        $("<div>")
+        const $errorMessageElement = $("<div>")
             .addClass('webgis-validation-error')
             .insertAfter($elem);
+        $elem.data('errorMessageElement', $errorMessageElement);
 
         $elem.on('input', function (e) {
             $(this).webgis_validation('validate');
