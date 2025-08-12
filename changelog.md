@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Usability: Shortcuts for eg. Edit tool (**SPACE** select only one, **E** start editing, **D** delete feature)
   [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#tastatur-shortcuts)
 
+- Usability: Edit Mask Combo/Select-Boxes - use ``select2``, for combos with 
+  many items (combination ``domain``/``autocomplete``)
+
 ### Fixed
 
 - removed tag ``<strong>`` from result [discussion #244](https://github.com/e-netze/webgis-community/discussions/244)
