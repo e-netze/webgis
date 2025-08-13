@@ -56,6 +56,7 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
                 CustomSelection = customSelection,
                 Links = features.Links,
                 LinkTargets = features.LinkTargets,
+                LinkImages = features.LinkImages,
                 TableFields = features.TableFieldDefintions == null ?
                                     null :
                                     features.TableFieldDefintions.Select(f => new TableFieldDefintion()
@@ -360,6 +361,11 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
         [System.Text.Json.Serialization.JsonPropertyName("linktargets")]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public Dictionary<string, string> LinkTargets { get; set; }
+
+        [JsonProperty(PropertyName = "linkimages", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonPropertyName("linkimages")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public Dictionary<string, string> LinkImages { get; set; }
 
         [JsonProperty(PropertyName = "service_id", NullValueHandling = NullValueHandling.Ignore)]
         [System.Text.Json.Serialization.JsonPropertyName("service_id")]

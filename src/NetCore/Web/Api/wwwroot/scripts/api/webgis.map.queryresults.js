@@ -1063,7 +1063,11 @@
         if (features.metadata && features.metadata.links) {
             $tabTools.data('feature.metadata', features.metadata);  // Links können sich ändern (add/remove features). Referenz auf Objekt merken und erst beim klick eigentlichen Link auslesen
             for (var l in features.metadata.links) {
-                createToolbarButton($exportBlock, l, webgis.css.imgResource('external-link-26.png'))
+                createToolbarButton($exportBlock,
+                                    l,
+                                    features.metadata.linkimages && features.metadata.linkimages[l] 
+                                        ? features.metadata.linkimages[l] 
+                                        : webgis.css.imgResource('external-link-26.png'))
                     .data('linkname', l)
                     .click(function () {
                         let featureMetadata = $(this).closest('.webgis-result-table-tools').data('feature.metadata');

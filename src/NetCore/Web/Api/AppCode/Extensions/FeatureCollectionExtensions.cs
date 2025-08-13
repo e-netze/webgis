@@ -37,10 +37,18 @@ static public class FeatureCollectionExtensions
                     {
                         returnFeatures.Links ??= new();
                         returnFeatures.LinkTargets ??= new();
+                        
 
                         var colName = hotlinkField.HotlinkName.OrTake(hotlinkField.ColumnName);
                         returnFeatures.Links[colName] = hotLinkUrl;
                         returnFeatures.LinkTargets[colName] = hotlinkField.Target.ToString().ToLowerInvariant();
+
+                        if(!String.IsNullOrEmpty(hotlinkField.ImageExpression) && !ExpressionHasParameters(hotlinkField.ImageExpression))
+                        {
+                            returnFeatures.LinkImages ??= new();
+                            returnFeatures.LinkImages[colName] = hotlinkField.ImageExpression;
+                        }
+                       
                     }
                 }
                 catch { }
@@ -65,5 +73,11 @@ static public class FeatureCollectionExtensions
             }
         }
         return expr;
+    }
+
+    static private bool ExpressionHasParameters(string expression)
+    {
+        return expression?.Contains("[") == true 
+            && expression?.Contains("]") == true;
     }
 }

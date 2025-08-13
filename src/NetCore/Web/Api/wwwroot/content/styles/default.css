@@ -967,6 +967,10 @@ img.tile {
             box-sizing: border-box;
         }
 
+            .webgis-result-table-tools-container .webgis-result-table-tools .webgis-toolbox-tool-item img {
+                max-height: 26px;
+            }
+
 .webgis-result-warning-panel {
     position: sticky;
     left: 0px;

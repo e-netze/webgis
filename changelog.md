@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [discussion #279](https://github.com/e-netze/webgis-community/discussions/279)
   [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#toolbox)
 
+- Usability: Icons for 1:n Hyperlinks
+  [discussion #299](https://github.com/e-netze/webgis-community/discussions/299)
+
 - Usability: Edit Mask Combo/Select-Boxes - use ``select2``, for combos with 
   many items (combination ``domain``/``autocomplete``)
 
