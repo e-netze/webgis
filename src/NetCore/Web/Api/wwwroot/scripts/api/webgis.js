@@ -2039,10 +2039,13 @@
                     webgis._toolInfos[client] = result.tools;
 
                     // overriede custom properties
-                    var overrideProperties = ["name", "container", "tooltip", "image", "cursor", "help_urlpath"]
+                    var overrideProperties = ["name", "container", "tooltip", "image", "cursor", "help_urlpath", "priority"]
 
-                    for (let t in result.tools) {
-                        let tool = result.tools[t];
+                    let tools = result.tools;
+
+                    for (let t in tools) {
+                        let tool = tools[t];
+                        tool.order = 0;
                         if (webgis.usability.toolProperties[tool.id]) {
                             for (let p in overrideProperties) {
                                 let prop = overrideProperties[p];
@@ -2052,8 +2055,11 @@
                         webgis.l10n.set(tool.id, tool.name);
                         webgis.l10n.set(tool.id + ".tooltip", tool.tooltip);
                     }
+
+                    //console.log(tools);
+
                     if (callback)
-                        callback(result.tools);
+                        callback(tools);
                 }
             });
         }

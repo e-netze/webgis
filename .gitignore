@@ -317,3 +317,4 @@ keys.config
 
 /src/NetCore/Web/Cms/wwwroot/js/cms/cms.min.js
 /src/NetCore/Web/Cms/wwwroot/js/cms/cms.min.js.map
+/src/NetCore/Web/Api/wwwroot/lib/select2
