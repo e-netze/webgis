@@ -1591,6 +1591,165 @@ L.dimLine = function (latLngs, options) {
     return new L.DimLine(latLngs, options);
 };
 
+L.DimPolygon = L.LayerCollection.extend({
+    options: {
+        color: '#ffff00',
+        strokeColor: '#ff0000',
+        strokeWeight: 2,
+        fontColor: 'black',
+        fontSize: 13,
+        fontSytle: '',
+        circleMarkerOptions: { same_as_line: true, radius: 4, color: '#000', weight: 2, fillcolor: '#eee' },
+        attributes: {}
+    },
+
+    _calcCrs: 0,
+    _latLngs: null,
+    _setLatLngs: function (latLngs) {
+        this.setLatLngs(latLngs);
+    },
+
+    _setStyle: function (style) {
+        for (var i in style) {
+            switch (i.toLocaleLowerCase()) {
+                case 'font-size':
+                case 'fontsize':
+                case 'size':
+                    this.options.fontSize = style[i];
+                    break;
+            }
+        }
+    },
+
+    onAdd: function () {
+        this.rebuild();
+    },
+    setLatLngs: function (latLngs) {
+        this._latLngs = latLngs;
+        this.rebuild();
+    },
+    addLatLng: function (latLng) {
+        if (this._latLngs)
+            this._latLngs.push(latLng);
+        else
+            this._latLngs = [latLng];
+
+        this.rebuild();
+    },
+    getLatLngs: function () { return this._latLngs; },
+    getCalcCrs: function () { return this._calcCrs; },
+    redraw: function () {
+        this.rebuild();
+    },
+    rebuild: function () {
+        if (this._latLngs && this._latLngs.length >= 2) {
+            let count = this.getChildLayerCount();
+            if (count === 0) {
+                let polygon = L.polygon(this._latLngs, this.options);
+                this.addChildLayer(polygon);
+                polygon.on('click', function (e) {
+                    this.fireEvent('click', e);
+                }, this);
+            } else {
+                var polygon = this.getChildLayer(0);
+                polygon.setLatLngs(this._latLngs);
+
+                this.trimChildren(1);
+            }
+
+            if (this.options.circleMarkerOptions.same_as_line === true) {
+                this.options.circleMarkerOptions.color = this.options.color;
+                this.options.circleMarkerOptions.weight = this.options.weight;
+            }
+
+            let xProp = "x", yProp = "y";
+            if (webgis.calc._canProject()) {
+                xProp = "X"; yProp = "Y";
+            }
+            let calcVertices = [];
+            let insertAtArea = { lng: 0, lat: 0 };
+
+            for (let i = 0; i < this._latLngs.length; i++) {
+                let p = [
+                    { x: this._latLngs[i].lng, y: this._latLngs[i].lat },
+                    { x: this._latLngs[(i + 1) % this._latLngs.length].lng, y: this._latLngs[(i + 1) % this._latLngs.length].lat }
+                ];
+                let insertAt = { lng: (p[0].x + p[1].x) * .5, lat: (p[0].y + p[1].y) * .5 };
+
+                
+
+                //console.log(p);
+
+                if (webgis.calc._canProject()) {
+                    this._calcCrs = webgis.calc.getCalcCrsId(p);
+                    p = webgis.calc._projectToCalcCrs(p);
+                }
+
+                calcVertices.push({ x: this._latLngs[i].lng, y: this._latLngs[i].lat });
+                insertAtArea.lng += (this._latLngs[i].lng - insertAtArea.lng) / calcVertices.length;
+                insertAtArea.lat += (this._latLngs[i].lat - insertAtArea.lat) / calcVertices.length;
+
+                let dx = p[1][xProp] - p[0][xProp];
+                let dy = p[1][yProp] - p[0][yProp];
+                let len = Math.sqrt(dx * dx + dy * dy);
+                let angle = Math.atan2(dy, dx) * 180.0 / Math.PI;
+                if (angle < 0)
+                    angle += 360.0;
+
+                //console.log(angle);
+
+                if (angle > 90.0 && angle < 270)
+                    angle += 180;
+
+                let circle = L.circleMarker(this._latLngs[i], this.options.circleMarkerOptions);
+                this.addChildLayer(circle);
+
+                let text = L.svgLabel(insertAt, {
+                    text: Math.round(len * 100.0) / 100.0 + 'm',
+                    rotation: -angle,
+                    fontSize: this.options.fontSize,
+                    alignmentBaseline: 'ideographic' //'central'
+                });
+                this.addChildLayer(text);
+            }
+
+            let area = webgis.calc.area(calcVertices, xProp, yProp);
+            if (area > 0) {
+                this.addChildLayer(L.svgLabel(insertAtArea, {
+                    text: Math.round(area * 100.0) / 100.0 + ' m²',
+                    fontSize: this.options.fontSize * 1.2,
+                    alignmentBaseline: 'ideographic', //'central'
+                    backgroundColor: '#f00'
+                }));
+            }
+
+            let circle = L.circleMarker(this._latLngs[this._latLngs.length - 1], this.options.circleMarkerOptions);
+            this.addChildLayer(circle);
+        }
+    },
+    toGeoJSON: function () {
+        let geoJson = {
+            geometry: {
+                type: 'Polygon',
+                coordinates: []
+            }
+        };
+
+
+        if (this._latLngs) {
+            for (let l in this._latLngs) {
+                geoJson.geometry.coordinates.push([this._latLngs[l].lng, this._latLngs[l].lat]);
+            }
+        }
+
+        return geoJson;
+    }
+})
+
+L.dimPolygon = function (latLngs, options) {
+    return new L.DimPolygon(latLngs, options);
+};
+
 L.HectoLine = L.LayerCollection.extend({
     options: {
         color: '#ff0000',

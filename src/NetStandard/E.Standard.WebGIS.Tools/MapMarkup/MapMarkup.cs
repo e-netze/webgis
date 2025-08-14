@@ -44,7 +44,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     private const string ConfigDeaultDownloadEpsgCode = "default-download-epsg";
 
     private readonly string[] MobileTools = new string[] { "pointer", "symbol", "freehand", "line", "polygon", "dimline", "share", "save", "open", "upload", "download" };
-    private readonly string[] AdvancedTools = new string[] { "text", "distance_circle", "compass", "dimline", "hectoline" };  // Do not use with Internet Explorer
+    private readonly string[] AdvancedTools = new string[] { "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline" };  // Do not use with Internet Explorer
 
     #region IApiServerTool Member
 
@@ -110,6 +110,11 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                         {
                             value = "dimline",
                             text = localizer.Localize("tools.dimline")
+                        },
+                        new UIImageButton(this.GetType(),"dimpolygon", UIButton.UIButtonType.servertoolcommand,"dimpolygon")
+                        {
+                            value = "dimpolygon",
+                            text = localizer.Localize("tools.dimpolygon")
                         },
                         new UIImageButton(this.GetType(),"hectoline", UIButton.UIButtonType.servertoolcommand,"hectoline")
                         {
