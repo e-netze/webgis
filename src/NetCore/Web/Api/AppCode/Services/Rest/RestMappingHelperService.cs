@@ -620,7 +620,9 @@ public class RestMappingHelperService /*: IDisposable*/
                 graphicsMetaText = JSerializer.GetJsonElementValue(meta, "text").ToStringOrEmpty();
             }
 
-            if ((graphicsTool == "dimline" || graphicsTool == "hectoline") && feature.GetPropery<int>("_calcCrs") > 0)
+            if ((graphicsTool == "dimline"
+                || graphicsTool == "dimpolygon"
+                || graphicsTool == "hectoline") && feature.GetPropery<int>("_calcCrs") > 0)
             {
                 calcShape = feature.ToShape();
                 using (var calcTransformer = new GeometricTransformerPro(ApiGlobals.SRefStore.SpatialReferences, 4326, feature.GetPropery<int>("_calcCrs")))
@@ -740,11 +742,24 @@ public class RestMappingHelperService /*: IDisposable*/
             }
             else if (shape is Polygon)
             {
-                map.GraphicsContainer.Add(new PolygonElement((Polygon)shape,
-                    feature.GetPropery<string>("stroke").HexToColor(feature.GetPropery<float>("stroke-opacity")),
-                    feature.GetPropery<string>("fill").HexToColor(feature.GetPropery<float>("fill-opacity")),
-                    feature.GetPropery<float>("stroke-width"),
-                    feature.GetPropery<string>("stroke-style").ToLineStyle()));
+                if (graphicsTool == "dimpolygon")
+                {
+                    map.GraphicsContainer.Add(new MeasurePolygonElement((Polygon)shape,
+                       feature.GetPropery<string>("stroke").HexToColor(),
+                       feature.GetPropery<string>("stroke").HexToColor(feature.GetPropery<float>("fill-opacity")),
+                       feature.GetPropery<float>("stroke-width"),
+                       LineDashStyle.Solid,
+                       calcPolygon: calcShape as Polygon,
+                       labelSegments: true));
+                }
+                else
+                {
+                    map.GraphicsContainer.Add(new PolygonElement((Polygon)shape,
+                        feature.GetPropery<string>("stroke").HexToColor(feature.GetPropery<float>("stroke-opacity")),
+                        feature.GetPropery<string>("fill").HexToColor(feature.GetPropery<float>("fill-opacity")),
+                        feature.GetPropery<float>("stroke-width"),
+                        feature.GetPropery<string>("stroke-style").ToLineStyle()));
+                }
             }
         }
         catch

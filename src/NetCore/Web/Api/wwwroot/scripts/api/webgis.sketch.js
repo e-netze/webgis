@@ -24,9 +24,9 @@
     var _ortho = false, _trace = false, _fan = false;
     this._isDirty = false;
 
-    var _isLineOrPolygon = function () { return $.inArray(_geometryType, ["polyline", "polygon", "dimline", "hectoline"]) >= 0 };
+    var _isLineOrPolygon = function () { return $.inArray(_geometryType, ["polyline", "polygon", "dimline", "dimpolygon", "hectoline"]) >= 0 };
     var _isLine = function () { return $.inArray(_geometryType, ["polyline", "dimline", "hectoline"]) >= 0 }
-    var _isPolygon = function () { return _geometryType === "polygon" };
+    var _isPolygon = function () { return $.inArray(_geometryType, ["polygon", "dimpolygon"]) >= 0 };
     var _isSimplePoint = function () { return _geometryType === 'point' };
 
     this._resetMarkerImage = function (frameworkElement) {
@@ -112,6 +112,15 @@
                     });
                     dimLine._webgis = { geometryType: _geometryType };
                     return dimLine;
+                case 'dimpolygon':
+                    var dimPolygon = L.dimPolygon(latLngs || [], {
+                        color: this.getColor(),
+                        weight: this.getWeight(),
+                        fontSize: this.getTextSize(),
+                        fontColor: this.getTextColor()
+                    });
+                    dimPolygon._webgis = { geometryType: _geometryType };
+                    return dimPolygon;
                 case 'hectoline':
                     var hectoline = L.hectoLine(latLngs || [], {
                         color: this.getColor(),
@@ -479,7 +488,7 @@
                 _frameworkElements[0].setBounds([[this.sketch_vertex_coords.y, this.sketch_vertex_coords.x], [rectBounds.getSouth(), rectBounds.getEast()]]);
             }
 
-            this.sketch.redraw($.inArray(geomType, ['polyline', 'polygon', 'distance_circle','compass_rose', 'circle', 'text', 'dimline', 'hectoline']) >= 0);
+            this.sketch.redraw($.inArray(geomType, ['polyline', 'polygon', 'distance_circle','compass_rose', 'circle', 'text', 'dimline', 'dimpolygon', 'hectoline']) >= 0);
             this.sketch.events.fire('onchangevertex', this.sketch, this.sketch_vertex_coords);
             this.sketch.events.fire('onchanged', this.sketch);
             this.sketch._isDirty = true;
@@ -591,7 +600,7 @@
                         var sketch = this.parentNode.sketch;
                         sketch.removeVertex(this.parentNode.vertex_index);
                     });
-                if (_geometryType == 'polyline' || _geometryType == 'polygon' || _geometryType === 'dimline' || _geometryType === 'hectoline') {
+                if (_geometryType == 'polyline' || _geometryType == 'polygon' || _geometryType === 'dimline' || _geometryType === 'dimpolygon' || _geometryType === 'hectoline') {
                     if (sketch.hasPrevVertex(index)) {
                         $("<li class='webgis-toolbox-tool-item'>Vorgänger einfügen</li>").appendTo($ul)
                             .click(function () {
@@ -788,6 +797,7 @@
                             || _geometryType === 'text'
                             || _geometryType === 'rectangle'
                             || _geometryType === 'dimline'
+                            || _geometryType === 'dimpolygon'
                             || _geometryType === 'hectoline'
                             || ((_geometryType === 'distance_circle' || _geometryType === 'compass_rose' || _geometryType === 'circle') && _vertices.length === 1)
                         ) {
@@ -923,7 +933,7 @@
         }
 
         var addAddVertexUndo = function (sketch, geometryType) {
-            if (geometryType === 'polygon' || geometryType === 'polyline' || geometryType === 'dimline' || geometryType === 'hectoline') {
+            if (geometryType === 'polygon' || geometryType === 'polyline' || geometryType === 'dimline' || geometryType === 'dimpolygon' || geometryType === 'hectoline') {
                 sketch.addUndo(webgis.l10n.get("sketch-add-vertex"));
             }
         }
@@ -1268,7 +1278,7 @@
             latLngs.push([ll.lat, ll.lng]);
         }
 
-        if (_geometryType === 'polyline' || _geometryType === 'linestring' || _geometryType === 'polygon' || _geometryType === 'dimline' || _geometryType === 'hectoline') {
+        if (_geometryType === 'polyline' || _geometryType === 'linestring' || _geometryType === 'polygon' || _geometryType === 'dimline' || _geometryType === 'dimpolygon' || _geometryType === 'hectoline') {
             if (!this.isClosed()) {
                 var traceLatLngs = [], lastNodeIndex = null, currentNodeIndex = null;
 
@@ -2060,6 +2070,8 @@
             case 'hectoline':
             case 'dimline':
                 return _vertices.length > 1;
+            case 'dimpolygon':
+                return _vertices.length > 2;
         }
         return false;
     };
@@ -2396,6 +2408,7 @@
     var _getStyleIndex = function (geomType) {
         switch (geomType || _geometryType) {
             case 'dimline':
+            case 'dimpolygon': 
             case 'hectoline':
             case 'distance_circle':
             case 'compass_rose':
@@ -3696,6 +3709,9 @@
                     break;
                 case 'dimline':
                     jsonGeometry.type = 'dimline';
+                    break;
+                case 'dimpolygon':
+                    jsonGeometry.type = 'dimpolygon';
                     break;
                 case 'hectoline':
                     jsonGeometry.type = 'hectoline';

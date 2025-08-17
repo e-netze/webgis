@@ -674,6 +674,40 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         };
     }
 
+    [ServerToolCommand("dimpolygon")]
+    public ApiEventResponse OnDimPolygonToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+    {
+        var uiElements = new List<IUIElement>().AddDimPolygonStyleElements(e, localizer, true).AsStagedStyleElements(e);
+
+        if (e.UseMobileBehavior())
+        {
+            uiElements.AddRange(new IUIElement[]
+            {
+                        new UIBreak(),
+                        new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.removecurrentgraphicselement){
+                            text = localizer.Localize("remove-sketch"),
+                            css=UICss.ToClass(new string[] { UICss.CancelButtonStyle })
+                        },
+                        new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.assumecurrentgraphicselement){
+                            text = localizer.Localize("apply-polygon")
+                        }
+            });
+        }
+
+        return new ApiEventResponse()
+        {
+            Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.DimPolygon },
+            UIElements = new IUIElement[] {
+                new UIDiv(){
+                    target = $"#{toolContainerId}", //UIElementTarget.tool_sidebar_left.ToString(),
+                    targettitle = localizer.Localize("draw-dimpolygon"),
+                    elements = uiElements.ToArray()
+                }
+            }
+        };
+    }
+
+
     [ServerToolCommand("hectoline")]
     public ApiEventResponse OnHectoLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
@@ -746,6 +780,9 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             case "dimline":
                 resp = OnDimLineToolClick(bridge, e, localizer);
                 break;
+            case "dimpolygon":
+                resp = OnDimPolygonToolClick(bridge, e, localizer);
+                break;
             case "hectoline":
                 resp = OnHectoLineToolClick(bridge, e, localizer);
                 break;
@@ -782,6 +819,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             "distance_circle" => new List<IUIElement>().AddDistanceCircleStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             "compass_rose" => new List<IUIElement>().AddCompassRoseStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             "dimline" => new List<IUIElement>().AddDimLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "dimpolygon" => new List<IUIElement>().AddDimPolygonStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             "hectoline" => new List<IUIElement>().AddHectoLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             _ => new()
                         })
@@ -1182,6 +1220,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                                                 "line" => new List<IUIElement>().AddLineStyleElements(e, localizer),
                                                 "polygon" => new List<IUIElement>().Add2DStyleElements(e, localizer),
                                                 "dimline" => new List<IUIElement>().AddDimLineStyleElements(e, localizer),
+                                                "dimpolygon" => new List<IUIElement>().AddDimPolygonStyleElements(e, localizer),
                                                 "hectoline" => new List<IUIElement>().AddHectoLineStyleElements(e, localizer),
                                                 _ => new()
                                             }

@@ -52,7 +52,8 @@ public enum GraphicsTool
     Pointer = 10,
     HectoLine = 11,
     Point = 12,
-    Compass_Rose = 13
+    Compass_Rose = 13,
+    DimPolygon = 14
 }
 
 public enum LookupType

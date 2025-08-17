@@ -17,6 +17,7 @@ Einfaches Zeichnen in der Karte.
 ## distance_circle: Umgebungs Kreis
 ## compass_rose: Kompass Rose
 ## dimline: Bemaßung
+## dimpolygon: Bemaßungsfläche
 ## hectoline: Hektometrierungslinine
 
 ## save: Zeichnung speichern
@@ -63,6 +64,7 @@ Einfaches Zeichnen in der Karte.
 # draw-distance-circle: Umgebungs Kreis zeichnen
 # draw-compass-rose: Kompass Rose zeichnen
 # draw-dimline: Bemaßung zeichnen
+# draw-dimpolygon: Bemaßungsfläche zeichnen
 # draw-hectoline: Hektometrierungslinie zeichnen
 
 # apply-line: Linie übernehmen

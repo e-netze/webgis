@@ -16,7 +16,7 @@
     this._sketchMetaSouce = null;
     this._stagedElement = null;
 
-    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "hectoline"];
+    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline"];
 
     this._sketch.events.on(['onchangevertex'], function (e, sender, coord) {
         if (this._tool === 'symbol' && this._currentMarker) {
@@ -151,7 +151,7 @@
             //console.log(this._tool);
             this._map._refreshToolBubbles(this._map.getActiveTool(),
                 $.inArray(this._tool, ["symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle","compass_rose", "dimline", "hectoline"]) >= 0,
-                $.inArray(this._tool, ["symbol", "text", "line", "polygon", "dimline", "hectoline"]) >= 0);
+                $.inArray(this._tool, ["symbol", "text", "line", "polygon", "dimline", "dimpolygon", "hectoline"]) >= 0);
         }
 
         this._refreshInfoContainers();
@@ -1127,6 +1127,20 @@
                         };
                     }
                     break;
+                case 'dimpolygon':
+                    if (element.frameworkElement.options) {
+                        properties["stroke"] = element.frameworkElement.options.color || _color;
+                        properties["stroke-width"] = element.frameworkElement.options.weight || _weight;
+                        properties["font-color"] = element.frameworkElement.options.fontColor || '#000';
+                        properties["font-style"] = element.frameworkElement.options.fontStyle || '';
+                        properties["font-size"] = element.frameworkElement.options.fontSize || 14;
+                        properties["_meta"] = {
+                            tool: "dimpolygon",
+                            text: element.metaText,
+                            source: element.metaSource
+                        };
+                    }
+                    break;
                 case 'hectoline':
                     if (element.frameworkElement.options) {
                         properties["stroke"] = element.frameworkElement.options.color || _color;
@@ -1254,6 +1268,10 @@
                                 this.setTool('dimline');
                                 feature.geometry.type = 'dimline';
                                 this.setTextSize(feature.properties["font-size"]);
+                            } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "dimpolygon") {
+                                this.setTool('dimpolygon');
+                                feature.geometry.type = 'dimpolygon';
+                                this.setTextSize(feature.properties["font-size"]);
                             } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "hectoline") {
                                 this.setTool('hectoline');
                                 feature.geometry.type = 'hectoline';
@@ -1358,6 +1376,7 @@
         if (activeTool && activeTool.tooltype === 'graphics') {
             switch (this.getTool()) {
                 case 'hectoline':
+                case 'dimpolygon': 
                 case 'dimline':
                     json.type = this.getTool();
                     break;
@@ -1383,6 +1402,7 @@
                 case 'distance_circle':
                 case 'compass_rose':
                 case 'dimline':
+                case 'dimpolygon': 
                 case 'hectoline':
                     return true;
             }
@@ -1540,6 +1560,19 @@
                         readonly_selected: element.readonly_selected
                     });
                     break;
+                case 'dimpolygon':
+                    result.push({
+                        type: 'dimpolygon',
+                        stroke: element.frameworkElement.options.color,
+                        strokeWidth: element.frameworkElement.options.weight,
+                        fontColor: element.frameworkElement.options.fontColor,
+                        fontSize: element.frameworkElement.options.fontSize,
+                        fontStyle: element.frameworkElement.options.fontStyle,
+                        originalElement: element,
+                        metaText: element.metaText,
+                        readonly_selected: element.readonly_selected
+                    });
+                    break;
                 case 'hectoline':
                     result.push({
                         type: 'hectoline',
@@ -1579,6 +1612,7 @@
             case 'distance_circle': return { name: 'line', styles: ['stroke-color', 'fill-collor'] };
             case 'compass_rose': return { name: 'line', styles: ['stroke-color'] };
             case 'dimline':
+            case 'dimpolygon':
             case 'hectoline': return { name: 'line', styles: ['stroke-color'] };
             default: return [];
         }
@@ -1618,7 +1652,7 @@
     };
 
     this._defaultBehaviour = function (type) {
-        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'hectoline']) >= 0;
+        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'dimpolygon', 'hectoline']) >= 0;
     };
 
     this.hideContextMenu = function () {

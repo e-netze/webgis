@@ -17,6 +17,7 @@ Simple drawing on the map.
 ## distance_circle: Distance Circle
 ## compass_rose: Compass Rose
 ## dimline: Dimensioning
+## dimpolygon: Dimensioning Polygon
 ## hectoline: Hectometer Line
 
 ## save: Save Drawing
@@ -63,6 +64,7 @@ Simple drawing on the map.
 # draw-distance-circle: Draw distance circle
 # draw-compass-rose: Draw compass rose
 # draw-dimline: Draw dimensioning
+# draw-dimpolygon: Draw dimensioning polygon
 # draw-hectoline: Draw hectometer line
 
 # apply-line: Apply line

@@ -358,6 +358,39 @@ static internal class UIElementExtensions
         return collection;
     }
 
+    static public List<IUIElement> AddDimPolygonStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    {
+        var lineColor = e.GetValue("mapmarkup-color", "#000000")?.ToString();
+
+        collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
+        {
+            new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, false) {
+                CollapseState = IsCollapsed(isCollapsed),
+                ExpandBehavior= ExpandMode(collapseExclusive),
+                value=lineColor,
+                //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-color"
+            },
+            new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslineweight){
+                CollapseState = IsCollapsed(isCollapsed),
+                ExpandBehavior=ExpandMode(collapseExclusive),
+                value=e.GetValue("mapmarkup-lineweight", 2),
+                //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-lineweight"
+            },
+            new UIFontSizeSelector(localizer.Localize("symbology.font-size"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
+            {
+                CollapseState = IsCollapsed(isCollapsed),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                value = e.GetValue("mapmarkup-fontsize", 14),
+                //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
+                id = "mapmarkup-fontsize"
+            },
+        }));
+
+        return collection;
+    }
+
     static public List<IUIElement> AddHectoLineStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
         var lineColor = e.GetValue("mapmarkup-color", "#000000")?.ToString();
