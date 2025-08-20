@@ -304,6 +304,7 @@ keys.config
 /src/NetCore/Web/Api/wwwroot/lib/maplibre-gl/
 /src/NetCore/Web/Api/wwwroot/lib/maplibre-gl-leaflet/
 /src/NetCore/Web/Api/wwwroot/lib/jextend/
+/src/NetCore/Web/Api/wwwroot/lib/select2/
 
 /src/NetCore/Web/Cms/wwwroot/lib/bootbox.js/
 /src/NetCore/Web/Cms/wwwroot/lib/showdown/
@@ -316,4 +317,4 @@ keys.config
 
 /src/NetCore/Web/Cms/wwwroot/js/cms/cms.min.js
 /src/NetCore/Web/Cms/wwwroot/js/cms/cms.min.js.map
-/src/NetCore/Web/Api/wwwroot/lib/select2
+/src/NetCore/Web/Api/wwwroot/scripts/api/api.min.js

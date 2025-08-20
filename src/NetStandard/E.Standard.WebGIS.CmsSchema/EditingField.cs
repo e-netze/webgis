@@ -128,6 +128,12 @@ Mit dem Prefix mask-insert-default:: wird der Wert vom System gesetzt, sondern e
     [DisplayName("Db-Anzeige Feld (Alias)")]
     public string DomainList { get; set; }
 
+    [Category("~optional: Domain Behaviour (experimental)")]
+    [DisplayName("Pro Behaviour")]
+    [Description("Gibt an, ob die Auswahlliste ein erweitertes Verhalten haben soll. Das erweiterte Verhalten ist von der WebGIS Instanz Konfiguration abhängig. (setzt man in der custom.js: webgis.usability.select_pro_behaviour = \"select2\"; ist für diese Auswahlliste die Suche nach items möglich. Das macht bei Auswahllisten mit vielen Items die Eingabe leichter.")]
+    public bool DomainProBehaviour { get; set; }
+
+
     [Category("~optional: Attribute Picker")]
     [DisplayName("Attribute Picker Abfrage")]
     [Description("Die Abfrage, von der ein Attribute geholt werden soll. Format service-id@query-id")]
@@ -178,6 +184,8 @@ Mit dem Prefix mask-insert-default:: wird der Wert vom System gesetzt, sondern e
 
         this.DomainList = (string)stream.Load("domain_list", String.Empty);
 
+        this.DomainProBehaviour = (bool)stream.Load("domain_pro_behaviour", false);
+
         this.AttributePickerQuery = (string)stream.Load("attribute_picker_query", String.Empty);
         this.AttributePickerField = (string)stream.Load("attribute_picker_field", String.Empty);
     }
@@ -213,6 +221,11 @@ Mit dem Prefix mask-insert-default:: wird der Wert vom System gesetzt, sondern e
         stream.Save("db_orderby", this.DbOrderBy ?? String.Empty);
 
         stream.Save("domain_list", this.DomainList ?? String.Empty);
+
+        if (this.DomainProBehaviour == true)
+        {
+            this.DomainProBehaviour = stream.Save("domain_pro_behaviour", this.DomainProBehaviour);
+        }
 
         stream.SaveOrRemoveIfEmpty("attribute_picker_query", this.AttributePickerQuery);
         stream.SaveOrRemoveIfEmpty("attribute_picker_field", this.AttributePickerField);

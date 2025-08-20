@@ -239,7 +239,8 @@ ul.toc li {
 
         #edit-editmask-container .webgis-editfield-container .webgis-input,
         #edit-editmask-container .webgis-editfield-container .webgis-select,
-        #edit-editmask-container .webgis-editfield-container .webgis-textarea {
+        #edit-editmask-container .webgis-editfield-container .webgis-textarea,
+        #edit-editmask-container .webgis-editfield-container .select2-container {
             /* width: 100% !important;
                 box-sizing: border-box;*/
             flex: 1 0 300px;
@@ -482,6 +483,16 @@ input, textarea, select {
 .select2-results {
     font-family: Verdana,Tahoma,Arial,sans-serif;
     font-size: 13px;
+}
+
+.select2-container.select2-container--open {
+        z-index: 999999 !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    font-size: 14px;
+}
+.select2-container {
+    max-width: 100%;
 }
 
 .webgis-button {
@@ -955,6 +966,10 @@ img.tile {
             width:48px;
             box-sizing: border-box;
         }
+
+            .webgis-result-table-tools-container .webgis-result-table-tools .webgis-toolbox-tool-item img {
+                max-height: 26px;
+            }
 
 .webgis-result-warning-panel {
     position: sticky;
@@ -3955,11 +3970,12 @@ body.webgis-ui-holder {
 
 /**** Info *******/
 div.webgis-info {
-    padding:4px;
-    border:1px solid #fbed80;
-    border-radius:4px;
-    background-color:#faffb8;
+    padding: 4px;
+    border: 1px solid #fbed80;
+    border-radius: 4px;
+    background-color: #faffb8;
     margin: 8px 0px;
+    max-width: 595px;
 }
 
 div.webgis-tip {

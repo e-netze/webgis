@@ -50,7 +50,7 @@ public sealed class TableFieldHotlinkDTO : TableFieldDTO
                 style.Append($";height:{this.ImageHeight}px;");
             }
 
-            style.Append("margin-right:8px;");
+            style.Append("margin-right:8px;vertical-align:sub");
 
             imageTag = $"<img style='{style}' src='{imgExpression}' />";
         }

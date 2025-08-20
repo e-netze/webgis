@@ -8,13 +8,33 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+### Fixed
+
+## 7.25.3401
+
+### Added
 
 - Usability: Shortcuts for eg. Edit tool (**SPACE** select only one, **E** start editing, **D** delete feature)
   [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#tastatur-shortcuts)
 
+- Usability: Tool Priority (sort tools inside containers)
+  [discussion #279](https://github.com/e-netze/webgis-community/discussions/279)
+  [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#toolbox)
+
+- Usability: Icons for 1:n Hyperlinks
+  [discussion #299](https://github.com/e-netze/webgis-community/discussions/299)
+
+- Usability: Edit Mask Combo/Select-Boxes - use ``select2``, for combos with 
+  many items (combination ``domain``/``autocomplete``)
+
 ### Fixed
 
 - removed tag ``<strong>`` from result [discussion #244](https://github.com/e-netze/webgis-community/discussions/244)
+
+- Some/More Map Markup Bugs
+  [discussion #319](https://github.com/e-netze/webgis-community/discussions/319)
+
+- CMS: Can't automatically solve warnings, when using CMS Upload
 
 ## 7.25.3202
 

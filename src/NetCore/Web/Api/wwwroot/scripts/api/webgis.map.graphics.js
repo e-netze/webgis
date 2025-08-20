@@ -55,6 +55,14 @@
         }
     }, this);
 
+    this._sketch.events.on(['ongetsinvalid'], function (e, sender) {
+        //console.log('ongetinvalid', e, sender);
+        if (this.hasStagedElement()) {
+            this._unstageElement();
+            this._refreshInfoContainers();
+        }
+    }, this);
+
     this._sketch.events.on(['beforeaddvertex', 'onchangevertex'], function (e, sender, coord) {
         // always project. Otherwise construction tools not working
 
@@ -199,6 +207,11 @@
             this._sketchMetaText = txt;
         } else {
             this._sketchMetaText = txt;
+        }
+
+        var stagedOrUpdatingElement = this.getStagedElement() || this.getUpdatingElement();
+        if (stagedOrUpdatingElement) {
+            stagedOrUpdatingElement.metaText = txt;
         }
     };
 

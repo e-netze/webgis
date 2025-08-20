@@ -2682,7 +2682,7 @@
         // Ansonsten bleiben diese immer so wie beim Erstellen einer Karte mit dem MapBuilder(zB Speicher und Laden => "Karte")
         //
 
-        //console.log('_mapToolsToServerContainers', containers);
+        //console.log('_mapToolsToServerContainers', containers, this._tools);
         let serverContainers = [];
 
         //console.log('containers', containers);
@@ -2696,6 +2696,7 @@
                 continue;
             }
 
+            
             for (let t in container.tools) {
                 const tool = this._tools[container.tools[t]];
                 if (!tool)
@@ -2720,7 +2721,8 @@
 
         //console.log('serverContainers', serverContainers);
 
-        var toolContainerOrder = webgis.usability.toolContainerOrder || [];
+        const map = this;
+        let toolContainerOrder = webgis.usability.toolContainerOrder || [];
         if (toolContainerOrder.length > 0) { 
             // sort serverContainers by name using an existing array toolContainerOrder
             // serverContinaer witch is not in the list => order at the end...
@@ -2743,6 +2745,28 @@
                 // If neither is in the array, maintain their relative order
                 return 0;
             });
+
+            for(let serverContainer of serverContainers) {
+                // sort tools in each container by priority
+                // if no priority is set, the order is not changed
+                if (!serverContainer.tools) continue;
+                //console.log('serverContainer', serverContainer);
+                serverContainer.tools.sort(function (a, b) {
+                    var toolA = map._tools[a];
+                    var toolB = map._tools[b];
+                    if (toolA && toolB) {
+                        console.log(toolA, toolB);
+                        if ((toolA.priority || 0) > (toolB.priority || 0)) {
+                            return -1;
+                        }
+                        else if ((toolA.priority || 0) < (toolB.priority || 0)) {
+                            return 1;
+                        }
+                        return 0;
+                    }
+                    return 0;
+                });
+            }
         }
 
         return serverContainers;

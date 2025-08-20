@@ -1355,6 +1355,12 @@
                     map.queryResultFeatures.setToolMarkerVisibility('webgis.tools.chainage',$(this).val() === 'show' ? true : false);
                 });
             }
+
+            if (element.allow_pro_behaviour === true && webgis.usability.select_pro_behaviour === "select2") {
+                webgis.require('select2', function ($select) {
+                    $select.select2({ width: '100%' });
+                }, $newElement);
+            }
         }
         else if (element.type === 'optionscontainer') {
             $newElement = $("<div " + elementProperties(element, options) + ">").appendTo($parent).addClass('webgis-ui-optionscontainer');
