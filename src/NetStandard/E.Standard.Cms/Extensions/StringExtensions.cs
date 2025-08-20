@@ -1,7 +1,9 @@
 ﻿using E.Standard.Cms.Configuration.Models;
 using E.Standard.Cms.Configuration.Services;
 using E.Standard.CMS.Core;
+using E.Standard.Extensions.Security;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace E.Standard.Cms.Extensions;
@@ -85,5 +87,15 @@ public static class StringExtensions
         catch { }
 
         return url;
+    }
+
+    static public FileInfo WarningsFileInfo(this string target)
+    {
+        if (target.IsUrl())
+        {
+            return new FileInfo(Path.Combine(Environment.CurrentDirectory, $"{target.UrlToHash()}.warnings"));
+        }
+
+        return new FileInfo($"{target}.warnings");
     }
 }

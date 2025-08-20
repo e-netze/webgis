@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+### Fixed
+
+## 7.25.3401
+
+### Added
 
 - Usability: Shortcuts for eg. Edit tool (**SPACE** select only one, **E** start editing, **D** delete feature)
   [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#tastatur-shortcuts)
@@ -28,6 +33,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Some/More Map Markup Bugs
   [discussion #319](https://github.com/e-netze/webgis-community/discussions/319)
+
+- CMS: Can't automatically solve warnings, when using CMS Upload
 
 ## 7.25.3202
 
