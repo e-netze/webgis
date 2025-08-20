@@ -3379,6 +3379,9 @@ body.webgis-ui-holder {
 
     .webgis-modal-body.enlargeable .webgis-modal-title.has-closebutton {
         background-position: right 40px center;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        padding-right: 64px;
     }
 
 .webgis-modal-content {

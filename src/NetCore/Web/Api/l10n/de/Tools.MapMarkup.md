@@ -54,6 +54,8 @@ Einfaches Zeichnen in der Karte.
 ## unit: Einheit
 ## segment-unit: Abstand [Einheit]
 ## apply-segment: Abstand übernehmen
+## area-unit: Flächen Einheit
+## label-edges: Kanten beschriften
 
 # draw-symbol: Symbol setzen
 # draw-point: Punkt setzen

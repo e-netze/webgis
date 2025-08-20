@@ -136,6 +136,9 @@ public class UICss
     public const string GraphicsHectolineUnit = "webgis-graphics-hectoline-unit";
     public const string GraphicsHectolineInterval = "webgis-graphics-hectoline-interval";
 
+    public const string DimPolygonAreaUnit = "webgis-graphics-dimpolygon-area-unit";
+    public const string DimPolygonLabelEdges = "webgis-graphics-dimpolygon-label-edges";
+
     public const string ModalCloseElement = "webgis-modal-close-element";
 
     public const string MapScalesSelect = "webgis-map-scales-select";

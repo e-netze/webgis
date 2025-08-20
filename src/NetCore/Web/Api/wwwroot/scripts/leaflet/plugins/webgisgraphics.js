@@ -830,6 +830,7 @@ L.SVGText = L.Layer.extend({
         fontSytle: '',
         text: 'SVG Text',
         refResolution: 0,
+        textAnchor: '',
         attributes: {}
     },
 
@@ -956,6 +957,11 @@ L.SVGText = L.Layer.extend({
 
                 tspan2.setAttribute('x', point.x);
                 tspan2.setAttribute('dy', t > 0 ? this.options.fontSize * 1.3 : 0);
+
+                if (this.options.textAnchor) {
+                    tspan.setAttribute('text-anchor', this.options.textAnchor);
+                    tspan2.setAttribute('text-anchor', this.options.textAnchor);
+                }
 
                 tspan.appendChild(document.createTextNode(text[t]));
                 tspan2.appendChild(document.createTextNode(text[t]));
@@ -1466,6 +1472,7 @@ L.DimLine = L.LayerCollection.extend({
     _calcCrs:0,
     _latLngs: null,
     _setLatLngs: function (latLngs) {
+        console.log('DimLine._setLatLngs', latLngs);
         this.setLatLngs(latLngs);
     },
 
@@ -1485,6 +1492,7 @@ L.DimLine = L.LayerCollection.extend({
         this.rebuild();
     },
     setLatLngs: function (latLngs) {
+        console.log('DimLine.setLatLngs', latLngs);
         this._latLngs = latLngs;
         this.rebuild();
     },
@@ -1593,13 +1601,16 @@ L.dimLine = function (latLngs, options) {
 
 L.DimPolygon = L.LayerCollection.extend({
     options: {
-        color: '#ffff00',
+        fillColor: '#ffff00',
+        fillOpacity: 0.2,
         strokeColor: '#ff0000',
         strokeWeight: 2,
         fontColor: 'black',
         fontSize: 13,
         fontSytle: '',
         circleMarkerOptions: { same_as_line: true, radius: 4, color: '#000', weight: 2, fillcolor: '#eee' },
+        areaUnit: 'm²',
+        labelEdges: false,
         attributes: {}
     },
 
@@ -1638,6 +1649,20 @@ L.DimPolygon = L.LayerCollection.extend({
     },
     getLatLngs: function () { return this._latLngs; },
     getCalcCrs: function () { return this._calcCrs; },
+    setAreaUnit: function (unit) {
+        this.options.areaUnit = unit;
+        this.rebuild();
+    },
+    getAreaUnit: function () {
+        return this.options.areaUnit;
+    },
+    setLabelEdges: function (doLabel) {
+        this.options.labelEdges = doLabel;
+        this.rebuild();
+    },
+    getLabelEdges: function () {
+        return this.options.labelEdges;
+    },
     redraw: function () {
         this.rebuild();
     },
@@ -1669,6 +1694,41 @@ L.DimPolygon = L.LayerCollection.extend({
             let calcVertices = [];
             let insertAtArea = { lng: 0, lat: 0 };
 
+            let lengthFactor = 1.0;
+            let areaFactor = 1.0;
+            let lengthUnit = ''
+            let areaUnit = '';
+
+            switch (this.options.areaUnit) {
+                case 'km':
+                case 'km²':
+                case 'km2':
+                    lengthFactor = 1.0/1000.0;
+                    areaFactor = 1.0/1000000.0;
+                    lengthUnit = 'km';
+                    areaUnit = 'km²';
+                    break;
+                case "ha":
+                    lengthFactor = 1.0;  // use meters
+                    areaFactor = 1.0 / 100.0;
+                    lengthUnit = 'm';
+                    areaUnit = 'ha';
+                    break;
+                case "a":
+                case "ar":
+                    lengthFactor = 1.0;  // use meters
+                    areaFactor = 1.0 / 10.0;
+                    lengthUnit = 'm';
+                    areaUnit = 'a';
+                    break;
+                default:  // m
+                    lengthFactor = 1.0;
+                    areaFactor = 1.0;
+                    lengthUnit = 'm';
+                    areaUnit = 'm²';
+            }
+
+
             for (let i = 0; i < this._latLngs.length; i++) {
                 let p = [
                     { x: this._latLngs[i].lng, y: this._latLngs[i].lat },
@@ -1676,8 +1736,7 @@ L.DimPolygon = L.LayerCollection.extend({
                 ];
                 let insertAt = { lng: (p[0].x + p[1].x) * .5, lat: (p[0].y + p[1].y) * .5 };
 
-                
-
+               
                 //console.log(p);
 
                 if (webgis.calc._canProject()) {
@@ -1704,22 +1763,29 @@ L.DimPolygon = L.LayerCollection.extend({
                 let circle = L.circleMarker(this._latLngs[i], this.options.circleMarkerOptions);
                 this.addChildLayer(circle);
 
-                let text = L.svgLabel(insertAt, {
-                    text: Math.round(len * 100.0) / 100.0 + 'm',
-                    rotation: -angle,
-                    fontSize: this.options.fontSize,
-                    alignmentBaseline: 'ideographic' //'central'
-                });
-                this.addChildLayer(text);
+                if (this.options.labelEdges) {
+                    let text = L.svgLabel(insertAt, {
+                        text: Math.round(len * lengthFactor * 100.0) / 100.0 + lengthUnit,
+                        rotation: -angle,
+                        fontSize: this.options.fontSize,
+                        alignmentBaseline: 'ideographic' //'central'
+                    });
+                    this.addChildLayer(text);
+                }
             }
 
             let area = webgis.calc.area(calcVertices, xProp, yProp);
+            let circumference = webgis.calc.length(calcVertices, xProp, yProp, true);
+            //console.log('calcVertices', calcVertices, 'area', area, 'circumference', circumference);
+
             if (area > 0) {
-                this.addChildLayer(L.svgLabel(insertAtArea, {
-                    text: Math.round(area * 100.0) / 100.0 + ' m²',
+                this.addChildLayer(L.svgText(insertAtArea, {
+                    text:
+                        webgis.l10n.get('area')[0] + ": " + Math.round(area * areaFactor * 100.0) / 100.0 + areaUnit + '\n' +
+                        webgis.l10n.get('circumference')[0] + ": " + Math.round(circumference * lengthFactor * 100.0) / 100.0 + lengthUnit,
                     fontSize: this.options.fontSize * 1.2,
-                    alignmentBaseline: 'ideographic', //'central'
-                    backgroundColor: '#f00'
+                    backgroundColor: '#f00',
+                    textAnchor: 'middle'
                 }));
             }
 
@@ -1735,12 +1801,15 @@ L.DimPolygon = L.LayerCollection.extend({
             }
         };
 
-
+        let ring = [];
         if (this._latLngs) {
             for (let l in this._latLngs) {
-                geoJson.geometry.coordinates.push([this._latLngs[l].lng, this._latLngs[l].lat]);
+                ring.push([this._latLngs[l].lng, this._latLngs[l].lat]);
             }
         }
+
+        geoJson.geometry.coordinates.push(ring);
+        //geoJson.geometry.coordinates = ring;
 
         return geoJson;
     }

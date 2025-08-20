@@ -24,6 +24,7 @@ using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 using E.Standard.WebMapping.GeoServices.Tiling;
 using gView.GraphicsEngine;
 using Microsoft.AspNetCore.Http;
+using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -730,7 +731,6 @@ public class RestMappingHelperService /*: IDisposable*/
                        feature.GetPropery<string>("hl-unit"),
                        calcPolyline: calcShape as Polyline,
                        fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor));
-
                 }
                 else
                 {
@@ -746,11 +746,13 @@ public class RestMappingHelperService /*: IDisposable*/
                 {
                     map.GraphicsContainer.Add(new MeasurePolygonElement((Polygon)shape,
                        feature.GetPropery<string>("stroke").HexToColor(),
-                       feature.GetPropery<string>("stroke").HexToColor(feature.GetPropery<float>("fill-opacity")),
+                       feature.GetPropery<string>("fill").HexToColor(feature.GetPropery<float>("fill-opacity")),
                        feature.GetPropery<float>("stroke-width"),
                        LineDashStyle.Solid,
+                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
                        calcPolygon: calcShape as Polygon,
-                       labelSegments: true));
+                       labelSegments: feature.GetPropery<bool>("label-edges"),
+                       areaUnit: feature.GetPropery<string>("area-unit")));
                 }
                 else
                 {

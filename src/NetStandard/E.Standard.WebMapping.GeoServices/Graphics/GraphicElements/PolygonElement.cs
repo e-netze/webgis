@@ -1,4 +1,5 @@
 ﻿using E.Standard.WebMapping.Core.Abstraction;
+using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using gView.GraphicsEngine;
@@ -13,17 +14,19 @@ public class PolygonElement : IGraphicElement
     private ArgbColor _color1, _color2;
     private float _width = 1, _fontSize;
     private LineDashStyle _dashStyle;
+    private Unit _unit = Unit.Meter;
 
-    public PolygonElement(Polygon polygon, ArgbColor color, float width, LineDashStyle dashStyle = LineDashStyle.Solid)
-        : this(polygon, color, color, width, dashStyle)
-    {
-    }
+    //public PolygonElement(Polygon polygon, ArgbColor color, float width, LineDashStyle dashStyle = LineDashStyle.Solid)
+    //    : this(polygon, color, color, width, dashStyle)
+    //{
+    //}
     public PolygonElement(Polygon polygon,
                           ArgbColor penColor,
                           ArgbColor brushColor,
                           float width,
                           LineDashStyle dashStyle = LineDashStyle.Solid,
-                          float fontSize = 9f)
+                          float fontSize = 9f,
+                          string unit = "m")
     {
         _polygon = polygon;
         _color1 = penColor;
@@ -31,6 +34,7 @@ public class PolygonElement : IGraphicElement
         _width = width;
         _dashStyle = dashStyle;
         _fontSize = fontSize > 0 ? fontSize : 9f;
+        _unit = (!String.IsNullOrEmpty(unit) ? unit : "m").FromUnitAbbreviation();
     }
 
     protected Polygon Polygon => _polygon;
@@ -107,7 +111,9 @@ public class PolygonElement : IGraphicElement
                                                   o_x, o_y, (float)point.X, (float)point.Y,
                                                   Math.Sqrt(Math.Pow(calcRing[p].X - calcRing[p - 1].X, 2) + Math.Pow(calcRing[p].Y - calcRing[p - 1].Y, 2)),
                                                   fontSize: _fontSize,
-                                                  dpiFactor: dpiFactor);
+                                                  dpiFactor: dpiFactor,
+                                                  lineAlignment: StringAlignment.Far,
+                                                  unit: _unit);
                         }
 
                         o_x = (float)point.X;

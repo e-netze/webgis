@@ -381,6 +381,12 @@
         this._sketch.setHectolineInterval(interval);
     };
 
+    this.setDimPolygonAreaUnit = function (unit) {
+        this._sketch.setDimPolygonAreaUnit(unit);
+    };
+    this.setDimPolygonLabelEdges = function (doLabel) {
+        this._sketch.setDimPolygonLabelEdges(doLabel);
+    };
     this.getOpacity = function (geomType) {
         return this._sketch.getOpacity(geomType);
     };
@@ -427,6 +433,13 @@
 
     this.getHectolineInterval = function () {
         return this._sketch.getHectolineInterval();
+    };
+
+    this.getDimPolygonAreaUnit = function () {
+        return this._sketch.getDimPolygonAreaUnit();
+    };
+    this.getDimPolygonLabelEdges = function () {
+        return this._sketch.getDimPolygonLabelEdges();
     };
 
     this.getTextColor = function (geomType) { return this._sketch.getTextColor(geomType); };
@@ -1129,11 +1142,15 @@
                     break;
                 case 'dimpolygon':
                     if (element.frameworkElement.options) {
+                        properties["fill"] = element.frameworkElement.options.fillColor || _fillColor;
+                        properties["fill-opacity"] = element.frameworkElement.options.fillOpacity || _fillOpacity;
                         properties["stroke"] = element.frameworkElement.options.color || _color;
                         properties["stroke-width"] = element.frameworkElement.options.weight || _weight;
                         properties["font-color"] = element.frameworkElement.options.fontColor || '#000';
                         properties["font-style"] = element.frameworkElement.options.fontStyle || '';
                         properties["font-size"] = element.frameworkElement.options.fontSize || 14;
+                        properties["area-unit"] = element.frameworkElement.options.areaUnit || 'm²';
+                        properties["label-edges"] = element.frameworkElement.options.labelEdges !== false;
                         properties["_meta"] = {
                             tool: "dimpolygon",
                             text: element.metaText,
@@ -1268,10 +1285,6 @@
                                 this.setTool('dimline');
                                 feature.geometry.type = 'dimline';
                                 this.setTextSize(feature.properties["font-size"]);
-                            } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "dimpolygon") {
-                                this.setTool('dimpolygon');
-                                feature.geometry.type = 'dimpolygon';
-                                this.setTextSize(feature.properties["font-size"]);
                             } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "hectoline") {
                                 this.setTool('hectoline');
                                 feature.geometry.type = 'hectoline';
@@ -1311,6 +1324,14 @@
 
                                 this._sketch.addVertices([{ x: minx, y: maxy }, { x: maxx, y: miny }]);
                             }
+                        } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "dimpolygon") {
+                            this.setTool('dimpolygon');
+                            feature.geometry.type = 'dimpolygon';
+                            this.setTextSize(feature.properties["font-size"]);
+                            this.setDimPolygonAreaUnit(feature.properties["area-unit"]);
+                            this.setDimPolygonLabelEdges(feature.properties["label-edges"] !== false); 
+
+                            this._sketch.fromJson(feature.geometry);
                         } else {
                             this.setTool('polygon');
 
@@ -1563,6 +1584,8 @@
                 case 'dimpolygon':
                     result.push({
                         type: 'dimpolygon',
+                        fill: element.frameworkElement.options.fillColor,
+                        fillOpacity: element.frameworkElement.options.fillOpacity,
                         stroke: element.frameworkElement.options.color,
                         strokeWidth: element.frameworkElement.options.weight,
                         fontColor: element.frameworkElement.options.fontColor,
@@ -1642,6 +1665,7 @@
     this._previewSketch2.setWeight(5);
 
     this.addPreviewFromJson = function (json, zoomto, readonly) {
+        //console.log('addPreviewFromJson', json, zoomto, readonly);
         this._previewSketch1.fromJson(json, false, true);
         this._previewSketch2.fromJson(json, false, readonly);
     };
