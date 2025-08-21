@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+
+- WMS Service: SLD_VERSION Support
+  [discussion #279](https://github.com/e-netze/webgis-community/discussions/324)
+
 ### Fixed
 
 ## 7.25.3401
