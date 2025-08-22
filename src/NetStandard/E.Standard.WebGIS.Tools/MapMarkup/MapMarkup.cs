@@ -57,69 +57,83 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         uiImageButtons.AddRange(new IUIElement[]{
                         new UIImageButton(this.GetType(),"pointer",UIButton.UIButtonType.servertoolcommand,"pointer"){
                             value = "pointer",
-                            text = localizer.Localize("tools.select")
+                            text = localizer.Localize("tools.select"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"symbol",UIButton.UIButtonType.servertoolcommand,"symbol"){
                             value = "symbol",
-                            text = localizer.Localize("tools.symbol")
+                            text = localizer.Localize("tools.symbol"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(), "text", UIButton.UIButtonType.servertoolcommand, "text")
                         {
                             value = "text",
-                            text = localizer.Localize("tools.text")
+                            text = localizer.Localize("tools.text"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(), "point", UIButton.UIButtonType.servertoolcommand, "point")
                         {
                             value = "point",
-                            text = localizer.Localize("tools.point")
+                            text = localizer.Localize("tools.point"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(), "freehand", UIButton.UIButtonType.servertoolcommand, "freehand")
                         {
                             value = "freehand",
-                            text = localizer.Localize("tools.freehand")
+                            text = localizer.Localize("tools.freehand"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"line",UIButton.UIButtonType.servertoolcommand,"line"){
                             value = "line",
-                            text = localizer.Localize("tools.line")
+                            text = localizer.Localize("tools.line"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"polygon",UIButton.UIButtonType.servertoolcommand,"polygon"){
                             value = "polygon",
-                            text = localizer.Localize("tools.polygon")
+                            text = localizer.Localize("tools.polygon"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"rectangle", UIButton.UIButtonType.servertoolcommand,"rectangle")
                         {
                             value = "rectangle",
-                            text = localizer.Localize("tools.rectangle")
+                            text = localizer.Localize("tools.rectangle"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"circle", UIButton.UIButtonType.servertoolcommand,"circle")
                         {
                             value = "circle",
-                            text = localizer.Localize("tools.circle")
+                            text = localizer.Localize("tools.circle"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"distance_circle", UIButton.UIButtonType.servertoolcommand,"distance_circle")
                         {
                             value = "distance_circle",
-                            text = localizer.Localize("tools.distance_circle")
+                            text = localizer.Localize("tools.distance_circle"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"compass", UIButton.UIButtonType.servertoolcommand,"compass_rose")
                         {
                             value = "compass_rose",
-                            text = localizer.Localize("tools.compass_rose")
+                            text = localizer.Localize("tools.compass_rose"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"dimline", UIButton.UIButtonType.servertoolcommand,"dimline")
                         {
                             value = "dimline",
-                            text = localizer.Localize("tools.dimline")
+                            text = localizer.Localize("tools.dimline"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"dimpolygon", UIButton.UIButtonType.servertoolcommand,"dimpolygon")
                         {
                             value = "dimpolygon",
-                            text = localizer.Localize("tools.dimpolygon")
+                            text = localizer.Localize("tools.dimpolygon"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"hectoline", UIButton.UIButtonType.servertoolcommand,"hectoline")
                         {
                             value = "hectoline",
-                            text = localizer.Localize("tools.hectoline")
+                            text = localizer.Localize("tools.hectoline"),
+                            css = UICss.Narrow
                         }
                         //,new UIBreak()
 
@@ -138,11 +152,13 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             uiImageButtons.AddRange(new IUIElement[]{
                         new UIImageButton(this.GetType(),"save",UIButton.UIButtonType.servertoolcommand,"save"){
                             value = "save",
-                            text = localizer.Localize("tools.save")
+                            text = localizer.Localize("tools.save"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"open",UIButton.UIButtonType.servertoolcommand,"open"){
                             value = "open",
-                            text = localizer.Localize("tools.open")
+                            text = localizer.Localize("tools.open"),
+                            css = UICss.Narrow
                         }
                         //,new UIHidden(){
                         //    id="mapmarkup-tool",
@@ -154,15 +170,18 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         uiImageButtons.AddRange(new IUIElement[]{
                         new UIImageButton(this.GetType(),"share",UIButton.UIButtonType.servertoolcommand,"share"){
                             value = "share",
-                            text = localizer.Localize("tools.share")
+                            text = localizer.Localize("tools.share"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"upload",UIButton.UIButtonType.servertoolcommand,"upload"){
                             value = "upload",
-                            text = localizer.Localize("tools.upload")
+                            text = localizer.Localize("tools.upload"),
+                            css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"download",UIButton.UIButtonType.servertoolcommand,"download"){
                             value = "download",
-                            text = localizer.Localize("tools.download")
+                            text = localizer.Localize("tools.download"),
+                            css = UICss.Narrow
                         }
                         //,new UIHidden(){
                         //    id="mapmarkup-tool",

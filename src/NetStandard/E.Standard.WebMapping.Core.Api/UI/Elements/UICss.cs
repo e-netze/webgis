@@ -153,6 +153,7 @@ public class UICss
 
     public const string EmptyOnChangeSketch = "webgis-ui-emtpy-onchage-sketch";
 
+    public const string Narrow = "webgis-narrow";
     public const string NarrowForm = "webgis-narrow-form";
     public const string NarrowFormMarginAuto = "webgis-narrow-form webgis-margin-auto";
 

@@ -2830,8 +2830,13 @@ body.webgis-ui-holder {
     padding: 2px;
     /*border: 1px solid #bcbbbb;*/
 }
+
     .webgis-ui-imagebutton:hover {
         background-color: #efefef;
+    }
+
+    .webgis-ui-optionscontainer.contains-lables .webgis-ui-imagebutton.webgis-narrow {
+        width: 38px;
     }
 
     .webgis-ui-imagebutton .webgis-ui-imagebutton-text {
@@ -2851,9 +2856,9 @@ body.webgis-ui-holder {
         color:#000;
     }
 
-.webgis-undobutton {
-    display: none;
-}
+    .webgis-undobutton {
+        display: none;
+    }
 .webgis-ui-undobutton {
     min-width: 38px;
     min-height: 38px;
