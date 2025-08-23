@@ -381,6 +381,12 @@
         this._sketch.setHectolineInterval(interval);
     };
 
+    this.setDimLineLengthUnit = function (unit) {
+        this._sketch.setDimLineLengthUnit(unit);
+    };
+    this.setDimLineLabelTotalLength = function (doLabel) {
+        this._sketch.setDimLineLabelTotalLength(doLabel);
+    };
     this.setDimPolygonAreaUnit = function (unit) {
         this._sketch.setDimPolygonAreaUnit(unit);
     };
@@ -434,7 +440,12 @@
     this.getHectolineInterval = function () {
         return this._sketch.getHectolineInterval();
     };
-
+    this.getDimLineLengthUnit = function () {
+        return this._sketch.getDimLineLengthUnit();
+    };
+    this.getDimLineLabelTotalLength = function () {
+        return this._sketch.getDimLineLabelTotalLength();
+    };
     this.getDimPolygonAreaUnit = function () {
         return this._sketch.getDimPolygonAreaUnit();
     };
@@ -1133,6 +1144,8 @@
                         properties["font-color"] = element.frameworkElement.options.fontColor || '#000';
                         properties["font-style"] = element.frameworkElement.options.fontStyle || '';
                         properties["font-size"] = element.frameworkElement.options.fontSize || 14;
+                        properties["length-unit"] = element.frameworkElement.options.lengthUnit || 'm'; 
+                        properties["label-total-length"] = element.frameworkElement.options.labelTotalLength === true; 
                         properties["_meta"] = {
                             tool: "dimline",
                             text: element.metaText,
@@ -1285,6 +1298,8 @@
                                 this.setTool('dimline');
                                 feature.geometry.type = 'dimline';
                                 this.setTextSize(feature.properties["font-size"]);
+                                this.setDimLineLengthUnit(feature.properties["length-unit"]);
+                                this.setDimLineLabelTotalLength(feature.properties["label-total-length"] === true); 
                             } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "hectoline") {
                                 this.setTool('hectoline');
                                 feature.geometry.type = 'hectoline';

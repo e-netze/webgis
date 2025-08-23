@@ -831,8 +831,12 @@
             $('.webgis-graphics-hectoline-interval').val(map.graphics.getHectolineInterval());
         }
 
+        if (this._map.graphics.getTool() === 'dimline') {
+            $('.webgis-graphics-dimline-length-unit').val(map.graphics.getDimLineLengthUnit());
+            $('.webgis-graphics-dimline-label-total-length').val((map.graphics.getDimLineLabelTotalLength() === true).toString().toLowerCase());
+        }
+
         if (this._map.graphics.getTool() === 'dimpolygon') {
-            console.log(map.graphics.getDimPolygonAreaUnit());
             $('.webgis-graphics-dimpolygon-area-unit').val(map.graphics.getDimPolygonAreaUnit());
             $('.webgis-graphics-dimpolygon-label-edges').val((map.graphics.getDimPolygonLabelEdges() !== false).toString().toLowerCase());
         }

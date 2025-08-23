@@ -56,6 +56,7 @@ Einfaches Zeichnen in der Karte.
 ## apply-segment: Abstand übernehmen
 ## area-unit: Flächen Einheit
 ## label-edges: Kanten beschriften
+## label-total-length: Gesamt-Länge beschriften
 
 # draw-symbol: Symbol setzen
 # draw-point: Punkt setzen

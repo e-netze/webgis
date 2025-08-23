@@ -161,6 +161,8 @@ public enum ApiClientButtonCommand
     setgraphicsdimpolygonareaunit = 87,
     setgraphicsdimpolygonlabeledges = 88,
     setgraphicscompassrosesteps = 89,
+    setgraphicsdimlinelengthunit = 90,
+    setgraphicsdimlinelabeltotallength = 91,
 }
 
 public enum ApiToolEvents

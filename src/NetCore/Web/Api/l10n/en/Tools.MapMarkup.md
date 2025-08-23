@@ -56,6 +56,7 @@ Simple drawing on the map.
 ## apply-segment: Apply distance
 ## area-unit: Area unit
 ## label-edges: Label edges
+## label-total-length: Label total length
 
 # draw-symbol: Set symbol
 # draw-point: Set point

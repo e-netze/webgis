@@ -136,8 +136,11 @@ public class UICss
     public const string GraphicsHectolineUnit = "webgis-graphics-hectoline-unit";
     public const string GraphicsHectolineInterval = "webgis-graphics-hectoline-interval";
 
-    public const string DimPolygonAreaUnit = "webgis-graphics-dimpolygon-area-unit";
-    public const string DimPolygonLabelEdges = "webgis-graphics-dimpolygon-label-edges";
+    public const string GraphicsDimLineLengthUnit = "webgis-graphics-dimline-length-unit";
+    public const string GraphicsDimLineLabelTotalLength = "webgis-graphics-dimline-label-total-length";
+
+    public const string GraphicsDimPolygonAreaUnit = "webgis-graphics-dimpolygon-area-unit";
+    public const string GraphicsDimPolygonLabelEdges = "webgis-graphics-dimpolygon-label-edges";
 
     public const string ModalCloseElement = "webgis-modal-close-element";
 

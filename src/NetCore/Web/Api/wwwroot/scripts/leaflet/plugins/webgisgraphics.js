@@ -1466,13 +1466,14 @@ L.DimLine = L.LayerCollection.extend({
         fontSize: 13,
         fontSytle: '',
         circleMarkerOptions: { same_as_line: true, radius: 4, color: '#000', weight: 2, fillcolor: '#eee' },
+        lengthUnit: 'm',
+        labelTotalLength: false,
         attributes: {}
     },
 
     _calcCrs:0,
     _latLngs: null,
     _setLatLngs: function (latLngs) {
-        console.log('DimLine._setLatLngs', latLngs);
         this.setLatLngs(latLngs);
     },
 
@@ -1492,7 +1493,6 @@ L.DimLine = L.LayerCollection.extend({
         this.rebuild();
     },
     setLatLngs: function (latLngs) {
-        console.log('DimLine.setLatLngs', latLngs);
         this._latLngs = latLngs;
         this.rebuild();
     },
@@ -1506,6 +1506,20 @@ L.DimLine = L.LayerCollection.extend({
     },
     getLatLngs: function () { return this._latLngs; },
     getCalcCrs: function () { return this._calcCrs; },
+    setLengthUnit: function (unit) {
+        this.options.lengthUnit = unit;
+        this.rebuild();
+    },
+    getLengthUnit: function () {
+        return this.options.lengthUnit;
+    },
+    setLabelTotalLength: function (doLabel) {
+        this.options.labelTotalLength = doLabel;
+        this.rebuild();
+    },
+    getLabelTotalLength: function () {
+        return this.options.labelTotalLength;
+    },
     redraw: function () {
         this.rebuild();
     },
@@ -1528,6 +1542,21 @@ L.DimLine = L.LayerCollection.extend({
             if (this.options.circleMarkerOptions.same_as_line === true) {
                 this.options.circleMarkerOptions.color = this.options.color;
                 this.options.circleMarkerOptions.weight = this.options.weight;
+            }
+
+            let lengthFactor = 1.0;
+            let lengthUnit = '';
+            let totalLength = 0.0;
+
+            switch (this.options.lengthUnit) {
+                case 'km':
+                    lengthFactor = 0.001;
+                    lengthUnit = 'km';
+                    break;
+                default:
+                    lengthFactor = 1.0;
+                    lengthUnit = 'm';
+                    break;
             }
 
             for (var i = 0; i < this._latLngs.length - 1; i++) {
@@ -1563,8 +1592,10 @@ L.DimLine = L.LayerCollection.extend({
                 var circle = L.circleMarker(this._latLngs[i], this.options.circleMarkerOptions);
                 this.addChildLayer(circle);
 
+                totalLength += len;
+
                 var text = L.svgLabel(insertAt, {
-                    text: Math.round(len * 100.0) / 100.0 + 'm',
+                    text: Math.round(len * lengthFactor * 100.0) / 100.0 + lengthUnit,
                     rotation: -angle,
                     fontSize: this.options.fontSize,
                     alignmentBaseline: 'ideographic' //'central'
@@ -1574,6 +1605,13 @@ L.DimLine = L.LayerCollection.extend({
 
             var circle = L.circleMarker(this._latLngs[this._latLngs.length - 1], this.options.circleMarkerOptions);
             this.addChildLayer(circle);
+
+            if (this.options.labelTotalLength && this._latLngs.length > 2) {
+                this.addChildLayer(L.svgText(this._latLngs[this._latLngs.length - 1], {
+                    text: " ∑: " + Math.round(totalLength * lengthFactor * 100.0) / 100.0 + lengthUnit,
+                    fontSize: this.options.fontSize * 1.2
+                }));
+            }
         }
     },
     toGeoJSON: function () {
@@ -1784,7 +1822,6 @@ L.DimPolygon = L.LayerCollection.extend({
                         webgis.l10n.get('area')[0] + ": " + Math.round(area * areaFactor * 100.0) / 100.0 + areaUnit + '\n' +
                         webgis.l10n.get('circumference')[0] + ": " + Math.round(circumference * lengthFactor * 100.0) / 100.0 + lengthUnit,
                     fontSize: this.options.fontSize * 1.2,
-                    backgroundColor: '#f00',
                     textAnchor: 'middle'
                 }));
             }

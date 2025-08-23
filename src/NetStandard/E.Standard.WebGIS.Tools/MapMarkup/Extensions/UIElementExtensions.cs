@@ -347,12 +347,48 @@ static internal class UIElementExtensions
             },
             new UIFontSizeSelector(localizer.Localize("symbology.font-size"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
             {
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior = ExpandMode(collapseExclusive),
                 value = e.GetValue("mapmarkup-fontsize", 14),
                 //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
                 id = "mapmarkup-fontsize"
             },
+            new UIOptionContainer()
+            {
+                title = localizer.Localize("symbology.properties"),
+                CollapseState = IsCollapsed(stagedOnly),
+                elements = new IUIElement[]
+                {
+                    new UILabel()
+                    {
+                        label = localizer.Localize("symbology.unit")
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsdimlinelengthunit)
+                    {
+                        options=new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value="m", label = $"{localizer.Localize("meters")} [m]" },
+                            new UISelect.Option() { value="km", label = $"{localizer.Localize("kilometers")} [km]" }
+                        },
+                        id="mapmarkup-dimline-unit",
+                        css=UICss.ToClass(new string[]{ UICss.GraphicsDimLineLengthUnit })
+                    },
+                    new UILabel()
+                    {
+                        label = $"{localizer.Localize("symbology.label-total-length")}:"
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsdimlinelabeltotallength)
+                    {
+                        options=new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value="true", label= localizer.Localize("yes") },
+                            new UISelect.Option() { value="false", label= localizer.Localize("no") }
+                        },
+                        id="mapmarkup-dimline-label-edges",
+                        css=UICss.ToClass(new string[]{ UICss.GraphicsDimLineLabelTotalLength })
+                    }
+                }
+            }
         }));
 
         return collection;
@@ -414,7 +450,7 @@ static internal class UIElementExtensions
                             new UISelect.Option() { value="a", label=localizer.Localize("square-a") },
                         },
                         id="mapmarkup-dimpolygon-area-unit",
-                        css=UICss.ToClass(new string[]{ UICss.DimPolygonAreaUnit })
+                        css=UICss.ToClass(new string[]{ UICss.GraphicsDimPolygonAreaUnit })
                     },
                     new UILabel(){
                             label = $"{localizer.Localize("symbology.label-edges")}:"
@@ -427,7 +463,7 @@ static internal class UIElementExtensions
                             new UISelect.Option() { value="false", label= localizer.Localize("no") }
                         },
                         id="mapmarkup-dimpolygon-label-edges",
-                        css=UICss.ToClass(new string[]{ UICss.DimPolygonLabelEdges })
+                        css=UICss.ToClass(new string[]{ UICss.GraphicsDimPolygonLabelEdges })
                     }
                 }
             }
@@ -478,7 +514,7 @@ static internal class UIElementExtensions
                             options=new UISelect.Option[]
                             {
                                 new UISelect.Option() { value="m", label = $"{localizer.Localize("meters")} [m]" },
-                                new UISelect.Option() { value="km", label = $"{localizer.Localize("kilometers")} [m]" }
+                                new UISelect.Option() { value="km", label = $"{localizer.Localize("kilometers")} [km]" }
                             },
                             id="mapmarkup-hectoline-unit",
                             css=UICss.ToClass(new string[]{ UICss.GraphicsHectolineUnit })

@@ -718,8 +718,12 @@ public class RestMappingHelperService /*: IDisposable*/
                        feature.GetPropery<float>("stroke-width"),
                        LineDashStyle.Solid,
                        calcPolyline: calcShape as Polyline,
-                       labelTotalLength: false, labelSegments: true, labelPointNumbers: false,
-                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor));
+                       labelTotalLength: feature.GetPropery<bool>("label-total-length"), 
+                       labelSegments: true, 
+                       labelPointNumbers: false,
+                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
+                       lengthUnit: feature.GetPropery<string>("length-unit"))
+                       );
                 }
                 else if (graphicsTool == "hectoline")
                 {

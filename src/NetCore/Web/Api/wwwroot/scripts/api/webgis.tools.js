@@ -253,6 +253,14 @@
                     if (map && map.graphics && tool.value)
                         map.graphics.setHectolineInterval(tool.value);
                     break;
+                case 'setgraphicsdimlinelengthunit':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setDimLineLengthUnit(tool.value);
+                    break;
+                case 'setgraphicsdimlinelabeltotallength':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setDimLineLabelTotalLength(tool.value == 'true');
+                    break;
                 case 'setgraphicsdimpolygonareaunit':
                     if (map && map.graphics && tool.value)
                         map.graphics.setDimPolygonAreaUnit(tool.value);

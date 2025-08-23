@@ -16,6 +16,7 @@
     var _txtColor = ['#000','#000'], _txtStyle = ['',''], _txtSize = [12, 14], _txtRefResolution = 0; 
     var _distance_circle_radius = 5000.0, _distance_circle_steps = 3, _compass_rose_radius=10.0, _compass_rose_steps = 36, _circle_radius = 0, _svg_text = null;
     var _hectoline_unit = 'm', _hectoline_interval = 100;
+    var _dimLine_lengthUnit = 'm', _dimLine_labelTotalLength = false;
     var _dimPolygon_areaUnit = 'm²', _dimPolygon_labelEdges = true;
     var _isDraggingMarker = false;
     var _sketchProperties = null;
@@ -109,7 +110,9 @@
                         color: this.getColor(),
                         weight: this.getWeight(),
                         fontSize: this.getTextSize(),
-                        fontColor: this.getTextColor()
+                        fontColor: this.getTextColor(),
+                        lengthUnit: this.getDimLineLengthUnit(),
+                        labelTotalLength: this.getDimLineLabelTotalLength()
                     });
                     dimLine._webgis = { geometryType: _geometryType };
                     return dimLine;
@@ -2342,6 +2345,16 @@
 
         _hectoline_interval = interval;
     };
+    this.setDimLineLengthUnit = function (unit) {
+        if (_frameworkElements[_currentFrameworkIndex].setLengthUnit)
+            _frameworkElements[_currentFrameworkIndex].setLengthUnit(unit);
+        _dimLine_lengthUnit = unit;
+    };
+    this.setDimLineLabelTotalLength = function (doLabel) {
+        if (_frameworkElements[_currentFrameworkIndex].setLabelTotalLength)
+            _frameworkElements[_currentFrameworkIndex].setLabelTotalLength(doLabel);
+        _dimLine_labelTotalLength = doLabel;
+    };
     this.setDimPolygonAreaUnit = function (unit) {
         if (_frameworkElements[_currentFrameworkIndex].setAreaUnit)
             _frameworkElements[_currentFrameworkIndex].setAreaUnit(unit);
@@ -2421,6 +2434,16 @@
 
         return _hectoline_interval;
     };
+    this.getDimLineLengthUnit = function () {
+        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getLengthUnit)
+            _dimLine_lengthUnit = _frameworkElements[_currentFrameworkIndex].getLengthUnit();
+        return _dimLine_lengthUnit;
+    };
+    this.getDimLineLabelTotalLength = function () {
+        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getLabelTotalLength)
+            _dimLine_labelTotalLength = _frameworkElements[_currentFrameworkIndex].getLabelTotalLength();
+        return _dimLine_labelTotalLength;
+    };
     this.getDimPolygonAreaUnit = function () {
         if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getAreaUnit)
             _dimPolygon_areaUnit = _frameworkElements[_currentFrameworkIndex].getAreaUnit();
@@ -2432,7 +2455,7 @@
             _dimPolygon_labelEdges = _frameworkElements[_currentFrameworkIndex].getLabelEdges();
 
         return _dimPolygon_labelEdges;
-    }
+    };
 
     var _getStyleIndex = function (geomType) {
         switch (geomType || _geometryType) {
@@ -3738,6 +3761,8 @@
                     break;
                 case 'dimline':
                     jsonGeometry.type = 'dimline';
+                    _dimLine_lengthUnit = frameworkElement.getLengthUnit();
+                    _dimLine_labelTotalLength = frameworkElement.getLabelTotalLength();
                     break;
                 case 'dimpolygon':
                     jsonGeometry.type = 'dimpolygon';

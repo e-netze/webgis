@@ -72,7 +72,6 @@ public class MeasurePolygonElement : PolygonElement
                         area = area.SquareMetersToSquareUnit(_areaUnit);
                         circumference = circumference.MetersToUnit(_lengthUnit);
                         
-
                         var text = $"F: {Math.Round(area, 2)}{_areaUnit.ToSquareAbbreviation()}{System.Environment.NewLine}U: {Math.Round(circumference, 2)}{_lengthUnit.ToAbbreviation()}{System.Environment.NewLine}EPSG:{(_calcPolygon ?? base.Polygon).SrsId}";
                         var box = canvas.MeasureText(text, font);
 
