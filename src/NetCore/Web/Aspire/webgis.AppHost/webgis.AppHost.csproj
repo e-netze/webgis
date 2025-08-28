@@ -14,6 +14,7 @@
     <PackageReference Include="MessageQueueNET.Aspire.Hosting" Version="3.25.101" IsAspireProjectResource="false" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Mcp\webgis-api-mcp\webgis-api-mcp.csproj" />
     <ProjectReference Include="..\..\Api\webgis-api.csproj" />
     <ProjectReference Include="..\..\Cms\webgis-cms.csproj" />
     <ProjectReference Include="..\..\Portal\webgis-portal.csproj" />

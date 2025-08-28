@@ -111,4 +111,10 @@ var webgisCms = builder.AddProject<Projects.webgis_cms>("webgis-cms")
 
 #endregion
 
+#region MCP
+
+builder.AddProject<Projects.webgis_api_mcp>("webgis-api-mcp");
+
+#endregion
+
 builder.Build().Run();
