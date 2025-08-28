@@ -235,6 +235,10 @@
                     if (map && map.graphics && tool.value)
                         map.graphics.setDistanceCircleRadius(tool.value);
                     break;
+                case 'setgraphicscompassrosesteps':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setCompassRoseSteps(tool.value);
+                    break;
                 case 'setgraphicstextsize':
                 case 'setgraphics_text_size_and_apply_to_selected':
                     if (map && map.graphics && tool.value)
@@ -248,6 +252,22 @@
                     //console.log('setgraphicshectolineinterval', tool)
                     if (map && map.graphics && tool.value)
                         map.graphics.setHectolineInterval(tool.value);
+                    break;
+                case 'setgraphicsdimlinelengthunit':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setDimLineLengthUnit(tool.value);
+                    break;
+                case 'setgraphicsdimlinelabeltotallength':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setDimLineLabelTotalLength(tool.value == 'true');
+                    break;
+                case 'setgraphicsdimpolygonareaunit':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setDimPolygonAreaUnit(tool.value);
+                    break;
+                case 'setgraphicsdimpolygonlabeledges':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setDimPolygonLabelEdges(tool.value == 'true');
                     break;
                 case 'setgraphicstextstyle':
                 case 'setgraphics_text_style_and_apply_to_selected':
@@ -1753,7 +1773,7 @@
             tool != null &&
             (tool.tooltype === 'sketch1d' || tool.tooltype === 'sketch2d' ||
                 (tool.tooltype === 'sketchany' && map.sketch && $.inArray(map.sketch.getGeometryType(), ["polyline", "polygon"]) >= 0) ||
-                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "hectoline"]) >= 0));
+                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "dimpolygon", "hectoline"]) >= 0));
     };
 
     this.replaceCustomToolUrl = function (map, url, eventObject) {

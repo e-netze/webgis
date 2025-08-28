@@ -2755,7 +2755,6 @@
                     var toolA = map._tools[a];
                     var toolB = map._tools[b];
                     if (toolA && toolB) {
-                        console.log(toolA, toolB);
                         if ((toolA.priority || 0) > (toolB.priority || 0)) {
                             return -1;
                         }

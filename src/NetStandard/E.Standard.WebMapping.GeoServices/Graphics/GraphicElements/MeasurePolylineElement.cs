@@ -1,4 +1,5 @@
-using E.Standard.WebMapping.Core.Abstraction;
+﻿using E.Standard.WebMapping.Core.Abstraction;
+using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using gView.GraphicsEngine;
@@ -14,6 +15,7 @@ public class MeasurePolylineElement : PolylineElement
     private bool _labelPointNumbers = false;
     private bool _labelTotalLength = true;
     private float _fontSize;
+    private Unit _lengthUnit = Unit.Meter;
 
     public MeasurePolylineElement(Polyline polyline,
                                  ArgbColor color,
@@ -23,14 +25,16 @@ public class MeasurePolylineElement : PolylineElement
                                  bool labelSegments = false,
                                  bool labelPointNumbers = false,
                                  bool labelTotalLength = true,
-                                 float fontSize = 11f)
-        : base(polyline, color, width, dashStyle, fontSize)
+                                 float fontSize = 11f,
+                                 string lengthUnit = "m")
+        : base(polyline, color, width, dashStyle, fontSize, lengthUnit)
     {
         _calcPolyline = calcPolyline;
         _labelSegments = labelSegments;
         _labelPointNumbers = labelPointNumbers;
         _labelTotalLength = labelTotalLength;
         _fontSize = fontSize > 0 ? fontSize : 11f;
+        _lengthUnit = (!String.IsNullOrEmpty(lengthUnit) ? lengthUnit : "m").FromUnitAbbreviation();
     }
 
     #region IGraphicElement Member
@@ -66,7 +70,8 @@ public class MeasurePolylineElement : PolylineElement
                             using (var fontBrush = Current.Engine.CreateSolidBrush(ArgbColor.Black))
                             using (var font = Current.Engine.CreateFont(Platform.SystemInfo.DefaultFontName, _fontSize * dpiFactor))
                             {
-                                var text = $"L: {Math.Round(calcPath.Length, 2)}m{System.Environment.NewLine}{System.Environment.NewLine}EPSG:{(_calcPolyline ?? base.Polyline).SrsId}";
+                                var length = calcPath.Length.MetersToUnit(_lengthUnit);
+                                var text = $"∑: {Math.Round(length, 2)}{_lengthUnit.ToAbbreviation()}{System.Environment.NewLine}EPSG:{(_calcPolyline ?? base.Polyline).SrsId}";
                                 var box = canvas.MeasureText(text, font);
 
                                 canvas.FillRectangle(rectBrush, new CanvasRectangleF((float)point.X, (float)point.Y, box.Width, box.Height));

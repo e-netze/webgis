@@ -24,6 +24,7 @@ using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 using E.Standard.WebMapping.GeoServices.Tiling;
 using gView.GraphicsEngine;
 using Microsoft.AspNetCore.Http;
+using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -620,7 +621,9 @@ public class RestMappingHelperService /*: IDisposable*/
                 graphicsMetaText = JSerializer.GetJsonElementValue(meta, "text").ToStringOrEmpty();
             }
 
-            if ((graphicsTool == "dimline" || graphicsTool == "hectoline") && feature.GetPropery<int>("_calcCrs") > 0)
+            if ((graphicsTool == "dimline"
+                || graphicsTool == "dimpolygon"
+                || graphicsTool == "hectoline") && feature.GetPropery<int>("_calcCrs") > 0)
             {
                 calcShape = feature.ToShape();
                 using (var calcTransformer = new GeometricTransformerPro(ApiGlobals.SRefStore.SpatialReferences, 4326, feature.GetPropery<int>("_calcCrs")))
@@ -715,8 +718,12 @@ public class RestMappingHelperService /*: IDisposable*/
                        feature.GetPropery<float>("stroke-width"),
                        LineDashStyle.Solid,
                        calcPolyline: calcShape as Polyline,
-                       labelTotalLength: false, labelSegments: true, labelPointNumbers: false,
-                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor));
+                       labelTotalLength: feature.GetPropery<bool>("label-total-length"), 
+                       labelSegments: true, 
+                       labelPointNumbers: false,
+                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
+                       lengthUnit: feature.GetPropery<string>("length-unit"))
+                       );
                 }
                 else if (graphicsTool == "hectoline")
                 {
@@ -728,7 +735,6 @@ public class RestMappingHelperService /*: IDisposable*/
                        feature.GetPropery<string>("hl-unit"),
                        calcPolyline: calcShape as Polyline,
                        fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor));
-
                 }
                 else
                 {
@@ -740,11 +746,26 @@ public class RestMappingHelperService /*: IDisposable*/
             }
             else if (shape is Polygon)
             {
-                map.GraphicsContainer.Add(new PolygonElement((Polygon)shape,
-                    feature.GetPropery<string>("stroke").HexToColor(feature.GetPropery<float>("stroke-opacity")),
-                    feature.GetPropery<string>("fill").HexToColor(feature.GetPropery<float>("fill-opacity")),
-                    feature.GetPropery<float>("stroke-width"),
-                    feature.GetPropery<string>("stroke-style").ToLineStyle()));
+                if (graphicsTool == "dimpolygon")
+                {
+                    map.GraphicsContainer.Add(new MeasurePolygonElement((Polygon)shape,
+                       feature.GetPropery<string>("stroke").HexToColor(),
+                       feature.GetPropery<string>("fill").HexToColor(feature.GetPropery<float>("fill-opacity")),
+                       feature.GetPropery<float>("stroke-width"),
+                       LineDashStyle.Solid,
+                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
+                       calcPolygon: calcShape as Polygon,
+                       labelSegments: feature.GetPropery<bool>("label-edges"),
+                       areaUnit: feature.GetPropery<string>("area-unit")));
+                }
+                else
+                {
+                    map.GraphicsContainer.Add(new PolygonElement((Polygon)shape,
+                        feature.GetPropery<string>("stroke").HexToColor(feature.GetPropery<float>("stroke-opacity")),
+                        feature.GetPropery<string>("fill").HexToColor(feature.GetPropery<float>("fill-opacity")),
+                        feature.GetPropery<float>("stroke-width"),
+                        feature.GetPropery<string>("stroke-style").ToLineStyle()));
+                }
             }
         }
         catch

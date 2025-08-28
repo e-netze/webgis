@@ -52,6 +52,7 @@
     "mapmarkup-tool-text": "Text",
     "mapmarkup-tool-point": "Point",
     "mapmarkup-tool-dimline": "Dimension line",
+    "mapmarkup-tool-dimpolygon": "Dimension polygon", 
     "mapmarkup-tool-hectoline": "Hectometer line",
 
     "mapmarkup-pointer": "Click on an existing mapmarkup object in the map to edit it. To draw a new object, the corresponding tool must be selected.",
@@ -66,6 +67,7 @@
     "mapmarkup-distance_circle": "Click on the map to set the center of the distance circle. Then click again to define the radius. Alternatively, you can specify a radius under 'Properties (Radius...)'. There you can also set the number of intermediate circles.",
     "mapmarkup-compass_rose": "Click on the map to set the center of the compass rose. Then click again to define the radius.",
     "mapmarkup-dimline": "Click on the map to define at least two vertices of the line. Each segment will be labeled with its length [m].",
+    "mapmarkup-dimpolygon": "Click on the map to define at least three vertices of the polygon. Each segment will be labeled with its length [m]. The area will be labeled with its size [m²].", 
     "mapmarkup-hectoline": "Click on the map to define at least two vertices of the line. Intermediate points will be marked and labeled depending on the configured distance (under Properties).",
 
     "service-order": "Service Order",
