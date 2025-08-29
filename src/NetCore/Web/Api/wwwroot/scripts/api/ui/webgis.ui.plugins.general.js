@@ -72,4 +72,4 @@ webgis.ui.showLayerNotVisibleNotification = function (service, query, $target) {
                 });
         }
     }
-}
+};

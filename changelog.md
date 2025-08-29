@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Bug: MapMarkup: download GPX/Shape
+  [discussion #335](https://github.com/e-netze/webgis-community/discussions/335)
+
 ## 7.25.3401
 
 ### Added

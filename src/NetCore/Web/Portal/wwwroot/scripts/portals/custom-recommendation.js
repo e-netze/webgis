@@ -73,6 +73,7 @@ webgis.usability.allowViewerLayoutTemplateSelection = true;
 webgis.usability.quickSearch.displayMetadata.geocodes = true;
 
 webgis.usability.useAdvancedKeyShortcutHandling = true;
+webgis.usability.showQueryLayerNotVisbleNotification = true;
 
 if (webgis.isMobileDevice() === false) {
     webgis.usability.optionContainerDefault.push({

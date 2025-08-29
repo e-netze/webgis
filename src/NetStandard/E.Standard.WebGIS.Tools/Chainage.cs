@@ -180,7 +180,8 @@ public class Chainage : IApiServerToolLocalizableAsync<Chainage>,
             };
             foreach (var serviceId in availableServiceIds)
             {
-                foreach (var chainageTheme in bridge.ServiceChainageThemes(serviceId))
+                foreach (var chainageTheme in bridge.ServiceChainageThemes(serviceId)
+                                                    .Where(c => !String.IsNullOrEmpty(c.LineLayerId) && String.IsNullOrEmpty(c.ApiServiceUrl)))  // ignore chainage from api calls 
                 {
                     var lineFeatures = await bridge.QueryLayerAsync(serviceId, chainageTheme.LineLayerId, filter);
                     if (lineFeatures.Count > 0)

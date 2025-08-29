@@ -7,19 +7,19 @@ webgis.ui.__getPluginRegistry = function ($el) {
         $el.data('__plugins__', list);
     }
     return list;
-}
+};
 webgis.ui.__registerPlugin = function ($el, instance) {
     //console.log('Register plugin', instance._pluginName);
     var list = webgis.ui.__getPluginRegistry($el);
     list.push(instance);
-}
+};
 webgis.ui.__unregisterPlugin = function ($el, instance) {
     //console.log('Unregister plugin', instance._pluginName);
     var list = webgis.ui.__getPluginRegistry($el);
     var i = list.indexOf(instance);
     if (i > -1) list.splice(i, 1);
     if (list.length === 0) $el.removeData('__plugins__');
-}
+};
 webgis.ui.destroyPluginsDeep = function ($root) {
     $root = $root instanceof $ ? $root : $($root);
     // Post-order: child first, then parent/root
@@ -100,4 +100,4 @@ webgis.ui.definePlugin = function (name, spec) {
 
         return chainable ? this : result;
     };
-}
+};
