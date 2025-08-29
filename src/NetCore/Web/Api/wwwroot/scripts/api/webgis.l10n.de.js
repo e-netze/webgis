@@ -328,5 +328,6 @@
     "show-markers-on-new-queries": "Marker bei neuen Abfragen anzeigen",
     "show-markers-on-new-queries-info": "Wenn diese Methode angewendet wird, werden bei jeder neuen Abfrage automatisch Kartenmarken in der Karte angezeigt. Das Defaultverhalten ist, das Marker automatisch dargestellt werden.",
     "select-new-query-results": "Neue Abfragen in der Karte auswählen/selektieren",
-    "select-new-query-results-info": "Wenn diese Methode angewendet wird, werden Abfrageergebnisse in der Karte automatisch selektiert dargestellt."
+    "select-new-query-results-info": "Wenn diese Methode angewendet wird, werden Abfrageergebnisse in der Karte automatisch selektiert dargestellt.",
+    "query-layer-not-visible-notification": "Der abgefrage Layer ist in der Karte ausgeblendet. Hier Klicken zum Einblenden."
 };

@@ -3350,7 +3350,7 @@ webgis.setCurrentKeyCodeFromEvent = function (e) {
         if (e.ctrlKey === true) key += 'ctrl+';
         if (e.shiftKey === true) key += 'shift+';
 
-        if (e.key.length == 1) {
+        if (e.key && e.key.length === 1) {
             key += e.key || e.code || '';
         }
 

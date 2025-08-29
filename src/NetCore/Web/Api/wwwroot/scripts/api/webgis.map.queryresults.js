@@ -693,9 +693,13 @@
             .addClass('webgis-table-panel-content')
             .css('padding', '0px');
 
+        
+
         var $tabToolsContainer = $("<div>")
             .addClass('webgis-result-table-tools-container')
             .appendTo($content);
+
+        webgis.ui.showLayerNotVisibleNotification(service, query, $content);
 
         if (!webgis.usability.tableToolsContainerExtended) {
             $tabToolsContainer.addClass('collapsed');

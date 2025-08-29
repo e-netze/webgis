@@ -93,6 +93,8 @@ webgis.usability = {
 
     useAdvancedKeyShortcutHandling: false,
 
+    showQueryLayerNotVisbleNotification: true,
+
     tsp: {
         allowOrderFeatures: false,
         maxFeatures: 50

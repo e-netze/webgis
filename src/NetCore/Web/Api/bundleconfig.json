@@ -58,6 +58,8 @@
   {
     "outputFileName": "wwwroot/scripts/api/api-ui.min.js",
     "inputFiles": [
+      "wwwroot/scripts/api/ui/webgis.ui.plugins.js",
+      "wwwroot/scripts/api/ui/webgis.ui.plugins.general.js",
       "wwwroot/scripts/api/ui/webgis_contentsearch.js",
       "wwwroot/scripts/api/ui/webgis_presentationToc.js",
       "wwwroot/scripts/api/ui/webgis_addServicesToc.js",
