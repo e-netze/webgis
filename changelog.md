@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+### Fixed
+
+## 7.25.3601
+
+### Added
 
 - WMS Service: SLD_VERSION Support
   [discussion #279](https://github.com/e-netze/webgis-community/discussions/324)
@@ -22,7 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     webgis.usability.showQueryLayerNotVisbleNotification = false;
   ```
 
-- Usability: Show Section leght/area with measure tools
+- Usability: Show Section length/area with measure tools
   [discussion #325](https://github.com/e-netze/webgis-community/discussions/325)
 
 ### Fixed
