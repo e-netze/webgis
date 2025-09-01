@@ -15,12 +15,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Usability: Show a note in query table, if the corresponding layer is not visible in the map
   [discussion #334](https://github.com/e-netze/webgis-community/discussions/334)
   can be switched on/off in ``custom.js``
-- 
+
   ``` javascript
     // default: false for all API apps
     // but set 'true' in custom-recomandations.js for the Viewer
     webgis.usability.showQueryLayerNotVisbleNotification = false;
   ```
+
+- Usability: Show Section leght/area with measure tools
+  [discussion #325](https://github.com/e-netze/webgis-community/discussions/325)
 
 ### Fixed
 

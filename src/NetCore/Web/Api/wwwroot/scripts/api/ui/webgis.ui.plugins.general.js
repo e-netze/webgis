@@ -3,7 +3,7 @@
 // eg. webgis.ui.showLayerNotVisibleNotification(service, query, $target);
 //     used in query result table, to notify the user that the corresponing layer is invisible   
 
-webgis.ui.definePlugin('webgis_click_note', {
+webgis.ui.definePlugin('webgis_clickNote', {
     defaults: {
         text: 'Note...',
         callback: null,
@@ -11,7 +11,7 @@ webgis.ui.definePlugin('webgis_click_note', {
     },
 
     init: function () {
-        var o = this.options;
+        let o = this.options;
         // Events always use name namespace -> simpler deploy
         this.$el
             .css(o.styles)
@@ -56,7 +56,7 @@ webgis.ui.showLayerNotVisibleNotification = function (service, query, $target) {
         if (foundVisible === false) {
             $("<div>")
                 .appendTo($target)
-                .webgis_click_note({
+                .webgis_clickNote({
                     text: webgis.l10n.get('query-layer-not-visible-notification'),
                     callback: function () {
                         // Try to find and show the first associated layer

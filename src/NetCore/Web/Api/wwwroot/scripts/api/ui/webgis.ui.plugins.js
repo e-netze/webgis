@@ -40,7 +40,7 @@ webgis.ui.destroyPluginsDeep = function ($root) {
     });
 };
 webgis.ui.definePlugin = function (name, spec) {
-    var defaults = spec.defaults || {};
+    let defaults = spec.defaults || {};
 
     function Ctor(el, options) {
         this.$el = $(el);
@@ -69,6 +69,21 @@ webgis.ui.definePlugin = function (name, spec) {
         webgis.ui.__unregisterPlugin(this.$el, this);
         this.$el.removeData(this._pluginName);
     };
+
+    // add additional methods from spec.methods to the instance prototype
+    if (spec.methods) {
+        Object.keys(spec.methods).forEach(function (k) {
+            Ctor.prototype[k] = spec.methods[k];
+        });
+    }
+
+    // add static methods
+    if (spec.staticMethods) {
+        Object.keys(spec.staticMethods).forEach(function (k) {
+            Ctor[k] = spec.staticMethods[k];
+        });
+    }
+
 
     (webgis.$ || jQuery).fn[name] = function (arg) {
         var args = Array.prototype.slice.call(arguments, 1);

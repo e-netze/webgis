@@ -294,6 +294,8 @@
     "sketch-ortho-off": "End orthogonal mode",
     "sketch-trace-off": "End trace mode",
     "sketch-fan-off": "End fan mode",
+    "sections": "Sections",
+    "section": "Section",
 
     // query combos
     "query-choose-category": "Choose category (optional)",

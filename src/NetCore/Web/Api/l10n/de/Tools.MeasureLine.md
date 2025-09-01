@@ -12,6 +12,7 @@ Aufgrund der Längenverzerrungen in dieser Kartenprojektion weichen die
 Werte stark von der Realität ab!
 
 # length-m: Länge (m)
+# total-length-m: Gesamtlänge (m)
 
 # 3d:
 

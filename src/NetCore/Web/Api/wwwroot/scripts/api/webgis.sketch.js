@@ -3106,6 +3106,7 @@
         }
         _currentFrameworkIndex = _frameworkElements.length - 1;
         this._addToMap(_frameworkElements[_currentFrameworkIndex]);
+        this.hideMoverLine();
     }; 
     this.isMultiPart = function () {
         return _partIndex == null || _partIndex.length > 1;

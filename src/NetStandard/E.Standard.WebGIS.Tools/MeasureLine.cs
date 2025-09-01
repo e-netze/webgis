@@ -49,7 +49,7 @@ public class MeasureLine : IApiServerToolLocalizable<MeasureLine>,
 
         response.AddUIElements(
                 new UILabel()
-                    .WithLabel(localizer.Localize("length-m")),
+                    .WithLabel(localizer.Localize("total-length-m")),
                 new UIInputText()
                     .WithStyles("webgis-sketch-length"),
                 new UIButtonContainer(

@@ -294,6 +294,8 @@
     "sketch-ortho-off": "Orthogonal-Modus beenden",
     "sketch-trace-off": "Trace-Modus beenden",
     "sketch-fan-off": "Fan-Modus beenden",
+    "sections": "Abschnitte",
+    "section": "Abschnitt",
 
     // query combos
     "query-choose-category": "Kategorie wählen (optional)",
