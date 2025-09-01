@@ -12,6 +12,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - WMS Service: SLD_VERSION Support
   [discussion #279](https://github.com/e-netze/webgis-community/discussions/324)
 
+- Usability: Show a note in query table, if the corresponding layer is not visible in the map
+  [discussion #334](https://github.com/e-netze/webgis-community/discussions/334)
+  can be switched on/off in ``custom.js``
+- 
+  ``` javascript
+    // default: false for all API apps
+    // but set 'true' in custom-recomandations.js for the Viewer
+    webgis.usability.showQueryLayerNotVisbleNotification = false;
+  ```
+
 ### Fixed
 
 - Bug: MapMarkup: download GPX/Shape
