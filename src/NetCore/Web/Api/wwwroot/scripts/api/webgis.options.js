@@ -106,7 +106,8 @@ webgis.usability = {
         displayMetadata: {
             default: true,
             geocodes: false
-        }
+        },
+        selectFirstOnEnter: false
     },
 
     sketchTools: {

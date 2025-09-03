@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+
+- Usability: QuickSearch - Select first on enter
+  [discussion #328](https://github.com/e-netze/webgis-community/discussions/328)
+  [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#schnellsuche)
+
 ### Fixed
 
 ## 7.25.3601
@@ -29,6 +34,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Usability: Show Section length/area with measure tools
   [discussion #325](https://github.com/e-netze/webgis-community/discussions/325)
+
+- MapMarkup: Added tool for measure polygon area/circumference
 
 ### Fixed
 

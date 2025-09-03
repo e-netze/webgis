@@ -71,6 +71,7 @@ webgis.usability.highlightFeatureOnMarkerClick = true;
 
 webgis.usability.allowViewerLayoutTemplateSelection = true;
 webgis.usability.quickSearch.displayMetadata.geocodes = true;
+webgis.usability.quickSearch.selectFirstOnEnter = true;
 
 webgis.usability.useAdvancedKeyShortcutHandling = true;
 webgis.usability.showQueryLayerNotVisbleNotification = true;

@@ -2343,6 +2343,11 @@
                                 }
                             });
 
+                            // on enter: select first... on enter
+                            if (dataItems.length > 1 && webgis.usability.quickSearch.selectFirstOnEnter === true) {
+                                dataItems = [dataItems[0]];
+                            }
+
                             // if only one left => do like it is selected => get original ...
                             if (dataItems.length === 1 && $this.data('autocomplete-onselect')) {
                                 $(this).data('autocomplete-onselect')(this, dataItems[0]);
