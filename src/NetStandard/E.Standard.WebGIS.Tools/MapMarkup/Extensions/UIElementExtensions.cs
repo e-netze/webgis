@@ -48,7 +48,7 @@ static internal class UIElementExtensions
                 id = "mapmarkup-point-color"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.point-size"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicspointsize){
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior = ExpandMode(stagedOnly),
                 value = e.GetValue("mapmarkup-pointsize", 10),
                 id = "mapmarkup-point-size"
@@ -72,7 +72,7 @@ static internal class UIElementExtensions
             },
             new UIFontStyleSelector(localizer.Localize("symbology.font-style"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextstyle)
             {
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior = ExpandMode(collapseExclusive),
                 value = e.GetValue("mapmarkup-fontstyle","regular"),
                 //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
@@ -80,7 +80,7 @@ static internal class UIElementExtensions
             },
             new UIColorSelector(localizer.Localize("symbology.font-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextcolor, false)
             {
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior = ExpandMode(collapseExclusive),
                 value = e.GetValue("mapmarkup-fontcolor","#000000"),
                 //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
@@ -109,7 +109,7 @@ static internal class UIElementExtensions
                 id="mapmarkup-line-linecolor"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("mapmarkup-lineweight",4),
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
@@ -138,14 +138,14 @@ static internal class UIElementExtensions
                     id="mapmarkup-line-linecolor"
                 },
                 new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
-                    CollapseState = IsCollapsed(isCollapsed),
+                    CollapseState = IsCollapsed(/*isCollapsed*/true),
                     ExpandBehavior=ExpandMode(collapseExclusive),
                     value=e.GetValue("mapmarkup-lineweight", 4),
                     //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                     id="mapmarkup-line-lineweight"
                 },
                 new UILineStyleSelector(localizer.Localize("symbology.line-style"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinestyle){
-                    CollapseState = IsCollapsed(isCollapsed),
+                    CollapseState = IsCollapsed(/*isCollapsed*/true),
                     ExpandBehavior=ExpandMode(collapseExclusive),
                     //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-linestyle")? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                     id="mapmarkup-line-linestyle",
@@ -169,28 +169,28 @@ static internal class UIElementExtensions
             },
             new UIOpacitySelector(localizer.Localize("symbology.fill-opacity"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsfillopacity)
             {
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("mapmarkup-fillopacity", "20"),
                 //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-fillcolor")?UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                 id="mapmarkup-polyline-fillopacity"
             },
             new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinecolor, true){
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("mapmarkup-color","#ff0000"),
                 //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-color")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
                 id="mapmarkup-polyline-linecolor"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("mapmarkup-lineweight",4),
                 //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-lineweight")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
                 id="mapmarkup-polyline-lineweight"
             },
             new UILineStyleSelector(localizer.Localize("symbology.line-style"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinestyle){
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-linestyle")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
                 id="mapmarkup-polyline-linestyle",
@@ -206,21 +206,21 @@ static internal class UIElementExtensions
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
             new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, true) {
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("mapmarkup-color","#ff0000"),
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                 id="mapmarkup-distance_circle-linecolor"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("mapmarkup-lineweight",4),
                 //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-lineweight")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistentImportant}),
                 id="mapmarkup-distance_circle-lineweight"
             },
             new UIColorSelector(localizer.Localize("symbology.fill-color"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicsfillcolor, true){
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("mapmarkup-fillcolor", "#ffff00"),
                 //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-fillcolor")?UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
@@ -283,14 +283,14 @@ static internal class UIElementExtensions
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
             new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, true) {
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior= ExpandMode(collapseExclusive),
                 value=e.GetValue("mapmarkup-color","#ff0000"),
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistantImportant }),
                 id="mapmarkup-compass-rose-linecolor"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior= ExpandMode(collapseExclusive),
                 value=e.GetValue("mapmarkup-lineweight",4),
                 //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-lineweight")?UICss.ToolParameterPersistent: UICss.ToolParameterPersistantImportant}),
@@ -306,7 +306,7 @@ static internal class UIElementExtensions
                         new UILabel(){
                             label = localizer.Localize("symbology.num-angle-segments")
                         },
-                        new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsdistancecirclesteps)
+                        new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicscompassrosesteps)
                         {
                             options=new UISelect.Option[]
                             {
@@ -332,14 +332,14 @@ static internal class UIElementExtensions
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
             new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, false) {
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior= ExpandMode(collapseExclusive),
                 value=lineColor,
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                 id="mapmarkup-color"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslineweight){
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("mapmarkup-lineweight", 2),
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
@@ -347,12 +347,126 @@ static internal class UIElementExtensions
             },
             new UIFontSizeSelector(localizer.Localize("symbology.font-size"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
             {
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior = ExpandMode(collapseExclusive),
                 value = e.GetValue("mapmarkup-fontsize", 14),
                 //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
                 id = "mapmarkup-fontsize"
             },
+            new UIOptionContainer()
+            {
+                title = localizer.Localize("symbology.properties"),
+                CollapseState = IsCollapsed(stagedOnly),
+                elements = new IUIElement[]
+                {
+                    new UILabel()
+                    {
+                        label = localizer.Localize("symbology.unit")
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsdimlinelengthunit)
+                    {
+                        options=new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value="m", label = $"{localizer.Localize("meters")} [m]" },
+                            new UISelect.Option() { value="km", label = $"{localizer.Localize("kilometers")} [km]" }
+                        },
+                        id="mapmarkup-dimline-unit",
+                        css=UICss.ToClass(new string[]{ UICss.GraphicsDimLineLengthUnit })
+                    },
+                    new UILabel()
+                    {
+                        label = $"{localizer.Localize("symbology.label-total-length")}:"
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsdimlinelabeltotallength)
+                    {
+                        options=new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value="true", label= localizer.Localize("yes") },
+                            new UISelect.Option() { value="false", label= localizer.Localize("no") }
+                        },
+                        id="mapmarkup-dimline-label-edges",
+                        css=UICss.ToClass(new string[]{ UICss.GraphicsDimLineLabelTotalLength })
+                    }
+                }
+            }
+        }));
+
+        return collection;
+    }
+
+    static public List<IUIElement> AddDimPolygonStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    {
+        var lineColor = e.GetValue("mapmarkup-color", "#000000")?.ToString();
+        var fillColor = e.GetValue("mapmarkup-fillcolor", "#ffff00")?.ToString();
+
+        collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
+        {
+            new UIColorSelector(localizer.Localize("symbology.fill-color"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicsfillcolor, true){
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                value= fillColor,
+                //css=UICss.ToClass(new string[]{e.IsEmpty("mapmarkup-fillcolor")?UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-fillcolor"
+            },
+            new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, false) {
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
+                ExpandBehavior= ExpandMode(collapseExclusive),
+                value=lineColor,
+                //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-color"
+            },
+            new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslineweight){
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
+                ExpandBehavior=ExpandMode(collapseExclusive),
+                value=e.GetValue("mapmarkup-lineweight", 2),
+                //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
+                id="mapmarkup-lineweight"
+            },
+            new UIFontSizeSelector(localizer.Localize("symbology.font-size"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
+            {
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                value = e.GetValue("mapmarkup-fontsize", 14),
+                //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
+                id = "mapmarkup-fontsize"
+            },
+            new UIOptionContainer()
+            {
+                title = localizer.Localize("symbology.properties"),
+                CollapseState = IsCollapsed(isCollapsed),
+                ExpandBehavior=ExpandMode(collapseExclusive),
+                elements = new IUIElement[]
+                {
+                    new UILabel(){
+                            label = $"{localizer.Localize("symbology.area-unit")}:"
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsdimpolygonareaunit)
+                    {
+                        options=new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value="m²", label=localizer.Localize("square-meters") },
+                            new UISelect.Option() { value="km²", label=localizer.Localize("square-kilometers") },
+                            new UISelect.Option() { value="ha", label=localizer.Localize("square-hectares") },
+                            new UISelect.Option() { value="a", label=localizer.Localize("square-a") },
+                        },
+                        id="mapmarkup-dimpolygon-area-unit",
+                        css=UICss.ToClass(new string[]{ UICss.GraphicsDimPolygonAreaUnit })
+                    },
+                    new UILabel(){
+                            label = $"{localizer.Localize("symbology.label-edges")}:"
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsdimpolygonlabeledges)
+                    {
+                        options=new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value="true", label= localizer.Localize("yes") },
+                            new UISelect.Option() { value="false", label= localizer.Localize("no") }
+                        },
+                        id="mapmarkup-dimpolygon-label-edges",
+                        css=UICss.ToClass(new string[]{ UICss.GraphicsDimPolygonLabelEdges })
+                    }
+                }
+            }
         }));
 
         return collection;
@@ -365,14 +479,14 @@ static internal class UIElementExtensions
         collection.Add(CreateHolder(e, stagedOnly, new IUIElement[]
         {
              new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslinecolor, false) {
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                  ExpandBehavior=ExpandMode(collapseExclusive),
                 value=lineColor,
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-color") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
                 id="mapmarkup-color"
             },
             new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.setgraphicslineweight){
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior=ExpandMode(collapseExclusive),
                 value=e.GetValue("mapmarkup-lineweight", 2),
                 //css=UICss.ToClass(new string[]{ e.IsEmpty("mapmarkup-lineweight") ? UICss.ToolParameterPersistent : UICss.ToolParameterPersistentImportant }),
@@ -380,7 +494,7 @@ static internal class UIElementExtensions
             },
             new UIFontSizeSelector(localizer.Localize("symbology.font-size"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
             {
-                CollapseState = IsCollapsed(isCollapsed),
+                CollapseState = IsCollapsed(/*isCollapsed*/true),
                 ExpandBehavior = ExpandMode(collapseExclusive),
                 value = e.GetValue("mapmarkup-fontsize", 14),
                 //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
@@ -400,7 +514,7 @@ static internal class UIElementExtensions
                             options=new UISelect.Option[]
                             {
                                 new UISelect.Option() { value="m", label = $"{localizer.Localize("meters")} [m]" },
-                                new UISelect.Option() { value="km", label = $"{localizer.Localize("kilometers")} [m]" }
+                                new UISelect.Option() { value="km", label = $"{localizer.Localize("kilometers")} [km]" }
                             },
                             id="mapmarkup-hectoline-unit",
                             css=UICss.ToClass(new string[]{ UICss.GraphicsHectolineUnit })

@@ -1,5 +1,4 @@
 ﻿using E.Standard.Drawing.Models;
-using E.Standard.Extensions.Collections;
 using E.Standard.Extensions.Compare;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
@@ -7,7 +6,6 @@ using E.Standard.ThreadSafe;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebGIS.Tools.Identify.Extensions;
-using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -20,7 +18,6 @@ using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Reflection;
-using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -483,6 +480,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
 
             switch (sketchGeometry)
             {
+                case "dimpolygon":
                 case "polygon":
                     if (layerType != WebMapping.Core.LayerType.polygon)
                     {
@@ -729,10 +727,10 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
         var oids = e.GetArray<string>("feature-oids");
         var oidParts = oids.Select(o => o.Split(":")).ToArray();
         var serviceIds = oidParts.Select(o => o[0]).Distinct().ToArray();
-        var queryIds = oidParts.Select(o => o.Length >= 1 ?  o[1] : "").Distinct().ToArray();
-        var objectIds = oidParts.Select(o => o.Length >= 2 ? o[2]: "").Distinct().ToArray();
+        var queryIds = oidParts.Select(o => o.Length >= 1 ? o[1] : "").Distinct().ToArray();
+        var objectIds = oidParts.Select(o => o.Length >= 2 ? o[2] : "").Distinct().ToArray();
 
-        if(serviceIds.Length != 1 || queryIds.Length != 1)
+        if (serviceIds.Length != 1 || queryIds.Length != 1)
         {
             throw new Exception("Can't query attachments for multiple service queries...");
         }
@@ -795,7 +793,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
         }
 
         return new ApiEventResponse().
-            AddUIElements(dialog);     
+            AddUIElements(dialog);
     }
 
     #endregion

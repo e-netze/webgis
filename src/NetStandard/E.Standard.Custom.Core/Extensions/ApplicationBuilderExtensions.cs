@@ -10,7 +10,7 @@ static public class ApplicationBuilderExtensions
         if (!String.IsNullOrEmpty(basePath))
         {
             app.UsePathBase(basePath);
-            Console.WriteLine($"Info: Set Base Path: {basePath}"); ;
+            Console.WriteLine($"Info: Set Base Path: {basePath}");
         }
 
         return app;

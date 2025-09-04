@@ -40,11 +40,11 @@ public class MeasureArea : IApiServerToolLocalizable<MeasureArea>,
 
         response.AddUIElements(
                 new UILabel()
-                    .WithLabel(localizer.Localize("circumference-m")),
+                    .WithLabel(localizer.Localize("total-circumference-m")),
                 new UIInputText()
                     .WithStyles("webgis-sketch-circumference"),
                 new UILabel()
-                    .WithLabel(localizer.Localize("area-m2")),
+                    .WithLabel(localizer.Localize("total-area-m2")),
                 new UIInputText()
                     .WithStyles("webgis-sketch-area"),
                 new UIButtonContainer(

@@ -2343,6 +2343,11 @@
                                 }
                             });
 
+                            // on enter: select first... on enter
+                            if (dataItems.length > 1 && webgis.usability.quickSearch.selectFirstOnEnter === true) {
+                                dataItems = [dataItems[0]];
+                            }
+
                             // if only one left => do like it is selected => get original ...
                             if (dataItems.length === 1 && $this.data('autocomplete-onselect')) {
                                 $(this).data('autocomplete-onselect')(this, dataItems[0]);
@@ -3350,7 +3355,7 @@ webgis.setCurrentKeyCodeFromEvent = function (e) {
         if (e.ctrlKey === true) key += 'ctrl+';
         if (e.shiftKey === true) key += 'shift+';
 
-        if (e.key.length == 1) {
+        if (e.key && e.key.length === 1) {
             key += e.key || e.code || '';
         }
 

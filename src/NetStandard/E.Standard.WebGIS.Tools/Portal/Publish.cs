@@ -315,23 +315,23 @@ public class Publish : IApiServerButton, IStorageInteractions
 
         if (e["add_master"] == "true" && !map.Equals(Master.MasterBlobName, StringComparison.InvariantCultureIgnoreCase))
         {
-            masterJson1 = bridge.Storage.LoadString(Master.MasterBlobName);
-            //if (String.IsNullOrWhiteSpace(masterJson))
-            {
-                #region Search in root directory
+            masterJson1 = bridge.Storage.LoadString(Master.MasterBlobName)
+                                        .ReplaceLegacyMapJsonItems();
 
-                var cat1 = bridge.CurrentEventArguments["page-publish-category"];
-                var cat2 = bridge.CurrentEventArguments["category"];
+            #region Search in root directory
 
-                bridge.CurrentEventArguments["page-publish-category"] = null;
-                bridge.CurrentEventArguments["category"] = null;
-                masterJson0 = bridge.Storage.LoadString(Master.MasterBlobName);
+            var cat1 = bridge.CurrentEventArguments["page-publish-category"];
+            var cat2 = bridge.CurrentEventArguments["category"];
 
-                bridge.CurrentEventArguments["page-publish-category"] = cat1;
-                bridge.CurrentEventArguments["category"] = cat2;
+            bridge.CurrentEventArguments["page-publish-category"] = null;
+            bridge.CurrentEventArguments["category"] = null;
+            masterJson0 = bridge.Storage.LoadString(Master.MasterBlobName)
+                                        .ReplaceLegacyMapJsonItems();
 
-                #endregion
-            }
+            bridge.CurrentEventArguments["page-publish-category"] = cat1;
+            bridge.CurrentEventArguments["category"] = cat2;
+
+            #endregion
         }
 
         Metadata metadata = null;

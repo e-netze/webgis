@@ -124,6 +124,8 @@
                     if (layer != null && layer.selectable === false)
                         selectable = false;
                 }
+
+                webgis.ui.showLayerNotVisibleNotification(service, query, $parent);
             }
             if (query && $.inArray(query.name, includedQueries) < 0) {
                 includedQueries.push(query.name);

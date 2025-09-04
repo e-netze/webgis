@@ -100,7 +100,7 @@ public class CapabilitiesHelper
 
             #region GetMap
 
-            if (caps.Capability.Request.GetMap.DCPType.Length > 0)
+            if (caps.Capability.Request.GetMap?.DCPType?.Length > 0)
             {
                 _getMapOnlineResource = caps.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource.href;
             }
@@ -113,12 +113,21 @@ public class CapabilitiesHelper
 
             if (caps.Capability.Request.GetFeatureInfo != null)
             {
-                if (caps.Capability.Request.GetFeatureInfo.DCPType.Length > 0)
+                if (caps.Capability.Request.GetFeatureInfo.DCPType?.Length > 0)
                 {
                     _getFeatureInfoOnlineResource = caps.Capability.Request.GetFeatureInfo.DCPType[0].HTTP.Get.OnlineResource.href;
                 }
 
                 _getFeatureInfoFormats = caps.Capability.Request.GetFeatureInfo.Format;
+            }
+
+            #endregion
+
+            #region GetLegendGraphic
+
+            if (caps.Capability.Request.GetLegendGraphic?.DCPType?.Length > 0)
+            {
+                _getLegendGraphicOnlineResource = caps.Capability.Request.GetLegendGraphic.DCPType[0].HTTP.Get.OnlineResource.href;
             }
 
             #endregion

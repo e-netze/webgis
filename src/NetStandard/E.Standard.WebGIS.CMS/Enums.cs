@@ -118,6 +118,13 @@ public enum WFS_Version
     version_1_1_0 = 1
 }
 
+public enum SLD_Version
+{
+    unused = 0,
+    version_1_0_0 = 1,
+    version_1_1_0 = 2
+}
+
 public enum VisFilterType
 {
     visible = 0,

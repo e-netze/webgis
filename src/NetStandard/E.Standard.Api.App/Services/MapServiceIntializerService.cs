@@ -212,7 +212,8 @@ public class MapServiceInitializerService
                     (string)serviceLink.Target.Load("getmapformat", "image/png"),
                     (string)serviceLink.Target.Load("getfeatureinfoformat", "text/html"),
                     (WMS_LayerOrder)serviceLink.Target.Load("layerorder", (int)WMS_LayerOrder.Up),
-                    (WMS_Vendor)serviceLink.Target.Load("vendor", (int)WMS_Vendor.Unknown));
+                    (WMS_Vendor)serviceLink.Target.Load("vendor", (int)WMS_Vendor.Unknown),
+                    (SLD_Version)serviceLink.Target.Load("sld_version", (int)SLD_Version.unused));
 
                 authUser = serviceLink.Target.LoadString("user");
                 authPwd = CmsCryptoHelper.Decrypt(serviceLink.Target.LoadString("pwd"), "wmsservice");
@@ -619,7 +620,8 @@ public class MapServiceInitializerService
                          "image/png",
                          "text/html",
                          WMS_LayerOrder.Up,
-                         WMS_Vendor.Unknown);
+                         WMS_Vendor.Unknown,
+                         SLD_Version.unused);
 
             wmsService.GetFeatureInfoFeatureCount = 30;
             wmsService.ImageServiceType = ImageServiceType.Normal;

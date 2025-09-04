@@ -879,6 +879,7 @@
             button.map = options.map;
             if (element.text) {
                 $("<div>").text(element.text).addClass('webgis-ui-imagebutton-text').appendTo($newElement);
+                $newElement.attr('title', element.text);
             }
             $(button).click(function () {
                 var $this= $(this),

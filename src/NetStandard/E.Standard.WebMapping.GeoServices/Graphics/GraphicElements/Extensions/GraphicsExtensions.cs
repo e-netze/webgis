@@ -1,4 +1,5 @@
 ﻿using E.Standard.WebMapping.Core.Abstraction;
+using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
@@ -43,7 +44,8 @@ static public class GraphicsExtensions
                                           float fontSize,
                                           float dpiFactor = 1f,
                                           StringAlignment alignment = StringAlignment.Center,
-                                          StringAlignment lineAlignment = StringAlignment.Center)
+                                          StringAlignment lineAlignment = StringAlignment.Center,
+                                          Unit unit = Unit.Meter)
     {
         try
         {
@@ -67,7 +69,7 @@ static public class GraphicsExtensions
                 canvas.RotateTransform(angle);
                 //gr.TranslateTransform(0, -font.Height / 2.0f);
 
-                var text = $"{Math.Round(length, 2)}m";
+                var text = $"{Math.Round(length.MetersToUnit(unit), 2)}{unit.ToAbbreviation()}";
                 var drawTextFormat = Current.Engine.CreateDrawTextFormat();
                 drawTextFormat.Alignment = alignment;
                 drawTextFormat.LineAlignment = lineAlignment;

@@ -95,37 +95,58 @@ internal class SystemTextJsonSerializer : IJSerializer
 
         for (int i = 0; i < propertyNameParts.Length; i++)
         {
-            if (element is JsonElement jsonElement && jsonElement.TryGetProperty(propertyNameParts[i], out JsonElement propertyElement))
+            if (element is JsonElement jsonElement /*&& jsonElement.TryGetProperty(propertyNameParts[i], out JsonElement propertyElement)*/)
             {
-                result = propertyElement.ValueKind switch
+                if (jsonElement.TryGetProperty(propertyNameParts[i], out JsonElement propertyElement))
                 {
-                    JsonValueKind.Null => null,
-                    JsonValueKind.True => true,
-                    JsonValueKind.False => false,
-                    JsonValueKind.String => propertyElement.GetString(),
-                    JsonValueKind.Number => propertyElement.GetDouble(),
-                    _ => i == propertyNameParts.Length - 1
-                        ? propertyElement // throw new ArgumentException($"Unsuppoerted JSON Element ValueKind in GetJsonElementValue: {propertyElement.ValueKind}")
-                        : propertyElement
-                };
+                    result = propertyElement.ValueKind switch
+                    {
+                        JsonValueKind.Null => null,
+                        JsonValueKind.True => true,
+                        JsonValueKind.False => false,
+                        JsonValueKind.String => propertyElement.GetString(),
+                        JsonValueKind.Number => propertyElement.GetDouble(),
+                        _ => i == propertyNameParts.Length - 1
+                            ? propertyElement // throw new ArgumentException($"Unsuppoerted JSON Element ValueKind in GetJsonElementValue: {propertyElement.ValueKind}")
+                            : propertyElement
+                    };
+                } 
+                else
+                {
+                    result = null;
+                }
 
                 if (i < propertyNameParts.Length - 1)
                 {
                     element = result!;
                 }
             }
-            else if (element is IDictionary<string, object> dict && dict.ContainsKey(propertyNameParts[i]))
+            else if (element is IDictionary<string, object> dict /*&& dict.ContainsKey(propertyNameParts[i])*/)
             {
-                result = ((IDictionary<string, object>)element)[propertyNameParts[i]];
-
+                if (dict.ContainsKey(propertyNameParts[i]))
+                {
+                    result = ((IDictionary<string, object>)element)[propertyNameParts[i]];
+                } 
+                else
+                {
+                    result = null;
+                }
+                
                 if (i < propertyNameParts.Length - 1)
                 {
                     element = result!;
                 }
             }
-            else if (element is not JsonElement && element?.GetType().GetProperty(propertyNameParts[i]) != null)
+            else if (element is not JsonElement /*&& element?.GetType().GetProperty(propertyNameParts[i]) != null*/)
             {
-                result = element?.GetType().GetProperty(propertyNameParts[i]);
+                if(element?.GetType().GetProperty(propertyNameParts[i]) != null)
+                {
+                    result = element?.GetType().GetProperty(propertyNameParts[i]);
+                }
+                else
+                {
+                    result = null;
+                }
 
                 if (i < propertyNameParts.Length - 1)
                 {
