@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Bug: Sketch - drawing multipart geometries and moveing vertices causes strange behavior
+  [discussion #342](https://github.com/e-netze/webgis-community/discussions/342)
+
+- Bug: Basemap tiles will not removed when removing service from map (also on loading a user map)
+  [discussion #346](https://github.com/e-netze/webgis-community/discussions/346)
+
 ## 7.25.3601
 
 ### Added
