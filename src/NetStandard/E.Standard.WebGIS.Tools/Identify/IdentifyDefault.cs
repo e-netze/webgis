@@ -1,11 +1,13 @@
 ﻿using E.Standard.Drawing.Models;
 using E.Standard.Extensions.Compare;
+using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
 using E.Standard.ThreadSafe;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebGIS.Tools.Identify.Extensions;
+using E.Standard.WebGIS.Tools.MapMarkup.Export;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -16,12 +18,15 @@ using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
+using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading.Tasks;
 using static E.Standard.WebMapping.Core.CoreApiGlobals;
 
@@ -779,28 +784,80 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
         }
 
         var dialog = new UIDiv()
-            .AsDialog(UIElementTarget.tool_sidebar_left)
-            .WithStyles(UICss.NarrowForm)
+            .AsDialog(UIElementTarget.modaldialog)
+            .WithSize(720, 600)
             .WithDialogTitle(localizer.Localize("attachments"));
 
-        foreach (var attachment in attachments.Attachements)
+        #region Files
+
+        var itemBar = new UIDiv();
+        dialog.AddChild(itemBar);
+
+        foreach (var attachment in attachments.Attachements.Where(a => !a.Type.IsImageContentType()))
         {
-            dialog.AddChild(new UILiteralBold() { literal = attachment.Name });
-            dialog.AddChild(new UIBreak());
-            dialog.AddChild(new UIImage(
+            var item = new UIButton(UIButton.UIButtonType.servertoolcommand_ext, "download_attachment")
+            {
+                buttoncommand_argument = bridge.SecurityEncryptString(JSerializer.Serialize(
+                    new AttachentInfo()
+                    {
+                        ServiceId = oidParts[0],
+                        Name = attachment.Name,
+                        Type = attachment.Type,
+                        Uri = Encoding.UTF8.GetString(attachment.Data)
+                    })),
+                icon = "rest/toolresource/webgis-tools-coordinates-download"
+            }
+            .WithId("webgis.tools.identify")
+            .WithStyles(UICss.ButtonIcon)
+            .WithText(attachment.Name);
+
+            itemBar.AddChild(item);
+        }
+
+        #endregion
+
+        #region Images
+
+        foreach (var attachment in attachments.Attachements.Where(a => a.Type.IsImageContentType()))
+        {
+            var item = new UIClickToggleElement("width,position,left,top,background", "unset,absolute,0px,0px,#fff", resetSiblings: true)
+                .WithStyles(UICss.AttachmentItem);
+
+            dialog.AddChild(item);
+
+            item.AddChild(new UILiteralBold() { literal = attachment.Name });
+            item.AddChild(new UIBreak());
+            item.AddChild(new UIImage(
                 Convert.ToBase64String(attachment.Data),
                 true));
         }
 
+        #endregion
+
         return new ApiEventResponse().
             AddUIElements(dialog);
+    }
+
+    [ServerToolCommand("download_attachment")]
+    async public Task<ApiEventResponse> OnDownloadAttachment(IBridge bridge, ApiToolEventArguments e, ILocalizer<IdentifyDefault> localizer)
+    {
+        var attachentInfo = JSerializer.Deserialize<AttachentInfo>( bridge.SecurityDecryptString(e.ServerCommandArgument));
+        var attachmentData = await bridge.GetFeatureAttachmentData(attachentInfo.ServiceId, attachentInfo.Uri);
+
+        return new ApiRawDownloadEventResponse(attachentInfo.Name, attachmentData) { ContentType = attachentInfo.Type };
     }
 
     #endregion
 
     #region Classes
 
-
+    private class AttachentInfo
+    {
+        public string ServiceId { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public string Uri { get; set; }
+    }
 
     #endregion
 }

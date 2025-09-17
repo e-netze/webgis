@@ -1939,7 +1939,8 @@
             parent = parent || $('.webgis-presentation_toc-holder');
             let $elem = $(parent);
             $elem.find('.webgis-presentation_toc-basemap-item').each(function (i, e) {
-                if (e.service && e.service.id == service.id) {
+                const itemService = $(e).data("service");
+                if (itemService && itemService.id == service.id) {
                     $(e).remove();
                 }
             });

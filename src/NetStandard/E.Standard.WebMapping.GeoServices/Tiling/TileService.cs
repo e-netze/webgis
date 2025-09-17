@@ -12,6 +12,7 @@ using gView.GraphicsEngine.Abstraction;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.Tiling;
@@ -469,10 +470,9 @@ public abstract class TileService : IMapService, IPrintableMapService, IMapServi
             GeometricTransformerPro geoTransform = null;
             try
             {
-                //Console.WriteLine($"TileService.GetPrintMapAsync: SupportedCrs - { (this.SupportedCrs != null && this.SupportedCrs.Length > 0 ? this.SupportedCrs[0].ToString() : "null") }");
-                if (this.SupportedCrs != null && this.SupportedCrs.Length > 0)
+                if (_map.SpatialReference != null)
                 {
-                    if (_map.SpatialReference != null && _map.SpatialReference.Id != this.SupportedCrs[0])
+                    if (this.SupportedCrs?.Any() == true && _map.SpatialReference.Id != this.SupportedCrs[0])
                     {
                         var from = _map.SpatialReference;
                         var to = CoreApiGlobals.SRefStore.SpatialReferences.ById(this.SupportedCrs[0]);
@@ -676,7 +676,7 @@ public abstract class TileService : IMapService, IPrintableMapService, IMapServi
                                         {
                                             if (displayRot != 0.0 || geoTransform != null)
                                             {
-                                                #region neue Methode (mit drehen)
+                                                #region new methode (with rotation)
 
                                                 Point p1 = new Point(tilePoint.X + (col - col0) * _grid.TileWidth(res),
                                                                      tilePoint.Y + (row - row0 - (_grid.Orientation == TileGridOrientation.UpperLeft ? 0 : 1)) *
@@ -714,7 +714,7 @@ public abstract class TileService : IMapService, IPrintableMapService, IMapServi
                                             }
                                             else
                                             {
-                                                #region alte Methode
+                                                #region old method
 
                                                 double x0 = iTilePoint.X + (col - col0) * iW;
                                                 double y0 = iTilePoint.Y + (row - row0) * iH * (_grid.Orientation == TileGridOrientation.UpperLeft ? 1.0 : -1.0);

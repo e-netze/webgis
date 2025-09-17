@@ -13,6 +13,7 @@ using E.Standard.ThreadSafe;
 using E.Standard.Web.Exceptions;
 using E.Standard.Web.Models;
 using E.Standard.WebGIS.CMS;
+using E.Standard.WebGIS.CmsSchema.Extensions;
 using E.Standard.WebGIS.CmsSchema.UI;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Exceptions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
@@ -978,7 +979,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
                 // Da trat bisher nur beim gView Server auf. Die Frage ist, ob man das auch beim Esri AGS Server machen muss
                 // Falls bei Kunden einmal irgendwas nicht geht, sollte man das überprüfen
                 //
-                string tokenParams = "request=gettoken&username=" + this._user + "&password=" + System.Web.HttpUtility.UrlEncode(this._pwd) + "&expiration=" + this.TicketExpiration + "&f=json";
+                string tokenParams = $"request=gettoken&username={this._user}&password={this._pwd.UrlEncodePassword()}&expiration={this.TicketExpiration}&f=json";
 
                 string tokenResponse = String.Empty;
                 while (true)

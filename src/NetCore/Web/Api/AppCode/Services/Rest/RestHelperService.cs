@@ -748,12 +748,17 @@ public class RestHelperService
                         {
                             Name = f.ColumnName,
                             Visible = f.Visible,
-                            SortingAlgorithm = f is TableFieldData fieldData && !String.IsNullOrEmpty(fieldData.SortingAlgorithm)
-                                                        ? ((TableFieldData)f).SortingAlgorithm
-                                                        : null,
-                            ImageSize = f is TableFieldImageDTO fieldImage && (fieldImage.ImageWidth > 0 || fieldImage.ImageHeight > 0)
-                                                        ? (fieldImage.ImageWidth, fieldImage.ImageHeight)
-                                                        : null,
+                            SortingAlgorithm = f switch
+                            {
+                                TableFieldData fieldData when !String.IsNullOrEmpty(fieldData.SortingAlgorithm) => fieldData.SortingAlgorithm,
+                                TableFieldExpressionDTO fieldExpression when fieldExpression.ColDataType == ColumnDataType.Number => "number",
+                                _ => null
+                            },
+                            ImageSize = f switch
+                            {
+                                TableFieldImageDTO fieldImage when fieldImage.ImageWidth > 0 || fieldImage.ImageHeight > 0 => (fieldImage.ImageWidth, fieldImage.ImageHeight),
+                                _ => null
+                            },
                         });
                 }
 

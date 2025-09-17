@@ -13,7 +13,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [discussion #328](https://github.com/e-netze/webgis-community/discussions/328)
   [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#schnellsuche)
 
+- Usability: Feature Result Attachments
+             - UI: smaller preview images, clickable => enlarge
+             - Non-Image Attachements (eg PDF) are now downloadable
+
 ### Fixed
+
+- Bug: Sketch - drawing multipart geometries and moveing vertices causes strange behavior
+  [discussion #342](https://github.com/e-netze/webgis-community/discussions/342)
+
+- Bug: Basemap tiles will not removed when removing service from map (also on loading a user map)
+  [discussion #346](https://github.com/e-netze/webgis-community/discussions/346)
+
+- Bug: Sorting numeric expressions in result table not worked correctly
+  [discussion #348](https://github.com/e-netze/webgis-community/discussions/348) 
 
 ## 7.25.3601
 
