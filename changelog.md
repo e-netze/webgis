@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+### Fixed
+
+## 7.25.3801
+
+### Added
 
 - Usability: QuickSearch - Select first on enter
   [discussion #328](https://github.com/e-netze/webgis-community/discussions/328)
