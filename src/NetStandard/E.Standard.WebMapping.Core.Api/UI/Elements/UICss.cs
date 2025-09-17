@@ -160,6 +160,8 @@ public class UICss
     public const string NarrowForm = "webgis-narrow-form";
     public const string NarrowFormMarginAuto = "webgis-narrow-form webgis-margin-auto";
 
+    public const string AttachmentItem = "webgis-attachment-item";
+
     public static string ToClass(IEnumerable<string> css)
     {
         return String.Join(" ", css);
