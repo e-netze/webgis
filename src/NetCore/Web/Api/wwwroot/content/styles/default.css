@@ -5413,3 +5413,21 @@ select.webgis-not-valid {
     background: #cccccc1f;
 }
 
+.webgis-attachment-item {
+    max-width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100px;
+    display: inline-block;
+}
+
+    .webgis-attachment-item img {
+        max-width: 100%;
+        display:inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+.webgis-click-toggle {
+    cursor: pointer;
+}

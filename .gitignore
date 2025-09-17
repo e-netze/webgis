@@ -320,3 +320,4 @@ keys.config
 /src/NetCore/Web/Api/wwwroot/scripts/api/api.min.js
 /src/NetCore/Web/Api/wwwroot/scripts/leaflet/plugins/leaflet-plugins.min.js
 /src/NetCore/Web/Api/wwwroot/scripts/leaflet/plugins/leaflet-plugins-gesture-handling.min.js
+/src/NetCore/Web/Api/wwwroot/scripts/api/api-ui.min.js

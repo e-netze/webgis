@@ -46,7 +46,8 @@ public class MapService : IMapService2,
                           IDynamicService,
                           IImageServiceType,
                           IMapServiceAuthentication,
-                          IMapServiceCapabilities
+                          IMapServiceCapabilities,
+                          IServiceAttachmentProvider
 {
     private readonly LayerCollection _layers;
     private string _errMsg = "", _mapServiceName = String.Empty;
@@ -1553,9 +1554,20 @@ public class MapService : IMapService2,
     #region IMapServiceCapabilities
 
     private static MapServiceCapability[] _capabilities =
-       [MapServiceCapability.Map, MapServiceCapability.Query, MapServiceCapability.Identify, MapServiceCapability.Legend ];
+       [MapServiceCapability.Map, MapServiceCapability.Query, MapServiceCapability.Identify, MapServiceCapability.Legend];
 
     public MapServiceCapability[] Capabilities => _capabilities;
+
+    #endregion
+
+    #region IServiceAttachmentProvider
+
+    public Task<byte[]> GetServiceAttachementData(IRequestContext requestContext, string attachmentUri)
+    {
+        var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
+
+        return authHandler.TryGetRawAsync(this, attachmentUri);
+    }
 
     #endregion
 
@@ -1573,4 +1585,6 @@ public class MapService : IMapService2,
     }
 
     #endregion
+
+
 }

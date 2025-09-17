@@ -1007,6 +1007,18 @@ public class Bridge : IBridge
         return null;
     }
 
+    async public Task<byte[]> GetFeatureAttachmentData(string serviceId, string attachementUri)
+    {
+        var service = await TryGetOriginalService(serviceId).ThrowIfNull(() => $"Unknown Service: {serviceId}");
+
+        if(service is IServiceAttachmentProvider attachmentService)
+        {
+            return await attachmentService.GetServiceAttachementData(_requestContext, attachementUri);
+        }
+
+        return null;
+    }
+
     public SpatialReference CreateSpatialReference(int sRefId)
     {
         return ApiGlobals.SRefStore.SpatialReferences.ById(sRefId);

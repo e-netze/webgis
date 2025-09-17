@@ -294,6 +294,8 @@
     "sketch-ortho-off": "End orthogonal mode",
     "sketch-trace-off": "End trace mode",
     "sketch-fan-off": "End fan mode",
+    "sections": "Sections",
+    "section": "Section",
 
     // query combos
     "query-choose-category": "Choose category (optional)",
@@ -328,5 +330,6 @@
     "show-markers-on-new-queries": "Show markers on new queries", 
     "show-markers-on-new-queries-info": "If this option is enabled, markers will be displayed on the map for new query results. If disabled, only the results will be shown in the table without markers on the map.",
     "select-new-query-results": "Select new query results", 
-    "select-new-query-results-info": "If this option is enabled, new query results will be automatically selected in the map."
+    "select-new-query-results-info": "If this option is enabled, new query results will be automatically selected in the map.",
+    "query-layer-not-visible-notification": "The queried layer is hidden in the map. Click here to show it."
 };

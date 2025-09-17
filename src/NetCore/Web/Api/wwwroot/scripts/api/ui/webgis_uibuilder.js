@@ -1370,6 +1370,12 @@
             }
             $newElement.get(0).value = element.value;
         }
+        else if (element.type === 'click-toggle')
+        {
+            $newElement = $newElement = $("<div " + elementProperties(element, options) + ">")
+                .appendTo($parent)
+                .webgis_clickToggle({ toggleStyle: element.togglestyle.split(','), toggleStyleValue: element.togglestylevalue.split(','), resetSiblings: element.resetsiblings });
+        }
         else if (element.type === 'drop-list') {
             $newElement = $("<div " + elementProperties(element, options) + ">").attr('id', element.id + "_droplist").attr('data-id', element.id).appendTo($parent).data('map', options.map).addClass('webgis-ui-droplist');
             $("<input type='hidden' " + elementProperties(element, options) + "/>").appendTo($parent).val(element.value);

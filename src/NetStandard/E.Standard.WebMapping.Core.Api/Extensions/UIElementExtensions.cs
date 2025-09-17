@@ -263,6 +263,20 @@ static public class UIElementExtensions
         return element;
     }
 
+    static public T WithSize<T>(this T element, int width = 0, int height = 0)
+        where T : UIElement
+    {
+        if(width > 0)
+        {
+            element.targetwidth = $"{width}px";
+        }
+        if(height > 0)
+        {
+            element.targetheight = $"{height}px";
+        }
+        return element;
+    }
+
     static public T WithTargetTitle<T>(this T element, string tragetTitle)
         where T : IUIElement
     {

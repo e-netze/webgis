@@ -150,6 +150,15 @@ public abstract class BaseWmtsService : TileService, IMapServiceDescription, ISe
                         };
                     }
 
+                    // if SupportedCrs is not set in CMS
+                    // use the supportedCRS from the matrixset, eg: <ows:SupportedCRS>urn:ogc:def:crs:EPSG::31256</ows:SupportedCRS>
+                    if (this.SupportedCrs?.Any() != true 
+                        && !String.IsNullOrEmpty(matrixSet.SupportedCRS)
+                        && int.TryParse(matrixSet.SupportedCRS.Split(":").Last(), out int supportedCrs))
+                    {
+                        this.SupportedCrs = [supportedCrs];
+                    }
+
                     foreach (var tileMatrix in matrixSet.TileMatrix)
                     {
                         var level = int.Parse(tileMatrix.Identifier.Value);

@@ -46,6 +46,7 @@ public class WmsService : IMapService2,
     private string _server = String.Empty;
     internal readonly WMS_Version _version = WMS_Version.version_1_1_1;
     internal readonly WMS_Vendor _vendor = WMS_Vendor.Unknown;
+    internal readonly SLD_Version _sldVersion = SLD_Version.unused;
     private bool _isDirty = false;
     private float _opacity = 1.0f;
     private bool _useToc = true;
@@ -66,7 +67,7 @@ public class WmsService : IMapService2,
     private RequestAuthorization _requestAuthorization = null;
     private readonly WMS_LayerOrder _layerOrder;
 
-    public WmsService(WMS_Version version, string getMapFormat, string getFeatureInfoFormat, WMS_LayerOrder layerOrder, WMS_Vendor vendor)
+    public WmsService(WMS_Version version, string getMapFormat, string getFeatureInfoFormat, WMS_LayerOrder layerOrder, WMS_Vendor vendor, SLD_Version sldVersion)
     {
         _version = version;
         if (!String.IsNullOrEmpty(getMapFormat))
@@ -84,6 +85,7 @@ public class WmsService : IMapService2,
         _vendor = vendor;
 
         ShowInToc = true;
+        _sldVersion = sldVersion;
     }
 
     #region IService Member
@@ -262,32 +264,9 @@ public class WmsService : IMapService2,
 
                 this.ServiceDescription = capsHelper.GetServiceDescription();
 
-                if (!String.IsNullOrEmpty(capsHelper.GetMapOnlineResouce))
-                {
-                    _onlineResourceGetMap = capsHelper.GetMapOnlineResouce;
-                }
-                else
-                {
-                    _onlineResourceGetMap = _server;
-                }
-
-                if (!String.IsNullOrEmpty(capsHelper.GetFeatureInfoOnlineResouce))
-                {
-                    _onlineResourceGetFeatureInfo = capsHelper.GetFeatureInfoOnlineResouce;
-                }
-                else
-                {
-                    _onlineResourceGetFeatureInfo = _server;
-                }
-
-                if (!String.IsNullOrEmpty(capsHelper.GetLegendGraphicOnlineResource))
-                {
-                    _onlineResourceGetLegendGraphic = capsHelper.GetLegendGraphicOnlineResource;
-                }
-                else
-                {
-                    _onlineResourceGetLegendGraphic = _server;
-                }
+                _onlineResourceGetMap = capsHelper.GetMapOnlineResouce.OrTake(_server);
+                _onlineResourceGetFeatureInfo = capsHelper.GetFeatureInfoOnlineResouce.OrTake(_server);
+                _onlineResourceGetLegendGraphic = capsHelper.GetLegendGraphicOnlineResource.OrTake(_server);
 
                 #region Layers
 
@@ -586,6 +565,12 @@ public class WmsService : IMapService2,
 
             #endregion
 
+            #region Other Parameters
+
+            reqArgs.AppendSldVersion(_sldVersion);
+
+            #endregion
+
             #endregion
 
             string url = AppendToUrl(_onlineResourceGetMap,
@@ -767,7 +752,7 @@ public class WmsService : IMapService2,
 
     public IMapService Clone(IMap parent)
     {
-        WmsService clone = new WmsService(_version, _getMapFormat, _getFeatureInfoFormat, _layerOrder, _vendor);
+        WmsService clone = new WmsService(_version, _getMapFormat, _getFeatureInfoFormat, _layerOrder, _vendor, _sldVersion);
 
         clone._map = parent ?? _map;
 
@@ -799,6 +784,7 @@ public class WmsService : IMapService2,
 
         clone._onlineResourceGetFeatureInfo = _onlineResourceGetFeatureInfo;
         clone._onlineResourceGetMap = _onlineResourceGetMap;
+        clone._onlineResourceGetLegendGraphic = _onlineResourceGetLegendGraphic;
         clone._getMapFormat = _getMapFormat;
         clone._imgExtension = _imgExtension;
         clone._getFeatureInfoFormat = _getFeatureInfoFormat;
@@ -1082,15 +1068,17 @@ public class WmsService : IMapService2,
                     reqArgs
                         .Append("&REQUEST=GetLegendGraphic")
                         .Append($"&LAYER={layerId}&STYLE={layerStyle}")
-                        .Append($"&FORMAT={_getMapFormat}");
+                        .Append($"&FORMAT={_getMapFormat}")
+                        .AppendSldVersion(_sldVersion);
 
-                    string url = AppendToUrl(_onlineResourceGetMap, reqArgs.ToString());
+                    string url = AppendToUrl(
+                        _onlineResourceGetLegendGraphic, 
+                        reqArgs.ToString());
                     try
                     {
                         var fileBytes = new MemoryStream(await httpService.GetDataAsync(_ticketHttpService.ModifyUrl(httpService, url),
                                                                                         _requestAuthorization,
                                                                                         timeOutSeconds: this.Timeout.ToTimeoutSecondOrDefault()));
-
                         try
                         {
                             using (var lImage = Current.Engine.CreateBitmap(fileBytes))
@@ -1107,14 +1095,20 @@ public class WmsService : IMapService2,
                                     legendHeight += (int)Math.Max(20f, lImage.Height);
                                     legendWidth = Math.Max(legendWidth, lImage.Width);
 
-                                    legendWidth = Math.Max(legendWidth, (int)(canvas.MeasureText(layerLabel, font).Width + 35f));
+                                    legendWidth = Math.Max(legendWidth, (int)(canvas.MeasureText(layerLabel, font).Width + 45f));
                                 }
 
                                 imageData.Add(layer.Name, fileBytes.ToArray());
                                 layerLabels.Add(layer.Name, layerLabel);
                             }
+                        } 
+                        catch
+                        {
+                            requestContext
+                                .GetRequiredService<IExceptionLogger>()
+                                .LogException(_map, this.Server, this.Service, "GetLegend",
+                                    new System.Exception($"Can't load legend image: {Encoding.UTF8.GetString(fileBytes.ToArray())}"));
                         }
-                        catch { }
                     }
                     catch (System.Exception ex)
                     {
@@ -1162,12 +1156,19 @@ public class WmsService : IMapService2,
                         }
                         else
                         {
-                            if (lImage.Width <= lImage.Height * 2)  // Problem bei Kunden: hier wird der Text immer schon in der Legendgraphic angedruckt -> wenn Bild aus eine gewisse Breite hat, kein Text schreiben 
+                            if ( //
+                                 // Hier wurden einige Chaos Regeln geführt, weil jeder WMS Legenden anders erzeugt... 
+                                 // und jeder glaubt, er macht es RICHTIG!??
+                                 // WMS sucks sometimes...
+                                 //
+                                (lImage.Width <= lImage.Height * 2) ||  // Problem bei Kunden: hier wird der Text immer schon in der Legendgraphic angedruckt -> wenn Bild eine gewisse Breite hat, kein Text schreiben 
+                                (lImage.Width <=40)  // Problem bei anderem Kunden: Images (für Raster) sind oft nur 5 Pixel hoch -> trotzdem beschreiften, auch wenn erstes Kriterium greift
+                               )  
                             {
-                                canvas.DrawText(label, font, blackBrush, new CanvasPointF(30f, y + 3f), stringFormat);
+                                canvas.DrawText(label, font, blackBrush, new CanvasPointF(40f, y + 3f), stringFormat);
                             }
-                            canvas.DrawBitmap(lImage, new CanvasPointF(3f, y + Math.Max(0f, (20f - lImage.Height) / 2f)));
 
+                            canvas.DrawBitmap(lImage, new CanvasPointF(3f, y + Math.Max(0f, (20f - lImage.Height) / 2f)));
                             y += Math.Max(20f, lImage.Height);
                         }
                     }

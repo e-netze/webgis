@@ -12,6 +12,7 @@ Due to the length distortions in this map projection, the values deviate
 significantly from reality!
 
 # length-m: Length (m)
+# total-length-m: Total Length (m)
 
 # 3d:
 

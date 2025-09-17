@@ -151,7 +151,7 @@ public class DeployService : ICmsTool
             console.WriteLine("Scann for warnings");
             var warnings = cms.Warnings();
 
-            var fiWarnings = new FileInfo(deploy.Target + ".warnings");
+            var fiWarnings = deploy.Target.WarningsFileInfo();
             if (fiWarnings.Exists)
             {
                 fiWarnings.Delete();

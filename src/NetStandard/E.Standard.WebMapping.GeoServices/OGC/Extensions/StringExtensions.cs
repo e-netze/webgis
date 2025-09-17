@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using E.Standard.WebGIS.CMS;
+using System.Linq;
+using System.Text;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.Extensions;
 
@@ -59,5 +61,20 @@ static internal class StringExtensions
         {
             return false;
         }
+    }
+
+    static public StringBuilder AppendSldVersion(this StringBuilder sb, SLD_Version sldVersion)
+    {
+        switch (sldVersion)
+        {
+            case SLD_Version.version_1_0_0:
+                sb.Append("&SLD_VERSION=1.0.0");
+                break;
+            case SLD_Version.version_1_1_0:
+                sb.Append("&SLD_VERSION=1.1.0");
+                break;
+        }
+
+        return sb;
     }
 }

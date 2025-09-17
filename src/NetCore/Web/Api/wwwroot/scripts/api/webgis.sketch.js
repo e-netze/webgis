@@ -270,7 +270,6 @@
 
         _frameworkElements = [];
         _frameworkElements.push(this._createFrameworkElement());
-        _currentFrameworkIndex = 0;
 
         webgis.sketch.construct.cancel(this);
 
@@ -2248,6 +2247,7 @@
         this.stopTraceMode();
 
         _fan = true;
+        //_currentFrameworkIndex = 0;
 
         this.redraw(true);
         this.fireCurrentState();
@@ -2255,9 +2255,12 @@
     this.stopFanMode = function () {
         if (_fan === true) {
             _fan = false;
-
-            _currentFrameworkIndex = 0;
+           
             this.redraw(true);
+
+            // reset to last framework element, so next vertex is added to last element
+            _currentFrameworkIndex = _frameworkElements.length - 1;
+
             this.fireCurrentState();
         }
     };
@@ -3106,6 +3109,7 @@
         }
         _currentFrameworkIndex = _frameworkElements.length - 1;
         this._addToMap(_frameworkElements[_currentFrameworkIndex]);
+        this.hideMoverLine();
     }; 
     this.isMultiPart = function () {
         return _partIndex == null || _partIndex.length > 1;

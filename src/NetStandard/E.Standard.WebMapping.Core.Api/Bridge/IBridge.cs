@@ -77,6 +77,7 @@ public interface IBridge : IAppCryptography
 
     Task<IEnumerable<string>> GetHasFeatureAttachments(string serviceId, string layerId, IEnumerable<string> objectIds);
     Task<IFeatureAttachments> GetFeatureAttachments(string serviceId, string layerId, string objectId);
+    Task<byte[]> GetFeatureAttachmentData(string serviceId, string attachementUri);
 
     IEnumerable<IChainageThemeBridge> ServiceChainageThemes(string serviceId);
     IChainageThemeBridge ChainageTheme(string id);

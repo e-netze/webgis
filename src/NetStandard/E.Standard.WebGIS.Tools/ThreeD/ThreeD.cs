@@ -45,10 +45,17 @@ public class ThreeD : IApiServerToolLocalizableAsync<ThreeD>,
         {
             new UISelect.Option() { value="0", label = localizer.Localize("texture-monochrome") },
             new UISelect.Option() { value="1", label = localizer.Localize("texture-current-map") },
-
-            new UISelect.Option() { value="2", label= localizer.Localize("texture-orhtophoto") },
-            new UISelect.Option() { value="3", label= localizer.Localize("texture-orhtophoto-with-streets") }
         });
+
+        if (!String.IsNullOrEmpty(e.GetConfigValue("texture-ortho-service")))
+        {
+            textureOptions.Add(new UISelect.Option() { value = "2", label = localizer.Localize("texture-orhtophoto") });
+
+            if (!String.IsNullOrEmpty(e.GetConfigValue("texture-streets-overlay-service")))
+            {
+                textureOptions.Add(new UISelect.Option() { value = "3", label = localizer.Localize("texture-orhtophoto-with-streets") });
+            }
+        }
 
         var texturePreviewDict = new Dictionary<string, string>
         {
