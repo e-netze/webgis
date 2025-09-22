@@ -1,8 +1,6 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using WebGIS.API.MCP.Extensions;
 using WebGIS.API.MCP.Extensions.DependencyInjection;
+using WebGIS.API.MCP.Services;
 using WebGIS.API.MCP.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,11 +20,19 @@ builder.Services
 //builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddHttpClient("WebGISApiClient", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("WebGISApi:BaseUrl") ?? "https://api.webgiscloud.com/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+    //client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+builder.Services.AddTransient<WebGISApiClient>();
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
-if(builder.Configuration.UseAuthentication())
+if (builder.Configuration.UseAuthentication())
 {
     app.Logger.LogInformation("Authentication is enabled. Authority: {Authority}, Audience: {Audience}, Scopes: {Scopes}",
         builder.Configuration.GetAuthenticationAuthority(),

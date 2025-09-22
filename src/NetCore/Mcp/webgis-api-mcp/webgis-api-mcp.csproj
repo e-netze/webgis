@@ -33,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Platform\E.Standard.Platform.csproj" />
     <ProjectReference Include="..\..\Web\Aspire\webgis.ServiceDefaults\webgis.ServiceDefaults.csproj" />
   </ItemGroup>
 
