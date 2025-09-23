@@ -164,6 +164,7 @@ ul.toc li {
     margin: 10px 0px 2px 0px;
     color: #555;
     padding: 0px 0px 2px 4px;
+    width:180px;
 }
 
 .webgis-label p {
@@ -2057,12 +2058,13 @@ tr.webgis-border-bottom td{
     }
 
 .webgis-tabs-tab-content-holder {
-    background:white;
-    max-height:80%;
-    overflow:auto;
-    max-width:400px;
-    width:100%;
-    z-index:9997;
+    background: white;
+    max-height: 80%;
+    overflow: auto;
+    max-width: 400px;
+    width: 100%;
+    z-index: 9997;
+    scrollbar-width: thin;
 }
 
 .webgis-tabs-tab-header {
@@ -4346,6 +4348,8 @@ div.webgis-copy {
         padding: 0px;
         overflow: auto;
         /*height: calc(100vh - 480px);*/ /* empirisch, wird in webgis_graphics_info_container live berechnet */
+        scrollbar-gutter: stable;
+        scrollbar-width: thin;
     }
         .webgis-graphics-info-container-holder .webgis-graphics-info-list .webgis-graphics-info-listitem {
             position:relative;

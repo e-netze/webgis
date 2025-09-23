@@ -8,6 +8,7 @@ using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Geometry;
+using Microsoft.Identity.Client;
 
 namespace E.Standard.WebGIS.Tools;
 
@@ -28,25 +29,20 @@ public class MeasureArea : IApiServerToolLocalizable<MeasureArea>,
             response
                 .AddUIElements(
                     new UIDiv()
-                    {
-                        css = UICss.ToClass(new string[] { "webgis-info" }),
-                        elements = new IUIElement[]
-                            {
-                                new UILiteral() { literal = localizer.Localize("warning-webmercator:body") }
-                            }
-                    }
+                        .WithStyles(["webgis-info"])
+                        .AddChild(new UILiteral()
+                            .WithLiteral(localizer.Localize("warning-webmercator:body"))
+                        )
                 );
         }
 
         response.AddUIElements(
-                new UILabel()
-                    .WithLabel(localizer.Localize("total-circumference-m")),
-                new UIInputText()
-                    .WithStyles("webgis-sketch-circumference"),
-                new UILabel()
-                    .WithLabel(localizer.Localize("total-area-m2")),
-                new UIInputText()
-                    .WithStyles("webgis-sketch-area"),
+                new UIInputTextField()
+                    .WithLabelText(localizer.Localize("total-circumference-m"))
+                    .WithInputStyles("webgis-sketch-circumference"),
+                new UIInputTextField()
+                    .WithLabelText(localizer.Localize("total-area-m2"))
+                    .WithInputStyles("webgis-sketch-area"),
                 new UIButtonContainer(
                     new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removesketch)
                         .WithStyles(UICss.CancelButtonStyle)
