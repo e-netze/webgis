@@ -452,7 +452,7 @@ public class CmsController : ApplicationSecurityController
                     var displayNameAttribute = subPropertyInfo.GetCustomAttribute<System.ComponentModel.DisplayNameAttribute>();
                     if (displayNameAttribute != null)
                     {
-                        displayName = displayNameAttribute.DisplayName;
+                        displayName = displayNameAttribute.LocalizedDisplayName();
                     }
                 }
             }
@@ -488,7 +488,7 @@ public class CmsController : ApplicationSecurityController
                 var editProperty = new NodeProperty()
                 {
                     Name = propertyInfo.Name,
-                    DisplayName = displayNameAttribute?.DisplayName ?? propertyInfo.Name,
+                    DisplayName = displayNameAttribute?.LocalizedDisplayName() ?? propertyInfo.Name,
                     Category = categoryAttribute?.Category ?? "Allgemein",
                     Description = descriptionAttribute?.Description ?? String.Empty,
                     ReadOnly = (propertyInfo.CanWrite == false) || (readOnlyAttribute != null && readOnlyAttribute.IsReadOnly == true),
@@ -1057,7 +1057,7 @@ public class CmsController : ApplicationSecurityController
             var displayNameAttribute = propertyInfo.GetCustomAttribute<DisplayNameAttribute>();
             if (displayNameAttribute != null)
             {
-                displayName = displayNameAttribute.DisplayName;
+                displayName = displayNameAttribute.LocalizedDisplayName();
             }
 
             if (editorAttribute != null)
