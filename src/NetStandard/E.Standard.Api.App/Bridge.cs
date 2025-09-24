@@ -883,7 +883,7 @@ public class Bridge : IBridge
         {
             Bridge = this,
             LayerId = layerId,
-            items = new QueryDTO.Item[0],
+            items = new QueryDTO.ItemDTO[0],
             AllowEmptyQueries = true
         };
         query.Init(service);
