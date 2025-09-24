@@ -127,7 +127,7 @@ public class QueryEngine
             }
             else if (query.items != null)
             {
-                foreach (QueryDTO.Item item in query.items)
+                foreach (QueryDTO.ItemDTO item in query.items)
                 //foreach (CmsNode itemNode in cms.SelectNodes(ui, Globals.GdiXPath((string)mapSession.Map.UserValue(webgisConst.QueryTheme, String.Empty) + "/searchitems/*")))
                 {
                     string queryValue = queryItems?[item.id];

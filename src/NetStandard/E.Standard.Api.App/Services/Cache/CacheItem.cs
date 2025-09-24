@@ -434,7 +434,7 @@ public class CmsCacheItem
 
                                     #region Search Items
 
-                                    List<AuthObject<QueryDTO.Item>> items = new List<AuthObject<QueryDTO.Item>>();
+                                    List<AuthObject<QueryDTO.ItemDTO>> items = new List<AuthObject<QueryDTO.ItemDTO>>();
                                     foreach (CmsNode itemNode in cmsHlp.GetQuerySearchItems(queryNode))
                                     {
                                         var lookupConnectionString = itemNode.LoadString("lookup_connectionstring");
@@ -454,8 +454,8 @@ public class CmsCacheItem
                                             }
                                         }
 
-                                        items.Add(new AuthObject<QueryDTO.Item>(
-                                            new QueryDTO.Item()
+                                        items.Add(new AuthObject<QueryDTO.ItemDTO>(
+                                            new QueryDTO.ItemDTO()
                                             {
                                                 id = itemNode.Url,
                                                 name = itemNode.Name,
