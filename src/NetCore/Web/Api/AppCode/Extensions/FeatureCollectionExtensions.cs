@@ -1,4 +1,5 @@
-﻿using E.Standard.Api.App.DTOs;
+﻿using E.Standard.Api.App.Data;
+using E.Standard.Api.App.DTOs;
 using E.Standard.Extensions.Compare;
 using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.CMS;
@@ -20,7 +21,7 @@ static public class FeatureCollectionExtensions
     {
         if (renderFields && query?.Fields != null)
         {
-            foreach (TableFieldHotlinkDTO hotlinkField in query.Fields.Where(f => f is TableFieldHotlinkDTO field && field.One2N == true))
+            foreach (TableFieldHotlink hotlinkField in query.Fields.Where(f => f is TableFieldHotlink field && field.One2N == true))
             {
                 try
                 {

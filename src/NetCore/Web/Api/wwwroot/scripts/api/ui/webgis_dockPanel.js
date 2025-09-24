@@ -211,6 +211,7 @@
                         $panel.webgis_dockPanel('resize', { size: height });
 
                         if (options.autoResizeBoth) {
+                            $panel.css({ width: 'unset' });
                             var width = 0;
                             $content.children().addClass('min-width');
                             $content.children().each(function (i, c) {
@@ -219,7 +220,7 @@
                                 //console.log('outerWidth', $(c).outerWidth());
                             });
                             $content.children().removeClass('min-width');
-                            $panel.css('width', Math.min(width + 40, parseInt($(window).width() - $panel.offset().left)));
+                            $panel.css('width', Math.min(width /*+ 40*/, parseInt($(window).width() - $panel.offset().left)));
 
                             //console.log('max-width: ' + parseInt($(window).width() - $panel.offset().left));
 

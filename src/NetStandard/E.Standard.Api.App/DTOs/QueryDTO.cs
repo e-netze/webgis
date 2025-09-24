@@ -1,3 +1,4 @@
+using E.Standard.Api.App.Data;
 using E.Standard.Api.App.Models.Abstractions;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
@@ -21,7 +22,20 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
 {
     public string id { get; set; }
     public string name { get; set; }
-    public Item[] items { get; set; }
+    public ItemDTO[] items { get; set; }
+
+    public ResultFieldDTO[] result_fields =>
+        this.Fields?.Select(f => new ResultFieldDTO
+        {
+            ColumnName = f.ColumnName,
+            Visible = f.Visible == false ? false : null,
+            ColumnType = f switch
+            {
+                TableFieldHotlink => "hotlink",
+                TableFieldImage => "image",
+                _ => "value"
+            }
+        }).ToArray();
 
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
@@ -33,7 +47,7 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
 
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
-    public TableFieldDTO[] Fields { get; set; }
+    public TableField[] Fields { get; set; }
 
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
@@ -77,7 +91,7 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
     [System.Text.Json.Serialization.JsonIgnore]
     public string PreviewTextTemplate { get; set; }
 
-    public Item GetItem(string id)
+    public ItemDTO GetItem(string id)
     {
         if (items == null)
         {
@@ -96,10 +110,10 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
 
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
-    public AuthObject<Item>[] AuthItems { get; set; }
+    public AuthObject<ItemDTO>[] AuthItems { get; set; }
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
-    public AuthObject<TableFieldDTO>[] AuthFields { get; set; }
+    public AuthObject<TableField>[] AuthFields { get; set; }
 
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
@@ -173,7 +187,7 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
 
     #region SubClasses
 
-    public class Item : IHtml
+    public class ItemDTO : IHtml
     {
         public string id { get; set; }
         public string name { get; set; }
@@ -224,6 +238,22 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
         }
 
         #endregion
+    }
+
+    public class ResultFieldDTO // For backward compatibility
+    {
+        [JsonProperty("name")]
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string ColumnName { get; set; }
+
+        [JsonProperty("visible", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonPropertyName("visible")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public bool? Visible { get; set; }
+
+        [JsonProperty("type")]
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
+        public string ColumnType { get; set; }
     }
 
     public class AssociatedLayer
@@ -349,10 +379,10 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
         {
             id = this.id,
             name = this.name,
-            items = AuthObject<QueryDTO.Item>.QueryObjectArray(this.AuthItems, cmsui),
+            items = AuthObject<QueryDTO.ItemDTO>.QueryObjectArray(this.AuthItems, cmsui),
             AllowEmptyQueries = this.AllowEmptyQueries,
             LayerId = this.LayerId,
-            Fields = AuthObject<TableFieldDTO>.QueryObjectArray(this.AuthFields, cmsui),
+            Fields = AuthObject<TableField>.QueryObjectArray(this.AuthFields, cmsui),
             TableExportFormats = AuthObject<TableExportFormat>.QueryObjectArray(this.AuthTableExportFormats, cmsui),
 
             associatedlayers = this.associatedlayers,

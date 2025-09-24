@@ -1,4 +1,5 @@
-﻿using E.Standard.Api.App.DTOs;
+﻿using E.Standard.Api.App.Data;
+using E.Standard.Api.App.DTOs;
 using E.Standard.Extensions.Compare;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
@@ -315,7 +316,7 @@ static public class DynamicServiceExtensions
             }
             else
             {
-                query.Fields = new TableFieldDTO[] { new TableFieldData() { FieldName = "*", Visible = true, ColumnName = "All" } };
+                query.Fields = new TableField[] { new TableFieldData() { FieldName = "*", Visible = true, ColumnName = "All" } };
             }
 
             query.Init(service);
@@ -371,7 +372,7 @@ static public class DynamicServiceExtensions
             }
             else
             {
-                query.Fields = new TableFieldDTO[] { new TableFieldData() { FieldName = "*", Visible = true, ColumnName = "All" } };
+                query.Fields = new TableField[] { new TableFieldData() { FieldName = "*", Visible = true, ColumnName = "All" } };
             }
         }
 

@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 
-namespace E.Standard.Api.App.DTOs;
+namespace E.Standard.Api.App.Data;
 
-public sealed class TableFieldImageDTO : TableFieldDTO
+public sealed class TableFieldImage : TableField
 {
     public string ImageExpression { get; set; }
     public int ImageWidth { get; set; }
