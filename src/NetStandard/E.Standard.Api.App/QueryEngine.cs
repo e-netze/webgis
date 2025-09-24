@@ -1,4 +1,5 @@
-﻿using E.Standard.Api.App.DTOs;
+﻿using E.Standard.Api.App.Data;
+using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.Exceptions;
 using E.Standard.CMS.Core;
 using E.Standard.Extensions.Compare;
@@ -387,7 +388,7 @@ public class QueryEngine
             {
                 #region TableFields from CMS
 
-                foreach (TableFieldDTO tableField in query.Fields)
+                foreach (TableField tableField in query.Fields)
                 {
                     var featureFieldNames = tableField.FeatureFieldNames;
 

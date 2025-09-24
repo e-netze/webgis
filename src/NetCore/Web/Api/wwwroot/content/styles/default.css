@@ -313,7 +313,7 @@ ul.toc li {
     .webgis-ui-holder .webgis-tooldialog-header h2,
     .webgis-ui-collapsable .webgis-ui-collapsable-title h2 {
         margin: 0px;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: normal;
     }
     .webgis-ui-holder .webgis-tooldialog-header .close {
@@ -2574,7 +2574,7 @@ td.webgis-tab-header {
     }
 
 .webgis-toolbox-tool-item {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: normal;
     cursor: pointer;
     white-space: nowrap;
@@ -3533,6 +3533,7 @@ body.webgis-ui-holder {
         text-overflow: ellipsis;
         padding-right: 65px;
         width: calc(100% - 40px);
+        box-sizing: border-box;
     }
 
     .webgis-dockpanel-title.image .text {

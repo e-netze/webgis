@@ -5,9 +5,9 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace E.Standard.Api.App.DTOs;
+namespace E.Standard.Api.App.Data;
 
-public sealed class TableFieldDataMulti : TableFieldDTO
+public sealed class TableFieldDataMulti : TableField
 {
     public string[] FieldNames { get; set; }
 

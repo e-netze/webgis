@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 
-namespace E.Standard.Api.App.DTOs;
+namespace E.Standard.Api.App.Data;
 
-public sealed class TableFieldDateTime : TableFieldDTO
+public sealed class TableFieldDateTime : TableField
 {
     public string FieldName { get; set; }
 

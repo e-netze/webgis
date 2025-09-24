@@ -1,4 +1,5 @@
-﻿using E.Standard.Api.App.DTOs;
+﻿using E.Standard.Api.App.Data;
+using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.Exceptions;
 using E.Standard.Api.App.Extensions;
 using E.Standard.CMS.Core;
@@ -482,11 +483,11 @@ public class CmsCacheItem
 
                                     #region Table Fields
 
-                                    List<AuthObject<TableFieldDTO>> fields = new List<AuthObject<TableFieldDTO>>();
+                                    List<AuthObject<TableField>> fields = new List<AuthObject<TableField>>();
                                     foreach (CmsNode columnNode in cmsHlp.TableColumns(queryNode))
                                     {
                                         ColumnType colType = (ColumnType)columnNode.Load("columntype", (int)ColumnType.Field);
-                                        TableFieldDTO field = null;
+                                        TableField field = null;
 
                                         if (colType == ColumnType.Field ||
                                             colType == ColumnType.EmailAddress ||
@@ -516,31 +517,31 @@ public class CmsCacheItem
                                         }
                                         else if (colType == ColumnType.Hotlink)
                                         {
-                                            field = new TableFieldHotlinkDTO();
+                                            field = new TableFieldHotlink();
 
-                                            ((TableFieldHotlinkDTO)field).HotlinkUrl = (string)columnNode.Load("hotlinkurl", String.Empty);
-                                            ((TableFieldHotlinkDTO)field).HotlinkName = (string)columnNode.Load("hotlinkname", String.Empty);
-                                            ((TableFieldHotlinkDTO)field).One2N = (bool)columnNode.Load("one2n", false);
-                                            ((TableFieldHotlinkDTO)field).One2NSeperator = (char)columnNode.Load("one2nseperator", ';');
-                                            ((TableFieldHotlinkDTO)field).Target = (BrowserWindowTarget)columnNode.Load("target", (int)BrowserWindowTarget._blank);
-                                            ((TableFieldHotlinkDTO)field).ImageExpression = (string)columnNode.Load("imgexpression", String.Empty);
-                                            ((TableFieldHotlinkDTO)field).ImageHeight = (int)columnNode.Load("imgheight", 0);
-                                            ((TableFieldHotlinkDTO)field).ImageWidth = (int)columnNode.Load("imgwidth", 0);
+                                            ((TableFieldHotlink)field).HotlinkUrl = (string)columnNode.Load("hotlinkurl", String.Empty);
+                                            ((TableFieldHotlink)field).HotlinkName = (string)columnNode.Load("hotlinkname", String.Empty);
+                                            ((TableFieldHotlink)field).One2N = (bool)columnNode.Load("one2n", false);
+                                            ((TableFieldHotlink)field).One2NSeperator = (char)columnNode.Load("one2nseperator", ';');
+                                            ((TableFieldHotlink)field).Target = (BrowserWindowTarget)columnNode.Load("target", (int)BrowserWindowTarget._blank);
+                                            ((TableFieldHotlink)field).ImageExpression = (string)columnNode.Load("imgexpression", String.Empty);
+                                            ((TableFieldHotlink)field).ImageHeight = (int)columnNode.Load("imgheight", 0);
+                                            ((TableFieldHotlink)field).ImageWidth = (int)columnNode.Load("imgwidth", 0);
                                         }
                                         else if (colType == ColumnType.Expression)
                                         {
-                                            field = new TableFieldExpressionDTO();
+                                            field = new TableFieldExpression();
 
-                                            ((TableFieldExpressionDTO)field).Expression = (string)columnNode.Load("expression", String.Empty);
-                                            ((TableFieldExpressionDTO)field).ColDataType = (ColumnDataType)columnNode.Load("coldatatype", (int)ColumnDataType.String);
+                                            ((TableFieldExpression)field).Expression = (string)columnNode.Load("expression", String.Empty);
+                                            ((TableFieldExpression)field).ColDataType = (ColumnDataType)columnNode.Load("coldatatype", (int)ColumnDataType.String);
                                         }
                                         else if (colType == ColumnType.ImageExpression)
                                         {
-                                            field = new TableFieldImageDTO();
+                                            field = new TableFieldImage();
 
-                                            ((TableFieldImageDTO)field).ImageExpression = (string)columnNode.Load("imgexpression", String.Empty);
-                                            ((TableFieldImageDTO)field).ImageWidth = (int)columnNode.Load("iwidth", 0);
-                                            ((TableFieldImageDTO)field).ImageHeight = (int)columnNode.Load("iheight", 0);
+                                            ((TableFieldImage)field).ImageExpression = (string)columnNode.Load("imgexpression", String.Empty);
+                                            ((TableFieldImage)field).ImageWidth = (int)columnNode.Load("iwidth", 0);
+                                            ((TableFieldImage)field).ImageHeight = (int)columnNode.Load("iheight", 0);
                                         }
 
                                         if (field != null)
@@ -548,7 +549,7 @@ public class CmsCacheItem
                                             field.ColumnName = !String.IsNullOrEmpty(columnNode.AliasName) ? columnNode.AliasName : columnNode.Name;
                                             field.Visible = (bool)columnNode.Load("visible", true);
 
-                                            fields.Add(new AuthObject<TableFieldDTO>(field, CmsDocument.GetAuthNodeFast(cms, columnNode.NodeXPath)));
+                                            fields.Add(new AuthObject<TableField>(field, CmsDocument.GetAuthNodeFast(cms, columnNode.NodeXPath)));
                                         }
                                     }
                                     query.AuthFields = fields.ToArray();
