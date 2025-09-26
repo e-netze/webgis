@@ -58,8 +58,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
 
     #region Properties
 
-    [DisplayName("Darstellungsvariaten bereitstellen")]
-    [Description("Darastellungsvarianten werden nicht mehr parametriert, sondern werden dynamisch aus dem TOC des Dienstes erstellt. Das Level gibt an, bis zu welcher Ebene Untergruppen erstellt werden. Layer unterhalb des maximalen Levels werden zu einer Checkbox-Darstellungsvariante zusammengeasst.")]
+    [DisplayName("#dynamic_presenations")]
     public WebMapping.Core.ServiceDynamicPresentations DynamicPresentations { get; set; }
 
     [DisplayName("Abfragen bereitstellen")]
@@ -75,21 +74,21 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
     public WebMapping.Core.ImageServiceType ServiceType { get; set; }
 
     [DisplayName("Karten Server")]
-    [Category("Service")]
+    [Category("#category-service")]
     public string Server
     {
         get { return _server; }
         set { _server = value; }
     }
     [DisplayName("Karten Dienst")]
-    [Category("Service")]
+    [Category("#category-service")]
     public string Service
     {
         get { return _service; }
         set { _service = value; }
     }
     [DisplayName("Karten Dienst Url")]
-    [Category("Service")]
+    [Category("#category-service")]
     public string ServiceUrl
     {
         get { return _serviceUrl; }
@@ -97,12 +96,12 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
     }
 
     [DisplayName("Export Map Format")]
-    [Category("Service")]
+    [Category("#category-service")]
     [Description("Bei 'Json' wird das Ergebnis ins Outputverzeichnis von ArcGIS Server gelegt und dort vom Client abgeholt. Hat der Client keinen Zugriff auf dieses Output Verzeichnis, kann als Option 'Image' gewählt werden. Es wird dann vom ArcGIS Server keine Bild abgelegt sondern direkt übergeben.")]
     public AGSExportMapFormat ExportMapFormat { get; set; }
 
     [DisplayName("Username")]
-    [Category("~Anmeldungs-Credentials")]
+    [Category("~#category-credentials")]
     public string Username
     {
         get { return _user; }
@@ -110,7 +109,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
     }
 
     [DisplayName("Password")]
-    [Category("~Anmeldungs-Credentials")]
+    [Category("~#category-credentials")]
     [PasswordPropertyText(true)]
     public string Password
     {
@@ -119,12 +118,12 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
     }
 
     [DisplayName("Token")]
-    [Category("~Anmeldungs-Token")]
+    [Category("~#category-token")]
     [PasswordPropertyText(true)]
     [Editor(typeof(TypeEditor.TokenAuthentificationEditor), typeof(TypeEditor.ITypeEditor))]
     public string Token { get; set; }
 
-    [Category("~Anmeldungs-Credentials")]
+    [Category("~#category-credentials")]
     [DisplayName("Ticket-Gültigkeit [min]")]
     public int TicketExpiration
     {
@@ -144,7 +143,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
      * */
 
     [DisplayName("GetSelection Methode")]
-    [Category("~~Selektion")]
+    [Category("~~#category-selection")]
     public AGSGetSelectionMothod GetSelectionMethod
     {
         get { return _selectionMethod; }
@@ -562,7 +561,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
 
         #region Queries
 
-        var nameurlControl = new NameUrlControl();
+        var nameurlControl = new NameUrlControl(_servicePack);
         if (refresh == false && AutoImportQueries == true)
         {
             urls.Clear();
@@ -774,36 +773,6 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         return ret;
     }
 
-    [Category("~~Soap")]
-    public string SoapServiceUrl
-    {
-        get
-        {
-            return GetSoapUrl(_serviceUrl);
-        }
-    }
-
-    [Category("~~Soap")]
-    public string SoapServer
-    {
-        get
-        {
-            return GetSoapUrl(_server);
-        }
-    }
-    private string GetSoapUrl(string serviceUrl)
-    {
-        if (serviceUrl.ToLower().Contains("/rest/"))
-        {
-            int pos = serviceUrl.ToLower().IndexOf("/rest/");
-            string soapUrl = serviceUrl.Substring(0, pos + 1) + serviceUrl.Substring(pos + 6, serviceUrl.Length - pos - 6);
-            return soapUrl;
-        }
-
-        return serviceUrl;
-    }
-
-
     internal static string ShortLayerName(string layername)
     {
         if (layername.Contains("\\"))
@@ -813,23 +782,6 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         }
 
         return layername;
-    }
-
-    private static JsonLayer MapLayerInfoByID(IEnumerable<JsonLayer> infos, int id)
-    {
-        if (id < 0)
-        {
-            return null;
-        }
-
-        foreach (var info in infos)
-        {
-            if (info.Id == id)
-            {
-                return info;
-            }
-        }
-        return null;
     }
 
     private string ParentLayerName(JsonLayer layer, IEnumerable<JsonLayer> layers)

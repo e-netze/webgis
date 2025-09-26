@@ -290,7 +290,7 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
 
             if (AutoImportEditFields == ImportEditFields.Fields)
             {
-                var nameurlControl = new NameUrlControl();
+                var nameurlControl = new NameUrlControl(_servicePack);
 
                 var category = new EditingFieldCategory()
                 {

@@ -27,7 +27,7 @@ public class NameUrl : Persistable, IUrlNode
 
     #region Properties
 
-    [Category("Bezeichnung")]
+    [Category("#category-label")]
     virtual public string Name
     {
         get { return _name; }
@@ -42,7 +42,7 @@ public class NameUrl : Persistable, IUrlNode
     }
 
     [ReadOnly(true)]
-    [Category("Bezeichnung")]
+    [Category("#category-label")]
     virtual public string Url
     {
         get { return _url; }

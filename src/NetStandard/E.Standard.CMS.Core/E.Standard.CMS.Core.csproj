@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\E.Standard.Configuration\E.Standard.Configuration.csproj" />
     <ProjectReference Include="..\E.Standard.Extensions\E.Standard.Extensions.csproj" />
+    <ProjectReference Include="..\E.Standard.Localization\E.Standard.Localization.csproj" />
     <ProjectReference Include="..\E.Standard.Platform\E.Standard.Platform.csproj" />
     <ProjectReference Include="..\E.Standard.Security.Cryptography\E.Standard.Security.Cryptography.csproj" />
     <ProjectReference Include="..\E.Standard.ThreadsafeClasses\E.Standard.ThreadsafeClasses.csproj" />

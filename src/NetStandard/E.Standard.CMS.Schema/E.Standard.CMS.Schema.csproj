@@ -13,6 +13,11 @@
     <ProjectReference Include="..\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
     <ProjectReference Include="..\E.Standard.CMS.UI\E.Standard.CMS.UI.csproj" />
     <ProjectReference Include="..\E.Standard.Extensions\E.Standard.Extensions.csproj" />
+    <ProjectReference Include="..\E.Standard.Localization.Extensions\E.Standard.Localization.Extensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
 </Project>

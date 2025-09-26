@@ -7,7 +7,7 @@
       <schema-node name="IMS" description="doc/service.txt">
         <schema-node name="*" createmode="user"
                      filtertype="service"
-                     prompt="Neuen Dienst einbinden"
+                     prompt="add-new-service"
                      deletable="true"
                      assembly="E.Standard.WebGIS.CmsSchema.dll"
                      instance="E.Standard.WebGIS.CmsSchema.IMSService">
@@ -37,7 +37,7 @@
       <schema-node name="ArcGisServer" description="doc/arcgis-services.txt">
         <schema-node name="MapServer" description="doc/service.txt">
           <schema-node name="*" createmode="user"
-                       prompt="Neuen Dienst einbinden"
+                       prompt="add-new-service"
                        deletable="true"
                        filtertype="service"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -72,7 +72,7 @@
 
         <schema-node name="TileService" description="doc/service.txt">
           <schema-node name="*" createmode="user"
-                       prompt="Neuen Dienst einbinden"
+                       prompt="add-new-service"
                        deletable="true"
                        filtertype="service"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -94,7 +94,7 @@
 
 	    <schema-node name="WMTSService" description="doc/service.txt">
 		     <schema-node name="*" createmode="user"
-						   prompt="Neuen Dienst einbinden"
+						   prompt="add-new-service"
 						   deletable="true"
 						   filtertype="service"
 						   assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -116,7 +116,7 @@
       
         <schema-node name="ImageServerService" description="doc/service.txt">
           <schema-node name="*" createmode="user"
-                       prompt="Neuen Dienst einbinden"
+                       prompt="add-new-service"
                        deletable="true"
                        filtertype="service"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -143,7 +143,7 @@
         <schema-node name="WMS" description="doc/service.txt">
           <schema-node name="*" createmode="user"
                      filtertype="service"
-                     prompt="Neuen Dienst einbinden"
+                     prompt="add-new-service"
                      deletable="true"
                      assembly="E.Standard.WebGIS.CmsSchema.dll"
                      instance="E.Standard.WebGIS.CmsSchema.WMSService">
@@ -175,7 +175,7 @@
 <!--
         <schema-node name="WMSC">
           <schema-node name="*" createmode="user"
-                       prompt="Neuen Dienst einbinden"
+                       prompt="add-new-service"
                        deletable="true"
                        filtertype="service"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -197,7 +197,7 @@
 -->
         <schema-node name="WMTS" description="doc/service.txt">
           <schema-node name="*" createmode="user"
-                       prompt="Neuen Dienst einbinden"
+                       prompt="add-new-service"
                        deletable="true"
                        filtertype="service"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -223,7 +223,7 @@
         <schema-node name="WFS" description="doc/service.txt">
           <schema-node name="*" createmode="user"
                        filtertype="service"
-                       prompt="Neuen Dienst einbinden"
+                       prompt="add-new-service"
                        deletable="true"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.WFSService">

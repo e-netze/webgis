@@ -4,6 +4,7 @@ using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
 using E.Standard.Extensions.Compare;
+using E.Standard.Localization.Abstractions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Specialized;
@@ -19,17 +20,17 @@ public class EsriServiceControl : NameUrlUserConrol, IInitParameter, ISubmit
     private ArcServerImageServerService _agsImageService = null;
     public event EventHandler OnChanged = null;
 
-    private GroupBox _gbService = new GroupBox() { Label = "IMS Dienst" };
-    private AuthentificationControl _authentificationControl = new AuthentificationControl();
-    private Input _txtServer = new Input("txtServer") { Label = "Server", Required = true };
-    private ComboBox _cmbService = new ComboBox("cmbService") { Label = "Service", Required = true };
-    private TextArea _serviceDescription = new TextArea("txtServiceDescription") { Label = "", Enabled = false, Rows = 2 };
-    private ListBox _lstLayers = new ListBox("lstLayers") { Label = "Layers", Height = 250 };
+    private GroupBox _gbService;
+    private AuthentificationControl _authentificationControl;
+    private Input _txtServer;
+    private ComboBox _cmbService;
+    private TextArea _serviceDescription;
+    private ListBox _lstLayers;
 
-    private NameUrlControl _nameUrlControl = new NameUrlControl("nameUrlControl");
+    private NameUrlControl _nameUrlControl;
 
-    private GroupBox _gbAgs = new GroupBox() { Label = "ArcGIS Server Eingenschaften" };
-    private ComboBox _cmbAgsAccessMethod = new ComboBox("cmbAgsAccessMethod") { Label = "Zugriffsmethode" };
+    private GroupBox _gbAgs;
+    private ComboBox _cmbAgsAccessMethod;
 
     private CheckBox _chkAutoImportQueries = new CheckBox("chkAutoImportQueries") { Label = "Autoimport: alle vorhanden Feature Layer als Abfragen einfügen" };
     private CheckBox _chkAutoImportPresentations = new CheckBox("chkAutoImportPresentations") { Label = "Autoimport: Layerschaltungen/Darstellungsvariaten" };
@@ -38,6 +39,7 @@ public class EsriServiceControl : NameUrlUserConrol, IInitParameter, ISubmit
     private Button _bthRefreshServiceCombo = new Button("btnRefreshServiceCombo") { Label = "Services Aktualisieren" };
 
     private readonly CmsItemTransistantInjectionServicePack _servicePack;
+    private readonly ILocalizer _localizer;
 
     public EsriServiceControl(CmsItemTransistantInjectionServicePack servicePack)
         : this(servicePack, false)
@@ -48,6 +50,9 @@ public class EsriServiceControl : NameUrlUserConrol, IInitParameter, ISubmit
                              bool copyMode)
     {
         _servicePack = servicePack;
+        _localizer = _servicePack?.GetLocalizer(typeof(EsriServiceControl));
+
+        InitializeControls();
 
         _gbService.Enabled = !copyMode;
 
@@ -85,6 +90,22 @@ public class EsriServiceControl : NameUrlUserConrol, IInitParameter, ISubmit
         #endregion
     }
 
+
+    private void InitializeControls()
+    {
+        _gbService = new GroupBox() { Label = _localizer.Localize("ims-service") };
+        _authentificationControl = new AuthentificationControl();
+        _txtServer = new Input("txtServer") { Label = _localizer.Localize("server"), Required = true };
+        _cmbService = new ComboBox("cmbService") { Label = _localizer.Localize("service"), Required = true };
+        _serviceDescription = new TextArea("txtServiceDescription") { Label = "", Enabled = false, Rows = 2 };
+        _lstLayers = new ListBox("lstLayers") { Label = _localizer.Localize("layers"), Height = 250 };
+
+        _nameUrlControl = new NameUrlControl(_servicePack, "nameUrlControl");
+
+        _gbAgs = new GroupBox() { Label = "ArcGIS Server Eingenschaften" };
+        _cmbAgsAccessMethod = new ComboBox("cmbAgsAccessMethod") { Label = "Zugriffsmethode" };
+    }
+
     public override NameUrlControl NameUrlControlInstance => _nameUrlControl;
 
 
@@ -116,7 +137,7 @@ public class EsriServiceControl : NameUrlUserConrol, IInitParameter, ISubmit
 
                 _nameUrlControl.InitParameter = _imsService;
 
-                _gbService.Label = "IMS Dienst";
+                _gbService.Label = _localizer.Localize("ims-service");
                 _gbAgs.Visible = false;
             }
             else if (value is ArcServerService)
@@ -353,7 +374,7 @@ public class EsriServiceControl : NameUrlUserConrol, IInitParameter, ISubmit
 
                 string mapName = (
                     descriptionResult.mapName?.ToLower() == "layers" || descriptionResult.mapName?.ToLower() == "layer"
-                        ? String.Empty 
+                        ? String.Empty
                         : descriptionResult.mapName
                     ) ?? String.Empty;
                 _nameUrlControl.SetName(mapName.OrTake(_agsService.Service?.Split("/").Last()), true);

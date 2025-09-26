@@ -1,12 +1,15 @@
 ﻿using E.Standard.Cms.Configuration.Models;
 using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.Plattform;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Schema;
 using E.Standard.Configuration;
 using E.Standard.Json;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Security.App.Services.Abstraction;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -20,10 +23,12 @@ namespace E.Standard.Cms.Configuration.Services;
 public class CmsConfigurationService
 {
     private readonly CmsConfigurationServiceOptions _options;
+    private readonly ILocalizer _localizer;
 
     public CmsConfigurationService(
         IOptionsMonitor<CmsConfigurationServiceOptions> optionsMonitor,
-        IEnumerable<IConfigValueParser> configValueParsers)
+        IEnumerable<IConfigValueParser> configValueParsers,
+        IStringLocalizerFactory stringLocalizer)
     {
         _options = optionsMonitor.CurrentValue;
 
@@ -55,7 +60,7 @@ public class CmsConfigurationService
             doc.Load(_options.ContentPath + "/schemes/" + cmsItem.Scheme + "/schema.xml");
 
             CMS[cmsItem.Id] = new E.Standard.CMS.Core.CMSManager(doc);
-            CMS[cmsItem.Id].SetConnectionString(new CmsItemTransistantInjectionServicePack(null), cmsItem.Path);
+            CMS[cmsItem.Id].SetConnectionString(new CmsItemTransistantInjectionServicePack(null, stringLocalizer), cmsItem.Path);
             CMS[cmsItem.Id].CmsDisplayName = cmsItem.Name;
             CMS[cmsItem.Id].CmsSchemaName = cmsItem.Scheme;
 
@@ -67,6 +72,8 @@ public class CmsConfigurationService
             }
             catch { }
         }
+
+        _localizer = stringLocalizer.CreateCmsLocalizer(typeof(CmsConfigurationService));
     }
 
     public readonly CmsConfig Instance;
@@ -78,6 +85,12 @@ public class CmsConfigurationService
     {
         try
         {
+            string localized = _localizer.Localize($"scheme.webgis.{key}", ILocalizer.LocalizeMode.ExcactKeyOnly, ILocalizer.LocalizerDefaultValue.Null);
+            if (!String.IsNullOrEmpty(localized))
+            {
+                return localized;
+            }
+
             if (TranslationDictionary == null)
             {
                 return key;

@@ -1,4 +1,5 @@
 ﻿using Cms.AppCode.Extensions.DependencyInjection;
+using Cms.AppCode.Services;
 using E.DataLinq.Code.Extensions.DependencyInjection;
 using E.Standard.ActiveDirectory.Services.ApplicationSecurity;
 using E.Standard.Azure.Extensions.DependencyInjection;
@@ -35,6 +36,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -324,6 +326,20 @@ public class Startup
         services.AddTransient<ExportCmsService>();
 
         #endregion
+
+        #region Localization
+
+        services.AddMarkdownLocalizerFactory<CultureProvider>(config =>
+        {
+            config.SupportedLanguages = ["de", "en"];
+#if DEBUG
+            config.DefaultLanguage = "en";
+#else
+            config.DefaultLanguage = config.SupportedLanguages.First();
+#endif
+        });
+
+#endregion
 
         services.AddTransient<CmsItemInjectionPackService>();
     }

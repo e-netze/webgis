@@ -74,7 +74,7 @@ public class EditingFeatureTransfer : CopyableNode, ICreatable, IUI, IPersistabl
 
     public IUIControl GetUIControl(bool create)
     {
-        IInitParameter ip = new NameUrlControl();
+        IInitParameter ip = new NameUrlControl(_servicePack);
 
         ip.InitParameter = this;
 

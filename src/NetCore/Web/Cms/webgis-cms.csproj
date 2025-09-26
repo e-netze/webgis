@@ -121,4 +121,9 @@
     <Folder Include="_config\" />
   </ItemGroup>
 
+	<ItemGroup>
+     <Content Include="l10n\**\*.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

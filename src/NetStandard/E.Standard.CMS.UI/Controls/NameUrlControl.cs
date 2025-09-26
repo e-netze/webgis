@@ -1,5 +1,10 @@
+#nullable enable
+
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.UI.Abstraction;
+using E.Standard.CMS.UI.Extensions;
+using E.Standard.Localization.Abstractions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,13 +14,26 @@ namespace E.Standard.CMS.UI.Controls;
 
 public class NameUrlControl : UserControl, IInitParameter
 {
-    private NameUrl _nameUrl = null;
+    private NameUrl? _nameUrl = null;
 
-    public NameUrlControl(string name = "")
+    public NameUrlControl(string name)
+        : this(null, name)
+    {
+    }
+
+    public NameUrlControl(CmsItemTransistantInjectionServicePack? servicePack = null, string name = "")
         : base(name)
     {
-        this.txtName = new Input("Name") { Label = "Name/Bezeichnung", Placeholder = "Anzeigename", Required = true };
-        this.txtUrl = new Input("Url") { Label = "Url", Placeholder = "Kurzname, für Url Aufrufe (nur Kleinbuchstaben und Nummern)", Required = true };
+        ILocalizer? localizer = servicePack?.GetLocalizer(typeof(NameUrlControl));
+
+        this.txtName = new Input("Name") { 
+            Label = localizer.LocalizeOrDefault("name", "Name/Bezedichnung"), 
+            Placeholder = localizer.LocalizeOrDefault("displayname", "Anzeigename"), 
+            Required = true };
+        this.txtUrl = new Input("Url") { 
+            Label = localizer.LocalizeOrDefault("url", "Url"), 
+            Placeholder = localizer.LocalizeOrDefault("url:body", "Kurzname, für Url Aufrufe (nur Kleinbuchstaben und Nummern)"), 
+            Required = true };
 
         this.txtUrl.DependsFrom = "Name";
         this.txtUrl.ModifyMethods = new string[] { "toLowerCase" };
@@ -28,12 +46,12 @@ public class NameUrlControl : UserControl, IInitParameter
         regexReplace.Add(new KeyValuePair<string, string>("[^A-Za-z0-9_]", ""));
         this.txtUrl.RegexReplace = regexReplace;
 
-        txtName.OnChange += txtName_TextChanged;
-        txtUrl.OnChange += txtUrl_TextChanged;
+        txtName.OnChange += txtName_TextChanged!;
+        txtUrl.OnChange += txtUrl_TextChanged!;
 
         var groupBox = new GroupBox()
         {
-            Label = "Allgemeine Eigenschaften"
+            Label = localizer.LocalizeOrDefault("general", "Allgemeine Eigenschaften")
         };
         groupBox.AddControls(new Control[] { this.txtName, this.txtUrl });
 
@@ -44,7 +62,7 @@ public class NameUrlControl : UserControl, IInitParameter
         : this(control.Name)
     {
         //_nameUrl = control._nameUrl;
-        this.InitParameter = control._nameUrl;
+        this.InitParameter = control._nameUrl!;
 
         this.NameIsVisible = control.NameIsVisible;
         this.UrlIsVisible = control.UrlIsVisible;
