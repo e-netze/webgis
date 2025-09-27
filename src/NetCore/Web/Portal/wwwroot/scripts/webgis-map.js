@@ -763,7 +763,7 @@ webgis.mapInitializer = (function (m) {
                     for (var m in webgis.initialParameters.markers) {
                         var marker = webgis.initialParameters.markers[m];
                         markerCollection.features.push({
-                            oid: m,
+                            oid: '#service:#default:' + m,
                             type: "Feature",
                             geometry: { type: "Point", coordinates: [marker.lng, marker.lat] },
                             properties: { _fulltext: marker.text || '' }

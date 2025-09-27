@@ -288,7 +288,9 @@
 
         var reorderAble = map.queryResultFeatures.reorderAble();
 
-        var $ul = $("<ol class='webgis-geojuhu-results'>").appendTo($parent);
+        var $ul = $("<ol class='webgis-geojuhu-results'>")
+            .data('map', map)
+            .appendTo($parent);
         for (var f in features) {
             var feature = features[f];
             var query = dynamicContentQuery;
@@ -342,7 +344,9 @@
                     .appendTo($li)
                     .click(function (e) {
                         e.stopPropagation();
-                        var map = $(this).closest('.webgis-search-result-holder').data('map');
+                        let $this = $(this);
+                        let map = $(this).closest('.webgis-geojuhu-results').data('map')
+                               || $(this).closest('.webgis-search-result-holder').data('map');
                         map.queryResultFeatures.removeFeature($(this).closest('li').attr('data-id'));
                     });
             }
@@ -368,7 +372,7 @@
             $li.click(function () {
                 var $this = $(this);
                 var $list = $this.closest('.webgis-geojuhu-results');
-                var map = $this.closest('.webgis-search-result-holder').data('map');
+                var map = $list.data('map') || $this.closest('.webgis-search-result-holder').data('map');
                 var feature = $this.data('feature');
 
                 if (!feature || !map)
