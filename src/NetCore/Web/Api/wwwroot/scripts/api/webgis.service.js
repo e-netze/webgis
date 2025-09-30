@@ -895,6 +895,15 @@
         }
     };
 
+    /* Time Info */
+    this.hasTimeInfoLayers = function () {
+        return this.getTimeInfoLayers().length > 0;
+    };
+    this.getTimeInfoLayers = function () {
+        let timeInfoLayers = this.layers.filter(layer => layer.time_info && layer.time_info.extent && layer.time_info.extent.length === 2);
+        return timeInfoLayers;
+    };
+
     /* Static Overlays ... */
     this.setAffinePoints = function (affinePoints) {
         //console.log('service.setAffinePoints', affinePoints);

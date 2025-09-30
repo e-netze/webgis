@@ -1562,6 +1562,10 @@
                 selected: element.value,
             });
         }
+        else if (typeof webgis.ui.builder[element.type] === 'function') {
+            $newElement = $("<div " + elementProperties(element, options) + "></div>").appendTo($parent);
+            webgis.ui.builder[element.type](map, $newElement, element);
+        }
         else {
             var repeat = element.repeat || 1;
             for (var i = 0; i < repeat; i++) {

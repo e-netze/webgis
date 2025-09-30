@@ -48,7 +48,8 @@
     this.presenation = {
         labeling: 'webgis.tools.presentation.labeling',
         filter: 'webgis.tools.presentation.visfilter',
-        filterRemove: 'webgis.tools.presentation.visfilterremoveall'
+        filterRemove: 'webgis.tools.presentation.visfilterremoveall',
+        timeFilter: 'webgis.tools.presentation.timefilter'
     };
     this._toolData = [];
     this.getToolData = function (toolId) {

@@ -43,7 +43,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
 
     }
 
-    public string Container => "Presentation";
+    public string Container => "Query";
 
     public bool HasUI => true;
 

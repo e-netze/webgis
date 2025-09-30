@@ -18,4 +18,6 @@ public interface IDisplay
     double DisplayRotation { get; set; }
 
     ArgbColor BackgroundColor { get; set; }
+
+    long[] TimeEpoch { get; set; }
 }

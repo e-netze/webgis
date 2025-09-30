@@ -32,7 +32,7 @@ public class JsonTimeInfo
 
     [JsonProperty("timeInterval")]
     [System.Text.Json.Serialization.JsonPropertyName("timeInterval")]
-    public double TimeInterval { get; set; }
+    public float TimeInterval { get; set; }
 
     [JsonProperty("timeIntervalUnits")]
     [System.Text.Json.Serialization.JsonPropertyName("timeIntervalUnits")]

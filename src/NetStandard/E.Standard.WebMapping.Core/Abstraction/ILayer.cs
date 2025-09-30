@@ -1,5 +1,8 @@
+#nullable enable
+
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Filters;
+using System;
 using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.Core.Abstraction;
@@ -16,6 +19,8 @@ public interface ILayer : IClone<ILayer, IMapService>
     double MaxScale { get; }
 
     bool Queryable { get; }
+
+    LayerTimeInfo TimeInfo { get; }
 
     FieldCollection Fields { get; }
 

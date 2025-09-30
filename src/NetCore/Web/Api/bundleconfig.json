@@ -60,6 +60,7 @@
     "inputFiles": [
       "wwwroot/scripts/api/ui/webgis.ui.plugins.js",
       "wwwroot/scripts/api/ui/webgis.ui.plugins.general.js",
+      "wwwroot/scripts/api/ui/webgis.ui.plugins.timefilter.js",
       "wwwroot/scripts/api/ui/webgis_contentsearch.js",
       "wwwroot/scripts/api/ui/webgis_presentationToc.js",
       "wwwroot/scripts/api/ui/webgis_addServicesToc.js",

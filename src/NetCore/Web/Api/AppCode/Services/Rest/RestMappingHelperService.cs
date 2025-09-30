@@ -84,9 +84,11 @@ public class RestMappingHelperService /*: IDisposable*/
 
         map.ImageWidth = int.Parse(request.FormOrQuery("width"));
         map.ImageHeight = int.Parse(request.FormOrQuery("height"));
+        map.TimeEpoch = request.FormOrQuery("time_epoch")?.UrlParameterToArray<long>();
+
         string[] bbox = request.FormOrQuery("bbox").ToString().Split(',');
         string[] layerIds = request.FormOrQuery("layers")?.ToString().Split(',') ?? new string[0];
-
+       
         string crsId = request.FormOrQuery("crs");
         if (!String.IsNullOrEmpty(crsId))
         {

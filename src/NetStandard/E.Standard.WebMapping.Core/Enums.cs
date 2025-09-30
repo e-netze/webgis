@@ -165,3 +165,18 @@ public enum MapServiceCapability
     Identify,
     Legend
 }
+
+public enum TimePeriod
+{
+    Unknown,
+    MilliSeconds,
+    Seconds,
+    Minutes,
+    Hours,
+    Days,
+    Weeks,
+    Months,
+    Years,
+    Decades,
+    Centuries
+}

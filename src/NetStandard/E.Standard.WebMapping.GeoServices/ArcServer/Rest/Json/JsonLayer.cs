@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿#nullable enable
+
+using Newtonsoft.Json;
 using System;
 using System.Text;
 
@@ -17,23 +19,23 @@ public class JsonLayer
 
     [JsonProperty("name")]
     [System.Text.Json.Serialization.JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonProperty("type")]
     [System.Text.Json.Serialization.JsonPropertyName("type")]
-    public string Type { get; set; }
+    public string? Type { get; set; }
 
     [JsonProperty("geometryType")]
     [System.Text.Json.Serialization.JsonPropertyName("geometryType")]
-    public string GeometryType { get; set; }
+    public string? GeometryType { get; set; }
 
     [JsonProperty("subLayers")]
     [System.Text.Json.Serialization.JsonPropertyName("subLayers")]
-    public JsonLayer[] SubLayers { get; set; }
+    public JsonLayer[]? SubLayers { get; set; }
 
     [JsonProperty("parentLayer")]
     [System.Text.Json.Serialization.JsonPropertyName("parentLayer")]
-    public JsonLayer ParentLayer { get; set; }
+    public JsonLayer? ParentLayer { get; set; }
 
     [JsonProperty("minScale")]
     [System.Text.Json.Serialization.JsonPropertyName("minScale")]
@@ -57,15 +59,15 @@ public class JsonLayer
 
     [JsonProperty("fields")]
     [System.Text.Json.Serialization.JsonPropertyName("fields")]
-    public JsonField[] Fields { get; set; }
+    public JsonField[]? Fields { get; set; }
 
     [JsonProperty("extent")]
     [System.Text.Json.Serialization.JsonPropertyName("extent")]
-    public JsonExtent Extent { get; set; }
+    public JsonExtent? Extent { get; set; }
 
     [JsonProperty("drawingInfo")]
     [System.Text.Json.Serialization.JsonPropertyName("drawingInfo")]
-    public JsonDrawingInfo DrawingInfo { get; set; }
+    public JsonDrawingInfo? DrawingInfo { get; set; }
 
     [JsonProperty("hasZ")]
     [System.Text.Json.Serialization.JsonPropertyName("hasZ")]
@@ -77,11 +79,15 @@ public class JsonLayer
 
     [JsonProperty("description")]
     [System.Text.Json.Serialization.JsonPropertyName("description")]
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     [JsonProperty("hasAttachments")]
     [System.Text.Json.Serialization.JsonPropertyName("hasAttachments")]
     public bool HasAttachments { get; set; } = false;
+
+    [JsonProperty("timeInfo")]
+    [System.Text.Json.Serialization.JsonPropertyName("timeInfo")]
+    public JsonTimeInfo? TimeInfo { get; set; }
 
     public string FullName
     {

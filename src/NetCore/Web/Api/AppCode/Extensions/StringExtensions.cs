@@ -52,4 +52,29 @@ static public class StringExtensions
             }
         }
     }
+
+    static public T[] UrlParameterToArray<T>(this string str, char separator = ',')
+    {
+        if (String.IsNullOrEmpty(str) || "null".Equals(str, StringComparison.OrdinalIgnoreCase))
+        {
+            return new T[0];
+        }
+
+        return str.Split(separator).Select(s => 
+                typeof(T) switch
+                {
+                    Type t when t == typeof(short) => (T)(object)short.Parse(s.Trim()),
+                    Type t when t == typeof(int) => (T)(object)int.Parse(s.Trim()),
+                    Type t when t == typeof(long) => (T)(object)long.Parse(s.Trim()),
+
+                    Type t when t == typeof(string) => (T)(object)s.Trim(),
+                    
+                    Type t when t == typeof(float) => (T)(object)float.Parse(s.Trim()),
+                    Type t when t == typeof(double) => (T)(object)double.Parse(s.Trim()),
+
+                    Type t when t == typeof(bool) => (T)(object)bool.Parse(s.Trim()),
+                    _ => (T)Convert.ChangeType(s.Trim(), typeof(T)),
+                }
+            ).ToArray();
+    }
 }

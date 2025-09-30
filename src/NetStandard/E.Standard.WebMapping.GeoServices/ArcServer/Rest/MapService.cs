@@ -27,6 +27,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 
@@ -257,7 +258,13 @@ public class MapService : IMapService2,
                                 HasM = jsonLayer.HasM,
                                 HasZ = jsonLayer.HasZ,
                                 Visible = jsonLayer.DefaultVisbilityIncludesGroups(), // .DefaultVisibility
-                                HasAttachments = jsonLayer.HasAttachments
+                                HasAttachments = jsonLayer.HasAttachments,
+                                TimeInfo = jsonLayer?.TimeInfo is not null
+                                    ? new LayerTimeInfo(
+                                        jsonLayer.TimeInfo.TimeExtent,
+                                        jsonLayer.TimeInfo.TimeInterval,
+                                        jsonLayer.TimeInfo.TimeIntervalUnits.ToTimePeriod(TimePeriod.Years))
+                                    : null
                             };
 
                             if (jsonLayer.Fields != null)

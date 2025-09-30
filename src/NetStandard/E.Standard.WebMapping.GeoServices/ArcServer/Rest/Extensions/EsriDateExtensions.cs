@@ -4,11 +4,15 @@ using System;
 using System.Globalization;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
+
 static public class EsriDateExtensions
 {
     static public string DateFormatString = "dd.MM.yyyy";
     static public string TimeFormatString = "HH:mm:ss";
     static public CultureInfo CultureInfo = CultureInfo.CurrentCulture;
+
+    static public DateTimeOffset EsriDateToDateTimeOffset(this long esriDateTime)
+        => new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(esriDateTime);
 
     static public string EsriDateToString(this object? dateValue, string? dateFormat = null, string? timeFormat = null)
     {

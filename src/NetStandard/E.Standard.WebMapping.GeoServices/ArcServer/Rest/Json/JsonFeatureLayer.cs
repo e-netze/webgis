@@ -74,8 +74,4 @@ public class JsonFeatureLayer
     [JsonProperty("hasAttachments")]
     [System.Text.Json.Serialization.JsonPropertyName("hasAttachments")]
     public bool HasAttachments { get; set; } = false;
-
-    [JsonProperty("timeInfo")]
-    [System.Text.Json.Serialization.JsonPropertyName("timeInfo")]
-    public JsonTimeInfo? TimeInfo { get; set; }
 }

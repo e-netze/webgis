@@ -282,10 +282,10 @@ public class Bridge : IBridge
             opacity = service.InitialOpacity
         };
 
-        List<ServiceInfoDTO.LayerInfo> layers = new List<ServiceInfoDTO.LayerInfo>();
+        List<ServiceInfoDTO.LayerInfoDTO> layers = new List<ServiceInfoDTO.LayerInfoDTO>();
         foreach (var layer in service.Layers)
         {
-            layers.Add(new ServiceInfoDTO.LayerInfo()
+            layers.Add(new ServiceInfoDTO.LayerInfoDTO()
             {
                 id = layer.ID,
                 idfieldname = layer.IdFieldName,

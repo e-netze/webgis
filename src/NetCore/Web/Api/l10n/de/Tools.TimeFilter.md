@@ -1,0 +1,5 @@
+﻿# name: Zeitfilter
+
+Zeitfilter setzen, um die Sichtbarkeit von Geo-Objekten einzuschränken.
+
+# container: Abfragen

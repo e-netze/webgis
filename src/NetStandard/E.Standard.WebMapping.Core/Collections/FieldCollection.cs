@@ -58,3 +58,4 @@ public class FieldCollection : ThreadSafeList<IField>
         return sb.ToString();
     }
 }
+

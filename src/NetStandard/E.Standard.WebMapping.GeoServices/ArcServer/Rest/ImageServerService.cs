@@ -269,6 +269,14 @@ public class ImageServerService : IMapService2,
                     this.Name = jsonImageService.Name.OrTake(this.ServiceShortname);
                 }
 
+                if(jsonImageService.TimeInfo is not null)
+                {
+                    layer.TimeInfo = new LayerTimeInfo(
+                        jsonImageService.TimeInfo.TimeExtent,
+                        jsonImageService.TimeInfo.TimeInterval.OrTake(1),
+                        jsonImageService.TimeInfo.TimeIntervalUnits.ToTimePeriod(TimePeriod.Years));
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -307,7 +315,7 @@ public class ImageServerService : IMapService2,
         {
             try
             {
-                string path = String.Format("exportImage?bbox={0},{1},{2},{3}&bboxSR={4}&size={5},{6}&imageSR={4}&time=&format={7}&pixelType={8}&noData={9}&noDataInterpretation={10}&interpolation={11}&compressionQuality={12}&bandIds={13}&mosaicRule={14}&renderingRule={15}&f=json",
+                string path = String.Format("exportImage?bbox={0},{1},{2},{3}&bboxSR={4}&size={5},{6}&imageSR={4}&format={7}&pixelType={8}&noData={9}&noDataInterpretation={10}&interpolation={11}&compressionQuality={12}&bandIds={13}&mosaicRule={14}&renderingRule={15}&time={16}&f=json",
                     _map.Extent?.MinX.ToPlatformNumberString(),
                     _map.Extent?.MinY.ToPlatformNumberString(),
                     _map.Extent?.MaxX.ToPlatformNumberString(),
@@ -322,7 +330,8 @@ public class ImageServerService : IMapService2,
                     _compressQaulity,
                     _bandIDs,
                     HttpUtility.UrlEncode(this.MosaicRule),
-                    HttpUtility.UrlEncode(this.RenderingRule)
+                    HttpUtility.UrlEncode(this.RenderingRule),
+                    _map.TimeEpoch?.Any() == true ? String.Join(",", _map.TimeEpoch) : null
                     );
                 string url = $"{_serviceUrl}/{path}";
                 var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();

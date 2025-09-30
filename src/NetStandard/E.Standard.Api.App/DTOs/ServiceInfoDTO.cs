@@ -34,7 +34,7 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string basemap_type { get; set; }
 
-    public LayerInfo[] layers { get; set; }
+    public LayerInfoDTO[] layers { get; set; }
 
     public PresentationDTO[] presentations { get; set; }
     public QueryDTO[] queries { get; set; }
@@ -173,7 +173,7 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
 
     #region Sub Classes
 
-    public sealed class LayerInfo : IHtml, WebMapping.Core.Api.Bridge.ILayerBridge
+    public sealed class LayerInfoDTO : IHtml, WebMapping.Core.Api.Bridge.ILayerBridge
     {
         public string name { get; set; }
         public string id { get; set; }
@@ -222,7 +222,12 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public string undropdownable_groupname { get; set; }
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public TimeInfoDTO time_info{ get; set; }
+
         private string _ogcId = null;
+
         [JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public string OgcId
@@ -479,6 +484,13 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
 
             return new double[] { vec[0], vec[1] };
         }
+    }
+
+    public sealed class TimeInfoDTO
+    {
+        public long[] extent { get; set; }
+        public float interval { get; set; } = 1f;
+        public string interval_unit { get; set; }
     }
 
     #endregion

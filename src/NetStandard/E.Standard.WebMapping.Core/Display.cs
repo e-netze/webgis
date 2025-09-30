@@ -126,6 +126,8 @@ public class Display : IDisplay
 
     public ArgbColor BackgroundColor { get; set; } = ArgbColor.White;
 
+    public long[] TimeEpoch { get; set; } = null;
+
     #endregion
 
     static public Envelope ProjectBounds(Envelope bounds, int targetSref)

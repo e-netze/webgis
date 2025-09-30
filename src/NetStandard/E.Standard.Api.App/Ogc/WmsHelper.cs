@@ -1503,7 +1503,7 @@ ex.Message +
         return serviceLayerId + "@" + service.id;
     }
 
-    private bool IsQueryableLayer(ServiceInfoDTO serviceInfo, ServiceInfoDTO.LayerInfo layerInfo)
+    private bool IsQueryableLayer(ServiceInfoDTO serviceInfo, ServiceInfoDTO.LayerInfoDTO layerInfo)
     {
         if (serviceInfo.queries == null)
         {
@@ -1515,7 +1515,7 @@ ex.Message +
                 select q).FirstOrDefault() != null;
     }
 
-    private QueryDTO GetLayerQuery(IMapService service, ServiceInfoDTO serviceInfo, ServiceInfoDTO.LayerInfo layerInfo)
+    private QueryDTO GetLayerQuery(IMapService service, ServiceInfoDTO serviceInfo, ServiceInfoDTO.LayerInfoDTO layerInfo)
     {
         var query = (from q in serviceInfo.queries
                      where q.associatedlayers != null && q.associatedlayers.Length > 0 && q.associatedlayers[0].id == layerInfo.id

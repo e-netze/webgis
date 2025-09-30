@@ -80,7 +80,9 @@ public abstract class Layer : ILayer
         }
     }
 
-    public bool Queryable { get; }
+    public bool Queryable { get; private set; }
+
+    public LayerTimeInfo TimeInfo { get; set; }
 
     public double MinScale
     {
@@ -190,6 +192,8 @@ public abstract class Layer : ILayer
         this._fields = layer.Fields;
 
         this.Description = layer.Description;
+        this.Queryable = layer.Queryable;
+        this.TimeInfo = layer.TimeInfo;
     }
     public static IMapService ServiceByLayer(IMap map, ILayer layer)
     {

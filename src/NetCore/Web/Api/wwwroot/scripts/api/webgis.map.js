@@ -3313,6 +3313,33 @@
     this.unsetAllFilters = function () {
         this._visfilters = [];
     };
+    /***** TimeInfo ****/
+    this._timeEpoch = null;
+    this.getTimeInfoServices = function () {
+        var timeInfoServices = [];
+        for (let serviceId in this.services) {
+            let service = this.services[serviceId];
+            if (service.hasTimeInfoLayers()) {
+                timeInfoServices.push(service);
+            }
+        }
+        return timeInfoServices;
+    };
+    this.setTimeFilter = function(start, end) {
+        console.log('setTimeFilter', start, end);
+        if (!start) {
+            this._timeEpoch = null;
+        } else if (!end) {
+            this._timeEpoch = [start]
+        } else {
+            this._timeEpoch = [start, end];
+        }
+
+        for (var service of this.getTimeInfoServices()) {
+            service.refresh();
+        }
+    };
+    this.getTimeEpoch = () => this._timeEpoch;
     /***** Labeling ****/
     this._labels = [];
     this.setLabeling = function (labeling) {
