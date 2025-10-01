@@ -1,4 +1,5 @@
-﻿@model Cms.Models.DeployModel
+﻿@using E.Standard.Cms.Extensions
+@model Cms.Models.DeployModel
 
 @{
     ViewData["Title"] = "Deplay";
@@ -11,7 +12,7 @@
     @foreach (var deploy in Model.CmsItem.Deployments)
     {
         var fi = new System.IO.FileInfo(deploy.Target);
-        var fiWargings = new System.IO.FileInfo(deploy.Target + ".warnings");
+        var fiWargings = deploy.Target.WarningsFileInfo();
 
     <div style="display:inline-block">
         <div class="tile wide deploy" data-cmsid="@Model.CmsItem.Id" data-name="@deploy.Name">

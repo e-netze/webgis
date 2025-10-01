@@ -6,7 +6,7 @@ using System.Text;
 
 namespace E.Standard.WebMapping.Core.Api.UI.Elements;
 
-public class UIInputAutocomplete : UIElement, IUIElementLabel
+public class UIInputAutocomplete : UIValidation, IUIElementLabel
 {
     public UIInputAutocomplete(string dataSource, int minLength = 1)
         : base("input-autocomplete")

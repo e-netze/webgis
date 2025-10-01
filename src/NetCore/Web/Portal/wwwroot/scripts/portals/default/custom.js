@@ -33,6 +33,8 @@ webgis.usability.singleResultButtons.push(
 
 webgis.usability.allowSelectSketchVertices = true;
 
+webgis.usability.select_pro_behaviour = "select2";
+
 webgis.hooks["query_result_feature"]["enetze_fotos"] = function (map, $parent, feature, base) {
     $(feature.properties.Vorschau).appendTo($parent);
 };

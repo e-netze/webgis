@@ -23,7 +23,7 @@
 
 @if (Model.IsContentAuthor)
 {
-    <script src="@((request.Uri().ToString().Split('?')[0].EndsWith("/") ? "../":"") +Url.Content("Scripts/webgis-portal-content.js"))"></script>
+    <script src="@((request.Uri().ToString().Split('?')[0].EndsWith("/") ? "../" : "") + Url.Content("Scripts/webgis-portal-content.js?") + WebGISVersion.CssVersion)"></script>
     @*<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>*@
 
     <script src="@(portalUrl)/scripts/tinymce/4/tinymce.js"></script>

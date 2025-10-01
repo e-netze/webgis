@@ -1,4 +1,5 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using E.Standard.Extensions.Collections;
+using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -429,13 +430,11 @@ class FeatureLayer : RestLayer,
         foreach (var attachment in attachmentResponse
                                     ?.AttachmentGroups
                                     ?.SelectMany(g => g.AttachmentInfos)
-                                    .Where(i => (i.ContentType == "image/jpeg"
-                                             || i.ContentType == "image/jpg"
-                                             || i.ContentType == "image/gif"
-                                             || i.ContentType == "image/png")
-                                             && !String.IsNullOrEmpty(i.Url)) ?? [])
+                                    .Where(i => !String.IsNullOrEmpty(i.Url)) ?? [])
         {
-            var data = await authHandler.TryGetRawAsync(_service, attachment.Url);
+            var data = attachment.ContentType.IsImageContentType() 
+                       ? await authHandler.TryGetRawAsync(_service, attachment.Url)
+                       : Encoding.UTF8.GetBytes(attachment.Url);
 
             if (data is not null && data.Length > 0)
             {

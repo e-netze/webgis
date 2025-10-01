@@ -52,6 +52,7 @@
     "mapmarkup-tool-text": "Text",
     "mapmarkup-tool-point": "Point",
     "mapmarkup-tool-dimline": "Dimension line",
+    "mapmarkup-tool-dimpolygon": "Dimension polygon", 
     "mapmarkup-tool-hectoline": "Hectometer line",
 
     "mapmarkup-pointer": "Click on an existing mapmarkup object in the map to edit it. To draw a new object, the corresponding tool must be selected.",
@@ -66,6 +67,7 @@
     "mapmarkup-distance_circle": "Click on the map to set the center of the distance circle. Then click again to define the radius. Alternatively, you can specify a radius under 'Properties (Radius...)'. There you can also set the number of intermediate circles.",
     "mapmarkup-compass_rose": "Click on the map to set the center of the compass rose. Then click again to define the radius.",
     "mapmarkup-dimline": "Click on the map to define at least two vertices of the line. Each segment will be labeled with its length [m].",
+    "mapmarkup-dimpolygon": "Click on the map to define at least three vertices of the polygon. Each segment will be labeled with its length [m]. The area will be labeled with its size [m²].", 
     "mapmarkup-hectoline": "Click on the map to define at least two vertices of the line. Intermediate points will be marked and labeled depending on the configured distance (under Properties).",
 
     "service-order": "Service Order",
@@ -292,6 +294,8 @@
     "sketch-ortho-off": "End orthogonal mode",
     "sketch-trace-off": "End trace mode",
     "sketch-fan-off": "End fan mode",
+    "sections": "Sections",
+    "section": "Section",
 
     // query combos
     "query-choose-category": "Choose category (optional)",
@@ -326,5 +330,6 @@
     "show-markers-on-new-queries": "Show markers on new queries", 
     "show-markers-on-new-queries-info": "If this option is enabled, markers will be displayed on the map for new query results. If disabled, only the results will be shown in the table without markers on the map.",
     "select-new-query-results": "Select new query results", 
-    "select-new-query-results-info": "If this option is enabled, new query results will be automatically selected in the map."
+    "select-new-query-results-info": "If this option is enabled, new query results will be automatically selected in the map.",
+    "query-layer-not-visible-notification": "The queried layer is hidden in the map. Click here to show it."
 };

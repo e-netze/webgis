@@ -1,6 +1,8 @@
 ﻿using E.Standard.Extensions.Compare;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace E.Standard.Extensions.Security;
@@ -60,5 +62,12 @@ static public class StringExtensions
         }
 
         return input.IsUrl() || input.Contains("../");
+    }
+
+    public static string UrlToHash(this string url)
+    {
+        using var sha256 = System.Security.Cryptography.SHA256.Create();
+        string hash = Convert.ToHexString(sha256.ComputeHash(Encoding.UTF8.GetBytes(url)));
+        return hash;
     }
 }

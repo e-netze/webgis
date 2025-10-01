@@ -637,13 +637,22 @@
                 this.loadScript(webgis.baseUrl + '/lib/nav-compass/src/js/nav-compass.js', webgis.baseUrl + '/lib/nav-compass/src/css/nav-compass.css', callback, arg);
             }
         }
-        else if (lib == "sortable") {
+        else if (lib === "sortable") {
             if (!window.Sortable) {
                 loading = true;
                 this.loadScript(webgis.baseUrl + '/lib/sortable/sortable.min.js', '', callback, arg);
             }
         }
-        else if (lib == "monaco-editor") {
+        else if (lib === "select2") {
+            if(!$.fn.select2) {
+                loading = true;
+                this.loadScript(webgis.baseUrl + '/lib/select2/dist/js/select2.min.js', webgis.baseUrl + '/lib/select2/dist/css/select2.min.css', function () {
+                    //$.fn.select2.defaults.set('theme', 'webgis');
+                    callback(arg);
+                }, arg);
+            }
+        }
+        else if (lib === "monaco-editor") {
             if (!window.monaco) {
                 loading = true;
                 //window.require = window.require || {};
@@ -2030,10 +2039,13 @@
                     webgis._toolInfos[client] = result.tools;
 
                     // overriede custom properties
-                    var overrideProperties = ["name", "container", "tooltip", "image", "cursor", "help_urlpath"]
+                    var overrideProperties = ["name", "container", "tooltip", "image", "cursor", "help_urlpath", "priority"]
 
-                    for (let t in result.tools) {
-                        let tool = result.tools[t];
+                    let tools = result.tools;
+
+                    for (let t in tools) {
+                        let tool = tools[t];
+                        tool.order = 0;
                         if (webgis.usability.toolProperties[tool.id]) {
                             for (let p in overrideProperties) {
                                 let prop = overrideProperties[p];
@@ -2043,8 +2055,11 @@
                         webgis.l10n.set(tool.id, tool.name);
                         webgis.l10n.set(tool.id + ".tooltip", tool.tooltip);
                     }
+
+                    //console.log(tools);
+
                     if (callback)
-                        callback(result.tools);
+                        callback(tools);
                 }
             });
         }
@@ -2327,6 +2342,11 @@
                                     dataItems.push(item);
                                 }
                             });
+
+                            // on enter: select first... on enter
+                            if (dataItems.length > 1 && webgis.usability.quickSearch.selectFirstOnEnter === true) {
+                                dataItems = [dataItems[0]];
+                            }
 
                             // if only one left => do like it is selected => get original ...
                             if (dataItems.length === 1 && $this.data('autocomplete-onselect')) {
@@ -3335,7 +3355,7 @@ webgis.setCurrentKeyCodeFromEvent = function (e) {
         if (e.ctrlKey === true) key += 'ctrl+';
         if (e.shiftKey === true) key += 'shift+';
 
-        if (e.key.length == 1) {
+        if (e.key && e.key.length === 1) {
             key += e.key || e.code || '';
         }
 

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using E.Standard.Extensions.Formatting;
 
 namespace Portal.Core.Models.Map;
 
@@ -134,7 +135,8 @@ public class MapParameters
         mapParameters.Marker = null;
         if (!String.IsNullOrWhiteSpace(request.Query["marker"].ToStringOrEmptyIfMalware()))
         {
-            var mapMarker = JSerializer.Deserialize<MapMarkerDTO>(request.Query["marker"]);
+            var markerJson = request.Query["marker"].ToString().FixToStrictJson();
+            var mapMarker = JSerializer.Deserialize<MapMarkerDTO>(markerJson);
 
             await PrepareMapMarkers(new MapMarkerDTO[] { mapMarker }, context, api);
 
@@ -147,7 +149,8 @@ public class MapParameters
 
         if (!String.IsNullOrWhiteSpace(request.Query["markers"].ToStringOrEmptyIfMalware()))
         {
-            var mapMarkers = JSerializer.Deserialize<MapMarkerDTO[]>(request.Query["markers"]);
+            var markersJson = request.Query["markers"].ToString().FixToStrictJson();
+            var mapMarkers = JSerializer.Deserialize<MapMarkerDTO[]>(markersJson);
 
             await PrepareMapMarkers(mapMarkers, context, api);
 

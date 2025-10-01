@@ -58,6 +58,8 @@
   {
     "outputFileName": "wwwroot/scripts/api/api-ui.min.js",
     "inputFiles": [
+      "wwwroot/scripts/api/ui/webgis.ui.plugins.js",
+      "wwwroot/scripts/api/ui/webgis.ui.plugins.general.js",
       "wwwroot/scripts/api/ui/webgis_contentsearch.js",
       "wwwroot/scripts/api/ui/webgis_presentationToc.js",
       "wwwroot/scripts/api/ui/webgis_addServicesToc.js",
@@ -84,7 +86,7 @@
       "wwwroot/scripts/api/ui/webgis_bubble.js",
       "wwwroot/scripts/api/ui/webgis_control_upload.js",
       "wwwroot/scripts/api/ui/webgis_graphics_info_container.js",
-      "wwwroot/scripts/api/ui/webgis_sketch_info_container.js",
+      "wwwroot/scripts/api/ui/webgis.ui.plugings.sketch_info_container.js",
       "wwwroot/scripts/api/ui/webgis_validation.js",
       "wwwroot/scripts/api/ui/webgis_liveshare.js",
       "wwwroot/scripts/api/ui/webgis_errors.js",

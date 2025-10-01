@@ -1,4 +1,5 @@
-﻿using E.Standard.CMS.Core;
+﻿using Azure;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
@@ -17,6 +18,7 @@ using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Logging.Abstraction;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -180,17 +182,26 @@ public class Chainage : IApiServerToolLocalizableAsync<Chainage>,
             };
             foreach (var serviceId in availableServiceIds)
             {
-                foreach (var chainageTheme in bridge.ServiceChainageThemes(serviceId))
+                foreach (var chainageTheme in bridge.ServiceChainageThemes(serviceId)
+                                                    .Where(c => !String.IsNullOrEmpty(c.LineLayerId) && String.IsNullOrEmpty(c.ApiServiceUrl)))  // ignore chainage from api calls 
                 {
-                    var lineFeatures = await bridge.QueryLayerAsync(serviceId, chainageTheme.LineLayerId, filter);
-                    if (lineFeatures.Count > 0)
+                    try
                     {
-                        result.Add(new CanIdentifyResult()
+                        var lineFeatures = await bridge.QueryLayerAsync(serviceId, chainageTheme.LineLayerId, filter);
+                        if (lineFeatures.Count > 0)
                         {
-                            Name = chainageTheme.Name,
-                            ToolParameters = "chainage-theme-id=" + chainageTheme.Id + ";chainage-map-scale=" + (int)scale,
-                            Count = 1
-                        });
+                            result.Add(new CanIdentifyResult()
+                            {
+                                Name = chainageTheme.Name,
+                                ToolParameters = "chainage-theme-id=" + chainageTheme.Id + ";chainage-map-scale=" + (int)scale,
+                                Count = 1
+                            });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        bridge.RequestContext.GetRequiredService<IExceptionLogger>()
+                            .LogException(CmsDocument.UserIdentification.Anonymous, "", "", "Chainage.CanIdentifyAsync", ex);
                     }
                 }
             }

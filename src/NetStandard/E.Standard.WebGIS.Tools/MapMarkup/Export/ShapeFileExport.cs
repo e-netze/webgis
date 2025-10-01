@@ -57,15 +57,15 @@ class ShapeFileExport : IExport
                     continue;
                 }
 
-                ShapeFile.geometryType geomtryType = Mapping.ShapeGeometryMapping[toolType];
-                var propertymapping = Mapping.ShapePropertyMapping[toolType];
+                ShapeFile.geometryType geometryType = Mapping.ShapeGeometryMapping[toolType];
+                var propertyMapping = Mapping.ShapePropertyMapping[toolType];
 
                 List<IField> fields = new List<IField>();
                 fields.Add(new Field("ID", FieldType.ID));
-                fields.AddRange(propertymapping.Keys
+                fields.AddRange(propertyMapping.Keys
                                                .Select(k => new Field(k)));
 
-                var shapeFile = ShapeFile.Create(_streamProvider, toolType, geomtryType, fields);
+                var shapeFile = ShapeFile.Create(_streamProvider, toolType, geometryType, fields);
                 if (shapeFile == null)
                 {
                     throw new Exception($"Can't create shape file {toolType}");
@@ -80,9 +80,9 @@ class ShapeFileExport : IExport
                     transformer.Transform(shape);
                     shapeFeature.Shape = shape;
 
-                    foreach (var fieldName in propertymapping.Keys)
+                    foreach (var fieldName in propertyMapping.Keys)
                     {
-                        shapeFeature.Attributes.Add(new WebMapping.Core.Attribute(fieldName, feature.GetPropery<string>(propertymapping[fieldName])));
+                        shapeFeature.Attributes.Add(new WebMapping.Core.Attribute(fieldName, feature.GetPropery<string>(propertyMapping[fieldName])));
                     }
 
                     shapeFile.WriteShape(shapeFeature);

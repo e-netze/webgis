@@ -111,6 +111,12 @@ public class SimpleSetup
         string apiHost = args.GetArgumentValue("-api-url") ?? "http://localhost:5001";
 #endif
 
+        string defaultCrs = args.GetArgumentValue("-default-crs");
+        if (String.IsNullOrWhiteSpace(defaultCrs))
+        {
+            defaultCrs = "3857";
+        }
+
 #if DEBUG || DEBUG_INTERNAL
         string company = "dev";
 #else
@@ -122,7 +128,8 @@ public class SimpleSetup
                                .Replace("{api-onlineresource}", apiHost)
                                .Replace("{api-internal-url}", apiHost)
                                .Replace("{portal-onlineresource}", portalHost)
-                               .Replace("{company}", company);
+                               .Replace("{company}", company)
+                               .Replace("{default-calc-crs}", defaultCrs);
 
         return configText;
     }
@@ -137,6 +144,7 @@ public class SimpleSetup
     private const string EnvKey_PortalOnlineResourceUrl = "PORTAL_ONLINERESOURCE_URL";
     private const string EnvKey_ConfigRootPath = "PORTAL_CONFIG_ROOT_PATH";
     private const string EnvKey_Company = "COMPANY";
+    private const string EnvKey_DefaultCrs = "DEFAULT_CRS";
 
     private void LinuxPreSetup()
     {
@@ -164,6 +172,7 @@ public class SimpleSetup
 #else
             "my-company";
 #endif
+        string defaultCrs = GetEnvironmentVariable(EnvKey_DefaultCrs) ?? "3857";
 
         var fi = new FileInfo(configTemplateFile);
 
@@ -172,7 +181,8 @@ public class SimpleSetup
                                .Replace("{api-onlineresource}", apiOnlineResource)
                                .Replace("{api-internal-url}", apiInternalUrl)
                                .Replace("{portal-onlineresource}", portalOnlineResource)
-                               .Replace("{company}", company);
+                               .Replace("{company}", company)
+                               .Replace("{default-calc-crs}", defaultCrs);
 
         return configText;
     }

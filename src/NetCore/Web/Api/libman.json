@@ -34,6 +34,11 @@
     },
     {
       "provider": "unpkg",
+      "library": "select2@4.1.0-rc.0",
+      "destination": "wwwroot/lib/select2/"
+    },
+    {
+      "provider": "unpkg",
       "library": "@microsoft/signalr@8.0.7",
       "destination": "wwwroot/scripts/signalr/"
       //,
@@ -41,6 +46,6 @@
       //  "dist/browser/signalr.js",
       //  "dist/browser/signalr.min.js"
       //]
-    }
+    } 
   ]
 } 

@@ -194,6 +194,11 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
                     xml.Append($@" attribute_picker_query=""{editField.AttributePickerQueryId.EscapeXmlString()}""");
                     xml.Append($@" attribute_picker_field=""{editField.AttributePickerField.EscapeXmlString()}""");
                 }
+
+                if(editField.DomainProBbehaviour)
+                {
+                    xml.Append(@" domain_pro_behaviour=""true""");
+                }
             }
 
             if (!categories.ContainsKey(editField.CategoryId))
@@ -349,6 +354,8 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
 
             this.DomainList = cmsNode.LoadString("domain_list");
 
+            this.DomainProBbehaviour = (bool)cmsNode.Load("domain_pro_behaviour", false);
+
             string attributePickerServiceQuery = cmsNode.LoadString("attribute_picker_query");
             if (!String.IsNullOrEmpty(attributePickerServiceQuery) &&
                 attributePickerServiceQuery.Contains("@"))
@@ -396,6 +403,8 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
         public string DbOrderBy { get; set; }
 
         public string DomainList { get; set; }
+
+        public bool DomainProBbehaviour { get; set; }
 
         public string AttributePickerServiceId { get; set; }
         public string AttributePickerQueryId { get; set; }

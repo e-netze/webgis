@@ -5,7 +5,11 @@ namespace E.Standard.WebMapping.Core.Api.UI.Elements;
 
 public class UIInputText : UIValidation, IUIElementLabel, IUIElementReadonly
 {
-    public UIInputText(bool readOnly = false)
+    public UIInputText() : this(false)
+    {
+    }
+
+    public UIInputText(bool readOnly)
         : base("input-text")
     {
         this.@readonly = readOnly;

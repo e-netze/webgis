@@ -879,6 +879,7 @@
             button.map = options.map;
             if (element.text) {
                 $("<div>").text(element.text).addClass('webgis-ui-imagebutton-text').appendTo($newElement);
+                $newElement.attr('title', element.text);
             }
             $(button).click(function () {
                 var $this= $(this),
@@ -1355,6 +1356,12 @@
                     map.queryResultFeatures.setToolMarkerVisibility('webgis.tools.chainage',$(this).val() === 'show' ? true : false);
                 });
             }
+
+            if (element.allow_pro_behaviour === true && webgis.usability.select_pro_behaviour === "select2") {
+                webgis.require('select2', function ($select) {
+                    $select.select2({ width: '100%' });
+                }, $newElement);
+            }
         }
         else if (element.type === 'optionscontainer') {
             $newElement = $("<div " + elementProperties(element, options) + ">").appendTo($parent).addClass('webgis-ui-optionscontainer');
@@ -1362,6 +1369,12 @@
                 $newElement.addClass('allow-null-values');
             }
             $newElement.get(0).value = element.value;
+        }
+        else if (element.type === 'click-toggle')
+        {
+            $newElement = $newElement = $("<div " + elementProperties(element, options) + ">")
+                .appendTo($parent)
+                .webgis_clickToggle({ toggleStyle: element.togglestyle.split(','), toggleStyleValue: element.togglestylevalue.split(','), resetSiblings: element.resetsiblings });
         }
         else if (element.type === 'drop-list') {
             $newElement = $("<div " + elementProperties(element, options) + ">").attr('id', element.id + "_droplist").attr('data-id', element.id).appendTo($parent).data('map', options.map).addClass('webgis-ui-droplist');

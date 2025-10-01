@@ -44,7 +44,7 @@ class DatalinqHostAuthenticationService : IHostAuthenticationService
     {
         var ui = httpContext?.User?.ToUserIdentification(ApiAuthenticationTypes.Hmac);
 
-        return new DataLinqUser(ui?.Username, ui?.Userroles);
+        return new DataLinqUser(ui?.Username, ui?.Userroles, ui?.UserrolesParameters);
     }
 
     #region Classes
@@ -52,15 +52,19 @@ class DatalinqHostAuthenticationService : IHostAuthenticationService
     private class DataLinqUser : IDataLinqUser
     {
         public DataLinqUser(string username,
-                            IEnumerable<string> userroles)
+                            IEnumerable<string> userroles,
+                            IEnumerable<string> userrolesParameters)
         {
             this.Username = username ?? string.Empty;
             this.Userroles = userroles ?? new string[0];
+            this.Claims = userrolesParameters ?? new string[0];
         }
 
         public string Username { get; }
 
         public IEnumerable<string> Userroles { get; }
+
+        public IEnumerable<string> Claims { get; }
     }
 
     #endregion

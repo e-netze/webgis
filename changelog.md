@@ -8,9 +8,90 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+### Fixed
+
+## 7.25.4001
+
+### Added
+
+- DataLinq: New DataLinqHelper Function: GetUserClaim(claimName)
+  RoleParameters can now be queried in DataLinq Views with this method.
+  [datalinq-discussion #36](https://github.com/e-netze/datalinq-community/discussions/36)
+
+### Fixed
+
+- Bug: Printing AGS WMTS TileCache Services outside the TileCache extent
+  [discussion #341](https://github.com/e-netze/webgis-community/discussions/341)
+
+- Bug: Numeric sorting in result table not worked correctly
+  [discussion #348](https://github.com/e-netze/webgis-community/discussions/348)
+
+## 7.25.3801
+
+### Added
+
+- Usability: QuickSearch - Select first on enter
+  [discussion #328](https://github.com/e-netze/webgis-community/discussions/328)
+  [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#schnellsuche)
+
+- Usability: Feature Result Attachments
+             - UI: smaller preview images, clickable => enlarge
+             - Non-Image Attachements (eg PDF) are now downloadable
+
+### Fixed
+
+- Bug: Sketch - drawing multipart geometries and moveing vertices causes strange behavior
+  [discussion #342](https://github.com/e-netze/webgis-community/discussions/342)
+
+- Bug: Basemap tiles will not removed when removing service from map (also on loading a user map)
+  [discussion #346](https://github.com/e-netze/webgis-community/discussions/346)
+
+- Bug: Sorting numeric expressions in result table not worked correctly
+  [discussion #348](https://github.com/e-netze/webgis-community/discussions/348) 
+
+## 7.25.3601
+
+### Added
+
+- WMS Service: SLD_VERSION Support
+  [discussion #279](https://github.com/e-netze/webgis-community/discussions/324)
+
+- Usability: Show a note in query table, if the corresponding layer is not visible in the map
+  [discussion #334](https://github.com/e-netze/webgis-community/discussions/334)
+  can be switched on/off in ``custom.js``
+
+  ``` javascript
+    // default: false for all API apps
+    // but set 'true' in custom-recomandations.js for the Viewer
+    webgis.usability.showQueryLayerNotVisbleNotification = false;
+  ```
+
+- Usability: Show Section length/area with measure tools
+  [discussion #325](https://github.com/e-netze/webgis-community/discussions/325)
+
+- MapMarkup: Added tool for measure polygon area/circumference
+
+### Fixed
+
+- Bug: MapMarkup: download GPX/Shape
+  [discussion #335](https://github.com/e-netze/webgis-community/discussions/335)
+
+## 7.25.3401
+
+### Added
 
 - Usability: Shortcuts for eg. Edit tool (**SPACE** select only one, **E** start editing, **D** delete feature)
   [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#tastatur-shortcuts)
+
+- Usability: Tool Priority (sort tools inside containers)
+  [discussion #279](https://github.com/e-netze/webgis-community/discussions/279)
+  [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#toolbox)
+
+- Usability: Icons for 1:n Hyperlinks
+  [discussion #299](https://github.com/e-netze/webgis-community/discussions/299)
+
+- Usability: Edit Mask Combo/Select-Boxes - use ``select2``, for combos with 
+  many items (combination ``domain``/``autocomplete``)
 
 ### Fixed
 
@@ -18,6 +99,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Some/More Map Markup Bugs
   [discussion #319](https://github.com/e-netze/webgis-community/discussions/319)
+
+- CMS: Can't automatically solve warnings, when using CMS Upload
 
 ## 7.25.3202
 

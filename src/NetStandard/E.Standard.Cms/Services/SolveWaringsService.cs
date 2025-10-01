@@ -96,7 +96,7 @@ public class SolveWaringsService : ICmsTool
             console.WriteLine("Scann for warnings");
             var warnings = cms.Warnings();
 
-            FileInfo fiWarnings = new FileInfo(deploy.Target + ".warnings");
+            FileInfo fiWarnings = deploy.Target.WarningsFileInfo();
             if (fiWarnings.Exists)
             {
                 fiWarnings.Delete();

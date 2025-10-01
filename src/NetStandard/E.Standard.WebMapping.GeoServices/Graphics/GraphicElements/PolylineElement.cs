@@ -1,4 +1,5 @@
 using E.Standard.WebMapping.Core.Abstraction;
+using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using gView.GraphicsEngine;
@@ -13,18 +14,21 @@ public class PolylineElement : IGraphicElement
     private ArgbColor _color;
     private float _width = 1, _fontSize;
     private LineDashStyle _dashStyle;
+    private Unit _unit = Unit.Meter;
 
     public PolylineElement(Polyline polyline,
                            ArgbColor color,
                            float width,
                            LineDashStyle dashStyle = LineDashStyle.Solid,
-                           float fontSize = 9f)
+                           float fontSize = 9f,
+                           string unit = "m")
     {
         _polyline = polyline;
         _color = color;
         _width = width;
         _dashStyle = dashStyle;
         _fontSize = fontSize > 0 ? fontSize : 9f;
+        _unit = (!String.IsNullOrEmpty(unit) ? unit : "m").FromUnitAbbreviation();
     }
 
     protected Polyline Polyline => _polyline;
@@ -104,7 +108,8 @@ public class PolylineElement : IGraphicElement
                                                   Math.Sqrt(Math.Pow(calcPath[p].X - calcPath[p - 1].X, 2) + Math.Pow(calcPath[p].Y - calcPath[p - 1].Y, 2)),
                                                   fontSize: _fontSize,
                                                   dpiFactor: dpiFactor,
-                                                  lineAlignment: StringAlignment.Far);
+                                                  lineAlignment: StringAlignment.Far,
+                                                  unit: _unit);
                         }
 
                         o_x = (float)point.X;

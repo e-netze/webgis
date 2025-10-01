@@ -52,7 +52,8 @@ public enum GraphicsTool
     Pointer = 10,
     HectoLine = 11,
     Point = 12,
-    Compass_Rose = 13
+    Compass_Rose = 13,
+    DimPolygon = 14
 }
 
 public enum LookupType
@@ -156,7 +157,12 @@ public enum ApiClientButtonCommand
     setgraphics_text_size_and_apply_to_selected = 83,
     setgraphics_point_color_and_apply_to_selected = 84,
     setgraphics_point_size_and_apply_to_selected = 85,
-    refreshgraphicsui = 86
+    refreshgraphicsui = 86,
+    setgraphicsdimpolygonareaunit = 87,
+    setgraphicsdimpolygonlabeledges = 88,
+    setgraphicscompassrosesteps = 89,
+    setgraphicsdimlinelengthunit = 90,
+    setgraphicsdimlinelabeltotallength = 91,
 }
 
 public enum ApiToolEvents

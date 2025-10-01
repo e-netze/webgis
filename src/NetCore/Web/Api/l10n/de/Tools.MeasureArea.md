@@ -5,7 +5,9 @@ Polygon zeichnen, um Fläche zu messen
 # container: Werkzeuge
 
 # circumference-m: Umfang (m)
+# total-circumference-m: Gesamtumfang (m)
 # area-m2: Fläche (m²)
+# total-area-m2: Gesamtfläche (m²)
 
 # warning-webmercator: 
 

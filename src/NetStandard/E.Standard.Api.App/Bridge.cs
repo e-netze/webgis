@@ -883,7 +883,7 @@ public class Bridge : IBridge
         {
             Bridge = this,
             LayerId = layerId,
-            items = new QueryDTO.Item[0],
+            items = new QueryDTO.ItemDTO[0],
             AllowEmptyQueries = true
         };
         query.Init(service);
@@ -1002,6 +1002,18 @@ public class Bridge : IBridge
         if (layer is IFeatureAttachmentProvider attachmentContainer)
         {
             return await attachmentContainer.GetAttachmentsFor(_requestContext, objectId);
+        }
+
+        return null;
+    }
+
+    async public Task<byte[]> GetFeatureAttachmentData(string serviceId, string attachementUri)
+    {
+        var service = await TryGetOriginalService(serviceId).ThrowIfNull(() => $"Unknown Service: {serviceId}");
+
+        if(service is IServiceAttachmentProvider attachmentService)
+        {
+            return await attachmentService.GetServiceAttachementData(_requestContext, attachementUri);
         }
 
         return null;

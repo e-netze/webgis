@@ -70,24 +70,24 @@
 
   <ItemGroup>
 	<PackageReference Include="BuildBundlerMinifier2022" Version="2.9.11" />
-    <PackageReference Include="E.DataLinq.Code" Version="7.25.2801" />
-    <PackageReference Include="E.DataLinq.Core" Version="7.25.2801" />
-    <PackageReference Include="E.DataLinq.Web.Api.Client" Version="7.25.2801" />
+    <PackageReference Include="E.DataLinq.Code" Version="7.25.4005" />
+    <PackageReference Include="E.DataLinq.Core" Version="7.25.4005" />
+    <PackageReference Include="E.DataLinq.Web.Api.Client" Version="7.25.4005" />
     <PackageReference Include="jquery.TypeScript.DefinitelyTyped" Version="3.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.7">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.9">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.9" />
     <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="3.1.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.7" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.9" />
     <!--<PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.6" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />-->
   </ItemGroup>

@@ -3,6 +3,7 @@ using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Mvc;
 using Api.Core.AppCode.Sorting;
 using E.Standard.Api.App;
+using E.Standard.Api.App.Data;
 using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Models;
@@ -511,7 +512,7 @@ public class RestHelperService
                 && tableFields[0] is TableFieldData tableFieldData
                 && tableFieldData.FieldName == "*")
             {
-                List<TableFieldDTO> allTableFields = new List<TableFieldDTO>();
+                List<TableField> allTableFields = new List<TableField>();
                 foreach (var queryFeature in queryFeatures)
                 {
                     if (queryFeature.Attributes == null)
@@ -748,12 +749,17 @@ public class RestHelperService
                         {
                             Name = f.ColumnName,
                             Visible = f.Visible,
-                            SortingAlgorithm = f is TableFieldData fieldData && !String.IsNullOrEmpty(fieldData.SortingAlgorithm)
-                                                        ? ((TableFieldData)f).SortingAlgorithm
-                                                        : null,
-                            ImageSize = f is TableFieldImageDTO fieldImage && (fieldImage.ImageWidth > 0 || fieldImage.ImageHeight > 0)
-                                                        ? (fieldImage.ImageWidth, fieldImage.ImageHeight)
-                                                        : null,
+                            SortingAlgorithm = f switch
+                            {
+                                TableFieldData fieldData when !String.IsNullOrEmpty(fieldData.SortingAlgorithm) => fieldData.SortingAlgorithm,
+                                TableFieldExpression fieldExpression when fieldExpression.ColDataType == ColumnDataType.Number => "number",
+                                _ => null
+                            },
+                            ImageSize = f switch
+                            {
+                                TableFieldImage fieldImage when fieldImage.ImageWidth > 0 || fieldImage.ImageHeight > 0 => (fieldImage.ImageWidth, fieldImage.ImageHeight),
+                                _ => null
+                            },
                         });
                 }
 

@@ -177,7 +177,7 @@
         $(menuItem).closest('.webgis-contextmenu').trigger('click');
     };
     this._isPolygon = function (sketch) { return sketch.getGeometryType() === "polygon" };
-    this._isLineOrPolygon = function (sketch) { return $.inArray(sketch.getGeometryType(), ["polyline", "polygon", "dimline", "hectoline"]) >= 0 };
+    this._isLineOrPolygon = function (sketch) { return $.inArray(sketch.getGeometryType(), ["polyline", "polygon", "dimline", "dimpolygon", "hectoline"]) >= 0 };
 
     this._ui = new function () {
         this.distanceContextUI = function (distanceElement, sketch, $menu, onSucceeded) {

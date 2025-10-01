@@ -9,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace E.Standard.Api.App.DTOs;
+namespace E.Standard.Api.App.Data;
 
-public sealed class TableFieldHotlinkDTO : TableFieldDTO
+public sealed class TableFieldHotlink : TableField
 {
     public string HotlinkUrl { get; set; }
     public string HotlinkName { get; set; }
@@ -50,7 +50,7 @@ public sealed class TableFieldHotlinkDTO : TableFieldDTO
                 style.Append($";height:{this.ImageHeight}px;");
             }
 
-            style.Append("margin-right:8px;");
+            style.Append("margin-right:8px;vertical-align:sub");
 
             imageTag = $"<img style='{style}' src='{imgExpression}' />";
         }

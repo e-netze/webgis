@@ -52,6 +52,7 @@
     "mapmarkup-tool-text": "Text",
     "mapmarkup-tool-point": "Punkt",
     "mapmarkup-tool-dimline": "Bemaßung",
+    "mapmarkup-tool-dimpolygon": "Bemaßung Polygon",
     "mapmarkup-tool-hectoline": "Hektometrierungslinie",
 
     "mapmarkup-pointer": "Zum Bearbeiten eines bestehenden Map-Markup-Objektes in der Karte auf das Objekt klicken. Zum Zeichnen eines neuen Objektes muss das entsprechende Werkzeug ausgewählt werden.",
@@ -66,6 +67,7 @@
     "mapmarkup-distance_circle": "In die Karte klicken, um den Mittelpunkt des Umgebungskreises festzulegen. Danach noch einmal klicken, um den Radius festzulegen. Alternativ kann ein Radius auch unter 'Eigenschaften (Radius...)' angegeben werden. Dort kann auch noch die Anzahl der Zwischenkreise definiert werden.",
     "mapmarkup-compass_rose": "In die Karte klicken, um den Mittelpunkt der Kompass Rose festzulegen. Danach noch einmal klicken, um den Radius festzulegen.",
     "mapmarkup-dimline": "In die Karte klicken, um mindestens zwei Stützpunkte der Linie zu definieren. Die einzelnen Segemente werden mit der jeweiligen Länge [m] beschriftet.",
+    "mapmarkup-dimpolygon": "In die Karte klicken, um mindestens drei Stützpunkte der Fläche zu definieren. Die einzelnen Segmente werden mit der jeweiligen Länge [m] beschriftet. Die Fläche wird mit der jeweiligen Fläche [m²] beschriftet.", 
     "mapmarkup-hectoline": "In die Karte klicken, um mindestens zwei Stützpunkte der Linie zu definieren. Die Zwischenpunkte werden je nach eingestelltem Abstand (unter Eigenschaften) markiert und beschriftet.",
 
     "service-order": "Zeichenreihenfolge",
@@ -292,6 +294,8 @@
     "sketch-ortho-off": "Orthogonal-Modus beenden",
     "sketch-trace-off": "Trace-Modus beenden",
     "sketch-fan-off": "Fan-Modus beenden",
+    "sections": "Abschnitte",
+    "section": "Abschnitt",
 
     // query combos
     "query-choose-category": "Kategorie wählen (optional)",
@@ -326,5 +330,6 @@
     "show-markers-on-new-queries": "Marker bei neuen Abfragen anzeigen",
     "show-markers-on-new-queries-info": "Wenn diese Methode angewendet wird, werden bei jeder neuen Abfrage automatisch Kartenmarken in der Karte angezeigt. Das Defaultverhalten ist, das Marker automatisch dargestellt werden.",
     "select-new-query-results": "Neue Abfragen in der Karte auswählen/selektieren",
-    "select-new-query-results-info": "Wenn diese Methode angewendet wird, werden Abfrageergebnisse in der Karte automatisch selektiert dargestellt."
+    "select-new-query-results-info": "Wenn diese Methode angewendet wird, werden Abfrageergebnisse in der Karte automatisch selektiert dargestellt.",
+    "query-layer-not-visible-notification": "Der abgefrage Layer ist in der Karte ausgeblendet. Hier Klicken zum Einblenden."
 };

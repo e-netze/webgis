@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿#nullable enable
+
+using Newtonsoft.Json;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 
@@ -15,15 +17,15 @@ public class JsonFeatureLayer
 
     [JsonProperty("name")]
     [System.Text.Json.Serialization.JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonProperty("type")]
     [System.Text.Json.Serialization.JsonPropertyName("type")]
-    public string Type { get; set; }
+    public string? Type { get; set; }
 
     [JsonProperty("geometryType")]
     [System.Text.Json.Serialization.JsonPropertyName("geometryType")]
-    public string GeometryType { get; set; }
+    public string? GeometryType { get; set; }
 
     [JsonProperty("parentLayerId")]
     [System.Text.Json.Serialization.JsonPropertyName("parentLayerId")]
@@ -43,15 +45,15 @@ public class JsonFeatureLayer
 
     [JsonProperty("fields")]
     [System.Text.Json.Serialization.JsonPropertyName("fields")]
-    public JsonFeatureField[] Fields { get; set; }
+    public JsonFeatureField[]? Fields { get; set; }
 
     [JsonProperty("extent")]
     [System.Text.Json.Serialization.JsonPropertyName("extent")]
-    public JsonExtent Extent { get; set; }
+    public JsonExtent? Extent { get; set; }
 
     [JsonProperty("drawingInfo")]
     [System.Text.Json.Serialization.JsonPropertyName("drawingInfo")]
-    public JsonDrawingInfo DrawingInfo { get; set; }
+    public JsonDrawingInfo? DrawingInfo { get; set; }
 
     [JsonProperty("hasZ")]
     [System.Text.Json.Serialization.JsonPropertyName("hasZ")]
@@ -63,13 +65,17 @@ public class JsonFeatureLayer
 
     [JsonProperty("description")]
     [System.Text.Json.Serialization.JsonPropertyName("description")]
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     [JsonProperty("capabilities")]
     [System.Text.Json.Serialization.JsonPropertyName("capabilities")]
-    public string Capabilities { get; set; }
+    public string? Capabilities { get; set; }
 
     [JsonProperty("hasAttachments")]
     [System.Text.Json.Serialization.JsonPropertyName("hasAttachments")]
     public bool HasAttachments { get; set; } = false;
+
+    [JsonProperty("timeInfo")]
+    [System.Text.Json.Serialization.JsonPropertyName("timeInfo")]
+    public JsonTimeInfo? TimeInfo { get; set; }
 }

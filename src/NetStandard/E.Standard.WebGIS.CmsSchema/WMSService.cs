@@ -25,7 +25,7 @@ namespace E.Standard.WebGIS.CmsSchema;
 public class WMSService : CopyableNode, IAuthentification, IClientCertification, ICreatable, IEditable, IUI, IDisplayName, IRefreshable
 {
     private string _user, _pwd, _server, _imageformat, _gfiformat;
-    WMS_Version _version;
+    private WMS_Version _version;
     private string _guid;
     private string _certificate = String.Empty, _certificatePwd = String.Empty;
     private int _featureCount = 30;
@@ -108,6 +108,11 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
         set { _featureCount = value; }
     }
 
+    [DisplayName("(optional) SLD_Version")]
+    [Category("Service")]
+    [Description("In der Regel ist dieser Parameter optional. Nur setzen, wenn der WMS diesen Parameter unbedingt braucht. Wird für GetMap- und GetLegendGraphics-Requests übergeben.")]
+    public SLD_Version SLDVersion { get; set; }
+
     [Category("~~Anmeldung")]
     [DisplayName("webGIS Instanz für Ticket Service (Optional)")]
     public string TicketServer
@@ -134,7 +139,8 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
         _certificate = (string)stream.Load("cert", String.Empty);
         _certificatePwd = CmsCryptoHelper.Decrypt((string)stream.Load("certpwd", String.Empty), "WmsServiceCertificatePassword").Replace(stream.StringReplace);
         _featureCount = (int)stream.Load("featurecount", 30);
-
+        
+        this.SLDVersion = (SLD_Version)stream.Load("sld_version", (int)SLD_Version.unused);
         this.LayerOrder = (WMS_LayerOrder)stream.Load("layerorder", (int)WMS_LayerOrder.Up);
         this.Vendor = (WMS_Vendor)stream.Load("vendor", (int)WMS_Vendor.Unknown);
 
@@ -181,6 +187,11 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
         }
 
         stream.Save("featurecount", _featureCount);
+
+        if (SLDVersion != SLD_Version.unused)
+        {
+            stream.Save("sld_version", (int)SLDVersion);
+        }
 
         stream.Save("layerorder", (int)this.LayerOrder);
         stream.Save("vendor", (int)this.Vendor);

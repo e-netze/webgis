@@ -1,6 +1,7 @@
 ﻿using E.Standard.Extensions.Collections;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -263,6 +264,20 @@ static public class UIElementExtensions
         return element;
     }
 
+    static public T WithSize<T>(this T element, int width = 0, int height = 0)
+        where T : UIElement
+    {
+        if(width > 0)
+        {
+            element.targetwidth = $"{width}px";
+        }
+        if(height > 0)
+        {
+            element.targetheight = $"{height}px";
+        }
+        return element;
+    }
+
     static public T WithTargetTitle<T>(this T element, string tragetTitle)
         where T : IUIElement
     {
@@ -337,6 +352,31 @@ static public class UIElementExtensions
         }
         return element;
     }
+
+    #region IUIInputField
+
+    static public T WithLabelText<T>(this T element, string label)
+        where T : IUIInputField
+    {
+        if (element != null && element.UILabel != null)
+        {
+            element.UILabel.label = label;
+        }
+
+        return element;
+    }
+
+    static public T WithInputStyles<T>(this T element, params string[] styles)
+        where T : IUIInputField
+    {
+        if (element != null && element.Input != null && styles != null && styles.Length > 0)
+        {
+            element.Input.css = UICss.ToClass(element.Input.css, styles);
+        }
+        return element;
+    }
+
+    #endregion
 
     static public T WithLiteral<T>(this T element, string literal, bool asMarkdown = false)
         where T : IUIElementLiteral

@@ -242,6 +242,7 @@ public class FeatureCollection : ThreadSafeList<Feature>, IClone<FeatureCollecti
 
     public Dictionary<string, string> Links = null;
     public Dictionary<string, string> LinkTargets = null;
+    public Dictionary<string, string> LinkImages = null;
 
     public IEnumerable<TableFieldDefintion> TableFieldDefintions = null;
 

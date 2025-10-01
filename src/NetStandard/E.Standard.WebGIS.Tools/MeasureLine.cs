@@ -37,21 +37,17 @@ public class MeasureLine : IApiServerToolLocalizable<MeasureLine>,
             response
                 .AddUIElements(
                     new UIDiv()
-                    {
-                        css = UICss.ToClass(new string[] { "webgis-info" }),
-                        elements = new IUIElement[]
-                            {
-                                new UILiteral() { literal = localizer.Localize("warning-webmercator:body") }
-                            }
-                    }
+                        .WithStyles(["webgis-info"])
+                        .AddChild(new UILiteral()
+                            .WithLiteral(localizer.Localize("warning-webmercator:body"))
+                        )
                 );
         }
 
         response.AddUIElements(
-                new UILabel()
-                    .WithLabel(localizer.Localize("length-m")),
-                new UIInputText()
-                    .WithStyles("webgis-sketch-length"),
+                new UIInputTextField()
+                    .WithLabelText(localizer.Localize("total-length-m"))
+                    .WithInputStyles("webgis-sketch-length"),
                 new UIButtonContainer(
                      new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removesketch)
                         .WithStyles(UICss.CancelButtonStyle)

@@ -164,6 +164,7 @@ ul.toc li {
     margin: 10px 0px 2px 0px;
     color: #555;
     padding: 0px 0px 2px 4px;
+    width:180px;
 }
 
 .webgis-label p {
@@ -239,7 +240,8 @@ ul.toc li {
 
         #edit-editmask-container .webgis-editfield-container .webgis-input,
         #edit-editmask-container .webgis-editfield-container .webgis-select,
-        #edit-editmask-container .webgis-editfield-container .webgis-textarea {
+        #edit-editmask-container .webgis-editfield-container .webgis-textarea,
+        #edit-editmask-container .webgis-editfield-container .select2-container {
             /* width: 100% !important;
                 box-sizing: border-box;*/
             flex: 1 0 300px;
@@ -311,7 +313,7 @@ ul.toc li {
     .webgis-ui-holder .webgis-tooldialog-header h2,
     .webgis-ui-collapsable .webgis-ui-collapsable-title h2 {
         margin: 0px;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: normal;
     }
     .webgis-ui-holder .webgis-tooldialog-header .close {
@@ -482,6 +484,16 @@ input, textarea, select {
 .select2-results {
     font-family: Verdana,Tahoma,Arial,sans-serif;
     font-size: 13px;
+}
+
+.select2-container.select2-container--open {
+        z-index: 999999 !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    font-size: 14px;
+}
+.select2-container {
+    max-width: 100%;
 }
 
 .webgis-button {
@@ -955,6 +967,10 @@ img.tile {
             width:48px;
             box-sizing: border-box;
         }
+
+            .webgis-result-table-tools-container .webgis-result-table-tools .webgis-toolbox-tool-item img {
+                max-height: 26px;
+            }
 
 .webgis-result-warning-panel {
     position: sticky;
@@ -2042,12 +2058,13 @@ tr.webgis-border-bottom td{
     }
 
 .webgis-tabs-tab-content-holder {
-    background:white;
-    max-height:80%;
-    overflow:auto;
-    max-width:400px;
-    width:100%;
-    z-index:9997;
+    background: white;
+    max-height: 80%;
+    overflow: auto;
+    max-width: 400px;
+    width: 100%;
+    z-index: 9997;
+    scrollbar-width: thin;
 }
 
 .webgis-tabs-tab-header {
@@ -2557,7 +2574,7 @@ td.webgis-tab-header {
     }
 
 .webgis-toolbox-tool-item {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: normal;
     cursor: pointer;
     white-space: nowrap;
@@ -2815,8 +2832,13 @@ body.webgis-ui-holder {
     padding: 2px;
     /*border: 1px solid #bcbbbb;*/
 }
+
     .webgis-ui-imagebutton:hover {
         background-color: #efefef;
+    }
+
+    .webgis-ui-optionscontainer.contains-lables .webgis-ui-imagebutton.webgis-narrow {
+        width: 38px;
     }
 
     .webgis-ui-imagebutton .webgis-ui-imagebutton-text {
@@ -2836,9 +2858,9 @@ body.webgis-ui-holder {
         color:#000;
     }
 
-.webgis-undobutton {
-    display: none;
-}
+    .webgis-undobutton {
+        display: none;
+    }
 .webgis-ui-undobutton {
     min-width: 38px;
     min-height: 38px;
@@ -3364,6 +3386,9 @@ body.webgis-ui-holder {
 
     .webgis-modal-body.enlargeable .webgis-modal-title.has-closebutton {
         background-position: right 40px center;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        padding-right: 64px;
     }
 
 .webgis-modal-content {
@@ -3508,6 +3533,7 @@ body.webgis-ui-holder {
         text-overflow: ellipsis;
         padding-right: 65px;
         width: calc(100% - 40px);
+        box-sizing: border-box;
     }
 
     .webgis-dockpanel-title.image .text {
@@ -3955,11 +3981,12 @@ body.webgis-ui-holder {
 
 /**** Info *******/
 div.webgis-info {
-    padding:4px;
-    border:1px solid #fbed80;
-    border-radius:4px;
-    background-color:#faffb8;
+    padding: 4px;
+    border: 1px solid #fbed80;
+    border-radius: 4px;
+    background-color: #faffb8;
     margin: 8px 0px;
+    max-width: 595px;
 }
 
 div.webgis-tip {
@@ -4322,6 +4349,8 @@ div.webgis-copy {
         padding: 0px;
         overflow: auto;
         /*height: calc(100vh - 480px);*/ /* empirisch, wird in webgis_graphics_info_container live berechnet */
+        scrollbar-gutter: stable;
+        scrollbar-width: thin;
     }
         .webgis-graphics-info-container-holder .webgis-graphics-info-list .webgis-graphics-info-listitem {
             position:relative;
@@ -5389,3 +5418,21 @@ select.webgis-not-valid {
     background: #cccccc1f;
 }
 
+.webgis-attachment-item {
+    max-width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100px;
+    display: inline-block;
+}
+
+    .webgis-attachment-item img {
+        max-width: 100%;
+        display:inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+.webgis-click-toggle {
+    cursor: pointer;
+}

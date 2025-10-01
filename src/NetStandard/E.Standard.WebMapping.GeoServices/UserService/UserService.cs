@@ -512,7 +512,8 @@ public class UserService : IUserService, IPersistable
                     (string)stream.Load("wms_imageformat", "image/png"),
                     (string)stream.Load("wms_getfeatureformat", "text/html"),
                     (WMS_LayerOrder)stream.Load("layerorder", (int)WMS_LayerOrder.Up),
-                    (WMS_Vendor)stream.Load("vendor", (int)WMS_Vendor.Unknown));
+                    (WMS_Vendor)stream.Load("vendor", (int)WMS_Vendor.Unknown),
+                    (SLD_Version)stream.Load("sld_version", (int)SLD_Version.unused));
                 break;
         }
         if (_service == null)

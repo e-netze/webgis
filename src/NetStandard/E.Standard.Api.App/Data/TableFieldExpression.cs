@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 
-namespace E.Standard.Api.App.DTOs;
+namespace E.Standard.Api.App.Data;
 
-public sealed class TableFieldExpressionDTO : TableFieldDTO
+public sealed class TableFieldExpression : TableField
 {
     public string Expression { get; set; }
     public ColumnDataType ColDataType { get; set; }

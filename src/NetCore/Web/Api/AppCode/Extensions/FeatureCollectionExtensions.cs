@@ -1,4 +1,5 @@
-﻿using E.Standard.Api.App.DTOs;
+﻿using E.Standard.Api.App.Data;
+using E.Standard.Api.App.DTOs;
 using E.Standard.Extensions.Compare;
 using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.CMS;
@@ -20,7 +21,7 @@ static public class FeatureCollectionExtensions
     {
         if (renderFields && query?.Fields != null)
         {
-            foreach (TableFieldHotlinkDTO hotlinkField in query.Fields.Where(f => f is TableFieldHotlinkDTO field && field.One2N == true))
+            foreach (TableFieldHotlink hotlinkField in query.Fields.Where(f => f is TableFieldHotlink field && field.One2N == true))
             {
                 try
                 {
@@ -37,10 +38,18 @@ static public class FeatureCollectionExtensions
                     {
                         returnFeatures.Links ??= new();
                         returnFeatures.LinkTargets ??= new();
+                        
 
                         var colName = hotlinkField.HotlinkName.OrTake(hotlinkField.ColumnName);
                         returnFeatures.Links[colName] = hotLinkUrl;
                         returnFeatures.LinkTargets[colName] = hotlinkField.Target.ToString().ToLowerInvariant();
+
+                        if(!String.IsNullOrEmpty(hotlinkField.ImageExpression) && !ExpressionHasParameters(hotlinkField.ImageExpression))
+                        {
+                            returnFeatures.LinkImages ??= new();
+                            returnFeatures.LinkImages[colName] = hotlinkField.ImageExpression;
+                        }
+                       
                     }
                 }
                 catch { }
@@ -65,5 +74,11 @@ static public class FeatureCollectionExtensions
             }
         }
         return expr;
+    }
+
+    static private bool ExpressionHasParameters(string expression)
+    {
+        return expression?.Contains("[") == true 
+            && expression?.Contains("]") == true;
     }
 }

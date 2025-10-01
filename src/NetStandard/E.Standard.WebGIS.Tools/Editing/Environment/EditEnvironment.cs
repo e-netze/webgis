@@ -1061,7 +1061,7 @@ class EditEnvironment
                                                 EditThemeDefinition editThemeDef,
                                                 EditOperation editOperation,
                                                 WebMapping.Core.Feature feature = null,
-                                                bool useMobileBehavoir = true,
+                                                bool useMobileBehaviour = true,
                                                 string onUpdateComboCallbackToolId = null,
                                                 bool editThemeNameAsCategory = false,
                                                 string[] ignoreFields = null)
@@ -1184,7 +1184,7 @@ class EditEnvironment
                     }
                 }
 
-                if ((editOperation == EditOperation.Insert || editOperation == EditOperation.Update) && useMobileBehavoir == true)
+                if ((editOperation == EditOperation.Insert || editOperation == EditOperation.Update) && useMobileBehaviour == true)
                 {
                     parentElement.AddChild(new UILabel() { label = $"{localizer.Localize("mask.label-geometry")}:" });
                     parentElement.AddChild(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.hidetoolmodaldialog)
@@ -1223,6 +1223,7 @@ class EditEnvironment
                     }
 
                     IUIElement inputElement = null;
+                    string fieldNodeType = fieldNode.Attributes["type"]?.Value?.ToLower();
 
                     if (fieldNode.Attributes["field"] != null)
                     {
@@ -1264,7 +1265,7 @@ class EditEnvironment
 
                             #endregion
                         }
-                        else if (fieldNode.Attributes["type"]?.Value?.ToLower() == "domain")
+                        else if (fieldNodeType == "domain")
                         {
                             #region Combobox
 
@@ -1501,14 +1502,16 @@ class EditEnvironment
                                     options = options.ToArray(),
                                     css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange }),
                                     dependency_field_ids = whereKeyParameters?.Select(p => $"{fieldPrefix}_{p}").ToArray(),
-                                    dependency_field_ids_callback_toolid = whereKeyParameters != null && whereKeyParameters.Count() > 0 ? onUpdateComboCallbackToolId : null
+                                    dependency_field_ids_callback_toolid = whereKeyParameters != null && whereKeyParameters.Count() > 0 ? onUpdateComboCallbackToolId : null,
+                                    allow_pro_behaviour = fieldNode.Attributes["domain_pro_behaviour"]?.Value?.ToLower() == "true" ? true : null,
                                 });
                             }
+
                             parentElement.AddChild(new UIBreak());
 
                             #endregion
                         }
-                        else if (fieldNode.Attributes["type"]?.Value?.ToLower() == "autocomplete")
+                        else if (fieldNodeType == "autocomplete")
                         {
                             #region Autocomplete
 
@@ -1546,7 +1549,7 @@ class EditEnvironment
 
                             #endregion
                         }
-                        else if (fieldNode.Attributes["type"]?.Value?.ToLower() == "date")
+                        else if (fieldNodeType == "date")
                         {
                             #region Datepicker
 
@@ -1578,7 +1581,7 @@ class EditEnvironment
 
                             #endregion
                         }
-                        else if (fieldNode.Attributes["type"]?.Value?.ToLower() == "drop-list")
+                        else if (fieldNodeType == "drop-list")
                         {
                             #region drop-list
 
@@ -1606,7 +1609,7 @@ class EditEnvironment
 
                             #endregion
                         }
-                        else if (fieldNode.Attributes["type"]?.Value?.ToLower() == "file")
+                        else if (fieldNodeType == "file")
                         {
                             var fieldContainer = CreateEditFieldContainer(fieldNode, editOperation, fieldPrefix);
                             parentElement.AddChild(fieldContainer);
@@ -1633,7 +1636,7 @@ class EditEnvironment
                             }
                             parentElement.AddChild(new UIBreak());
                         }
-                        else if (fieldNode.Attributes["type"]?.Value?.ToLower() == "textarea")
+                        else if (fieldNodeType == "textarea")
                         {
                             #region textarea
 
@@ -1690,7 +1693,7 @@ class EditEnvironment
                     }
                     else
                     {
-                        if (fieldNode.Attributes["type"]?.Value?.ToLower() == "info" &&
+                        if (fieldNodeType == "info" &&
                             fieldNode.Attributes["label"] != null)
                         {
                             #region Freier Text
@@ -1758,7 +1761,7 @@ class EditEnvironment
 
             #endregion
 
-            //if ((editOperation == EditOperation.Insert || editOperation == EditOperation.Udate) && useMobileBehavoir == true)
+            //if ((editOperation == EditOperation.Insert || editOperation == EditOperation.Udate) && useMobileBehaviour == true)
             //{
             //    parentElement.Add(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.hidetoolmodaldialog)
             //    {
@@ -1817,7 +1820,7 @@ class EditEnvironment
 
                     buttonGroup.AddChild(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setparenttool)
                     {
-                        text = useMobileBehavoir ? localizer.Localize("cancel") : localizer.Localize("mask.stop-editing"),
+                        text = useMobileBehaviour ? localizer.Localize("cancel") : localizer.Localize("mask.stop-editing"),
                         css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.ButtonIcon })
                     });
 

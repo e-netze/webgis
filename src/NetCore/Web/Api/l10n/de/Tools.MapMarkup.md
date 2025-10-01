@@ -17,6 +17,7 @@ Einfaches Zeichnen in der Karte.
 ## distance_circle: Umgebungs Kreis
 ## compass_rose: Kompass Rose
 ## dimline: Bemaßung
+## dimpolygon: Bemaßungsfläche
 ## hectoline: Hektometrierungslinine
 
 ## save: Zeichnung speichern
@@ -53,6 +54,9 @@ Einfaches Zeichnen in der Karte.
 ## unit: Einheit
 ## segment-unit: Abstand [Einheit]
 ## apply-segment: Abstand übernehmen
+## area-unit: Flächen Einheit
+## label-edges: Kanten beschriften
+## label-total-length: Gesamt-Länge beschriften
 
 # draw-symbol: Symbol setzen
 # draw-point: Punkt setzen
@@ -63,6 +67,7 @@ Einfaches Zeichnen in der Karte.
 # draw-distance-circle: Umgebungs Kreis zeichnen
 # draw-compass-rose: Kompass Rose zeichnen
 # draw-dimline: Bemaßung zeichnen
+# draw-dimpolygon: Bemaßungsfläche zeichnen
 # draw-hectoline: Hektometrierungslinie zeichnen
 
 # apply-line: Linie übernehmen

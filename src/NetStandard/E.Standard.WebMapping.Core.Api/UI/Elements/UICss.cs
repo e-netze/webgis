@@ -136,6 +136,12 @@ public class UICss
     public const string GraphicsHectolineUnit = "webgis-graphics-hectoline-unit";
     public const string GraphicsHectolineInterval = "webgis-graphics-hectoline-interval";
 
+    public const string GraphicsDimLineLengthUnit = "webgis-graphics-dimline-length-unit";
+    public const string GraphicsDimLineLabelTotalLength = "webgis-graphics-dimline-label-total-length";
+
+    public const string GraphicsDimPolygonAreaUnit = "webgis-graphics-dimpolygon-area-unit";
+    public const string GraphicsDimPolygonLabelEdges = "webgis-graphics-dimpolygon-label-edges";
+
     public const string ModalCloseElement = "webgis-modal-close-element";
 
     public const string MapScalesSelect = "webgis-map-scales-select";
@@ -150,8 +156,11 @@ public class UICss
 
     public const string EmptyOnChangeSketch = "webgis-ui-emtpy-onchage-sketch";
 
+    public const string Narrow = "webgis-narrow";
     public const string NarrowForm = "webgis-narrow-form";
     public const string NarrowFormMarginAuto = "webgis-narrow-form webgis-margin-auto";
+
+    public const string AttachmentItem = "webgis-attachment-item";
 
     public static string ToClass(IEnumerable<string> css)
     {
