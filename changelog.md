@@ -10,6 +10,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Fixed
 
+## 7.25.4001
+
+### Added
+
+- DataLinq: New DataLinqHelper Function: GetUserClaim(claimName)
+  RoleParameters can now be queried in DataLinq Views with this method.
+  [datalinq-discussion #36](https://github.com/e-netze/datalinq-community/discussions/36)
+
+### Fixed
+
+- Bug: Printing AGS WMTS TileCache Services outside the TileCache extent
+  [discussion #341](https://github.com/e-netze/webgis-community/discussions/341)
+
+- Bug: Numeric sorting in result table not worked correctly
+  [discussion #348](https://github.com/e-netze/webgis-community/discussions/348)
+
 ## 7.25.3801
 
 ### Added
