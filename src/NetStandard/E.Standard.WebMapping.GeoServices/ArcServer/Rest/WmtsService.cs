@@ -1,5 +1,6 @@
 ﻿using E.Standard.Configuration.Services;
 using E.Standard.Security.Cryptography.Abstractions;
+using E.Standard.Web.Exceptions;
 using E.Standard.WebGIS.Api.Abstractions;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -107,9 +108,23 @@ public class WmtsService : BaseWmtsService, IMapServiceAuthentication
     // Called from TileService.GetPrintMapAsync
     async override internal Task<TileData> DownloadTile(IRequestContext requestContext, TileData tileData)
     {
-        tileData.Data = await GetSecuredData(requestContext, tileData.Url);
+        try
+        {
+            tileData.Data = await GetSecuredData(requestContext, tileData.Url);
 
-        return tileData;
+            return tileData;
+        }
+        catch (HttpServiceException ex)
+        {
+            if (ex.StatusCode == HttpStatusCode.BadRequest
+                || ex.StatusCode == HttpStatusCode.NotFound)
+            {
+                // Tile not found, return null
+                return null;
+            }
+
+            throw;
+        }
     }
 
     public override (string tileUrl, string[] domains) ImageUrlPro(
