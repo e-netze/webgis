@@ -155,11 +155,11 @@ public class ToolEventResponseDTO
     [JsonProperty(PropertyName = "setfilters", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("setfilters")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-    public FilterDefintionDTO[] SetFilters { get; set; }
+    public FilterDefinitionDTO[] SetFilters { get; set; }
     [JsonProperty(PropertyName = "unsetfilters", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("unsetfilters")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-    public FilterDefintionDTO[] UnsetFilters { get; set; }
+    public FilterDefinitionDTO[] UnsetFilters { get; set; }
 
     [JsonProperty(PropertyName = "setlabeling", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("setlabeling")]

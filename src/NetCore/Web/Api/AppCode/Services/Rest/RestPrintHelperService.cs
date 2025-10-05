@@ -15,7 +15,6 @@ using E.Standard.Platform;
 using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Extensions;
-using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -1413,6 +1412,21 @@ public class RestPrintHelperService
 
                 #endregion
 
+                #region Time Epoch
+
+                if(serviceDefintion.TimeEpoch is not null)
+                {
+                    map.AddTimeEpoch(serviceDefintion.Id,
+                        new TimeEpochDefinition()
+                        {
+                            StartTime = serviceDefintion.TimeEpoch.Start,
+                            EndTime = serviceDefintion.TimeEpoch.End,
+                            Relation = TimeEpochRelation.Default
+                        });
+                }
+
+                #endregion
+
                 #region Labeling
 
                 service.AddLabeling(labelingDefinitions, _cache, ui);
@@ -1421,7 +1435,7 @@ public class RestPrintHelperService
 
                 #region Increase Timeout, when printing, because bigger plans need often more time!
 
-                service.Timeout = Math.Max(service.Timeout, 
+                service.Timeout = Math.Max(service.Timeout,
                     ApiGlobals.HttpClientDefaultTimeoutSeconds.OrTake(100));  // wait as long as possible for printing
 
                 #endregion

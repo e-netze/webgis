@@ -358,7 +358,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
                     throw new Exception("Internal error: can't query feature to filter");
                 }
 
-                List<FilterDefintionDTO> visFilterDefinitions = new List<FilterDefintionDTO>();
+                List<FilterDefinitionDTO> visFilterDefinitions = new List<FilterDefinitionDTO>();
                 LayerVisibility layerVisibility = null;
 
                 foreach (var serviceFilter in await bridge.ServiceQueryVisFilters(ids[0], ids[1]))
@@ -421,7 +421,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
 
         if (ids.Length == 3)
         {
-            List<FilterDefintionDTO> visFilterDefinitions = new List<FilterDefintionDTO>();
+            List<FilterDefinitionDTO> visFilterDefinitions = new List<FilterDefinitionDTO>();
 
             foreach (var serviceFilter in await bridge.ServiceQueryVisFilters(ids[0], ids[1]))
             {

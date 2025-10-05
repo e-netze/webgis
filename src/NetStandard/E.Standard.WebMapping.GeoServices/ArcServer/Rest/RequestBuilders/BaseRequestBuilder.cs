@@ -3,10 +3,13 @@
 using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Platform;
+using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.DynamicLayers;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.Linq;
 using System.Text;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.RequestBuilders;
@@ -98,6 +101,16 @@ public class BaseRequestBuilder<T> where T : BaseRequestBuilder<T>
             > 0 => Append($"bboxSR={sRefId}"),
             _ => _self
         };
+
+    protected T WithTimeEpoch(TimeEpochDefinition? timeEpoch)
+    {
+        var timeEpochAsArray = timeEpoch?.ToJavascriptEpochArray();
+        if (timeEpochAsArray?.Any() == true && timeEpochAsArray.Length<=2)
+        {
+            return Append($"time={string.Join(",", timeEpochAsArray)}");
+        }
+        return _self;
+    }
 
     protected T WithDatumTransformations(int[] datumTransformations)
     {

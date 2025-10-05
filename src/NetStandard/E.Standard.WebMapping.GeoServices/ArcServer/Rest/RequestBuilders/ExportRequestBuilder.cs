@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.DynamicLayers;
@@ -28,6 +29,8 @@ public class ExportRequestBuilder : BaseRequestBuilder<ExportRequestBuilder>
 
     new public ExportRequestBuilder WithLayerDefintions(IDictionary<string, string>? layerDefs)
         => base.WithLayerDefintions(layerDefs);
+
+    new public ExportRequestBuilder WithTimeEpoch(TimeEpochDefinition? timeEpoch) => base.WithTimeEpoch(timeEpoch);
 
     new public ExportRequestBuilder WithMapRotation(IMap map) => base.WithMapRotation(map);
 

@@ -5436,3 +5436,117 @@ select.webgis-not-valid {
 .webgis-click-toggle {
     cursor: pointer;
 }
+
+.webgis-date-combo .webgis-date-container,
+.webgis-date-combo .webgis-datelabel-container {
+    width: calc(50% - 10px);
+    max-width: 148px;
+    display: inline-block;
+    text-align: right;
+}
+
+.webgis-date-combo .webgis-datelabel-container {
+    text-align: center;
+}
+
+.webgis-date-combo .webgis-date-container .date-year,
+.webgis-date-combo .webgis-datelabel-container .date-year,
+.webgis-date-combo .webgis-date-container .date-year-end {
+    padding: 4px 0px !important;
+}
+
+.webgis-date-combo .webgis-date-container .date-month,
+.webgis-date-combo .webgis-datelabel-container .date-month,
+.webgis-date-combo .webgis-date-container .date-month-end {
+    padding: 4px 0px !important;
+}
+
+.webgis-date-combo .webgis-date-container .date-day,
+.webgis-date-combo .webgis-datelabel-container .date-day,
+.webgis-date-combo .webgis-date-container .date-day-end {
+    padding: 4px 0px !important;
+}
+
+.webgis-date-combo.year-month-day .webgis-date-container .date-year,
+.webgis-date-combo.year-month-day .webgis-datelabel-container .date-year,
+.webgis-date-combo.year-month-day .webgis-date-container .date-year-end {
+    width: 58px;
+    display: inline-block;
+}
+.webgis-date-combo.year-month-day .webgis-date-container .date-month,
+.webgis-date-combo.year-month-day .webgis-datelabel-container .date-month,
+.webgis-date-combo.year-month-day .webgis-date-container .date-month-end {
+    width: 40px;
+    display: inline-block;
+}
+.webgis-date-combo.year-month-day .webgis-date-container .date-day,
+.webgis-date-combo.year-month-day .webgis-datelabel-container .date-day,
+.webgis-date-combo.year-month-day .webgis-date-container .date-day-end {
+    width: 40px;
+    display: inline-block;
+}
+
+.webgis-date-combo.year-month .webgis-date-container .date-year,
+.webgis-date-combo.year-month .webgis-datelabel-container .date-year,
+.webgis-date-combo.year-month .webgis-date-container .date-year-end {
+    width: 78px;
+    display: inline-block;
+}
+
+.webgis-date-combo.year-month .webgis-date-container .date-month,
+.webgis-date-combo.year-month .webgis-datelabel-container .date-month,
+.webgis-date-combo.year-month .webgis-date-container .date-month-end {
+    width: 60px;
+    display: inline-block;
+}
+
+.webgis-date-combo.year .webgis-date-container .date-year,
+.webgis-date-combo.year .webgis-datelabel-container .date-year,
+.webgis-date-combo.year .webgis-date-container .date-year-end {
+    width: 138px;
+    display: inline-block;
+}
+
+
+.webgis-timefilter-list-holder {
+}
+
+    .webgis-timefilter-list-holder .webgis-timefilter-list {
+        list-style:none;
+        padding: 0px;
+    }
+
+        .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item {
+            position: relative;
+            height: 44px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 4px;
+            padding:4px;
+            box-sizing:border-box;
+            cursor: pointer;
+        }
+
+            .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .title {
+                font-size: 12px;
+            }
+            .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .range {
+            }
+
+            .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .button {
+                position: absolute;
+                top: 7px;
+                right: 4px;
+                width: 30px;
+                height: 30px;
+                background-color: #fff;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: 20px;
+                box-sizing: border-box;
+                border: 2px solid #ccc;
+                border-radius: 4px;
+            }
+                .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .button.delete {
+                    background-image: url(../api/img/tools/remove.png);
+                }

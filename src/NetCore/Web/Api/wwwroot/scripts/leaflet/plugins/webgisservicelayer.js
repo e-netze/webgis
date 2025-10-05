@@ -344,8 +344,7 @@
         return size;
     },
     _calculateTimeEpoch: function () {
-        const map = this._service.map;
-        return map.getTimeEpoch();
+        return this._service.getTimeEpoch();
     }
 
 });

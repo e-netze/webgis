@@ -92,6 +92,7 @@ class FeatureLayer : RestLayer,
                     ? "*"
                     : filter.SubFields.Replace(" ", ","))
             .WithWhereClause(where)
+            .WithTimeEpoch(filter.TimeEpoch)
             .WithOrderByFields(filter.OrderBy)
             .WithResultRecordCount(null)  // always set null with AGS: otherwise Pagination Errors and bad performance
             .WithInSpatialReferenceId(

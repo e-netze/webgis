@@ -33,11 +33,11 @@ public class MapDefinitionDTO
 
     [JsonProperty(PropertyName = "selections")]
     [System.Text.Json.Serialization.JsonPropertyName("selections")]
-    public SelectionDefinition[] Selections { get; set; }
+    public SelectionDefinitionDTO[] Selections { get; set; }
 
     [JsonProperty(PropertyName = "focused_services")]
     [System.Text.Json.Serialization.JsonPropertyName("focused_services")]
-    public FocusedServicesDefinition FocusedServices { get; set; }
+    public FocusedServicesDefinitionDTO FocusedServices { get; set; }
 
     #region Classes
 
@@ -73,6 +73,10 @@ public class MapDefinitionDTO
         [JsonProperty(PropertyName = "queries")]
         [System.Text.Json.Serialization.JsonPropertyName("queries")]
         public QueryDefinition[] Queries { get; set; }
+
+        [JsonProperty(PropertyName = "time_epoch")]
+        [System.Text.Json.Serialization.JsonPropertyName("time_epoch")]
+        public TimeEpochDTO TimeEpoch { get; set; }
 
         #region Classes
 
@@ -110,7 +114,7 @@ public class MapDefinitionDTO
         #endregion
     }
 
-    public class SelectionDefinition
+    public class SelectionDefinitionDTO
     {
         [JsonProperty(PropertyName = "type")]
         [System.Text.Json.Serialization.JsonPropertyName("type")]
@@ -133,7 +137,7 @@ public class MapDefinitionDTO
         public string CustomId { get; set; }
     }
 
-    public class FocusedServicesDefinition
+    public class FocusedServicesDefinitionDTO
     {
         [JsonProperty(PropertyName = "ids")]
         [System.Text.Json.Serialization.JsonPropertyName("ids")]
@@ -142,6 +146,21 @@ public class MapDefinitionDTO
         [JsonProperty(PropertyName = "opacity")]
         [System.Text.Json.Serialization.JsonPropertyName("opacity")]
         public float Opacity { get; set; }
+    }
+
+    public class TimeEpochDTO
+    {
+        [JsonProperty(PropertyName = "start")]
+        [System.Text.Json.Serialization.JsonPropertyName("start")]
+        public long Start { get; set; }
+
+        [JsonProperty(PropertyName = "end")]
+        [System.Text.Json.Serialization.JsonPropertyName("end")]
+        public long End { get; set; }
+
+        [JsonProperty(PropertyName = "relation")]
+        [System.Text.Json.Serialization.JsonPropertyName("relation")]
+        public string Relation { get; set; }
     }
 
     #endregion

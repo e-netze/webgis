@@ -59,6 +59,7 @@ public class QueryEngine
                                          SpatialReference filterSref = null,
                                          AdvancedQueryMethod advancedQueryMethod = AdvancedQueryMethod.Normal,
                                          string visFilterClause = "",
+                                         TimeEpochDefinition timeEpoch = null,
                                          QueryFields queryFields = QueryFields.TableFields,
                                          int limit = 0,
                                          string orderBy = "",
@@ -473,6 +474,7 @@ public class QueryEngine
             filter.FeatureSpatialReference = featureSref;
             filter.QueryGeometry = queryGeometry;
             filter.SuppressResolveAttributeDomains = suppressResolveAttributeDomains;
+            filter.TimeEpoch = timeEpoch;
 
             #region Limit Records
 
@@ -658,14 +660,16 @@ public class QueryEngine
                                          ApiQueryFilter filter,
                                          AdvancedQueryMethod advancedQueryMethod = AdvancedQueryMethod.Normal,
                                          string appendFilterClause = "",
+                                         TimeEpochDefinition timeEpoch = null,
                                          int limit = 0,
                                          double mapScale = 0D)
     {
         string visFilterClause = null;
 
-        if (query.Bridge is Bridge)
+        if (query.Bridge is Bridge bridge)
         {
-            visFilterClause = ((Bridge)query.Bridge).GetFilterDefinitionQuery(query);
+            visFilterClause = bridge.GetFilterDefinitionQuery(query);
+            timeEpoch ??= bridge.GetTimeEpoch(query);
         }
 
         if (!String.IsNullOrWhiteSpace(appendFilterClause))
@@ -692,6 +696,7 @@ public class QueryEngine
                                       advancedQueryMethod: advancedQueryMethod,
                                       queryFields: filter.Fields,
                                       visFilterClause: visFilterClause,
+                                      timeEpoch: timeEpoch,
                                       limit: limit,
                                       mapScale: mapScale,
                                       suppressResolveAttributeDomains: filter.SuppressResolveAttributeDomains);
@@ -706,6 +711,7 @@ public class QueryEngine
                                       advancedQueryMethod: advancedQueryMethod,
                                       queryFields: filter.Fields,
                                       visFilterClause: visFilterClause,
+                                      timeEpoch: timeEpoch,
                                       limit: limit,
                                       mapScale: mapScale,
                                       suppressResolveAttributeDomains: filter.SuppressResolveAttributeDomains);

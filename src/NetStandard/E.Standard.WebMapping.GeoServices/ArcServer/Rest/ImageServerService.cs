@@ -5,6 +5,7 @@ using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
+using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
@@ -269,7 +270,7 @@ public class ImageServerService : IMapService2,
                     this.Name = jsonImageService.Name.OrTake(this.ServiceShortname);
                 }
 
-                if(jsonImageService.TimeInfo is not null)
+                if (jsonImageService.TimeInfo is not null)
                 {
                     layer.TimeInfo = new LayerTimeInfo(
                         jsonImageService.TimeInfo.TimeExtent,
@@ -315,6 +316,8 @@ public class ImageServerService : IMapService2,
         {
             try
             {
+                var time = _map.GetTimeEpoch(this.Url)?.ToJavascriptEpochArray();
+
                 string path = String.Format("exportImage?bbox={0},{1},{2},{3}&bboxSR={4}&size={5},{6}&imageSR={4}&format={7}&pixelType={8}&noData={9}&noDataInterpretation={10}&interpolation={11}&compressionQuality={12}&bandIds={13}&mosaicRule={14}&renderingRule={15}&time={16}&f=json",
                     _map.Extent?.MinX.ToPlatformNumberString(),
                     _map.Extent?.MinY.ToPlatformNumberString(),
@@ -331,7 +334,7 @@ public class ImageServerService : IMapService2,
                     _bandIDs,
                     HttpUtility.UrlEncode(this.MosaicRule),
                     HttpUtility.UrlEncode(this.RenderingRule),
-                    _map.TimeEpoch?.Any() == true ? String.Join(",", _map.TimeEpoch) : null
+                    time?.Any() == true ? string.Join(",", time) : String.Empty
                     );
                 string url = $"{_serviceUrl}/{path}";
                 var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();

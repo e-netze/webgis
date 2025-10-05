@@ -21,6 +21,10 @@
     "tools": "Tools",
     "current-tool": "Current tool",
 
+    "year": "Year",
+    "month": "Month",
+    "day": "Day",
+
     "query-results": "Query Results",
     "search-results": "Search Results",
     "buffer-results": "Buffer Results",

@@ -74,6 +74,9 @@ webgis.ui.showLayerNotVisibleNotification = function (service, query, $target) {
     }
 };
 
+// WebGIS Click Toggle Plugin
+// A UI plugin that toggles CSS styles and classes on an element when clicked.
+// Supports resetting sibling toggles and custom style changes for interactive controls.
 webgis.ui.definePlugin('webgis_clickToggle', {
     defaults: {
         toggleStyle: [],
@@ -115,6 +118,7 @@ webgis.ui.definePlugin('webgis_clickToggle', {
     }
 });
 
+
 webgis.ui.definePlugin('webgis_dateCombo', {
     defaults: {
         showYear: true,
@@ -132,6 +136,11 @@ webgis.ui.definePlugin('webgis_dateCombo', {
         let fromDate = o.from ? new Date(o.from) : now;
         let toDate = o.to ? new Date(o.to) : fromDate;
 
+        let cls = 'year';
+        if (o.showMonth) cls += '-month';
+        if (o.showDay) cls += '-day';
+        $container.addClass(cls);
+
         // Helper to create select options
         function createOptions(start, end, selected) {
             let opts = '';
@@ -141,48 +150,76 @@ webgis.ui.definePlugin('webgis_dateCombo', {
             return opts;
         }
 
+        const $labels = $("<div>").appendTo($container);
+        const $combos = $("<div>").appendTo($container);
+        const $dateLabelContainer = $("<div>").addClass('webgis-datelabel-container').appendTo($labels);
+        const $dateContainer = $("<div>").addClass('webgis-date-container').appendTo($combos);
+
         // Year
         let $year, $yearEnd;
+        let $yearLabel, $yearEndLabel;
 
         const yearStart = fromDate.getFullYear();
         const yearEnd = toDate.getFullYear();
 
         if (o.showYear) {
-            $year = $(`<select class="date-year">${createOptions(yearStart, yearEnd, fromDate.getFullYear())}</select>`);
-            $container.append($year);
+            $yearLabel = $("<div>").addClass("date-year").text(webgis.l10n.get("year"));
+            $year = $(`<select class="webgis-input date-year">${createOptions(yearStart, yearEnd, fromDate.getFullYear())}</select>`);
         }
 
         // Month
         let $month, $monthEnd;
+        let $monthLabel, $monthEndLabel;
+
         if (o.showMonth) {
-            $month = $(`<select class="date-month">${createOptions(1, 12, fromDate.getMonth() + 1)}</select>`);
-            $container.append($month);
+            $monthLabel = $("<div>").addClass("date-month").text(webgis.l10n.get("month"));
+            $month = $(`<select class="webgis-input date-month">${createOptions(1, 12, fromDate.getMonth() + 1)}</select>`);
         }
 
         // Day
         let $day, $dayEnd;
+        let $dayLabel, $dayEndLabel;
+
         function daysInMonth(year, month) {
             return new Date(year, month, 0).getDate();
         }
         if (o.showDay) {
-            $day = $(`<select class="date-day">${createOptions(1, daysInMonth(fromDate.getFullYear(), fromDate.getMonth() + 1), fromDate.getDate())}</select>`);
-            $container.append($day);
+            $dayLabel = $("<div>").addClass("date-day").text(webgis.l10n.get("day"));
+            $day = $(`<select class="webgis-input date-day">${createOptions(1, daysInMonth(fromDate.getFullYear(), fromDate.getMonth() + 1), fromDate.getDate())}</select>`);
+        }
+
+        for (let $e of [$dayLabel, $monthLabel, $yearLabel]) {
+            $e?.appendTo($dateLabelContainer);
+        }
+        for (let $e of [$day, $month, $year]) {
+            $e?.appendTo($dateContainer);
         }
 
         if (o.range) {
-            $container.append(' - ').append($dayEnd);
+            $labels.append(" - ");
+            $combos.append(" - ");
+
+            const $dateEndLabelContainer = $("<div>").addClass('webgis-datelabel-container').appendTo($labels);
+            const $dateEndContainer = $("<div>").addClass('webgis-date-container').appendTo($combos);
 
             if (o.showYear) {
-                $yearEnd = $(`<select class="date-year-end">${createOptions(yearStart, yearEnd, toDate ? toDate.getFullYear() : fromDate.getFullYear())}</select>`);
-                $container.append($yearEnd);
+                $yearEndLabel = $("<div>").addClass("date-year").text(webgis.l10n.get("year"));
+                $yearEnd = $(`<select class="webgis-input date-year-end">${createOptions(yearStart, yearEnd, toDate ? toDate.getFullYear() : fromDate.getFullYear())}</select>`);
             }
             if (o.showMonth) {
-                $monthEnd = $(`<select class="date-month-end">${createOptions(1, 12, toDate ? toDate.getMonth() + 1 : fromDate.getMonth() + 1)}</select>`);
-                $container.append($monthEnd);
+                $monthEndLabel = $("<div>").addClass("date-month").text(webgis.l10n.get("month"));
+                $monthEnd = $(`<select class="webgis-input date-month-end">${createOptions(1, 12, toDate ? toDate.getMonth() + 1 : fromDate.getMonth() + 1)}</select>`);
             }
             if (o.showDay) {
-                $dayEnd = $(`<select class="date-day-end">${createOptions(1, daysInMonth(toDate ? toDate.getFullYear() : fromDate.getFullYear(), toDate ? toDate.getMonth() + 1 : fromDate.getMonth() + 1), toDate ? toDate.getDate() : fromDate.getDate())}</select>`);
-                $container.append($dayEnd);
+                $dayEndLabel = $("<div>").addClass("date-day").text(webgis.l10n.get("day"));
+                $dayEnd = $(`<select class="webgis-input date-day-end">${createOptions(1, daysInMonth(toDate ? toDate.getFullYear() : fromDate.getFullYear(), toDate ? toDate.getMonth() + 1 : fromDate.getMonth() + 1), toDate ? toDate.getDate() : fromDate.getDate())}</select>`);
+            }
+
+            for (let $e of [$dayEndLabel, $monthEndLabel, $yearEndLabel]) {
+                $e?.appendTo($dateEndLabelContainer);
+            }
+            for (let $e of [$dayEnd, $monthEnd, $yearEnd]) {
+                $e?.appendTo($dateEndContainer);
             }
         }
 
@@ -197,32 +234,45 @@ webgis.ui.definePlugin('webgis_dateCombo', {
         }
 
         if (o.showDay && o.showMonth && o.showYear) {
-            $year && $year.on('change', () => updateDays($year, $month, $day));
-            $month && $month.on('change', () => updateDays($year, $month, $day));
+            $year && $year.on('change.webgis_date_combo', () => updateDays($year, $month, $day));
+            $month && $month.on('change.webgis_date_combo', () => updateDays($year, $month, $day));
             if (o.range) {
-                $yearEnd && $yearEnd.on('change', () => updateDays($yearEnd, $monthEnd, $dayEnd));
-                $monthEnd && $monthEnd.on('change', () => updateDays($yearEnd, $monthEnd, $dayEnd));
+                $yearEnd && $yearEnd.on('change.webgis_date_combo', () => updateDays($yearEnd, $monthEnd, $dayEnd));
+                $monthEnd && $monthEnd.on('change.webgis_date_combo', () => updateDays($yearEnd, $monthEnd, $dayEnd));
             }
         }
 
         // Store value(s) on change
-        function getDateFromSelects($y, $m, $d) {
+        function getDateFromSelects($y, $m, $d, isEnd) {
+            let result = null;
             if ($y && $m && $d) {
-                return new Date(parseInt($y.val(), 10), parseInt($m.val(), 10) - 1, parseInt($d.val(), 10));
+                result = new Date(
+                    parseInt($y.val(), 10),
+                    parseInt($m.val(), 10) - 1,
+                    parseInt($d.val(), 10) + (isEnd ? 1 : 0));
             }
-            if ($y && $m) {
-                return new Date(parseInt($y.val(), 10), parseInt($m.val(), 10) - 1, 1);
+            else if ($y && $m) {
+                result = new Date(
+                    parseInt($y.val(), 10),
+                    parseInt($m.val(), 10) - 1 + (isEnd ? 1 : 0),
+                    1);
             }
-            if ($y) {
-                return new Date(parseInt($y.val(), 10), 0, 1);
+            else if ($y) {
+                result = new Date(
+                    parseInt($y.val(), 10) + (isEnd ? 1 : 0),
+                    0,
+                    1);
             }
-            return null;
+
+            if (result && isEnd) result.setSeconds(result.getSeconds() - 1);
+
+            return result;
         }
 
         const updateValue = () => {
             this.value_start = getDateFromSelects($year, $month, $day);
             if (o.range) {
-                this.value_end = getDateFromSelects($yearEnd, $monthEnd, $dayEnd);
+                this.value_end = getDateFromSelects($yearEnd, $monthEnd, $dayEnd, true);
             } else {
                 this.value_end = new Date(this.value_start.getTime() + 10000 * 60 * 24 * 364);
             }
@@ -236,7 +286,7 @@ webgis.ui.definePlugin('webgis_dateCombo', {
         updateValue();
     },
     destroy: function () {
-        //console.log('Destroy time filter'); 
+        console.log('Destroy time filter'); 
         this.$el.off('.webgis_date_combo');
     }
 });

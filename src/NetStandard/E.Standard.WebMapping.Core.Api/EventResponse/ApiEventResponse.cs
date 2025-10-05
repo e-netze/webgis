@@ -70,8 +70,8 @@ public class ApiEventResponse
     public IEnumerable<ApiClientButtonCommand> ClientCommands { get; set; }
     public object ClientCommandData { get; set; }
 
-    public FilterDefintionDTO[] SetFilters { get; set; }
-    public FilterDefintionDTO[] UnsetFilters { get; set; }
+    public FilterDefinitionDTO[] SetFilters { get; set; }
+    public FilterDefinitionDTO[] UnsetFilters { get; set; }
 
     public LabelingDefinitionDTO[] SetLabeling { get; set; }
     public LabelingDefinitionDTO[] UnsetLabeling { get; set; }

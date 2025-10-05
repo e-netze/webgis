@@ -1,5 +1,6 @@
 ﻿using E.Standard.WebMapping.Core.Geometry;
 using gView.GraphicsEngine;
+using System.Collections.Generic;
 
 namespace E.Standard.WebMapping.Core.Abstraction;
 
@@ -19,5 +20,5 @@ public interface IDisplay
 
     ArgbColor BackgroundColor { get; set; }
 
-    long[] TimeEpoch { get; set; }
+    IDictionary<string, TimeEpochDefinition> TimeEpoch { get; set; }
 }

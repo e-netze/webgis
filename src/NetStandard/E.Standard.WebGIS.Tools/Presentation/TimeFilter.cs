@@ -30,8 +30,9 @@ internal class TimeFilter : IApiServerButtonLocalizable<TimeFilter>,
     public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<TimeFilter> localizer)
     {
         return new ApiEventResponse()
-            .AddUIElement(
-                new UITimeFilterElement());
+            .AddUIElements(
+                new UITimeFilterControlElement(),
+                new UITimeFilterListElement());
     }
 
     #endregion

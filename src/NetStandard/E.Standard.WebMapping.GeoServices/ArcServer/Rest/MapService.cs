@@ -596,6 +596,7 @@ public class MapService : IMapService2,
                            ? null
                            : visibleIds)
                     .WithLayerDefintions(layerDefs)
+                    .WithTimeEpoch(this.Map.GetTimeEpoch(this.Url))
                     .WithMapRotation(this.Map)
                     .WithImageFormat(_imageFormat)
                     .WithTransparency()
@@ -858,6 +859,7 @@ public class MapService : IMapService2,
                     .WithBBox(this.Map.Extent)
                     .WithLayers(_layers.Select(l => l.ID), "hide")  // hide all layers
                     .WithLayerDefintions(null)
+                    .WithTimeEpoch(this.Map.GetTimeEpoch(this.Url))
                     .WithImageFormat("png32")
                     .WithTransparency()
                     .WithImageSizeAndDpi(this.Map.ImageWidth, this.Map.ImageHeight, (int)(this.Map.Dpi / dpiFactor))

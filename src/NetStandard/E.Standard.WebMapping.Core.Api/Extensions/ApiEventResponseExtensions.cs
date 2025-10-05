@@ -466,11 +466,11 @@ static public class ApiEventResponseExtensions
         return eventResponse;
     }
 
-    static public T AddFilters<T>(this T eventResponse, params FilterDefintionDTO[] filters)
+    static public T AddFilters<T>(this T eventResponse, params FilterDefinitionDTO[] filters)
         where T : ApiEventResponse
-        => eventResponse.AddFilters((IEnumerable<FilterDefintionDTO>)filters);
+        => eventResponse.AddFilters((IEnumerable<FilterDefinitionDTO>)filters);
 
-    static public T AddFilters<T>(this T eventResponse, IEnumerable<FilterDefintionDTO> filters)
+    static public T AddFilters<T>(this T eventResponse, IEnumerable<FilterDefinitionDTO> filters)
         where T : ApiEventResponse
     {
         if (eventResponse != null)
@@ -481,11 +481,11 @@ static public class ApiEventResponseExtensions
         return eventResponse;
     }
 
-    static public T RemoveFilters<T>(this T eventResponse, params FilterDefintionDTO[] filters)
+    static public T RemoveFilters<T>(this T eventResponse, params FilterDefinitionDTO[] filters)
         where T : ApiEventResponse
-        => eventResponse.RemoveFilters((IEnumerable<FilterDefintionDTO>)filters);
+        => eventResponse.RemoveFilters((IEnumerable<FilterDefinitionDTO>)filters);
 
-    static public T RemoveFilters<T>(this T eventResponse, IEnumerable<FilterDefintionDTO> filters)
+    static public T RemoveFilters<T>(this T eventResponse, IEnumerable<FilterDefinitionDTO> filters)
         where T : ApiEventResponse
     {
         if (eventResponse != null)

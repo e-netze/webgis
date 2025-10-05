@@ -3,6 +3,7 @@ using E.Standard.WebMapping.Core.Geometry;
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
 using System;
+using System.Collections.Generic;
 
 namespace E.Standard.WebMapping.Core;
 
@@ -126,7 +127,7 @@ public class Display : IDisplay
 
     public ArgbColor BackgroundColor { get; set; } = ArgbColor.White;
 
-    public long[] TimeEpoch { get; set; } = null;
+    public IDictionary<string, TimeEpochDefinition> TimeEpoch { get; set; } = null;
 
     #endregion
 

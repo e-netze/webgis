@@ -84,7 +84,7 @@ public class RestMappingHelperService /*: IDisposable*/
 
         map.ImageWidth = int.Parse(request.FormOrQuery("width"));
         map.ImageHeight = int.Parse(request.FormOrQuery("height"));
-        map.TimeEpoch = request.FormOrQuery("time_epoch")?.UrlParameterToArray<long>();
+        map.AddTimeEpoch(id, request.FormOrQuery("time_epoch")?.UrlParameterToTimeEpoch());
 
         string[] bbox = request.FormOrQuery("bbox").ToString().Split(',');
         string[] layerIds = request.FormOrQuery("layers")?.ToString().Split(',') ?? new string[0];
@@ -233,6 +233,7 @@ public class RestMappingHelperService /*: IDisposable*/
 
         map.ImageWidth = int.Parse(request.FormOrQuery("width"));
         map.ImageHeight = int.Parse(request.FormOrQuery("height"));
+        map.AddTimeEpoch(id, request.FormOrQuery("time_epoch")?.UrlParameterToTimeEpoch());
         string[] bbox = request.FormOrQuery("bbox").ToString().Split(',');
 
         map.ZoomTo(new Envelope(

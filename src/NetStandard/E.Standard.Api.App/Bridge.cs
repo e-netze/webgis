@@ -32,6 +32,7 @@ using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -107,7 +108,11 @@ public class Bridge : IBridge
             {
                 this.RequestFilters = JSerializer.Deserialize<VisFilterDefinitionDTO[]>(filters);
             }
-            ;
+            string timeEpoch = request.QueryString["timeEpoch"] ?? request.Form["timeEpoch"];
+            if(!String.IsNullOrEmpty(timeEpoch))
+            {
+                this.RequestTimeEpoch = JSerializer.Deserialize<TimeEpochDefinitionDTO[]>(timeEpoch);
+            }
         }
 
         this.DefaultSrefId = _config.DefaultQuerySrefId();
@@ -124,6 +129,8 @@ public class Bridge : IBridge
     internal IApiButton CurrentTool { get; private set; }
 
     internal VisFilterDefinitionDTO[] RequestFilters { get; set; }
+
+    internal TimeEpochDefinitionDTO[] RequestTimeEpoch { get; set; }
 
     private string GdiCustomGdiScheme => _urlHelper.GetCustomGdiScheme();
 
@@ -233,6 +240,25 @@ public class Bridge : IBridge
         catch { }
 
         return sql.ToString();
+    }
+
+    internal TimeEpochDefinition GetTimeEpoch(QueryDTO query)
+    {
+        var epoch = RequestTimeEpoch?
+                    .Where(t => t.ServiceId == query?.Service.Url)
+                    .FirstOrDefault()?
+                    .Epoch;
+
+        if(epoch != null && epoch.Length == 2)
+        {
+            return new TimeEpochDefinition()
+            {
+                StartTime = epoch[0],
+                EndTime = epoch[1]
+            };
+        }
+
+        return null;
     }
 
     #endregion

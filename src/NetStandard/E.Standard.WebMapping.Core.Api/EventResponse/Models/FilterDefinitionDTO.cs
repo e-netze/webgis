@@ -4,16 +4,16 @@ using System.Collections.Generic;
 namespace E.Standard.WebMapping.Core.Api.EventResponse.Models;
 
 [System.Text.Json.Serialization.JsonPolymorphic()]
-[System.Text.Json.Serialization.JsonDerivedType(typeof(FilterDefintionDTO))]
+[System.Text.Json.Serialization.JsonDerivedType(typeof(FilterDefinitionDTO))]
 [System.Text.Json.Serialization.JsonDerivedType(typeof(VisFilterDefinitionDTO))]
-public class FilterDefintionDTO
+public class FilterDefinitionDTO
 {
     [JsonProperty(PropertyName = "id")]
     [System.Text.Json.Serialization.JsonPropertyName("id")]
     public string Id { get; set; }
 }
 
-public class VisFilterDefinitionDTO : FilterDefintionDTO
+public class VisFilterDefinitionDTO : FilterDefinitionDTO
 {
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]

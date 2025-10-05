@@ -1,5 +1,6 @@
 ﻿using E.Standard.Api.App.Extensions;
 using E.Standard.Configuration.Services;
+using E.Standard.WebMapping.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using System;
@@ -76,5 +77,23 @@ static public class StringExtensions
                     _ => (T)Convert.ChangeType(s.Trim(), typeof(T)),
                 }
             ).ToArray();
+    }
+
+    static public TimeEpochDefinition UrlParameterToTimeEpoch(this string str)
+    {
+        if (String.IsNullOrEmpty(str) || "null".Equals(str, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+        var parts = str.Split(',');
+        if (parts.Length != 2)
+        {
+            throw new ArgumentException("Invalid timeEpoch parameter");
+        }
+        return new TimeEpochDefinition()
+        {
+            StartTime = long.Parse(parts[0].Trim()),
+            EndTime = long.Parse(parts[1].Trim())
+        };
     }
 }

@@ -21,6 +21,10 @@
     "tools": "Werkzeuge",
     "current-tool": "Aktives Werkzeug",
 
+    "year": "Jahr",
+    "month": "Monat",
+    "day": "Tag",
+
     "query-results": "Abfrageergebnisse",
     "search-results": "Suchergebnisse",
     "buffer-results": "Nachbarschaftsberechnung",

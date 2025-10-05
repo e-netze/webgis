@@ -1912,6 +1912,9 @@
 
             service.map.events.on('refresh', function (e) {
                 let service = this.data("service");
+                if (!service || !service.map) {
+                    return;
+                }
                 let scale = Math.round(service.map.scale());
                 if (this.data('last-refresh-scale') === scale)
                     return;

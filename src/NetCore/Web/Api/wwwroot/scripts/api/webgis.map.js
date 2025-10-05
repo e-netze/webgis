@@ -3314,7 +3314,6 @@
         this._visfilters = [];
     };
     /***** TimeInfo ****/
-    this._timeEpoch = null;
     this.getTimeInfoServices = function () {
         var timeInfoServices = [];
         for (let serviceId in this.services) {
@@ -3325,21 +3324,6 @@
         }
         return timeInfoServices;
     };
-    this.setTimeFilter = function(start, end) {
-        console.log('setTimeFilter', start, end);
-        if (!start) {
-            this._timeEpoch = null;
-        } else if (!end) {
-            this._timeEpoch = [start]
-        } else {
-            this._timeEpoch = [start, end];
-        }
-
-        for (var service of this.getTimeInfoServices()) {
-            service.refresh();
-        }
-    };
-    this.getTimeEpoch = () => this._timeEpoch;
     /***** Labeling ****/
     this._labels = [];
     this.setLabeling = function (labeling) {
@@ -3372,9 +3356,9 @@
         if (data == null)
             return;
         // Filters
-        var serviceFilters = [];
-        for (var f in this._visfilters) {
-            var visfilter = this._visfilters[f];
+        let serviceFilters = [];
+        for (let f in this._visfilters) {
+            let visfilter = this._visfilters[f];
             if (serviceId && visfilter.id.indexOf('~') > 0 && visfilter.id.indexOf(serviceId + '~') < 0)
                 continue;
             serviceFilters.push(visfilter);
@@ -3382,9 +3366,9 @@
         if (serviceFilters.length > 0)
             data.filters = JSON.stringify(serviceFilters);
         // Labeling
-        var labels = [];
-        for (var l in this._labels) {
-            var label = this._labels[l];
+        let labels = [];
+        for (let l in this._labels) {
+            let label = this._labels[l];
             if (serviceId && label.id.indexOf('~') > 0 && label.id.indexOf(serviceId + '~') < 0)
                 continue;
             labels.push(label);
@@ -3395,6 +3379,19 @@
         if (!data.dpi && _dpi > 0) {
             data.dpi = _dpi;
         }
+
+        let timeEpoch = [];
+        for (let service of this.getTimeInfoServices())
+        {
+            let serviceTimeEpoch = service.getTimeEpoch();
+            if (serviceTimeEpoch != null && serviceTimeEpoch.length > 0 && serviceTimeEpoch.length < 3) {
+                timeEpoch.push({ serviceId: service.id, epoch: serviceTimeEpoch });
+            }
+        }
+        if (timeEpoch.length > 0) {
+            data.timeEpoch = JSON.stringify(timeEpoch);
+        }
+
         return data;
     };
     /***** Chart *****/
