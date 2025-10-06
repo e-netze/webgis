@@ -21,7 +21,7 @@ internal class TimeFilter : IApiServerButtonLocalizable<TimeFilter>,
 
     public string Container => "Query";
 
-    public string Image => UIImageButton.ToolResourceImage(this, "filter");
+    public string Image => UIImageButton.ToolResourceImage(this, "timefilter");
 
     public string ToolTip => "Filter data by time";
 
@@ -31,7 +31,8 @@ internal class TimeFilter : IApiServerButtonLocalizable<TimeFilter>,
     {
         return new ApiEventResponse()
             .AddUIElements(
-                new UITimeFilterControlElement(),
+                new UICard(localizer.Localize("define-service-filter"))
+                    .AddChildren(new UITimeFilterControlElement()),
                 new UITimeFilterListElement());
     }
 
@@ -41,7 +42,7 @@ internal class TimeFilter : IApiServerButtonLocalizable<TimeFilter>,
 
     public void RegisterToolResources(IToolResouceManager toolResourceManager)
     {
-        toolResourceManager.AddImageResource("filter", Properties.Resources.filter);
+        //toolResourceManager.AddImageResource("timefilter", /*Properties.Resources.filter*/(byte[])null);
     }
 
     #endregion

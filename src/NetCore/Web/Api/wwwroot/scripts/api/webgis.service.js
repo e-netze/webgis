@@ -929,6 +929,7 @@
 
         this.map.events.fire('service-timeepoch-changed', this);
         this.refresh();
+        this.map.ui.refreshUIElements();
     };
     this.getTimeEpoch = () => this._timeEpoch;
 

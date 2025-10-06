@@ -5437,6 +5437,38 @@ select.webgis-not-valid {
     cursor: pointer;
 }
 
+.webgis-button-group {
+    text-align: right;
+    margin-top: 6px;
+}
+
+.webgis-card {
+    padding: 6px 4px;
+    margin: -2px;
+    background-color: #ececec;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+    .webgis-card .webgis-card-title {
+        font-size: 14px;
+        margin: -6px -4px 6px -4px;
+        background: #dcdcdc;
+        padding: 4px 10px;
+        border-radius: 6px 6px 0px 0px;
+    }
+
+    .webgis-card .webgis-button-group {
+        margin: 6px 4px 2px 4px;
+    }
+
+        .webgis-card .webgis-button-group .webgis-button {
+            margin-left: 4px;
+            border-width: 1px;
+            padding: 4px 12px;
+            border-radius: 8px;
+        }
+
 .webgis-date-combo .webgis-date-container,
 .webgis-date-combo .webgis-datelabel-container {
     width: calc(50% - 10px);
@@ -5522,15 +5554,21 @@ select.webgis-not-valid {
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 4px;
-            padding:4px;
-            box-sizing:border-box;
+            padding: 4px;
+            box-sizing: border-box;
             cursor: pointer;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
         }
+            .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item:hover {
+                background: #efefef;
+            }
 
             .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .title {
                 font-size: 12px;
             }
             .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .range {
+                font-size: 11px;
+                color:#777;
             }
 
             .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .button {

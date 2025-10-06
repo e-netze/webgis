@@ -80,6 +80,8 @@
     "services": "Dienste",
     "focus-service": "Dienst hervorheben (Focus)",
     "map-services": "Karten Dienste",
+    "all-services": "Alle Dienste",
+    "all-time-dependent-services": "Alle zeitabhängigen Dienste",
 
     "point": "Punkt",
     "polyline": "(Poly)Linie",

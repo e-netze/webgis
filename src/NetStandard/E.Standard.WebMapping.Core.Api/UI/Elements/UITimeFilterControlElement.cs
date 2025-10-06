@@ -1,4 +1,6 @@
-﻿namespace E.Standard.WebMapping.Core.Api.UI.Elements;
+﻿using Microsoft.Identity.Client;
+
+namespace E.Standard.WebMapping.Core.Api.UI.Elements;
 
 public class UITimeFilterControlElement : UIElement
 {

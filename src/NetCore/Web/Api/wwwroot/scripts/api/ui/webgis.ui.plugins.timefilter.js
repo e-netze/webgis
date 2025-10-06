@@ -19,7 +19,11 @@
             .addClass("webgis-input webgis-timefilter-services")
             .appendTo($el);
 
-  
+
+        let minStart = Number.MAX_VALUE;
+        let maxEnd = Number.MIN_VALUE;
+        $("<option>").attr('value', '*').text(webgis.l10n.get('all-time-dependent-services')).appendTo($serviceCombo);
+
         for (let service of map.getTimeInfoServices()) {
             $("<option>")
                 .attr("value", service.id)
@@ -34,6 +38,9 @@
                 start = Math.min(start, layer.time_info.extent[0]);
                 end = Math.max(end, layer.time_info.extent[1]);
 
+                minStart = Math.min(start, minStart);
+                maxEnd = Math.max(end, maxEnd);
+
                 if (!intervalUnits[layer.time_info.interval_unit]) {
                     intervalUnits[layer.time_info.interval_unit] = true;
                 }
@@ -46,6 +53,12 @@
             };
         }
 
+        o["*"] = {
+            start: minStart,
+            end: maxEnd,
+            intervalUnits: 'years'
+        };
+
         const $epochControlHolder = $("<div>").addClass("webgis-timefilter-epochcontrol-holder").appendTo($el);   
         this.createEpochControl($epochControlHolder, o, $serviceCombo.val());
 
@@ -56,16 +69,23 @@
             me.createEpochControl($epochControlHolder, o, selectedServiceId);
         });
 
+        const $buttonGroup = webgis.ui.createButtonGroup($el);
+
         $("<button>")
             .addClass('webgis-button')
             .text(webgis.l10n.get('apply'))
-            .appendTo($el)
+            .appendTo($buttonGroup)
             .on('click.webgis_time_filter_control', function(e) {
                 const start = $epochControlHolder.data('start');
                 const end = $epochControlHolder.data('end');
 
-                o.map.getService($serviceCombo.val())
-                     .setTimeEpoch(start ? start.getTime() : null, end ? end.getTime() : null);
+                var affectedServices = $serviceCombo.val() === '*'
+                    ? o.map.getTimeInfoServices()
+                    : [o.map.getService($serviceCombo.val())];
+
+                for (let affectedService of affectedServices) {
+                    affectedService.setTimeEpoch(start ? start.getTime() : null, end ? end.getTime() : null);
+                }
             });
     },
     destroy: function () {
@@ -74,14 +94,26 @@
     },
     methods: {
         createEpochControl: function ($parent, options, serviceId) {
-            let start = options[serviceId].start;
-            let end = options[serviceId].end;
+            const start = options[serviceId].start;
+            const end = options[serviceId].end;
+
+            let currentStart, currentEnd;
+            const service = options.map.getService(serviceId);
+            if (service) {  // serviceId can be '*' => all services...
+                const timeEpoch = options.map.getService(serviceId)?.getTimeEpoch();
+                if (timeEpoch && timeEpoch.length === 2) {
+                    currentStart = timeEpoch[0];
+                    currentEnd = timeEpoch[1];
+                }
+            }
 
             //$parent.destroy();
             $("<div>").appendTo($parent.empty()).webgis_dateCombo({
                 range: true,
-                from: new Date(start),
-                to: new Date(end),
+                start: new Date(start),
+                end: new Date(end),
+                currentStart: currentStart,
+                currentEnd: currentEnd,
                 showYear: true,
                 showMonth: true,
                 showDay: true,
@@ -94,6 +126,14 @@
                     $parent.data('end', end);
                 }
             });
+        },
+        setService: function (options) {
+            //console.log('setService', options);
+            const service = options.service;
+            if (!service) return;
+
+            const $serviceCombo = this.$el.find('.webgis-timefilter-services');
+            $serviceCombo.val(service.id).trigger('change');
         }
     }
 });
@@ -164,6 +204,14 @@ webgis.ui.definePlugin('webgis_timeFilterList', {
                             .data('service')
                             .setTimeEpoch(null);
                     });
+
+                $item.on('click.webgis_time_filter_list', function (e) {
+                    e.stopPropagation();
+                    const $i = $(this);
+                    $(".webgis-timefilter-holder").webgis_timeFilterControl('setService', {
+                        service: $i.data('service')
+                    });
+                });
             }
         }
     }

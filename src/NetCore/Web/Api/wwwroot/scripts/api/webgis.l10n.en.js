@@ -80,6 +80,8 @@
     "services": "Services",
     "focus-service": "Focus service",
     "map-services": "Map services",
+    "all-services": "All services",
+    "all-time-dependent-services": "All time-dependent services",
 
     "point": "Point",
     "polyline": "(Poly)line",

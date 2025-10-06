@@ -76,7 +76,7 @@
         //
 
         // Remove All Visfilters:
-        var $filterButton = $("<div style='text-align:center'>")
+        const $filterButton = $("<div style='text-align:center'>")
             .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
             .addClass('webgis-tool-button webgis-dependencies webgis-dependency-hasfilters')
             .data('map', this)
@@ -92,8 +92,25 @@
             });
         $("<img src='" + webgis.css.imgResource('filter-remove-26.png', 'tools') + "' />").appendTo($filterButton);
 
+        // Remove All Timefilters:
+        const $timeFilterButton = $("<div style='text-align:center'>")
+            .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
+            .addClass('webgis-tool-button webgis-dependencies webgis-dependency-hastimefilters')
+            .data('map', this)
+            .attr('alt', 'Alle Zeitfilter entfernen')
+            .appendTo(toolButtonBars)
+            .click(function () {
+                var map = $(this).data('map');
+                if (map) {
+                    for(let s of map.getTimeInfoServices()) {
+                        s.setTimeEpoch(null);
+                    }
+                }
+            });
+        $("<img src='" + webgis.css.imgResource('timefilter-remove-26.png', 'tools') + "' />").appendTo($timeFilterButton);
+
         // Remove all queryresults
-        var $queryResultButton = $("<div style='text-align:center'>")
+        const $queryResultButton = $("<div style='text-align:center'>")
             .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
             .addClass('webgis-tool-button webgis-dependencies webgis-dependency-queryresultsexists')
             .data('map', this)
@@ -108,7 +125,7 @@
         $("<img src='" + webgis.css.imgResource('marker-remove-26.png', 'tools') + "' />").appendTo($queryResultButton);
 
         // reset (service) focus
-        var $resetFocusButton = $("<div style='text-align:center'>")
+        const $resetFocusButton = $("<div style='text-align:center'>")
             .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
             .addClass('webgis-tool-button webgis-dependencies webgis-dependency-focused-service-exists')
             .data('map', this)
