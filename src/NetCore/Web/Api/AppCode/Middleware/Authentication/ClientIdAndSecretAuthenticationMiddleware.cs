@@ -69,7 +69,7 @@ public class ClientIdAndSecretAuthenticationMiddleware
                         throw new Exception("Unknown Subscriber");
                     }
 
-                    usernamePrefix = usernamePrefix = $"{subscriber.Name}@";
+                    usernamePrefix = usernamePrefix = $"{subscriber.FullName}@";
                 }
 
                 var ui = new CmsDocument.UserIdentification($"{usernamePrefix}{clientName}", client.Roles?.ToArray(), null, null);
