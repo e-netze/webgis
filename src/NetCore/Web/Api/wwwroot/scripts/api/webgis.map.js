@@ -28,7 +28,8 @@
             webgis.toolInfos({}, null, function (tools) {
                 toolButtonBars.each(function (i, b) {
                     var $b = $(b);
-                    var toolIds = $(b).attr('data-tools').split(',');
+                    var toolIds = $(b).attr('data-tools').split(',').filter(t => t);
+                    console.log('toolIds', toolIds);
                     if ($b.hasClass('horizontal')) {
                         $b.css({ height: height || 40, width: toolIds.length * 40 });
                     }

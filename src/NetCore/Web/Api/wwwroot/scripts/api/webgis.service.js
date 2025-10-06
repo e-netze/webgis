@@ -918,7 +918,7 @@
 
     this._timeEpoch = null;
     this.setTimeEpoch = function (start, end) {
-        console.log('service.setTimeEpoch', start, end);
+        //console.log('service.setTimeEpoch', start, end);
         if (!start) {
             this._timeEpoch = null;
         } else if (!end) {

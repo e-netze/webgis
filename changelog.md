@@ -8,7 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+
+- Time Filter
+
 ### Fixed
+
+- Bug: Remove-Filter, etc tools will not be shown in quicktools bar,
+       if not quicktools are selected in map builder
 
 ## 7.25.4001
 
