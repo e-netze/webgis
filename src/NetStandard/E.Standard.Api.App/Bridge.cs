@@ -25,6 +25,7 @@ using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
+using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.IO;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Editing;
@@ -32,7 +33,6 @@ using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -109,7 +109,7 @@ public class Bridge : IBridge
                 this.RequestFilters = JSerializer.Deserialize<VisFilterDefinitionDTO[]>(filters);
             }
             string timeEpoch = request.QueryString["timeEpoch"] ?? request.Form["timeEpoch"];
-            if(!String.IsNullOrEmpty(timeEpoch))
+            if (!String.IsNullOrEmpty(timeEpoch))
             {
                 this.RequestTimeEpoch = JSerializer.Deserialize<TimeEpochDefinitionDTO[]>(timeEpoch);
             }
@@ -151,15 +151,33 @@ public class Bridge : IBridge
 
         try
         {
-            var visFilters = _cacheService.GetAllVisFilters(query.Service.Url, _userIdentification);
+            var cmsRequestFilters = this.RequestFilters?.Where(f => f.IsTocVisFilter() == false).ToArray();
+            var tocRequestFilters = this.RequestFilters?.Where(f => f.IsTocVisFilter(query.Service.Url)).ToArray();
+            var serviceVisFilters = _cacheService.GetAllVisFilters(query.Service.Url, _userIdentification);
 
-            if (RequestFilters != null && RequestFilters.Length > 0)
+            #region TOC Filters
+
+            if (tocRequestFilters != null && tocRequestFilters.Length > 0)
             {
-                if (visFilters.filters != null)
+                foreach (var tocVisFilter in tocRequestFilters.Where(f => f.TocVisFilterLayerId() == query.LayerId))
+                {
+                    tocVisFilter.CheckSignature(_crypto);
+
+                    sql = sql.AppendWhereClause(tocVisFilter.TocVisFilterWhereClause());
+                }
+            }
+
+            #endregion
+
+            #region CMS (defined) Vis Filters 
+
+            if (cmsRequestFilters != null && cmsRequestFilters.Length > 0)
+            {
+                if (serviceVisFilters.filters != null)
                 {
                     #region Normale Filter
 
-                    foreach (var visFilter in visFilters.filters.Where(f => f.FilterType != E.Standard.WebGIS.CMS.VisFilterType.locked))
+                    foreach (var visFilter in serviceVisFilters.filters.Where(f => f.FilterType != E.Standard.WebGIS.CMS.VisFilterType.locked))
                     {
                         if (visFilter.LayerNamesString.Split(';').Where(layerName =>
                         {
@@ -175,7 +193,7 @@ public class Bridge : IBridge
                             continue;
                         }
 
-                        var requestFilter = RequestFilters
+                        var requestFilter = cmsRequestFilters
                             .Where(f =>
                             {
                                 if (f?.Id == null)
@@ -197,7 +215,7 @@ public class Bridge : IBridge
                         string filterClause = visFilter.Filter;
                         foreach (var arg in requestFilter.Arguments.OrEmpty())
                         {
-                            filterClause = filterClause.Replace("[" + arg.Name + "]", arg.Value);
+                            filterClause = filterClause.Replace($"[{arg.Name}]", arg.Value);
                         }
 
                         if (!String.IsNullOrWhiteSpace(filterClause))
@@ -214,16 +232,18 @@ public class Bridge : IBridge
                 }
             }
 
+            #endregion
+
             #region Locked Vis Layers
 
-            if (visFilters.HasLockedFilters)
+            if (serviceVisFilters.HasLockedFilters)
             {
                 var layer = query.Service.Layers.Where(l => l.ID == query.LayerId).FirstOrDefault();
                 if (layer != null)
                 {
                     string lockedVisFilterClause = String.Empty;
 
-                    foreach (var lockedFilter in visFilters.LockedFilters.Where(f => f.LayerNamesString.Split(';').Contains(layer.Name)))
+                    foreach (var lockedFilter in serviceVisFilters.LockedFilters.Where(f => f.LayerNamesString.Split(';').Contains(layer.Name)))
                     {
                         lockedVisFilterClause = lockedVisFilterClause.AppendWhereClause(E.Standard.WebGIS.CMS.CmsHlp.ReplaceFilterKeys(_httpRequestContext.OriginalUrlParameters, _userIdentification, lockedFilter.Filter));
                     }
@@ -249,7 +269,7 @@ public class Bridge : IBridge
                     .FirstOrDefault()?
                     .Epoch;
 
-        if(epoch != null && epoch.Length == 2)
+        if (epoch != null && epoch.Length == 2)
         {
             return new TimeEpochDefinition()
             {
@@ -1037,7 +1057,7 @@ public class Bridge : IBridge
     {
         var service = await TryGetOriginalService(serviceId).ThrowIfNull(() => $"Unknown Service: {serviceId}");
 
-        if(service is IServiceAttachmentProvider attachmentService)
+        if (service is IServiceAttachmentProvider attachmentService)
         {
             return await attachmentService.GetServiceAttachementData(_requestContext, attachementUri);
         }
@@ -1570,6 +1590,8 @@ public class Bridge : IBridge
 
     public IHttpService HttpService => _http;
     public IRequestContext RequestContext => _requestContext;
+
+    public ICryptoService CryptoService => _crypto;
 
     #region Environment
 

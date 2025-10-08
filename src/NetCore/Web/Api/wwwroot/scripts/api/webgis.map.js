@@ -3292,12 +3292,17 @@
     };
     /***** Filters ****/
     this._visfilters = [];
-    this.setFilter = function (filterId, args) {
+    this.setFilter = function (filterId, args, signature, spanId) {
         //console.log('setfilter', filterId, args);
         this.unsetFilter(filterId);
-        this._visfilters.push({
-            id: filterId, args: args
-        });
+        let filter = {
+            id: filterId,
+            args: args
+        };
+        if (signature) filter.sig = signature;
+        if(spanId) filter.sp_id = spanId
+        
+        this._visfilters.push(filter);
     };
     this.unsetFilter = function (filterId) {
         filterId = filterId || '';

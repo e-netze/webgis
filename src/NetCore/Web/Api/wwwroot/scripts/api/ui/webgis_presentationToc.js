@@ -231,6 +231,30 @@
             $.presentationToc.checkItemVisibility();
             $.presentationToc.checkContainerVisibility();
         },
+        collectLayers: function (sender, ids) {
+            let $elem = sender ? $(sender).closest('.webgis-presentation_toc-holder') : $('.webgis-presentation_toc-holder');
+            if ($elem.length === 0)
+                return;
+
+            let map = $elem.get(0)._map;
+            if (map == null)
+                return;
+
+            var result = {};
+            for (let i = 0; i < ids.length; i++) {
+                let p = $.presentationToc.findItem(map, ids[i]);
+                if (p && p.presentation && p.item) {
+                    const service = p.presentation.service;
+                    const layerids = p.presentation.service.getLayerIdsFromNames(p.presentation.layers);
+                    result[service.id] = result[service.id] || [];
+                    for (let l of layerids) {
+                        result[service.id].push(l);
+                    }
+                }
+            }
+
+            return result;
+        },
         findItem: function (map, id) {
             for (let serviceId in map.services) {
                 
@@ -1480,7 +1504,35 @@
                         });
                     }
 
+                    const $overlayButtons = $("<div>")
+                        .addClass('webgis-presentation_toc-item-overlay-buttons')
+                        .appendTo($item_li);
+                    $("<div>")
+                        .addClass('webgis-presentation_toc-item-overlay-button visfilter')
+                        .data('presentation', presentation)
+                        .appendTo($overlayButtons)
+                        .click(function (e) {
+                            e.stopPropagation();
 
+                            console.log('presentation', $(this).data('presentation'));
+                            console.log('presIds', $(this).closest('li').get(0).presIds);
+                            console.log('layers', $.presentationToc.collectLayers(this, $(this).closest('li').get(0).presIds));
+
+                            const layers = $.presentationToc.collectLayers(this, $(this).closest('li').get(0).presIds);
+
+                            webgis.tools.onButtonClick(service.map,
+                                {
+                                    command: 'set_toc_layer_filter',
+                                    type: 'servertoolcommand_ext',
+                                    id: 'webgis.tools.presentation.visfilter',
+                                    map: service.map,
+                                    argument: JSON.stringify({
+                                        id: presentation.id,
+                                        name: presentation.name,
+                                        serviceLayers: layers
+                                    })
+                                }, this, null, null);
+                        });
                 }
 
                 item_li.presIds = item_li.presIds || [];

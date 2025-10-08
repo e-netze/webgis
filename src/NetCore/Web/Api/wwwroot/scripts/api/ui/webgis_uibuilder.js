@@ -1201,10 +1201,6 @@
             $newElement = $("<select " + elementProperties(element, options) + "></select>").appendTo($parent);
             $newElement.webgis_chainageCombo({ map: options.map });
         }
-        else if (element.type === 'visfiltercombo') {
-            $newElement = $("<select " + elementProperties(element, options) + "></select>").appendTo($parent);
-            $newElement.webgis_visfilterCombo({ map: options.map, val: element.value });
-        }
         else if (element.type === 'labelingcombo') {
             $newElement = $("<select " + elementProperties(element, options) + "></select>").appendTo($parent);
             $newElement.webgis_labelingCombo({ map: options.map, val: element.value });
@@ -1540,10 +1536,10 @@
             $newElement = $("<div " + elementProperties(element, options) + "></div>").appendTo($parent);
             $newElement.webgis_opacity_control({ service: map.getService(element.serviceId) });
         }
-        else if (element.type === "query-builder") { 
-            $newElement = $("<div " + elementProperties(element, options) + "></div>").appendTo($parent);
-            $newElement.webgis_queryBuilder({ map: map, id: element.id, field_defs: element.field_defs, show_geometry_option: element.show_geometry_option, event: options.event });
-        }
+        //else if (element.type === "query-builder") { 
+        //    $newElement = $("<div " + elementProperties(element, options) + "></div>").appendTo($parent);
+        //    $newElement.webgis_queryBuilder({ map: map, id: element.id, field_defs: element.field_defs, show_geometry_option: element.show_geometry_option, event: options.event });
+        //}
         else if (element.type === "ui-liveshare") {
             $newElement = $("<div " + elementProperties(element, options) + "></div>").appendTo($parent);
             $newElement.webgis_liveshare();
@@ -1563,8 +1559,9 @@
             });
         }
         else if (typeof webgis.ui.builder[element.type] === 'function') {
-            $newElement = $("<div " + elementProperties(element, options) + "></div>").appendTo($parent);
-            webgis.ui.builder[element.type](map, $newElement, element);
+            const tagName = webgis.ui.builder[element.type + ".tagname"] || "div";
+            $newElement = $("<" + tagName + " " + elementProperties(element, options) + "></" + tagName + ">").appendTo($parent);
+            webgis.ui.builder[element.type](map, $newElement, element, options);
         }
         else {
             var repeat = element.repeat || 1;
@@ -1726,7 +1723,6 @@
             case 'querycombo':
             case 'editthemecombo':
             case 'chainagethemecombo':
-            case 'visfiltercombo':
             case 'labelingcombo':
             case 'sketchselect':
             case 'circleradiuscombo':

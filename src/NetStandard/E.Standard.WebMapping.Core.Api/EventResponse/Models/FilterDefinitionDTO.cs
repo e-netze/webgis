@@ -1,5 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿#nullable enable
+
+using E.Standard.Security.Cryptography.Abstractions;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace E.Standard.WebMapping.Core.Api.EventResponse.Models;
 
@@ -10,39 +15,32 @@ public class FilterDefinitionDTO
 {
     [JsonProperty(PropertyName = "id")]
     [System.Text.Json.Serialization.JsonPropertyName("id")]
-    public string Id { get; set; }
+    public string Id { get; set; } = "";
 }
 
 public class VisFilterDefinitionDTO : FilterDefinitionDTO
 {
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
-    public string ServiceId { get; set; }
+    public string ServiceId { get; set; } = "";
+
+    [JsonProperty("sp_id", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("sp_id")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? SpanId { get; set; }
+
+    [JsonProperty("sp_n")]
+    [System.Text.Json.Serialization.JsonPropertyName("sp_m")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? SpanName { get; set; }    
 
     [JsonProperty(PropertyName = "args")]
     [System.Text.Json.Serialization.JsonPropertyName("args")]
-    public VisFilterDefinitionArgument[] Arguments { get; set; }
+    public VisFilterDefinitionArgument[]? Arguments { get; set; }
 
-    public void AddArgument(string name, string value)
-    {
-        List<VisFilterDefinitionArgument> args = Arguments != null ? new List<VisFilterDefinitionArgument>(Arguments) : new List<VisFilterDefinitionArgument>();
-
-        args.Add(new VisFilterDefinitionArgument()
-        {
-            Name = name,
-            Value = value
-        });
-        this.Arguments = args.ToArray();
-    }
-
-    public void CalcServiceId()
-    {
-        if (Id != null && Id.Contains("~"))
-        {
-            this.ServiceId = Id.Split('~')[0];
-            this.Id = Id.Split('~')[1];
-        }
-    }
+    [JsonProperty(PropertyName = "sig")]
+    [System.Text.Json.Serialization.JsonPropertyName("sig")]
+    public string? Signature { get; set; }
 
     #region Classes
 
@@ -50,11 +48,11 @@ public class VisFilterDefinitionDTO : FilterDefinitionDTO
     {
         [JsonProperty(PropertyName = "n")]
         [System.Text.Json.Serialization.JsonPropertyName("n")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [JsonProperty(PropertyName = "v")]
         [System.Text.Json.Serialization.JsonPropertyName("v")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
     }
 
     #endregion

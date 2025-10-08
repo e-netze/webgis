@@ -43,6 +43,9 @@
     "info-no-legend": "At this map extent/scale or with the current layer configuration, no legend is available for the selected services.",
     "find-layers": "Find layers...",
 
+    "all-filters": "All filters",
+    "remove-all-filters": "Remove all filters",
+
     // tool MapMarkup
     "mapmarkup-tool-pointer": "Select object",
     "mapmarkup-tool-symbol": "Symbol",

@@ -1,3 +1,5 @@
+#nullable enable
+
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +23,16 @@ public class UIQueryBuilder : UICollapsableElement
     [JsonProperty("show_geometry_option")]
     [System.Text.Json.Serialization.JsonPropertyName("show_geometry_option")]
     public bool ShowGeometryOption { get; set; }
+
+    [JsonProperty("callback_tool_id", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("callback_tool_id")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? CallbackToolId { get; set; }
+
+    [JsonProperty("callback_argument", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("callback_argument")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? CallbackArgument { get; set; }
 
     public void TryAddField(string fieldName, FieldType fieldType = FieldType.Unknown)
     {
@@ -85,29 +97,29 @@ public class UIQueryBuilder : UICollapsableElement
     {
         [JsonProperty("geometry_option")]
         [System.Text.Json.Serialization.JsonPropertyName("geometry_option")]
-        public string GeometryOption { get; set; }
+        public string? GeometryOption { get; set; }
 
         [JsonProperty("query_defs")]
         [System.Text.Json.Serialization.JsonPropertyName("query_defs")]
-        public IEnumerable<QueryDef> QueryDefs { get; set; }
+        public IEnumerable<QueryDef>? QueryDefs { get; set; }
 
         public class QueryDef
         {
             [JsonProperty("field")]
             [System.Text.Json.Serialization.JsonPropertyName("field")]
-            public string Field { get; set; }
+            public string Field { get; set; } = "";
             [JsonProperty("operator")]
             [System.Text.Json.Serialization.JsonPropertyName("operator")]
-            public string Operator { get; set; }
+            public string Operator { get; set; } = "";
             [JsonProperty("value")]
             [System.Text.Json.Serialization.JsonPropertyName("value")]
-            public string Value { get; set; }
+            public string? Value { get; set; }
             [JsonProperty("value_template")]
             [System.Text.Json.Serialization.JsonPropertyName("value_template")]
-            public string ValueTemplate { get; set; }
+            public string? ValueTemplate { get; set; }
             [JsonProperty("logical_operator")]
             [System.Text.Json.Serialization.JsonPropertyName("logical_operator")]
-            public string LogicalOperator { get; set; }
+            public string? LogicalOperator { get; set; }
         }
     }
 

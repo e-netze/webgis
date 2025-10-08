@@ -172,7 +172,7 @@ webgis.ui.definePlugin('webgis_timeFilterList', {
 
             $el.empty()
                 .addClass('webgis-timefilter-list-holder')
-                .data('options', this.options);
+                .data('options', o);
 
             const $timeEpochList = $("<ul>")
                 .addClass('webgis-timefilter-list')

@@ -1136,7 +1136,7 @@
         if (response.setfilters) {
             for (var i in response.setfilters) {
                 var filter = response.setfilters[i];
-                map.setFilter(filter.id, filter.args);
+                map.setFilter(filter.id, filter.args, filter.sig, filter.sp_id);
                 map.ui.refreshUIElements();
             }
         }

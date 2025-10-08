@@ -169,6 +169,7 @@ public interface IBridge : IAppCryptography
 
     IHttpService HttpService { get; }
     IRequestContext RequestContext { get; }
+    ICryptoService CryptoService { get; }
 
     string CreateNewAnoymousCliendsideUserId();
 

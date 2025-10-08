@@ -762,7 +762,7 @@ public class ApiBaseController : Controller
     {
         if (!String.IsNullOrWhiteSpace(fileName))
         {
-            Response.Headers.Append("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            Response.Headers.Append("Content-Disposition", $"attachment; filename=\"{fileName}\"");
         }
 
         return File(data, contentType);
