@@ -1507,32 +1507,35 @@
                     const $overlayButtons = $("<div>")
                         .addClass('webgis-presentation_toc-item-overlay-buttons')
                         .appendTo($item_li);
-                    $("<div>")
-                        .addClass('webgis-presentation_toc-item-overlay-button visfilter')
-                        .data('presentation', presentation)
-                        .appendTo($overlayButtons)
-                        .click(function (e) {
-                            e.stopPropagation();
+                    if (presentation && presentation.layers && presentation.layers.length > 0) {
+                        $("<div>")
+                            .addClass('webgis-presentation_toc-item-overlay-button visfilter')
+                            .css('background-image', 'url(' + webgis.css.imgResource('filter-26.png', 'tools') + ')')
+                            .data('presentation', presentation)
+                            .appendTo($overlayButtons)
+                            .click(function (e) {
+                                e.stopPropagation();
 
-                            console.log('presentation', $(this).data('presentation'));
-                            console.log('presIds', $(this).closest('li').get(0).presIds);
-                            console.log('layers', $.presentationToc.collectLayers(this, $(this).closest('li').get(0).presIds));
+                                console.log('presentation', $(this).data('presentation'));
+                                console.log('presIds', $(this).closest('li').get(0).presIds);
+                                console.log('layers', $.presentationToc.collectLayers(this, $(this).closest('li').get(0).presIds));
 
-                            const layers = $.presentationToc.collectLayers(this, $(this).closest('li').get(0).presIds);
+                                const layers = $.presentationToc.collectLayers(this, $(this).closest('li').get(0).presIds);
 
-                            webgis.tools.onButtonClick(service.map,
-                                {
-                                    command: 'set_toc_layer_filter',
-                                    type: 'servertoolcommand_ext',
-                                    id: 'webgis.tools.presentation.visfilter',
-                                    map: service.map,
-                                    argument: JSON.stringify({
-                                        id: presentation.id,
-                                        name: presentation.name,
-                                        serviceLayers: layers
-                                    })
-                                }, this, null, null);
-                        });
+                                webgis.tools.onButtonClick(service.map,
+                                    {
+                                        command: 'set_toc_layer_filter',
+                                        type: 'servertoolcommand_ext',
+                                        id: 'webgis.tools.presentation.visfilter',
+                                        map: service.map,
+                                        argument: JSON.stringify({
+                                            id: presentation.id,
+                                            name: presentation.name,
+                                            serviceLayers: layers
+                                        })
+                                    }, this, null, null);
+                            });
+                    }
                 }
 
                 item_li.presIds = item_li.presIds || [];

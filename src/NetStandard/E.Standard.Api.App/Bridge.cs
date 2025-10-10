@@ -591,6 +591,8 @@ public class Bridge : IBridge
         return E.Standard.WebGIS.CMS.CmsHlp.ReplaceFilterKeys(_httpRequestContext.OriginalUrlParameters, _userIdentification, filter, startingBracket: startingBracket, endingBracket: endingBracket);
     }
 
+    public IEnumerable<VisFilterDefinitionDTO> RequestVisFilterDefintions() => RequestFilters;
+
     #endregion
 
     #region Labeling

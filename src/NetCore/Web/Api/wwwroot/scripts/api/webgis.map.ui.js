@@ -689,6 +689,9 @@
                     vis = me._map.hasFilters();
                 }
             }
+            if (vis === true && $e.hasClass("webgis-dependency-hastimefilterservices")) {
+                vis = me._map.getTimeInfoServices().length > 0;
+            }
             if (vis === true && $e.hasClass("webgis-dependency-hastimefilters")) {
                 vis = me._map.getTimeInfoServices().filter(s => s.getTimeEpoch()).length > 0;
             }

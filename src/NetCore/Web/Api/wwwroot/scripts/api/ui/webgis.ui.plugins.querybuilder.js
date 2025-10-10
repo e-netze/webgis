@@ -6,9 +6,11 @@
         show_geometry_option: false,
         callback_tool_id: null,
         callback_argument: null,
+        whereclause_parts: null,
         event: null
     },
     init: function () {
+        const $ = this.$;
         const options = this.options;
         const $parent = this.$el
             .addClass('webgis-query-builder');
@@ -75,7 +77,9 @@
     },
     methods: {
         addTableRow: function () {
-            let options = this.options;
+            const $ = this.$;
+            const options = this.options;
+
             if (!options.field_defs) {
                 return;
             }
@@ -165,8 +169,25 @@
                     me.addTableRow();
                 }
             });
+
+            //console.log(options.whereclause_parts);
+            if (options.whereclause_parts) {
+                if (options.whereclause_parts.length > 0) {
+                    $selectFields.val(options.whereclause_parts.shift()).trigger('change');
+                }
+                if (options.whereclause_parts.length > 0) {
+                    $selectOperators.val(options.whereclause_parts.shift()).trigger('change');
+                }
+                if (options.whereclause_parts.length > 0) {
+                    $inputValue.val(options.whereclause_parts.shift());
+                }
+                if (options.whereclause_parts.length > 0) {
+                    $selectLogicalOperator.val(options.whereclause_parts.shift()).trigger('change');
+                }
+            }
         },
         nextRowId: function () {
+            const $ = this.$;
             const $parent = this.$el;
 
             let rowId = 0,
@@ -179,6 +200,7 @@
             return rowId + 1;
         },
         queryDefinitions: function () {
+            const $ = this.$;
             const options = this.options;
             const $parent = this.$el;
 
@@ -234,6 +256,7 @@ webgis.ui.builder['query-builder'] = (map, $newElement, element, options) => {
         show_geometry_option: element.show_geometry_option,
         callback_tool_id: element.callback_tool_id,
         callback_argument: element.callback_argument,
+        whereclause_parts: element.whereclause_parts,
         event: options.event
     });
 };

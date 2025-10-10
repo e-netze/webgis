@@ -659,8 +659,9 @@ path.webgis-leaflet-interactive {
 
 
 .webgis-uibutton-container {
-    margin:10px 0px;
-    text-align:right;
+    margin: 10px 0px;
+    text-align: right;
+    white-space: nowrap;
 }
 
     .webgis-uibutton-container .uibutton {
@@ -1501,11 +1502,11 @@ tr.webgis-border-bottom td{
     background-size: 16px;
     background-repeat: no-repeat;
     border-radius: 4px;
-    border: 1px solid #333;
+    /*border: 1px solid #333;*/
     padding:0px;
 }
 .webgis-presentation_toc-item .webgis-presentation_toc-item-overlay-button.visfilter {
-    background-image: url('../api/img/ui/leave-26.png');
+    background-image: url('../api/img/tools/filter-26.png');
 }
 
 .webgis-presentation_toc-basemap-item {
@@ -4437,17 +4438,15 @@ div.webgis-copy {
             right: 0px;
             width: 30px;
             height: 30px;
-            background-color: #fff;
+            background-color: transparent;
             background-position: center;
             background-repeat: no-repeat;
             background-size: 20px;
             box-sizing: border-box;
-            border: 2px solid #ccc;
-            border-radius: 4px;
+            opacity: .7;
         }
             .webgis-graphics-info-container-holder .webgis-graphics-info-list .webgis-graphics-info-listitem .button:hover {
-                border: 2px solid #aaa;
-                background-color: #ccc;
+                opacity: 1;
             }
             .webgis-graphics-info-container-holder .webgis-graphics-info-list .webgis-graphics-info-listitem .button.inactive {
                 border:none !important;
@@ -5472,6 +5471,7 @@ select.webgis-not-valid {
 .webgis-button-group {
     text-align: right;
     margin-top: 6px;
+    white-space: nowrap;
 }
 
 .webgis-card {
@@ -5494,12 +5494,20 @@ select.webgis-not-valid {
         margin: 6px 4px 2px 4px;
     }
 
-        .webgis-card .webgis-button-group .webgis-button {
-            margin-left: 4px;
-            border-width: 1px;
-            padding: 4px 12px;
-            border-radius: 8px;
-        }
+    .webgis-card .webgis-uibutton-container {
+        margin: 0px 8px 0px 0px;
+    }
+    .webgis-card .webgis-button-group .webgis-button,
+    .webgis-card .webgis-uibutton-container .webgis-button {
+        margin-left: 4px;
+        border-width: 1px;
+        padding: 4px 12px;
+        border-radius: 8px;
+    }
+
+    .webgis-card .webgis-uibutton-container .uibutton {
+        min-width: calc(50% - 21px);
+    }
 
 .webgis-date-combo .webgis-date-container,
 .webgis-date-combo .webgis-datelabel-container {
@@ -5572,51 +5580,73 @@ select.webgis-not-valid {
 }
 
 
-.webgis-timefilter-list-holder {
+.webgis-timefilter-list-holder,
+.webgis-visfilter-list-holder {
 }
 
-    .webgis-timefilter-list-holder .webgis-timefilter-list {
-        list-style:none;
+    .webgis-timefilter-list-holder .webgis-timefilter-list,
+    .webgis-visfilter-list-holder .webgis-visfilter-list {
+        list-style: none;
         padding: 0px;
     }
 
-        .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item {
-            position: relative;
-            height: 44px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 4px;
-            padding: 4px;
-            box-sizing: border-box;
-            cursor: pointer;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item,
+    .webgis-visfilter-list-holder .webgis-visfilter-list .webgis-visfilter-list-item {
+        position: relative;
+        min-height: 44px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 4px;
+        padding: 4px;
+        box-sizing: border-box;
+        cursor: pointer;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    }
+        .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item:hover,
+        .webgis-visfilter-list-holder .webgis-visfilter-list .webgis-visfilter-list-item:hover {
+            background: #efefef;
         }
-            .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item:hover {
-                background: #efefef;
+
+        .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .title,
+        .webgis-visfilter-list-holder .webgis-visfilter-list .webgis-visfilter-list-item .title {
+            font-size: 12px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            height: 15px;
+            padding-right: 65px;
+        }
+        .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .range,
+        .webgis-visfilter-list-holder .webgis-visfilter-list .webgis-visfilter-list-item .statement {
+            font-size: 11px;
+            color: #777;
+        }
+
+        .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .button,
+        .webgis-visfilter-list-holder .webgis-visfilter-list .webgis-visfilter-list-item .button {
+            position: absolute;
+            top: 7px;
+            right: 4px;
+            width: 30px;
+            height: 30px;
+            background-color: transparent;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 20px;
+            box-sizing: border-box;
+            opacity: 0.6;
+        }
+        .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .button:hover,
+        .webgis-visfilter-list-holder .webgis-visfilter-list .webgis-visfilter-list-item .button:hover {
+            opacity: 1;
+        }
+            .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .button.delete,
+            .webgis-visfilter-list-holder .webgis-visfilter-list .webgis-visfilter-list-item .button.delete {
+                background-image: url(../api/img/tools/remove.png);
             }
 
-            .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .title {
-                font-size: 12px;
+            .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .button.split,
+            .webgis-visfilter-list-holder .webgis-visfilter-list .webgis-visfilter-list-item .button.split {
+                background-image: url(../api/img/tools/split-26.png); 
+                right:36px;
             }
-            .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .range {
-                font-size: 11px;
-                color:#777;
-            }
-
-            .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .button {
-                position: absolute;
-                top: 7px;
-                right: 4px;
-                width: 30px;
-                height: 30px;
-                background-color: #fff;
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: 20px;
-                box-sizing: border-box;
-                border: 2px solid #ccc;
-                border-radius: 4px;
-            }
-                .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item .button.delete {
-                    background-image: url(../api/img/tools/remove.png);
-                }

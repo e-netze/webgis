@@ -11,7 +11,8 @@ webgis.ui.definePlugin('webgis_clickNote', {
     },
 
     init: function () {
-        let o = this.options;
+        const $ = this.$;
+        const o = this.options;
         // Events always use name namespace -> simpler deploy
         this.$el
             .css(o.styles)
@@ -54,7 +55,7 @@ webgis.ui.showLayerNotVisibleNotification = function (service, query, $target) {
         };
 
         if (foundVisible === false) {
-            $("<div>")
+            webgis.$("<div>")
                 .appendTo($target)
                 .webgis_clickNote({
                     text: webgis.l10n.get('query-layer-not-visible-notification'),
@@ -85,6 +86,8 @@ webgis.ui.definePlugin('webgis_clickToggle', {
     },
 
     init: function () {
+        const $ = this.$;
+
         this.$el
             .addClass('webgis-click-toggle')
             .data('options', this.options)
@@ -126,6 +129,7 @@ webgis.ui.definePlugin('webgis_card', {
         title: null,
     },
     init: function () {
+        const $ = this.$;
         const o = this.options;
         const $container = this.$el.addClass('webgis-card');
 
@@ -149,7 +153,7 @@ webgis.ui.definePlugin('webgis_buttonGroup', {
 });
 
 webgis.ui.createButtonGroup = function ($parent) {
-    return $("<div>").appendTo($parent).webgis_buttonGroup();
+    return webgis.$("<div>").appendTo($parent).webgis_buttonGroup();
 };
        
 webgis.ui.definePlugin('webgis_dateCombo', {
@@ -165,6 +169,7 @@ webgis.ui.definePlugin('webgis_dateCombo', {
         onChange: null // function (rangeStartDate, rangeEndDate) { ... }
     },
     init: function () {
+        const $ = this.$;
         const o = this.options;
         const $container = this.$el.empty().addClass('webgis-date-combo');
         const now = new Date();
@@ -332,6 +337,7 @@ webgis.ui.definePlugin('webgis_dateCombo', {
     },
     methods: {
         setDate: function (options) {
+            const $ = this.$;
             //console.log('Set date', options);
             var date = options.date;
             if (!date) return;

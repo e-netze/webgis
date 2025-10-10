@@ -1,10 +1,6 @@
 ﻿#nullable enable
 
-using E.Standard.Security.Cryptography.Abstractions;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 
 namespace E.Standard.WebMapping.Core.Api.EventResponse.Models;
 
@@ -30,9 +26,9 @@ public class VisFilterDefinitionDTO : FilterDefinitionDTO
     public string? SpanId { get; set; }
 
     [JsonProperty("sp_n")]
-    [System.Text.Json.Serialization.JsonPropertyName("sp_m")]
+    [System.Text.Json.Serialization.JsonPropertyName("sp_n")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-    public string? SpanName { get; set; }    
+    public string? SpanName { get; set; }
 
     [JsonProperty(PropertyName = "args")]
     [System.Text.Json.Serialization.JsonPropertyName("args")]
@@ -54,6 +50,15 @@ public class VisFilterDefinitionDTO : FilterDefinitionDTO
         [System.Text.Json.Serialization.JsonPropertyName("v")]
         public string? Value { get; set; }
     }
+
+    #endregion
+
+    #region Static Members
+
+    public const string TocFilterPrefix = $"#TOC#~";
+    public const char TocFilterSeparator = '~';
+
+    public static string CreateTocFilterId(string serviceId, string layerId) => $"{TocFilterPrefix}{serviceId}{TocFilterSeparator}{layerId}";
 
     #endregion
 }

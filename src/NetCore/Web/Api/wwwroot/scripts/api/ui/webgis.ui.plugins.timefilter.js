@@ -144,7 +144,8 @@ webgis.ui.builder['timefiltercontrol'] = (map, $newElement, element) => {
 
 webgis.ui.definePlugin('webgis_timeFilterList', {
     defaults: {
-        map: null
+        map: null,
+        onRemoveAllFilters: null
     },
     init: function () {
         const map = this.options.map;
@@ -166,6 +167,7 @@ webgis.ui.definePlugin('webgis_timeFilterList', {
     },
     methods: {
         refresh: function () {
+            const $ = this.$;
             const $el = this.$el;
             const o = this.options;
             const map = o.map;
@@ -173,6 +175,19 @@ webgis.ui.definePlugin('webgis_timeFilterList', {
             $el.empty()
                 .addClass('webgis-timefilter-list-holder')
                 .data('options', o);
+
+            $("<button>")
+                .addClass("webgis-button uibutton uibutton-danger")
+                .addClass("webgis-dependencies webgis-dependency-hastimefilters")
+                .text(webgis.l10n.get("remove-all-filters"))
+                .appendTo(webgis.ui.createButtonGroup($el))
+                .on("click", function () {
+                    for (let s of map.getTimeInfoServices()) {
+                        s.setTimeEpoch(null);
+                    }
+
+                    if (o.onRemoveAllFilters) o.onRemoveAllFilters();
+                });
 
             const $timeEpochList = $("<ul>")
                 .addClass('webgis-timefilter-list')
@@ -219,4 +234,18 @@ webgis.ui.definePlugin('webgis_timeFilterList', {
 
 webgis.ui.builder['timefilterlist'] = (map, $newElement, element) => {
     $newElement.webgis_timeFilterList({ map: map });
+};
+
+webgis.ui.showRemoveTimeFiltersDialog = function (map) {
+    webgis.$("body").webgis_modal({
+        title: webgis.l10n.get("remove-filters"),
+        width: "600px",
+        onload: function ($content) {
+            $("<div>").webgis_timeFilterList({
+                map: map,
+                onRemoveAllFilters: function () { webgis.$("body").webgis_modal("close"); }
+            })
+            .appendTo($content);
+        }
+    });
 };

@@ -4,6 +4,7 @@
         readonly: false
     },
     init: function () {
+        const $ = this.$;
         let options = this.options;
 
         if (!options && !options.map) {
@@ -110,6 +111,8 @@
             .css({ display: 'none', width: '100%', boxSizing: 'border-box', textAlign: 'left' });
     },
     destroy: function () {
+        const $ = this.$;
+
         this.$el.off('.webgis_sketch_info_container');
 
         const sketch = this.options?.map?.toolSketch?.();
@@ -123,6 +126,7 @@
     staticMethods: {
         onSketchCurrentStateChanged: function (channel, info) {
             //console.log('onSketchCurrentStateChanged', info);
+            const $ = this.$;
 
             const sketch = this.sketch;
             const $elem = this.elem;

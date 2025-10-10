@@ -743,6 +743,26 @@ namespace E.Standard.WebGIS.Tools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] timefilter {
+            get {
+                object obj = ResourceManager.GetObject("timefilter", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] timefilter_remove {
+            get {
+                object obj = ResourceManager.GetObject("timefilter_remove", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] trashcan {
             get {
                 object obj = ResourceManager.GetObject("trashcan", resourceCulture);

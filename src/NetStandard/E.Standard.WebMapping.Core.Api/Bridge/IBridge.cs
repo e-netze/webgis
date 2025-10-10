@@ -5,6 +5,7 @@ using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Abstractions;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Abstraction;
+using E.Standard.WebMapping.Core.Api.EventResponse.Models;
 using E.Standard.WebMapping.Core.Api.IO;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Editing;
@@ -86,6 +87,8 @@ public interface IBridge : IAppCryptography
     IVisFilterBridge ServiceVisFilter(string serviceId, string filterId);
     Task<IEnumerable<IVisFilterBridge>> ServiceQueryVisFilters(string serviceId, string queryId);
     IUnloadedRequestVisFiltersContext UnloadRequestVisFiltersContext();
+
+    IEnumerable<VisFilterDefinitionDTO> RequestVisFilterDefintions();
 
     IEnumerable<ILabelingBridge> ServiceLabeling(string serviceId);
     ILabelingBridge ServiceLabeling(string serviceId, string labelingId);

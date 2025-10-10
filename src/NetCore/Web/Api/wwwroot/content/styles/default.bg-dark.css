@@ -661,18 +661,12 @@ body.webgis-dark .webgis-card {
         background: #222;
     }
 
-body.webgis-dark .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item {
-    position: relative;
-    height: 44px;
+body.webgis-dark .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item,
+body.webgis-dark .webgis-visfilter-list-holder .webgis-visfilter-list .webgis-visfilter-list-item {
     border: 1px solid #777;
-    border-radius: 5px;
-    margin-bottom: 4px;
-    padding: 4px;
-    box-sizing: border-box;
-    cursor: pointer;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
-    body.webgis-dark .webgis-timefilter-list-holder .webgis-timefilter-list .webgis-timefilter-list-item:hover {
+    body.webgis-dark .webgis-visfilter-list-holder .webgis-visfilter-list .webgis-visfilter-list-item:hover {
         background: #222;
     }

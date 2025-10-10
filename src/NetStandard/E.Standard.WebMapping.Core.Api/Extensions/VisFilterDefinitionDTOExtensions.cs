@@ -4,6 +4,7 @@ using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using static E.Standard.WebMapping.Core.Api.EventResponse.Models.VisFilterDefinitionDTO;
 
@@ -27,7 +28,8 @@ static public class VisFilterDefinitionDTOExtensions
 
     static public void CalcServiceId(this VisFilterDefinitionDTO dto)
     {
-        if (dto.Id?.Contains("~") == true)
+        if (dto.IsTocVisFilter() == false
+            && dto.Id?.Contains("~") == true)
         {
             dto.ServiceId = dto.Id.Split('~')[0];
             dto.Id = dto.Id.Split('~')[1];
@@ -84,8 +86,18 @@ static public class VisFilterDefinitionDTOExtensions
         }
 
         return String.IsNullOrEmpty(serviceId)
-            ? dto.Id.StartsWith("#TOC.", StringComparison.Ordinal)
-            : dto.Id.StartsWith($"#TOC.{serviceId}.", StringComparison.Ordinal);
+            ? dto.Id.StartsWith(VisFilterDefinitionDTO.TocFilterPrefix, StringComparison.Ordinal)
+            : dto.Id.StartsWith($"{VisFilterDefinitionDTO.TocFilterPrefix}{serviceId}{VisFilterDefinitionDTO.TocFilterSeparator}", StringComparison.Ordinal);
+    }
+
+    static public string? TocVisFilterServiceId(this VisFilterDefinitionDTO? dto)
+    {
+        if (!dto.IsTocVisFilter())
+        {
+            throw new InvalidOperationException("Not a TOC vis filter");
+        }
+
+        return dto?.Id.Split(VisFilterDefinitionDTO.TocFilterSeparator).Skip(1).First();
     }
 
     static public string? TocVisFilterLayerId(this VisFilterDefinitionDTO? dto)
@@ -95,7 +107,7 @@ static public class VisFilterDefinitionDTOExtensions
             throw new InvalidOperationException("Not a TOC vis filter");
         }
 
-        return dto?.Id.Substring(dto.Id.LastIndexOf('.') + 1);
+        return dto?.Id.Substring(dto.Id.LastIndexOf(VisFilterDefinitionDTO.TocFilterSeparator) + 1);
     }
 
     static public string TocVisFilterWhereClause(this VisFilterDefinitionDTO? dto)

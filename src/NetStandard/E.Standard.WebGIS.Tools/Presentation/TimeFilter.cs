@@ -13,7 +13,8 @@ namespace E.Standard.WebGIS.Tools.Presentation;
 //[ToolHelp("tools/presentation/timefilter.html")]
 [AdvancedToolProperties(VisFilterDependent = true, ClientDeviceDependent = true)]
 internal class TimeFilter : IApiServerButtonLocalizable<TimeFilter>,
-                            IApiButtonResources
+                            IApiButtonResources,
+                            IApiButtonDependency
 {
     #region IApiServerButton
 
@@ -33,6 +34,7 @@ internal class TimeFilter : IApiServerButtonLocalizable<TimeFilter>,
             .AddUIElements(
                 new UICard(localizer.Localize("define-service-filter"))
                     .AddChildren(new UITimeFilterControlElement()),
+                new UIBreak(1),
                 new UITimeFilterListElement());
     }
 
@@ -42,8 +44,14 @@ internal class TimeFilter : IApiServerButtonLocalizable<TimeFilter>,
 
     public void RegisterToolResources(IToolResouceManager toolResourceManager)
     {
-        //toolResourceManager.AddImageResource("timefilter", /*Properties.Resources.filter*/(byte[])null);
+        toolResourceManager.AddImageResource("timefilter", Properties.Resources.timefilter);
     }
+
+    #endregion
+
+    #region IApiButtonDependency Member
+
+    public VisibilityDependency ButtonDependencies => VisibilityDependency.HasTimeFilterServices;
 
     #endregion
 }

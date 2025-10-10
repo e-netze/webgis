@@ -480,6 +480,10 @@ public class ApiToolEventArguments
 
     public string ServerCommandMethod => this["_method"];
     public string ServerCommandArgument => this["_servercommand_argument"];
+    public void SetServerCommandArgument(string argument)
+    {
+        this["_servercommand_argument"] = argument;
+    }
 
     public bool AsDefaultTool { get; set; }
 

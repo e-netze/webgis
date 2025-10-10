@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31919.166
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11104.47 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E.Standard.Plot", "NetStandard\E.Standard.Plot\E.Standard.Plot.csproj", "{34BFFF2D-04BA-4523-8F42-08B43B8F0255}"
 EndProject
@@ -166,6 +166,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mcp", "mcp", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webgis-api-mcp", "NetCore\Mcp\webgis-api-mcp\webgis-api-mcp.csproj", "{B3FADCE8-A742-4DC7-9A36-D643B2D47CA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E.Standard.WebMapping.Core.Api.Tests", "NetStandard\E.Standard.WebMapping.Core.Api.Tests\E.Standard.WebMapping.Core.Api.Tests.csproj", "{89799BAB-56E8-4CF4-A4C6-91417586D7BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -773,6 +775,14 @@ Global
 		{B3FADCE8-A742-4DC7-9A36-D643B2D47CA0}.Release_Internal|Any CPU.Build.0 = Release|Any CPU
 		{B3FADCE8-A742-4DC7-9A36-D643B2D47CA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3FADCE8-A742-4DC7-9A36-D643B2D47CA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89799BAB-56E8-4CF4-A4C6-91417586D7BE}.Debug_Internal|Any CPU.ActiveCfg = Debug|Any CPU
+		{89799BAB-56E8-4CF4-A4C6-91417586D7BE}.Debug_Internal|Any CPU.Build.0 = Debug|Any CPU
+		{89799BAB-56E8-4CF4-A4C6-91417586D7BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89799BAB-56E8-4CF4-A4C6-91417586D7BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89799BAB-56E8-4CF4-A4C6-91417586D7BE}.Release_Internal|Any CPU.ActiveCfg = Release|Any CPU
+		{89799BAB-56E8-4CF4-A4C6-91417586D7BE}.Release_Internal|Any CPU.Build.0 = Release|Any CPU
+		{89799BAB-56E8-4CF4-A4C6-91417586D7BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89799BAB-56E8-4CF4-A4C6-91417586D7BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -852,6 +862,7 @@ Global
 		{3CA69B24-A186-4E62-8B2C-FB9F68358CF7} = {FB5D2B86-06B5-4A4A-9A86-8A1D53D09A09}
 		{1A7A9117-0B20-7DB2-F557-321BAF0063F3} = {CC2AD9D0-9A16-4BD0-A5A6-EBC5301E163C}
 		{B3FADCE8-A742-4DC7-9A36-D643B2D47CA0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{89799BAB-56E8-4CF4-A4C6-91417586D7BE} = {CC2AD9D0-9A16-4BD0-A5A6-EBC5301E163C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F99A5AB1-C2BA-427E-8A64-380D6234B360}

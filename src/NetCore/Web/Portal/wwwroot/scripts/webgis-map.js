@@ -434,6 +434,8 @@ webgis.mapInitializer = (function (m) {
         if (typeof refMapJson.value === 'string')
             refMapJson.value = webgis.$.parseJSON(refMapJson.value);
 
+        console.log('refMapJson.value', refMapJson.value);
+
         if (json.success === false) {
             webgis.alert(
                 'Beim Laden der Karte ist ein Fehler aufgetreten: ' + json.exception,
@@ -572,6 +574,7 @@ webgis.mapInitializer = (function (m) {
             },
             mapUrlName,
             webgis.initialParameters.appendservices);
+
         $('#' + targetId).data('webgis-map', map);
 
         globals.map = map;

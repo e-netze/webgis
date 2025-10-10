@@ -86,9 +86,7 @@
             .click(function () {
                 var map = $(this).data('map');
                 if (map) {
-                    map.unsetAllFilters();
-                    map.refresh();
-                    map.ui.refreshUIElements();
+                    webgis.tools.onButtonClick(map, { command: 'visfilterremoveall', type: 'clientbutton', map: map });
                 }
             });
         $("<img src='" + webgis.css.imgResource('filter-remove-26.png', 'tools') + "' />").appendTo($filterButton);
@@ -103,10 +101,14 @@
             .click(function () {
                 var map = $(this).data('map');
                 if (map) {
-                    for(let s of map.getTimeInfoServices()) {
-                        s.setTimeEpoch(null);
-                    }
+                    webgis.tools.onButtonClick(map, { command: 'timefilterremoveall', type: 'clientbutton', map: map });
                 }
+                //var map = $(this).data('map');
+                //if (map) {
+                //    for(let s of map.getTimeInfoServices()) {
+                //        s.setTimeEpoch(null);
+                //    }
+                //}
             });
         $("<img src='" + webgis.css.imgResource('timefilter-remove-26.png', 'tools') + "' />").appendTo($timeFilterButton);
 
@@ -808,7 +810,8 @@
             services: [],
             dynamiccontent: [],
             userdata: {},
-            selections: []
+            selections: [],
+            visfilters: this._visfilters
         };
         if (options.ui === true) {
             o.ui = this.ui.serialize();
@@ -1020,7 +1023,8 @@
             services: '',
             layers: [],
             custom: {},
-            query_results: mapJson.query_results
+            query_results: mapJson.query_results,
+            visfilters: mapJson.visfilters
         };
         for (var s in mapJson.services) {
             if (mapOptions.services != '')
@@ -3303,20 +3307,77 @@
         if(spanId) filter.sp_id = spanId
         
         this._visfilters.push(filter);
+
+        this.events.fire('visfilters-changed', this);
     };
     this.unsetFilter = function (filterId) {
         filterId = filterId || '';
 
         var visfilters = [];
-        for (var f in this._visfilters) {
-            var visfilter = this._visfilters[f];
+        for (let f in this._visfilters) {
+            const visfilter = this._visfilters[f];
             if (visfilter.id === filterId || visfilter.id.indexOf('~' + filterId) > 0 || filterId.indexOf('~' + visfilter.id) > 0 || filterId == '')
                 continue;
 
             visfilters.push(visfilter);
         }
         this._visfilters = visfilters;
+        this.events.fire('visfilters-changed', this);
     };
+    this.unsetFilterSpan = function (spanId) {
+        if (!spanId) return;
+
+        const visfilters = [];
+        const affectedServices = new Set();
+        for (let f in this._visfilters) {
+            const visfilter = this._visfilters[f];
+            if (visfilter.sp_id && visfilter.sp_id === spanId)
+            {
+                if (visfilter.id.indexOf("#TOC#~") === 0) {
+                    const idParts = visfilter.id.split('~');
+                    affectedServices.add(idParts[1]);
+                }
+
+                continue;
+            }
+
+            visfilters.push(visfilter);
+        }
+        this._visfilters = visfilters;
+
+        const me = this;
+        affectedServices.forEach(serviceId => {
+            console.log('refresh', serviceId);
+            const affectedService = me.getService(serviceId);
+            if (affectedService) affectedService.refresh();
+        });
+
+        this.events.fire('visfilters-changed', this);
+    };
+    this.getFilterSpan = function (spanId) {
+        const spanVisfilters = [];
+        if (spanId) {
+            for (let f in this._visfilters) {
+                const visfilter = this._visfilters[f];
+                if (visfilter.sp_id && visfilter.sp_id === spanId) {
+                    spanVisfilters.push(visfilter);
+                }
+            }
+        }
+        return spanVisfilters;
+    };
+    this.splitFilterSpan = function (spanId) {
+        if (!spanId) return;
+
+        const spanVisfilters = this.getFilterSpan(spanId);
+        this.unsetFilterSpan(spanId);
+        for (let f in spanVisfilters) {
+            const visfilter = spanVisfilters[f];
+            this.setFilter(visfilter.id, visfilter.args, visfilter.sig, webgis.guid());
+        }
+
+        this.events.fire('visfilters-changed', this);
+    }
     this.hasFilter = function (filterId) {
         if (!filterId) {
             return false;
@@ -3335,6 +3396,28 @@
     };
     this.unsetAllFilters = function () {
         this._visfilters = [];
+
+        this.events.fire('visfilters-changed', this);
+    };
+    this.getFilterName = function (filterId) {
+        if (filterId.indexOf('#TOC#~') > 0) return filterId;
+        if (filterId.indexOf('~') < 0) return filterId;
+
+        const filterUrl = filterId.split('~')[1];
+
+        for (var s in this.services) {
+            var service = this.services[s];
+            if (!service.serviceInfo?.filters) continue;
+
+            for (var f in service.serviceInfo.filters) {
+                var filter = service.serviceInfo.filters[f];
+                if (filter.id === filterUrl) {
+                    return filter.name;
+                }
+            }
+        }
+
+        return filterUrl;
     };
     /***** TimeInfo ****/
     this.getTimeInfoServices = function () {

@@ -815,7 +815,8 @@
             dynamiccontent: mapJson.dynamiccontent,
             name: mapName,
             custom: customParameters,
-            query_results: mapJson.query_results
+            query_results: mapJson.query_results,
+            visfilters: mapJson.visfilters
         });
 
         // Set Opacity, Order
@@ -871,7 +872,6 @@
         return map;
     };
     this._createMap = function (elemId, options, mapObject) {
-
         if (webgis.customEvents.beforeCreateMap) {
             webgis.customEvents.beforeCreateMap(elemId, options, mapObject);
         }
@@ -987,6 +987,9 @@
             }
             if (options.dynamiccontent && options.dynamiccontent.length > 0) {
                 map.addDynamicContent(options.dynamiccontent, true);
+            }
+            if (Array.isArray(options.visfilters)) {
+                map._visfilters = options.visfilters;
             }
         }
         webgis.hideProgress('Karte wird geladen...');

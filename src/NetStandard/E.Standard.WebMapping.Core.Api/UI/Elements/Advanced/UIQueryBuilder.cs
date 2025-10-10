@@ -3,6 +3,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 
@@ -34,6 +35,11 @@ public class UIQueryBuilder : UICollapsableElement
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string? CallbackArgument { get; set; }
 
+    [JsonProperty("whereclause_parts", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("whereclause_parts")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string[]? WhereClauseParts { get; private set; }
+
     public void TryAddField(string fieldName, FieldType fieldType = FieldType.Unknown)
     {
         if (string.IsNullOrEmpty(fieldName))
@@ -49,6 +55,79 @@ public class UIQueryBuilder : UICollapsableElement
         }
     }
 
+    // Optional: only for reference – not strictly needed below
+    //private static readonly string[] possibleOperators =
+    //    { "=", " like ", " in ", "<>", ">", ">=", "<", "<=" };
+
+    public void TrySetWhereClause(string whereClause)
+    {
+        if (string.IsNullOrWhiteSpace(whereClause))
+        {
+            return;
+        }
+
+        // The order of alternatives matters (longer/more complex ones first)
+        const string pattern =
+            // logical operators
+            @"\bAND\b|\bOR\b" +
+            // comparison operators
+            @"|<>|>=|<=|=|>|<" +
+            // LIKE / IN
+            @"|\bLIKE\b|\bIN\b" +
+            // IN-lists in parentheses
+            @"|\([^\)]*\)" +
+            // string literals with escaped ''
+            @"|'(?:[^']|'')*'" +
+            // identifiers
+            @"|[A-Za-z_][A-Za-z0-9_]*" +
+            // numeric literals (simplified)
+            @"|\d+(?:\.\d+)?";
+
+        var tokens = new List<string>();
+        foreach (Match m in Regex.Matches(whereClause, pattern, RegexOptions.IgnoreCase))
+        {
+            string t = m.Value;
+
+            if (Regex.IsMatch(t, @"^(?:AND|OR)$", RegexOptions.IgnoreCase))
+            {
+                tokens.Add(t.ToLowerInvariant()); // normalize to "and"/"or"
+                continue;
+            }
+
+            if (Regex.IsMatch(t, @"^(?:LIKE|IN)$", RegexOptions.IgnoreCase))
+            {
+                // add with surrounding spaces: " like " / " in "
+                tokens.Add($" {t.ToLowerInvariant()} ");
+                continue;
+            }
+
+            if (t.StartsWith("(") && t.EndsWith(")") && t.Length >= 2)
+            {
+                // IN-list: remove parentheses, keep content as one token
+                tokens.Add(string.Join(",",
+                               t.Substring(1, t.Length - 2)         // remove "(" and ")"
+                                .Split(',')                         // split by ","
+                                .Select(v => v.Trim().Trim('\''))   // remove whitespace and outer quotes
+                            )
+                            .Trim());
+                continue;
+            }
+
+            if (t.Length >= 2 && t[0] == '\'' && t[^1] == '\'')
+            {
+                // string literal without outer quotes, '' -> '
+                string inner = t.Substring(1, t.Length - 2).Replace("''", "'");
+                tokens.Add(inner);
+                continue;
+            }
+
+            // identifiers, numbers, or comparison operators
+            tokens.Add(t);
+        }
+
+        WhereClauseParts = tokens.ToArray();
+    }
+
     #region Classes
 
     private class FieldDef
@@ -60,7 +139,7 @@ public class UIQueryBuilder : UICollapsableElement
             switch (fieldType)
             {
                 case FieldType.String:
-                    Operators = new[] { "=", " like ", "<>", ">", ">=", "<", "<=" };
+                    Operators = new[] { "=", " like ", " in ", "<>", ">", ">=", "<", "<=" };
                     ValueTemplate = "'{0}'";
                     break;
                 case FieldType.Interger:
@@ -68,7 +147,7 @@ public class UIQueryBuilder : UICollapsableElement
                 case FieldType.SmallInteger:
                 case FieldType.Float:
                 case FieldType.Double:
-                    Operators = new[] { "=", "<>", ">", ">=", "<", "<=" };
+                    Operators = new[] { "=", " in ", "<>", ">", ">=", "<", "<=" };
                     ValueTemplate = "{0}";
                     break;
                 case FieldType.Boolean:

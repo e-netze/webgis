@@ -340,4 +340,10 @@
   <data name="compass" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\compass-26.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="timefilter_remove" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\timefilter-remove-26.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="timefilter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\timefilter-26.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

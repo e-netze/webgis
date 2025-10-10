@@ -43,7 +43,9 @@
     "info-no-legend": "In diesem Ausschnitt/Maßstab bzw. bei dieser Layerschaltung wird für die gewählten Dienste keine Legende angeboten.",
     "find-layers": "Themen suchen...",
 
+    "select-filter": "Filter wählen",
     "all-filters": "Alle Filter",
+    "remove-filters": "Filter entferenen",
     "remove-all-filters": "Alle Filter entfernen",
 
     // tool MapMarkup

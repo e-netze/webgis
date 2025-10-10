@@ -49,7 +49,8 @@
         labeling: 'webgis.tools.presentation.labeling',
         filter: 'webgis.tools.presentation.visfilter',
         filterRemove: 'webgis.tools.presentation.visfilterremoveall',
-        timeFilter: 'webgis.tools.presentation.timefilter'
+        timeFilter: 'webgis.tools.presentation.timefilter',
+        timeFilterRemove: 'webgis.tools.presentation.timefilterremoveall'
     };
     this._toolData = [];
     this.getToolData = function (toolId) {
@@ -535,9 +536,12 @@
                     break;
                 case 'visfilterremoveall':
                     if (map) {
-                        map.unsetAllFilters();
-                        map.refresh();
-                        map.ui.refreshUIElements();
+                        webgis.ui.showRemoveVisFiltersDialog(map);
+                    }
+                    break;
+                case 'timefilterremoveall':
+                    if (map) {
+                        webgis.ui.showRemoveTimeFiltersDialog(map);
                     }
                     break;
                 default:

@@ -5,6 +5,7 @@ using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebGIS.Tools.Identify;
+using E.Standard.WebGIS.Tools.Presentation.Extensions;
 using E.Standard.WebGIS.Tools.Presentation.Models;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api;
@@ -35,6 +36,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
                          IApiButtonResources
 {
     public const string VisFilterQueryBuilderId = "set-toc-layer-filter";
+    public const string VisFilterWhereClauseArgumentName = "visfilter-whereclause";
 
     #region IApiServer Button
 
@@ -47,9 +49,12 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
 
         return new ApiEventResponse()
             .AddUIElement(
-                new UIVisFilterCombo() { onchange = "visfilterchanged" }
-                    .WithId("visfilter-filter")
-                    .AsPersistantToolParameter(UICss.ToolInitializationParameterImportant));
+                new UICard(localizer.Localize("predefined-visfilters"))
+                    .AddChild(
+                        new UIVisFilterCombo() { onchange = "visfilterchanged" }
+                            .WithId("visfilter-filter")
+                            .AsPersistantToolParameter(UICss.ToolInitializationParameterImportant))
+                    );
 
     }
 
@@ -129,21 +134,25 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
         var existingVisFilter = bridge.GetVisFilters().Where(f => f.Id == visFilterParameter).FirstOrDefault();
         bool visFilterIsActive = activeVisFilters.Contains(visFilterParameter);
 
-        apiResponse.AddUIElement(
+        var predefinedFiltersUIParent = new UICard(localizer.Localize("predefined-visfilters"));
+        apiResponse.AddUIElements(predefinedFiltersUIParent, new UIBreak(1), new UIVisFilterListElement());
+
+        predefinedFiltersUIParent.AddChild(
             new UIVisFilterCombo() { onchange = "visfilterchanged" }
                 .WithId("visfilter-filter")
                 .AsPersistantToolParameter()
-                .WithValue(visFilterParameter));
+                .WithValue(visFilterParameter)
+        );
 
         apiResponse.AddUISetter(new UIPersistentParametersSetter(this));
 
         if (filter != null)
         {
-            apiResponse.AddUIElement(new UIBreak(2));
+            predefinedFiltersUIParent.AddChild(new UIBreak(1));
 
             foreach (var keyParemeter in filter.Parameters.Keys)
             {
-                apiResponse.AddUIElement(
+                predefinedFiltersUIParent.AddChild(
                     new UILabel()
                         .WithLabel(keyParemeter));
 
@@ -175,14 +184,14 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
 
                 if (lookupType == LookupType.None)
                 {
-                    apiResponse.AddUIElement(
+                    predefinedFiltersUIParent.AddChild(
                         new UIInputText()
                             .WithId(id)
                             .AsPersistantToolParameter());
                 }
                 else if (lookupType == LookupType.Autocomplete)
                 {
-                    apiResponse.AddUIElement(
+                    predefinedFiltersUIParent.AddChild(
                         new UIInputAutocomplete(UIInputAutocomplete.MethodSource(bridge, typeof(VisFilter), "autocomplete", new
                         {
                             visfilter_filter = visFilterParameter,
@@ -195,7 +204,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
                 {
                     var values = await bridge.GetLookupValues<string>(filter, parameter: keyParemeter, serviceId: serviceId, layerId: lookupLayer?.Id);
 
-                    apiResponse.AddUIElement(
+                    predefinedFiltersUIParent.AddChild(
                         new UISelect()
                             .WithId(id)
                             .AsPersistantToolParameter()
@@ -224,35 +233,35 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
                         ? localizer.Localize("apply-changes")
                         : localizer.Localize("apply-filter")));
 
-            apiResponse.AddUIElements(buttonContainer, new UIVisFilterListElement());
+            predefinedFiltersUIParent.AddChildren(buttonContainer);
         }
         else
         {
-            var buttonContainer = new UIButtonContainer();
+            //var buttonContainer = new UIButtonContainer();
 
-            foreach (var activeVisFilter in activeVisFilters)
-            {
-                var activeFilter = activeVisFilter.Contains("~") ? bridge.ServiceVisFilter(activeVisFilter.Split('~')[0], activeVisFilter.Split('~')[1]) : null;
-                if (activeFilter != null)
-                {
-                    buttonContainer.AddChild(
-                        new UICallbackButton(this, "unsetfilter") { buttoncommand_argument = activeVisFilter }
-                            .WithText(String.Format(localizer.Localize("filter-remove"), activeFilter.Name))
-                            .WithStyles(UICss.CancelButtonStyle));
-                }
-            }
+            //foreach (var activeVisFilter in activeVisFilters)
+            //{
+            //    var activeFilter = activeVisFilter.Contains("~") ? bridge.ServiceVisFilter(activeVisFilter.Split('~')[0], activeVisFilter.Split('~')[1]) : null;
+            //    if (activeFilter != null)
+            //    {
+            //        buttonContainer.AddChild(
+            //            new UICallbackButton(this, "unsetfilter") { buttoncommand_argument = activeVisFilter }
+            //                .WithText(String.Format(localizer.Localize("filter-remove"), activeFilter.Name))
+            //                .WithStyles(UICss.CancelButtonStyle));
+            //    }
+            //}
 
-            buttonContainer.AddChild(
-                new UICallbackButton(this, "unsetfilter") { buttoncommand_argument = "#" }
-                    .WithText(localizer.Localize("remove-all-filter"))
-                    .WithStyles(UICss.CancelButtonStyle));
+            //buttonContainer.AddChild(
+            //    new UICallbackButton(this, "unsetfilter") { buttoncommand_argument = "#" }
+            //        .WithText(localizer.Localize("remove-all-filter"))
+            //        .WithStyles(UICss.CancelButtonStyle));
 
-            apiResponse.AddUIElements(buttonContainer, new UIVisFilterListElement());
+            //predefinedFiltersUIParent.AddChildren(buttonContainer);
         }
     }
 
     [ServerToolCommand("setfilter")]
-    async public Task<ApiEventResponse> SetFilter(IBridge bridge, ApiToolEventArguments e, ILocalizer<VisFilter> localizer)
+    async public Task<ApiEventResponse> OnSetFilter(IBridge bridge, ApiToolEventArguments e, ILocalizer<VisFilter> localizer)
     {
         string visFilterParameter = e["visfilter-filter"];
 
@@ -316,7 +325,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
     }
 
     [ServerToolCommand("unsetfilter")]
-    async public Task<ApiEventResponse> UnsetFilter(IBridge bridge, ApiToolEventArguments e, ILocalizer<VisFilter> localizer)
+    async public Task<ApiEventResponse> OnUnsetFilter(IBridge bridge, ApiToolEventArguments e, ILocalizer<VisFilter> localizer)
     {
         string visFilterParameter = e.ServerCommandArgument.OrTake(e["visfilter-filter"]);
 
@@ -341,7 +350,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
     }
 
     [ServerToolCommand("setfeaturefilter")]
-    async public Task<ApiEventResponse> SetFeatureFilter(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnSetFeatureFilter(IBridge bridge, ApiToolEventArguments e)
     {
         var ids = e["feature_oid"]?.Split(':');
         var filterId = e["filter_id"];
@@ -425,7 +434,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
     }
 
     [ServerToolCommand("unsetfeaturefilter")]
-    async public Task<ApiEventResponse> UnsetFeatureFilter(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnUnsetFeatureFilter(IBridge bridge, ApiToolEventArguments e)
     {
         var ids = e["feature_oid"]?.Split(':');
 
@@ -456,7 +465,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
     }
 
     [ServerToolCommand("set_toc_layer_filter")]
-    async public Task<ApiEventResponse> SetTocLayerFilter(IBridge bridge, ApiToolEventArguments e, ILocalizer<VisFilter> localizer)
+    async public Task<ApiEventResponse> OnSetTocLayerFilter(IBridge bridge, ApiToolEventArguments e, ILocalizer<VisFilter> localizer)
     {
         var argument = e.ServerCommandArgument;
 
@@ -496,6 +505,13 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
             uiQueryBuilder.TryAddField(field.Name, field.Type);
         }
 
+        string whereClause = e[VisFilterWhereClauseArgumentName]
+                             .IfNullOrEmptyTake(() => tocVisFilterRequest.TryGetWhereClause(bridge.RequestVisFilterDefintions()));
+        if(!String.IsNullOrEmpty(whereClause))
+        {
+            uiQueryBuilder.TrySetWhereClause(whereClause);
+        }
+
         return new ApiEventResponse()
         {
             UIElements = new IUIElement[]
@@ -503,13 +519,41 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
                     new UIDiv()
                     {
                         target =  UIElementTarget.modaldialog.ToString(),
-                        targettitle = localizer.Localize("desktop.querybuilder"),
+                        targettitle = localizer.Localize("querybuilder"),
                         targetwidth = "600px",
                         targetheight = "400px",
                         elements = new IUIElement[] { uiQueryBuilder }
                     }
                 }
         };
+    }
+
+    [ServerToolCommand("edit_toc_layer_filter")]
+    public Task<ApiEventResponse> OnEditTocLayerFilter(IBridge bridge, ApiToolEventArguments e, ILocalizer<VisFilter> localizer)
+    {
+        string spanId = e.ServerCommandArgument;
+        var spanFilterDefinitions = (bridge.RequestVisFilterDefintions()?
+            .Where(f => f.SpanId == spanId)
+            .ToArray())
+            .ThrowIfNullOrEmpty(() => "No Filterdefinitions found");
+
+        string whereClause = spanFilterDefinitions.First().Arguments?.FirstOrDefault()?.Value;
+        var request = new TocVisFilterRequestDTO();
+        request.ServiceLayers = new Dictionary<string, string[]>();
+
+        foreach (var serviceId in spanFilterDefinitions.Select(f => f.TocVisFilterServiceId()).Distinct())
+        {
+            request.ServiceLayers[serviceId] = spanFilterDefinitions
+                                                    .Where(f => f.TocVisFilterServiceId() == serviceId)
+                                                    .Select(f => f.TocVisFilterLayerId())
+                                                    .Where(l => !String.IsNullOrEmpty(l))
+                                                    .ToArray();
+        }
+
+        e.SetServerCommandArgument(JSerializer.Serialize(request));
+        e[VisFilterWhereClauseArgumentName] = whereClause;
+
+        return OnSetTocLayerFilter(bridge, e, localizer);
     }
 
     [ServerToolCommand("querybuilder")]
@@ -539,7 +583,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
 
                 var visFilterDefinition = new VisFilterDefinitionDTO()
                 {
-                    Id = $"#TOC.{serviceId}.{layerId}",
+                    Id = VisFilterDefinitionDTO.CreateTocFilterId(serviceId,layerId),
                     ServiceId = serviceId,
                     SpanId = spanId
                 };

@@ -89,7 +89,9 @@ public enum VisibilityDependency
     HasToolResults_Coordinates_or_Chainage_or_QueryResults = 524288,
     QueryFeaturesHasTableProperties = 1048576,
     ToolSketchesExists = 2097152,
-    HasGraphicsStagedElement = 4194304
+    HasGraphicsStagedElement = 4194304,
+    HasTimeFilters = 8388608,
+    HasTimeFilterServices = 16777216,
 }
 
 public enum ApiClientButtonCommand
@@ -163,6 +165,7 @@ public enum ApiClientButtonCommand
     setgraphicscompassrosesteps = 89,
     setgraphicsdimlinelengthunit = 90,
     setgraphicsdimlinelabeltotallength = 91,
+    timefilterremoveall = 92,
 }
 
 public enum ApiToolEvents
