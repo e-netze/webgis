@@ -18,7 +18,8 @@ public enum ToolType
     graphics = 20,
     print_preview = 40,
     watch_position = 80,
-    overlay_georef_def = 101
+    overlay_georef_def = 101,
+    sketchseries = 102
 }
 
 public enum ToolCursor

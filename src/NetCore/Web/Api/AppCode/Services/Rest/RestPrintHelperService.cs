@@ -19,6 +19,7 @@ using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api;
+using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
@@ -33,6 +34,7 @@ using E.Standard.WebMapping.GeoServices.Tiling;
 using gView.GraphicsEngine;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -144,8 +146,11 @@ public class RestPrintHelperService
         string layoutId = form["layout"];
         string layoutFormat = form["format"];
         double printScale = !String.IsNullOrWhiteSpace(form["scale"]) ? form["scale"].ToPlatformDouble() : mapDefinition.Scale;
-        double printRotation = !String.IsNullOrWhiteSpace(form["rotation"]) ? form["rotation"].ToPlatformDouble() : 0D;
         string layoutDpi = form["dpi"];
+        string toolId = form["toolId"];
+        string toolSketchWKT = form["toolSketch"];
+        var tool = String.IsNullOrEmpty(toolId) ? null : _cache.GetTool(toolId);
+        var tookSketch = String.IsNullOrEmpty(toolSketchWKT) ? null : toolSketchWKT.ShapeFromWKT();
 
         E.Standard.WebMapping.Core.Api.Bridge.IBridge bridge = null;
 
@@ -206,6 +211,14 @@ public class RestPrintHelperService
                 calcSketch: calcSketch,
                 sketchLabelMode: sketchLabelMode
             );
+        var printMapOrientations = (
+                                        tool != null && tookSketch != null && tool is IApiButtonPrintSeriesProvider printServiceProvider
+                                            ? printServiceProvider.GetPrintMapOrientations(tookSketch)
+                                            : null
+                                   ) ?? [ new PrintMapOrientation(
+                                                new Point(mapDefinition.Center[0], mapDefinition.Center[1]),
+                                                !String.IsNullOrWhiteSpace(form["rotation"]) ? form["rotation"].ToPlatformDouble() : 0D)
+                                        ];
 
         if (!String.IsNullOrWhiteSpace(layoutId))
         {
@@ -215,7 +228,6 @@ public class RestPrintHelperService
             var pageOrientation = PageOrientation.Landscape;
             double dpi = 96D;
 
-            if (!String.IsNullOrWhiteSpace(layoutFormat))
             {
                 pageSize = layoutFormat.GetPageSize();
                 pageOrientation = layoutFormat.GetPageOrientation();
@@ -239,7 +251,6 @@ public class RestPrintHelperService
             }
 
             map.Dpi = dpi;
-            map.DisplayRotation = printRotation;
 
             #endregion
 
@@ -248,21 +259,25 @@ public class RestPrintHelperService
             {
                 throw new Exception("Unkown layout id=" + layoutId);
             }
+            List<LayoutBuilderJob> layoutBuilderJobs = new();
 
-            LayoutBuilder mainLayoutBuilder = new LayoutBuilder(
-                map,
-                _requestContext.Http,
-                _urlHelper.AppEtcPath() + "/layouts/" + printLayout.LayoutFile,
-                pageSize,
-                pageOrientation,
-                dpi,
-                _urlHelper.AppEtcPath() + "/layouts/data");
+            foreach (var printMapOrientation in printMapOrientations)
+            {
+                LayoutBuilder mainLayoutBuilder = new LayoutBuilder(
+                    map.Clone(null),
+                    _requestContext.Http,
+                    System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", printLayout.LayoutFile),
+                    pageSize,
+                    pageOrientation,
+                    dpi,
+                    System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", "data"));
 
-            List<LayoutBuilder> layoutBuilders = new List<LayoutBuilder>([mainLayoutBuilder]);
+                layoutBuilderJobs.Add(new LayoutBuilderJob(mainLayoutBuilder, new Point(printMapOrientation.MapCenter), printMapOrientation.MapRoation, true));
 
-            #region SubPages
+            }
+            #region SubPages (only for first page, eg mostly just the legend)
 
-            foreach (string subpageName in mainLayoutBuilder.SubPages)
+            foreach (string subpageName in layoutBuilderJobs.FirstOrDefault()?.Builder.SubPages ?? [])
             {
                 if (String.IsNullOrWhiteSpace(subpageName))
                 {
@@ -272,22 +287,25 @@ public class RestPrintHelperService
                 IMap subMap = map.Clone(null);
                 LayoutBuilder subLayoutBuilder = new LayoutBuilder(
                     subMap, _requestContext.Http,
-                    _urlHelper.AppEtcPath() + "/layouts/" + subpageName,
+                    System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", subpageName),
                     pageSize,
                     pageOrientation,
                     dpi,
-                    _urlHelper.AppEtcPath() + "/layouts/data");
+                    System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", "data"));
 
-                layoutBuilders.Add(subLayoutBuilder);
+                layoutBuilderJobs.Add(new LayoutBuilderJob(subLayoutBuilder, new Point(printMapOrientations.First().MapCenter), printMapOrientations.First().MapRoation, false));
             }
 
             #endregion
 
+
             ErrorResponseCollection errorRespones = new ErrorResponseCollection(null);
 
             Dictionary<LayoutBuilder, string> images = new Dictionary<LayoutBuilder, string>();
-            foreach (var layoutBuilder in layoutBuilders)
+            foreach (var layoutBuilderJob in layoutBuilderJobs)
             {
+                var layoutBuilder = layoutBuilderJob.Builder;
+
                 #region Layout Text
 
                 foreach (var layoutText in layoutBuilder.UserText ?? new List<LayoutUserText>())
@@ -316,8 +334,7 @@ public class RestPrintHelperService
                     layoutBuilder.Map.Dpi = layoutBuilder.PageDpi(dpi);
                     layoutBuilder.Scale = printScale;
 
-                    var mapCenter = new Point(mapDefinition.Center[0], mapDefinition.Center[1]);
-
+                    var mapCenter = new Point(layoutBuilderJob.MapCenter);
                     if (mapDefinition.Crs != null)
                     {
                         var mapSrs = layoutBuilder.PageMapSrs(layoutBuilder.Map.SpatialReference.Id);
@@ -335,6 +352,7 @@ public class RestPrintHelperService
                     }
 
                     layoutBuilder.Map.SetScale(printScale, layoutBuilder.MapPixels.Width, layoutBuilder.MapPixels.Height, mapCenter.X, mapCenter.Y);
+                    layoutBuilder.Map.DisplayRotation = layoutBuilder.DisplayRotation = layoutBuilderJob.MapRotation;
 
                     layoutBuilder.Map.IsDirty = true;
 
@@ -492,7 +510,7 @@ public class RestPrintHelperService
 
                 #endregion
 
-                string outputPath = map.AsOutputFilename(@"print_" + Guid.NewGuid().ToString("N").ToLower() + ".png");
+                string outputPath = map.AsOutputFilename(@$"print_{Guid.NewGuid().ToString("N").ToLower()}.png");
                 if (await layoutBuilder.Draw(outputPath))
                 {
                     images.Add(layoutBuilder, outputPath);
@@ -528,12 +546,12 @@ public class RestPrintHelperService
 
                 pic2Pdf.PageWidth = rect.width;
                 pic2Pdf.PageHeight = rect.height;
-                pic2Pdf.MarginLeft = (float)layoutBuilders[0].BorderLeft;
-                pic2Pdf.MarginTop = (float)layoutBuilders[0].BorderTop;
-                pic2Pdf.MarginRight = (float)layoutBuilders[0].BorderRight;
-                pic2Pdf.MarginBottom = (float)layoutBuilders[0].BorderBottom;
+                pic2Pdf.MarginLeft = (float)layoutBuilderJobs[0].Builder.BorderLeft;
+                pic2Pdf.MarginTop = (float)layoutBuilderJobs[0].Builder.BorderTop;
+                pic2Pdf.MarginRight = (float)layoutBuilderJobs[0].Builder.BorderRight;
+                pic2Pdf.MarginBottom = (float)layoutBuilderJobs[0].Builder.BorderBottom;
 
-                using (var imageBytes = await images[layoutBuilders[0]].BytesFromUri(_requestContext.Http))
+                using (var imageBytes = await images[layoutBuilderJobs[0].Builder].BytesFromUri(_requestContext.Http))
                 {
                     var output = pic2Pdf.Convert(_requestContext.Http, imageBytes);
 
@@ -1414,7 +1432,7 @@ public class RestPrintHelperService
 
                 #region Time Epoch
 
-                if(serviceDefintion.TimeEpoch is not null)
+                if (serviceDefintion.TimeEpoch is not null)
                 {
                     map.AddTimeEpoch(serviceDefintion.Id,
                         new TimeEpochDefinition()
@@ -1887,6 +1905,22 @@ public class RestPrintHelperService
     private string WorldFileExtension(string format)
     {
         return format == "png" ? "pgw" : "jgw";
+    }
+
+    #endregion
+
+    #region Models
+
+    private class LayoutBuilderJob
+    {
+        public LayoutBuilderJob(LayoutBuilder layoutBuilder, Point mapCenter, double mapRotation, bool isMainLayout = true)
+            => (Builder, MapCenter, MapRotation, IsMainLayout) = (layoutBuilder, mapCenter, mapRotation, isMainLayout);
+
+        public bool IsMainLayout { get; }
+        public LayoutBuilder Builder { get; }
+
+        public Point MapCenter { get; }
+        public double MapRotation { get; }
     }
 
     #endregion

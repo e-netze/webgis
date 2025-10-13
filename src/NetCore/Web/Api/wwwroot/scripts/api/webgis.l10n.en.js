@@ -206,6 +206,8 @@
     "sketch-from-feature-geometry": "From geo-object geometry",
     "sketch-upload": "Upload sketch (GPX, GeoJson)",
     "sketch-download": "Download sketch (GPX, GeoJson)",
+    "sketch-add-element": "Add Element",
+    "sketch-rotate-element": "Rotate element",
 
     "sketch-segment-createion-mode": "Segment creation mode",
     "sketch-mode-normal": "Normal",

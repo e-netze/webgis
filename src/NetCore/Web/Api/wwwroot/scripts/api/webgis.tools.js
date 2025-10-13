@@ -43,6 +43,7 @@
     };
     this.io = {
         print: 'webgis.tools.print',
+        mapseriesprint: 'webgis.tools.mapseriesprint',
         downloadmapimage: 'webgis.tools.downloadmapimage'
     };
     this.presenation = {
@@ -419,6 +420,12 @@
                             printOptions.showSketchLabels = $holder.find('.webgis-print-tool-sketch-labels').val();
 
                             //console.log('test', $holder.find('#print-sketch-selector--print_tool_sketch').length, $holder.find('#print-sketch-selector--print_tool_sketch_labels').length);
+
+                            printOptions.toolId = map.getActiveTool()?.id;
+                            const toolSketch = map.toolSketch();
+                            if (toolSketch) {
+                                printOptions.toolSketch = toolSketch.toWKT();
+                            }
 
                             printOptions.rotation = map.viewLense.currentRotation();
                             $holder.find('.webgis-print-textelement').each(function (i, e) {
@@ -1127,6 +1134,12 @@
                         sketch.zoomTo(1000);
                     }
                 }
+            }
+        }
+        if (response.sketch_properties) {
+            var sketch = map.toolSketch();
+            if (sketch) {
+                sketch.setProperties(response.sketch_properties);
             }
         }
         if (response.replace_query_features) {

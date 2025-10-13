@@ -11,15 +11,17 @@ using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace E.Standard.WebGIS.Tools;
+namespace E.Standard.WebGIS.Tools.Export;
 
 [Export(typeof(IApiButton))]
 [ToolHelp("tools/map/downloadmapimage.html")]
 [ToolConfigurationSection("print")]
+[ToolId("webgis.tools.downloadmapimage")]
 [AdvancedToolProperties(MapCrsDependent = true, MapBBoxDependent = true, MapImageSizeDependent = true)]
 public class DownloadMapImage : IApiServerToolLocalizable<DownloadMapImage>,
                                 IApiButtonResources

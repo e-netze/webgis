@@ -154,6 +154,27 @@ static public class ApiEventResponseExtensions
         return eventResponse;
     }
 
+    static public T AddSketchProperties<T>(this T eventResponse,
+        double? elementWidth = null,
+        double? elementHeight = null)
+        where T : ApiEventResponse
+    {
+        if (eventResponse != null)
+        {
+            eventResponse.SketchProperties ??= new SketchPropertiesDTO();
+
+            if (elementWidth.HasValue)
+            {
+                eventResponse.SketchProperties.ElementWidth = elementWidth;
+            }
+            if (elementHeight.HasValue)
+            {
+                eventResponse.SketchProperties.ElementHeight = elementHeight;
+            }
+        }
+        return eventResponse;
+    }
+
     #endregion
 
     #region Features 

@@ -46,7 +46,7 @@
         let $tabSections = $("<table>")
             .appendTo(this.$el);
 
-        let sketch = options.map.toolSketch();
+        const sketch = options.sketch = options.map.toolSketch();
         if (sketch) {
             sketch.events.off('currentstate', this.constructor.onSketchCurrentStateChanged);
             sketch.events.on('currentstate', this.constructor.onSketchCurrentStateChanged,
@@ -111,12 +111,14 @@
             .css({ display: 'none', width: '100%', boxSizing: 'border-box', textAlign: 'left' });
     },
     destroy: function () {
+        //console.log("destroy webgis_sketchInfoContainer");
         const $ = this.$;
 
         this.$el.off('.webgis_sketch_info_container');
 
-        const sketch = this.options?.map?.toolSketch?.();
+        const sketch = this.options.sketch;
         if (sketch) {
+            //console.log('off sketch event currentstate');
             sketch.events.off("currentstate", this.constructor.onSketchCurrentStateChanged);
         }
     },
@@ -126,7 +128,7 @@
     staticMethods: {
         onSketchCurrentStateChanged: function (channel, info) {
             //console.log('onSketchCurrentStateChanged', info);
-            const $ = this.$;
+            const $ = webgis.$;
 
             const sketch = this.sketch;
             const $elem = this.elem;

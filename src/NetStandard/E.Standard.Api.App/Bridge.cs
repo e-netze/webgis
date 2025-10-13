@@ -710,7 +710,7 @@ public class Bridge : IBridge
 
     public IEnumerable<IPrintLayoutBridge> GetPrintLayouts(IEnumerable<string> layoutIds)
     {
-        if (layoutIds == null)
+        if (layoutIds?.Any() != true)
         {
             return new IPrintLayoutBridge[0];
         }

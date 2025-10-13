@@ -2484,3 +2484,297 @@ L.SketchConstructionResults = L.LayerCollection.extend({
 L.sketchConstructionResults = function (options) {
     return new L.SketchConstructionResults(null, options);
 };
+
+L.RotatableRectangle = L.LayerCollection.extend({
+    options: {
+        color: '#ff0000',
+        weight: 2,
+        fillColor: '#ffff00',
+        fillOpacity: 0.2,
+        width: 500,
+        height: 300,
+        rotation: 0,
+        markerOptions: {
+            draggable: true,
+            icon: L.icon({
+                iconUrl: webgis.css.imgResource('marker-pin_32.png', 'markers'),
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+                popupAnchor: [0, -32]
+            })
+        }
+    },
+    _center: null,
+    _rotation: 0,
+    _marker: null,
+
+    _setLatLngs: function (latLngs) {
+        if (latLngs && latLngs.length > 0) {
+            this.setLatLng(latLngs[0]);
+        }
+    },
+
+    setLatLng: function (latLng) {
+        this._center = latLng;
+        this.redraw();
+    },
+
+    setRotation: function (rotation) {
+        this._rotation = rotation;
+        this.redraw();
+    },
+
+    getLatLngs: function () {
+        return [this._center];
+    },
+
+    onAdd: function () {
+        this.redraw();
+    },
+
+    //onRemove: function () {
+    //    this.removeAllChildLayers();
+    //    if (this._marker) {
+    //        this._map.removeLayer(this._marker);
+    //        this._marker = null;
+    //    }
+    //},
+
+    redraw: function () {
+        this.removeAllChildLayers();
+        if (!this._center || !this._map) return;
+
+        // Calculate rectangle corners
+        let rectCoords = this._calcRectangleCoords(this._center, this.options.width, this.options.height, this._rotation);
+
+        // Draw rectangle
+        let rectangle = L.polygon(rectCoords, {
+            color: this.options.color,
+            weight: this.options.weight,
+            fillColor: this.options.fillColor,
+            fillOpacity: this.options.fillOpacity
+        });
+        this.addChildLayer(rectangle);
+
+        // Calculate marker position (top right corner)
+        let markerPos = rectCoords[2]; // [top right]
+
+        // Add draggable marker
+        if (!this._marker) {
+            this._marker = L.marker(markerPos, this.options.markerOptions);
+            this._marker.on('drag', this._onMarkerDrag, this);
+            this._marker.on('dragend', this._onMarkerDragEnd, this);
+            //this._marker.addTo(this._map);
+            this.addChildLayer(this._marker);
+        } else {
+            this._marker.setLatLng(markerPos);
+        }
+    },
+
+    _calcRectangleCoords: function (center, width, height, rotation) {
+        // Project center to map coordinates
+        let p = [{ x: center.lng, y: center.lat }];
+        let xProp = "x", yProp = "y";
+        if (webgis.calc._canProject()) {
+            p = webgis.calc._projectToCalcCrs(p);
+            xProp = "X"; yProp = "Y";
+        }
+        let cx = p[0][xProp], cy = p[0][yProp];
+
+        // Rectangle corners before rotation
+        let corners = [
+            { X: cx - width / 2, Y: cy - height / 2 }, // bottom left
+            { X: cx - width / 2, Y: cy + height / 2 }, // top left
+            { X: cx + width / 2, Y: cy + height / 2 }, // top right
+            { X: cx + width / 2, Y: cy - height / 2 }, // bottom right
+        ];
+
+        // Apply rotation
+        if (rotation && rotation !== 0) {
+            const sinA = Math.sin(rotation * Math.PI / 180.0);
+            const cosA = Math.cos(rotation * Math.PI / 180.0);
+            for (let i = 0; i < corners.length; i++) {
+                let dx = corners[i][xProp] - cx;
+                let dy = corners[i][yProp] - cy;
+                corners[i][xProp] = cx + (dx * cosA - dy * sinA);
+                corners[i][yProp] = cy + (dx * sinA + dy * cosA);
+            }
+        }
+
+        // Unproject if needed
+        if (webgis.calc._canProject()) {
+            corners = webgis.calc._unprojectFromCalcCrs(corners);
+        }
+
+        // Convert to LatLng
+        return corners.map(c => L.latLng(c.y, c.x));
+    },
+
+    _onMarkerDrag: function (e) {
+        if (!this._center) return;
+        let markerLatLng = this._marker.getLatLng();
+
+        var p = [
+            { x: this._center.lng, y: this._center.lat },
+            { x: markerLatLng.lng, y: markerLatLng.lat }
+        ];
+        let xProp = "x", yProp = "y";
+        if (webgis.calc._canProject()) {
+            p = webgis.calc._projectToCalcCrs(p);
+            xProp = "X"; yProp = "Y";
+        }
+        
+        // Calculate angle between center and marker
+        let dx = p[1][xProp] - p[0][xProp];
+        let dy = p[1][yProp] - p[0][yProp];
+        let angle = Math.atan2(dy, dx) * 180.0 / Math.PI;
+        let angleR = Math.atan2(this.options.height, this.options.width) * 180.0 / Math.PI;
+        this._rotation = angle - angleR;
+
+        let rectCoords = this._calcRectangleCoords(this._center, this.options.width, this.options.height, this._rotation);
+        this.getChildLayer(0).setLatLngs(rectCoords); // Update rectangle
+    },
+
+    _onMarkerDragEnd: function (e) {
+        //console.log("onMarkerDragEnd", this._rotation);
+        if (!this._center || !this._marker) return;
+        let rectCoords = this._calcRectangleCoords(this._center, this.options.width, this.options.height, this._rotation);
+        this._marker.setLatLng(rectCoords[2]); // Ensure marker is at top right corner
+
+        // Optionally fire event or update state
+        this.fireEvent('rotated', { sender: this, rotation: this._rotation });
+    },
+
+    toGeoJSON: function () {
+        let geoJson = {
+            geometry: {
+                type: 'Polygon',
+                coordinates: []
+            }
+        };
+        let rectCoords = this._calcRectangleCoords(this._center, this.options.width, this.options.height, this._rotation);
+        geoJson.geometry.coordinates.push(rectCoords.map(ll => [ll.lng, ll.lat]));
+        return geoJson;
+    }
+});
+
+L.rotatableRectangle = function (latLngs, options) {
+    return new L.RotatableRectangle(latLngs, options);
+};
+
+L.GraphicsElementSeries = L.LayerCollection.extend({
+    options: {
+        type: 'rectangle',
+        rotatable: true,
+        rectangleOptions: {
+            color: '#ff0000',
+            weight: 2,
+            fill: '#ffff00'
+        },
+        width: 500,
+        height: 300
+    },
+    _latLngs: null,
+    _setLatLngs: function (latLngs) {
+        this.setLatLngs(latLngs);
+    },
+    setLatLngs: function (latLngs) {
+        this._latLngs = latLngs;
+        this.rebuild();
+    },
+    setLatLngAt: function (index, latLng) {
+        if (this._latLngs && this._latLngs.length > index) {
+            const latLngRotation = this._latLngs[index]._rotation || 0;
+
+            this._latLngs[index] = latLng;
+            this._latLngs[index]._rotation = latLngRotation;
+            this.rebuildAt(index);
+        }
+    },
+    addLatLng: function (latLng) {
+        if (this._latLngs) {
+            if (!latLng._rotation) {
+                latLng._rotation = (this._latLngs.length > 0)
+                    ? this._latLngs[this._latLngs.length - 1]._rotation || 0
+                    : 0;
+            }
+            this._latLngs.push(latLng);
+        }
+        else {
+            latLng._rotation = latLng._rotation || 0;
+            this._latLngs = [latLng];
+        }
+
+        this.rebuild();
+    },
+    getLatLngs: function () { return this._latLngs; },
+    vertexToLatLng: function (vertex) {
+        let latLng = L.latLng(vertex.y, vertex.x);
+        vertex.m = vertex.m || 0;
+        latLng._rotation = vertex.m;
+        //console.log('vertexToLatLng', latLng);
+        return latLng;
+    },
+    setVertexRotation: function (vertex, rotation) {
+        vertex.m = rotation || 0;
+    },
+    setElementSize: function (width, height) {
+        this.options.width = width;
+        this.options.height = height;
+        this.rebuild();
+    },
+    redraw: function () {
+        this.rebuild();
+    },
+    rebuild: function () {
+        //console.log('rebuild', this);
+        if (!this._latLngs || this._latLngs.length === 0) return;
+
+        this.removeAllChildLayers();
+        let index = 0;
+        for (let latLng of this._latLngs) {
+            if (this.options.type === "rectangle") { 
+                //let elementLatLngs = this._calcElementLatLngs(latLng);
+                //polyline = L.polyline(elementLatLngs.latLngs, this.options.rectangleOptions);
+                //this.addChildLayer(polyline);
+                let rectangle = L.rotatableRectangle([latLng], {
+                    color: this.options.rectangleOptions.color,
+                    weight: this.options.rectangleOptions.weight,
+                    fillColor: this.options.rectangleOptions.fill,
+                    fillOpacity: this.options.rectangleOptions.fillOpacity || 0.2,
+                    width: this.options.width,
+                    height: this.options.height,
+                    rotation: latLng._rotation || 0,
+                    markerOptions: this.options.rotatable ? {
+                        draggable: true,
+                        icon: L.icon({
+                            iconUrl: webgis.css.imgResource('marker-pin_32.png', 'markers'),
+                            iconSize: [32, 32],
+                            iconAnchor: [16, 32],
+                            popupAnchor: [0, -32]
+                        })
+                    } : null
+                });
+                rectangle.setRotation(latLng._rotation);
+                rectangle._index = index++;
+                rectangle.on("rotated", function (ev) {
+                    this._latLngs[ev.sender._index]._rotation = ev.rotation;
+                    this.fireEvent("element-rotated", { sender: this, elementIndex: ev.sender._index, rotation: ev.rotation });
+                }, this);
+                this.addChildLayer(rectangle); 
+            }
+        }
+    },
+    rebuildAt: function (index) {
+        //console.log('rebuildat', index);
+        if (!this._latLngs || this._latLngs.length <= index) return;
+
+        var element = this.getChildLayer(index);
+        element.setLatLng(this._latLngs[index]);
+    },
+});
+
+L.graphicsElementSeries = function (latLngs, options) {
+    console.log('create L.GraphicsElementSeries', latLngs, options);
+    return new L.GraphicsElementSeries(latLngs, options);
+}

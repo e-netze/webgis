@@ -67,6 +67,8 @@ public class ApiEventResponse
 
     public E.Standard.WebMapping.Core.Geometry.Point SketchAddVertex { get; set; }
 
+    public SketchPropertiesDTO SketchProperties { get; set; }
+
     public IEnumerable<ApiClientButtonCommand> ClientCommands { get; set; }
     public object ClientCommandData { get; set; }
 

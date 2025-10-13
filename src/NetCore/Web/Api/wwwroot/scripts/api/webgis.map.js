@@ -2404,6 +2404,17 @@
             }
             this._enableSketchClickHandling();
         }
+        else if (tool.tooltype === 'sketchseries') {
+            if (tool.currentSketch != null && tool.currentSketch.geometryType === 'elementseries') {
+                this.sketch.load(tool.currentSketch);
+            } else {
+                this.sketch.remove(true);
+                this.sketch.unsetOriginalSrs();
+                this.sketch.setReadOnly(false);
+                this.sketch.setGeometryType('elementseries');
+            }
+            this._enableSketchClickHandling();
+        }
         else if (tool.tooltype === 'sketchany' && this.sketch) {
             if (tool.currentSketch) {
                 this.sketch.load(tool.currentSketch);
@@ -2461,7 +2472,7 @@
         if (!tool)
             return false;
 
-        return $.inArray(tool.tooltype, ['sketch0d', 'sketch1d', 'sketch2d', 'sketchany', 'sketchcircle']) >= 0;
+        return $.inArray(tool.tooltype, ['sketch0d', 'sketch1d', 'sketch2d', 'sketchany', 'sketchcircle', 'sketchseries']) >= 0;
     };
     this.isGraphicsTool = function (tool) {
         if (!tool)

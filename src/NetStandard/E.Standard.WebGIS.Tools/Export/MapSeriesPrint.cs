@@ -14,18 +14,19 @@ using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Extensions;
-
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace E.Standard.WebGIS.Tools;
+namespace E.Standard.WebGIS.Tools.Export;
 
 [Export(typeof(IApiButton))]
 [ToolHelp("tools/map/print.html")]
 [ToolConfigurationSection("print")]
+[ToolId("webgis.tools.mapseriesprint")]
 [AdvancedToolProperties(
         MapBBoxDependent = true,
         MapCrsDependent = true,
@@ -35,50 +36,62 @@ namespace E.Standard.WebGIS.Tools;
         CoordinateMarkersVisibilityDependent = true,
         ChainageMarkersVisibilityDependent = true
     )]
-public class Print : IApiServerToolLocalizable<Print>,
-                     IApiButtonResources
+internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
+                                IApiButtonResources,
+                                IApiButtonPrintSeriesProvider
 {
     public const string ConfigQualitiesDpi = "qualities-dpi";
     public const string ConfigDefaultQuality = "default-quality";
     public const string ConfigDefaultFormat = "default-format";
 
+    public const string PrintLayoutOptionPrefix = "series-layout:";
+
+    public const string MapSeriesPrintScalesId = "mapseriesprint-map-scales";
+    public const string MapSeriesPrintLayoutId = "mapseriesprint-layout-select";
+    public const string MapSeriesPrintFormatId = "mapsseriesprint-format-select";
+    public const string MapSeriesPrintScaleId = "mapseriesprint-scale-select";
+    public const string MapSeriesPrintInitScaleId = "mapseriesprint-init-scale";
+    public const string MapSeriesPrintQualityId = "mapseriesprint-qualitity-select";
+
     #region IApiServerTool
 
-    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<Print> localizer)
+    public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
     {
-        var printLayouts = bridge.GetPrintLayouts(e.GetToolOptions<string[]>());
+        var printLayouts = bridge.GetPrintLayouts(
+            e.GetToolOptions<string[]>()?
+             .Where(l => l.StartsWith(PrintLayoutOptionPrefix))
+             .Select(l => l.Substring(PrintLayoutOptionPrefix.Length)));
         var printFormats = bridge.GetPrintFormats();
 
         var qualitites = e.GetConfigDictionay<int, string>(ConfigQualitiesDpi);
         var markersSelector = new UIPrintMarkerSelector("print-marker-selector");
 
         return new ApiEventResponse()
-            .AddMapViewLense(Lense.Current)  // Keep current, if tool is already selected
             .AddUIElements(
                 new UIHidden()
-                    .WithId("print-map-scales")
+                    .WithId(MapSeriesPrintScalesId)
                     .AsToolParameter(UICss.AutoSetterMapScales),
                 new UILabel()
                     .WithLabel(localizer.Localize("layout")),
                 new UISelect(UIButton.UIButtonType.servertoolcommand, "selectionchanged")
-                    .WithId("print-layout-select")
+                    .WithId(MapSeriesPrintLayoutId)
                     .AsPersistantToolParameter(UICss.PrintToolLayout, UICss.ToolInitializationParameterImportant)
                     .AddOptions(printLayouts.Select(l => new UISelect.Option()
                                                                 .WithValue(l.Id)
                                                                 .WithLabel(l.Name))),
                 new UILabel()
                     .WithLabel(localizer.Localize("format")),
-                UISelect.PrintFormats("print-format-select", printFormats, UIButton.UIButtonType.servertoolcommand, "selectionchanged", defaultValue: e.GetConfigValue(ConfigDefaultFormat)),
+                UISelect.PrintFormats(MapSeriesPrintFormatId, printFormats, UIButton.UIButtonType.servertoolcommand, "selectionchanged", defaultValue: e.GetConfigValue(ConfigDefaultFormat)),
                 new UILabel()
                     .WithLabel(localizer.Localize("print-scale")),
-                UISelect.Scales("print-scale-select", UIButton.UIButtonType.servertoolcommand, "selectionchanged", allowAddValues: true, scales: e.GetConfigArray<int>("scales")),
+                UISelect.Scales(MapSeriesPrintScaleId, UIButton.UIButtonType.servertoolcommand, "selectionchanged", allowAddValues: true, scales: e.GetConfigArray<int>("scales")),
                 new UILabel()
                     .WithLabel(localizer.Localize("print-quality")),
-                UISelect.PrintQuality("print-qualitity-select", qualitites),
+                UISelect.PrintQuality(MapSeriesPrintQualityId, qualitites),
 
-                new UIDiv()
-                    .WithVisibilityDependency(VisibilityDependency.ToolSketchesExists)
-                    .AddChild(new UIPrintSketchSelector("print-sketch-selector")),
+                //new UIDiv()
+                //    .WithVisibilityDependency(VisibilityDependency.ToolSketchesExists)
+                //    .AddChild(new UIPrintSketchSelector("print-sketch-selector")),
                 new UIDiv()
                     .WithVisibilityDependency(VisibilityDependency.HasToolResults_Coordinates_or_Chainage_or_QueryResults)
                     .AddChild(markersSelector),
@@ -101,23 +114,23 @@ public class Print : IApiServerToolLocalizable<Print>,
             });
     }
 
-    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<Print> localizer) => null;
+    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer) => null;
 
-    public ToolType Type => ToolType.print_preview;
+    public ToolType Type => ToolType.sketchseries;
 
-    public ToolCursor Cursor => ToolCursor.Pointer;
+    public ToolCursor Cursor => ToolCursor.Crosshair;
 
     #endregion
 
     #region IApiButton Member
 
-    public string Name => "Pring";
+    public string Name => "Map Series";
 
     public string Container => "Map";
 
     public string Image => UIImageButton.ToolResourceImage(this, "print");
 
-    public string ToolTip => "Print the current map section in PDF format.";
+    public string ToolTip => "Print a map series in PDF format.";
 
     public bool HasUI => true;
 
@@ -139,7 +152,7 @@ public class Print : IApiServerToolLocalizable<Print>,
     {
         if (e.MapScale.HasValue)
         {
-            e["print-init-scale"] = e.MapScale.Value.ToString();
+            e[MapSeriesPrintInitScaleId] = (e.MapScale.Value / 4.0).ToString();
         }
         return OnSelectionChanged(bridge, e);
     }
@@ -148,12 +161,12 @@ public class Print : IApiServerToolLocalizable<Print>,
     [ServerToolCommand("selectionchanged")]
     public ApiEventResponse OnSelectionChanged(IBridge bridge, ApiToolEventArguments e)
     {
-        string layoutId = e["print-layout-select"];
-        string layoutFormat = e["print-format-select"];
-        double scale = !String.IsNullOrEmpty(e["print-init-scale"]) ?
-                            e.GetDouble("print-init-scale") :
-                            e.GetDouble("print-scale-select");
-        var scaleComboValues = new List<int>(e.TryGetArray<int>("print-scale-select.values") ?? new int[0]);
+        string layoutId = e[MapSeriesPrintLayoutId];
+        string layoutFormat = e[MapSeriesPrintFormatId];
+        double scale = !String.IsNullOrEmpty(e[MapSeriesPrintInitScaleId]) ?
+                            e.GetDouble(MapSeriesPrintInitScaleId) :
+                            e.GetDouble(MapSeriesPrintScaleId);
+        var scaleComboValues = new List<int>(e.TryGetArray<int>($"{MapSeriesPrintScaleId}.values") ?? new int[0]);
 
         PageSize pageSize = (PageSize)Enum.Parse(typeof(PageSize), layoutFormat.Split('.')[0], true);
         PageOrientation pageOrientation = PageOrientation.Landscape;
@@ -178,7 +191,7 @@ public class Print : IApiServerToolLocalizable<Print>,
             }
         }
 
-        response.AddUISetter(new UISelectOptionsSetter("print-format-select", $"{pageSize}.{pageOrientation}",
+        response.AddUISetter(new UISelectOptionsSetter(MapSeriesPrintFormatId, $"{pageSize}.{pageOrientation}",
                                                         allowedFormats.Select(f => UISelect.ToPrintFormatsOption(f))));
 
         #endregion
@@ -218,7 +231,7 @@ public class Print : IApiServerToolLocalizable<Print>,
             scale = scales.Closest(Convert.ToInt32(scale));
 
             response.AddUISetter(
-                new UISelectOptionsSetter("print-scale-select", scale.ToString(),
+                new UISelectOptionsSetter(MapSeriesPrintScaleId, scale.ToString(),
                                           scales.Select(s => new UISelect.Option()
                                                                          .WithValue(s.ToString())
                                                                          .WithLabel(string.Format("1:{0:0,0.}", s).Replace(" ", ".")))));
@@ -228,37 +241,29 @@ public class Print : IApiServerToolLocalizable<Print>,
 
         var properties = bridge.GetPrintLayoutProperties(layoutId, pageSize, pageOrientation, scale);
 
-        double? lenseScale = null;
-        if (e.GetConfigBool("scale-wysiwyg", false) == true)
-        {
-            lenseScale = scale;
-        }
-
-        float lenseFactor = 1f;
-
         var mapSRef = bridge.CreateSpatialReference((int)e.MapCrs);
         var mapEnvelope = new Envelope(e.MapBBox());
 
+        float scaleFactor = 1.0f;
         if (mapSRef.IsWebMercator())
         {
-            lenseFactor = 1f / (float)Math.Cos(mapEnvelope.CenterPoint.Y / 180.0 * Math.PI);
+            // recalc scale for web mercator ??
+            scaleFactor = 1f / (float)Math.Cos(mapEnvelope.CenterPoint.Y / 180.0 * Math.PI);
         }
 
         return response
-                .AddMapViewLense(new Lense()
-                                     .WithSize(properties.WorldSize.Width * lenseFactor, properties.WorldSize.Height * lenseFactor)
-                                     .WithScale(lenseScale)
-                                     .WithScaleControlId("print-scale-select")
-                                     .ZommTo());
+                .AddSketchProperties(
+                    elementWidth: properties.WorldSize.Width * scaleFactor, 
+                    elementHeight: properties.WorldSize.Height * scaleFactor);
     }
 
     [ServerToolCommand("print")]
     async public Task<ApiEventResponse> OnPrint(IBridge bridge, ApiToolEventArguments e, ILocalizer<Print> localizer)
     {
-        string layoutId = e["print-layout-select"];
-        string layoutFormat = e["print-format-select"];
-        double scale = e.GetDouble("print-scale-select");
-        int dpi = e.GetInt("print-qualitity-select");
+        string layoutId = e[MapSeriesPrintLayoutId];
+        string layoutFormat = e[MapSeriesPrintFormatId];
+        double scale = e.GetDouble(MapSeriesPrintScaleId);
+        int dpi = e.GetInt(MapSeriesPrintQualityId);
 
         List<IUIElement> textElements = new List<IUIElement>();
         foreach (var layoutText in bridge.GetPrintLayoutTextElements(layoutId))
@@ -284,7 +289,7 @@ public class Print : IApiServerToolLocalizable<Print>,
 
         var properties = bridge.GetPrintLayoutProperties(layoutId, pageSize, pageOrientation, scale);
 
-        #region Features um aktuellen Auschnitt hinzufügen
+        #region Add Features in current Extent
 
         if (properties.IsQueryDependent)
         {
@@ -402,6 +407,28 @@ public class Print : IApiServerToolLocalizable<Print>,
                             new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.print)
                                 .WithText(localizer.Localize("start-print-job")))
                     )
+                );
+    }
+
+    #endregion
+
+    #region IApiButtonPrintSeriesProvider
+
+    public IEnumerable<PrintMapOrientation> GetPrintMapOrientations(Shape toolSketch)
+    {
+        var points = toolSketch as MultiPoint;
+        if(points is null)
+        {
+            throw new ArgumentException("Tool sketch is null or not an valid Multipoint") ;
+        }
+
+        return points
+                .ToArray()
+                .Select(p => new PrintMapOrientation(p, p switch
+                    {
+                        PointM m => -Convert.ToDouble(m.M),
+                        _ => 0D
+                    })
                 );
     }
 

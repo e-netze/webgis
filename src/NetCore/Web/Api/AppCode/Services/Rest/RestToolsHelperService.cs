@@ -596,6 +596,10 @@ public class RestToolsHelperService
         {
             response.SketchAddVertex = new double[] { apiResponse.SketchAddVertex.X, apiResponse.SketchAddVertex.Y };
         }
+        if (apiResponse.SketchProperties is not null)
+        {
+            response.SketchProperties = apiResponse.SketchProperties;
+        }
         if (apiResponse.SetFilters != null && apiResponse.SetFilters.Length > 0)
         {
             response.SetFilters = apiResponse.SetFilters;
