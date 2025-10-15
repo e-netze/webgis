@@ -2,9 +2,7 @@
 using E.Standard.WebMapping.Core.Geometry;
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
-using HtmlAgilityPack;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
@@ -38,7 +36,7 @@ public class MapFrameElement : IGraphicElement
     {
         var ring = CalcPolygonRing();
 
-        using var pen = Current.Engine.CreatePen(_borderColor, 2);
+        using var pen = Current.Engine.CreatePen(_borderColor, 2f * (float)map.Dpi / 96f);
         var imgPoints = ring.ToArray().Select(p => map.WorldToImage(p)).ToArray();
         var path = Current.Engine.CreateGraphicsPath();
 
@@ -50,10 +48,12 @@ public class MapFrameElement : IGraphicElement
         path.CloseFigure();
         canvas.DrawPath(pen, path);
 
-        DrawLabel(canvas, map, imgPoints[0], 1.0f, 1.0f);
-        DrawLabel(canvas, map, imgPoints[1], -1.0f, 1.0f);
-        DrawLabel(canvas, map, imgPoints[2], -1.0f, -1.0f);
-        DrawLabel(canvas, map, imgPoints[3], 1.0f, -1.0f);
+        float scale = 1f;
+
+        DrawLabel(canvas, map, imgPoints[0], scale, scale);
+        DrawLabel(canvas, map, imgPoints[1], -scale, scale);
+        DrawLabel(canvas, map, imgPoints[2], -scale, -scale);
+        DrawLabel(canvas, map, imgPoints[3], scale, -scale);
     }
 
     public Envelope Extent =>
@@ -96,14 +96,14 @@ public class MapFrameElement : IGraphicElement
 
             using var brush = Current.Engine.CreateSolidBrush(ArgbColor.Black);
             using var textBrush = Current.Engine.CreateSolidBrush(ArgbColor.White);
-            using var font = Current.Engine.CreateFont("Arial", 10, FontStyle.Regular);
+            using var font = Current.Engine.CreateFont("Arial", 10f * (float)map.Dpi / 96.0f, FontStyle.Regular);
 
             var size = canvas.MeasureText(_name, font);
 
             var rect = new CanvasRectangleF(
-                scaleX < 0 ?  size.Width * scaleX : 0f, 
-                scaleY < 0 ?  size.Height * scaleY : 0f,
-                size.Width, 
+                scaleX < 0 ? size.Width * scaleX : 0f,
+                scaleY < 0 ? size.Height * scaleY : 0f,
+                size.Width,
                 size.Height);
 
             canvas.FillRectangle(brush, rect);

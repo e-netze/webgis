@@ -17,3 +17,9 @@ Karten Serie im PDF Format drucken.
 # print-jobs: Print jobs
 
 # start-print-job: Start print job
+
+# tools:
+## save: Save Series
+## open: Load Series
+## upload: Upload Series
+## download: Download Series

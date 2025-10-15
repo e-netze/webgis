@@ -17,3 +17,9 @@ Print a map series in PDF format.
 # print-jobs: Print jobs
 
 # start-print-job: Start print job
+
+# tools:
+## save: Zeichnung speichern
+## open: Zeichnung laden
+## upload: Hochladen (GPX, ...)
+## download: Herunterladen (GPX, Shape)

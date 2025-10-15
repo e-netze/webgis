@@ -10,6 +10,9 @@ public interface IApiButtonPrintSeriesProvider
 {
     IEnumerable<PrintMapOrientation>? GetPrintMapOrientations(Shape toolSketch);
     IGraphicsContainer GetPrintSeriesGraphicElements(Shape toolSketch, double extentWidth, double extentHeight);
+
+    PrintMapSeriesOverviewPageDefinition? GetPrintMapSeriesOverviewPageDefinition(IMap mapPrototype);
 }
 
-public record PrintMapOrientation(Point MapCenter, double MapRoation);
+public record PrintMapSeriesOverviewPageDefinition(string LayoutFile, IMap Map, Envelope MapExtent);
+public record PrintMapOrientation(string PageName, Point? MapCenter, Envelope? mapExtent, double MapRoation);

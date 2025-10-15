@@ -33,6 +33,7 @@ using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
+using Microsoft.AspNetCore.Razor.Hosting;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -881,13 +882,22 @@ public class Bridge : IBridge
         return layoutBuilder.GetAllowedScales();
     }
 
-    public IEnumerable<IPrintLayoutTextBridge> GetPrintLayoutTextElements(string layoutId)
+    public IEnumerable<IPrintLayoutTextBridge> GetPrintLayoutTextElements(string layoutId, bool allowFileName = false)
     {
         var map = _mapServiceInitializer.Map(_requestContext, _userIdentification);
-        var printLayout = _cacheService.GetPrintLayouts(this.GdiCustomGdiScheme, _userIdentification).Where(l => l.Id == layoutId).FirstOrDefault();
+
+        var fileTitle = (allowFileName && layoutId.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
+                ? layoutId
+                : _cacheService.GetPrintLayouts(this.GdiCustomGdiScheme, _userIdentification).Where(l => l.Id == layoutId).FirstOrDefault()?.LayoutFile;
+        if(String.IsNullOrEmpty(fileTitle))
+        {
+            throw new Exception($"Configuration Error: Print Layout with id '{layoutId}' not found. Check CMS configuration");
+        }
+
+        var fileName = System.IO.Path.Combine(ApiGlobals.AppEtcPath, "layouts", fileTitle);
 
         var layoutBuilder = new E.Standard.WebMapping.GeoServices.Print.LayoutBuilder(map, _http,
-            System.IO.Path.Combine(ApiGlobals.AppEtcPath, "layouts", printLayout.LayoutFile),
+            fileName,
             E.Standard.WebMapping.GeoServices.Print.PageSize.A4,
             E.Standard.WebMapping.GeoServices.Print.PageOrientation.Landscape,
             96D,

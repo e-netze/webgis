@@ -64,7 +64,7 @@ public interface IBridge : IAppCryptography
 
     IEnumerable<int> GetPrintLayoutScales(string layoutId);
 
-    IEnumerable<IPrintLayoutTextBridge> GetPrintLayoutTextElements(string layoutId);
+    IEnumerable<IPrintLayoutTextBridge> GetPrintLayoutTextElements(string layoutId, bool allowFileName = false);
 
     string GetQueryThemeId(IQueryBridge query);
 

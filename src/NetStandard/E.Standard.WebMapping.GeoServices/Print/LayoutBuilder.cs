@@ -221,6 +221,8 @@ public class LayoutBuilder
     public string TextPurpose { get { return _purpose; } set { _purpose = value; } }
     public string TextSection { get { return _section; } set { _section = value; } }
     public string TextTitle { get { return _title; } set { _title = value; } }
+    public string PageName { get; set; } = "";
+
     public string HeaderID { get { return _headerID; } set { _headerID = value; } }
     public bool HasHeaderIDQuery
     {
@@ -1190,6 +1192,7 @@ public class LayoutBuilder
         text = text.Replace("[EPSG]", _map?.SpatialReference?.Id.ToString() ?? "");
         text = text.Replace("[MAP_SRS_NAME]", $"{_map?.SpatialReference?.Name}");
         text = text.Replace("[PAGE_SIZE]", _pageSize.ToString());
+        text = text.Replace("[PAGE_NAME]", this.PageName);
 
         //   ul---------------------ur
         //   |                       |

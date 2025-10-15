@@ -215,8 +215,9 @@ public class RestPrintHelperService
                                         tool != null && tookSketch != null && tool is IApiButtonPrintSeriesProvider printServiceProvider
                                             ? printServiceProvider.GetPrintMapOrientations(tookSketch)
                                             : null
-                                   ) ?? [ new PrintMapOrientation(
+                                   ) ?? [ new PrintMapOrientation("",
                                                 new Point(mapDefinition.Center[0], mapDefinition.Center[1]),
+                                                null,
                                                 !String.IsNullOrWhiteSpace(form["rotation"]) ? form["rotation"].ToPlatformDouble() : 0D)
                                         ];
 
@@ -261,15 +262,34 @@ public class RestPrintHelperService
             }
 
             var mapServicesGraphicsElements = (tool as IApiButtonPrintSeriesProvider).GetPrintSericiesGraphicsElements(map,
-                _requestContext.Http, _urlHelper, 
+                _requestContext.Http, _urlHelper,
                 printLayout, pageSize, pageOrientation, printScale,
                 tookSketch);
-            foreach(var el in mapServicesGraphicsElements)
+            foreach (var el in mapServicesGraphicsElements)
             {
                 map.GraphicsContainer.Add(el);
             }
 
+            await map.AddNecessaryServices(_requestContext);
+
             List<LayoutBuilderJob> layoutBuilderJobs = new();
+
+            var printOverviewMapDefinition = tool is IApiButtonPrintSeriesProvider printSeriesProvider
+                ? printSeriesProvider.GetPrintMapSeriesOverviewPageDefinition(map)
+                : null;
+            if (printOverviewMapDefinition is not null)
+            {
+                LayoutBuilder mainLayoutBuilder = new LayoutBuilder(
+                    printOverviewMapDefinition.Map,
+                    _requestContext.Http,
+                    System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", printOverviewMapDefinition.LayoutFile),
+                    pageSize,
+                    pageOrientation,
+                    dpi,
+                    System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", "data"));
+
+                layoutBuilderJobs.Add(new LayoutBuilderJob<Envelope>(mainLayoutBuilder, "", new Envelope(printOverviewMapDefinition.MapExtent), mapDefinition.Crs?.Epsg ?? 0, 0, 0));
+            }
 
             foreach (var printMapOrientation in printMapOrientations)
             {
@@ -282,7 +302,7 @@ public class RestPrintHelperService
                     dpi,
                     System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", "data"));
 
-                layoutBuilderJobs.Add(new LayoutBuilderJob(mainLayoutBuilder, new Point(printMapOrientation.MapCenter), printMapOrientation.MapRoation, true));
+                layoutBuilderJobs.Add(new LayoutBuilderJob<Point>(mainLayoutBuilder, printMapOrientation.PageName, new Point(printMapOrientation.MapCenter), mapDefinition.Crs?.Epsg ?? 0, printMapOrientation.MapRoation, printScale));
             }
 
             #region SubPages (only for first page, eg mostly just the legend)
@@ -303,11 +323,10 @@ public class RestPrintHelperService
                     dpi,
                     System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", "data"));
 
-                layoutBuilderJobs.Add(new LayoutBuilderJob(subLayoutBuilder, new Point(printMapOrientations.First().MapCenter), printMapOrientations.First().MapRoation, false));
+                layoutBuilderJobs.Add(new LayoutBuilderJob<Point>(subLayoutBuilder, "", new Point(printMapOrientations.First().MapCenter), mapDefinition.Crs?.Epsg ?? 0, printMapOrientations.First().MapRoation, printScale));
             }
 
             #endregion
-
 
             ErrorResponseCollection errorRespones = new ErrorResponseCollection(null);
             Dictionary<LayoutBuilder, string> images = new Dictionary<LayoutBuilder, string>();
@@ -315,6 +334,7 @@ public class RestPrintHelperService
             foreach (var layoutBuilderJob in layoutBuilderJobs)
             {
                 var layoutBuilder = layoutBuilderJob.Builder;
+                layoutBuilder.PageName = layoutBuilderJob.PageName;
 
                 #region Layout Text
 
@@ -342,26 +362,7 @@ public class RestPrintHelperService
                 if (layoutBuilder.Map != null && layoutBuilder.Map.ImageWidth > 0 && layoutBuilder.Map.ImageHeight > 0)
                 {
                     layoutBuilder.Map.Dpi = layoutBuilder.PageDpi(dpi);
-                    layoutBuilder.Scale = printScale;
-
-                    var mapCenter = new Point(layoutBuilderJob.MapCenter);
-                    if (mapDefinition.Crs != null)
-                    {
-                        var mapSrs = layoutBuilder.PageMapSrs(layoutBuilder.Map.SpatialReference.Id);
-                        if (mapSrs != mapDefinition.Crs.Epsg)
-                        {
-                            map.SpatialReference = ApiGlobals.SRefStore.SpatialReferences.ById(mapSrs);
-                            using (var transformer = new GeometricTransformerPro(
-                                    ApiGlobals.SRefStore.SpatialReferences,
-                                    mapDefinition.Crs.Epsg,
-                                    mapSrs))
-                            {
-                                transformer.Transform(mapCenter);
-                            }
-                        }
-                    }
-
-                    layoutBuilder.Map.SetScale(printScale, layoutBuilder.MapPixels.Width, layoutBuilder.MapPixels.Height, mapCenter.X, mapCenter.Y);
+                    layoutBuilderJob.SetMapExtent(layoutBuilder);
                     layoutBuilder.Map.DisplayRotation = layoutBuilder.DisplayRotation = layoutBuilderJob.MapRotation;
 
                     layoutBuilder.Map.IsDirty = true;
@@ -435,7 +436,7 @@ public class RestPrintHelperService
                             var graphicsService = new GraphicsService();
                             await graphicsService.InitAsync(ovMap, _requestContext);
                             ovMap.Services.Add(graphicsService);
-                            ovMap.GraphicsContainer.Add(new CrossHairElement(ovMap.Extent, map.Extent, ArgbColor.Red));
+                            ovMap.GraphicsContainer.Add(new CrossHairElement(ovMap.Extent, layoutBuilder.Map.Extent, ArgbColor.Red));
 
                             var ovServiceResponse = await ovMap.GetMapAsync(_requestContext);
 
@@ -789,6 +790,7 @@ public class RestPrintHelperService
         #endregion
 
         var map = await CreateMap(httpRequest, mapDefinition, graphics, ui);
+        await map.AddNecessaryServices(_requestContext);
 
         #region Quality (dpi) 
 
@@ -805,22 +807,6 @@ public class RestPrintHelperService
         map.ImageHeight = (int)(size[1] * dpiFactor);
 
         #endregion
-
-        //#region Epsg 
-
-        //if (!String.IsNullOrEmpty(httpRequest.Form["bbox_epsg"]) && map.SpatialReference != null)
-        //{
-        //    var bboxEpsg = int.Parse(httpRequest.Form["bbox_epsg"]);
-        //    if (bboxEpsg > 0 && bboxEpsg != map.SpatialReference.Id)
-        //    {
-        //        SpatialReference sRef = Globals.SpatialReferences.ById(bboxEpsg);
-        //        map.SpatialReference = sRef;
-
-        //        //Console.WriteLine($"DownloadImage - SpatialReference: { sRef.Id } - { sRef?.Proj4 }");
-        //    }
-        //}
-
-        //#endregion
 
         #region Zoom To
 
@@ -956,6 +942,7 @@ public class RestPrintHelperService
         var mapDefinition = JSerializer.Deserialize<MapDefinitionUiDTO>(toolResponse.SerializationMapJson);
 
         var map = await CreateMap(httpRequest, mapDefinition, null, ui);
+        await map.AddNecessaryServices(_requestContext);
 
         #endregion
 
@@ -1732,13 +1719,6 @@ public class RestPrintHelperService
 
             #endregion
 
-            if (map.GraphicsContainer.Count() > 0)
-            {
-                var graphicsService = new GraphicsService();
-                await graphicsService.InitAsync(map, _requestContext);
-                map.Services.Add(graphicsService);
-            }
-
             #endregion
         }
 
@@ -1922,16 +1902,96 @@ public class RestPrintHelperService
 
     #region Models
 
-    private class LayoutBuilderJob
+    abstract private class LayoutBuilderJob
     {
-        public LayoutBuilderJob(LayoutBuilder layoutBuilder, Point mapCenter, double mapRotation, bool isMainLayout = true)
-            => (Builder, MapCenter, MapRotation, IsMainLayout) = (layoutBuilder, mapCenter, mapRotation, isMainLayout);
+        protected LayoutBuilderJob(LayoutBuilder layoutBuilder, string pageName, double mapRotation, double mapScale)
+            => (Builder, PageName, MapRotation, MapScale) = (layoutBuilder, pageName, mapRotation, mapScale);
 
-        public bool IsMainLayout { get; }
         public LayoutBuilder Builder { get; }
 
-        public Point MapCenter { get; }
+        public string PageName { get; }
+
         public double MapRotation { get; }
+
+        public double MapScale { get; set; }
+
+        abstract public void SetMapExtent(LayoutBuilder layoutBuilder);
+    }
+
+    private class LayoutBuilderJob<T> : LayoutBuilderJob
+        where T : Shape
+    {
+        public LayoutBuilderJob(LayoutBuilder layoutBuilder, string pageName, T extentShape, int extentShapeEpsg, double mapRotation, double mapScale)
+            : base(layoutBuilder, pageName, mapRotation, mapScale)
+        {
+            this.ExtentShape = extentShape;
+            this.extentShapeEpsg = extentShapeEpsg;
+        }
+
+        public T ExtentShape { get; }
+        public int extentShapeEpsg { get; }
+
+        override public void SetMapExtent(LayoutBuilder layoutBuilder)
+        {
+            switch (ExtentShape)
+            {
+                case Point point:
+                    ZoomToPoint(layoutBuilder, point);
+                    break;
+                case Envelope envelope:
+                    ZoomToEnvelope(layoutBuilder, envelope);
+                    break;
+                default:
+                    throw new Exception("Unsupported extent shape type: " + ExtentShape?.GetType().FullName);
+            }
+        }
+
+        private void ZoomToPoint(LayoutBuilder layoutBuilder, Point mapCenter)
+        {
+            layoutBuilder.Scale = this.MapScale;
+
+            mapCenter = new Point(mapCenter);
+            if (extentShapeEpsg > 0)
+            {
+                var mapSrs = layoutBuilder.PageMapSrs(layoutBuilder.Map.SpatialReference.Id);
+                if (mapSrs != extentShapeEpsg)
+                {
+                    using (var transformer = new GeometricTransformerPro(
+                            ApiGlobals.SRefStore.SpatialReferences,
+                            extentShapeEpsg,
+                            mapSrs))
+                    {
+                        transformer.Transform(mapCenter);
+                    }
+                }
+            }
+
+            layoutBuilder.Map.SetScale(this.MapScale, layoutBuilder.MapPixels.Width, layoutBuilder.MapPixels.Height, mapCenter.X, mapCenter.Y);
+        }
+
+        private void ZoomToEnvelope(LayoutBuilder layoutBuilder, Envelope mapExtent)
+        {
+            mapExtent = new Envelope(mapExtent);
+            if (extentShapeEpsg > 0)
+            {
+                var mapSrs = layoutBuilder.PageMapSrs(layoutBuilder.Map.SpatialReference.Id);
+                if (mapSrs != extentShapeEpsg)
+                {
+                    using (var transformer = new GeometricTransformerPro(
+                            ApiGlobals.SRefStore.SpatialReferences,
+                            extentShapeEpsg,
+                            mapSrs))
+                    {
+                        transformer.Transform(mapExtent);
+                    }
+                }
+            }
+
+            layoutBuilder.Map.ImageWidth = layoutBuilder.MapPixels.Width;
+            layoutBuilder.Map.ImageHeight = layoutBuilder.MapPixels.Height;
+            layoutBuilder.Map.ZoomTo(mapExtent);
+            layoutBuilder.Scale = layoutBuilder.Map.MapScale;
+        }
     }
 
     #endregion

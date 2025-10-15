@@ -287,6 +287,8 @@
             geom = 'point';
         if (geom === 'line' || geom === 'linestring' || geom === 'multilinestring')
             geom = 'polyline';
+        if (geom === 'multipoint' && _geometryType === 'elementseries')
+            geom = 'elementseries'; // keep
         if (geom.toLocaleLowerCase() != _geometryType) {
             _geometryType = geom.toLowerCase();
             this.remove(true);
