@@ -87,6 +87,13 @@ public class CompassRoseElement : IGraphicElement
         }
     }
 
+    public Envelope Extent =>
+        _center is not null
+            ? new Envelope(
+                _center.X - _radius, _center.Y - _radius, 
+                _center.X + _radius, _center.Y + _radius)
+            : null;
+
     #region Helper
 
     private GraphicsPathPro CirclePath(IMap map, Point center, double radius, double steps, bool close = false)

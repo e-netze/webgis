@@ -18,8 +18,9 @@
     var _hectoline_unit = 'm', _hectoline_interval = 100;
     var _dimLine_lengthUnit = 'm', _dimLine_labelTotalLength = false;
     var _dimPolygon_areaUnit = 'm²', _dimPolygon_labelEdges = true;
-    var _isDraggingMarker = false;
     var _sketchProperties = null;
+    var _sketchAdvancedProperties = null;
+    var _isDraggingMarker = false;
     this._lastChangeTime = new Date().getTime();
     var _sketchMovingVertexIndex = -1, _sketchRotatingVertexIndex = -1;
 
@@ -131,6 +132,7 @@
                     return dimPolygon;
                 case 'elementseries':
                     let series = L.graphicsElementSeries(latLngs || [], {});
+                    this._setElementAdvancedProperties(series, _sketchAdvancedProperties); // to set element size to the last vales
                     series.on("element-rotated", function (ev) {
                         if (!_vertices || _vertices.length <= ev.elementIndex) return;
                         this.addUndo(webgis.l10n.get("sketch-rotate-element"));
@@ -248,10 +250,20 @@
     };
     this.isEditable = function () { return this._isEditable === true; };
 
-    this.setProperties = function (properties) {
-        if (this.getGeometryType() === 'elementseries') {
+    this.setAdvancedProperties = function (properties) {
+        _sketchAdvancedProperties = properties || null;
+        if (!properties) return;
+
+        for (var frameworkElement of _frameworkElements) {
+            this._setElementAdvancedProperties(frameworkElement, properties);
+        }
+    };
+    this._setElementAdvancedProperties = function (element, properties) {
+        if (!element || !properties) return;
+
+        if (element instanceof L.GraphicsElementSeries) {
             if (properties.element_width && properties.element_height) {
-                _frameworkElements[0].setElementSize(properties.element_width, properties.element_height);
+                element.setElementSize(properties.element_width, properties.element_height);
             }
         }
     };

@@ -149,4 +149,9 @@ public class HectoPolylineElement : IGraphicElement
             }
         }
     }
+
+    public Envelope Extent =>
+        _polyline is not null
+            ? new Envelope(_polyline.ShapeEnvelope)
+            : null;
 }

@@ -273,7 +273,7 @@ ul.toc li {
     cursor: pointer;
     height: 38px;
     background-color: #b5dbad;
-    margin: -10px -10px 10px -10px;
+    margin: -10px -10px 0px -10px;
     background-repeat: no-repeat;
     background-position: 4px center;
     padding: 9px 0px 9px 9px;
@@ -341,6 +341,16 @@ ul.toc li {
         background-image: url(../api/img/help-26-b.png);
         background-repeat: no-repeat;
         background-position: center center;
+    }
+
+.webgis-ui-holder .webgis-ui-collapsable,
+.webgis-modal-content .webgis-ui-collapsable {
+    margin: 0 -10px;
+}
+
+    .webgis-ui-holder .webgis-ui-collapsable .webgis-ui-optionscontainer,
+    .webgis-modal-content .webgis-ui-collapsable .webgis-ui-optionscontainer {
+        padding: 10px 10px 10px 10px;
     }
 
 .modal-large #edit-editmask-container .webgis-editfield-container input,

@@ -1139,7 +1139,7 @@
         if (response.sketch_properties) {
             var sketch = map.toolSketch();
             if (sketch) {
-                sketch.setProperties(response.sketch_properties);
+                sketch.setAdvancedProperties(response.sketch_properties);
             }
         }
         if (response.replace_query_features) {

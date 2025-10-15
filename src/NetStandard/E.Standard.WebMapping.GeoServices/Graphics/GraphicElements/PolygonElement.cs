@@ -132,5 +132,10 @@ public class PolygonElement : IGraphicElement
         Draw(canvas, map, false, false);
     }
 
+    public Envelope Extent =>
+        _polygon is not null
+            ? new Envelope(_polygon.ShapeEnvelope)
+            : null;
+
     #endregion
 }

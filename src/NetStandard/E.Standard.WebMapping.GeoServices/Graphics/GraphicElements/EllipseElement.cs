@@ -98,6 +98,13 @@ public class EllipseElement : IGraphicElement
         catch { }
     }
 
+    public Envelope Extent =>
+        _center is not null
+            ? new Envelope(
+                _center.X - _radiusX, _center.Y - _radiusY,
+                _center.X + _radiusX, _center.Y + _radiusY)
+            : null;
+
     #endregion
 
     #region Static Members

@@ -4,6 +4,8 @@ Aktuellen Kartenauschnitt im PDF Format drucken.
 
 # container: Karte
 
+# layout-quality: Layout/Qualität
+
 # layout: Layout
 
 # format: Papierformat

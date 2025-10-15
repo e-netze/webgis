@@ -1241,6 +1241,11 @@ public class Map : Display, IMap
 
         clone.DiagnosticsWaringLevel = this.DiagnosticsWaringLevel;
 
+        if(_graphicsContainer?.Any() == true)
+        {
+            clone._graphicsContainer.AddRange(_graphicsContainer);
+        }
+
         return clone;
     }
 

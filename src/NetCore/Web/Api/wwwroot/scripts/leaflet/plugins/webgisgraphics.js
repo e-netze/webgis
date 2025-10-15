@@ -2495,12 +2495,12 @@ L.RotatableRectangle = L.LayerCollection.extend({
         height: 300,
         rotation: 0,
         markerOptions: {
-            draggable: true,
+            draggable: true, 
             icon: L.icon({
-                iconUrl: webgis.css.imgResource('marker-pin_32.png', 'markers'),
-                iconSize: [32, 32],
-                iconAnchor: [16, 32],
-                popupAnchor: [0, -32]
+                iconUrl: webgis.css.imgResource('rotate_26.png', 'markers'),
+                iconSize: [26, 26],
+                iconAnchor: [13, 13],
+                popupAnchor: [-13, -13]
             })
         }
     },
@@ -2556,6 +2556,25 @@ L.RotatableRectangle = L.LayerCollection.extend({
         });
         this.addChildLayer(rectangle);
 
+        let northArrow = L.polyline(this._calcNorthArrowFromRectangle(rectCoords), {
+            color: 'black',
+            weight: 1
+        }); 
+        this.addChildLayer(northArrow);
+
+        let hLine = L.polyline(this._calcHLineFromRectangle(rectCoords), {
+            color: 'black',
+            weight: 1,
+            dashArray: '4,4'
+        });
+        this.addChildLayer(hLine);
+        let vLine = L.polyline(this._calcVLineFromRectangle(rectCoords), {
+            color: 'black',
+            weight: 1,
+            dashArray: '4,4'
+        });
+        this.addChildLayer(vLine);
+
         // Calculate marker position (top right corner)
         let markerPos = rectCoords[2]; // [top right]
 
@@ -2609,7 +2628,26 @@ L.RotatableRectangle = L.LayerCollection.extend({
         // Convert to LatLng
         return corners.map(c => L.latLng(c.y, c.x));
     },
-
+    _calcNorthArrowFromRectangle: function (rectCoords) {
+        return [
+            L.latLng(rectCoords[0].lat, rectCoords[0].lng), // bottom left
+            L.latLng((rectCoords[1].lat + rectCoords[2].lat) * 0.5, (rectCoords[1].lng + rectCoords[2].lng) * 0.5), // top
+            L.latLng(rectCoords[3].lat, rectCoords[3].lng)  // bottom right
+        ];
+    },
+    _calcHLineFromRectangle: function (rectCoords) {
+        return [
+            L.latLng((rectCoords[0].lat + rectCoords[1].lat) * 0.5, (rectCoords[0].lng + rectCoords[1].lng) * 0.5), // left
+            L.latLng((rectCoords[2].lat + rectCoords[3].lat) * 0.5, (rectCoords[2].lng + rectCoords[3].lng) * 0.5)  // right
+        ]
+    },
+    _calcVLineFromRectangle: function (rectCoords) {
+        return [
+            L.latLng((rectCoords[0].lat + rectCoords[3].lat) * 0.5, (rectCoords[0].lng + rectCoords[3].lng) * 0.5), // bottom
+            L.latLng((rectCoords[1].lat + rectCoords[2].lat) * 0.5, (rectCoords[1].lng + rectCoords[2].lng) * 0.5)  // top
+        ]
+    },
+            
     _onMarkerDrag: function (e) {
         if (!this._center) return;
         let markerLatLng = this._marker.getLatLng();
@@ -2633,6 +2671,9 @@ L.RotatableRectangle = L.LayerCollection.extend({
 
         let rectCoords = this._calcRectangleCoords(this._center, this.options.width, this.options.height, this._rotation);
         this.getChildLayer(0).setLatLngs(rectCoords); // Update rectangle
+        this.getChildLayer(1).setLatLngs(this._calcNorthArrowFromRectangle(rectCoords)); // Update north arrow
+        this.getChildLayer(2).setLatLngs(this._calcHLineFromRectangle(rectCoords)); // Update H line
+        this.getChildLayer(3).setLatLngs(this._calcVLineFromRectangle(rectCoords)); // Update V line
     },
 
     _onMarkerDragEnd: function (e) {
@@ -2692,25 +2733,19 @@ L.GraphicsElementSeries = L.LayerCollection.extend({
         }
     },
     addLatLng: function (latLng) {
-        if (this._latLngs) {
-            if (!latLng._rotation) {
-                latLng._rotation = (this._latLngs.length > 0)
-                    ? this._latLngs[this._latLngs.length - 1]._rotation || 0
-                    : 0;
-            }
-            this._latLngs.push(latLng);
-        }
-        else {
-            latLng._rotation = latLng._rotation || 0;
-            this._latLngs = [latLng];
-        }
-
+        this._latLngs = this._latLngs || [];
+        this._latLngs.push(latLng);
         this.rebuild();
     },
     getLatLngs: function () { return this._latLngs; },
     vertexToLatLng: function (vertex) {
         let latLng = L.latLng(vertex.y, vertex.x);
-        vertex.m = vertex.m || 0;
+        if (!vertex.m) {
+            vertex.m = (this._latLngs && this._latLngs.length > 0)
+                ? this._latLngs[this._latLngs.length - 1]._rotation || 0
+                : 0;
+        }
+
         latLng._rotation = vertex.m;
         //console.log('vertexToLatLng', latLng);
         return latLng;
@@ -2748,10 +2783,10 @@ L.GraphicsElementSeries = L.LayerCollection.extend({
                     markerOptions: this.options.rotatable ? {
                         draggable: true,
                         icon: L.icon({
-                            iconUrl: webgis.css.imgResource('marker-pin_32.png', 'markers'),
-                            iconSize: [32, 32],
-                            iconAnchor: [16, 32],
-                            popupAnchor: [0, -32]
+                            iconUrl: webgis.css.imgResource('rotate_26.png', 'markers'),
+                            iconSize: [26, 26],
+                            iconAnchor: [13, 13],
+                            popupAnchor: [-13, -13]
                         })
                     } : null
                 });
@@ -2775,6 +2810,6 @@ L.GraphicsElementSeries = L.LayerCollection.extend({
 });
 
 L.graphicsElementSeries = function (latLngs, options) {
-    console.log('create L.GraphicsElementSeries', latLngs, options);
+    //console.log('create L.GraphicsElementSeries', latLngs, options);
     return new L.GraphicsElementSeries(latLngs, options);
 }

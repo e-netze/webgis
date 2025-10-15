@@ -38,6 +38,10 @@ public class NetworkBarrierGraphicElement : IGraphicElement
         }
     }
 
+    public Envelope Extent =>
+        _point is not null
+            ? new Envelope(_point.ShapeEnvelope)
+            : null;
     #endregion
 
     public static NetworkBarrierGraphicElement[] FindBarriers(IMap map, string serviceUrl, string layerId)

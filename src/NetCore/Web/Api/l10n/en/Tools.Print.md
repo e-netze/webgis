@@ -4,6 +4,8 @@ Print the current map section in PDF format.
 
 # container: Map
 
+# layout-quality: Layout/Quality
+
 # layout: Layout
 
 # format: Paper format

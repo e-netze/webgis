@@ -1,6 +1,7 @@
 ﻿using E.Standard.Extensions.Collections;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
+using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -13,13 +14,16 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
+using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Reflection;
+using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static E.Standard.WebMapping.Core.Api.UI.Elements.UICollapsableElement;
 
 namespace E.Standard.WebGIS.Tools.Export;
 
@@ -71,24 +75,30 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                 new UIHidden()
                     .WithId(MapSeriesPrintScalesId)
                     .AsToolParameter(UICss.AutoSetterMapScales),
-                new UILabel()
-                    .WithLabel(localizer.Localize("layout")),
-                new UISelect(UIButton.UIButtonType.servertoolcommand, "selectionchanged")
-                    .WithId(MapSeriesPrintLayoutId)
-                    .AsPersistantToolParameter(UICss.PrintToolLayout, UICss.ToolInitializationParameterImportant)
-                    .AddOptions(printLayouts.Select(l => new UISelect.Option()
-                                                                .WithValue(l.Id)
-                                                                .WithLabel(l.Name))),
-                new UILabel()
-                    .WithLabel(localizer.Localize("format")),
-                UISelect.PrintFormats(MapSeriesPrintFormatId, printFormats, UIButton.UIButtonType.servertoolcommand, "selectionchanged", defaultValue: e.GetConfigValue(ConfigDefaultFormat)),
-                new UILabel()
-                    .WithLabel(localizer.Localize("print-scale")),
-                UISelect.Scales(MapSeriesPrintScaleId, UIButton.UIButtonType.servertoolcommand, "selectionchanged", allowAddValues: true, scales: e.GetConfigArray<int>("scales")),
-                new UILabel()
-                    .WithLabel(localizer.Localize("print-quality")),
-                UISelect.PrintQuality(MapSeriesPrintQualityId, qualitites),
-
+                new UIOptionContainer() 
+                    { 
+                        title = localizer.Localize("layout-quality"),
+                        CollapseState = CollapseStatus.Expanded
+                    }
+                    .AddChildren(
+                        new UILabel()
+                            .WithLabel(localizer.Localize("layout")),
+                        new UISelect(UIButton.UIButtonType.servertoolcommand, "selectionchanged")
+                            .WithId(MapSeriesPrintLayoutId)
+                            .AsPersistantToolParameter(UICss.PrintToolLayout, UICss.ToolInitializationParameterImportant)
+                            .AddOptions(printLayouts.Select(l => new UISelect.Option()
+                                                                        .WithValue(l.Id)
+                                                                        .WithLabel(l.Name))),
+                        new UILabel()
+                            .WithLabel(localizer.Localize("format")),
+                        UISelect.PrintFormats(MapSeriesPrintFormatId, printFormats, UIButton.UIButtonType.servertoolcommand, "selectionchanged", defaultValue: e.GetConfigValue(ConfigDefaultFormat)),
+                        new UILabel()
+                            .WithLabel(localizer.Localize("print-scale")),
+                        UISelect.Scales(MapSeriesPrintScaleId, UIButton.UIButtonType.servertoolcommand, "selectionchanged", allowAddValues: true, scales: e.GetConfigArray<int>("scales")),
+                        new UILabel()
+                            .WithLabel(localizer.Localize("print-quality")),
+                        UISelect.PrintQuality(MapSeriesPrintQualityId, qualitites)
+                    ),
                 //new UIDiv()
                 //    .WithVisibilityDependency(VisibilityDependency.ToolSketchesExists)
                 //    .AddChild(new UIPrintSketchSelector("print-sketch-selector")),
@@ -430,6 +440,37 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                         _ => 0D
                     })
                 );
+    }
+
+    public IGraphicsContainer GetPrintSeriesGraphicElements(Shape toolSketch, double extentWidth, double extentHeight)
+    {
+        var graphicElements = new GraphicsContainer();
+        var points = toolSketch as MultiPoint;
+
+        if (toolSketch is null || points?.ToArray().Any() != true)
+        {
+            return graphicElements;
+        }
+
+        int index = 1;
+        foreach (var point in points.ToArray())         
+        {
+            graphicElements.Add(new MapFrameElement(
+                name: $"A{index++}",
+                center: point,
+                width: extentWidth,
+                height: extentHeight,
+                rotation: point switch
+                {
+                    PointM m => -Convert.ToDouble(m.M),
+                    _ => 0D
+                },
+                borderColor: gView.GraphicsEngine.ArgbColor.Black));
+        }
+
+        // Add logic to populate graphicElements based on toolSketch, extentWidth, and extentHeight
+
+        return graphicElements;
     }
 
     #endregion

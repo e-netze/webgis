@@ -259,6 +259,16 @@ public class RestPrintHelperService
             {
                 throw new Exception("Unkown layout id=" + layoutId);
             }
+
+            var mapServicesGraphicsElements = (tool as IApiButtonPrintSeriesProvider).GetPrintSericiesGraphicsElements(map,
+                _requestContext.Http, _urlHelper, 
+                printLayout, pageSize, pageOrientation, printScale,
+                tookSketch);
+            foreach(var el in mapServicesGraphicsElements)
+            {
+                map.GraphicsContainer.Add(el);
+            }
+
             List<LayoutBuilderJob> layoutBuilderJobs = new();
 
             foreach (var printMapOrientation in printMapOrientations)
@@ -273,8 +283,8 @@ public class RestPrintHelperService
                     System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", "data"));
 
                 layoutBuilderJobs.Add(new LayoutBuilderJob(mainLayoutBuilder, new Point(printMapOrientation.MapCenter), printMapOrientation.MapRoation, true));
-
             }
+
             #region SubPages (only for first page, eg mostly just the legend)
 
             foreach (string subpageName in layoutBuilderJobs.FirstOrDefault()?.Builder.SubPages ?? [])
@@ -300,8 +310,8 @@ public class RestPrintHelperService
 
 
             ErrorResponseCollection errorRespones = new ErrorResponseCollection(null);
-
             Dictionary<LayoutBuilder, string> images = new Dictionary<LayoutBuilder, string>();
+
             foreach (var layoutBuilderJob in layoutBuilderJobs)
             {
                 var layoutBuilder = layoutBuilderJob.Builder;
@@ -1695,6 +1705,7 @@ public class RestPrintHelperService
                     }
                 }
             }
+
             #endregion
 
             #region Add Sketch

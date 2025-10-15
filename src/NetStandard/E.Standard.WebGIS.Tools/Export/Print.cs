@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static E.Standard.WebMapping.Core.Api.UI.Elements.UICollapsableElement;
 
 namespace E.Standard.WebGIS.Tools.Export;
 
@@ -59,24 +60,30 @@ public class Print : IApiServerToolLocalizable<Print>,
                 new UIHidden()
                     .WithId("print-map-scales")
                     .AsToolParameter(UICss.AutoSetterMapScales),
-                new UILabel()
-                    .WithLabel(localizer.Localize("layout")),
-                new UISelect(UIButton.UIButtonType.servertoolcommand, "selectionchanged")
-                    .WithId("print-layout-select")
-                    .AsPersistantToolParameter(UICss.PrintToolLayout, UICss.ToolInitializationParameterImportant)
-                    .AddOptions(printLayouts.Select(l => new UISelect.Option()
-                                                                .WithValue(l.Id)
-                                                                .WithLabel(l.Name))),
-                new UILabel()
-                    .WithLabel(localizer.Localize("format")),
-                UISelect.PrintFormats("print-format-select", printFormats, UIButton.UIButtonType.servertoolcommand, "selectionchanged", defaultValue: e.GetConfigValue(ConfigDefaultFormat)),
-                new UILabel()
-                    .WithLabel(localizer.Localize("print-scale")),
-                UISelect.Scales("print-scale-select", UIButton.UIButtonType.servertoolcommand, "selectionchanged", allowAddValues: true, scales: e.GetConfigArray<int>("scales")),
-                new UILabel()
-                    .WithLabel(localizer.Localize("print-quality")),
-                UISelect.PrintQuality("print-qualitity-select", qualitites),
-
+                new UIOptionContainer()
+                {
+                    title = localizer.Localize("layout-quality"),
+                    CollapseState = CollapseStatus.Expanded
+                }
+                .AddChildren(
+                    new UILabel()
+                        .WithLabel(localizer.Localize("layout")),
+                    new UISelect(UIButton.UIButtonType.servertoolcommand, "selectionchanged")
+                        .WithId("print-layout-select")
+                        .AsPersistantToolParameter(UICss.PrintToolLayout, UICss.ToolInitializationParameterImportant)
+                        .AddOptions(printLayouts.Select(l => new UISelect.Option()
+                                                                    .WithValue(l.Id)
+                                                                    .WithLabel(l.Name))),
+                    new UILabel()
+                        .WithLabel(localizer.Localize("format")),
+                    UISelect.PrintFormats("print-format-select", printFormats, UIButton.UIButtonType.servertoolcommand, "selectionchanged", defaultValue: e.GetConfigValue(ConfigDefaultFormat)),
+                    new UILabel()
+                        .WithLabel(localizer.Localize("print-scale")),
+                    UISelect.Scales("print-scale-select", UIButton.UIButtonType.servertoolcommand, "selectionchanged", allowAddValues: true, scales: e.GetConfigArray<int>("scales")),
+                    new UILabel()
+                        .WithLabel(localizer.Localize("print-quality")),
+                    UISelect.PrintQuality("print-qualitity-select", qualitites)
+                    ),
                 new UIDiv()
                     .WithVisibilityDependency(VisibilityDependency.ToolSketchesExists)
                     .AddChild(new UIPrintSketchSelector("print-sketch-selector")),

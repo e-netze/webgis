@@ -127,5 +127,10 @@ public class PolylineElement : IGraphicElement
         Draw(canvas, map, false, false);
     }
 
+    public Envelope Extent =>
+        _polyline is not null
+            ? new Envelope(_polyline.ShapeEnvelope)
+            : null;
+
     #endregion
 }
