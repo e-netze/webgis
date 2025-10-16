@@ -52,7 +52,7 @@ public class Print : IApiServerToolLocalizable<Print>,
         var printFormats = bridge.GetPrintFormats();
 
         var qualitites = e.GetConfigDictionay<int, string>(ConfigQualitiesDpi);
-        var markersSelector = new UIPrintMarkerSelector("print-marker-selector");
+        var markersSelector = new UIPrintMarkerSelector(this, "print-marker-selector");
 
         return new ApiEventResponse()
             .AddMapViewLense(Lense.Current)  // Keep current, if tool is already selected
@@ -76,13 +76,13 @@ public class Print : IApiServerToolLocalizable<Print>,
                                                                     .WithLabel(l.Name))),
                     new UILabel()
                         .WithLabel(localizer.Localize("format")),
-                    UISelect.PrintFormats("print-format-select", printFormats, UIButton.UIButtonType.servertoolcommand, "selectionchanged", defaultValue: e.GetConfigValue(ConfigDefaultFormat)),
+                    UISelect.PrintFormats(this, "print-format-select", printFormats, UIButton.UIButtonType.servertoolcommand, "selectionchanged", defaultValue: e.GetConfigValue(ConfigDefaultFormat)),
                     new UILabel()
                         .WithLabel(localizer.Localize("print-scale")),
                     UISelect.Scales("print-scale-select", UIButton.UIButtonType.servertoolcommand, "selectionchanged", allowAddValues: true, scales: e.GetConfigArray<int>("scales")),
                     new UILabel()
                         .WithLabel(localizer.Localize("print-quality")),
-                    UISelect.PrintQuality("print-qualitity-select", qualitites)
+                    UISelect.PrintQuality(this, "print-qualitity-select", qualitites)
                     ),
                 new UIDiv()
                     .WithVisibilityDependency(VisibilityDependency.ToolSketchesExists)
@@ -376,7 +376,7 @@ public class Print : IApiServerToolLocalizable<Print>,
                             .WithStyles(UICss.PrintToolSketch)
                             .WithValue(UIPrintSketchSelector.GetValue(e, "print-sketch-selector", UIPrintSketchSelector.PrintTookSketch)),
                         new UIHidden()
-                            .WithStyles(UICss.PrintToolSketchLables)
+                            .WithStyles(UICss.PrintToolSketchLabels)
                             .WithValue(UIPrintSketchSelector.GetValue(e, "print-sketch-selector", UIPrintSketchSelector.PrintToolSketchLables)),
                         new UIHidden()
                             .WithStyles(UICss.PrintShowQueryMarkers)

@@ -2621,11 +2621,13 @@
         //console.log(tool);
         if (initializationRequired && !tool._isInitialized) {
             tool._isInitialized = true;
-            //console.log('init tool:' + tool.id);
             var type = this.isServerButton(tool.id) ? 'servertoolcommand_ext' : 'servertoolcommand';
-            webgis.tools.onButtonClick(this, {
-                command: 'init', type: type, id: tool.id, map: this
-            });
+            webgis.delayed(function (arg) {
+                console.log('init tool:' + tool.id);
+                webgis.tools.onButtonClick(arg.map, {
+                    command: 'init', type: arg.type, id: arg.tool.id, map: arg.map
+                });
+            }, 1, { map: this, type: type, tool: tool });  // delay to ensure the ui thread is ready
         }
     };
     this._toolEvents = [];

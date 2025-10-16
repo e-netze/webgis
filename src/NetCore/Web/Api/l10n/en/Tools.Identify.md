@@ -1,4 +1,4 @@
-﻿# name: Identify/Select
+﻿# name: Identify / Select
 
 Identify or select geo-objects on the map.
 

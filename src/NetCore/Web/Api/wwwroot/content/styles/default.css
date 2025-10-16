@@ -295,10 +295,12 @@ ul.toc li {
     }
 
     .webgis-ui-holder .webgis-tooldialog-header.secondary {
-        color:#333;
-        background-color:#fff;
-        border-bottom:2px solid #b5dbad;
+        color: #333;
+        background-color: #fff;
+        border-bottom: 2px solid #b5dbad;
         padding: 9px 0px 9px 36px;
+        margin-top: 0px;
+        border-top: 2px solid #b5dbad;
     }
 
     .webgis-ui-holder .webgis-tooldialog-header.secondary:hover {
@@ -2715,8 +2717,13 @@ td.webgis-tab-header {
     text-overflow: ellipsis;
     max-width: 57px;
     height: 23px;
-    line-height: 1.5;
+    line-height: 1.2;
 }
+
+    .webgis-toolbar-tabcontent .webgis-toolbox-tool-item .webgis-toolbox-tool-item-label {
+        overflow: unset;
+        text-overflow: unset;
+    }
 
 .webgis-table-menuitems{
     margin:0px;
@@ -2868,8 +2875,9 @@ body.webgis-ui-holder {
 .webgis-ui-imagebutton.inactive {
     opacity:.3;
 }
- 
-.webgis-ui-optionscontainer.contains-lables .webgis-ui-imagebutton {
+
+.webgis-ui-optionscontainer.contains-labels .webgis-ui-imagebutton,
+.image-button-container.contains-labels .webgis-ui-imagebutton {
     width: 46px;
     height: 56px;
     padding: 2px;
@@ -2880,9 +2888,10 @@ body.webgis-ui-holder {
         background-color: #efefef;
     }
 
-    .webgis-ui-optionscontainer.contains-lables .webgis-ui-imagebutton.webgis-narrow {
-        width: 38px;
-    }
+.webgis-ui-optionscontainer.contains-labels .webgis-ui-imagebutton.webgis-narrow,
+.image-button-container.contains-labels .webgis-ui-imagebutton.webgis-narrow {
+    width: 38px;
+}
 
     .webgis-ui-imagebutton .webgis-ui-imagebutton-text {
         position: absolute;
@@ -2896,7 +2905,7 @@ body.webgis-ui-holder {
         text-overflow: ellipsis;
         max-width: 57px;
         height: 23px;
-        line-height: 1.5;
+        line-height: 1.2;
         padding:1px 2px;
         color:#000;
     }

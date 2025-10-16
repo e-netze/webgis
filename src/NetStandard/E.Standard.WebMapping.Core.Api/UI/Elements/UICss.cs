@@ -86,7 +86,8 @@ public class UICss
     public const string ValidationContainer = "webgis-validation-container";
     public const string FormContainer = "webgis-form-container";
 
-    public const string OptionContainerWithLabels = "contains-lables";
+    public const string OptionContainerWithLabels = "contains-labels";
+    public const string ImageButtonWithLabelsContaier = "image-button-container contains-labels";
 
     public const string InputSetBorderOnChange = "input-setborder-onchange";
     public const string InputAutocomplete = "webgis-autocomplete";
@@ -105,11 +106,31 @@ public class UICss
     public const string PrintAttachCoordinates = "webgis-print-attach-coordinates";
     public const string PrintAttachCoordinatesFieldId = "webgis-print-attach-coordinates-field";
     public const string PrintToolSketch = "webgis-print-show-tool-sketch";
-    public const string PrintToolSketchLables = "webgis-print-tool-sketch-labels";
+    public const string PrintToolSketchLabels = "webgis-print-tool-sketch-labels";
 
     public const string PrintShowQueryMarkersSelect = "webgis-print-show-query-markers-select";
     public const string PrintShowCoordinateMarkersSelect = "webgis-print-show-coordinate-markers-select";
     public const string PrintShowChainageMarkersSelect = "webgis-print-show-chainage-markers-select";
+
+    public const string MapSeriesPrintToolLayout = "webgis-mapseriesprint-tool-layout";
+    public const string MapSeriesPrintToolFormat = "webgis-mapseriesprint-tool-format";
+    public const string MapSeriesPrintToolQuality = "webgis-mapseriesprint-tool-quality";
+    public const string MapSeriesPrintTextElement = "webgis-mapseriesprint-textelement";
+    public const string MapSeriesPrintHeaderIdElement = "webgis-mapseriesprint-header-id-element";
+    public const string MapSeriesPrintShowQueryMarkers = "webgis-mapseriesprint-show-query-markers";
+    public const string MapSeriesPrintShowCoordinatesMarkers = "webgis-mapseriesprint-show-coords-markers";
+    public const string MapSeriesPrintQueryMarkerLabelField = "webgis-mapseriesprint-query-markers-label-field";
+    public const string MapSeriesPrintShowChainageMarkers = "webgis-mapseriesprint-show-chainage-markers";
+    public const string MapSeriesPrintCoordinatesMarkerLabelField = "webgis-mapseriesprint-coords-markers-label-field";
+    public const string MapSeriesPrintAttachQueryResults = "webgis-mapseriesprint-attach-query-results";
+    public const string MapSeriesPrintAttachCoordinates = "webgis-mapseriesprint-attach-coordinates";
+    public const string MapSeriesPrintAttachCoordinatesFieldId = "webgis-mapseriesprint-attach-coordinates-field";
+    public const string MapSeriesPrintToolSketch = "webgis-mapseriesprint-show-tool-sketch";
+    public const string MapSeriesPrintToolSketchLables = "webgis-mapseriesprint-tool-sketch-labels";
+
+    public const string MapSeriesPrintShowQueryMarkersSelect = "webgis-mapseriesprint-show-query-markers-select";
+    public const string MapSeriesPrintShowCoordinateMarkersSelect = "webgis-mapseriesprint-show-coordinate-markers-select";
+    public const string MapSeriesPrintShowChainageMarkersSelect = "webgis-mapseriesprint-show-chainage-markers-select";
 
     public const string DownloadMapImageBBox = "webgis-download-mapimage-bbox";
     public const string DownloadMapImageSize = "webgis-download-mapimage-size";

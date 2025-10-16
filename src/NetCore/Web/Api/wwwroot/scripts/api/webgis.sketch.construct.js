@@ -260,7 +260,7 @@
         };
         this.addContainer = function (sketch, $menu, options, appendXYAbsolute, appendFixedDirection, directionElement, onSetDirectionSucceeded) {
             $container = $("<li>")
-                .addClass("webgis-ui-optionscontainer contains-lables")
+                .addClass("webgis-ui-optionscontainer contains-labels")
                 .css('max-width', '320px')
                 .appendTo($menu);
 

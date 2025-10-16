@@ -1,4 +1,4 @@
-﻿# name: Umgebungskreis
+﻿# name: Umgebungs&shy;kreis
 
 Punkt setzen, um Umgebungskreis anzuzeigen.
 

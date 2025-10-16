@@ -79,7 +79,9 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
         var printFormats = bridge.GetPrintFormats();
 
         var qualitites = e.GetConfigDictionay<int, string>(ConfigQualitiesDpi);
-        var markersSelector = new UIPrintMarkerSelector("print-marker-selector");
+        var markersSelector = new UIPrintMarkerSelector(this, "mapseriesprint-marker-selector");
+
+        #region Tool Buttons
 
         List<IUIElement> uiImageButtons = new List<IUIElement>();
         if (bridge.CurrentUser?.IsAnonymous == false)
@@ -115,6 +117,8 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                         }
             });
 
+        #endregion
+
         return new ApiEventResponse()
             .AddUIElements(
                 new UIHidden()
@@ -122,7 +126,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                     .AsToolParameter(UICss.AutoSetterMapScales),
                 new UIDiv()
                     .WithId(toolContainerId)    
-                    .WithStyles(UICss.OptionContainerWithLabels)
+                    .WithStyles(UICss.ImageButtonWithLabelsContaier)
                     .AddChildren(uiImageButtons.ToArray()),
                 new UIOptionContainer() 
                     { 
@@ -134,19 +138,20 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                             .WithLabel(localizer.Localize("layout")),
                         new UISelect(UIButton.UIButtonType.servertoolcommand, "selectionchanged")
                             .WithId(MapSeriesPrintLayoutId)
-                            .AsPersistantToolParameter(UICss.PrintToolLayout, UICss.ToolInitializationParameterImportant)
+                            .AsPersistantToolParameter(UICss.MapSeriesPrintToolLayout, UICss.ToolInitializationParameterImportant)
                             .AddOptions(printLayouts.Select(l => new UISelect.Option()
                                                                         .WithValue(l.Id)
                                                                         .WithLabel(l.Name))),
                         new UILabel()
                             .WithLabel(localizer.Localize("format")),
-                        UISelect.PrintFormats(MapSeriesPrintFormatId, printFormats, UIButton.UIButtonType.servertoolcommand, "selectionchanged", defaultValue: e.GetConfigValue(ConfigDefaultFormat)),
+                        UISelect.PrintFormats(this, MapSeriesPrintFormatId, printFormats, UIButton.UIButtonType.servertoolcommand, "selectionchanged", defaultValue: e.GetConfigValue(ConfigDefaultFormat)),
                         new UILabel()
                             .WithLabel(localizer.Localize("print-scale")),
-                        UISelect.Scales(MapSeriesPrintScaleId, UIButton.UIButtonType.servertoolcommand, "selectionchanged", allowAddValues: true, scales: e.GetConfigArray<int>("scales")),
+                        UISelect.Scales(MapSeriesPrintScaleId, UIButton.UIButtonType.servertoolcommand, "selectionchanged", allowAddValues: true, scales: e.GetConfigArray<int>("scales"))
+                            .AsPersistantToolParameter(),
                         new UILabel()
                             .WithLabel(localizer.Localize("print-quality")),
-                        UISelect.PrintQuality(MapSeriesPrintQualityId, qualitites)
+                        UISelect.PrintQuality(this, MapSeriesPrintQualityId, qualitites)
                     ),
                 //new UIDiv()
                 //    .WithVisibilityDependency(VisibilityDependency.ToolSketchesExists)
@@ -156,7 +161,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                     .AddChild(markersSelector),
                 new UIDiv()
                     .WithVisibilityDependency(VisibilityDependency.HasToolResults_Coordinates_or_QueryResults)
-                    .AddChild(new UIPrintAttachementsSelector("print-attachment-selector")),
+                    .AddChild(new UIPrintAttachementsSelector("mapseriesprint-attachment-selector")),
                 new UIButtonContainer()
                     .AddChildren(
                         new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.showprinttasks)
@@ -227,9 +232,9 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     {
         string layoutId = e[MapSeriesPrintLayoutId];
         string layoutFormat = e[MapSeriesPrintFormatId];
-        double scale = !String.IsNullOrEmpty(e[MapSeriesPrintInitScaleId]) ?
-                            e.GetDouble(MapSeriesPrintInitScaleId) :
-                            e.GetDouble(MapSeriesPrintScaleId);
+        double scale = !String.IsNullOrEmpty(e[MapSeriesPrintScaleId]) ?
+                            e.GetDouble(MapSeriesPrintScaleId) :
+                            e.GetDouble(MapSeriesPrintInitScaleId);
         var scaleComboValues = new List<int>(e.TryGetArray<int>($"{MapSeriesPrintScaleId}.values") ?? new int[0]);
 
         PageSize pageSize = (PageSize)Enum.Parse(typeof(PageSize), layoutFormat.Split('.')[0], true);
@@ -266,7 +271,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
         var scales = bridge.GetPrintLayoutScales(layoutId) ??
                      e.GetConfigArray<int>("scales") ??
-                     e.GetArray<double>("print-map-scales")?
+                     e.GetArray<double>(MapSeriesPrintScalesId)?
                         .Select(s => Math.Round(s / 10.0, 0) * 10.0)
                         .ToArray()
                         .ConvertItems<int>();
@@ -355,7 +360,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                 new UIInputText()
                     .WithId(layoutText.Name)
                     .WithValue(layoutText.Default)
-                    .WithStyles(UICss.PrintTextElement));
+                    .WithStyles(UICss.MapSeriesPrintTextElement));
         }
 
         PageSize pageSize = (PageSize)Enum.Parse(typeof(PageSize), layoutFormat.Split('.')[0], true);
@@ -403,7 +408,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                 var fields = query.GetSimpleTableFields().Take(3);
 
                 var uiSelect = new UIOptionList()
-                        .WithStyles(UICss.PrintHeaderIdElement)
+                        .WithStyles(UICss.MapSeriesPrintHeaderIdElement)
                         .AddChildren(features
                                         .Where(f => printEnvelope.ShapeEnvelope.Intersects(f.Shape.ShapeEnvelope))
                                         .OrderBy(f => f.Shape.ShapeEnvelope.CenterPoint.Distance2D(printEnvelope.ShapeEnvelope.CenterPoint))
@@ -437,48 +442,48 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                     .WithStyles(UICss.NarrowFormMarginAuto)
                     .AddChildren(
                         new UIHidden()
-                            .WithStyles(UICss.PrintToolLayout)
+                            .WithStyles(UICss.MapSeriesPrintToolLayout)
                             .WithValue(layoutId),
                         new UIHidden()
-                            .WithStyles(UICss.PrintToolFormat)
+                            .WithStyles(UICss.MapSeriesPrintToolFormat)
                             .WithValue(layoutFormat),
                         new UIHidden()
-                            .WithStyles(UICss.PrintToolQuality)
+                            .WithStyles(UICss.MapSeriesPrintToolQuality)
                             .WithValue(dpi),
                         new UIHidden()
                             .WithStyles(UICss.MapScalesSelect)
                             .WithValue(scale),
 
                         new UIHidden()
-                            .WithStyles(UICss.PrintToolSketch)
-                            .WithValue(UIPrintSketchSelector.GetValue(e, "print-sketch-selector", UIPrintSketchSelector.PrintTookSketch)),
+                            .WithStyles(UICss.MapSeriesPrintToolSketch)
+                            .WithValue(UIPrintSketchSelector.GetValue(e, "mapseriesprint-sketch-selector", UIPrintSketchSelector.PrintTookSketch)),
                         new UIHidden()
-                            .WithStyles(UICss.PrintToolSketchLables)
-                            .WithValue(UIPrintSketchSelector.GetValue(e, "print-sketch-selector", UIPrintSketchSelector.PrintToolSketchLables)),
+                            .WithStyles(UICss.MapSeriesPrintToolSketchLables)
+                            .WithValue(UIPrintSketchSelector.GetValue(e, "mapseriesprint-sketch-selector", UIPrintSketchSelector.PrintToolSketchLables)),
                         new UIHidden()
-                            .WithStyles(UICss.PrintShowQueryMarkers)
-                            .WithValue(UIPrintMarkerSelector.GetValue(e, "print-marker-selector", UIPrintMarkerSelector.ShowQueryMarkersId)),
+                            .WithStyles(UICss.MapSeriesPrintShowQueryMarkers)
+                            .WithValue(UIPrintMarkerSelector.GetValue(e, "mapseriesprint-marker-selector", UIPrintMarkerSelector.ShowQueryMarkersId)),
                         new UIHidden()
-                            .WithStyles(UICss.PrintQueryMarkerLabelField)
-                            .WithValue(UIPrintMarkerSelector.GetValue(e, "print-marker-selector", UIPrintMarkerSelector.QueryLabelFieldId)),
+                            .WithStyles(UICss.MapSeriesPrintQueryMarkerLabelField)
+                            .WithValue(UIPrintMarkerSelector.GetValue(e, "mapseriesprint-marker-selector", UIPrintMarkerSelector.QueryLabelFieldId)),
                         new UIHidden()
-                            .WithStyles(UICss.PrintShowCoordinatesMarkers)
-                            .WithValue(UIPrintMarkerSelector.GetValue(e, "print-marker-selector", UIPrintMarkerSelector.ShowCoordinatesMarkersId)),
+                            .WithStyles(UICss.MapSeriesPrintShowCoordinatesMarkers)
+                            .WithValue(UIPrintMarkerSelector.GetValue(e, "mapseriesprint-marker-selector", UIPrintMarkerSelector.ShowCoordinatesMarkersId)),
                         new UIHidden()
-                            .WithStyles(UICss.PrintCoordinatesMarkerLabelField)
-                            .WithValue(UIPrintMarkerSelector.GetValue(e, "print-marker-selector", UIPrintMarkerSelector.CoordinatesLabelFieldId)),
+                            .WithStyles(UICss.MapSeriesPrintCoordinatesMarkerLabelField)
+                            .WithValue(UIPrintMarkerSelector.GetValue(e, "mapseriesprint-marker-selector", UIPrintMarkerSelector.CoordinatesLabelFieldId)),
                         new UIHidden()
-                            .WithStyles(UICss.PrintShowChainageMarkers)
-                            .WithValue(UIPrintMarkerSelector.GetValue(e, "print-marker-selector", UIPrintMarkerSelector.ShowChainageMarkersId)),
+                            .WithStyles(UICss.MapSeriesPrintShowChainageMarkers)
+                            .WithValue(UIPrintMarkerSelector.GetValue(e, "mapseriesprint-marker-selector", UIPrintMarkerSelector.ShowChainageMarkersId)),
                         new UIHidden()
-                            .WithStyles(UICss.PrintAttachQueryResults)
-                            .WithValue(UIPrintAttachementsSelector.GetValue(e, "print-attachment-selector", UIPrintAttachementsSelector.AttachQueryResultsId)),
+                            .WithStyles(UICss.MapSeriesPrintAttachQueryResults)
+                            .WithValue(UIPrintAttachementsSelector.GetValue(e, "mapseriesprint-attachment-selector", UIPrintAttachementsSelector.AttachQueryResultsId)),
                         new UIHidden()
-                            .WithStyles(UICss.PrintAttachCoordinates)
-                            .WithValue(UIPrintAttachementsSelector.GetValue(e, "print-attachment-selector", UIPrintAttachementsSelector.AttachCoordinatesId)),
+                            .WithStyles(UICss.MapSeriesPrintAttachCoordinates)
+                            .WithValue(UIPrintAttachementsSelector.GetValue(e, "mapseriesprint-attachment-selector", UIPrintAttachementsSelector.AttachCoordinatesId)),
                         new UIHidden()
-                            .WithStyles(UICss.PrintAttachCoordinatesFieldId)
-                            .WithValue(UIPrintAttachementsSelector.GetValue(e, "print-attachment-selector", UIPrintAttachementsSelector.CoordinatesFieldId)),
+                            .WithStyles(UICss.MapSeriesPrintAttachCoordinatesFieldId)
+                            .WithValue(UIPrintAttachementsSelector.GetValue(e, "mapseriesprint-attachment-selector", UIPrintAttachementsSelector.CoordinatesFieldId)),
 
                         new UIDiv()
                             .AddChildren(textElements.ToArray()),
@@ -627,15 +632,31 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
         sketch.SrsId = model.SketchSrs;
         sketch.HasM = true;
 
-        return new ApiEventResponse()
-        {
-            UIElements = new IUIElement[] {
-                new UIEmpty(){
-                    target=UIElementTarget.modaldialog.ToString(),
-                }
-            },
-            Sketch = sketch
-        };
+        e[MapSeriesPrintFormatId] = model.Format;
+        e[MapSeriesPrintLayoutId] = model.LayoutId;
+        e[MapSeriesPrintScaleId] = ((int)model.Scale).ToString();
+        e[MapSeriesPrintQualityId] = model.Quality.ToString();
+
+        var response = OnSelectionChanged(bridge, e);
+
+        response.AddUIElement(new UIEmpty().WithTarget(UIElementTarget.modaldialog.ToString()));
+        response.AddUISetters(
+            new UISetter(MapSeriesPrintLayoutId, model.LayoutId),
+            new UISetter(MapSeriesPrintFormatId, model.Format),
+            new UISetter(MapSeriesPrintQualityId, model.Quality.ToString()));
+        response.Sketch = sketch;
+
+        return response;
+        //return new ApiEventResponse()
+        //{
+        //    Sketch = sketch,
+        //}
+        //.AddUIElement(new UIEmpty().WithTarget(UIElementTarget.modaldialog.ToString()))
+        //.AddUISetters(
+        //    new UISetter(MapSeriesPrintLayoutId, model.LayoutId),
+        //    new UISetter(MapSeriesPrintFormatId, model.Format),
+        //    new UISetter(MapSeriesPrintQualityId, model.Quality.ToString()),
+        //    new UISetter(MapSeriesPrintScaleId, ((int)model.Scale).ToString()));
     }
 
     [ServerToolCommand("delete-series")]

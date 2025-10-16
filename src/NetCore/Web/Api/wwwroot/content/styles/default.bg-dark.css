@@ -351,6 +351,11 @@ body.webgis-dark .webgis-table-alternate-row-color tr:nth-child(even),
     color: #dcdcdc;
 }
 
+.webgis-container.dark .webgis-tooldialog-header.secondary {
+    border-bottom: 1px solid #0077d4;
+    border-top: 1px solid #0077d4;
+}
+
 .webgis-container.dark .webgis-search-result-holder {
     background-color: #444;
 }

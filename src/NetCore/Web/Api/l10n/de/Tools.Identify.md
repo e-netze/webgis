@@ -1,4 +1,4 @@
-﻿# name: Identifizieren/Auswählen
+﻿# name: Identifiziern / Auswählen
 
 Geo-Objekte in der Karte identifizieren oder auswählen.
 

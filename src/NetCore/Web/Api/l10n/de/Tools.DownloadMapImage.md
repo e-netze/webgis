@@ -1,4 +1,4 @@
-﻿# name: Kartenbild herunterladen
+﻿# name: Kartenbild herunter&shy;laden
 
 (georeferenziertes) Kartenbild des aktuellen Ausschnittes herunterladen
 

@@ -1473,7 +1473,7 @@
         else if (element.type === 'sharelink-buttons')
         {
             $newElement = $("<div>")
-                .addClass('contains-lables webgis-ui-optionscontainer')
+                .addClass('contains-labels webgis-ui-optionscontainer')
                 .appendTo($parent);
 
             if (element.link) {

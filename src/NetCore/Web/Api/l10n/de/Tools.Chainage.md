@@ -1,4 +1,4 @@
-﻿# name: Stationierung
+﻿# name: Station&shy;ierung
 
 Stationierungswerte entlang einer Linie abfragen
 

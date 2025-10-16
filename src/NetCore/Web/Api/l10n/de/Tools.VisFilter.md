@@ -1,4 +1,4 @@
-﻿# name: Darstellungsfilter
+﻿# name: Darstellungs&shy;filter
 
 Darstellungsfilter setzen, um die Sichtbarkeit von Geo-Objekten einzuschränken.
 

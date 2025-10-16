@@ -1393,7 +1393,7 @@
         }
 
         var $tools = $("<div>")
-            .addClass('webgis-ui-optionscontainer contains-lables')
+            .addClass('webgis-ui-optionscontainer contains-labels')
             .css('display', 'inline-block');
 
         var map = this._map, me = this, isExtentDependent = this.isExtentDependent();

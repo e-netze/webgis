@@ -401,23 +401,28 @@
                                 $holder = $(domElement).closest('.webgis-modal-content');
                             if ($holder.length === 0)
                                 $holder = $(domElement).parent();
-                            printOptions.layout = $holder.find('.webgis-print-tool-layout').val();
-                            printOptions.format = $holder.find('.webgis-print-tool-format').val();
-                            printOptions.dpi = $holder.find('.webgis-print-tool-quality').val();
+
+                            var cssPrefix = map.getActiveTool()?.id == "webgis.tools.mapseriesprint"
+                                ? ".webgis-mapseriesprint-"
+                                : ".webgis-print-";
+
+                            printOptions.layout = $holder.find(cssPrefix + 'tool-layout').val();
+                            printOptions.format = $holder.find(cssPrefix + 'tool-format').val();
+                            printOptions.dpi = $holder.find(cssPrefix + 'tool-quality').val();
                             printOptions.scale = $holder.find('.webgis-map-scales-select').val();
 
-                            printOptions.showQueryMarkers = $holder.find('.webgis-print-show-query-markers').val() === 'show';
-                            printOptions.showCoordinateMarkers = $holder.find('.webgis-print-show-coords-markers').val() === 'show';
-                            printOptions.showChainageMarkers = $holder.find('.webgis-print-show-chainage-markers').val() === 'show';
-                            printOptions.queryMarkersLabelField = $holder.find('.webgis-print-query-markers-label-field').val();
-                            printOptions.coordinateMarkersLabelField = $holder.find('.webgis-print-coords-markers-label-field').val();
+                            printOptions.showQueryMarkers = $holder.find(cssPrefix + 'show-query-markers').val() === 'show';
+                            printOptions.showCoordinateMarkers = $holder.find(cssPrefix + 'show-coords-markers').val() === 'show';
+                            printOptions.showChainageMarkers = $holder.find(cssPrefix + 'show-chainage-markers').val() === 'show';
+                            printOptions.queryMarkersLabelField = $holder.find(cssPrefix + 'query-markers-label-field').val();
+                            printOptions.coordinateMarkersLabelField = $holder.find(cssPrefix + 'coords-markers-label-field').val();
 
-                            printOptions.attachQueryResults = $holder.find('.webgis-print-attach-query-results').val();
-                            printOptions.attachCoordinates = $holder.find('.webgis-print-attach-coordinates').val();
-                            printOptions.attachCoordinatesField = $holder.find('.webgis-print-attach-coordinates-field').val();
+                            printOptions.attachQueryResults = $holder.find(cssPrefix + 'attach-query-results').val();
+                            printOptions.attachCoordinates = $holder.find(cssPrefix + 'attach-coordinates').val();
+                            printOptions.attachCoordinatesField = $holder.find(cssPrefix + 'attach-coordinates-field').val();
 
-                            printOptions.showSketch = $holder.find('.webgis-print-show-tool-sketch').val() !== '';
-                            printOptions.showSketchLabels = $holder.find('.webgis-print-tool-sketch-labels').val();
+                            printOptions.showSketch = $holder.find(cssPrefix + 'show-tool-sketch').val() !== '';
+                            printOptions.showSketchLabels = $holder.find(cssPrefix + 'tool-sketch-labels').val();
 
                             //console.log('test', $holder.find('#print-sketch-selector--print_tool_sketch').length, $holder.find('#print-sketch-selector--print_tool_sketch_labels').length);
 
@@ -1551,6 +1556,7 @@
 
         var me = this;
         $('.' + parameterClass).each(function (i, e) {
+            //console.log($(e).attr("id"));
             if (writeParameter(e)) {
                 ret += (ret !== '' ? '|' : '');
                 ret += e.id + '=' + webgis.tools.toParameterValue(me.getElementValue(e));

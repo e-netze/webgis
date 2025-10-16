@@ -4,7 +4,7 @@ Print a map series in PDF format.
 
 # container: Map
 
-# layout-quality: Layout/Quality
+# layout-quality: Layout/Qualität
 
 # layout: Layout
 
@@ -19,7 +19,8 @@ Print a map series in PDF format.
 # start-print-job: Start print job
 
 # tools:
-## save: Zeichnung speichern
-## open: Zeichnung laden
-## upload: Hochladen (GPX, ...)
-## download: Herunterladen (GPX, Shape)
+## save: Save Series
+## open: Load Series
+## upload: Upload Series
+## download: Download Series
+## remove-sketch: Remove Sketch
