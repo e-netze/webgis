@@ -307,7 +307,8 @@ public class RestPrintHelperService
 
             #region SubPages (only for first page, eg mostly just the legend)
 
-            foreach (string subpageName in layoutBuilderJobs.FirstOrDefault()?.Builder.SubPages ?? [])
+            // see, if the last layout (series page layout) has subpages, eg. legend page
+            foreach (string subpageName in layoutBuilderJobs.LastOrDefault()?.Builder.SubPages ?? [])
             {
                 if (String.IsNullOrWhiteSpace(subpageName))
                 {

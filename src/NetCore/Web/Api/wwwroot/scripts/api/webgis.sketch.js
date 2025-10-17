@@ -3221,19 +3221,13 @@
         }
     };
     this.zoomTo = function (scale) {
-        if (!_vertices || _vertices.length == 0)
-            return;
-        var minx = _vertices[0].x, miny = _vertices[0].y, maxx = _vertices[0].x, maxy = _vertices[0].y;
-        for (var i = 1; i < _vertices.length; i++) {
-            minx = Math.min(minx, _vertices[i].x);
-            miny = Math.min(miny, _vertices[i].y);
-            maxx = Math.max(maxx, _vertices[i].x);
-            maxy = Math.max(maxy, _vertices[i].y);
-        }
+        var bounds = this.bounds();
+        if (!bounds) return;
+
         if (scale)
-            this.map.zoomToBoundsOrScale([minx, miny, maxx, maxy], scale);
+            this.map.zoomToBoundsOrScale(bounds, scale);
         else
-            this.map.zoomTo(webgis.calc.resizeBounds([minx, miny, maxx, maxy], webgis.usability.zoom.allowsFreeZooming() ? 1.3 : 1.0));
+            this.map.zoomTo(webgis.calc.resizeBounds(bounds, webgis.usability.zoom.allowsFreeZooming() ? 1.3 : 1.0));
     };
     this.onClick = function (f, remove) {
         if (webgis.mapFramework == "leaflet") {
@@ -3278,6 +3272,40 @@
             Y1 = Y2;
         }
         return null;
+    };
+    this.bounds = function () {
+        if (!_vertices || _vertices.length === 0) return null;
+
+        // first calculate bounds of vertices
+        var minX = _vertices[0].x;
+        var minY = _vertices[0].y;
+        var maxX = _vertices[0].x;
+        var maxY = _vertices[0].y;
+
+        for (var i = 1; i < _vertices.length; i++) {
+            var vertex = _vertices[i];
+            minX = Math.min(minX, vertex.x);
+            minY = Math.min(minY, vertex.y);
+            maxX = Math.max(maxX, vertex.x);
+            maxY = Math.max(maxY, vertex.y);
+        }
+
+        // than calculate bounds of framework elements (parts) if implemented
+        // Circles or Series has a larger extent than vertices
+        for (var frameworkElement of _frameworkElements) {
+            if (frameworkElement?.getBounds) {
+                var bounds = frameworkElement.getBounds();
+                console.log('frameworkElement bounds', bounds);
+                if (bounds?.isValid && bounds.isValid()) {
+                    minX = Math.min(minX, bounds.getWest());
+                    minY = Math.min(minY, bounds.getSouth());
+                    maxX = Math.max(maxX, bounds.getEast());
+                    maxY = Math.max(maxY, bounds.getNorth());
+                }
+            }
+        }
+
+        return [minX, minY, maxX, maxY];
     };
 
     this.metaInfo = function (s) {

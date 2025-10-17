@@ -154,6 +154,11 @@ static public class GeometryExtensions
         return 0;
     }
 
+    static public bool HasPoints(this Shape shape)
+    {
+        return CountPoints(shape) > 0;
+    }
+
     static public IEnumerable<Point> AllPathStartAndEndPoints(this Polyline polyline)
     {
         if (polyline == null || polyline.PathCount == 0)

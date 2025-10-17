@@ -61,7 +61,7 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
         response.ToolCursor = ToolCursor.Custom_Pen;
         response.ActiveToolType = ToolType.sketchany;
 
-        response.UISetters = response.UISetters.TryAppendItems(new IUISetter[] { new UIPersistentParametersSetter(this) });
+        response.UISetters = response.UISetters.TryAppendItems(new IUISetter[] { new UIApplyPersistentParametersSetter(this) });
 
         return response;
     }

@@ -144,7 +144,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
                 .WithValue(visFilterParameter)
         );
 
-        apiResponse.AddUISetter(new UIPersistentParametersSetter(this));
+        apiResponse.AddUISetter(new UIApplyPersistentParametersSetter(this));
 
         if (filter != null)
         {

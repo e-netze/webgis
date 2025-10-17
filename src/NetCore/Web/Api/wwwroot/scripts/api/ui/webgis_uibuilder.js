@@ -511,6 +511,9 @@
                             }
                         });
                     }
+                    if (setter.id === '_webgis_setter_update_persistent_parameters_') {
+                        options.map.updatePersistentToolParameters(setter.val);
+                    }
                     $('#' + setter.id).each(function (j, e) {
                         let $e = $(e);
 

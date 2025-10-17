@@ -3,6 +3,8 @@ using E.Standard.GeoJson;
 using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
+using E.Standard.WebGIS.Tools.Export.Extensions;
+using E.Standard.WebGIS.Tools.Export.Models;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebGIS.Tools.MapMarkup.Export;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -21,9 +23,11 @@ using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Geometry.Extensions;
 using E.Standard.WebMapping.Core.Reflection;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 using E.Standard.WebMapping.GeoServices.Tiling;
+using Microsoft.IdentityModel.Abstractions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -170,7 +174,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                         new UIButton(UIButton.UIButtonType.servertoolcommand, "print")
                             .WithText(localizer.Localize("name")))
             )
-            .AddUISetter(new UIPersistentParametersSetter(this))
+            .AddUISetter(new UIApplyPersistentParametersSetter(this))
             .AddUISetters(new IUISetter[] {
                 new UISetter(markersSelector.QueryMarkersVisibilitySelectorId, e.QueryMarkersVisible() ? "show" : ""),
                 new UISetter(markersSelector.CoodianteMakersVisiblitySelectorId, e.CoordinateMarkersVisible() ? "show" : ""),
@@ -329,6 +333,8 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     [ServerToolCommand("print")]
     async public Task<ApiEventResponse> OnPrint(IBridge bridge, ApiToolEventArguments e, ILocalizer<Print> localizer)
     {
+        e.ValidateSketch(localizer);
+
         string layoutId = e[MapSeriesPrintLayoutId];
         string layoutFormat = e[MapSeriesPrintFormatId];
         double scale = e.GetDouble(MapSeriesPrintScaleId);
@@ -500,6 +506,8 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     [ServerToolCommand("save")]
     public ApiEventResponse OnSaveClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
     {
+        e.ValidateSketch(localizer);
+
         return new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Pointer },
@@ -548,10 +556,10 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     {
         string name = e["mapseriesprint-io-save-name"];
 
-        if (!name.IsValidFilename(out string invalidChars))
-        {
-            throw new Exception(String.Format(localizer.Localize("io.exception-invalid-char"), invalidChars));
-        }
+        //if (!name.IsValidFilename(out string invalidChars))
+        //{
+        //    throw new Exception(String.Format(localizer.Localize("io.exception-invalid-char"), invalidChars));
+        //}
 
         var model = new PrintSeriesModel()
         {
@@ -628,35 +636,8 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
         string json = bridge.Storage.LoadString(name);
         var model = JSerializer.Deserialize<PrintSeriesModel>(json);
-        var sketch = !String.IsNullOrEmpty(model.SketchWKT) ? model.SketchWKT.ShapeFromWKT() : null;
-        sketch.SrsId = model.SketchSrs;
-        sketch.HasM = true;
 
-        e[MapSeriesPrintFormatId] = model.Format;
-        e[MapSeriesPrintLayoutId] = model.LayoutId;
-        e[MapSeriesPrintScaleId] = ((int)model.Scale).ToString();
-        e[MapSeriesPrintQualityId] = model.Quality.ToString();
-
-        var response = OnSelectionChanged(bridge, e);
-
-        response.AddUIElement(new UIEmpty().WithTarget(UIElementTarget.modaldialog.ToString()));
-        response.AddUISetters(
-            new UISetter(MapSeriesPrintLayoutId, model.LayoutId),
-            new UISetter(MapSeriesPrintFormatId, model.Format),
-            new UISetter(MapSeriesPrintQualityId, model.Quality.ToString()));
-        response.Sketch = sketch;
-
-        return response;
-        //return new ApiEventResponse()
-        //{
-        //    Sketch = sketch,
-        //}
-        //.AddUIElement(new UIEmpty().WithTarget(UIElementTarget.modaldialog.ToString()))
-        //.AddUISetters(
-        //    new UISetter(MapSeriesPrintLayoutId, model.LayoutId),
-        //    new UISetter(MapSeriesPrintFormatId, model.Format),
-        //    new UISetter(MapSeriesPrintQualityId, model.Quality.ToString()),
-        //    new UISetter(MapSeriesPrintScaleId, ((int)model.Scale).ToString()));
+        return model.CreateResponse(this, bridge, e);
     }
 
     [ServerToolCommand("delete-series")]
@@ -685,8 +666,10 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     #region Download/Upload
 
     [ServerToolCommand("download")]
-    public ApiEventResponse OnDownloadObjects(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnDownloadObjects(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
     {
+        e.ValidateSketch(localizer);
+
         var model = new PrintSeriesModel()
         {
             LayoutId = e[MapSeriesPrintLayoutId],
@@ -706,69 +689,44 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     public ApiEventResponse OnUploadClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
     {
         return new ApiEventResponse()
-        {
-            UIElements = new IUIElement[]
-            {
+            .AddUIElements(
                 new UIDiv()
-                {
-                    target = UIElementTarget.modaldialog.ToString(),
-                    targettitle = localizer.Localize("tools.upload"),
-                    css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
-                    elements = new IUIElement[]
-                    {
+                    .AsDialog()
+                    .WithDialogTitle(localizer.Localize("tools.upload"))
+                    .WithStyles(UICss.NarrowFormMarginAuto)
+                    .AddChildren(
                         new UILabel()
-                        {
-                            label = localizer.Localize("io.upload-label1:body")
-                        },
-                        new UIBreak(2),
-                        new UISelect()
-                        {
-                            id="mapseriesprint-upload-replaceelements",
-                            css = UICss.ToClass(new string[]{ UICss.ToolParameter }),
-                            options=new UISelect.Option[]
-                            {
-                                new UISelect.Option() { value = "false", label = localizer.Localize("io.extend-current-session") },
-                                new UISelect.Option() { value = "true", label = localizer.Localize("io.replace-current-session") }
-                            }
-                        },
-                        new UIBreak(2),
-                        new UIUploadFile(this.GetType(), "upload-series") {
-                            id="upload-file",
-                            css=UICss.ToClass(new string[]{UICss.ToolParameter})
-                        }
-                    }
-                }
-            }
-        };
+                            .WithLabel(localizer.Localize("io.upload-label1:body")),
+                        //new UIBreak(2),
+                        //new UISelect()
+                        //    .WithId("mapseriesprint-upload-replaceelements")
+                        //    .WithStyles(UICss.ToolParameter)
+                        //    .AddOptions(new UISelect.Option[]
+                        //    {
+                        //        new UISelect.Option()
+                        //            .WithValue("false")
+                        //            .WithLabel(localizer.Localize("io.extend-current-session")),
+                        //        new UISelect.Option()
+                        //            .WithValue("true")
+                        //            .WithLabel(localizer.Localize("io.replace-current-session"))
+                        //    }),
+                        //new UIBreak(2),
+                        new UIUploadFile(this.GetType(), "upload-series")
+                            .WithId("upload-file")
+                            .WithStyles(UICss.ToolParameter)
+                    ));
     }
 
     [ServerToolCommand("upload-series")]
     public ApiEventResponse OnUploadObject(IBridge bridge, ApiToolEventArguments e)
     {
         var file = e.GetFile("upload-file");
-        var replaceExistingMapMarkup = e["mapseriesprint-upload-replaceelements"] == "true";
+        //var replaceExistingMapMarkup = e["mapseriesprint-upload-replaceelements"] == "true";
 
         string json = Encoding.UTF8.GetString(file.Data);
         var model = JSerializer.Deserialize<PrintSeriesModel>(json);
-        var sketch = !String.IsNullOrEmpty(model.SketchWKT) ? model.SketchWKT.ShapeFromWKT() : null;
-
-        if(sketch is null)
-        {
-            throw new Exception("Uploaded file contains no valid geometry data.");
-        }
-
-        sketch.SrsId = model.SketchSrs;
-        sketch.HasM = true;
-
-        return new ApiEventResponse()
-        {
-            UIElements = new IUIElement[] {
-                new UIEmpty(){
-                    target=UIElementTarget.modaldialog.ToString(),
-                }
-            },
-            Sketch = sketch
-        };
+        
+        return model.CreateResponse(this, bridge, e);
     }
 
     #endregion
@@ -779,14 +737,14 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
     public IEnumerable<PrintMapOrientation> GetPrintMapOrientations(Shape toolSketch)
     {
-        var points = toolSketch as MultiPoint;
-        if(points is null)
+        var multiPoint = toolSketch.MultiPointFromPointOrMultiPoint();
+        if (multiPoint is null)
         {
-            throw new ArgumentException("Tool sketch is null or not an valid Multipoint") ;
+            throw new ArgumentException("Tool sketch is null or not a valid Multipoint") ;
         }
 
         int index = 1;
-        return points
+        return multiPoint
                 .ToArray()
                 .Select(p => new PrintMapOrientation(GetMapSericesPrintPageName(index++), p, null, p switch
                     {
@@ -799,15 +757,15 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     public IGraphicsContainer GetPrintSeriesGraphicElements(Shape toolSketch, double extentWidth, double extentHeight)
     {
         var graphicElements = new GraphicsContainer();
-        var points = toolSketch as MultiPoint;
+        var multiPoint = toolSketch.MultiPointFromPointOrMultiPoint();
 
-        if (toolSketch is null || points?.ToArray().Any() != true)
+        if (toolSketch is null || multiPoint?.ToArray().Any() != true)
         {
             return graphicElements;
         }
 
         int index = 1;
-        foreach (var point in points.ToArray())         
+        foreach (var point in multiPoint.ToArray())         
         {
             graphicElements.Add(new MapFrameElement(
                 name: GetMapSericesPrintPageName(index++),
@@ -857,37 +815,6 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     private string GetMapSericesPrintPageName(int index)
     {
         return $"M{index:000}";
-    }
-
-    #endregion
-
-    #region Models
-
-    private class PrintSeriesModel
-    {
-        [JsonProperty("layoutId")]
-        [System.Text.Json.Serialization.JsonPropertyName("layoutId")]
-        public string LayoutId { get; set; }
-
-        [JsonProperty("format")]
-        [System.Text.Json.Serialization.JsonPropertyName("format")]
-        public string Format { get; set; }
-
-        [JsonProperty("scale")]
-        [System.Text.Json.Serialization.JsonPropertyName("scale")]
-        public double Scale { get; set; }
-
-        [JsonProperty("quality")]
-        [System.Text.Json.Serialization.JsonPropertyName("quality")]
-        public int Quality { get; set; }
-
-        [JsonProperty("sketchWKT")]
-        [System.Text.Json.Serialization.JsonPropertyName("sketchWKT")]
-        public string SketchWKT { get; set; }
-
-        [JsonProperty("sketchSrs")]
-        [System.Text.Json.Serialization.JsonPropertyName("sketchSrs")]
-        public int SketchSrs { get; set; }
     }
 
     #endregion

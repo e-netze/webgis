@@ -2554,6 +2554,7 @@
             tool.persistencecontext || tool.id;
         if (prefix) context = prefix + ":" + context;
 
+        //console.log('setPersistentToolParameter', context, paramId, val);
         if (!this._toolPersistence[context])
             this._toolPersistence[context] = [];
         this._toolPersistence[context][paramId] = val;
@@ -2576,7 +2577,7 @@
     };
     this.applyPersistentToolParameters = function (tool, callbackAfterChanged) {
         let params = this.getPersistentToolParameters(tool);
-        //console.log('persistant parameters: ', params)
+        //console.log('applyPersistentToolParameters: ', params)
         for (let id in params) {
             let $e = $('#' + id);
             if ($e.hasClass('webgis-tool-parameter-persistent') || true) {
@@ -2599,6 +2600,23 @@
                 if (callbackAfterChanged) {
                     callbackAfterChanged($e);
                 }
+            }
+        }
+    };
+    this.updatePersistentToolParameters = function (tool) {
+        if (!tool)
+            return;
+        var context = (typeof tool === 'string' || tool instanceof String) ?
+            tool :
+            tool.persistencecontext || tool.id;
+        var params = this._toolPersistence[context];
+        if (!params) return;
+        //console.log('updatePersistentToolParameters: ', params);
+        for (var id in params) {
+            var $e = $('#' + id + '.webgis-tool-parameter-persistent');
+            if ($e.length > 0) {
+                params[id] = $e.val();
+                console.log(' updated parameter', id, params[id]);
             }
         }
     };

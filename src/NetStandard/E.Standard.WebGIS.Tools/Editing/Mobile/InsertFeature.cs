@@ -144,7 +144,7 @@ public class InsertFeature : IApiServerToolLocalizableAsync<InsertFeature>,
         {
             UIElements = uiElements.ToArray(),
             UISetters = new IUISetter[] {
-                new UIPersistentParametersSetter(this)
+                new UIApplyPersistentParametersSetter(this)
             }
         };
 
@@ -229,7 +229,7 @@ public class InsertFeature : IApiServerToolLocalizableAsync<InsertFeature>,
                                                                  e,
                                                                  e.UseMobileBehavior() == false ? $"#{EditMaskContainerId}" : null);
 
-        response.UISetters = response.UISetters.TryAppendItems(new IUISetter[] { new UIPersistentParametersSetter(this) });
+        response.UISetters = response.UISetters.TryAppendItems(new IUISetter[] { new UIApplyPersistentParametersSetter(this) });
         return response;
     }
 

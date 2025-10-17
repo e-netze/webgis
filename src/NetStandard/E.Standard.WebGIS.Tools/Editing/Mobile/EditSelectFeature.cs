@@ -129,7 +129,7 @@ public abstract class EditSelectFeature<T> : IApiServerToolLocalizableAsync<Edit
         {
             UIElements = uiElements.ToArray(),
             UISetters = new IUISetter[] {
-                new UIPersistentParametersSetter(this)
+                new UIApplyPersistentParametersSetter(this)
             }
         };
     }

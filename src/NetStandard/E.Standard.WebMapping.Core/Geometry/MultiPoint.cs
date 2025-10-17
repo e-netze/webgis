@@ -16,6 +16,11 @@ public sealed class MultiPoint : PointCollection
         : base(pColl)
     {
     }
+    public MultiPoint(IEnumerable<Point> points) 
+    {
+        this.AddPoints(points);
+    }
+
     public override string ArcXML(NumberFormatInfo nfi)
     {
         StringBuilder sb = new StringBuilder();

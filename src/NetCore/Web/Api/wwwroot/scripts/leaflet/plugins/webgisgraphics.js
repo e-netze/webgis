@@ -2527,7 +2527,10 @@ L.RotatableRectangle = L.LayerCollection.extend({
     getLatLngs: function () {
         return [this._center];
     },
-
+    getBounds: function() {
+        var rectCoords = this._calcRectangleCoords(this._center, this.options.width, this.options.height, this._rotation);
+        return L.latLngBounds(rectCoords);
+    },
     onAdd: function () {
         this.redraw();
     },
@@ -2738,6 +2741,24 @@ L.GraphicsElementSeries = L.LayerCollection.extend({
         this.rebuild();
     },
     getLatLngs: function () { return this._latLngs; },
+    getBounds: function () {
+        if (!this._latLngs || this._latLngs.length === 0) return null;
+
+        let bounds = null;
+        for (let latLng of this._latLngs) {
+            let elementBounds = L.rotatableRectangle([latLng], {
+                width: this.options.width,
+                height: this.options.height,
+                rotation: latLng._rotation || 0
+            }).getBounds();
+            if (bounds) {
+                bounds.extend(elementBounds);
+            } else {
+                bounds = elementBounds;
+            }
+        }
+        return bounds;
+    },
     vertexToLatLng: function (vertex) {
         let latLng = L.latLng(vertex.y, vertex.x);
         if (!vertex.m) {

@@ -24,3 +24,17 @@ Print a map series in PDF format.
 ## upload: Upload Series
 ## download: Download Series
 ## remove-sketch: Remove Sketch
+
+# io:
+## extend-current-session: Extend Current Series
+## replace-current-session: Replace Current Series
+## exception-no-sketch-defined: 
+
+There is no series defined in the map yet. Please create
+first a series. You can define the individual pages of the series
+by clicking on the map.
+
+## upload-label1: 
+
+Here you can upload series. Valid file extensions are *.json.
+Only series created with this tool can be uploaded.

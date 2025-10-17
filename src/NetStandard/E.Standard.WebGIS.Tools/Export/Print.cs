@@ -101,7 +101,7 @@ public class Print : IApiServerToolLocalizable<Print>,
                         new UIButton(UIButton.UIButtonType.servertoolcommand, "print")
                             .WithText(localizer.Localize("name")))
             )
-            .AddUISetter(new UIPersistentParametersSetter(this))
+            .AddUISetter(new UIApplyPersistentParametersSetter(this))
             .AddUISetters(new IUISetter[] {
                 new UISetter(markersSelector.QueryMarkersVisibilitySelectorId, e.QueryMarkersVisible() ? "show" : ""),
                 new UISetter(markersSelector.CoodianteMakersVisiblitySelectorId, e.CoordinateMarkersVisible() ? "show" : ""),
