@@ -1,5 +1,6 @@
 ﻿using Api.Core.AppCode.Mvc;
 using Api.Core.AppCode.Services;
+using E.Standard.Platform;
 using E.Standard.Web.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -37,7 +38,19 @@ public class OutputController : ApiBaseController
             return StatusCode(400);
         }
 
-        var fileInfo = new FileInfo($"{_urlHelper.OutputPath()}/{id}");
+        var fileInfo = new FileInfo(Path.Combine(_urlHelper.OutputPath(), id));
+
+        try
+        {
+            // ensure the file is in the output path!!
+            fileInfo.CheckIfFileInDirectory(new DirectoryInfo(_urlHelper.OutputPath()));
+        } 
+        catch
+        {
+            return StatusCode(403);
+        }
+
+
         string contentType;
         switch (fileInfo.Extension.ToLower())
         {

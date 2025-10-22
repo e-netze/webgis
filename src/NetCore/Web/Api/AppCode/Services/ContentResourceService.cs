@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using E.Standard.Platform;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
 
@@ -18,6 +19,11 @@ public class ContentResourceService
         byte[] resourceBytes = null;
 
         id = id?.Replace("~", ".");
+        if(id.Contains("\\") || id.Contains("/"))
+        {
+            throw new UnauthorizedAccessException();
+        }
+
         string path = $"{_urlHelper.WWWRootPath()}/content/api/img/";
 
         FileInfo fi = null;
@@ -47,6 +53,8 @@ public class ContentResourceService
 
         if (fi.Exists)
         {
+            fi.CheckIfFileInDirectoryOrSubDirectory(new DirectoryInfo(path));
+
             resourceBytes = System.IO.File.ReadAllBytes(fi.FullName);
         }
         return resourceBytes;
