@@ -32,6 +32,8 @@ var app = builder.Build();
 app.MapDefaultEndpoints();
 #endif
 
+app.UseCors();
+
 startup.Configure(app,
                   app.Services.GetRequiredService<ConfigurationService>(),
                   app.Services.GetRequiredService<KeyValueCacheService>(),

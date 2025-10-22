@@ -1,6 +1,8 @@
-//#define ADD_IDENTITYSERVER
+﻿//#define ADD_IDENTITYSERVER
 //#define ADD_MESSAGEQUEUE
 //#define ADD_REDIS
+//#define POSTGRES
+//#define GVIEW
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -83,6 +85,39 @@ var redis = builder
             .WithLifetime(ContainerLifetime.Persistent);
 
 #endregion
+#endif
+
+#if POSTGRES
+
+var postgresPassword = builder.AddParameter("postgresql-password", "postgres");
+
+// Add a PostgreSQL container using the PostGIS-enabled image
+var postgres = builder
+                    .AddPostgres("webgis-postgis", password: postgresPassword)
+                    .WithImage("postgis/postgis")
+                    .WithDataVolume("webgis-postgis")
+                    //.WithInitBindMount(source: "C:\\postgres\\init")
+                    .WithContainerName("webgis-postgis")
+                    //.WithPgAdmin(containerName: "webgis-pgadmin")
+                    .WithLifetime(ContainerLifetime.Persistent)
+                    .WithHostPort(5432);
+
+#endif
+
+#if GVIEW
+var gViewServer = builder
+                    .AddgViewServer("gview-server", httpPort: 61656)
+                    .Build()
+                    .WithLifetime(ContainerLifetime.Persistent)
+                    .WithContainerName("gview-server");
+
+var gViewWebApps = builder
+                    .AddgViewWebApps("gview-webapps")
+                    .WithDrive("GEODATA", "/geodata", @"C:\temp\GeoData")
+                    .WithgViewServer(gViewServer)
+                    .Build()
+                    .WithLifetime(ContainerLifetime.Persistent)
+                    .WithContainerName("gview-webapps");
 #endif
 
 #region WebGIS

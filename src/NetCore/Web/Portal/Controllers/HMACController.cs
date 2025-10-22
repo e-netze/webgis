@@ -3,6 +3,7 @@ using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Security.App.Extensions;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Core.Reflection.Authentication;
 
+[EnableCors("Dynamic")]
 public class HMACController : PortalBaseController
 {
     private readonly ILogger<HMACController> _logger;
