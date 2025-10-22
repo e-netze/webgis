@@ -1,12 +1,11 @@
 ﻿using E.Standard.Extensions.Collections;
-using E.Standard.GeoJson;
 using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
+using E.Standard.WebGIS.Tools.Export.Calc;
 using E.Standard.WebGIS.Tools.Export.Extensions;
 using E.Standard.WebGIS.Tools.Export.Models;
 using E.Standard.WebGIS.Tools.Extensions;
-using E.Standard.WebGIS.Tools.MapMarkup.Export;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
@@ -27,13 +26,10 @@ using E.Standard.WebMapping.Core.Geometry.Extensions;
 using E.Standard.WebMapping.Core.Reflection;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 using E.Standard.WebMapping.GeoServices.Tiling;
-using Microsoft.IdentityModel.Abstractions;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Unicode;
 using System.Threading.Tasks;
 using static E.Standard.WebMapping.Core.Api.UI.Elements.UICollapsableElement;
 
@@ -41,7 +37,7 @@ namespace E.Standard.WebGIS.Tools.Export;
 
 [Export(typeof(IApiButton))]
 [ToolHelp("tools/map/print.html")]
-[ToolConfigurationSection("print")]
+[ToolConfigurationSection("map-series-print")]
 [ToolId("webgis.tools.mapseriesprint")]
 [ToolStorageId("WebGIS.Tools.Serialization/{user}/_mapseries")]
 [AdvancedToolProperties(
@@ -60,6 +56,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     public const string ConfigQualitiesDpi = "qualities-dpi";
     public const string ConfigDefaultQuality = "default-quality";
     public const string ConfigDefaultFormat = "default-format";
+    public const string ConfigMaxPages = "max-pages";
 
     public const string PrintLayoutOptionPrefix = "series-layout:";
 
@@ -129,14 +126,14 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                     .WithId(MapSeriesPrintScalesId)
                     .AsToolParameter(UICss.AutoSetterMapScales),
                 new UIDiv()
-                    .WithId(toolContainerId)    
+                    .WithId(toolContainerId)
                     .WithStyles(UICss.ImageButtonWithLabelsContaier)
                     .AddChildren(uiImageButtons.ToArray()),
-                new UIOptionContainer() 
-                    { 
-                        title = localizer.Localize("layout-quality"),
-                        CollapseState = CollapseStatus.Expanded
-                    }
+                new UIOptionContainer()
+                {
+                    title = localizer.Localize("layout-quality"),
+                    CollapseState = CollapseStatus.Expanded
+                }
                     .AddChildren(
                         new UILabel()
                             .WithLabel(localizer.Localize("layout")),
@@ -326,7 +323,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
         return response
                 .AddSketchProperties(
-                    elementWidth: properties.WorldSize.Width * scaleFactor, 
+                    elementWidth: properties.WorldSize.Width * scaleFactor,
                     elementHeight: properties.WorldSize.Height * scaleFactor);
     }
 
@@ -342,7 +339,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
         List<IPrintLayoutTextBridge> layoutTexts = new();
         bool first = true;
-        foreach (var lId in new string[] { "layout_map_services_overview.xml", layoutId})
+        foreach (var lId in new string[] { "layout_map_services_overview.xml", layoutId })
         {
             bridge.GetPrintLayoutTextElements(lId, allowFileName: first == true)  // first (overview) layout allow direct access by file name
                 .ToList()
@@ -355,7 +352,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                 });
             first = false;
         }
-        
+
         List<IUIElement> textElements = new List<IUIElement>();
         foreach (var layoutText in layoutTexts)
         {
@@ -630,14 +627,14 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     }
 
     [ServerToolCommand("load-series")]
-    public ApiEventResponse OnLoadProject(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnLoadProject(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
     {
         string name = e["mapseriesprint-io-load-name"]?.ToValidEncodedName();
 
         string json = bridge.Storage.LoadString(name);
         var model = JSerializer.Deserialize<PrintSeriesModel>(json);
 
-        return model.CreateResponse(this, bridge, e);
+        return model.CreateResponse(this, bridge, e, localizer);
     }
 
     [ServerToolCommand("delete-series")]
@@ -681,7 +678,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
         };
 
         return new ApiRawDownloadEventResponse(
-            "map-series-print.json", 
+            "map-series-print.json",
             Encoding.UTF8.GetBytes(JSerializer.Serialize(model, true)));
     }
 
@@ -718,15 +715,125 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     }
 
     [ServerToolCommand("upload-series")]
-    public ApiEventResponse OnUploadObject(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnUploadObject(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
     {
         var file = e.GetFile("upload-file");
         //var replaceExistingMapMarkup = e["mapseriesprint-upload-replaceelements"] == "true";
 
         string json = Encoding.UTF8.GetString(file.Data);
         var model = JSerializer.Deserialize<PrintSeriesModel>(json);
-        
-        return model.CreateResponse(this, bridge, e);
+
+        return model.CreateResponse(this, bridge, e, localizer);
+    }
+
+    #endregion
+
+    #region Create Series from Features
+
+    internal const string ParameterServiceId = "service-id";
+    internal const string ParameterQueryId = "query-id";
+    internal const string ParameterFeatureIds = "feature-ids";
+    internal const string ParameterOverlappingPercent = "mapservicesprint-overlapping-percent";
+    internal const string ParameterSeriesType = "mapservicesprint-series-type";
+
+    [ServerToolCommand("create-series-from-features")]
+    async public Task<ApiEventResponse> OnCreateSeriesFromFeatures(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
+    {
+        var features = await e.GetFeatureCollectionForMapSeries(bridge);
+
+        return new ApiEventResponse()
+            .AddUIElements(
+                new UIDiv()
+                    .AsDialog()
+                    .WithDialogTitle(localizer.Localize("create-series-from-features"))
+                    .AddChildren(e.AddRequiredMapSeriesPrintCreateFromFeaturesHiddenElements())
+                    .AddChildren(
+                         new UILabel()
+                            .WithDialogTitle(localizer.Localize("series-type")),
+                         new UISelect()
+                            .WithId(ParameterSeriesType)
+                            .WithStyles(UICss.ToolParameter, UICss.ToolParameterPersistent)
+                            .AddPossibleSeriesTypeOptions(features, localizer),
+                         new UILabel()
+                            .WithLabel(localizer.Localize("overlapping-percent")),
+                         new UISelect()
+                            .WithId(ParameterOverlappingPercent)
+                            .WithStyles(UICss.ToolParameter, UICss.ToolParameterPersistent)
+                            .AddOptions(
+                                Enumerable.Range(0, 50)
+                                    .Select(r => new UISelect.Option() { value = r.ToString(), label = $"{r}%" })
+                            ),
+                        new UIButtonContainer()
+                            .AddChildren(
+                                new UIButton(UIButton.UIButtonType.servertoolcommand, "create-series-from-features-calc")
+                                    .WithText(localizer.Localize("create")))
+                    )
+            )
+            .AddUISetter(new UIApplyPersistentParametersSetter(this));
+    }
+
+    [ServerToolCommand("create-series-from-features-calc")]
+    async public Task<ApiEventResponse> OnCreateSeriesFromFeaturesCalc(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
+    {
+        double overlappingPercent = e.GetDouble(ParameterOverlappingPercent);
+        string layoutId = e[MapSeriesPrintLayoutId];
+        string layoutFormat = e[MapSeriesPrintFormatId];
+        double scale = e.GetDouble(MapSeriesPrintScaleId);
+        SeriesType seriesType = e.GetEnumValue<SeriesType>(ParameterSeriesType);
+
+        PageSize pageSize = (PageSize)Enum.Parse(typeof(PageSize), layoutFormat.Split('.')[0], true);
+        PageOrientation pageOrientation = PageOrientation.Landscape;
+        if (layoutFormat.Contains("."))
+        {
+            pageOrientation = (PageOrientation)Enum.Parse(typeof(PageOrientation), layoutFormat.Split('.')[1], true);
+        }
+        else { pageOrientation = 0; }
+
+        var properties = bridge.GetPrintLayoutProperties(layoutId, pageSize, pageOrientation, scale);
+        var mapSRef = bridge.CreateSpatialReference((int)e.MapCrs);
+        var mapEnvelope = new Envelope(e.MapBBox());
+
+        float scaleFactor = 1.0f;
+        if (mapSRef.IsWebMercator())
+        {
+            // recalc scale for web mercator ??
+            scaleFactor = 1f / (float)Math.Cos(mapEnvelope.CenterPoint.Y / 180.0 * Math.PI);
+        }
+
+        double pageWidth = properties.WorldSize.Width * scaleFactor;
+        double pageHeight = properties.WorldSize.Height * scaleFactor;
+        var features = await e.GetFeatureCollectionForMapSeries(bridge);
+
+        var seriesCreator = new SeriesCreator(features, pageWidth, pageHeight, overlappingPercent);
+
+        var sketch = seriesType switch
+        {
+            SeriesType.AlongPolylines => seriesCreator.SeriesAlongPolylines(),
+            SeriesType.IntersectionRaster => seriesCreator.IntersectionRaster(),
+            SeriesType.BoundingBoxRaster => seriesCreator.BoundingBoxRaster(),
+            _ => throw new NotSupportedException($"Series type '{seriesType}' is not supported.")
+        };
+
+        var response = new ApiEventResponse()
+            .AddUIElement(new UIEmpty().WithTarget(UIElementTarget.modaldialog.ToString()));
+
+        if (sketch.CountPoints() > e.GetMaxMapSeriesPages())
+        {
+            response.ErrorMessage = String.Format(localizer.Localize(
+                "create-series-from-features.exception-too-many-pages:body"),
+                                    sketch.CountPoints(),
+                                    e.GetMaxMapSeriesPages());
+            sketch = (MultiPoint)sketch.ReducePointNummerTo(e.GetMaxMapSeriesPages());
+        }
+
+        sketch.HasM = true;
+        sketch.SrsId = e.CalcCrs ?? 0;
+
+        response.Sketch = sketch;
+        response.ClientCommands = [
+                ApiClientButtonCommand.zoom2sketch
+            ];
+        return response;
     }
 
     #endregion
@@ -740,17 +847,17 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
         var multiPoint = toolSketch.MultiPointFromPointOrMultiPoint();
         if (multiPoint is null)
         {
-            throw new ArgumentException("Tool sketch is null or not a valid Multipoint") ;
+            throw new ArgumentException("Tool sketch is null or not a valid Multipoint");
         }
 
         int index = 1;
         return multiPoint
                 .ToArray()
                 .Select(p => new PrintMapOrientation(GetMapSericesPrintPageName(index++), p, null, p switch
-                    {
-                        PointM m => -Convert.ToDouble(m.M),
-                        _ => 0D
-                    })
+                {
+                    PointM m => -Convert.ToDouble(m.M),
+                    _ => 0D
+                })
                 );
     }
 
@@ -765,7 +872,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
         }
 
         int index = 1;
-        foreach (var point in multiPoint.ToArray())         
+        foreach (var point in multiPoint.ToArray())
         {
             graphicElements.Add(new MapFrameElement(
                 name: GetMapSericesPrintPageName(index++),
@@ -794,11 +901,12 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
             .Select(f => f.Extent)
             .Where(e => e is not null)
             .ToList()
-            .ForEach(e =>{
-                if(extent is null)
+            .ForEach(e =>
+            {
+                if (extent is null)
                 {
                     extent = new Envelope(e);
-                } 
+                }
                 else
                 {
                     extent.Union(e);

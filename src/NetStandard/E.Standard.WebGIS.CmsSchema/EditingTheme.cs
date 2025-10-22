@@ -65,7 +65,7 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
     public bool AllowUpdate { get; set; }
 
     [Category("~Rechte")]
-    [DisplayName("DELETE (bestendes löschen) erlauben")]
+    [DisplayName("DELETE (bestehendes löschen) erlauben")]
     public bool AllowDelete { get; set; }
 
     [Category("~Rechte")]

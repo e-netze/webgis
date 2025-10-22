@@ -1012,7 +1012,7 @@
                     $('body').webgis_modal({
                         title: 'Nicht berechtigte Dienste',
                         onload: function ($content) {
-                            $content.html('<h2>Hinweis</h2><p>In diese Karte wurde vom Kartenautor Dienste eingefühgt, für die Sie keine Berechtigung besitzen. Diese Dienste werden in der Karte nicht angezeigt. Auf die Funktionsweise der Karte sollte das keinen Einfluss nehmen. Folgende Dienste sind für Sie nicht in der Karte vorhanden (falls sie einen dieser Dienste benötigen, wenden sie sich and den Administrator):');
+                            $content.html('<h2>Hinweis</h2><p>In diese Karte wurde vom Kartenautor Dienste eingefügt, für die Sie keine Berechtigung besitzen. Diese Dienste werden in der Karte nicht angezeigt. Auf die Funktionsweise der Karte sollte das keinen Einfluss nehmen. Folgende Dienste sind für Sie nicht in der Karte vorhanden (falls sie einen dieser Dienste benötigen, wenden sie sich and den Administrator):');
                             var $ul = $("<ul>").appendTo($content);
                             for (var i in options.unauthorizedservices) {
                                 $("<li>" + options.unauthorizedservices[i] + "</li>").appendTo($ul);

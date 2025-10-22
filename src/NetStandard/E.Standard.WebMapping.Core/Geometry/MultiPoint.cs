@@ -16,7 +16,7 @@ public sealed class MultiPoint : PointCollection
         : base(pColl)
     {
     }
-    public MultiPoint(IEnumerable<Point> points) 
+    public MultiPoint(IEnumerable<Point> points)
     {
         this.AddPoints(points);
     }

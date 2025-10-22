@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Tools.Export.Models;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.WebGIS.Tools.Export.Models;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse;
@@ -7,6 +8,7 @@ using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Extensions;
+using E.Standard.WebMapping.Core.Geometry.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,17 +24,15 @@ static internal class PrintSeriesModelExtensions
         this PrintSeriesModel model,
         MapSeriesPrint tool,
         IBridge bridge,
-        ApiToolEventArguments e)
+        ApiToolEventArguments e,
+        ILocalizer localizer)
     {
         var sketch = !String.IsNullOrEmpty(model.SketchWKT) ? model.SketchWKT.ShapeFromWKT() : null;
 
         if (sketch is null)
         {
-            throw new Exception("Uploaded file contains no valid geometry data.");
+            throw new Exception(localizer.Localize("io.exception-shape-not-contains-vertices:body"));
         }
-
-        sketch.SrsId = model.SketchSrs;
-        sketch.HasM = true;
 
         e[MapSeriesPrint.MapSeriesPrintFormatId] = model.Format;
         e[MapSeriesPrint.MapSeriesPrintLayoutId] = model.LayoutId;
@@ -40,6 +40,18 @@ static internal class PrintSeriesModelExtensions
         e[MapSeriesPrint.MapSeriesPrintQualityId] = model.Quality.ToString();
 
         var response = tool.OnSelectionChanged(bridge, e);
+        
+        if (sketch.CountPoints()> e.GetMaxMapSeriesPages())
+        {
+            response.ErrorMessage = response.ErrorMessage = String.Format(localizer.Localize(
+                "io.exception-too-many-pages:body"),
+                                    sketch.CountPoints(),
+                                    e.GetMaxMapSeriesPages());
+            sketch = sketch.ReducePointNummerTo(e.GetMaxMapSeriesPages());
+        }
+
+        sketch.SrsId = model.SketchSrs;
+        sketch.HasM = true;
 
         response.AddUIElement(new UIEmpty().WithTarget(UIElementTarget.modaldialog.ToString()));
         response.AddUISetters(
@@ -54,4 +66,6 @@ static internal class PrintSeriesModelExtensions
             ];
         return response;
     }
+
+   
 }

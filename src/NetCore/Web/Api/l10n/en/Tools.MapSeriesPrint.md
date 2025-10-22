@@ -1,10 +1,10 @@
-# name: Map Series Print
+﻿# name: Map Series Print
 
 Print a map series in PDF format.
 
 # container: Map
 
-# layout-quality: Layout/Qualit�t
+# layout-quality: Layout/Qualität
 
 # layout: Layout
 
@@ -34,7 +34,27 @@ There is no series defined in the map yet. Please create
 first a series. You can define the individual pages of the series
 by clicking on the map.
 
+## exception-shape-not-contains-vertices:
+
+Oops, something went wrong.
+The geometry of the series does not contain any vertices.
+
+## exception-too-many-pages:
+
+The loading of the series cannot be carried out correctly because the file
+contains too many pages ({0} pages).
+A maximum of {1} pages can be defined in a series. Therefore, not
+all pages will be loaded.
+
 ## upload-label1: 
 
 Here you can upload series. Valid file extensions are *.json.
 Only series created with this tool can be uploaded.
+ 
+# create-series-from-features:
+## exception-too-many-pages:
+
+The creation of the series cannot be carried out correctly because too many pages
+would have to be created ({0} pages).
+A maximum of {1} pages can be defined in a series. Change the scale
+or the paper format to create fewer pages.

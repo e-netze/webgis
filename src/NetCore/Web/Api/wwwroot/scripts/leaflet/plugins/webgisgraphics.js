@@ -1161,6 +1161,13 @@ L.SVGLabel = L.Layer.extend({
     getText: function () {
         return this.options.text;
     },
+    setRotation: function (rotation) {
+        this.options.rotation = rotation;
+        this.redraw();
+    },
+    getRotation: function () {  
+        return this.options.rotation;
+    },
 
     setStyle: function (style) {
         for (var i in style) {
@@ -2494,6 +2501,7 @@ L.RotatableRectangle = L.LayerCollection.extend({
         width: 500,
         height: 300,
         rotation: 0,
+        label: '',
         markerOptions: {
             draggable: true, 
             icon: L.icon({
@@ -2577,6 +2585,18 @@ L.RotatableRectangle = L.LayerCollection.extend({
             dashArray: '4,4'
         });
         this.addChildLayer(vLine);
+
+        if (this.options.label) {
+            let label = L.svgLabel(rectCoords[1], { // top left
+                text: this.options.label,
+                fontSize: 14,
+                fontWeight: 'bold',
+                anchor: 'start',
+                alignmentBaseline: 'hanging',
+                rotation: -this._rotation
+            });
+            this.addChildLayer(label);
+        }
 
         // Calculate marker position (top right corner)
         let markerPos = rectCoords[2]; // [top right]
@@ -2677,6 +2697,8 @@ L.RotatableRectangle = L.LayerCollection.extend({
         this.getChildLayer(1).setLatLngs(this._calcNorthArrowFromRectangle(rectCoords)); // Update north arrow
         this.getChildLayer(2).setLatLngs(this._calcHLineFromRectangle(rectCoords)); // Update H line
         this.getChildLayer(3).setLatLngs(this._calcVLineFromRectangle(rectCoords)); // Update V line
+        this.getChildLayer(4).setLatLng(rectCoords[1]); // Update label position
+        this.getChildLayer(4).setRotation(-this._rotation);
     },
 
     _onMarkerDragEnd: function (e) {
@@ -2711,8 +2733,8 @@ L.GraphicsElementSeries = L.LayerCollection.extend({
         type: 'rectangle',
         rotatable: true,
         rectangleOptions: {
-            color: '#ff0000',
-            weight: 2,
+            color: '#ffff00',
+            weight: 1,
             fill: '#ffff00'
         },
         width: 500,
@@ -2801,6 +2823,7 @@ L.GraphicsElementSeries = L.LayerCollection.extend({
                     width: this.options.width,
                     height: this.options.height,
                     rotation: latLng._rotation || 0,
+                    label: String(index + 1).padStart(3, '0'),
                     markerOptions: this.options.rotatable ? {
                         draggable: true,
                         icon: L.icon({

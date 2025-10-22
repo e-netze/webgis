@@ -664,6 +664,8 @@
         const editToolMassattributionId = 'webgis.tools.editing.desktop.advanced.massattributation';
         const selectionToolAddId = 'webgis.tools.addtoselection';
         const selectionToolRemoveId = 'webgis.tools.removefromselection';
+        const mapSeriesPrintToolId = 'webgis.tools.mapseriesprint';
+        const mapSeriesPrintToolIdClass = 'webgis-tools-mapseriesprint';
 
         if (!useTabControl) {
             this._map.ui.webgisContainer().webgis_dockPanel({
@@ -878,7 +880,7 @@
         if (useTabControl) {
             let $selectionBlock = createToolbarButtonBlock("selection"), $toolBlock = null;
 
-            if (selectable && useTabControl) {
+            if (selectable) {
                 var printToolIdClass = 'webgis-tools-print';
 
                 $markerButton = createToolbarButton($selectionBlock, "button-show-markers", webgis.css.imgResource('marker-26.png', 'tools'))
@@ -897,80 +899,88 @@
                     $tabTools.closest('.webgis-container').find(".webgis-toolbox-tool-item[data-toolid='webgis.tools.editing.edit']").length >= 1) {
                     var editToolIdClass = 'webgis-tools-editing-edit';
 
-                    if (useTabControl) {
-                        createToolbarButton($selectionBlock, editToolId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-edit', 'tools'), editToolId + '.tooltip')
+                    createToolbarButton($selectionBlock, editToolId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-edit', 'tools'), editToolId + '.tooltip')
+                        .css('display', 'none')
+                        .data('selectionButton', $selectButton)
+                        .addClass('webgis-selection-edittool-shortcut webgis-dependencies webgis-dependency-not-activetool ' + editToolIdClass)
+                        .click(function () {
+                            $(this).closest('.webgis-container').find(".webgis-toolbox-tool-item[data-toolid='webgis.tools.editing.edit']").trigger('click');
+                            var $selectButton = $(this).data('selectionButton');
+                            if (!$selectButton.hasClass('selected')) {
+                                $selectButton.trigger('click');
+                            }
+                        });
+
+
+                    let $editingBlock = createToolbarButtonBlock('edit', 'webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass);
+
+                    if (service.hasEditLayerPermissions(query.layerid, ['insert', 'update', 'delete', 'geometry'])) {
+                        if (features.features.length > 1) {
+                            createToolbarButton($editingBlock, editToolMergeId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-merge', 'tools'), editToolMergeId + '.tooltip')
+                                .css('display', 'none')
+                                .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
+                                .click(function () {
+                                    var args = [];
+                                    webgis.tools.onButtonClick(map, { command: 'mergefeatures', type: 'servertoolcommand', map: map }, this, null, args);
+                                });
+                        }
+                        createToolbarButton($editingBlock, editToolCutId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-cut', 'tools'), editToolCutId + '.tooltip')
                             .css('display', 'none')
-                            .data('selectionButton', $selectButton)
-                            .addClass('webgis-selection-edittool-shortcut webgis-dependencies webgis-dependency-not-activetool ' + editToolIdClass)
+                            .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
                             .click(function () {
-                                $(this).closest('.webgis-container').find(".webgis-toolbox-tool-item[data-toolid='webgis.tools.editing.edit']").trigger('click');
-                                var $selectButton = $(this).data('selectionButton');
-                                if (!$selectButton.hasClass('selected')) {
-                                    $selectButton.trigger('click');
-                                }
+                                var args = [];
+                                webgis.tools.onButtonClick(map, { command: 'cutfeatures', type: 'servertoolcommand', map: map }, this, null, args);
                             });
 
-
-                        let $editingBlock = createToolbarButtonBlock('edit', 'webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass);
-
-                        if (service.hasEditLayerPermissions(query.layerid, ['insert', 'update', 'delete', 'geometry'])) {
-                            if (features.features.length > 1) {
-                                createToolbarButton($editingBlock, editToolMergeId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-merge', 'tools'), editToolMergeId + '.tooltip')
-                                    .css('display', 'none')
-                                    .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
-                                    .click(function () {
-                                        var args = [];
-                                        webgis.tools.onButtonClick(map, { command: 'mergefeatures', type: 'servertoolcommand', map: map }, this, null, args);
-                                    });
-                            }
-                            createToolbarButton($editingBlock, editToolCutId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-cut', 'tools'), editToolCutId + '.tooltip')
-                                .css('display', 'none')
-                                .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
-                                .click(function () {
-                                    var args = [];
-                                    webgis.tools.onButtonClick(map, { command: 'cutfeatures', type: 'servertoolcommand', map: map }, this, null, args);
-                                });
-
-                            createToolbarButton($editingBlock, editToolClipId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-clip', ''), editToolClipId + '.tooltip')
-                                .css('display', 'none')
-                                .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
-                                .click(function () {
-                                    var args = [];
-                                    webgis.tools.onButtonClick(map, { command: 'clipfeatures', type: 'servertoolcommand', map: map }, this, null, args);
-                                });
-                        }
-
-                        if (service.hasEditLayerPermission(query.layerid, 'delete')) {
-                            createToolbarButton($editingBlock, editToolDeleteSelectedId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-delete', 'tools'), editToolDeleteSelectedId + '.tooltip')
-                                .css('display', 'none')
-                                .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
-                                .click(function () {
-                                    var args = [];
-                                    webgis.tools.onButtonClick(map, { command: 'deleteselectedfeatures', type: 'servertoolcommand', map: map }, this, null, args);
-                                });
-                        }
-
-                        if (service.hasEditLayerPermission(query.layerid, 'massattributation')) {
-                            createToolbarButton($editingBlock, webgis.l10n.get(editToolMassattributionId), webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-mass', 'tools'), webgis.l10n.get(editToolMassattributionId + '.tooltip'))
-                                .css('display', 'none')
-                                .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
-                                .click(function () {
-                                    var args = [];
-                                    webgis.tools.onButtonClick(map, { command: 'massattributation', type: 'servertoolcommand', map: map }, this, null, args);
-                                });
-                        }
-
-                        if (webgis.usability.useAdvancedKeyShortcutHandling === true) {
-                            createToolbarButton($editingBlock, 'shortcuts', webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/tips-26', ''), '')
-                                .css('display', 'none')
-                                .css('background-color', '#ffc')
-                                .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
-                                .click(function () {
-                                    var args = [];
-                                    webgis.tools.onButtonClick(map, { command: 'show-shortcuts', type: 'servertoolcommand', map: map }, this, null, args);
-                                });
-                        }
+                        createToolbarButton($editingBlock, editToolClipId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-clip', ''), editToolClipId + '.tooltip')
+                            .css('display', 'none')
+                            .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
+                            .click(function () {
+                                var args = [];
+                                webgis.tools.onButtonClick(map, { command: 'clipfeatures', type: 'servertoolcommand', map: map }, this, null, args);
+                            });
                     }
+
+                    if (service.hasEditLayerPermission(query.layerid, 'delete')) {
+                        createToolbarButton($editingBlock, editToolDeleteSelectedId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-delete', 'tools'), editToolDeleteSelectedId + '.tooltip')
+                            .css('display', 'none')
+                            .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
+                            .click(function () {
+                                var args = [];
+                                webgis.tools.onButtonClick(map, { command: 'deleteselectedfeatures', type: 'servertoolcommand', map: map }, this, null, args);
+                            });
+                    }
+
+                    if (service.hasEditLayerPermission(query.layerid, 'massattributation')) {
+                        createToolbarButton($editingBlock, webgis.l10n.get(editToolMassattributionId), webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-mass', 'tools'), webgis.l10n.get(editToolMassattributionId + '.tooltip'))
+                            .css('display', 'none')
+                            .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
+                            .click(function () {
+                                var args = [];
+                                webgis.tools.onButtonClick(map, { command: 'massattributation', type: 'servertoolcommand', map: map }, this, null, args);
+                            });
+                    }
+
+                    if (webgis.usability.useAdvancedKeyShortcutHandling === true) {
+                        createToolbarButton($editingBlock, 'shortcuts', webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/tips-26', ''), '')
+                            .css('display', 'none')
+                            .css('background-color', '#ffc')
+                            .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
+                            .click(function () {
+                                var args = [];
+                                webgis.tools.onButtonClick(map, { command: 'show-shortcuts', type: 'servertoolcommand', map: map }, this, null, args);
+                            });
+                    }
+
+                }
+
+                if ($tabTools.closest('.webgis-container').find(".webgis-toolbox-tool-item[data-toolid='" + mapSeriesPrintToolId + "']").length >= 1) {
+                    createToolbarButton($selectionBlock, mapSeriesPrintToolId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-mapseriesprint-print', 'tools'), mapSeriesPrintToolId + '.tooltip')
+                        .css('display', 'none')
+                        .addClass('webgis-dependencies webgis-dependency-not-activetool ' + mapSeriesPrintToolIdClass)
+                        .click(function () {
+                            $(this).closest('.webgis-container').find(".webgis-toolbox-tool-item[data-toolid='" + mapSeriesPrintToolId + "']").trigger('click');
+                        });
                 }
 
                 if (map.queryResultFeatures.supportsBufferFeatures()) {
@@ -1004,6 +1014,20 @@
                                 if (tool)
                                     map.setActiveTool(tool);
                             }
+                        });
+                }
+
+                if (map.getTool(mapSeriesPrintToolId)) {
+                    createToolbarButton($toolBlock = $toolBlock || createToolbarButtonBlock('tools'), "create-map-series", webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-mapseriesprint-print', 'tools'))
+                        .addClass('webgis-dependencies webgis-dependency-activetool ' + mapSeriesPrintToolIdClass)
+                        .click(function (e) {
+                            e.stopPropagation();
+ 
+                            let args = [];
+                            args["service-id"] = map.queryResultFeatures.firstService().id;
+                            args["query-id"] = map.queryResultFeatures.firstQuery().id;
+                            args["feature-ids"] = map.queryResultFeatures.featureIds(true).join(',');
+                            webgis.tools.onButtonClick(map, { command: 'create-series-from-features', type: 'servertoolcommand', id: mapSeriesPrintToolId, map: map }, this, null, args);
                         });
                 }
 

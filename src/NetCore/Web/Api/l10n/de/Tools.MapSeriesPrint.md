@@ -1,4 +1,4 @@
-# name: Karten Serie Drucken
+﻿# name: Karten Serie Drucken
 
 Karten Serie im PDF Format drucken.
 
@@ -31,10 +31,30 @@ Karten Serie im PDF Format drucken.
 ## exception-no-sketch-defined: 
 
 In der Karte ist noch keine Serie definiert. Bitte erstellen Sie
-zuerst eine Serie. Die einzelnen Seiten der Serie k�nnen Sie 
+zuerst eine Serie. Die einzelnen Seiten der Serie können Sie 
 Beispielsweise durch klicken in die Karte definieren.
+
+## exception-shape-not-contains-vertices:
+
+Ups, etwas ist schief gelaufen.
+Die Geometrie der Serie enthölt keine Stützpunkte.
+
+## exception-too-many-pages:
+
+Das Laden der Serien kann nicht korrekt durchgeführt werden, da die Datei
+zu viele Seiten ({0} Seiten) enthält.
+Es können maximal {1} Seiten in einer Serie definiert werden. Daher werden nicht
+alle Seite geladen.
 
 ## upload-label1:
 
-Hier k�nnen Serien hochgeladen werden. G�ltige Dateiendungen sind hier *.json.
-Es k�nnen nur Serien hochgeladen werden, die mit diesem Werkzeug erstellt wurden.
+Hier können Serien hochgeladen werden. Gültige Dateiendungen sind hier *.json.
+Es können nur Serien hochgeladen werden, die mit diesem Werkzeug erstellt wurden.
+
+# create-series-from-features:
+## exception-too-many-pages:
+ 
+Das Erzeugen der Serie kann nicht korrekt durchgeführt werden, weil zu viele Seiten 
+erstellt werden müssten ({0} Seiten).
+Es können maximal {1} Seiten in einer Serie definiert werden. Verändern sie den Maßstab
+oder das Papierformat, um weniger Seiten zu erstellen.
