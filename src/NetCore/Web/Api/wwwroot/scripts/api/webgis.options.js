@@ -114,7 +114,9 @@ webgis.usability = {
         offset: {
             defaultOffset: 0
         }
-    }
+    },
+
+    allowTocVisFilters: false 
 };
 
 webgis.colorScheme = 'default';

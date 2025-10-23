@@ -1507,7 +1507,10 @@
                     const $overlayButtons = $("<div>")
                         .addClass('webgis-presentation_toc-item-overlay-buttons')
                         .appendTo($item_li);
-                    if (presentation && presentation.layers && presentation.layers.length > 0) {
+                    if (webgis.usability.allowTocVisFilters === true &&
+                        presentation &&
+                        presentation.layers &&
+                        presentation.layers.length > 0) {
                         $("<div>")
                             .addClass('webgis-presentation_toc-item-overlay-button visfilter')
                             .css('background-image', 'url(' + webgis.css.imgResource('filter-26.png', 'tools') + ')')
@@ -1516,9 +1519,9 @@
                             .click(function (e) {
                                 e.stopPropagation();
 
-                                console.log('presentation', $(this).data('presentation'));
-                                console.log('presIds', $(this).closest('li').get(0).presIds);
-                                console.log('layers', $.presentationToc.collectLayers(this, $(this).closest('li').get(0).presIds));
+                                //console.log('presentation', $(this).data('presentation'));
+                                //console.log('presIds', $(this).closest('li').get(0).presIds);
+                                //console.log('layers', $.presentationToc.collectLayers(this, $(this).closest('li').get(0).presIds));
 
                                 const layers = $.presentationToc.collectLayers(this, $(this).closest('li').get(0).presIds);
 

@@ -31,6 +31,7 @@ namespace E.Standard.WebGIS.Tools.Presentation;
 
 [Export(typeof(IApiButton))]
 [ToolHelp("tools/presentation/visfilter.html")]
+[ToolConfigurationSection("visfilter")]
 [AdvancedToolProperties(VisFilterDependent = true, ClientDeviceDependent = true)]
 public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
                          IApiButtonResources
@@ -467,6 +468,9 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
     [ServerToolCommand("set_toc_layer_filter")]
     async public Task<ApiEventResponse> OnSetTocLayerFilter(IBridge bridge, ApiToolEventArguments e, ILocalizer<VisFilter> localizer)
     {
+        e.GetConfigBool("allow-toc-visfilter")
+         .ThrowIfFalse(() => "Set visibility filters from toc is not allowed");
+
         var argument = e.ServerCommandArgument;
 
         var tocVisFilterRequest = JSerializer.Deserialize<TocVisFilterRequestDTO>(argument);
@@ -531,6 +535,9 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
     [ServerToolCommand("edit_toc_layer_filter")]
     public Task<ApiEventResponse> OnEditTocLayerFilter(IBridge bridge, ApiToolEventArguments e, ILocalizer<VisFilter> localizer)
     {
+        e.GetConfigBool("allow-toc-visfilter")
+         .ThrowIfFalse(() => "Edit visibility filters from toc is not allowed");
+
         string spanId = e.ServerCommandArgument;
         var spanFilterDefinitions = (bridge.RequestVisFilterDefintions()?
             .Where(f => f.SpanId == spanId)
@@ -559,6 +566,9 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
     [ServerToolCommand("querybuilder")]
     async public Task<ApiEventResponse> OnQueryBuilder(IBridge bridge, ApiToolEventArguments e)
     {
+        e.GetConfigBool("allow-toc-visfilter")
+         .ThrowIfFalse(() => "Set visibility filters from toc is not allowed");
+
         var argument = e.ServerCommandArgument;
         var tocVisFilterRequest = JSerializer.Deserialize<TocVisFilterRequestDTO>(argument);
         var queryBuilderResult = e.QueryBuilderResult(VisFilterQueryBuilderId);

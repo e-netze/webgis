@@ -68,10 +68,66 @@
         if (regex.test(html)) {
             return true;
         }
+
+        // test
+        //console.log(webgis.isSuspiciousHtml('<img src=x onerror=alert(1)>')); // true
+        //console.log(webgis.isSuspiciousHtml('<svg onload="evil()">...</svg>')); // true
+        //console.log(webgis.isSuspiciousHtml('<a href="javascript:alert(1)">click</a>')); // true
+        //console.log(webgis.isSuspiciousHtml('<p>harmless text</p>')); // false
+        //console.log(webgis.isSuspiciousHtml('<iframe src="http://evil">')); // true
+
+        if (!html || typeof html !== 'string') return false;
+
+        // 1) Detect <script> tags (case-insensitive)
+        var scriptRe = /<\s*script\b[^>]*>([\s\S]*?)<\s*\/\s*script\s*>/i;
+        if (scriptRe.test(html)) {
+            return true;
+        }
+
+        // 2) Detect inline event-handler attributes such as onload=, onerror=, onclick=, etc.
+        // Looks for attributes starting with "on" inside any HTML tag.
+        // Accepts values in double quotes, single quotes, or unquoted.
+        var onAttrRe = /<[^>]*\b(on[a-zA-Z]+\s*)=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i;
+        if (onAttrRe.test(html)) {
+            return true;
+        }
+
+        // 3) Detect javascript: URIs in href, src, or similar attributes.
+        // Example: <a href="javascript:alert(1)">
+        var jsUriRe = /\b(?:href|src|xlink:href|style|data-?src)\s*=\s*(?:"\s*javascript:|'\s*javascript:|javascript:)/i;
+        if (jsUriRe.test(html)) {
+            return true;
+        }
+
+        // 4) Detect any attribute value that contains javascript: or data:text/html
+        // This is a more general catch-all for encoded or obfuscated forms.
+        var anyJsUriRe = /(=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))/ig;
+        var match;
+        while ((match = anyJsUriRe.exec(html)) !== null) {
+            var val = match[1];
+            if (/javascript\s*:/i.test(val) || /data\s*:\s*text\/html/i.test(val)) {
+                return true;
+            }
+        }
+
+        // 5) Detect dangerous tags that can execute code or load remote content.
+        // Includes iframe, object, embed, frame, meta, and link.
+        var dangerousTagsRe = /<\s*(iframe|object|embed|frame|meta|link)\b[^>]*>/i;
+        if (dangerousTagsRe.test(html)) {
+            return true;
+        }
+
+        // 6) Detect srcdoc attribute (can contain full HTML, often used for injection)
+        var srcdocRe = /\b(srcdoc)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i;
+isSuspiciousHtml        if (srcdocRe.test(html)) {
+            return true;
+        }
+
+        // No suspicious patterns found
         return false;
     };
     this.emptyIfSuspiciousHtml = function (html) {   
-        return webgis.isSuspiciousHtml(html) ? "" : html;
+        return webgis.(html) ? "" : html;
     };
     this.secureHtml = function (html) {
         return webgis.emptyIfSuspiciousHtml(html) || 'suppressing dangerous result...';
