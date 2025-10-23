@@ -62,13 +62,17 @@ static public class RequestExtensions
     }
     static public HttpResponse AddPortalCorsHeaders(this HttpResponse response, HttpRequest request = null)
     {
-        response.Headers.TryAdd("Access-Control-Allow-Headers", "*");
-        response.Headers.TryAdd("Access-Control-Allow-Origin",
-            (string)request?.Headers["Origin"] != null
-                ? (string)request.Headers["Origin"]
-                : "*"
-             );
-        response.Headers.TryAdd("Access-Control-Allow-Credentials", "true");
+        //
+        // Legacy: Should be done in Middleware (WebgisPortalCorsProvider
+        //
+
+        //response.Headers.TryAdd("Access-Control-Allow-Headers", "*");
+        //response.Headers.TryAdd("Access-Control-Allow-Origin",
+        //    (string)request?.Headers["Origin"] != null
+        //        ? (string)request.Headers["Origin"]
+        //        : "*"
+        //     );
+        //response.Headers.TryAdd("Access-Control-Allow-Credentials", "true");
 
         return response;
     }

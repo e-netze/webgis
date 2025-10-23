@@ -21,6 +21,7 @@ using Portal.AppCode.Mvc.Wrapper;
 using Portal.Core.AppCode.Exceptions;
 using Portal.Core.AppCode.Extensions;
 using Portal.Core.AppCode.Services;
+using Portal.Core.AppCode.Services.Authentication;
 using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
@@ -100,28 +101,6 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
     #endregion
 
     #region Auth
-
-    protected const string AuthCookieName = "webgis5core-portal-auth2";
-
-    public void SetAuthCookie(bool persistentCookie, string userName, UserType authType, string displayName = null)
-    {
-        var data = new CookieData()
-        {
-            Value = userName,
-            AuthType = (int)authType,
-            Displayname = displayName
-        };
-
-        string dataString = _crypto.EncryptTextDefault(JSerializer.Serialize(data));
-
-        //if (persistantCookie)
-        //    cookie.Expires = DateTime.Now.AddDays(7);
-
-        this.Response.Cookies.Append(AuthCookieName, _crypto.EncryptTextDefault(dataString));
-        Response.Headers.Append("P3P", "CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'");
-    }
-
-    public bool HasAuthCookie => Request.Cookies[AuthCookieName] != null;
 
     public PortalUser CurrentPortalUser()
     {
@@ -219,7 +198,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
 
     public new void SignOut()
     {
-        Response.Cookies.Delete(AuthCookieName);
+        Response.Cookies.Delete(WebgisCookieService.AuthCookieName);
     }
 
     public string CurrentUrl()

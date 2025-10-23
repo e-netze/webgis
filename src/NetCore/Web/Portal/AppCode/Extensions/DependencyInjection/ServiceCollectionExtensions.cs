@@ -204,7 +204,7 @@ static public class ServiceCollectionExtensions
         this IServiceCollection services)
     {
         services.AddCors();
-        services.AddSingleton<ICorsPolicyProvider, DefaultCorsPolicyProvider>();
+        services.AddSingleton<ICorsPolicyProvider, WebgisPortalCorsPolicyProvider>();
 
         return services;
     }

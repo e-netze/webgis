@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Core.Reflection.Authentication;
 
-[EnableCors("Dynamic")]
+[EnableCors("hmac")]
 public class HMACController : PortalBaseController
 {
     private readonly ILogger<HMACController> _logger;

@@ -338,6 +338,7 @@ public class Startup
 
         app.UseRouting();
 
+        app.UseCors();
         // Must be between UseRouting & UseEndpoints
         app.UseWebgisAuthorizationMiddleware(applicationSecurity, configService, customAuthentications);
 
