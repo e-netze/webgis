@@ -33,6 +33,7 @@
             let start = Number.MAX_VALUE;
             let end = Number.MIN_VALUE;
             let intervalUnits = [];
+            let interval = 9999999;
 
             for (let layer of service.getTimeInfoLayers()) {
                 start = Math.min(start, layer.time_info.extent[0]);
@@ -44,20 +45,25 @@
                 if (!intervalUnits[layer.time_info.interval_unit]) {
                     intervalUnits[layer.time_info.interval_unit] = true;
                 }
+
+                interval = Math.min(interval, layer.time_info.interval);
             }
 
             o[service.id] = {
                 start: start,
                 end: end,
-                intervalUnits: intervalUnits
+                intervalUnits: intervalUnits,
+                interval: Math.max(1, interval)
             };
         }
 
         o["*"] = {
             start: minStart,
             end: maxEnd,
-            intervalUnits: 'years'
+            intervalUnits: [],
+            interval: 1
         };
+        o["*"].intervalUnits["years"] = true;
 
         const $epochControlHolder = $("<div>").addClass("webgis-timefilter-epochcontrol-holder").appendTo($el);   
         this.createEpochControl($epochControlHolder, o, $serviceCombo.val());
@@ -97,6 +103,8 @@
             const start = options[serviceId].start;
             const end = options[serviceId].end;
 
+            console.log("createEpochControl", options);
+
             let currentStart, currentEnd;
             const service = options.map.getService(serviceId);
             if (service) {  // serviceId can be '*' => all services...
@@ -107,6 +115,10 @@
                 }
             }
 
+            console.log('years', options[serviceId].intervalUnits["years"] === true);
+            console.log('months', options[serviceId].intervalUnits["months"] === true);
+            console.log('days', options[serviceId].intervalUnits["days"] === true);
+
             //$parent.destroy();
             $("<div>").appendTo($parent.empty()).webgis_dateCombo({
                 range: true,
@@ -114,9 +126,10 @@
                 end: new Date(end),
                 currentStart: currentStart,
                 currentEnd: currentEnd,
-                showYear: true,
-                showMonth: true,
-                showDay: true,
+                showYear: options[serviceId].intervalUnits["years"] === true || options[serviceId].intervalUnits["months"] === true || options[serviceId].intervalUnits["days"] === true,
+                showMonth: options[serviceId].intervalUnits["months"] === true || options[serviceId].intervalUnits["days"] === true,
+                showDay: options[serviceId].intervalUnits["days"] === true,
+                interval: options[serviceId].interval,
                 onChange: function (start, end) {
                     //const unit = $unitCombo.val();
                     //map.setTimeFilter(start ? start.getTime() : null, end ? end.getTime() : null, unit);
