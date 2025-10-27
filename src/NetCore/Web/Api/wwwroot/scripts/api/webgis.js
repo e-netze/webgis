@@ -45,7 +45,7 @@
         return result;
     };
     this.asMarkdownOrText = function (txt) {
-        txt = webgis.emptyIfSuspiciousHtml(webgis.sanitize(txt));
+        txt = webgis.emptyIfSuspiciousHtml(webgis.sanitizeHtml(txt));
 
         let isMarkdown = txt.indexOf('md:') === 0;
         if (isMarkdown) {
