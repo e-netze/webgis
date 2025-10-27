@@ -32,6 +32,8 @@
 <link href="@(apiUrl)/content/api/ui.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 <link href="@(apiUrl)/scripts/select2/css/select2.min.css" rel="stylesheet" />
 
+<script src="@(apiUrl)/lib/dompurify/purify.min.js"></script>
+
 <environment include="Staging,Production">
     <script src="@(apiUrl)/scripts/api/api.min.js?@(WebGISVersion.JsVersion)" id="webgis-api-script"></script>
     <script src="@(apiUrl)/scripts/api/api-ui.min.js?@(WebGISVersion.JsVersion)"></script>

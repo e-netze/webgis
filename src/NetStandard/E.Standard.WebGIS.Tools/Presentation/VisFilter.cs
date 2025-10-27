@@ -471,6 +471,8 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
         e.GetConfigBool("allow-toc-visfilter")
          .ThrowIfFalse(() => "Set visibility filters from toc is not allowed");
 
+        string[] allowedFields = e.GetConfigArray<string>("allowed-filter-fields")?.ToArray();
+
         var argument = e.ServerCommandArgument;
 
         var tocVisFilterRequest = JSerializer.Deserialize<TocVisFilterRequestDTO>(argument);
@@ -489,6 +491,11 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
             {
                 var fields = (await bridge.GetServiceLayerFields(serviceId, layerId))?.Where(f => f.Type != WebMapping.Core.FieldType.Shape);
                 if (fields == null || fields?.Count() == 0) continue;
+
+                if(allowedFields?.Any() == true)
+                {
+                    fields = fields.Where(f => allowedFields.Contains(f.Name)).ToArray();
+                }
 
                 commonFields = commonFields is null
                     ? new List<IField>(fields)

@@ -469,7 +469,7 @@
             html += "<br/>📐" + featureProperties._distanceString;
         }
 
-        $parent.html($parent.html() + webgis.secureHtml(html));
+        $parent.html($parent.html() + webgis.sanitizeHtml(html));
 
         $parent.find("a[target='dialog']").each(function (i, link) {
             var $link = $(link);

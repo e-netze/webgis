@@ -1682,9 +1682,10 @@
                       (featureMetadata || {}).table_fields || this.tableFields());
 
         
-        if (webgis.isSuspiciousHtml(content)) {
-            content = '<div>suppressing dangerous result...</div>';
-        }
+        //if (webgis.isSuspiciousHtml(content)) {
+        //    content = '<div>suppressing dangerous result...</div>';
+        //}
+        content = webgis.sanitizeHtml(content);
 
         for (var b in buttonArray) {
             var button = buttonArray[b];

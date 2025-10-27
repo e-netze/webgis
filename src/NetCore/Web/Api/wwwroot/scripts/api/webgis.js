@@ -36,6 +36,8 @@
     };
     this._initialError = null;
     this.encodeUntrustedHtml = function (html, isMarkdown) {
+        html = webgis.sanitizeHtml(html);
+
         var result = html.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
         if (isMarkdown)
             result = webgis.simpleMarkdown.render(result);
@@ -43,7 +45,7 @@
         return result;
     };
     this.asMarkdownOrText = function (txt) {
-        txt = webgis.emptyIfSuspiciousHtml(txt);
+        txt = webgis.emptyIfSuspiciousHtml(webgis.sanitize(txt));
 
         let isMarkdown = txt.indexOf('md:') === 0;
         if (isMarkdown) {
@@ -119,7 +121,7 @@
 
         // 6) Detect srcdoc attribute (can contain full HTML, often used for injection)
         var srcdocRe = /\b(srcdoc)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i;
-isSuspiciousHtml        if (srcdocRe.test(html)) {
+        if (srcdocRe.test(html)) {
             return true;
         }
 
@@ -127,11 +129,19 @@ isSuspiciousHtml        if (srcdocRe.test(html)) {
         return false;
     };
     this.emptyIfSuspiciousHtml = function (html) {   
-        return webgis.(html) ? "" : html;
+        return webgis.isSuspiciousHtml(html) ? "" : html;
     };
     this.secureHtml = function (html) {
+        this.sanitizeHtml(html);
+    };
+    this.sanitizeHtml = function (html) {
+        if (window.DOMPurify) {
+            console.log('DOMPurify Sanitizing HTML...', html);
+            return DOMPurify.sanitize(html);
+        }
         return webgis.emptyIfSuspiciousHtml(html) || 'suppressing dangerous result...';
     };
+
     this.alert = function (message, title, onClose) {
         title = title || 'WebGIS Meldung';
 

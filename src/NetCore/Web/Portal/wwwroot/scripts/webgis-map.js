@@ -1172,7 +1172,7 @@ webgis.mapInitializer = (function (m) {
 
             if (mapPortalPageName) {
                 $("<li>")
-                    .html(webgis.emptyIfSuspiciousHtml(webgis.l10n.get("portal") + ": " + mapPortalPageName))
+                    .html(webgis.sanitizeHtml(webgis.l10n.get("portal") + ": " + mapPortalPageName))
                     .addClass('portal')
                     .css("backgroundImage", "url(" + webgis.css.imgResource("portal-26.png", "tools") + ")")
                     .appendTo($ul)
