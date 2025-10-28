@@ -1,6 +1,7 @@
 ﻿using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Platform;
+using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -10,10 +11,14 @@ using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
+using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
+using gView.GraphicsEngine;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -307,13 +312,17 @@ public class ImageServerService : IMapService2,
         {
             try
             {
+                IDisplay display = _map.DisplayRotation != 0
+                    ? Display.TransformedDisplay(_map)
+                    : _map;
+                
                 string path = String.Format("exportImage?bbox={0},{1},{2},{3}&bboxSR={4}&size={5},{6}&imageSR={4}&time=&format={7}&pixelType={8}&noData={9}&noDataInterpretation={10}&interpolation={11}&compressionQuality={12}&bandIds={13}&mosaicRule={14}&renderingRule={15}&f=json",
-                    _map.Extent?.MinX.ToPlatformNumberString(),
-                    _map.Extent?.MinY.ToPlatformNumberString(),
-                    _map.Extent?.MaxX.ToPlatformNumberString(),
-                    _map.Extent?.MaxY.ToPlatformNumberString(),
+                    display.Extent?.MinX.ToPlatformNumberString(),
+                    display.Extent?.MinY.ToPlatformNumberString(),
+                    display.Extent?.MaxX.ToPlatformNumberString(),
+                    display.Extent?.MaxY.ToPlatformNumberString(),
                     _map.SpatialReference?.Id,
-                    _map.ImageWidth, _map.ImageHeight,
+                    display.ImageWidth, display.ImageHeight,
                     _imageFormat.ToString(),
                     _pixelType.ToString(),
                     _nodata,
@@ -324,6 +333,7 @@ public class ImageServerService : IMapService2,
                     HttpUtility.UrlEncode(this.MosaicRule),
                     HttpUtility.UrlEncode(this.RenderingRule)
                     );
+
                 string url = $"{_serviceUrl}/{path}";
                 var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
@@ -332,6 +342,24 @@ public class ImageServerService : IMapService2,
 
                 if (!String.IsNullOrEmpty(jsonResult.Href))
                 {
+                    if (_map.DisplayRotation != 0)
+                    {
+                        using var imageData = new MemoryStream(await requestContext.Http.GetDataAsync(jsonResult.Href));
+                        using var sourceImgage = Current.Engine.CreateBitmap(imageData);
+                        using var sourceBitmap = Display.TransformImage(sourceImgage, display, _map);
+
+                        string filename = $"rot_{Guid.NewGuid():N}.{_imageFormat}";
+                        string filePath = _map.AsOutputFilename(filename);
+                        string fileUrl = _map.AsOutputUrl(filename);
+                        var imageFormat = _imageFormat.ToString().StartsWith("png", StringComparison.OrdinalIgnoreCase)
+                                            ? gView.GraphicsEngine.ImageFormat.Png
+                                            : gView.GraphicsEngine.ImageFormat.Jpeg;
+
+                        await sourceBitmap.SaveOrUpload(filePath, imageFormat);
+
+                        return new ImageLocation(_map.Services.IndexOf(this), this.ID, String.Empty, fileUrl);
+                    }
+
                     return new ImageLocation(_map.Services.IndexOf(this), this.ID, String.Empty, jsonResult.Href);
                 }
 
