@@ -325,7 +325,6 @@ public class ImageServerService : IMapService2,
                     ? Display.TransformedDisplay(_map)
                     : _map;
                 
-                string path = String.Format("exportImage?bbox={0},{1},{2},{3}&bboxSR={4}&size={5},{6}&imageSR={4}&time=&format={7}&pixelType={8}&noData={9}&noDataInterpretation={10}&interpolation={11}&compressionQuality={12}&bandIds={13}&mosaicRule={14}&renderingRule={15}&f=json",
                 var time = _map.GetTimeEpoch(this.Url)?.ToJavascriptEpochArray();
 
                 string path = String.Format("exportImage?bbox={0},{1},{2},{3}&bboxSR={4}&size={5},{6}&imageSR={4}&format={7}&pixelType={8}&noData={9}&noDataInterpretation={10}&interpolation={11}&compressionQuality={12}&bandIds={13}&mosaicRule={14}&renderingRule={15}&time={16}&f=json",
