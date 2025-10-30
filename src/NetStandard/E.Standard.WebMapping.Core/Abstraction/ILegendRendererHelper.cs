@@ -11,4 +11,6 @@ public interface ILegendRendererHelper
     string UniqueValue_Field3 { get; set; }
     string UniqueValue_FieldDelimiter { get; set; }
     Task<string> FirstLegendValueAsync(QueryFilter filter, IRequestContext requestContext);
+
+    bool SupportsDynamicLegends { get; set; }
 }

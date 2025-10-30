@@ -36,21 +36,23 @@ class FeatureLayer : RestLayer,
     private readonly string _id = String.Empty;
     private ThreadSafe.ThreadSafeDictionary<string, JsonDomain> _domains = null;
 
-    public FeatureLayer(string name, string id, IMapService service, bool queryable)
+    public FeatureLayer(string name, string id, IMapService service, bool queryable, bool supportsDynamicLegends)
         : base(name, id, service, queryable: queryable)
     {
         _service = (MapService)service;
         _id = id;
 
         HasM = HasZ = false;
+        SupportsDynamicLegends = supportsDynamicLegends;
     }
-    public FeatureLayer(string name, string id, LayerType type, IMapService service, bool queryable)
+    public FeatureLayer(string name, string id, LayerType type, IMapService service, bool queryable, bool supportsDynamicLegends)
         : base(name, id, type, service, queryable: queryable)
     {
         _service = (MapService)service;
         _id = id;
 
         HasM = HasZ = false;
+        SupportsDynamicLegends = supportsDynamicLegends;
     }
 
     async public override Task<bool> GetFeaturesAsync(QueryFilter filter, FeatureCollection features, IRequestContext requestContext)
@@ -315,7 +317,7 @@ class FeatureLayer : RestLayer,
             return null;
         }
 
-        FeatureLayer clone = new FeatureLayer(this.Name, this.ID, this.Type, parent, this.Queryable);
+        FeatureLayer clone = new FeatureLayer(this.Name, this.ID, this.Type, parent, this.Queryable, this.SupportsDynamicLegends);
         clone.ClonePropertiesFrom(this);
 
         clone._definitionExpression = _definitionExpression;
@@ -709,6 +711,8 @@ class FeatureLayer : RestLayer,
         catch { }
         return String.Empty;
     }
+
+    public bool SupportsDynamicLegends { get; set; }
 
     #endregion
 

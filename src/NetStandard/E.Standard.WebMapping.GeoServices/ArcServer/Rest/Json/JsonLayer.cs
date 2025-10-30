@@ -3,6 +3,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Text;
+using System.Text.Json;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 
@@ -88,6 +89,11 @@ public class JsonLayer
     [JsonProperty("timeInfo")]
     [System.Text.Json.Serialization.JsonPropertyName("timeInfo")]
     public JsonTimeInfo? TimeInfo { get; set; }
+
+    [JsonProperty("supportsDynamicLegends")]
+    [System.Text.Json.Serialization.JsonPropertyName("supportsDynamicLegends")]
+    public bool SupportsDynamicLegends { get; set; } = false;
+
 
     public string FullName
     {
