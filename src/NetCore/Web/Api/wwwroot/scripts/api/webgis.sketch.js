@@ -23,7 +23,6 @@
     var _isDraggingMarker = false;
     this._lastChangeTime = new Date().getTime();
     var _sketchMovingVertexIndex = -1, _sketchRotatingVertexIndex = -1;
-
     var _ortho = false, _trace = false, _fan = false;
     this._isDirty = false;
 
@@ -38,6 +37,18 @@
         }
     };
     this._addToMap = function (element) {
+        // experiemtal, to build holes in polygons
+        //if (_geometryType === "polygon") {
+        //    let latLngs = [];
+
+        //    for (var i = 0; i < _frameworkElements.length; i++) {
+        //        latLngs.push(_frameworkElements[i].getLatLngs());
+        //    }
+
+        //    console.log('polygon lngLats', latLngs);
+        //    let polygon = L.polygon(latLngs || [], { interactive: true, color: this.getColor(), fillColor: this.getFillColor(), opacity: this.getOpacity(), fillOpacity: this.getFillOpacity(), weight: this.getWeight(), dashArray: this._toDashArray(this.getLineStyle()) });
+        //    polygon.addTo(this.map.frameworkElement);
+        //}
         element.addTo(this.map.frameworkElement);
     };
     this._createFrameworkElement = function (latLngs) {
@@ -815,6 +826,9 @@
                 var coords = vertex;
                 if (fireEvents) {
                     this.events.fire('beforeaddvertex', this, coords);
+                    if (coords.ignore === true) {
+                        continue;
+                    }
                 }
 
                 if (_geometryType === 'text') {
@@ -2288,7 +2302,7 @@
         }
     };
 
-    this.isInTraceMode = function() { return _trace === true; }
+    this.isInTraceMode = function () { return _trace === true; };
     this.startTraceMode = function () {
         this.stopOrthoMode();
         this.stopFanMode();

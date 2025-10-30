@@ -8,6 +8,7 @@ namespace E.Standard.WebMapping.Core.Api.Abstraction;
 
 public interface IApiButtonPrintSeriesProvider
 {
+    void CheckPrintMapSeriesSupport(IMap map, Shape toolSketch, ApiToolEventArguments e);
     IEnumerable<PrintMapOrientation>? GetPrintMapOrientations(Shape toolSketch);
     IGraphicsContainer GetPrintSeriesGraphicElements(Shape toolSketch, double extentWidth, double extentHeight);
 

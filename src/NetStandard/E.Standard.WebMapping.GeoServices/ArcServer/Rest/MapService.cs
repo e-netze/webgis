@@ -264,7 +264,7 @@ public class MapService : IMapService2,
                                         jsonLayer.TimeInfo.TimeExtent,
                                         "esriTimeUnitsUnknown".Equals(jsonLayer.TimeInfo.TimeIntervalUnits, StringComparison.OrdinalIgnoreCase) 
                                             ? 1
-                                            : jsonLayer.TimeInfo.TimeInterval,
+                                            : Math.Max(jsonLayer.TimeInfo.TimeInterval, 1),
                                         jsonLayer.TimeInfo.TimeIntervalUnits.ToTimePeriod(TimePeriod.Years))
                                     : null
                             };

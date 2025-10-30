@@ -23,7 +23,7 @@ Print a map series in PDF format.
 ## open: Load Series
 ## upload: Upload Series
 ## download: Download Series
-## remove-sketch: Remove Sketch
+## remove-series: Remove Series
 
 # io:
 ## extend-current-session: Extend Current Series

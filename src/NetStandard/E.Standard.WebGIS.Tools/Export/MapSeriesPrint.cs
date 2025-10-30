@@ -51,6 +51,7 @@ namespace E.Standard.WebGIS.Tools.Export;
     )]
 internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                                 IApiButtonResources,
+                                IApiToolSketchProperties,
                                 IApiButtonPrintSeriesProvider
 {
     public const string ConfigQualitiesDpi = "qualities-dpi";
@@ -102,18 +103,18 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
         }
 
         uiImageButtons.AddRange(new IUIElement[]{
-                        new UIImageButton(this.GetType(),"upload", UIButton.UIButtonType.servertoolcommand, "upload"){
-                            value = "upload",
-                            text = localizer.Localize("tools.upload"),
-                            css = UICss.Narrow
-                        },
                         new UIImageButton(this.GetType(),"download", UIButton.UIButtonType.servertoolcommand, "download"){
                             value = "download",
                             text = localizer.Localize("tools.download"),
                             css = UICss.Narrow
                         },
+                        new UIImageButton(this.GetType(),"upload", UIButton.UIButtonType.servertoolcommand, "upload"){
+                            value = "upload",
+                            text = localizer.Localize("tools.upload"),
+                            css = UICss.Narrow
+                        },
                         new UIImageButton(this.GetType(), "delete", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.removesketch){
-                            text = localizer.Localize("tools.remove-sketch"),
+                            text = localizer.Localize("tools.remove-series"),
                             css = UICss.Narrow
                         }
             });
@@ -842,6 +843,20 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
     #region IApiButtonPrintSeriesProvider
 
+    public void CheckPrintMapSeriesSupport(IMap map, Shape toolSketch, ApiToolEventArguments e)
+    {
+        if(toolSketch is null || toolSketch.CountPoints() == 0)
+        {
+            throw new ArgumentException("Tool sketch is null or has no points");
+        }
+
+        int maxPages = e.GetMaxMapSeriesPages();
+        if (toolSketch.CountPoints() > maxPages)
+        {
+            throw new ArgumentException($"the series has too many pages ({toolSketch.CountPoints()}). Maximum allowed pages are {maxPages}.");
+        }
+    }
+
     public IEnumerable<PrintMapOrientation> GetPrintMapOrientations(Shape toolSketch)
     {
         var multiPoint = toolSketch.MultiPointFromPointOrMultiPoint();
@@ -922,8 +937,14 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
     private string GetMapSericesPrintPageName(int index)
     {
-        return $"M{index:000}";
+        return $"{index:000}";
     }
+
+    #endregion
+
+    #region IApiToolSketchProperties
+
+    public int? MaxToolSketchVertices(ApiToolEventArguments e) => e.GetMaxMapSeriesPages();
 
     #endregion
 }

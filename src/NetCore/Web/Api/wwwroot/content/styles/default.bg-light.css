@@ -336,8 +336,8 @@ body.webgis-light .webgis-result-table tr:hover,
 }
 
     .webgis-container.light .webgis-tooldialog-header.secondary {
-        border-bottom: 2px solid #0077d4;
-        border-top: 2px solid #0077d4;
+        border-bottom: 1px solid #0077d4;
+        border-top: 1px solid #0077d4;
     }
 
 .webgis-container.light .webgis-search-result-holder {

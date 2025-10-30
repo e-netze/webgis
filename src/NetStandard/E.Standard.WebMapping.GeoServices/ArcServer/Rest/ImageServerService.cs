@@ -279,7 +279,7 @@ public class ImageServerService : IMapService2,
                 {
                     layer.TimeInfo = new LayerTimeInfo(
                         jsonImageService.TimeInfo.TimeExtent,
-                        jsonImageService.TimeInfo.TimeInterval.OrTake(1),
+                        Math.Max(1, jsonImageService.TimeInfo.TimeInterval.OrTake(1)),
                         jsonImageService.TimeInfo.TimeIntervalUnits.ToTimePeriod(TimePeriod.Years));
                 }
 

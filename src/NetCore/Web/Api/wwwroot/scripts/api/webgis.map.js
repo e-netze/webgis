@@ -503,6 +503,15 @@
 
             if (this.sketch) {
                 this.sketch.events.on(['beforeaddvertex', 'onchangevertex'], function (e, sender, coord) {
+
+                    let activeTool = this.getActiveTool();
+                    if (e.channel === "beforeaddvertex" && activeTool?.max_sketch_vertices
+                        && this.sketch.getVerticesCount() >= activeTool.max_sketch_vertices) {  // map series print only allows a certain number of vertices/pages
+                        coord.ignore = true;
+                        webgis.toastMessage("Error", `Maximum number of vertices (${activeTool.max_sketch_vertices}) reached.`, null, "warning");
+                        return;
+                    }
+                    
                     if (coord.projEvent === 'snapped' && coord.X && coord.Y) {
                         // Do not change coordinates, but set SRS if different
                         if (this.hasDynamicCalcCrs() === true || (sender.originalSrs() > 0 && this.construct.snappingSrsId() > 0 && sender.originalSrs() !== this.construct.snappingSrsId())) {

@@ -148,6 +148,12 @@ public class RestToolsHelperService
             tool.dependencies = buttonDependencies.ToArray();
         }
 
+        if(apiTool is IApiToolSketchProperties toolSketchProperties)
+        {
+            var e = CreateApiToolEventArguments(apiTool, "", null);
+            tool.MaxSketchVertices = toolSketchProperties.MaxToolSketchVertices(e);
+        }
+
         if (apiTool is IApiToolConfirmation)
         {
             List<ToolConfirmMessageDTO> confirmations = new List<ToolConfirmMessageDTO>();

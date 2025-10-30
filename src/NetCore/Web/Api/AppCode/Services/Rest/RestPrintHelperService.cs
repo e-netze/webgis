@@ -53,6 +53,7 @@ public class RestPrintHelperService
     private readonly MapServiceInitializerService _mapServiceInitializer;
     private readonly RestMappingHelperService _restMapping;
     private readonly RestImagingService _restImaging;
+    private readonly RestToolsHelperService _restTools;
     private readonly ConfigurationService _config;
     private readonly BridgeService _bridge;
     private readonly RestToolsHelperService _tools;
@@ -64,6 +65,7 @@ public class RestPrintHelperService
                                   MapServiceInitializerService mapServiceInitializer,
                                   RestMappingHelperService restMapping,
                                   RestImagingService restImaging,
+                                  RestToolsHelperService restTools,
                                   ConfigurationService config,
                                   BridgeService bridge,
                                   RestToolsHelperService tools,
@@ -75,6 +77,7 @@ public class RestPrintHelperService
         _mapServiceInitializer = mapServiceInitializer;
         _restMapping = restMapping;
         _restImaging = restImaging;
+        _restTools = restTools;
         _config = config;
         _bridge = bridge;
         _tools = tools;
@@ -151,6 +154,8 @@ public class RestPrintHelperService
         string toolSketchWKT = form["toolSketch"];
         var tool = String.IsNullOrEmpty(toolId) ? null : _cache.GetTool(toolId);
         var tookSketch = String.IsNullOrEmpty(toolSketchWKT) ? null : toolSketchWKT.ShapeFromWKT();
+        var printSeriesProvider = tool as IApiButtonPrintSeriesProvider;
+
 
         E.Standard.WebMapping.Core.Api.Bridge.IBridge bridge = null;
 
@@ -211,9 +216,11 @@ public class RestPrintHelperService
                 calcSketch: calcSketch,
                 sketchLabelMode: sketchLabelMode
             );
+        printSeriesProvider?.CheckPrintMapSeriesSupport(map, tookSketch, _restTools.CreateApiToolEventArguments(tool, "", null));
+
         var printMapOrientations = (
-                                        tool != null && tookSketch != null && tool is IApiButtonPrintSeriesProvider printServiceProvider
-                                            ? printServiceProvider.GetPrintMapOrientations(tookSketch)
+                                        tool != null && tookSketch != null && printSeriesProvider != null
+                                            ? printSeriesProvider.GetPrintMapOrientations(tookSketch)
                                             : null
                                    ) ?? [ new PrintMapOrientation("",
                                                 new Point(mapDefinition.Center[0], mapDefinition.Center[1]),
@@ -261,10 +268,11 @@ public class RestPrintHelperService
                 throw new Exception("Unkown layout id=" + layoutId);
             }
 
-            var mapServicesGraphicsElements = (tool as IApiButtonPrintSeriesProvider).GetPrintSericiesGraphicsElements(map,
+            var mapServicesGraphicsElements = printSeriesProvider.GetPrintSericiesGraphicsElements(map,
                 _requestContext.Http, _urlHelper,
                 printLayout, pageSize, pageOrientation, printScale,
                 tookSketch);
+
             foreach (var el in mapServicesGraphicsElements)
             {
                 map.GraphicsContainer.Add(el);
@@ -274,9 +282,8 @@ public class RestPrintHelperService
 
             List<LayoutBuilderJob> layoutBuilderJobs = new();
 
-            var printOverviewMapDefinition = tool is IApiButtonPrintSeriesProvider printSeriesProvider
-                ? printSeriesProvider.GetPrintMapSeriesOverviewPageDefinition(map)
-                : null;
+            var printOverviewMapDefinition = printSeriesProvider?.GetPrintMapSeriesOverviewPageDefinition(map);
+                
             if (printOverviewMapDefinition is not null)
             {
                 LayoutBuilder mainLayoutBuilder = new LayoutBuilder(

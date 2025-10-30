@@ -7,6 +7,7 @@ webgis.ui.definePlugin("webgis_visfilterCombo", {
         const $ = this.$;
         const o = this.options;
 
+        this.$el.addClass('webgis-visfilter-combo');
         $("<option value='#'></option>").text("--- " + webgis.l10n.get("select-filter") + " ---").appendTo(this.$el);
         if (o.map !== null) {
             for (var serviceId in o.map.services) {
@@ -214,6 +215,8 @@ webgis.ui.definePlugin("webgis_visfilterList", {
                                 argument: $item.data("spanId")
                             }, this, null, null);
                         return;
+                    } else {
+                        $('.webgis-visfilter-combo').val($item.data("filterId")).trigger('change');
                     }
                 });
             }

@@ -297,10 +297,10 @@ ul.toc li {
     .webgis-ui-holder .webgis-tooldialog-header.secondary {
         color: #333;
         background-color: #fff;
-        border-bottom: 2px solid #b5dbad;
+        border-bottom: 1px solid #b5dbad;
         padding: 9px 0px 9px 36px;
         margin-top: 0px;
-        border-top: 2px solid #b5dbad;
+        border-top: 1px solid #b5dbad;
     }
 
     .webgis-ui-holder .webgis-tooldialog-header.secondary:hover {
@@ -5495,7 +5495,7 @@ select.webgis-not-valid {
 
 .webgis-card {
     padding: 6px 4px;
-    margin: -2px;
+    margin: 8px -2px 0px -2px;
     background-color: #ececec;
     border-radius: 6px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);

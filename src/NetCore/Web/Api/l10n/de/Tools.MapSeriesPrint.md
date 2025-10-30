@@ -19,11 +19,11 @@ Karten Serie im PDF Format drucken.
 # start-print-job: Start print job
 
 # tools:
-## save: Zeichnung speichern
-## open: Zeichnung laden
+## save: Serie speichern
+## open: Serie laden
 ## upload: Serie Hochladen
 ## download: Serie Herunterladen
-## remove-sketch: Sketch entfernen
+## remove-series: Serie entfernen
 
 # io:
 ## extend-current-session: Bestehende Serie erweitern

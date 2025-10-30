@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace E.Standard.WebMapping.Core;
 
@@ -168,15 +168,15 @@ public enum MapServiceCapability
 
 public enum TimePeriod
 {
-    Unknown,
-    MilliSeconds,
-    Seconds,
-    Minutes,
-    Hours,
-    Days,
-    Weeks,
-    Months,
-    Years,
-    Decades,
-    Centuries
+    Unknown = 0,
+    MilliSeconds = 1,
+    Seconds = 2,
+    Minutes = 3,
+    Hours = 4,
+    Days = 5,
+    Weeks = 6,
+    Months = 7,
+    Years = 8,
+    Decades = 9,
+    Centuries = 10
 }

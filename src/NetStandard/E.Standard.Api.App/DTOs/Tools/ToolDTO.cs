@@ -1,4 +1,4 @@
-using E.Standard.Api.App.Models.Abstractions;
+﻿using E.Standard.Api.App.Models.Abstractions;
 using Newtonsoft.Json;
 
 namespace E.Standard.Api.App.DTOs.Tools;
@@ -57,6 +57,11 @@ public class ToolDTO : IHtml
     [JsonProperty(PropertyName = "o")]
     [System.Text.Json.Serialization.JsonPropertyName("o")]
     public string[] OnButtonClickDependencies { get; set; }
+
+    [JsonProperty(PropertyName = "max_sketch_vertices", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("max_sketch_vertices")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public int? MaxSketchVertices { get; set; }
 
     [JsonProperty(PropertyName = "visfilter_dependent", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("visfilter_dependent")]
