@@ -300,7 +300,9 @@ public class ApiBaseController : Controller
                 success = success,
                 exception = exceptionMessage,
                 exception_type = exceptionType,
-                requestid = requestId
+                requestid = requestId,
+                taskId = Request.FormOrQuery("taskId"),
+                toolId = Request.FormOrQuery("toolId")
             });
         }
         return JsonView("{\"success\":" + success.ToString().ToLower() + "}");
@@ -393,6 +395,9 @@ public class ApiBaseController : Controller
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public string requestid { get; set; }
+
+        public string taskId { get; set; }
+        public string toolId { get; set; }  
     }
 
 

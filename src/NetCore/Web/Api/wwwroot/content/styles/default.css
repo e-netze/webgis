@@ -5669,3 +5669,41 @@ select.webgis-not-valid {
                 background-image: url(../api/img/tools/split-26.png); 
                 right:36px;
             }
+
+.webgis-task-progress-container .webgis-task-progress-list {
+    z-index: 99999;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    list-style: none;
+    padding: 0px;
+}
+
+    .webgis-task-progress-container .webgis-task-progress-list .webgis-task-progress-item {
+        position: relative;
+        background-position: 8px center;
+        background-repeat: no-repeat;
+        background-size: 16px;
+        background-image: url(../api/img/hourglass/loader1.gif);
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 8px 8px 8px 32px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+        margin-bottom: 6px;
+        width: 250px;
+        box-sizing: border-box;
+        opacity: 0.7;
+    }
+        .webgis-task-progress-container .webgis-task-progress-list .webgis-task-progress-item.finished {
+            background-image: url(../api/img/button-ok.png);
+            background-color: #e0ffe0;
+            cursor: pointer;
+            opacity: 1.0;
+        }
+        .webgis-task-progress-container .webgis-task-progress-list .webgis-task-progress-item.finished.error {
+            background-image: url(../api/img/button-danger.png);
+            background-color: #ffe0e0;
+            cursor: pointer;
+            opacity: 1.0;
+        }

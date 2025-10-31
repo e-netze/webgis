@@ -709,7 +709,9 @@ public class RestPrintHelperService
                 page_format = form["format"],
                 scale_dominator = form["scale"].ToPlatformDouble(),
                 success = errorRespones.HasErrors == false,
-                exception = errorRespones.HasErrors ? errorRespones.ErrorMessage : null
+                exception = errorRespones.HasErrors ? errorRespones.ErrorMessage : null,
+                taskId = form["taskId"],
+                toolId = form["toolId"]
             });
         }
         else
@@ -726,7 +728,9 @@ public class RestPrintHelperService
             {
                 return await controller.JsonObject(new
                 {
-                    url = ((ImageLocation)mapResponse).ImageUrl
+                    url = ((ImageLocation)mapResponse).ImageUrl,
+                    taskId = form["taskId"],
+                    toolId = form["toolId"]
                 });
             }
         }

@@ -2815,6 +2815,16 @@
             elem = 'body';
         $(elem).webgis_modalprogress('close', { message: message });
     };
+    this.addTaskProgress = function (taskId, message) {
+        if (webgis.ui.addTaskProgress) {
+            webgis.ui.addTaskProgress({ taskId: taskId, message: message });
+        }
+    };
+    this.finishTaskProgress = function (taskId, callback, callbackArgs, fireCallback) {
+        if (webgis.ui.finishTaskProgress) {
+            webgis.ui.finishTaskProgress({ taskId: taskId, callback: callback, callbackArgs: callbackArgs, fireCallback: fireCallback });
+        }
+    };
     this.loadOptions = function (options) {
         if (typeof options == 'string') {
             var x = webgis.ajax({

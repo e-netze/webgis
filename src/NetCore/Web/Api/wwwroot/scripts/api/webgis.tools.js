@@ -394,15 +394,18 @@
                     break;
                 case 'print':
                     if (map) {
-                        var printOptions = {};
+                        let printOptions = {
+                            taskId: webgis.guid()
+                        };
+                        let progressMessage = '';
                         if (domElement) {
-                            var $holder = $(domElement).closest('.webgis-tabs-tab-content-holder');
+                            let $holder = $(domElement).closest('.webgis-tabs-tab-content-holder');
                             if ($holder.length === 0)
                                 $holder = $(domElement).closest('.webgis-modal-content');
                             if ($holder.length === 0)
                                 $holder = $(domElement).parent();
 
-                            var cssPrefix = map.getActiveTool()?.id == "webgis.tools.mapseriesprint"
+                            const cssPrefix = map.getActiveTool()?.id == "webgis.tools.mapseriesprint"
                                 ? ".webgis-mapseriesprint-"
                                 : ".webgis-print-";
 
@@ -433,39 +436,47 @@
                             }
 
                             printOptions.rotation = map.viewLense.currentRotation();
-                            $holder.find('.webgis-print-textelement').each(function (i, e) {
+                            $holder.find(cssPrefix + 'textelement').each(function (i, e) {
+                                if (!progressMessage) progressMessage = $(e).val();
                                 printOptions["LAYOUT_TEXT_" + $(e).attr('id')] = $(e).val();
-                                map.setPersistentToolParameter('webgis.tools.print', "LAYOUT_TEXT_" + $(e).attr('id'), $(e).val());
+                                map.setPersistentToolParameter(map.getActiveTool().id, "LAYOUT_TEXT_" + $(e).attr('id'), $(e).val());
                             });
-                            $holder.find('.webgis-print-header-id-element').each(function (i, e) {
+                            $holder.find(cssPrefix + 'header-id-element').each(function (i, e) {
                                 printOptions["LAYOUT_HEADER_ID"] = $(e).val();
                             });
                         }
-                        webgis.showProgress('Drucken...', null);
-                        map.print(printOptions, function (result) {
-                            webgis.hideProgress('Drucken...');
-                            if (result) {
-                                if (result.url) {
-                                    var data = webgis.tools.getToolData("webgis.tools.io.print");
-                                    if (!data.prints)
-                                        data.prints = [];
-                                    data.prints.push(result);
 
-                                    if (result.success == false && result.exception) {
-                                        webgis.alert("Errors occurred during printing. The printout may not be complete. Please check if all relevant topics are included in the printout.:\n\n\n\n\n" + result.exception, "info", function () {
-                                            webgis.delayed(function () {
+                        $('body').webgis_modal('close');
+
+                        webgis.addTaskProgress(printOptions.taskId, map.getActiveTool().name + ": " + progressMessage); 
+
+                        map.print(printOptions, function (result) {
+                            webgis.finishTaskProgress(result.taskId,
+                                function (result) {
+                                    if (result) {
+                                        if (result.url) {
+                                            var data = webgis.tools.getToolData("webgis.tools.io.print");
+                                            if (!data.prints)
+                                                data.prints = [];
+                                            data.prints.push(result);
+
+                                            if (result.success == false && result.exception) {
+                                                webgis.alert("Errors occurred during printing. The printout may not be complete. Please check if all relevant topics are included in the printout.:\n\n\n\n\n" + result.exception, "info", function () {
+                                                    webgis.delayed(function () {
+                                                        map.showPrintTasks();
+                                                    }, 500);
+                                                });
+                                            } else {
                                                 map.showPrintTasks();
-                                            }, 500);
-                                        });
+                                            }
+                                        } else {
+                                            webgis.alert(result.exception, 'error');
+                                        }
                                     } else {
-                                        map.showPrintTasks();
+                                        webgis.alert('Unkonwn error!', 'error');
                                     }
-                                } else {
-                                    webgis.alert(result.exception, 'error');
-                                }
-                            } else {
-                                webgis.alert('Unkonwn error!', 'error');
-                            }
+                                }, result,
+                                false && map.getActiveTool().id === result.toolId); // force automatic callback if tool is the same!
                         });
                     }
                     break;
