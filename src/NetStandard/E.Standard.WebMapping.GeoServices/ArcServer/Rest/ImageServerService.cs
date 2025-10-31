@@ -664,7 +664,7 @@ public class ImageServerService : IMapService2,
 
                 string jsonAnswer = await authHandler.TryGetAsync(this, requestUrl);
 
-                return await this.RenderRestLegendResponse(requestContext, jsonAnswer);
+                return await this.RenderRestLegendResponse(requestContext, jsonAnswer, optimize: true);
             }
         }
         catch (Exception ex)

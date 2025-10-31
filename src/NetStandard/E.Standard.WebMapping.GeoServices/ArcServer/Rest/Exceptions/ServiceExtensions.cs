@@ -21,7 +21,7 @@ namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 
 static class ServiceExtensions
 {
-    async public static Task<ServiceResponse> RenderRestLegendResponse(this IMapService2 service, IRequestContext requestContext, string jsonResponse)
+    async public static Task<ServiceResponse> RenderRestLegendResponse(this IMapService2 service, IRequestContext requestContext, string jsonResponse, bool optimize)
     {
         var serviceLegend = service as IMapServiceLegend;
         if (serviceLegend == null)
@@ -68,17 +68,20 @@ static class ServiceExtensions
                     visible = serviceLayer.Visible && service.LayerProperties.ShowInLegend(serviceLayer.ID);
                     legendAliasname = service.LayerProperties.LegendAliasname(serviceLayer.ID);
 
-                    if (visible)
+                    if (optimize)
                     {
-                        visible = WebGIS.CMS.Globals.VisibleInServiceMapScale(service.Map, serviceLayer);
-                    }
-                    if (visible && (serviceLegend.LegendOptMethod == LegendOptimization.Themes || serviceLegend.LegendOptMethod == LegendOptimization.Symbols))
-                    {
-                        SpatialFilter filter = new SpatialFilter(serviceLayer.IdFieldName, service.Map.Extent, 1000, 0);
-
-                        if (serviceLayer is ILayer2)
+                        if (visible)
                         {
-                            visible = await ((ILayer2)serviceLayer).HasFeaturesAsync(filter, requestContext) > 0;
+                            visible = WebGIS.CMS.Globals.VisibleInServiceMapScale(service.Map, serviceLayer);
+                        }
+                        if (visible && (serviceLegend.LegendOptMethod == LegendOptimization.Themes || serviceLegend.LegendOptMethod == LegendOptimization.Symbols))
+                        {
+                            SpatialFilter filter = new SpatialFilter(serviceLayer.IdFieldName, service.Map.Extent, 1000, 0);
+
+                            if (serviceLayer is ILayer2)
+                            {
+                                visible = await ((ILayer2)serviceLayer).HasFeaturesAsync(filter, requestContext) > 0;
+                            }
                         }
                     }
                     if (visible)
@@ -102,7 +105,7 @@ static class ServiceExtensions
                                 }
                                 legendLayers.Add(legendLayer);
 
-                                if (serviceLegend.LegendOptMethod == LegendOptimization.Symbols && service.Map.MapScale <= serviceLegend.LegendOptSymbolScale && serviceLayer is ILegendRendererHelper)
+                                if (optimize && serviceLegend.LegendOptMethod == LegendOptimization.Symbols && service.Map.MapScale <= serviceLegend.LegendOptSymbolScale && serviceLayer is ILegendRendererHelper)
                                 {
                                     #region Legende Optimieren
 
@@ -153,7 +156,7 @@ static class ServiceExtensions
                                 {
                                     #region Legende Optimieren
 
-                                    if (layerLegendValues != null && legend.Values != null && legend.Values.Count() > 0)
+                                    if (optimize && layerLegendValues != null && legend.Values != null && legend.Values.Count() > 0)
                                     {
                                         bool hasValue = false;
                                         foreach (var val in legend.Values)

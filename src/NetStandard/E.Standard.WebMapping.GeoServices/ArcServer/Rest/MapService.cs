@@ -1379,7 +1379,7 @@ public class MapService : IMapService2,
                             dynamicLayerRequestUrl,
                             LegendRequestBuilder.DefaultRequest);
 
-                    return await this.RenderRestLegendResponse(requestContext, jsonLegendAnswer);
+                    return await this.RenderRestLegendResponse(requestContext, jsonLegendAnswer, optimize: true);
                 }
             }
 
@@ -1428,7 +1428,7 @@ public class MapService : IMapService2,
 
             #endregion
 
-            return await this.RenderRestLegendResponse(requestContext, jsonQueryLegendAnswer);
+            return await this.RenderRestLegendResponse(requestContext, jsonQueryLegendAnswer, optimize: false);
         }
         catch (Exception ex)
         {
