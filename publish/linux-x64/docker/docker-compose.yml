@@ -2,7 +2,7 @@
 
 services:
     webgis-cms:
-        image: webgis-cms:${WEBGIS_CMS_TAG}
+        image: ${WEBGIS_CR}webgis-cms:${WEBGIS_CMS_TAG}
         ports:
             - "5003:8080"
         volumes:
@@ -14,7 +14,7 @@ services:
             - cms.env
 
     webgis-api:
-        image: webgis-api:${WEBGIS_API_TAG}
+        image: ${WEBGIS_CR}webgis-api:${WEBGIS_API_TAG}
         ports:
             - "5001:8080"
         volumes:
@@ -26,7 +26,7 @@ services:
             - api.env
 
     webgis-portal:
-        image: webgis-portal:${WEBGIS_PORTAL_TAG}
+        image: ${WEBGIS_CR}webgis-portal:${WEBGIS_PORTAL_TAG}
         ports:
             - "5002:8080"
         volumes:
