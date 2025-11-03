@@ -12,7 +12,7 @@
             $.error('Method ' + method + ' does not exist on webgis.$.webgis_contentsearch');
         }
     };
-    var defaults = {
+    var defaults = { 
         placeholder: 'Inhalte filtern...',
         container_selectors: ["li", "ul"],
         onChanged: null,

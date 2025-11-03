@@ -1,6 +1,8 @@
 ﻿using ModelContextProtocol.Server;
 using System.ComponentModel;
 using System.Globalization;
+using System.Text.Json;
+using System.Web;
 using WebGIS.API.MCP.Services;
 
 namespace WebGIS.API.MCP.Tools;
@@ -46,11 +48,14 @@ public class WebGISApiTools
         To set the map extent of the map, use on of the following:
         * Zoom to a specific area by providing bounding box, or center and scale 
         * Zoom to a specific geo-object by providing a query ID and associated query parameters to customize the map view.
+        * Set a marker to a specific position
 
         Possible query parameters depend on the selected query ID (items with id).
         Query, query parameters and their Ids can be found in the map service info.
         If a query and query parameters are defined, the view zooms automatically to the query result.
         The generated URL can be used to directly access the map with the specified configurations.
+
+        Optional a marker can be placed on the map by providing at least the marker coordinates.
         """)]
     async public Task<string> GetMapUrl(
         string[]? serviceIds = null,
@@ -65,7 +70,15 @@ public class WebGISApiTools
         [Description("The ID of a predefined query to be executed on one of the selected map services. The query must be defined in the map service (items with id).")]
         string? queryId = null,
         [Description("Required query parameters to customize the query execution. Possible query parameters depend on the selected query ID (items with id). Query, query parameters and their values can be found in the map service info.")]
-        Dictionary<string, string>? queryParameters = null)
+        Dictionary<string, string>? queryParameters = null,
+        [Description("Optional marker to be placed on the map. The center is defined as an array of two double values: [X, Y]")]
+        double[]? marker = null,
+        [Description("The spatial reference system (SRS) of the provided marker. The SRS is specified using its EPSG code (e.g., 2056 for CH1903+ / LV95). If not provided, WGS84 (4326) is used.")]
+        int? markerCrs = null,
+        [Description("Optional text to be displayed in a popup when the marker is clicked.")]
+        string? markerText = null,
+        [Description("Determines whether the popup for the marker should be opened automatically when the map is loaded.")]
+        bool? markerOpenPopup = null)
     {
         string portalUrl = "https://localhost:44320/";
 
@@ -96,7 +109,7 @@ public class WebGISApiTools
             portalUrl += $"scale={scale}&";  // scale
         }
 
-        if(srs.HasValue)
+        if (srs.HasValue)
         {
             portalUrl += $"srs={srs}&";  // srs
         }
@@ -116,6 +129,39 @@ public class WebGISApiTools
                     portalUrl += $"{key}={value}&";  // query parameters
                 }
             }
+        }
+
+        #endregion
+
+        #region Marker
+
+        if (marker?.Length == 2)
+        {
+            Dictionary<string, object> markerDict = new();
+
+            if (markerCrs == null || markerCrs == 4326)
+            {
+                markerDict["lng"] = marker[0];
+                markerDict["lat"] = marker[1];
+            }
+            else
+            {
+                markerDict["x"] = marker[0];
+                markerDict["y"] = marker[1];
+                markerDict["srs"] = markerCrs;
+            }
+
+            if (!String.IsNullOrEmpty(markerText))
+            {
+                markerDict["text"] = markerText;
+            }
+            if (markerOpenPopup == true)
+            {
+                markerDict["openPopup"] = true;
+            }
+
+            // Todo: Urlencode the json?
+            portalUrl += $"marker={HttpUtility.UrlEncode(JsonSerializer.Serialize(markerDict))}&";
         }
 
         #endregion
@@ -141,10 +187,10 @@ public class WebGISApiTools
         string queryId,
         [Description("Required query parameters parameters to customize the query execution. Possible query parameters depend on the selected query ID (items with id). Query, query parameters and their values can be found in the map service info.")]
         Dictionary<string, string>? queryParameters = null,
-        [Description("Determines, if the result contains the full geometry (full), only a single point represents the geometry (simple) or no geometry (none).")] 
+        [Description("Determines, if the result contains the full geometry (full), only a single point represents the geometry (simple) or no geometry (none).")]
         string resultGeometryType = "none",
         [Description("Return rendered fields: returns all fields including expressions and hotlinks, that are set in them WebGIS CMS. If false, only the original fields from the datebase values will returned.")]
-        bool renderFields = true 
+        bool renderFields = true
         )
     {
         string endpoint = $"rest/services/{serviceId}/queries/{queryId}?";

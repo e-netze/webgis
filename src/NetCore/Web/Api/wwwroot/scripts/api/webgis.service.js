@@ -876,7 +876,7 @@
                 vislayers.push(layer.id);
             }
         }
-        return { width: mapSize[0], height: mapSize[0], bbox: bbox, crs: crsId, layers: vislayers.join(','), f: 'json' };
+        return { width: mapSize[0], height: mapSize[1], bbox: bbox, crs: crsId, layers: vislayers.join(','), f: 'json' };
     };
 
     this.copy = function () {

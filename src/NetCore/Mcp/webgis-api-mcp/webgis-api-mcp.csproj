@@ -36,4 +36,8 @@
     <ProjectReference Include="..\..\Web\Aspire\webgis.ServiceDefaults\webgis.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

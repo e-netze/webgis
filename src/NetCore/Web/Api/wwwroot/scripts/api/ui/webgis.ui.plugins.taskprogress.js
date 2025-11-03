@@ -73,7 +73,7 @@ webgis.ui.addTaskProgress = function (options) {
     }
 
     $taskProgressContainer.webgis_taskProgress('addTask', options);
-}
+};
 
 webgis.ui.finishTaskProgress = function (options) {
     var $mapContainer = $(".webgis-container").find("#map");
@@ -81,4 +81,4 @@ webgis.ui.finishTaskProgress = function (options) {
     if ($taskProgressContainer.length === 0) return;
 
     $taskProgressContainer.webgis_taskProgress("finsihTask", options);
-}
+};

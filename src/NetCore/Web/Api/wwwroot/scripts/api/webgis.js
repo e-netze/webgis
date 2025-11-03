@@ -18,7 +18,7 @@
 
     this._defaultToolPrefix = '__default__';
 
-    this.options = {
+    this.options = { 
         load_markercluster: true,
         load_label: false,
         load_proj: true,
