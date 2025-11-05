@@ -33,7 +33,6 @@ using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
-using Microsoft.AspNetCore.Razor.Hosting;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -345,6 +344,18 @@ public class Bridge : IBridge
         info.layers = layers.ToArray();
 
         return info.ToServiceBridge();
+    }
+
+    public bool IsServiceQueryBuilderAllowed(string serviceId)
+    {
+        return _cacheService.IsServiceQueryBuilderAllowed(serviceId, _userIdentification);
+    }
+
+    public IEnumerable<IQueryBuilderFieldBridge> GetAllowedQueryBuilderFields(string serviceId)
+    {
+        return _cacheService.IsServiceQueryBuilderAllowed(serviceId, _userIdentification)
+            ? _cacheService.GetAllowedQueryBuilderFields(serviceId, _userIdentification)
+            : [];
     }
 
     async public Task<IQueryBridge> GetQuery(string serviceId, string queryId)
@@ -889,7 +900,7 @@ public class Bridge : IBridge
         var fileTitle = (allowFileName && layoutId.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
                 ? layoutId
                 : _cacheService.GetPrintLayouts(this.GdiCustomGdiScheme, _userIdentification).Where(l => l.Id == layoutId).FirstOrDefault()?.LayoutFile;
-        if(String.IsNullOrEmpty(fileTitle))
+        if (String.IsNullOrEmpty(fileTitle))
         {
             throw new Exception($"Configuration Error: Print Layout with id '{layoutId}' not found. Check CMS configuration");
         }

@@ -7,6 +7,7 @@ using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebGIS.Tools.Identify;
 using E.Standard.WebGIS.Tools.Presentation.Extensions;
 using E.Standard.WebGIS.Tools.Presentation.Models;
+using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
@@ -471,9 +472,8 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
         e.GetConfigBool("allow-toc-visfilter")
          .ThrowIfFalse(() => "Set visibility filters from toc is not allowed");
 
-        string[] allowedFields = e.GetConfigArray<string>("allowed-filter-fields")?.ToArray();
-
         var argument = e.ServerCommandArgument;
+        bool useAllFields = false;
 
         var tocVisFilterRequest = JSerializer.Deserialize<TocVisFilterRequestDTO>(argument);
         List<IField> commonFields = null;
@@ -485,6 +485,16 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
 
         foreach (var serviceId in tocVisFilterRequest.ServiceLayers.Keys)
         {
+            var allowedQueryFilterFields = bridge.GetAllowedQueryBuilderFields(serviceId);
+            if(!allowedQueryFilterFields?.Any() == true)
+            {
+                continue;
+            }
+            if (allowedQueryFilterFields.Any(f => f.Name.Equals("*")))
+            {
+                useAllFields = true;
+            }
+
             var service = bridge.GetService(serviceId);
 
             foreach (var layerId in tocVisFilterRequest.ServiceLayers[serviceId])
@@ -492,15 +502,17 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
                 var fields = (await bridge.GetServiceLayerFields(serviceId, layerId))?.Where(f => f.Type != WebMapping.Core.FieldType.Shape);
                 if (fields == null || fields?.Count() == 0) continue;
 
-                if(allowedFields?.Any() == true)
-                {
-                    fields = fields.Where(f => allowedFields.Contains(f.Name)).ToArray();
-                }
+                var allowedFields = allowedQueryFilterFields.SelectAllowedFields(fields);
 
                 commonFields = commonFields is null
-                    ? new List<IField>(fields)
-                    : commonFields.Intersect(fields, new FieldNameAndTypeEqualityComparer()).ToList();
+                        ? new List<IField>(allowedFields)
+                        : commonFields.Intersect(allowedFields, new FieldNameAndTypeEqualityComparer()).ToList();
             }
+        }
+
+        if(commonFields == null || commonFields.Count == 0)
+        {
+            throw new Exception("No common fields found for query builder");
         }
 
         var uiQueryBuilder = new UIQueryBuilder()
@@ -511,9 +523,9 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
             CallbackArgument = argument
         };
 
-        foreach (var field in commonFields.OrEmpty().OrderBy(f => f.Name))
+        foreach (var field in commonFields.OrEmpty()/*.OrderBy(f => f.Name)*/)  // sorting comes from CMS
         {
-            uiQueryBuilder.TryAddField(field.Name, field.Type);
+            uiQueryBuilder.TryAddField(field.Name, field.Type, field.Alias);
         }
 
         string whereClause = e[VisFilterWhereClauseArgumentName]
@@ -593,6 +605,10 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
 
         foreach (var serviceId in tocVisFilterRequest.ServiceLayers.Keys)
         {
+            bridge.GetAllowedQueryBuilderFields(serviceId)
+                .CheckIfOnlyAllowedQueryFieldsIncludedInResult(queryBuilderResult);
+          
+
             foreach (var layerId in tocVisFilterRequest.ServiceLayers[serviceId])
             {
                 var fields = await bridge.GetServiceLayerFields(serviceId, layerId);

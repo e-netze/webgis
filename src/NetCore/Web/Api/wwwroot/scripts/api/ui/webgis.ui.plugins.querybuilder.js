@@ -127,7 +127,7 @@
 
                 $("<option>")
                     .attr('value', fieldDef.name)
-                    .text(fieldDef.name)
+                    .text(fieldDef.alias || fieldDef.name)
                     .appendTo($selectFields);
             }
 

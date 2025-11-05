@@ -85,6 +85,8 @@
   <add key="FeatureTransfers" value="Feature Transfers (copy/move)"	/>
   <add key="FieldSetters" value="Field Setters" />
 	<add key="validations" value="Validierungen" />
-  
+
+	<add key="querybuilder" value="Query Builder" />
+	
   <add key=".linktemplate" value="Erweiterte Einstellungen (GDI)" />
 </dictionary>

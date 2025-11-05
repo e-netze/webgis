@@ -5,6 +5,7 @@ using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.Security;
+using E.Standard.CMS.Core.Security.Reflection;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
 using E.Standard.Extensions.Text;
@@ -73,6 +74,11 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
     [DisplayName("Service-Typ")]
     [Description("Watermark Services werden immer ganz oben gezeichnet und können vom Anwender nicht transparent geschalten oder ausgelendet werden. Watermark Services können neben Wasserzeichen auch Polygondecker enthalten.")]
     public WebMapping.Core.ImageServiceType ServiceType { get; set; }
+
+    [DisplayName("Allow QueryBuilder (Darstellungsfilter aus TOC")]
+    [Description("Der Anwender kann aus dem TOC Filter als mit deinen SQL Edititor setzen.")]
+    [AuthorizableProperty("allow_querybuilder", false)]
+    public bool AllowQueryBuilder { get; set; }
 
     [DisplayName("Karten Server")]
     [Category("Service")]
@@ -175,6 +181,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         this.DynamicQueries = (WebMapping.Core.ServiceDynamicQueries)stream.Load("dynamic_queries", (int)WebMapping.Core.ServiceDynamicQueries.Manually);
         this.ServiceType = (WebMapping.Core.ImageServiceType)stream.Load("service_type", (int)WebMapping.Core.ImageServiceType.Normal);
         this.DynamicDehavior = (WebMapping.Core.DynamicDehavior)stream.Load("dynamic_behavior", (int)WebMapping.Core.DynamicDehavior.AutoAppendNewLayers);
+        this.AllowQueryBuilder = (bool)stream.Load("allow_querybuilder", false);
     }
 
     override public void Save(IStreamDocument stream)
@@ -197,6 +204,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         stream.Save("dynamic_queries", (int)this.DynamicQueries);
         stream.Save("service_type", (int)this.ServiceType);
         stream.Save("dynamic_behavior", (int)this.DynamicDehavior);
+        stream.Save("allow_querybuilder", this.AllowQueryBuilder);
     }
 
     #endregion
@@ -1131,6 +1139,23 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         }
 
         return layer.Fields.Select(f => f.Name);
+    }
+
+    async public Task<IEnumerable<JsonField>> GetAllLayerFields()
+    {
+        string service = this.ServiceUrl + "/layers?f=json";
+        if (!service.ToLower().Contains("/rest/services/"))
+        {
+            service = service.Replace("/services/", "/rest/services/");
+        }
+
+        string response = await TryPostAsync(service, String.Empty);
+
+        JsonLayers jsonLayers = JSerializer.Deserialize<JsonLayers>(response);
+
+        var allFields = jsonLayers.Layers.Where(l => l?.Fields != null).SelectMany(l => l.Fields).ToArray();
+
+        return allFields.DistinctBy(f => f.Name);
     }
 
     async public Task<IEnumerable<JsonField>> GetLayerFieldsAsync(string layerId)

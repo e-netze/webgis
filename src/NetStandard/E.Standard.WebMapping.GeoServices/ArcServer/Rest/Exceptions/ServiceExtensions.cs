@@ -29,7 +29,7 @@ static class ServiceExtensions
             throw new ArgumentException("Service do not implement IServiceLegend");
         }
 
-        string fileTitle = "legend_" + Guid.NewGuid().ToString("N").ToLower() + ".png";
+        string fileTitle = $"legend_{Guid.NewGuid().ToString("N").ToLower()}.png";
 
         #region ImageProcessing Variables
 

@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ public class UIQueryBuilder : UICollapsableElement
     [JsonProperty("field_defs")]
     [System.Text.Json.Serialization.JsonPropertyName("field_defs")]
     public IEnumerable<object> FieldDefs =>
-        _fieldDefs.OrderBy(x => x.Name);
+        _fieldDefs/*.OrderBy(x => x.Name)*/;
 
     [JsonProperty("show_geometry_option")]
     [System.Text.Json.Serialization.JsonPropertyName("show_geometry_option")]
@@ -40,7 +40,7 @@ public class UIQueryBuilder : UICollapsableElement
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string[]? WhereClauseParts { get; private set; }
 
-    public void TryAddField(string fieldName, FieldType fieldType = FieldType.Unknown)
+    public void TryAddField(string fieldName, FieldType fieldType = FieldType.Unknown, string? alias = null)
     {
         if (string.IsNullOrEmpty(fieldName))
         {
@@ -50,12 +50,15 @@ public class UIQueryBuilder : UICollapsableElement
         var fieldDef = _fieldDefs.Where(f => fieldName.Equals(f.Name)).FirstOrDefault();
         if (fieldDef == null)
         {
-            fieldDef = new FieldDef(fieldName, fieldType);
+            fieldDef = new FieldDef(fieldName, fieldType)
+            {
+                Aliasname = alias
+            };
             _fieldDefs.Add(fieldDef);
         }
     }
 
-    // Optional: only for reference � not strictly needed below
+    // Optional: only for reference – not strictly needed below
     //private static readonly string[] possibleOperators =
     //    { "=", " like ", " in ", "<>", ">", ">=", "<", "<=" };
 
@@ -164,9 +167,16 @@ public class UIQueryBuilder : UICollapsableElement
         [JsonProperty("name")]
         [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; }
+
+        [JsonProperty("alias", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonPropertyName("alias")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public string? Aliasname { get; set;  }
+
         [JsonProperty("operators")]
         [System.Text.Json.Serialization.JsonPropertyName("operators")]
         public IEnumerable<string> Operators { get; set; }
+        
         [JsonProperty("value_template")]
         [System.Text.Json.Serialization.JsonPropertyName("value_template")]
         public string ValueTemplate { get; set; }

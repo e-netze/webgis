@@ -476,7 +476,7 @@
                                         webgis.alert('Unkonwn error!', 'error');
                                     }
                                 }, result,
-                                false && map.getActiveTool().id === result.toolId); // force automatic callback if tool is the same!
+                                map.getActiveTool().id === result.toolId); // force automatic callback if tool is the same!
                         });
                     }
                     break;

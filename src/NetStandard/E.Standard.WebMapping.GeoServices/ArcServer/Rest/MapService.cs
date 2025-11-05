@@ -1363,9 +1363,11 @@ public class MapService : IMapService2,
 
             #endregion
 
-            var useDynamcLegendQuery = this.Layers
-                .Where(l => visibleIds.Contains(l.ID))
-                .All(l => l is ILegendRendererHelper legendHelper && legendHelper.SupportsDynamicLegends);
+            var useDynamcLegendQuery =
+                this.LegendOptMethod == LegendOptimization.Symbols &&
+                this.Layers
+                    .Where(l => visibleIds.Contains(l.ID))
+                    .All(l => l is ILegendRendererHelper legendHelper && legendHelper.SupportsDynamicLegends);
 
             #region /legend (old method without optimization)
 

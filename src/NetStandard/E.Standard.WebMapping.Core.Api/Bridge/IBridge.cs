@@ -25,6 +25,9 @@ public interface IBridge : IAppCryptography
 
     Task<IServiceBridge> GetService(string serviceId);
 
+    bool IsServiceQueryBuilderAllowed(string serviceId);
+    IEnumerable<IQueryBuilderFieldBridge> GetAllowedQueryBuilderFields(string serviceId);
+
     Task<IQueryBridge> GetQuery(string setviceId, string queryId);
 
     // Faster, no initialisation of service etc, no dynamic services

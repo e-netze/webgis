@@ -7,6 +7,7 @@ using E.Standard.Web.Models;
 using E.Standard.WebGIS.CmsSchema.Legacy;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -57,6 +58,10 @@ public class TableColumnAssistentControl : UserControl
             else if (_node is LabellingFieldAssistent)
             {
                 objects = _cms.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(_relPath, 2) + "/LabellingTheme", true);
+            }
+            else if (_node is QueryBuilderFieldAssistent)
+            {
+                objects = [_cms.SchemaNodeInstance(_servicePack, Helper.TrimPathRight(_relPath, 2), true)];
             }
 
             List<(string name, string aliasname)> fields = new List<(string, string)>();
@@ -150,6 +155,10 @@ public class TableColumnAssistentControl : UserControl
                                 #endregion
                             }
                         }
+                    }
+                    if(obj is ArcServerService agsService)
+                    {
+                        fields.AddRange((await agsService.GetAllLayerFields()).Select(f => (f.Name, f.Name)));  // only the name here, ignore the aliases
                     }
                 }
             }
