@@ -473,7 +473,6 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
          .ThrowIfFalse(() => "Set visibility filters from toc is not allowed");
 
         var argument = e.ServerCommandArgument;
-        bool useAllFields = false;
 
         var tocVisFilterRequest = JSerializer.Deserialize<TocVisFilterRequestDTO>(argument);
         List<IField> commonFields = null;
@@ -489,10 +488,6 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
             if(!allowedQueryFilterFields?.Any() == true)
             {
                 continue;
-            }
-            if (allowedQueryFilterFields.Any(f => f.Name.Equals("*")))
-            {
-                useAllFields = true;
             }
 
             var service = bridge.GetService(serviceId);

@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.30.0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.9.25" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.9" />
+    <PackageReference Include="StackExchange.Redis" Version="2.9.32" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.10" />
   </ItemGroup>
 
   <ItemGroup>

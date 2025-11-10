@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.9" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.10" />
 	  <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0-preview.6.25358.103" />
 	  <PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.3.0-preview.4" />
   </ItemGroup>
