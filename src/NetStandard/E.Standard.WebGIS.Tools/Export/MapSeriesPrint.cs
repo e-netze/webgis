@@ -1,5 +1,4 @@
-﻿using E.Standard.Extensions.Collections;
-using E.Standard.Json;
+﻿using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Export.Calc;
@@ -58,6 +57,8 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     public const string ConfigDefaultQuality = "default-quality";
     public const string ConfigDefaultFormat = "default-format";
     public const string ConfigMaxPages = "max-pages";
+    public const string ConfigOverviewPageLayout = "overview-page-layout";
+    public const string ConfigOverviewPageFormat = "overview-page-format";
 
     public const string PrintLayoutOptionPrefix = "series-layout:";
 
@@ -67,6 +68,8 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     public const string MapSeriesPrintScaleId = "mapseriesprint-scale-select";
     public const string MapSeriesPrintInitScaleId = "mapseriesprint-init-scale";
     public const string MapSeriesPrintQualityId = "mapseriesprint-qualitity-select";
+
+    public const string CreateSeriesValidationErrors = "mapseriesprint-create-validation-errors";
 
     protected string toolContainerId = "webgis-mapseriesprint-tool-container";
 
@@ -232,100 +235,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     [ServerToolCommand("selectionchanged")]
     public ApiEventResponse OnSelectionChanged(IBridge bridge, ApiToolEventArguments e)
     {
-        string layoutId = e[MapSeriesPrintLayoutId];
-        string layoutFormat = e[MapSeriesPrintFormatId];
-        double scale = !String.IsNullOrEmpty(e[MapSeriesPrintScaleId]) ?
-                            e.GetDouble(MapSeriesPrintScaleId) :
-                            e.GetDouble(MapSeriesPrintInitScaleId);
-        var scaleComboValues = new List<int>(e.TryGetArray<int>($"{MapSeriesPrintScaleId}.values") ?? new int[0]);
-
-        PageSize pageSize = (PageSize)Enum.Parse(typeof(PageSize), layoutFormat.Split('.')[0], true);
-        PageOrientation pageOrientation = PageOrientation.Landscape;
-        if (layoutFormat.Contains("."))
-        {
-            pageOrientation = (PageOrientation)Enum.Parse(typeof(PageOrientation), layoutFormat.Split('.')[1], true);
-        }
-        else { pageOrientation = 0; }
-
-        var response = new ApiEventResponse();
-
-        #region Formats (allowed formats)
-
-        var allowedFormats = bridge.GetPrintFormats(layoutId);
-        if (allowedFormats.Count() > 0)
-        {
-            var currentFormat = allowedFormats.Where(f => f.Size == pageSize && f.Orientation == pageOrientation).FirstOrDefault();
-            if (currentFormat == null)
-            {
-                pageSize = allowedFormats.First().Size;
-                pageOrientation = allowedFormats.First().Orientation;
-            }
-        }
-
-        response.AddUISetter(new UISelectOptionsSetter(MapSeriesPrintFormatId, $"{pageSize}.{pageOrientation}",
-                                                        allowedFormats.Select(f => UISelect.ToPrintFormatsOption(f))));
-
-        #endregion
-
-        #region Scales (allowed Scales)
-
-        var allowAddScales = bridge.GetPrintLayoutScales(layoutId) == null;
-
-        var scales = bridge.GetPrintLayoutScales(layoutId) ??
-                     e.GetConfigArray<int>("scales") ??
-                     e.GetArray<double>(MapSeriesPrintScalesId)?
-                        .Select(s => Math.Round(s / 10.0, 0) * 10.0)
-                        .ToArray()
-                        .ConvertItems<int>();
-
-        if (allowAddScales)
-        {
-            List<int> extendedScales = new List<int>();
-            foreach (var extendScale in scaleComboValues)
-            {
-                if (!scales.Contains(extendScale) &&
-                    extendScale < scales.Max() &&
-                    extendScale > scales.Min())
-                {
-                    extendedScales.Add(extendScale);
-                }
-            }
-
-            var scalesList = new List<int>(scales);
-            scalesList.AddRange(extendedScales);
-            scales = scalesList;
-        }
-
-        if (scales != null)
-        {
-            scales = scales.OrderByDescending(v => v);
-            scale = scales.Closest(Convert.ToInt32(scale));
-
-            response.AddUISetter(
-                new UISelectOptionsSetter(MapSeriesPrintScaleId, scale.ToString(),
-                                          scales.Select(s => new UISelect.Option()
-                                                                         .WithValue(s.ToString())
-                                                                         .WithLabel(string.Format("1:{0:0,0.}", s).Replace(" ", ".")))));
-        }
-
-        #endregion
-
-        var properties = bridge.GetPrintLayoutProperties(layoutId, pageSize, pageOrientation, scale);
-
-        var mapSRef = bridge.CreateSpatialReference((int)e.MapCrs);
-        var mapEnvelope = new Envelope(e.MapBBox());
-
-        float scaleFactor = 1.0f;
-        if (mapSRef.IsWebMercator())
-        {
-            // recalc scale for web mercator ??
-            scaleFactor = 1f / (float)Math.Cos(mapEnvelope.CenterPoint.Y / 180.0 * Math.PI);
-        }
-
-        return response
-                .AddSketchProperties(
-                    elementWidth: properties.WorldSize.Width * scaleFactor,
-                    elementHeight: properties.WorldSize.Height * scaleFactor);
+        return new ApiEventResponse().CalcPrintSericesDimension(bridge, e);
     }
 
     [ServerToolCommand("print")]
@@ -738,48 +648,19 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     internal const string ParameterSeriesType = "mapservicesprint-series-type";
 
     [ServerToolCommand("create-series-from-features")]
-    async public Task<ApiEventResponse> OnCreateSeriesFromFeatures(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
+    public Task<ApiEventResponse> OnCreateSeriesFromFeatures(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
     {
-        var features = await e.GetFeatureCollectionForMapSeries(bridge);
 
-        return new ApiEventResponse()
-            .AddUIElements(
-                new UIDiv()
-                    .AsDialog()
-                    .WithDialogTitle(localizer.Localize("create-series-from-features"))
-                    .AddChildren(e.AddRequiredMapSeriesPrintCreateFromFeaturesHiddenElements())
-                    .AddChildren(
-                         new UILabel()
-                            .WithDialogTitle(localizer.Localize("series-type")),
-                         new UISelect()
-                            .WithId(ParameterSeriesType)
-                            .WithStyles(UICss.ToolParameter, UICss.ToolParameterPersistent)
-                            .AddPossibleSeriesTypeOptions(features, localizer),
-                         new UILabel()
-                            .WithLabel(localizer.Localize("overlapping-percent")),
-                         new UISelect()
-                            .WithId(ParameterOverlappingPercent)
-                            .WithStyles(UICss.ToolParameter, UICss.ToolParameterPersistent)
-                            .AddOptions(
-                                Enumerable.Range(0, 50)
-                                    .Select(r => new UISelect.Option() { value = r.ToString(), label = $"{r}%" })
-                            ),
-                        new UIButtonContainer()
-                            .AddChildren(
-                                new UIButton(UIButton.UIButtonType.servertoolcommand, "create-series-from-features-calc")
-                                    .WithText(localizer.Localize("create")))
-                    )
-            )
-            .AddUISetter(new UIApplyPersistentParametersSetter(this));
+        return new ApiEventResponse().AddCreateMapSeriesFromFeaturesDialog(this, bridge, e, localizer);
     }
 
     [ServerToolCommand("create-series-from-features-calc")]
     async public Task<ApiEventResponse> OnCreateSeriesFromFeaturesCalc(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
     {
         double overlappingPercent = e.GetDouble(ParameterOverlappingPercent);
-        string layoutId = e[MapSeriesPrintLayoutId];
-        string layoutFormat = e[MapSeriesPrintFormatId];
-        double scale = e.GetDouble(MapSeriesPrintScaleId);
+        string layoutId = e[$"{MapSeriesPrintLayoutId}-create"];
+        string layoutFormat = e[$"{MapSeriesPrintFormatId}-create"];
+        double scale = e.GetDouble($"{MapSeriesPrintScaleId}-create");
         SeriesType seriesType = e.GetEnumValue<SeriesType>(ParameterSeriesType);
 
         PageSize pageSize = (PageSize)Enum.Parse(typeof(PageSize), layoutFormat.Split('.')[0], true);
@@ -815,12 +696,17 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
             _ => throw new NotSupportedException($"Series type '{seriesType}' is not supported.")
         };
 
+        // Set parameters for map series print for recalc rects etc...
+        e[MapSeriesPrintLayoutId] = layoutId;
+        e[MapSeriesPrintFormatId] = layoutFormat;
+        e[MapSeriesPrintScaleId] = scale.ToString();
+
         var response = new ApiEventResponse()
             .AddUIElement(new UIEmpty().WithTarget(UIElementTarget.modaldialog.ToString()));
 
         if (sketch.CountPoints() > e.GetMaxMapSeriesPages())
         {
-            response.ErrorMessage = String.Format(localizer.Localize(
+            e[CreateSeriesValidationErrors] = String.Format(localizer.Localize(
                 "create-series-from-features.exception-too-many-pages:body"),
                                     sketch.CountPoints(),
                                     e.GetMaxMapSeriesPages());
@@ -834,6 +720,28 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
         response.ClientCommands = [
                 ApiClientButtonCommand.zoom2sketch
             ];
+
+        // update the parameters in the tool dialog...
+        response.UISetters = [
+                new UISetter(MapSeriesPrintLayoutId, layoutId),
+                new UISetter(MapSeriesPrintFormatId, layoutFormat),
+                new UISetter(MapSeriesPrintScaleId, ((int)scale).ToString()),
+                new UIUpdatePersistentParametersSetter(this)
+            ];
+        // ...and recalc map series rectangle dimension
+        response.CalcPrintSericesDimension(bridge, e);
+
+        if (!String.IsNullOrEmpty(e[CreateSeriesValidationErrors]))
+        {
+            await response.AddCreateMapSeriesFromFeaturesDialog(this, bridge, e, localizer);
+            // set the parameters again to ensure they are not lost
+            response.AddUISetters(
+                new UISetter(ParameterOverlappingPercent, e[ParameterOverlappingPercent]),
+                new UISetter(ParameterSeriesType, e[ParameterSeriesType])
+            );
+           
+        }
+
         return response;
     }
 
@@ -845,7 +753,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
     public void CheckPrintMapSeriesSupport(IMap map, Shape toolSketch, ApiToolEventArguments e)
     {
-        if(toolSketch is null || toolSketch.CountPoints() == 0)
+        if (toolSketch is null || toolSketch.CountPoints() == 0)
         {
             throw new ArgumentException("Tool sketch is null or has no points");
         }
@@ -905,7 +813,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
         return graphicElements;
     }
 
-    public PrintMapSeriesOverviewPageDefinition GetPrintMapSeriesOverviewPageDefinition(IMap mapPrototype)
+    public PrintMapSeriesOverviewPageDefinition GetPrintMapSeriesOverviewPageDefinition(IMap mapPrototype, ApiToolEventArguments e)
     {
         var mapFrames = mapPrototype?.GraphicsContainer?.Where(e => e is MapFrameElement).ToArray();
 
@@ -932,7 +840,12 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
         map.Services.RemoveAll(s => s is not TileService && s is not IGraphicsService);
 
-        return new PrintMapSeriesOverviewPageDefinition("layout_map_services_overview.xml", map, extent);
+        return new PrintMapSeriesOverviewPageDefinition(
+            e.GetMapSeriesOverviewLayout(),
+            e.GetMapSeriesOverviewPageSize(),
+            e.GetMapSeriesOverviewPageOrientation(),
+            map, 
+            extent);
     }
 
     private string GetMapSericesPrintPageName(int index)

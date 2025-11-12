@@ -575,6 +575,7 @@
                                         }
                                         $(e).val(setter.val).data('initial-value', setter.val);  // initial-value: ursprünglichen Wert speichern. Das macht bei kaskadierenden Auswahllisten Sinn. Wann werden der Wert richtig zugewiesen wein man hin un her schaltet...
                                     }
+                                    // do not trigger('change')  => endless loop possible (tool calling themself with toolrequests!!)
                                     break;
                                 default:
                                     $e.html(setter.val);

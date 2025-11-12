@@ -1,4 +1,5 @@
-﻿using E.Standard.Localization.Abstractions;
+﻿using E.Standard.Extensions.Compare;
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.Extensions;
@@ -6,6 +7,7 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry.Extensions;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections;
 using System.Linq;
@@ -46,18 +48,50 @@ static internal class ApiToolEventArgumentsExtensions
         => new IUIElement[] {
            new UIHidden()
                     .WithId(MapSeriesPrint.ParameterServiceId)
-                    .WithStyles(UICss.ToolParameter)
+                    .AsToolParameter()
                     .WithValue(e[MapSeriesPrint.ParameterServiceId]),
                 new UIHidden()
                     .WithId(MapSeriesPrint.ParameterQueryId)
-                    .WithStyles(UICss.ToolParameter)
+                    .AsToolParameter()
                     .WithValue(e[MapSeriesPrint.ParameterQueryId]),
                 new UIHidden()
                     .WithId(MapSeriesPrint.ParameterFeatureIds)
-                    .WithStyles(UICss.ToolParameter)
+                    .AsToolParameter()
                     .WithValue(e[MapSeriesPrint.ParameterFeatureIds])
         };
 
     static public int GetMaxMapSeriesPages(this ApiToolEventArguments e)
         => e.GetConfigInt(MapSeriesPrint.ConfigMaxPages, 5);
+
+    static public string GetMapSeriesOverviewLayout(this ApiToolEventArguments e)
+        => e.GetConfigValue(MapSeriesPrint.ConfigOverviewPageLayout)
+            .OrTake("layout_map_services_overview.xml");
+
+    static public PageSize? GetMapSeriesOverviewPageSize(this ApiToolEventArguments e)
+    {
+        string pageSizeStr = e.GetConfigValue(MapSeriesPrint.ConfigOverviewPageFormat)?
+            .Split('.')
+            .FirstOrDefault();
+
+        if(!String.IsNullOrEmpty(pageSizeStr) && Enum.TryParse<PageSize>(pageSizeStr, ignoreCase: true, out var pageSize))
+        {
+            return pageSize;
+        }
+
+        return null;
+    }
+
+    static public PageOrientation? GetMapSeriesOverviewPageOrientation(this ApiToolEventArguments e)
+    {
+        string pageOrientationStr = e.GetConfigValue(MapSeriesPrint.ConfigOverviewPageFormat)?
+            .Split('.')
+            .LastOrDefault();
+
+        if (!String.IsNullOrEmpty(pageOrientationStr) && Enum.TryParse<PageOrientation>(pageOrientationStr, ignoreCase: true, out var pageOrientation))
+        {
+            return pageOrientation;
+        }
+
+        return null;
+    }
 }

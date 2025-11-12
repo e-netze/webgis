@@ -25,6 +25,14 @@ Print a map series in PDF format.
 ## download: Download Series
 ## remove-series: Remove Series
 
+# create:
+## method: Method
+### bbox-grid: Bounding Box Grid
+### intersection-grid: Intersection Grid
+### along-polyline: Along a Polyline
+## overlapping-percent: Overlapping (Percent)
+## start: Create Series
+
 # io:
 ## extend-current-session: Extend Current Series
 ## replace-current-session: Replace Current Series
@@ -51,7 +59,7 @@ all pages will be loaded.
 Here you can upload series. Valid file extensions are *.json.
 Only series created with this tool can be uploaded.
  
-# create-series-from-features:
+# create-series-from-features: Series from geo-objects
 ## exception-too-many-pages:
 
 The creation of the series cannot be carried out correctly because too many pages

@@ -4,19 +4,19 @@ Karten Serie im PDF Format drucken.
 
 # container: Karte
 
-# layout-quality: Layout/Quality
+# layout-quality: Layout/Qualität
 
 # layout: Layout
 
-# format: Paper format
+# format: Papierformat
 
-# print-scale: Print scale
+# print-scale: Druckmaßstab
 
-# print-quality: Print quality
+# print-quality: Druckqualität
 
-# print-jobs: Print jobs
+# print-jobs: Druckaufträge
 
-# start-print-job: Start print job
+# start-print-job: Druckauftrag starten
 
 # tools:
 ## save: Serie speichern
@@ -24,6 +24,15 @@ Karten Serie im PDF Format drucken.
 ## upload: Serie Hochladen
 ## download: Serie Herunterladen
 ## remove-series: Serie entfernen
+
+# create:
+## method: Methode
+### bbox-grid: Bounding Box Raster
+### intersection-grid: Schnitt Raster
+### along-polyline: Entlang einer Linie
+
+## overlapping-percent: Überlappung (Prozent)
+## start: Serie erstellen
 
 # io:
 ## extend-current-session: Bestehende Serie erweitern
@@ -51,7 +60,7 @@ alle Seite geladen.
 Hier können Serien hochgeladen werden. Gültige Dateiendungen sind hier *.json.
 Es können nur Serien hochgeladen werden, die mit diesem Werkzeug erstellt wurden.
 
-# create-series-from-features:
+# create-series-from-features: Serie aus Geo-Objekten
 ## exception-too-many-pages:
  
 Das Erzeugen der Serie kann nicht korrekt durchgeführt werden, weil zu viele Seiten 

@@ -282,7 +282,7 @@ public class RestPrintHelperService
 
             List<LayoutBuilderJob> layoutBuilderJobs = new();
 
-            var printOverviewMapDefinition = printSeriesProvider?.GetPrintMapSeriesOverviewPageDefinition(map);
+            var printOverviewMapDefinition = printSeriesProvider?.GetPrintMapSeriesOverviewPageDefinition(map, _restTools.CreateApiToolEventArguments(tool, "", null));
                 
             if (printOverviewMapDefinition is not null)
             {
@@ -290,8 +290,8 @@ public class RestPrintHelperService
                     printOverviewMapDefinition.Map,
                     _requestContext.Http,
                     System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", printOverviewMapDefinition.LayoutFile),
-                    pageSize,
-                    pageOrientation,
+                    (PageSize?)printOverviewMapDefinition.PageSize ?? pageSize,
+                    (PageOrientation?)printOverviewMapDefinition.pageOrientation ?? pageOrientation,
                     dpi,
                     System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", "data"));
 

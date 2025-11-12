@@ -4079,6 +4079,23 @@ div.webgis-copy {
     white-space:normal;
 }
 
+/*********** Validation **********/
+.webgis-validation-error,
+.webgis-validation-error-summary {
+    border: 1px solid #ff0000 !important;
+    background-color: #ffcccc !important;
+    padding: 4px;
+    border-radius: 4px;
+    margin: 8px 0px;
+    max-width: 595px;
+}
+
+.webgis-modal .webgis-validation-error,
+.webgis-modal .webgis-validation-error-summary {
+    font-size: 1.3em;
+    white-space: normal;
+}
+
 /*********** Hourglass *************/
 .webgis-hourglass-container {
     background-color:#aaa;

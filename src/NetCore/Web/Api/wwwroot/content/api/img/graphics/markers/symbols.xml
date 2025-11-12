@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <symbols>
-  <symbol name="pin1.png" hx="0" hy="31" />
-  <symbol name="marker.gif" hx="12" hy="27" />
-  <symbol name="marker_blau.gif" hx="12" hy="27" />
-  <symbol name="marker_gruen.gif" hx="12" hy="27" />
-  <symbol name="marker_rot.gif" hx="12" hy="27" />
-  <symbol name="marker_red.gif" hx="9" hy="18" />
+	<symbol name="hotspot00.png" hx="0" hy="31" />
+	<symbol name="hotspot01.gif" hx="9" hy="18" />
+	<symbol name="hotspot02.gif" hx="15" hy="15" />
+	<symbol name="hotspot03.gif" hx="14" hy="15" />
+	<symbol name="hotspot04.gif" hx="14" hy="15" />
+	<symbol name="hotspot05.gif" hx="14" hy="15" />
+	<symbol name="hotspot06.png" hx="15" hy="15" />
+	<symbol name="hotspot07.png" hx="15" hy="15" />
+	<symbol name="hotspot08.png" hx="15" hy="15" />
+	<symbol name="hotspot13.png" hx="15" hy="15" />
+	<symbol name="mp1.png" hx="16" hy="16" />
+	<symbol name="mp2.png" hx="16" hy="16" />
+	<symbol name="mp3.png" hx="16" hy="16" />
+	<symbol name="pfeil1_n.png" hx="17" hy="0" />
+	<symbol name="pfeil2_ne.png" hx="30" hy="0" />
+	<symbol name="pfeil3_e.png" hx="35" hy="17" />
+	<symbol name="pfeil4_es.png" hx="30" hy="30"/>
+	<symbol name="pfeil5_s.png" hx="17" hy="35" />
+	<symbol name="pfeil6_sw.png" hx="0" hy="30" />
+	<symbol name="pfeil7_w.png" hx="0" hy="17" />
+	<symbol name="pfeil8_wn.png" hx="0" hy="0" />
+	<symbol name="pfeil_lr.png" hx="46" hy="46" />
+	<symbol name="pfeil_rl.png" hx="0" hy="46" />
 </symbols>

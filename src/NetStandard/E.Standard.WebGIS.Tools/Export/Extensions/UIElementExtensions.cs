@@ -19,17 +19,17 @@ static internal class UIElementExtensions
         select.AddOptions(
             new UISelect.Option()
                 .WithValue(((int)SeriesType.IntersectionRaster).ToString())
-                .WithLabel(localizer.Localize("Intersection Raster")),
+                .WithLabel(localizer.Localize("create.method.intersection-grid")),
             new UISelect.Option()
                 .WithValue(((int)SeriesType.BoundingBoxRaster).ToString())
-                .WithLabel(localizer.Localize("Bounding Box Raster")));
+                .WithLabel(localizer.Localize("create.method.bbox-grid")));
 
         if (shapeProto is Polyline)
         {
             select.AddOption(
                 new UISelect.Option()
                     .WithValue(((int)SeriesType.AlongPolylines).ToString())
-                    .WithLabel(localizer.Localize("Along Polylines")));
+                    .WithLabel(localizer.Localize("create.method.along-polyline")));
         }
 
         return select;

@@ -1471,7 +1471,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     {
         string name = e["mapmarkup-io-load-name"];
 
-        string geoJson = bridge.Storage.LoadString(name);
+        string geoJson = bridge.Storage.LoadString(name)?.ReplaceLegacySymbols();
+
         return new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { Elements = geoJson },

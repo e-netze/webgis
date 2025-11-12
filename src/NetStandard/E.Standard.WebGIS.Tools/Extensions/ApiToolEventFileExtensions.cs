@@ -244,30 +244,46 @@ public static class ApiToolEventFileExtensions
 
                         if (!geoJsonFeature.HasProperty("symbol"))
                         {
-                            geoJsonFeature.TrySetProperty("symbol", "graphics/markers/hotspot0.gif", false);
+                            geoJsonFeature.TrySetProperty("symbol", "graphics/markers/hotspot0.gif".ReplaceLegacySymbols(), false);
                         }
 
-                        //
-                        // absolute Urls are not allowed!!
-                        // to avoid CSRF (Cross-Site Request Forgery)
-                        // => this url is send back to the client and client tries to call this url!
-                        //
-                        if (geoJsonFeature.GetPropery<string>("symbol").IsUrlOrContainsBacks())
+
+                        string symbol = geoJsonFeature.GetPropery<string>("symbol")?.ToString() ?? "";
+                        if (symbol != symbol.ReplaceLegacySymbols())
                         {
-                            geoJsonFeature.SetProperty("symbol", "graphics/markers/hotspot0.gif");
+                            geoJsonFeature.SetProperty("symbol", symbol.ReplaceLegacySymbols());
+                        }
+                        else if (symbol.IsUrlOrContainsBacks())
+                        {
+                            //
+                            // absolute Urls are not allowed!!
+                            // to avoid CSRF (Cross-Site Request Forgery)
+                            // => this url is send back to the client and client tries to call this url!
+                            //
+                            geoJsonFeature.SetProperty("symbol", "graphics/markers/hotspot0.gif".ReplaceLegacySymbols());
                         }
 
-                        var metaSymbolId = GetValue(geoJsonFeature.Properties, "_meta.symbol.id");
-                        var metaSymbolIcon = GetValue(geoJsonFeature.Properties, "_meta.symbol.icon");
+                        var metaSymbolId = GetValue(geoJsonFeature.Properties, "_meta.symbol.id")?.ToString() ?? "";
+                        if (metaSymbolId != metaSymbolId.ReplaceLegacySymbols())
+                        {
+                            geoJsonFeature.SetProperty("_meta.symbol.id", metaSymbolId.ReplaceLegacySymbols());
+                        }
+                        else if (metaSymbolId.IsUrlOrContainsBacks() == true)
+                        {
+                            geoJsonFeature.SetProperty("_meta.symbol.id", "graphics/markers/hotspot0.gif".ReplaceLegacySymbols());
+                        }
 
-                        if (metaSymbolId?.ToString().IsUrlOrContainsBacks() == true)
+                        var metaSymbolIcon = GetValue(geoJsonFeature.Properties, "_meta.symbol.icon")?.ToString() ?? "";
+                        if (metaSymbolIcon != metaSymbolIcon.ReplaceLegacySymbols())
                         {
-                            geoJsonFeature.SetProperty("_meta.symbol.id", "graphics/markers/hotspot0.gif");
+                            geoJsonFeature.SetProperty("_meta.symbol.icon", metaSymbolIcon.ReplaceLegacySymbols());
                         }
-                        if (metaSymbolIcon?.ToString().IsUrlOrContainsBacks() == true)
+                        else if (metaSymbolIcon.IsUrlOrContainsBacks() == true)
                         {
-                            geoJsonFeature.SetProperty("_meta.symbol.icon", "graphics/markers/hotspot0.gif");
+                            geoJsonFeature.SetProperty("_meta.symbol.icon", "graphics/markers/hotspot0.gif".ReplaceLegacySymbols());
                         }
+
+
                     }
                 }
 
@@ -280,6 +296,21 @@ public static class ApiToolEventFileExtensions
 
         return geoJsonFeatures;
     }
+
+    static private string ReplaceLegacySymbols(this string symbol)
+    => symbol switch
+    {
+        "graphics/markers/hotspot0.gif" => "graphics/markers/hotspot03.gif",
+        "graphics/markers/hotspot1.gif" => "graphics/markers/hotspot04.gif",
+        "graphics/markers/hotspot2.gif" => "graphics/markers/hotspot05.gif",
+        "graphics/markers/hotspot3.gif" => "graphics/markers/hotspot06.png",
+        "graphics/markers/hotspot4.gif" => "graphics/markers/hotspot07.png",
+        "graphics/markers/hotspot5.gif" => "graphics/markers/hotspot08.png",
+        "graphics/markers/hotspot6.gif" => "graphics/markers/hotspot02.gif",
+        "graphics/markers/marker_red.gif" => "graphics/markers/hotspot01.gif",
+        "graphics/markers/pin1.png" => "graphics/markers/hotspot00.png",
+        _ => symbol
+    };
 
     static public object DefaultPointGeoJsonProperties(this ApiToolEventArguments e, string text, string source, bool setNameProperty = false)
     {
