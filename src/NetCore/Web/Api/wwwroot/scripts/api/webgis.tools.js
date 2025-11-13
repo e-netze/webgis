@@ -1973,7 +1973,7 @@ webgis.tools.mouseEvent = function (map, e) {
             ret += (ret !== '' ? '|' : '') + 'x=' + _m.click.x + '|y=' + _m.click.y;
         }
         if (_m.meta) {
-            ret += (ret !== '' ? '|' : '') + 'event_scale=' + _m.meta.scale;
+            ret += (ret !== '' ? '|' : '') + 'event_scale=' + _m.meta.scale + '|event_service_scale=' + map.crsScale();
         }
         if (map) {
             ret += (ret !== '' ? '|' : '') + 'mapcrs=' + map.crsId();
