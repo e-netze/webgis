@@ -71,6 +71,9 @@ static public class ServiceCollectionExtensions
 
                     options.Events.OnSigningIn = (context) =>
                     {
+                        //var idToken = context.Properties.GetTokenValue("id_token");
+                        //Console.WriteLine($"OnSigningIn - id_token: {idToken}");
+
                         // Make it IsPermanent
                         context.CookieOptions.Expires = DateTimeOffset.UtcNow.AddDays(365);
                         context.CookieOptions.Secure = true;

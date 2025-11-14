@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Bug: Remove-Filter, etc tools will not be shown in quicktools bar,
        if not quicktools are selected in map builder
 
+
+## 7.25.4601
+
+### Fixed
+
+- Interpret scale for ``all-queries``, ``all-editthemes``, etc like in the TOC (same as MapServers like AGS do) (JS method: ``map.crcScale()``) instead of scale showed in the Viewer
+  This ensures, that **Identify Visible Layers** identifies the Layers in current scale, also if user is nearby the **minScale** or **maxScale** or the layer.
+
+- 
 ## 7.25.4001
 
 ### Added

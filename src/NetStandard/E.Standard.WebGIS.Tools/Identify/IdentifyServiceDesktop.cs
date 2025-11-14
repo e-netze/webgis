@@ -29,7 +29,9 @@ internal class IdentifyServiceDesktop
     {
         var click = e.ToMapProjectedClickEvent();
 
-        double eventScale = click.EventScale.OrTake(e.GetDouble(IdentifyDefault.IdentifyMapScaleId)).OrTake(e.MapScale ?? 0);
+        double eventScale =  click.EventScale
+                                 .OrTake(e.GetDouble(IdentifyDefault.IdentifyMapScaleId))
+                                 .OrTake(e.MapScale ?? 0);
         string allQueries = e[IdentifyDefault.IdentifyAllQueriesId];
         string targetCategoryId = String.Empty;
         bool appendToUI = false;

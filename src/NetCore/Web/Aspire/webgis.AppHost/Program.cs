@@ -9,7 +9,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 #if ADD_IDENTITYSERVER
 #region IdentityServerNET
 
-var identityServer = builder.AddIdentityServerNET("is-net-dev", httpsPort: 44300)
+var identityServer = builder.AddIdentityServerNET("is-net-dev", httpsPort: 8443)
        .WithConfiguration(config =>
        {
            config
@@ -50,7 +50,8 @@ var identityServer = builder.AddIdentityServerNET("is-net-dev", httpsPort: 44300
        })
        .Build()
        .WithContainerName("webgis-identityserver-net")
-       .WithLifetime(ContainerLifetime.Persistent);
+       .WithLifetime(ContainerLifetime.Persistent)
+       .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development");
 
 #endregion
 #endif

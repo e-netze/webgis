@@ -5,6 +5,7 @@ using E.Standard.Security.App.Json;
 using E.Standard.WebApp.Extensions;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -42,6 +43,12 @@ public class OidcPrefixAuthenticationMiddleware
             if (context.User.Identity.IsAuthenticated)
             {
                 _logger.LogClaims(LogLevel.Debug, context.User);
+                //var authResult = await context.AuthenticateAsync("Cookies");
+                //if (authResult.Succeeded)
+                //{
+                //    var idToken = authResult.Properties.GetTokenValue("id_token");
+                //    _logger.Log(LogLevel.Debug, "Id-Token: {id_token}", idToken);
+                //}
 
                 var portalUser = context.User.ToPortalUser();
 
