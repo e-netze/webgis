@@ -68,6 +68,8 @@ public class DummyCache : IKeyValueCache
         return null;
     }
 
+    public string[] GetAllKeys() => [];
+
     public int MaxChunkSize => int.MaxValue;
 
     #endregion

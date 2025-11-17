@@ -3,6 +3,7 @@ using E.Standard.Caching.Extensions;
 using E.Standard.Extensions.Compare;
 using E.Standard.Security.App.Services.Abstraction;
 using E.Standard.Security.Cryptography.Abstractions;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -123,6 +124,8 @@ public class KeyValueCacheService : IKeyValueCache
         }
     }
 
+    public string[] GetAllKeys() => _keyValueCache.GetAllKeys();
+
     #endregion
 
     public Type KeyValueCacheType => _keyValueCache?.GetType();
@@ -212,6 +215,8 @@ public class KeyValueCacheService : IKeyValueCache
 
         return keyValueCache;
     }
+
+    
 
     #endregion
 }
