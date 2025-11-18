@@ -1610,9 +1610,10 @@
                     height: '400px',
                     title: "Share: QR-Code",
                     onload: function ($content) {
+                        let imageData = qr_base64.indexOf("data:image/") === 0 ? qr_base64 : 'data:image/png;base64, ' + qr_base64;
                         $("<img>")
                             .css({ width: '290px', height: '290px' })
-                            .attr('src', 'data:image/png;base64, ' + qr_base64)
+                            .attr('src', imageData)
                             .appendTo($content.css('text-align', 'center'));
                     }
                 });
