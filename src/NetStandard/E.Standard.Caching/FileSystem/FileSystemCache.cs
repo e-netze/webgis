@@ -161,7 +161,7 @@ public class FileSystemCache : IKeyValueCache
 
         if (key.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
         {
-            key = key.Substring(0, key.Length - 4);
+            key = key.Substring(0, key.Length - ".json".Length);
         }
 
         return key;
