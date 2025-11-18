@@ -16,9 +16,14 @@ public class SubscriberDatabaseService
         ISecurityConfigurationService config,
         IOptionsMonitor<SubscriberDatabaseServiceOptions> options)
     {
-        _connectionString = config[options.CurrentValue.ConnectionStringConfigurationKey]
-            .OrTake(options.CurrentValue.ConnectionStringConfigurationKey);
+        _connectionString = GetConnectionString(config, options);
     }
+
+    virtual protected string GetConnectionString(
+                            ISecurityConfigurationService config,
+                            IOptionsMonitor<SubscriberDatabaseServiceOptions> options) =>
+        config[options.CurrentValue.ConnectionStringConfigurationKey]
+            .OrTake(options.CurrentValue.ConnectionStringConfigurationKey);
 
     public ISubscriberDb? CreateInstance(ILogger? logger = null)
     {
@@ -29,4 +34,21 @@ public class SubscriberDatabaseService
 
         return SubscriberDb.Create(_connectionString, logger);
     }
+}
+
+public class MigrateSubscriberDatabaseService : SubscriberDatabaseService
+{
+
+    public MigrateSubscriberDatabaseService(
+        ISecurityConfigurationService config,
+        IOptionsMonitor<SubscriberDatabaseServiceOptions> options)
+                : base(config, options)
+    {
+    }
+
+    protected override string GetConnectionString(ISecurityConfigurationService config, IOptionsMonitor<SubscriberDatabaseServiceOptions> options) =>
+        config[$"{options.CurrentValue.ConnectionStringConfigurationKey}-mig"];
+    
+
+    public bool HasMigrationSettings() => this.CreateInstance() != null;
 }

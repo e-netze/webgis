@@ -1,8 +1,9 @@
-using E.Standard.ActiveDirectory;
+﻿using E.Standard.ActiveDirectory;
 using E.Standard.Caching.Abstraction;
 using E.Standard.Json;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace E.Standard.Caching.FileSystem;
@@ -121,15 +122,49 @@ public class FileSystemCache : IKeyValueCache
         }
     }
 
+    public string[] GetAllKeys()
+    {
+        try
+        {
+            List<string> keys = new();
+
+            using (var impersonateContext = _impersonateor.ImpersonateContext(true))
+            {
+                foreach (var fi in new DirectoryInfo(_rootPath).GetFiles("*.json"))
+                {
+                    keys.Add(Filename2Key(fi.Name));
+                }
+            }
+
+            return keys.ToArray();
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public int MaxChunkSize => int.MaxValue;
 
     #endregion
 
     #region Helper
 
-    private string Key2Filename(string username)
+    private string Key2Filename(string key)
     {
-        return username.Replace(":", "~").Replace(@"\", "$") + ".json";
+        return $"{key.Replace(":", "~").Replace(@"\", "$")}.json";
+    }
+
+    private string Filename2Key(string filename)
+    {
+        string key = filename.Replace("~", ":").Replace("$", @"\");
+
+        if (key.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+        {
+            key = key.Substring(0, key.Length - ".json".Length);
+        }
+
+        return key;
     }
 
     private void DeleteExpiredItems()

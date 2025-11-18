@@ -1,6 +1,7 @@
 ﻿using E.Standard.Caching.Abstraction;
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace E.Standard.Caching.InApp;
@@ -38,6 +39,8 @@ public class InAppCache : IKeyValueCache, ICacheClearable
 
         return null;
     }
+
+    public string[] GetAllKeys() => _cache.Keys.ToArray();
 
     public bool Init(string initalParameter)
     {

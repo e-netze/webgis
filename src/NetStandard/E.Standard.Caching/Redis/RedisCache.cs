@@ -1,4 +1,6 @@
 ﻿using E.Standard.Caching.Abstraction;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -223,6 +225,42 @@ public class RedisCache : IKeyValueCache
     public void Remove(long uid)
     {
         Remove(uid.ToString());
+    }
+
+    public string[] GetAllKeys()
+    {
+        try
+        {
+            List<string> keys = new List<string>();
+
+            if (_connection != null)
+            {
+                foreach (var endpoint in _connection.GetEndPoints())
+                {
+                    var server = _connection.GetServer(endpoint);
+
+                    // ensure, it realy a server (not a sentinel)
+                    if (server == null || !server.IsConnected)
+                        continue;
+
+                    foreach (var key in server.Keys(pattern: "*"))
+                    {
+                        keys.Add(key);
+                    }
+                }
+            }
+
+            return keys.ToArray();
+        }
+        catch (Exception)
+        {
+            if (!IsAsideCache)
+            {
+                throw;
+            }
+        }
+
+        return [];
     }
 
     public int MaxChunkSize => int.MaxValue;

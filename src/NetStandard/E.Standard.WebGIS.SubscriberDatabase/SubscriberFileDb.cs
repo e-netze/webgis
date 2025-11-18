@@ -26,9 +26,21 @@ public class SubscriberFileDb : ISubscriberDb
 
     #region Subsciber
 
-    public bool CreateApiSubscriber(SubscriberDb.Subscriber subscriber)
+    public bool CreateApiSubscriber(SubscriberDb.Subscriber subscriber, bool identityInsert)
     {
-        subscriber.Id = CreatePseudoId();
+        string id = (identityInsert ? subscriber.Id : CreatePseudoId())?.Trim();
+
+        if (String.IsNullOrEmpty(id))
+        {
+            throw new ArgumentException("Subscriber ID cannot be null or empty.");
+        }
+
+        if (this.GetSubscriberById(id) is not null)
+        {
+            throw new Exception("Subscriber with the same ID already exists.");
+        }
+
+        subscriber.Id = id;
         subscriber.Name = subscriber.Name.ToLower();
         subscriber.Email = subscriber.Email.ToLower();
         subscriber.LastLogin = DateTime.UtcNow;
@@ -158,9 +170,21 @@ public class SubscriberFileDb : ISubscriberDb
 
     #region Clients
 
-    public bool CreateApiClient(SubscriberDb.Client client)
+    public bool CreateApiClient(SubscriberDb.Client client, bool identityInsert)
     {
-        client.Id = CreatePseudoId();
+        string id = (identityInsert ? client.Id : CreatePseudoId())?.Trim();
+
+        if (String.IsNullOrEmpty(id))
+        {
+            throw new ArgumentException("Client ID cannot be null or empty.");
+        }
+
+        if (this.GetClientByClientId(id) is not null)
+        {
+            throw new Exception("Client with the same ID already exists.");
+        }
+
+        client.Id = id;
         client.ClientName = client.ClientName.ToLower();
 
         File.WriteAllText(Path.Combine(ClientsRootPath, $"{client.Subscriber}.{client.ClientId}.json"), JSerializer.Serialize(client));

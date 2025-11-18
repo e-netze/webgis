@@ -17,9 +17,14 @@ public class KeyValueCacheService : IKeyValueCache
     private readonly ISecurityConfigurationService _config;
     private readonly ICryptoService _crypto;
     private readonly KeyValueCacheServiceOptions _options;
-    
+
     private IKeyValueCache _keyValueCache = null;
     private IKeyValueCache _asideKeyValueCache = null;
+
+    protected string CacheProviderConfigValue;
+    protected string CacheConnectionStringConfigValue;
+    protected string CacheAsideProviderConfigValue;
+    protected string CacheAsideConnectionStringConfigValue;
 
     public KeyValueCacheService(ISecurityConfigurationService config,
                                 ICryptoService crypto,
@@ -28,6 +33,8 @@ public class KeyValueCacheService : IKeyValueCache
         _config = config;
         _crypto = crypto;
         _options = optionsMonitor.CurrentValue;
+
+        IntializeConnectionStrings(_config, _options);
 
         Init(String.Empty);
     }
@@ -57,13 +64,13 @@ public class KeyValueCacheService : IKeyValueCache
     {
         if (_keyValueCache == null)
         {
-            string cacheProvider = _config[_options.CacheProviderConfigValue];
-            string cacheConnectionString = _config[_options.CacheConnectionStringConfigValue];
+            string cacheProvider = _config[CacheProviderConfigValue];
+            string cacheConnectionString = _config[CacheConnectionStringConfigValue];
 
             _keyValueCache = Build(cacheProvider, cacheConnectionString, false, _config[_options.ImpersonateUserConfigValue]) ?? new DummyCache();
 
-            string cacheAsideProvider = _config[_options.CacheAsideProviderConfigValue];
-            string cacheAsideConnectionString = _config[_options.CacheAsideConnectionStringConfigValue];
+            string cacheAsideProvider = _config[CacheAsideProviderConfigValue];
+            string cacheAsideConnectionString = _config[CacheAsideConnectionStringConfigValue];
 
             _asideKeyValueCache = Build(cacheAsideProvider, cacheAsideConnectionString, true, _config[_options.ImpersonateUserConfigValue]);
         }
@@ -123,7 +130,17 @@ public class KeyValueCacheService : IKeyValueCache
         }
     }
 
+    public string[] GetAllKeys() => _keyValueCache.GetAllKeys();
+
     #endregion
+
+    protected virtual void IntializeConnectionStrings(ISecurityConfigurationService config, KeyValueCacheServiceOptions options)
+    {
+        CacheProviderConfigValue = options.CacheProviderConfigValue;
+        CacheConnectionStringConfigValue = options.CacheConnectionStringConfigValue;
+        CacheAsideProviderConfigValue = options.CacheAsideProviderConfigValue;
+        CacheAsideConnectionStringConfigValue = options.CacheAsideConnectionStringConfigValue;
+    }
 
     public Type KeyValueCacheType => _keyValueCache?.GetType();
     public Type KeyValueCacheAsideType => _asideKeyValueCache?.GetType();
@@ -213,5 +230,46 @@ public class KeyValueCacheService : IKeyValueCache
         return keyValueCache;
     }
 
+
     #endregion
+}
+
+public class MigrateKeyValueCacheService : KeyValueCacheService
+{
+    private readonly ISecurityConfigurationService _config;
+    private readonly KeyValueCacheServiceOptions _options;
+
+    public MigrateKeyValueCacheService(ISecurityConfigurationService config,
+                                ICryptoService crypto,
+                                IOptionsMonitor<KeyValueCacheServiceOptions> optionsMonitor)
+        : base(config, crypto, optionsMonitor)
+    {
+        _config = config;
+        _options = optionsMonitor.CurrentValue;
+    }
+
+    public bool HasMigrationSettings()
+    {
+        if(!String.IsNullOrEmpty(_config[this.CacheProviderConfigValue]) 
+            && _config[_options.CacheProviderConfigValue] != _config[this.CacheProviderConfigValue])
+        {
+            return true;
+        }
+
+        if (!String.IsNullOrEmpty(_config[this.CacheConnectionStringConfigValue])
+            && _config[_options.CacheConnectionStringConfigValue] != _config[this.CacheConnectionStringConfigValue])
+        {
+            return true;
+        }
+
+        return false;   
+    }
+
+    protected override void IntializeConnectionStrings(ISecurityConfigurationService config, KeyValueCacheServiceOptions options)
+    {
+        CacheProviderConfigValue = $"{options.CacheProviderConfigValue}-mig";
+        CacheConnectionStringConfigValue = $"{options.CacheConnectionStringConfigValue}-mig";
+        CacheAsideProviderConfigValue = "";
+        CacheAsideConnectionStringConfigValue = "";
+    }
 }

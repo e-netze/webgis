@@ -1,4 +1,6 @@
-﻿using E.Standard.Api.App.Services;
+﻿#nullable enable
+
+using E.Standard.Api.App.Services;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.Caching.Services;
 using E.Standard.DbConnector.Schema;
@@ -12,19 +14,19 @@ namespace E.Standard.Api.App;
 public class Setup
 {
     public string Start(CacheService cacheService,
-                        KeyValueCacheService keyValueCacke,
-                        SubscriberDatabaseService subscriberDb,
+                        KeyValueCacheService? keyValueCacke,
+                        SubscriberDatabaseService? subscriberDb,
                         IEnumerable<IExpectableUserRoleNamesProvider> expectableUserRolesNamesProviders)
     {
         bool succeeded = true;
 
         cacheService.Init(expectableUserRolesNamesProviders);
 
-        Dictionary<string, object> instances = new Dictionary<string, object>();
+        Dictionary<string, object?> instances = new Dictionary<string, object?>();
 
-        instances.Add("Cache", keyValueCacke.KeyValueCacheInstance);
-        instances.Add("Cache Aside", keyValueCacke.KeyValueCacheAsideInstance);
-        instances.Add("Subscriber Db", subscriberDb.CreateInstance());
+        instances.Add("Cache", keyValueCacke?.KeyValueCacheInstance);
+        instances.Add("Cache Aside", keyValueCacke?.KeyValueCacheAsideInstance);
+        instances.Add("Subscriber Db", subscriberDb?.CreateInstance());
         instances.Add("P4", ApiGlobals.SRefStore.SpatialReferences);
 
         StringBuilder console = new StringBuilder();

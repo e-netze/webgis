@@ -1,4 +1,4 @@
-using E.Standard.DbConnector;
+﻿using E.Standard.DbConnector;
 using E.Standard.DbConnector.Schema;
 using E.Standard.Security.Cryptography.Extensions;
 using Microsoft.Extensions.Logging;
@@ -66,8 +66,13 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
 
     #region Subscribers
 
-    public bool CreateApiSubscriber(Subscriber subscriber)
+    public bool CreateApiSubscriber(Subscriber subscriber, bool migrate = false)
     {
+        if (migrate == true)
+        {
+            throw new NotSupportedException("Migration: Identity Insert is not supported for Dabase SubscriberDbs.");
+        }
+
         using (DBConnection conn = new DBConnection())
         {
             conn.OleDbConnectionMDB = _connectionString;
@@ -315,8 +320,13 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
 
     #region Clients
 
-    public bool CreateApiClient(Client client)
+    public bool CreateApiClient(Client client, bool migrate = false)
     {
+        if (migrate == true)
+        {
+            throw new NotSupportedException("Identity Insert is not supported for Dabase SubscriberDbs.");
+        }
+
         using (DBConnection conn = new DBConnection())
         {
             conn.OleDbConnectionMDB = _connectionString;
