@@ -47,16 +47,16 @@ public class JsonDeserializerTests
         var deserializedObject2 = JSerializer.Deserialize<DtoWithString>(json)!;
 
         // Assert
-        Assert.Equal(deserializedObject1.Id, "1729");
-        Assert.Equal(deserializedObject2.Id, "1729");
+        Assert.Equal("1729", deserializedObject1.Id);
+        Assert.Equal("1729", deserializedObject2.Id);
     }
 
     #region Classes
 
     private class DtoWithString
     {
-        [System.Text.Json.Serialization.JsonConverter(typeof(StringConverter))] 
-        public string Id { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(StringConverter))]
+        public string Id { get; set; } = "";
     }
 
     #endregion

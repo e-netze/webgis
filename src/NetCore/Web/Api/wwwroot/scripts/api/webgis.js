@@ -24,7 +24,7 @@
         load_proj: true,
         prefer_fetch_api: true
     };
-    this.loadedScripts = {
+    this.loadedScripts = { 
         mapFramework: false,
         mapFramework_dependencies: false,
         markerCluster: false,

@@ -1,22 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <TargetFramework>net9.0</TargetFramework>
+	  <TargetFramework>net10.0</TargetFramework>
 	  <LangVersion>13</LangVersion>
     <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.8.0" />
-    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.54.1" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.55.0" />
     <!--<PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.22.0" />-->
     <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.2.3" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.10" />
     <!--
 	<PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.3.0" />
 	-->
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
-	<PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>

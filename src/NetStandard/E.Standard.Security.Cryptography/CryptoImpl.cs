@@ -559,16 +559,23 @@ public partial class CryptoImpl
             hash = algorithm.ComputeHash(initialBytes);
         }
 
-        var ret = new byte[size];
-        Buffer.BlockCopy(hash, 0, ret, 0, Math.Min(hash.Length, ret.Length));
+        //var ret = new byte[size];
+        //Buffer.BlockCopy(hash, 0, ret, 0, Math.Min(hash.Length, ret.Length));
 
-        byte[] saltBytes = new byte[] { 176, 223, 23, 125, 64, 98, 177, 214 };
-        var key = new Rfc2898DeriveBytes(
+        //byte[] saltBytes = new byte[] { 176, 223, 23, 125, 64, 98, 177, 214 };
+        //var key = new Rfc2898DeriveBytes(
+        //    hash,
+        //    _options.HashBytesSalt,
+        //    10, // 10 is enough for this...
+        //    hashAlgorithm: HashAlgorithmName.SHA1);
+        //ret = key.GetBytes(size);
+
+        var ret = Rfc2898DeriveBytes.Pbkdf2(
             hash,
             _options.HashBytesSalt,
             10, // 10 is enough for this...
-            hashAlgorithm: HashAlgorithmName.SHA1);
-        ret = key.GetBytes(size);
+            hashAlgorithm: HashAlgorithmName.SHA1,
+            outputLength: size);
 
         return ret;
     }
