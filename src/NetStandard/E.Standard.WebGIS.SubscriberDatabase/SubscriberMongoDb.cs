@@ -284,6 +284,17 @@ public class SubscriberMongoDb : ISubscriberDb2
         return true;
     }
 
+    public SubscriberDb.Client[] GetAllClients()
+    {
+        var collection = ClientCollection();
+
+        return collection
+            .Find(_ => true)
+            .ToList()
+            .Select(i => i.ToClient())
+            .ToArray();
+    }
+
     #endregion
 
     #endregion

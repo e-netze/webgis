@@ -1,8 +1,7 @@
 ﻿//#define ADD_IDENTITYSERVER
 //#define ADD_MESSAGEQUEUE
 //#define ADD_REDIS
-//#define POSTGRES
-//#define GVIEW
+//#define ADD_MCP
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -149,7 +148,11 @@ var webgisCms = builder.AddProject<Projects.webgis_cms>("webgis-cms")
 
 #region MCP
 
+#if ADD_MCP
+
 builder.AddProject<Projects.webgis_api_mcp>("webgis-api-mcp");
+
+#endif
 
 #endregion
 
