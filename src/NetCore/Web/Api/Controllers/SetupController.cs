@@ -114,16 +114,27 @@ public class SetupController : ApiBaseController
             migrateResponse.Append(Environment.NewLine);
 
             // migrate the keys
-            foreach(var key in _keyValueCache.GetAllKeys())
+            migrateResponse.Append("MIGRATE");
+            migrateResponse.Append(Environment.NewLine);
+            migrateResponse.Append("###################################################");
+            migrateResponse.Append(Environment.NewLine);
+
+            foreach (var key in _keyValueCache.GetAllKeys())
             {
                 string val = _keyValueCache.Get(key);
                 migrateResponse.Append($"Migriage {key}...");
                 _migrateKeyValueCacheService.Set(key, val);
                 migrateResponse.Append(Environment.NewLine);
             }
+
+            migrateResponse.Append("Done...");
+            migrateResponse.Append(Environment.NewLine);
+            migrateResponse.Append("###################################################");
+            migrateResponse.Append(Environment.NewLine);
+
         }
-        
-        if(_migrateSubscriberDb.HasMigrationSettings())
+
+        if (_migrateSubscriberDb.HasMigrationSettings())
         {
             migrateResponse.Append("Migrate SubscriberDatabase");
             migrateResponse.Append(Environment.NewLine);
@@ -135,21 +146,53 @@ public class SetupController : ApiBaseController
             migrateResponse.Append(Environment.NewLine);
 
             // migrate the subscribers
+            migrateResponse.Append("MIGRATE");
+            migrateResponse.Append(Environment.NewLine);
+            migrateResponse.Append("###################################################");
+            migrateResponse.Append(Environment.NewLine);
+
             var sourceSubscriberDb = _subscriberDb.CreateInstance();
             var targetSubscriberDb = _migrateSubscriberDb.CreateInstance();
-            foreach (var subscriber in sourceSubscriberDb.GetSubscribers())
+            if (sourceSubscriberDb is null || targetSubscriberDb is null)
             {
-                migrateResponse.Append($"Migriage {subscriber.Name}({subscriber.Id})...");
-                targetSubscriberDb.CreateApiSubscriber(subscriber, true);
-                migrateResponse.Append(Environment.NewLine);
-
-                // migrate api clients
-                foreach (var apiClient in sourceSubscriberDb.GetSubscriptionClients(subscriber.Id))
+                migrateResponse.Append("Migration SubscriberDatabase instances could not be created.");
+            }
+            else
+            {
+                foreach (var subscriber in sourceSubscriberDb.GetSubscribers())
                 {
+                    if (targetSubscriberDb.GetSubscriberByName(subscriber.Name) is not null)
+                    {
+                        migrateResponse.Append($"Subscriber {subscriber.Name}({subscriber.Id}) already migrated, skipping...");
+                        migrateResponse.Append(Environment.NewLine);
+
+                        continue;
+                    }
+
+                    migrateResponse.Append($"Migriage {subscriber.Name}({subscriber.Id})...");
+                    targetSubscriberDb.CreateApiSubscriber(subscriber, true);
+                    migrateResponse.Append(Environment.NewLine);
+                }
+
+                foreach (var apiClient in sourceSubscriberDb.GetAllClients())
+                {
+                    if (targetSubscriberDb.GetClientByClientId(apiClient.ClientId) is not null)
+                    {
+                        migrateResponse.Append($"API Client {apiClient.ClientName}({apiClient.Id}) already migrated, skipping...");
+                        migrateResponse.Append(Environment.NewLine);
+
+                        continue;
+                    }
+
                     migrateResponse.Append($"Migriage API Client {apiClient.ClientName}({apiClient.Id})...");
                     targetSubscriberDb.CreateApiClient(apiClient, true);
                     migrateResponse.Append(Environment.NewLine);
                 }
+
+                migrateResponse.Append("Done...");
+                migrateResponse.Append(Environment.NewLine);
+                migrateResponse.Append("###################################################");
+                migrateResponse.Append(Environment.NewLine);
             }
         }
 

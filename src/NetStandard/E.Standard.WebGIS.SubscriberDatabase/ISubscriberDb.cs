@@ -33,6 +33,8 @@ public interface ISubscriberDb
 
     bool DeleteApiClient(SubscriberDb.Client client);
 
+    SubscriberDb.Client[] GetAllClients();
+
     #region Favorites
 
     Task<UserFavoriteStatus> GetFavUserStatusAsync(string username);

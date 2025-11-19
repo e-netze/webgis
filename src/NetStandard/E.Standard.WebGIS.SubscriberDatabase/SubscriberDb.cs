@@ -495,6 +495,26 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
         }
     }
 
+    public SubscriberDb.Client[] GetAllClients()
+    {
+        using (DBConnection conn = new DBConnection())
+        {
+            conn.OleDbConnectionMDB = _connectionString;
+
+            using (DbConnection dbconn = conn.GetConnection())
+            {
+                DbCommand command = conn.GetCommand();
+                command.Connection = dbconn;
+
+                command.CommandText = "select * from webgis_api_clients";
+
+                dbconn.Open();
+                var reader = command.ExecuteReader();
+                return ReadClients(reader);
+            }
+        }
+    }
+
     #endregion
 
     #region Favorites

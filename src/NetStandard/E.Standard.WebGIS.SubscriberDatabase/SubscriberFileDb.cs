@@ -28,7 +28,7 @@ public class SubscriberFileDb : ISubscriberDb
 
     public bool CreateApiSubscriber(SubscriberDb.Subscriber subscriber, bool identityInsert)
     {
-        string id = (identityInsert ? subscriber.Id : CreatePseudoId())?.Trim();
+        string id = (identityInsert ? subscriber.Id : CreatePseudoId()).Trim();
 
         if (String.IsNullOrEmpty(id))
         {
@@ -172,7 +172,7 @@ public class SubscriberFileDb : ISubscriberDb
 
     public bool CreateApiClient(SubscriberDb.Client client, bool identityInsert)
     {
-        string id = (identityInsert ? client.Id : CreatePseudoId())?.Trim();
+        string id = (identityInsert ? client.Id : CreatePseudoId()).Trim();
 
         if (String.IsNullOrEmpty(id))
         {
@@ -259,6 +259,27 @@ public class SubscriberFileDb : ISubscriberDb
     public SubscriberDb.Client? GetClientByName(SubscriberDb.Subscriber subscriber, string clientName)
     {
         return GetSubscriptionClients(subscriber.Id).Where(c => c.ClientName == clientName.ToLower()).FirstOrDefault();
+    }
+
+    public SubscriberDb.Client[] GetAllClients()
+    {
+        List<SubscriberDb.Client> clients = new List<SubscriberDb.Client>();
+
+        foreach (var fileInfo in new DirectoryInfo(ClientsRootPath).GetFiles("*.json"))
+        {
+            try
+            {
+                var client = JSerializer.Deserialize<SubscriberDb.Client>(File.ReadAllText(fileInfo.FullName));
+
+                if (client is not null)
+                {
+                    clients.Add(client);
+                }
+            }
+            catch { }
+        }
+
+        return clients.ToArray();
     }
 
     #endregion
