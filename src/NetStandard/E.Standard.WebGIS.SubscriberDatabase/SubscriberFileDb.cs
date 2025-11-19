@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.SubscriberDatabase;
 
-public class SubscriberFileDb : ISubscriberDb
+public class SubscriberFileDb : ISubscriberDb2
 {
     private readonly string _rootPath;
     private readonly ILogger? _logger;
@@ -283,6 +283,42 @@ public class SubscriberFileDb : ISubscriberDb
     }
 
     #endregion
+
+    #endregion
+
+    #region ISubscriberDb2
+
+    public string GenerateNewClientId() => "";
+
+    public Task<bool> ApplyClientCmsId(SubscriberDb.Client client, string cmsId, bool add)
+    {
+        var roles = new List<string>();
+        if (client.Roles != null)
+        {
+            roles.AddRange(client.Roles);
+        }
+
+        bool store = false;
+
+        if (add == true && !roles.Contains(SubscriberDb.Client.CmsRolePrefix + cmsId))
+        {
+            roles.Add(SubscriberDb.Client.CmsRolePrefix + cmsId);
+            store = true;
+        }
+        else if (add == false && roles.Contains(SubscriberDb.Client.CmsRolePrefix + cmsId))
+        {
+            roles.Remove(SubscriberDb.Client.CmsRolePrefix + cmsId);
+            store = true;
+        }
+
+        if (store)
+        {
+            client.Roles = roles;
+            UpdateApiClient(client);
+        }
+
+        return Task.FromResult(true);
+    }
 
     #endregion
 

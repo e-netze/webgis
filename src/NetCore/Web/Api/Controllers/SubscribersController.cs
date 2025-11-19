@@ -12,6 +12,7 @@ using E.Standard.Api.App.Reflection;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core;
 using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Security.App.Exceptions;
 using E.Standard.Security.App.Json;
@@ -484,7 +485,7 @@ public class SubscribersController : ApiBaseController
             string clientId = Guid.NewGuid().ToString("N").ToLower();
             if (db is ISubscriberDb2)
             {
-                clientId = ((ISubscriberDb2)db).GenerateNewClientId();
+                clientId = ((ISubscriberDb2)db).GenerateNewClientId().OrTake(clientId);
             }
 
             var client = new UpdateClient();
