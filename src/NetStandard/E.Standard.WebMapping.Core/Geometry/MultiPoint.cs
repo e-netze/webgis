@@ -76,4 +76,9 @@ public sealed class MultiPoint : PointCollection
             base.AppendMuiltiparts(shape);
         }
     }
+
+    public override bool IsValid()
+    {
+        return this._points?.Count >= 1;
+    }
 }
