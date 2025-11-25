@@ -50,7 +50,8 @@ var identityServer = builder.AddIdentityServerNET("is-net-dev", httpsPort: 8443)
        .Build()
        .WithContainerName("webgis-identityserver-net")
        .WithLifetime(ContainerLifetime.Persistent)
-       .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development");
+       //.WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
+       ;
 
 #endregion
 #endif
