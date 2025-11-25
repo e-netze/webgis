@@ -272,9 +272,9 @@ public class UpdateFeature : IApiServerToolLocalizable<Edit>,
     #region Commands
 
     [ServerToolCommand("save")]
-    async public Task<ApiEventResponse> OnSave(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnSave(IBridge bridge, ApiToolEventArguments e, ILocalizer<UpdateFeature> localizer)
     {
-        return await _updateFeatureService.SaveFeature(bridge, e, new EditSelectUpdateFeature()
+        return await _updateFeatureService.SaveFeature(bridge, e, localizer, new EditSelectUpdateFeature()
         {
             ParentTool = new Edit()
         });

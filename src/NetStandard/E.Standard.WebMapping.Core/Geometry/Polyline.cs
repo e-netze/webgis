@@ -323,4 +323,14 @@ public sealed class Polyline : Shape
     {
         return _paths?.ToArray() ?? new Path[0];
     }
+
+    public override bool IsValid()
+    {
+        if(this._paths is null || this._paths.Count == 0)
+        {
+            return false;
+        }
+
+        return _paths.All(p => p.IsValid());
+    }
 }

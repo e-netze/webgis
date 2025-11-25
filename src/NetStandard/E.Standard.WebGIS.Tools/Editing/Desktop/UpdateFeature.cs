@@ -1,4 +1,5 @@
-﻿using E.Standard.Localization.Reflection;
+﻿using E.Standard.Localization.Abstractions;
+using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 using E.Standard.WebGIS.Tools.Editing.Environment;
@@ -196,9 +197,9 @@ public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolPersistenceC
     #region Commands
 
     [ServerToolCommand("save")]
-    async public Task<ApiEventResponse> OnSave(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnSave(IBridge bridge, ApiToolEventArguments e, ILocalizer<UpdateFeature> localizer)
     {
-        return await _updateFeatureService.SaveFeature(bridge, e, new Edit());
+        return await _updateFeatureService.SaveFeature(bridge, e, localizer, new Edit());
     }
 
     [ServerToolCommand("select-by-legend")]

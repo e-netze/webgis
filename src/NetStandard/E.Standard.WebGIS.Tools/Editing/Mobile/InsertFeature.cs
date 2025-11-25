@@ -243,12 +243,16 @@ public class InsertFeature : IApiServerToolLocalizableAsync<InsertFeature>,
         var feature = editEnvironment.GetFeature(bridge, e);
         if (feature == null)
         {
-            throw new Exception(localizer.Localize("mobile.exception-save-no-feature"));
+            throw new Exception(localizer.Localize("feature.exception-save-no-feature"));
         }
 
         if (feature.Shape == null)
         {
-            throw new Exception(localizer.Localize("mobile.exception-save-no-geometry"));
+            throw new Exception(localizer.Localize("shape.exception-save-no-geometry"));
+        }
+        if (feature.Shape.IsValid() == false)
+        {
+            throw new Exception(localizer.Localize("shape.exception-save-invalid-geometry"));
         }
 
         var editTheme = editEnvironment[e];
