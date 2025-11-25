@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Compare;
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Models;
@@ -151,6 +152,7 @@ internal class UpdateFeatureService
 
     async public Task<ApiEventResponse> SaveFeature(IBridge bridge,
                                                     ApiToolEventArguments e,
+                                                    ILocalizer localizer,
                                                     IApiTool newActiveTool = null)
     {
         EditEnvironment editEnvironment = new EditEnvironment(bridge, e)
@@ -165,6 +167,17 @@ internal class UpdateFeatureService
         if (!editTheme.DbRights.Contains("g"))
         {
             feature.Shape = null;
+        }
+        else
+        {
+            if(feature.Shape == null)
+            {
+                throw new Exception(localizer.Localize("shape.exception-save-no-geometry"));
+            }
+            if (feature.Shape.IsValid() == false)
+            {
+                throw new Exception(localizer.Localize("shape.exception-save-invalid-geometry"));
+            }
         }
 
         await editEnvironment.UpdateFeature(editTheme, feature);

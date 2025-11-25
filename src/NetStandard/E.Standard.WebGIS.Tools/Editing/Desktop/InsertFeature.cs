@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Collections;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Environment;
@@ -129,7 +130,7 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
     #region Commands
 
     [ServerToolCommand("save")]
-    async public Task<ApiEventResponse> OnSave(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnSave(IBridge bridge, ApiToolEventArguments e, ILocalizer<InsertFeature> localizer)
     {
         EditEnvironment editEnvironment = new EditEnvironment(bridge, e)
         {
@@ -138,12 +139,16 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
         var feature = editEnvironment.GetFeature(bridge, e);
         if (feature == null)
         {
-            throw new Exception("Es wurde keine Feature übergeben");
+            throw new Exception(localizer.Localize("feature.exception-save-no-feature"));
         }
 
         if (feature.Shape == null)
         {
-            throw new Exception("Das Objekt besitzt noch keine Lage/Geometrie. Zum Speichern bitte Lage/Geometrie bearbeiten");
+            throw new Exception(localizer.Localize("shape.exception-save-no-geometry"));
+        }
+        if (feature.Shape.IsValid() == false)
+        {
+            throw new Exception(localizer.Localize("shape.exception-save-invalid-geometry"));
         }
 
         var editTheme = editEnvironment[e];
@@ -178,16 +183,16 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
     }
 
     [ServerToolCommand("saveandselect")]
-    async public Task<ApiEventResponse> OnSaveAndSelect(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnSaveAndSelect(IBridge bridge, ApiToolEventArguments e, ILocalizer<InsertFeature> localizer)
     {
         e["_select"] = "true";
-        return await OnSave(bridge, e);
+        return await OnSave(bridge, e, localizer);
     }
-
+    
     [ServerToolCommand("save-and-keep-attributes")]
-    async public Task<ApiEventResponse> OnSaveKeepAttributes(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnSaveKeepAttributes(IBridge bridge, ApiToolEventArguments e, ILocalizer<InsertFeature> localizer)
     {
-        var response = await OnSave(bridge, e);
+        var response = await OnSave(bridge, e, localizer);
 
         response.ActiveTool = this;
 
@@ -200,9 +205,9 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
     }
 
     [ServerToolCommand("save-and-continue-sketch")]
-    async public Task<ApiEventResponse> OnSaveAndContinueSketch(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnSaveAndContinueSketch(IBridge bridge, ApiToolEventArguments e, ILocalizer<InsertFeature> localizer)
     {
-        var response = await OnSave(bridge, e);
+        var response = await OnSave(bridge, e, localizer);
 
         response.ActiveTool = this;
 
@@ -215,9 +220,9 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
     }
 
     [ServerToolCommand("save-and-continue-sketch-keep-attributes")]
-    async public Task<ApiEventResponse> OnSaveAndContinueSketchKeepAttributes(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnSaveAndContinueSketchKeepAttributes(IBridge bridge, ApiToolEventArguments e, ILocalizer<InsertFeature> localizer)
     {
-        var response = await OnSave(bridge, e);
+        var response = await OnSave(bridge, e, localizer);
 
         response.ActiveTool = this;
 

@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 7.25.4601
 
+### Added
+
+- Editing: Check, if geometry is valid before saving (insert/update) feature
+  - Lines must consist of at least 2 points
+  - Areas must consist of at least 3 points
+
+## 7.25.4601
+
 ### Fixed
 
 - Interpret scale for ``all-queries``, ``all-editthemes``, etc like in the TOC (same as MapServers like AGS do) (JS method: ``map.crcScale()``) instead of scale showed in the Viewer
