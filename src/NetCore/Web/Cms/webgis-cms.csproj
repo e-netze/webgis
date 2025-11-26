@@ -70,9 +70,9 @@
 
   <ItemGroup>
 	<PackageReference Include="BuildBundlerMinifier2022" Version="2.9.11" />
-    <PackageReference Include="E.DataLinq.Code" Version="7.25.4302" />
-    <PackageReference Include="E.DataLinq.Core" Version="7.25.4302" />
-    <PackageReference Include="E.DataLinq.Web.Api.Client" Version="7.25.4302" />
+    <PackageReference Include="E.DataLinq.Code" Version="8.25.4801" />
+    <PackageReference Include="E.DataLinq.Core" Version="8.25.4801" />
+    <PackageReference Include="E.DataLinq.Web.Api.Client" Version="8.25.4801" />
     <PackageReference Include="jquery.TypeScript.DefinitelyTyped" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.0" />
