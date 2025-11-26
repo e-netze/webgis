@@ -56,7 +56,7 @@
     <PackageReference Include="E.DataLinq.Core" Version="8.25.4801" />
     <PackageReference Include="E.DataLinq.Engine.MsSqlServer" Version="8.25.4801" />
     <PackageReference Include="E.DataLinq.Engine.OracleClient" Version="8.25.4801" />
-    <PackageReference Include="E.DataLinq.Engine.Postgres" Version="7.25.4005" />
+    <PackageReference Include="E.DataLinq.Engine.Postgres" Version="8.25.4801" />
     <PackageReference Include="E.DataLinq.Engine.SQLite" Version="8.25.4801" />
     <PackageReference Include="E.DataLinq.Engine.SqlServer-legacy" Version="8.25.4801" />
     <PackageReference Include="E.DataLinq.Web" Version="8.25.4801" />
