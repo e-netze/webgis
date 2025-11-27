@@ -260,17 +260,17 @@ static public class ServiceCollectionExtensions
             {
                 List<string> customCssUrls = new List<string>(new[]
                 {
-                $"~/content/styles/default.css?{WebGISVersion.CssVersion}",
-                $"~/content/Site.css?{WebGISVersion.CssVersion}"
-            });
+                    $"~/content/styles/default.css?{WebGISVersion.CssVersion}",
+                    $"~/content/Site.css?{WebGISVersion.CssVersion}"
+                });
                 customCssUrls.AddRange(configuration.DataLinqCustomCssUrls(WebGISVersion.CssVersion));
 
                 var customReportJavascriptUrls = new List<string>(new[]
-                {
-                $"src=~/scripts/api/api.min.js?{WebGISVersion.JsVersion};id=webgis-api-script",
-                $"~/scripts/api/api-ui.min.js?{WebGISVersion.JsVersion}",
-                $"~/scripts/api/datalinq-overrides.js?{WebGISVersion.JsVersion}"
-            });
+                    {
+                    $"src=~/scripts/api/api.min.js?{WebGISVersion.JsVersion};id=webgis-api-script",
+                    $"~/scripts/api/api-ui.min.js?{WebGISVersion.JsVersion}",
+                    $"~/scripts/api/datalinq-overrides.js?{WebGISVersion.JsVersion}"
+                });
                 customReportJavascriptUrls.AddRange(configuration.DataLinqCustomJavaScriptUrls(WebGISVersion.JsVersion));
 
                 config.CustomReportCssUrls = customCssUrls.ToArray();
@@ -386,6 +386,7 @@ static public class ServiceCollectionExtensions
             .AddDataLinqCodeApiServices<DataLinqCodeIdentityProvider>(config =>
             {
                 config.DataLinqCodeClients = configuration.DataLinqCodeApiClients()?.ToArray();
+                config.InitializeSandboxOnStartup = configuration.DataLinqInitlaizeSandboxOnStartup();
             });
     }
 
