@@ -1,4 +1,7 @@
-﻿using System;
+﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
+using E.Standard.Platform;
+using System;
 
 namespace E.Standard.WebGIS.CmsSchema.Extensions;
 internal static class StringExtensions
@@ -27,5 +30,26 @@ internal static class StringExtensions
         }
 
         return password;
+    }
+
+    static public string TrimAndAppendSchemaNodePath(this string relativePath, int trim, string schemaNodePath)
+    {
+        string trimedPath = relativePath.TrimRightRelativeCmsPath(trim).TrimEnd('/', '\\');
+        if (SystemInfo.IsLinux)
+        {
+            // in linux schemaNodePath is always lower case
+            schemaNodePath = schemaNodePath.ToLowerInvariant();
+        }
+
+        if (string.IsNullOrWhiteSpace(trimedPath))
+        {
+            return schemaNodePath;
+        }
+
+        schemaNodePath = schemaNodePath.TrimStart('/', '\\');
+
+        
+
+        return $"{trimedPath}/{schemaNodePath}";
     }
 }

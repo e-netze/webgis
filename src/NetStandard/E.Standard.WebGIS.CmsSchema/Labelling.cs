@@ -1,9 +1,11 @@
-using E.Standard.CMS.Core;
+﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
+using E.Standard.WebGIS.CmsSchema.Extensions;
 using E.Standard.WebGIS.CmsSchema.UI;
 using System;
 using System.ComponentModel;
@@ -43,7 +45,7 @@ public class Labelling : NameUrl, ICreatable, IUI, IDisplayName
 
     public Task<bool> CreatedAsync(string FullName)
     {
-        var serviceLayer = this.CmsManager.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(this.RelativePath, 3) + "/Themes", true)
+        var serviceLayer = this.CmsManager.SchemaNodeInstances(_servicePack, this.RelativePath.TrimAndAppendSchemaNodePath(3, "Themes"), true)
             .Where(o => o is ServiceLayer && ((ServiceLayer)o).Id == this.LabellingThemeId)
             .FirstOrDefault() as ServiceLayer;
 
@@ -54,7 +56,7 @@ public class Labelling : NameUrl, ICreatable, IUI, IDisplayName
             string newLinkName = Helper.NewLinkName();
             IStreamDocument xmlStream = DocumentFactory.New(this.CmsManager.ConnectionString);
             link.Save(xmlStream);
-            xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + Helper.TrimPathRight(this.RelativePath, 1) + @"/LabellingTheme/" + newLinkName);
+            xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + this.RelativePath.TrimAndAppendSchemaNodePath(1, "LabellingTheme") + "/" + newLinkName);
         }
 
         return Task<bool>.FromResult(true);
@@ -193,7 +195,7 @@ public class LabellingFieldAssistent : SchemaNode, IAutoCreatable, IUI
             return false;
         }
 
-        string path = this.CmsManager.ConnectionString + @"/" + Helper.TrimPathRight(this.RelativePath, 1);
+        string path = this.CmsManager.ConnectionString + @"/" + this.RelativePath.TrimRightRelativeCmsPath(1);
         foreach (TableColumnAssistentControl.Field field in _ctrl.SelectedFields)
         {
             LabellingField lField = new LabellingField(_servicePack);

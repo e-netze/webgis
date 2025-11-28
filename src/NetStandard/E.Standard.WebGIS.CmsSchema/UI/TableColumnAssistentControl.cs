@@ -1,9 +1,11 @@
 ﻿using E.Standard.ArcXml;
 using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.UI.Controls;
 using E.Standard.Web.Models;
+using E.Standard.WebGIS.CmsSchema.Extensions;
 using E.Standard.WebGIS.CmsSchema.Legacy;
 using System;
 using System.Collections.Generic;
@@ -52,11 +54,11 @@ public class TableColumnAssistentControl : UserControl
             object[] objects = null;
             if (_node is TableColumnAssistent)
             {
-                objects = _cms.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(_relPath, 2) + "/QueryTheme", true);
+                objects = _cms.SchemaNodeInstances(_servicePack, _relPath.TrimAndAppendSchemaNodePath(2, "QueryTheme"), true);
             }
             else if (_node is LabellingFieldAssistent)
             {
-                objects = _cms.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(_relPath, 2) + "/LabellingTheme", true);
+                objects = _cms.SchemaNodeInstances(_servicePack, _relPath.TrimAndAppendSchemaNodePath(2, "LabellingTheme"), true);
             }
 
             List<(string name, string aliasname)> fields = new List<(string, string)>();
@@ -74,7 +76,7 @@ public class TableColumnAssistentControl : UserControl
                             if (themeLink.LinkUri.StartsWith("services/ims"))
                             {
                                 #region IMS Dienst abfragen
-                                IMSService service = _cms.SchemaNodeInstance(_servicePack, Helper.TrimPathRight(themeLink.LinkUri, 2), true) as IMSService;
+                                IMSService service = _cms.SchemaNodeInstance(_servicePack, themeLink.LinkUri.TrimRightRelativeCmsPath(2), true) as IMSService;
                                 if (service != null)
                                 {
                                     var connectionProperties = new ArcAxlConnectionProperties()
@@ -111,7 +113,7 @@ public class TableColumnAssistentControl : UserControl
                             {
                                 #region ArcGIS Dienst abfragen
 
-                                ArcServerService service = _cms.SchemaNodeInstance(_servicePack, Helper.TrimPathRight(themeLink.LinkUri, 2), true) as ArcServerService;
+                                ArcServerService service = _cms.SchemaNodeInstance(_servicePack, themeLink.LinkUri.TrimRightRelativeCmsPath(2), true) as ArcServerService;
                                 fields.AddRange(await service.GetLayerFieldsAndAliasesAsync(layer.Id));
 
                                 #endregion
@@ -120,7 +122,7 @@ public class TableColumnAssistentControl : UserControl
                             {
                                 #region WFS Dienst abfragen
 
-                                WFSService service = _cms.SchemaNodeInstance(_servicePack, Helper.TrimPathRight(themeLink.LinkUri, 2), true) as WFSService;
+                                WFSService service = _cms.SchemaNodeInstance(_servicePack, themeLink.LinkUri.TrimRightRelativeCmsPath(2), true) as WFSService;
 
                                 RequestAuthorization requestAuthorization = null;
 

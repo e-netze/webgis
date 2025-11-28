@@ -78,7 +78,16 @@ public class IOController : ApplicationSecurityController
     {
         try
         {
-            var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), ExportCms, id);
+            bool forLinux =
+                Request.Form["for-linux"] == "checked" ||
+                Request.Form["for-linux"] == "on" ||
+                Request.Form["for-linux"] == "true"; 
+
+            var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), ExportCms, 
+                new CmsExportDefinition()
+                {
+                    ForLinux = forLinux
+                });
 
             return View(new ExportModel()
             {
@@ -128,9 +137,9 @@ public class IOController : ApplicationSecurityController
 
             process.WriteLine($"export {archivePath}");
 
-            string xml = childDocumentInfo is IXmlConverter ?
-                ((IXmlConverter)childDocumentInfo).ReadAllAsXmlString() :
-                childDocumentInfo.ReadAll();
+            string xml = childDocumentInfo is IXmlConverter xmlConverter 
+                ? xmlConverter.ReadAllAsXmlString() 
+                : childDocumentInfo.ReadAll();
 
             var entry = archive.CreateEntry(archivePath);
             using (StreamWriter writer = new StreamWriter(entry.Open()))
@@ -188,6 +197,7 @@ public class IOController : ApplicationSecurityController
     [HttpGet]
     public IActionResult Import(string id)
     {
+        ViewData["CmsId"] = id;
         return View();
     }
 
@@ -196,9 +206,19 @@ public class IOController : ApplicationSecurityController
     {
         try
         {
+            ViewData["CmsId"] = id;
+
+            if (String.IsNullOrEmpty(id) ||
+               id != Request.Form["confirm-id"])
+            {
+                ViewData["FormError"] = "Insert the correct Cms-Id to confirm clearing the Cms.";
+                return View();
+            }
+
             if (this.Request.Form.Files.Count == 0)
             {
-                throw new Exception("No file uploaded");
+                ViewData["FormError"] = "No file uploaded";
+                return View();
             }
 
             byte[] fileBuffer = new byte[this.Request.Form.Files[0].Length];
@@ -296,10 +316,26 @@ public class IOController : ApplicationSecurityController
                             {
                                 var bytes = reader.ReadBytes((int)entry.Length);
                                 var documentInfo = DocumentFactory.DocumentInfo(cmspath);
-                                if (documentInfo is IXmlConverter)
+                                if (documentInfo is IXmlConverter xmlConverter)
                                 {
-                                    if (((IXmlConverter)documentInfo).WriteXmlData(Encoding.UTF8.GetString(bytes), importDefinition.ImportType == ImportType.UpdateAll))
+                                    if (xmlConverter.WriteXmlData(Encoding.UTF8.GetString(bytes), importDefinition.ImportType == ImportType.UpdateAll))
                                     {
+                                        process.WriteLine("create/update file " + entryPath);
+                                    } 
+                                    else
+                                    {
+                                        process.WriteLine("skip existing file " + entryPath);
+                                    }
+                                } 
+                                else
+                                {
+                                    if (documentInfo.Exists && importDefinition.ImportType == ImportType.OnlyNew)
+                                    {
+                                        process.WriteLine("skip existing file " + entryPath);
+                                    }
+                                    else
+                                    {
+                                        documentInfo.Write(Encoding.UTF8.GetString(bytes));
                                         process.WriteLine("create/update file " + entryPath);
                                     }
                                 }
@@ -363,6 +399,7 @@ public class IOController : ApplicationSecurityController
     {
         try
         {
+            ViewData["CmsId"] = id;
             return View();
         }
         catch (Exception ex)
@@ -376,6 +413,15 @@ public class IOController : ApplicationSecurityController
     {
         try
         {
+            ViewData["CmsId"] = id;
+
+            if (String.IsNullOrEmpty(id) ||
+               id != Request.Form["confirm-id"])
+            {
+                ViewData["FormError"]= "Insert the correct Cms-Id to confirm clearing the Cms.";
+                return View();
+            }
+
             var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), ClearCms, id);
 
             return View(new ClearModel()

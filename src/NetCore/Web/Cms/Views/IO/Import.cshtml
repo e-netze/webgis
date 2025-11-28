@@ -37,7 +37,7 @@
     </div>
 }
 
-<form method="post" enctype="multipart/form-data" class="cms-form">
+<form method="post" enctype="multipart/form-data">
     <div class="input-container">
         <div class="label">Import Typ:</div>
         <select name="ImportType">
@@ -55,6 +55,19 @@
         <input type="file" name="zipFile" />
     </div>
 
+	<br />
+    <br />
+    <p>
+        Bitte geben Sie zur Bestätigung die CMS ID ein: <strong>@ViewData["CmsId"]</strong>
+    </p>
+    <input type="text" name="confirm-id" id="confirm-id" placeholder="CMS ID eingeben..." />
+    <br />
+    @if (ViewData["FormError"] != null)
+    {
+        <div class="error-message">
+            @ViewData["FormError"]
+        </div>
+    }
     <br />
 
     <button type="submit">Import</button>

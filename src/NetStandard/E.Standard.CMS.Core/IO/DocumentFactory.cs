@@ -14,8 +14,8 @@ static public class DocumentFactory
     static public Dictionary<string, Type> DocumentTypes = new Dictionary<string, Type>() { { "", typeof(XmlFileStreamDocument) } };
     static public Dictionary<string, Type> DocumentInfoTypes = new Dictionary<string, Type>() { { "", typeof(FileSystemDocumentInfo) } };
     static public Dictionary<string, Type> PathInfoTypes = new Dictionary<string, Type>() { { "", typeof(FileSystemPathInfo) } };
-    static public Dictionary<string, bool> CanImportValues = new Dictionary<string, bool>() { { "", false } };
-    static public Dictionary<string, bool> CanClearValues = new Dictionary<string, bool>() { { "", false } };
+    static public Dictionary<string, bool> CanImportValues = new Dictionary<string, bool>() { { "", true } };
+    static public Dictionary<string, bool> CanClearValues = new Dictionary<string, bool>() { { "", true } };
 
     static internal List<string> TypeNames = new List<string>();
 
@@ -144,6 +144,9 @@ static public class DocumentFactory
     {
         if (SystemInfo.IsLinux)
         {
+            // Linux schema nodes are case-sensitive,
+            // so we need to convert all schema-node names and urifilterlinks
+            // to lowercase
             var pathInfo = PathInfo(root);
             if (typeof(FileSystemPathInfo).Equals(pathInfo?.GetType()))
             {
@@ -160,7 +163,7 @@ static public class DocumentFactory
                             {
                                 if (!string.IsNullOrEmpty(schemaNode.Attributes[attributeName]?.Value))
                                 {
-                                    schemaNode.Attributes[attributeName].Value = schemaNode.Attributes[attributeName].Value.ToLower();
+                                    schemaNode.Attributes[attributeName].Value = schemaNode.Attributes[attributeName].Value.ToLowerInvariant();
                                 }
                             }
                         }

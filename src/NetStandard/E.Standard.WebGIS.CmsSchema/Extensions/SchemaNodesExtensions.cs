@@ -1,5 +1,6 @@
 ﻿using E.Standard.ArcXml;
 using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.Web.Models;
@@ -39,7 +40,7 @@ static class SchemaNodesExtensions
                         {
                             #region IMS Dienst abfragen
 
-                            IMSService service = cmsManager.SchemaNodeInstance(servicePack, Helper.TrimPathRight(themeLink.LinkUri, 2), true) as IMSService;
+                            IMSService service = cmsManager.SchemaNodeInstance(servicePack, themeLink.LinkUri.TrimRightRelativeCmsPath(2), true) as IMSService;
 
                             try
                             {
@@ -85,7 +86,7 @@ static class SchemaNodesExtensions
                         {
                             #region ArcGIS Dienst abfragen
 
-                            ArcServerService service = cmsManager.SchemaNodeInstance(servicePack, Helper.TrimPathRight(themeLink.LinkUri, 2), true) as ArcServerService;
+                            ArcServerService service = cmsManager.SchemaNodeInstance(servicePack, themeLink.LinkUri.TrimRightRelativeCmsPath(2), true) as ArcServerService;
                             try
                             {
                                 foreach (JsonField field in await service.GetLayerFieldsAsync(layer.Id))
@@ -125,7 +126,7 @@ static class SchemaNodesExtensions
                             //dotNETConnector conn = new dotNETConnector(
                             //    System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"/dotNETConnector.xml", String.Empty, String.Empty);
 
-                            WFSService service = cmsManager.SchemaNodeInstance(servicePack, Helper.TrimPathRight(themeLink.LinkUri, 2), true) as WFSService;
+                            WFSService service = cmsManager.SchemaNodeInstance(servicePack, themeLink.LinkUri.TrimRightRelativeCmsPath(2), true) as WFSService;
 
                             RequestAuthorization requestAuthorization = null;
 

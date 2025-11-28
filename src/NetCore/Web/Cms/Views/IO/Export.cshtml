@@ -18,6 +18,18 @@
 
 <form id="form" method="post">
     <input type="hidden" />
+    <input type="checkbox" name="for-linux" id="for-linux" />
+	<label for="for-linux">Export für Linux Server (Dateiberechtigungen werden beachtet)</label>
+    <p>
+		<small>
+            Hinweis: Der Export für Linux Server kann verwendet werden,
+            wenn das CMS, für das der Export verwendet wird, auf einem Linux Server betrieben wird. 
+			Linux Server sind bei File- und Verzeichnisnamen case-sensitiv.
+			Alle Verzeichnisnamen werden mit dieser Option in LowerCase umgewandelt,
+            um vom Zeil CMS korrekt erkannt zu werden.
+		</small>
+    </p>
+    <br />
     <button type="submit">Export</button>
 </form>
 

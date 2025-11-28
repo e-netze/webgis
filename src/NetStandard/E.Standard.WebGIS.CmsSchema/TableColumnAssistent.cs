@@ -1,4 +1,5 @@
 ﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
@@ -69,7 +70,7 @@ public class TableColumnAssistent : SchemaNode, IAutoCreatable, IUI
             return false;
         }
 
-        string path = this.CmsManager.ConnectionString + @"/" + Helper.TrimPathRight(this.RelativePath, 1).Replace(@"\", @"/");
+        string path = this.CmsManager.ConnectionString + @"/" + this.RelativePath.TrimRightRelativeCmsPath(1).Replace(@"\", @"/");
         foreach (TableColumnAssistentControl.Field field in _ctrl.SelectedFields)
         {
             TableColumn tabCol = new TableColumn();
