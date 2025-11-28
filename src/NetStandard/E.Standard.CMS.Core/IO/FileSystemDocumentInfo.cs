@@ -11,9 +11,9 @@ public class FileSystemDocumentInfo : IDocumentInfo
     public FileSystemDocumentInfo(string path)
     {
         _fi = new FileInfo(
-            SystemInfo.IsLinux ?
-            path.ToPlatformPath().RemoveDoubleSlashes() :
-            path);
+            SystemInfo.IsLinux 
+            ? path.ToPlatformPath().RemoveDoubleSlashes() 
+            : path);
     }
 
     #region IDocumentInfo
