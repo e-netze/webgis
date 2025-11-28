@@ -2215,7 +2215,7 @@ public partial class CMSManager
 
         if (!String.IsNullOrWhiteSpace(propertyTagName))
         {
-            relPath = Helper.TrimPathRight(relPath, 1) + "/" + Helper.TrimPathLeft(relPath, 1) + "@" + propertyTagName;
+            relPath = relPath.TrimRightRelativeCmsPath(1) + "/" + relPath.TrimLeftRelativeCmsPath(1) + "@" + propertyTagName;
         }
 
         auth.TargetAclPath = relPath;

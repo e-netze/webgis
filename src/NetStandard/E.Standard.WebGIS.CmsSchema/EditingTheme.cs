@@ -273,7 +273,7 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
 
     async public Task<bool> CreatedAsync(string fullName)
     {
-        var serviceLayer = this.CmsManager.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(this.RelativePath, 3) + "/Themes", true)
+        var serviceLayer = this.CmsManager.SchemaNodeInstances(_servicePack, this.RelativePath.TrimAndAppendSchemaNodePath(3, "Themes"), true)
             .Where(o => o is ServiceLayer && ((ServiceLayer)o).Id == this.EditingThemeId)
             .FirstOrDefault() as ServiceLayer;
 
@@ -284,9 +284,9 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
             string newLinkName = Helper.NewLinkName();
             IStreamDocument xmlStream = DocumentFactory.New(this.CmsManager.ConnectionString);
             link.Save(xmlStream);
-            xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + Helper.TrimPathRight(this.RelativePath, 1) + @"/EditingTheme/" + newLinkName);
+            xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + this.RelativePath.TrimAndAppendSchemaNodePath(1, "EditingTheme") + "/" + newLinkName);
 
-            var objects = this.CmsManager.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(this.RelativePath, 1) + "/EditingTheme", true);
+            var objects = this.CmsManager.SchemaNodeInstances(_servicePack, this.RelativePath.TrimAndAppendSchemaNodePath(1, "EditingTheme"), true);
 
             if (AutoImportEditFields == ImportEditFields.Fields)
             {
@@ -303,7 +303,7 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
 
                 xmlStream = DocumentFactory.New(this.CmsManager.ConnectionString);
                 category.Save(xmlStream);
-                xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + Helper.TrimPathRight(this.RelativePath, 1) + @"/EditingFields/" + categoryCreateAs + ".xml");
+                xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + this.RelativePath.TrimAndAppendSchemaNodePath(1, "EditingFields") + "/" + categoryCreateAs + ".xml");
 
                 List<string> urls = new List<string>();
                 foreach (var jsonFeatureField in await objects.FieldsNames(this.CmsManager, _servicePack, onlyEditable: true))
@@ -323,12 +323,12 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
                     string fieldCreateAs = field.CreateAs(true).Replace("\\", "/");
                     xmlStream = DocumentFactory.New(this.CmsManager.ConnectionString);
                     field.Save(xmlStream);
-                    xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + Helper.TrimPathRight(this.RelativePath, 1) + @"/EditingFields/" + categoryUrl + "/" + fieldCreateAs + ".xml");
+                    xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + this.RelativePath.TrimAndAppendSchemaNodePath(1, "EditingFields") + "/" + categoryUrl + "/" + fieldCreateAs + ".xml");
 
                     urls.Add(fieldCreateAs + ".xml");
                 }
 
-                var itemOrder = new ItemOrder(this.CmsManager.ConnectionString + "/" + Helper.TrimPathRight(this.RelativePath, 1) + @"/EditingFields/" + categoryUrl);
+                var itemOrder = new ItemOrder(this.CmsManager.ConnectionString + "/" + this.RelativePath.TrimAndAppendSchemaNodePath(1, "EditingFields") + "/" + categoryUrl);
                 itemOrder.Items = urls.ToArray();
                 itemOrder.Save();
             }
@@ -344,10 +344,10 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
     [Browsable(false)]
     public string DisplayName
     {
-        get 
+        get
         {
-            return String.IsNullOrWhiteSpace(this.Tags) 
-                ? $"{Name}" 
+            return String.IsNullOrWhiteSpace(this.Tags)
+                ? $"{Name}"
                 : $"{Name} ({String.Join(", ", this.Tags.Split(',').Select(t => $"#{t.Trim()}"))})";
         }
     }

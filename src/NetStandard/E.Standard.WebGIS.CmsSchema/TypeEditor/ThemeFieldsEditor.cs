@@ -1,10 +1,12 @@
 ﻿using E.Standard.ArcXml;
 using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
 using E.Standard.Web.Models;
 using E.Standard.WebGIS.CMS;
+using E.Standard.WebGIS.CmsSchema.Extensions;
 using E.Standard.WebGIS.CmsSchema.Legacy;
 using Newtonsoft.Json;
 using System;
@@ -49,19 +51,19 @@ public class ThemeFieldsEditor : UserControl, IUITypeEditorAsync
         object[] objects = null;
         if (context.Instance is LabellingField)
         {
-            objects = context.CmsManager.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(context.RelativePath, 2) + "/LabellingTheme", true);
+            objects = context.CmsManager.SchemaNodeInstances(_servicePack, context.RelativePath.TrimAndAppendSchemaNodePath(2, "LabellingTheme"), true);
         }
         else if (context.Instance is DocumentManagement)
         {
-            objects = context.CmsManager.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(context.RelativePath, 1) + "/QueryTheme", true);
+            objects = context.CmsManager.SchemaNodeInstances(_servicePack, context.RelativePath.TrimAndAppendSchemaNodePath(1, "QueryTheme"), true);
         }
         else if (context.Instance is EditingField)
         {
-            objects = context.CmsManager.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(context.RelativePath, 3) + "/EditingTheme", true);
+            objects = context.CmsManager.SchemaNodeInstances(_servicePack, context.RelativePath.TrimAndAppendSchemaNodePath(3, "EditingTheme"), true);
         }
         else
         {
-            objects = context.CmsManager.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(context.RelativePath, 2) + "/QueryTheme", true);
+            objects = context.CmsManager.SchemaNodeInstances(_servicePack, context.RelativePath.TrimAndAppendSchemaNodePath(2, "QueryTheme"), true);
         }
         Dictionary<string, string> fields = new Dictionary<string, string>();
 
@@ -77,7 +79,7 @@ public class ThemeFieldsEditor : UserControl, IUITypeEditorAsync
                     {
                         #region IMS Dienst abfragen
 
-                        IMSService service = context.CmsManager.SchemaNodeInstance(_servicePack, Helper.TrimPathRight(themeLink.LinkUri, 2), true) as IMSService;
+                        IMSService service = context.CmsManager.SchemaNodeInstance(_servicePack, themeLink.LinkUri.TrimRightRelativeCmsPath(2), true) as IMSService;
                         try
                         {
 
@@ -130,7 +132,7 @@ public class ThemeFieldsEditor : UserControl, IUITypeEditorAsync
                     {
                         #region ArcGIS Dienst abfragen
 
-                        ArcServerService service = context.CmsManager.SchemaNodeInstance(_servicePack, Helper.TrimPathRight(themeLink.LinkUri, 2), true) as ArcServerService;
+                        ArcServerService service = context.CmsManager.SchemaNodeInstance(_servicePack, themeLink.LinkUri.TrimRightRelativeCmsPath(2), true) as ArcServerService;
                         try
                         {
                             foreach (string field in await service.GetLayerFieldNamesAsync(layer.Id))
@@ -159,7 +161,7 @@ public class ThemeFieldsEditor : UserControl, IUITypeEditorAsync
                         //dotNETConnector conn = new dotNETConnector(
                         //    System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"/dotNETConnector.xml", String.Empty, String.Empty);
 
-                        WFSService service = context.CmsManager.SchemaNodeInstance(_servicePack, Helper.TrimPathRight(themeLink.LinkUri, 2), true) as WFSService;
+                        WFSService service = context.CmsManager.SchemaNodeInstance(_servicePack, themeLink.LinkUri.TrimRightRelativeCmsPath(2), true) as WFSService;
 
                         RequestAuthorization requestAuthorization = null;
 

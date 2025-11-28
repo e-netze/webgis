@@ -1,12 +1,14 @@
-﻿using E.Standard.CMS.Core.IO.Abstractions;
+﻿using E.Standard.CMS.Core.Abstractions;
+using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.Platform;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace E.Standard.CMS.Core.IO;
 
-public class FileSystemPathInfo : IPathInfo
+public class FileSystemPathInfo : IPathInfo, IDatabasePath
 {
     private DirectoryInfo _di;
     public FileSystemPathInfo(string path)
@@ -32,6 +34,7 @@ public class FileSystemPathInfo : IPathInfo
         _di.Create();
     }
 
+
     public IPathInfo CreateSubdirectory(string path)
     {
         return new FileSystemPathInfo(_di.CreateSubdirectory(path).FullName);
@@ -47,6 +50,7 @@ public class FileSystemPathInfo : IPathInfo
         _di.Delete(recursive);
     }
 
+    
     public IEnumerable<IPathInfo> GetDirectories()
     {
         return _di.GetDirectories().Select(d => new FileSystemPathInfo(d.FullName));
@@ -60,6 +64,22 @@ public class FileSystemPathInfo : IPathInfo
     public IEnumerable<IDocumentInfo> GetFiles()
     {
         return _di.GetFiles().Select(f => new FileSystemDocumentInfo(f.FullName));
+    }
+
+    #endregion
+
+    #region IDatabasePath
+
+    public void CreateDatabase()
+    {
+        this.Create();
+    }
+
+    public Task<bool> DeleteDatabase(IConsoleOutputStream outstream)
+    {
+        this.Delete(true);
+
+        return Task.FromResult(true);
     }
 
     #endregion

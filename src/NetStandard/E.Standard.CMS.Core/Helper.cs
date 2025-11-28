@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core.Extensions;
+ï»¿using E.Standard.CMS.Core.Extensions;
 using E.Standard.Extensions.Text;
 using System;
 using System.Collections.Generic;
@@ -78,58 +78,66 @@ public class Helper
 
     static public string RegularUrl(string url)
     {
-        url = url.Replace("ä", "ae");
-        url = url.Replace("ö", "oe");
-        url = url.Replace("ü", "ue");
-        url = url.Replace("Ä", "AE");
-        url = url.Replace("Ö", "OE");
-        url = url.Replace("Ü", "UE");
-        url = url.Replace("ß", "ss");
+        url = url.Replace("Ã¤", "ae");
+        url = url.Replace("Ã¶", "oe");
+        url = url.Replace("Ã¼", "ue");
+        url = url.Replace("Ã„", "AE");
+        url = url.Replace("Ã–", "OE");
+        url = url.Replace("Ãœ", "UE");
+        url = url.Replace("ÃŸ", "ss");
         url = url.Replace(" ", "_");
 
         return url;
     }
+
+    [Obsolete("Use String extension method TrimRightRelativeCmsPath")]
     static public string TrimPathRight(string path, int trim)
     {
-        string[] parts = path.Replace(@"\", "/").Split('/');
-        if (parts.Length <= trim)
-        {
-            return String.Empty;
-        }
+        return path.TrimRightRelativeCmsPath(trim);
 
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < parts.Length - trim; i++)
-        {
-            if (i > 0)
-            {
-                sb.Append("/");
-            }
+        //string[] parts = path.Replace(@"\", "/").Split('/');
+        //if (parts.Length <= trim)
+        //{
+        //    return String.Empty;
+        //}
 
-            sb.Append(parts[i]);
-        }
+        //StringBuilder sb = new StringBuilder();
+        //for (int i = 0; i < parts.Length - trim; i++)
+        //{
+        //    if (i > 0)
+        //    {
+        //        sb.Append("/");
+        //    }
 
-        return sb.ToString();
+        //    sb.Append(parts[i]);
+        //}
+
+        //return sb.ToString();
     }
+
+    [Obsolete("Use String extension method TrimLeftRelativeCmsPath")]
     static public string TrimPathLeft(string path, int trim)
     {
-        string[] parts = path.Replace(@"\", "/").Split('/');
-        if (parts.Length <= trim)
-        {
-            return String.Empty;
-        }
+        return path.TrimLeftRelativeCmsPath(trim);
 
-        StringBuilder sb = new StringBuilder();
-        for (int i = parts.Length - trim; i < parts.Length; i++)
-        {
-            if (sb.Length > 0)
-            {
-                sb.Append("/");
-            }
+        //string[] parts = path.Replace(@"\", "/").Split('/');
+        //if (parts.Length <= trim)
+        //{
+        //    return String.Empty;
+        //}
 
-            sb.Append(parts[i]);
-        }
+        //StringBuilder sb = new StringBuilder();
+        //for (int i = parts.Length - trim; i < parts.Length; i++)
+        //{
+        //    if (sb.Length > 0)
+        //    {
+        //        sb.Append("/");
+        //    }
 
-        return sb.ToString();
+        //    sb.Append(parts[i]);
+        //}
+
+        //return sb.ToString();
     }
 
     static public string ArrayToString(string[] array)
@@ -240,8 +248,8 @@ public class Helper
                 var keys = name.Split(',');
                 if (keys.Length <= 3)
                 {
-                    // Parameter können auch die Form [KG,GNR,|] oder [KG,GNR] haben. Der 3. Parameter ist dann ein Platzhalter und soll nicht übernommen werden.
-                    // Aufgelöst werden solche Kunstrukte im Feature Indexer: feature[key]=...
+                    // Parameter kÃ¶nnen auch die Form [KG,GNR,|] oder [KG,GNR] haben. Der 3. Parameter ist dann ein Platzhalter und soll nicht Ã¼bernommen werden.
+                    // AufgelÃ¶st werden solche Kunstrukte im Feature Indexer: feature[key]=...
 
                     for (int i = 0; i < Math.Min(keys.Length, 2); i++)
                     {
@@ -274,12 +282,12 @@ public class Helper
             errMsg = "Darf nicht leer sein!";
             return false;
         }
-        string invalid = " öäüÖÄÜß!\"\\§$%&/()=?+*#':.,µ@<>|^°{[]}";
+        string invalid = " Ã¶Ã¤Ã¼Ã–Ã„ÃœÃŸ!\"\\Â§$%&/()=?+*#':.,Âµ@<>|^Â°{[]}";
         for (int i = 0; i < invalid.Length; i++)
         {
             if (url.Contains(invalid[i].ToString()))
             {
-                errMsg = "Ungültiges Zeichen: '" + invalid[i] + "'";
+                errMsg = "UngÃ¼ltiges Zeichen: '" + invalid[i] + "'";
                 return false;
             }
         }
@@ -305,9 +313,9 @@ public class Helper
             return "_empty";
         }
 
-        string url = name.ToLower().Replace("ä", "ae").Replace("ö", "oe").Replace("ü", "ue").Replace("ß", "ss");
+        string url = name.ToLower().Replace("Ã¤", "ae").Replace("Ã¶", "oe").Replace("Ã¼", "ue").Replace("ÃŸ", "ss");
 
-        string invalid = " !\"\\§$%&/()=?+*#':.,µ@<>|^°{[]}–";  // – => in not an real minus!
+        string invalid = " !\"\\Â§$%&/()=?+*#':.,Âµ@<>|^Â°{[]}â€“";  // â€“ => in not an real minus!
         for (int i = 0; i < invalid.Length; i++)
         {
             url = url.Replace(invalid[i].ToString(), "_");

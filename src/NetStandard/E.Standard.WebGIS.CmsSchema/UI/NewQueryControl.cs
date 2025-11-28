@@ -109,7 +109,7 @@ public class NewQueryControl : NameUrlUserConrol, IInitParameter, ISubmit
             object[] objects = null;
             if (_node is Query)
             {
-                objects = _cms.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(_relPath, 2) + "/Themes", true);
+                objects = _cms.SchemaNodeInstances(_servicePack, _relPath.TrimAndAppendSchemaNodePath(2, "Themes"), true);
             }
 
             if (objects != null)

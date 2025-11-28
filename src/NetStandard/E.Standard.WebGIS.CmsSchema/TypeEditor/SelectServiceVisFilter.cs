@@ -1,6 +1,7 @@
-using E.Standard.CMS.Core;
+﻿using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
+using E.Standard.WebGIS.CmsSchema.Extensions;
 using Newtonsoft.Json;
 using System;
 
@@ -28,7 +29,7 @@ public class SelectServiceVisFilter : UserControl, IUITypeEditor
         CMSManager cms = context.CmsManager;
         string relPath = context.RelativePath;
 
-        object[] objects = cms.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(relPath, 2) + "/visfilter", true);
+        object[] objects = cms.SchemaNodeInstances(_servicePack, relPath.TrimAndAppendSchemaNodePath(2, "visfilter"), true);
 
         SelectMapVisFiler.FillList(_servicePack, list, objects);
 

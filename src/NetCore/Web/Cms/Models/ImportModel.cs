@@ -13,7 +13,7 @@ public class ImportModel
 
 public enum ImportType
 {
-    [Description("Nur neue vorhandene Knoten erstellen")]
+    [Description("Nur neue (nicht vorhandene) Knoten erstellen")]
     OnlyNew = 0,
     [Description("Vorhandene Knoten überschreiben, nicht vorhandene erstellen")]
     UpdateAll = 1

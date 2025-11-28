@@ -8,6 +8,7 @@ using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.Extensions.ErrorHandling;
 using E.Standard.Web.Abstractions;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -43,7 +44,7 @@ public class ExportCmsService : ICmsTool
         try
         {
             var cmsId = context.CmsId;
-
+           
             CmsConfig.CmsItem? cmsItem = null;
             //bool isDynamicCms = false;
 
@@ -106,14 +107,22 @@ public class ExportCmsService : ICmsTool
     }
 
     private void ExportPath(CmsToolContext context, IConsoleOutputStream console, CMSManager cms, ZipArchive archive, IPathInfo pathInfo, string rootPath)
-    {
+    { 
         if (console.IsCanceled)
         {
             return;
         }
+
+        // for linux target systems, lowcase all directory names
+        var exportDefintion = context.Deployment as CmsExportDefinition ?? new CmsExportDefinition();
+
         foreach (var childPathInfo in pathInfo.GetDirectories())
         {
-            var archivePath = ArchivePath(context.CmsId, rootPath, childPathInfo.FullName) + "/";  // end with / => folder
+            var archivePath = ArchivePath(context.CmsId, rootPath, 
+                exportDefintion.ForLinux
+                    ? childPathInfo.FullName.ToLower()
+                    : childPathInfo.FullName
+                ) + "/";  // end with / => folder
             archive.CreateEntry(archivePath);
 
             ExportPath(context, console, cms, archive, childPathInfo, rootPath);
@@ -121,13 +130,17 @@ public class ExportCmsService : ICmsTool
 
         foreach (var childDocumentInfo in pathInfo.GetFiles())
         {
-            var archivePath = ArchivePath(context.CmsId, rootPath, childDocumentInfo.FullName);
+            var archivePath = ArchivePath(context.CmsId, rootPath, 
+                exportDefintion.ForLinux
+                    ? $"{childDocumentInfo.Directory.FullName.ToLower()}/{childDocumentInfo.Name}"
+                    : childDocumentInfo.FullName
+                );
 
             console.WriteLine($"export {archivePath}");
 
-            string xml = childDocumentInfo is IXmlConverter ?
-                ((IXmlConverter)childDocumentInfo).ReadAllAsXmlString() :
-                childDocumentInfo.ReadAll();
+            string xml = childDocumentInfo is IXmlConverter xmlConverter 
+                ? xmlConverter.ReadAllAsXmlString() 
+                : childDocumentInfo.ReadAll();
 
             var entry = archive.CreateEntry(archivePath);
             using (StreamWriter writer = new StreamWriter(entry.Open()))

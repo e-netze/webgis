@@ -1,6 +1,7 @@
 ﻿using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.UI.Controls;
+using E.Standard.WebGIS.CmsSchema.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,7 @@ public class ThemeAssistentControl : UserControl
             object[] objects = null;
             if (_node is PresentationThemeAssistent)
             {
-                objects = _cms.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(_relPath, 2) + "/Themes", true);
+                objects = _cms.SchemaNodeInstances(_servicePack, _relPath.TrimAndAppendSchemaNodePath(2, "Themes"), true);
             }
 
             List<string> themes = new List<string>();

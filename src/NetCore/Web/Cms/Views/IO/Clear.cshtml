@@ -22,6 +22,20 @@
 
 <form id="form" method="post">
     <input type="hidden" />
+    <br/>
+    <br/>
+    <p>
+        Bitte geben Sie zur Bestätigung die CMS ID ein: <strong>@ViewData["CmsId"]</strong>
+	</p>
+    <input type="text" name="confirm-id" id="confirm-id" placeholder="CMS ID eingeben..." />
+    <br/>
+    @if(ViewData["FormError"] != null)
+    {
+        <div class="error-message">
+            @ViewData["FormError"]
+        </div>
+    }
+    <br/>
     <button type="submit" class="btn-danger">!!! Clear !!!</button>
 </form>
 
