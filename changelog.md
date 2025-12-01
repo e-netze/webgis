@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Fixed
 
+## 7.25.4805
+
+### Added
+
+- CMS: Export/Import improvements
+  - Export with lowercase folder names for linux, etc
+  - Confirm Clean/Import with CMS id
+
 ## 7.25.4601
 
 ### Added
