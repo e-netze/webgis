@@ -385,6 +385,7 @@
     };
 
     this.downloadFile = function (url) {
+        console.log('download file', CMS.appRootUrl + '/' + url);
         $("<iframe>").attr('src', CMS.appRootUrl + '/' + url).appendTo('body');
     };
 

@@ -11,11 +11,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Time Filter
 
-### Fixed
-
 - Bug: Remove-Filter, etc tools will not be shown in quicktools bar,
        if not quicktools are selected in map builder
 
+### Fixed
+
+## 7.25.4805
+
+### Added
+
+- CMS: Export/Import improvements
+  - Export with lowercase folder names for linux, etc
+  - Confirm Clean/Import with CMS id
 
 ## 7.25.4601
 
