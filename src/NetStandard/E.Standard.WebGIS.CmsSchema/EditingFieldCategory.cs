@@ -59,7 +59,7 @@ public class EditingFieldCategory : NameUrl, IUI, ICreatable, IDisplayName, IEdi
     {
         if (appendRoot)
         {
-            return Crypto.GetID() + @"\.general";
+            return Crypto.GetID() + @"/.general";
         }
         else
         {

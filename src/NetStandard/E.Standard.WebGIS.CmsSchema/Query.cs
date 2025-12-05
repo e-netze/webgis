@@ -213,7 +213,7 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     {
         if (appendRoot)
         {
-            return this.Url + @"\.general";
+            return this.Url + @"/.general";
         }
         else
         {

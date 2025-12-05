@@ -111,7 +111,7 @@ public class SnapSchema : NameUrl, IUI, ICreatable, IDisplayName, IEditable
     {
         if (appendRoot)
         {
-            return (string.IsNullOrWhiteSpace(this.Url) ? Crypto.GetID() : this.Url) + @"\.general";
+            return (string.IsNullOrWhiteSpace(this.Url) ? Crypto.GetID() : this.Url) + @"/.general";
         }
         else
         {

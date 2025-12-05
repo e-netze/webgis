@@ -84,7 +84,7 @@ public class ContainerNode : CopyableNode, IUI, ICreatable, IDisplayName, IEdita
     {
         if (appendRoot)
         {
-            return this.Url + @"\.general";
+            return this.Url + @"/.general";
         }
         else
         {

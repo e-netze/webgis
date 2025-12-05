@@ -263,7 +263,7 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
     {
         if (appendRoot)
         {
-            return this.Url + @"\.general";
+            return this.Url + @"/.general";
         }
         else
         {

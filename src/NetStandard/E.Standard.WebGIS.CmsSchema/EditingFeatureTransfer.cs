@@ -55,7 +55,7 @@ public class EditingFeatureTransfer : CopyableNode, ICreatable, IUI, IPersistabl
     {
         if (appendRoot)
         {
-            return this.Url + @"\.general";
+            return this.Url + @"/.general";
         }
         else
         {
