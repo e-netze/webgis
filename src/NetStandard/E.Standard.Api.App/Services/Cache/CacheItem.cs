@@ -509,6 +509,7 @@ public class CmsCacheItem
                                             ((TableFieldDateTime)field).FieldName = (string)columnNode.Load("fieldname", String.Empty);
                                             ((TableFieldDateTime)field).DisplayType = (DateFieldDisplayType)columnNode.Load("displaytype", (int)DateFieldDisplayType.Normal);
                                             ((TableFieldDateTime)field).FormatString = (string)columnNode.Load("date_formatstring", String.Empty);
+                                            ((TableFieldDateTime)field).SortingAlgorithm = (string)columnNode.Load("sorting_alg", String.Empty);
                                         }
                                         else if (colType == ColumnType.MultiField)
                                         {
