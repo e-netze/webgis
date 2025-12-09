@@ -17,6 +17,7 @@ static public class ServiceCollectionExtensions
         this IServiceCollection services,
         Action<MessageQueueNetServiceOptions> configureOptions)
     {
+        Console.WriteLine("Adding MessageQueueNET Service...");
         services.Configure<MessageQueueNetServiceOptions>(configureOptions);
         services.AddSingleton<IMessageQueueService, MessageQueueNetService>();
         return services;
