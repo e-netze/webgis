@@ -53,17 +53,17 @@ public class FileSystemPathInfo : IPathInfo, IDatabasePath
     
     public IEnumerable<IPathInfo> GetDirectories()
     {
-        return _di.GetDirectories().Select(d => new FileSystemPathInfo(d.FullName));
+        return _di.GetDirectories().Select(d => new FileSystemPathInfo(d.FullName)).ToArray();
     }
 
     public IEnumerable<IDocumentInfo> GetFiles(string filter)
     {
-        return _di.GetFiles(filter).Select(f => new FileSystemDocumentInfo(f.FullName));
+        return _di.GetFiles(filter).Select(f => new FileSystemDocumentInfo(f.FullName)).ToArray();
     }
 
     public IEnumerable<IDocumentInfo> GetFiles()
     {
-        return _di.GetFiles().Select(f => new FileSystemDocumentInfo(f.FullName));
+        return _di.GetFiles().Select(f => new FileSystemDocumentInfo(f.FullName)).ToArray();
     }
 
     #endregion
