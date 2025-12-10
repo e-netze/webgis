@@ -732,7 +732,7 @@
             .appendTo($tabToolsContainer);
 
         // Toolbar Functions
-        var $selectButton, $addButton, $removeButton;
+        let $selectButton, $addButton, $removeButton, $markerButton;
         var createToolbarButtonBlock = function (label, classes, elementType) {
             label = webgis.l10n.get(label);
 
@@ -1682,10 +1682,22 @@
                       (featureMetadata || {}).table_fields || this.tableFields());
 
         
-        //if (webgis.isSuspiciousHtml(content)) {
-        //    content = '<div>suppressing dangerous result...</div>';
-        //}
-        content = webgis.sanitizeHtml(content);
+        if (webgis.isSuspiciousHtml(content, {
+                    checkOnHandlers: false,  // disable general check for onclick etc. handlers ... map.ui.featureResultTable
+                    allowedHandlerPatterns: [  // is allowed in onclick handlers
+                        ///^webgis\.iFrameDialog\s*\(/,
+                        ///^webgis\.copy\s*\(/,
+                        ///^webgis\.copyAll\s*\(/,
+                    ]
+                }
+        )) {
+            content = "<div style='background:#fcc;color:red;padding:8px'>Suspicious content detected and sanitized. Maybe some functionallity link copy/paste or open links are missing...</div>" + content;
+            content = webgis.sanitizeHtml(content);
+            if (webgis.isSuspiciousHtml(content)) {
+                content = "<div style='background:#fcc;color:red;padding:8px'>suppressing dangerous result...</div>";
+            }
+        }
+        //
 
         for (var b in buttonArray) {
             var button = buttonArray[b];

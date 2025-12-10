@@ -46,7 +46,7 @@
       //  "dist/browser/signalr.js",
       //  "dist/browser/signalr.min.js"
       //]
-    },
+    }, 
     {
       "library": "dompurify@3.1.6",
       "destination": "wwwroot/lib/dompurify/",

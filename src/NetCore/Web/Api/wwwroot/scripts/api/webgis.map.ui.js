@@ -244,6 +244,12 @@
                     for (let v in vals) {
                         let val = vals[v], valType = typeof (val);
 
+                        if (webgis.isSuspiciousHtml(val)) {
+                            console.log("sanitize suspicious val:", val);
+                            val = webgis.sanitizeHtml(val);
+                            console.log("to", val);
+                        }
+
                         if (valType === 'string' && val.indexOf("<a") === 0) {
                             let $val = $(val);
                             if ($val.attr('target') === 'dialog') {
@@ -2018,7 +2024,7 @@
                 if (service && query)
                     $select.val(service.id + ':' + query.id);
                 $("<div style='webgis-input-label'>Puffer Distanz [m]</div>").css('margin-top', '14px').appendTo($content);
-                $("<input class='webgis-input' value='30' name='distance' />").css('width', '287px').appendTo($content);
+                $("<input class='webgis-input' name='distance' />").val(webgis.usability.defaultBufferDistance || 30).css('width', '287px').appendTo($content);
                 $("<br/>").appendTo($content);
                 $("<button class='webgis-button'>Nachbarschaft berechnen</button>").css('margin-top', '14px').data('map', map).appendTo($content)
                     .click(function () {

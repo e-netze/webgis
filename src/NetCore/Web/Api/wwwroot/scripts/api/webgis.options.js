@@ -116,7 +116,8 @@ webgis.usability = {
         }
     },
 
-    allowTocVisFilters: false 
+    allowTocVisFilters: false,
+    defaultBufferDistance: 30
 };
 
 webgis.colorScheme = 'default';

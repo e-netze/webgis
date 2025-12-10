@@ -11,10 +11,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Time Filter
 
-- Bug: Remove-Filter, etc tools will not be shown in quicktools bar,
-       if not quicktools are selected in map builder
+
+- custom.js: new Usability for Buffer Distance:
+   `webgis.usability.defaultBufferDistance` (default: 30)
+   [datalinq-discussion #288](https://github.com/e-netze/datalinq-community/discussions/288)
 
 ### Fixed
+
+- Bug: Remove-Filter, etc tools will not be shown in quicktools bar,
+       if not quicktools are selected in map builder
 
 ## 7.25.4805
 

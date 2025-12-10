@@ -64,12 +64,14 @@
 
         return txt;
     };
-    this.isSuspiciousHtml = function (html) {
+    this.isSuspiciousHtml = function (html, options) {
         // script-tag case insensitiv
         var regex = /<\s*script[^>]*>/gi; // /<\s*script[^>]*>(.*?)<\s*\/\s*script>/gi;
         if (regex.test(html)) {
             return true;
         }
+
+        options = options || {};
 
         // test
         //console.log(webgis.isSuspiciousHtml('<img src=x onerror=alert(1)>')); // true
@@ -85,20 +87,40 @@
         if (scriptRe.test(html)) {
             return true;
         }
+        
+        if (options.checkOnHandlers !== false) {
+            // 2) Detect inline event-handler attributes such as onload=, onerror=, onclick=, etc.
+            // Looks for attributes starting with "on" inside any HTML tag.
+            // Accepts values in double quotes, single quotes, or unquoted.
 
-        // 2) Detect inline event-handler attributes such as onload=, onerror=, onclick=, etc.
-        // Looks for attributes starting with "on" inside any HTML tag.
-        // Accepts values in double quotes, single quotes, or unquoted.
-        var onAttrRe = /<[^>]*\b(on[a-zA-Z]+\s*)=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i;
-        if (onAttrRe.test(html)) {
-            return true;
+            const onAttrRe = /<[^>]*\b(on[a-zA-Z]+\s*)=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
+            let matchOnAttrRe;
+            const allowedOnAttrHandlerPatterns = options.allowedHandlerPatterns || [];
+
+            while ((matchOnAttrRe = onAttrRe.exec(html)) !== null) {
+                const attrName = matchOnAttrRe[1].trim().toLowerCase(); // eg. "onclick"
+                const handlerCode = (matchOnAttrRe[2] || matchOnAttrRe[3] || matchOnAttrRe[4] || "").trim();
+
+                // alternative - check methods:
+                // if (!["onclick", "onload", "onerror"].includes(attrName)) continue;
+
+                const isAllowed = allowedOnAttrHandlerPatterns.some((re) => re.test(handlerCode));
+
+                if (!isAllowed) {
+                    // hier kannst du auch debuggen/loggen, was gefunden wurde
+                    console.trace('forbidden handler:', attrName, handlerCode);
+                    return true; // not allowed inline header
+                }
+            }
         }
 
-        // 3) Detect javascript: URIs in href, src, or similar attributes.
-        // Example: <a href="javascript:alert(1)">
-        var jsUriRe = /\b(?:href|src|xlink:href|style|data-?src)\s*=\s*(?:"\s*javascript:|'\s*javascript:|javascript:)/i;
-        if (jsUriRe.test(html)) {
-            return true;
+        if (options.checkJsUris !== false) {
+            // 3) Detect javascript: URIs in href, src, or similar attributes.
+            // Example: <a href="javascript:alert(1)">
+            var jsUriRe = /\b(?:href|src|xlink:href|style|data-?src)\s*=\s*(?:"\s*javascript:|'\s*javascript:|javascript:)/i;
+            if (jsUriRe.test(html)) {
+                return true;
+            }
         }
 
         // 4) Detect any attribute value that contains javascript: or data:text/html
@@ -112,11 +134,13 @@
             }
         }
 
-        // 5) Detect dangerous tags that can execute code or load remote content.
-        // Includes iframe, object, embed, frame, meta, and link.
-        var dangerousTagsRe = /<\s*(iframe|object|embed|frame|meta|link)\b[^>]*>/i;
-        if (dangerousTagsRe.test(html)) {
-            return true;
+        if (options.dangerousTags !== false) {
+            // 5) Detect dangerous tags that can execute code or load remote content.
+            // Includes iframe, object, embed, frame, meta, and link.
+            var dangerousTagsRe = /<\s*(iframe|object|embed|frame|meta|link)\b[^>]*>/i;
+            if (dangerousTagsRe.test(html)) {
+                return true;
+            }
         }
 
         // 6) Detect srcdoc attribute (can contain full HTML, often used for injection)
@@ -136,10 +160,11 @@
     };
     this.sanitizeHtml = function (html) {
         if (window.DOMPurify) {
-            console.log('DOMPurify Sanitizing HTML...', html);
+            //console.log('DOMPurify Sanitizing HTML...', html);
             return DOMPurify.sanitize(html);
         }
-        return webgis.emptyIfSuspiciousHtml(html) || 'suppressing dangerous result...';
+        return webgis.emptyIfSuspiciousHtml(html) || "<div style='background:#faa;padding:8px;color:red'>Suppressing dangerous result!<div>";
+        return html;
     };
 
     this.alert = function (message, title, onClose) {
