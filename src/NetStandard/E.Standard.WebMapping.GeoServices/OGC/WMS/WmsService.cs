@@ -1079,6 +1079,15 @@ public class WmsService : IMapService2,
                         var fileBytes = new MemoryStream(await httpService.GetDataAsync(_ticketHttpService.ModifyUrl(httpService, url),
                                                                                         _requestAuthorization,
                                                                                         timeOutSeconds: this.Timeout.ToTimeoutSecondOrDefault()));
+
+                        if(fileBytes.Length == 0)  // empty image
+                        {
+                            using (var emptyImage = Current.Engine.CreateBitmap(20, 20))
+                            {
+                                fileBytes = new MemoryStream();
+                                emptyImage.Save(fileBytes, ImageFormat.Png);
+                            }
+                        }
                         try
                         {
                             using (var lImage = Current.Engine.CreateBitmap(fileBytes))
@@ -1102,12 +1111,12 @@ public class WmsService : IMapService2,
                                 layerLabels.Add(layer.Name, layerLabel);
                             }
                         } 
-                        catch
+                        catch(System.Exception ex)
                         {
                             requestContext
                                 .GetRequiredService<IExceptionLogger>()
                                 .LogException(_map, this.Server, this.Service, "GetLegend",
-                                    new System.Exception($"Can't load legend image: {Encoding.UTF8.GetString(fileBytes.ToArray())}"));
+                                    new System.Exception($"Can't load legend image - {ex.Message}: {Encoding.UTF8.GetString(fileBytes.ToArray())}"));
                         }
                     }
                     catch (System.Exception ex)
