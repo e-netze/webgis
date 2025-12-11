@@ -56,7 +56,7 @@ public class ItemOrder
                 foreach (XmlNode itemNode in doc.SelectNodes("items/item[@name]"))
                 {
                     string name = itemNode.Attributes["name"].Value;
-                    string path = _di.FullName + @"\" + name;
+                    string path = _di.FullName + @"/" + name;
                     if (_fast)
                     {
                         _orderedItems.Add(name.ToLower());

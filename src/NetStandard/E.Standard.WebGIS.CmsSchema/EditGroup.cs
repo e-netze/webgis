@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core.IO.Abstractions;
+﻿using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
@@ -36,7 +36,7 @@ public class EditGroup : NameUrl, IUI, ICreatable, IDisplayName, IEditable
     {
         if (appendRoot)
         {
-            return Crypto.GetID() + @"\.general";
+            return Crypto.GetID() + @"/.general";
         }
         else
         {

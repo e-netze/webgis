@@ -35,7 +35,7 @@ public class Labelling : NameUrl, ICreatable, IUI, IDisplayName
     {
         if (appendRoot)
         {
-            return Crypto.GetID() + @"\.general";
+            return Crypto.GetID() + @"/.general";
         }
         else
         {
@@ -284,7 +284,7 @@ public class LabellingGroup : NameUrl, IUI, ICreatable, IDisplayName
     {
         if (appendRoot)
         {
-            return Crypto.GetID() + @"\.general";
+            return Crypto.GetID() + @"/.general";
         }
         else
         {

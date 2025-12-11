@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core;
+ï»¿using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Reflection;
 using E.Standard.CMS.Core.Schema;
@@ -83,7 +83,7 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
             {
                 if (_silentChanges == false)
                 {
-                    //if (MessageBox.Show("Durch das Änderen des Feld-Types gehen die Information von '" + _fieldData.GetType() + "' verloren.\nWollen Sie den Vorgang vortsetzen?", "Warnung", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                    //if (MessageBox.Show("Durch das Ã„nderen des Feld-Types gehen die Information von '" + _fieldData.GetType() + "' verloren.\nWollen Sie den Vorgang vortsetzen?", "Warnung", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                     {
                         _fieldData = data;
                     }
@@ -161,7 +161,7 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
 
     [DisplayName("Sichtbar: wird in der Tabelle angezeigt")]
     [Category("Allgemein")]
-    [Description("Felder die nicht sichtbar sind, werden in der Tabelle nicht angezeigt. Achtung: Nicht sichtbare Felder werden trotzdem zum Client übermittelt, um beispielsweise für die Markerdefinitionen in der custom.js verwendet zu werden. Ein nicht sichtbar schalten ist keine Security Maßnahme, Attribute werden trotzdem an den Client übermittelt, nur die Anzeige an der Oberfläche wird unterdrückt.")]
+    [Description("Felder die nicht sichtbar sind, werden in der Tabelle nicht angezeigt. Achtung: Nicht sichtbare Felder werden trotzdem zum Client Ã¼bermittelt, um beispielsweise fÃ¼r die Markerdefinitionen in der custom.js verwendet zu werden. Ein nicht sichtbar schalten ist keine Security MaÃŸnahme, Attribute werden trotzdem an den Client Ã¼bermittelt, nur die Anzeige an der OberflÃ¤che wird unterdrÃ¼ckt.")]
     public bool Visible { get; set; }
 
     [Category("~Suchergebnis Darstellung (WebGIS 4)")]
@@ -373,7 +373,7 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
             set { _fieldName = value; }
         }
 
-        [Description("Einfache Übersetzung von Werten. Eingabebeispiel: 0,1,2=ja,nein,vielleicht. Alternativ kann eine Url zu einem JSON Array mit name,value Werten angegeben werden, beispielsweise eine DataLinq PlainText Query.")]
+        [Description("Einfache Ãœbersetzung von Werten. Eingabebeispiel: 0,1,2=ja,nein,vielleicht. Alternativ kann eine Url zu einem JSON Array mit name,value Werten angegeben werden, beispielsweise eine DataLinq PlainText Query.")]
         [DisplayName("Simple Domains")]
         public string SimpleDomains
         {
@@ -382,7 +382,7 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
         }
 
         [DisplayName("Raw Html")]
-        [Description("Der Wert des Feldes werden 1:1 übernommen. Damit können auch HTML Fragmente direkt in die Tabelle übernommen werden (standardmäßig werden zB spitze Klammern kodiert, und als solche auch in der Tabelle dargestellt). Dieser Flag sollte nur falls unbedingt notwendig verwendet werden. Handelt es sich bei dem Feld um Ihnalte aus Usereingaben (Editing usw), sollte dieser Flag unbedingt vermieden werden, da damit eine Cross-Site-Scripting Schwachstelle entsteht!")]
+        [Description("Der Wert des Feldes werden 1:1 Ã¼bernommen. Damit kÃ¶nnen auch HTML Fragmente direkt in die Tabelle Ã¼bernommen werden (standardmÃ¤ÃŸig werden zB spitze Klammern kodiert, und als solche auch in der Tabelle dargestellt). Dieser Flag sollte nur falls unbedingt notwendig verwendet werden. Handelt es sich bei dem Feld um Ihnalte aus Usereingaben (Editing usw), sollte dieser Flag unbedingt vermieden werden, da damit eine Cross-Site-Scripting Schwachstelle entsteht!")]
         public bool RawHtml
         {
             get { return _rawHtml; }
@@ -391,7 +391,7 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
 
         [DisplayName("Sortier-Algorithmus")]
         [Category("Sortieren")]
-        [Description("Gibt an mit welchen Algorithmus die Spalte in der Tabelle sortiert werden sollte. Standardmäßig wird die Spalte beim Storieren als Zeichenkette (string) interpretiert. Fix implementierte Algorithmen sind hier: string, number, gnr, date_dd_mm_yyyy. Über die custom.js können noch weitere Algorithmen definiert werden.")]
+        [Description("Gibt an mit welchen Algorithmus die Spalte in der Tabelle sortiert werden sollte. StandardmÃ¤ÃŸig wird die Spalte beim Storieren als Zeichenkette (string) interpretiert. Fix implementierte Algorithmen sind hier: string, number, gnr, date_dd_mm_yyyy. Ãœber die custom.js kÃ¶nnen noch weitere Algorithmen definiert werden.")]
         public string SortingAlgorithm { get; set; }
 
 
@@ -502,8 +502,13 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
         }
 
         [DisplayName("Format String (optional)")]
-        [Description("Für den DisplayType 'normal' kann hier optional der Formatierungsstring angeführt werden. Beispiele: MM/dd/yyyy, dddd, dd MMMM yyyy HH:mm:ss, MMMM dd. Eine genauere Beschreibung gibt es hier: https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tostring?view=net-6.0 oder https://www.c-sharpcorner.com/blogs/date-and-time-format-in-c-sharp-programming1")]
+        [Description("FÃ¼r den DisplayType 'normal' kann hier optional der Formatierungsstring angefÃ¼hrt werden. Beispiele: MM/dd/yyyy, dddd, dd MMMM yyyy HH:mm:ss, MMMM dd. Eine genauere Beschreibung gibt es hier: https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tostring?view=net-6.0 oder https://www.c-sharpcorner.com/blogs/date-and-time-format-in-c-sharp-programming1")]
         public string FormatString { get; set; }
+
+        [DisplayName("Sortier-Algorithmus")]
+        [Category("Sortieren")]
+        [Description("Gibt an mit welchen Algorithmus die Spalte in der Tabelle sortiert werden sollte. StandardmÃ¤ÃŸig wird die Spalte beim Storieren als Zeichenkette (string) interpretiert. Fix implementierte Algorithmen fÃ¼r Datum sind: date_dd_mm_yyyy. Ãœber die custom.js kÃ¶nnen noch weitere Algorithmen definiert werden.")]
+        public string SortingAlgorithm { get; set; }
 
         #endregion
 
@@ -515,6 +520,7 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
             _fieldName = (string)stream.Load("fieldname", String.Empty);
             _displayType = (DateFieldDisplayType)stream.Load("displaytype", (int)DateFieldDisplayType.Normal);
             this.FormatString = (string)stream.Load("date_formatstring", String.Empty);
+            this.SortingAlgorithm = (string)stream.Load("sorting_alg", String.Empty);
         }
 
         public override void Save(IStreamDocument stream)
@@ -524,6 +530,8 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
             stream.Save("fieldname", _fieldName ?? String.Empty);
             stream.Save("displaytype", (int)_displayType);
             stream.Save("date_formatstring", this.FormatString ?? String.Empty);
+            stream.SaveOrRemoveIfEmpty("sorting_alg", this.SortingAlgorithm);
+
         }
         #endregion
     }
@@ -550,7 +558,7 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
         }
 
         [DisplayName("Name/Bezeichnug des Hotlinks")]
-        [Description("Die Url für den Hotlink mit Platzhaltern, zB http://www.server.com/page?id=[ID_FIELDNAME]&name=[NAME_FIELDNAME]. Mit dem prefix 'url-encode:' kann eine kodierung Url Kodierung des Feldes erzwungen werden, falls die automatische Kodierung durch den Browser nicht ausreicht, zB [url-encode:FIELDNAME].")]
+        [Description("Die Url fÃ¼r den Hotlink mit Platzhaltern, zB http://www.server.com/page?id=[ID_FIELDNAME]&name=[NAME_FIELDNAME]. Mit dem prefix 'url-encode:' kann eine kodierung Url Kodierung des Feldes erzwungen werden, falls die automatische Kodierung durch den Browser nicht ausreicht, zB [url-encode:FIELDNAME].")]
         public string HotlinkName
         {
             get { return _hotlinkName; }
@@ -599,7 +607,7 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
             get { return _imgwidth; }
             set { _imgwidth = value; }
         }
-        [DisplayName("Bildquelle-Höhe (Pixel)")]
+        [DisplayName("Bildquelle-HÃ¶he (Pixel)")]
         public int IHeight
         {
             get { return _imgheight; }
@@ -722,7 +730,7 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
             get { return _iwidth; }
             set { _iwidth = value; }
         }
-        [DisplayName("Bildquelle-Höhe (Pixel)")]
+        [DisplayName("Bildquelle-HÃ¶he (Pixel)")]
         public int IHeight
         {
             get { return _iheight; }

@@ -761,6 +761,8 @@ public class RestHelperService
                             {
                                 TableFieldData fieldData when !String.IsNullOrEmpty(fieldData.SortingAlgorithm) => fieldData.SortingAlgorithm,
                                 TableFieldExpression fieldExpression when fieldExpression.ColDataType == ColumnDataType.Number => "number",
+                                TableFieldDateTime fieldDateTime when !String.IsNullOrEmpty(fieldDateTime.SortingAlgorithm) => fieldDateTime.SortingAlgorithm,
+                                //TableFieldDateTime fieldDateTime when fieldDateTime.DisplayType == DateFieldDisplayType.ShortDate => "date_dd_mm_yyyy",
                                 _ => null
                             },
                             ImageSize = f switch

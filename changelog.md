@@ -9,12 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Time Filter
-
-
-- custom.js: new Usability for Buffer Distance:
-   `webgis.usability.defaultBufferDistance` (default: 30)
-   [datalinq-discussion #288](https://github.com/e-netze/datalinq-community/discussions/288)
+- DateTimeFields: Added the possibility to set sorting algorithm for DateTime fields in CMS configuration
+  Possible values:
+  - `default`: Default sorting behavior (string based)
+  - `date_dd_mm_yyyy`: Sort as date with format dd.MM.yyyy
+  [discussion #341](https://github.com/e-netze/webgis-community/discussions/379)
 
 ### Fixed
 

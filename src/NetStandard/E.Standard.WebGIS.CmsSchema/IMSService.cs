@@ -1,4 +1,4 @@
-using E.Standard.ArcXml;
+ï»¿using E.Standard.ArcXml;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
@@ -57,15 +57,15 @@ public class IMSService : CopyableNode, IAuthentification, ICreatable, IEditable
     public WebMapping.Core.ServiceDynamicPresentations DynamicPresentations { get; set; }
 
     [DisplayName("Dynamische Abfragen")]
-    [Description("Abfragen werden nicht mehr parametriert, sondern werden zur Laufzeit für alle (Feature) Layer eine Abfrage erstellt (ohne Suchbegriffe, nur Identify)")]
+    [Description("Abfragen werden nicht mehr parametriert, sondern werden zur Laufzeit fÃ¼r alle (Feature) Layer eine Abfrage erstellt (ohne Suchbegriffe, nur Identify)")]
     public WebMapping.Core.ServiceDynamicQueries DynamicQueries { get; set; }
 
     [DisplayName("Dynamisches Verhalten")]
-    [Description("Gibt an, wie mit Layern umgegangen wird, die nicht beim erstellen oder nach einem Refresh im CMS unter Themen gelistet werden. AutoAppendNewLayers ... neue Themen werden beim Initialisieren des Dienstes (nach einem cache/clear) der Karte hinzugefügt und können über den TOC geschalten werden. UseStrict ... nur jene Themen, die unter Themen aufgelistet sind, kommen auch in der Karte vor.")]
+    [Description("Gibt an, wie mit Layern umgegangen wird, die nicht beim erstellen oder nach einem Refresh im CMS unter Themen gelistet werden. AutoAppendNewLayers ... neue Themen werden beim Initialisieren des Dienstes (nach einem cache/clear) der Karte hinzugefÃ¼gt und kÃ¶nnen Ã¼ber den TOC geschalten werden. UseStrict ... nur jene Themen, die unter Themen aufgelistet sind, kommen auch in der Karte vor.")]
     public WebMapping.Core.DynamicDehavior DynamicDehavior { get; set; }
 
     [DisplayName("Service-Typ")]
-    [Description("Watermark Services werden immer ganz oben gezeichnet und können vom Anwender nicht transparent geschalten oder ausgelendet werden. Watermark Services können neben Wasserzeichen auch Polygondecker enthalten.")]
+    [Description("Watermark Services werden immer ganz oben gezeichnet und kÃ¶nnen vom Anwender nicht transparent geschalten oder ausgelendet werden. Watermark Services kÃ¶nnen neben Wasserzeichen auch Polygondecker enthalten.")]
     public WebMapping.Core.ImageServiceType ServiceType { get; set; }
 
     [DisplayName("Username")]
@@ -94,7 +94,7 @@ public class IMSService : CopyableNode, IAuthentification, ICreatable, IEditable
     //[Browsable(true)]
     //[Category("Localisierung")]
     //[DisplayName("Komma-Format")]
-    //[Description("Hier kann gegeben werden, wie ein Komma für Dienste interpretiert werden soll.\nDefault=Wert wird aus dem LOCALE Tag von GET_SERVICE_INFO übernommen\nForceComma=Beistrich als Komma\nForcePoint=Punkt als Komma")] 
+    //[Description("Hier kann gegeben werden, wie ein Komma fÃ¼r Dienste interpretiert werden soll.\nDefault=Wert wird aus dem LOCALE Tag von GET_SERVICE_INFO Ã¼bernommen\nForceComma=Beistrich als Komma\nForcePoint=Punkt als Komma")] 
     //public CommaFormat CommaFormat
     //{
     //    get { return _commaFormat; }
@@ -102,8 +102,8 @@ public class IMSService : CopyableNode, IAuthentification, ICreatable, IEditable
     //}
     [Browsable(true)]
     [Category("~Lokalisierung")]
-    [DisplayName("IMS Service LOCALE überschreiben")]
-    [Description("Hier kann gegeben werden, wie ein Komma für Dienste interpretiert werden soll.\nKein Wert ... Lokalisierung wird aus dem LOCALE Tag von GET_SERVICE_INFO übernommen\nde-AT ... Beistrich als Komma, en-US ... Punkt als Komma")]
+    [DisplayName("IMS Service LOCALE Ã¼berschreiben")]
+    [Description("Hier kann gegeben werden, wie ein Komma fÃ¼r Dienste interpretiert werden soll.\nKein Wert ... Lokalisierung wird aus dem LOCALE Tag von GET_SERVICE_INFO Ã¼bernommen\nde-AT ... Beistrich als Komma, en-US ... Punkt als Komma")]
     [Editor(typeof(TypeEditor.IMSLocaleEditor), typeof(TypeEditor.ITypeEditor))]
     public IMSLocale OverrideLocal
     {
@@ -174,7 +174,7 @@ public class IMSService : CopyableNode, IAuthentification, ICreatable, IEditable
     {
         if (appendRoot)
         {
-            return this.Url + @"\.general";
+            return this.Url + @"/.general";
         }
         else
         {
@@ -277,7 +277,7 @@ public class IMSService : CopyableNode, IAuthentification, ICreatable, IEditable
         List<string> urls = new List<string>();
         List<string> themeLinkUris = new List<string>();
 
-        #region Überprüfen, ob beim Refresh layer gelöscht/hinzugefügt werden werden
+        #region ÃœberprÃ¼fen, ob beim Refresh layer gelÃ¶scht/hinzugefÃ¼gt werden werden
         if (refresh && level == 0)
         {
             int oldT = this.CmsManager.CountConfigFiles(di.FullName + @"\themes", "*.xml");
@@ -285,11 +285,11 @@ public class IMSService : CopyableNode, IAuthentification, ICreatable, IEditable
             int divT = newT - oldT;
             if (divT < 0)
             {
-                throw new RefreshConfirmException("Durch den Refresh " + (divT == -1 ? "wird" : "werden") + " " + (-divT).ToString() + " " + (divT == -1 ? "Thema" : "Themen") + " aus Dienst gelöscht.\nMöchten Sie trotzden fortfahren?");
+                throw new RefreshConfirmException("Durch den Refresh " + (divT == -1 ? "wird" : "werden") + " " + (-divT).ToString() + " " + (divT == -1 ? "Thema" : "Themen") + " aus Dienst gelÃ¶scht.\nMÃ¶chten Sie trotzden fortfahren?");
             }
             else if (divT > 0)
             {
-                throw new RefreshConfirmException("Durch den Refresh " + (divT == 1 ? "wird" : "werden") + " dem Dienst " + (divT).ToString() + " " + (divT == 1 ? "Thema" : "Themen") + " hinzugefügt.\nMöchten Sie fortfahren?");
+                throw new RefreshConfirmException("Durch den Refresh " + (divT == 1 ? "wird" : "werden") + " dem Dienst " + (divT).ToString() + " " + (divT == 1 ? "Thema" : "Themen") + " hinzugefÃ¼gt.\nMÃ¶chten Sie fortfahren?");
             }
         }
         #endregion
@@ -324,7 +324,7 @@ public class IMSService : CopyableNode, IAuthentification, ICreatable, IEditable
             {
                 save = false;
 
-                #region Überprüfen, ob LayerID noch zusammenpasst!
+                #region ÃœberprÃ¼fen, ob LayerID noch zusammenpasst!
                 string eFilename = di.FullName + @"\themes\" + IMSService.ExtractLastPathElement(themeLinkUri) + ".xml";
                 IStreamDocument eXmlSteam = DocumentFactory.Open(eFilename);
                 ServiceLayer eLayer = new ServiceLayer();
@@ -424,7 +424,7 @@ public class IMSService : CopyableNode, IAuthentification, ICreatable, IEditable
             return false;
         }
 
-        // Früher waren die TOC Layer xml-Files
+        // FrÃ¼her waren die TOC Layer xml-Files
         foreach (var fi in di.GetFiles("*.xml"))
         {
             if (fi.Name.StartsWith("."))

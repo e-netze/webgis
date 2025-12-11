@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core.IO.Abstractions;
+﻿using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
@@ -25,7 +25,7 @@ public class ServiceCollection : NameUrl, ICreatable, IUI, IDisplayName
     {
         if (appendRoot)
         {
-            return this.Url + @"\.general";
+            return this.Url + @"/.general";
         }
         else
         {
@@ -95,7 +95,7 @@ public class MapServiceCollection : NameUrl, ICreatable, IUI, IDisplayName
     {
         if (appendRoot)
         {
-            return this.Url + @"\.general";
+            return this.Url + @"/.general";
         }
         else
         {

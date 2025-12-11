@@ -497,8 +497,8 @@ public class PresentationGroupGdi : NameUrl, IUI, ICreatable, IDisplayName, IEdi
     {
         if (appendRoot)
         {
-            //return Crypto.GetID() + @"\.general";
-            return this.Url + @"\.general";
+            //return Crypto.GetID() + @"/.general";
+            return this.Url + @"/.general";
         }
         else
         {

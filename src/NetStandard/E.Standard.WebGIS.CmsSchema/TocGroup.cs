@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core.IO.Abstractions;
+ï»¿using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
@@ -77,7 +77,7 @@ public class TocGroup : CopyableNode, IUI, ICreatable, IDisplayName, IEditable
     }
 
     [DisplayName("Ogc Id")]
-    [Description("Id für dieses Thema, das für WMS export verwendet wird (nur relevant, wenn die Gruppe für das 'Aufklappen' gesprerrt ist). Wenn hier nichts angeben wird, enspricht diese Id dem Namen.")]
+    [Description("Id fÃ¼r dieses Thema, das fÃ¼r WMS export verwendet wird (nur relevant, wenn die Gruppe fÃ¼r das 'Aufklappen' gesprerrt ist). Wenn hier nichts angeben wird, enspricht diese Id dem Namen.")]
     [Category("~WebGIS 5 OGC")]
     public string OgcId
     {
@@ -105,7 +105,7 @@ public class TocGroup : CopyableNode, IUI, ICreatable, IDisplayName, IEditable
     {
         if (appendRoot)
         {
-            return Crypto.GetID() + @"\.general";
+            return Crypto.GetID() + @"/.general";
         }
         else
         {

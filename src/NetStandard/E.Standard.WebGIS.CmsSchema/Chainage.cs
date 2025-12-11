@@ -79,7 +79,7 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
     {
         if (appendRoot)
         {
-            return Crypto.GetID() + @"\.general";
+            return Crypto.GetID() + @"/.general";
         }
         else
         {

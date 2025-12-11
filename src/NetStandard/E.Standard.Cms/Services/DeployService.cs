@@ -10,6 +10,7 @@ using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.Extensions.Compare;
 using E.Standard.Extensions.ErrorHandling;
 using E.Standard.Extensions.Security;
+using E.Standard.Platform;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Security.Cryptography.Services;
 using E.Standard.Web.Abstractions;
@@ -109,29 +110,34 @@ public class DeployService : ICmsTool
             }
 
             int counter = 0;
+            int stepWidth = SystemInfo.IsLinux ? 100 : 1000;
+            DateTime currentTime = DateTime.Now;
+
             cms.OnParseWaring += (object? sender, EventArgs e) =>
             {
                 counter++;
-                if (counter % 1000 == 0)
+                if (counter % stepWidth == 0)
                 {
                     if (e is CMSManager.ParseEventArgs)
                     {
                         CMSManager.ParseEventArgs pe = (CMSManager.ParseEventArgs)e;
 
-                        console.WriteLine("scanned " + counter + " nodes");
+                        console.WriteLine($"scanned {counter} nodes in {(int)(DateTime.Now-currentTime).TotalMilliseconds}ms");
+                        currentTime = DateTime.Now;
                     }
                 }
             };
             cms.OnExportNode += (object? sender, EventArgs e) =>
             {
                 counter++;
-                if (counter % 1000 == 0)
+                if (counter % stepWidth == 0)
                 {
                     if (e is CMSManager.ParseEventArgs)
                     {
                         CMSManager.ParseEventArgs pe = (CMSManager.ParseEventArgs)e;
 
-                        console.WriteLine("Processed " + counter + " nodes");
+                        console.WriteLine($"Processed {counter} nodes in {(int)(DateTime.Now-currentTime).TotalMilliseconds}ms");
+                        currentTime = DateTime.Now;
                     }
                 }
             };
