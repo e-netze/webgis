@@ -3,6 +3,7 @@ using E.Standard.Configuration.Services;
 using E.Standard.WebMapping.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using RazorEngine.Compilation.ImpromptuInterface.Dynamic;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -61,7 +62,7 @@ static public class StringExtensions
             return new T[0];
         }
 
-        return str.Split(separator).Select(s => 
+        return str.Split(separator).Select(s =>
                 typeof(T) switch
                 {
                     Type t when t == typeof(short) => (T)(object)short.Parse(s.Trim()),
@@ -69,7 +70,7 @@ static public class StringExtensions
                     Type t when t == typeof(long) => (T)(object)long.Parse(s.Trim()),
 
                     Type t when t == typeof(string) => (T)(object)s.Trim(),
-                    
+
                     Type t when t == typeof(float) => (T)(object)float.Parse(s.Trim()),
                     Type t when t == typeof(double) => (T)(object)double.Parse(s.Trim()),
 
@@ -95,5 +96,21 @@ static public class StringExtensions
             StartTime = long.Parse(parts[0].Trim()),
             EndTime = long.Parse(parts[1].Trim())
         };
+    }
+
+    static public string RemoveSubscriberPrefix(this string userName)
+    {
+        if (string.IsNullOrEmpty(userName))
+        {
+            return userName;
+        }
+
+        // Remove "subscriber::" prefix if it exists
+        if (userName.StartsWith("subscriber::", StringComparison.OrdinalIgnoreCase))
+        {
+            return userName.Substring("subscriber::".Length);
+        }
+
+        return userName;
     }
 }

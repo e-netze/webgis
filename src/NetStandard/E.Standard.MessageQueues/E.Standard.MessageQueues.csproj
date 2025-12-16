@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="MessageQueueNET.Client" Version="3.24.5101" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.1" />
   </ItemGroup>
 
 </Project>
