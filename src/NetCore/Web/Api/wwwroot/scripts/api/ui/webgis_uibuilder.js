@@ -118,7 +118,11 @@
 
             for (var i = 0, to = options.elements.length; i < to; i++) {
                 if (options.elements[i].target && options.elements[i].target.indexOf('#') === 0) {  // Id selector
-                    // do nothing
+                    // set target root if not already set
+                    // otherwise cascading combos not work for eg. multiple feature transfers
+                    if ($targetRoot.length === 0) {
+                        $targetRoot = $(options.elements[i].target);
+                    }
                 } else {
                     if (options.map) {
                         //console.log('map.fire: onbuildui-' + options.elements[i].target);
