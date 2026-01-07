@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## 8.26.201
+
+### Fixed
+
+- Bug: dont show queries in detail search with only invisible query items
+- Bug: DataLinq: Keep changes in documents after changing tabs
+
+
+## 8.25.5101
+
 ### Added
 
 - DateTimeFields: Added the possibility to set sorting algorithm for DateTime fields in CMS configuration

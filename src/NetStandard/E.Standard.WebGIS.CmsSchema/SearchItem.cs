@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core;
+﻿using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
@@ -38,7 +38,7 @@ public class SearchItem : CopyableXml, IUI, IEditable, IDisplayName, ICopyable
     #region Properties
 
     [DisplayName("Suchfelder")]
-    [Description("Felder in denen f�r diesen Ausdruck gesucht wird.")]
+    [Description("Felder in denen für diesen Ausdruck gesucht wird.")]
     [Category("Allgemein")]
     [Editor(typeof(TypeEditor.ThemeFieldsEditor), typeof(TypeEditor.ITypeEditor))]
     public string[] Fields
@@ -55,8 +55,8 @@ public class SearchItem : CopyableXml, IUI, IEditable, IDisplayName, ICopyable
         set { _method = value; }
     }
 
-    [DisplayName("Sichbar")]
-    [Description("Gibt an, ob das Feld in der Suchmaske angezeigt wird. Nicht sichbare Felder sind beispielsweise sinnvoll, wenn diese nur f�r parametrierte Aufrufe verwendet werden sollten, f�r den Anwender aber nicht sichtbar sein sollten (z.B. Adresscode, ObjectID, ...).")]
+    [DisplayName("Sichtbar")]
+    [Description("Gibt an, ob das Feld in der Suchmaske angezeigt wird. Nicht sichbare Felder sind beispielsweise sinnvoll, wenn diese nur für parametrierte Aufrufe verwendet werden sollten, für den Anwender aber nicht sichtbar sein sollten (z.B. Adresscode, ObjectID, ...).")]
     [Category("Allgemein")]
     public bool Visible
     {
@@ -65,12 +65,12 @@ public class SearchItem : CopyableXml, IUI, IEditable, IDisplayName, ICopyable
     }
 
     [DisplayName("Eingabe erforderlich")]
-    [Description("Gibt an, ob die Eingabe dieses Feldes erforderlich ist, um die Abfrage auszuf�hren.")]
+    [Description("Gibt an, ob die Eingabe dieses Feldes erforderlich ist, um die Abfrage auszuführen.")]
     [Category("Allgemein")]
     public bool Required { get; set; }
 
-    [DisplayName("Beispiele f�r die Eingabe")]
-    [Description("Dieser Text wird unter dem Eingabefeld angegzeigt und soll dem Anwender Beispielwerte f�r die Eingabe vermitteln.")]
+    [DisplayName("Beispiele für die Eingabe")]
+    [Description("Dieser Text wird unter dem Eingabefeld angegzeigt und soll dem Anwender Beispielwerte für die Eingabe vermitteln.")]
     [Category("~Eingabe")]
     public string Examples
     {
@@ -78,8 +78,8 @@ public class SearchItem : CopyableXml, IUI, IEditable, IDisplayName, ICopyable
         set { _examples = value; }
     }
 
-    [DisplayName("Regul�rer Ausdruck")]
-    [Description("Dieser Ausdruck wird f�r die Validierung der Eingabe verwendet.")]
+    [DisplayName("Regulärer Ausdruck")]
+    [Description("Dieser Ausdruck wird für die Validierung der Eingabe verwendet.")]
     [Category("~Eingabe")]
     [Editor(typeof(TypeEditor.RegExTypeEditor), typeof(TypeEditor.ITypeEditor))]
     public string RegularExpression
@@ -89,7 +89,7 @@ public class SearchItem : CopyableXml, IUI, IEditable, IDisplayName, ICopyable
     }
 
     [DisplayName("Format Expression")]
-    [Description("Mit dieser Expression wird die Eingabe formatiert. {0} ist der Platzhalter f�r die Usereingabe, zB DATE '{0}' => wird zu DATE '2015-5-3'. Achtung: Wenn eine Expression angeben wird, muss der komplette Ausdruck angegeben inklusive (einfachen) Hochkomma am Anfang oder Ende angeben werden! zB 'fix_prefix_{0}_fix_postfix'.")]
+    [Description("Mit dieser Expression wird die Eingabe formatiert. {0} ist der Platzhalter für die Usereingabe, zB DATE '{0}' => wird zu DATE '2015-5-3'. Achtung: Wenn eine Expression angeben wird, muss der komplette Ausdruck angegeben inklusive (einfachen) Hochkomma am Anfang oder Ende angeben werden! zB 'fix_prefix_{0}_fix_postfix'.")]
     [Category("~Eingabe")]
     public string FormatExpression { get; set; }
 
@@ -104,7 +104,7 @@ public class SearchItem : CopyableXml, IUI, IEditable, IDisplayName, ICopyable
 
 
     [DisplayName("Auswahlliste")]
-    [Description("Auswahlliste f�r dieses Suchfeld.")]
+    [Description("Auswahlliste für dieses Suchfeld.")]
     [Category("~Auswahlliste")]
     [Editor(typeof(TypeEditor.LookUpEditor), typeof(TypeEditor.ITypeEditor))]
     public LookUp LookUp
@@ -114,7 +114,7 @@ public class SearchItem : CopyableXml, IUI, IEditable, IDisplayName, ICopyable
     }
 
     [DisplayName("Auswahlliste verwenden")]
-    [Description("Auswahlliste f�r dieses Suchfeld anwenden.")]
+    [Description("Auswahlliste für dieses Suchfeld anwenden.")]
     [Category("~Auswahlliste")]
     public bool UseLookUp
     {
@@ -134,7 +134,7 @@ public class SearchItem : CopyableXml, IUI, IEditable, IDisplayName, ICopyable
     [Browsable(true)]
     [DisplayName("Sql Injektion Whitelist")]
     [Category("~Sicherheit")]
-    [Description("Hier kann ein String mit Zeichen angegeben werden, die von der SQL-Injektion �berpr�fung ignoriert werden. zB: ><&'\"")]
+    [Description("Hier kann ein String mit Zeichen angegeben werden, die von der SQL-Injektion überprüfung ignoriert werden. zB: ><&'\"")]
     public string SqlInjectionWhiteList
     {
         get; set;
@@ -143,14 +143,14 @@ public class SearchItem : CopyableXml, IUI, IEditable, IDisplayName, ICopyable
     [Browsable(true)]
     [DisplayName("In Ergebnisvorschau ignorieren")]
     [Category("Ergebnisvorschau")]
-    [Description("Werden mehrere Objekte bei einer Abfrage gefunden, wird zuerst eine verfachte Liste der Objekte angezeigt. Dazu wird f�r jedes Objekte ein kurzer Vorschau-Text erstellt. Dieser Text setzt sich in der Regel aus den Attributwerten der m�glichen Suchbegriffe zusammen. Wenn eine Suchbegriff nicht f�r den Vorschau-Text verwendet werden sollte, kann er hier weggeschalten werden.")]
+    [Description("Werden mehrere Objekte bei einer Abfrage gefunden, wird zuerst eine verfachte Liste der Objekte angezeigt. Dazu wird für jedes Objekte ein kurzer Vorschau-Text erstellt. Dieser Text setzt sich in der Regel aus den Attributwerten der möglichen Suchbegriffe zusammen. Wenn eine Suchbegriff nicht für den Vorschau-Text verwendet werden sollte, kann er hier weggeschalten werden.")]
     public bool IgnoreInPreviewText
     {
         get; set;
     }
 
     [DisplayName("SQL-Upper verwenden (Oracle)")]
-    [Description("Um bei Oracle Datenbanken nicht Case-Sensitiv zu suchen, kann f�r String Felder SQL-Upper auf 'true' gesetzt werden. Liegt eine SQL Server Datenbank zugrunde, ist der Wert immer auf 'false' zu setzen.")]
+    [Description("Um bei Oracle Datenbanken nicht Case-Sensitiv zu suchen, kann für String Felder SQL-Upper auf 'true' gesetzt werden. Liegt eine SQL Server Datenbank zugrunde, ist der Wert immer auf 'false' zu setzen.")]
     [Category("~~SQL")]
     public bool UseUpper
     {

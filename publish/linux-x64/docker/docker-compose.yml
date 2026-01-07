@@ -11,6 +11,7 @@ services:
         networks:
             - webgis-network
         env_file:
+            - common.env
             - cms.env
 
     webgis-api:
@@ -23,6 +24,7 @@ services:
         networks:
             - webgis-network
         env_file:
+            - common.env
             - api.env
 
     webgis-portal:
@@ -35,7 +37,8 @@ services:
         networks:
             - webgis-network
         env_file:
-            - api.env
+            - common.env
+            - portal.env
 
 volumes:
     webgis-repository: 

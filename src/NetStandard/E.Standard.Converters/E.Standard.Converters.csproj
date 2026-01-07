@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReverseMarkdown" Version="3.25.0" />
+    <PackageReference Include="ReverseMarkdown" Version="4.7.1" />
   </ItemGroup>
 
 </Project>

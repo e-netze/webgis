@@ -116,7 +116,7 @@
             var query = service.queries[i];
             if (query.visible === false)
                 continue;
-            if (type === 'query' && (query.items == null || query.items.length === 0))
+            if (type === 'query' && (!query.items || !query.items.find((item) => item.visible !== false)))
                 continue;
             var val = service.id + ':' + query.id;
             if (options.valuefunction) {
