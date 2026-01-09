@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+### Fixed
+
+## 8.26.202
+
+### Fixed
+
+- Show Layername in legend for AGS-Raster layers
+  [discussion #376](https://github.com/e-netze/webgis-community/discussions/376)
+
 ## 8.26.201
 
 ### Fixed
@@ -23,7 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   Possible values:
   - `default`: Default sorting behavior (string based)
   - `date_dd_mm_yyyy`: Sort as date with format dd.MM.yyyy
-  [discussion #341](https://github.com/e-netze/webgis-community/discussions/379)
+  [discussion #379](https://github.com/e-netze/webgis-community/discussions/379)
 
 ### Fixed
 

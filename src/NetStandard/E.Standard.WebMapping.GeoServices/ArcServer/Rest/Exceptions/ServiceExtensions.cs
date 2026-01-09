@@ -184,7 +184,11 @@ static class ServiceExtensions
                                         maxWidth = Math.Max(maxWidth, Math.Max(legendImage.Width + 10, 40) + (int)canvas.MeasureText(label, font).Width);
                                     }
                                 }
-                                if (legendLayer.Legend.Length > 1)
+
+                                if (
+                                    legendLayer.Legend.Count() > 1  // has more than one legend item
+                                    || !legendLayer.Legend.Any(l => String.IsNullOrEmpty(l.Label))  // has at least legend item with label (Raster Layers,...))
+                                   )
                                 {
                                     imageHeight += 25;
                                 }
@@ -220,7 +224,10 @@ static class ServiceExtensions
             foreach (var legendLayer in legendLayers)
             {
                 var xOffset = 0;
-                if ((legendLayer.Legend.Count() > 1))
+                if (
+                    legendLayer.Legend.Count() > 1  // has more than one legend item
+                    || !legendLayer.Legend.Any(l => String.IsNullOrEmpty(l.Label))  // has at least legend item with label (Raster Layers,...)
+                    )
                 {
                     canvas.DrawText(legendLayer.LayerName, headlineFontStyle, blackBrush, new CanvasPointF(5, yOffset), stringFormat); // headline
                     xOffset = 10;
