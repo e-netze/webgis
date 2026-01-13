@@ -73,6 +73,10 @@ public class LayoutBuilder
             }
 
             FileInfo fi = new FileInfo(filename);
+            if (!fi.Exists)
+            {
+                throw new Exception($"Layout file {fi.Name} not exists");
+            }
             _doc = new XmlDocument();
 
             //var xml = File.ReadAllText(filename);
@@ -160,6 +164,8 @@ public class LayoutBuilder
         {
             _errMsg = ex.Message;
             _doc = null;
+
+            throw;
         }
     }
     public LayoutBuilder(IMap map, IHttpService http, string filename, PageSize size, PageOrientation orientation)

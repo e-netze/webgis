@@ -93,10 +93,18 @@
                     affectedService.setTimeEpoch(start ? start.getTime() : null, end ? end.getTime() : null);
                 }
             });
+
+        o.map.events.on('onaddservice', this.addService, this);
+        o.map.events.on('onremoveservice', this.removeService, this);
     },
     destroy: function () {
         //console.log('Destroy time filter'); 
         this.$el.off('.webgis_time_filter_control');
+
+        const o = this.options;
+        o.map.events.off('onaddservice', this.addService);
+        o.map.events.off('onremoveservice', this.removeService);
+
     },
     methods: {
         createEpochControl: function ($parent, options, serviceId) {
@@ -147,6 +155,21 @@
 
             const $serviceCombo = this.$el.find('.webgis-timefilter-services');
             $serviceCombo.val(service.id).trigger('change');
+        },
+
+        addService: function (e, service) {
+            if (!service?.hasTimeInfoLayers()) return;
+
+            const $serviceCombo = this.$el.find(".webgis-timefilter-services");
+            $("<option>")
+                .attr("value", service.id)
+                .text(service.name)
+                .appendTo($serviceCombo);
+   
+        },
+        removeService: function (e, service) {
+            const $serviceCombo = this.$el.find(".webgis-timefilter-services");
+            $serviceCombo.children("option[value='" + service.id + "']").remove();
         }
     }
 });
@@ -173,10 +196,15 @@ webgis.ui.definePlugin('webgis_timeFilterList', {
         );
 
         this.refresh();
+
+        map.events.on('onremoveservice', this.removeService, this);
     },
     destroy: function () {
         //console.log('Destroy time filter list'); 
         this.$el.off('.webgis_time_filter_list');
+
+        const map = this.options.map;
+        map.events.off('onremoveservice', this.removeService);
     },
     methods: {
         refresh: function () {
@@ -241,6 +269,15 @@ webgis.ui.definePlugin('webgis_timeFilterList', {
                     });
                 });
             }
+        },
+        removeService: function (e, service) {
+            const $timeEpochList = this.$el.find(".webgis-timefilter-list");
+            $timeEpochList.children("li").each(function () {
+                const $item = $(this);
+                if ($item.data('service').id === service.id) {
+                    $item.remove();
+                }
+            });
         }
     }
 });

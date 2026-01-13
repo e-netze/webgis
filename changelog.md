@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Fixed
 
+- Bug: Timefilter - UI not refreshed after adding or removing service to map
+  [discussion #390](https://github.com/e-netze/webgis-community/discussions/390)
+
 ## 8.26.202
 
 ### Fixed

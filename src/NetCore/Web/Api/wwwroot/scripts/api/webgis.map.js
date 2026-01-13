@@ -3447,7 +3447,7 @@
 
         for (var s in this.services) {
             var service = this.services[s];
-            if (!service.serviceInfo?.filters) continue;
+            if (!service?.serviceInfo?.filters) continue;
 
             for (var f in service.serviceInfo.filters) {
                 var filter = service.serviceInfo.filters[f];
@@ -3464,7 +3464,7 @@
         var timeInfoServices = [];
         for (let serviceId in this.services) {
             let service = this.services[serviceId];
-            if (service.hasTimeInfoLayers()) {
+            if (service?.hasTimeInfoLayers()) {
                 timeInfoServices.push(service);
             }
         }

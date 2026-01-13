@@ -250,7 +250,8 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
         List<IPrintLayoutTextBridge> layoutTexts = new();
         bool first = true;
-        foreach (var lId in new string[] { "layout_map_services_overview.xml", layoutId })
+
+        foreach (var lId in new string[] { e.GetMapSeriesOverviewLayout(), layoutId })
         {
             bridge.GetPrintLayoutTextElements(lId, allowFileName: first == true)  // first (overview) layout allow direct access by file name
                 .ToList()
