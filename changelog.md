@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## Added
+## Fixed
+
+## 8.26.302
+
 ### Added
+
+- custom.js: add ``modify_event`` to custom tools to e.g. calculate world coordinates in a different coordinate system
+  [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/customtools.html)
+
 ### Fixed
 
 - Bug: Timefilter - UI not refreshed after adding or removing service to map
