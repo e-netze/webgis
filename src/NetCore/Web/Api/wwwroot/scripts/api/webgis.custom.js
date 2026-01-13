@@ -14,6 +14,7 @@ webgis.custom = new function () {
                 cursor: tool.cursor || 'pointer',
                 command: tool.command || '',
                 command_target: tool.command_target,
+                modify_event: tool.modify_event || null,  
                 description: tool.description || '',
                 help_urlpath: tool.help_urlpath || '',
                 uiElements: tool.uiElements || []

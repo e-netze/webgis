@@ -1865,6 +1865,10 @@
     };
     this.executeCustomTool = function (map, tool, eventObject) {
         if (tool.command) {
+            if (typeof tool.modify_event === 'function') {
+                tool.modify_event(map, eventObject);
+            }
+
             let command = this.replaceCustomToolUrl(map, tool.command, eventObject);
 
             switch (tool.tooltype) {
