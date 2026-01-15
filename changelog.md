@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+## 8.26.303
+
+## Fixed
+
+- CMS-Dockerfile: fixed typo ``WORKDIR /app#`` => ``WORKDIR /app``
+
 ## 8.26.302
 
 ### Added

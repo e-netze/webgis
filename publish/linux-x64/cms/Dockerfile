@@ -11,7 +11,7 @@ ENV ASPNETCORE_URLS=http://*:8080
 # readOnlyRootFilesystem = true works with this:
 ENV COMPlus_EnableDiagnostics=0
 
-WORKDIR /app#
+WORKDIR /app
 COPY /artifacts .
 COPY /override .
 
