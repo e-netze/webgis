@@ -100,10 +100,10 @@ public class ApiBaseController : Controller
 
     #endregion
 
-    public IActionResult ViewResult(object model = null) => View(model);
-    public IActionResult ViewResult(string viewName, object model = null) => View(viewName, model);
-    public IActionResult RedirectResult(string target) => this.Redirect(target);
-    public IActionResult RedirectToActionResult(string action, string controller = "", object parameters = null)
+    protected IActionResult ViewResult(object model = null) => View(model);
+    protected IActionResult ViewResult(string viewName, object model = null) => View(viewName, model);
+    protected IActionResult RedirectResult(string target) => this.Redirect(target);
+    protected IActionResult RedirectToActionResult(string action, string controller = "", object parameters = null)
     {
         if (string.IsNullOrWhiteSpace(controller))
         {
@@ -113,19 +113,19 @@ public class ApiBaseController : Controller
         return this.RedirectToAction(action, controller, parameters);
     }
 
-    public string ActionUrl(string action, object parameters = null)
+    protected string ActionUrl(string action, object parameters = null)
     {
         return this.Url.Action(action, values: parameters);
     }
 
-    public string ActionUrl(string controller, string action, object parameters = null)
+    protected string ActionUrl(string controller, string action, object parameters = null)
     {
         return this.Url.Action(controller, action, values: parameters);
     }
 
-    public void AddViewData(string name, string value) => this.ViewData[name] = value;
+    protected void AddViewData(string name, string value) => this.ViewData[name] = value;
 
-    public Version JavaScriptApiVersion()
+    protected Version JavaScriptApiVersion()
     {
         NameValueCollection nvc = this.HasFormData
             ? Request.Form.ToCollection()
@@ -141,7 +141,7 @@ public class ApiBaseController : Controller
         return new System.Version(apiVersion);
     }
 
-    public bool ClientJavascriptVersionOrLater(System.Version version)
+    internal bool ClientJavascriptVersionOrLater(System.Version version)
     {
         var apiVersion = JavaScriptApiVersion();
         if (apiVersion == null)
@@ -152,7 +152,7 @@ public class ApiBaseController : Controller
         return apiVersion >= version;
     }
 
-    async public Task<IActionResult> ApiObject(object obj)
+    async internal Task<IActionResult> ApiObject(object obj)
     {
         NameValueCollection nvc = this.HasFormData ? Request.Form.ToCollection() : Request.Query.ToCollection();
         if (nvc["f"] == "json" || Request.Query["f"] == "json" ||
@@ -225,7 +225,7 @@ public class ApiBaseController : Controller
         return View("_html", obj as E.Standard.Api.App.Models.Abstractions.IHtml);
     }
 
-    async public Task<IActionResult> JsonObject(object obj, bool pretty = false)
+    async internal Task<IActionResult> JsonObject(object obj, bool pretty = false)
     {
         var json = JSerializer.Serialize(obj, pretty || ApiGlobals.IsDevelopmentEnvironment);
 
@@ -254,7 +254,7 @@ public class ApiBaseController : Controller
         //}
     }
 
-    public IActionResult JsonView(string json)
+    protected IActionResult JsonView(string json)
     {
         //ViewData["json"] = json;
 
@@ -262,7 +262,7 @@ public class ApiBaseController : Controller
         return JsonResultStream(json);
     }
 
-    public IActionResult FramedJsonObject(object obj, string callbackChannel = "framed-json-response")
+    internal IActionResult FramedJsonObject(object obj, string callbackChannel = "framed-json-response")
     {
         var json = JSerializer.Serialize(obj);
 
@@ -291,7 +291,7 @@ public class ApiBaseController : Controller
         //}
     }
 
-    async public Task<IActionResult> JsonViewSuccess(bool success, string exceptionMessage = "", string exceptionType = "", string requestId = null)
+    async internal Task<IActionResult> JsonViewSuccess(bool success, string exceptionMessage = "", string exceptionType = "", string requestId = null)
     {
         if (!success && !String.IsNullOrEmpty(exceptionMessage))
         {
@@ -308,7 +308,7 @@ public class ApiBaseController : Controller
         return JsonView("{\"success\":" + success.ToString().ToLower() + "}");
     }
 
-    async public Task<IActionResult> ThrowJsonException(Exception ex, int statusCode = 200)
+    async internal Task<IActionResult> ThrowJsonException(Exception ex, int statusCode = 200)
     {
         //Response.StatusCode = statusCode;
 
@@ -323,7 +323,7 @@ public class ApiBaseController : Controller
                                ex is ReportWarningException ? ((ReportWarningException)ex).RequestId : null);
     }
 
-    public IActionResult RawResponse(byte[] responseBytes, string contentType, NameValueCollection headers)
+    internal IActionResult RawResponse(byte[] responseBytes, string contentType, NameValueCollection headers)
     {
         if (headers != null)
         {
@@ -347,7 +347,7 @@ public class ApiBaseController : Controller
         return BinaryResultStream(responseBytes, contentType);
     }
 
-    public IActionResult PlainView(string plain, string contentType = "")
+    internal IActionResult PlainView(string plain, string contentType = "")
     {
         //ViewData["plain"] = plain;
         //ViewData["ContentType"] = contentType;
@@ -356,7 +356,7 @@ public class ApiBaseController : Controller
         return PlainResultStream(plain, contentType);
     }
 
-    public bool IsJsonRequest
+    protected bool IsJsonRequest
     {
         get
         {
@@ -626,12 +626,12 @@ public class ApiBaseController : Controller
     //    //System.Web.Security.FormsAuthentication.SignOut();
     //}
 
-    public IActionResult SignOutSchemes(params string[] authenticationSchemes)
+    protected IActionResult SignOutSchemes(params string[] authenticationSchemes)
     {
         return base.SignOut(authenticationSchemes);
     }
 
-    public ClaimsPrincipal ClaimsPrincipalUser => this.User;
+    protected ClaimsPrincipal ClaimsPrincipalUser => this.User;
 
     //public string GetCookieUsername()
     //{
@@ -732,7 +732,7 @@ public class ApiBaseController : Controller
 
     #endregion
 
-    async public Task<IActionResult> HandleAuthenticationException()
+    async protected Task<IActionResult> HandleAuthenticationException()
     {
         if (Request.Method.ToString() == "POST")
         {
@@ -763,7 +763,7 @@ public class ApiBaseController : Controller
 
     #region Return Streams 
 
-    public IActionResult BinaryResultStream(byte[] data, string contentType, string fileName = "")
+    protected IActionResult BinaryResultStream(byte[] data, string contentType, string fileName = "")
     {
         if (!String.IsNullOrWhiteSpace(fileName))
         {
@@ -773,7 +773,7 @@ public class ApiBaseController : Controller
         return File(data, contentType);
     }
 
-    public IActionResult JsonResultStream(string json)
+    protected IActionResult JsonResultStream(string json)
     {
         json = json ?? String.Empty;
 
@@ -784,7 +784,7 @@ public class ApiBaseController : Controller
         return BinaryResultStream(Encoding.UTF8.GetBytes(json), "application/json; charset=utf-8");
     }
 
-    public IActionResult PlainResultStream(string text, string contantType)
+    protected IActionResult PlainResultStream(string text, string contantType)
     {
         text = text ?? String.Empty;
 

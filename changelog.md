@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+## 8.26.401
+
+## Added
+
+- SecurityConfig: added ``roleClaimType`` and ``roleClaimValueSeparator`` for AzureAD and OpenID Connect Authentication
+  [docs](https://docs.webgiscloud.com/de/webgis/config/authentication/openid.html)
+
+
 ## 8.26.303
 
 ## Fixed
