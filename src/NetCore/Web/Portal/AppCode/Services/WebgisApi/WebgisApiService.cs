@@ -1,6 +1,7 @@
 ﻿using E.Standard.Configuration.Services;
 using E.Standard.Extensions.Collections;
 using E.Standard.Json;
+using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebGIS.Core;
@@ -8,6 +9,7 @@ using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebGIS.Core.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Portal.Core.AppCode.Extensions;
 using System;
 using System.Collections.Generic;
@@ -27,6 +29,7 @@ public class WebgisApiService
     private readonly InMemoryPortalAppCache _cache;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ICryptoService _crypto;
+    private readonly ApplicationSecurityConfig _appSecurityConfig;
 
     public WebgisApiService(
         ILogger<WebgisApiService> logger,
@@ -34,7 +37,8 @@ public class WebgisApiService
         UrlHelperService urlHelperService,
         InMemoryPortalAppCache cache,
         IHttpClientFactory httpClientFactory,
-        ICryptoService crypto)
+        ICryptoService crypto,
+        IOptions<ApplicationSecurityConfig> appSecurityConfig)
     {
         _logger = logger;
         _config = config;
@@ -42,6 +46,7 @@ public class WebgisApiService
         _cache = cache;
         _httpClientFactory = httpClientFactory;
         _crypto = crypto;
+        _appSecurityConfig = appSecurityConfig.Value;
     }
 
     async public Task<string[]> ApiCmsUserRoles(HttpRequest request)
@@ -449,7 +454,7 @@ public class WebgisApiService
         //    }
         //}
 
-        var currentPortalUser = context.User.ToPortalUser();
+        var currentPortalUser = context.User.ToPortalUser(_appSecurityConfig);
         //var currentPortalUser = CurrentPortalUser(controller, portalId);
 
         if (currentPortalUser != null)

@@ -25,8 +25,25 @@ static public class OidcExtenstions
                 .Claims
                 .Where(c => c.Type == rolesClaimType)
                 .Select(c => c.Value)
+                .Where(r => !string.IsNullOrEmpty(r))
                 .ToArray();
 
+        char? roleClaimValueSeperator = appSecurity.RoleClaimValueSeparator();
+        if (roleClaimValueSeperator.HasValue
+            && roles?.Any() == true)
+        {
+            roles = roles
+                        .SelectMany(r => r.Split(roleClaimValueSeperator.Value))
+                        .Select(r => r.Trim())
+                        .Where(r => !string.IsNullOrEmpty(r))
+                        .ToArray();
+        }
+
+        //
+        // if no roles from the original claims 
+        // try to use to "role" json representation from the webgis internal claims representation.
+        // Info: This claim is set in PortalUserExtensions.ToClaimsPricipal() method
+        // 
         if (roles == null || roles.Length == 0)
         {
             var roleClaim = claimsPrincipal
@@ -125,6 +142,29 @@ static public class OidcExtenstions
             }
         }
 
+        if (appSecurity?.IdentityType == ApplicationSecurityIdentityTypes.AzureAD)
+        {
+            if (!string.IsNullOrEmpty(appSecurity.AzureADConfiguration?.RoleClaimType))
+            {
+                return appSecurity.AzureADConfiguration.RoleClaimType;
+            }
+        }
+
         return DefaultRolesClaimType;
+    }
+
+    static private char? RoleClaimValueSeparator(this ApplicationSecurityConfig? appSecurity)
+    {
+        if (appSecurity?.IdentityType == ApplicationSecurityIdentityTypes.OpenIdConnection)
+        {
+            return appSecurity.OpenIdConnectConfiguration.RoleClaimValueSeparator?.FirstOrDefault();
+        }
+
+        if (appSecurity?.IdentityType == ApplicationSecurityIdentityTypes.AzureAD)
+        {
+            return appSecurity.AzureADConfiguration.RoleClaimValueSeparator?.FirstOrDefault();
+        }
+
+        return null;
     }
 }

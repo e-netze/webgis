@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 
 namespace E.Standard.Security.App.Json;
@@ -109,6 +109,10 @@ public class ApplicationSecurityConfig
         [JsonProperty("roleClaimType")]
         [System.Text.Json.Serialization.JsonPropertyName("roleClaimType")]
         public string RoleClaimType { get; set; }
+
+        [JsonProperty("roleClaimValueSeparator")]
+        [System.Text.Json.Serialization.JsonPropertyName("roleClaimValueSeparator")]
+        public string RoleClaimValueSeparator { get; set; }
     }
 
     public class AzureAD
@@ -124,6 +128,14 @@ public class ApplicationSecurityConfig
         [JsonProperty(PropertyName = "extended-roles-from")]
         [System.Text.Json.Serialization.JsonPropertyName("extended-roles-from")]
         public string ExtendedRolesFrom { get; set; }
+
+        [JsonProperty("roleClaimType")]
+        [System.Text.Json.Serialization.JsonPropertyName("roleClaimType")]
+        public string RoleClaimType { get; set; }
+
+        [JsonProperty("roleClaimValueSeparator")]
+        [System.Text.Json.Serialization.JsonPropertyName("roleClaimValueSeparator")]
+        public string RoleClaimValueSeparator { get; set; }
     }
 
     #endregion

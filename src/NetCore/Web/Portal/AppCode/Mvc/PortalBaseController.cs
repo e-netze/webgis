@@ -106,7 +106,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
     {
         if (this.User.Identity.IsAuthenticated)
         {
-            return this.User.ToPortalUser();
+            return this.User.ToPortalUser(_appSecurityConfig);
         }
         else
         {

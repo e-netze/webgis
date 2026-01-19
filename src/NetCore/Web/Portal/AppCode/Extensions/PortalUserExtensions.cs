@@ -1,6 +1,9 @@
-﻿using E.Standard.Custom.Core.Models;
+﻿#nullable enable
+
+using E.Standard.Custom.Core.Models;
 using E.Standard.Json;
 using E.Standard.OpenIdConnect.Extensions;
+using E.Standard.Security.App.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +19,7 @@ static public class PortalUserExtensions
     private const string IsPortalUserClaimType = "is_portaluser";
     private const string StopAuthenticationPropagationClaimType = "stop_auth_propagation";
 
-    static public PortalUser ToPortalUser(this PortalAuthenticationServiceUser authenticationServiceUser)
+    static public PortalUser? ToPortalUser(this PortalAuthenticationServiceUser authenticationServiceUser)
     {
         if (authenticationServiceUser == null)
         {
@@ -49,7 +52,7 @@ static public class PortalUserExtensions
         }
         claims.Add(new Claim(IsPortalUserClaimType, "1"));
 
-        if (!String.IsNullOrWhiteSpace(portalUser.DisplayName))
+        if (!String.IsNullOrWhiteSpace(portalUser?.DisplayName))
         {
             claims.Add(new Claim(DisplayNameClaimType, portalUser.DisplayName));
         }
@@ -60,7 +63,7 @@ static public class PortalUserExtensions
         return claimsPricipal;
     }
 
-    static public PortalUser ToPortalUser(this ClaimsPrincipal claimsPrincipal)
+    static public PortalUser ToPortalUser(this ClaimsPrincipal claimsPrincipal, ApplicationSecurityConfig? appSecurityConfig)
     {
         if (claimsPrincipal == null)
         {
@@ -69,7 +72,7 @@ static public class PortalUserExtensions
 
         var portalUser = new PortalUser(
             claimsPrincipal.GetUsername(),
-            claimsPrincipal.GetRoles()?.ToArray(),
+            claimsPrincipal.GetRoles(appSecurityConfig)?.ToArray(),
             claimsPrincipal.GetRoleParameters()?.ToArray(),
             claimsPrincipal?
                     .Claims?
@@ -102,7 +105,7 @@ static public class PortalUserExtensions
     static public bool ApplyAuthenticationMiddleware(this ClaimsPrincipal claimsPrincipal)
     {
         return claimsPrincipal == null ||
-               !(claimsPrincipal.Identity.IsAuthenticated == true && claimsPrincipal.StopAuthenticationPropagation());
+               !(claimsPrincipal.Identity?.IsAuthenticated == true && claimsPrincipal.StopAuthenticationPropagation());
     }
 
     static public bool HasUsernamePrefix(this PortalUser portalUser)
@@ -133,10 +136,10 @@ static public class PortalUserExtensions
                 portalUser.DisplayName == portalUser.Username ? $"{usernamePrefix}::{portalUser.Username}" : portalUser.DisplayName);
         }
 
-        return portalUser;
+        return portalUser!;
     }
 
-    static public PortalUser AppendRoles(this PortalUser portalUser, IEnumerable<string> roles)
+    static public PortalUser? AppendRoles(this PortalUser portalUser, IEnumerable<string> roles)
     {
         if (portalUser == null || portalUser.IsAnonymous)
         {
@@ -166,9 +169,9 @@ static public class PortalUserExtensions
 
     private class Identity : IIdentity
     {
-        public Identity(PortalUser portalUser)
+        public Identity(PortalUser? portalUser)
         {
-            this.Name = portalUser?.Username;
+            this.Name = portalUser?.Username!;
             _isAuthenticated = portalUser != null && !portalUser.IsAnonymous;
 
             if (_isAuthenticated)
@@ -177,8 +180,8 @@ static public class PortalUserExtensions
             }
         }
 
-        private readonly string _authenticationType;
-        public string AuthenticationType => _authenticationType;
+        private readonly string? _authenticationType;
+        public string? AuthenticationType => _authenticationType;
 
         private readonly bool _isAuthenticated = false;
         public bool IsAuthenticated => _isAuthenticated;

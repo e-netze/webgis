@@ -1,7 +1,9 @@
 ﻿using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Security.App.Json;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Portal.Core.AppCode.Extensions;
 using Portal.Core.AppCode.Services.Authentication;
 using System;
@@ -25,6 +27,7 @@ public class WindowsAuthenticationMiddleware
     public async Task Invoke(HttpContext context,
                              WebgisCookieService webgisCookieService,
                              IEnumerable<IPortalAuthenticationService> _authenticationServices,
+                             IOptions<ApplicationSecurityConfig> appSecurityConfigOptions,
                              ITracerService tracer)
     {
         if (context.User.ApplyAuthenticationMiddleware() /*&& context.Request.HttpContext?.User?.Identity is WindowsIdentity*/)
@@ -46,7 +49,7 @@ public class WindowsAuthenticationMiddleware
                                                   windowsUser.UserRoles,
                                                   null).ToClaimsPricipal();
 
-                    tracer.TracePortalUser(this, context);
+                    tracer.TracePortalUser(this, context, appSecurityConfigOptions.Value);
                 }
             }
         }

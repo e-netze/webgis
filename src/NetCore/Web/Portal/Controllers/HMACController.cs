@@ -67,7 +67,7 @@ public class HMACController : PortalBaseController
             }
         }
 
-        portalUser = portalUser ?? this.User.ToPortalUser();
+        portalUser = portalUser ?? this.User.ToPortalUser(_appSecurityConfig);
 
         var hmacObject = await _hmacService.CreateHmacObjectAsync(portalUser);
 

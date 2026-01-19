@@ -31,12 +31,12 @@ public class OidcPrefixAuthenticationMiddleware
     }
 
     public async Task Invoke(HttpContext context,
-                             IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfigMonitor,
+                             IOptions<ApplicationSecurityConfig> appSecurityConfigOptions,
                              IEnumerable<IPortalAuthenticationService> _authenticationServices,
                              ConfigurationService config,
                              ITracerService tracer = null)
     {
-        ApplicationSecurityConfig appSecurityConfig = appSecurityConfigMonitor.CurrentValue;
+        ApplicationSecurityConfig appSecurityConfig = appSecurityConfigOptions.Value;
 
         if (appSecurityConfig.UseOpenIdConnect() || appSecurityConfig.UseAzureAD())
         {
@@ -50,7 +50,7 @@ public class OidcPrefixAuthenticationMiddleware
                 //    _logger.Log(LogLevel.Debug, "Id-Token: {id_token}", idToken);
                 //}
 
-                var portalUser = context.User.ToPortalUser();
+                var portalUser = context.User.ToPortalUser(appSecurityConfig);
 
                 //Console.WriteLine("Username: " + portalUser.Username);
                 //Console.WriteLine($" Roles [{ String.Join(", ", portalUser.UserRoles ?? new string[0]) }]");
