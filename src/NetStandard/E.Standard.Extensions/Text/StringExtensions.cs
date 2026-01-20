@@ -108,7 +108,7 @@ static public class StringExtensions
             return str;
         }
 
-        while (str.Length <= minLength)
+        while (str.Length < minLength)
         {
             str += str;
         }

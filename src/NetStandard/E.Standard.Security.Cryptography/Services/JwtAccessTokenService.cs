@@ -93,7 +93,7 @@ public class JwtAccessTokenService
     static public JwtAccessTokenService Create(string signingPassword)
     {
         var symKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(signingPassword.DoubleToMinLength(24)));
+            Encoding.UTF8.GetBytes(signingPassword.DoubleToMinLength(32)));
 
         return new JwtAccessTokenService()
         {

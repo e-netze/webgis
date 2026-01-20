@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - SecurityConfig: added ``roleClaimType`` and ``roleClaimValueSeparator`` for AzureAD and OpenID Connect Authentication
   [docs](https://docs.webgiscloud.com/de/webgis/config/authentication/openid.html)
 
+- CMS Upload: Increased min secret length to 32. With this realease both ``api`` and ``cms`` must be updated to at least version 8.26.401, otherwise cms upload will not work.
+
 
 ## 8.26.303
 
