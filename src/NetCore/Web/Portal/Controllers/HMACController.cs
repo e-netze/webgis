@@ -50,7 +50,7 @@ public class HMACController : PortalBaseController
     }
 
     [AuthorizeEndpoint]
-    async public Task<IActionResult> Index(string redirect = null)
+    async public Task<IActionResult> Index(string redirect = null,string pwd = null)
     {
         PortalUser portalUser = null;
 
@@ -78,6 +78,17 @@ public class HMACController : PortalBaseController
             // => datalinq.js will call this url, if no username is set
             hmacObject.authEndpoint = $"{_urlHelper.AppRootUrl(this.Request, this).RemoveEndingSlashes()}/auth/LoginOidc?webgis-redirect={_crypto.EncryptTextDefault(redirect, Security.Cryptography.CryptoResultStringType.Hex)}";
         }
+
+        #region Add Roles when correct password is given
+
+        string appCachePassword = _configService.AppCacheListPassword();
+        if (!string.IsNullOrWhiteSpace(appCachePassword)
+            && pwd == appCachePassword)
+        {
+            hmacObject.userroles = portalUser.UserRoles;
+        }
+
+        #endregion
 
         return JsonObject(hmacObject);
     }
