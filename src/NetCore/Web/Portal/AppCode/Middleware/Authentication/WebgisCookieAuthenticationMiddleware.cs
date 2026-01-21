@@ -34,6 +34,7 @@ public class WebgisCookieAuthenticationMiddleware
     public async Task Invoke(HttpContext context,
                              WebgisCookieService webgisCookieService,
                              UrlHelperService urlHelper,
+                             IOptions<ApplicationSecurityConfig> appSecurityConfigOptions,
                              ITracerService tracer)
     {
         if (context.User.ApplyAuthenticationMiddleware())
@@ -43,7 +44,7 @@ public class WebgisCookieAuthenticationMiddleware
             {
                 context.User = portalUser.ToClaimsPricipal();
 
-                tracer.TracePortalUser(this, context);
+                tracer.TracePortalUser(this, context, appSecurityConfigOptions.Value);
             }
             else if (_useWindowsAuthentication && context.User.Identity is WindowsIdentity)
             {

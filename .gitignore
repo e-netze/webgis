@@ -305,6 +305,7 @@ keys.config
 /src/NetCore/Web/Api/wwwroot/lib/maplibre-gl-leaflet/
 /src/NetCore/Web/Api/wwwroot/lib/jextend/
 /src/NetCore/Web/Api/wwwroot/lib/select2/
+/src/NetCore/Web/Api/wwwroot/lib/dompurify/
 
 /src/NetCore/Web/Cms/wwwroot/lib/bootbox.js/
 /src/NetCore/Web/Cms/wwwroot/lib/showdown/
@@ -322,3 +323,4 @@ keys.config
 /src/NetCore/Web/Api/wwwroot/scripts/leaflet/plugins/leaflet-plugins-gesture-handling.min.js
 /src/NetCore/Web/Api/wwwroot/scripts/api/api-ui.min.js
 /src/NetCore/Web/Api/wwwroot/scripts/flatpickr/flatpickr.de.min.js
+/src/NetCore/Web/Api/wwwroot/lib/select2

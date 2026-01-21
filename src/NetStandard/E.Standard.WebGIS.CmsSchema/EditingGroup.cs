@@ -36,7 +36,7 @@ public class EditingGroup : NameUrl, IUI, ICreatable, IDisplayName, IEditable
     {
         if (appendRoot)
         {
-            return Crypto.GetID() + @"\.general";
+            return Crypto.GetID() + @"/.general";
         }
         else
         {

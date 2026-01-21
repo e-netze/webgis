@@ -28,10 +28,17 @@ function createSelectorFromAjax(name, id, url, selectOptions, sortable, type) {
             result[type][i].id = toolName != null ? toolName : /*"'" +*/ result[type][i].id /*+ "'"*/;
             result[type][i].selected = true;
 
+            console.log("toolname:", toolName);
             if (toolName === 'webgis.tools.io.print') {
                 result[type][i].options = {
                     singleselect: false,
                     items: printLayouts()
+                };
+            }
+            if (toolName === 'webgis.tools.io.mapseriesprint') {
+                result[type][i].options = {
+                    singleselect: false,
+                    items: printLayouts("series-layout:")
                 };
             }
         }
@@ -44,13 +51,14 @@ function createSelectorFromAjax(name, id, url, selectOptions, sortable, type) {
     createSelector(name, id, selectOptions, result[type], sortable);
 };
 
-function printLayouts() {
+function printLayouts(prefix) {
+    prefix = prefix || "";
     var result = webgis.ajaxSync(webgis.baseUrl + '/rest/printlayouts');
     
     var layouts = [];
     for (var i in result) {
         layouts.push({
-            id: /*'print-layout-' +*/ result[i].id,
+            id: /*'print-layout-' +*/ prefix + result[i].id,
             name: result[i].name
         });
     }

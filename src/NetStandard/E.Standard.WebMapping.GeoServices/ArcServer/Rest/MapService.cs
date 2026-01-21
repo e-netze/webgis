@@ -252,12 +252,22 @@ public class MapService : IMapService2,
                                 jsonLayer.Id.ToString(),
                                 layerType,
                                 this,
-                                queryable: true)
+                                queryable: true,
+                                supportsDynamicLegends: jsonLayer.SupportsDynamicLegends
+                            )
                             {
                                 HasM = jsonLayer.HasM,
                                 HasZ = jsonLayer.HasZ,
                                 Visible = jsonLayer.DefaultVisbilityIncludesGroups(), // .DefaultVisibility
-                                HasAttachments = jsonLayer.HasAttachments
+                                HasAttachments = jsonLayer.HasAttachments,
+                                TimeInfo = jsonLayer?.TimeInfo is not null
+                                    ? new LayerTimeInfo(
+                                        jsonLayer.TimeInfo.TimeExtent,
+                                        "esriTimeUnitsUnknown".Equals(jsonLayer.TimeInfo.TimeIntervalUnits, StringComparison.OrdinalIgnoreCase)
+                                            ? 1
+                                            : Math.Max(jsonLayer.TimeInfo.TimeInterval, 1),
+                                        jsonLayer.TimeInfo.TimeIntervalUnits.ToTimePeriod(TimePeriod.Years))
+                                    : null
                             };
 
                             if (jsonLayer.Fields != null)
@@ -589,6 +599,7 @@ public class MapService : IMapService2,
                            ? null
                            : visibleIds)
                     .WithLayerDefintions(layerDefs)
+                    .WithTimeEpoch(this.Map.GetTimeEpoch(this.Url))
                     .WithMapRotation(this.Map)
                     .WithImageFormat(_imageFormat)
                     .WithTransparency()
@@ -851,6 +862,7 @@ public class MapService : IMapService2,
                     .WithBBox(this.Map.Extent)
                     .WithLayers(_layers.Select(l => l.ID), "hide")  // hide all layers
                     .WithLayerDefintions(null)
+                    .WithTimeEpoch(this.Map.GetTimeEpoch(this.Url))
                     .WithImageFormat("png32")
                     .WithTransparency()
                     .WithImageSizeAndDpi(this.Map.ImageWidth, this.Map.ImageHeight, (int)(this.Map.Dpi / dpiFactor))
@@ -1309,19 +1321,116 @@ public class MapService : IMapService2,
                     this.ID, String.Empty, FixLegendUrl);
             }
 
-            using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, _mapServiceName, "GetLegend", $"GetLegend {this.Service}"))
+            var httpService = requestContext.Http;
+            var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
+
+            #region Layer Visibility/Layer Defintion Queries/Dynamic Layers
+
+            List<string> visibleIds = new();
+            Dictionary<string, string> layerDefs = new Dictionary<string, string>();
+
+            foreach (var layer in this.Layers.Where(l => l != null))
             {
-                var httpService = requestContext.Http;
-                var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-                string dynamicLayerRequestUrl = $"{this.Service}/legend";
-                string jsonAnswer = await authHandler.TryPostAsync(
-                        this,
-                        dynamicLayerRequestUrl,
-                        LegendRequestBuilder.DefaultRequest);
+                bool visible = layer.Visible;
 
-                return await this.RenderRestLegendResponse(requestContext, jsonAnswer);
+                if (visible)
+                {
+                    visibleIds.Add(layer.ID);
+                }
+
+                string where = String.Empty;
+                if (layer is FeatureLayer)
+                {
+                    where = ((FeatureLayer)layer).DefinitionExpression;
+                }
+
+                if (!String.IsNullOrEmpty(layer.Filter))
+                {
+                    where = where.AppendWhereClause(layer.Filter);
+                }
+
+                if (!String.IsNullOrWhiteSpace(where))
+                {
+                    var layerDefLayerId = layer.ID;
+                    if (layer.Type == LayerType.annotation && layer is RestLayer && ((RestLayer)layer).ParentLayerIds != null && ((RestLayer)layer).ParentLayerIds.Length > 0)
+                    {
+                        layerDefLayerId = ((RestLayer)layer).ParentLayerIds[0].ToString();
+                    }
+                    layerDefs.Add(layerDefLayerId, FeatureLayer.UrlEncodeWhere(where));
+                }
             }
+
+            #endregion
+
+            var useDynamcLegendQuery =
+                this.LegendOptMethod == LegendOptimization.Symbols &&
+                this.Layers
+                    .Where(l => visibleIds.Contains(l.ID))
+                    .All(l => l is ILegendRendererHelper legendHelper && legendHelper.SupportsDynamicLegends);
+
+            #region /legend (old method without optimization)
+
+            if (!useDynamcLegendQuery)
+            {
+                using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, _mapServiceName, "GetLegend", $"GetLegend {this.Service}"))
+                {
+                    string dynamicLayerRequestUrl = $"{this.Service}/legend";
+                    string jsonLegendAnswer = await authHandler.TryPostAsync(
+                            this,
+                            dynamicLayerRequestUrl,
+                            LegendRequestBuilder.DefaultRequest);
+
+                    return await this.RenderRestLegendResponse(requestContext, jsonLegendAnswer, optimize: true);
+                }
+            }
+
+            #endregion
+
+            #region queryLegend 10.7.1
+
+            #region ImageDescription
+
+            var imageSizeAndDpi = this.Map.CalcImageSizeAndDpi(_maxImageWidth, _maxImageHeight);
+
+            #endregion
+
+            var requestBuilder = new ExportRequestBuilder()
+                .WithBBox(this.Map.Extent)
+                .WithLayers(this.SealedLayers
+                       ? null
+                       : visibleIds)
+                .WithLayerDefintions(layerDefs)
+                .WithTimeEpoch(this.Map.GetTimeEpoch(this.Url))
+                .WithMapRotation(this.Map)
+                .WithImageFormat(_imageFormat)
+                .WithTransparency()
+                .WithImageSizeAndDpi(imageSizeAndDpi.imageWidth, imageSizeAndDpi.imageHeight, (int)imageSizeAndDpi.dpi)
+                .WithImageAndBBoxSRef(
+                    this.ProjectionMethode switch
+                    {
+                        ServiceProjectionMethode.Map => Map.SpatialReference?.Id ?? 0,
+                        ServiceProjectionMethode.Userdefined => this.ProjectionId,
+                        _ => 0
+                    })
+                .WithDatumTransformations(this.DatumTransformations)
+                .WithFormat("json");
+
+            string requestUrl = $"{this.Service}/querylegends";
+
+            string jsonQueryLegendAnswer = await requestContext.LogRequest(
+                    this.Service,
+                    this.ServiceShortname,
+                    requestBuilder.Build(),
+                    "query_legend",
+                    (requestBody) => authHandler.TryPostAsync(
+                        this,
+                        requestUrl,
+                        requestBody));
+
+            #endregion
+
+            return await this.RenderRestLegendResponse(requestContext, jsonQueryLegendAnswer, optimize: false);
         }
         catch (Exception ex)
         {

@@ -10,10 +10,12 @@ using E.Standard.Configuration.Services;
 using E.Standard.Extensions.Compare;
 using E.Standard.Platform;
 using E.Standard.Security.Core;
+using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
+using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Extensions;
@@ -41,6 +43,7 @@ public class RestQueryHelperService
     private readonly IRequestContext _requestContext;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly CancellationTokenService _cancellationToken;
+    private readonly ICryptoService _crypto;
 
     public RestQueryHelperService(RestHelperService restHelper,
                                   HttpRequestContextService httpRequestContext,
@@ -51,7 +54,8 @@ public class RestQueryHelperService
                                   MapServiceInitializerService mapServiceInitializer,
                                   IRequestContext requestContext,
                                   IHttpContextAccessor httpContextAccessor,
-                                  CancellationTokenService cancellationToken)
+                                  CancellationTokenService cancellationToken,
+                                  ICryptoService crypto)
     {
         _restHelper = restHelper;
         _httpRequestContext = httpRequestContext;
@@ -63,6 +67,7 @@ public class RestQueryHelperService
         _requestContext = requestContext;
         _httpContextAccessor = httpContextAccessor;
         _cancellationToken = cancellationToken;
+        _crypto = crypto;
     }
 
     #region Query
@@ -98,6 +103,7 @@ public class RestQueryHelperService
         #region VisFilters
 
         string visFilterClause = LayerVisFilterClause(controller.Request, service, layer, ui);
+        var timeEpoch = TimeEpoch(controller.Request, service);
 
         #endregion
 
@@ -156,6 +162,7 @@ public class RestQueryHelperService
                                       queryShape: queryShape,
                                       filterSref: filterSref,
                                       visFilterClause: visFilterClause,
+                                      timeEpoch: timeEpoch,
                                       limit: limit,
                                       mapScale: queryScale,
                                       orderBy: orderBy);
@@ -243,7 +250,14 @@ public class RestQueryHelperService
         return await controller.ApiObject(resultFeatures);
     }
 
-    async public Task<IActionResult> PerformIdentify(ApiBaseController controller, string serviceId, string queryId, System.Collections.Specialized.NameValueCollection form, bool json, QueryGeometryType geometryType, CmsDocument.UserIdentification ui, bool renderFields = true)
+    async public Task<IActionResult> PerformIdentify(ApiBaseController controller,
+                                                     string serviceId,
+                                                     string queryId,
+                                                     System.Collections.Specialized.NameValueCollection form,
+                                                     bool json,
+                                                     QueryGeometryType geometryType,
+                                                     CmsDocument.UserIdentification ui,
+                                                     bool renderFields = true)
     {
         var watch = new StopWatch(serviceId);
 
@@ -263,6 +277,7 @@ public class RestQueryHelperService
         #region VisFilters
 
         var visFilterClause = LayerVisFilterClause(controller.Request, service, layer, ui);
+        var timeEpoch = TimeEpoch(controller.Request, service);
 
         #endregion
 
@@ -340,6 +355,7 @@ public class RestQueryHelperService
                                       queryShape: queryShape,
                                       filterSref: shapeSRef,
                                       visFilterClause: visFilterClause.ToString(),
+                                      timeEpoch: timeEpoch,
                                       advancedQueryMethod: advancedQueryMethod);
 
         FeatureCollection queryFeatures = engine.FeaturesOrEmtpyFeatureCollection;
@@ -477,6 +493,7 @@ public class RestQueryHelperService
         #region VisFilters
 
         string visFilterClause = LayerVisFilterClause(httpRequest, service, layer, ui);
+        var timeEpoch = TimeEpoch(controller.Request, service);
 
         #endregion
 
@@ -486,7 +503,7 @@ public class RestQueryHelperService
         bufferFilter.FeatureSpatialReference = targetSref;
 
         var engine = new QueryEngine();
-        FeatureCollection queryFeatures = await engine.PerformAsync(_requestContext, query, bufferFilter, appendFilterClause: visFilterClause) ? engine.Features : new FeatureCollection();
+        FeatureCollection queryFeatures = await engine.PerformAsync(_requestContext, query, bufferFilter, appendFilterClause: visFilterClause, timeEpoch: timeEpoch) ? engine.Features : new FeatureCollection();
 
         #region Try Order Features (Original first)
 
@@ -764,20 +781,30 @@ public class RestQueryHelperService
 
     private string LayerVisFilterClause(HttpRequest httpRequest, IMapService service, ILayer layer, CmsDocument.UserIdentification ui)
     {
-        var visFilters = httpRequest.VisFilterDefinitionsFromParameters();
+        var requestVisFilters = httpRequest.VisFilterDefinitionsFromParameters();
+        var cmsVisFilters = requestVisFilters?.Where(f => f.IsTocVisFilter() == false).ToArray() ?? [];
+        var tocVisFilters = requestVisFilters?.Where(f => f.IsTocVisFilter(service.Url)).ToArray() ?? [];
+
         string visFilterClause = String.Empty;
+
+        foreach (var tocVisFilter in tocVisFilters.Where(f => f.TocVisFilterLayerId() == layer.ID))
+        {
+            tocVisFilter.CheckSignature(_crypto);
+
+            visFilterClause = visFilterClause.AppendWhereClause(tocVisFilter.TocVisFilterWhereClause());
+        }
 
         var serviceFilters = _cache.GetAllVisFilters(service.Url, ui);
 
-        if (visFilters != null || serviceFilters.HasLockedFilters)
+        if (cmsVisFilters != null || serviceFilters.HasLockedFilters)
         {
             if (serviceFilters != null && serviceFilters.filters != null)
             {
-                if (visFilters != null)
+                if (cmsVisFilters != null)
                 {
                     #region Normale Filter
 
-                    foreach (var filter in visFilters)
+                    foreach (var filter in cmsVisFilters)
                     {
                         if (!String.IsNullOrWhiteSpace(filter.ServiceId) && filter.ServiceId != service.Url)
                         {
@@ -797,13 +824,6 @@ public class RestQueryHelperService
                             {
                                 continue;
                             }
-
-                            //if (visFilterClause.Length > 0)
-                            //{
-                            //    visFilterClause.Append(" AND ");
-                            //}
-
-                            //visFilterClause.Append(filterClause);
 
                             visFilterClause = visFilterClause.AppendWhereClause(filterClause);
                         }
@@ -831,6 +851,27 @@ public class RestQueryHelperService
         }
 
         return visFilterClause.ToString();
+    }
+
+    private TimeEpochDefinition TimeEpoch(HttpRequest httpRequest, IMapService service)
+    {
+        var timeEpochDefinitions = httpRequest.TimeEpochDefinitionDTOsFromParameters();
+
+        var epoch = timeEpochDefinitions?
+                    .Where(t => t.ServiceId == service.Url)
+                    .FirstOrDefault()?
+                    .Epoch;
+
+        if (epoch != null && epoch.Length == 2)
+        {
+            return new TimeEpochDefinition()
+            {
+                StartTime = epoch[0],
+                EndTime = epoch[1]
+            };
+        }
+
+        return null;
     }
 
     async private Task<QueryDTO> GetQuery(string serviceId, string queryId, CmsDocument.UserIdentification ui)

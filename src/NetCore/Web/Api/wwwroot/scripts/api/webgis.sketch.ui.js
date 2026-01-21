@@ -1109,7 +1109,7 @@
     // Modern Menu Items (Image Buttons)
     var $_menuContainer = function ($menu) {
         return $("<li>")
-            .addClass("webgis-ui-optionscontainer contains-lables")
+            .addClass("webgis-ui-optionscontainer contains-labels")
             .css('max-width', '320px')
             .appendTo($menu);
     };

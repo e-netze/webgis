@@ -1,4 +1,5 @@
 ﻿webgis.ui = webgis.ui || {};
+webgis.ui.builder = webgis.ui.builder || [];
 
 webgis.ui.__getPluginRegistry = function ($el) {
     var list = $el.data('__plugins__');
@@ -21,12 +22,12 @@ webgis.ui.__unregisterPlugin = function ($el, instance) {
     if (list.length === 0) $el.removeData('__plugins__');
 };
 webgis.ui.destroyPluginsDeep = function ($root) {
-    $root = $root instanceof $ ? $root : $($root);
+    $root = $root instanceof (webgis.$ || jQuery) ? $root : (webgis.$ || jQuery)($root);
     // Post-order: child first, then parent/root
     var nodes = $root.find('*').addBack().get().reverse();
 
     nodes.forEach(function (node) {
-        var $node = $(node);
+        var $node = (webgis.$ || jQuery)(node);
         var list = $node.data('__plugins__');
         if (!list || !list.length) return;
 
@@ -43,7 +44,8 @@ webgis.ui.definePlugin = function (name, spec) {
     let defaults = spec.defaults || {};
 
     function Ctor(el, options) {
-        this.$el = $(el);
+        this.$ = webgis.$ || jQuery;
+        this.$el = this.$(el);
         this.options = $.extend(true, {}, defaults, options);
 
         this._pluginName = name;
@@ -92,7 +94,7 @@ webgis.ui.definePlugin = function (name, spec) {
         var chainable = true, result;
 
         this.each(function () {
-            var $el = $(this);
+            var $el = (webgis.$ || jQuery)(this);
             var inst = $el.data(name);
 
             if (!inst) {
@@ -114,5 +116,25 @@ webgis.ui.definePlugin = function (name, spec) {
         });
 
         return chainable ? this : result;
+    };
+
+    var _oldEmpty = (webgis.$ || jQuery).fn.empty;
+    var _oldRemove = (webgis.$ || jQuery).fn.remove;
+
+    (webgis.$ || jQuery).fn.empty = function () {
+        //console.log("run custom $.empty");
+        (webgis.$ || jQuery)(this).children().each(function (i, child) {
+            //console.log(child);
+            webgis.ui.destroyPluginsDeep((webgis.$ || jQuery)(child));
+        });
+
+        return _oldEmpty.call(this);
+    };
+
+    (webgis.$ || jQuery).fn.remove = function () {
+        //console.log("run custom $.remove");
+        webgis.ui.destroyPluginsDeep(this);
+
+        return _oldRemove.call(this);
     };
 };

@@ -148,6 +148,12 @@ public class RestToolsHelperService
             tool.dependencies = buttonDependencies.ToArray();
         }
 
+        if(apiTool is IApiToolSketchProperties toolSketchProperties)
+        {
+            var e = CreateApiToolEventArguments(apiTool, "", null);
+            tool.MaxSketchVertices = toolSketchProperties.MaxToolSketchVertices(e);
+        }
+
         if (apiTool is IApiToolConfirmation)
         {
             List<ToolConfirmMessageDTO> confirmations = new List<ToolConfirmMessageDTO>();
@@ -595,6 +601,10 @@ public class RestToolsHelperService
         if (apiResponse.SketchAddVertex != null)
         {
             response.SketchAddVertex = new double[] { apiResponse.SketchAddVertex.X, apiResponse.SketchAddVertex.Y };
+        }
+        if (apiResponse.SketchProperties is not null)
+        {
+            response.SketchProperties = apiResponse.SketchProperties;
         }
         if (apiResponse.SetFilters != null && apiResponse.SetFilters.Length > 0)
         {

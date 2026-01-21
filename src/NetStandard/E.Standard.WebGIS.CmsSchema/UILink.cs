@@ -33,7 +33,7 @@ public class UILinkCollection : NameUrl, ICreatable, IUI, IDisplayName, IEditabl
     {
         if (appendRoot)
         {
-            return Crypto.GetID() + @"\.general";
+            return Crypto.GetID() + @"/.general";
         }
         else
         {

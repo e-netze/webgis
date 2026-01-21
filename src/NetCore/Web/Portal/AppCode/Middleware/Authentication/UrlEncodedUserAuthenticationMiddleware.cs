@@ -1,8 +1,10 @@
 ﻿#nullable enable
 
 using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Security.App.Json;
 using E.Standard.WebGIS.Core.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Portal.Core.AppCode.Extensions;
 using System;
 using System.Collections.Generic;
@@ -25,6 +27,7 @@ public class UrlEncodedUserAuthenticationMiddleware
 
     public async Task Invoke(HttpContext context,
                              ITracerService tracer,
+                             IOptions<ApplicationSecurityConfig> appSecurityConfigOptions,
                              IEnumerable<ICustomSecretUrlParameterDecoder>? decoders = null)
     {
         if (context.User.ApplyAuthenticationMiddleware())
@@ -55,7 +58,7 @@ public class UrlEncodedUserAuthenticationMiddleware
                     bool stopAuthenicationMiddlewarePropagation = !username.Contains("\\"); // if username has domain => dont stop propagagion => windows auth shoud to the rest
                     context.User = new PortalUser(username).ToClaimsPricipal(false);
 
-                    tracer.TracePortalUser(this, context);
+                    tracer.TracePortalUser(this, context, appSecurityConfigOptions.Value);
                 }
             }
         }

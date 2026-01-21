@@ -27,6 +27,7 @@ public class CmsCacheItem
     public Dictionary<string, AuthObject<EditThemeDTO>[]> _editThemes = new Dictionary<string, AuthObject<EditThemeDTO>[]>();
     public Dictionary<string, AuthObject<VisFilterDTO>[]> _visFilters = new Dictionary<string, AuthObject<VisFilterDTO>[]>();
     public Dictionary<string, AuthObject<LabelingDTO>[]> _labeling = new Dictionary<string, AuthObject<LabelingDTO>[]>();
+    public Dictionary<string, AuthObject<QueryBuilderField>[]> _queryBuilderFields = new Dictionary<string, AuthObject<QueryBuilderField>[]>();
     public Dictionary<string, AuthObject<SnapSchemaDTO>[]> _snapSchemes = new Dictionary<string, AuthObject<SnapSchemaDTO>[]>();
     public Dictionary<string, string> _tocName = new Dictionary<string, string>();
     public Dictionary<string, AuthObject<PrintLayoutDTO>> _printLayouts = new Dictionary<string, AuthObject<PrintLayoutDTO>>();
@@ -509,6 +510,7 @@ public class CmsCacheItem
                                             ((TableFieldDateTime)field).FieldName = (string)columnNode.Load("fieldname", String.Empty);
                                             ((TableFieldDateTime)field).DisplayType = (DateFieldDisplayType)columnNode.Load("displaytype", (int)DateFieldDisplayType.Normal);
                                             ((TableFieldDateTime)field).FormatString = (string)columnNode.Load("date_formatstring", String.Empty);
+                                            ((TableFieldDateTime)field).SortingAlgorithm = (string)columnNode.Load("sorting_alg", String.Empty);
                                         }
                                         else if (colType == ColumnType.MultiField)
                                         {
@@ -1264,6 +1266,43 @@ public class CmsCacheItem
 
                             #endregion
 
+                            #region QueryFilter (Allowed) Fields
+
+                            List<AuthObject<QueryBuilderField>> queryBuilderFields = new();
+                            foreach (var queryBuildFieldNode in cms.SelectNodes(null, $"{serviceNode.NodeXPath}/querybuilder/*"))
+                            {
+                                var queryBuilderField = new QueryBuilderField()
+                                {
+                                    Name = queryBuildFieldNode.LoadString("name"),
+                                    Aliasname = queryBuildFieldNode.LoadString("alias"),
+                                };
+
+                                queryBuilderFields.Add(new AuthObject<QueryBuilderField>(queryBuilderField, CmsDocument.GetAuthNodeFast(cms, queryBuildFieldNode.NodeXPath)));
+                            }
+
+                            if(queryBuilderFields.Count > 0)
+                            {
+                                if (_queryBuilderFields.ContainsKey(serviceUrlKey))
+                                {
+                                    throw new Exception("Key for labeling already exists: " + serviceUrlKey);
+                                }
+
+                                _queryBuilderFields.Add(serviceUrlKey, queryBuilderFields.ToArray());
+                            }
+
+                            #endregion
+
+                            #region Service Auth Properties
+
+                            if ((bool)serviceNode.Load("allow_querybuilder", false) == true)
+                            {
+                                CmsDocument.AuthNode allowQueryBuilder = CmsDocument.GetPropertyAuthNodeFast(cms, serviceNode.NodeXPath, "allow_querybuilder");
+
+                                _authBoolProperties.Add(new AuthProperty<bool>($"{serviceUrlKey}::allow_querybuilder", true, false, allowQueryBuilder));
+                            }
+
+                            #endregion
+
                             service.Url = serviceUrlKey;
 
                             if (_mapServices.ContainsKey(serviceUrlKey))
@@ -1535,6 +1574,7 @@ public class CmsCacheItem
         _editThemes.Clear();
         _visFilters.Clear();
         _labeling.Clear();
+        _queryBuilderFields.Clear();
         _snapSchemes.Clear();
         _toolConfig.Clear();
         _authBoolProperties.Clear();

@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core;
+﻿using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
@@ -68,7 +68,7 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
     [Browsable(true)]
     [DisplayName("Anzeigetyp")]
     [Category("Filter")]
-    [Description("Gibt an, ob der Filter im Werkzeugdialog angezeigt wird. Gesperrte Filter (locked) werden nicht angezeigt und sind automatisch immer gesetzt (der Benutzer kann den Filter nicht zur�cksetzen). Unsichtbare (invisible) Filter werde nicht im Werkzeugdialog angezeigt und sind auch nicht automisch gesetzt. Diese Option ist nur sinnvoll, wenn der Filter z.B. nur als Abfragefilter verwendet werden soll.")]
+    [Description("Gibt an, ob der Filter im Werkzeugdialog angezeigt wird. Gesperrte Filter (locked) werden nicht angezeigt und sind automatisch immer gesetzt (der Benutzer kann den Filter nicht zurücksetzen). Unsichtbare (invisible) Filter werde nicht im Werkzeugdialog angezeigt und sind auch nicht automisch gesetzt. Diese Option ist nur sinnvoll, wenn der Filter z.B. nur als Abfragefilter verwendet werden soll.")]
     public VisFilterType Type
     {
         get
@@ -84,7 +84,7 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
     [Browsable(true)]
     [DisplayName("Betroffene Layer sichtbar schalten")]
     [Category("Filter")]
-    [Description("Gibt an, ob die betroffen Layer beim Setzen des Filters automatisch sichtbar geschalten werden sollen. Dieser Parameter wird nur ber�cksichtigt, wenn der Anwender den Filter in der Benutzeroberfl�che setzt. Wird der Filter als Url-Parameter �bergeben, muss die Sichtbarkeit der Layer extra �ber Url-Parameter (sichtbar, darstelllungsvariante) gesetzt werden.")]
+    [Description("Gibt an, ob die betroffen Layer beim Setzen des Filters automatisch sichtbar geschalten werden sollen. Dieser Parameter wird nur berücksichtigt, wenn der Anwender den Filter in der Benutzeroberfläche setzt. Wird der Filter als Url-Parameter übergeben, muss die Sichtbarkeit der Layer extra über Url-Parameter (sichtbar, darstelllungsvariante) gesetzt werden.")]
     public bool SetLayerVisibility
     {
         get { return _setlayervis; }
@@ -109,7 +109,7 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
 
     [Browsable(true)]
     [DisplayName("Auswahlliste")]
-    [Description("Hier kann f�r jeden Suchbegriff eine Auswahlliste definiert werden. Liefert das SQL Statement als Spalten 'VALUE' und 'NAME' zur�ck (SELECT f1 as NAME, f2 as VALUE FROM ....) werden diese f�r die Auswahlliste verwendet. Ansonsten wird die erste Spalte, sowohl f�r 'VALUE' und 'NAME' verwendet. Die Werte f�r VALUE aus der angef�hrten Abfrage m�ssen f�r Auswahllisten eindeutig sein.")]
+    [Description("Hier kann für jeden Suchbegriff eine Auswahlliste definiert werden. Liefert das SQL Statement als Spalten 'VALUE' und 'NAME' zurück (SELECT f1 as NAME, f2 as VALUE FROM ....) werden diese für die Auswahlliste verwendet. Ansonsten wird die erste Spalte, sowohl für 'VALUE' und 'NAME' verwendet. Die Werte für VALUE aus der angeführten Abfrage müssen für Auswahllisten eindeutig sein.")]
     [Category("~Auswahlliste")]
     [Editor(typeof(TypeEditor.VisFilterLookupEditor), typeof(TypeEditor.ITypeEditor))]
     public LookupTable[] LookupTables
@@ -124,7 +124,7 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
     [Browsable(true)]
     [DisplayName("Sql Injektion Whitelist")]
     [Category("~Sicherheit")]
-    [Description("Hier kann ein String mit Zeichen angegeben werden, die von der SQL-Injektion �berpr�fung ignoriert werden. zB: ><&'\"")]
+    [Description("Hier kann ein String mit Zeichen angegeben werden, die von der SQL-Injektion überprüfung ignoriert werden. zB: ><&'\"")]
     public string SqlInjectionWhiteList
     {
         get; set;
@@ -134,7 +134,7 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
     [DisplayName("Optional: Lookup Layer")]
     [Category("~Auswahlliste")]
     [Editor(typeof(TypeEditor.SelectLayersEditor), typeof(TypeEditor.ITypeEditor))]
-    [Description("Werden die Lookup-Werte nicht �ber eine Datenbank oder eine DataLinq Query abgeohlt, sondern direkt von einem Layer des Dienstes, dann dieser Layer hier eingestellt werden. Bei der Auswahlliste muss dann nur noch ein '#' als Connection String eingestellt werden. Die Angabe dieses Layers ist nur notwendig, wenn die betroffenen Layer f�r diesesn Filter sich auf mehrere Themen beziehen. Wird �ber diesen Filter nur ein Layer gefilter, ist dieser auch automatisch der Layer f�r die Lookup Tabelle, wenn hier nichts anderes angef�hrt wurde.")]
+    [Description("Werden die Lookup-Werte nicht über eine Datenbank oder eine DataLinq Query abgeohlt, sondern direkt von einem Layer des Dienstes, dann dieser Layer hier eingestellt werden. Bei der Auswahlliste muss dann nur noch ein '#' als Connection String eingestellt werden. Die Angabe dieses Layers ist nur notwendig, wenn die betroffenen Layer für diesesn Filter sich auf mehrere Themen beziehen. Wird über diesen Filter nur ein Layer gefilter, ist dieser auch automatisch der Layer für die Lookup Tabelle, wenn hier nichts anderes angeführt wurde.")]
     public string LookupLayer
     {
         get; set;
@@ -303,7 +303,7 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
         public string Key { get { return _key; } set { _key = value; } }
 
         [DisplayName("Auswahlliste")]
-        [Description("Auswahlliste f�r dieses Key-Feld")]
+        [Description("Auswahlliste für dieses Key-Feld")]
         [Editor(typeof(TypeEditor.LookUpEditor), typeof(TypeEditor.ITypeEditor))]
         public LookUp LookUp
         {
@@ -384,8 +384,8 @@ public class VisFilterGroup : NameUrl, IUI, ICreatable, IDisplayName, IEditable
     {
         if (appendRoot)
         {
-            //return Crypto.GetID() + @"\.general";
-            return this.Url + @"\.general";
+            //return Crypto.GetID() + @"/.general";
+            return this.Url + @"/.general";
         }
         else
         {

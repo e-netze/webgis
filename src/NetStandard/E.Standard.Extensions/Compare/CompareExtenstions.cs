@@ -12,6 +12,21 @@ static public class CompareExtenstions
                 ? alternativeStringValue
                 : currentStringValue;
 
+    static public bool IsNullOrDefaultValue<T>(this T currentStringValue)
+        => typeof(T) switch
+        {
+            var t when t == typeof(string) => String.IsNullOrEmpty(currentStringValue as string),
+            var t when t == typeof(Guid) => (Guid)(object)currentStringValue == Guid.Empty,
+            var t when t == typeof(Guid?) => !(currentStringValue as Guid?).HasValue || (Guid)(object)currentStringValue == Guid.Empty,
+            _ => currentStringValue == null || currentStringValue.Equals(default(T))
+        };
+
+
+    static public T IfNullOrEmptyTake<T>(this T currentStringValue, Func<T> alternativeStringValueFunction)
+        => currentStringValue.IsNullOrDefaultValue()
+                ? alternativeStringValueFunction()
+                : currentStringValue;
+
 
     static public int OrTake(this int currentIntValue, int alternativeIntValue)
         => currentIntValue > 0

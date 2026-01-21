@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.RequestBuilders;
@@ -24,6 +25,9 @@ public class GetFeaturesRequestBuilder : BaseRequestBuilder<GetFeaturesRequestBu
 
     new public GetFeaturesRequestBuilder WithWhereClause(string where)
         => base.WithWhereClause(where);
+
+    new public GetFeaturesRequestBuilder WithTimeEpoch(TimeEpochDefinition? timeEpoch)
+        => base.WithTimeEpoch(timeEpoch);
 
     new public GetFeaturesRequestBuilder WithOrderByFields(string fields)
         => base.WithOrderByFields(fields);

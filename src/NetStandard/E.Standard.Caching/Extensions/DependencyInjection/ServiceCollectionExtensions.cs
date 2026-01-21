@@ -13,6 +13,7 @@ static public class ServiceCollectionExtensions
     {
         services.Configure(setupOptions);
         services.AddSingleton<KeyValueCacheService>(); // Must be singletion!
+        services.AddTransient<MigrateKeyValueCacheService>();
 
         return services;
     }

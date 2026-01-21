@@ -154,6 +154,8 @@ static public class RequestExtensions
                 : "*"
              );
         response.Headers.TryAdd("Access-Control-Allow-Credentials", "true");
+        // is this also required? Maybe after an OPTION request
+        // response.Headers.TryAdd("Access-Control-Allow-Methods", "*");
 
         return response;
     }

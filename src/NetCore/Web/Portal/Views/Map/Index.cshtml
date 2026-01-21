@@ -83,6 +83,7 @@
     <script src="@(apiUrl)/lib/jextend/src/jextend-ajax.js"></script>*@
     <script src="@(apiUrl)/scripts/jquery-3.4.1.min.js"></script> 
     <script src="@(apiUrl)/scripts/typeahead/typeahead.jquery.min.js"></script>
+    <script src="@(apiUrl)/lib/dompurify/purify.min.js"></script>
 
     <environment include="Staging,Production">
         <script src="@(apiUrl)/scripts/api/api.min.js?@(WebGISVersion.JsVersion)" id="webgis-api-script"></script>
@@ -132,6 +133,10 @@
 
         <script src="@(apiUrl)/scripts/api/ui/webgis.ui.plugins.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis.ui.plugins.general.js"></script>
+        <script src="@(apiUrl)/scripts/api/ui/webgis.ui.plugins.timefilter.js"></script>
+        <script src="@(apiUrl)/scripts/api/ui/webgis.ui.plugins.visfilter.js"></script>
+        <script src="@(apiUrl)/scripts/api/ui/webgis.ui.plugins.querybuilder.js"></script>
+        <script src="@(apiUrl)/scripts/api/ui/webgis.ui.plugins.taskprogress.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_tabs.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_tab_control.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_contentsearch.js"></script>
@@ -141,7 +146,6 @@
         <script src="@(apiUrl)/scripts/api/ui/webgis_hourglass.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_topbar.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_queryResults.js"></script>
-        <script src="@(apiUrl)/scripts/api/ui/webgis_queryBuilder.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_modal.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_dockPanel.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_modalprogress.js"></script>
@@ -149,7 +153,7 @@
         <script src="@(apiUrl)/scripts/api/ui/webgis_toolbar.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_uibuilder.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_queryCombo.js"></script>
-        <script src="@(apiUrl)/scripts/api/ui/webgis_editthemeTree.js"></script>
+        <script src="@(apiUrl)/scripts/api/ui/webgis_editthemeCombo.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_editthemeTree.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_copyright.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_control_search.js"></script>
@@ -157,7 +161,7 @@
         <script src="@(apiUrl)/scripts/api/ui/webgis_bubble.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_control_upload.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_graphics_info_container.js"></script>
-        <script src="@(apiUrl)/scripts/api/ui/webgis.ui.plugings.sketch_info_container.js"></script>
+        <script src="@(apiUrl)/scripts/api/ui/webgis.ui.plugins.sketch_info_container.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_validation.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_liveshare.js"></script>
         <script src="@(apiUrl)/scripts/api/ui/webgis_errors.js"></script>

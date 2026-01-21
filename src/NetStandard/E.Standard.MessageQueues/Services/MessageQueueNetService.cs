@@ -88,7 +88,11 @@ public class MessageQueueNetService : IMessageQueueService
 
             return true;
         }
-        catch { return false; }
+        catch (Exception ex) 
+        {
+            _logger.LogError("Error on EnqueueAsync: {message}", ex.Message);
+            return false; 
+        }
     }
 
     async public Task<IEnumerable<string>> DequeueAsync(int count = 1)

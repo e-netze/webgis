@@ -1,9 +1,9 @@
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-bookworm-slim
+﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble
 # needed by skia
 RUN apt-get update && \
     apt-get install -y libfontconfig1
 
-#FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+#FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 # needed by skia
 #RUN apk update && \
 #    apk add fontconfig

@@ -11,7 +11,7 @@ string workDirectory = Environment.CurrentDirectory; // Path.GetDirectoryName(As
 
 Console.WriteLine($"******************************************");
 Console.WriteLine($"*                                        *");
-Console.WriteLine($"*      WebGIS.Deploy Tool {DeployVersionService.DeployToolVersion}      *");
+Console.WriteLine($"*      WebGIS.Deploy Tool {DeployVersionService.DeployToolVersion}       *");
 #if INTERNAL
 Console.WriteLine($"*             !!!!!!!!!!!!!!             *");
 Console.WriteLine($"*             !! INTERNAL !!             *");

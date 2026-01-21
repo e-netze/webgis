@@ -50,4 +50,6 @@ public class CrossHairElement : IGraphicElement
         }
         catch { }
     }
+
+    public Envelope Extent => null;
 }

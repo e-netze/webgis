@@ -288,7 +288,9 @@
 
         var reorderAble = map.queryResultFeatures.reorderAble();
 
-        var $ul = $("<ol class='webgis-geojuhu-results'>").appendTo($parent);
+        var $ul = $("<ol class='webgis-geojuhu-results'>")
+            .data('map', map)
+            .appendTo($parent);
         for (var f in features) {
             var feature = features[f];
             var query = dynamicContentQuery;
@@ -342,7 +344,9 @@
                     .appendTo($li)
                     .click(function (e) {
                         e.stopPropagation();
-                        var map = $(this).closest('.webgis-search-result-holder').data('map');
+                        let $this = $(this);
+                        let map = $(this).closest('.webgis-geojuhu-results').data('map')
+                               || $(this).closest('.webgis-search-result-holder').data('map');
                         map.queryResultFeatures.removeFeature($(this).closest('li').attr('data-id'));
                     });
             }
@@ -368,7 +372,7 @@
             $li.click(function () {
                 var $this = $(this);
                 var $list = $this.closest('.webgis-geojuhu-results');
-                var map = $this.closest('.webgis-search-result-holder').data('map');
+                var map = $list.data('map') || $this.closest('.webgis-search-result-holder').data('map');
                 var feature = $this.data('feature');
 
                 if (!feature || !map)
@@ -465,7 +469,7 @@
             html += "<br/>📐" + featureProperties._distanceString;
         }
 
-        $parent.html($parent.html() + webgis.secureHtml(html));
+        $parent.html($parent.html() + webgis.sanitizeHtml(html));
 
         $parent.find("a[target='dialog']").each(function (i, link) {
             var $link = $(link);
@@ -653,6 +657,8 @@
         var editToolId = 'webgis.tools.editing.edit'
         var editToolIdClass = 'webgis-tools-editing-edit';
         var identityToolId = 'webgis.tools.identify';
+        var mapSeriesToolId = 'webgis.tools.mapseriesprint';
+        var mapSeriesToolIdClass = 'webgis-tools-mapseriesprint';
 
         var reorderable = options.reorderable === true && hasUnionFeatures === false;
 
@@ -820,7 +826,7 @@
 
                                         // edit attributes
                                         $("<div>")
-                                            .addClass('menubutton inline webgis-dependencies webgis-dependency-not-activetool ' + editToolIdClass)
+                                            .addClass('menubutton inline webgis-dependencies webgis-dependency-not-activetool ' + editToolIdClass + ' ' + mapSeriesToolIdClass)
                                             .attr('title', edittheme.name + ': ' + webgis.l10n.get("edit-attributes"))
                                             .attr('shortcut', 'e')
                                             .data('edittheme', edittheme)
@@ -887,6 +893,27 @@
                                                 webgis.tools.onButtonClick(map, { command: 'deletefeature', type: 'servertoolcommand', id: editToolId, map: map }, this, null, args);
                                             });
                                     }
+                                }
+
+                                if (feature.__serviceId && feature.__queryId) {
+                                    $("<div>")
+                                        .addClass('menubutton inline webgis-dependencies webgis-dependency-activetool ' + mapSeriesToolIdClass)
+                                        .attr('title', webgis.l10n.get("create-map-series"))
+                                        .data('map', map)
+                                        .data('serviceId', feature.__serviceId)
+                                        .data('queryId', feature.__queryId)
+                                        .data('oid', feature.oid.split(':')[2])
+                                        .css('background-image', 'url(' + webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-mapseriesprint-print', 'tools') + ')')
+                                        .appendTo($td)
+                                        .click(function (e) {
+                                            e.stopPropagation();
+                                            const $this = $(this);
+                                            let args = [], map = $this.data('map');
+                                            args["service-id"] = $this.data('serviceId');
+                                            args["query-id"] = $this.data('queryId');
+                                            args["feature-ids"] = $this.data('oid')
+                                            webgis.tools.onButtonClick(map, { command: 'create-series-from-features', type: 'servertoolcommand', id: mapSeriesToolId, map: map }, this, null, args);
+                                        });
                                 }
                             }
 

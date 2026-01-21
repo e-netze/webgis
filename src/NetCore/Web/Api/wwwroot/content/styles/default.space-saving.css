@@ -105,7 +105,8 @@ body.webgis-space-saving .webgis-ui-imagebutton .webgis-ui-imagebutton-text {
     font-size: 12px;
 }
 
-.webgis-container.webgis-space-saving .webgis-tooldialog-content .webgis-ui-optionscontainer.contains-lables .webgis-ui-imagebutton {
+.webgis-container.webgis-space-saving .webgis-tooldialog-content .webgis-ui-optionscontainer.contains-labels .webgis-ui-imagebutton,
+.webgis-container.webgis-space-saving .webgis-tooldialog-content .image-button-container.contains-labels .webgis-ui-imagebutton {
     width: 38px;
     height: 50px;
     padding: 1px;

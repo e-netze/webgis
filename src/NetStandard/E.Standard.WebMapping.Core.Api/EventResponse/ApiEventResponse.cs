@@ -67,11 +67,13 @@ public class ApiEventResponse
 
     public E.Standard.WebMapping.Core.Geometry.Point SketchAddVertex { get; set; }
 
+    public SketchPropertiesDTO SketchProperties { get; set; }
+
     public IEnumerable<ApiClientButtonCommand> ClientCommands { get; set; }
     public object ClientCommandData { get; set; }
 
-    public FilterDefintionDTO[] SetFilters { get; set; }
-    public FilterDefintionDTO[] UnsetFilters { get; set; }
+    public FilterDefinitionDTO[] SetFilters { get; set; }
+    public FilterDefinitionDTO[] UnsetFilters { get; set; }
 
     public LabelingDefinitionDTO[] SetLabeling { get; set; }
     public LabelingDefinitionDTO[] UnsetLabeling { get; set; }

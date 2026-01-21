@@ -569,6 +569,11 @@ static public class ConfigurationServiceExtensions
                          .ToArray();
     }
 
+    public static bool DataLinqInitlaizeSandboxOnStartup(this IConfiguration config)
+    {
+        return "true".Equals(config[$"{ApiConfigKeys.ConfigurationSectionName}:datalinq:initialize-sandbox-on-startup"], StringComparison.OrdinalIgnoreCase);
+    }
+
     public static string DataLinqApiEngineConnectionReplace(this IConfiguration config, string url)
     {
         var replacements = config[$"{ApiConfigKeys.ConfigurationSectionName}:datalinq:api-engine-connection-replacements"];

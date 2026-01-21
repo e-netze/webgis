@@ -114,7 +114,10 @@ webgis.usability = {
         offset: {
             defaultOffset: 0
         }
-    }
+    },
+
+    allowTocVisFilters: false,
+    defaultBufferDistance: 30
 };
 
 webgis.colorScheme = 'default';

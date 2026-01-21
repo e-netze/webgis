@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core.IO.Abstractions;
+﻿using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
@@ -75,7 +75,7 @@ public class MapCollection : NameUrl, IUI, ICreatable, IEditable, IDisplayName
     {
         if (appendRoot)
         {
-            return this.Url + @"\.general";
+            return this.Url + @"/.general";
         }
         else
         {

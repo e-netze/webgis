@@ -1,4 +1,6 @@
+using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
+using E.Standard.WebMapping.Core.Extensions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -84,12 +86,18 @@ public class UISelect : UIValidation
 
     #endregion
 
-    public static UISelect PrintFormats(string id, IEnumerable<IPrintFormatBridge> formats, UIButton.UIButtonType changeType = UIButton.UIButtonType.clientbutton, string changeCommand = "", string defaultValue = "")
+    public static UISelect PrintFormats(IApiButton button, string id, IEnumerable<IPrintFormatBridge> formats, UIButton.UIButtonType changeType = UIButton.UIButtonType.clientbutton, string changeCommand = "", string defaultValue = "")
     {
         var select = new UISelect(changeType, changeCommand)
         {
             id = id,
-            css = UICss.ToClass(new string[] { UICss.PrintToolFormat, UICss.ToolParameter, UICss.ToolParameterPersistent }),
+            css = UICss.ToClass(new string[] {
+                button?.GetType().ToToolId() switch {
+                    "webgis.tools.mapseriesprint" => UICss.MapSeriesPrintToolFormat,
+                    _ => UICss.PrintToolFormat
+                },
+                UICss.ToolParameter,
+                UICss.ToolParameterPersistent }),
         };
 
         if (formats != null)
@@ -110,7 +118,8 @@ public class UISelect : UIValidation
         return select;
     }
 
-    public static UISelect PrintQuality(string id,
+    public static UISelect PrintQuality(IApiButton button,
+                                        string id,
                                         Dictionary<int, string> qualities,
                                         UIButton.UIButtonType changeType = UIButton.UIButtonType.clientbutton,
                                         string changeCommand = "")
@@ -127,7 +136,13 @@ public class UISelect : UIValidation
         var select = new UISelect(changeType, changeCommand)
         {
             id = id,
-            css = UICss.ToClass(new string[] { UICss.PrintToolQuality, UICss.ToolParameter, UICss.ToolParameterPersistent }),
+            css = UICss.ToClass(new string[] {
+                button?.GetType().ToToolId() switch {
+                    "webgis.tools.mapseriesprint" => UICss.MapSeriesPrintToolQuality,
+                    _ => UICss.PrintToolQuality
+                },
+                UICss.ToolParameter, 
+                UICss.ToolParameterPersistent }),
             defaultvalue = qualities.Keys.First().ToString(),
             options = qualities.Keys.OrderBy(dpi => dpi)
                                     .Select(dpi => new Option()

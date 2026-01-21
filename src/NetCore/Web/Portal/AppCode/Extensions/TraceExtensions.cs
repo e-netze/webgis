@@ -1,4 +1,5 @@
-﻿using E.Standard.Web.Extensions;
+﻿using E.Standard.Security.App.Json;
+using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.Core.Services;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -27,11 +28,11 @@ static public class TraceExtensions
         }
     }
 
-    static public void TracePortalUser(this ITracerService tracer, object source, HttpContext httpContext)
+    static public void TracePortalUser(this ITracerService tracer, object source, HttpContext httpContext, ApplicationSecurityConfig applicationSecurityConfig)
     {
         if (tracer != null && tracer.Trace == true)
         {
-            var portalUser = httpContext.User.ToPortalUser();
+            var portalUser = httpContext.User.ToPortalUser(applicationSecurityConfig);
 
             tracer.Log(source, "PortalUser:");
             tracer.Log(source, $">> Username: {portalUser.Username}");

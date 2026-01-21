@@ -7,6 +7,8 @@ public interface IKeyValueCache
     string Get(string key);
     void Set(string key, object o, double expireSeconds);
 
+    string[] GetAllKeys();
+
     void Remove(string key);
 
     int MaxChunkSize { get; }

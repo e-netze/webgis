@@ -179,4 +179,9 @@ public class Ring : Path
 
         return pColl;
     }
+
+    public override bool IsValid()
+    {
+        return this._points?.Count >= 3;
+    }
 }

@@ -12,10 +12,10 @@ using E.Standard.WebMapping.Core.Api.IO;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
-using QRCoder;
+using Net.Codecrete.QrCodeGenerator;
 using System;
 using System.Collections.Generic;
-using static QRCoder.PayloadGenerator;
+using System.Text;
 
 namespace E.Standard.WebGIS.Tools.Serialization;
 
@@ -187,13 +187,9 @@ public class ShareMap : IApiServerButtonLocalizable<ShareMap>,
 
         #region Generate QR Code
 
-        Url generator = new Url(url);
-        string payload = generator.ToString();
-
-        QRCodeGenerator qrGenerator = new QRCodeGenerator();
-        QRCodeData qrCodeData = qrGenerator.CreateQrCode(payload, QRCodeGenerator.ECCLevel.Q);
-        Base64QRCode qrCode = new Base64QRCode(qrCodeData);
-        string qrCodeImageAsBase64 = qrCode.GetGraphic(20);
+        var qr = QrCode.EncodeText(url, QrCode.Ecc.High);
+        string svgText = qr.ToSvgString(4);
+        string qrCodeImageAsBase64 = "data:image/svg+xml;base64," + Convert.ToBase64String(Encoding.UTF8.GetBytes(svgText));
 
         #endregion
 

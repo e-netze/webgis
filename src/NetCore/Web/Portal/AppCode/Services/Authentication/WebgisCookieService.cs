@@ -1,4 +1,4 @@
-using E.Standard.Custom.Core.Abstractions;
+﻿using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Json;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebGIS.Core;
@@ -18,7 +18,7 @@ public class WebgisCookieService
     private readonly UrlHelperService _urlHelper;
     private readonly ICryptoService _crypto;
 
-    protected const string AuthCookieName = "webgis5core-portal-auth2";
+    internal const string AuthCookieName = E.Standard.WebMapping.Core.Web.Const.WebgisPortalCookieName;
 
     public WebgisCookieService(UrlHelperService urlHelper,
                                IEnumerable<IPortalAuthenticationService> authenticationServices,

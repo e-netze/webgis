@@ -217,7 +217,7 @@ public class RestHelperService
         info.show_in_toc = service.ShowInToc;
         info.HasVisibleLockedLayers = false;
 
-        List<ServiceInfoDTO.LayerInfo> layers = new List<ServiceInfoDTO.LayerInfo>();
+        List<ServiceInfoDTO.LayerInfoDTO> layers = new List<ServiceInfoDTO.LayerInfoDTO>();
         var serviceLayerProperties = _cache.GetServiceLayerProperties(id);
 
         var unauthorizedLayerIds = _cache.GetUnauthorizedLayerIds(service, ui);
@@ -273,7 +273,7 @@ public class RestHelperService
                 }
             }
 
-            var layerInfo = new ServiceInfoDTO.LayerInfo()
+            var layerInfo = new ServiceInfoDTO.LayerInfoDTO()
             {
                 id = layer.ID,
                 name = name,
@@ -292,6 +292,14 @@ public class RestHelperService
                 MetadataButtonStyle = layerProps != null ? layerProps.MetadataButtonStyle : MetadataButtonStyle.i_button,
                 MetadataTarget = layerProps != null ? layerProps.MetadataTarget : BrowserWindowTarget2.tab,
                 MetadataTitle = layerProps != null ? layerProps.MetadataTitle : null,
+                time_info = layer.TimeInfo is not null  
+                    ? new ServiceInfoDTO.TimeInfoDTO()
+                    {
+                        extent = layer.TimeInfo.Extent,
+                        interval = layer.TimeInfo.Interval,
+                        interval_unit = layer.TimeInfo.IntervalUnit.ToString().ToLowerInvariant(),
+                    }
+                    : null
             };
 
             if (layerProps != null)
@@ -309,7 +317,7 @@ public class RestHelperService
         {
             #region Reorder layers => damit TOC richtig dargestellt wird
 
-            var layerInfos = new List<ServiceInfoDTO.LayerInfo>();
+            var layerInfos = new List<ServiceInfoDTO.LayerInfoDTO>();
 
             foreach (var layerProperties in serviceLayerProperties)
             {
@@ -753,6 +761,8 @@ public class RestHelperService
                             {
                                 TableFieldData fieldData when !String.IsNullOrEmpty(fieldData.SortingAlgorithm) => fieldData.SortingAlgorithm,
                                 TableFieldExpression fieldExpression when fieldExpression.ColDataType == ColumnDataType.Number => "number",
+                                TableFieldDateTime fieldDateTime when !String.IsNullOrEmpty(fieldDateTime.SortingAlgorithm) => fieldDateTime.SortingAlgorithm,
+                                //TableFieldDateTime fieldDateTime when fieldDateTime.DisplayType == DateFieldDisplayType.ShortDate => "date_dd_mm_yyyy",
                                 _ => null
                             },
                             ImageSize = f switch

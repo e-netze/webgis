@@ -1,5 +1,6 @@
 ﻿using E.Standard.WebMapping.Core.Geometry;
 using gView.GraphicsEngine;
+using System.Collections.Generic;
 
 namespace E.Standard.WebMapping.Core.Abstraction;
 
@@ -18,4 +19,6 @@ public interface IDisplay
     double DisplayRotation { get; set; }
 
     ArgbColor BackgroundColor { get; set; }
+
+    IDictionary<string, TimeEpochDefinition> TimeEpoch { get; set; }
 }

@@ -36,5 +36,10 @@ public class ImageElement : IGraphicElement
         catch { }
     }
 
+    public Envelope Extent =>
+        _point is not null
+            ? new Envelope(_point.ShapeEnvelope)
+            : null;
+
     #endregion
 }

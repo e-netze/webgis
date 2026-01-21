@@ -15,11 +15,11 @@ using E.Standard.Platform;
 using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Extensions;
-using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api;
+using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
@@ -34,6 +34,7 @@ using E.Standard.WebMapping.GeoServices.Tiling;
 using gView.GraphicsEngine;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -52,6 +53,7 @@ public class RestPrintHelperService
     private readonly MapServiceInitializerService _mapServiceInitializer;
     private readonly RestMappingHelperService _restMapping;
     private readonly RestImagingService _restImaging;
+    private readonly RestToolsHelperService _restTools;
     private readonly ConfigurationService _config;
     private readonly BridgeService _bridge;
     private readonly RestToolsHelperService _tools;
@@ -63,6 +65,7 @@ public class RestPrintHelperService
                                   MapServiceInitializerService mapServiceInitializer,
                                   RestMappingHelperService restMapping,
                                   RestImagingService restImaging,
+                                  RestToolsHelperService restTools,
                                   ConfigurationService config,
                                   BridgeService bridge,
                                   RestToolsHelperService tools,
@@ -74,6 +77,7 @@ public class RestPrintHelperService
         _mapServiceInitializer = mapServiceInitializer;
         _restMapping = restMapping;
         _restImaging = restImaging;
+        _restTools = restTools;
         _config = config;
         _bridge = bridge;
         _tools = tools;
@@ -145,8 +149,13 @@ public class RestPrintHelperService
         string layoutId = form["layout"];
         string layoutFormat = form["format"];
         double printScale = !String.IsNullOrWhiteSpace(form["scale"]) ? form["scale"].ToPlatformDouble() : mapDefinition.Scale;
-        double printRotation = !String.IsNullOrWhiteSpace(form["rotation"]) ? form["rotation"].ToPlatformDouble() : 0D;
         string layoutDpi = form["dpi"];
+        string toolId = form["toolId"];
+        string toolSketchWKT = form["toolSketch"];
+        var tool = String.IsNullOrEmpty(toolId) ? null : _cache.GetTool(toolId);
+        var tookSketch = String.IsNullOrEmpty(toolSketchWKT) ? null : toolSketchWKT.ShapeFromWKT();
+        var printSeriesProvider = tool as IApiButtonPrintSeriesProvider;
+
 
         E.Standard.WebMapping.Core.Api.Bridge.IBridge bridge = null;
 
@@ -207,6 +216,17 @@ public class RestPrintHelperService
                 calcSketch: calcSketch,
                 sketchLabelMode: sketchLabelMode
             );
+        printSeriesProvider?.CheckPrintMapSeriesSupport(map, tookSketch, _restTools.CreateApiToolEventArguments(tool, "", null));
+
+        var printMapOrientations = (
+                                        tool != null && tookSketch != null && printSeriesProvider != null
+                                            ? printSeriesProvider.GetPrintMapOrientations(tookSketch)
+                                            : null
+                                   ) ?? [ new PrintMapOrientation("",
+                                                new Point(mapDefinition.Center[0], mapDefinition.Center[1]),
+                                                null,
+                                                !String.IsNullOrWhiteSpace(form["rotation"]) ? form["rotation"].ToPlatformDouble() : 0D)
+                                        ];
 
         if (!String.IsNullOrWhiteSpace(layoutId))
         {
@@ -216,7 +236,6 @@ public class RestPrintHelperService
             var pageOrientation = PageOrientation.Landscape;
             double dpi = 96D;
 
-            if (!String.IsNullOrWhiteSpace(layoutFormat))
             {
                 pageSize = layoutFormat.GetPageSize();
                 pageOrientation = layoutFormat.GetPageOrientation();
@@ -240,7 +259,6 @@ public class RestPrintHelperService
             }
 
             map.Dpi = dpi;
-            map.DisplayRotation = printRotation;
 
             #endregion
 
@@ -250,20 +268,54 @@ public class RestPrintHelperService
                 throw new Exception("Unkown layout id=" + layoutId);
             }
 
-            LayoutBuilder mainLayoutBuilder = new LayoutBuilder(
-                map,
-                _requestContext.Http,
-                _urlHelper.AppEtcPath() + "/layouts/" + printLayout.LayoutFile,
-                pageSize,
-                pageOrientation,
-                dpi,
-                _urlHelper.AppEtcPath() + "/layouts/data");
+            var mapServicesGraphicsElements = printSeriesProvider.GetPrintSericiesGraphicsElements(map,
+                _requestContext.Http, _urlHelper,
+                printLayout, pageSize, pageOrientation, printScale,
+                tookSketch);
 
-            List<LayoutBuilder> layoutBuilders = new List<LayoutBuilder>([mainLayoutBuilder]);
+            foreach (var el in mapServicesGraphicsElements)
+            {
+                map.GraphicsContainer.Add(el);
+            }
 
-            #region SubPages
+            await map.AddNecessaryServices(_requestContext);
 
-            foreach (string subpageName in mainLayoutBuilder.SubPages)
+            List<LayoutBuilderJob> layoutBuilderJobs = new();
+
+            var printOverviewMapDefinition = printSeriesProvider?.GetPrintMapSeriesOverviewPageDefinition(map, _restTools.CreateApiToolEventArguments(tool, "", null));
+                
+            if (printOverviewMapDefinition is not null)
+            {
+                LayoutBuilder mainLayoutBuilder = new LayoutBuilder(
+                    printOverviewMapDefinition.Map,
+                    _requestContext.Http,
+                    System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", printOverviewMapDefinition.LayoutFile),
+                    (PageSize?)printOverviewMapDefinition.PageSize ?? pageSize,
+                    (PageOrientation?)printOverviewMapDefinition.pageOrientation ?? pageOrientation,
+                    dpi,
+                    System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", "data"));
+
+                layoutBuilderJobs.Add(new LayoutBuilderJob<Envelope>(mainLayoutBuilder, "", new Envelope(printOverviewMapDefinition.MapExtent), mapDefinition.Crs?.Epsg ?? 0, 0, 0));
+            }
+
+            foreach (var printMapOrientation in printMapOrientations)
+            {
+                LayoutBuilder mainLayoutBuilder = new LayoutBuilder(
+                    map.Clone(null),
+                    _requestContext.Http,
+                    System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", printLayout.LayoutFile),
+                    pageSize,
+                    pageOrientation,
+                    dpi,
+                    System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", "data"));
+
+                layoutBuilderJobs.Add(new LayoutBuilderJob<Point>(mainLayoutBuilder, printMapOrientation.PageName, new Point(printMapOrientation.MapCenter), mapDefinition.Crs?.Epsg ?? 0, printMapOrientation.MapRoation, printScale));
+            }
+
+            #region SubPages (only for first page, eg mostly just the legend)
+
+            // see, if the last layout (series page layout) has subpages, eg. legend page
+            foreach (string subpageName in layoutBuilderJobs.LastOrDefault()?.Builder.SubPages ?? [])
             {
                 if (String.IsNullOrWhiteSpace(subpageName))
                 {
@@ -273,22 +325,25 @@ public class RestPrintHelperService
                 IMap subMap = map.Clone(null);
                 LayoutBuilder subLayoutBuilder = new LayoutBuilder(
                     subMap, _requestContext.Http,
-                    _urlHelper.AppEtcPath() + "/layouts/" + subpageName,
+                    System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", subpageName),
                     pageSize,
                     pageOrientation,
                     dpi,
-                    _urlHelper.AppEtcPath() + "/layouts/data");
+                    System.IO.Path.Combine(_urlHelper.AppEtcPath(), "layouts", "data"));
 
-                layoutBuilders.Add(subLayoutBuilder);
+                layoutBuilderJobs.Add(new LayoutBuilderJob<Point>(subLayoutBuilder, "", new Point(printMapOrientations.First().MapCenter), mapDefinition.Crs?.Epsg ?? 0, printMapOrientations.First().MapRoation, printScale));
             }
 
             #endregion
 
             ErrorResponseCollection errorRespones = new ErrorResponseCollection(null);
-
             Dictionary<LayoutBuilder, string> images = new Dictionary<LayoutBuilder, string>();
-            foreach (var layoutBuilder in layoutBuilders)
+
+            foreach (var layoutBuilderJob in layoutBuilderJobs)
             {
+                var layoutBuilder = layoutBuilderJob.Builder;
+                layoutBuilder.PageName = layoutBuilderJob.PageName;
+
                 #region Layout Text
 
                 foreach (var layoutText in layoutBuilder.UserText ?? new List<LayoutUserText>())
@@ -315,27 +370,8 @@ public class RestPrintHelperService
                 if (layoutBuilder.Map != null && layoutBuilder.Map.ImageWidth > 0 && layoutBuilder.Map.ImageHeight > 0)
                 {
                     layoutBuilder.Map.Dpi = layoutBuilder.PageDpi(dpi);
-                    layoutBuilder.Scale = printScale;
-
-                    var mapCenter = new Point(mapDefinition.Center[0], mapDefinition.Center[1]);
-
-                    if (mapDefinition.Crs != null)
-                    {
-                        var mapSrs = layoutBuilder.PageMapSrs(layoutBuilder.Map.SpatialReference.Id);
-                        if (mapSrs != mapDefinition.Crs.Epsg)
-                        {
-                            map.SpatialReference = ApiGlobals.SRefStore.SpatialReferences.ById(mapSrs);
-                            using (var transformer = new GeometricTransformerPro(
-                                    ApiGlobals.SRefStore.SpatialReferences,
-                                    mapDefinition.Crs.Epsg,
-                                    mapSrs))
-                            {
-                                transformer.Transform(mapCenter);
-                            }
-                        }
-                    }
-
-                    layoutBuilder.Map.SetScale(printScale, layoutBuilder.MapPixels.Width, layoutBuilder.MapPixels.Height, mapCenter.X, mapCenter.Y);
+                    layoutBuilderJob.SetMapExtent(layoutBuilder);
+                    layoutBuilder.Map.DisplayRotation = layoutBuilder.DisplayRotation = layoutBuilderJob.MapRotation;
 
                     layoutBuilder.Map.IsDirty = true;
 
@@ -408,7 +444,7 @@ public class RestPrintHelperService
                             var graphicsService = new GraphicsService();
                             await graphicsService.InitAsync(ovMap, _requestContext);
                             ovMap.Services.Add(graphicsService);
-                            ovMap.GraphicsContainer.Add(new CrossHairElement(ovMap.Extent, map.Extent, ArgbColor.Red));
+                            ovMap.GraphicsContainer.Add(new CrossHairElement(ovMap.Extent, layoutBuilder.Map.Extent, ArgbColor.Red));
 
                             var ovServiceResponse = await ovMap.GetMapAsync(_requestContext);
 
@@ -493,7 +529,7 @@ public class RestPrintHelperService
 
                 #endregion
 
-                string outputPath = map.AsOutputFilename(@"print_" + Guid.NewGuid().ToString("N").ToLower() + ".png");
+                string outputPath = map.AsOutputFilename(@$"print_{Guid.NewGuid().ToString("N").ToLower()}.png");
                 if (await layoutBuilder.Draw(outputPath))
                 {
                     images.Add(layoutBuilder, outputPath);
@@ -529,12 +565,12 @@ public class RestPrintHelperService
 
                 pic2Pdf.PageWidth = rect.width;
                 pic2Pdf.PageHeight = rect.height;
-                pic2Pdf.MarginLeft = (float)layoutBuilders[0].BorderLeft;
-                pic2Pdf.MarginTop = (float)layoutBuilders[0].BorderTop;
-                pic2Pdf.MarginRight = (float)layoutBuilders[0].BorderRight;
-                pic2Pdf.MarginBottom = (float)layoutBuilders[0].BorderBottom;
+                pic2Pdf.MarginLeft = (float)layoutBuilderJobs[0].Builder.BorderLeft;
+                pic2Pdf.MarginTop = (float)layoutBuilderJobs[0].Builder.BorderTop;
+                pic2Pdf.MarginRight = (float)layoutBuilderJobs[0].Builder.BorderRight;
+                pic2Pdf.MarginBottom = (float)layoutBuilderJobs[0].Builder.BorderBottom;
 
-                using (var imageBytes = await images[layoutBuilders[0]].BytesFromUri(_requestContext.Http))
+                using (var imageBytes = await images[layoutBuilderJobs[0].Builder].BytesFromUri(_requestContext.Http))
                 {
                     var output = pic2Pdf.Convert(_requestContext.Http, imageBytes);
 
@@ -673,7 +709,9 @@ public class RestPrintHelperService
                 page_format = form["format"],
                 scale_dominator = form["scale"].ToPlatformDouble(),
                 success = errorRespones.HasErrors == false,
-                exception = errorRespones.HasErrors ? errorRespones.ErrorMessage : null
+                exception = errorRespones.HasErrors ? errorRespones.ErrorMessage : null,
+                taskId = form["taskId"],
+                toolId = form["toolId"]
             });
         }
         else
@@ -690,7 +728,9 @@ public class RestPrintHelperService
             {
                 return await controller.JsonObject(new
                 {
-                    url = ((ImageLocation)mapResponse).ImageUrl
+                    url = ((ImageLocation)mapResponse).ImageUrl,
+                    taskId = form["taskId"],
+                    toolId = form["toolId"]
                 });
             }
         }
@@ -762,6 +802,7 @@ public class RestPrintHelperService
         #endregion
 
         var map = await CreateMap(httpRequest, mapDefinition, graphics, ui);
+        await map.AddNecessaryServices(_requestContext);
 
         #region Quality (dpi) 
 
@@ -778,22 +819,6 @@ public class RestPrintHelperService
         map.ImageHeight = (int)(size[1] * dpiFactor);
 
         #endregion
-
-        //#region Epsg 
-
-        //if (!String.IsNullOrEmpty(httpRequest.Form["bbox_epsg"]) && map.SpatialReference != null)
-        //{
-        //    var bboxEpsg = int.Parse(httpRequest.Form["bbox_epsg"]);
-        //    if (bboxEpsg > 0 && bboxEpsg != map.SpatialReference.Id)
-        //    {
-        //        SpatialReference sRef = Globals.SpatialReferences.ById(bboxEpsg);
-        //        map.SpatialReference = sRef;
-
-        //        //Console.WriteLine($"DownloadImage - SpatialReference: { sRef.Id } - { sRef?.Proj4 }");
-        //    }
-        //}
-
-        //#endregion
 
         #region Zoom To
 
@@ -929,6 +954,7 @@ public class RestPrintHelperService
         var mapDefinition = JSerializer.Deserialize<MapDefinitionUiDTO>(toolResponse.SerializationMapJson);
 
         var map = await CreateMap(httpRequest, mapDefinition, null, ui);
+        await map.AddNecessaryServices(_requestContext);
 
         #endregion
 
@@ -1413,6 +1439,21 @@ public class RestPrintHelperService
 
                 #endregion
 
+                #region Time Epoch
+
+                if (serviceDefintion.TimeEpoch is not null)
+                {
+                    map.AddTimeEpoch(serviceDefintion.Id,
+                        new TimeEpochDefinition()
+                        {
+                            StartTime = serviceDefintion.TimeEpoch.Start,
+                            EndTime = serviceDefintion.TimeEpoch.End,
+                            Relation = TimeEpochRelation.Default
+                        });
+                }
+
+                #endregion
+
                 #region Labeling
 
                 service.AddLabeling(labelingDefinitions, _cache, ui);
@@ -1421,7 +1462,7 @@ public class RestPrintHelperService
 
                 #region Increase Timeout, when printing, because bigger plans need often more time!
 
-                service.Timeout = Math.Max(service.Timeout, 
+                service.Timeout = Math.Max(service.Timeout,
                     ApiGlobals.HttpClientDefaultTimeoutSeconds.OrTake(100));  // wait as long as possible for printing
 
                 #endregion
@@ -1663,6 +1704,7 @@ public class RestPrintHelperService
                     }
                 }
             }
+
             #endregion
 
             #region Add Sketch
@@ -1688,13 +1730,6 @@ public class RestPrintHelperService
             }
 
             #endregion
-
-            if (map.GraphicsContainer.Count() > 0)
-            {
-                var graphicsService = new GraphicsService();
-                await graphicsService.InitAsync(map, _requestContext);
-                map.Services.Add(graphicsService);
-            }
 
             #endregion
         }
@@ -1873,6 +1908,102 @@ public class RestPrintHelperService
     private string WorldFileExtension(string format)
     {
         return format == "png" ? "pgw" : "jgw";
+    }
+
+    #endregion
+
+    #region Models
+
+    abstract private class LayoutBuilderJob
+    {
+        protected LayoutBuilderJob(LayoutBuilder layoutBuilder, string pageName, double mapRotation, double mapScale)
+            => (Builder, PageName, MapRotation, MapScale) = (layoutBuilder, pageName, mapRotation, mapScale);
+
+        public LayoutBuilder Builder { get; }
+
+        public string PageName { get; }
+
+        public double MapRotation { get; }
+
+        public double MapScale { get; set; }
+
+        abstract public void SetMapExtent(LayoutBuilder layoutBuilder);
+    }
+
+    private class LayoutBuilderJob<T> : LayoutBuilderJob
+        where T : Shape
+    {
+        public LayoutBuilderJob(LayoutBuilder layoutBuilder, string pageName, T extentShape, int extentShapeEpsg, double mapRotation, double mapScale)
+            : base(layoutBuilder, pageName, mapRotation, mapScale)
+        {
+            this.ExtentShape = extentShape;
+            this.extentShapeEpsg = extentShapeEpsg;
+        }
+
+        public T ExtentShape { get; }
+        public int extentShapeEpsg { get; }
+
+        override public void SetMapExtent(LayoutBuilder layoutBuilder)
+        {
+            switch (ExtentShape)
+            {
+                case Point point:
+                    ZoomToPoint(layoutBuilder, point);
+                    break;
+                case Envelope envelope:
+                    ZoomToEnvelope(layoutBuilder, envelope);
+                    break;
+                default:
+                    throw new Exception("Unsupported extent shape type: " + ExtentShape?.GetType().FullName);
+            }
+        }
+
+        private void ZoomToPoint(LayoutBuilder layoutBuilder, Point mapCenter)
+        {
+            layoutBuilder.Scale = this.MapScale;
+
+            mapCenter = new Point(mapCenter);
+            if (extentShapeEpsg > 0)
+            {
+                var mapSrs = layoutBuilder.PageMapSrs(layoutBuilder.Map.SpatialReference.Id);
+                if (mapSrs != extentShapeEpsg)
+                {
+                    using (var transformer = new GeometricTransformerPro(
+                            ApiGlobals.SRefStore.SpatialReferences,
+                            extentShapeEpsg,
+                            mapSrs))
+                    {
+                        transformer.Transform(mapCenter);
+                    }
+                }
+            }
+
+            layoutBuilder.Map.SetScale(this.MapScale, layoutBuilder.MapPixels.Width, layoutBuilder.MapPixels.Height, mapCenter.X, mapCenter.Y);
+        }
+
+        private void ZoomToEnvelope(LayoutBuilder layoutBuilder, Envelope mapExtent)
+        {
+            mapExtent = new Envelope(mapExtent);
+            if (extentShapeEpsg > 0)
+            {
+                var mapSrs = layoutBuilder.PageMapSrs(layoutBuilder.Map.SpatialReference.Id);
+                if (mapSrs != extentShapeEpsg)
+                {
+                    using (var transformer = new GeometricTransformerPro(
+                            ApiGlobals.SRefStore.SpatialReferences,
+                            extentShapeEpsg,
+                            mapSrs))
+                    {
+                        transformer.Transform(mapExtent);
+                    }
+                }
+            }
+
+            layoutBuilder.Map.ImageWidth = layoutBuilder.MapPixels.Width;
+            layoutBuilder.Map.ImageHeight = layoutBuilder.MapPixels.Height;
+            layoutBuilder.Map.ZoomTo(mapExtent);
+            layoutBuilder.Scale = layoutBuilder.Map.MapScale;
+        }
     }
 
     #endregion

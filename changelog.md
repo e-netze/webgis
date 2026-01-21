@@ -7,8 +7,106 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## Added
+## Fixed
+
+## 8.26.401
+
+## Added
+
+- SecurityConfig: added ``roleClaimType`` and ``roleClaimValueSeparator`` for AzureAD and OpenID Connect Authentication
+  [docs](https://docs.webgiscloud.com/de/webgis/config/authentication/openid.html)
+
+- CMS Upload: Increased min secret length to 32. With this realease both ``api`` and ``cms`` must be updated to at least version 8.26.401, otherwise cms upload will not work.
+
+
+## 8.26.303
+
+## Fixed
+
+- CMS-Dockerfile: fixed typo ``WORKDIR /app#`` => ``WORKDIR /app``
+
+## 8.26.302
+
 ### Added
+
+- custom.js: add ``modify_event`` to custom tools to e.g. calculate world coordinates in a different coordinate system
+  [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/customtools.html)
+
 ### Fixed
+
+- Bug: Timefilter - UI not refreshed after adding or removing service to map
+  [discussion #390](https://github.com/e-netze/webgis-community/discussions/390)
+
+## 8.26.202
+
+### Fixed
+
+- Show Layername in legend for AGS-Raster layers
+  [discussion #376](https://github.com/e-netze/webgis-community/discussions/376)
+
+## 8.26.201
+
+### Fixed
+
+- Bug: dont show queries in detail search with only invisible query items
+- Bug: DataLinq: Keep changes in documents after changing tabs
+
+
+## 8.25.5101
+
+### Added
+
+- DateTimeFields: Added the possibility to set sorting algorithm for DateTime fields in CMS configuration
+  Possible values:
+  - `default`: Default sorting behavior (string based)
+  - `date_dd_mm_yyyy`: Sort as date with format dd.MM.yyyy
+  [discussion #379](https://github.com/e-netze/webgis-community/discussions/379)
+
+### Fixed
+
+- Bug: Remove-Filter, etc tools will not be shown in quicktools bar,
+       if not quicktools are selected in map builder
+
+## 7.25.4805
+
+### Added
+
+- CMS: Export/Import improvements
+  - Export with lowercase folder names for linux, etc
+  - Confirm Clean/Import with CMS id
+
+## 7.25.4601
+
+### Added
+
+- Editing: Check, if geometry is valid before saving (insert/update) feature
+  - Lines must consist of at least 2 points
+  - Areas must consist of at least 3 points
+
+## 7.25.4601
+
+### Fixed
+
+- Interpret scale for ``all-queries``, ``all-editthemes``, etc like in the TOC (same as MapServers like AGS do) (JS method: ``map.crcScale()``) instead of scale showed in the Viewer
+  This ensures, that **Identify Visible Layers** identifies the Layers in current scale, also if user is nearby the **minScale** or **maxScale** or the layer.
+
+- 
+## 7.25.4001
+
+### Added
+
+- DataLinq: New DataLinqHelper Function: GetUserClaim(claimName)
+  RoleParameters can now be queried in DataLinq Views with this method.
+  [datalinq-discussion #36](https://github.com/e-netze/datalinq-community/discussions/36)
+
+### Fixed
+
+- Bug: Printing AGS WMTS TileCache Services outside the TileCache extent
+  [discussion #341](https://github.com/e-netze/webgis-community/discussions/341)
+
+- Bug: Numeric sorting in result table not worked correctly
+  [discussion #348](https://github.com/e-netze/webgis-community/discussions/348)
 
 ## 7.25.3801
 

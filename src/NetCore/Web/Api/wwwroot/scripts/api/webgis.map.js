@@ -28,7 +28,8 @@
             webgis.toolInfos({}, null, function (tools) {
                 toolButtonBars.each(function (i, b) {
                     var $b = $(b);
-                    var toolIds = $(b).attr('data-tools').split(',');
+                    var toolIds = $(b).attr('data-tools').split(',').filter(t => t);
+                    console.log('toolIds', toolIds);
                     if ($b.hasClass('horizontal')) {
                         $b.css({ height: height || 40, width: toolIds.length * 40 });
                     }
@@ -76,7 +77,7 @@
         //
 
         // Remove All Visfilters:
-        var $filterButton = $("<div style='text-align:center'>")
+        const $filterButton = $("<div style='text-align:center'>")
             .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
             .addClass('webgis-tool-button webgis-dependencies webgis-dependency-hasfilters')
             .data('map', this)
@@ -85,15 +86,34 @@
             .click(function () {
                 var map = $(this).data('map');
                 if (map) {
-                    map.unsetAllFilters();
-                    map.refresh();
-                    map.ui.refreshUIElements();
+                    webgis.tools.onButtonClick(map, { command: 'visfilterremoveall', type: 'clientbutton', map: map });
                 }
             });
         $("<img src='" + webgis.css.imgResource('filter-remove-26.png', 'tools') + "' />").appendTo($filterButton);
 
+        // Remove All Timefilters:
+        const $timeFilterButton = $("<div style='text-align:center'>")
+            .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
+            .addClass('webgis-tool-button webgis-dependencies webgis-dependency-hastimefilters')
+            .data('map', this)
+            .attr('alt', 'Alle Zeitfilter entfernen')
+            .appendTo(toolButtonBars)
+            .click(function () {
+                var map = $(this).data('map');
+                if (map) {
+                    webgis.tools.onButtonClick(map, { command: 'timefilterremoveall', type: 'clientbutton', map: map });
+                }
+                //var map = $(this).data('map');
+                //if (map) {
+                //    for(let s of map.getTimeInfoServices()) {
+                //        s.setTimeEpoch(null);
+                //    }
+                //}
+            });
+        $("<img src='" + webgis.css.imgResource('timefilter-remove-26.png', 'tools') + "' />").appendTo($timeFilterButton);
+
         // Remove all queryresults
-        var $queryResultButton = $("<div style='text-align:center'>")
+        const $queryResultButton = $("<div style='text-align:center'>")
             .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
             .addClass('webgis-tool-button webgis-dependencies webgis-dependency-queryresultsexists')
             .data('map', this)
@@ -108,7 +128,7 @@
         $("<img src='" + webgis.css.imgResource('marker-remove-26.png', 'tools') + "' />").appendTo($queryResultButton);
 
         // reset (service) focus
-        var $resetFocusButton = $("<div style='text-align:center'>")
+        const $resetFocusButton = $("<div style='text-align:center'>")
             .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
             .addClass('webgis-tool-button webgis-dependencies webgis-dependency-focused-service-exists')
             .data('map', this)
@@ -483,6 +503,15 @@
 
             if (this.sketch) {
                 this.sketch.events.on(['beforeaddvertex', 'onchangevertex'], function (e, sender, coord) {
+
+                    let activeTool = this.getActiveTool();
+                    if (e.channel === "beforeaddvertex" && activeTool?.max_sketch_vertices
+                        && this.sketch.getVerticesCount() >= activeTool.max_sketch_vertices) {  // map series print only allows a certain number of vertices/pages
+                        coord.ignore = true;
+                        webgis.toastMessage("Error", `Maximum number of vertices (${activeTool.max_sketch_vertices}) reached.`, null, "warning");
+                        return;
+                    }
+                    
                     if (coord.projEvent === 'snapped' && coord.X && coord.Y) {
                         // Do not change coordinates, but set SRS if different
                         if (this.hasDynamicCalcCrs() === true || (sender.originalSrs() > 0 && this.construct.snappingSrsId() > 0 && sender.originalSrs() !== this.construct.snappingSrsId())) {
@@ -790,7 +819,8 @@
             services: [],
             dynamiccontent: [],
             userdata: {},
-            selections: []
+            selections: [],
+            visfilters: this._visfilters
         };
         if (options.ui === true) {
             o.ui = this.ui.serialize();
@@ -1002,7 +1032,8 @@
             services: '',
             layers: [],
             custom: {},
-            query_results: mapJson.query_results
+            query_results: mapJson.query_results,
+            visfilters: mapJson.visfilters
         };
         for (var s in mapJson.services) {
             if (mapOptions.services != '')
@@ -2382,6 +2413,17 @@
             }
             this._enableSketchClickHandling();
         }
+        else if (tool.tooltype === 'sketchseries') {
+            if (tool.currentSketch != null && tool.currentSketch.geometryType === 'elementseries') {
+                this.sketch.load(tool.currentSketch);
+            } else {
+                this.sketch.remove(true);
+                this.sketch.unsetOriginalSrs();
+                this.sketch.setReadOnly(false);
+                this.sketch.setGeometryType('elementseries');
+            }
+            this._enableSketchClickHandling();
+        }
         else if (tool.tooltype === 'sketchany' && this.sketch) {
             if (tool.currentSketch) {
                 this.sketch.load(tool.currentSketch);
@@ -2439,7 +2481,7 @@
         if (!tool)
             return false;
 
-        return $.inArray(tool.tooltype, ['sketch0d', 'sketch1d', 'sketch2d', 'sketchany', 'sketchcircle']) >= 0;
+        return $.inArray(tool.tooltype, ['sketch0d', 'sketch1d', 'sketch2d', 'sketchany', 'sketchcircle', 'sketchseries']) >= 0;
     };
     this.isGraphicsTool = function (tool) {
         if (!tool)
@@ -2521,6 +2563,7 @@
             tool.persistencecontext || tool.id;
         if (prefix) context = prefix + ":" + context;
 
+        //console.log('setPersistentToolParameter', context, paramId, val);
         if (!this._toolPersistence[context])
             this._toolPersistence[context] = [];
         this._toolPersistence[context][paramId] = val;
@@ -2543,7 +2586,7 @@
     };
     this.applyPersistentToolParameters = function (tool, callbackAfterChanged) {
         let params = this.getPersistentToolParameters(tool);
-        //console.log('persistant parameters: ', params)
+        //console.log('applyPersistentToolParameters: ', params)
         for (let id in params) {
             let $e = $('#' + id);
             if ($e.hasClass('webgis-tool-parameter-persistent') || true) {
@@ -2569,6 +2612,23 @@
             }
         }
     };
+    this.updatePersistentToolParameters = function (tool) {
+        if (!tool)
+            return;
+        var context = (typeof tool === 'string' || tool instanceof String) ?
+            tool :
+            tool.persistencecontext || tool.id;
+        var params = this._toolPersistence[context];
+        if (!params) return;
+        //console.log('updatePersistentToolParameters: ', params);
+        for (var id in params) {
+            var $e = $('#' + id + '.webgis-tool-parameter-persistent');
+            if ($e.length > 0) {
+                params[id] = $e.val();
+                console.log(' updated parameter', id, params[id]);
+            }
+        }
+    };
     this.applyToolInitialization = function (tool) {
         var params = this.getPersistentToolParameters(tool);
         //console.log(params);
@@ -2588,11 +2648,13 @@
         //console.log(tool);
         if (initializationRequired && !tool._isInitialized) {
             tool._isInitialized = true;
-            //console.log('init tool:' + tool.id);
             var type = this.isServerButton(tool.id) ? 'servertoolcommand_ext' : 'servertoolcommand';
-            webgis.tools.onButtonClick(this, {
-                command: 'init', type: type, id: tool.id, map: this
-            });
+            webgis.delayed(function (arg) {
+                console.log('init tool:' + tool.id);
+                webgis.tools.onButtonClick(arg.map, {
+                    command: 'init', type: arg.type, id: arg.tool.id, map: arg.map
+                });
+            }, 1, { map: this, type: type, tool: tool });  // delay to ensure the ui thread is ready
         }
     };
     this._toolEvents = [];
@@ -3274,26 +3336,88 @@
     };
     /***** Filters ****/
     this._visfilters = [];
-    this.setFilter = function (filterId, args) {
+    this.setFilter = function (filterId, args, signature, spanId) {
         //console.log('setfilter', filterId, args);
         this.unsetFilter(filterId);
-        this._visfilters.push({
-            id: filterId, args: args
-        });
+        let filter = {
+            id: filterId,
+            args: args
+        };
+        if (signature) filter.sig = signature;
+        if(spanId) filter.sp_id = spanId
+        
+        this._visfilters.push(filter);
+
+        this.events.fire('visfilters-changed', this);
     };
     this.unsetFilter = function (filterId) {
         filterId = filterId || '';
 
         var visfilters = [];
-        for (var f in this._visfilters) {
-            var visfilter = this._visfilters[f];
+        for (let f in this._visfilters) {
+            const visfilter = this._visfilters[f];
             if (visfilter.id === filterId || visfilter.id.indexOf('~' + filterId) > 0 || filterId.indexOf('~' + visfilter.id) > 0 || filterId == '')
                 continue;
 
             visfilters.push(visfilter);
         }
         this._visfilters = visfilters;
+        this.events.fire('visfilters-changed', this);
     };
+    this.unsetFilterSpan = function (spanId) {
+        if (!spanId) return;
+
+        const visfilters = [];
+        const affectedServices = new Set();
+        for (let f in this._visfilters) {
+            const visfilter = this._visfilters[f];
+            if (visfilter.sp_id && visfilter.sp_id === spanId)
+            {
+                if (visfilter.id.indexOf("#TOC#~") === 0) {
+                    const idParts = visfilter.id.split('~');
+                    affectedServices.add(idParts[1]);
+                }
+
+                continue;
+            }
+
+            visfilters.push(visfilter);
+        }
+        this._visfilters = visfilters;
+
+        const me = this;
+        affectedServices.forEach(serviceId => {
+            console.log('refresh', serviceId);
+            const affectedService = me.getService(serviceId);
+            if (affectedService) affectedService.refresh();
+        });
+
+        this.events.fire('visfilters-changed', this);
+    };
+    this.getFilterSpan = function (spanId) {
+        const spanVisfilters = [];
+        if (spanId) {
+            for (let f in this._visfilters) {
+                const visfilter = this._visfilters[f];
+                if (visfilter.sp_id && visfilter.sp_id === spanId) {
+                    spanVisfilters.push(visfilter);
+                }
+            }
+        }
+        return spanVisfilters;
+    };
+    this.splitFilterSpan = function (spanId) {
+        if (!spanId) return;
+
+        const spanVisfilters = this.getFilterSpan(spanId);
+        this.unsetFilterSpan(spanId);
+        for (let f in spanVisfilters) {
+            const visfilter = spanVisfilters[f];
+            this.setFilter(visfilter.id, visfilter.args, visfilter.sig, webgis.guid());
+        }
+
+        this.events.fire('visfilters-changed', this);
+    }
     this.hasFilter = function (filterId) {
         if (!filterId) {
             return false;
@@ -3312,6 +3436,39 @@
     };
     this.unsetAllFilters = function () {
         this._visfilters = [];
+
+        this.events.fire('visfilters-changed', this);
+    };
+    this.getFilterName = function (filterId) {
+        if (filterId.indexOf('#TOC#~') > 0) return filterId;
+        if (filterId.indexOf('~') < 0) return filterId;
+
+        const filterUrl = filterId.split('~')[1];
+
+        for (var s in this.services) {
+            var service = this.services[s];
+            if (!service?.serviceInfo?.filters) continue;
+
+            for (var f in service.serviceInfo.filters) {
+                var filter = service.serviceInfo.filters[f];
+                if (filter.id === filterUrl) {
+                    return filter.name;
+                }
+            }
+        }
+
+        return filterUrl;
+    };
+    /***** TimeInfo ****/
+    this.getTimeInfoServices = function () {
+        var timeInfoServices = [];
+        for (let serviceId in this.services) {
+            let service = this.services[serviceId];
+            if (service?.hasTimeInfoLayers()) {
+                timeInfoServices.push(service);
+            }
+        }
+        return timeInfoServices;
     };
     /***** Labeling ****/
     this._labels = [];
@@ -3345,9 +3502,9 @@
         if (data == null)
             return;
         // Filters
-        var serviceFilters = [];
-        for (var f in this._visfilters) {
-            var visfilter = this._visfilters[f];
+        let serviceFilters = [];
+        for (let f in this._visfilters) {
+            let visfilter = this._visfilters[f];
             if (serviceId && visfilter.id.indexOf('~') > 0 && visfilter.id.indexOf(serviceId + '~') < 0)
                 continue;
             serviceFilters.push(visfilter);
@@ -3355,9 +3512,9 @@
         if (serviceFilters.length > 0)
             data.filters = JSON.stringify(serviceFilters);
         // Labeling
-        var labels = [];
-        for (var l in this._labels) {
-            var label = this._labels[l];
+        let labels = [];
+        for (let l in this._labels) {
+            let label = this._labels[l];
             if (serviceId && label.id.indexOf('~') > 0 && label.id.indexOf(serviceId + '~') < 0)
                 continue;
             labels.push(label);
@@ -3368,6 +3525,19 @@
         if (!data.dpi && _dpi > 0) {
             data.dpi = _dpi;
         }
+
+        let timeEpoch = [];
+        for (let service of this.getTimeInfoServices())
+        {
+            let serviceTimeEpoch = service.getTimeEpoch();
+            if (serviceTimeEpoch != null && serviceTimeEpoch.length > 0 && serviceTimeEpoch.length < 3) {
+                timeEpoch.push({ serviceId: service.id, epoch: serviceTimeEpoch });
+            }
+        }
+        if (timeEpoch.length > 0) {
+            data.timeEpoch = JSON.stringify(timeEpoch);
+        }
+
         return data;
     };
     /***** Chart *****/

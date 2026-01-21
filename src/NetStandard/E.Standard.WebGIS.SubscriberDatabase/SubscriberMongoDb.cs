@@ -27,8 +27,13 @@ public class SubscriberMongoDb : ISubscriberDb2
 
     #region Subscriber
 
-    public bool CreateApiSubscriber(SubscriberDb.Subscriber subscriber)
+    public bool CreateApiSubscriber(SubscriberDb.Subscriber subscriber, bool migrate = false)
     {
+        if (migrate == true)
+        {
+            throw new NotSupportedException("Migration: Identity insert is not supported in MongoDB");
+        }
+
         subscriber.Name = subscriber.Name.ToLower();
         subscriber.Created = DateTime.UtcNow;
         subscriber.LastLogin = DateTime.UtcNow;
@@ -152,8 +157,13 @@ public class SubscriberMongoDb : ISubscriberDb2
         return ObjectId.GenerateNewId(DateTime.UtcNow).ToString();
     }
 
-    public bool CreateApiClient(SubscriberDb.Client client)
+    public bool CreateApiClient(SubscriberDb.Client client, bool migrate = false)
     {
+        if (migrate == true)
+        {
+            throw new NotSupportedException("Migration: Identity insert is not supported in MongoDB");
+        }
+
         client.ClientName = client.ClientName.ToLower();
         client.Created = DateTime.UtcNow;
 
@@ -272,6 +282,17 @@ public class SubscriberMongoDb : ISubscriberDb2
         }
 
         return true;
+    }
+
+    public SubscriberDb.Client[] GetAllClients()
+    {
+        var collection = ClientCollection();
+
+        return collection
+            .Find(_ => true)
+            .ToList()
+            .Select(i => i.ToClient())
+            .ToArray();
     }
 
     #endregion

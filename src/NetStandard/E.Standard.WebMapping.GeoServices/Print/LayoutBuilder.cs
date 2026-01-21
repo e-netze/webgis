@@ -73,6 +73,10 @@ public class LayoutBuilder
             }
 
             FileInfo fi = new FileInfo(filename);
+            if (!fi.Exists)
+            {
+                throw new Exception($"Layout file {fi.Name} not exists");
+            }
             _doc = new XmlDocument();
 
             //var xml = File.ReadAllText(filename);
@@ -160,6 +164,8 @@ public class LayoutBuilder
         {
             _errMsg = ex.Message;
             _doc = null;
+
+            throw;
         }
     }
     public LayoutBuilder(IMap map, IHttpService http, string filename, PageSize size, PageOrientation orientation)
@@ -221,6 +227,8 @@ public class LayoutBuilder
     public string TextPurpose { get { return _purpose; } set { _purpose = value; } }
     public string TextSection { get { return _section; } set { _section = value; } }
     public string TextTitle { get { return _title; } set { _title = value; } }
+    public string PageName { get; set; } = "";
+
     public string HeaderID { get { return _headerID; } set { _headerID = value; } }
     public bool HasHeaderIDQuery
     {
@@ -1190,6 +1198,7 @@ public class LayoutBuilder
         text = text.Replace("[EPSG]", _map?.SpatialReference?.Id.ToString() ?? "");
         text = text.Replace("[MAP_SRS_NAME]", $"{_map?.SpatialReference?.Name}");
         text = text.Replace("[PAGE_SIZE]", _pageSize.ToString());
+        text = text.Replace("[PAGE_NAME]", this.PageName);
 
         //   ul---------------------ur
         //   |                       |

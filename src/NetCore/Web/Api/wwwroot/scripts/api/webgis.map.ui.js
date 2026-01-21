@@ -244,6 +244,12 @@
                     for (let v in vals) {
                         let val = vals[v], valType = typeof (val);
 
+                        if (webgis.isSuspiciousHtml(val)) {
+                            console.log("sanitize suspicious val:", val);
+                            val = webgis.sanitizeHtml(val);
+                            console.log("to", val);
+                        }
+
                         if (valType === 'string' && val.indexOf("<a") === 0) {
                             let $val = $(val);
                             if ($val.attr('target') === 'dialog') {
@@ -311,7 +317,10 @@
         //console.log('refreshUIElements', servercommand);
 
         var me = this, qString = '', eString = '', tString = '', sString = '', vfString = '', lString = '';
-        var currentScale = this._map.scale();
+        var currentScale = this._map.scale();  // leaflet scale
+        let currentServiceScale = this._map.crsScale();  // scale inside services (ags) ... also used do gray themes form the TOC
+                                                         // queryies, editthemes schould use this one
+                                                         // => all layer in scale dependent things
 
         $('.webgis-all-queries').each(function (i, e) {
             if (qString === '') {
@@ -328,7 +337,7 @@
                             var inScale = false;
                             for (var a = 0; a < query.associatedlayers.length; a++) {
                                 var associatedLayerDef = query.associatedlayers[a];
-                                inScale = inScale || service.layerInScale(associatedLayerDef.id, currentScale);
+                                inScale = inScale || service.layerInScale(associatedLayerDef.id, currentServiceScale);
                             }
                             if (!inScale) {
                                 continue;
@@ -382,7 +391,7 @@
                     for (var i = 0, to = service.editthemes.length; i < to; i++) {
                         var edittheme = service.editthemes[i];
 
-                        if (!edittheme /*|| !service.checkLayerVisibility([edittheme.layerid])*/ || !service.layerInScale(edittheme.layerid, currentScale)) {
+                        if (!edittheme /*|| !service.checkLayerVisibility([edittheme.layerid])*/ || !service.layerInScale(edittheme.layerid, currentServiceScale)) {
                             continue;
                         }
 
@@ -689,6 +698,12 @@
                     vis = me._map.hasFilters();
                 }
             }
+            if (vis === true && $e.hasClass("webgis-dependency-hastimefilterservices")) {
+                vis = me._map.getTimeInfoServices().length > 0;
+            }
+            if (vis === true && $e.hasClass("webgis-dependency-hastimefilters")) {
+                vis = me._map.getTimeInfoServices().filter(s => s.getTimeEpoch()).length > 0;
+            }
             if (vis == true &&
                 ($e.hasClass('webgis-dependency-layersvisible') || $e.hasClass('webgis-dependency-layersinscale')) &&
                 $e.attr('data-dependency-arguments')) {
@@ -719,14 +734,14 @@
                         var layerId = argument.split(':')[1];
 
                         if ($e.hasClass('webgis-dependency-layersvisible') && $e.hasClass('webgis-dependency-layersinscale')) {
-                            visible = service.layerVisibleAndInScale(layerId, currentScale);
+                            visible = service.layerVisibleAndInScale(layerId, currentServiceScale);
                         }
                         else if ($e.hasClass('webgis-dependency-layersvisible')) {
                             var layer = service.getLayer(layerId);
                             visible = layer ? layer.visible : false;
                         }
                         else if ($e.hasClass('webgis-dependency-layersinscale')) {
-                            visible = service.layerInScale(layerId, currentScale);
+                            visible = service.layerInScale(layerId, currentServiceScale);
                         }
                     }
 
@@ -2009,7 +2024,7 @@
                 if (service && query)
                     $select.val(service.id + ':' + query.id);
                 $("<div style='webgis-input-label'>Puffer Distanz [m]</div>").css('margin-top', '14px').appendTo($content);
-                $("<input class='webgis-input' value='30' name='distance' />").css('width', '287px').appendTo($content);
+                $("<input class='webgis-input' name='distance' />").val(webgis.usability.defaultBufferDistance || 30).css('width', '287px').appendTo($content);
                 $("<br/>").appendTo($content);
                 $("<button class='webgis-button'>Nachbarschaft berechnen</button>").css('margin-top', '14px').data('map', map).appendTo($content)
                     .click(function () {

@@ -24,7 +24,7 @@ static public class DynamicServiceExtensions
     static public PresentationDTO[] DynamicPresentations(
                 this IDynamicService service,
                 IMapService originalService,
-                IEnumerable<ServiceInfoDTO.LayerInfo> layers,
+                IEnumerable<ServiceInfoDTO.LayerInfoDTO> layers,
                 IStringLocalizer stringLocalizer)
     {
         List<PresentationDTO> presentations = new List<PresentationDTO>();

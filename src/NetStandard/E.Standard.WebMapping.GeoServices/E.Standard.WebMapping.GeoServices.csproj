@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <TargetFramework>net9.0</TargetFramework>
+	  <TargetFramework>net10.0</TargetFramework>
 	  <LangVersion>13</LangVersion>
     <Configurations>Debug;Release;Release_Internal;Debug_Internal</Configurations>
   </PropertyGroup>
@@ -11,12 +11,7 @@
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.1" />
   </ItemGroup>
   -->
-		
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.8" />
-  </ItemGroup>
-
+	
 	<ItemGroup>
     <ProjectReference Include="..\E.Standard.ArcXml\E.Standard.ArcXml.csproj" />
     <ProjectReference Include="..\E.Standard.Converters\E.Standard.Converters.csproj" />

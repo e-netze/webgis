@@ -146,4 +146,9 @@ public class Path : PointCollection
             return SpatialAlgorithms.PolylinePoint(new Polyline(this), length / 2D);
         }
     }
+
+    public override bool IsValid()
+    {
+        return this._points?.Count >= 2;
+    }
 }

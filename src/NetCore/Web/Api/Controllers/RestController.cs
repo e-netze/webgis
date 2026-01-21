@@ -582,6 +582,7 @@ public class RestController : ApiBaseController
     }
 
     // some browsers send an Options request before POST a file to check cors capabilities
+    // (preflight)
     [HttpOptions]
     async public Task<IActionResult> ServiceObjectOptionsRequest(string serviceId, string request, string objectId, string command/*, IFormCollection form*/)
     {

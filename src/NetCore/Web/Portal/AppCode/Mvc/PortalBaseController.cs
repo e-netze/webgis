@@ -21,6 +21,7 @@ using Portal.AppCode.Mvc.Wrapper;
 using Portal.Core.AppCode.Exceptions;
 using Portal.Core.AppCode.Extensions;
 using Portal.Core.AppCode.Services;
+using Portal.Core.AppCode.Services.Authentication;
 using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
@@ -101,33 +102,11 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
 
     #region Auth
 
-    protected const string AuthCookieName = "webgis5core-portal-auth2";
-
-    public void SetAuthCookie(bool persistentCookie, string userName, UserType authType, string displayName = null)
-    {
-        var data = new CookieData()
-        {
-            Value = userName,
-            AuthType = (int)authType,
-            Displayname = displayName
-        };
-
-        string dataString = _crypto.EncryptTextDefault(JSerializer.Serialize(data));
-
-        //if (persistantCookie)
-        //    cookie.Expires = DateTime.Now.AddDays(7);
-
-        this.Response.Cookies.Append(AuthCookieName, _crypto.EncryptTextDefault(dataString));
-        Response.Headers.Append("P3P", "CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'");
-    }
-
-    public bool HasAuthCookie => Request.Cookies[AuthCookieName] != null;
-
-    public PortalUser CurrentPortalUser()
+    protected PortalUser CurrentPortalUser()
     {
         if (this.User.Identity.IsAuthenticated)
         {
-            return this.User.ToPortalUser();
+            return this.User.ToPortalUser(_appSecurityConfig);
         }
         else
         {
@@ -135,7 +114,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         }
     }
 
-    public PortalUser CurrentPortalUserOrThrowIfRequired(bool allowAnonymous)
+    protected PortalUser CurrentPortalUserOrThrowIfRequired(bool allowAnonymous)
     {
         var portalUser = CurrentPortalUser();
 
@@ -147,7 +126,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         return portalUser;
     }
 
-    public bool IsAuthorizedPortalUser(ApiPortalPageDTO portal, PortalUser portalUser, bool redirectIfNecessary = true)
+    protected bool IsAuthorizedPortalUser(ApiPortalPageDTO portal, PortalUser portalUser, bool redirectIfNecessary = true)
     {
         // Page Subscriber
         if (portal.Subscriber.Equals(portalUser.Username, StringComparison.CurrentCultureIgnoreCase))
@@ -190,7 +169,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         return true;
     }
 
-    public bool IsAuthorizedPortalMapAuthor(ApiPortalPageDTO portal, PortalUser portalUser)
+    protected bool IsAuthorizedPortalMapAuthor(ApiPortalPageDTO portal, PortalUser portalUser)
     {
         if (!UserManagement.IsAllowed(portalUser.Username, portal.MapAuthors) &&
             !UserManagement.IsAllowed(portalUser.UserRoles, portal.MapAuthors))
@@ -201,7 +180,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         return true;
     }
 
-    public bool IsAuthorizedPortalContentAuthor(ApiPortalPageDTO portal, PortalUser portalUser)
+    protected bool IsAuthorizedPortalContentAuthor(ApiPortalPageDTO portal, PortalUser portalUser)
     {
         if (!UserManagement.IsAllowed(portalUser.Username, portal.ContentAuthors) &&
             !UserManagement.IsAllowed(portalUser.UserRoles, portal.ContentAuthors))
@@ -212,17 +191,17 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         return true;
     }
 
-    public bool IsPortalOwner(ApiPortalPageDTO portal, PortalUser portalUser)
+    protected bool IsPortalOwner(ApiPortalPageDTO portal, PortalUser portalUser)
     {
         return portal.Subscriber == portalUser.Username;
     }
 
-    public new void SignOut()
+    protected new void SignOut()
     {
-        Response.Cookies.Delete(AuthCookieName);
+        Response.Cookies.Delete(WebgisCookieService.AuthCookieName);
     }
 
-    public string CurrentUrl()
+    protected string CurrentUrl()
     {
         return _urlHelper.PortalUrl() + this.Request.Path +
             (String.IsNullOrWhiteSpace(Request.QueryString.ToString()) ?
@@ -230,7 +209,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
             "?" + this.Request.QueryString);
     }
 
-    public ClaimsPrincipal ClaimsPrincipalUser => this.User;
+    protected ClaimsPrincipal ClaimsPrincipalUser => this.User;
 
     public IActionResult SignOutSchemes(params string[] authenticationSchemes)
     {
@@ -398,13 +377,13 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         }
     }
 
-    public IActionResult ExceptionView(Exception ex)
+    protected IActionResult ExceptionView(Exception ex)
     {
         LogException(ex);
         return View("_exception", ex);
     }
 
-    public IActionResult JsonObject(object obj)
+    protected IActionResult JsonObject(object obj)
     {
         var json = JSerializer.Serialize(obj);
 
@@ -426,7 +405,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         //}
     }
 
-    public IActionResult JsonObjectEncrypted(object obj)
+    protected IActionResult JsonObjectEncrypted(object obj)
     {
         return JsonView(_crypto.EncryptTextDefault(JsonString(obj), CryptoResultStringType.Hex));
     }
@@ -453,7 +432,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         //}
     }
 
-    public IActionResult JsonView(string json)
+    protected IActionResult JsonView(string json)
     {
         //ViewData["json"] = json;
 
@@ -461,7 +440,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         return JsonResultStream(json);
     }
 
-    public IActionResult JsonViewSuccess(bool success, string exceptionMessage = "")
+    protected IActionResult JsonViewSuccess(bool success, string exceptionMessage = "")
     {
         if (!success && !String.IsNullOrEmpty(exceptionMessage))
         {
@@ -484,12 +463,12 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         //throw new NotImplementedException();
     }
 
-    public IActionResult NotlicendedExceptionView()
+    protected IActionResult NotlicendedExceptionView()
     {
         return RedirectToAction("NotLicensed", "Home");
     }
 
-    public IActionResult PlainView(string plain, string contentType = "")
+    protected IActionResult PlainView(string plain, string contentType = "")
     {
         //ViewData["plain"] = plain;
         //ViewData["ContentType"] = contentType;
@@ -498,7 +477,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         return PlainResultStream(plain, contentType);
     }
 
-    public IActionResult HtlmView(string html)
+    protected IActionResult HtlmView(string html)
     {
         //ViewData["html"] = html;
 
@@ -506,7 +485,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         return PlainResultStream(html, "text/html");
     }
 
-    public IActionResult RawResponse(byte[] responseBytes, string contentType)
+    protected IActionResult RawResponse(byte[] responseBytes, string contentType)
     {
         try
         {
@@ -524,9 +503,9 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
     }
 
 
-    public IActionResult RedirectResult(string target) => this.Redirect(target);
+    protected IActionResult RedirectResult(string target) => this.Redirect(target);
 
-    public IActionResult RedirectToActionResult(string action, string controller = "", object parameters = null)
+    protected IActionResult RedirectToActionResult(string action, string controller = "", object parameters = null)
     {
         if (string.IsNullOrWhiteSpace(controller))
         {
@@ -536,14 +515,14 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         return this.RedirectToAction(action, controller, parameters);
     }
 
-    public IActionResult ViewResult(object model = null) => View(model);
-    public IActionResult ViewResult(string viewName, object model = null) => View(viewName, model);
+    protected IActionResult ViewResult(object model = null) => View(model);
+    protected IActionResult ViewResult(string viewName, object model = null) => View(viewName, model);
 
-    public string ActionUrl(string action, object parameters = null)
+    protected string ActionUrl(string action, object parameters = null)
     {
         return this.Url.Action(action, values: parameters);
     }
-    public string ActionUrl(string controller, string action, object parameters = null)
+    protected string ActionUrl(string controller, string action, object parameters = null)
     {
         return this.Url.Action(controller, action, values: parameters);
     }
@@ -583,7 +562,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
 
     #region Return Streams 
 
-    public ActionResult BinaryResultStream(byte[] data, string contentType, string fileName = "")
+    protected ActionResult BinaryResultStream(byte[] data, string contentType, string fileName = "")
     {
         if (!String.IsNullOrWhiteSpace(fileName))
         {
@@ -593,7 +572,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         return File(data, contentType);
     }
 
-    public ActionResult JsonResultStream(string json)
+    protected ActionResult JsonResultStream(string json)
     {
         json = json ?? String.Empty;
 
@@ -604,7 +583,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         return BinaryResultStream(System.Text.Encoding.UTF8.GetBytes(json), "application/json; charset=utf-8");
     }
 
-    public ActionResult PlainResultStream(string text, string contentType)
+    protected ActionResult PlainResultStream(string text, string contentType)
     {
         text = text ?? String.Empty;
 

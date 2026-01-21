@@ -1,4 +1,4 @@
-﻿# name: Image Georeferencing
+﻿# name: Image Georefer&shy;encing
 
 Upload images to georeference.
 

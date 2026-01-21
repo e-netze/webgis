@@ -2,7 +2,9 @@
 using E.Standard.DbConnector;
 using E.Standard.DbConnector.Schema;
 using E.Standard.Security.Cryptography.Abstractions;
+using System.Linq;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 
@@ -139,6 +141,35 @@ public class DbCache : IKeyValueCache, IDbSchemaProvider
 
                 command.ExecuteNonQuery();
                 connection.Close();
+            }
+        }
+    }
+
+    public string[] GetAllKeys()
+    {
+        using (DBConnection conn = new DBConnection())
+        {
+            conn.OleDbConnectionMDB = _connectionString;
+
+            using (DbConnection connection = conn.GetConnection())
+            {
+                DbCommand command = conn.GetCommand();
+                command.CommandText = $"select {conn.ColumnNames2("cache_key")} from {conn.TableName2(_tableName)}";
+
+                command.Connection = connection;
+                connection.Open();
+
+                using (var reader = command.ExecuteReader())
+                {
+                    List<string> keys = new List<string>();
+
+                    while (reader.Read())
+                    {
+                        keys.Add(reader["cache_key"]?.ToString());
+                    }
+
+                    return keys.Where(static k => !String.IsNullOrEmpty(k)).ToArray();
+                }
             }
         }
     }

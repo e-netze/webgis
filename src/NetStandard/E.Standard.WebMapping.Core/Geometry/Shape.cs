@@ -137,6 +137,8 @@ public class Shape
         get { throw new NotImplementedException(); }
     }
 
+    public virtual bool IsValid() => true;
+
     public virtual void AppendMuiltiparts(Shape shape)
     {
         throw new NotImplementedException();

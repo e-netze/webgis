@@ -18,13 +18,13 @@
 
     this._defaultToolPrefix = '__default__';
 
-    this.options = {
+    this.options = { 
         load_markercluster: true,
         load_label: false,
         load_proj: true,
         prefer_fetch_api: true
     };
-    this.loadedScripts = {
+    this.loadedScripts = { 
         mapFramework: false,
         mapFramework_dependencies: false,
         markerCluster: false,
@@ -36,6 +36,8 @@
     };
     this._initialError = null;
     this.encodeUntrustedHtml = function (html, isMarkdown) {
+        html = webgis.sanitizeHtml(html);
+
         var result = html.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
         if (isMarkdown)
             result = webgis.simpleMarkdown.render(result);
@@ -43,7 +45,7 @@
         return result;
     };
     this.asMarkdownOrText = function (txt) {
-        txt = webgis.emptyIfSuspiciousHtml(txt);
+        txt = webgis.emptyIfSuspiciousHtml(webgis.sanitizeHtml(txt));
 
         let isMarkdown = txt.indexOf('md:') === 0;
         if (isMarkdown) {
@@ -62,20 +64,109 @@
 
         return txt;
     };
-    this.isSuspiciousHtml = function (html) {
+    this.isSuspiciousHtml = function (html, options) {
         // script-tag case insensitiv
         var regex = /<\s*script[^>]*>/gi; // /<\s*script[^>]*>(.*?)<\s*\/\s*script>/gi;
         if (regex.test(html)) {
             return true;
         }
+
+        options = options || {};
+
+        // test
+        //console.log(webgis.isSuspiciousHtml('<img src=x onerror=alert(1)>')); // true
+        //console.log(webgis.isSuspiciousHtml('<svg onload="evil()">...</svg>')); // true
+        //console.log(webgis.isSuspiciousHtml('<a href="javascript:alert(1)">click</a>')); // true
+        //console.log(webgis.isSuspiciousHtml('<p>harmless text</p>')); // false
+        //console.log(webgis.isSuspiciousHtml('<iframe src="http://evil">')); // true
+
+        if (!html || typeof html !== 'string') return false;
+
+        // 1) Detect <script> tags (case-insensitive)
+        var scriptRe = /<\s*script\b[^>]*>([\s\S]*?)<\s*\/\s*script\s*>/i;
+        if (scriptRe.test(html)) {
+            return true;
+        }
+        
+        if (options.checkOnHandlers !== false) {
+            // 2) Detect inline event-handler attributes such as onload=, onerror=, onclick=, etc.
+            // Looks for attributes starting with "on" inside any HTML tag.
+            // Accepts values in double quotes, single quotes, or unquoted.
+
+            const onAttrRe = /<[^>]*\b(on[a-zA-Z]+\s*)=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
+            let matchOnAttrRe;
+            const allowedOnAttrHandlerPatterns = options.allowedHandlerPatterns || [];
+
+            while ((matchOnAttrRe = onAttrRe.exec(html)) !== null) {
+                const attrName = matchOnAttrRe[1].trim().toLowerCase(); // eg. "onclick"
+                const handlerCode = (matchOnAttrRe[2] || matchOnAttrRe[3] || matchOnAttrRe[4] || "").trim();
+
+                // alternative - check methods:
+                // if (!["onclick", "onload", "onerror"].includes(attrName)) continue;
+
+                const isAllowed = allowedOnAttrHandlerPatterns.some((re) => re.test(handlerCode));
+
+                if (!isAllowed) {
+                    // hier kannst du auch debuggen/loggen, was gefunden wurde
+                    console.trace('forbidden handler:', attrName, handlerCode);
+                    return true; // not allowed inline header
+                }
+            }
+        }
+
+        if (options.checkJsUris !== false) {
+            // 3) Detect javascript: URIs in href, src, or similar attributes.
+            // Example: <a href="javascript:alert(1)">
+            var jsUriRe = /\b(?:href|src|xlink:href|style|data-?src)\s*=\s*(?:"\s*javascript:|'\s*javascript:|javascript:)/i;
+            if (jsUriRe.test(html)) {
+                return true;
+            }
+        }
+
+        // 4) Detect any attribute value that contains javascript: or data:text/html
+        // This is a more general catch-all for encoded or obfuscated forms.
+        var anyJsUriRe = /(=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))/ig;
+        var match;
+        while ((match = anyJsUriRe.exec(html)) !== null) {
+            var val = match[1];
+            if (/javascript\s*:/i.test(val) || /data\s*:\s*text\/html/i.test(val)) {
+                return true;
+            }
+        }
+
+        if (options.dangerousTags !== false) {
+            // 5) Detect dangerous tags that can execute code or load remote content.
+            // Includes iframe, object, embed, frame, meta, and link.
+            var dangerousTagsRe = /<\s*(iframe|object|embed|frame|meta|link)\b[^>]*>/i;
+            if (dangerousTagsRe.test(html)) {
+                return true;
+            }
+        }
+
+        // 6) Detect srcdoc attribute (can contain full HTML, often used for injection)
+        var srcdocRe = /\b(srcdoc)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i;
+        if (srcdocRe.test(html)) {
+            return true;
+        }
+
+        // No suspicious patterns found
         return false;
     };
     this.emptyIfSuspiciousHtml = function (html) {   
         return webgis.isSuspiciousHtml(html) ? "" : html;
     };
     this.secureHtml = function (html) {
-        return webgis.emptyIfSuspiciousHtml(html) || 'suppressing dangerous result...';
+        this.sanitizeHtml(html);
     };
+    this.sanitizeHtml = function (html) {
+        if (window.DOMPurify) {
+            //console.log('DOMPurify Sanitizing HTML...', html);
+            return DOMPurify.sanitize(html);
+        }
+        return webgis.emptyIfSuspiciousHtml(html) || "<div style='background:#faa;padding:8px;color:red'>Suppressing dangerous result!<div>";
+        return html;
+    };
+
     this.alert = function (message, title, onClose) {
         title = title || 'WebGIS Meldung';
 
@@ -815,7 +906,8 @@
             dynamiccontent: mapJson.dynamiccontent,
             name: mapName,
             custom: customParameters,
-            query_results: mapJson.query_results
+            query_results: mapJson.query_results,
+            visfilters: mapJson.visfilters
         });
 
         // Set Opacity, Order
@@ -871,7 +963,6 @@
         return map;
     };
     this._createMap = function (elemId, options, mapObject) {
-
         if (webgis.customEvents.beforeCreateMap) {
             webgis.customEvents.beforeCreateMap(elemId, options, mapObject);
         }
@@ -988,6 +1079,9 @@
             if (options.dynamiccontent && options.dynamiccontent.length > 0) {
                 map.addDynamicContent(options.dynamiccontent, true);
             }
+            if (Array.isArray(options.visfilters)) {
+                map._visfilters = options.visfilters;
+            }
         }
         webgis.hideProgress('Karte wird geladen...');
         if (options.unknownservices && options.unknownservices.length > 0) {
@@ -1009,7 +1103,7 @@
                     $('body').webgis_modal({
                         title: 'Nicht berechtigte Dienste',
                         onload: function ($content) {
-                            $content.html('<h2>Hinweis</h2><p>In diese Karte wurde vom Kartenautor Dienste eingefühgt, für die Sie keine Berechtigung besitzen. Diese Dienste werden in der Karte nicht angezeigt. Auf die Funktionsweise der Karte sollte das keinen Einfluss nehmen. Folgende Dienste sind für Sie nicht in der Karte vorhanden (falls sie einen dieser Dienste benötigen, wenden sie sich and den Administrator):');
+                            $content.html('<h2>Hinweis</h2><p>In diese Karte wurde vom Kartenautor Dienste eingefügt, für die Sie keine Berechtigung besitzen. Diese Dienste werden in der Karte nicht angezeigt. Auf die Funktionsweise der Karte sollte das keinen Einfluss nehmen. Folgende Dienste sind für Sie nicht in der Karte vorhanden (falls sie einen dieser Dienste benötigen, wenden sie sich and den Administrator):');
                             var $ul = $("<ul>").appendTo($content);
                             for (var i in options.unauthorizedservices) {
                                 $("<li>" + options.unauthorizedservices[i] + "</li>").appendTo($ul);
@@ -1610,9 +1704,10 @@
                     height: '400px',
                     title: "Share: QR-Code",
                     onload: function ($content) {
+                        let imageData = qr_base64.indexOf("data:image/") === 0 ? qr_base64 : 'data:image/png;base64, ' + qr_base64;
                         $("<img>")
                             .css({ width: '290px', height: '290px' })
-                            .attr('src', 'data:image/png;base64, ' + qr_base64)
+                            .attr('src', imageData)
                             .appendTo($content.css('text-align', 'center'));
                     }
                 });
@@ -2745,6 +2840,16 @@
         if (!elem)
             elem = 'body';
         $(elem).webgis_modalprogress('close', { message: message });
+    };
+    this.addTaskProgress = function (taskId, message) {
+        if (webgis.ui.addTaskProgress) {
+            webgis.ui.addTaskProgress({ taskId: taskId, message: message });
+        }
+    };
+    this.finishTaskProgress = function (taskId, callback, callbackArgs, fireCallback) {
+        if (webgis.ui.finishTaskProgress) {
+            webgis.ui.finishTaskProgress({ taskId: taskId, callback: callback, callbackArgs: callbackArgs, fireCallback: fireCallback });
+        }
     };
     this.loadOptions = function (options) {
         if (typeof options == 'string') {

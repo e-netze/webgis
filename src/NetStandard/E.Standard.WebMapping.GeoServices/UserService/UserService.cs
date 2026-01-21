@@ -501,12 +501,15 @@ public class UserService : IUserService, IPersistable
         switch ((string)stream.Load("type", String.Empty))
         {
             case "E.Standard.WebMapping.Service.AXL.Service":
+            case "E.Standard.WebMapping.GeoServices.AXL.Service":
                 _service = new AXL.AxlService();
                 break;
             case "E.Standard.WebMapping.Service.ArcServer.Rest.Service":
+            case "E.Standard.WebMapping.GeoServices.ArcServer.Rest.MapService":
                 _service = new ArcServer.Rest.MapService();
                 break;
             case "E.Standard.WebMapping.Service.OGC.WMS.Service":
+            case "E.Standard.WebMapping.GeoServices.OGC.WMS.Service":
                 _service = new OGC.WMS.WmsService(
                     (WMS_Version)stream.Load("wms_version", (int)WMS_Version.version_1_1_1),
                     (string)stream.Load("wms_imageformat", "image/png"),

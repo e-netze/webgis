@@ -12,6 +12,8 @@ webgis.usability.allowDarkmode = true;
 webgis.usability.allowStyleClassSelection = true;
 webgis.usability.showTips = true;
 
+webgis.usability.allowTocVisFilters = true;
+
 webgis.usability.allowAddCustomServices = true;
 webgis.usability.makePresentationTocGroupCheckboxes = true;
 

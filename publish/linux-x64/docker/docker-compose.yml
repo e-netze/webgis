@@ -1,8 +1,8 @@
-﻿version: "3.8"
+﻿# Aus version: "3.8"
 
 services:
     webgis-cms:
-        image: webgis-cms:${WEBGIS_CMS_TAG}
+        image: ${WEBGIS_CR}webgis-cms:${WEBGIS_CMS_TAG}
         ports:
             - "5003:8080"
         volumes:
@@ -11,10 +11,11 @@ services:
         networks:
             - webgis-network
         env_file:
+            - common.env
             - cms.env
 
     webgis-api:
-        image: webgis-api:${WEBGIS_API_TAG}
+        image: ${WEBGIS_CR}webgis-api:${WEBGIS_API_TAG}
         ports:
             - "5001:8080"
         volumes:
@@ -23,10 +24,11 @@ services:
         networks:
             - webgis-network
         env_file:
+            - common.env
             - api.env
 
     webgis-portal:
-        image: webgis-portal:${WEBGIS_PORTAL_TAG}
+        image: ${WEBGIS_CR}webgis-portal:${WEBGIS_PORTAL_TAG}
         ports:
             - "5002:8080"
         volumes:
@@ -35,7 +37,8 @@ services:
         networks:
             - webgis-network
         env_file:
-            - api.env
+            - common.env
+            - portal.env
 
 volumes:
     webgis-repository: 

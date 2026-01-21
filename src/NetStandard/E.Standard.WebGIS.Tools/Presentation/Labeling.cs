@@ -157,7 +157,7 @@ public class Labeling : IApiServerButtonLocalizable<Labeling>,
             apiResponse.AddUIElement(buttonContainer);
         }
 
-        return apiResponse.AddUISetter(new UIPersistentParametersSetter(this));
+        return apiResponse.AddUISetter(new UIApplyPersistentParametersSetter(this));
     }
 
     [ServerToolCommand("setlabel")]

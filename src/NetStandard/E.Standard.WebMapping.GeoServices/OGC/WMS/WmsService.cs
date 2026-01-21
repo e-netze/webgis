@@ -1060,7 +1060,7 @@ public class WmsService : IMapService2,
                             reqArgs.Append("VERSION=1.3.0");
                             break;
                     }
-                    if (!_onlineResourceGetMap.ToLower().Contains("service=wms"))
+                    if (!_onlineResourceGetLegendGraphic.Contains("service=wms", StringComparison.OrdinalIgnoreCase))
                     {
                         reqArgs.Append("&SERVICE=WMS");
                     }
@@ -1079,10 +1079,29 @@ public class WmsService : IMapService2,
                         var fileBytes = new MemoryStream(await httpService.GetDataAsync(_ticketHttpService.ModifyUrl(httpService, url),
                                                                                         _requestAuthorization,
                                                                                         timeOutSeconds: this.Timeout.ToTimeoutSecondOrDefault()));
+
+                        //Console.WriteLine("Legend Response:");
+                        //Console.WriteLine(_ticketHttpService.ModifyUrl(httpService, url));
+                        //Console.WriteLine(Json.JSerializer.Serialize(_requestAuthorization, true));
+                        //Console.WriteLine(Encoding.UTF8.GetString(fileBytes.ToArray()));
+
+                        if (fileBytes.Length == 0)  // empty image
+                        {
+                            using (var emptyImage = Current.Engine.CreateBitmap(20, 20))
+                            {
+                                fileBytes = new MemoryStream();
+                                emptyImage.Save(fileBytes, ImageFormat.Png);
+                            }
+                        }
                         try
                         {
                             using (var lImage = Current.Engine.CreateBitmap(fileBytes))
                             {
+                                if(lImage?.EngineElement == null)
+                                {
+                                    throw new System.Exception("Response is not an image");
+                                }
+
                                 if (lImage.Height > 25)
                                 {
                                     legendHeight += (int)Math.Max(20f, lImage.Height + 20f + 4f);
@@ -1102,12 +1121,12 @@ public class WmsService : IMapService2,
                                 layerLabels.Add(layer.Name, layerLabel);
                             }
                         } 
-                        catch
+                        catch(System.Exception ex)
                         {
                             requestContext
                                 .GetRequiredService<IExceptionLogger>()
                                 .LogException(_map, this.Server, this.Service, "GetLegend",
-                                    new System.Exception($"Can't load legend image: {Encoding.UTF8.GetString(fileBytes.ToArray())}"));
+                                    new System.Exception($"Can't load legend image - {ex.Message}: {Encoding.UTF8.GetString(fileBytes.ToArray())}"));
                         }
                     }
                     catch (System.Exception ex)
@@ -1269,7 +1288,7 @@ public class WmsService : IMapService2,
                 reqArgs.Append("VERSION=1.3.0");
                 break;
         }
-        if (!_onlineResourceGetMap.ToLower().Contains("service=wms"))
+        if (!_onlineResourceGetLegendGraphic.Contains("service=wms", StringComparison.OrdinalIgnoreCase))
         {
             reqArgs.Append("&SERVICE=WMS");
         }
@@ -1279,7 +1298,7 @@ public class WmsService : IMapService2,
             .Append($"&LAYER={layerId}&STYLE={layerStyle}")
             .Append($"&FORMAT={_getMapFormat}");
 
-        string url = AppendToUrl(_onlineResourceGetMap, reqArgs.ToString());
+        string url = AppendToUrl(_onlineResourceGetLegendGraphic, reqArgs.ToString());
 
         try
         {

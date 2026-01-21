@@ -1,4 +1,4 @@
-﻿# name: Georeference
+﻿# name: Georefer&shy;ence
 
 Upload documents for georeferencing.
 

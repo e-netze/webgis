@@ -151,6 +151,13 @@ public class DistanceCircleElement : IGraphicElement
         }
     }
 
+    public Envelope Extent =>
+        _center is not null
+            ? new Envelope(
+                _center.X - _radius, _center.Y - _radius,
+                _center.X + _radius, _center.Y + _radius)
+            : null;
+
     #endregion
 
     #region Helper

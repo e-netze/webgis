@@ -111,7 +111,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("Standardmäßig sichbar")]
+    [DisplayName("Standardmäßig sichtbar")]
     [Description("Gibt an, ob der Dienst beim Kartenaufruf sichtbar ist...")]
     [Category("TOC")]
     public bool Visible

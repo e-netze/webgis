@@ -43,12 +43,15 @@
     };
     this.io = {
         print: 'webgis.tools.print',
+        mapseriesprint: 'webgis.tools.mapseriesprint',
         downloadmapimage: 'webgis.tools.downloadmapimage'
     };
     this.presenation = {
         labeling: 'webgis.tools.presentation.labeling',
         filter: 'webgis.tools.presentation.visfilter',
-        filterRemove: 'webgis.tools.presentation.visfilterremoveall'
+        filterRemove: 'webgis.tools.presentation.visfilterremoveall',
+        timeFilter: 'webgis.tools.presentation.timefilter',
+        timeFilterRemove: 'webgis.tools.presentation.timefilterremoveall'
     };
     this._toolData = [];
     this.getToolData = function (toolId) {
@@ -391,67 +394,89 @@
                     break;
                 case 'print':
                     if (map) {
-                        var printOptions = {};
+                        let printOptions = {
+                            taskId: webgis.guid()
+                        };
+                        let progressMessage = '';
                         if (domElement) {
-                            var $holder = $(domElement).closest('.webgis-tabs-tab-content-holder');
+                            let $holder = $(domElement).closest('.webgis-tabs-tab-content-holder');
                             if ($holder.length === 0)
                                 $holder = $(domElement).closest('.webgis-modal-content');
                             if ($holder.length === 0)
                                 $holder = $(domElement).parent();
-                            printOptions.layout = $holder.find('.webgis-print-tool-layout').val();
-                            printOptions.format = $holder.find('.webgis-print-tool-format').val();
-                            printOptions.dpi = $holder.find('.webgis-print-tool-quality').val();
+
+                            const cssPrefix = map.getActiveTool()?.id == "webgis.tools.mapseriesprint"
+                                ? ".webgis-mapseriesprint-"
+                                : ".webgis-print-";
+
+                            printOptions.layout = $holder.find(cssPrefix + 'tool-layout').val();
+                            printOptions.format = $holder.find(cssPrefix + 'tool-format').val();
+                            printOptions.dpi = $holder.find(cssPrefix + 'tool-quality').val();
                             printOptions.scale = $holder.find('.webgis-map-scales-select').val();
 
-                            printOptions.showQueryMarkers = $holder.find('.webgis-print-show-query-markers').val() === 'show';
-                            printOptions.showCoordinateMarkers = $holder.find('.webgis-print-show-coords-markers').val() === 'show';
-                            printOptions.showChainageMarkers = $holder.find('.webgis-print-show-chainage-markers').val() === 'show';
-                            printOptions.queryMarkersLabelField = $holder.find('.webgis-print-query-markers-label-field').val();
-                            printOptions.coordinateMarkersLabelField = $holder.find('.webgis-print-coords-markers-label-field').val();
+                            printOptions.showQueryMarkers = $holder.find(cssPrefix + 'show-query-markers').val() === 'show';
+                            printOptions.showCoordinateMarkers = $holder.find(cssPrefix + 'show-coords-markers').val() === 'show';
+                            printOptions.showChainageMarkers = $holder.find(cssPrefix + 'show-chainage-markers').val() === 'show';
+                            printOptions.queryMarkersLabelField = $holder.find(cssPrefix + 'query-markers-label-field').val();
+                            printOptions.coordinateMarkersLabelField = $holder.find(cssPrefix + 'coords-markers-label-field').val();
 
-                            printOptions.attachQueryResults = $holder.find('.webgis-print-attach-query-results').val();
-                            printOptions.attachCoordinates = $holder.find('.webgis-print-attach-coordinates').val();
-                            printOptions.attachCoordinatesField = $holder.find('.webgis-print-attach-coordinates-field').val();
+                            printOptions.attachQueryResults = $holder.find(cssPrefix + 'attach-query-results').val();
+                            printOptions.attachCoordinates = $holder.find(cssPrefix + 'attach-coordinates').val();
+                            printOptions.attachCoordinatesField = $holder.find(cssPrefix + 'attach-coordinates-field').val();
 
-                            printOptions.showSketch = $holder.find('.webgis-print-show-tool-sketch').val() !== '';
-                            printOptions.showSketchLabels = $holder.find('.webgis-print-tool-sketch-labels').val();
+                            printOptions.showSketch = $holder.find(cssPrefix + 'show-tool-sketch').val() !== '';
+                            printOptions.showSketchLabels = $holder.find(cssPrefix + 'tool-sketch-labels').val();
 
                             //console.log('test', $holder.find('#print-sketch-selector--print_tool_sketch').length, $holder.find('#print-sketch-selector--print_tool_sketch_labels').length);
 
+                            printOptions.toolId = map.getActiveTool()?.id;
+                            const toolSketch = map.toolSketch();
+                            if (toolSketch) {
+                                printOptions.toolSketch = toolSketch.toWKT();
+                            }
+
                             printOptions.rotation = map.viewLense.currentRotation();
-                            $holder.find('.webgis-print-textelement').each(function (i, e) {
+                            $holder.find(cssPrefix + 'textelement').each(function (i, e) {
+                                if (!progressMessage) progressMessage = $(e).val();
                                 printOptions["LAYOUT_TEXT_" + $(e).attr('id')] = $(e).val();
-                                map.setPersistentToolParameter('webgis.tools.print', "LAYOUT_TEXT_" + $(e).attr('id'), $(e).val());
+                                map.setPersistentToolParameter(map.getActiveTool().id, "LAYOUT_TEXT_" + $(e).attr('id'), $(e).val());
                             });
-                            $holder.find('.webgis-print-header-id-element').each(function (i, e) {
+                            $holder.find(cssPrefix + 'header-id-element').each(function (i, e) {
                                 printOptions["LAYOUT_HEADER_ID"] = $(e).val();
                             });
                         }
-                        webgis.showProgress('Drucken...', null);
-                        map.print(printOptions, function (result) {
-                            webgis.hideProgress('Drucken...');
-                            if (result) {
-                                if (result.url) {
-                                    var data = webgis.tools.getToolData("webgis.tools.io.print");
-                                    if (!data.prints)
-                                        data.prints = [];
-                                    data.prints.push(result);
 
-                                    if (result.success == false && result.exception) {
-                                        webgis.alert("Errors occurred during printing. The printout may not be complete. Please check if all relevant topics are included in the printout.:\n\n\n\n\n" + result.exception, "info", function () {
-                                            webgis.delayed(function () {
+                        $('body').webgis_modal('close');
+
+                        webgis.addTaskProgress(printOptions.taskId, map.getActiveTool().name + ": " + progressMessage); 
+
+                        map.print(printOptions, function (result) {
+                            webgis.finishTaskProgress(result.taskId,
+                                function (result) {
+                                    if (result) {
+                                        if (result.url) {
+                                            var data = webgis.tools.getToolData("webgis.tools.io.print");
+                                            if (!data.prints)
+                                                data.prints = [];
+                                            data.prints.push(result);
+
+                                            if (result.success == false && result.exception) {
+                                                webgis.alert("Errors occurred during printing. The printout may not be complete. Please check if all relevant topics are included in the printout.:\n\n\n\n\n" + result.exception, "info", function () {
+                                                    webgis.delayed(function () {
+                                                        map.showPrintTasks();
+                                                    }, 500);
+                                                });
+                                            } else {
                                                 map.showPrintTasks();
-                                            }, 500);
-                                        });
+                                            }
+                                        } else {
+                                            webgis.alert(result.exception, 'error');
+                                        }
                                     } else {
-                                        map.showPrintTasks();
+                                        webgis.alert('Unkonwn error!', 'error');
                                     }
-                                } else {
-                                    webgis.alert(result.exception, 'error');
-                                }
-                            } else {
-                                webgis.alert('Unkonwn error!', 'error');
-                            }
+                                }, result,
+                                map.getActiveTool().id === result.toolId); // force automatic callback if tool is the same!
                         });
                     }
                     break;
@@ -534,9 +559,12 @@
                     break;
                 case 'visfilterremoveall':
                     if (map) {
-                        map.unsetAllFilters();
-                        map.refresh();
-                        map.ui.refreshUIElements();
+                        webgis.ui.showRemoveVisFiltersDialog(map);
+                    }
+                    break;
+                case 'timefilterremoveall':
+                    if (map) {
+                        webgis.ui.showRemoveTimeFiltersDialog(map);
                     }
                     break;
                 default:
@@ -1124,6 +1152,12 @@
                 }
             }
         }
+        if (response.sketch_properties) {
+            var sketch = map.toolSketch();
+            if (sketch) {
+                sketch.setAdvancedProperties(response.sketch_properties);
+            }
+        }
         if (response.replace_query_features) {
             map.queryResultFeatures.replaceFeatures(response.replace_query_features);
             map.queryResultFeatures.replaceFeaturesFromInactiveTabs(response.replace_query_features);
@@ -1135,7 +1169,7 @@
         if (response.setfilters) {
             for (var i in response.setfilters) {
                 var filter = response.setfilters[i];
-                map.setFilter(filter.id, filter.args);
+                map.setFilter(filter.id, filter.args, filter.sig, filter.sp_id);
                 map.ui.refreshUIElements();
             }
         }
@@ -1533,6 +1567,7 @@
 
         var me = this;
         $('.' + parameterClass).each(function (i, e) {
+            //console.log($(e).attr("id"));
             if (writeParameter(e)) {
                 ret += (ret !== '' ? '|' : '');
                 ret += e.id + '=' + webgis.tools.toParameterValue(me.getElementValue(e));
@@ -1830,6 +1865,10 @@
     };
     this.executeCustomTool = function (map, tool, eventObject) {
         if (tool.command) {
+            if (typeof tool.modify_event === 'function') {
+                tool.modify_event(map, eventObject);
+            }
+
             let command = this.replaceCustomToolUrl(map, tool.command, eventObject);
 
             switch (tool.tooltype) {
@@ -1973,7 +2012,7 @@ webgis.tools.mouseEvent = function (map, e) {
             ret += (ret !== '' ? '|' : '') + 'x=' + _m.click.x + '|y=' + _m.click.y;
         }
         if (_m.meta) {
-            ret += (ret !== '' ? '|' : '') + 'event_scale=' + _m.meta.scale;
+            ret += (ret !== '' ? '|' : '') + 'event_scale=' + _m.meta.scale + '|event_service_scale=' + map.crsScale();
         }
         if (map) {
             ret += (ret !== '' ? '|' : '') + 'mapcrs=' + map.crsId();

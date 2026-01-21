@@ -347,12 +347,12 @@ static public class ConfigExtensions
     static public string[] HeaderAuthenticationExtendedRoleParametersFromHeaders(this ConfigurationService config)
     {
         string roleParameters = config[PortalConfigKeys.HeaderAuthenticationExtendedRoleParametersFromHeaders];
-        
+
         if (String.IsNullOrWhiteSpace(roleParameters))
         {
             return Array.Empty<string>();
         }
-        
+
         return roleParameters.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                              .Select(s => s.Trim())
                              .ToArray();
@@ -464,6 +464,20 @@ static public class ConfigExtensions
     static public string MessageQueueClientSecret(this IConfiguration config)
     {
         return config[$"{PortalConfigKeys.ConfigurationSectionName}:message-queue:secret"];
+    }
+
+    #endregion
+
+    #region Cors
+
+    static public string[] AdditionalCorsOriginsFor(this IConfiguration config, string policyName)
+    {
+        return (config[$"{PortalConfigKeys.ConfigurationSectionName}:add-cors-origins-for-{policyName}"]
+                ?? "")
+                .Split(',')
+                .Select(s => s.Trim())
+                .Where(u => !String.IsNullOrEmpty(u))
+                .ToArray();
     }
 
     #endregion

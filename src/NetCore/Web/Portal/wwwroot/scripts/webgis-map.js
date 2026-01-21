@@ -434,6 +434,8 @@ webgis.mapInitializer = (function (m) {
         if (typeof refMapJson.value === 'string')
             refMapJson.value = webgis.$.parseJSON(refMapJson.value);
 
+        console.log('refMapJson.value', refMapJson.value);
+
         if (json.success === false) {
             webgis.alert(
                 'Beim Laden der Karte ist ein Fehler aufgetreten: ' + json.exception,
@@ -572,6 +574,7 @@ webgis.mapInitializer = (function (m) {
             },
             mapUrlName,
             webgis.initialParameters.appendservices);
+
         $('#' + targetId).data('webgis-map', map);
 
         globals.map = map;
@@ -763,7 +766,7 @@ webgis.mapInitializer = (function (m) {
                     for (var m in webgis.initialParameters.markers) {
                         var marker = webgis.initialParameters.markers[m];
                         markerCollection.features.push({
-                            oid: m,
+                            oid: '#service:#default:' + m,
                             type: "Feature",
                             geometry: { type: "Point", coordinates: [marker.lng, marker.lat] },
                             properties: { _fulltext: marker.text || '' }
@@ -1169,7 +1172,7 @@ webgis.mapInitializer = (function (m) {
 
             if (mapPortalPageName) {
                 $("<li>")
-                    .html(webgis.emptyIfSuspiciousHtml(webgis.l10n.get("portal") + ": " + mapPortalPageName))
+                    .html(webgis.sanitizeHtml(webgis.l10n.get("portal") + ": " + mapPortalPageName))
                     .addClass('portal')
                     .css("backgroundImage", "url(" + webgis.css.imgResource("portal-26.png", "tools") + ")")
                     .appendTo($ul)

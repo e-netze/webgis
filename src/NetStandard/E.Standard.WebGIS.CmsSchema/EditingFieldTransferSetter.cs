@@ -31,7 +31,7 @@ public class EditingFieldTransferSetter : NameUrl, IUI, ICreatable, IDisplayName
 
     [DisplayName("Ist Default Value")]
     [Category("Allgemein")]
-    [Description("Der hier angegebene Wert ist ein Defaultwert und wird nur übernommen, wenn das Feld in der Quell Featureklasse leer ist. Ist der Feld in der Quellfeatureklasse gesetzt, wird dieser übernommen. Ist dieser Wert auf 'false' gesetzt, werd der hier angeführte Wert immer gesetzt => Der aus der Quellfeatureklasse wird überschrieben.")]
+    [Description("Der hier angegebene Wert ist ein Defaultwert und wird nur übernommen, wenn das Feld in der Quell Featureklasse leer ist. Ist das Feld in der Quellfeatureklasse gesetzt, wird dieser übernommen. Ist dieser Wert auf 'false' gesetzt, werden die hier angeführte Wert immer gesetzt => Der aus der Quellfeatureklasse wird überschrieben.")]
     public bool IsDefaultValue { get; set; }
 
     [DisplayName("Ist im Ziel erforderlich")]

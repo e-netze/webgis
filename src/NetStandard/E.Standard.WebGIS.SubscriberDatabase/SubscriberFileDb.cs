@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.SubscriberDatabase;
 
-public class SubscriberFileDb : ISubscriberDb
+public class SubscriberFileDb : ISubscriberDb2
 {
     private readonly string _rootPath;
     private readonly ILogger? _logger;
@@ -26,9 +26,21 @@ public class SubscriberFileDb : ISubscriberDb
 
     #region Subsciber
 
-    public bool CreateApiSubscriber(SubscriberDb.Subscriber subscriber)
+    public bool CreateApiSubscriber(SubscriberDb.Subscriber subscriber, bool identityInsert)
     {
-        subscriber.Id = CreatePseudoId();
+        string id = (identityInsert ? subscriber.Id : CreatePseudoId()).Trim();
+
+        if (String.IsNullOrEmpty(id))
+        {
+            throw new ArgumentException("Subscriber ID cannot be null or empty.");
+        }
+
+        if (this.GetSubscriberById(id) is not null)
+        {
+            throw new Exception("Subscriber with the same ID already exists.");
+        }
+
+        subscriber.Id = id;
         subscriber.Name = subscriber.Name.ToLower();
         subscriber.Email = subscriber.Email.ToLower();
         subscriber.LastLogin = DateTime.UtcNow;
@@ -158,9 +170,21 @@ public class SubscriberFileDb : ISubscriberDb
 
     #region Clients
 
-    public bool CreateApiClient(SubscriberDb.Client client)
+    public bool CreateApiClient(SubscriberDb.Client client, bool identityInsert)
     {
-        client.Id = CreatePseudoId();
+        string id = (identityInsert ? client.Id : CreatePseudoId()).Trim();
+
+        if (String.IsNullOrEmpty(id))
+        {
+            throw new ArgumentException("Client ID cannot be null or empty.");
+        }
+
+        if (this.GetClientByClientId(id) is not null)
+        {
+            throw new Exception("Client with the same ID already exists.");
+        }
+
+        client.Id = id;
         client.ClientName = client.ClientName.ToLower();
 
         File.WriteAllText(Path.Combine(ClientsRootPath, $"{client.Subscriber}.{client.ClientId}.json"), JSerializer.Serialize(client));
@@ -237,7 +261,64 @@ public class SubscriberFileDb : ISubscriberDb
         return GetSubscriptionClients(subscriber.Id).Where(c => c.ClientName == clientName.ToLower()).FirstOrDefault();
     }
 
+    public SubscriberDb.Client[] GetAllClients()
+    {
+        List<SubscriberDb.Client> clients = new List<SubscriberDb.Client>();
+
+        foreach (var fileInfo in new DirectoryInfo(ClientsRootPath).GetFiles("*.json"))
+        {
+            try
+            {
+                var client = JSerializer.Deserialize<SubscriberDb.Client>(File.ReadAllText(fileInfo.FullName));
+
+                if (client is not null)
+                {
+                    clients.Add(client);
+                }
+            }
+            catch { }
+        }
+
+        return clients.ToArray();
+    }
+
     #endregion
+
+    #endregion
+
+    #region ISubscriberDb2
+
+    public string GenerateNewClientId() => "";
+
+    public Task<bool> ApplyClientCmsId(SubscriberDb.Client client, string cmsId, bool add)
+    {
+        var roles = new List<string>();
+        if (client.Roles != null)
+        {
+            roles.AddRange(client.Roles);
+        }
+
+        bool store = false;
+
+        if (add == true && !roles.Contains(SubscriberDb.Client.CmsRolePrefix + cmsId))
+        {
+            roles.Add(SubscriberDb.Client.CmsRolePrefix + cmsId);
+            store = true;
+        }
+        else if (add == false && roles.Contains(SubscriberDb.Client.CmsRolePrefix + cmsId))
+        {
+            roles.Remove(SubscriberDb.Client.CmsRolePrefix + cmsId);
+            store = true;
+        }
+
+        if (store)
+        {
+            client.Roles = roles;
+            UpdateApiClient(client);
+        }
+
+        return Task.FromResult(true);
+    }
 
     #endregion
 

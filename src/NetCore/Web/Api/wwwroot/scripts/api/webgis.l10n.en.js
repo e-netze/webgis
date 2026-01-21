@@ -21,6 +21,10 @@
     "tools": "Tools",
     "current-tool": "Current tool",
 
+    "year": "Year",
+    "month": "Month",
+    "day": "Day",
+
     "query-results": "Query Results",
     "search-results": "Search Results",
     "buffer-results": "Buffer Results",
@@ -38,6 +42,11 @@
     "info-and-copyright": "Info & Copyright",
     "info-no-legend": "At this map extent/scale or with the current layer configuration, no legend is available for the selected services.",
     "find-layers": "Find layers...",
+
+    "select-filter": "Select filter",
+    "all-filters": "All filters",
+    "remove-filters": "Remove filters",
+    "remove-all-filters": "Remove all filters",
 
     // tool MapMarkup
     "mapmarkup-tool-pointer": "Select object",
@@ -76,6 +85,8 @@
     "services": "Services",
     "focus-service": "Focus service",
     "map-services": "Map services",
+    "all-services": "All services",
+    "all-time-dependent-services": "All time-dependent services",
 
     "point": "Point",
     "polyline": "(Poly)line",
@@ -195,6 +206,8 @@
     "sketch-from-feature-geometry": "From geo-object geometry",
     "sketch-upload": "Upload sketch (GPX, GeoJson)",
     "sketch-download": "Download sketch (GPX, GeoJson)",
+    "sketch-add-element": "Add Element",
+    "sketch-rotate-element": "Rotate element",
 
     "sketch-segment-createion-mode": "Segment creation mode",
     "sketch-mode-normal": "Normal",
@@ -331,5 +344,7 @@
     "show-markers-on-new-queries-info": "If this option is enabled, markers will be displayed on the map for new query results. If disabled, only the results will be shown in the table without markers on the map.",
     "select-new-query-results": "Select new query results", 
     "select-new-query-results-info": "If this option is enabled, new query results will be automatically selected in the map.",
-    "query-layer-not-visible-notification": "The queried layer is hidden in the map. Click here to show it."
+    "query-layer-not-visible-notification": "The queried layer is hidden in the map. Click here to show it.",
+
+    "create-map-series": "Create map series"
 };

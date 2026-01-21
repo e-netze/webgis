@@ -12,7 +12,7 @@ public class VisFilterRemoveAll : IApiClientButton, IApiButtonResources, IApiBut
 
     public string Name => "Remove Display Filters";
 
-    public string Container => "Presentation";
+    public string Container => "Query";
 
     public string Image => UIImageButton.ToolResourceImage(this, "filter_remove");
 

@@ -1,13 +1,14 @@
-//#define ADD_IDENTITYSERVER
+﻿//#define ADD_IDENTITYSERVER
 //#define ADD_MESSAGEQUEUE
 //#define ADD_REDIS
+//#define ADD_MCP
 
 var builder = DistributedApplication.CreateBuilder(args);
 
 #if ADD_IDENTITYSERVER
 #region IdentityServerNET
 
-var identityServer = builder.AddIdentityServerNET("is-net-dev", httpsPort: 44300)
+var identityServer = builder.AddIdentityServerNET("is-net-dev", httpsPort: 8443)
        .WithConfiguration(config =>
        {
            config
@@ -48,7 +49,9 @@ var identityServer = builder.AddIdentityServerNET("is-net-dev", httpsPort: 44300
        })
        .Build()
        .WithContainerName("webgis-identityserver-net")
-       .WithLifetime(ContainerLifetime.Persistent);
+       .WithLifetime(ContainerLifetime.Persistent)
+       //.WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
+       ;
 
 #endregion
 #endif
@@ -85,6 +88,39 @@ var redis = builder
 #endregion
 #endif
 
+#if POSTGRES
+
+var postgresPassword = builder.AddParameter("postgresql-password", "postgres");
+
+// Add a PostgreSQL container using the PostGIS-enabled image
+var postgres = builder
+                    .AddPostgres("webgis-postgis", password: postgresPassword)
+                    .WithImage("postgis/postgis")
+                    .WithDataVolume("webgis-postgis")
+                    //.WithInitBindMount(source: "C:\\postgres\\init")
+                    .WithContainerName("webgis-postgis")
+                    //.WithPgAdmin(containerName: "webgis-pgadmin")
+                    .WithLifetime(ContainerLifetime.Persistent)
+                    .WithHostPort(5432);
+
+#endif
+
+#if GVIEW
+var gViewServer = builder
+                    .AddgViewServer("gview-server", httpPort: 61656)
+                    .Build()
+                    .WithLifetime(ContainerLifetime.Persistent)
+                    .WithContainerName("gview-server");
+
+var gViewWebApps = builder
+                    .AddgViewWebApps("gview-webapps")
+                    .WithDrive("GEODATA", "/geodata", @"C:\temp\GeoData")
+                    .WithgViewServer(gViewServer)
+                    .Build()
+                    .WithLifetime(ContainerLifetime.Persistent)
+                    .WithContainerName("gview-webapps");
+#endif
+
 #region WebGIS
 
 var webgisApi = builder.AddProject<Projects.webgis_api>("webgis-api")
@@ -113,7 +149,11 @@ var webgisCms = builder.AddProject<Projects.webgis_cms>("webgis-cms")
 
 #region MCP
 
+#if ADD_MCP
+
 builder.AddProject<Projects.webgis_api_mcp>("webgis-api-mcp");
+
+#endif
 
 #endregion
 

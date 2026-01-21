@@ -73,5 +73,10 @@ public class SymbolElement : IGraphicElement
         catch { }
     }
 
+    public Envelope Extent =>
+        _point is not null
+            ? new Envelope(_point.ShapeEnvelope)
+            : null;
+
     #endregion
 }

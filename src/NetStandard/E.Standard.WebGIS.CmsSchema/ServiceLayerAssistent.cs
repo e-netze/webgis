@@ -1,4 +1,5 @@
 ﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
@@ -29,18 +30,18 @@ internal class ServiceLayerAssistent : SchemaNode, IAutoCreatable, IUI
             return false;
         }
 
-        string absolutePath = $"{this.CmsManager.ConnectionString}/{Helper.TrimPathRight(this.RelativePath, 2)}";
+        string absolutePath = $"{this.CmsManager.ConnectionString}/{this.RelativePath.TrimRightRelativeCmsPath(2)}";
 
         if (this.RelativePath.StartsWith("services/arcgisserver/mapserver"))
         {
-            ArcServerService service = this.CmsManager.SchemaNodeInstance(_servicePack, Helper.TrimPathRight(this.RelativePath, 2), true) as ArcServerService;
+            ArcServerService service = this.CmsManager.SchemaNodeInstance(_servicePack, this.RelativePath.TrimRightRelativeCmsPath(2), true) as ArcServerService;
 
             service.ImportLayers = _ctrl.SelectedLayerIds;
             service.RefreshAsync($"{absolutePath}/{service.CreateAs(false)}.xml", 1).Wait();
         }
         else if (this.RelativePath.StartsWith("services/ogc/wms"))
         {
-            WMSService service = this.CmsManager.SchemaNodeInstance(_servicePack, Helper.TrimPathRight(this.RelativePath, 2), true) as WMSService;
+            WMSService service = this.CmsManager.SchemaNodeInstance(_servicePack, this.RelativePath.TrimRightRelativeCmsPath(2), true) as WMSService;
 
             service.ImportLayers = _ctrl.SelectedLayerIds;
             service.RefreshAsync($"{absolutePath}/{service.CreateAs(false)}.xml", 1).Wait();

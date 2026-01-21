@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core;
+ï»¿using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
@@ -53,15 +53,15 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
     public WebMapping.Core.ServiceDynamicPresentations DynamicPresentations { get; set; }
 
     [DisplayName("Abfragen bereitstellen")]
-    [Description("Abfragen werden nicht mehr parametriert, sondern werden zur Laufzeit für alle (Feature) Layer eine Abfrage erstellt (ohne Suchbegriffe, nur Identify)")]
+    [Description("Abfragen werden nicht mehr parametriert, sondern werden zur Laufzeit fÃ¼r alle (Feature) Layer eine Abfrage erstellt (ohne Suchbegriffe, nur Identify)")]
     public WebMapping.Core.ServiceDynamicQueries DynamicQueries { get; set; }
 
     [DisplayName("Dynamisches Verhalten")]
-    [Description("Gibt an, wie mit Layern umgegangen wird, die nicht beim erstellen oder nach einem Refresh im CMS unter Themen gelistet werden. AutoAppendNewLayers ... neue Themen werden beim Initialisieren des Dienstes (nach einem cache/clear) der Karte hinzugefügt und können über den TOC geschalten werden. UseStrict ... nur jene Themen, die unter Themen aufgelistet sind, kommen auch in der Karte vor. SealedLayers_UseServiceDefaults ... Es werden immer alle Layer übergeben. Diese Options macht nur beim Fallback(druck)services für VTC Dienste Sinn!")]
+    [Description("Gibt an, wie mit Layern umgegangen wird, die nicht beim erstellen oder nach einem Refresh im CMS unter Themen gelistet werden. AutoAppendNewLayers ... neue Themen werden beim Initialisieren des Dienstes (nach einem cache/clear) der Karte hinzugefÃ¼gt und kÃ¶nnen Ã¼ber den TOC geschalten werden. UseStrict ... nur jene Themen, die unter Themen aufgelistet sind, kommen auch in der Karte vor. SealedLayers_UseServiceDefaults ... Es werden immer alle Layer Ã¼bergeben. Diese Options macht nur beim Fallback(druck)services fÃ¼r VTC Dienste Sinn!")]
     public WebMapping.Core.DynamicDehavior DynamicDehavior { get; set; }
 
     [DisplayName("Service-Typ")]
-    [Description("Watermark Services werden immer ganz oben gezeichnet und können vom Anwender nicht transparent geschalten oder ausgelendet werden. Watermark Services können neben Wasserzeichen auch Polygondecker enthalten.")]
+    [Description("Watermark Services werden immer ganz oben gezeichnet und kÃ¶nnen vom Anwender nicht transparent geschalten oder ausgelendet werden. Watermark Services kÃ¶nnen neben Wasserzeichen auch Polygondecker enthalten.")]
     public WebMapping.Core.ImageServiceType ServiceType { get; set; }
 
     [DisplayName("Layer Reihenfolge")]
@@ -69,7 +69,7 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
     public WMS_LayerOrder LayerOrder { get; set; }
 
     [DisplayName("Server Vendor (Anbieter)")]
-    [Description("Durch die Angabe des WMS Server Vendors können für den jeweiligen Server spezifische Parameter übergeben werden. Zum Beispiel der kann der DPI Wert der Karte übergeben werden, damit Maßstabsgrenzen von Layern richtig angewendet werden.")]
+    [Description("Durch die Angabe des WMS Server Vendors kÃ¶nnen fÃ¼r den jeweiligen Server spezifische Parameter Ã¼bergeben werden. Zum Beispiel der kann der DPI Wert der Karte Ã¼bergeben werden, damit MaÃŸstabsgrenzen von Layern richtig angewendet werden.")]
     public WMS_Vendor Vendor { get; set; }
 
     [DisplayName("Karten Server")]
@@ -110,11 +110,11 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
 
     [DisplayName("(optional) SLD_Version")]
     [Category("Service")]
-    [Description("In der Regel ist dieser Parameter optional. Nur setzen, wenn der WMS diesen Parameter unbedingt braucht. Wird für GetMap- und GetLegendGraphics-Requests übergeben.")]
+    [Description("In der Regel ist dieser Parameter optional. Nur setzen, wenn der WMS diesen Parameter unbedingt braucht. Wird fÃ¼r GetMap- und GetLegendGraphics-Requests Ã¼bergeben.")]
     public SLD_Version SLDVersion { get; set; }
 
     [Category("~~Anmeldung")]
-    [DisplayName("webGIS Instanz für Ticket Service (Optional)")]
+    [DisplayName("webGIS Instanz fÃ¼r Ticket Service (Optional)")]
     public string TicketServer
     {
         get;
@@ -384,10 +384,10 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
 
         if (capsHelper.LayersWithStyle.Count == 0)
         {
-            throw new System.Exception("Es konnten keine Layer ausgelesen werden.\nMöchten Sie trotzden fortfahren und alle (TOC)Themen dieses Dienstes aus dem CMS löschen?");
+            throw new System.Exception("Es konnten keine Layer ausgelesen werden.\nMÃ¶chten Sie trotzden fortfahren und alle (TOC)Themen dieses Dienstes aus dem CMS lÃ¶schen?");
         }
 
-        #region Überprüfen, ob beim Refresh layer gelöscht/hinzugefügt werden werden
+        #region ÃœberprÃ¼fen, ob beim Refresh layer gelÃ¶scht/hinzugefÃ¼gt werden werden
 
         if (refresh && level == 0)
         {
@@ -397,11 +397,11 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
 
             if (divT < 0)
             {
-                throw new RefreshConfirmException("Durch den Refresh " + (divT == -1 ? "wird" : "werden") + " " + (-divT).ToString() + " " + (divT == -1 ? "Thema" : "Themen") + " aus Dienst gelöscht.\nMöchten Sie trotzden fortfahren?");
+                throw new RefreshConfirmException("Durch den Refresh " + (divT == -1 ? "wird" : "werden") + " " + (-divT).ToString() + " " + (divT == -1 ? "Thema" : "Themen") + " aus Dienst gelÃ¶scht.\nMÃ¶chten Sie trotzden fortfahren?");
             }
             else if (divT > 0)
             {
-                throw new RefreshConfirmException("Durch den Refresh " + (divT == 1 ? "wird" : "werden") + " dem Dienst " + (divT).ToString() + " " + (divT == 1 ? "Thema" : "Themen") + " hinzugefügt.\nMöchten Sie fortfahren?");
+                throw new RefreshConfirmException("Durch den Refresh " + (divT == 1 ? "wird" : "werden") + " dem Dienst " + (divT).ToString() + " " + (divT == 1 ? "Thema" : "Themen") + " hinzugefÃ¼gt.\nMÃ¶chten Sie fortfahren?");
             }
         }
 
@@ -472,7 +472,7 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
             {
                 save = false;
 
-                #region Überprüfen, ob LayerID noch zusammenpasst!
+                #region ÃœberprÃ¼fen, ob LayerID noch zusammenpasst!
 
                 string eFilename = di.FullName + @"/themes/" + IMSService.ExtractLastPathElement(themeLinkUri) + ".xml";
                 IStreamDocument eXmlSteam = DocumentFactory.Open(eFilename);

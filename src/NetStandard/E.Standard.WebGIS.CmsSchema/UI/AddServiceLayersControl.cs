@@ -1,4 +1,5 @@
 ﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
@@ -93,7 +94,7 @@ public class AddServiceLayersControl : UserControl, IInitParameter
         {
             #region ArcGIS Dienst abfragen
 
-            ArcServerService service = _cms.SchemaNodeInstance(_servicePack, Helper.TrimPathRight(_relPath, 2), true) as ArcServerService;
+            ArcServerService service = _cms.SchemaNodeInstance(_servicePack, _relPath.TrimRightRelativeCmsPath(2), true) as ArcServerService;
             try
             {
                 foreach (var jsonLayer in await service.GetLayersWithGroupLayernamesAsync())
@@ -115,7 +116,7 @@ public class AddServiceLayersControl : UserControl, IInitParameter
         {
             #region WMS Dienst abfragen
 
-            WMSService service = _cms.SchemaNodeInstance(_servicePack, Helper.TrimPathRight(_relPath, 2), true) as WMSService;
+            WMSService service = _cms.SchemaNodeInstance(_servicePack, _relPath.TrimRightRelativeCmsPath(2), true) as WMSService;
 
             RequestAuthorization requestAuthorization = null;
 

@@ -101,6 +101,7 @@ class ImageServerLayer : RestLayer, ILayer2
         if (parent is ImageServerService imageServerService)
         {
             ImageServerLayer clone = new ImageServerLayer(this.Name, this.ID, this.Type, imageServerService, this.Queryable);
+            clone.ClonePropertiesFrom(this);
             base.CloneParentLayerIdsTo(clone);
             return clone;
         }

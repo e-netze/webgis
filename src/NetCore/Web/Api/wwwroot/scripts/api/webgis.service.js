@@ -122,6 +122,14 @@
             o.custom_request_parameters = serviceInfo.custom_request_parameters;
         }
 
+        if (this._timeEpoch) {
+            o.time_epoch = { "relation": "default" };
+            o.time_epoch.start = this._timeEpoch[0];
+            if (this._timeEpoch.length > 1) {
+                o.time_epoch.end = this._timeEpoch[1];
+            }
+        }
+
         return o;
     };
 
@@ -736,6 +744,10 @@
             //console.log('setOrder: '+this.name, jsonService.order);
             this.setOrder(jsonService.order);
         }
+
+        if (jsonService.time_epoch) {
+            this.setTimeEpoch(jsonService.time_epoch.start, jsonService.time_epoch.end);
+        }
     };
 
     // Request Id
@@ -864,7 +876,7 @@
                 vislayers.push(layer.id);
             }
         }
-        return { width: mapSize[0], height: mapSize[0], bbox: bbox, crs: crsId, layers: vislayers.join(','), f: 'json' };
+        return { width: mapSize[0], height: mapSize[1], bbox: bbox, crs: crsId, layers: vislayers.join(','), f: 'json' };
     };
 
     this.copy = function () {
@@ -894,6 +906,32 @@
             }
         }
     };
+
+    /* Time Info */
+    this.hasTimeInfoLayers = function () {
+        return this.getTimeInfoLayers().length > 0;
+    };
+    this.getTimeInfoLayers = function () {
+        let timeInfoLayers = this.layers.filter(layer => layer.time_info && layer.time_info.extent && layer.time_info.extent.length === 2);
+        return timeInfoLayers;
+    };
+
+    this._timeEpoch = null;
+    this.setTimeEpoch = function (start, end) {
+        //console.log('service.setTimeEpoch', start, end);
+        if (!start) {
+            this._timeEpoch = null;
+        } else if (!end) {
+            this._timeEpoch = [start]
+        } else {
+            this._timeEpoch = [start, end];
+        }
+
+        this.map.events.fire('service-timeepoch-changed', this);
+        this.refresh();
+        this.map.ui.refreshUIElements();
+    };
+    this.getTimeEpoch = () => this._timeEpoch;
 
     /* Static Overlays ... */
     this.setAffinePoints = function (affinePoints) {

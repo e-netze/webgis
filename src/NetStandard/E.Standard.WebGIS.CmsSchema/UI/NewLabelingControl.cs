@@ -2,6 +2,7 @@
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
+using E.Standard.WebGIS.CmsSchema.Extensions;
 using System;
 using System.Collections.Specialized;
 
@@ -77,7 +78,7 @@ public class NewLabelingControl : NameUrlUserConrol, IInitParameter, ISubmit
             object[] objects = null;
             if (_node is Labelling)
             {
-                objects = _cms.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(_relPath, 2) + "/Themes", true);
+                objects = _cms.SchemaNodeInstances(_servicePack, _relPath.TrimAndAppendSchemaNodePath(2, "Themes"), true);
             }
 
             if (objects != null)

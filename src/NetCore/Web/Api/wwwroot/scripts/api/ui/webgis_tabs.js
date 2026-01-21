@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
     "use strict";
     $.fn.webgis_tabs = function (method) {
         if (methods[method]) {
@@ -124,6 +124,7 @@
             var $header = $("<div></div>")
                 .addClass("webgis-tabs-tab-header")
                 .css("display", "none")
+                .css("position", "relative")
                 .attr("id", "tab-presentations-header")
                 .text(webgis.l10n.get("content") + (currentBranch ? '[' + currentBranch + ']' : ''))
                 .appendTo($tab_content);
@@ -133,7 +134,7 @@
             if ($.fn.webgis_presentationToc) {
                 $("<div></div>")
                     .css({
-                        float: 'right', width: 32, height: 32, cursor: 'pointer', margin: -2,
+                        position: 'absolute', right: 3, top: 3, width: 32, height: 32, cursor: 'pointer', margin: -2,
                         backgroundRepeat: 'no-repeat', backgroundPosition: 'center',
                         backgroundImage: 'url(' + webgis.css.imgResource('legend-24.png', 'toc') + ')'
                     })

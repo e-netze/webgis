@@ -76,7 +76,7 @@ public class WebgisPortalService
 
     async public Task<string> GetPortalAuth2CookieUser(HttpContext context)
     {
-        var cookieValue = context.Request.Cookies["webgis5core-portal-auth2"];
+        var cookieValue = context.Request.Cookies[E.Standard.WebMapping.Core.Web.Const.WebgisPortalCookieName];
         if (!String.IsNullOrWhiteSpace(cookieValue))
         {
             return await PortalAuth2CookieUser(context, cookieValue);

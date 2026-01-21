@@ -1,4 +1,4 @@
-﻿# name: Zeichenreihenfolge (Dienste)
+﻿# name: Zeichen&shy;reihenfolge (Dienste)
 
 Reihenfolge und Transparenz der Dienste ändern
 

@@ -5,6 +5,7 @@ namespace E.Standard.Api.App.DTOs.Geometry;
 [System.Text.Json.Serialization.JsonPolymorphic()]
 [System.Text.Json.Serialization.JsonDerivedType(typeof(GeometryDTO))]
 [System.Text.Json.Serialization.JsonDerivedType(typeof(PointDTO))]
+[System.Text.Json.Serialization.JsonDerivedType(typeof(MultiPointDTO))]
 [System.Text.Json.Serialization.JsonDerivedType(typeof(LineStringDTO))]
 [System.Text.Json.Serialization.JsonDerivedType(typeof(PolygonDTO))]
 public class GeometryDTO
@@ -33,6 +34,11 @@ public class GeometryDTO
         if (shape is WebMapping.Core.Geometry.Point)
         {
             geometry = new PointDTO((WebMapping.Core.Geometry.Point)shape);
+        }
+
+        if(shape is WebMapping.Core.Geometry.MultiPoint)
+        {
+            geometry = new MultiPointDTO((WebMapping.Core.Geometry.MultiPoint)shape);
         }
 
         if (shape is WebMapping.Core.Geometry.Polyline)

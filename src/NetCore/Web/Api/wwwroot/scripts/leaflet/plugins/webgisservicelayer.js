@@ -342,7 +342,11 @@
         }
 
         return size;
+    },
+    _calculateTimeEpoch: function () {
+        return this._service.getTimeEpoch();
     }
+
 });
 
 L.ImageOverlay.webgis_service = L.ImageOverlay.ImageServiceBase.extend({
@@ -464,6 +468,7 @@ L.ImageOverlay.webgis_service = L.ImageOverlay.ImageServiceBase.extend({
 
         var bbox = this._calculateBbox();
         var mapSize = this._calculateImageSize();
+        var timeEpoch = this._calculateTimeEpoch();
 
         //var relBbox = (bbox[2] - bbox[0]) / (bbox[3] - bbox[1]);
         //var relMapSize = mapSize.x / mapSize.y;
@@ -496,7 +501,7 @@ L.ImageOverlay.webgis_service = L.ImageOverlay.ImageServiceBase.extend({
         if (this._service && this._service.map && this._service.map.crs)
             crsId = this._service.map.crs.id;
 
-        urlParams = { width: mapSize.x, height: mapSize.y, bbox: bbox, crs: crsId };
+        urlParams = { width: mapSize.x, height: mapSize.y, bbox: bbox, crs: crsId, time_epoch: timeEpoch };
         if (this._service && this._service.map) {
             this._service.map.appendRequestParameters(urlParams, this._service.id);
         }
@@ -937,6 +942,7 @@ L.ImageOverlay.webgis_selection = L.ImageOverlay.ImageServiceBase.extend({
 
         var bbox = this._calculateBbox();
         var mapSize = this._calculateImageSize();
+        var timeEpoch = this._calculateTimeEpoch();
 
         var vislayers = [];
         if (this._service != null && this._service.layers) {
@@ -953,7 +959,7 @@ L.ImageOverlay.webgis_selection = L.ImageOverlay.ImageServiceBase.extend({
         if (this._service && this._service.map && this._service.map.crs)
             crsId = this._service.map.crs.id;
 
-        urlParams = { width: mapSize.x, height: mapSize.y, bbox: bbox, crs: crsId, selection: this._name };
+        urlParams = { width: mapSize.x, height: mapSize.y, bbox: bbox, crs: crsId, time_epoch: timeEpoch, selection: this._name };
         if (this._service && this._service.map) {
             this._service.map.appendRequestParameters(urlParams, this._service.id);
         }

@@ -5,6 +5,7 @@ using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Abstractions;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Abstraction;
+using E.Standard.WebMapping.Core.Api.EventResponse.Models;
 using E.Standard.WebMapping.Core.Api.IO;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Editing;
@@ -23,6 +24,9 @@ public interface IBridge : IAppCryptography
     string GetRequestParameter(string parameter);
 
     Task<IServiceBridge> GetService(string serviceId);
+
+    bool IsServiceQueryBuilderAllowed(string serviceId);
+    IEnumerable<IQueryBuilderFieldBridge> GetAllowedQueryBuilderFields(string serviceId);
 
     Task<IQueryBridge> GetQuery(string setviceId, string queryId);
 
@@ -63,7 +67,7 @@ public interface IBridge : IAppCryptography
 
     IEnumerable<int> GetPrintLayoutScales(string layoutId);
 
-    IEnumerable<IPrintLayoutTextBridge> GetPrintLayoutTextElements(string layoutId);
+    IEnumerable<IPrintLayoutTextBridge> GetPrintLayoutTextElements(string layoutId, bool allowFileName = false);
 
     string GetQueryThemeId(IQueryBridge query);
 
@@ -86,6 +90,8 @@ public interface IBridge : IAppCryptography
     IVisFilterBridge ServiceVisFilter(string serviceId, string filterId);
     Task<IEnumerable<IVisFilterBridge>> ServiceQueryVisFilters(string serviceId, string queryId);
     IUnloadedRequestVisFiltersContext UnloadRequestVisFiltersContext();
+
+    IEnumerable<VisFilterDefinitionDTO> RequestVisFilterDefintions();
 
     IEnumerable<ILabelingBridge> ServiceLabeling(string serviceId);
     ILabelingBridge ServiceLabeling(string serviceId, string labelingId);
@@ -169,6 +175,7 @@ public interface IBridge : IAppCryptography
 
     IHttpService HttpService { get; }
     IRequestContext RequestContext { get; }
+    ICryptoService CryptoService { get; }
 
     string CreateNewAnoymousCliendsideUserId();
 

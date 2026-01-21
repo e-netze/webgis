@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core;
+﻿using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
@@ -213,7 +213,7 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     {
         if (appendRoot)
         {
-            return this.Url + @"\.general";
+            return this.Url + @"/.general";
         }
         else
         {
@@ -223,7 +223,7 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
 
     async public Task<bool> CreatedAsync(string fullName)
     {
-        var serviceLayer = this.CmsManager.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(this.RelativePath, 3) + "/Themes", true)?
+        var serviceLayer = this.CmsManager.SchemaNodeInstances(_servicePack, this.RelativePath.TrimAndAppendSchemaNodePath(3, "Themes"), true)?
             .Where(o => o is ServiceLayer && ((ServiceLayer)o).Id == this.QueryThemeId)
             .FirstOrDefault() as ServiceLayer;
 
@@ -234,7 +234,7 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
             string newLinkName = Helper.NewLinkName();
             IStreamDocument xmlStream = DocumentFactory.New(this.CmsManager.ConnectionString);
             link.Save(xmlStream);
-            xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + Helper.TrimPathRight(this.RelativePath, 1) + @"/QueryTheme/" + newLinkName);
+            xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + this.RelativePath.TrimAndAppendSchemaNodePath(1, "QueryTheme") + "/" + newLinkName);
         }
 
         if (AutoImportAllFields == ImportQueryTable.Dynamic)
@@ -246,11 +246,11 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
 
             IStreamDocument xmlStream = DocumentFactory.New(this.CmsManager.ConnectionString);
             tableColumn.Save(xmlStream);
-            xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + Helper.TrimPathRight(this.RelativePath, 1) + @"/TableColumns/" + tableColumn.CreateAs(true) + ".xml");
+            xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + this.RelativePath.TrimAndAppendSchemaNodePath(1, "TableColumns") + "/" + tableColumn.CreateAs(true) + ".xml");
         }
         else if (AutoImportAllFields == ImportQueryTable.Fields)
         {
-            var objects = this.CmsManager.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(this.RelativePath, 1) + "/QueryTheme", true);
+            var objects = this.CmsManager.SchemaNodeInstances(_servicePack, this.RelativePath.TrimAndAppendSchemaNodePath(1, "QueryTheme"), true);
 
             List<string> fieldOrder = new List<string>();
             foreach (var field in await objects.FieldsNames(this.CmsManager, _servicePack, excludeShape: true))
@@ -265,10 +265,10 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
 
                 IStreamDocument xmlStream = DocumentFactory.New(this.CmsManager.ConnectionString);
                 tableColumn.Save(xmlStream);
-                xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + Helper.TrimPathRight(this.RelativePath, 1) + @"/TableColumns/" + createAs);
+                xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + this.RelativePath.TrimAndAppendSchemaNodePath(1, "TableColumns") + "/" + createAs);
             }
 
-            var itemOrder = new ItemOrder(this.CmsManager.ConnectionString + "/" + Helper.TrimPathRight(this.RelativePath, 1) + @"/TableColumns");
+            var itemOrder = new ItemOrder(this.CmsManager.ConnectionString + "/" + this.RelativePath.TrimAndAppendSchemaNodePath(1, "TableColumns"));
             itemOrder.Items = fieldOrder.ToArray();
             itemOrder.Save();
         }

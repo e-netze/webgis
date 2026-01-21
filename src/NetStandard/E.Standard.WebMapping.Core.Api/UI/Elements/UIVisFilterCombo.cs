@@ -12,3 +12,11 @@ public class UIVisFilterCombo : UIElement
     public string onchange { get; set; }
     new public string value { get; set; }
 }
+
+public class UIVisFilterListElement : UIElement
+{
+    public UIVisFilterListElement()
+        : base("visfilterlist")
+    {
+    }
+}

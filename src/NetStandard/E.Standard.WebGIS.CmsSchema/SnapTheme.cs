@@ -1,9 +1,11 @@
-using E.Standard.CMS.Core;
+ï»¿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
+using E.Standard.WebGIS.CmsSchema.Extensions;
 using E.Standard.WebGIS.CmsSchema.UI;
 using System.ComponentModel;
 using System.Linq;
@@ -17,7 +19,7 @@ public class SnapTheme : Link, IPersistable, IEditable
 
     #region Properties
     /*
-    [DisplayName("Stützpunkt (Vertex)")]
+    [DisplayName("StÃ¼tzpunkt (Vertex)")]
     [Category("Snappen auf...")]
     public bool Vertex
     {
@@ -80,7 +82,7 @@ public class SnapSchema : NameUrl, IUI, ICreatable, IDisplayName, IEditable
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Snappen ab einem Maßstab von 1:")]
+    [DisplayName("Snappen ab einem MaÃŸstab von 1:")]
     public int MinScale
     {
         get { return _minScale; }
@@ -109,7 +111,7 @@ public class SnapSchema : NameUrl, IUI, ICreatable, IDisplayName, IEditable
     {
         if (appendRoot)
         {
-            return (string.IsNullOrWhiteSpace(this.Url) ? Crypto.GetID() : this.Url) + @"\.general";
+            return (string.IsNullOrWhiteSpace(this.Url) ? Crypto.GetID() : this.Url) + @"/.general";
         }
         else
         {
@@ -123,7 +125,7 @@ public class SnapSchema : NameUrl, IUI, ICreatable, IDisplayName, IEditable
         {
             foreach (var layerId in SnapThemeIds)
             {
-                var serviceLayer = this.CmsManager.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(this.RelativePath, 3) + "/Themes", true)
+                var serviceLayer = this.CmsManager.SchemaNodeInstances(_servicePack, this.RelativePath.TrimAndAppendSchemaNodePath(3, "Themes"), true)
                         .Where(o => o is ServiceLayer && ((ServiceLayer)o).Id == layerId)
                         .FirstOrDefault() as ServiceLayer;
 
@@ -134,7 +136,7 @@ public class SnapSchema : NameUrl, IUI, ICreatable, IDisplayName, IEditable
                     string newLinkName = Helper.NewLinkName();
                     IStreamDocument xmlStream = DocumentFactory.New(this.CmsManager.ConnectionString);
                     link.Save(xmlStream);
-                    xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + Helper.TrimPathRight(this.RelativePath, 1) + @"/" + newLinkName);
+                    xmlStream.SaveDocument(this.CmsManager.ConnectionString + "/" + this.RelativePath.TrimRightRelativeCmsPath(1) + @"/" + newLinkName);
                 }
             }
         }

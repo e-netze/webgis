@@ -41,7 +41,7 @@ public class GeneralVectorTileCache :
     {
         if (appendRoot)
         {
-            return this.Url + @"\.general";
+            return this.Url + @"/.general";
         }
         else
         {

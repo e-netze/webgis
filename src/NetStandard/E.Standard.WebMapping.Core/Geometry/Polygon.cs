@@ -1,4 +1,6 @@
 ﻿using E.Standard.WebMapping.Core.Geometry.Clipper;
+using E.Standard.WebMapping.Core.Geometry.Topology;
+using Proj4Net.Core.IO;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -550,5 +552,15 @@ public sealed class Polygon : Shape
     public IEnumerable<Ring> ToArray()
     {
         return _rings?.ToArray() ?? new Ring[0];
+    }
+
+    public override bool IsValid()
+    {
+        if (this._rings is null || this._rings.Count == 0)
+        {
+            return false;
+        }
+
+        return _rings.All(p => p.IsValid());
     }
 }

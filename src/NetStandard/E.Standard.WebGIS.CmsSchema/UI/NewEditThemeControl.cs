@@ -1,4 +1,5 @@
 ﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
@@ -38,7 +39,7 @@ public class NewEditThemeControl : NameUrlUserConrol, IInitParameter, ISubmit
                 _relPath += "/";
             }
 
-            _txtSrs.Value = Helper.TrimPathRight(schemaNode.RelativePath, 1).ServiceSrs(_cms, _servicePack).Result.ToString();
+            _txtSrs.Value = schemaNode.RelativePath.TrimRightRelativeCmsPath(1).ServiceSrs(_cms, _servicePack).Result.ToString();
         }
 
         _gbEditTheme.AddControl(_cmbEditTheme);
@@ -108,7 +109,7 @@ public class NewEditThemeControl : NameUrlUserConrol, IInitParameter, ISubmit
             object[] objects = null;
             if (_node is EditingTheme)
             {
-                objects = _cms.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(_relPath, 2) + "/Themes", true);
+                objects = _cms.SchemaNodeInstances(_servicePack, _relPath.TrimAndAppendSchemaNodePath(2, "Themes"), true);
             }
 
             if (objects != null)

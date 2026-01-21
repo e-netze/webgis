@@ -11,10 +11,12 @@ using E.Standard.CMS.Core;
 using E.Standard.Extensions;
 using E.Standard.Json;
 using E.Standard.Platform;
+using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
+using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
@@ -24,7 +26,6 @@ using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 using E.Standard.WebMapping.GeoServices.Tiling;
 using gView.GraphicsEngine;
 using Microsoft.AspNetCore.Http;
-using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,6 +42,7 @@ public class RestMappingHelperService /*: IDisposable*/
     private readonly CacheService _cache;
     private readonly MapServiceInitializerService _mapServiceInitializer;
     private readonly UrlHelperService _urlHelper;
+    private readonly ICryptoService _crypto;
     private readonly IRequestContext _requestContext;
 
     public RestMappingHelperService(RestHelperService restHelper,
@@ -48,6 +50,7 @@ public class RestMappingHelperService /*: IDisposable*/
                                     CacheService cache,
                                     MapServiceInitializerService mapServiceInitializer,
                                     UrlHelperService urlHelper,
+                                    ICryptoService crypto,
                                     IRequestContext requestContext)
     {
         _restHelper = restHelper;
@@ -55,6 +58,7 @@ public class RestMappingHelperService /*: IDisposable*/
         _cache = cache;
         _mapServiceInitializer = mapServiceInitializer;
         _urlHelper = urlHelper;
+        _crypto = crypto;
         _requestContext = requestContext;
     }
 
@@ -84,6 +88,8 @@ public class RestMappingHelperService /*: IDisposable*/
 
         map.ImageWidth = int.Parse(request.FormOrQuery("width"));
         map.ImageHeight = int.Parse(request.FormOrQuery("height"));
+        map.AddTimeEpoch(id, request.FormOrQuery("time_epoch")?.UrlParameterToTimeEpoch());
+
         string[] bbox = request.FormOrQuery("bbox").ToString().Split(',');
         string[] layerIds = request.FormOrQuery("layers")?.ToString().Split(',') ?? new string[0];
 
@@ -231,6 +237,7 @@ public class RestMappingHelperService /*: IDisposable*/
 
         map.ImageWidth = int.Parse(request.FormOrQuery("width"));
         map.ImageHeight = int.Parse(request.FormOrQuery("height"));
+        map.AddTimeEpoch(id, request.FormOrQuery("time_epoch")?.UrlParameterToTimeEpoch());
         string[] bbox = request.FormOrQuery("bbox").ToString().Split(',');
 
         map.ZoomTo(new Envelope(
@@ -718,8 +725,8 @@ public class RestMappingHelperService /*: IDisposable*/
                        feature.GetPropery<float>("stroke-width"),
                        LineDashStyle.Solid,
                        calcPolyline: calcShape as Polyline,
-                       labelTotalLength: feature.GetPropery<bool>("label-total-length"), 
-                       labelSegments: true, 
+                       labelTotalLength: feature.GetPropery<bool>("label-total-length"),
+                       labelSegments: true,
                        labelPointNumbers: false,
                        fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
                        lengthUnit: feature.GetPropery<string>("length-unit"))
@@ -782,21 +789,33 @@ public class RestMappingHelperService /*: IDisposable*/
 
     public void ApplyVisFilters(HttpRequest httpRequest, IMapService service, CmsDocument.UserIdentification ui)
     {
-        var visFilters = httpRequest.VisFilterDefinitionsFromParameters();
+        var requestVisFilters = httpRequest.VisFilterDefinitionsFromParameters();
+        var cmsVisFilters = requestVisFilters?.Where(f => f.IsTocVisFilter() == false).ToArray() ?? [];
+        var tocVisFilters = requestVisFilters?.Where(f => f.IsTocVisFilter(service.Url)).ToArray() ?? [];
 
         var serviceFilters = _cache.GetAllVisFilters(service.Url, ui);
 
-        if (visFilters != null || serviceFilters.HasLockedFilters)
+        foreach (var tocVisFilter in tocVisFilters)
+        {
+            tocVisFilter.CheckSignature(_crypto);
+
+            var layer = service.Layers.FindByLayerId(tocVisFilter.TocVisFilterLayerId());
+            if (layer == null) continue;
+
+            layer.Filter = layer.Filter.AppendWhereClause(tocVisFilter.TocVisFilterWhereClause());
+        }
+
+        if (cmsVisFilters != null || serviceFilters.HasLockedFilters)
         {
             //var serviceFilters = Cache.GetVisFilters(service.Url, ui);
 
             if (serviceFilters != null && serviceFilters.filters != null)
             {
-                if (visFilters != null)
+                if (cmsVisFilters != null)
                 {
                     #region Normal Visfilters
 
-                    foreach (var filter in visFilters)
+                    foreach (var filter in cmsVisFilters)
                     {
                         if (!String.IsNullOrWhiteSpace(filter.ServiceId) && filter.ServiceId != service.Url)
                         {

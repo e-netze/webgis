@@ -1,10 +1,11 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 
 public class JsonDrawingInfo
 {
-
+    [JsonProperty(PropertyName = "renderer")]
+    [System.Text.Json.Serialization.JsonPropertyName("renderer")]
     public JsonRenderer Renderer
     {
         get; set;

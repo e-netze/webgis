@@ -6,19 +6,25 @@ using System.Text;
 
 namespace E.Standard.WebMapping.Core.Extensions;
 
+public enum WKTFormat
+{
+    WKT,
+    WKTWithMetadata
+}
+
 static public class WKTExtensions
 {
     public readonly static System.Globalization.NumberFormatInfo _nhi = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
 
     #region ToWKT
 
-    public static string WKTFromShape(this Shape geometry)
+    public static string WKTFromShape(this Shape geometry, WKTFormat format = WKTFormat.WKT)
     {
         StringBuilder sb = new StringBuilder();
         if (geometry is Point)
         {
             sb.Append("POINT(");
-            AppendPoint(sb, (Point)geometry);
+            AppendPoint(sb, (Point)geometry, format);
             sb.Append(")");
         }
         else if (geometry is MultiPoint)
@@ -39,7 +45,7 @@ static public class WKTExtensions
                 }
 
                 sb.Append("(");
-                AppendPoint(sb, mPoint);
+                AppendPoint(sb, mPoint, format);
                 sb.Append(")");
                 first = false;
             }
@@ -48,7 +54,7 @@ static public class WKTExtensions
         else if (geometry is Polyline)
         {
             sb.Append("MULTILINESTRING(");
-            AppendPolyline(sb, (Polyline)geometry);
+            AppendPolyline(sb, (Polyline)geometry, format);
             sb.Append(")");
         }
         else if (geometry is Polygon)
@@ -60,13 +66,13 @@ static public class WKTExtensions
                     break;
                 case 1:
                     sb.Append("POLYGON(");
-                    AppendPolygon(sb, (Polygon)geometry);
+                    AppendPolygon(sb, (Polygon)geometry, format);
                     sb.Append(")");
                     break;
                 default:
                     // ToDo: Inner, outer Rings...
                     sb.Append("MULTIPOLYGON((");
-                    AppendPolygon(sb, (Polygon)geometry);
+                    AppendPolygon(sb, (Polygon)geometry, format);
                     sb.Append("))");
                     //throw new Exception("Can't handle complex features...");
                     break;
@@ -94,7 +100,7 @@ static public class WKTExtensions
         return sb.ToString();
     }
 
-    private static void AppendPoint(StringBuilder sb, Point point)
+    private static void AppendPoint(StringBuilder sb, Point point, WKTFormat format)
     {
         if (point == null)
         {
@@ -102,9 +108,49 @@ static public class WKTExtensions
         }
 
         sb.Append(point.X.ToString(_nhi) + " " + point.Y.ToString(_nhi));
+
+        if (format == WKTFormat.WKTWithMetadata)
+        {
+            if (point is PointM3 pM3)
+            {
+                sb.Append($" z:{pM3.Z.ToString(_nhi)}");
+                if (pM3.M != null)
+                {
+                    sb.Append($" m:{ToMetaValue(pM3.M)}");
+                }
+                if (pM3.M2 != null)
+                {
+                    sb.Append($" m2:{ToMetaValue(pM3.M2)}");
+                }
+                if (pM3.M2 != null)
+                {
+                    sb.Append($" m3:{ToMetaValue(pM3.M3)}");
+                }
+            }
+            else if (point is PointM2 pM2)
+            {
+                sb.Append($" z:{pM2.Z.ToString(_nhi)}");
+                if (pM2.M != null)
+                {
+                    sb.Append($" m:{ToMetaValue(pM2.M)}");
+                }
+                if (pM2.M2 != null)
+                {
+                    sb.Append($" m2:{ToMetaValue(pM2.M2)}");
+                }
+            }
+            else if (point is PointM pM)
+            {
+                sb.Append($" z:{pM.Z.ToString(_nhi)}");
+                if (pM.M != null)
+                {
+                    sb.Append($" m:{ToMetaValue(pM.M)}");
+                }
+            }
+        }
     }
 
-    private static void AppendPointCollection(StringBuilder sb, PointCollection pColl)
+    private static void AppendPointCollection(StringBuilder sb, PointCollection pColl, WKTFormat format)
     {
         if (pColl == null || pColl.PointCount == 0)
         {
@@ -123,14 +169,14 @@ static public class WKTExtensions
                     sb.Append(",");
                 }
 
-                AppendPoint(sb, p);
+                AppendPoint(sb, p, format);
                 first = false;
             }
         }
         sb.Append(")");
     }
 
-    private static void AppendPolyline(StringBuilder sb, Polyline pLine)
+    private static void AppendPolyline(StringBuilder sb, Polyline pLine, WKTFormat format)
     {
         if (pLine == null || pLine.PathCount == 0)
         {
@@ -148,13 +194,13 @@ static public class WKTExtensions
                     sb.Append(",");
                 }
 
-                AppendPointCollection(sb, p);
+                AppendPointCollection(sb, p, format);
                 first = false;
             }
         }
     }
 
-    private static void AppendPolygon(StringBuilder sb, Polygon poly)
+    private static void AppendPolygon(StringBuilder sb, Polygon poly, WKTFormat format)
     {
         if (poly == null || poly.RingCount == 0)
         {
@@ -173,11 +219,19 @@ static public class WKTExtensions
                 }
 
                 r.ClosePath();
-                AppendPointCollection(sb, r);
+                AppendPointCollection(sb, r, format);
                 first = false;
             }
         }
     }
+
+    private static string ToMetaValue(object metaValue)
+        => metaValue switch
+        {
+            float f => f.ToString(_nhi),
+            double d => d.ToString(_nhi),
+            _ => metaValue.ToString().Replace(",", ".") // komma is not allowed in M Values
+        };
 
     #endregion
 
@@ -202,6 +256,17 @@ static public class WKTExtensions
         else if (wkt.StartsWith("MULTIPOINT(", StringComparison.OrdinalIgnoreCase))
         {
             var multiPoint = ReadMultiPoint(pathStrings[0]);
+            for(int i = 1; i < pathStrings.Count; i++)
+            {
+                var additionalMultiPoint = ReadMultiPoint(pathStrings[i]);
+                if (additionalMultiPoint != null)
+                {
+                    foreach(var pt in additionalMultiPoint.ToArray())
+                    {
+                        multiPoint.AddPoint(pt);
+                    }
+                }
+            }
             if (multiPoint != null && multiPoint.PointCount == 1)
             {
                 return multiPoint[0];

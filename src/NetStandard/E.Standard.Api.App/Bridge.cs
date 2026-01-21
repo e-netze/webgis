@@ -25,6 +25,7 @@ using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
+using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.IO;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Editing;
@@ -108,7 +109,11 @@ public class Bridge : IBridge
             {
                 this.RequestFilters = JSerializer.Deserialize<VisFilterDefinitionDTO[]>(filters);
             }
-            ;
+            string timeEpoch = request.QueryString["timeEpoch"] ?? request.Form["timeEpoch"];
+            if (!String.IsNullOrEmpty(timeEpoch))
+            {
+                this.RequestTimeEpoch = JSerializer.Deserialize<TimeEpochDefinitionDTO[]>(timeEpoch);
+            }
         }
 
         this.DefaultSrefId = _config.DefaultQuerySrefId();
@@ -125,6 +130,8 @@ public class Bridge : IBridge
     internal IApiButton CurrentTool { get; private set; }
 
     internal VisFilterDefinitionDTO[] RequestFilters { get; set; }
+
+    internal TimeEpochDefinitionDTO[] RequestTimeEpoch { get; set; }
 
     private string GdiCustomGdiScheme => _urlHelper.GetCustomGdiScheme();
 
@@ -145,15 +152,33 @@ public class Bridge : IBridge
 
         try
         {
-            var visFilters = _cacheService.GetAllVisFilters(query.Service.Url, _userIdentification);
+            var cmsRequestFilters = this.RequestFilters?.Where(f => f.IsTocVisFilter() == false).ToArray();
+            var tocRequestFilters = this.RequestFilters?.Where(f => f.IsTocVisFilter(query.Service.Url)).ToArray();
+            var serviceVisFilters = _cacheService.GetAllVisFilters(query.Service.Url, _userIdentification);
 
-            if (RequestFilters != null && RequestFilters.Length > 0)
+            #region TOC Filters
+
+            if (tocRequestFilters != null && tocRequestFilters.Length > 0)
             {
-                if (visFilters.filters != null)
+                foreach (var tocVisFilter in tocRequestFilters.Where(f => f.TocVisFilterLayerId() == query.LayerId))
+                {
+                    tocVisFilter.CheckSignature(_crypto);
+
+                    sql = sql.AppendWhereClause(tocVisFilter.TocVisFilterWhereClause());
+                }
+            }
+
+            #endregion
+
+            #region CMS (defined) Vis Filters 
+
+            if (cmsRequestFilters != null && cmsRequestFilters.Length > 0)
+            {
+                if (serviceVisFilters.filters != null)
                 {
                     #region Normale Filter
 
-                    foreach (var visFilter in visFilters.filters.Where(f => f.FilterType != E.Standard.WebGIS.CMS.VisFilterType.locked))
+                    foreach (var visFilter in serviceVisFilters.filters.Where(f => f.FilterType != E.Standard.WebGIS.CMS.VisFilterType.locked))
                     {
                         if (visFilter.LayerNamesString.Split(';').Where(layerName =>
                         {
@@ -169,7 +194,7 @@ public class Bridge : IBridge
                             continue;
                         }
 
-                        var requestFilter = RequestFilters
+                        var requestFilter = cmsRequestFilters
                             .Where(f =>
                             {
                                 if (f?.Id == null)
@@ -191,7 +216,7 @@ public class Bridge : IBridge
                         string filterClause = visFilter.Filter;
                         foreach (var arg in requestFilter.Arguments.OrEmpty())
                         {
-                            filterClause = filterClause.Replace("[" + arg.Name + "]", arg.Value);
+                            filterClause = filterClause.Replace($"[{arg.Name}]", arg.Value);
                         }
 
                         if (!String.IsNullOrWhiteSpace(filterClause))
@@ -208,16 +233,18 @@ public class Bridge : IBridge
                 }
             }
 
+            #endregion
+
             #region Locked Vis Layers
 
-            if (visFilters.HasLockedFilters)
+            if (serviceVisFilters.HasLockedFilters)
             {
                 var layer = query.Service.Layers.Where(l => l.ID == query.LayerId).FirstOrDefault();
                 if (layer != null)
                 {
                     string lockedVisFilterClause = String.Empty;
 
-                    foreach (var lockedFilter in visFilters.LockedFilters.Where(f => f.LayerNamesString.Split(';').Contains(layer.Name)))
+                    foreach (var lockedFilter in serviceVisFilters.LockedFilters.Where(f => f.LayerNamesString.Split(';').Contains(layer.Name)))
                     {
                         lockedVisFilterClause = lockedVisFilterClause.AppendWhereClause(E.Standard.WebGIS.CMS.CmsHlp.ReplaceFilterKeys(_httpRequestContext.OriginalUrlParameters, _userIdentification, lockedFilter.Filter));
                     }
@@ -234,6 +261,25 @@ public class Bridge : IBridge
         catch { }
 
         return sql.ToString();
+    }
+
+    internal TimeEpochDefinition GetTimeEpoch(QueryDTO query)
+    {
+        var epoch = RequestTimeEpoch?
+                    .Where(t => t.ServiceId == query?.Service.Url)
+                    .FirstOrDefault()?
+                    .Epoch;
+
+        if (epoch != null && epoch.Length == 2)
+        {
+            return new TimeEpochDefinition()
+            {
+                StartTime = epoch[0],
+                EndTime = epoch[1]
+            };
+        }
+
+        return null;
     }
 
     #endregion
@@ -283,10 +329,10 @@ public class Bridge : IBridge
             opacity = service.InitialOpacity
         };
 
-        List<ServiceInfoDTO.LayerInfo> layers = new List<ServiceInfoDTO.LayerInfo>();
+        List<ServiceInfoDTO.LayerInfoDTO> layers = new List<ServiceInfoDTO.LayerInfoDTO>();
         foreach (var layer in service.Layers)
         {
-            layers.Add(new ServiceInfoDTO.LayerInfo()
+            layers.Add(new ServiceInfoDTO.LayerInfoDTO()
             {
                 id = layer.ID,
                 idfieldname = layer.IdFieldName,
@@ -299,6 +345,18 @@ public class Bridge : IBridge
         info.layers = layers.ToArray();
 
         return info.ToServiceBridge();
+    }
+
+    public bool IsServiceQueryBuilderAllowed(string serviceId)
+    {
+        return _cacheService.IsServiceQueryBuilderAllowed(serviceId, _userIdentification);
+    }
+
+    public IEnumerable<IQueryBuilderFieldBridge> GetAllowedQueryBuilderFields(string serviceId)
+    {
+        return _cacheService.IsServiceQueryBuilderAllowed(serviceId, _userIdentification)
+            ? _cacheService.GetAllowedQueryBuilderFields(serviceId, _userIdentification)
+            : [];
     }
 
     async public Task<IQueryBridge> GetQuery(string serviceId, string queryId)
@@ -546,6 +604,8 @@ public class Bridge : IBridge
         return E.Standard.WebGIS.CMS.CmsHlp.ReplaceFilterKeys(_httpRequestContext.OriginalUrlParameters, _userIdentification, filter, startingBracket: startingBracket, endingBracket: endingBracket);
     }
 
+    public IEnumerable<VisFilterDefinitionDTO> RequestVisFilterDefintions() => RequestFilters;
+
     #endregion
 
     #region Labeling
@@ -663,7 +723,7 @@ public class Bridge : IBridge
 
     public IEnumerable<IPrintLayoutBridge> GetPrintLayouts(IEnumerable<string> layoutIds)
     {
-        if (layoutIds == null)
+        if (layoutIds?.Any() != true)
         {
             return new IPrintLayoutBridge[0];
         }
@@ -834,13 +894,22 @@ public class Bridge : IBridge
         return layoutBuilder.GetAllowedScales();
     }
 
-    public IEnumerable<IPrintLayoutTextBridge> GetPrintLayoutTextElements(string layoutId)
+    public IEnumerable<IPrintLayoutTextBridge> GetPrintLayoutTextElements(string layoutId, bool allowFileName = false)
     {
         var map = _mapServiceInitializer.Map(_requestContext, _userIdentification);
-        var printLayout = _cacheService.GetPrintLayouts(this.GdiCustomGdiScheme, _userIdentification).Where(l => l.Id == layoutId).FirstOrDefault();
+
+        var fileTitle = (allowFileName && layoutId.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
+                ? layoutId
+                : _cacheService.GetPrintLayouts(this.GdiCustomGdiScheme, _userIdentification).Where(l => l.Id == layoutId).FirstOrDefault()?.LayoutFile;
+        if (String.IsNullOrEmpty(fileTitle))
+        {
+            throw new Exception($"Configuration Error: Print Layout with id '{layoutId}' not found. Check CMS configuration");
+        }
+
+        var fileName = System.IO.Path.Combine(ApiGlobals.AppEtcPath, "layouts", fileTitle);
 
         var layoutBuilder = new E.Standard.WebMapping.GeoServices.Print.LayoutBuilder(map, _http,
-            System.IO.Path.Combine(ApiGlobals.AppEtcPath, "layouts", printLayout.LayoutFile),
+            fileName,
             E.Standard.WebMapping.GeoServices.Print.PageSize.A4,
             E.Standard.WebMapping.GeoServices.Print.PageOrientation.Landscape,
             96D,
@@ -1012,7 +1081,7 @@ public class Bridge : IBridge
     {
         var service = await TryGetOriginalService(serviceId).ThrowIfNull(() => $"Unknown Service: {serviceId}");
 
-        if(service is IServiceAttachmentProvider attachmentService)
+        if (service is IServiceAttachmentProvider attachmentService)
         {
             return await attachmentService.GetServiceAttachementData(_requestContext, attachementUri);
         }
@@ -1545,6 +1614,8 @@ public class Bridge : IBridge
 
     public IHttpService HttpService => _http;
     public IRequestContext RequestContext => _requestContext;
+
+    public ICryptoService CryptoService => _crypto;
 
     #region Environment
 

@@ -43,6 +43,10 @@
         <script src="~/lib/typeahead/typeahead.bundle.js"></script>
     </environment>
 
+    <script type="text/javascript">
+        CMS.appRootUrl = '@(ViewData["AppRootUrl"] ?? String.Empty)';
+    </script>
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

@@ -32,6 +32,7 @@ using E.Standard.WebMapping.Core.Extensions.DependencyInjection;
 using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.GeoServices.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -85,8 +86,10 @@ static public class ServiceCollectionExtensions
 
         services.AddRestServiceFactory(configuration);
 
-        services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
+        // obsolote: https://github.com/aspnet/Announcements/issues/520 ... replaces by IHttpContextAccessor
+        //services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
         services.AddHttpContextAccessor();
+
         services.AddRoutingEndPointReflectionService(options =>
         {
             options.AppRoles = E.Standard.Api.App.AppRoles.None;
@@ -257,17 +260,17 @@ static public class ServiceCollectionExtensions
             {
                 List<string> customCssUrls = new List<string>(new[]
                 {
-                $"~/content/styles/default.css?{WebGISVersion.CssVersion}",
-                $"~/content/Site.css?{WebGISVersion.CssVersion}"
-            });
+                    $"~/content/styles/default.css?{WebGISVersion.CssVersion}",
+                    $"~/content/Site.css?{WebGISVersion.CssVersion}"
+                });
                 customCssUrls.AddRange(configuration.DataLinqCustomCssUrls(WebGISVersion.CssVersion));
 
                 var customReportJavascriptUrls = new List<string>(new[]
-                {
-                $"src=~/scripts/api/api.min.js?{WebGISVersion.JsVersion};id=webgis-api-script",
-                $"~/scripts/api/api-ui.min.js?{WebGISVersion.JsVersion}",
-                $"~/scripts/api/datalinq-overrides.js?{WebGISVersion.JsVersion}"
-            });
+                    {
+                    $"src=~/scripts/api/api.min.js?{WebGISVersion.JsVersion};id=webgis-api-script",
+                    $"~/scripts/api/api-ui.min.js?{WebGISVersion.JsVersion}",
+                    $"~/scripts/api/datalinq-overrides.js?{WebGISVersion.JsVersion}"
+                });
                 customReportJavascriptUrls.AddRange(configuration.DataLinqCustomJavaScriptUrls(WebGISVersion.JsVersion));
 
                 config.CustomReportCssUrls = customCssUrls.ToArray();
@@ -383,6 +386,7 @@ static public class ServiceCollectionExtensions
             .AddDataLinqCodeApiServices<DataLinqCodeIdentityProvider>(config =>
             {
                 config.DataLinqCodeClients = configuration.DataLinqCodeApiClients()?.ToArray();
+                config.InitializeSandboxOnStartup = configuration.DataLinqInitlaizeSandboxOnStartup();
             });
     }
 

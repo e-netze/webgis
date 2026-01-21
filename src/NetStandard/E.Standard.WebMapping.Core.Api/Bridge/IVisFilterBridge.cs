@@ -12,3 +12,9 @@ public interface IVisFilterBridge : IApiObjectBridge
     string[] LayerNames { get; }
     string LookupLayerName { get; }
 }
+
+public interface IQueryBuilderFieldBridge : IApiObjectBridge
+{
+    public string Name { get; }
+    public string Aliasname { get;  }
+}

@@ -1,4 +1,4 @@
-using E.Standard.Json;
+﻿using E.Standard.Json;
 using E.Standard.Platform;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.Reflection;
@@ -480,6 +480,10 @@ public class ApiToolEventArguments
 
     public string ServerCommandMethod => this["_method"];
     public string ServerCommandArgument => this["_servercommand_argument"];
+    public void SetServerCommandArgument(string argument)
+    {
+        this["_servercommand_argument"] = argument;
+    }
 
     public bool AsDefaultTool { get; set; }
 
@@ -564,7 +568,8 @@ public class ApiToolEventArguments
             Sketch = sketch,
             SketchInfo = this.SketchInfo,
             Size = size,
-            EventScale = rawEventDict.ContainsKey("event_scale") ? rawEventDict["event_scale"].ToString().ToPlatformDouble() : 0D
+            EventScale = rawEventDict.ContainsKey("event_scale") ? rawEventDict["event_scale"].ToString().ToPlatformDouble() : 0D,
+            EventServiceScale = rawEventDict.ContainsKey("event_service_scale") ? rawEventDict["event_service_scale"].ToString().ToPlatformDouble() : 0D
         };
     }
 
@@ -626,6 +631,8 @@ public class ApiToolEventArguments
     #endregion
 
     public double? MapScale { get; set; }
+    public double? MapServicesScale { get; set; }
+
     public int? MapCrs { get; set; }
     public int? CalcCrs { get; set; }
     public bool CalcCrsIsDynamic { get; set; }
@@ -973,6 +980,7 @@ public class ApiToolEventArguments
         public int[] Size { get; set; }
 
         public double EventScale { get; set; }
+        public double EventServiceScale { get; set; }
     }
 
     public class ApiToolEventFile

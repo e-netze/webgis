@@ -1,4 +1,4 @@
-using E.Standard.CMS.Core;
+ï»¿using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
@@ -45,7 +45,7 @@ public class GeneralTileCache : CopyableNode, ICreatable, IEditable, IUI, IDispl
     #region Properties
 
     [DisplayName("Rendering")]
-    [Description("Für Luftbilder 'Quality' verwenden. Für Ortspläne (mit Text) 'Readablility'...")]
+    [Description("FÃ¼r Luftbilder 'Quality' verwenden. FÃ¼r OrtsplÃ¤ne (mit Text) 'Readablility'...")]
     public TileGridRendering Rendering
     {
         get { return _rendering; }
@@ -53,11 +53,11 @@ public class GeneralTileCache : CopyableNode, ICreatable, IEditable, IUI, IDispl
     }
 
     //[DisplayName("Max. Level")]
-    //[Description("Der höchste Level, der für diesen Dienst verwendet werden kann. Ein Wert kleiner als 0, gibt an, dass das maximale Level dem maximalen Matrixset Level aus den Capabilities entspricht.")]
+    //[Description("Der hÃ¶chste Level, der fÃ¼r diesen Dienst verwendet werden kann. Ein Wert kleiner als 0, gibt an, dass das maximale Level dem maximalen Matrixset Level aus den Capabilities entspricht.")]
     //public int MaxLevel { get; set; }
 
     [DisplayName("Unter Max. Level verbergen")]
-    [Description("Zoomt der Anwender weiter in die Karte, als dieser Tiling Dienst zur Verfügung steht, werden die Tiles nicht mehr angezeigt. Per Default (Wert = false) wird der Dienst trotzdem angezeigt und die Tiles entsprechend \"vergrößert/unscharf\" dargestellt.")]
+    [Description("Zoomt der Anwender weiter in die Karte, als dieser Tiling Dienst zur VerfÃ¼gung steht, werden die Tiles nicht mehr angezeigt. Per Default (Wert = false) wird der Dienst trotzdem angezeigt und die Tiles entsprechend \"vergrÃ¶ÃŸert/unscharf\" dargestellt.")]
     public bool HideBeyondMaxLevel { get; set; }
 
     #endregion
@@ -68,7 +68,7 @@ public class GeneralTileCache : CopyableNode, ICreatable, IEditable, IUI, IDispl
     {
         if (appendRoot)
         {
-            return this.Url + @"\.general";
+            return this.Url + @"/.general";
         }
         else
         {
@@ -188,7 +188,7 @@ public class GeneralTileCache : CopyableNode, ICreatable, IEditable, IUI, IDispl
                     2256.99886668828
                 };
 
-                // Mastäbe in Resolutions umwanden
+                // MastÃ¤be in Resolutions umwanden
                 for (int i = 0; i < props.Resolutions.Length; i++)
                 {
                     props.Resolutions[i] /= (96.0 / 0.0254);
@@ -237,7 +237,7 @@ public class GeneralTileCache : CopyableNode, ICreatable, IEditable, IUI, IDispl
                     564.249716672069
                 };
 
-                // Mastäbe in Resolutions umwanden
+                // MastÃ¤be in Resolutions umwanden
                 for (int i = 0; i < props.Resolutions.Length; i++)
                 {
                     props.Resolutions[i] /= (96.0 / 0.0254);
@@ -330,7 +330,7 @@ public class GeneralTileCacheProperties : SchemaNode, IEditable
     #region Properties
     //[TypeConverter(typeof(ExpandableObjectConverter))]
     [DisplayName("Ausdehnung")]
-    [Category("Ausprägung")]
+    [Category("AusprÃ¤gung")]
     public Extent TileCacheExtent
     {
         get { return _extent; }
@@ -338,7 +338,7 @@ public class GeneralTileCacheProperties : SchemaNode, IEditable
     }
 
     [DisplayName("Lage des Ursprunges")]
-    [Category("Ausprägung")]
+    [Category("AusprÃ¤gung")]
     public TileGridOrientation Origin
     {
         get { return _origin; }
@@ -346,7 +346,7 @@ public class GeneralTileCacheProperties : SchemaNode, IEditable
     }
 
     [DisplayName("Kartenprojektion")]
-    [Category("Ausprägung")]
+    [Category("AusprÃ¤gung")]
     //[Editor(typeof(TypeEditor.Proj4TypeEditor), typeof(TypeEditor.ITypeEditor))]
     public int ProjId
     {
@@ -354,7 +354,7 @@ public class GeneralTileCacheProperties : SchemaNode, IEditable
         set { _projId = value; }
     }
 
-    [DisplayName("Auflösungen (Resolutions)")]
+    [DisplayName("AuflÃ¶sungen (Resolutions)")]
     [Category("Ebenen")]
     public double[] Resolutions
     {
@@ -362,7 +362,7 @@ public class GeneralTileCacheProperties : SchemaNode, IEditable
         set { _resolutions = value; }
     }
 
-    [DisplayName("Url für Tiles")]
+    [DisplayName("Url fÃ¼r Tiles")]
     [Category("Tiles")]
     public string TileUrl
     {
@@ -370,7 +370,7 @@ public class GeneralTileCacheProperties : SchemaNode, IEditable
         set { _tileUrl = value; }
     }
 
-    [DisplayName("Dateisystem-Pfad für Tiles (optional)")]
+    [DisplayName("Dateisystem-Pfad fÃ¼r Tiles (optional)")]
     [Category("Optional")]
     public string TilePath
     {
@@ -379,8 +379,8 @@ public class GeneralTileCacheProperties : SchemaNode, IEditable
     }
 
     private string _domains;
-    [DisplayName("Domains für Url")]
-    [Description("Dieses Domains werden in der Url zufällig beim Platzhalter {0} einsetzt")]
+    [DisplayName("Domains fÃ¼r Url")]
+    [Description("Dieses Domains werden in der Url zufÃ¤llig beim Platzhalter {0} einsetzt")]
     [Category("Optional")]
     public string[] Domains
     {
@@ -414,7 +414,7 @@ public class GeneralTileCacheProperties : SchemaNode, IEditable
         set { _tileWidth = value; }
     }
 
-    [DisplayName("Höhe in Pixel")]
+    [DisplayName("HÃ¶he in Pixel")]
     [Category("Tiles")]
     public int TileHeight
     {

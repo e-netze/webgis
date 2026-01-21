@@ -4,11 +4,14 @@ using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Extensions.Compare;
 using E.Standard.Security.App.Extensions;
 using E.Standard.Security.App.Json;
+using E.Standard.ThreadSafe;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Client;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Portal.Core.AppCode.Services;
@@ -42,8 +45,9 @@ static public class ServiceCollectionExtensions
         return services;
     }
 
-    static public IServiceCollection AddWebgisPortalAuthenticationServices(this IServiceCollection services,
-                                                                           IConfiguration configuration)
+    static public IServiceCollection AddWebgisPortalAuthenticationServices(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddApplicationSecurityConfiguration();
 
@@ -67,6 +71,9 @@ static public class ServiceCollectionExtensions
 
                     options.Events.OnSigningIn = (context) =>
                     {
+                        //var idToken = context.Properties.GetTokenValue("id_token");
+                        //Console.WriteLine($"OnSigningIn - id_token: {idToken}");
+
                         // Make it IsPermanent
                         context.CookieOptions.Expires = DateTimeOffset.UtcNow.AddDays(365);
                         context.CookieOptions.Secure = true;
@@ -186,6 +193,21 @@ static public class ServiceCollectionExtensions
         }
 
         #endregion
+
+        #region Cors
+
+        services.AddWebgisPortalCorsPolicy();
+
+        #endregion
+
+        return services;
+    }
+
+    static public IServiceCollection AddWebgisPortalCorsPolicy(
+        this IServiceCollection services)
+    {
+        services.AddCors();
+        services.AddSingleton<ICorsPolicyProvider, WebgisPortalCorsPolicyProvider>();
 
         return services;
     }

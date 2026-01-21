@@ -1,4 +1,4 @@
-﻿# name: Bild Georeferenzieren
+﻿# name: Bild Geo&shy;refer&shy;enzieren
 
 Bilder hochladen, um zu Georeferenzieren.
 

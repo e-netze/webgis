@@ -1,6 +1,7 @@
-using E.Standard.CMS.Core;
+﻿using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
+using E.Standard.WebGIS.CmsSchema.Extensions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -33,11 +34,11 @@ public class SelectLayersEditor : UserControl, IUITypeEditor
         object[] objects;
         if (context.Instance is EditingFeatureTransfer)
         {
-            objects = cms.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(relPath, 4) + "/Themes", true);
+            objects = cms.SchemaNodeInstances(_servicePack, relPath.TrimAndAppendSchemaNodePath(4, "Themes"), true);
         }
         else
         {
-            objects = cms.SchemaNodeInstances(_servicePack, Helper.TrimPathRight(relPath, 2) + "/Themes", true);
+            objects = cms.SchemaNodeInstances(_servicePack, relPath.TrimAndAppendSchemaNodePath(2, "Themes"), true);
         }
 
         List<string> checkedLayerNames = new List<string>();

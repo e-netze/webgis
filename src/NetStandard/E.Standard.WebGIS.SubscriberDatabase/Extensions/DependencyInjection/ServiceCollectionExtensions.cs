@@ -10,6 +10,7 @@ public static class ServiceCollectionExtensions
     {
         services.Configure(setupOptions);
         services.AddTransient<SubscriberDatabaseService>();
+        services.AddTransient<MigrateSubscriberDatabaseService>();
 
         return services;
     }

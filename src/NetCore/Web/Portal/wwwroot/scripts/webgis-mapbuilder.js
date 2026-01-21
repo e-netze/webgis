@@ -315,7 +315,7 @@ function selectionChanged() {
     var extent = $('#extents').val();
     var services = orderedServices();
     var tools = $('#tools').val();
-    var toolsQuickAccess = $('#tools-quick-access').val();
+    var toolsQuickAccess = $('#tools-quick-access').val() || "";
     var queries = $('#queries').length > 0 ? $('#queries').val().replace(/\"selected\":/g, '\"visible\":') : null;
     var defaultTool = tryEval($('#defaulttool').val());
 
@@ -407,10 +407,11 @@ function selectionChanged() {
         $('#topbar').empty();
         $('#webgis-container').find('.webgis-tool-button-bar').remove();
 
-        if (toolsQuickAccess) {
-            $("<div class='webgis-tool-button-bar shadow' style='position:absolute;left:9px;top:109px' data-tools='" + toolsQuickAccess + "'></div>").appendTo('#webgis-container');
-        }
-
+        //if (toolsQuickAccess)
+        // allways add tool button bar, also when no tools are selected
+        // because there must be a container for remove-filter, etc tools
+        $("<div class='webgis-tool-button-bar shadow' style='position:absolute;left:9px;top:109px' data-tools='" + toolsQuickAccess + "'></div>").appendTo('#webgis-container');
+        
         var dynContent = [], includedDynContent=getDynamicContent();
         for (var d in includedDynContent) {
             if (includedDynContent[d].selected == true)

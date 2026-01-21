@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
 	  <LangVersion>13</LangVersion>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <RootNamespace>Api.Core</RootNamespace>
@@ -53,14 +53,14 @@
 
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier2022" Version="2.9.11" />
-    <PackageReference Include="E.DataLinq.Core" Version="7.25.2801" />
-    <PackageReference Include="E.DataLinq.Engine.MsSqlServer" Version="7.25.2801" />
-    <PackageReference Include="E.DataLinq.Engine.OracleClient" Version="7.25.2801" />
-    <PackageReference Include="E.DataLinq.Engine.Postgres" Version="7.25.2801" />
-    <PackageReference Include="E.DataLinq.Engine.SQLite" Version="7.25.2801" />
-    <PackageReference Include="E.DataLinq.Engine.SqlServer-legacy" Version="7.25.2801" />
-    <PackageReference Include="E.DataLinq.Web" Version="7.25.2801" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.8" />
+    <PackageReference Include="E.DataLinq.Core" Version="8.26.202" />
+    <PackageReference Include="E.DataLinq.Engine.MsSqlServer" Version="8.26.202" />
+    <PackageReference Include="E.DataLinq.Engine.OracleClient" Version="8.26.202" />
+    <PackageReference Include="E.DataLinq.Engine.Postgres" Version="8.26.202" />
+    <PackageReference Include="E.DataLinq.Engine.SQLite" Version="8.26.202" />
+    <PackageReference Include="E.DataLinq.Engine.SqlServer-legacy" Version="8.26.202" />
+    <PackageReference Include="E.DataLinq.Web" Version="8.26.202" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.AzureStorage" Version="3.1.24" />
     <!--<PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />-->
@@ -68,7 +68,7 @@
 
   <ItemGroup><!--<DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />-->
   
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.1" />
   
 <!--
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
@@ -79,9 +79,7 @@
 <!--
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
 -->
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.8" />
   
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.8" />
   </ItemGroup>
 
   <ItemGroup>
@@ -133,14 +131,20 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Update="_setup\proto\_webgis-repository\db\subscriber\subscribers\11702178.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
-  <ItemGroup>
-     <Content Include="l10n\**\*.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="l10n\**\*.md">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Content Remove="_setup\**\*.*" />
+		<Content Include="_setup\**\*.*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+ 
 </Project>

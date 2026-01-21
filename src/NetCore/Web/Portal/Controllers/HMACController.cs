@@ -3,6 +3,7 @@ using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Security.App.Extensions;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Core.Reflection.Authentication;
 
+[EnableCors("hmac")]
 public class HMACController : PortalBaseController
 {
     private readonly ILogger<HMACController> _logger;
@@ -48,7 +50,7 @@ public class HMACController : PortalBaseController
     }
 
     [AuthorizeEndpoint]
-    async public Task<IActionResult> Index(string redirect = null)
+    async public Task<IActionResult> Index(string redirect = null,string pwd = null)
     {
         PortalUser portalUser = null;
 
@@ -65,7 +67,7 @@ public class HMACController : PortalBaseController
             }
         }
 
-        portalUser = portalUser ?? this.User.ToPortalUser();
+        portalUser = portalUser ?? this.User.ToPortalUser(_appSecurityConfig);
 
         var hmacObject = await _hmacService.CreateHmacObjectAsync(portalUser);
 
@@ -76,6 +78,17 @@ public class HMACController : PortalBaseController
             // => datalinq.js will call this url, if no username is set
             hmacObject.authEndpoint = $"{_urlHelper.AppRootUrl(this.Request, this).RemoveEndingSlashes()}/auth/LoginOidc?webgis-redirect={_crypto.EncryptTextDefault(redirect, Security.Cryptography.CryptoResultStringType.Hex)}";
         }
+
+        #region Add Roles when correct password is given
+
+        string appCachePassword = _configService.AppCacheListPassword();
+        if (!string.IsNullOrWhiteSpace(appCachePassword)
+            && pwd == appCachePassword)
+        {
+            hmacObject.userroles = portalUser.UserRoles;
+        }
+
+        #endregion
 
         return JsonObject(hmacObject);
     }

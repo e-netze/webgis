@@ -1,8 +1,10 @@
 ﻿using E.Standard.Caching.Abstraction;
 using E.Standard.Caching.Extensions;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using System;
+using System.Linq;
 
 namespace E.Standard.Caching.Mongo;
 
@@ -47,6 +49,21 @@ public class MongoCache : IKeyValueCache
             filter: Builders<KeyValueDocument>.Filter.Eq("_id", key),
             item,
             new ReplaceOptions() { IsUpsert = true });
+    }
+
+    public string[] GetAllKeys()
+    {
+        var collection = KeyValueCollection();
+
+        var keys = collection
+                .Find(FilterDefinition<KeyValueDocument>.Empty)
+                .Project(Builders<KeyValueDocument>.Projection.Include("_id"))
+                .ToList()
+                .Select(doc => doc["_id"]?.ToString())
+                .Where(id => !String.IsNullOrEmpty(id))
+                .ToArray();
+
+        return keys;
     }
 
     public int MaxChunkSize => int.MaxValue;

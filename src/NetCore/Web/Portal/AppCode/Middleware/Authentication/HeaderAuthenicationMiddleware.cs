@@ -1,5 +1,7 @@
-﻿using E.Standard.WebGIS.Core.Services;
+﻿using E.Standard.Security.App.Json;
+using E.Standard.WebGIS.Core.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Portal.Core.AppCode.Extensions;
 using Portal.Core.AppCode.Services.Authentication;
 using System.Threading.Tasks;
@@ -17,6 +19,7 @@ public class HeaderAuthenicationMiddleware
 
     public async Task Invoke(HttpContext httpContext,
                              HeaderAuthenticationService headerAuthenticationService,
+                             IOptions<ApplicationSecurityConfig> appSecurityConfigOptions,
                              ITracerService tracer)
     {
         if (httpContext.User.ApplyAuthenticationMiddleware())
@@ -30,7 +33,7 @@ public class HeaderAuthenicationMiddleware
                     userRoles: user.Roles,
                     roleParameters: user.RoleParameters).ToClaimsPricipal();
 
-                tracer.TracePortalUser(this, httpContext);
+                tracer.TracePortalUser(this, httpContext, appSecurityConfigOptions.Value);
             }
         }
 

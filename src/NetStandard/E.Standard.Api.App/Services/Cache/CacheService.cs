@@ -1,4 +1,5 @@
-﻿using E.Standard.Api.App.DTOs;
+﻿using E.Standard.Api.App.Data;
+using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services.Cms;
 using E.Standard.CMS.Core;
@@ -730,6 +731,17 @@ public class CacheService
         return cmsCacheItem._layerProperties[id].ToArray(); // ThreadSafe Copy
     }
 
+    public bool IsServiceQueryBuilderAllowed(string serviceUrl,CmsDocument.UserIdentification ui)
+    {
+        var auth = GetBoolPropertyAuthorization($"{serviceUrl}::allow_querybuilder", ui);
+        if(auth == null)
+        {
+            return false;
+        }
+
+        return auth.AuthorizedPropertyValue(ui);
+    }
+
     #endregion
 
     #region Copyright
@@ -1175,6 +1187,22 @@ public class CacheService
         }
 
         return new LabelingsDTO();
+    }
+
+    #endregion
+
+    #region QueryBuilderFields
+
+    public IEnumerable<QueryBuilderField> GetAllowedQueryBuilderFields(string serviceUrl, CmsDocument.UserIdentification ui)
+    {
+        var cmsCacheItem = GetCmsCacheItem(serviceUrl, ui);
+
+        if (cmsCacheItem != null && cmsCacheItem._queryBuilderFields.ContainsKey(serviceUrl))
+        {
+            return AuthObject<QueryBuilderField>.QueryObjectArray(cmsCacheItem._queryBuilderFields[serviceUrl], ui).ToArray();
+        }
+
+        return [];
     }
 
     #endregion

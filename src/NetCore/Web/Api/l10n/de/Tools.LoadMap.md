@@ -13,7 +13,7 @@ Gespeicherte Karte laden.
 Falls eine gespeicherte Karte nicht in der Liste aufscheint, 
 müssen sie eventuell den Wiederherstellungscode eingeben.
 
-# enter-recovery-code: Wiederherstellungscode eingaben
+# enter-recovery-code: Wiederherstellungscode eingeben
 
 # confirm-delete: Soll das Projekt '{serialization-load-mapname}' wirklich gelöscht werden?
 

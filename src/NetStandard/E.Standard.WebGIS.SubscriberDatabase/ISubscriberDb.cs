@@ -5,7 +5,7 @@ namespace E.Standard.WebGIS.SubscriberDatabase;
 
 public interface ISubscriberDb
 {
-    bool CreateApiSubscriber(SubscriberDb.Subscriber subscriber);
+    bool CreateApiSubscriber(SubscriberDb.Subscriber subscriber, bool migrate = false);
 
     bool UpdateApiSubscriberSettings(SubscriberDb.Subscriber subscriber);
 
@@ -21,7 +21,7 @@ public interface ISubscriberDb
 
     SubscriberDb.Subscriber[] GetSubscribers();
 
-    bool CreateApiClient(SubscriberDb.Client client);
+    bool CreateApiClient(SubscriberDb.Client client, bool migrate = false);
 
     bool UpdateApiClient(SubscriberDb.Client client);
 
@@ -32,6 +32,8 @@ public interface ISubscriberDb
     SubscriberDb.Client[] GetSubscriptionClients(string subscriber);
 
     bool DeleteApiClient(SubscriberDb.Client client);
+
+    SubscriberDb.Client[] GetAllClients();
 
     #region Favorites
 

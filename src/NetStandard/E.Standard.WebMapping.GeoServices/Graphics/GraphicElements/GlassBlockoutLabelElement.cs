@@ -65,5 +65,10 @@ public class GlassBlockoutLabelElement : IGraphicElement
         }
     }
 
+    public Envelope Extent =>
+        _point is not null
+            ? new Envelope(_point.ShapeEnvelope)
+            : null;
+
     #endregion
 }

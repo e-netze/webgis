@@ -21,7 +21,7 @@ namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 
 static class ServiceExtensions
 {
-    async public static Task<ServiceResponse> RenderRestLegendResponse(this IMapService2 service, IRequestContext requestContext, string jsonResponse)
+    async public static Task<ServiceResponse> RenderRestLegendResponse(this IMapService2 service, IRequestContext requestContext, string jsonResponse, bool optimize)
     {
         var serviceLegend = service as IMapServiceLegend;
         if (serviceLegend == null)
@@ -29,7 +29,7 @@ static class ServiceExtensions
             throw new ArgumentException("Service do not implement IServiceLegend");
         }
 
-        string fileTitle = "legend_" + Guid.NewGuid().ToString("N").ToLower() + ".png";
+        string fileTitle = $"legend_{Guid.NewGuid().ToString("N").ToLower()}.png";
 
         #region ImageProcessing Variables
 
@@ -68,17 +68,20 @@ static class ServiceExtensions
                     visible = serviceLayer.Visible && service.LayerProperties.ShowInLegend(serviceLayer.ID);
                     legendAliasname = service.LayerProperties.LegendAliasname(serviceLayer.ID);
 
-                    if (visible)
+                    if (optimize)
                     {
-                        visible = WebGIS.CMS.Globals.VisibleInServiceMapScale(service.Map, serviceLayer);
-                    }
-                    if (visible && (serviceLegend.LegendOptMethod == LegendOptimization.Themes || serviceLegend.LegendOptMethod == LegendOptimization.Symbols))
-                    {
-                        SpatialFilter filter = new SpatialFilter(serviceLayer.IdFieldName, service.Map.Extent, 1000, 0);
-
-                        if (serviceLayer is ILayer2)
+                        if (visible)
                         {
-                            visible = await ((ILayer2)serviceLayer).HasFeaturesAsync(filter, requestContext) > 0;
+                            visible = WebGIS.CMS.Globals.VisibleInServiceMapScale(service.Map, serviceLayer);
+                        }
+                        if (visible && (serviceLegend.LegendOptMethod == LegendOptimization.Themes || serviceLegend.LegendOptMethod == LegendOptimization.Symbols))
+                        {
+                            SpatialFilter filter = new SpatialFilter(serviceLayer.IdFieldName, service.Map.Extent, 1000, 0);
+
+                            if (serviceLayer is ILayer2)
+                            {
+                                visible = await ((ILayer2)serviceLayer).HasFeaturesAsync(filter, requestContext) > 0;
+                            }
                         }
                     }
                     if (visible)
@@ -102,7 +105,7 @@ static class ServiceExtensions
                                 }
                                 legendLayers.Add(legendLayer);
 
-                                if (serviceLegend.LegendOptMethod == LegendOptimization.Symbols && service.Map.MapScale <= serviceLegend.LegendOptSymbolScale && serviceLayer is ILegendRendererHelper)
+                                if (optimize && serviceLegend.LegendOptMethod == LegendOptimization.Symbols && service.Map.MapScale <= serviceLegend.LegendOptSymbolScale && serviceLayer is ILegendRendererHelper)
                                 {
                                     #region Legende Optimieren
 
@@ -153,7 +156,7 @@ static class ServiceExtensions
                                 {
                                     #region Legende Optimieren
 
-                                    if (layerLegendValues != null && legend.Values != null && legend.Values.Count() > 0)
+                                    if (optimize && layerLegendValues != null && legend.Values != null && legend.Values.Count() > 0)
                                     {
                                         bool hasValue = false;
                                         foreach (var val in legend.Values)
@@ -181,7 +184,11 @@ static class ServiceExtensions
                                         maxWidth = Math.Max(maxWidth, Math.Max(legendImage.Width + 10, 40) + (int)canvas.MeasureText(label, font).Width);
                                     }
                                 }
-                                if (legendLayer.Legend.Length > 1)
+
+                                if (
+                                    legendLayer.Legend.Count() > 1  // has more than one legend item
+                                    || !legendLayer.Legend.Any(l => String.IsNullOrEmpty(l.Label))  // has at least legend item with label (Raster Layers,...))
+                                   )
                                 {
                                     imageHeight += 25;
                                 }
@@ -217,7 +224,10 @@ static class ServiceExtensions
             foreach (var legendLayer in legendLayers)
             {
                 var xOffset = 0;
-                if ((legendLayer.Legend.Count() > 1))
+                if (
+                    legendLayer.Legend.Count() > 1  // has more than one legend item
+                    || !legendLayer.Legend.Any(l => String.IsNullOrEmpty(l.Label))  // has at least legend item with label (Raster Layers,...)
+                    )
                 {
                     canvas.DrawText(legendLayer.LayerName, headlineFontStyle, blackBrush, new CanvasPointF(5, yOffset), stringFormat); // headline
                     xOffset = 10;

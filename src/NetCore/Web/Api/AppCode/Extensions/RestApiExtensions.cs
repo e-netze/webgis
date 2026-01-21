@@ -1,5 +1,6 @@
 ﻿using E.Standard.Json;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
+using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.GeoServices.Print;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -23,6 +24,18 @@ static public class RestApiExtensions
             filter.CalcServiceId();
         }
         return filters;
+    }
+
+    static public TimeEpochDefinitionDTO[] TimeEpochDefinitionDTOsFromParameters(this HttpRequest httpRequest)
+    {
+        string timeEpochJson = httpRequest.FormOrQuery("timeEpoch");
+
+        if (String.IsNullOrWhiteSpace(timeEpochJson))
+        {
+            return null;
+        }
+
+        return JSerializer.Deserialize<TimeEpochDefinitionDTO[]>(timeEpochJson);
     }
 
     static public LabelingDefinitionDTO[] LabelDefinitionsFromParameters(this HttpRequest httpRequest)

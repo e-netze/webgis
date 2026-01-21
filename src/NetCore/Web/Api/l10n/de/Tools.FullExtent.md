@@ -1,4 +1,4 @@
-﻿# name: Gesamter Kartenausschnitt
+﻿# name: Gesamter Karten&shy;aus&shy;schnitt
 
 Setzt die Karte auf den gesamten Kartenausschnitt zurück.
 

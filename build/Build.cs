@@ -247,18 +247,6 @@ class Build : NukeBuild
                         Log.Information($"{txt}");
                     })
                     .AssertZeroExitCode();
-
-                /*
-                ProcessTasks.StartProcess(
-                    (RootDirectory / "publish" / Platform / "docker" / "build-images.bat").ToString(),
-                    arguments: Version,
-                    workingDirectory: (RootDirectory / "publish" / Platform / "docker").ToString(),
-                    logger: (oType, txt) =>
-                    {
-                        Log.Information($"{txt}");
-                    })
-                   .AssertZeroExitCode();
-                */
                 return;
             }
 
@@ -398,6 +386,10 @@ class Build : NukeBuild
             );
             DotNetTasks.DotNetTest(s => s
                 .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebMapping.GeoServices.Tests" / "E.Standard.WebMapping.GeoServices.Tests.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebMapping.Core.Api.Tests" / "E.Standard.WebMapping.Core.Api.Tests.csproj")
                 .SetProcessWorkingDirectory(RootDirectory)
             );
         });

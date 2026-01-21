@@ -25,6 +25,16 @@ static internal class ToolExtensions
             }
         }
 
+        #region Add config for "any" tool
+
+        foreach (var key in configService.GetPathsStartWith(ApiConfigKeys.ToKey($"tool-any:")))
+        {
+            toolConfig = toolConfig ?? new Dictionary<string, string>();
+            toolConfig.Add(key.Substring(key.LastIndexOf(":") + 1), configService[key]);
+        }
+
+        #endregion
+
         return toolConfig;
     }
 }

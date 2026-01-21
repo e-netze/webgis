@@ -21,6 +21,10 @@
     "tools": "Werkzeuge",
     "current-tool": "Aktives Werkzeug",
 
+    "year": "Jahr",
+    "month": "Monat",
+    "day": "Tag",
+
     "query-results": "Abfrageergebnisse",
     "search-results": "Suchergebnisse",
     "buffer-results": "Nachbarschaftsberechnung",
@@ -38,6 +42,11 @@
     "info-and-copyright": "Info & Copyright",
     "info-no-legend": "In diesem Ausschnitt/Maßstab bzw. bei dieser Layerschaltung wird für die gewählten Dienste keine Legende angeboten.",
     "find-layers": "Themen suchen...",
+
+    "select-filter": "Filter wählen",
+    "all-filters": "Alle Filter",
+    "remove-filters": "Filter entferenen",
+    "remove-all-filters": "Alle Filter entfernen",
 
     // tool MapMarkup
     "mapmarkup-tool-pointer": "Objekt auswählen",
@@ -76,6 +85,8 @@
     "services": "Dienste",
     "focus-service": "Dienst hervorheben (Focus)",
     "map-services": "Karten Dienste",
+    "all-services": "Alle Dienste",
+    "all-time-dependent-services": "Alle zeitabhängigen Dienste",
 
     "point": "Punkt",
     "polyline": "(Poly)Linie",
@@ -195,6 +206,8 @@
     "sketch-from-feature-geometry": "Aus Geo-Objekt Geometrie übernehmen",
     "sketch-upload": "Sketch hochladen (GPX, GeoJson)",
     "sketch-download": "Sketch herunterladen (GPX, GeoJson)",
+    "sketch-add-element": "Element hinzufügen",
+    "sketch-rotate-element": "Element drehen",
 
     "sketch-segment-createion-mode": "Segmenterstellungs Modus",
     "sketch-mode-normal": "Gerade",
@@ -331,5 +344,7 @@
     "show-markers-on-new-queries-info": "Wenn diese Methode angewendet wird, werden bei jeder neuen Abfrage automatisch Kartenmarken in der Karte angezeigt. Das Defaultverhalten ist, das Marker automatisch dargestellt werden.",
     "select-new-query-results": "Neue Abfragen in der Karte auswählen/selektieren",
     "select-new-query-results-info": "Wenn diese Methode angewendet wird, werden Abfrageergebnisse in der Karte automatisch selektiert dargestellt.",
-    "query-layer-not-visible-notification": "Der abgefrage Layer ist in der Karte ausgeblendet. Hier Klicken zum Einblenden."
+    "query-layer-not-visible-notification": "Der abgefrage Layer ist in der Karte ausgeblendet. Hier Klicken zum Einblenden.",
+
+    "create-map-series": "Kartenserie erstellen"
 };

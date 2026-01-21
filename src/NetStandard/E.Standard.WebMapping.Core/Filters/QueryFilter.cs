@@ -54,6 +54,7 @@ public class QueryFilter
         _cmsQueryNodeCollection = query._cmsQueryNodeCollection;
 
         this.SuppressResolveAttributeDomains = query.SuppressResolveAttributeDomains;
+        this.TimeEpoch = query.TimeEpoch;
     }
 
     public void Plus(long featureId)
@@ -197,6 +198,8 @@ public class QueryFilter
         get { return _featureSr; }
         set { _featureSr = value; }
     }
+
+    public TimeEpochDefinition TimeEpoch { get; set; }
 
     virtual public string ArcXML(NumberFormatInfo nfi)
     {

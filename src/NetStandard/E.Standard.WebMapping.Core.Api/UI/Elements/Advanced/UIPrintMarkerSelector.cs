@@ -1,5 +1,7 @@
-﻿using E.Standard.WebMapping.Core.Api.Extensions;
+﻿using E.Standard.WebMapping.Core.Api.Abstraction;
+using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
+using E.Standard.WebMapping.Core.Extensions;
 
 namespace E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 
@@ -13,7 +15,7 @@ public class UIPrintMarkerSelector : UIOptionContainer
 
     private readonly string _id;
 
-    public UIPrintMarkerSelector(string id)
+    public UIPrintMarkerSelector(IApiButton button, string id)
     {
         _id = id;
 
@@ -30,7 +32,14 @@ public class UIPrintMarkerSelector : UIOptionContainer
                 {
                     new UISelect()
                     {
-                        css = UICss.ToClass(new[] { UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.PrintShowQueryMarkersSelect }),
+                        css = UICss.ToClass(new[] { 
+                            UICss.ToolParameter, 
+                            UICss.ToolParameterPersistent,
+                            button?.GetType().ToToolId() switch {
+                                "webgis.tools.mapseriesprint" => UICss.MapSeriesPrintShowQueryMarkersSelect,
+                                _ => UICss.PrintShowQueryMarkersSelect
+                            }
+                        }),
                         id = QueryMarkersVisibilitySelectorId,
                         options=new UISelect.Option[]
                         {
@@ -65,7 +74,14 @@ public class UIPrintMarkerSelector : UIOptionContainer
                 {
                     new UISelect()
                     {
-                        css = UICss.ToClass(new[] { UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.PrintShowCoordinateMarkersSelect }),
+                        css = UICss.ToClass(new[] { 
+                            UICss.ToolParameter, 
+                            UICss.ToolParameterPersistent,
+                            button?.GetType().ToToolId() switch {
+                                "webgis.tools.mapseriesprint" => UICss.MapSeriesPrintShowCoordinateMarkersSelect,
+                                _ => UICss.PrintShowCoordinateMarkersSelect
+                            }
+                        }),
                         id = CoodianteMakersVisiblitySelectorId,
                         options=new UISelect.Option[]
                         {
@@ -98,7 +114,14 @@ public class UIPrintMarkerSelector : UIOptionContainer
                 new UILabel() { label = "Stationierungsmarker" },
                 new UISelect()
                     {
-                        css = UICss.ToClass(new[] { UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.PrintShowChainageMarkersSelect }),
+                        css = UICss.ToClass(new[] {
+                            UICss.ToolParameter, 
+                            UICss.ToolParameterPersistent,
+                            button?.GetType().ToToolId() switch {
+                                "webgis.tools.mapseriesprint" => UICss.MapSeriesPrintShowChainageMarkersSelect,
+                                _ => UICss.PrintShowChainageMarkersSelect
+                            }
+                        }),
                         id = ChainageMarkersVisiblitySelectorId,
                         options=new UISelect.Option[]
                         {

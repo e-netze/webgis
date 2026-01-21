@@ -947,7 +947,7 @@ public partial class CMSManager
     {
         //var dt = DateTime.UtcNow;
         var directories = di.GetDirectories();
-        //Console.WriteLine("GetDirectory:" + (DateTime.UtcNow - dt).TotalMilliseconds + "ms");
+        //Console.WriteLine($"GetDirectories {di.FullName} [{directories.Count()}]:{(int)(DateTime.UtcNow - dt).TotalMilliseconds}ms");
 
         foreach (var subDir in directories)
         {
@@ -956,7 +956,7 @@ public partial class CMSManager
 
         //dt = DateTime.UtcNow;
         var files = di.GetFiles();
-        //Console.WriteLine("GetDirectory:" + (DateTime.UtcNow - dt).TotalMilliseconds + "ms");
+        //Console.WriteLine($"GetFiles {di.FullName} [{files.Count()}]:{(int)(DateTime.UtcNow - dt).TotalMilliseconds}ms");
 
         XmlNode schemaNode = null;
 
@@ -2215,7 +2215,7 @@ public partial class CMSManager
 
         if (!String.IsNullOrWhiteSpace(propertyTagName))
         {
-            relPath = Helper.TrimPathRight(relPath, 1) + "/" + Helper.TrimPathLeft(relPath, 1) + "@" + propertyTagName;
+            relPath = relPath.TrimRightRelativeCmsPath(1) + "/" + relPath.TrimLeftRelativeCmsPath(1) + "@" + propertyTagName;
         }
 
         auth.TargetAclPath = relPath;

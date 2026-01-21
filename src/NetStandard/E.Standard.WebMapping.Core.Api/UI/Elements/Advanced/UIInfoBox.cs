@@ -13,7 +13,7 @@ public class UIInfoBox : UIDiv
             new UILiteral()
             {
                  literal = text
-            },
+            }
         };
     }
 

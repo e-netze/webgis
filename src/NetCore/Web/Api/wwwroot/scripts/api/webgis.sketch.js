@@ -18,15 +18,15 @@
     var _hectoline_unit = 'm', _hectoline_interval = 100;
     var _dimLine_lengthUnit = 'm', _dimLine_labelTotalLength = false;
     var _dimPolygon_areaUnit = 'm²', _dimPolygon_labelEdges = true;
-    var _isDraggingMarker = false;
     var _sketchProperties = null;
+    var _sketchAdvancedProperties = null;
+    var _isDraggingMarker = false;
     this._lastChangeTime = new Date().getTime();
     var _sketchMovingVertexIndex = -1, _sketchRotatingVertexIndex = -1;
-
     var _ortho = false, _trace = false, _fan = false;
     this._isDirty = false;
 
-    var _isLineOrPolygon = function () { return $.inArray(_geometryType, ["polyline", "polygon", "dimline", "dimpolygon", "hectoline"]) >= 0 };
+    var _isLineOrPolygon = function () { return $.inArray(_geometryType, ["polyline", "polygon", "dimline", "dimpolygon", "hectoline", "elementseries"]) >= 0 };
     var _isLine = function () { return $.inArray(_geometryType, ["polyline", "dimline", "hectoline"]) >= 0 }
     var _isPolygon = function () { return $.inArray(_geometryType, ["polygon", "dimpolygon"]) >= 0 };
     var _isSimplePoint = function () { return _geometryType === 'point' };
@@ -37,6 +37,18 @@
         }
     };
     this._addToMap = function (element) {
+        // experiemtal, to build holes in polygons
+        //if (_geometryType === "polygon") {
+        //    let latLngs = [];
+
+        //    for (var i = 0; i < _frameworkElements.length; i++) {
+        //        latLngs.push(_frameworkElements[i].getLatLngs());
+        //    }
+
+        //    console.log('polygon lngLats', latLngs);
+        //    let polygon = L.polygon(latLngs || [], { interactive: true, color: this.getColor(), fillColor: this.getFillColor(), opacity: this.getOpacity(), fillOpacity: this.getFillOpacity(), weight: this.getWeight(), dashArray: this._toDashArray(this.getLineStyle()) });
+        //    polygon.addTo(this.map.frameworkElement);
+        //}
         element.addTo(this.map.frameworkElement);
     };
     this._createFrameworkElement = function (latLngs) {
@@ -129,6 +141,15 @@
                     });
                     dimPolygon._webgis = { geometryType: _geometryType };
                     return dimPolygon;
+                case 'elementseries':
+                    let series = L.graphicsElementSeries(latLngs || [], {});
+                    this._setElementAdvancedProperties(series, _sketchAdvancedProperties); // to set element size to the last vales
+                    series.on("element-rotated", function (ev) {
+                        if (!_vertices || _vertices.length <= ev.elementIndex) return;
+                        this.addUndo(webgis.l10n.get("sketch-rotate-element"));
+                        ev.sender.setVertexRotation(_vertices[ev.elementIndex], ev.rotation);
+                    }, this);
+                    return series;
                 case 'hectoline':
                     var hectoline = L.hectoLine(latLngs || [], {
                         color: this.getColor(),
@@ -240,6 +261,24 @@
     };
     this.isEditable = function () { return this._isEditable === true; };
 
+    this.setAdvancedProperties = function (properties) {
+        _sketchAdvancedProperties = properties || null;
+        if (!properties) return;
+
+        for (var frameworkElement of _frameworkElements) {
+            this._setElementAdvancedProperties(frameworkElement, properties);
+        }
+    };
+    this._setElementAdvancedProperties = function (element, properties) {
+        if (!element || !properties) return;
+
+        if (element instanceof L.GraphicsElementSeries) {
+            if (properties.element_width && properties.element_height) {
+                element.setElementSize(properties.element_width, properties.element_height);
+            }
+        }
+    };
+
     this.destroy = function () {
         if (this.map) {
             this.map.events.off('rightclick', mapOnRightClick);
@@ -259,6 +298,8 @@
             geom = 'point';
         if (geom === 'line' || geom === 'linestring' || geom === 'multilinestring')
             geom = 'polyline';
+        if (geom === 'multipoint' && _geometryType === 'elementseries')
+            geom = 'elementseries'; // keep
         if (geom.toLocaleLowerCase() != _geometryType) {
             _geometryType = geom.toLowerCase();
             this.remove(true);
@@ -279,7 +320,8 @@
                 if (i > 0 && this.isInFanMode()) {
                     _frameworkElements.push(this._createFrameworkElement());
                     frameworkElement = _frameworkElements[_frameworkElements.length - 1];
-                    frameworkElement.addLatLng(L.latLng(_vertices[0].y, _vertices[0].x));
+                    //frameworkElement.addLatLng(L.latLng(_vertices[0].y, _vertices[0].x));
+                    this._addAsLatLng(frameworkElement, _vertices[0]);
                 }
                 else if (i > 0 && $.inArray(i, _partIndex) >= 0) {
                     _frameworkElements.push(this._createFrameworkElement());
@@ -287,12 +329,13 @@
                 }
 
                 var vertex = _vertices[i];
-                if (frameworkElement.addLatLng) {
-                    frameworkElement.addLatLng(L.latLng(vertex.y, vertex.x));
-                }
-                else {
-                    frameworkElement.setLatLng(L.latLng(vertex.y, vertex.x));  
-                }
+                //if (frameworkElement.addLatLng) {
+                //    frameworkElement.addLatLng(L.latLng(vertex.y, vertex.x));
+                //}
+                //else {
+                //    frameworkElement.setLatLng(L.latLng(vertex.y, vertex.x));
+                //}
+                this._addAsLatLng(frameworkElement, vertex);
 
                 if (_geometryType === 'point') {  // Bei Punkt ist Frameworkelement auch der verschiebbare Marker und brauch den Vertex, damit beim Verschieben im "dragend" die Koordinaten richt übernommen werden.
                     frameworkElement.sketch_vertex_coords = vertex;
@@ -495,6 +538,12 @@
                 _frameworkElements[0].setBounds([[this.sketch_vertex_coords.y, this.sketch_vertex_coords.x], [rectBounds.getSouth(), rectBounds.getEast()]]);
             }
 
+            if (geomType === 'elementseries' &&
+                _frameworkElements.length === 1) {
+                //console.log("dragend element series", this.vertex_index, latlng);
+                _frameworkElements[0].setLatLngAt(this.vertex_index, latlng);
+            }
+
             this.sketch.redraw($.inArray(geomType, ['polyline', 'polygon', 'distance_circle','compass_rose', 'circle', 'text', 'dimline', 'dimpolygon', 'hectoline']) >= 0);
             this.sketch.events.fire('onchangevertex', this.sketch, this.sketch_vertex_coords);
             this.sketch.events.fire('onchanged', this.sketch);
@@ -533,8 +582,16 @@
                     latLngs.push({ lng: vertex.x, lat: vertex.y });
                 }
             }
-            this.sketch.showMoverLine(latLngs);
 
+            if (this.sketch.getGeometryType() === 'elementseries' &&
+                _frameworkElements.length === 1) {
+                //console.log("drag element", this.vertex_index, latlng);
+                _frameworkElements[0].setLatLngAt(this.vertex_index, latlng);
+            } 
+
+            if (this.sketch.getGeometryType() !== 'elementseries') {
+                this.sketch.showMoverLine(latLngs);
+            }
         }, marker);
         marker.on('click', function (e) {
             // stop propagation
@@ -680,6 +737,7 @@
         }
     };
     this.addVertices = function (vertices, fireEvents, readOnly) {
+        //console.log("addVertices", vertices, fireEvents, readOnly); 
         if (_frameworkElements == null ||
             this.map == null ||
             _frameworkElements.length < _currentFrameworkIndex ||
@@ -768,6 +826,9 @@
                 var coords = vertex;
                 if (fireEvents) {
                     this.events.fire('beforeaddvertex', this, coords);
+                    if (coords.ignore === true) {
+                        continue;
+                    }
                 }
 
                 if (_geometryType === 'text') {
@@ -785,17 +846,20 @@
                     _frameworkElements.push(this._createFrameworkElement());
                     _currentFrameworkIndex = _frameworkElements.length - 1;
                     this.map.frameworkElement.addLayer(_frameworkElements[_currentFrameworkIndex]);
-                    _frameworkElements[_currentFrameworkIndex].addLatLng(L.latLng(_vertices[0].y, _vertices[0].x));
+                    //_frameworkElements[_currentFrameworkIndex].addLatLng(L.latLng(_vertices[0].y, _vertices[0].x));
+                    this._addAsLatLng(_frameworkElements[_currentFrameworkIndex], _vertices[0]);
                 }
 
                 if (webgis.mapFramework === "leaflet") {
-                    if (_frameworkElements[_currentFrameworkIndex].addLatLng) {
-                        _frameworkElements[_currentFrameworkIndex].addLatLng(L.latLng(vertex.y, vertex.x));
-                    }
-                    else {
-                        _frameworkElements[_currentFrameworkIndex].setLatLng(L.latLng(vertex.y, vertex.x));
-                        _frameworkElements[_currentFrameworkIndex].sketch_vertex_coords = coords;
-                    }
+                    //if (_frameworkElements[_currentFrameworkIndex].addLatLng) {
+                    //    _frameworkElements[_currentFrameworkIndex].addLatLng(L.latLng(vertex.y, vertex.x));
+                    //}
+                    //else {
+                    //    _frameworkElements[_currentFrameworkIndex].setLatLng(L.latLng(vertex.y, vertex.x));
+                    //    _frameworkElements[_currentFrameworkIndex].sketch_vertex_coords = coords;
+                    //}
+                    this._addAsLatLng(_frameworkElements[_currentFrameworkIndex], vertex);
+                    _frameworkElements[_currentFrameworkIndex].sketch_vertex_coords = coords;
 
                     if (!readOnly && !this.isReadOnly()) {    
                         if (_geometryType === 'polyline'
@@ -806,6 +870,7 @@
                             || _geometryType === 'dimline'
                             || _geometryType === 'dimpolygon'
                             || _geometryType === 'hectoline'
+                            || _geometryType === 'elementseries'
                             || ((_geometryType === 'distance_circle' || _geometryType === 'compass_rose' || _geometryType === 'circle') && _vertices.length === 1)
                         ) {
                             var icon = "sketch_vertex";
@@ -943,6 +1008,9 @@
             if (geometryType === 'polygon' || geometryType === 'polyline' || geometryType === 'dimline' || geometryType === 'dimpolygon' || geometryType === 'hectoline') {
                 sketch.addUndo(webgis.l10n.get("sketch-add-vertex"));
             }
+            if (geometryType === 'elementseries') {
+                sketch.addUndo(webgis.l10n.get("sketch-add-element"));
+            }
         }
 
         if ((_isPolygon() && webgis.usability.sketch.checkForOverlappingPolygonSegments === true) ||
@@ -1079,6 +1147,21 @@
             return true;   // added
         }
     };
+
+    this._addAsLatLng = function (frameworkElement, vertex) {
+        //console.log("sketch._addAsLatLng", frameworkElement, vertex);
+
+        const latLng = frameworkElement.vertexToLatLng
+            ? frameworkElement.vertexToLatLng(vertex)
+            : L.latLng(vertex.y, vertex.x);
+
+        if (frameworkElement.addLatLng) {
+            frameworkElement.addLatLng(latLng);
+        }
+        else {
+            frameworkElement.setLatLng(latLng);
+        }
+    }
 
     this.originalSrs = function () {
         return _originalSrs;
@@ -2219,7 +2302,7 @@
         }
     };
 
-    this.isInTraceMode = function() { return _trace === true; }
+    this.isInTraceMode = function () { return _trace === true; };
     this.startTraceMode = function () {
         this.stopOrthoMode();
         this.stopFanMode();
@@ -2827,7 +2910,6 @@
         }
         const isValidBeforeRemove = this.isValid();
 
-        var vertexFrameworkElements = [];
         for (var i = 0; i < _vertices.length; i++) {
             if (i == index)
                 continue;
@@ -2836,8 +2918,6 @@
                 this._resetMarkerImage(_vertexFrameworkElements[i]);
             }
         }
-        //_vertices = vertices;
-        //_vertexFrameworkElements = vertexFrameworkElements;
         _vertices.splice(index, 1);
         _vertexFrameworkElements.splice(index, 1);
 
@@ -3155,19 +3235,13 @@
         }
     };
     this.zoomTo = function (scale) {
-        if (!_vertices || _vertices.length == 0)
-            return;
-        var minx = _vertices[0].x, miny = _vertices[0].y, maxx = _vertices[0].x, maxy = _vertices[0].y;
-        for (var i = 1; i < _vertices.length; i++) {
-            minx = Math.min(minx, _vertices[i].x);
-            miny = Math.min(miny, _vertices[i].y);
-            maxx = Math.max(maxx, _vertices[i].x);
-            maxy = Math.max(maxy, _vertices[i].y);
-        }
+        var bounds = this.bounds();
+        if (!bounds) return;
+
         if (scale)
-            this.map.zoomToBoundsOrScale([minx, miny, maxx, maxy], scale);
+            this.map.zoomToBoundsOrScale(bounds, scale);
         else
-            this.map.zoomTo(webgis.calc.resizeBounds([minx, miny, maxx, maxy], webgis.usability.zoom.allowsFreeZooming() ? 1.3 : 1.0));
+            this.map.zoomTo(webgis.calc.resizeBounds(bounds, webgis.usability.zoom.allowsFreeZooming() ? 1.3 : 1.0));
     };
     this.onClick = function (f, remove) {
         if (webgis.mapFramework == "leaflet") {
@@ -3212,6 +3286,40 @@
             Y1 = Y2;
         }
         return null;
+    };
+    this.bounds = function () {
+        if (!_vertices || _vertices.length === 0) return null;
+
+        // first calculate bounds of vertices
+        var minX = _vertices[0].x;
+        var minY = _vertices[0].y;
+        var maxX = _vertices[0].x;
+        var maxY = _vertices[0].y;
+
+        for (var i = 1; i < _vertices.length; i++) {
+            var vertex = _vertices[i];
+            minX = Math.min(minX, vertex.x);
+            minY = Math.min(minY, vertex.y);
+            maxX = Math.max(maxX, vertex.x);
+            maxY = Math.max(maxY, vertex.y);
+        }
+
+        // than calculate bounds of framework elements (parts) if implemented
+        // Circles or Series has a larger extent than vertices
+        for (var frameworkElement of _frameworkElements) {
+            if (frameworkElement?.getBounds) {
+                var bounds = frameworkElement.getBounds();
+                console.log('frameworkElement bounds', bounds);
+                if (bounds?.isValid && bounds.isValid()) {
+                    minX = Math.min(minX, bounds.getWest());
+                    minY = Math.min(minY, bounds.getSouth());
+                    maxX = Math.max(maxX, bounds.getEast());
+                    maxY = Math.max(maxY, bounds.getNorth());
+                }
+            }
+        }
+
+        return [minX, minY, maxX, maxY];
     };
 
     this.metaInfo = function (s) {
@@ -3515,7 +3623,7 @@
 
         let wkt = '';
 
-        if (_geometryType === 'point') {
+        if (_geometryType === 'point' || _geometryType === 'elementseries') {
             wkt += "MULTIPOINT(";
         }
         else if (_geometryType === 'polyline') {
@@ -3610,7 +3718,7 @@
         console.log('isMultipart', isMultipart, _partIndex);
 
         let wkt = '', closeVertex = null;
-        if (_geometryType === 'point') {
+        if (_geometryType === 'point' || _geometryType === 'elementseries') {
             wkt += isMultipart ? "MULTIPOINT(" : "POINT(";
         }
         else if (_geometryType === 'polyline') {
@@ -3715,11 +3823,12 @@
                         partIndex++;
                     }
                     var vertex = _vertices[i];
-                    if (element.addLatLng) {
-                        latlngs.push(L.latLng(vertex.y, vertex.x));;
-                    } else {
-                        element.setLatLng(L.latLng(vertex.y, vertex.x));
-                    }
+                    //if (element.addLatLng) {
+                    //    latlngs.push(L.latLng(vertex.y, vertex.x));;
+                    //} else {
+                    //    element.setLatLng(L.latLng(vertex.y, vertex.x));
+                    //}
+                    this._addAsLatLng(element, vertex);
                 }
 
                 if (latlngs.length > 0) {

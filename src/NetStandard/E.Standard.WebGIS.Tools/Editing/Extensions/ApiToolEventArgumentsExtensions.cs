@@ -291,7 +291,18 @@ static internal class ApiToolEventArgumentsExtensions
 
         foreach (var queryDef in queryBuilderResult.QueryDefs)
         {
-            string value = String.Format(queryDef.ValueTemplate.OrTake("{0}"), queryDef.Value);
+            string value = queryDef.Operator switch
+            {
+                " in " => String.Format("({0})", 
+                                String.Join(",", 
+                                            queryDef.Value
+                                                    .Split(',')
+                                                    .Select(v => v.Trim().Trim('\''))
+                                                    .Select(v => String.Format(queryDef.ValueTemplate.OrTake("{0}"), v))
+                                            )
+                                ),
+                _ => String.Format(queryDef.ValueTemplate.OrTake("{0}"), queryDef.Value)
+            };
 
             whereClause.Append($"{queryDef.Field}{queryDef.Operator}{value}");
             if (!String.IsNullOrEmpty(queryDef.LogicalOperator))
