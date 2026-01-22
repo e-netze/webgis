@@ -6,11 +6,11 @@ Objekte in der Karte erstellen
 
 # mobile:
 
-## attributes_and_save: Stachdaten & Speichern...
+## attributes_and_save: Sachdaten & Speichern...
 
 
 # desktop:
 
-## attributes_and_save: Stachdaten & Speichern...
+## attributes_and_save: Sachdaten & Speichern...
 
 

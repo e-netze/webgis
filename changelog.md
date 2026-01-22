@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+## 8.26.501
+
+## Added
+
+- Sketch/Markup upload: allow ``.geojson`` extension
+  [discussion #369](https://github.com/e-netze/webgis-community/discussions/369)
+
 ## 8.26.401
 
 ## Added

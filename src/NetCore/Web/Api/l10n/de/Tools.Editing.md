@@ -29,7 +29,7 @@ Geo-Objekte in der Karte bearbeiten
 ## new-feature: Neues Objekt anlegen
 ## edit-feature: Bestehendes Objekt bearbeiten
 ## delete-feature: Bestehendes Objekt löschen
-## attributes_and_save: Stachdaten & Speichern...
+## attributes_and_save: Sachdaten & Speichern...
 
 ## selected-features: Ausgewählte Objekte
 ## edit-selected-feature: Objekt bearbeiten
