@@ -59,8 +59,8 @@ Der Hochwert entspricht der geographischen Breite (Werte südlich des Äquators 
 
 Folgende Schreibweisen sind möglich:
 
-Rechtswert: 15,439833 
-Hochwert: 47,078167
+Rechtswert: 15,4398331 
+Hochwert: 47,0781672
 
 **Grad/Minuten:**
 Rechtswert: 15°26,39' 

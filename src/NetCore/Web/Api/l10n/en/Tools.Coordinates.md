@@ -59,8 +59,8 @@ The northing corresponds to the geographic latitude (values south of the equator
 
 The following notations are possible:
 
-Easting: 15.439833 
-Northing: 47.078167
+Easting: 15.4398331
+Northing: 47.0781672
 
 **Degrees/Minutes:**
 Easting: 15°26.39' 
