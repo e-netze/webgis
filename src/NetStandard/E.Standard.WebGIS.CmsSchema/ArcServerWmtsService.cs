@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
@@ -29,64 +29,61 @@ public class ArcServerWmtsService : CopyableNode, IAuthentification, ICreatable,
 
     #region Properties
 
-    [Category("WMTS")]
-    [DisplayName("Dienst Server/Url")]
+    [Category("#category_server")]
+    [DisplayName("#server")]
     public string Server { get; set; }
 
-    [Category("WMTS")]
-    [DisplayName("Tile-Layer")]
+    [Category("#category_tile_layer")]
+    [DisplayName("#tile_layer")]
     public string TileLayer { get; set; }
 
-    [Category("WMTS")]
-    [DisplayName("Tile-Matrix-Set")]
+    [Category("#category_tile_matrix_set")]
+    [DisplayName("#tile_matrix_set")]
     public string TileMatrixSet { get; set; }
 
-    [Category("WMTS")]
-    [DisplayName("Image Format")]
+    [Category("#category_image_format")]
+    [DisplayName("#image_format")]
     public string ImageFormat { get; set; }
 
-    [Category("WMTS")]
-    [DisplayName("Tile-Style")]
+    [Category("#category_tile_style")]
+    [DisplayName("#tile_style")]
     public string TileStyle { get; set; }
 
-    [Category("WMTS")]
-    [DisplayName("ResourceURLs")]
+    [Category("#category_rendering")]
+    [DisplayName("#rendering")]
     public string[] ResourceURLs { get; set; }
 
-    [DisplayName("Rendering")]
-    [Description("Für Luftbilder 'Quality' verwenden. Für Ortspläne (mit Text) 'Readablility'...")]
+    [DisplayName("#rendering")]
     public TileGridRendering Rendering { get; set; }
 
-    [DisplayName("Max. Level")]
-    [Description("Der höchste Level, der für diesen Dienst verwendet werden kann. Ein Wert kleiner als 0, gibt an, dass das maximale Level dem maximalen Matrixset Level aus den Capabilities entspricht.")]
+    [DisplayName("#max_level")]
     public int MaxLevel { get; set; }
 
-    [DisplayName("Unter Max. Level verbergen")]
-    [Description("Zoomt der Anwender weiter in die Karte, als dieser Tiling Dienst zur Verfügung steht, werden die Tiles nicht mehr angezeigt. Per Default (Wert = false) wird der Dienst trotzdem angezeigt und die Tiles entsprechend \"vergrößert/unscharf\" dargestellt.")]
+    [DisplayName("#hide_beyond_max_level")]
     public bool HideBeyondMaxLevel { get; set; }
 
     #endregion
 
     #region IAuthentification Member
 
-    [DisplayName("Username")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#username")]
+    [Category("#category_username")]
     public string Username { get; set; }
 
-    [DisplayName("Password")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#password")]
+    [Category("#category_password")]
     [PasswordPropertyText(true)]
     public string Password { get; set; }
 
     [Browsable(false)]
-    [DisplayName("Token")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#token")]
+    [Category("#category_token")]
     [PasswordPropertyText(true)]
     [Editor(typeof(TypeEditor.TokenAuthentificationEditor), typeof(TypeEditor.ITypeEditor))]
     public string Token { get; set; }
 
-    [Category("~Anmeldungs-Credentials")]
-    [DisplayName("Token-Gültigkeit [min]")]
+    [Category("~#category_token_expiration")]
+    [DisplayName("#token_expiration")]
     public int TokenExpiration { get; set; } = 60;
 
     #endregion

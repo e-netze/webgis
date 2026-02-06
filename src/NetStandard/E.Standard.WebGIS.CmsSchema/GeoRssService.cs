@@ -29,22 +29,22 @@ public class GeoRssService : CopyableXml, ICreatable, IEditable, IDisplayName, I
     }
 
     #region Properties
-    [DisplayName("Url zum Dienst")]
+    [DisplayName("#service_url")]
     public string ServiceUrl
     {
         get { return _serviceUrl; }
         set { _serviceUrl = value; }
     }
-    [DisplayName("Username")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#username")]
+    [Category("#category_username")]
     public string Username
     {
         get { return _user; }
         set { _user = value; }
     }
 
-    [DisplayName("Password")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#password")]
+    [Category("#category_password")]
     [PasswordPropertyText(true)]
     public string Password
     {
@@ -52,35 +52,34 @@ public class GeoRssService : CopyableXml, ICreatable, IEditable, IDisplayName, I
         set { _pwd = value; }
     }
 
-    [DisplayName("Token")]
-    [Category("Anmeldungs-Token")]
+    [DisplayName("#token")]
+    [Category("#category_token")]
     [PasswordPropertyText(true)]
     [Editor(typeof(TypeEditor.TokenAuthentificationEditor), typeof(TypeEditor.ITypeEditor))]
     public string Token { get; set; }
 
-    [DisplayName("Marker Symbol")]
+    [DisplayName("#marker")]
     [Editor(typeof(TypeEditor.GeoRssMarkerEditor), typeof(TypeEditor.ITypeEditor))]
-    [Category("Symbole")]
+    [Category("#category_marker")]
     public string Marker
     {
         get { return _marker; }
         set { _marker = value; }
     }
     [Editor(typeof(TypeEditor.GeoRssMarkerEditor), typeof(TypeEditor.ITypeEditor))]
-    [Category("Symbole")]
+    [Category("#category_highlight_marker")]
     public string HighlightMarker
     {
         get { return _highlightMarker; }
         set { _highlightMarker = value; }
     }
-    [Category("Beschriftungsmethode")]
+    [Category("#category_label_method")]
     public GeoRssLabelMethod LabelMethod
     {
         get { return _labelMethod; }
         set { _labelMethod = value; }
     }
-    [DisplayName("Caching Zeitspanne in Sekunden")]
-    [Description("Für diesen Zeitraum wird der Dienst gecached.")]
+    [DisplayName("#update_duration")]
     public int UpdateDuration
     {
         get { return _updateDuration; }

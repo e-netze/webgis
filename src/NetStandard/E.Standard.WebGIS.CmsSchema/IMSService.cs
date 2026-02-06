@@ -1,4 +1,4 @@
-﻿using E.Standard.ArcXml;
+using E.Standard.ArcXml;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
@@ -39,45 +39,41 @@ public class IMSService : CopyableNode, IAuthentification, ICreatable, IEditable
     }
 
     #region Properties
-    [DisplayName("Karten Server")]
+    [DisplayName("#server")]
     public string Server
     {
         get { return _server; }
         set { _server = value; }
     }
-    [DisplayName("Karten Dienst")]
+    [DisplayName("#service")]
     public string Service
     {
         get { return _service; }
         set { _service = value; }
     }
 
-    [DisplayName("Dynamische Darstellungsvariaten")]
-    [Description("Darastellungsvarianten werden nicht mehr parametriert, sondern werden dynamisch aus dem TOC des Dienstes erstellt. Das Level gibt an, bis zu welcher Ebene Untergruppen erstellt werden. Layer unterhalb des maximalen Levels werden zu einer Checkbox-Darstellungsvariante zusammengeasst.")]
+    [DisplayName("#dynamic_presentations")]
     public WebMapping.Core.ServiceDynamicPresentations DynamicPresentations { get; set; }
 
-    [DisplayName("Dynamische Abfragen")]
-    [Description("Abfragen werden nicht mehr parametriert, sondern werden zur Laufzeit für alle (Feature) Layer eine Abfrage erstellt (ohne Suchbegriffe, nur Identify)")]
+    [DisplayName("#dynamic_queries")]
     public WebMapping.Core.ServiceDynamicQueries DynamicQueries { get; set; }
 
-    [DisplayName("Dynamisches Verhalten")]
-    [Description("Gibt an, wie mit Layern umgegangen wird, die nicht beim erstellen oder nach einem Refresh im CMS unter Themen gelistet werden. AutoAppendNewLayers ... neue Themen werden beim Initialisieren des Dienstes (nach einem cache/clear) der Karte hinzugefügt und können über den TOC geschalten werden. UseStrict ... nur jene Themen, die unter Themen aufgelistet sind, kommen auch in der Karte vor.")]
+    [DisplayName("#dynamic_dehavior")]
     public WebMapping.Core.DynamicDehavior DynamicDehavior { get; set; }
 
-    [DisplayName("Service-Typ")]
-    [Description("Watermark Services werden immer ganz oben gezeichnet und können vom Anwender nicht transparent geschalten oder ausgelendet werden. Watermark Services können neben Wasserzeichen auch Polygondecker enthalten.")]
+    [DisplayName("#service_type")]
     public WebMapping.Core.ImageServiceType ServiceType { get; set; }
 
-    [DisplayName("Username")]
-    [Category("~Anmeldungs-Credentials")]
+    [DisplayName("#username")]
+    [Category("~#category_username")]
     public string Username
     {
         get { return _user; }
         set { _user = value; }
     }
 
-    [DisplayName("Password")]
-    [Category("~Anmeldungs-Credentials")]
+    [DisplayName("#password")]
+    [Category("~#category_password")]
     [PasswordPropertyText(true)]
     public string Password
     {
@@ -85,8 +81,8 @@ public class IMSService : CopyableNode, IAuthentification, ICreatable, IEditable
         set { _pwd = value; }
     }
 
-    [DisplayName("Token")]
-    [Category("~Anmeldungs-Token")]
+    [DisplayName("#token")]
+    [Category("~#category_token")]
     [PasswordPropertyText(true)]
     [Editor(typeof(TypeEditor.TokenAuthentificationEditor), typeof(TypeEditor.ITypeEditor))]
     public string Token { get; set; }
@@ -101,9 +97,8 @@ public class IMSService : CopyableNode, IAuthentification, ICreatable, IEditable
     //    set { _commaFormat = value; }
     //}
     [Browsable(true)]
-    [Category("~Lokalisierung")]
-    [DisplayName("IMS Service LOCALE überschreiben")]
-    [Description("Hier kann gegeben werden, wie ein Komma für Dienste interpretiert werden soll.\nKein Wert ... Lokalisierung wird aus dem LOCALE Tag von GET_SERVICE_INFO übernommen\nde-AT ... Beistrich als Komma, en-US ... Punkt als Komma")]
+    [Category("~#category_override_local")]
+    [DisplayName("#override_local")]
     [Editor(typeof(TypeEditor.IMSLocaleEditor), typeof(TypeEditor.ITypeEditor))]
     public IMSLocale OverrideLocal
     {

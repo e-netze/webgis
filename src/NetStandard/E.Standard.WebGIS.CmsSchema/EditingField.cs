@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Reflection;
 using E.Standard.CMS.Core.Schema;
@@ -26,121 +26,104 @@ public class EditingField : CopyableXml, IUI, IEditable, IDisplayName
 
     #region Properties
 
-    [DisplayName("Feld Name")]
+    [DisplayName("#field_name")]
     [Editor(typeof(TypeEditor.ThemeFieldsEditor), typeof(TypeEditor.ITypeEditor))]
     public string FieldName
     {
         get; set;
     }
 
-    [DisplayName("Eingabe Typ")]
-    [Description("Neben Text-Eingabefeldern können hier noch weitere Eingabetypen definiert werden: Auswahlliste (Domain), Datum, Fileupload, ...")]
+    [DisplayName("#field_type")]
     public EditingFieldType FieldType { get; set; }
 
-    [DisplayName("Sichtbar")]
-    [Description("Gibt an, ob das Feld für den Anwender sichtbar ist. Unsichtbare Felder können praktisch sein, wenn diese eventuell erst später über einen AutoValue berechnet werden oder bereits über Url übergeben werde und verändert werden dürfen.")]
+    [DisplayName("#visible")]
     public bool Visible { get; set; }
 
-    [DisplayName("Gesperrt (nicht veränderbar)")]
-    [Description("Wie bei 'nicht Sichtbar'. Hier wird das Feld allergings angezeigt, kann vom Anwender aber nicht geändert werden. Locked Felder werden beim Speichern auch in die Datenbank geschreiben. Kann nützlich sein, wenn ein Wert (ID) schon über Url Aufruf übergeben wird und der Anwender diesen nicht mehr ändern sollte.")]
+    [DisplayName("#locked")]
     public bool Locked { get; set; }
 
-    [DisplayName("Feld bestimmt die Legende")]
-    [Description("Besitzt das Editierthema in der Karte eine Legende mit unterschiedlichen Symbolen und ist das Symbol abhängig vom Wert dieses Feldes, kann diese Option gesetzt werden. Der Anwender hat dann über die Auswahlliste die Möglichkeit, neben dem Tabellenwert auch das (Legenden) Symbol auszuwählen.")]
+    [DisplayName("#legend_field")]
     public bool LegendField { get; set; }
 
-    [DisplayName("Beständig (Resistant)")]
-    [Description("Der Wert des Feldes bleibt nach dem Speichern erhalten und muss nicht jedes Mal vom Anwender neu eingeben werden. Das gilt auch, wenn es das gleiche Feld in unterschiedlichen Themen gibt. ZB muss so eine Projektnummer, die auf jedem Objekt mitverspeichert wird nur einmal eingeben werden und bleibt im Formular 'beständig', bis der Anwender eine andere Projektnummer vergibt.")]
+    [DisplayName("#resistant")]
     public bool Resistant { get; set; }
 
-    [DisplayName("Feld für Massen-Attributierung")]
-    [Description("Wird Massen-Attributierung (alle ausgewählten Objekte ändern) erlaubt, kann hier angegeben werden, ob das Feld über Massen-Attributierung gesetzt werden darf.")]
+    [DisplayName("#mass_attributable")]
     public bool MassAttributable { get; set; }
 
-    [DisplayName("Schreibgeschützt (Readonly)")]
-    [Description("Hier wird das Feld zwar angezeigt, kann vom Anwender aber nicht geändert werden. Readonly Felder werden beim Speichern NICHT in die Datenbank geschrieben und dienen nur informativen Zwecken. Ausnahme: Readonly Felder, für die ein AutoValue angegeben wird, werden beim Speichern auch in die Datenbank geschrieben.")]
+    [DisplayName("#readonly")]
     public bool Readonly { get; set; }
 
-    [Category("~Validierung")]
-    [DisplayName("Clientseitige Validierung")]
-    [Description("Die Validierung erfolgt bereichts am Client bei der Eingabe bzw. spätestens beim Klick auf den Speichern Button. Dadurch ergibt sich in der Regel eine besser 'User Experience'")]
+    [Category("~#category_clientside_validation")]
+    [DisplayName("#clientside_validation")]
     public bool ClientsideValidation { get; set; }
 
-    [Category("~Validierung")]
-    [DisplayName("Erforderlich (requried)")]
-    [Description("Gibt an, dass für dieses Feld eine Eingabe vom Anwender erfolgen muss")]
+    [Category("~#category_required")]
+    [DisplayName("#required")]
     public bool Required { get; set; }
 
-    [Category("~Validierung")]
-    [DisplayName("Minimale Eingabe-Länge")]
-    [Description("Gibt die minimale Eingabe von Zeichen an, die ein Anwender eingeben muss")]
+    [Category("~#category_min_length")]
+    [DisplayName("#min_length")]
     public int MinLength { get; set; }
 
-    [Category("~Validierung")]
-    [DisplayName("Regulärer Ausdruch (Regex)")]
-    [Description("Hier kann ein regulärer Ausdruck angegeben werden. Ein Objekt kann nur erstellt werden, wenn die Eingabe des Benutzers für dieses Feld, dem regulären Ausdruck entspricht")]
+    [Category("~#category_regex_pattern")]
+    [DisplayName("#regex_pattern")]
     public string RegexPattern { get; set; }
 
-    [Category("~Validierung")]
-    [DisplayName("Validierungsfehlermeldung")]
-    [Description("Kommt es bei der Validierung eines Feldes zu einem Fehler, wird dem Anwender dieser Text angezeigt. Hier können/sollten auch Beispiele für korrekte Eingaben angeführt werden.")]
+    [Category("~#category_validation_error_message")]
+    [DisplayName("#validation_error_message")]
 
     public string ValidationErrorMessage { get; set; }
 
-    [Category("~Autovalue")]
-    [DisplayName("Auto Value")]
+    [Category("~#category_auto_value")]
+    [DisplayName("#auto_value")]
     public EditingFieldAutoValue AutoValue { get; set; }
 
-    [Category("~Autovalue")]
-    [DisplayName("Benuterdefinierter Auto Value (custom, db_select=ConnectionString)")]
+    [Category("~#category_custom_auto_value")]
+    [DisplayName("#custom_auto_value")]
     [Description(@"Hier kann zum Beispiel ein benutzerdefinierter AutoValue für eine räumliche Abfrage (gnr from grunstuecke) eingetragen werden. 
 Aus Autovalue in der Liste muss in diesem Fall 'custom' ausgewählt werden, 'grundsuecke' wäre eine Abfrage. Verwendet man den AutoValue 'db_select', muss hier der Connection String zu Datenbank eingetragen werden.
 Custom Autovalues können mit = beginnen. Der Wert wird dadurch immer gesetzt.
 Mit dem Prefix mask-insert-default:: wird der Wert vom System gesetzt, sondern erscheint als Default Wert in der Eingabemaske, wenn ein neues Objekt erstellt wird.")]
     public string CustomAutoValue { get; set; }
 
-    [Category("~Autovalue")]
-    [DisplayName("Benutzerdefinerter Auto Value 2 (zb: db_select=SqlStatement")]
-    [Description("Manche Autovalues benötigen weitere Parameter. zB. bei 'db_select' muss hier ein SQL Statement eingetragen werden, über das der entsprechende Wert ermittelt wird. Das Statement muss dabei so formuliert werden, dass exakt ein Ergebniss (ein Wert, ein Record) entsteht. Als Platzhalter für bestehende Felder muss {{..}} verwendet werden, zB select gnr from grst objectid={{id}}. Achtung: Um Sql Injection vorzubeugen, werden die Platzhalter im Statement in Parameter umgewandelt. Daher dürfen hier keine Hochkomma rund um die Platzhalter im Statement verwendet werden, auch wenn das entsprechende Feld ein String ist!")]
+    [Category("~#category_custom_auto_value2")]
+    [DisplayName("#custom_auto_value2")]
     public string CustomAutoValue2 { get; set; }
 
-    [Category("~optional: Database Domain")]
-    [DisplayName("Connection String")]
+    [Category("~#category_db_domain_connection_string")]
+    [DisplayName("#db_domain_connection_string")]
     public string DbDomainConnectionString { get; set; }
-    [Category("~optional: Database Domain")]
-    [DisplayName("Db-Tabelle (Table)")]
+    [Category("~#category_db_domain_table")]
+    [DisplayName("#db_domain_table")]
     public string DbDomainTable { get; set; }
-    [Category("~optional: Database Domain")]
-    [DisplayName("Db-Feld (Field)")]
+    [Category("~#category_db_domain_field")]
+    [DisplayName("#db_domain_field")]
     public string DbDomainField { get; set; }
-    [Category("~optional: Database Domain")]
-    [DisplayName("Db-Anzeige Feld (Alias)")]
+    [Category("~#category_db_domain_alias")]
+    [DisplayName("#db_domain_alias")]
     public string DbDomainAlias { get; set; }
-    [Category("~optional: Database Domain")]
-    [DisplayName("Db-Where Klausel (WHERE)")]
-    [Description("Hier kann die Auswahlliste weiter eingeschränkt werden. Das kann über einen statischer Ausdruck erfolten (wenn die gleiche Tabelle für unterschiedliche Auswahlisten verwendet wird) oder über einen dynamische Ausdruck (XYZ='{{role-parameter:...}}', um beispielsweise eine Auswahlliste für eine Bestimmte Benutzergruppe einzuschränken.")]
+    [Category("~#category_db_domain_where")]
+    [DisplayName("#db_domain_where")]
     public string DbDomainWhere { get; set; }
-    [Category("~optional: Database Domain")]
-    [DisplayName("Db-Orderby (Field)")]
+    [Category("~#category_db_order_by")]
+    [DisplayName("#db_order_by")]
     public string DbOrderBy { get; set; }
 
-    [Category("~optional: Domain List")]
-    [DisplayName("Db-Anzeige Feld (Alias)")]
+    [Category("~#category_domain_list")]
+    [DisplayName("#domain_list")]
     public string DomainList { get; set; }
 
-    [Category("~optional: Domain Behaviour (experimental)")]
-    [DisplayName("Pro Behaviour")]
-    [Description("Gibt an, ob die Auswahlliste ein erweitertes Verhalten haben soll. Das erweiterte Verhalten ist von der WebGIS Instanz Konfiguration abhängig. (setzt man in der custom.js: webgis.usability.select_pro_behaviour = \"select2\"; ist für diese Auswahlliste die Suche nach items möglich. Das macht bei Auswahllisten mit vielen Items die Eingabe leichter.")]
+    [Category("~#category_domain_pro_behaviour")]
+    [DisplayName("#domain_pro_behaviour")]
     public bool DomainProBehaviour { get; set; }
 
 
-    [Category("~optional: Attribute Picker")]
-    [DisplayName("Attribute Picker Abfrage")]
-    [Description("Die Abfrage, von der ein Attribute geholt werden soll. Format service-id@query-id")]
+    [Category("~#category_attribute_picker_query")]
+    [DisplayName("#attribute_picker_query")]
     public string AttributePickerQuery { get; set; }
-    [Category("~optional: Attribute Picker")]
-    [DisplayName("Attribute Picker Feld")]
-    [Description("Das Feld aus der Abfrage, das beim Attribute Picking übernommen werden soll.")]
+    [Category("~#category_attribute_picker_field")]
+    [DisplayName("#attribute_picker_field")]
     public string AttributePickerField { get; set; }
 
     //[Category("~optional: Default Value")]

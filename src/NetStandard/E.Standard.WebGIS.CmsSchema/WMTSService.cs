@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
@@ -31,87 +31,84 @@ public class WMTSService : CopyableNode, IAuthentification, ICreatable, IEditabl
         this.MaxLevel = -1;
     }
 
-    [Category("WMTS")]
-    [DisplayName("Dienst Server/Url")]
+    [Category("#category_server")]
+    [DisplayName("#server")]
     public string Server
     {
         get { return _server; }
         set { _server = value; }
     }
 
-    [Category("WMTS")]
-    [DisplayName("Tile-Layer")]
+    [Category("#category_tile_layer")]
+    [DisplayName("#tile_layer")]
     public string TileLayer
     {
         get { return _tileLayer; }
         set { _tileLayer = value; }
     }
 
-    [Category("WMTS")]
-    [DisplayName("Tile-Matrix-Set")]
+    [Category("#category_tile_matrix_set")]
+    [DisplayName("#tile_matrix_set")]
     public string TileMatrixSet
     {
         get { return _tileMatrixSet; }
         set { _tileMatrixSet = value; }
     }
 
-    [Category("WMTS")]
-    [DisplayName("Image Format")]
+    [Category("#category_image_format")]
+    [DisplayName("#image_format")]
     public string ImageFormat
     {
         get { return _imageFormat; }
         set { _imageFormat = value; }
     }
 
-    [Category("WMTS")]
-    [DisplayName("Tile-Style")]
+    [Category("#category_tile_style")]
+    [DisplayName("#tile_style")]
     public string TileStyle
     {
         get { return _tileStyle; }
         set { _tileStyle = value; }
     }
 
-    [Category("WMTS")]
-    [DisplayName("ResourceURLs")]
+    [Category("#category_ticket_server")]
+    [DisplayName("#ticket_server")]
     public string[] ResourceURLs { get; set; }
 
-    [Category("Anmeldung")]
-    [DisplayName("webGIS Instanz für Ticket Service (Optional)")]
+    [Category("#category_ticket_server")]
+    [DisplayName("#ticket_server")]
     public string TicketServer
     {
         get;
         set;
     }
 
-    [DisplayName("Rendering")]
-    [Description("Für Luftbilder 'Quality' verwenden. Für Ortspläne (mit Text) 'Readablility'...")]
+    [DisplayName("#rendering")]
     public TileGridRendering Rendering
     {
         get { return _rendering; }
         set { _rendering = value; }
     }
 
-    [DisplayName("Max. Level")]
-    [Description("Der höchste Level, der für diesen Dienst verwendet werden kann. Ein Wert kleiner als 0, gibt an, dass das maximale Level dem maximalen Matrixset Level aus den Capabilities entspricht.")]
+    [DisplayName("#max_level")]
     public int MaxLevel { get; set; }
 
-    [DisplayName("Unter Max. Level verbergen")]
-    [Description("Zoomt der Anwender weiter in die Karte, als dieser Tiling Dienst zur Verfügung steht, werden die Tiles nicht mehr angezeigt. Per Default (Wert = false) wird der Dienst trotzdem angezeigt und die Tiles entsprechend \"vergrößert/unscharf\" dargestellt.")]
+    [DisplayName("#hide_beyond_max_level")]
     public bool HideBeyondMaxLevel { get; set; }
 
 
     #region IAuthentification Member
 
-    [DisplayName("Username")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#username")]
+    [Category("#category_username")]
     public string Username
     {
         get { return _user; }
         set { _user = value; }
     }
 
-    [DisplayName("Password")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#password")]
+    [Category("#category_password")]
     [PasswordPropertyText(true)]
     public string Password
     {
@@ -119,8 +116,8 @@ public class WMTSService : CopyableNode, IAuthentification, ICreatable, IEditabl
         set { _pwd = value; }
     }
 
-    [DisplayName("Token")]
-    [Category("Anmeldungs-Token")]
+    [DisplayName("#token")]
+    [Category("#category_token")]
     [PasswordPropertyText(true)]
     [Editor(typeof(TypeEditor.TokenAuthentificationEditor), typeof(TypeEditor.ITypeEditor))]
     public string Token { get; set; }

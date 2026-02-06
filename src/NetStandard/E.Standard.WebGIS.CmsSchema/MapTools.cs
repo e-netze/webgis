@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.Security.Reflection;
@@ -76,112 +76,112 @@ public class MapTools : SchemaNode, IEditable
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Standardwerkzeug")]
-    [Category("Allgemein")]
+    [DisplayName("#default_tool")]
+    [Category("#category_default_tool")]
     public DefaultToolId DefaultTool
     {
         get { return _defaultTool; }
         set { _defaultTool = value; }
     }
     [Browsable(true)]
-    [DisplayName("Zoom In Dynamisch")]
-    [Category("Kartennavigation")]
+    [DisplayName("#zoom_in")]
+    [Category("#category_zoom_in")]
     public bool ZoomIn
     {
         get { return _zoomIn; }
         set { _zoomIn = value; }
     }
     [Browsable(true)]
-    [DisplayName("Zoom Out Dynamisch")]
-    [Category("Kartennavigation")]
+    [DisplayName("#zoom_out")]
+    [Category("#category_zoom_out")]
     public bool ZoomOut
     {
         get { return _zoomOut; }
         set { _zoomOut = value; }
     }
     [Browsable(true)]
-    [DisplayName("Verschieben/Pan")]
-    [Category("Kartennavigation")]
+    [DisplayName("#pan")]
+    [Category("#category_pan")]
     public bool Pan
     {
         get { return _pan; }
         set { _pan = value; }
     }
     [Browsable(true)]
-    [DisplayName("Aktuelle GPS Position")]
-    [Category("Kartennavigation")]
+    [DisplayName("#current_pos")]
+    [Category("#category_current_pos")]
     public bool CurrentPos
     {
         get { return _currentpos; }
         set { _currentpos = value; }
     }
     [Browsable(true)]
-    [DisplayName("Geo Location ermitteln")]
-    [Category("Kartennavigation")]
+    [DisplayName("#geo_location")]
+    [Category("#category_geo_location")]
     public bool GeoLocation
     {
         get { return _geolocation; }
         set { _geolocation = value; }
     }
     [Browsable(true)]
-    [DisplayName("Karte Aktualisieren")]
-    [Category("Maßstab/Atkualisierung")]
+    [DisplayName("#refresh")]
+    [Category("#category_refresh")]
     public bool Refresh
     {
         get { return _refresh; }
         set { _refresh = value; }
     }
     [Browsable(true)]
-    [DisplayName("Auf maximalen Extent zoomen")]
-    [Category("Kartennavigation")]
+    [DisplayName("#full_extent")]
+    [Category("#category_full_extent")]
     public bool FullExtent
     {
         get { return _fullextent; }
         set { _fullextent = value; }
     }
     [Browsable(true)]
-    [DisplayName("Zoom Zurück")]
-    [Category("Kartennavigation")]
+    [DisplayName("#zoom_back")]
+    [Category("#category_zoom_back")]
     public bool ZoomBack
     {
         get { return _zoomback; }
         set { _zoomback = value; }
     }
     [Browsable(true)]
-    [DisplayName("Zoom Vorwärts")]
-    [Category("Kartennavigation")]
+    [DisplayName("#zoom_forward")]
+    [Category("#category_zoom_forward")]
     public bool ZoomForward
     {
         get { return _zoomforward; }
         set { _zoomforward = value; }
     }
     [Browsable(true)]
-    [DisplayName("Karte Drehen (Map Roation)")]
-    [Category("Kartennavigation")]
+    [DisplayName("#map_rotation")]
+    [Category("#category_map_rotation")]
     public bool MapRotation
     {
         get { return _maprotation; }
         set { _maprotation = value; }
     }
     [Browsable(true)]
-    [DisplayName("Referenzmaßstab setzen")]
-    [Category("Maßstab/Darstellung")]
+    [DisplayName("#ref_scale")]
+    [Category("#category_ref_scale")]
     [AuthorizablePropertyAttribute("refscale", false)]
     public bool RefScale
     {
         get { return _refscale; }
         set { _refscale = value; }
     }
-    [DisplayName("Darstellungsfilter setzen")]
-    [Category("Maßstab/Darstellung")]
+    [DisplayName("#vis_filter")]
+    [Category("#category_vis_filter")]
     [AuthorizablePropertyAttribute("visfilter", false)]
     public bool VisFilter
     {
         get { return _visfilter; }
         set { _visfilter = value; }
     }
-    [DisplayName("Themen beschriften")]
-    [Category("Maßstab/Darstellung")]
+    [DisplayName("#labelling")]
+    [Category("#category_labelling")]
     [AuthorizablePropertyAttribute("labelling", false)]
     public bool Labelling
     {
@@ -189,8 +189,8 @@ public class MapTools : SchemaNode, IEditable
         set { _labelling = value; }
     }
     [Browsable(true)]
-    [DisplayName("Suchen")]
-    [Category("Abfragewerkzeuge")]
+    [DisplayName("#search")]
+    [Category("#category_search")]
     [AuthorizablePropertyAttribute("search", false)]
     public bool Search
     {
@@ -198,8 +198,8 @@ public class MapTools : SchemaNode, IEditable
         set { _search = value; }
     }
     [Browsable(true)]
-    [DisplayName("Identify")]
-    [Category("Abfragewerkzeuge")]
+    [DisplayName("#identify")]
+    [Category("#category_identify")]
     [AuthorizablePropertyAttribute("identify", false)]
     public bool Identify
     {
@@ -207,8 +207,8 @@ public class MapTools : SchemaNode, IEditable
         set { _identify = value; }
     }
     [Browsable(true)]
-    [DisplayName("Punkt Identify (kein Rechteck aufziehen, nur klicken!)")]
-    [Category("Abfragewerkzeuge")]
+    [DisplayName("#point_identify")]
+    [Category("#category_point_identify")]
     [AuthorizablePropertyAttribute("pointidentify", false)]
     public bool PointIdentify
     {
@@ -216,8 +216,8 @@ public class MapTools : SchemaNode, IEditable
         set { _pointidentify = value; }
     }
     [Browsable(true)]
-    [DisplayName("Identify Wizard")]
-    [Category("Abfragewerkzeuge")]
+    [DisplayName("#identify_wizard")]
+    [Category("#category_identify_wizard")]
     [AuthorizablePropertyAttribute("identifywizard", false)]
     public bool IdentifyWizard
     {
@@ -226,8 +226,8 @@ public class MapTools : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Deep Identify")]
-    [Category("GeoJUHU")]
+    [DisplayName("#deep_identify")]
+    [Category("#category_deep_identify")]
     [AuthorizablePropertyAttribute("deepidentify", false)]
     public bool DeepIdentify
     {
@@ -235,8 +235,8 @@ public class MapTools : SchemaNode, IEditable
         set { _deepidentify = value; }
     }
     [Browsable(true)]
-    [DisplayName("GeoJuhu Suche")]
-    [Category("GeoJUHU")]
+    [DisplayName("#deep_search")]
+    [Category("#category_deep_search")]
     [AuthorizablePropertyAttribute("deepsearch", false)]
     public bool DeepSearch
     {
@@ -244,8 +244,8 @@ public class MapTools : SchemaNode, IEditable
         set { _deepsearch = value; }
     }
     [Browsable(true)]
-    [DisplayName("GeoJUHU Themenbezeichnung")]
-    [Category("GeoJUHU")]
+    [DisplayName("#geo_juhu_term")]
+    [Category("#category_geo_juhu_term")]
     public string GeoJuhuTerm
     {
         get { return _geojuhuterm; }
@@ -253,8 +253,8 @@ public class MapTools : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Geo(land) Suchservice")]
-    [Category("Abfragewerkzeuge")]
+    [DisplayName("#search_service")]
+    [Category("#category_search_service")]
     [AuthorizablePropertyAttribute("searchservice", false)]
     public bool SearchService
     {
@@ -263,8 +263,8 @@ public class MapTools : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Hotlink")]
-    [Category("Abfragewerkzeuge")]
+    [DisplayName("#hotlink")]
+    [Category("#category_hotlink")]
     [AuthorizablePropertyAttribute("hotlink", false)]
     public bool Hotlink
     {
@@ -272,8 +272,8 @@ public class MapTools : SchemaNode, IEditable
         set { _hotlink = value; }
     }
     [Browsable(true)]
-    [DisplayName("Stationierungsabfrage")]
-    [Category("Abfragewerkzeuge")]
+    [DisplayName("#chainage")]
+    [Category("#category_chainage")]
     [AuthorizablePropertyAttribute("chainage", false)]
     public bool Chainage
     {
@@ -281,8 +281,8 @@ public class MapTools : SchemaNode, IEditable
         set { _chainage = value; }
     }
     [Browsable(false)]
-    [DisplayName("Räumliche Abfrage")]
-    [Category("Abfragewerkzeuge")]
+    [DisplayName("#spatial_identify")]
+    [Category("#category_spatial_identify")]
     [AuthorizablePropertyAttribute("spatialidentify", false)]
     public bool SpatialIdentify
     {
@@ -290,8 +290,8 @@ public class MapTools : SchemaNode, IEditable
         set { _spatialidentify = value; }
     }
     [Browsable(true)]
-    [DisplayName("Auswählen")]
-    [Category("Auswahlwerkzeuge")]
+    [DisplayName("#select")]
+    [Category("#category_select")]
     [AuthorizablePropertyAttribute("select", false)]
     public bool Select
     {
@@ -299,8 +299,8 @@ public class MapTools : SchemaNode, IEditable
         set { _select = value; }
     }
     [Browsable(true)]
-    [DisplayName("Nachbarschaftsberechnung (Puffern)")]
-    [Category("Auswahlwerkzeuge")]
+    [DisplayName("#buffer")]
+    [Category("#category_buffer")]
     [AuthorizablePropertyAttribute("buffer", false)]
     public bool Buffer
     {
@@ -308,17 +308,16 @@ public class MapTools : SchemaNode, IEditable
         set { _buffer = value; }
     }
     [Browsable(true)]
-    [DisplayName("Nachbarschaftsberechnung (Puffern) - max. Distance")]
-    [Description("0 = keine Einschränkung für den Benutzer.")]
-    [Category("Auswahlwerkzeuge")]
+    [DisplayName("#max_buffer_dist")]
+    [Category("#category_max_buffer_dist")]
     public int MaxBufferDist
     {
         get { return _maxbufferdist; }
         set { _maxbufferdist = value; }
     }
     [Browsable(true)]
-    [DisplayName("Messen")]
-    [Category("Werkzeuge")]
+    [DisplayName("#measure")]
+    [Category("#category_measure")]
     [AuthorizablePropertyAttribute("measure", false)]
     public bool Measure
     {
@@ -326,8 +325,8 @@ public class MapTools : SchemaNode, IEditable
         set { _measure = value; }
     }
     [Browsable(true)]
-    [DisplayName("Messen 3d")]
-    [Category("Werkzeuge")]
+    [DisplayName("#measure3d")]
+    [Category("#category_measure3d")]
     [AuthorizablePropertyAttribute("measure3d", false)]
     public bool Measure3d
     {
@@ -335,8 +334,8 @@ public class MapTools : SchemaNode, IEditable
         set { _measure3d = value; }
     }
     [Browsable(true)]
-    [DisplayName("Koordinaten abfragen")]
-    [Category("Werkzeuge")]
+    [DisplayName("#x_y")]
+    [Category("#category_x_y")]
     [AuthorizablePropertyAttribute("xy", false)]
     public bool XY
     {
@@ -344,8 +343,8 @@ public class MapTools : SchemaNode, IEditable
         set { _xy = value; }
     }
     [Browsable(true)]
-    [DisplayName("Karte Überblenden")]
-    [Category("Werkzeuge")]
+    [DisplayName("#map_overlay")]
+    [Category("#category_map_overlay")]
     [AuthorizablePropertyAttribute("mapoverlay", false)]
     public bool MapOverlay
     {
@@ -353,8 +352,8 @@ public class MapTools : SchemaNode, IEditable
         set { _mapoverlay = value; }
     }
     [Browsable(true)]
-    [DisplayName("Lupe")]
-    [Category("Werkzeuge")]
+    [DisplayName("#magnifier")]
+    [Category("#category_magnifier")]
     [AuthorizablePropertyAttribute("magnifier", false)]
     public bool Magnifier
     {
@@ -362,8 +361,8 @@ public class MapTools : SchemaNode, IEditable
         set { _magnifier = value; }
     }
     [Browsable(true)]
-    [DisplayName("Map-Markup")]
-    [Category("Werkzeuge Pro")]
+    [DisplayName("#map_markup")]
+    [Category("#category_map_markup")]
     [AuthorizablePropertyAttribute("mapmarkup", false)]
     public bool MapMarkup
     {
@@ -371,8 +370,8 @@ public class MapTools : SchemaNode, IEditable
         set { _mapMarkup = value; }
     }
     [Browsable(true)]
-    [DisplayName("Email/Treffpunkt")]
-    [Category("Werkzeuge")]
+    [DisplayName("#e_mail")]
+    [Category("#category_e_mail")]
     [AuthorizablePropertyAttribute("email", false)]
     public bool EMail
     {
@@ -380,8 +379,8 @@ public class MapTools : SchemaNode, IEditable
         set { _email = value; }
     }
     [Browsable(true)]
-    [DisplayName("Service hinzufügen")]
-    [Category("Werkzeuge")]
+    [DisplayName("#add_service")]
+    [Category("#category_add_service")]
     [AuthorizablePropertyAttribute("addservice", false)]
     public bool AddService
     {
@@ -389,8 +388,8 @@ public class MapTools : SchemaNode, IEditable
         set { _addservice = value; }
     }
     [Browsable(true)]
-    [DisplayName("Webediting")]
-    [Category("Werkzeuge Pro")]
+    [DisplayName("#editing")]
+    [Category("#category_editing")]
     [AuthorizablePropertyAttribute("edit", false)]
     public bool Editing
     {
@@ -398,8 +397,8 @@ public class MapTools : SchemaNode, IEditable
         set { _editing = value; }
     }
     [Browsable(true)]
-    [DisplayName("Dokumentenmanagement")]
-    [Category("Werkzeuge Pro")]
+    [DisplayName("#document_management")]
+    [Category("#category_document_management")]
     [AuthorizablePropertyAttribute("docmanagement", false)]
     public bool DocumentManagement
     {
@@ -408,8 +407,8 @@ public class MapTools : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [Category("Processing Server")]
-    [DisplayName("Processing Server Werkzeug")]
+    [Category("#category_processing_server_tool")]
+    [DisplayName("#processing_server_tool")]
     [AuthorizablePropertyAttribute("ps", false)]
     public bool ProcessingServerTool
     {
@@ -417,16 +416,16 @@ public class MapTools : SchemaNode, IEditable
         set { _procServerTool = value; }
     }
     [Browsable(true)]
-    [Category("Processing Server")]
-    [DisplayName("Processing Server Maske (Url)")]
+    [Category("#category_processing_server_mask")]
+    [DisplayName("#processing_server_mask")]
     public string ProcessingServerMask
     {
         get { return _procServerMask; }
         set { _procServerMask = value; }
     }
     [Browsable(true)]
-    [Category("Processing Server")]
-    [DisplayName("Processing Server (server:port)")]
+    [Category("#category_processing_server")]
+    [DisplayName("#processing_server")]
     public string ProcessingServer
     {
         get { return _procServer; }
@@ -435,8 +434,8 @@ public class MapTools : SchemaNode, IEditable
 
 
     [Browsable(true)]
-    [DisplayName("Snapping")]
-    [Category("Werkzeuge Pro")]
+    [DisplayName("#snapping")]
+    [Category("#category_snapping")]
     [AuthorizablePropertyAttribute("snapping", false)]
     public bool Snapping
     {
@@ -444,8 +443,8 @@ public class MapTools : SchemaNode, IEditable
         set { _snapping = value; }
     }
     [Browsable(true)]
-    [DisplayName("Drucken")]
-    [Category("Datei")]
+    [DisplayName("#print")]
+    [Category("#category_print")]
     [AuthorizablePropertyAttribute("print", false)]
     public bool Print
     {
@@ -453,8 +452,8 @@ public class MapTools : SchemaNode, IEditable
         set { _print = value; }
     }
     [Browsable(true)]
-    [DisplayName("Plot Service Tool")]
-    [Category("Datei")]
+    [DisplayName("#plot_service_tool")]
+    [Category("#category_plot_service_tool")]
     [AuthorizablePropertyAttribute("plotservicetool", false)]
     public bool PlotServiceTool
     {
@@ -462,8 +461,8 @@ public class MapTools : SchemaNode, IEditable
         set { _plotservicetool = value; }
     }
     [Browsable(true)]
-    [DisplayName("Laden / Speichern")]
-    [Category("Datei")]
+    [DisplayName("#i_o")]
+    [Category("#category_i_o")]
     [AuthorizablePropertyAttribute("io", false)]
     public bool IO
     {
@@ -471,8 +470,8 @@ public class MapTools : SchemaNode, IEditable
         set { _io = value; }
     }
     [Browsable(true)]
-    [DisplayName("Kartenbild speichern")]
-    [Category("Datei")]
+    [DisplayName("#save_image")]
+    [Category("#category_save_image")]
     [AuthorizablePropertyAttribute("saveimage", false)]
     public bool SaveImage
     {
@@ -480,8 +479,8 @@ public class MapTools : SchemaNode, IEditable
         set { _saveimage = value; }
     }
     [Browsable(true)]
-    [DisplayName("Höhenprofil")]
-    [Category("Höhenprofil")]
+    [DisplayName("#vertical_alignment")]
+    [Category("#category_vertical_alignment")]
     [AuthorizablePropertyAttribute("verticalalignment", false)]
     public bool VerticalAlignment
     {
@@ -489,8 +488,8 @@ public class MapTools : SchemaNode, IEditable
         set { _verticalAlignment = value; }
     }
     [Browsable(true)]
-    [DisplayName("Höhenprofil-Konfiguration")]
-    [Category("Höhenprofil")]
+    [DisplayName("#vertical_alignment_config")]
+    [Category("#category_vertical_alignment_config")]
     [Editor(typeof(ProfilesConfigEditor),
         typeof(ITypeEditor))]
     public string VerticalAlignmentConfig
@@ -499,8 +498,8 @@ public class MapTools : SchemaNode, IEditable
         set { _verticalAlignmentConfig = value; }
     }
     [Browsable(true)]
-    [DisplayName("Höhenkoten Werkzeug")]
-    [Category("Höhenkote")]
+    [DisplayName("#height_above_datum")]
+    [Category("#category_height_above_datum")]
     [AuthorizablePropertyAttribute("had", false)]
     public bool HeightAboveDatum
     {
@@ -508,8 +507,8 @@ public class MapTools : SchemaNode, IEditable
         set { _heightAboveDatum = value; }
     }
     [Browsable(true)]
-    [DisplayName("Höhenkoten-Konfiguration")]
-    [Category("Höhenkote")]
+    [DisplayName("#height_above_datum_config")]
+    [Category("#category_height_above_datum_config")]
     //[Editor(typeof(HeightAboveDatumConfigEditor),
     //        typeof(ITypeEditor))]
     public string HeightAboveDatumConfig
@@ -518,16 +517,16 @@ public class MapTools : SchemaNode, IEditable
         set { _heightAboveDatumConfig = value; }
     }
     [Browsable(true)]
-    [DisplayName("Hilfe")]
-    [Category("Hilfe")]
+    [DisplayName("#help")]
+    [Category("#category_help")]
     public bool Help
     {
         get { return _help; }
         set { _help = value; }
     }
     [Browsable(true)]
-    [DisplayName("Maus-Sensitive-Hilfe")]
-    [Category("Hilfe")]
+    [DisplayName("#case_help")]
+    [Category("#category_case_help")]
     public bool CaseHelp
     {
         get { return _casehelp; }
@@ -535,8 +534,8 @@ public class MapTools : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("GeoTagging")]
-    [Category("Module")]
+    [DisplayName("#geo_tagging")]
+    [Category("#category_geo_tagging")]
     [AuthorizablePropertyAttribute("geotagging", false)]
     public bool GeoTagging
     {
@@ -544,8 +543,8 @@ public class MapTools : SchemaNode, IEditable
         set { _geotagging = value; }
     }
     [Browsable(true)]
-    [DisplayName("GeoTagging Serverschema")]
-    [Category("Module")]
+    [DisplayName("#geo_tagging_schema")]
+    [Category("#category_geo_tagging_schema")]
     //[Editor(typeof(GeoTaggingServerSchemaEditor),
     //        typeof(ITypeEditor))]
     public string GeoTaggingSchema
@@ -555,8 +554,8 @@ public class MapTools : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Flottenmanagement")]
-    [Category("Module")]
+    [DisplayName("#fleet_management")]
+    [Category("#category_fleet_management")]
     [AuthorizablePropertyAttribute("fleetmanagement", false)]
     public bool FleetManagement
     {
@@ -564,8 +563,8 @@ public class MapTools : SchemaNode, IEditable
         set { _fleetmanagement = value; }
     }
     [Browsable(true)]
-    [DisplayName("Flottenmanagement History")]
-    [Category("Module")]
+    [DisplayName("#fleet_management_history")]
+    [Category("#category_fleet_management_history")]
     [AuthorizablePropertyAttribute("fleetmanagementhistory", false)]
     public bool FleetManagementHistory
     {
@@ -573,8 +572,8 @@ public class MapTools : SchemaNode, IEditable
         set { _fleetmanagementhistory = value; }
     }
     [Browsable(true)]
-    [DisplayName("Flottenmanagement Serverschema")]
-    [Category("Module")]
+    [DisplayName("#fleet_management_schema")]
+    [Category("#category_fleet_management_schema")]
     //[Editor(typeof(FleetManagementServerSchemaEditor),
     //        typeof(ITypeEditor))]
     public string FleetManagementSchema
@@ -584,8 +583,8 @@ public class MapTools : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Netzwerk")]
-    [Category("Module")]
+    [DisplayName("#network")]
+    [Category("#category_network")]
     [AuthorizablePropertyAttribute("network", false)]
     public bool Network
     {
@@ -593,8 +592,8 @@ public class MapTools : SchemaNode, IEditable
         set { _network = value; }
     }
     [Browsable(true)]
-    [DisplayName("Netzwerk Serverschema")]
-    [Category("Module")]
+    [DisplayName("#network_schema")]
+    [Category("#category_network_schema")]
     //[Editor(typeof(NetworkSchemaEditor),
     //        typeof(ITypeEditor))]
     public string NetworkSchema
@@ -604,8 +603,8 @@ public class MapTools : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [Category("Module")]
-    [DisplayName("Solar Potential")]
+    [Category("#category_solar_potential")]
+    [DisplayName("#solar_potential")]
     [AuthorizablePropertyAttribute("solarpotential", false)]
     public bool SolarPotential
     {
@@ -614,8 +613,8 @@ public class MapTools : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Konstruieren")]
-    [Category("Sketch")]
+    [DisplayName("#sketch_construct")]
+    [Category("#category_sketch_construct")]
     [AuthorizablePropertyAttribute("sketch_construct", false)]
     public bool SketchConstruct
     {
@@ -623,8 +622,8 @@ public class MapTools : SchemaNode, IEditable
         set { _sketchConstruct = value; }
     }
     [Browsable(true)]
-    [DisplayName("Transformieren")]
-    [Category("Sketch")]
+    [DisplayName("#sketch_transform")]
+    [Category("#category_sketch_transform")]
     [AuthorizablePropertyAttribute("sketch_transform", false)]
     public bool SketchTransform
     {
@@ -632,8 +631,8 @@ public class MapTools : SchemaNode, IEditable
         set { _sketchTransform = value; }
     }
     [Browsable(true)]
-    [DisplayName("GPX Upload/Download")]
-    [Category("Sketch")]
+    [DisplayName("#sketch_gpx")]
+    [Category("#category_sketch_gpx")]
     [AuthorizablePropertyAttribute("sketch_gpx", false)]
     public bool SketchGpx
     {
@@ -642,17 +641,16 @@ public class MapTools : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Search Service Type")]
-    [Category("Search Service")]
+    [DisplayName("#search_serv_type")]
+    [Category("#category_search_serv_type")]
     public SearchServiceType SearchServType
     {
         get { return _searchServiceType; }
         set { _searchServiceType = value; }
     }
     [Browsable(true)]
-    [DisplayName("Search Service Url")]
-    [Category("Search Service")]
-    [Description("Url zum gDSS Service")]
+    [DisplayName("#search_service_url")]
+    [Category("#category_search_service_url")]
     public string SearchServiceUrl
     {
         get { return _searchServiceUrl; }

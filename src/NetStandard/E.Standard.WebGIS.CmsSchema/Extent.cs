@@ -32,40 +32,40 @@ public class Extent : CopyableXml, IEditable, IUI
 
     #region Properties
 
-    [Category("Ausdehnung")]
-    [DisplayName("Minimaler Rechtswert (MinX)")]
+    [Category("#category_min_x")]
+    [DisplayName("#min_x")]
     public double MinX
     {
         get { return _minx; }
         set { _minx = value; }
     }
 
-    [Category("Ausdehnung")]
-    [DisplayName("Minimaler Hochwert (MinY)")]
+    [Category("#category_min_y")]
+    [DisplayName("#min_y")]
     public double MinY
     {
         get { return _miny; }
         set { _miny = value; }
     }
 
-    [Category("Ausdehnung")]
-    [DisplayName("Maximaler Rechtswert (MaxX)")]
+    [Category("#category_max_x")]
+    [DisplayName("#max_x")]
     public double MaxX
     {
         get { return _maxx; }
         set { _maxx = value; }
     }
 
-    [Category("Ausdehnung")]
-    [DisplayName("Maximaler Hochwert (MaxY)")]
+    [Category("#category_max_y")]
+    [DisplayName("#max_y")]
     public double MaxY
     {
         get { return _maxy; }
         set { _maxy = value; }
     }
 
-    [DisplayName("Kartenprojektion")]
-    [Category("Koordinatensystem")]
+    [DisplayName("#proj_id")]
+    [Category("#category_proj_id")]
     //[Editor(typeof(TypeEditor.Proj4TypeEditor), typeof(TypeEditor.ITypeEditor))]
     public int ProjId
     {
@@ -73,24 +73,24 @@ public class Extent : CopyableXml, IEditable, IUI
         set { _projId = value; }
     }
 
-    [DisplayName("Auflösungen (Resolutions)")]
-    [Category("Ebenen")]
+    [DisplayName("Auflï¿½sungen (Resolutions)")]
+    [Category("#category_origin_x")]
     public double[] Resolutions
     {
         get { return _resolutions; }
         set { _resolutions = value; }
     }
 
-    [DisplayName("Ursprung Rechtswert (OriginX)")]
-    [Category("TileCache")]
+    [DisplayName("#origin_x")]
+    [Category("#category_origin_x")]
     public double OriginX
     {
         get { return _originX; }
         set { _originX = value; }
     }
 
-    [DisplayName("Ursprung Hochwert (OriginY)")]
-    [Category("TileCache")]
+    [DisplayName("#origin_y")]
+    [Category("#category_origin_y")]
     public double OriginY
     {
         get { return _originY; }

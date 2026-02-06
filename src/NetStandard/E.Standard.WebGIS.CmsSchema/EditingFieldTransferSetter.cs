@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
@@ -19,24 +19,20 @@ public class EditingFieldTransferSetter : NameUrl, IUI, ICreatable, IDisplayName
 
     #region Properties
 
-    [DisplayName("Feld")]
-    [Category("Allgemein")]
-    [Description("Name des Feldes im Ziel")]
+    [DisplayName("#field")]
+    [Category("#category_field")]
     public string Field { get; set; }
 
-    [DisplayName("Value Expression")]
-    [Category("Allgemein")]
-    [Description("Wert der geschrieben werden sollte")]
+    [DisplayName("#value_expression")]
+    [Category("#category_value_expression")]
     public string ValueExpression { get; set; }
 
-    [DisplayName("Ist Default Value")]
-    [Category("Allgemein")]
-    [Description("Der hier angegebene Wert ist ein Defaultwert und wird nur übernommen, wenn das Feld in der Quell Featureklasse leer ist. Ist das Feld in der Quellfeatureklasse gesetzt, wird dieser übernommen. Ist dieser Wert auf 'false' gesetzt, werden die hier angeführte Wert immer gesetzt => Der aus der Quellfeatureklasse wird überschrieben.")]
+    [DisplayName("#is_default_value")]
+    [Category("#category_is_default_value")]
     public bool IsDefaultValue { get; set; }
 
-    [DisplayName("Ist im Ziel erforderlich")]
-    [Category("Allgemein")]
-    [Description("Des Ergebnis aus der Value-Expression muss einen Wert ergeben, das Ergebnis darf nicht leer sein. Außerdem muss das Feld in der Ziel Featureklasse vorhanden sein, ansonsten wird ein Fehler ausgegeben.")]
+    [DisplayName("#is_required")]
+    [Category("#category_is_required")]
     public bool IsRequired { get; set; }
 
     #endregion

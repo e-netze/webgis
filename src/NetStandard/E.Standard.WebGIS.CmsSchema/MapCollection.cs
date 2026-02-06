@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
@@ -18,13 +18,13 @@ public class MapCollection : NameUrl, IUI, ICreatable, IEditable, IDisplayName
     }
 
     #region Properties 
-    [DisplayName("Sichtbar")]
+    [DisplayName("#visible")]
     public bool Visible
     {
         get { return _visible; }
         set { _visible = value; }
     }
-    [DisplayName("Im Ausdruck anzeigen")]
+    [DisplayName("#print")]
     public bool Print
     {
         get { return _print; }

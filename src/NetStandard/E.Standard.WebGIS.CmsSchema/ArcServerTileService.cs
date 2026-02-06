@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
@@ -32,45 +32,44 @@ public class ArcServerTileService : CopyableNode, IAuthentification, ICreatable,
     }
 
     #region Properties
-    [DisplayName("Karten Server")]
+    [DisplayName("#server")]
     public string Server
     {
         get { return _server; }
         set { _server = value; }
     }
-    [DisplayName("Karten Dienst")]
+    [DisplayName("#service")]
     public string Service
     {
         get { return _service; }
         set { _service = value; }
     }
-    [DisplayName("Karten Dienst Conf.xml Url/Pfad")]
+    [DisplayName("#service_config_url")]
     public string ServiceConfigUrl
     {
         get { return _serviceConfigUrl; }
         set { _serviceConfigUrl = value; }
     }
-    [DisplayName("Karten Dienst Tile-Image Url")]
+    [DisplayName("#tile_url")]
     public string TileUrl
     {
         get { return _tileUrl; }
         set { _tileUrl = value; }
     }
-    [DisplayName("Karten Name")]
+    [DisplayName("#map_name")]
     public string MapName
     {
         get { return _mapname; }
         set { _mapname = value; }
     }
-    [DisplayName("Layer Name")]
+    [DisplayName("#layer_name")]
     public string LayerName
     {
         get { return _layer; }
         set { _layer = value; }
     }
 
-    [DisplayName("Rendering")]
-    [Description("Für Luftbilder 'Quality' verwenden. Für Ortspläne (mit Text) 'Readablility'...")]
+    [DisplayName("#rendering")]
     public TileGridRendering Rendering
     {
         get { return _rendering; }
@@ -81,8 +80,7 @@ public class ArcServerTileService : CopyableNode, IAuthentification, ICreatable,
     //[Description("Der höchste Level, der für diesen Dienst verwendet werden kann. Ein Wert kleiner als 0, gibt an, dass das maximale Level dem maximalen Matrixset Level aus den Capabilities entspricht.")]
     //public int MaxLevel { get; set; }
 
-    [DisplayName("Unter Max. Level verbergen")]
-    [Description("Zoomt der Anwender weiter in die Karte, als dieser Tiling Dienst zur Verfügung steht, werden die Tiles nicht mehr angezeigt. Per Default (Wert = false) wird der Dienst trotzdem angezeigt und die Tiles entsprechend \"vergrößert/unscharf\" dargestellt.")]
+    [DisplayName("#hide_beyond_max_level")]
     public bool HideBeyondMaxLevel { get; set; }
 
     #endregion
@@ -265,16 +263,16 @@ public class ArcServerTileService : CopyableNode, IAuthentification, ICreatable,
     #region IAuthentification Member
 
     [Browsable(false)]
-    [DisplayName("Username")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#username")]
+    [Category("#category_username")]
     public string Username
     {
         get { return _user; }
         set { _user = value; }
     }
 
-    [DisplayName("Password")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#password")]
+    [Category("#category_password")]
     [PasswordPropertyText(true)]
     public string Password
     {
@@ -282,8 +280,8 @@ public class ArcServerTileService : CopyableNode, IAuthentification, ICreatable,
         set { _pwd = value; }
     }
 
-    [DisplayName("Token")]
-    [Category("Anmeldungs-Token")]
+    [DisplayName("#token")]
+    [Category("#category_token")]
     [PasswordPropertyText(true)]
     [Editor(typeof(TypeEditor.TokenAuthentificationEditor), typeof(TypeEditor.ITypeEditor))]
     public string Token { get; set; }

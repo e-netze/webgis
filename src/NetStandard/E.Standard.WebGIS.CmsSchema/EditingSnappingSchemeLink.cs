@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using System;
 using System.ComponentModel;
@@ -14,11 +14,11 @@ public class EditingSnappingSchemeLink : Link
 
     #region Properties
 
-    [DisplayName("Knoten/Stützpunkte [1]")]
+    [DisplayName("#nodes")]
     public bool Nodes { get; set; }
-    [DisplayName("Kanten [2]")]
+    [DisplayName("#edges")]
     public bool Edges { get; set; }
-    [DisplayName("Endpunkte [4]")]
+    [DisplayName("#end_points")]
     public bool EndPoints { get; set; }
 
     [Category("Topologie")]

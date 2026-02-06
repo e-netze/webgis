@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
@@ -64,16 +64,14 @@ public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
 
     private string _serviceUrl = String.Empty;
 
-    [DisplayName("Service Url")]
-    [Description("Die Url zum Suchdienst. Ist der Dienst ein geschützer LuceneServerNET Dienst kann die Authentifizierung über diese Url angefüft werden: https://client:secret@server.com")]
+    [DisplayName("#service_url")]
     public string ServiceUrl
     {
         get { return _serviceUrl; }
         set { _serviceUrl = value; }
     }
 
-    [DisplayName("Optional: Indexname")]
-    [Description("Der Indexname wird bei den meisten Suchdiensten schon über die Service Url definiert. Ausnahme sind Suchdienste vom Typ 'LuceneServerNET'. Hier ist die Angabe des Indexnamens pflicht.")]
+    [DisplayName("#index_name")]
     public string IndexName { get; set; }
 
     private SearchServiceTarget _target = SearchServiceTarget.Solr;
@@ -84,7 +82,7 @@ public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
     }
 
     private string _suggestedText = "textsuggest";
-    [Category("Attributes")]
+    [Category("#category_suggested_text")]
     public string SuggestedText
     {
         get { return _suggestedText; }
@@ -92,7 +90,7 @@ public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
     }
 
     private string _thumbnail = "thumbnail_url";
-    [Category("Attributes")]
+    [Category("#category_thumbnail")]
     public string Thumbnail
     {
         get { return _thumbnail; }
@@ -100,7 +98,7 @@ public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
     }
 
     private string _geo = "geo";
-    [Category("Attributes")]
+    [Category("#category_geometry")]
     public string Geometry
     {
         get { return _geo; }
@@ -108,7 +106,7 @@ public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
     }
 
     private string _link = "";
-    [Category("Attributes")]
+    [Category("#category_link")]
     public string Link
     {
         get { return _link; }
@@ -116,7 +114,7 @@ public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
     }
 
     private string _subtext = "subtext";
-    [Category("Attributes")]
+    [Category("#category_subtext")]
     public string Subtext
     {
         get { return _subtext; }
@@ -124,7 +122,7 @@ public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
     }
 
     private int _rows = 5;
-    [Category("Attributes")]
+    [Category("#category_rows")]
     public int Rows
     {
         get { return _rows; }
@@ -132,8 +130,8 @@ public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
     }
 
     private int _projId = -1;
-    [DisplayName("Kartenprojektion")]
-    [Category("Koordinatensystem")]
+    [DisplayName("#proj_id")]
+    [Category("#category_proj_id")]
     //[Editor(typeof(TypeEditor.Proj4TypeEditor), typeof(TypeEditor.ITypeEditor))]
     public int ProjId
     {
@@ -142,9 +140,8 @@ public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Copyright Info")]
-    [Description("Gibt die Copyright Info an, die für diesen Dienst hinterlegt ist. Die Info muss unnter Sonstiges/Copyright definiert sein.")]
-    [Category("Allgemein")]
+    [DisplayName("#copyright_info")]
+    [Category("#category_copyright_info")]
     [Editor(typeof(TypeEditor.CopyrightInfoEditor), typeof(TypeEditor.ITypeEditor))]
     public string CopyrightInfo
     {

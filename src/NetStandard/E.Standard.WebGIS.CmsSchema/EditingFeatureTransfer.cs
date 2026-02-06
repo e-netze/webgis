@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
@@ -26,15 +26,13 @@ public class EditingFeatureTransfer : CopyableNode, ICreatable, IUI, IPersistabl
     #region Properties
 
     [Browsable(true)]
-    [DisplayName("Felder mit gleichem Namen kopieren")]
-    [Category("Allgemein")]
-    [Description("Haben der Quell und die Ziel Layer namensgleiche Felder, wird der Inhalt der Felder auf die Ziellayer übernommen")]
+    [DisplayName("#copy_attributes")]
+    [Category("#category_copy_attributes")]
     public bool CopyAttributes { get; set; }
 
     [Browsable(true)]
-    [DisplayName("Transfer Methode")]
-    [Category("Allgemein")]
-    [Description("Hier kann angegeben werden, ob die Features beim Transfer nur ins Ziel kopiert oder verschoben werden. Beim Verschieben, verschwinden die Features aus dem Editlayer.")]
+    [DisplayName("#method")]
+    [Category("#category_method")]
     public FeatureTransferMethod Method { get; set; }
 
     #endregion

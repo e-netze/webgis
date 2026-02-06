@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
@@ -47,16 +47,15 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
 
     #region Properties
 
-    [DisplayName("Minimaler Ma�stab beim Zoom To 1:")]
-    [Category("Allgemein")]
+    [DisplayName("#min_zoom_to_scale")]
+    [Category("#category_min_zoom_to_scale")]
     public double MinZoomToScale
     {
         get { return _minZoomScale; }
         set { _minZoomScale = value; }
     }
-    [DisplayName("(Leere) Suche erlauben")]
-    [Description("Gibt an, ob der Anwender etwas eingeben muss um zu suchen")]
-    [Category("Allgemein")]
+    [DisplayName("#allow_empty_search")]
+    [Category("#category_allow_empty_search")]
     public bool AllowEmptySearch
     {
         get { return _allowEmptySearch; }
@@ -64,46 +63,40 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Ergebnisvorschau Vorlage (Template)")]
-    [Category("Ergebnisvorschau")]
-    [Description("Werden mehrere Objekte bei einer Abfrage gefunden, wird zuerst eine verfachte Liste der Objekte angezeigt. Dazu wird f�r jedes Objekte ein kurzer Vorschau-Text erstellt. Dieser Text setzt sich in der Regel aus den Attributwerten der m�glichen Suchbegriffe zusammen. Ist dies f�r diese Abfrage nicht erw�nscht oder sollten andrere Attribute verwendet werden, kann hier eine Vorlage defineirt werden. Die Vorlage kann ein beliegibter Text mit Platzhaltern f�r die Attribute in eckigen Klammern sein, zB Hausnummer [HRN] in [STRASSE]. Hinweis: Es werden nur Attribute im Template �bersetzt, die auch in der Ergebnisstabelle vorkommen. F�r einen Zeilenumbruch in der Vorschau kann \\n geschreiben werden.")]
+    [DisplayName("#preview_text_template")]
+    [Category("#category_preview_text_template")]
     public string PreviewTextTemplate
     {
         get; set;
     }
 
-    [Category("Allgemein")]
-    [DisplayName("Draggable (Ziehbar)")]
-    [Description("WebGIS 5: Das Ergebnis kann aus der Liste in eine andere Anwendung (zB Datalinq) gezogen werden.")]
+    [Category("#category_draggable")]
+    [DisplayName("#draggable")]
     public bool Draggable { get; set; }
 
-    [Category("Allgemein")]
-    [DisplayName("Show Attachments")]
+    [Category("#category_show_attachments")]
+    [DisplayName("#show_attachments")]
     [AuthorizableProperty("show_attachments", false)]
     public bool ShowAttachments { get; set; }
 
-    [Category("Erweiterte Eigenschaften")]
-    [DisplayName("Distinct")]
-    [Description("Gibt es Objekte mit idententer Geometie (zB gleicher Punkt) und sind ebenso die in der Abfrage abgeholten Attributewerte ident, wird ein Objekt in der Erebnisliste nur einmal angef�hrt.")]
+    [Category("#category_distict")]
+    [DisplayName("#distict")]
     public bool Distict { get; set; }
 
-    [Category("Erweiterte Eigenschaften")]
-    [DisplayName("Union")]
-    [Description("Ergebnismarker, die in der Karte am gleiche Ort liegen (identer Punkt) werden zu einem Objekt zusammengefasst. Der Marker enth�lt in der Tabellenansicht alle betroffenen 'Records'")]
+    [Category("#category_union")]
+    [DisplayName("#union")]
     public bool Union { get; set; }
 
-    [Category("Erweiterte Eigenschaften")]
-    [DisplayName("Layer Zoomgrenzen anwenden")]
-    [Description("Eine Abfrage (Identify, Dynamischer Inhalt im aktuellen Auscchnit) wird nur durchgef�hrt, wenn sich die Karte inhalb der Zoomgrenzen des zugrunde liegenden Abfragethemas befinden.")]
+    [Category("#category_apply_zoom_limits")]
+    [DisplayName("#apply_zoom_limits")]
     public bool ApplyZoomLimits { get; set; }
 
-    [Category("Erweiterte Eigenschaften")]
-    [DisplayName("Maximale Anzahl")]
-    [Description("Maximale Anzahl an Features, die bei eine Abfrage abgeholt werden sollten. Ein Wert <= 0 gibt an, dass die maximale Anzahl von Features abgeholt wird, die vom FeatureServer bei einem Request zur�ck gegeben werden k�nnen.")]
+    [Category("#category_max_features")]
+    [DisplayName("#max_features")]
     public int MaxFeatures { get; set; }
 
-    [Category("~~Sonder")]
-    [DisplayName("Netzwerk Tracer")]
+    [Category("~~#category_network_tracer")]
+    [DisplayName("#network_tracer")]
     [Editor(typeof(TypeEditor.NetworkTracersTypeEditor), typeof(TypeEditor.ITypeEditor))]
     public string NetworkTracer
     {
@@ -114,8 +107,8 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
         }
     }
 
-    [Category("~~Erweiterte Eigenschaften (WebGIS 4)")]
-    [DisplayName("(Gdi) Properties")]
+    [Category("~~#category_gdi_props")]
+    [DisplayName("#gdi_props")]
     //[TypeConverter(typeof(ExpandableObjectConverter))]
     public GdiProperties GdiProps
     {
@@ -136,8 +129,8 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     bool _mapInfoVisible = true, _isMapInfo = false, _setVisWithTheme = false;
 
     [Browsable(true)]
-    [DisplayName("Minimaler Ma�stab 1:")]
-    [Category("~~Karten Tipps (WebGIS 4)")]
+    [DisplayName("#min_scale")]
+    [Category("~~#category_min_scale")]
     public double MinScale
     {
         get { return _minScale; }
@@ -145,8 +138,8 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Maximaler Ma�stab 1:")]
-    [Category("Karten Tipps (WebGIS 4)")]
+    [DisplayName("#max_scale")]
+    [Category("#category_max_scale")]
     public double MaxScale
     {
         get { return _maxScale; }
@@ -154,8 +147,8 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Symbol")]
-    [Category("Karten Tipps (WebGIS 4)")]
+    [DisplayName("#map_info_symbol")]
+    [Category("#category_map_info_symbol")]
     [Editor(typeof(TypeEditor.GeoRssMarkerEditor),
         typeof(TypeEditor.ITypeEditor))]
     public string MapInfoSymbol
@@ -164,24 +157,24 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
         set { _mapInfoSymbol = value; }
     }
     [Browsable(true)]
-    [DisplayName("beim Start sichtbar")]
-    [Category("Karten Tipps (WebGIS 4)")]
+    [DisplayName("#map_info_visible")]
+    [Category("#category_map_info_visible")]
     public bool MapInfoVisible
     {
         get { return _mapInfoVisible; }
         set { _mapInfoVisible = value; }
     }
     [Browsable(true)]
-    [DisplayName("Als Karten Tipp darstellen")]
-    [Category("Karten Tipps (WebGIS 4)")]
+    [DisplayName("#is_map_info")]
+    [Category("#category_is_map_info")]
     public bool IsMapInfo
     {
         get { return _isMapInfo; }
         set { _isMapInfo = value; }
     }
     [Browsable(true)]
-    [DisplayName("Mit dem Thema �ber TOC mitschalten")]
-    [Category("Karten Tipps (WebGIS 4)")]
+    [DisplayName("#set_visible_with_theme")]
+    [Category("#category_set_visible_with_theme")]
     public bool SetVisibleWithTheme
     {
         get { return _setVisWithTheme; }
@@ -407,41 +400,39 @@ public class Query : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
         }
 
         #region Properties
-        [DisplayName("Suchergebnis Darstellung")]
+        [DisplayName("#feature_table_type")]
         public FeatureTableType FeatureTableType
         {
             get { return _featureTableType; }
             set { _featureTableType = value; }
         }
 
-        [DisplayName("Abfrage nimmt an GeoJuhu teil")]
-        [Category("GeoJuhu")]
+        [DisplayName("#geo_juhu")]
+        [Category("#category_geo_juhu")]
         public bool GeoJuhu
         {
             get { return _geoJuhu; }
             set { _geoJuhu = value; }
         }
 
-        [DisplayName("GeoJuhu Schema")]
-        [Category("GeoJuhu")]
-        [Description("Hier k�nnen mehrere Schematas mit Beistrich getrennt eingeben werden. Der Wert wird nur ber�cksichtigt, wenn ein GeoJuhu Schema in der Aufruf-Url �bergeben wird. * (Stern) kann angeben werden, wenn eine Thema in jedem Schema abgefragt werden soll.")]
+        [DisplayName("#geo_juhu_schema")]
+        [Category("#category_geo_juhu_schema")]
         public string GeoJuhuSchema
         {
             get { return _geoJuhuSchema; }
             set { _geoJuhuSchema = value; }
         }
 
-        [DisplayName("Filter")]
-        [Category("Filter")]
+        [DisplayName("#filter_url")]
+        [Category("#category_filter_url")]
         [Editor(typeof(TypeEditor.SelectServiceVisFilter), typeof(TypeEditor.ITypeEditor))]
-        [Description("Eine Abfrage kann mit einem Filter verbunden werden. Bei den Abfrageergebnissen erscheint dann ein Filter-Symbol mit dem man genau dieses Feature filtern kann.")]
         public string FilterUrl
         {
             get { return _filterUrl; }
             set { _filterUrl = value; }
         }
 
-        [DisplayName("Gruppenname")]
+        [DisplayName("#query_group_name")]
         public string QueryGroupName { get; set; }
 
         [Browsable(false)]

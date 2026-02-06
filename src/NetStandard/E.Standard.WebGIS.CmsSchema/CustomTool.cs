@@ -28,24 +28,24 @@ public class CustomTool : CopyableXml, IEditable, IUI, ICreatable, IDisplayName,
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Url zum Bild")]
-    [Category("Darstellung")]
+    [DisplayName("#image_url")]
+    [Category("#category_image_url")]
     public string ImageUrl
     {
         get { return _img; }
         set { _img = value; }
     }
     [Browsable(true)]
-    [DisplayName("Url zum Bild, wenn Werkzeug aktiv ist")]
-    [Category("Darstellung")]
+    [DisplayName("#image_url_act")]
+    [Category("#category_image_url_act")]
     public string ImageUrlAct
     {
         get { return _imgAct; }
         set { _imgAct = value; }
     }
     [Browsable(true)]
-    [DisplayName("Container, in welchem das Werkzeug angezeigt wird")]
-    [Category("Darstellung")]
+    [DisplayName("#container")]
+    [Category("#category_container")]
     public string Container
     {
         get { return _container; }
@@ -53,16 +53,16 @@ public class CustomTool : CopyableXml, IEditable, IUI, ICreatable, IDisplayName,
     }
 
     [Browsable(true)]
-    [DisplayName("Werkzeug-Typ")]
-    [Category("Eigenschaften")]
+    [DisplayName("#type")]
+    [Category("#category_type")]
     public CustomToolType Type
     {
         get { return _type; }
         set { _type = value; }
     }
     [Browsable(true)]
-    [DisplayName("Werkzeug Kommando")]
-    [Category("Eigenschaften")]
+    [DisplayName("#url_command")]
+    [Category("#category_url_command")]
     public string UrlCommand
     {
         get { return _urlcommand; }
@@ -71,18 +71,16 @@ public class CustomTool : CopyableXml, IEditable, IUI, ICreatable, IDisplayName,
 
     /*
     [Browsable(true)]
-    [DisplayName("Fenster Breite")]
-    [Category("Browserfenster")]
-    [Description("Gibt die Breite des Browserfenstersn in Pixel an. Ein Wert von 0 bedeutet: Parameterter ignorieren.")]
+    [DisplayName("#width")]
+    [Category("#category_width")]
     public int Width
     {
         get { return _width; }
         set { _width = value; }
     }
     [Browsable(true)]
-    [DisplayName("Fenster Höhe")]
-    [Category("Browserfenster")]
-    [Description("Gibt die Höhe des Browserfenstersn in Pixel an. Ein Wert von 0 bedeutet: Parameterter ignorieren.")]
+    [DisplayName("#height")]
+    [Category("#category_height")]
     public int Height
     {
         get { return _height; }
@@ -90,17 +88,16 @@ public class CustomTool : CopyableXml, IEditable, IUI, ICreatable, IDisplayName,
     }
     */
 
-    [DisplayName("Browser Fenster Attribute")]
-    [Category("Browserfenster")]
+    [DisplayName("#browser_window_props")]
+    [Category("#category_browser_window_props")]
     //[TypeConverter(typeof(ExpandableObjectConverter))]
     public TableColumn.BrowserWindowProperties BrowserWindowProps
     {
         get { return _browserWindowProps; }
         set { _browserWindowProps = value; }
     }
-    [DisplayName("Ziel bei neuem Browserfenster")]
-    [Category("Browserfenster")]
-    [Description("_blank ... neues Browserfenster\n_self ... Viewerfenster (aktuelles Fenster)\nopener ... Fenster von dem webGIS aufgerufen wurde")]
+    [DisplayName("#target")]
+    [Category("#category_target")]
     public BrowserWindowTarget Target
     {
         get { return _target; }

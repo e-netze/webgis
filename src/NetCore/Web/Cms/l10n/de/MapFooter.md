@@ -1,0 +1,24 @@
+#copyright: Copyright Text
+
+#category_copyright: Copyright
+
+#copyright_link: Copyright Link
+
+#category_copyright_link: Copyright
+
+#advice: Hinweis Text
+
+#category_advice: Allgemein
+
+#logo: Url f�r Logo
+
+#category_logo: Allgemein
+
+#logo_width: Logo Breite in Pixel
+
+#category_logo_width: Allgemein
+
+#logo_height: Logo H�he in Pixel
+
+#category_logo_height: Allgemein
+

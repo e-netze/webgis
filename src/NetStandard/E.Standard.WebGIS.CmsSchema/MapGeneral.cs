@@ -28,54 +28,54 @@ public class MapGeneral : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     }
 
     #region Properties
-    [DisplayName("Suchergebnis Darstellung")]
-    [Category("Darstellung")]
+    [DisplayName("#feature_table_type")]
+    [Category("#category_feature_table_type")]
     public FeatureTableType FeatureTableType
     {
         get { return _featureTableType; }
         set { _featureTableType = value; }
     }
-    [DisplayName("Kartenprojektion")]
-    [Category("Koordinatensystem")]
+    [DisplayName("#proj_id")]
+    [Category("#category_proj_id")]
     [Editor(typeof(Proj4TypeEditor), typeof(ITypeEditor))]
     public int ProjId
     {
         get { return _projId; }
         set { _projId = value; }
     }
-    [DisplayName("Kartenprojektion (ESRI Datum)")]
-    [Category("Koordinatensystem")]
+    [DisplayName("#esri_datum")]
+    [Category("#category_esri_datum")]
     [Editor(typeof(Proj4TypeEditor), typeof(ITypeEditor))]
     public int EsriDatum
     {
         get { return _esriDatum; }
         set { _esriDatum = value; }
     }
-    [DisplayName("Name des Browserfensters (für Hotlinks)")]
-    [Category("Browserfenster")]
+    [DisplayName("#browser_window_name")]
+    [Category("#category_browser_window_name")]
     public string BrowserWindowName
     {
         get { return _browserWindowName; }
         set { _browserWindowName = value; }
     }
 
-    [DisplayName("Standardkarte für Rolle")]
-    [Category("UserManagement")]
+    [DisplayName("#default_for_role")]
+    [Category("#category_default_for_role")]
     public string DefaultForRole
     {
         get { return _defaultForRole; }
         set { _defaultForRole = value; }
     }
 
-    [DisplayName("Standardkarte für Benutzer")]
-    [Category("UserManagement")]
+    [DisplayName("#default_for_user")]
+    [Category("#category_default_for_user")]
     public string DefaultForUser
     {
         get { return _defaultForUser; }
         set { _defaultForUser = value; }
     }
-    [DisplayName("Karte als WMS exportierbar")]
-    [Category("Export")]
+    [DisplayName("#export_w_m_s")]
+    [Category("#category_export_w_m_s")]
     public bool ExportWMS
     {
         get { return _exportwms; }
@@ -83,8 +83,8 @@ public class MapGeneral : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Vorschau Bild")]
-    [Category("Allgemein")]
+    [DisplayName("#thumb_nail")]
+    [Category("#category_thumb_nail")]
     public string ThumbNail
     {
         get { return _thumbnail; }
@@ -92,8 +92,8 @@ public class MapGeneral : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Beschreibung")]
-    [Category("Allgemein")]
+    [DisplayName("#description")]
+    [Category("#category_description")]
     public string Description
     {
         get { return _description; }
@@ -101,8 +101,8 @@ public class MapGeneral : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Karten Tipps im TOC anzeigen")]
-    [Category("Allgemein")]
+    [DisplayName("#show_map_tips_toc")]
+    [Category("#category_show_map_tips_toc")]
     public bool ShowMapTipsToc
     {
         get { return _showMapTipsToc; }
@@ -110,16 +110,14 @@ public class MapGeneral : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Warning Level")]
-    [Description("Gibt an, ab wann Fehler in der Karte angezeigt werden")]
-    [Category("Diagnostics")]
+    [DisplayName("#waring_level")]
+    [Category("#category_waring_level")]
     public ServiceDiagnosticsWarningLevel WaringLevel
     {
         get; set;
     }
 
     [DisplayName("Basemap Transparenz Klassen")]
-    [Description("Gibt Transparenzwerte an, die der Anwender über das Basemap Control auswählen kann")]
     [Category("Darstellung")]
     public int[] BasemapOpacityClasses
     {

@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
@@ -25,17 +25,16 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Längeneinheit")]
-    [Category("Darstellung")]
+    [DisplayName("#unit")]
+    [Category("#category_unit")]
     public LengthUnit Unit
     {
         get { return _unit; }
         set { _unit = value; }
     }
     [Browsable(true)]
-    [DisplayName("Ausdruck")]
-    [Category("Darstellung")]
-    [Description("Hier kann ein Ausdruck angegeben werden, der die Stationierung berechnet. Der Ausdruck muss einen Parameter enthalten, der die Länge in Metern angibt. Beispiel: {0} m, {json-property1} {json-property2} ... wenn eine API abgefragt wird, können hier die JSON Parameter des Responses als Platzhalter eingesetzt werden. Zeilenumbrüche können mit \n erzwungen werden.")]
+    [DisplayName("#expression")]
+    [Category("#category_expression")]
     public string Expression
     {
         get { return _expression; }
@@ -43,16 +42,16 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
     }
     
     [Browsable(true)]
-    [DisplayName("Punkt-Linien Beziehung (SQL)")]
-    [Category("~Verknüfung mit Punkt-Linienthema")]
+    [DisplayName("#point_line_relation")]
+    [Category("~#category_point_line_relation")]
     public string PointLineRelation
     {
         get { return _pointlinerelation; }
         set { _pointlinerelation = value; }
     }
     [Browsable(true)]
-    [DisplayName("Stationierungsfeld des Punktthemas")]
-    [Category("~Verknüfung mit Punkt-Linienthema")]
+    [DisplayName("#point_stat_field")]
+    [Category("~#category_point_stat_field")]
     public string PointStatField
     {
         get { return _pointstatfield; }
@@ -60,15 +59,13 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
     }
 
     [Browsable(true)]
-    [DisplayName("Service URL")]
-    [Category("~Oder Abfrage-Service-API")]
-    [Description("Hier kann eine URL zu einem Service angegeben werden, der die Stationierung berechnet. Wird hier kein Wert angegeben, wird die Stationierung aus den Punkt- und Linienthemen berechnet. Folgende Patzhalter sind möglich: {x}, {y} ... x,y in WGS84, {x:espgCode}, {y:epsgCode} ... x,y konvertiert nach EPSG-Code, {mapscale} ... current map scale")]
+    [DisplayName("#service_url")]
+    [Category("~#category_service_url")]
     public string ServiceUrl { get; set; } = String.Empty; 
 
     [Browsable(true)]
-    [Category("Berechnung")]
-    [DisplayName("Koordinatensystem, in dem gerechnet werden soll (EPSG-Code)")]
-    [Description("Um die Genauigkeit der Ergebnisse zu gewährleisten, sollte in einer Abbildungsebene mit möglichst geringer Längenverzerrung gerechnet werden. Wird hier kein Wert oder 0 angeführt, wird in der Kartenprojektion rechnert. Das kann bei WebMercator oder geographischen Projektionen zu Verzerrungen führen. Hier ist beispielsweise ein Projeziertes Koordinatensystem wie Gauß-Krüger ideal.")]
+    [Category("#category_calc_sref_id")]
+    [DisplayName("#calc_sref_id")]
     public int CalcSrefId { get; set; }
 
     #endregion

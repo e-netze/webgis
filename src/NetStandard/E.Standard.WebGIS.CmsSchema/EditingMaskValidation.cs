@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
@@ -21,17 +21,13 @@ public class EditingMaskValidation : CopyableXml, IUI, ICreatable, IDisplayName
 
     #region Properties
 
-    [DisplayName("Field Name")]
-    [Description("Feld, das vor dem Speichern geprüft werden sollte")]
+    [DisplayName("#field_name")]
     public string FieldName { get; set; } = string.Empty;
-    [DisplayName("Operator")]
-    [Description("Methode, mit der der Feld Wert zum Validator geprüft wird: zB: Ident (=genau gleich), Equals (=gleich aber case-insensitiv), in (Feld Wert muss in der Liste der Validator Werte vorkommen), inside (einer der Feld Werte muss in einem der Validator Werte vorkommen), IN/INSIDE (wie in/inside allerderins case-sensitiv). Kommen im Feldwert oder im Validator Werte ',' oder ';' vor, werden diese als Trennzeichen verwendet und der Wert als Liste interpretiert.")]
+    [DisplayName("#operator")]
     public MaskValidationOperators Operator { get; set; }
-    [DisplayName("Validator")]
-    [Description("Wert auf den geprüft wird. Hier kann auch auf eine Liste mit Trennzeichen (, oder ;) angegeben werden. Außerdem sind Platzhalter für User-Rollen möglich: role-parameter:GEMNR")]
+    [DisplayName("#validator")]
     public string Validator { get; set; } = string.Empty;
-    [DisplayName("Message")]
-    [Description("Nachricht, die ausgeben wird, wenn Validation fehl schlägt")]
+    [DisplayName("#message")]
     public string Message { get; set; } = string.Empty;
 
     #endregion

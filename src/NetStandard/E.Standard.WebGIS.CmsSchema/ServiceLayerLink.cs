@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.WebGIS.CMS;
@@ -19,9 +19,8 @@ public class ServiceLayerLink : SchemaNodeLink, IPersistable, IEditable
 
     #region Properties
 
-    [DisplayName("Aliasname")]
-    [Description("Aliasname, der im TOC angezeigt wird")]
-    [Category("Allgemein")]
+    [DisplayName("#alias_name")]
+    [Category("#category_alias_name")]
     public string AliasName
     {
         get { return _aliasName; }
@@ -36,60 +35,52 @@ public class ServiceLayerLink : SchemaNodeLink, IPersistable, IEditable
         }
     }
 
-    [DisplayName("Sichtbar")]
-    [Description("Theme ist standardmäßig sichtbar")]
-    [Category("Allgemein")]
+    [DisplayName("#visible")]
+    [Category("#category_visible")]
     public bool Visible
     {
         get; set;
     }
-    [DisplayName("Gesperrt (Locked)")]
-    [Description("Thema ist gesperrt. Ist im TOC nicht sichtbar und kann somit nicht geschalten werden.")]
-    [Category("Allgemein")]
+    [DisplayName("#locked")]
+    [Category("#category_locked")]
     public bool Locked
     {
         get; set;
     }
 
-    [DisplayName("In der Legende anzeigen")]
-    [Category("Allgemein")]
+    [DisplayName("#legend")]
+    [Category("#category_legend")]
     public bool Legend
     {
         get; set;
     }
 
-    [DisplayName("Aliasname für Legende")]
-    [Category("Allgemein")]
-    [Description("Gibt den Anzeigenamen für dieses Thema in der Legende an.")]
+    [DisplayName("#legend_aliasname")]
+    [Category("#category_legend_aliasname")]
     public string LegendAliasname { get; set; }
 
-    [DisplayName("Metadaten Link")]
-    [Category("~Metadaten")]
-    [Description("Nur wenn Darstellungsvarianten = 'auto' für den Dienst gilt.Wird im Viewer als [i] Button dargestellt und verwei�t auf angef�hten Link. Im Link k�nnen die Platzhalter f�r die Karte, wie bei benutzerdefnierten Werkzeugen verwendet weden: {map.bbox}, {map.centerx}, {map.centery}, {map.scale}")]
+    [DisplayName("#metadata_link")]
+    [Category("~#category_metadata_link")]
 
     public string MetadataLink
     {
         get; set;
     }
 
-    [DisplayName("Metadaten Target")]
-    [Category("Metadaten")]
-    [Description("Gibt an, wie der Link geöffnet wird (tab => neuer Tab, dialog => in Dialogfenster im Viewer).")]
+    [DisplayName("#metadata_target")]
+    [Category("#category_metadata_target")]
     public BrowserWindowTarget2 MetadataTarget { get; set; }
 
-    [DisplayName("Metadaten Titel")]
-    [Category("Metadaten")]
-    [Description("Hier kann ein Titel für den Metadaten Button angeben werden.")]
+    [DisplayName("#metadata_title")]
+    [Category("#category_metadata_title")]
     public string MetadataTitle { get; set; }
 
-    [DisplayName("Metadaten Button Style")]
-    [Category("Metadaten")]
-    [Description("Gibt an, wie der Button dargestellt wird: [i] Button oder auffälliger Link Button mit Titel.")]
+    [DisplayName("#metadata_link_button_style")]
+    [Category("#category_metadata_link_button_style")]
     public MetadataButtonStyle MetadataLinkButtonStyle { get; set; }
 
-    [DisplayName("Metadaten Format")]
-    [Description("application/xml oder text/xml oder text/html")]
-    [Category("Metadata")]
+    [DisplayName("#meta_data_format")]
+    [Category("#category_meta_data_format")]
     [Browsable(false)]  // unsed
     public string MetaDataFormat
     {
@@ -117,17 +108,16 @@ public class ServiceLayerLink : SchemaNodeLink, IPersistable, IEditable
     //    get;set;
     //}
 
-    [DisplayName("Ogc Id")]
-    [Description("Id für dieses Thema, das für WMS export verwendet wird. Wenn hier nichts angeben wird, enspricht diese Id der Original Id den Service.")]
-    [Category("~WebGIS 5 OGC")]
+    [DisplayName("#ogc_id")]
+    [Category("~#category_ogc_id")]
     public string OgcId
     {
         get; set;
     }
 
-    [DisplayName("Zusammenfassung (abstract)")]
+    [DisplayName("#abstract")]
     [Description("")]
-    [Category("~WebGIS 5 OGC")]
+    [Category("~#category_abstract")]
     [Editor(typeof(TypeEditor.MultilineStringEditor), typeof(TypeEditor.ITypeEditor))]
     public string Abstract
     {

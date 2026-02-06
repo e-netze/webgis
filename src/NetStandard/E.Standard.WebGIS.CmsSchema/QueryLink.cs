@@ -15,16 +15,16 @@ public class QueryLink : SchemaNodeLink, IEditable
     private string _filterUrl = String.Empty;
 
     #region Properties
-    [DisplayName("Suchergebnis Darstellung")]
-    [Category("Darstellung")]
+    [DisplayName("#feature_table_type")]
+    [Category("#category_feature_table_type")]
     public FeatureTableType FeatureTableType
     {
         get { return _featureTableType; }
         set { _featureTableType = value; }
     }
 
-    [DisplayName("Abfrage nimmt an GeoJuhu teil")]
-    [Category("GeoJuhu")]
+    [DisplayName("#geo_juhu")]
+    [Category("#category_geo_juhu")]
     [Editor(typeof(TypeEditor.RegExTypeEditor), typeof(TypeEditor.ITypeEditor))]
     public bool GeoJuhu
     {
@@ -32,19 +32,17 @@ public class QueryLink : SchemaNodeLink, IEditable
         set { _geoJuhu = value; }
     }
 
-    [DisplayName("GeoJuhu Schema")]
-    [Category("GeoJuhu")]
-    [Description("Hier können mehrere Schematas mit Beistrich getrennt eingeben werden. Der Wert wird nur berücksichtigt, wenn ein GeoJuhu Schema in der Aufruf-Url übergeben wird. * (Stern) kann angeben werden, wenn eine Thema in jedem Schema abgefragt werden soll.")]
+    [DisplayName("#geo_juhu_schema")]
+    [Category("#category_geo_juhu_schema")]
     public string GeoJuhuSchema
     {
         get { return _geoJuhuSchema; }
         set { _geoJuhuSchema = value; }
     }
 
-    [DisplayName("Filter Url")]
-    [Category("Filter")]
+    [DisplayName("#filter_url")]
+    [Category("#category_filter_url")]
     [Editor(typeof(TypeEditor.SelectMapVisFiler), typeof(TypeEditor.ITypeEditor))]
-    [Description("Eine Abfrage kann mit einem Filter verbunden werden. Bei den Abfrageergebnissen erscheint dann ein Filter-Symbol mit dem man genau dieses Feature filtern kann.")]
     public string FilterUrl
     {
         get { return _filterUrl; }

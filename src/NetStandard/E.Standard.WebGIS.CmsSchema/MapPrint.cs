@@ -27,80 +27,80 @@ public class MapPrintFormats : IEditable
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("A4 Hochformat")]
-    [Category("Papierformate")]
+    [DisplayName("#a4_portrait")]
+    [Category("#category_a4_portrait")]
     public bool A4Portrait
     {
         get { return _a4port; }
         set { _a4port = value; }
     }
     [Browsable(true)]
-    [DisplayName("A4 Querformat")]
-    [Category("Papierformate")]
+    [DisplayName("#a4_landscape")]
+    [Category("#category_a4_landscape")]
     public bool A4Landscape
     {
         get { return _a4land; }
         set { _a4land = value; }
     }
     [Browsable(true)]
-    [DisplayName("A3 Hochformat")]
-    [Category("Papierformate")]
+    [DisplayName("#a3_portrait")]
+    [Category("#category_a3_portrait")]
     public bool A3Portrait
     {
         get { return _a3port; }
         set { _a3port = value; }
     }
     [Browsable(true)]
-    [DisplayName("A3 Querformat")]
-    [Category("Papierformate")]
+    [DisplayName("#a3_landscape")]
+    [Category("#category_a3_landscape")]
     public bool A3Landscape
     {
         get { return _a3land; }
         set { _a3land = value; }
     }
     [Browsable(true)]
-    [DisplayName("A2 Hochformat")]
-    [Category("Papierformate")]
+    [DisplayName("#a2_portrait")]
+    [Category("#category_a2_portrait")]
     public bool A2Portrait
     {
         get { return _a2port; }
         set { _a2port = value; }
     }
     [Browsable(true)]
-    [DisplayName("A2 Querformat")]
-    [Category("Papierformate")]
+    [DisplayName("#a2_landscape")]
+    [Category("#category_a2_landscape")]
     public bool A2Landscape
     {
         get { return _a2land; }
         set { _a2land = value; }
     }
     [Browsable(true)]
-    [DisplayName("A1 Hochformat")]
-    [Category("Papierformate")]
+    [DisplayName("#a1_portrait")]
+    [Category("#category_a1_portrait")]
     public bool A1Portrait
     {
         get { return _a1port; }
         set { _a1port = value; }
     }
     [Browsable(true)]
-    [DisplayName("A1 Querformat")]
-    [Category("Papierformate")]
+    [DisplayName("#a1_landscape")]
+    [Category("#category_a1_landscape")]
     public bool A1Landscape
     {
         get { return _a1land; }
         set { _a1land = value; }
     }
     [Browsable(true)]
-    [DisplayName("A0 Hochformat")]
-    [Category("Papierformate")]
+    [DisplayName("#a0_portrait")]
+    [Category("#category_a0_portrait")]
     public bool A0Portrait
     {
         get { return _a0port; }
         set { _a0port = value; }
     }
     [Browsable(true)]
-    [DisplayName("A0 Querformat")]
-    [Category("Papierformate")]
+    [DisplayName("#a0_landscape")]
+    [Category("#category_a0_landscape")]
     public bool A0Landscape
     {
         get { return _a0land; }
@@ -108,32 +108,32 @@ public class MapPrintFormats : IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("A4 x A3")]
-    [Category("Mischformate")]
+    [DisplayName("#a4_a3")]
+    [Category("#category_a4_a3")]
     public bool A4A3
     {
         get { return _a4a3; }
         set { _a4a3 = value; }
     }
     [Browsable(true)]
-    [DisplayName("A4 x A2")]
-    [Category("Mischformate")]
+    [DisplayName("#a4_a2")]
+    [Category("#category_a4_a2")]
     public bool A4A2
     {
         get { return _a4a2; }
         set { _a4a2 = value; }
     }
     [Browsable(true)]
-    [DisplayName("A4 x A1")]
-    [Category("Mischformate")]
+    [DisplayName("#a4_a1")]
+    [Category("#category_a4_a1")]
     public bool A4A1
     {
         get { return _a4a1; }
         set { _a4a1 = value; }
     }
     [Browsable(true)]
-    [DisplayName("A4 x A0")]
-    [Category("Mischformate")]
+    [DisplayName("#a4_a0")]
+    [Category("#category_a4_a0")]
     public bool A4A0
     {
         get { return _a4a0; }
@@ -141,16 +141,16 @@ public class MapPrintFormats : IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("A3 x A2")]
-    [Category("Mischformate")]
+    [DisplayName("#a3_a2")]
+    [Category("#category_a3_a2")]
     public bool A3A2
     {
         get { return _a3a2; }
         set { _a3a2 = value; }
     }
     [Browsable(true)]
-    [DisplayName("A3 x A1")]
-    [Category("Mischformate")]
+    [DisplayName("#a3_a1")]
+    [Category("#category_a3_a1")]
     public bool A3A1
     {
         get { return _a3a1; }
@@ -158,8 +158,8 @@ public class MapPrintFormats : IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("A2 x A1")]
-    [Category("Mischformate")]
+    [DisplayName("#a2_a1")]
+    [Category("#category_a2_a1")]
     public bool A2A1
     {
         get { return _a2a1; }

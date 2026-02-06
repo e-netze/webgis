@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
@@ -39,8 +39,8 @@ public class Presentation : CopyableXml, ICreatable, IEditable, IUI, IDisplayNam
     #region Properties
 
     [Browsable(true)]
-    [DisplayName("Sichtbare Layer")]
-    [Category("Allgemein")]
+    [DisplayName("#layer_names")]
+    [Category("#category_layer_names")]
     [Editor(typeof(TypeEditor.SelectLayersEditor), typeof(TypeEditor.ITypeEditor))]
     virtual public string LayerNames
     {
@@ -55,8 +55,8 @@ public class Presentation : CopyableXml, ICreatable, IEditable, IUI, IDisplayNam
     }
 
     [Browsable(true)]
-    [DisplayName("Vorschau Bild")]
-    [Category("Allgemein")]
+    [DisplayName("#thumb_nail")]
+    [Category("#category_thumb_nail")]
     public string ThumbNail
     {
         get { return _thumbnail; }
@@ -64,9 +64,8 @@ public class Presentation : CopyableXml, ICreatable, IEditable, IUI, IDisplayNam
     }
 
     [Browsable(true)]
-    [DisplayName("Beschreibung")]
-    [Category("Allgemein")]
-    [Description("Beschreibung der Darstellungsvariante. Geben Sie in dieses Feld '#' ein, um automatisch als Beschreibung die betroffenen Layer aufzulisten.")]
+    [DisplayName("#description")]
+    [Category("#category_description")]
     public string Description
     {
         get { return _description; }
@@ -87,8 +86,8 @@ public class Presentation : CopyableXml, ICreatable, IEditable, IUI, IDisplayNam
         }
     }
 
-    [Category("~(WebGIS 4) Nur wenn Dienst mit Gdi verwendet wird")]
-    [DisplayName("Bei Basemap verwenden")]
+    [Category("~#category_use_for_basemap")]
+    [DisplayName("#use_for_basemap")]
     public bool UseForBasemap
     {
         get { return _useWithBasemap; }
@@ -252,47 +251,45 @@ public class Presentation : CopyableXml, ICreatable, IEditable, IUI, IDisplayNam
             set { _gdi_mode = value; }
         }
         [Browsable(true)]
-        [Description("Gibt an, was von der Darstellungsvariante betroffen sein soll. Der jeweilige Dienst (service) oder die gesamte Karte (map). F�r Darstellungsvarianten mit Checkbox ist dieser Wert nicht relevant, da dort nur die angef�hrten Themen geschalten werden.")]
         public PresentationAffecting GdiAffecting
         {
             get { return _gdi_affecting; }
             set { _gdi_affecting = value; }
         }
 
-        [Category("Gruppe")]
+        [Category("#category_gdi_group_name")]
         public string GdiGroupName
         {
             get { return _gdi_groupname; }
             set { _gdi_groupname = value; }
         }
-        [Category("Gruppe")]
+        [Category("#category_gdi_group_display_style")]
         public PresentationGroupStyle GdiGroupDisplayStyle
         {
             get { return _gdi_groupstyle; }
             set { _gdi_groupstyle = value; }
         }
-        [Category("Gruppe")]
-        [DisplayName("Sichtbar, wenn dieser Dienst in Karte")]
+        [Category("#category_visible_with_service")]
+        [DisplayName("#visible_with_service")]
         public bool VisibleWithService
         {
             get { return _visWithService; }
             set { _visWithService = value; }
         }
-        [Category("Gruppe")]
-        [DisplayName("Sichtbar, wenn einer dieser Dienste in der Karte vorkommt")]
-        [Description("Liste der Service-Urls mit Beistrich getrennt")]
+        [Category("#category_visible_with_one_of_services")]
+        [DisplayName("#visible_with_one_of_services")]
         public string VisibleWithOneOfServices { get; set; }
 
-        [Category("Container")]
-        [DisplayName("Default f�r Container")]
+        [Category("#category_is_container_default")]
+        [DisplayName("#is_container_default")]
         public bool IsContainerDefault
         {
             get { return _gdi_isContainerDefault; }
             set { _gdi_isContainerDefault = value; }
         }
 
-        [Category("Container")]
-        [DisplayName("Container Url")]
+        [Category("#category_container_url")]
+        [DisplayName("#container_url")]
         [Editor(typeof(TypeEditor.ContainerEditor), typeof(TypeEditor.ITypeEditor))]
         public string ContainerUrl
         {
@@ -399,8 +396,8 @@ public class PresentationForCollection : Presentation
     #region Properties
 
     [Browsable(true)]
-    [DisplayName("Sichtbar Layer")]
-    [Category("Anzeige")]
+    [DisplayName("#layer_names")]
+    [Category("#category_layer_names")]
     [Editor(typeof(TypeEditor.SelectLayersForCollectionEditor), typeof(TypeEditor.ITypeEditor))]
     override public string LayerNames
     {
@@ -436,37 +433,32 @@ public class PresentationGroupGdi : NameUrl, IUI, ICreatable, IDisplayName, IEdi
     }
 
     [Browsable(true)]
-    [DisplayName("Sichtbar")]
-    [Category("Allgemein")]
-    [Description("Darstellungsvariantengruppe ist f�r den Anwender sichtar/schaltbar")]
+    [DisplayName("#visible")]
+    [Category("#category_visible")]
     public bool Visible
     {
         get { return _visible; }
         set { _visible = value; }
     }
 
-    [DisplayName("Metadaten Link")]
-    [Category("Metadaten")]
-    [Description("Wird im Viewer als [i] Button dargestellt und verwei�t auf angef�hten Link. Im Link k�nnen die Platzhalter f�r die Karte, wie bei benutzerdefnierten Werkzeugen verwendet weden: {map.bbox}, {map.centerx}, {map.centery}, {map.scale}")]
+    [DisplayName("#metadata_link")]
+    [Category("#category_metadata_link")]
 
     public string MetadataLink
     {
         get; set;
     }
 
-    [DisplayName("Metadaten Target")]
-    [Category("Metadaten")]
-    [Description("Gibt an, wie der Link ge�ffnet wird (tab => neuer Tab, dialog => in Dialogfenster im Viewer).")]
+    [DisplayName("#metadata_target")]
+    [Category("#category_metadata_target")]
     public BrowserWindowTarget2 MetadataTarget { get; set; }
 
-    [DisplayName("Metadaten Titel")]
-    [Category("Metadaten")]
-    [Description("Hier kann ein Titel f�r den Metadaten Button angeben werden.")]
+    [DisplayName("#metadata_title")]
+    [Category("#category_metadata_title")]
     public string MetadataTitle { get; set; }
 
-    [DisplayName("Metadaten Button Style")]
-    [Category("Metadaten")]
-    [Description("Gibt an, wie der Button dargestellt wird: [i] Button oder auff�lliger Link Button mit Titel.")]
+    [DisplayName("#metadata_link_button_style")]
+    [Category("#category_metadata_link_button_style")]
     public MetadataButtonStyle MetadataLinkButtonStyle { get; set; }
 
     #endregion
@@ -559,8 +551,8 @@ public class PresentationGroup : PresentationGroupGdi
 {
     private string _containerUrl = String.Empty;
 
-    [Category("Container")]
-    [DisplayName("Container Name")]
+    [Category("#category_container_url")]
+    [DisplayName("#container_url")]
     [Editor(typeof(TypeEditor.ContainerEditor), typeof(TypeEditor.ITypeEditor))]
     public string ContainerUrl
     {
@@ -604,7 +596,6 @@ public class PresentationLinkGdi : SchemaNodeLink, IEditable, IDisplayName
     }
 
     [Browsable(true)]
-    [Description("Gibt an, was von der Darstellungsvariante betroffen sein soll. Der jeweilige Dienst (service) oder die gesamte Karte (map). F�r Darstellungsvarianten mit Checkbox ist dieser Wert nicht relevant, da dort nur die angef�hrten Themen geschalten werden.")]
     public PresentationAffecting Affecting
     {
         get { return _affecting; }
@@ -612,9 +603,8 @@ public class PresentationLinkGdi : SchemaNodeLink, IEditable, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Sichtbar")]
-    [Category("Sichtbarkeit")]
-    [Description("Darstellungsvariante ist f�r den Anwender sichtar/schaltbar")]
+    [DisplayName("#visible")]
+    [Category("#category_visible")]
     public bool Visible
     {
         get { return _visible; }
@@ -622,59 +612,51 @@ public class PresentationLinkGdi : SchemaNodeLink, IEditable, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Sichtbar, falls Client")]
-    [Category("Sichtbarkeit")]
-    [Description("Hier kann eingeschr�nkt werden, ob eine Darstellungsvariante nur auf einem bestimmten Endger�t angezeigt wird.")]
+    [DisplayName("#client_visibility")]
+    [Category("#category_client_visibility")]
     public ClientVisibility ClientVisibility { get; set; }
 
-    [Category("Container")]
-    [DisplayName("Default f�r Container")]
+    [Category("#category_is_container_default")]
+    [DisplayName("#is_container_default")]
     public bool IsContainerDefault
     {
         get { return _isContainerDefault; }
         set { _isContainerDefault = value; }
     }
 
-    [Category("Sichtbarkeit")]
-    [DisplayName("Sichtbar, wenn dieser Dienst in Karte")]
-    [Description("Die Anzeige einer Darstellungsvariante machte nicht immer Sinn. M�chte man zB beim Einschalten einer Darstellungsvariante (zB Naturbestand) Themen aus einem anderen Dienst (zB Kataster) ausschalten, hat es keinen Sinn, wenn die Container angezeigt wird, wenn nur der Kataster Dienste in einer Karte vorkommt. F�r diesen Fall kann man hier diese Option ausschalten. Die Eigentliche Gruppe wird dann nur angezeigt, wenn sich auch der Dienst (zB Naturbestand) in der Karte eingebunden ist.")]
+    [Category("#category_visible_with_service")]
+    [DisplayName("#visible_with_service")]
     virtual public bool VisibleWithService
     {
         get { return _visWithService; }
         set { _visWithService = value; }
     }
-    [Category("Sichtbarkeit")]
-    [DisplayName("Sichtbar, wenn einer dieser Dienste in der Karte vorkommt")]
-    [Description("Liste der Service-Urls mit Beistrich getrennt")]
+    [Category("#category_visible_with_one_of_services")]
+    [DisplayName("#visible_with_one_of_services")]
     public string VisibleWithOneOfServices { get; set; }
 
-    [DisplayName("Metadaten Link")]
-    [Category("Metadaten")]
-    [Description("Wird im Viewer als [i] Button dargestellt und verwei�t auf angef�hten Link. Im Link k�nnen die Platzhalter f�r die Karte, wie bei benutzerdefnierten Werkzeugen verwendet weden: {map.bbox}, {map.centerx}, {map.centery}, {map.scale}")]
+    [DisplayName("#metadata_link")]
+    [Category("#category_metadata_link")]
 
     public string MetadataLink
     {
         get; set;
     }
 
-    [DisplayName("Metadaten Target")]
-    [Category("Metadaten")]
-    [Description("Gibt an, wie der Link ge�ffnet wird (tab => neuer Tab, dialog => in Dialogfenster im Viewer).")]
+    [DisplayName("#metadata_target")]
+    [Category("#category_metadata_target")]
     public BrowserWindowTarget2 MetadataTarget { get; set; }
 
-    [DisplayName("Metadaten Titel")]
-    [Category("Metadaten")]
-    [Description("Hier kann ein Titel f�r den Metadaten Button angeben werden.")]
+    [DisplayName("#metadata_title")]
+    [Category("#category_metadata_title")]
     public string MetadataTitle { get; set; }
 
-    [DisplayName("Metadaten Button Style")]
-    [Category("Metadaten")]
-    [Description("Gibt an, wie der Button dargestellt wird: [i] Button oder auff�lliger Link Button mit Titel.")]
+    [DisplayName("#metadata_link_button_style")]
+    [Category("#category_metadata_link_button_style")]
     public MetadataButtonStyle MetadataLinkButtonStyle { get; set; }
 
-    [DisplayName("Gruppierung")]
-    [Category("~User Interface")]
-    [Description("Der Darstellungsvarianten Baum besteht aus Container (�bergeordnetes Element) und den eigentlichen Darstellungsvarianten, die sich wiederum in einer (aufklappbaren) Gruppe befinden k�nnen. Mehre Ebenen werden standardm��ig nicht angeboten, damit der Anwender nicht zu viele Ebenen klicken muss. Eine weiter Ebene wird darum hier in der Oberfl�che nicht angeboten. Allerdings gibt es immer wieder Ausnahmen, bei der eine weitere Ebene die Benutzerelemente im Viewer schlanker und einfache machen kann. F�r diese Ausnahmen ist es m�chglich, hier noch eine weiter Gruppierung anzugeben. Der hier angegebene Name entspricht dem Namen einer weiteren aufklappbaren Gruppe, die im Darstellungsvarianten Baum dargestellt wird. Mehre Darstellungsvarianten in der aktuellen Ebnen k�nnen hier den selben Gruppennamen aufweisen und werden unter dieser Gruppe angezeigt. Achtung: der hier angef�hrte Wert sollte in der Regel leer sein, au�er eine weiter Gruppierung bringt f�r die Bedienung Vorteile. Der hier eingetrage Wert wird sp�ter nur f�r Darstellungsvarianten ber�cksichtigit, die sich bereits in der aufklappbaren Gruppe befinden. Befindet sich die Darstellungsvariante in der obersten Ebene des Containers, bleibit dieser Wert unber�cksichtigt. Die Weg ist hier eine Gruppe zu erstellen und die Darstellungsvariante dort abzulegen! Es k�nnen mehrere Ebenen angegeben werden. Das Trennzeichen ist ein Schr�gstrich (/). Solle ein '/' als Text vorkommen ist dieser mittels '\\/ zu kodieren.'")]
+    [DisplayName("#u_i_group_name")]
+    [Category("~#category_u_i_group_name")]
     public string UIGroupName { get; set; }
 
     //[Browsable(true)]
@@ -762,8 +744,8 @@ public class PresentationLink : PresentationLinkGdi
 {
     private string _containerUrl = String.Empty;
 
-    [Category("Container")]
-    [DisplayName("Container Name")]
+    [Category("#category_container_url")]
+    [DisplayName("#container_url")]
     [Editor(typeof(TypeEditor.ContainerEditor), typeof(TypeEditor.ITypeEditor))]
     public string ContainerUrl
     {
@@ -804,28 +786,24 @@ public class PresentationThemeLinkGdi : SchemaNodeLink, IEditable
     #region Properties
 
     [Browsable(true)]
-    [DisplayName("Sichtbar")]
-    [Category("Allgemein")]
-    [Description("Thema ist beim start eingeschalten")]
+    [DisplayName("#checked")]
+    [Category("#category_checked")]
     public bool Checked { get; set; }
 
     [Browsable(true)]
-    [DisplayName("Name")]
-    [Category("Allgemein")]
-    [Description("Name des Themas bei den Darstellungsvarianten")]
+    [DisplayName("#name")]
+    [Category("#category_name")]
     public string Name { get; set; }
 
-    [DisplayName("Metadaten Link")]
-    [Category("Metadaten")]
-    [Description("Wird im Viewer als [i] Button dargestellt und verwei�t auf angef�hten Link. Im Link k�nnen die Platzhalter f�r die Karte, wie bei benutzerdefnierten Werkzeugen verwendet weden: {map.bbox}, {map.centerx}, {map.centery}, {map.scale}")]
+    [DisplayName("#metadata_link")]
+    [Category("#category_metadata_link")]
     public string MetadataLink
     {
         get; set;
     }
 
-    [DisplayName("Metadaten Target")]
-    [Category("Metadaten")]
-    [Description("Gibt an, wie der Link ge�ffnet wird (tab => neuer Tab, dialog => in Dialogfenster im Viewer).")]
+    [DisplayName("#metadata_target")]
+    [Category("#category_metadata_target")]
     public BrowserWindowTarget2 MetadataTarget { get; set; }
 
     public override void Load(IStreamDocument stream)

@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
@@ -48,33 +48,30 @@ public class ArcServerImageServerService : CopyableNode, IAuthentification, ICre
 
     #region Properties
 
-    [DisplayName("Darstellungsvariaten bereitstellen")]
-    [Description("Darastellungsvarianten werden nicht mehr parametriert, sondern werden dynamisch aus dem TOC des Dienstes erstellt. Das Level gibt an, bis zu welcher Ebene Untergruppen erstellt werden. Layer unterhalb des maximalen Levels werden zu einer Checkbox-Darstellungsvariante zusammengeasst.")]
+    [DisplayName("#dynamic_presentations")]
     public WebMapping.Core.ServiceDynamicPresentations DynamicPresentations { get; set; }
-    [DisplayName("Abfragen bereitstellen")]
-    [Description("Abfragen werden nicht mehr parametriert, sondern werden zur Laufzeit für alle (Feature) Layer eine Abfrage erstellt (ohne Suchbegriffe, nur Identify)")]
+    [DisplayName("#dynamic_queries")]
     public WebMapping.Core.ServiceDynamicQueries DynamicQueries { get; set; }
 
-    [DisplayName("Service-Typ")]
-    [Description("Watermark Services werden immer ganz oben gezeichnet und können vom Anwender nicht transparent geschalten oder ausgelendet werden. Watermark Services können neben Wasserzeichen auch Polygondecker enthalten.")]
+    [DisplayName("#service_type")]
     public WebMapping.Core.ImageServiceType ServiceType { get; set; }
 
-    [DisplayName("Karten Server")]
-    [Category("Service")]
+    [DisplayName("#server")]
+    [Category("#category_server")]
     public string Server
     {
         get { return _server; }
         set { _server = value; }
     }
-    [DisplayName("Karten Dienst")]
-    [Category("Service")]
+    [DisplayName("#service")]
+    [Category("#category_service")]
     public string Service
     {
         get { return _service; }
         set { _service = value; }
     }
-    [DisplayName("Karten Dienst Url")]
-    [Category("Service")]
+    [DisplayName("#service_url")]
+    [Category("#category_service_url")]
     public string ServiceUrl
     {
         get { return _serviceUrl; }
@@ -83,16 +80,16 @@ public class ArcServerImageServerService : CopyableNode, IAuthentification, ICre
 
 
 
-    [DisplayName("Username")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#username")]
+    [Category("#category_username")]
     public string Username
     {
         get { return _user; }
         set { _user = value; }
     }
 
-    [DisplayName("Password")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#password")]
+    [Category("#category_password")]
     [PasswordPropertyText(true)]
     public string Password
     {
@@ -100,89 +97,86 @@ public class ArcServerImageServerService : CopyableNode, IAuthentification, ICre
         set { _pwd = value; }
     }
 
-    [DisplayName("Token")]
-    [Category("Anmeldungs-Token")]
+    [DisplayName("#token")]
+    [Category("#category_token")]
     [PasswordPropertyText(true)]
     [Editor(typeof(TypeEditor.TokenAuthentificationEditor), typeof(TypeEditor.ITypeEditor))]
     public string Token { get; set; }
 
-    [Category("Image Server Properties")]
+    [Category("#category_image_format")]
     public ArcIS_ImageFormat ImageFormat
     {
         get { return _imageFormat; }
         set { _imageFormat = value; }
     }
 
-    [Category("Image Server Properties")]
+    [Category("#category_pixel_type")]
     public ArcIS_PixelType PixelType
     {
         get { return _pixelType; }
         set { _pixelType = value; }
     }
 
-    [Category("Image Server Properties")]
+    [Category("#category_no_data")]
     public string NoData
     {
         get { return _nodata; }
         set { _nodata = value; }
     }
 
-    [Category("Image Server Properties")]
+    [Category("#category_no_data_interpretation")]
     public ArcIS_NoDataInterpretation NoDataInterpretation
     {
         get { return _nodataInterpretation; }
         set { _nodataInterpretation = value; }
     }
 
-    [Category("Image Server Properties")]
+    [Category("#category_interpolation")]
     public ArcIS_Interpolation Interpolation
     {
         get { return _interpolation; }
         set { _interpolation = value; }
     }
 
-    [Category("Image Server Properties")]
+    [Category("#category_compression_quality")]
     public string CompressionQuality
     {
         get { return _compressQaulity; }
         set { _compressQaulity = value; }
     }
 
-    [Category("Image Server Properties")]
+    [Category("#category_band_i_ds")]
     public string BandIDs
     {
         get { return _bandIDs; }
         set { _bandIDs = value; }
     }
 
-    [Category("Image Server Properties")]
+    [Category("#category_mosaic_rule")]
     public string MosaicRule
     {
         get { return _mosaicRule; }
         set { _mosaicRule = value; }
     }
 
-    [Category("Image Server Properties")]
-    [DisplayName("RenderingRule (ExportImage/Legend)")]
-    [Description("Diese RenderingRule wird für die Darstellung des Dienstes und der Legende verwendet")]
+    [Category("#category_rendering_rule")]
+    [DisplayName("#rendering_rule")]
     public string RenderingRule
     {
         get;
         set;
     }
 
-    [Category("Image Server Properties")]
-    [DisplayName("RenderingRule (Identify)")]
-    [Description("Diese RenderingRule wird beim Identify verwendet. Gibt es für diese RenderingRule auch einen RasterAttributeTable, wird dieser zum bestimmen des angezeigten Wertes verwendet.")]
+    [Category("#category_rendering_rule_identify")]
+    [DisplayName("#rendering_rule_identify")]
     public string RenderingRuleIdentify
     {
         get;
         set;
     }
 
-    [Category("Image Server Identify")]
-    [DisplayName("Pixel Aliasname")]
-    [Description("Wird ein Identify auf den Dienst ausgeführt wird beim Ergebnis statt 'Pixel' dieser Wert in der Ergbnisstabelle angezeigt. Dies sollte ein Name sein, der das Ergebnis genauer beschreibt, zB Höhe [m]")]
+    [Category("#category_pixel_aliasname")]
+    [DisplayName("#pixel_aliasname")]
     public string PixelAliasname
     {
         get; set;

@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
@@ -21,20 +21,20 @@ public class EditingFieldCategory : NameUrl, IUI, ICreatable, IDisplayName, IEdi
 
     public bool IsDefault { get; set; }
 
-    [Category("~Erweiterte Collector Eigenschaften (Schnellsuche)")]
-    [DisplayName("Schnellsuche Service")]
+    [Category("~#category_quick_search_service")]
+    [DisplayName("#quick_search_service")]
     public string QuickSearchService { get; set; }
 
-    [Category("~Erweiterte Collector Eigenschaften (Schnellsuche)")]
-    [DisplayName("Schnellsuche Categorie")]
+    [Category("~#category_quick_search_category")]
+    [DisplayName("#quick_search_category")]
     public string QuickSearchCategory { get; set; }
 
-    [Category("~Erweiterte Collector Eigenschaften (Schnellsuche)")]
-    [DisplayName("Schnellsuche Platzhalter")]
+    [Category("~#category_quick_search_placeholder")]
+    [DisplayName("#quick_search_placeholder")]
     public string QuickSearchPlaceholder { get; set; }
 
-    [Category("~Erweiterte Collector Eigenschaften (Schnellsuche)")]
-    [DisplayName("Schnellsuche setzt Geometrie")]
+    [Category("~#category_quick_search_set_geometry")]
+    [DisplayName("#quick_search_set_geometry")]
     public bool QuickSearchSetGeometry { get; set; }
 
     #endregion

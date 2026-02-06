@@ -21,7 +21,7 @@ class MouseOverLink : SchemaNodeLink, IEditable
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Minimaler Maßstab 1:")]
+    [DisplayName("#min_scale")]
     public double MinScale
     {
         get { return _minScale; }
@@ -29,7 +29,7 @@ class MouseOverLink : SchemaNodeLink, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Maximaler Maßstab 1:")]
+    [DisplayName("#max_scale")]
     public double MaxScale
     {
         get { return _maxScale; }
@@ -37,8 +37,7 @@ class MouseOverLink : SchemaNodeLink, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Mouseover anwenden, wenn")]
-    [Description("Gibt an, ob Mouseover angezeigt wird, wenn das jeweilige Thema in der Karte sichtbar ist oder die Abfrage (falls in der Karte vorhanden) Abfragethema ist.")]
+    [DisplayName("#mode")]
     public MouseOverMode Mode
     {
         get { return _mode; }
@@ -46,16 +45,16 @@ class MouseOverLink : SchemaNodeLink, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Als Karten Tipp darstellen")]
-    [Category("Karten Tipps")]
+    [DisplayName("#is_map_info")]
+    [Category("#category_is_map_info")]
     public bool IsMapInfo
     {
         get { return _isMapInfo; }
         set { _isMapInfo = value; }
     }
     [Browsable(true)]
-    [DisplayName("Symbol")]
-    [Category("Karten Tipps")]
+    [DisplayName("#map_info_symbol")]
+    [Category("#category_map_info_symbol")]
     [Editor(typeof(TypeEditor.GeoRssMarkerEditor),
         typeof(TypeEditor.ITypeEditor))]
     public string MapInfoSymbol
@@ -64,16 +63,16 @@ class MouseOverLink : SchemaNodeLink, IEditable
         set { _mapInfoSymbol = value; }
     }
     [Browsable(true)]
-    [DisplayName("beim Start sichtbar")]
-    [Category("Karten Tipps")]
+    [DisplayName("#map_info_visible")]
+    [Category("#category_map_info_visible")]
     public bool MapInfoVisible
     {
         get { return _mapInfoVisible; }
         set { _mapInfoVisible = value; }
     }
     [Browsable(true)]
-    [DisplayName("Mit dem Thema über TOC mitschalten")]
-    [Category("Karten Tipps")]
+    [DisplayName("#set_visible_with_theme")]
+    [Category("#category_set_visible_with_theme")]
     public bool SetVisibleWithTheme
     {
         get { return _setVisWithTheme; }

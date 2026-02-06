@@ -17,44 +17,44 @@ public class MapLink : Link, IEditable
     private string _defaultStyles = String.Empty;
 
     #region Properties
-    [DisplayName("Sichtbar")]
-    [Category("Allgemein")]
+    [DisplayName("#visible")]
+    [Category("#category_visible")]
     public bool Visible
     {
         get { return _visible; }
         set { _visible = value; }
     }
-    [DisplayName("Default Karte")]
-    [Category("Allgemein")]
+    [DisplayName("#default")]
+    [Category("#category_default")]
     public bool Default
     {
         get { return _default; }
         set { _default = value; }
     }
 
-    [DisplayName("Viewer Template (optional)")]
-    [Category("~Aufruf (optional)")]
+    [DisplayName("#default_template")]
+    [Category("~#category_default_template")]
     public string DefaultTemplate
     {
         get { return _defaultTemplate; }
         set { _defaultTemplate = value; }
     }
-    [DisplayName("Viewer Layout (optional)")]
-    [Category("~Aufruf (optional)")]
+    [DisplayName("#default_layout")]
+    [Category("~#category_default_layout")]
     public string DefaultLayout
     {
         get { return _defaultLayout; }
         set { _defaultLayout = value; }
     }
-    [DisplayName("Viewer Design (optional)")]
-    [Category("~Aufruf (optional)")]
+    [DisplayName("#default_design")]
+    [Category("~#category_default_design")]
     public string DefaultDesign
     {
         get { return _defaultDesign; }
         set { _defaultDesign = value; }
     }
-    [DisplayName("Viewer Styles (optional)")]
-    [Category("~Aufruf (optional)")]
+    [DisplayName("#default_styles")]
+    [Category("~#category_default_styles")]
     public string DefaultStyles
     {
         get { return _defaultStyles; }

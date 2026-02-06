@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Reflection;
 using E.Standard.CMS.Core.Schema;
@@ -34,9 +34,8 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
 
     #region Properties
 
-    [DisplayName("Spalten Typ")]
-    [Description("Typ der Tabellen-Spalte.")]
-    [Category("Allgemein")]
+    [DisplayName("#column_type")]
+    [Category("#category_column_type")]
     public ColumnType ColumnType
     {
         get
@@ -101,8 +100,8 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
         }
     }
 
-    [DisplayName("Definition/Quelle")]
-    [Category("Allgemein")]
+    [DisplayName("#data")]
+    [Category("#category_data")]
     //[TypeConverter(typeof(ExpandableObjectConverter))]
     public FieldData Data
     {
@@ -159,37 +158,36 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
         }
     }
 
-    [DisplayName("Sichtbar: wird in der Tabelle angezeigt")]
-    [Category("Allgemein")]
-    [Description("Felder die nicht sichtbar sind, werden in der Tabelle nicht angezeigt. Achtung: Nicht sichtbare Felder werden trotzdem zum Client übermittelt, um beispielsweise für die Markerdefinitionen in der custom.js verwendet zu werden. Ein nicht sichtbar schalten ist keine Security Maßnahme, Attribute werden trotzdem an den Client übermittelt, nur die Anzeige an der Oberfläche wird unterdrückt.")]
+    [DisplayName("#visible")]
+    [Category("#category_visible")]
     public bool Visible { get; set; }
 
-    [Category("~Suchergebnis Darstellung (WebGIS 4)")]
-    [DisplayName("Spaltenname in der Html ansicht anzeigen")]
+    [Category("~#category_show_column_name_with_html")]
+    [DisplayName("#show_column_name_with_html")]
     public bool ShowColumnNameWithHtml
     {
         get { return _showColNameWithHtml; }
         set { _showColNameWithHtml = value; }
     }
 
-    [Category("~Suchergebnis Darstellung (WebGIS 4)")]
-    [DisplayName("In der Html Kopfzeile anzeigen")]
+    [Category("~#category_is_html_header")]
+    [DisplayName("#is_html_header")]
     public bool IsHtmlHeader
     {
         get { return _isHtmlHeader; }
         set { _isHtmlHeader = value; }
     }
 
-    [Category("~Suchergebnis Darstellung (WebGIS 4)")]
-    [DisplayName("In der Html ansicht verwenden")]
+    [Category("~#category_show_in_html")]
+    [DisplayName("#show_in_html")]
     public bool ShowInHtml
     {
         get { return _showInHtml; }
         set { _showInHtml = value; }
     }
 
-    [Category("~Suchergebnis Darstellung (WebGIS 4)")]
-    [DisplayName("In der Tabellenansicht sortieren")]
+    [Category("~#category_sort")]
+    [DisplayName("#sort")]
     public bool Sort
     {
         get { return _sort; }
@@ -365,7 +363,7 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
         private bool _rawHtml = false;
 
         #region Properties
-        [DisplayName("Feld Name")]
+        [DisplayName("#field_name")]
         [Editor(typeof(TypeEditor.ThemeFieldsEditor), typeof(TypeEditor.ITypeEditor))]
         public string FieldName
         {
@@ -373,31 +371,27 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
             set { _fieldName = value; }
         }
 
-        [Description("Einfache Übersetzung von Werten. Eingabebeispiel: 0,1,2=ja,nein,vielleicht. Alternativ kann eine Url zu einem JSON Array mit name,value Werten angegeben werden, beispielsweise eine DataLinq PlainText Query.")]
-        [DisplayName("Simple Domains")]
+        [DisplayName("#simple_domains")]
         public string SimpleDomains
         {
             get { return _simpledomains; }
             set { _simpledomains = value; }
         }
 
-        [DisplayName("Raw Html")]
-        [Description("Der Wert des Feldes werden 1:1 übernommen. Damit können auch HTML Fragmente direkt in die Tabelle übernommen werden (standardmäßig werden zB spitze Klammern kodiert, und als solche auch in der Tabelle dargestellt). Dieser Flag sollte nur falls unbedingt notwendig verwendet werden. Handelt es sich bei dem Feld um Ihnalte aus Usereingaben (Editing usw), sollte dieser Flag unbedingt vermieden werden, da damit eine Cross-Site-Scripting Schwachstelle entsteht!")]
+        [DisplayName("#raw_html")]
         public bool RawHtml
         {
             get { return _rawHtml; }
             set { _rawHtml = value; }
         }
 
-        [DisplayName("Sortier-Algorithmus")]
-        [Category("Sortieren")]
-        [Description("Gibt an mit welchen Algorithmus die Spalte in der Tabelle sortiert werden sollte. Standardmäßig wird die Spalte beim Storieren als Zeichenkette (string) interpretiert. Fix implementierte Algorithmen sind hier: string, number, gnr, date_dd_mm_yyyy. Über die custom.js können noch weitere Algorithmen definiert werden.")]
+        [DisplayName("#sorting_algorithm")]
+        [Category("#category_sorting_algorithm")]
         public string SortingAlgorithm { get; set; }
 
 
-        [DisplayName("Automatisch sortieren")]
-        [Category("Sortieren")]
-        [Description("Gibt an, ob nach diesem Feld automatisch nach einer Abfrage sortiert werden sollte.")]
+        [DisplayName("#auto_sort")]
+        [Category("#category_auto_sort")]
         public FieldAutoSortMethod AutoSort { get; set; }
 
         #endregion
@@ -487,7 +481,7 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
 
         #region Properties
 
-        [DisplayName("Feld Name")]
+        [DisplayName("#field_name")]
         [Editor(typeof(TypeEditor.ThemeFieldsEditor), typeof(TypeEditor.ITypeEditor))]
         public string FieldName
         {
@@ -501,13 +495,11 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
             set { _displayType = value; }
         }
 
-        [DisplayName("Format String (optional)")]
-        [Description("Für den DisplayType 'normal' kann hier optional der Formatierungsstring angeführt werden. Beispiele: MM/dd/yyyy, dddd, dd MMMM yyyy HH:mm:ss, MMMM dd. Eine genauere Beschreibung gibt es hier: https://docs.microsoft.com/en-us/dotnet/api/system.datetime.tostring?view=net-6.0 oder https://www.c-sharpcorner.com/blogs/date-and-time-format-in-c-sharp-programming1")]
+        [DisplayName("#format_string")]
         public string FormatString { get; set; }
 
-        [DisplayName("Sortier-Algorithmus")]
-        [Category("Sortieren")]
-        [Description("Gibt an mit welchen Algorithmus die Spalte in der Tabelle sortiert werden sollte. Standardmäßig wird die Spalte beim Storieren als Zeichenkette (string) interpretiert. Fix implementierte Algorithmen für Datum sind: date_dd_mm_yyyy. Über die custom.js können noch weitere Algorithmen definiert werden.")]
+        [DisplayName("#sorting_algorithm")]
+        [Category("#category_sorting_algorithm")]
         public string SortingAlgorithm { get; set; }
 
         #endregion
@@ -550,36 +542,35 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
         private int _imgheight = 0;
 
         #region Properties
-        [DisplayName("Hotlink Url")]
+        [DisplayName("#hotlink_url")]
         public string HotlinkUrl
         {
             get { return _hotlinkUrl; }
             set { _hotlinkUrl = value; }
         }
 
-        [DisplayName("Name/Bezeichnug des Hotlinks")]
-        [Description("Die Url für den Hotlink mit Platzhaltern, zB http://www.server.com/page?id=[ID_FIELDNAME]&name=[NAME_FIELDNAME]. Mit dem prefix 'url-encode:' kann eine kodierung Url Kodierung des Feldes erzwungen werden, falls die automatische Kodierung durch den Browser nicht ausreicht, zB [url-encode:FIELDNAME].")]
+        [DisplayName("#hotlink_name")]
         public string HotlinkName
         {
             get { return _hotlinkName; }
             set { _hotlinkName = value; }
         }
 
-        [DisplayName("1 : N")]
+        [DisplayName("#one2_n")]
         public bool One2N
         {
             get { return _one2n; }
             set { _one2n = value; }
         }
 
-        [DisplayName("1 : N Trennzeichen")]
+        [DisplayName("#one2_n_seperator")]
         public char One2NSeperator
         {
             get { return _one2nSeperator; }
             set { _one2nSeperator = value; }
         }
 
-        [DisplayName("Browser Fenster Attribute")]
+        [DisplayName("#browser_window_props")]
         //[TypeConverter(typeof(ExpandableObjectConverter))]
         public BrowserWindowProperties BrowserWindowProps
         {
@@ -587,27 +578,26 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
             set { _browserWindowProps = value; }
         }
 
-        [DisplayName("Ziel bei neuem Browserfenster")]
-        [Description("_blank ... neues Browserfenster\n_self ... Viewerfenster (aktuelles Fenster)\nopener ... Fenster von dem webGIS aufgerufen wurde")]
+        [DisplayName("#target")]
         public BrowserWindowTarget Target
         {
             get { return _target; }
             set { _target = value; }
         }
 
-        [DisplayName("Bildquelle-Ausdruck")]
+        [DisplayName("#image_expression")]
         public string ImageExpression
         {
             get { return _imgExpresson; }
             set { _imgExpresson = value; }
         }
-        [DisplayName("Bildquelle-Breite (Pixel)")]
+        [DisplayName("#i_width")]
         public int IWidth
         {
             get { return _imgwidth; }
             set { _imgwidth = value; }
         }
-        [DisplayName("Bildquelle-Höhe (Pixel)")]
+        [DisplayName("#i_height")]
         public int IHeight
         {
             get { return _imgheight; }
@@ -670,15 +660,14 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
         private ColumnDataType _colDataType = ColumnDataType.String;
 
         #region Properties
-        [DisplayName("Ausdruck")]
+        [DisplayName("#expression")]
         public string Expression
         {
             get { return _expresson; }
             set { _expresson = value; }
         }
 
-        [DisplayName("Datentyp des Ergebnisses")]
-        [Description("Wenn das Ergebnis immer eine Zahl ist, kann hier Number als Typ verwendet werden. Damit kann die Splate auch wie ein Zahlenfeld sortiert werden. Achtung: Es muss wirklich jedes Ergebniss eine Zahl sein (keine Leerwerte).")]
+        [DisplayName("#column_data_type")]
         public ColumnDataType ColumnDataType
         {
             get { return _colDataType; }
@@ -718,19 +707,19 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
         private int _iheight = 0;
 
         #region Properties
-        [DisplayName("Bildquelle-Ausdruck")]
+        [DisplayName("#image_expression")]
         public string ImageExpression
         {
             get { return _imgExpresson; }
             set { _imgExpresson = value; }
         }
-        [DisplayName("Bildquelle-Breite (Pixel)")]
+        [DisplayName("#i_width")]
         public int IWidth
         {
             get { return _iwidth; }
             set { _iwidth = value; }
         }
-        [DisplayName("Bildquelle-Höhe (Pixel)")]
+        [DisplayName("#i_height")]
         public int IHeight
         {
             get { return _iheight; }

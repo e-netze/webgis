@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
@@ -48,73 +48,66 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
 
     #region Properties
 
-    [DisplayName("Darstellungsvariaten bereitstellen")]
-    [Description("Darastellungsvarianten werden nicht mehr parametriert, sondern werden dynamisch aus dem TOC des Dienstes erstellt. Das Level gibt an, bis zu welcher Ebene Untergruppen erstellt werden. Layer unterhalb des maximalen Levels werden zu einer Checkbox-Darstellungsvariante zusammengeasst.")]
+    [DisplayName("#dynamic_presentations")]
     public WebMapping.Core.ServiceDynamicPresentations DynamicPresentations { get; set; }
 
-    [DisplayName("Abfragen bereitstellen")]
-    [Description("Abfragen werden nicht mehr parametriert, sondern werden zur Laufzeit für alle (Feature) Layer eine Abfrage erstellt (ohne Suchbegriffe, nur Identify)")]
+    [DisplayName("#dynamic_queries")]
     public WebMapping.Core.ServiceDynamicQueries DynamicQueries { get; set; }
 
-    [DisplayName("Dynamisches Verhalten")]
-    [Description("Gibt an, wie mit Layern umgegangen wird, die nicht beim erstellen oder nach einem Refresh im CMS unter Themen gelistet werden. AutoAppendNewLayers ... neue Themen werden beim Initialisieren des Dienstes (nach einem cache/clear) der Karte hinzugefügt und können über den TOC geschalten werden. UseStrict ... nur jene Themen, die unter Themen aufgelistet sind, kommen auch in der Karte vor. SealedLayers_UseServiceDefaults ... Es werden immer alle Layer übergeben. Diese Options macht nur beim Fallback(druck)services für VTC Dienste Sinn!")]
+    [DisplayName("#dynamic_dehavior")]
     public WebMapping.Core.DynamicDehavior DynamicDehavior { get; set; }
 
-    [DisplayName("Service-Typ")]
-    [Description("Watermark Services werden immer ganz oben gezeichnet und können vom Anwender nicht transparent geschalten oder ausgelendet werden. Watermark Services können neben Wasserzeichen auch Polygondecker enthalten.")]
+    [DisplayName("#service_type")]
     public WebMapping.Core.ImageServiceType ServiceType { get; set; }
 
-    [DisplayName("Layer Reihenfolge")]
-    [Description("Dieser Wert gibt an, wie die Zeichenreihenfolge der Layer in den Capabilities interpretiert werden sollte. Von oben nach unten oder umgekehrt...")]
+    [DisplayName("#layer_order")]
     public WMS_LayerOrder LayerOrder { get; set; }
 
-    [DisplayName("Server Vendor (Anbieter)")]
-    [Description("Durch die Angabe des WMS Server Vendors können für den jeweiligen Server spezifische Parameter übergeben werden. Zum Beispiel der kann der DPI Wert der Karte übergeben werden, damit Maßstabsgrenzen von Layern richtig angewendet werden.")]
+    [DisplayName("#vendor")]
     public WMS_Vendor Vendor { get; set; }
 
-    [DisplayName("Karten Server")]
-    [Category("Service")]
+    [DisplayName("#server")]
+    [Category("#category_server")]
     public string Server
     {
         get { return _server; }
         set { _server = value; }
     }
-    [DisplayName("WMS Version")]
-    [Category("Service")]
+    [DisplayName("#version")]
+    [Category("#category_version")]
     public WMS_Version Version
     {
         get { return _version; }
         set { _version = value; }
     }
-    [DisplayName("WMS GetMap Format")]
-    [Category("Service")]
+    [DisplayName("#image_format")]
+    [Category("#category_image_format")]
     public string ImageFormat
     {
         get { return _imageformat; }
         set { _imageformat = value; }
     }
-    [DisplayName("WMS GetFeatureInfo Format")]
-    [Category("Service")]
+    [DisplayName("#get_feature_info_format")]
+    [Category("#category_get_feature_info_format")]
     public string GetFeatureInfoFormat
     {
         get { return _gfiformat; }
         set { _gfiformat = value; }
     }
-    [DisplayName("WMS GetFeatureInfo Feature Count")]
-    [Category("Service")]
+    [DisplayName("#get_feature_info_feature_count")]
+    [Category("#category_get_feature_info_feature_count")]
     public int GetFeatureInfoFeatureCount
     {
         get { return _featureCount; }
         set { _featureCount = value; }
     }
 
-    [DisplayName("(optional) SLD_Version")]
-    [Category("Service")]
-    [Description("In der Regel ist dieser Parameter optional. Nur setzen, wenn der WMS diesen Parameter unbedingt braucht. Wird für GetMap- und GetLegendGraphics-Requests übergeben.")]
+    [DisplayName("#s_l_d_version")]
+    [Category("#category_s_l_d_version")]
     public SLD_Version SLDVersion { get; set; }
 
-    [Category("~~Anmeldung")]
-    [DisplayName("webGIS Instanz für Ticket Service (Optional)")]
+    [Category("~~#category_ticket_server")]
+    [DisplayName("#ticket_server")]
     public string TicketServer
     {
         get;
@@ -208,16 +201,16 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
 
     #region IAuthentification Member
 
-    [DisplayName("Username")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#username")]
+    [Category("#category_username")]
     public string Username
     {
         get { return _user; }
         set { _user = value; }
     }
 
-    [DisplayName("Password")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#password")]
+    [Category("#category_password")]
     [PasswordPropertyText(true)]
     public string Password
     {
@@ -225,8 +218,8 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
         set { _pwd = value; }
     }
 
-    [DisplayName("Token")]
-    [Category("Anmeldungs-Token")]
+    [DisplayName("#token")]
+    [Category("#category_token")]
     [PasswordPropertyText(true)]
     [Editor(typeof(TypeEditor.TokenAuthentificationEditor), typeof(TypeEditor.ITypeEditor))]
     public string Token { get; set; }
@@ -234,8 +227,8 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
     #endregion
 
     #region IClientCertification
-    [Category("Anmeldung")]
-    [DisplayName("Optional: Client Certificate")]
+    [Category("#category_client_certificate")]
+    [DisplayName("#client_certificate")]
     [Editor(typeof(TypeEditor.ClientCertificateEditor), typeof(TypeEditor.ITypeEditor))]
     public string ClientCertificate
     {

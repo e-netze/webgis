@@ -41,7 +41,7 @@ public class MapFooter : IEditable
         }
     }
     [Browsable(true)]
-    [DisplayName("Zugehörige Links")]
+    [DisplayName("Zugehï¿½rige Links")]
     [Category("Quellen")]
     public string[] Links
     {
@@ -66,48 +66,48 @@ public class MapFooter : IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Copyright Text")]
-    [Category("Copyright")]
+    [DisplayName("#copyright")]
+    [Category("#category_copyright")]
     public string Copyright
     {
         get { return _copyright; }
         set { _copyright = value; }
     }
     [Browsable(true)]
-    [DisplayName("Copyright Link")]
-    [Category("Copyright")]
+    [DisplayName("#copyright_link")]
+    [Category("#category_copyright_link")]
     public string CopyrightLink
     {
         get { return _copyrightLink; }
         set { _copyrightLink = value; }
     }
     [Browsable(true)]
-    [DisplayName("Hinweis Text")]
-    [Category("Allgemein")]
+    [DisplayName("#advice")]
+    [Category("#category_advice")]
     public string Advice
     {
         get { return _advice; }
         set { _advice = value; }
     }
     [Browsable(true)]
-    [DisplayName("Url für Logo")]
-    [Category("Allgemein")]
+    [DisplayName("#logo")]
+    [Category("#category_logo")]
     public string Logo
     {
         get { return _logo; }
         set { _logo = value; }
     }
     [Browsable(true)]
-    [DisplayName("Logo Breite in Pixel")]
-    [Category("Allgemein")]
+    [DisplayName("#logo_width")]
+    [Category("#category_logo_width")]
     public int LogoWidth
     {
         get { return _logoWidth; }
         set { _logoWidth = value; }
     }
     [Browsable(true)]
-    [DisplayName("Logo Höhe in Pixel")]
-    [Category("Allgemein")]
+    [DisplayName("#logo_height")]
+    [Category("#category_logo_height")]
     public int LogoHeight
     {
         get { return _logoHeight; }

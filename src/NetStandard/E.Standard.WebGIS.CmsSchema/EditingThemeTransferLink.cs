@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using System.ComponentModel;
 
@@ -6,17 +6,15 @@ namespace E.Standard.WebGIS.CmsSchema;
 
 public class EditingThemeTransferLink : Link, IPersistable
 {
-    [Category("Transfer Pipeline")]
+    [Category("#category_suppress_autovalues")]
     [Bindable(true)]
-    [DisplayName("Autovalues ausblenden")]
-    [Description("Autovalues werden beim Transfer nicht für die Zielobjekte neu ermittelt. Bestehende Felder werden 1:1 übernommen.")]
+    [DisplayName("#suppress_autovalues")]
     public bool SuppressAutovalues { get; set; }
 
 
-    [Category("Transfer Pipeline")]
+    [Category("#category_suppress_validation")]
     [Bindable(true)]
-    [DisplayName("Validierung ausblenden")]
-    [Description("Beim Transfer werden für die Zielobjekte keine Editfeld Validierungen durchgeführt. Bestehende Felder werden 1:1 übernommen.")]
+    [DisplayName("#suppress_validation")]
     public bool SuppressValidation { get; set; }
 
     public override void Load(IStreamDocument stream)

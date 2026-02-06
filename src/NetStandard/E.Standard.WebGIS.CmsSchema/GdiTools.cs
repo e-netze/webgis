@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using System;
@@ -14,8 +14,8 @@ public class GdiTools : SchemaNode, IEditable
     #region Properties
 
     [Browsable(true)]
-    [DisplayName("Höhenprofil-Konfiguration")]
-    [Category("Höhenprofil")]
+    [DisplayName("#vertical_alignment_config")]
+    [Category("#category_vertical_alignment_config")]
     [Editor(typeof(TypeEditor.ProfilesConfigEditor),
         typeof(TypeEditor.ITypeEditor))]
     public string VerticalAlignmentConfig

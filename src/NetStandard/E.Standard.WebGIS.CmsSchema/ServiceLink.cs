@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
@@ -54,9 +54,8 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     #region Properties
 
     [Browsable(true)]
-    [DisplayName("Initiale Deckkraft")]
-    [Description("Gibt an, ob der Dienst nach den Starten der Karte transparent dargestellt werden soll. Der Wert muss zwischen 0 (100% transparent) und 100 (nicht transparent) liegen.")]
-    [Category("Allgemein")]
+    [DisplayName("#opacity")]
+    [Category("#category_opacity")]
     public double Opacity
     {
         get { return _opacity; }
@@ -64,9 +63,8 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("Transparenz Faktor")]
-    [Description("Ein Factor, mit den die vom Anwender eingestellte Transparenz immer multipliziert wird. Sollte der Dienst beispielsweise immer hab durchlässig dargestellt werden, kann hier ein Wert von 0.5 eingestellt werden. Stellt der Anwender den Dienst auf 100% Deckkraft, bleibt der Dienst immer noch zu 50% durchlässig. Ein Wert von 1 bedeutet, dass der dienst bei 100% Deckkraft keine Transparenz aufweißt. 0 kann hier nicht eingegeben werden, da der Dienst dann überhaupt nicht angezeigt werden könnte!")]
-    [Category("Allgemein")]
+    [DisplayName("#opacity_factor")]
+    [Category("#category_opacity_factor")]
     public double OpacityFactor
     {
         get => _opacityFactor;
@@ -82,9 +80,8 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("Zeitverhalten: Timeout")]
-    [Description("Liefert der Dienst nach 'x' Sekunden kein Ergebnis, wird der Request abgebrochen...")]
-    [Category("Allgemein")]
+    [DisplayName("#timeout")]
+    [Category("#category_timeout")]
     [ObsoleteCmsPropeperty]
     public int Timeout
     {
@@ -93,17 +90,16 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("Image Format")]
-    [Description("Gibt an, in welchen Format das Kartenbild von Dienst abgeholt wird. Diese Eigenschaft wird nur für ArcIMS- und AGS Dienste berücksichtigt!")]
-    [Category("Allgemein")]
+    [DisplayName("#image_format")]
+    [Category("#category_image_format")]
     public ServiceImageFormat ImageFormat
     {
         get { return _imageFormat; }
         set { _imageFormat = value; }
     }
 
-    [DisplayName("Link auf Metadaten")]
-    [Category("Allgemein")]
+    [DisplayName("#meta_data")]
+    [Category("#category_meta_data")]
     public string MetaData
     {
         get { return _metadata; }
@@ -111,9 +107,8 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("Standardmäßig sichtbar")]
-    [Description("Gibt an, ob der Dienst beim Kartenaufruf sichtbar ist...")]
-    [Category("TOC")]
+    [DisplayName("#visible")]
+    [Category("#category_visible")]
     public bool Visible
     {
         get { return _visible; }
@@ -121,14 +116,14 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [Category("~~TOC")]
+    [Category("~~#category_toc_display_name")]
     public string TocDisplayName
     {
         get { return _tocDisplayName; }
         set { _tocDisplayName = value; }
     }
     [Browsable(true)]
-    [Category("TOC")]
+    [Category("#category_toc_name")]
     [Editor(typeof(TypeEditor.TocNameEditor), typeof(TypeEditor.ITypeEditor))]
     public string TocName
     {
@@ -136,16 +131,16 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
         set { _tocName = value; }
     }
     [Browsable(true)]
-    [DisplayName("Erweitert")]
-    [Category("TOC")]
+    [DisplayName("#collapsed")]
+    [Category("#category_collapsed")]
     public bool Collapsed
     {
         get { return _collapsed; }
         set { _collapsed = value; }
     }
     [Browsable(true)]
-    [DisplayName("Im Toc anzeigen")]
-    [Category("TOC")]
+    [DisplayName("#show_in_toc")]
+    [Category("#category_show_in_toc")]
     public bool ShowInToc
     {
         get { return _showInToc; }
@@ -153,7 +148,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [Category("~~Kartenprojektion")]
+    [Category("~~#category_projection_methode")]
     public ServiceProjection ProjectionMethode
     {
         get { return _projMethode; }
@@ -161,7 +156,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [Category("Kartenprojektion")]
+    [Category("#category_projection_id")]
     //[Editor(typeof(TypeEditor.Proj4TypeEditor), typeof(TypeEditor.ITypeEditor))]
     public int ProjectionId
     {
@@ -171,43 +166,38 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
 
     [Browsable(true)]
     [Category("Kartenprojektion")]
-    [Description("ESRI Datumstransformationen (Array), die bei Projection-On-The-Fly für diese Karte verwendet werden sollen. Nur für REST Services ab AGS 10.5. Es muss immer ein Array angegeben werden, zB [1618, ...] oder [1618]. Beim Abfragen (Query) kann nur eine Transformation übergeben werden; hier wird immer die erste hier angeführte Transformation verwendet.")]
     public int[] DatumTransformations
     {
         get; set;
     }
 
     [Browsable(true)]
-    [DisplayName("Service nimmt an der Legende teil")]
-    [Description("Gibt an, ob der Dienst in der Legendendarstellung erscheint")]
-    [Category("~Legende")]
+    [DisplayName("#show_in_legend")]
+    [Category("~#category_show_in_legend")]
     public bool ShowInLegend
     {
         get { return _showInLegend; }
         set { _showInLegend = value; }
     }
     [Browsable(true)]
-    [DisplayName("Optimierungsgrad")]
-    [Description("Gibt an, wie die Lengende optimiert wird.")]
-    [Category("Legende")]
+    [DisplayName("#legend_opt_method")]
+    [Category("#category_legend_opt_method")]
     public LegendOptimization LegendOptMethod
     {
         get { return _legendOpt; }
         set { _legendOpt = value; }
     }
     [Browsable(true)]
-    [DisplayName("Symboloptimierung ab einem Maßstab von 1:")]
-    [Description("Gibt an, ab welchem Maßstab die Symbole in der Legende optimiert werden (nur wenn Optimierungsgrad=Symbols).")]
-    [Category("Legende")]
+    [DisplayName("#legend_opt_symbol_scale")]
+    [Category("#category_legend_opt_symbol_scale")]
     public double LegendOptSymbolScale
     {
         get { return _legendOptSymbolScale; }
         set { _legendOptSymbolScale = value; }
     }
     [Browsable(true)]
-    [DisplayName("Url für fixe Legende")]
-    [Description("Bei Angabe einer fixen Legende, wird immer nur diese angezeigt. Alle anderen Legendeneigenschaften werden ignoriert")]
-    [Category("Legende")]
+    [DisplayName("#legend_url")]
+    [Category("#category_legend_url")]
     public string LegendUrl
     {
         get { return _legendUrl; }
@@ -215,18 +205,16 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("Fixen Referenzmaßstab verwenden")]
-    [Description("Gilt nur für ArcIMS (AXL) Dienste. Ist diese Eigenschaft auf 'true' gesetzt, wird auf diesen Kartendienst immer ein fester Referenzmaßstab angewendet. Dieser kann auch von Kartenbenutzer nicht überschreiben werden!")]
-    [Category("~~Referenzmaßstab")]
+    [DisplayName("#use_fix_ref_scale")]
+    [Category("~~#category_use_fix_ref_scale")]
     public bool UseFixRefScale
     {
         get { return _useFixRefScale; }
         set { _useFixRefScale = value; }
     }
     [Browsable(true)]
-    [DisplayName("Fixer Referenzmaßstab 1:")]
-    [Description("Gilt nur für ArcIMS (AXL) Dienste. Gibt einen fixen Referenzmaßstab an, der auf diensen Dienst angewendet wird. Dieser kann auch von Kartenbenutzer nicht überschreiben werden!")]
-    [Category("Referenzmaßstab")]
+    [DisplayName("#fix_ref_scale")]
+    [Category("#category_fix_ref_scale")]
     public double FixRefScale
     {
         get { return _fixRefScale; }
@@ -234,18 +222,16 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("MinScale: Dienst ist sichtbar bis 1:")]
-    [Description("Bei Eingabe von 0 (default) wird dieser Wert ignoriert!")]
-    [Category("~Maßstabsgrenzen")]
+    [DisplayName("#min_scale")]
+    [Category("~#category_min_scale")]
     public double MinScale
     {
         get { return _minScale; }
         set { _minScale = value; }
     }
     [Browsable(true)]
-    [DisplayName("MaxScale: Dienst ist sichtbar ab 1:")]
-    [Description("Bei Eingabe von 0 (default) wird dieser Wert ignoriert!")]
-    [Category("Maßstabsgrenzen")]
+    [DisplayName("#max_scale")]
+    [Category("#category_max_scale")]
     public double MaxScale
     {
         get { return _maxScale; }
@@ -253,36 +239,32 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("Räumliche Einschränkung verwenden")]
-    [Description("Dienst nur abfragen, wenn räumliche Einschränkung für diesen Dienst zutrifft")]
-    [Category("~Räumliche Einschränkung")]
+    [DisplayName("#use_with_spatial_constraint_service")]
+    [Category("~#category_use_with_spatial_constraint_service")]
     public bool UseWithSpatialConstraintService
     {
         get { return _useWithSpatialConstraintService; }
         set { _useWithSpatialConstraintService = value; }
     }
 
-    [DisplayName("(Hinter)Grundkarte")]
-    [Description("Gibt an, ob dieser Dienst eine Hintergrundkarte ist")]
-    [Category("~Basemap")]
+    [DisplayName("#is_basemap")]
+    [Category("~#category_is_basemap")]
     public bool IsBasemap
     {
         get { return _isBasemap; }
         set { _isBasemap = value; }
     }
 
-    [DisplayName("(Hinter)Grundkarten-Typ")]
-    [Description("Normal=Beim schalten dieser Hintergrundkarte werden alle anderen mit dem Typ normal ausgeschalten. Overlay=Diese Hintergrundkarte kann optional dazugeschalten werden (Beispiel: Ortsplanstraßen über ein Orthophoto)")]
-    [Category("Basemap")]
+    [DisplayName("#basemap_type")]
+    [Category("#category_basemap_type")]
     public BasemapType BasemapType
     {
         get { return _basemapType; }
         set { _basemapType = value; }
     }
 
-    [Category("Basemap")]
-    [Description("Die Url zu einem Bild, dass für die Kachel im Viewer als Vorschaubild angezeigt wird. Notwendig zB. für WMS Dienste")]
-    [DisplayName("Preview Image Url (Optional)")]
+    [Category("#category_basemap_preview_image_url")]
+    [DisplayName("#basemap_preview_image_url")]
     public string BasemapPreviewImageUrl { get; set; } = "";
 
     public int[] _supportedCrs = null;
@@ -294,8 +276,8 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
         set { _supportedCrs = value; }
     }
 
-    [DisplayName("Dienst als WMS exportierbar")]
-    [Category("~OGC Export")]
+    [DisplayName("#export_w_m_s")]
+    [Category("~#category_export_w_m_s")]
     [AuthorizablePropertyAttribute("exportwms", false)]
     public bool ExportWMS
     {
@@ -304,8 +286,8 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("Name der Kartenausdehnung")]
-    [Category("~OGC Export")]
+    [DisplayName("#map_extent_url")]
+    [Category("~#category_map_extent_url")]
     [Editor(typeof(TypeEditor.MapExtentsEditor), typeof(TypeEditor.ITypeEditor))]
     public string MapExtentUrl
     {
@@ -314,18 +296,16 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [DisplayName("Warning Level")]
-    [Description("Gibt an, ab wann Fehler in der Karte angezeigt werden")]
-    [Category("~Diagnostics")]
+    [DisplayName("#warning_level")]
+    [Category("~#category_warning_level")]
     public ServiceDiagnosticsWarningLevel WarningLevel
     {
         get; set;
     }
 
     [Browsable(true)]
-    [DisplayName("Copyright Info")]
-    [Description("Gibt die Copyright Info an, die für diesen Dienst hinterlegt ist. Die Info muss unnter Sonstiges/Copyright definiert sein.")]
-    [Category("Allgemein")]
+    [DisplayName("#copyright_info")]
+    [Category("#category_copyright_info")]
     [Editor(typeof(TypeEditor.CopyrightInfoEditor), typeof(TypeEditor.ITypeEditor))]
     public string CopyrightInfo
     {
@@ -532,7 +512,7 @@ public class OverlayServiceLink : Link, IEditableWrapper
 
     #region Properties
     [Browsable(true)]
-    [Category("Allgemein")]
+    [Category("#category_display_name")]
     public string DisplayName
     {
         get
@@ -554,7 +534,7 @@ public class OverlayServiceLink : Link, IEditableWrapper
     }
 
     [Browsable(true)]
-    [Category("TOC")]
+    [Category("#category_toc_name")]
     [Editor(typeof(TypeEditor.TocNameEditor), typeof(TypeEditor.ITypeEditor))]
     public string TocName
     {
@@ -577,7 +557,7 @@ public class OverlayServiceLink : Link, IEditableWrapper
     }
 
     [Browsable(true)]
-    [Category("Kartenprojektion")]
+    [Category("#category_projection_methode")]
     public ServiceProjection ProjectionMethode
     {
         get
@@ -599,7 +579,7 @@ public class OverlayServiceLink : Link, IEditableWrapper
     }
 
     [Browsable(true)]
-    [Category("Kartenprojektion")]
+    [Category("#category_projection_id")]
     //[Editor(typeof(TypeEditor.Proj4TypeEditor), typeof(TypeEditor.ITypeEditor))]
     public int ProjectionId
     {
@@ -645,16 +625,16 @@ public class SpatialConstraintServiceLink : Link, IEditable
     private string _queryLayerId = String.Empty;
     private string _serviceUrlFieldName = String.Empty;
 
-    [DisplayName("ID des Abfrage-Layers")]
-    [Category("Allgemein")]
+    [DisplayName("#query_layer_id")]
+    [Category("#category_query_layer_id")]
     public string QueryLayerId
     {
         get { return _queryLayerId; }
         set { _queryLayerId = value; }
     }
 
-    [DisplayName("Layer-Feld mit Service Url")]
-    [Category("Allgemein")]
+    [DisplayName("#service_url_field_name")]
+    [Category("#category_service_url_field_name")]
     public string ServiceUrlFieldName
     {
         get { return _serviceUrlFieldName; }
@@ -718,9 +698,8 @@ public class ServiceLinkGdi : Link, IEditable, ISchemaNode
 public class MapServiceLink : Link, IEditable
 {
     [Browsable(true)]
-    [DisplayName("Layer Sichtbarkeit")]
-    [Description("Gibt an, ob Layer per default sichtbar sind.")]
-    [Category("Allgemein")]
+    [DisplayName("#layer_visibility")]
+    [Category("#category_layer_visibility")]
     public MapServiceLayerVisibility LayerVisibility { get; set; }
 
     public override void Load(IStreamDocument stream)

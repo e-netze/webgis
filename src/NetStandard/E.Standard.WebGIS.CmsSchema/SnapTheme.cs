@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
@@ -19,22 +19,22 @@ public class SnapTheme : Link, IPersistable, IEditable
 
     #region Properties
     /*
-    [DisplayName("Stützpunkt (Vertex)")]
-    [Category("Snappen auf...")]
+    [DisplayName("#vertex")]
+    [Category("#category_vertex")]
     public bool Vertex
     {
         get { return _vertex; }
         set { _vertex = value; }
     }
-    [DisplayName("Kante (Linie)")]
-    [Category("Snappen auf...")]
+    [DisplayName("#edge")]
+    [Category("#category_edge")]
     public bool Edge
     {
         get { return _edge; }
         set { _edge = value; }
     }
-    [DisplayName("Start/Endpunkt")]
-    [Category("Snappen auf...")]
+    [DisplayName("#start_end_point")]
+    [Category("#category_start_end_point")]
     public bool StartEndPoint
     {
         get { return _startend_point; }
@@ -82,7 +82,7 @@ public class SnapSchema : NameUrl, IUI, ICreatable, IDisplayName, IEditable
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Snappen ab einem Maßstab von 1:")]
+    [DisplayName("#min_scale")]
     public int MinScale
     {
         get { return _minScale; }

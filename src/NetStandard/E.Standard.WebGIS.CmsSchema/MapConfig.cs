@@ -18,8 +18,8 @@ public class MapConfig : SchemaNode, IEditable
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Vordefinierte Maßstäbe")]
-    [Category("Maßstab")]
+    [DisplayName("Vordefinierte Maï¿½stï¿½be")]
+    [Category("Maï¿½stab")]
     public int[] Scales
     {
         get
@@ -54,8 +54,8 @@ public class MapConfig : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Vordefinierte Maßstäbe als Maßstabsgrenzen verwenden")]
-    [Category("Maßstab")]
+    [DisplayName("#use_scale_constraints")]
+    [Category("#category_use_scale_constraints")]
     public bool UseScaleConstraints
     {
         get { return _useScaleConstraints; }
@@ -63,8 +63,8 @@ public class MapConfig : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Vordefinierte Referenzmaßstäbe")]
-    [Category("Referenzmaßstab")]
+    [DisplayName("Vordefinierte Referenzmaï¿½stï¿½be")]
+    [Category("Referenzmaï¿½stab")]
     public int[] RefScales
     {
         get
@@ -99,8 +99,8 @@ public class MapConfig : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Referenzmaßstab beim Aufruf")]
-    [Category("Referenzmaßstab")]
+    [DisplayName("#ref_scale")]
+    [Category("#category_ref_scale")]
     public int RefScale
     {
         get { return _refScale; }
@@ -108,8 +108,8 @@ public class MapConfig : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Name der Kartenausdehnung")]
-    [Category("Kartenausdehung")]
+    [DisplayName("#map_extent_url")]
+    [Category("#category_map_extent_url")]
     [Editor(typeof(TypeEditor.MapExtentsEditor), typeof(TypeEditor.ITypeEditor))]
     public string MapExtentUrl
     {

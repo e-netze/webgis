@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
@@ -41,115 +41,98 @@ public class EditingTheme : CopyableNode, IUI, ICreatable, IEditable, IDisplayNa
 
     #region Properties
 
-    [DisplayName("Sichtbar")]
+    [DisplayName("#visible")]
     public bool Visible { get; set; }
 
-    [DisplayName("Über Edit-Server verfügbar")]
-    [Description("Wenn das Editthema nicht nur die Editwerkzeuge des WebGIS-Kartenviewers verfügbar sein sollten, sondern auch über den Collector (App-Builder), muss diese Option gesetzt werden.")]
+    [DisplayName("#enable_edit_server")]
     public bool EnableEditServer { get; set; }
 
-    [DisplayName("Räumliches Bezugssystem (EPSG-Code)")]
-    [Description("Hier muss das Koordinatensystem angeben werden, in dem die Daten in der Datenbank vorliegen! Wenn kein Bezugssystem angegeben wird, kann das Editthema nicht im Viewer ausgewählt werden.")]
+    [DisplayName("#srs")]
     public int Srs { get; set; }
 
-    [DisplayName("Tags (optional)")]
-    [Description("Tags, über die ein Editthema klassifiziert werden kann. Mit Beistrich getrennte Liste anführen.")]
+    [DisplayName("#tags")]
     public string Tags { get; set; }
 
-    [Category("~Rechte")]
-    [DisplayName("INSERT (neu anlegen) erlauben")]
+    [Category("~#category_allow_insert")]
+    [DisplayName("#allow_insert")]
     public bool AllowInsert { get; set; }
 
-    [Category("~Rechte")]
-    [DisplayName("UPDATE (bestehendes bearbeiten) erlauben")]
+    [Category("~#category_allow_update")]
+    [DisplayName("#allow_update")]
     public bool AllowUpdate { get; set; }
 
-    [Category("~Rechte")]
-    [DisplayName("DELETE (bestehendes löschen) erlauben")]
+    [Category("~#category_allow_delete")]
+    [DisplayName("#allow_delete")]
     public bool AllowDelete { get; set; }
 
-    [Category("~Rechte")]
-    [DisplayName("Geometrie: bearbeiten erlauben")]
+    [Category("~#category_allow_edit_geometry")]
+    [DisplayName("#allow_edit_geometry")]
     public bool AllowEditGeometry { get; set; }
 
-    [Category("~Rechte")]
-    [DisplayName("Geometrie: Multiparts erstellen erlauben")]
+    [Category("~#category_allow_multipart_geometries")]
+    [DisplayName("#allow_multipart_geometries")]
     public bool AllowMultipartGeometries { get; set; }
 
-    [Category("~Rechte")]
-    [DisplayName("Massenattributierung erlauben")]
+    [Category("~#category_allow_mass_attributation")]
+    [DisplayName("#allow_mass_attributation")]
     public bool AllowMassAttributation { get; set; }
 
-    [Category("~Aktionen (Insert)")]
-    [DisplayName("Speichern Button anzeigen")]
-    [Description("Gibt an, ober der 'Speichern' Button in der Erstellungsmaske angeboten wird.")]
+    [Category("~#category_show_save_button")]
+    [DisplayName("#show_save_button")]
     public bool ShowSaveButton { get; set; }
 
-    [Category("~Aktionen (Insert)")]
-    [DisplayName("Speichern und Selektieren (Auswählen) Button anzeigen")]
-    [Description("Gibt an, ober der 'Speichern und Auswählen' Button in der Erstellungsmaske angeboten wird.")]
+    [Category("~#category_show_save_and_select_button")]
+    [DisplayName("#show_save_and_select_button")]
     public bool ShowSaveAndSelectButton { get; set; }
 
-    [Category("~Aktionen (Insert)")]
-    [DisplayName("1. Erweiterte Speicheraktion (optional)")]
-    [Description("Für zusätzliche Buttons, die beim Speichern angeboten werden. Damit ein entsprechender Button angezeigt wird, muss hier eine Aktion gewählt und eine Text für den Button vergeben werden. Durch die ersten beiden Optionen (Save und SaveAndSelect) können die hier oben angeführten vordefinerten Aktionen überschreiben und mit einem anderen Button Text dargestellt werden.")]
+    [Category("~#category_insert_action1")]
+    [DisplayName("#insert_action1")]
     public EditingInsertAction InsertAction1 { get; set; }
 
-    [Category("~Aktionen (Insert)")]
-    [DisplayName("1. Erweiterte Speicheraktion (Text)")]
-    [Description("Text, der für diese Akton im Button angezeigt wird.")]
+    [Category("~#category_insert_action_text1")]
+    [DisplayName("#insert_action_text1")]
     public string InsertActionText1 { get; set; }
 
-    [Category("~Aktionen (Insert)")]
-    [DisplayName("2. Erweiterte Speicheraktion (optional)")]
-    [Description("Wie 'Erweiterte Speicheraktion 1'")]
+    [Category("~#category_insert_action2")]
+    [DisplayName("#insert_action2")]
     public EditingInsertAction InsertAction2 { get; set; }
 
-    [Category("~Aktionen (Insert)")]
-    [DisplayName("2. Erweiterte Speicheraktion (Text)")]
-    [Description("Wie 'Erweiterte Speicheraktion 1'")]
+    [Category("~#category_insert_action_text2")]
+    [DisplayName("#insert_action_text2")]
     public string InsertActionText2 { get; set; }
 
-    [Category("~Aktionen (Insert)")]
-    [DisplayName("3. Erweiterte Speicheraktion (optional)")]
-    [Description("Wie 'Erweiterte Speicheraktion 1'")]
+    [Category("~#category_insert_action3")]
+    [DisplayName("#insert_action3")]
     public EditingInsertAction InsertAction3 { get; set; }
 
-    [Category("~Aktionen (Insert)")]
-    [DisplayName("3. Erweiterte Speicheraktion (Text)")]
-    [Description("Wie 'Erweiterte Speicheraktion 1'")]
+    [Category("~#category_insert_action_text3")]
+    [DisplayName("#insert_action_text3")]
     public string InsertActionText3 { get; set; }
 
-    [Category("~Aktionen (Insert)")]
-    [DisplayName("4. Erweiterte Speicheraktion (optional)")]
-    [Description("Wie 'Erweiterte Speicheraktion 1'")]
+    [Category("~#category_insert_action4")]
+    [DisplayName("#insert_action4")]
     public EditingInsertAction InsertAction4 { get; set; }
 
-    [Category("~Aktionen (Insert)")]
-    [DisplayName("4. Erweiterte Speicheraktion (Text)")]
-    [Description("Wie 'Erweiterte Speicheraktion 1'")]
+    [Category("~#category_insert_action_text4")]
+    [DisplayName("#insert_action_text4")]
     public string InsertActionText4 { get; set; }
 
-    [Category("~Aktionen (Insert)")]
-    [DisplayName("5. Erweiterte Speicheraktion (optional)")]
-    [Description("Wie 'Erweiterte Speicheraktion 1'")]
+    [Category("~#category_insert_action5")]
+    [DisplayName("#insert_action5")]
     public EditingInsertAction InsertAction5 { get; set; }
 
-    [Category("~Aktionen (Insert)")]
-    [DisplayName("5. Erweiterte Speicheraktion (Text)")]
-    [Description("Wie 'Erweiterte Speicheraktion 1'")]
+    [Category("~#category_insert_action_text5")]
+    [DisplayName("#insert_action_text5")]
     public string InsertActionText5 { get; set; }
 
-    [Category("~Aktionen (Insert)")]
-    [DisplayName("Auto Explode Multipart Features")]
-    [Description("Zeichnet der Anwender Multipart (auch Fan-Geometrie) Features, werden diese beim Speichern automatisch auf mehere Objekte aufgeteilt.")]
+    [Category("~#category_auto_explode_multipart_featuers")]
+    [DisplayName("#auto_explode_multipart_featuers")]
     public bool AutoExplodeMultipartFeatuers { get; set; }
 
     //[Browsable(false)]
     //[ReadOnly(true)]
-    [Category("~Erweiterte Eigenschaften")]
-    [DisplayName("Interne ThemeId")]
-    [Description("Die ThemeId muss für eine Editthema eindeutig sein und sollte nicht mehr geändert werden, wenn ein Thema produktiv eingebunden wird. Die Vergabe einer eindeutigen Id wird beim erstellen eines Themas automatisch vergeben. Für bestimmte Aufgaben macht es Sinn, für diese Id einen sprechenden Namen zu vergeben (z.B. wenn das Editthema über eine Collector App außerhalb des Kartenviewers verwendet wird). Hier muss allerdings immer darauf geachtet werden, dass dieser Wert für alle Themen eindeutig bleibt. Dieser Wert sollte nur von versierten Administratoren geändert werden!!!")]
+    [Category("~#category_theme_id")]
+    [DisplayName("#theme_id")]
     public string ThemeId { get; set; }
 
     [Browsable(false)]

@@ -1,4 +1,4 @@
-﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
@@ -106,8 +106,8 @@ public class LabellingField : CopyableXml, IUI, IEditable, IDisplayName
     }
 
     #region Properties
-    [Category("Feld")]
-    [DisplayName("Feld Name")]
+    [Category("#category_field_name")]
+    [DisplayName("#field_name")]
     [Editor(typeof(TypeEditor.ThemeFieldsEditor), typeof(TypeEditor.ITypeEditor))]
     public string FieldName
     {
