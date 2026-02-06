@@ -8,7 +8,7 @@
 
 #geo_juhu_schema: GeoJuhu Schema
 
-Hier k�nnen mehrere Schematas mit Beistrich getrennt eingeben werden. Der Wert wird nur ber�cksichtigt, wenn ein GeoJuhu Schema in der Aufruf-Url �bergeben wird. * (Stern) kann angeben werden, wenn eine Thema in jedem Schema abgefragt werden soll.
+Hier können mehrere Schematas mit Beistrich getrennt eingeben werden. Der Wert wird nur berücksichtigt, wenn ein GeoJuhu Schema in der Aufruf-Url übergeben wird. * (Stern) kann angeben werden, wenn eine Thema in jedem Schema abgefragt werden soll.
 
 #category_geo_juhu_schema: GeoJuhu
 

@@ -1,6 +1,6 @@
-#min_scale: Minimaler Ma�stab 1:
+#min_scale: Minimaler Maßstab 1:
 
-#max_scale: Maximaler Ma�stab 1:
+#max_scale: Maximaler Maßstab 1:
 
 #mode: Mouseover anwenden, wenn
 
@@ -18,7 +18,7 @@ Gibt an, ob Mouseover angezeigt wird, wenn das jeweilige Thema in der Karte sich
 
 #category_map_info_visible: Karten Tipps
 
-#set_visible_with_theme: Mit dem Thema �ber TOC mitschalten
+#set_visible_with_theme: Mit dem Thema über TOC mitschalten
 
 #category_set_visible_with_theme: Karten Tipps
 

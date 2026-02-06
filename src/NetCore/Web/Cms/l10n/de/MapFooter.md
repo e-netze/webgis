@@ -10,7 +10,7 @@
 
 #category_advice: Allgemein
 
-#logo: Url f�r Logo
+#logo: Url für Logo
 
 #category_logo: Allgemein
 
@@ -18,7 +18,7 @@
 
 #category_logo_width: Allgemein
 
-#logo_height: Logo H�he in Pixel
+#logo_height: Logo Höhe in Pixel
 
 #category_logo_height: Allgemein
 

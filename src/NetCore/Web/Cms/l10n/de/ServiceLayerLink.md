@@ -28,7 +28,7 @@ Gibt den Anzeigenamen für dieses Thema in der Legende an.
 
 #metadata_link: Metadaten Link
 
-Nur wenn Darstellungsvarianten = 'auto' für den Dienst gilt.Wird im Viewer als [i] Button dargestellt und verwei�t auf angef�hten Link. Im Link k�nnen die Platzhalter f�r die Karte, wie bei benutzerdefnierten Werkzeugen verwendet weden: {map.bbox}, {map.centerx}, {map.centery}, {map.scale}
+Nur wenn Darstellungsvarianten = 'auto' für den Dienst gilt.Wird im Viewer als [i] Button dargestellt und verweißt auf angefühten Link. Im Link können die Platzhalter für die Karte, wie bei benutzerdefnierten Werkzeugen verwendet weden: {map.bbox}, {map.centerx}, {map.centery}, {map.scale}
 
 #category_metadata_link: Metadaten
 

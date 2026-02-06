@@ -6,7 +6,7 @@ Aliasname, der im TOC angezeigt wird
 
 #visible: Sichtbar
 
-Theme ist standardm��ig sichtbar
+Theme ist standardmäßig sichtbar
 
 #category_visible: Allgemein
 
@@ -20,31 +20,31 @@ Thema ist gesperrt. Ist im TOC nicht sichtbar und kann somit nicht geschalten we
 
 #category_legend: Allgemein
 
-#legend_aliasname: Aliasname f�r Legende
+#legend_aliasname: Aliasname für Legende
 
-Gibt den Anzeigenamen f�r dieses Thema in der Legende an.
+Gibt den Anzeigenamen für dieses Thema in der Legende an.
 
 #category_legend_aliasname: Allgemein
 
-#ref_scale: Refenzma�stab anwenden
+#ref_scale: Refenzmaßstab anwenden
 
 #category_ref_scale: Allgemein
 
 #downloadable: Download erlauben
 
-Daten dieses Themas k�nnen heruntergeladen werden.
+Daten dieses Themas können heruntergeladen werden.
 
 #category_downloadable: Download
 
 #theme_labeling: Themenbeschriftung
 
-Themenbeschriftung kann durch den User ge�ndert werden. Nur f�r IMS Dienste.
+Themenbeschriftung kann durch den User geändert werden. Nur für IMS Dienste.
 
-#category_theme_labeling: Labeling (nicht mehr unterst�tzt)
+#category_theme_labeling: Labeling (nicht mehr unterstützt)
 
 #ogc_id: Ogc Id
 
-Id f�r dieses Thema, das f�r WMS export verwendet wird. Wenn hier nichts angeben wird, enspricht diese Id der Original Id den Service.
+Id für dieses Thema, das für WMS export verwendet wird. Wenn hier nichts angeben wird, enspricht diese Id der Original Id den Service.
 
 #category_ogc_id: WebGIS 5 OGC
 

@@ -22,5 +22,5 @@
 
 #update_duration: Caching Zeitspanne in Sekunden
 
-F�r diesen Zeitraum wird der Dienst gecached.
+Für diesen Zeitraum wird der Dienst gecached.
 

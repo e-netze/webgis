@@ -24,9 +24,9 @@ Gibt die Breite des Browserfenstersn in Pixel an. Ein Wert von 0 bedeutet: Param
 
 #category_width: Browserfenster
 
-#height: Fenster H�he
+#height: Fenster Höhe
 
-Gibt die H�he des Browserfenstersn in Pixel an. Ein Wert von 0 bedeutet: Parameterter ignorieren.
+Gibt die Höhe des Browserfenstersn in Pixel an. Ein Wert von 0 bedeutet: Parameterter ignorieren.
 
 #category_height: Browserfenster
 

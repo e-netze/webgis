@@ -1,10 +1,10 @@
-#use_scale_constraints: Vordefinierte Ma�st�be als Ma�stabsgrenzen verwenden
+#use_scale_constraints: Vordefinierte Maßstäbe als Maßstabsgrenzen verwenden
 
-#category_use_scale_constraints: Ma�stab
+#category_use_scale_constraints: Maßstab
 
-#ref_scale: Referenzma�stab beim Aufruf
+#ref_scale: Referenzmaßstab beim Aufruf
 
-#category_ref_scale: Referenzma�stab
+#category_ref_scale: Referenzmaßstab
 
 #map_extent_url: Name der Kartenausdehnung
 

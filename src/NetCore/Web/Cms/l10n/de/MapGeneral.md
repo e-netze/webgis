@@ -10,15 +10,15 @@
 
 #category_esri_datum: Koordinatensystem
 
-#browser_window_name: Name des Browserfensters (f�r Hotlinks)
+#browser_window_name: Name des Browserfensters (für Hotlinks)
 
 #category_browser_window_name: Browserfenster
 
-#default_for_role: Standardkarte f�r Rolle
+#default_for_role: Standardkarte für Rolle
 
 #category_default_for_role: UserManagement
 
-#default_for_user: Standardkarte f�r Benutzer
+#default_for_user: Standardkarte für Benutzer
 
 #category_default_for_user: UserManagement
 
@@ -40,7 +40,7 @@
 
 #waring_level: Warning Level
 
-Gibt Transparenzwerte an, die der Anwender �ber das Basemap Control ausw�hlen kann
+Gibt Transparenzwerte an, die der Anwender über das Basemap Control auswählen kann
 
 #category_waring_level: Diagnostics
 
