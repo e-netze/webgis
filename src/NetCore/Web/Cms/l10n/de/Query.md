@@ -10,7 +10,13 @@ Gibt an, ob der Anwender etwas eingeben muss um zu suchen
 
 #preview_text_template: Ergebnisvorschau Vorlage (Template)
 
-Werden mehrere Objekte bei einer Abfrage gefunden, wird zuerst eine verfachte Liste der Objekte angezeigt. Dazu wird für jedes Objekte ein kurzer Vorschau-Text erstellt. Dieser Text setzt sich in der Regel aus den Attributwerten der möglichen Suchbegriffe zusammen. Ist dies für diese Abfrage nicht erwünscht oder sollten andrere Attribute verwendet werden, kann hier eine Vorlage defineirt werden. Die Vorlage kann ein beliegibter Text mit Platzhaltern für die Attribute in eckigen Klammern sein, zB Hausnummer [HRN] in [STRASSE]. Hinweis: Es werden nur Attribute im Template übersetzt, die auch in der Ergebnisstabelle vorkommen. Für einen Zeilenumbruch in der Vorschau kann \\n geschreiben werden.
+Werden mehrere Objekte bei einer Abfrage gefunden, wird zuerst eine verfachte Liste der Objekte angezeigt. 
+Dazu wird für jedes Objekte ein kurzer Vorschau-Text erstellt. Dieser Text setzt sich in der Regel aus den 
+Attributwerten der möglichen Suchbegriffe zusammen. Ist dies für diese Abfrage nicht erwünscht oder sollten 
+andrere Attribute verwendet werden, kann hier eine Vorlage defineirt werden. Die Vorlage kann ein 
+beliegibter Text mit Platzhaltern für die Attribute in eckigen Klammern sein, zB Hausnummer [HRN] in [STRASSE]. 
+Hinweis: Es werden nur Attribute im Template übersetzt, die auch in der Ergebnisstabelle vorkommen. 
+Für einen Zeilenumbruch in der Vorschau kann \\n geschreiben werden.
 
 #category_preview_text_template: Ergebnisvorschau
 
@@ -28,25 +34,30 @@ WebGIS 5: Das Ergebnis kann aus der Liste in eine andere Anwendung (zB Datalinq)
 
 #distict: Distinct
 
-Gibt es Objekte mit idententer Geometie (zB gleicher Punkt) und sind ebenso die in der Abfrage abgeholten Attributewerte ident, wird ein Objekt in der Erebnisliste nur einmal angeführt.
+Gibt es Objekte mit idententer Geometie (zB gleicher Punkt) und sind ebenso die in der Abfrage abgeholten 
+Attributewerte ident, wird ein Objekt in der Erebnisliste nur einmal angeführt.
 
 #category_union: Erweiterte Eigenschaften
 
 #union: Union
 
-Ergebnismarker, die in der Karte am gleiche Ort liegen (identer Punkt) werden zu einem Objekt zusammengefasst. Der Marker enthält in der Tabellenansicht alle betroffenen 'Records'
+Ergebnismarker, die in der Karte am gleiche Ort liegen (identer Punkt) werden zu einem Objekt 
+zusammengefasst. Der Marker enthält in der Tabellenansicht alle betroffenen 'Records'
 
 #category_apply_zoom_limits: Erweiterte Eigenschaften
 
 #apply_zoom_limits: Layer Zoomgrenzen anwenden
 
-Eine Abfrage (Identify, Dynamischer Inhalt im aktuellen Auscchnit) wird nur durchgeführt, wenn sich die Karte inhalb der Zoomgrenzen des zugrunde liegenden Abfragethemas befinden.
+Eine Abfrage (Identify, Dynamischer Inhalt im aktuellen Auscchnit) wird nur durchgeführt,
+wenn sich die Karte inhalb der Zoomgrenzen des zugrunde liegenden Abfragethemas befinden.
 
 #category_max_features: Erweiterte Eigenschaften
 
 #max_features: Maximale Anzahl
 
-Maximale Anzahl an Features, die bei eine Abfrage abgeholt werden sollten. Ein Wert <= 0 gibt an, dass die maximale Anzahl von Features abgeholt wird, die vom FeatureServer bei einem Request zurück gegeben werden können.
+Maximale Anzahl an Features, die bei eine Abfrage abgeholt werden sollten. Ein Wert <= 0 gibt an, 
+dass die maximale Anzahl von Features abgeholt wird, die vom FeatureServer bei einem Request zurück 
+gegeben werden können.
 
 #category_network_tracer: Sonder
 
@@ -88,15 +99,17 @@ Maximale Anzahl an Features, die bei eine Abfrage abgeholt werden sollten. Ein W
 
 #geo_juhu_schema: GeoJuhu Schema
 
-Hier können mehrere Schematas mit Beistrich getrennt eingeben werden. Der Wert wird nur berücksichtigt, wenn ein GeoJuhu Schema in der Aufruf-Url übergeben wird. * (Stern) kann angeben werden, wenn eine Thema in jedem Schema abgefragt werden soll.
+Hier können mehrere Schematas mit Beistrich getrennt eingeben werden. Der Wert wird nur berücksichtigt, 
+wenn ein GeoJuhu Schema in der Aufruf-Url übergeben wird. * (Stern) kann angeben werden, wenn eine 
+Thema in jedem Schema abgefragt werden soll.
 
 #category_geo_juhu_schema: GeoJuhu
 
 #filter_url: Filter
 
-Eine Abfrage kann mit einem Filter verbunden werden. Bei den Abfrageergebnissen erscheint dann ein Filter-Symbol mit dem man genau dieses Feature filtern kann.
+Eine Abfrage kann mit einem Filter verbunden werden. Bei den Abfrageergebnissen erscheint dann ein 
+Filter-Symbol mit dem man genau dieses Feature filtern kann.
 
 #category_filter_url: Filter
 
 #query_group_name: Gruppenname
-

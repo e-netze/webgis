@@ -2,11 +2,13 @@
 
 #enable_edit_server: Über Edit-Server verfügbar
 
-Wenn das Editthema nicht nur die Editwerkzeuge des WebGIS-Kartenviewers verfügbar sein sollten, sondern auch über den Collector (App-Builder), muss diese Option gesetzt werden.
+Wenn das Editthema nicht nur die Editwerkzeuge des WebGIS-Kartenviewers verfügbar sein sollten, 
+sondern auch über den Collector (App-Builder), muss diese Option gesetzt werden.
 
 #srs: Räumliches Bezugssystem (EPSG-Code)
 
-Hier muss das Koordinatensystem angeben werden, in dem die Daten in der Datenbank vorliegen! Wenn kein Bezugssystem angegeben wird, kann das Editthema nicht im Viewer ausgewählt werden.
+Hier muss das Koordinatensystem angeben werden, in dem die Daten in der Datenbank vorliegen! 
+Wenn kein Bezugssystem angegeben wird, kann das Editthema nicht im Viewer ausgewählt werden.
 
 #tags: Tags (optional)
 
@@ -52,7 +54,10 @@ Gibt an, ober der 'Speichern und Auswählen' Button in der Erstellungsmaske ange
 
 #insert_action1: 1. Erweiterte Speicheraktion (optional)
 
-Für zusätzliche Buttons, die beim Speichern angeboten werden. Damit ein entsprechender Button angezeigt wird, muss hier eine Aktion gewählt und eine Text für den Button vergeben werden. Durch die ersten beiden Optionen (Save und SaveAndSelect) können die hier oben angeführten vordefinerten Aktionen überschreiben und mit einem anderen Button Text dargestellt werden.
+Für zusätzliche Buttons, die beim Speichern angeboten werden. Damit ein entsprechender Button 
+angezeigt wird, muss hier eine Aktion gewählt und eine Text für den Button vergeben werden. 
+Durch die ersten beiden Optionen (Save und SaveAndSelect) können die hier oben angeführten 
+vordefinerten Aktionen überschreiben und mit einem anderen Button Text dargestellt werden.
 
 #category_insert_action_text1: Aktionen (Insert)
 
@@ -118,5 +123,10 @@ Zeichnet der Anwender Multipart (auch Fan-Geometrie) Features, werden diese beim
 
 #theme_id: Interne ThemeId
 
-Die ThemeId muss für eine Editthema eindeutig sein und sollte nicht mehr geändert werden, wenn ein Thema produktiv eingebunden wird. Die Vergabe einer eindeutigen Id wird beim erstellen eines Themas automatisch vergeben. Für bestimmte Aufgaben macht es Sinn, für diese Id einen sprechenden Namen zu vergeben (z.B. wenn das Editthema über eine Collector App außerhalb des Kartenviewers verwendet wird). Hier muss allerdings immer darauf geachtet werden, dass dieser Wert für alle Themen eindeutig bleibt. Dieser Wert sollte nur von versierten Administratoren geändert werden!!!
+Die ThemeId muss für eine Editthema eindeutig sein und sollte nicht mehr geändert werden, 
+wenn ein Thema produktiv eingebunden wird. Die Vergabe einer eindeutigen Id wird beim erstellen 
+eines Themas automatisch vergeben. Für bestimmte Aufgaben macht es Sinn, für diese Id einen 
+sprechenden Namen zu vergeben (z.B. wenn das Editthema über eine Collector App außerhalb des 
+Kartenviewers verwendet wird). Hier muss allerdings immer darauf geachtet werden, dass dieser 
+Wert für alle Themen eindeutig bleibt. Dieser Wert sollte nur von versierten Administratoren geändert werden!!!
 

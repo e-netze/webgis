@@ -28,7 +28,9 @@ Gibt den Anzeigenamen für dieses Thema in der Legende an.
 
 #metadata_link: Metadaten Link
 
-Nur wenn Darstellungsvarianten = 'auto' für den Dienst gilt.Wird im Viewer als [i] Button dargestellt und verweißt auf angefühten Link. Im Link können die Platzhalter für die Karte, wie bei benutzerdefnierten Werkzeugen verwendet weden: {map.bbox}, {map.centerx}, {map.centery}, {map.scale}
+Nur wenn Darstellungsvarianten = 'auto' für den Dienst gilt.Wird im Viewer als [i] Button 
+dargestellt und verweißt auf angefühten Link. Im Link können die Platzhalter für die Karte, 
+wie bei benutzerdefnierten Werkzeugen verwendet weden: {map.bbox}, {map.centerx}, {map.centery}, {map.scale}
 
 #category_metadata_link: Metadaten
 
@@ -58,7 +60,8 @@ application/xml oder text/xml oder text/html
 
 #ogc_id: Ogc Id
 
-Id für dieses Thema, das für WMS export verwendet wird. Wenn hier nichts angeben wird, enspricht diese Id der Original Id den Service.
+Id für dieses Thema, das für WMS export verwendet wird. Wenn hier nichts angeben wird, 
+enspricht diese Id der Original Id den Service.
 
 #category_ogc_id: WebGIS 5 OGC
 

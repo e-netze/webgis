@@ -28,11 +28,15 @@ Für Luftbilder 'Quality' verwenden. Für Ortspläne (mit Text) 'Readablility'..
 
 #max_level: Max. Level
 
-Der höchste Level, der für diesen Dienst verwendet werden kann. Ein Wert kleiner als 0, gibt an, dass das maximale Level dem maximalen Matrixset Level aus den Capabilities entspricht.
+Der höchste Level, der für diesen Dienst verwendet werden kann. Ein Wert kleiner als 
+0, gibt an, dass das maximale Level dem maximalen Matrixset Level aus den Capabilities
+entspricht.
 
 #hide_beyond_max_level: Unter Max. Level verbergen
 
-Zoomt der Anwender weiter in die Karte, als dieser Tiling Dienst zur Verfügung steht, werden die Tiles nicht mehr angezeigt. Per Default (Wert = false) wird der Dienst trotzdem angezeigt und die Tiles entsprechend \"vergrößert/unscharf\" dargestellt.
+Zoomt der Anwender weiter in die Karte, als dieser Tiling Dienst zur Verfügung 
+steht, werden die Tiles nicht mehr angezeigt. Per Default (Wert = false) wird der 
+Dienst trotzdem angezeigt und die Tiles entsprechend \"vergrößert/unscharf\" dargestellt.
 
 #username: Username
 

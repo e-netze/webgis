@@ -4,7 +4,8 @@
 
 #mode: Mouseover anwenden, wenn
 
-Gibt an, ob Mouseover angezeigt wird, wenn das jeweilige Thema in der Karte sichtbar ist oder die Abfrage (falls in der Karte vorhanden) Abfragethema ist.
+Gibt an, ob Mouseover angezeigt wird, wenn das jeweilige Thema in der Karte 
+sichtbar ist oder die Abfrage (falls in der Karte vorhanden) Abfragethema ist.
 
 #is_map_info: Als Karten Tipp darstellen
 

@@ -1,6 +1,8 @@
 #dynamic_presentations: Darstellungsvariaten bereitstellen
 
-Darastellungsvarianten werden nicht mehr parametriert, sondern werden dynamisch aus dem TOC des Dienstes erstellt. Das Level gibt an, bis zu welcher Ebene Untergruppen erstellt werden. Layer unterhalb des maximalen Levels werden zu einer Checkbox-Darstellungsvariante zusammengeasst.
+Darastellungsvarianten werden nicht mehr parametriert, sondern werden dynamisch aus dem TOC des Dienstes erstellt. 
+Das Level gibt an, bis zu welcher Ebene Untergruppen erstellt werden. 
+Layer unterhalb des maximalen Levels werden zu einer Checkbox-Darstellungsvariante zusammengeasst.
 
 #dynamic_queries: Abfragen bereitstellen
 
@@ -8,7 +10,8 @@ Abfragen werden nicht mehr parametriert, sondern werden zur Laufzeit für alle (
 
 #service_type: Service-Typ
 
-Watermark Services werden immer ganz oben gezeichnet und können vom Anwender nicht transparent geschalten oder ausgelendet werden. Watermark Services können neben Wasserzeichen auch Polygondecker enthalten.
+Watermark Services werden immer ganz oben gezeichnet und können vom Anwender nicht transparent geschalten oder ausgelendet werden. 
+Watermark Services können neben Wasserzeichen auch Polygondecker enthalten.
 
 #server: Karten Server
 
@@ -66,5 +69,5 @@ Diese RenderingRule wird beim Identify verwendet. Gibt es für diese RenderingRu
 
 #pixel_aliasname: Pixel Aliasname
 
-Wird ein Identify auf den Dienst ausgeführt wird beim Ergebnis statt 'Pixel' dieser Wert in der Ergbnisstabelle angezeigt. Dies sollte ein Name sein, der das Ergebnis genauer beschreibt, zB Höhe [m]
-
+Wird ein Identify auf den Dienst ausgeführt wird beim Ergebnis statt 'Pixel' dieser Wert in der Ergbnisstabelle angezeigt. 
+Dies sollte ein Name sein, der das Ergebnis genauer beschreibt, zB Höhe [m]

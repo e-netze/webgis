@@ -1,12 +1,18 @@
 #opacity: Initiale Deckkraft
 
-Gibt an, ob der Dienst nach den Starten der Karte transparent dargestellt werden soll. Der Wert muss zwischen 0 (100% transparent) und 100 (nicht transparent) liegen.
+Gibt an, ob der Dienst nach den Starten der Karte transparent dargestellt werden soll. 
+Der Wert muss zwischen 0 (100% transparent) und 100 (nicht transparent) liegen.
 
 #category_opacity: Allgemein
 
 #opacity_factor: Transparenz Faktor
 
-Ein Factor, mit den die vom Anwender eingestellte Transparenz immer multipliziert wird. Sollte der Dienst beispielsweise immer hab durchlässig dargestellt werden, kann hier ein Wert von 0.5 eingestellt werden. Stellt der Anwender den Dienst auf 100% Deckkraft, bleibt der Dienst immer noch zu 50% durchlässig. Ein Wert von 1 bedeutet, dass der dienst bei 100% Deckkraft keine Transparenz aufweißt. 0 kann hier nicht eingegeben werden, da der Dienst dann überhaupt nicht angezeigt werden könnte!
+Ein Factor, mit den die vom Anwender eingestellte Transparenz immer multipliziert wird. 
+Sollte der Dienst beispielsweise immer hab durchlässig dargestellt werden, kann hier ein 
+Wert von 0.5 eingestellt werden. Stellt der Anwender den Dienst auf 100% Deckkraft, 
+bleibt der Dienst immer noch zu 50% durchlässig. Ein Wert von 1 bedeutet, dass der dienst 
+bei 100% Deckkraft keine Transparenz aufweißt. 0 kann hier nicht eingegeben werden, 
+da der Dienst dann überhaupt nicht angezeigt werden könnte!
 
 #category_opacity_factor: Allgemein
 
@@ -18,7 +24,8 @@ Liefert der Dienst nach 'x' Sekunden kein Ergebnis, wird der Request abgebrochen
 
 #image_format: Image Format
 
-Gibt an, in welchen Format das Kartenbild von Dienst abgeholt wird. Diese Eigenschaft wird nur für ArcIMS- und AGS Dienste berücksichtigt!
+Gibt an, in welchen Format das Kartenbild von Dienst abgeholt wird. 
+Diese Eigenschaft wird nur für ArcIMS- und AGS Dienste berücksichtigt!
 
 #category_image_format: Allgemein
 
@@ -42,7 +49,11 @@ Gibt an, ob der Dienst beim Kartenaufruf sichtbar ist...
 
 #show_in_toc: Im Toc anzeigen
 
-ESRI Datumstransformationen (Array), die bei Projection-On-The-Fly für diese Karte verwendet werden sollen. Nur für REST Services ab AGS 10.5. Es muss immer ein Array angegeben werden, zB [1618, ...] oder [1618]. Beim Abfragen (Query) kann nur eine Transformation übergeben werden; hier wird immer die erste hier angeführte Transformation verwendet.
+ESRI Datumstransformationen (Array), die bei Projection-On-The-Fly für diese Karte 
+verwendet werden sollen. Nur für REST Services ab AGS 10.5. Es muss immer ein Array 
+angegeben werden, zB [1618, ...] oder [1618]. Beim Abfragen (Query) kann nur eine 
+Transformation übergeben werden; hier wird immer die erste hier angeführte Transformation 
+verwendet.
 
 #category_show_in_toc: TOC
 
@@ -70,19 +81,23 @@ Gibt an, ab welchem Maßstab die Symbole in der Legende optimiert werden (nur we
 
 #legend_url: Url für fixe Legende
 
-Bei Angabe einer fixen Legende, wird immer nur diese angezeigt. Alle anderen Legendeneigenschaften werden ignoriert
+Bei Angabe einer fixen Legende, wird immer nur diese angezeigt. Alle anderen Legendeneigenschaften
+werden ignoriert
 
 #category_legend_url: Legende
 
 #use_fix_ref_scale: Fixen Referenzmaßstab verwenden
 
-Gilt nur für ArcIMS (AXL) Dienste. Ist diese Eigenschaft auf 'true' gesetzt, wird auf diesen Kartendienst immer ein fester Referenzmaßstab angewendet. Dieser kann auch von Kartenbenutzer nicht überschreiben werden!
+Gilt nur für ArcIMS (AXL) Dienste. Ist diese Eigenschaft auf 'true' gesetzt, wird auf diesen
+Kartendienst immer ein fester Referenzmaßstab angewendet. Dieser kann auch von Kartenbenutzer
+nicht überschreiben werden!
 
 #category_use_fix_ref_scale: Referenzmaßstab
 
 #fix_ref_scale: Fixer Referenzmaßstab 1:
 
-Gilt nur für ArcIMS (AXL) Dienste. Gibt einen fixen Referenzmaßstab an, der auf diensen Dienst angewendet wird. Dieser kann auch von Kartenbenutzer nicht überschreiben werden!
+Gilt nur für ArcIMS (AXL) Dienste. Gibt einen fixen Referenzmaßstab an, der auf diensen Dienst
+angewendet wird. Dieser kann auch von Kartenbenutzer nicht überschreiben werden!
 
 #category_fix_ref_scale: Referenzmaßstab
 
@@ -112,7 +127,8 @@ Gibt an, ob dieser Dienst eine Hintergrundkarte ist
 
 #basemap_type: (Hinter)Grundkarten-Typ
 
-Die Url zu einem Bild, dass für die Kachel im Viewer als Vorschaubild angezeigt wird. Notwendig zB. für WMS Dienste
+Die Url zu einem Bild, dass für die Kachel im Viewer als Vorschaubild angezeigt wird. 
+Notwendig zB. für WMS Dienste
 
 #category_basemap_type: Basemap
 
@@ -136,7 +152,8 @@ Gibt an, ab wann Fehler in der Karte angezeigt werden
 
 #copyright_info: Copyright Info
 
-Gibt die Copyright Info an, die für diesen Dienst hinterlegt ist. Die Info muss unnter Sonstiges/Copyright definiert sein.
+Gibt die Copyright Info an, die für diesen Dienst hinterlegt ist. Die Info muss unnter 
+Sonstiges/Copyright definiert sein.
 
 #category_copyright_info: Allgemein
 

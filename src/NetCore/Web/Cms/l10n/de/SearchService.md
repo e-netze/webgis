@@ -1,10 +1,12 @@
 #service_url: Service Url
 
-Die Url zum Suchdienst. Ist der Dienst ein geschützer LuceneServerNET Dienst kann die Authentifizierung über diese Url angefüft werden: https://client:secret@server.com
+Die Url zum Suchdienst. Ist der Dienst ein geschützer LuceneServerNET Dienst kann 
+die Authentifizierung über diese Url angefüft werden: https://client:secret@server.com
 
 #index_name: Optional: Indexname
 
-Der Indexname wird bei den meisten Suchdiensten schon über die Service Url definiert. Ausnahme sind Suchdienste vom Typ 'LuceneServerNET'. Hier ist die Angabe des Indexnamens pflicht.
+Der Indexname wird bei den meisten Suchdiensten schon über die Service Url definiert. 
+Ausnahme sind Suchdienste vom Typ 'LuceneServerNET'. Hier ist die Angabe des Indexnamens pflicht.
 
 #category_suggested_text: Attributes
 
@@ -24,7 +26,8 @@ Der Indexname wird bei den meisten Suchdiensten schon über die Service Url defi
 
 #copyright_info: Copyright Info
 
-Gibt die Copyright Info an, die für diesen Dienst hinterlegt ist. Die Info muss unnter Sonstiges/Copyright definiert sein.
+Gibt die Copyright Info an, die für diesen Dienst hinterlegt ist. Die Info muss 
+unnter Sonstiges/Copyright definiert sein.
 
 #category_copyright_info: Allgemein
 

@@ -12,7 +12,8 @@ Theme ist standardmäßig sichtbar
 
 #locked: Gesperrt (Locked)
 
-Thema ist gesperrt. Ist im TOC nicht sichtbar und kann somit nicht geschalten werden.
+Thema ist gesperrt. Ist im TOC nicht sichtbar und kann 
+somit nicht geschalten werden.
 
 #category_locked: Allgemein
 
@@ -38,13 +39,15 @@ Daten dieses Themas können heruntergeladen werden.
 
 #theme_labeling: Themenbeschriftung
 
-Themenbeschriftung kann durch den User geändert werden. Nur für IMS Dienste.
+Themenbeschriftung kann durch den User geändert werden. 
+Nur für IMS Dienste.
 
 #category_theme_labeling: Labeling (nicht mehr unterstützt)
 
 #ogc_id: Ogc Id
 
-Id für dieses Thema, das für WMS export verwendet wird. Wenn hier nichts angeben wird, enspricht diese Id der Original Id den Service.
+Id für dieses Thema, das für WMS export verwendet wird. Wenn 
+hier nichts angeben wird, enspricht diese Id der Original Id den Service.
 
 #category_ogc_id: WebGIS 5 OGC
 

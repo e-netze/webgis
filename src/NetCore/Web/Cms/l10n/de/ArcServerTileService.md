@@ -16,7 +16,8 @@ Für Luftbilder 'Quality' verwenden. Für Ortspläne (mit Text) 'Readablility'..
 
 #hide_beyond_max_level: Unter Max. Level verbergen
 
-Zoomt der Anwender weiter in die Karte, als dieser Tiling Dienst zur Verfügung steht, werden die Tiles nicht mehr angezeigt. Per Default (Wert = false) wird der Dienst trotzdem angezeigt und die Tiles entsprechend \"vergrößert/unscharf\" dargestellt.
+Zoomt der Anwender weiter in die Karte, als dieser Tiling Dienst zur Verfügung steht, werden die Tiles nicht mehr angezeigt. 
+Per Default (Wert = false) wird der Dienst trotzdem angezeigt und die Tiles entsprechend \"vergrößert/unscharf\" dargestellt.
 
 #username: Username
 

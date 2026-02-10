@@ -6,7 +6,8 @@ Haben der Quell und die Ziel Layer namensgleiche Felder, wird der Inhalt der Fel
 
 #method: Transfer Methode
 
-Hier kann angegeben werden, ob die Features beim Transfer nur ins Ziel kopiert oder verschoben werden. Beim Verschieben, verschwinden die Features aus dem Editlayer.
+Hier kann angegeben werden, ob die Features beim Transfer nur ins Ziel kopiert oder verschoben werden. 
+Beim Verschieben, verschwinden die Features aus dem Editlayer.
 
 #category_method: Allgemein
 
