@@ -49,7 +49,7 @@
                            assembly="E.Standard.WebGIS.CmsSchema.dll"
                            instance="E.Standard.WebGIS.CmsSchema.ServiceLayer" />
 			  <schema-node createmode="user"
-						   prompt="Themen aus Dienst manuell hinzufügen/entfernen"
+						   prompt="add-remove-topics-from-service"
 						   assembly="E.Standard.WebGIS.CmsSchema.dll"
 						   instance="E.Standard.WebGIS.CmsSchema.ServiceLayerAssistent" />
             </schema-node>
@@ -157,7 +157,7 @@
                            assembly="E.Standard.WebGIS.CmsSchema.dll"
                            instance="E.Standard.WebGIS.CmsSchema.ServiceLayer" />
 		      <schema-node createmode="user"
-						   prompt="Themen aus Dienst manuell hinzufügen/entfernen"
+						   prompt="add-remove-topics-from-service"
 						   assembly="E.Standard.WebGIS.CmsSchema.dll"
 						   instance="E.Standard.WebGIS.CmsSchema.ServiceLayerAssistent" />
             </schema-node>
@@ -252,7 +252,7 @@
       <schema-node name="GeoRSS" obsolete="true">
         <schema-file name="*" createmode="user"
                      filtertype="service"
-                     prompt="Neuen GeoRSS Dienst"
+                     prompt="new-georss-service"
                      deletable="true"
                      assembly="E.Standard.WebGIS.CmsSchema.dll"
                      instance="E.Standard.WebGIS.CmsSchema.GeoRssService" />
@@ -262,7 +262,7 @@
       <schema-node name="Miscellaneous" description="doc/misc-services.txt">
         <schema-node name="GeneralTileCache" description="doc/service.txt">
           <schema-node name="*" createmode="user"
-                       prompt="Neuen Tilecache einbinden"
+                       prompt="add-new-tilecache"
                        deletable="true"
                        filtertype="service"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -288,7 +288,7 @@
 
 		<schema-node name="GeneralVectorTileCache" description="doc/service.txt">
 			<schema-node name="*" createmode="user"
-						prompt="Neuen VectorTilecache einbinden"
+						prompt="add-new-vector-tilecache"
 						deletable="true"
 						filtertype="service"
 						assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -296,7 +296,7 @@
 
 				<schema-node name="Fallback" required="true">
 					<schema-link name="*" deletable="true"
-								prompt="Fallback Dienst (zB zum Drucken)"
+								prompt="fallback-service"
 								onlyone="true"
 				                filter="Dienste|service"
 					            assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -328,7 +328,7 @@
 		<!--  
         <schema-node name="ServiceCollection" obsolete="true">
           <schema-node name="*" createmode="user"
-                       prompt="Neue Dienste Sammlung"
+                       prompt="new-service-collection"
                        deletable="true"
                        filtertype="service"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -336,7 +336,7 @@
 
             <schema-node name="Services" itemorder="true">
               <schema-link name="*" deletable="true" uniquelinks="true"
-                           prompt="Eingebundenen Dienst hinzufügen"
+                           prompt="add-integrated-service"
                            filter="Dienste|service"
                            assembly="E.Standard.WebGIS.CmsSchema.dll"
                            instance="E.Standard.WebGIS.CmsSchema.ServiceLink"
@@ -356,7 +356,7 @@
 		  
         <schema-node name="searchservices" itemorder="true" description="doc/service.txt">
           <schema-file name="*" deletable="true" createmode="user" itemorder="true"
-                       prompt="Neuen Suchdienst einbinden"
+                       prompt="add-new-search-service"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.SearchService" />
         </schema-node>
@@ -364,7 +364,7 @@
 
 		<schema-node name="MapServiceCollections">
 			<schema-node name="*" createmode="user"
-						 prompt="Neue MapService Collection"
+						 prompt="add-new-mapservice-collection"
 						 deletable="true"
 						 filtertype="service"
 						 assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -372,7 +372,7 @@
 
 				<schema-node name="Services" itemorder="true">
 					<schema-link name="*" deletable="true" uniquelinks="true"
-								 prompt="Eingebundenen Dienst hinzufügen"
+								 prompt="add-integrated-service"
 								 filter="Dienste|service"
 								 assembly="E.Standard.WebGIS.CmsSchema.dll"
 								 instance="E.Standard.WebGIS.CmsSchema.MapServiceLink"
@@ -384,7 +384,7 @@
 
     <schema-node name="Extents" itemorder="true">
       <schema-file name="*" createmode="user"
-                   prompt="Neuer Extent"
+                   prompt="new-extent"
                    filtertype="extent"
                    deletable="true"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -395,12 +395,12 @@
       <schema-node name="ui" obsolete="true">
         <schema-node name="Links" itemorder="true" obsolete="true">
           <schema-node name="*" deletable="true" createmode="user" itemorder="true"
-                       prompt="Neue Linkgruppe erstellen"
+                       prompt="new-linkgroup"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.UILinkCollection" >
             <schema-file name="*" deletable="true" createmode="user"
                        filtertype="uilink"
-                       prompt="Neuen Link erstellen"
+                       prompt="new-link"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.UILink" />
           </schema-node>
@@ -409,14 +409,14 @@
     
       <schema-node name="containers" itemorder="true" obsolete="true">
         <schema-file name="*" deletable="false" createmode="user" itemorder="true"
-                     prompt="Neuen Container erstellen"
+                     prompt="create-new-container"
                      assembly="E.Standard.WebGIS.CmsSchema.dll"
                      instance="E.Standard.WebGIS.CmsSchema.Container" />
       </schema-node>
     
       <schema-node name="copyright" itemorder="true">
         <schema-file name="*" deletable="false" createmode="user" itemorder="true"
-                     prompt="Neuen Copyright Info erstellen"
+                     prompt="create-new-copyright-info"
                      assembly="E.Standard.WebGIS.CmsSchema.dll"
                      instance="E.Standard.WebGIS.CmsSchema.CopyrightInfo" />
       </schema-node>
@@ -433,25 +433,25 @@
                    instance_="E.Standard.WebGIS.CmsSchema.Presentations"
                  >
           <schema-node name="*" deletable="true" createmode="user" itemorder="true" recommended="true" filtertype="presentaion_container"
-                       prompt="Neuen Container erstellen"
+                       prompt="create-new-container"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.ContainerNode">
 
             <schema-node name="*" createmode="user" itemorder="true"  recommended="true"
-                  prompt="Neue Gruppe"
+                  prompt="new-group"
                   deletable="true"
                   assembly="E.Standard.WebGIS.CmsSchema.dll"
                   instance="E.Standard.WebGIS.CmsSchema.PresentationGroupGdi">
 
               <schema-link name="*" deletable="true"
-                           prompt="Darstellungsvariante(n) hinzufügen"
+                           prompt="add-display-variants"
                            filter="Darstellungsvarianten|presentation"
                            urifilterlinks_="../../Services"
                            assembly="E.Standard.WebGIS.CmsSchema.dll"
                            instance="E.Standard.WebGIS.CmsSchema.PresentationLinkGdi" />
               </schema-node>
             <schema-link name="*" deletable="true"
-                         prompt="Darstellungsvariante(n) hinzufügen"
+                         prompt="add-display-variants"
                          filter="Darstellungsvarianten|presentation"
                          urifilterlinks_="../Services"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -465,12 +465,12 @@
                      instance_="E.Standard.WebGIS.CmsSchema.AddServicesMenu">
       
           <schema-node name="*" createmode="user" itemorder="true"
-                       prompt="Neue Gruppe"
+                       prompt="new-group"
                        deletable="true"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.ContainerNode">
             <schema-link name="*" deletable="true"
-                         prompt="Eingebundenen Dienst hinzufügen"
+                         prompt="add-integrated-service"
                          filter="Dienste|service"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
                          instance="E.Standard.WebGIS.CmsSchema.ServiceLinkGdi" />
@@ -484,7 +484,7 @@
           <schema-node name="Layouts" itemorder="true">
             <schema-file name="*" createmode="user"
                          deletable="true"
-                         prompt="Layout hinzufügen"
+                         prompt="add-layout"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
                          instance="E.Standard.WebGIS.CmsSchema.MapPrintLayout"
                          filtertype="layout" />
@@ -494,7 +494,7 @@
         <schema-node name="gdi-custom">
           <schema-node name="*" createmode="user"
                    deletable="true" itemorder="true"
-                   prompt="Neues GDI Schema"
+                   prompt="new-gdi-schema"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.GDISchema"
                    >
@@ -507,24 +507,24 @@
                    instance_="E.Standard.WebGIS.CmsSchema.Presentations"
                  >
             <schema-node name="*" deletable="true" createmode="user" itemorder="true" filtertype="presentaion_container"
-                         prompt="Neuen Container erstellen"
+                         prompt="create-new-container"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
                          instance="E.Standard.WebGIS.CmsSchema.ContainerNode">
 
               <schema-node name="*" createmode="user" itemorder="true"
-                    prompt="Neue Gruppe"
+                    prompt="new-group"
                     deletable="true"
                     assembly="E.Standard.WebGIS.CmsSchema.dll"
                     instance="E.Standard.WebGIS.CmsSchema.PresentationGroupGdi">
                 <schema-link name="*" deletable="true"
-                             prompt="Darstellungsvariante hinzufügen"
+                             prompt="add-display-variant"
                              filter="Darstellungsvarianten|presentation"
                              urifilterlinks_="../../Services"
                              assembly="E.Standard.WebGIS.CmsSchema.dll"
                              instance="E.Standard.WebGIS.CmsSchema.PresentationLinkGdi" />
               </schema-node>
               <schema-link name="*" deletable="true"
-                           prompt="Darstellungsvariante hinzufügen"
+                           prompt="add-display-variant"
                            filter="Darstellungsvarianten|presentation"
                            urifilterlinks_="../Services"
                            assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -539,7 +539,7 @@
               <schema-node name="Layouts" itemorder="true">
                 <schema-file name="*" createmode="user"
                              deletable="true"
-                             prompt="Layout hinzufügen"
+                             prompt="add-layout"
                              assembly="E.Standard.WebGIS.CmsSchema.dll"
                              instance="E.Standard.WebGIS.CmsSchema.MapPrintLayout"
                              filtertype="layout" />
@@ -550,12 +550,12 @@
                      instance_="E.Standard.WebGIS.CmsSchema.AddServicesMenu">
       
               <schema-node name="*" createmode="user" itemorder="true"
-                           prompt="Neue Gruppe"
+                           prompt="new-group"
                            deletable="true"
                            assembly="E.Standard.WebGIS.CmsSchema.dll"
                            instance="E.Standard.WebGIS.CmsSchema.ContainerNode">
                 <schema-link name="*" deletable="true"
-                             prompt="Eingebundenen Dienst hinzufügen"
+                             prompt="add-integrated-service"
                              filter="Dienste|service"
                              assembly="E.Standard.WebGIS.CmsSchema.dll"
                              instance="E.Standard.WebGIS.CmsSchema.ServiceLinkGdi" />
@@ -568,7 +568,7 @@
 		<!--
 		<schema-node name="MapServiceCollections">
 			<schema-node name="*" createmode="user"
-						 prompt="Neue MapService Collection"
+						 prompt="add-new-mapservice-collection"
 						 deletable="true"
 						 filtertype="service"
 						 assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -576,7 +576,7 @@
 
 				<schema-node name="Services" itemorder="true">
 					<schema-link name="*" deletable="true" uniquelinks="true"
-								 prompt="Eingebundenen Dienst hinzufügen"
+								 prompt="add-integrated-service"
 								 filter="Dienste|service"
 								 assembly="E.Standard.WebGIS.CmsSchema.dll"
 								 instance="E.Standard.WebGIS.CmsSchema.MapServiceLink"
@@ -590,7 +590,7 @@
     <schema-node name="Maps" obsolete="true">
       <schema-node name="*" createmode="user"
                    deletable="true"
-                   prompt="Neue Karte"
+                   prompt="new-map"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.MapGeneral"
                    filtertype="map"
@@ -610,19 +610,19 @@
         <schema-node name="Presentations"
                      itemorder="true">
           <schema-node name="*" createmode="user" itemorder="true"
-                       prompt="Neue Gruppe"
+                       prompt="new-group"
                        deletable="true"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.PresentationGroup">
             <schema-link name="*" deletable="true"
-                         prompt="Darstellungsvariante hinzufügen"
+                         prompt="add-display-variant"
                          filter="Darstellungsvarianten|presentation"
                          urifilterlinks="../../Services"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
                          instance="E.Standard.WebGIS.CmsSchema.PresentationLink" />
           </schema-node>
           <schema-link name="*" deletable="true"
-                         prompt="Darstellungsvariante hinzufügen"
+                         prompt="add-display-variant"
                          filter="Darstellungsvarianten|presentation"
                          urifilterlinks="../Services"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -631,19 +631,19 @@
         <schema-node name="VisFilter"
                      itemorder="true">
           <schema-node name="*" createmode="user" itemorder="true"
-                       prompt="Neue Gruppe"
+                       prompt="new-group"
                        deletable="true"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.VisFilterGroup">
             <schema-link name="*" deletable="true"
-                         prompt="Darstellungsfilter hinzufügen"
+                         prompt="add-display-variant"
                          filter="Darstellungsfilter|visfilter"
                          urifilterlinks="../../Services"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
                          instance="E.Standard.WebGIS.CmsSchema.VisFilterLink" />
           </schema-node>
           <schema-link name="*" deletable="true"
-                         prompt="Darstellungsfilter hinzufügen"
+                         prompt="add-display-variant"
                          filter="Darstellungsfilter|visfilter"
                          urifilterlinks="../Services"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -652,12 +652,12 @@
         <schema-node name="Labelling"
                      itemorder="true">
           <schema-node name="*" createmode="user" itemorder="true"
-                       prompt="Neue Gruppe"
+                       prompt="new-group"
                        deletable="true"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.LabellingGroup">
             <schema-link name="*" deletable="true"
-                         prompt="Beschriftungsthema hinzufügen"
+                         prompt="add-labeling-theme"
                          filter="Beschriftungsthemen|label"
                          urifilterlinks="../../Services"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -667,7 +667,7 @@
         <schema-node name="Chainage"
                      itemorder="true">
           <schema-link name="*" deletable="true"
-                       prompt="Stationierungsthema hinzufügen"
+                       prompt="add-stationing-theme"
                        filter="Stationierung|chainage"
                        urifilterlinks="../Services"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -676,12 +676,12 @@
         <schema-node name="Snapschemas"
                      itemorder="true">
           <schema-node name="*" createmode="user" itemorder="true"
-                       prompt="Neues Snapschema"
+                       prompt="new-snap-scheme"
                        deletable="true"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.SnapSchema">
             <schema-link name="*" deletable="true"
-                         prompt="(Dienst)Snap Schema hinzufügen"
+                         prompt="add-snap-scheme"
                          filter="Snapschema|snapschema"
                          urifilterlinks="../../Services"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -695,7 +695,7 @@
           <schema-node name="Layouts" itemorder="true">
             <schema-file name="*" createmode="user"
                          deletable="true"
-                         prompt="Layout hinzufügen"
+                         prompt="add-layout"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
                          instance="E.Standard.WebGIS.CmsSchema.MapPrintLayout"
                          filtertype="layout" />
@@ -704,7 +704,7 @@
 
         <schema-node name="Services" itemorder="true">
           <schema-link name="*" deletable="true" uniquelinks="true"
-                       prompt="Eingebundenen Dienst hinzufügen"
+                       prompt="add-integrated-service"
                        filter="Dienste|service"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.ServiceLink"
@@ -713,7 +713,7 @@
 
         <schema-node name="Bookmarks" itemorder="true">
           <schema-link name="*" deletable="true"
-                       prompt="Neue Rechtecksausdehnung hinzufügen"
+                       prompt="add-rectangle-extent"
                        filter="Rechtechsausdehnung|extent"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.ExtentLink" />
@@ -722,7 +722,7 @@
         <schema-node name="OverviewMap" itemorder="true">
           <schema-link name="*" deletable="true"
                      onlyone="true"
-                     prompt="Eingebundenen Dienst auswählen"
+                     prompt="select-integrated-service"
                      filter="Dienste|service"
                         />
         </schema-node>
@@ -730,7 +730,7 @@
         <schema-node name="SpatialConstraintService">
           <schema-link name="*" deletable="true"
                        onlyone="true"
-                       prompt="Eingebundenen Dienst auswählen"
+                       prompt="select-integrated-service"
                        filter="Dienste|service"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.SpatialConstraintServiceLink"
@@ -739,13 +739,13 @@
 
         <schema-node name="Queries" itemorder="true">
           <schema-node name="*" createmode="user" itemorder="true"
-                       prompt="Neue Abfragen Gruppe"
+                       prompt="new-request-group"
                        deletable="true"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.QueryGroup">
             <schema-link name="*" deletable="true"
                          uniquelinks="true"
-                         prompt="Abfrage hinzufügen"
+                         prompt="add-request"
                          filter="Abfragen|query"
                          urifilterlinks="../../Services"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -756,7 +756,7 @@
 
         <schema-node name="MouseOver" itemorder="true">
           <schema-link name="*" deletable="true"
-                       prompt="MouseOver Abfrage hinzufügen"
+                       prompt="add-request-mouseover"
                        filter="Abfragen|query"
                        urifilterlinks="../Services"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -765,7 +765,7 @@
 
         <schema-node name="OverlayServices" itemorder="true">
           <schema-link name="*" deletable="true"
-                       prompt="Eingebundenen Dienst hinzufügen"
+                       prompt="add-integrated-service"
                        filter="Dienste|service"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.ServiceLink"
@@ -775,12 +775,12 @@
 
         <schema-node name="Editing" itemorder="true">
           <schema-node name="*" createmode="user" itemorder="true"
-                       prompt="Neue Edit Themengruppe"
+                       prompt="new-edit-theme-group"
                        deletable="true"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.EditGroup">
             <schema-link name="*" deletable="true"
-                         prompt="Edit Thema hinzufügen"
+                         prompt="add-edith-theme"
                          filter="Thema|theme"
                          urifilterlinks="../../Services"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -791,13 +791,13 @@
 
         <schema-node name="ProcessingServer" itemorder="true">
           <schema-file name="*" createmode="user" deletable="true"
-                       prompt="Processing Server Dienste hinzufügen"
+                       prompt="add-processingserver-service"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.ProcessingServer.Service"/>
         </schema-node>
         <schema-node name="CustomTools" itemorder="true">
           <schema-file name="*" createmode="user" deletable="true" filtertype="customtool"
-                       prompt="Benutzerdefiniertes Werkzeug hinzufügen"
+                       prompt="add-custom-tool"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.CustomTool"/>
         </schema-node>
@@ -811,7 +811,7 @@
     <schema-node name="Map_Collections" itemorder="true" obsolete="true">
       <schema-node name="*" createmode="user"
                    deletable="true" itemorder="true"
-                   prompt="Neue Kartensammlung"
+                   prompt="new-map-collection"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.MapCollection"
                    >
@@ -819,7 +819,7 @@
                      assembly="E.Standard.WebGIS.CmsSchema.dll"
                      instance="E.Standard.WebGIS.CmsSchema.MapCollection" />
         <schema-link name="*" uniquelinks="true"
-                     prompt="Karten hinzufügen"
+                     prompt="add-map"
                      filter="Karten|map"
                      deletable="true"
                      assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -840,13 +840,13 @@
 				         visible_if="DynamicQueries=Manually"
 				 >
       <schema-node name="*" createmode="user" filtertype="query"
-                   deletable="true" prompt="Neue Abfrage"
+                   deletable="true" prompt="new-request"
                    description="doc/query.txt"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.Query">
         <schema-node name="QueryTheme" required="true">
           <schema-link name="*" deletable="true"
-                      prompt="Abfrage Thema auswählen"
+                      prompt="choose-request-theme"
                       filter="Themen|theme"
                       onlyone="true"
                        
@@ -856,7 +856,7 @@
         </schema-node>
         <schema-node name="QueryTocTheme" itemorder="true">
           <schema-link name="*" deletable="true"
-                       prompt="Toc Thema hinzufügen"
+                       prompt="add-toc-theme"
                        filter="Theme|theme"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.QueryTheme" />
@@ -864,25 +864,25 @@
         <schema-node name="SearchItems" itemorder="true" recommended="true">
           <schema-file name="*" deletable="true"
                        createmode="user" filtertype="searchitem"
-                       prompt="Suchbegriff hinzufügen"
+                       prompt="add-searchable"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.SearchItem" />
         </schema-node>
         <schema-node name="TableColumns" itemorder="true" required="true" >
           <schema-file name="*" deletable="true"
                        createmode="user" filtertype="tablecolumn"
-                       prompt="Spalte hinzufügen"
+                       prompt="add-column"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.TableColumn" />
           <schema-node createmode="user"
-                       prompt="Mehrere Spalten hinzufügen"
+                       prompt="add-multiple-columns"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.TableColumnAssistent" />
         </schema-node>
         <schema-node name="StandaloneQuery" obsolete="true">
           <schema-node name="StandaloneQueryMaps" itemorder="true" >
             <schema-link name="*"
-                       prompt="Karten hinzufügen"
+                       prompt="add-map"
                        filter="Karten|map"
                        deletable="true"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -892,20 +892,20 @@
         <schema-node name="ExportFormats" itemorder="true">
           <schema-file name="*" deletable="true"
                        createmode="user" filtertype="tableexportformat"
-                       prompt="Export Format hinzufügen"
+                       prompt="add-export-forma"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.TableExportFormat" />
         </schema-node>
 		<schema-node name="FeatureTransfers" itemorder="true" >
 			<schema-node name="*" deletable="true"
 						 createmode="user" filtertype="featuretransfer"
-						 prompt="Feature Transfer hinzufügen"
+						 prompt="add-feature-transfer"
 						 assembly="E.Standard.WebGIS.CmsSchema.dll"
 						 instance="E.Standard.WebGIS.CmsSchema.EditingFeatureTransfer">
 
 				<schema-node name="EditThemes" required="true">
 					<schema-link name="*" deletable="true"
-								prompt="Editthemen hinzufügen"
+								prompt="add-edith-themes"
 								filter="Edit Themen|edittheme"
 								assembly="E.Standard.WebGIS.CmsSchema.dll"
 								instance="E.Standard.WebGIS.CmsSchema.EditingThemeTransferLink" />
@@ -913,7 +913,7 @@
 				<schema-node name="FieldSetters" itemorder="true">
 				    <schema-node name="*" deletable="true"
 								 createmode="user" 
-								 prompt="Field Setter hinzufügen"
+								 prompt="add-field-setter"
 							     assembly="E.Standard.WebGIS.CmsSchema.dll"
 					             instance="E.Standard.WebGIS.CmsSchema.EditingFieldTransferSetter" />
 				</schema-node> 
@@ -930,12 +930,12 @@
                  assembly="E.Standard.WebGIS.CmsSchema.dll"
                  instance_="E.Standard.WebGIS.CmsSchema.Queries" >
       <schema-node name="*" createmode="user" filtertype="query"
-                   deletable="true" prompt="Neue Abfrage"
+                   deletable="true" prompt="new-request"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.Query">
         <schema-node name="QueryTheme" itemorder="true" >
           <schema-link name="*" deletable="true"
-                      prompt="Abfrage Thema hinzufügen"
+                      prompt="add-request-theme"
                       filter="Themen|theme"
                       onlyone="false"
                       urifilterlinks="../../../Services"
@@ -945,25 +945,25 @@
         <schema-node name="SearchItems" itemorder="true">
           <schema-file name="*" deletable="true"
                        createmode="user" filtertype="searchitem"
-                       prompt="Suchbegriff hinzufügen"
+                       prompt="add-searchable"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.SearchItem" />
         </schema-node>
         <schema-node name="TableColumns" itemorder="true" >
           <schema-file name="*" deletable="true"
                        createmode="user" filtertype="tablecolumn"
-                       prompt="Spalte hinzufügen"
+                       prompt="add-column"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.TableColumn" />
           <schema-node createmode="user"
-                       prompt="Mehrere Spalten hinzufügen"
+                       prompt="add-multiple-columns"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.TableColumnAssistent" />
         </schema-node>
         <schema-node name="StandaloneQuery">
           <schema-node name="StandaloneQueryMaps" itemorder="true" >
             <schema-link name="*"
-                       prompt="Karten hinzufügen"
+                       prompt="add-map"
                        filter="Karten|map"
                        deletable="true"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -973,7 +973,7 @@
         <schema-node name="ExportFormats" itemorder="true">
           <schema-file name="*" deletable="true"
                        createmode="user" filtertype="tableexportformat"
-                       prompt="Export Format hinzufügen"
+                       prompt="add-export-format"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.TableExportFormat" />
         </schema-node>
@@ -990,12 +990,12 @@
                  assembly="E.Standard.WebGIS.CmsSchema.dll"
                  instance_="E.Standard.WebGIS.CmsSchema.Queries" >
       <schema-node name="*" createmode="user" filtertype="query"
-                   deletable="true" prompt="Neue Abfrage"
+                   deletable="true" prompt="new-request"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.Query">
         <schema-node name="QueryTheme">
           <schema-link name="*" deletable="true"
-                      prompt="Abfrage Thema hinzufügen"
+                      prompt="add-request-theme"
                       filter="Themen|theme"
                       onlyone="true"
                       urifilterpath="../../../Themes"
@@ -1012,12 +1012,12 @@
 					 instance_="E.Standard.WebGIS.CmsSchema.Queries"
 					 visible_if="DynamicQueries=Manually" >
 			<schema-node name="*" createmode="user" filtertype="query"
-						 deletable="true" prompt="Neue Abfrage"
+						 deletable="true" prompt="new-request"
 						 assembly="E.Standard.WebGIS.CmsSchema.dll"
 						 instance="E.Standard.WebGIS.CmsSchema.Query">
 				<schema-node name="QueryTheme">
 					<schema-link name="*" deletable="true"
-								prompt="Abfrage Thema hinzufügen"
+								prompt="add-request-theme"
 								filter="Themen|theme"
 								onlyone="true"
 								urifilterpath="../../../Themes"
@@ -1027,7 +1027,7 @@
 				<schema-node name="TableColumns" itemorder="true" >
 					<schema-file name="*" deletable="true"
 								 createmode="user" filtertype="tablecolumn"
-								 prompt="Spalte hinzufügen"
+								 prompt="add-column"
 								 assembly="E.Standard.WebGIS.CmsSchema.dll"
 								 instance="E.Standard.WebGIS.CmsSchema.TableColumn" />
 				</schema-node>
@@ -1040,13 +1040,13 @@
       <schema-node name="*" createmode="user" itemorder="true"
                    filtertype="toc"
                    deletable="true"
-                   prompt="Neues Inhaltsverzeichnis"
+                   prompt="new-table-of-content"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.TOC">
         <!-- Ebent 0-->
         <schema-node name="*" createmode="user" itemorder="true"
                      filtertype="tocgroup"
-                     prompt="Neue Gruppe"
+                     prompt="new-group"
                      deletable="true"
                      assembly="E.Standard.WebGIS.CmsSchema.dll"
                      instance="E.Standard.WebGIS.CmsSchema.TocGroup">
@@ -1054,7 +1054,7 @@
           <!-- Ebent 1-->
           <schema-node name="*" createmode="user" itemorder="true"
                      filtertype="tocgroup"
-                     prompt="Neue Gruppe"
+                     prompt="new-group"
                      deletable="true"
                      assembly="E.Standard.WebGIS.CmsSchema.dll"
                      instance="E.Standard.WebGIS.CmsSchema.TocGroup">
@@ -1064,7 +1064,7 @@
             <!-- Ebent 2-->
             <schema-node name="*" createmode="user" itemorder="true"
                        filtertype="tocgroup"
-                       prompt="Neue Gruppe"
+                       prompt="new-group"
                        deletable="true"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.TocGroup">
@@ -1073,7 +1073,7 @@
               <!-- Ebent 3-->
               <schema-node name="*" createmode="user" itemorder="true"
                          filtertype="tocgroup"
-                         prompt="Neue Gruppe"
+                         prompt="new-group"
                          deletable="true"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
                          instance="E.Standard.WebGIS.CmsSchema.TocGroup">
@@ -1081,21 +1081,21 @@
                 <!-- Ebent 4-->
                 <schema-node name="*" createmode="user" itemorder="true"
                            filtertype="tocgroup"
-                           prompt="Neue Gruppe"
+                           prompt="new-group"
                            deletable="true"
                            assembly="E.Standard.WebGIS.CmsSchema.dll"
                            instance="E.Standard.WebGIS.CmsSchema.TocGroup">
                   <!-- Ebent 4-->
                   <schema-node name="*" createmode="user" itemorder="true"
                              filtertype="tocgroup"
-                             prompt="Neue Gruppe"
+                             prompt="new-group"
                              deletable="true"
                              assembly="E.Standard.WebGIS.CmsSchema.dll"
                              instance="E.Standard.WebGIS.CmsSchema.TocGroup">
                     <!-- letzte Gruppe nur hat nur noch themen-->
                     <schema-link name="*" deletable="true"
                                  filtertype="toctheme"
-                                 prompt="Thema hinzufügen"
+                                 prompt="new-theme"
                                  filter="Themen|theme"
                                  urifilterpath="../../../../../../../../Themes"
                                  assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1103,7 +1103,7 @@
                   </schema-node>
                   <schema-link name="*" deletable="true"
                          filtertype="toctheme"
-                         prompt="Thema hinzufügen"
+                         prompt="new-theme"
                          filter="Themen|theme"
                          urifilterpath="../../../../../../../Themes"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1111,7 +1111,7 @@
                 </schema-node>
                 <schema-link name="*" deletable="true"
                          filtertype="toctheme"
-                         prompt="Thema hinzufügen"
+                         prompt="new-theme"
                          filter="Themen|theme"
                          urifilterpath="../../../../../../Themes"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1120,7 +1120,7 @@
               </schema-node>
               <schema-link name="*" deletable="true"
                          filtertype="toctheme"
-                         prompt="Thema hinzufügen"
+                         prompt="new-theme"
                          filter="Themen|theme"
                          urifilterpath="../../../../../Themes"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1129,7 +1129,7 @@
             </schema-node>
             <schema-link name="*" deletable="true"
                          filtertype="toctheme"
-                         prompt="Thema hinzufügen"
+                         prompt="new-theme"
                          filter="Themen|theme"
                          urifilterpath="../../../../Themes"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1138,7 +1138,7 @@
           </schema-node>
           <schema-link name="*" deletable="true"
                        filtertype="toctheme"
-                       prompt="Thema hinzufügen"
+                       prompt="new-theme"
                        filter="Themen|theme"
                        urifilterpath="../../../Themes"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1147,7 +1147,7 @@
         </schema-node>
         <schema-link name="*" deletable="true"
                      filtertype="toctheme"
-                     prompt="Thema hinzufügen"
+                     prompt="new-theme"
                      filter="Themen|theme"
                      urifilterpath="../../Themes"
                      assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1160,13 +1160,13 @@
       <schema-node name="*" createmode="user" itemorder="true"
                    filtertype="toc"
                    deletable="true"
-                   prompt="Neues Inhaltsverzeichnis"
+                   prompt="#new-table-of-content"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.TOC">
         <!-- Ebent 0-->
         <schema-node name="*" createmode="user" itemorder="true"
                      filtertype="tocgroup"
-                     prompt="Neue Gruppe"
+                     prompt="new-group"
                      deletable="true"
                      assembly="E.Standard.WebGIS.CmsSchema.dll"
                      instance="E.Standard.WebGIS.CmsSchema.TocGroup">
@@ -1174,7 +1174,7 @@
           <!-- Ebent 1-->
           <schema-node name="*" createmode="user" itemorder="true"
                      filtertype="tocgroup"
-                     prompt="Neue Gruppe"
+                     prompt="new-group"
                      deletable="true"
                      assembly="E.Standard.WebGIS.CmsSchema.dll"
                      instance="E.Standard.WebGIS.CmsSchema.TocGroup">
@@ -1184,7 +1184,7 @@
             <!-- Ebent 2-->
             <schema-node name="*" createmode="user" itemorder="true"
                        filtertype="tocgroup"
-                       prompt="Neue Gruppe"
+                       prompt="new-group"
                        deletable="true"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.TocGroup">
@@ -1193,7 +1193,7 @@
               <!-- Ebent 3-->
               <schema-node name="*" createmode="user" itemorder="true"
                          filtertype="tocgroup"
-                         prompt="Neue Gruppe"
+                         prompt="new-group"
                          deletable="true"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
                          instance="E.Standard.WebGIS.CmsSchema.TocGroup">
@@ -1201,21 +1201,21 @@
                 <!-- Ebent 4-->
                 <schema-node name="*" createmode="user" itemorder="true"
                            filtertype="tocgroup"
-                           prompt="Neue Gruppe"
+                           prompt="new-group"
                            deletable="true"
                            assembly="E.Standard.WebGIS.CmsSchema.dll"
                            instance="E.Standard.WebGIS.CmsSchema.TocGroup">
                   <!-- Ebent 4-->
                   <schema-node name="*" createmode="user" itemorder="true"
                              filtertype="tocgroup"
-                             prompt="Neue Gruppe"
+                             prompt="new-group"
                              deletable="true"
                              assembly="E.Standard.WebGIS.CmsSchema.dll"
                              instance="E.Standard.WebGIS.CmsSchema.TocGroup">
                     <!-- letzte Gruppe nur hat nur noch themen-->
                     <schema-link name="*" deletable="true"
                                  filtertype="toctheme"
-                                 prompt="Thema hinzufügen"
+                                 prompt="new-theme"
                                  filter="Themen|theme"
                                  urifilterlinks="../../../../../../../../Services"
                                  assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1223,7 +1223,7 @@
                   </schema-node>
                   <schema-link name="*" deletable="true"
                          filtertype="toctheme"
-                         prompt="Thema hinzufügen"
+                         prompt="new-theme"
                          filter="Themen|theme"
                          urifilterlinks="../../../../../../../Services"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1231,7 +1231,7 @@
                 </schema-node>
                 <schema-link name="*" deletable="true"
                          filtertype="toctheme"
-                         prompt="Thema hinzufügen"
+                         prompt="new-theme"
                          filter="Themen|theme"
                          urifilterlinks="../../../../../../Services"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1240,7 +1240,7 @@
               </schema-node>
               <schema-link name="*" deletable="true"
                          filtertype="toctheme"
-                         prompt="Thema hinzufügen"
+                         prompt="new-theme"
                          filter="Themen|theme"
                          urifilterlinks="../../../../../Services"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1249,7 +1249,7 @@
             </schema-node>
             <schema-link name="*" deletable="true"
                          filtertype="toctheme"
-                         prompt="Thema hinzufügen"
+                         prompt="new-theme"
                          filter="Themen|theme"
                          urifilterlinks="../../../../Services"
                          assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1258,7 +1258,7 @@
           </schema-node>
           <schema-link name="*" deletable="true"
                        filtertype="toctheme"
-                       prompt="Thema hinzufügen"
+                       prompt="new-theme"
                        filter="Themen|theme"
                        urifilterlinks="../../../Services"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1267,7 +1267,7 @@
         </schema-node>
         <schema-link name="*" deletable="true"
                      filtertype="toctheme"
-                     prompt="Thema hinzufügen"
+                     prompt="new-theme"
                      filter="Themen|theme"
                      urifilterlinks="../../Services"
                      assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1283,7 +1283,7 @@
 				 visible_if="DynamicPresentations=Manually"
                  >
       <schema-file name="*" createmode="user"
-                   prompt="Neue Layergruppe"
+                   prompt="new-layer-group"
                    deletable="true"
                    filtertype="presentation"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1291,7 +1291,7 @@
 
       <schema-node createmode="user"
                    name="somepresentations"
-                   prompt="Mehrere Einzellayer-Schaltungen anlegen"
+                   prompt="create-multiple-single-layer"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.PresentationThemeAssistent" />
     </schema-node>
@@ -1302,7 +1302,7 @@
                  instance_="E.Standard.WebGIS.CmsSchema.Presentations"
                  >
       <schema-file name="*" createmode="user"
-                   prompt="Neue Darstellungsvariante"
+                   prompt="new-display-variant"
                    deletable="true"
                    filtertype="presentation"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1314,12 +1314,12 @@
     <schema-node name="Snapschemas" itemorder="true">
       <schema-node name="*" createmode="user" itemorder="true" required="true"
                        filtertype="snapschema"
-                       prompt="Neues Snapschema"
+                       prompt="new-snap-scheme"
                        deletable="true"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.SnapSchema">
         <schema-link name="*" deletable="true" filtertype="snaptheme"
-                        prompt="Snap-Thema"
+                        prompt="nap-theme"
                         filter="Themen|theme"
                         urifilterpath="../../Themes"
                         assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1331,7 +1331,7 @@
   <schema-template name="VisFilter">
     <schema-node name="VisFilter" itemorder="true">
       <schema-file name="*" createmode="user"
-                   prompt="Neuen Darstellungsfilter"
+                   prompt="new-display-filter"
                    deletable="true"
                    filtertype="visfilter"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1347,7 +1347,7 @@
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.QueryBuilderField"/>
 			<schema-node createmode="user"
-									 prompt="Mehrere Felder hinzufügen"
+									 prompt="add-multiple-fields"
 									 assembly="E.Standard.WebGIS.CmsSchema.dll"
 									 instance="E.Standard.WebGIS.CmsSchema.QueryBuilderFieldAssistent" />
 		</schema-node>
@@ -1356,13 +1356,13 @@
     <schema-node name="Labelling" itemorder="true" obsolete="true">
       <schema-node name="*" createmode="user" itemorder="true"
                    filtertype="label"
-                   prompt="Neues Beschriftungsthema"
+                   prompt="new-labeling-theme"
                    deletable="true"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.Labelling">
         <schema-node name="LabellingTheme" required="true">
           <schema-link name="*" deletable="true"
-                       prompt="Thema für Labelling hinzufügen"
+                       prompt="add-theme-for-labeling"
                        filter="Themen|theme"
                        urifilterpath="../../../Themes"
                        onlyone="true"
@@ -1373,11 +1373,11 @@
           <schema-file name="*" deletable="true"
                        filtertype="labellingfield"
                        createmode="user"
-                       prompt="Feld hinzufügen"
+                       prompt="add-field"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.LabellingField" />
           <schema-node createmode="user"
-                       prompt="Mehrere Felder hinzufügen"
+                       prompt="add-multiple-fields"
                        assembly="E.Standard.WebGIS.CmsSchema.dll"
                        instance="E.Standard.WebGIS.CmsSchema.LabellingFieldAssistent" />
         </schema-node>
@@ -1389,13 +1389,13 @@
     <schema-node name="Chainage" itemorder="true">
       <schema-node name="*" createmode="user"
                    filtertype="chainage"
-                   prompt="Neues Stationierungsthema hinzufügen"
+                   prompt="add-stationing-theme"
                    deletable="true"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.Chainage">
         <schema-node name="ChainageLineTheme">
           <schema-link name="*" deletable="true"
-                       prompt="Linienthema für Stationierung"
+                       prompt="add-line-theme-for-stationing"
                        filter="Themen|theme"
                        urifilterpath="../../../Themes"
                        onlyone="true"
@@ -1404,7 +1404,7 @@
         </schema-node>
         <schema-node name="ChainagePointTheme">
           <schema-link name="*" deletable="true"
-                       prompt="Punktthema für Stationierung"
+                       prompt="add-point-theme-for-stationing"
                        filter="Themen|theme"
                        urifilterpath="../../../Themes"
                        onlyone="true"
@@ -1418,7 +1418,7 @@
   <schema-template name="ThemeProperties">
     <schema-node name="ThemesProperties" itemorder="true"  recommended="true" description="doc/service-themes-properties.txt">
       <schema-link name="*" deletable="true"
-                   prompt="Themen hinzufügen"
+                   prompt="new-theme"
                    filter="Themen|theme"
                    urifilterpath="../themes"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1429,19 +1429,19 @@
   <schema-template name="EditingThemes">
     <schema-node name="Editing" itemorder="true">
       <!--<schema-node name="*" createmode="user" itemorder="true" recommended="true"
-                   prompt="Neue Gruppe"
+                   prompt="new-group"
                    deletable="true"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.EditingGroup" >-->
         <schema-node name="*" createmode="user" itemorder="true" recommended="true"
-              prompt="Neues Edit Thema"
+              prompt="add-new-edit-theme"
               deletable="true"
               filtertype="edittheme"
               assembly="E.Standard.WebGIS.CmsSchema.dll"
               instance="E.Standard.WebGIS.CmsSchema.EditingTheme">
           <schema-node name="EditingTheme" required="true">
             <schema-link name="*" deletable="true"
-                        prompt="Edit Thema auswählen"
+                        prompt="choose-edit-theme"
                         filter="Themen|theme"
                         onlyone="true"
                         urifilterpath="../../../Themes" 
@@ -1450,27 +1450,27 @@
           </schema-node>
           <schema-node name="EditingFields" required="true" itemorder="true">
             <schema-node name="*" createmode="user" itemorder="true"
-                   prompt="Neue Kategorie"
+                   prompt="add-category"
                    deletable="true"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.EditingFieldCategory" >
               <schema-file name="*" deletable="true"
                    createmode="user" filtertype="tablecolumn"
-                   prompt="Feld hinzufügen"
+                   prompt="add-field"
                    assembly="E.Standard.WebGIS.CmsSchema.dll"
                    instance="E.Standard.WebGIS.CmsSchema.EditingField" />
             </schema-node>
           </schema-node>
           <schema-node name="Snapping" itemorder="true" recommended="true">
               <schema-link name="*" deletable="true"
-                           prompt="Snapping Themen hinzufügen"
+                           prompt="add-snapping-theme"
                            filter="Snapschema|snapschema"
                            assembly="E.Standard.WebGIS.CmsSchema.dll"
                            instance="E.Standard.WebGIS.CmsSchema.EditingSnappingSchemeLink" />
           </schema-node>
 		  <schema-node name="Validations">
 			 <schema-node name="*" createmode="user" itemorder="true"
-						  prompt="Neue Editmask Validation"
+						  prompt="new-edit-mask-validation"
 						  deletable="true"
 					      assembly="E.Standard.WebGIS.CmsSchema.dll"
 			              instance="E.Standard.WebGIS.CmsSchema.EditingMaskValidation" />
