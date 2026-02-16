@@ -8,9 +8,9 @@
     <UserSecretsId>eb67a133-534c-4975-9b7e-5609d9ccd90b</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.1.0" />
-    <PackageReference Include="Aspire.Hosting.Redis" Version="13.1.0" />
-		<PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.1.0" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.1.1" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="13.1.1" />
+		<PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.1.1" />
     <PackageReference Include="gView.Aspire.Hosting" Version="7.25.4202" />
     <PackageReference Include="IdentityServerNET.Aspire.Hosting" Version="6.25.4801" IsAspireProjectResource="false" />
     <PackageReference Include="MessageQueueNET.Aspire.Hosting" Version="3.25.101" IsAspireProjectResource="false" />
