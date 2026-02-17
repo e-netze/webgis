@@ -8,8 +8,10 @@ using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
+using E.Standard.Configuration.Services;
 using E.Standard.Extensions;
 using E.Standard.Json;
+using E.Standard.OGC.Schema.wfs_1_0_0;
 using E.Standard.Platform;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebGIS.CMS;
@@ -30,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,6 +47,7 @@ public class RestMappingHelperService /*: IDisposable*/
     private readonly UrlHelperService _urlHelper;
     private readonly ICryptoService _crypto;
     private readonly IRequestContext _requestContext;
+    private readonly ConfigurationService _config;
 
     public RestMappingHelperService(RestHelperService restHelper,
                                     HttpRequestContextService httpRequestContext,
@@ -51,7 +55,8 @@ public class RestMappingHelperService /*: IDisposable*/
                                     MapServiceInitializerService mapServiceInitializer,
                                     UrlHelperService urlHelper,
                                     ICryptoService crypto,
-                                    IRequestContext requestContext)
+                                    IRequestContext requestContext,
+                                    ConfigurationService config)
     {
         _restHelper = restHelper;
         _httpRequestContext = httpRequestContext;
@@ -60,6 +65,7 @@ public class RestMappingHelperService /*: IDisposable*/
         _urlHelper = urlHelper;
         _crypto = crypto;
         _requestContext = requestContext;
+        _config = config;
     }
 
     #region Map/Tile/Legend
@@ -347,16 +353,18 @@ public class RestMappingHelperService /*: IDisposable*/
                 var filter = new E.Standard.WebMapping.Core.Filters.QueryFilter(layer.IdFieldName, -1, 0);
                 filter.Where = layer.IdFieldName + " in (" + fIds + ")";
 
+                
+
                 switch (request.FormOrQuery("selection").ToString().ToLower())
                 {
                     case "selection":
-                        selectionCollection.Add(new Selection(ArgbColor.Cyan, "selection", layer, filter));
+                        selectionCollection.Add(new Selection(_config.QueryResultsSelectionColor(), _config.QueryResultsSelectionFillColor(), "selection", layer, filter));
                         break;
                     case "query":
-                        selectionCollection.Add(new Selection(ArgbColor.Yellow, "query", layer, filter));
+                        selectionCollection.Add(new Selection(_config.QueryResultsHighlightColor(), _config.QueryResultsHighlightFillColor(), "query", layer, filter));
                         break;
                     default:
-                        selectionCollection.Add(new Selection(ArgbColor.Red, request.FormOrQuery("selection").ToString().ToLower(), layer, filter));
+                        selectionCollection.Add(new Selection(ArgbColor.Red, null, request.FormOrQuery("selection").ToString().ToLower(), layer, filter));
                         break;
                 }
             }

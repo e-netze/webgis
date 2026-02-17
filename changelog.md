@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+## 8.26.801
+
+## Added
+
+- QueryResults: config selection/highlight color and fillcolor in api.config
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#abschnitt-query-results)
+  [discussion #353](https://github.com/e-netze/webgis-community/discussions/353)
+
+## Fixed
+
 ## 8.26.501
 
 ## Added

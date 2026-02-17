@@ -1532,15 +1532,17 @@ public class RestPrintHelperService
                         var filter = new QueryFilter(layer.IdFieldName, -1, 0);
                         filter.Where = layer.IdFieldName + " in (" + selectionDefinition.FeatureIds + ")";
 
-                        var color = ArgbColor.Yellow;
+                        var color = _config.QueryResultsHighlightColor(); // ArgbColor.Yellow;
+                        var fillColor = _config.QueryResultsHighlightFillColor();
                         switch (selectionDefinition.Type)
                         {
                             case "selection":
-                                color = ArgbColor.Cyan;
+                                color = _config.QueryResultsSelectionColor(); // ArgbColor.Cyan;
+                                fillColor = _config.QueryResultsSelectionFillColor();
                                 break;
                         }
 
-                        Selection selection = new Selection(color, selectionDefinition.Type, layer, filter);
+                        Selection selection = new Selection(color, fillColor, selectionDefinition.Type, layer, filter);
 
                         map.Selection.Add(selection);
 

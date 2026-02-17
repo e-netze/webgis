@@ -564,11 +564,15 @@ public class RestQueryHelperService
                     transformer.Transform(mergedBufferPolygon);
                 }
 
+                var color = _config.QueryResultsBufferColor();
+                var fillCollor = _config.QueryResultsBufferFillColor();
+
                 var bufferJsonString = mergedBufferPolygon.ToGeoJson(new E.Standard.WebMapping.Core.Attribute[]{
-                    new E.Standard.WebMapping.Core.Attribute("stroke","#000"),
-                    new E.Standard.WebMapping.Core.Attribute("stroke-opacity",".5"),
-                    new E.Standard.WebMapping.Core.Attribute("fill","#aaa"),
-                    new E.Standard.WebMapping.Core.Attribute("fill-opacity",".2"),
+                    new E.Standard.WebMapping.Core.Attribute("stroke", color.ToHexString(false) ),
+                    new E.Standard.WebMapping.Core.Attribute("stroke-opacity", (color.A == 255 ? .5f : (float)color.A / 255f).ToPlatformNumberString()),
+                    new E.Standard.WebMapping.Core.Attribute("stroke-width", "2"),
+                    new E.Standard.WebMapping.Core.Attribute("fill", fillCollor.ToHexString(false)),
+                    new E.Standard.WebMapping.Core.Attribute("fill-opacity", (fillCollor.A == 255 ? .2f : (float)fillCollor.A / 255f).ToPlatformNumberString())
                 });
 
                 bufferId = $"buffer_{Guid.NewGuid().ToString("N").ToLower()}";
