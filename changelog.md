@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Fixed
 
+- MapMarkup: Donat polygons produced incorrect map-markup polygons
+  [Issue #413](https://github.com/e-netze/webgis-community/issues/413)
+
 ## 8.26.501
 
 ## Added

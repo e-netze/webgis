@@ -3823,12 +3823,17 @@
                         partIndex++;
                     }
                     var vertex = _vertices[i];
-                    //if (element.addLatLng) {
-                    //    latlngs.push(L.latLng(vertex.y, vertex.x));;
-                    //} else {
-                    //    element.setLatLng(L.latLng(vertex.y, vertex.x));
-                    //}
-                    this._addAsLatLng(element, vertex);
+
+                    // Do NOT use this, when cloning
+                    // otherwise multipart geometries not work correct with MapMarkup
+                    //this._addAsLatLng(element, vertex);
+
+                    // Use this
+                    if (element.addLatLng) {
+                        latlngs.push(L.latLng(vertex.y, vertex.x));;
+                    } else {
+                        element.setLatLng(L.latLng(vertex.y, vertex.x));
+                    }
                 }
 
                 if (latlngs.length > 0) {
