@@ -215,7 +215,7 @@ public class SubscribersController : ApiBaseController
         catch (Exception ex)
         {
             _logger.LogError(ex, "Login error: {0}", ex.Message);
-            _botDetection.AddSuspiciousUser(login.Username);
+            _botDetection.AddSuspiciousUser(login?.Username);
 
             var captchaCode = Captcha.GenerateCaptchaCode(login.Username);
             var captchaResult = Captcha.GenerateCaptchaImage(captchaCode);
