@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ## Added
+
+- Editing: Added field type ``Date_DateOnly`` to show a DatePicker without a time (hour/minute) selector
+  [Issue #409](https://github.com/e-netze/webgis-community/issues/409)
+
 ## Fixed
 
 ## 8.26.801
