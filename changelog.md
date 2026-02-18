@@ -23,6 +23,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - MapMarkup: Donat polygons produced incorrect map-markup polygons
   [Issue #413](https://github.com/e-netze/webgis-community/issues/413)
 
+- Usabliby: Markerinfo dock window is collapsed
+  [Issue #412](https://github.com/e-netze/webgis-community/issues/412)
+
+- MapMarkup: Wrong unit calculation m² => ar, ha
+  [Issue #407](https://github.com/e-netze/webgis-community/issues/407)
+
 ## 8.26.501
 
 ## Added
