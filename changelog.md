@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Fixed
 
+- Map Series Print: Check max iteration when creating map servies from features (Raster, Intersection, Along polyline)
+  This avoid heavy CPU usage
+  [discussion #402](https://github.com/e-netze/webgis-community/discussions/402)
+
 ## 8.26.801
 
 ## Added
