@@ -71,5 +71,5 @@ oder das Papierformat, um weniger Seiten zu erstellen.
 ## exception-to-many-iterations:
 
 Das Berechnen der Serie übersteigt die maximale Anzahl der erlaubten Iterationen >{0}
-und kann nicht durchgeführt weden. Verändern sie den Maßstab
+und kann nicht durchgeführt werden. Verändern sie den Maßstab
 oder das Papierformat, um weniger Seiten zu erstellen.

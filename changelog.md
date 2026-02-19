@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   This avoid heavy CPU usage
   [discussion #402](https://github.com/e-netze/webgis-community/discussions/402)
 
+- Custom Authentication via database role extension: Fixed Role/Roleparameter confusion
+  [discussion #394](https://github.com/e-netze/webgis-community/discussions/394)
+
 ## 8.26.801
 
 ## Added
