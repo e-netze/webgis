@@ -223,7 +223,7 @@ public class EditToolServiceMobile : IEditToolService
             style = "padding:5px"
         });
 
-        uiElements.Add(new UIToolUndoButton(this.GetType(), _localizer.Localize("mobile.undo"))
+        uiElements.Add(new UIToolUndoButton(new Edit().GetType(), _localizer.Localize("mobile.undo"))
         {
             id = "webgis-edit-undo-button"
         });
