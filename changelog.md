@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+- MapSeries Print: Works with WebMercator (and different display spatial reference)
+  [discusson #401]()https://github.com/e-netze/webgis-community/discussions/401
+
 ## 8.26.802
 
 ## Added

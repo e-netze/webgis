@@ -8,7 +8,7 @@ static public class SpatialReferenceExtensions
 {
     static public bool IsWebMercator(this SpatialReference sRef)
     {
-        if (sRef != null && new int[] { 3857 }.Contains(sRef.Id))
+        if (sRef != null && KnownSRef.WebMercatorIds.Contains(sRef.Id))
         {
             return true;
         }

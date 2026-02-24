@@ -752,7 +752,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                 new UISetter(ParameterOverlappingPercent, e[ParameterOverlappingPercent]),
                 new UISetter(ParameterSeriesType, e[ParameterSeriesType])
             );
-           
+
         }
 
         return response;
@@ -808,13 +808,26 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
         }
 
         int index = 1;
+
         foreach (var point in multiPoint.ToArray())
         {
+            double width = extentWidth;
+            double height = extentHeight;
+
+            if (toolSketch.IsWebMercator())
+            {
+                var centerPoint = new Point(point) { SrsId = WebMapping.Core.KnownSRef.WebMercator };
+                centerPoint.TransformTo(WebMapping.Core.KnownSRef.WGS84);
+
+                width /= Math.Cos(centerPoint.Y * Math.PI / 180.0);
+                height /= Math.Cos(centerPoint.Y * Math.PI / 180.0);
+            }
+
             graphicElements.Add(new MapFrameElement(
                 name: GetMapSericesPrintPageName(index++),
                 center: point,
-                width: extentWidth,
-                height: extentHeight,
+                width: width,
+                height: height,
                 rotation: point switch
                 {
                     PointM m => -Convert.ToDouble(m.M),
@@ -857,7 +870,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
             e.GetMapSeriesOverviewLayout(),
             e.GetMapSeriesOverviewPageSize(),
             e.GetMapSeriesOverviewPageOrientation(),
-            map, 
+            map,
             extent);
     }
 
