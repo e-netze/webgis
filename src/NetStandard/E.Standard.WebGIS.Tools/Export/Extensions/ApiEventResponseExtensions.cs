@@ -105,8 +105,12 @@ static internal class ApiEventResponseExtensions
         float scaleFactor = 1.0f;
         if (mapSRef.IsWebMercator())
         {
+            // no scale factor needed. But its important apply cos(phi) for preview polygon
+            // size in the MapServicePrint.GetPrintSeriesGraphicElements() 
+            // method.
+
             // recalc scale for web mercator ??
-            scaleFactor = 1f / (float)Math.Cos(mapEnvelope.CenterPoint.Y / 180.0 * Math.PI);
+            //scaleFactor = /*1f /*/ (float)Math.Cos(mapEnvelope.CenterPoint.Y / 180.0 * Math.PI);
         }
 
         return response

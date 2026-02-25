@@ -2,8 +2,10 @@
 using E.Standard.Configuration.Services;
 using E.Standard.Extensions.Compare;
 using E.Standard.Security.App.Services.Abstraction;
+using gView.GraphicsEngine;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -722,4 +724,55 @@ static public class ConfigurationServiceExtensions
     }
 
     #endregion
+
+    #region Section QueryResults
+
+    #region Colors 
+
+    static private ConcurrentDictionary<string, ArgbColor> _queryResultColors = new ConcurrentDictionary<string, ArgbColor>();
+    static private ArgbColor GetQueryResultColor(this ConfigurationService config, string key, ArgbColor defaultColor)
+    {
+        if (_queryResultColors.TryGetValue(key, out ArgbColor color))
+        {
+            return color;
+        }
+
+        var colorString = config[key];
+        if (string.IsNullOrEmpty(colorString))
+        {
+            color = defaultColor;
+        }
+        else
+        {
+            color = ArgbColor.FromString(colorString);
+        }
+
+        _queryResultColors[key] = color;
+        return color;
+    }
+
+    static private ArgbColor ToFillColor(this ArgbColor color) => ArgbColor.FromArgb(color.A / 3, color);
+    static private ArgbColor ToBufferFillColor(this ArgbColor color) => ArgbColor.FromArgb((int)(color.A * .2f), color);
+
+    static public ArgbColor QueryResultsSelectionColor(this ConfigurationService config)
+        => config.GetQueryResultColor(ApiConfigKeys.QueryResultsSelectionColor, ArgbColor.Cyan);
+
+    static public ArgbColor QueryResultsHighlightColor(this ConfigurationService config)
+        => config.GetQueryResultColor(ApiConfigKeys.QueryResultsHighlightColor, ArgbColor.Yellow);
+
+    static public ArgbColor QueryResultsBufferColor(this ConfigurationService config)
+        => config.GetQueryResultColor(ApiConfigKeys.QueryResultsBufferColor, ArgbColor.Gray);
+
+    static public ArgbColor QueryResultsSelectionFillColor(this ConfigurationService config)
+        => config.GetQueryResultColor(ApiConfigKeys.QueryResultsSelectionFillColor, config.QueryResultsSelectionColor().ToFillColor());
+
+    static public ArgbColor QueryResultsHighlightFillColor(this ConfigurationService config)
+        => config.GetQueryResultColor(ApiConfigKeys.QueryResultsHighlightFillColor, config.QueryResultsHighlightColor().ToFillColor());
+
+    static public ArgbColor QueryResultsBufferFillColor(this ConfigurationService config)
+        => config.GetQueryResultColor(ApiConfigKeys.QueryResultsBufferFillColor, config.QueryResultsBufferColor().ToBufferFillColor());
+
+    #endregion Colors
+
+    #endregion Section QueryResults
 }

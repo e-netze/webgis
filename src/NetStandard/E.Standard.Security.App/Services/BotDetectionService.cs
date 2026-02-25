@@ -11,7 +11,10 @@ public class BotDetectionService
 
     public void AddSuspiciousUser(string username)
     {
-        _suspiciousUsers[username] = DateTime.UtcNow;
+        if (!string.IsNullOrWhiteSpace(username))
+        {
+            _suspiciousUsers[username] = DateTime.UtcNow;
+        }
     }
 
     public bool IsSuspiciousUser(string username)

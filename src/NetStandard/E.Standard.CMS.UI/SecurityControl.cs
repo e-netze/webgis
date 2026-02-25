@@ -150,7 +150,7 @@ public class SecurityControl : UserControl
             this.AddControl(tblUsers);
         }
 
-        this.AddControl(new Heading() { Label = "Rolen" });
+        this.AddControl(new Heading() { Label = "Rollen" });
         if (tblRoles.Rows.Count > 0)
         {
             tblRoles.Headers = new string[] { "", "Name", "Geerbt von", "" };

@@ -106,4 +106,11 @@ public class ApiConfigKeys
     public const string AppCacheListPassword = ConfigurationSectionName + ":app-cache-list-pwd";
 
     public const string SupportedLanguages = ConfigurationSectionName + ":supported-languages";
+
+    public const string QueryResultsSelectionColor = ConfigurationSectionName + ":query-results:selection-color";
+    public const string QueryResultsHighlightColor = ConfigurationSectionName + ":query-results:highlight-color";  
+    public const string QueryResultsBufferColor = ConfigurationSectionName + ":query-results:buffer-color";
+    public const string QueryResultsSelectionFillColor = ConfigurationSectionName + ":query-results:selection-fill-color";
+    public const string QueryResultsHighlightFillColor = ConfigurationSectionName + ":query-results:highlight-fill-color";
+    public const string QueryResultsBufferFillColor = ConfigurationSectionName + ":query-results:buffer-fill-color";
 }

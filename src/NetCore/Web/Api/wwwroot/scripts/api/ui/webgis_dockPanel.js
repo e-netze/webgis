@@ -204,15 +204,22 @@
                 if (options.onload) {
                     options.onload($content, $panel);
                     if (resize === true && sizeProperty === 'height') {
-                        var height = 85; // 66;
+                        let height = 85; // 66;
                         $content.children().each(function (i, c) {
                             height += $(c).outerHeight();
                         });
                         $panel.webgis_dockPanel('resize', { size: height });
 
                         if (options.autoResizeBoth) {
-                            $panel.css({ width: 'unset' });
-                            var width = 0;
+                            $panel.css({ width: 'unset', right: '0px' });
+
+                            let width = 0;
+                            let bordContent = $content.outerWidth() - $content.innerWidth();
+                            let paddContent = $content.innerWidth() - $content.width();
+                            let margContent = $content.outerWidth(true) - $content.outerWidth();
+                            let addWidth = bordContent + paddContent + margContent;
+                            //console.log('addWidth', addWidth, bordContent, paddContent, margContent);
+
                             $content.children().addClass('min-width');
                             $content.children().each(function (i, c) {
                                 width = Math.max(width, $(c).outerWidth());
@@ -220,7 +227,7 @@
                                 //console.log('outerWidth', $(c).outerWidth());
                             });
                             $content.children().removeClass('min-width');
-                            $panel.css('width', Math.min(width /*+ 40*/, parseInt($(window).width() - $panel.offset().left)));
+                            $panel.css('width', Math.min(width + addWidth /*+ 40*/, parseInt($(window).width() - $panel.offset().left)));
 
                             //console.log('max-width: ' + parseInt($(window).width() - $panel.offset().left));
 

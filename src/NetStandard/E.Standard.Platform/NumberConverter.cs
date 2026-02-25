@@ -80,6 +80,11 @@ static public class NumberConverter
         return value.ToString(SystemInfo.Nhi);
     }
 
+    static public string ToPlatformNumberString(this float value)
+    {
+        return value.ToString(SystemInfo.Nhi);
+    }
+
     static public string ToPlatformDistanceString(this double value)
     {
         return $"{value.ToString("N0", CultureInfo.InvariantCulture).Replace(",", ".")}m";

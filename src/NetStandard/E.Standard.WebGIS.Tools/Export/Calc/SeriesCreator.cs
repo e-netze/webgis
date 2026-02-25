@@ -1,4 +1,5 @@
-﻿using E.Standard.WebGIS.Tools.Export.Extensions;
+﻿using E.Standard.WebGIS.Tools.Export.Exeption;
+using E.Standard.WebGIS.Tools.Export.Extensions;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Geometry.Extensions;
@@ -38,7 +39,7 @@ internal class SeriesCreator
         _overlappingPercent = overlappingPercent;
     }
 
-    public MultiPoint BoundingBoxRaster()
+    public MultiPoint BoundingBoxRaster(int maxIterations)
     {
         var featuresBBox = FeatureCollectionBBox(_features);
 
@@ -57,6 +58,7 @@ internal class SeriesCreator
         var startY = featuresBBox.CenterPoint.Y - rasterHeight / 2;
 
         var points = new MultiPoint();
+        int iterations = 0;
 
         for (int row = rows - 1; row >= 0; row--)
         {
@@ -65,16 +67,23 @@ internal class SeriesCreator
                 double x = startX + col * stepX;
                 double y = startY + row * stepY;
                 points.AddPoint(new PointM(x + _pageWidth / 2, y + _pageHeight / 2, 0, 0));
+
+                iterations++;
+                if (maxIterations > 0 && iterations >= maxIterations)
+                {
+                    throw new MapSeriesPrintToManyPagesExeption(iterations);
+                }
             }
         }
 
         return points;
     }
 
-    public MultiPoint IntersectionRaster()
+    public MultiPoint IntersectionRaster(int maxIterations)
     {
-        var raster = BoundingBoxRaster();
+        var raster = BoundingBoxRaster(maxIterations * 5);
         var intersectRaster = new MultiPoint();
+        int iterations = 0;
 
         foreach (var p in raster.ToArray())
         {
@@ -85,13 +94,19 @@ internal class SeriesCreator
             if (_features.Any(f => Intersects(pageBox, f.Shape)))
             {
                 intersectRaster.AddPoint(p);
+
+                iterations++;
+                if (maxIterations > 0 && iterations >= maxIterations)
+                {
+                    throw new MapSeriesPrintToManyPagesExeption(iterations);
+                }
             }
         }
 
         return intersectRaster;
     }
 
-    public MultiPoint SeriesAlongPolylines()
+    public MultiPoint SeriesAlongPolylines(int maxIterations)
     {
         MultiPoint series = new MultiPoint();
 
@@ -102,8 +117,13 @@ internal class SeriesCreator
                 foreach (var singlePathPolyline in polyline.ExplodeToSinglePathPolylines())
                 {
                     // 2 * _overlappingPercent to consider overlapping on both sides of the page
-                    var lineSeries = SeriesAlongPolyline(singlePathPolyline, _pageWidth * (100 - 2D * _overlappingPercent) / 100D);
+                    var lineSeries = SeriesAlongPolyline(singlePathPolyline, _pageWidth * (100 - 2D * _overlappingPercent) / 100D, maxIterations);
                     series.AddPoints(lineSeries.ToArray());
+
+                    if(maxIterations > 0 && series.PointCount >= maxIterations)
+                    {
+                        throw new MapSeriesPrintToManyPagesExeption(series.PointCount);
+                    }
                 }
             }
         }
@@ -140,7 +160,7 @@ internal class SeriesCreator
             _ => false,
         };
 
-    private MultiPoint SeriesAlongPolyline(Polyline polyline, double spacing)
+    private MultiPoint SeriesAlongPolyline(Polyline polyline, double spacing, int maxIterations)
     {
         if (spacing <= 0)
         {
@@ -157,6 +177,7 @@ internal class SeriesCreator
         double currentDistance = 0;
         Point currentPoint = polylineVerticies.First();
         double lineLength = polyline.Length;
+        int iterations = 0;
 
         while (true)
         {
@@ -194,6 +215,12 @@ internal class SeriesCreator
                 series.AddPoint(new PointM(
                     pageCenter.X, pageCenter.Y, 0,
                     angle * 180.0 / Math.PI));
+
+                iterations++;
+                if (maxIterations > 0 && iterations >= maxIterations)
+                {
+                    throw new MapSeriesPrintToManyPagesExeption(iterations);
+                }
 
                 break;
             }

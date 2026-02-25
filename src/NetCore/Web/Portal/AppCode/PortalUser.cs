@@ -30,7 +30,7 @@ public class PortalUser
         {
             List<string> currentRoles = new List<string>(this.UserRoles ?? new string[0]);
             currentRoles.AddRange(roles);
-            this.RoleParameters = currentRoles.ToArray();
+            this.UserRoles = currentRoles.ToArray();
         }
     }
 

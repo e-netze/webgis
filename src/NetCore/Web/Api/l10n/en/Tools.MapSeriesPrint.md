@@ -66,3 +66,9 @@ The creation of the series cannot be carried out correctly because too many page
 would have to be created ({0} pages).
 A maximum of {1} pages can be defined in a series. Change the scale
 or the paper format to create fewer pages.
+
+## exception-to-many-iterations:
+
+The calculation of the series exceeds the maximum number of allowed iterations >{0} 
+and cannot be performed.
+Change the scale or the paper format to create fewer pages.

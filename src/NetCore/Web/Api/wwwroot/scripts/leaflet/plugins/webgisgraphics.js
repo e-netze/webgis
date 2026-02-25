@@ -1743,6 +1743,7 @@ L.DimPolygon = L.LayerCollection.extend({
             let areaFactor = 1.0;
             let lengthUnit = ''
             let areaUnit = '';
+            let digitsRound = 100.0;
 
             switch (this.options.areaUnit) {
                 case 'km':
@@ -1752,17 +1753,18 @@ L.DimPolygon = L.LayerCollection.extend({
                     areaFactor = 1.0/1000000.0;
                     lengthUnit = 'km';
                     areaUnit = 'km²';
+                    digitsRound = 1000.0;
                     break;
                 case "ha":
                     lengthFactor = 1.0;  // use meters
-                    areaFactor = 1.0 / 100.0;
+                    areaFactor = 1.0 / 10000.0;
                     lengthUnit = 'm';
                     areaUnit = 'ha';
                     break;
                 case "a":
                 case "ar":
                     lengthFactor = 1.0;  // use meters
-                    areaFactor = 1.0 / 10.0;
+                    areaFactor = 1.0 / 100.0;
                     lengthUnit = 'm';
                     areaUnit = 'a';
                     break;
@@ -1810,7 +1812,7 @@ L.DimPolygon = L.LayerCollection.extend({
 
                 if (this.options.labelEdges) {
                     let text = L.svgLabel(insertAt, {
-                        text: Math.round(len * lengthFactor * 100.0) / 100.0 + lengthUnit,
+                        text: Math.round(len * lengthFactor * digitsRound) / digitsRound + lengthUnit,
                         rotation: -angle,
                         fontSize: this.options.fontSize,
                         alignmentBaseline: 'ideographic' //'central'
@@ -1826,8 +1828,8 @@ L.DimPolygon = L.LayerCollection.extend({
             if (area > 0) {
                 this.addChildLayer(L.svgText(insertAtArea, {
                     text:
-                        webgis.l10n.get('area')[0] + ": " + Math.round(area * areaFactor * 100.0) / 100.0 + areaUnit + '\n' +
-                        webgis.l10n.get('circumference')[0] + ": " + Math.round(circumference * lengthFactor * 100.0) / 100.0 + lengthUnit,
+                        webgis.l10n.get('area')[0] + ": " + Math.round(area * areaFactor * digitsRound) / digitsRound + areaUnit + '\n' +
+                        webgis.l10n.get('circumference')[0] + ": " + Math.round(circumference * lengthFactor * digitsRound) / digitsRound + lengthUnit,
                     fontSize: this.options.fontSize * 1.2,
                     textAnchor: 'middle'
                 }));
