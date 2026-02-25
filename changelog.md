@@ -5,10 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-
 ## Unreleased
 
 ## Added
+## Fixed
+
+## 8.26.901
+
+## Added
+
+- Health Checks: added ``/health`` and ``/alive`` endpionts 
+  [Issue #414](https://github.com/e-netze/webgis-community/issues/414)
+
 ## Fixed
 
 - MapSeries Print: Works with WebMercator (and different display spatial reference)
