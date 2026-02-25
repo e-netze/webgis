@@ -787,7 +787,8 @@ public class MapService : IMapService2,
                         int[] selectionColor = new int[4] { selection.Color.R, selection.Color.G, selection.Color.B, selection.Color.A };
                         int[] selectionColor80 = new int[4] { selection.Color.R, selection.Color.G, selection.Color.B, selection.Color.A * 8 / 10 };
                         int[] selectionColor66 = new int[4] { selection.Color.R, selection.Color.G, selection.Color.B, selection.Color.A * 2 / 3 };
-                        int[] selectionColor33 = new int[4] { selection.Color.R, selection.Color.G, selection.Color.B, selection.Color.A / 3 };
+                        //int[] selectionColor33 = new int[4] { selection.Color.R, selection.Color.G, selection.Color.B, selection.Color.A / 3 };
+                        int[] selectionColorFill = new int[4] { selection.FillColor.R, selection.FillColor.G, selection.FillColor.B, selection.FillColor.A };
 
                         object symbol = selection.Layer.Type switch
                         {
@@ -796,7 +797,7 @@ public class MapService : IMapService2,
                                 {
                                     Type = "esriSMS",
                                     Style = "esriSMSCircle",
-                                    Color = selectionColor33,
+                                    Color = selectionColorFill, //selectionColor33,
                                     Size = 10,
                                     Angle = 0,
                                     Xoffset = 0,
@@ -822,7 +823,7 @@ public class MapService : IMapService2,
                                 {
                                     Type = "esriSFS",
                                     Style = "esriSFSSolid", // Schraffur
-                                    Color = selectionColor33,
+                                    Color = selectionColorFill, //selectionColor33,
                                     Outline = new Outline()
                                     {
                                         Type = "esriSFS",

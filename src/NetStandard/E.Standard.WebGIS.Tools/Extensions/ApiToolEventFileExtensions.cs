@@ -31,7 +31,8 @@ public static class ApiToolEventFileExtensions
             {
                 geoJsonFeatures = ParseGpx(e, Encoding.UTF8.GetString(file.Data), setNameProperty);
             }
-            else if (file.FileName.ToLower().EndsWith(".json"))
+            else if (file.FileName.ToLower().EndsWith(".json")
+                || file.FileName.ToLower().EndsWith(".geojson"))
             {
                 geoJsonFeatures = ParseGeoJson(e, Encoding.UTF8.GetString(file.Data), coordinatesToDoubleArray, setNameProperty);
             }

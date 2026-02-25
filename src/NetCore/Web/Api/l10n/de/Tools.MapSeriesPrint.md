@@ -67,3 +67,9 @@ Das Erzeugen der Serie kann nicht korrekt durchgeführt werden, weil zu viele Se
 erstellt werden müssten ({0} Seiten).
 Es können maximal {1} Seiten in einer Serie definiert werden. Verändern sie den Maßstab
 oder das Papierformat, um weniger Seiten zu erstellen.
+
+## exception-to-many-iterations:
+
+Das Berechnen der Serie übersteigt die maximale Anzahl der erlaubten Iterationen >{0}
+und kann nicht durchgeführt werden. Verändern sie den Maßstab
+oder das Papierformat, um weniger Seiten zu erstellen.

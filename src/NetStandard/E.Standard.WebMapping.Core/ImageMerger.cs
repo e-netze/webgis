@@ -1,4 +1,4 @@
-using E.Standard.Extensions.Text;
+﻿using E.Standard.Extensions.Text;
 using E.Standard.Web.Extensions;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
@@ -139,18 +139,7 @@ class ImageMerger : IDisposable
         try
         {
             DateTime time = DateTime.Now;
-            string fileName = "merged_" +
-                time.Day.ToString() + time.Hour.ToString() +
-                time.Second.ToString() + time.Millisecond.ToString() + "_" + time.Ticks.ToString() + "_" + Guid.NewGuid().ToString("N").ToLower();
-
-            if (_imageFormat == ImageFormat.Jpeg)
-            {
-                fileName += ".jpg";
-            }
-            else
-            {
-                fileName += ".png";
-            }
+            string fileName = $"merged_{time.Ticks}_{Guid.NewGuid().ToString("N").ToLower()}.{(_imageFormat == ImageFormat.Jpeg ? "jpg" : "png")}";
 
             List<string> cleanupFiles = new List<string>();
 

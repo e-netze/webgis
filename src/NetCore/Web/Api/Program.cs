@@ -24,6 +24,8 @@ var builder = WebApplication
 
 #if DEBUG // aspire
 builder.AddServiceDefaults();
+#else
+builder.AddDefaultHealthChecks();
 #endif
 
 var startup = new Startup(builder.Configuration, builder.Environment);
@@ -31,9 +33,10 @@ startup.ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
-#if DEBUG // aspire
+//#if DEBUG // aspire
+// /health & /alive endpoints 
 app.MapDefaultEndpoints();
-#endif
+//#endif
 
 startup.Configure(app,
                   app.Services.GetRequiredService<ConfigurationService>(),

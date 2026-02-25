@@ -377,6 +377,7 @@ public enum EditingFieldType
     AutoComplete = 3,
 
     Date = 10,
+    Date_DateOnly = 11,
 
     File = 20,
 

@@ -10,6 +10,63 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+## 8.26.901
+
+## Added
+
+- Health Checks: added ``/health`` and ``/alive`` endpionts 
+  [Issue #414](https://github.com/e-netze/webgis-community/issues/414)
+
+## Fixed
+
+- MapSeries Print: Works with WebMercator (and different display spatial reference)
+  [discusson #401]()https://github.com/e-netze/webgis-community/discussions/401
+
+- Undo Button: not (always) works in Mobile-Editing mode
+  [discusson #403]()https://github.com/e-netze/webgis-community/discussions/403
+
+## 8.26.802
+
+## Added
+
+- Editing: Added field type ``Date_DateOnly`` to show a DatePicker without a time (hour/minute) selector
+  [Issue #409](https://github.com/e-netze/webgis-community/issues/409)
+
+## Fixed
+
+- Map Series Print: Check max iteration when creating map servies from features (Raster, Intersection, Along polyline)
+  This avoid heavy CPU usage
+  [discussion #402](https://github.com/e-netze/webgis-community/discussions/402)
+
+- Custom Authentication via database role extension: Fixed Role/Roleparameter confusion
+  [discussion #394](https://github.com/e-netze/webgis-community/discussions/394)
+
+## 8.26.801
+
+## Added
+
+- QueryResults: config selection/highlight color and fillcolor in api.config
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#abschnitt-query-results)
+  [discussion #353](https://github.com/e-netze/webgis-community/discussions/353)
+
+## Fixed
+
+- MapMarkup: Donat polygons produced incorrect map-markup polygons
+  [Issue #413](https://github.com/e-netze/webgis-community/issues/413)
+
+- Usabliby: Markerinfo dock window is collapsed
+  [Issue #412](https://github.com/e-netze/webgis-community/issues/412)
+
+- MapMarkup: Wrong unit calculation m² => ar, ha
+  [Issue #407](https://github.com/e-netze/webgis-community/issues/407)
+
+## 8.26.501
+
+## Added
+
+- Sketch/Markup upload: allow ``.geojson`` extension
+  [discussion #369](https://github.com/e-netze/webgis-community/discussions/369)
+
 ## 8.26.401
 
 ## Added

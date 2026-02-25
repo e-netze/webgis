@@ -1,4 +1,4 @@
-using E.Standard.WebMapping.Core.Abstraction;
+﻿using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Filters;
 using gView.GraphicsEngine;
 using System;
@@ -11,25 +11,26 @@ public class Selection : Dependency, IClone<Selection, IMap>
     private ILayer _layer;
     private QueryFilter _filter;
     private ArgbColor _color;
+    private ArgbColor _fillColor;
     private bool _isDirty = true;
     private bool _drawSpatialFilter = false;
 
-    public Selection(ArgbColor color, string name)
+    public Selection(ArgbColor color, ArgbColor? fillColor, string name, ILayer layer, QueryFilter query)
     {
         _color = color;
-        _name = name;
-        _layer = null;
-        _filter = null;
-    }
-    public Selection(ArgbColor color, string name, ILayer layer, QueryFilter query)
-    {
-        _color = color;
+        _fillColor = fillColor ?? ArgbColor.FromArgb(color.A / 3, color);
         _name = name;
         _layer = layer;
         _filter = query;
     }
-    public Selection(ArgbColor color, string name, ILayer layer, QueryFilter query, bool drawSpatialFilter)
-        : this(color, name, layer, query)
+
+    public Selection(ArgbColor color, ArgbColor? fillColor, string name)
+       : this(color, fillColor, name, null, null)
+    {
+    }
+
+    public Selection(ArgbColor color, ArgbColor? fillColor, string name, ILayer layer, QueryFilter query, bool drawSpatialFilter)
+        : this(color, fillColor, name, layer, query)
     {
         _drawSpatialFilter = drawSpatialFilter;
     }
@@ -37,6 +38,11 @@ public class Selection : Dependency, IClone<Selection, IMap>
     public ArgbColor Color
     {
         get { return _color; }
+    }
+
+    public ArgbColor FillColor
+    {
+        get { return _fillColor; }
     }
 
     public string Name
@@ -80,11 +86,11 @@ public class Selection : Dependency, IClone<Selection, IMap>
         Selection clone = null;
         if (this is BufferSelection)
         {
-            clone = new BufferSelection(_color, _name);
+            clone = new BufferSelection(_color, _fillColor, _name);
         }
         else
         {
-            clone = new Selection(_color, _name);
+            clone = new Selection(_color, _fillColor, _name);
         }
 
         clone._drawSpatialFilter = _drawSpatialFilter;
@@ -112,12 +118,12 @@ public class Selection : Dependency, IClone<Selection, IMap>
 
 public class BufferSelection : Selection
 {
-    public BufferSelection(ArgbColor color, string name)
-        : base(color, name)
+    public BufferSelection(ArgbColor color, ArgbColor? fillColor, string name)
+        : base(color, fillColor, name)
     {
     }
-    public BufferSelection(ArgbColor color, string name, ILayer layer, QueryFilter query)
-        : base(color, name, layer, query)
+    public BufferSelection(ArgbColor color, ArgbColor? fillColor, string name, ILayer layer, QueryFilter query)
+        : base(color, fillColor, name, layer, query)
     {
     }
 }

@@ -1549,7 +1549,7 @@ class EditEnvironment
 
                             #endregion
                         }
-                        else if (fieldNodeType == "date")
+                        else if (fieldNodeType == "date" || fieldNodeType == "date_dateonly")
                         {
                             #region Datepicker
 
@@ -1574,8 +1574,8 @@ class EditEnvironment
                                 {
                                     id = id,
                                     css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange }),
-                                    date_only = fieldNode.Attributes["date_only"]?.Value.ToLower() == "true"
-                                });
+                                    date_only = fieldNode.Attributes["date_only"]?.Value.ToLower() == "true" || fieldNodeType == "date_dateonly"
+                                });  
                             }
                             parentElement.AddChild(new UIBreak());
 
@@ -1700,7 +1700,8 @@ class EditEnvironment
 
                             parentElement.AddChild(new UILabel()
                             {
-                                label = fieldNode.Attributes["label"].Value
+                                label = fieldNode.Attributes["label"].Value,
+                                css = "info"
                             });
                             parentElement.AddChild(new UIBreak());
 

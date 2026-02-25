@@ -167,6 +167,10 @@ ul.toc li {
     width:180px;
 }
 
+.webgis-label.info {
+    width:unset;
+}
+
 .webgis-label p {
     font-size: 14px !important;
 }

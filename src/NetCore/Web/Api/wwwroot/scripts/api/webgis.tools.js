@@ -433,6 +433,7 @@
                             const toolSketch = map.toolSketch();
                             if (toolSketch) {
                                 printOptions.toolSketch = toolSketch.toWKT();
+                                printOptions.toolSketchCrsId = map.calcCrsId();
                             }
 
                             printOptions.rotation = map.viewLense.currentRotation();

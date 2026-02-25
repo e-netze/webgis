@@ -153,7 +153,13 @@ public class RestPrintHelperService
         string toolId = form["toolId"];
         string toolSketchWKT = form["toolSketch"];
         var tool = String.IsNullOrEmpty(toolId) ? null : _cache.GetTool(toolId);
-        var tookSketch = String.IsNullOrEmpty(toolSketchWKT) ? null : toolSketchWKT.ShapeFromWKT();
+        var toolSketch = String.IsNullOrEmpty(toolSketchWKT) ? null : toolSketchWKT.ShapeFromWKT();
+        if (toolSketch is not null)
+        {
+            toolSketch.SrsId = String.IsNullOrEmpty(form["toolSketchCrsId"])
+                ? toolSketch.SrsId
+                : int.Parse(form["toolSketchCrsId"]);
+        }
         var printSeriesProvider = tool as IApiButtonPrintSeriesProvider;
 
 
@@ -216,11 +222,16 @@ public class RestPrintHelperService
                 calcSketch: calcSketch,
                 sketchLabelMode: sketchLabelMode
             );
-        printSeriesProvider?.CheckPrintMapSeriesSupport(map, tookSketch, _restTools.CreateApiToolEventArguments(tool, "", null));
+
+        // toolSketch must transfomed to map spatialreference
+        // eg. toolSketch is 31256 and map is 3857...
+        // otherwise map series print dont work with WebMercator and calcCrs = 31256
+        toolSketch.TransformTo(map.SpatialReference);
+        printSeriesProvider?.CheckPrintMapSeriesSupport(map, toolSketch, _restTools.CreateApiToolEventArguments(tool, "", null));
 
         var printMapOrientations = (
-                                        tool != null && tookSketch != null && printSeriesProvider != null
-                                            ? printSeriesProvider.GetPrintMapOrientations(tookSketch)
+                                        tool != null && toolSketch != null && printSeriesProvider != null
+                                            ? printSeriesProvider.GetPrintMapOrientations(toolSketch)
                                             : null
                                    ) ?? [ new PrintMapOrientation("",
                                                 new Point(mapDefinition.Center[0], mapDefinition.Center[1]),
@@ -271,7 +282,7 @@ public class RestPrintHelperService
             var mapServicesGraphicsElements = printSeriesProvider.GetPrintSericiesGraphicsElements(map,
                 _requestContext.Http, _urlHelper,
                 printLayout, pageSize, pageOrientation, printScale,
-                tookSketch);
+                toolSketch);
 
             foreach (var el in mapServicesGraphicsElements)
             {
@@ -1532,15 +1543,17 @@ public class RestPrintHelperService
                         var filter = new QueryFilter(layer.IdFieldName, -1, 0);
                         filter.Where = layer.IdFieldName + " in (" + selectionDefinition.FeatureIds + ")";
 
-                        var color = ArgbColor.Yellow;
+                        var color = _config.QueryResultsHighlightColor(); // ArgbColor.Yellow;
+                        var fillColor = _config.QueryResultsHighlightFillColor();
                         switch (selectionDefinition.Type)
                         {
                             case "selection":
-                                color = ArgbColor.Cyan;
+                                color = _config.QueryResultsSelectionColor(); // ArgbColor.Cyan;
+                                fillColor = _config.QueryResultsSelectionFillColor();
                                 break;
                         }
 
-                        Selection selection = new Selection(color, selectionDefinition.Type, layer, filter);
+                        Selection selection = new Selection(color, fillColor, selectionDefinition.Type, layer, filter);
 
                         map.Selection.Add(selection);
 

@@ -2,6 +2,7 @@
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Export.Calc;
+using E.Standard.WebGIS.Tools.Export.Exeption;
 using E.Standard.WebGIS.Tools.Export.Extensions;
 using E.Standard.WebGIS.Tools.Export.Models;
 using E.Standard.WebGIS.Tools.Extensions;
@@ -689,13 +690,24 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
         var seriesCreator = new SeriesCreator(features, pageWidth, pageHeight, overlappingPercent);
 
-        var sketch = seriesType switch
+        MultiPoint sketch = new();
+        try
         {
-            SeriesType.AlongPolylines => seriesCreator.SeriesAlongPolylines(),
-            SeriesType.IntersectionRaster => seriesCreator.IntersectionRaster(),
-            SeriesType.BoundingBoxRaster => seriesCreator.BoundingBoxRaster(),
-            _ => throw new NotSupportedException($"Series type '{seriesType}' is not supported.")
-        };
+            int maxIterations = e.GetMaxMapSeriesPages() * 10;
+            sketch = seriesType switch
+            {
+                SeriesType.AlongPolylines => seriesCreator.SeriesAlongPolylines(maxIterations),
+                SeriesType.IntersectionRaster => seriesCreator.IntersectionRaster(maxIterations),
+                SeriesType.BoundingBoxRaster => seriesCreator.BoundingBoxRaster(maxIterations),
+                _ => throw new NotSupportedException($"Series type '{seriesType}' is not supported.")
+            };
+        }
+        catch (MapSeriesPrintToManyPagesExeption ex)
+        {
+            e[CreateSeriesValidationErrors] = String.Format(localizer.Localize(
+                "create-series-from-features.exception-to-many-iterations:body"),
+                                    ex.Iterations);
+        }
 
         // Set parameters for map series print for recalc rects etc...
         e[MapSeriesPrintLayoutId] = layoutId;
@@ -740,7 +752,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                 new UISetter(ParameterOverlappingPercent, e[ParameterOverlappingPercent]),
                 new UISetter(ParameterSeriesType, e[ParameterSeriesType])
             );
-           
+
         }
 
         return response;
@@ -796,13 +808,26 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
         }
 
         int index = 1;
+
         foreach (var point in multiPoint.ToArray())
         {
+            double width = extentWidth;
+            double height = extentHeight;
+
+            if (toolSketch.IsWebMercator())
+            {
+                var centerPoint = new Point(point) { SrsId = WebMapping.Core.KnownSRef.WebMercator };
+                centerPoint.TransformTo(WebMapping.Core.KnownSRef.WGS84);
+
+                width /= Math.Cos(centerPoint.Y * Math.PI / 180.0);
+                height /= Math.Cos(centerPoint.Y * Math.PI / 180.0);
+            }
+
             graphicElements.Add(new MapFrameElement(
                 name: GetMapSericesPrintPageName(index++),
                 center: point,
-                width: extentWidth,
-                height: extentHeight,
+                width: width,
+                height: height,
                 rotation: point switch
                 {
                     PointM m => -Convert.ToDouble(m.M),
@@ -845,7 +870,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
             e.GetMapSeriesOverviewLayout(),
             e.GetMapSeriesOverviewPageSize(),
             e.GetMapSeriesOverviewPageOrientation(),
-            map, 
+            map,
             extent);
     }
 

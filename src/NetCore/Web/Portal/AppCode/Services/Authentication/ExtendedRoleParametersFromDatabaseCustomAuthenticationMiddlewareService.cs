@@ -42,7 +42,6 @@ public class ExtendedRoleParametersFromDatabaseCustomAuthenticationMiddlewareSer
                     {
                         string username = httpContext.User.Identity.Name.RemoveAuthPrefix();
                         command.Parameters.Add(dbFactory.GetParameter("username", /*dbFactory.EncodeString(username)*/ username));  // Muss man noch encoden, wenn man das per Parameter übergibt?!
-
                     }
 
                     if (command.CommandText.Contains("@pvp_gvgid"))
@@ -85,7 +84,7 @@ public class ExtendedRoleParametersFromDatabaseCustomAuthenticationMiddlewareSer
                                 {
                                     if (rowCount > 0)
                                     {
-                                        fieldName += "[" + rowCount + "]";
+                                        fieldName += $"[{rowCount}]";
                                     }
 
                                     string roleParameterVals = reader.GetValue(i).ToString();
