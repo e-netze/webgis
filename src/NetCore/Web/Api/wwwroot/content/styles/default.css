@@ -3422,7 +3422,7 @@ body.webgis-ui-holder {
     overflow: hidden;
     border-radius: 5px 5px 0px 0px;
     text-overflow: ellipsis;
-    padding-right: 3px;
+    padding-right: 85px;
 }
 
 .webgis-modal-body {

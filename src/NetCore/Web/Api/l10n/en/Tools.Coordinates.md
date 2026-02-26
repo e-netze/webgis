@@ -34,6 +34,7 @@ The coordinate system in which the coordinates of the CSV file are present must 
 
 ### label1: Here you can upload a GPX or GeoJson file that will be taken over as a sketch.
 ### exception-no-geometry-candidates: No suitable sketch candidates for geometry {0} were found in the file.
+    
 
 # download:
 

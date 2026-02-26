@@ -621,8 +621,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                     .WithId("upload-sketch-geometry-type")
                     .AsToolParameter()
                     .WithValue(e["sketch-geometry-type"]),
-                new UILabel()
-                    .WithLabel(localizer.Localize("upload.sketch.label1")),
+                new UIInfoBox(localizer.Localize("upload.sketch.label1")),
                 new UIBreak(2),
                 new UIUploadFile(this.GetType(), "upload-sketch-file")
                     .WithId("upload-sketch-file")
@@ -630,7 +629,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
     }
 
     [ServerToolCommand("upload-sketch-file")]
-    public ApiEventResponse OnUploadSketchFile(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnUploadSketchFile(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
         var file = e.GetFile("upload-sketch-file");
         string geometryType = e["upload-sketch-geometry-type"];
@@ -659,7 +658,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
 
         if (geoJsonFeatures?.Features?.Length.OrTake(0) == 0)
         {
-            throw new Exception(String.Format("upload.sketch.exception-no-geometry-candidates", geometryType));
+            throw new Exception(String.Format(localizer.Localize("upload.sketch.exception-no-geometry-candidates"), geometryType));
         }
 
         var epsg = geoJsonFeatures.Crs.TryGetEpsg().OrTake(Epsg.WGS84);
@@ -693,8 +692,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                     .AddOption(new UISelect.Option()
                         .WithValue("json")
                         .WithLabel("GeoJson Datei")),
-                new UILabel()
-                    .WithLabel(localizer.Localize("download.sketch.label1")),
+                new UIInfoBox(localizer.Localize("download.sketch.label1")),
                 new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand_ext, "download-sketch-file")
                     .WithId("webgis.tools.coordinates")
                     .WithStyles(UICss.DefaultButtonStyle)
