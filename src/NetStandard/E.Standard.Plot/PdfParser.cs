@@ -17,49 +17,79 @@ public class PdfParser
     public IEnumerable<byte[]> GetImages(Stream stream)
     {
         var doc = PdfReader.Open(stream);
-        var imageCount = 0;
 
         List<byte[]> images = new List<byte[]>();
 
         foreach (var page in doc.Pages)
         {
             // Get the resources dictionary.
-            var resources = page.Elements.GetDictionary("/Resources");
-            if (resources == null)
-            {
-                continue;
-            }
+            CollectImagesFromResources(page, images);
 
-            // Get the external objects dictionary.
-            var xObjects = resources.Elements.GetDictionary("/XObject");
-            if (xObjects == null)
-            {
-                continue;
-            }
-
-            var items = xObjects.Elements.Values;
-            // Iterate the references to external objects.
-            foreach (var item in items)
-            {
-                var reference = item as PdfReference;
-                if (reference == null)
-                {
-                    continue;
-                }
-
-                var xObject = reference.Value as PdfDictionary;
-                // Is external object an image?
-                if (xObject != null && xObject.Elements.GetString("/Subtype") == "/Image")
-                {
-                    images.Add(ExportImage(xObject, ref imageCount));
-                }
-            }
+            //CollectImagesFromContents(page, images);
         }
 
         return images.Where(image => image != null);
     }
 
-    private byte[] ExportImage(PdfDictionary image, ref int count)
+    private void CollectImagesFromResources(PdfPage page, List<byte[]> images)
+    {
+        var resources = page.Elements.GetDictionary("/Resources");
+        if (resources == null)
+        {
+            return;
+        }
+
+        // Get the external objects dictionary.
+        var xObjects = resources.Elements.GetDictionary("/XObject");
+        if (xObjects == null)
+        {
+            return;
+        }
+
+        var items = xObjects.Elements.Values;
+        // Iterate the references to external objects.
+        foreach (var item in items)
+        {
+            var reference = item as PdfReference;
+            if (reference == null)
+            {
+                continue;
+            }
+
+            var xObject = reference.Value as PdfDictionary;
+            // Is external object an image?
+            if (xObject != null && xObject.Elements.GetString("/Subtype") == "/Image")
+            {
+                images.Add(ExportImage(xObject));
+            }
+        }
+    }
+
+
+    private void CollectImagesFromContents(PdfPage page, List<byte[]> images)
+    {
+        // dont work...
+        // experimental
+
+        var contents = page.Elements.GetObject("/Contents") as PdfArray;
+        if (contents is null)
+        {
+            return;
+        }
+
+        for (int e = 0; e < contents.Elements.Count; e++)
+        {
+            var image = contents.Elements.GetObject(e) as PdfDictionary;
+            if (image?.Stream is null) continue;
+
+            //FlateDecode flate = new FlateDecode();
+            //var decodedBytes = flate.Decode(image.Stream.Value, new FilterParms(new PdfDictionary()));
+
+            //images.Add(ExportImage(image));
+        }
+    }
+
+    private byte[] ExportImage(PdfDictionary image)
     {
         try
         {
@@ -73,17 +103,17 @@ public class PdfParser
                     array.Elements.GetName(0) == "/FlateDecode" &&
                     array.Elements.GetName(1) == "/DCTDecode")
                 {
-                    return ExportJpegImage(image, true, ref count);
+                    return ExportJpegImage(image, true);
                 }
 
                 if (array.Elements.GetName(0) == "/DCTDecode")
                 {
-                    return ExportJpegImage(image, false, ref count);
+                    return ExportJpegImage(image, false);
                 }
 
                 if (array.Elements.GetName(0) == "/FlateDecode")
                 {
-                    return ExportAsPngImage(image, ref count);
+                    return ExportAsPngImage(image);
                 }
                 // TODO Deal with other encodings like "/FlateDecode" + "/CCITTFaxDecode"
             }
@@ -96,10 +126,10 @@ public class PdfParser
                 switch (decoder)
                 {
                     case "/DCTDecode":
-                        return ExportJpegImage(image, false, ref count);
+                        return ExportJpegImage(image, false);
 
                     case "/FlateDecode":
-                        return ExportAsPngImage(image, ref count);
+                        return ExportAsPngImage(image);
 
                         // TODO Deal with other encodings like "/CCITTFaxDecode"
                 }
@@ -112,7 +142,7 @@ public class PdfParser
         return null;
     }
 
-    private static byte[] ExportJpegImage(PdfDictionary image, bool flateDecode, ref int count)
+    private static byte[] ExportJpegImage(PdfDictionary image, bool flateDecode)
     {
         // Fortunately JPEG has native support in PDF and exporting an image is just writing the stream to a file.
         var stream = flateDecode ? Filtering.Decode(image.Stream.Value, "/FlateDecode") : image.Stream.Value;
@@ -122,7 +152,7 @@ public class PdfParser
     /// <summary>
     /// Exports image in PNG format.
     /// </summary>
-    private static byte[] ExportAsPngImage__(PdfDictionary image, ref int count)
+    private static byte[] ExportAsPngImage__(PdfDictionary image)
     {
         var width = image.Elements.GetInteger(PdfImage.Keys.Width);
         var height = image.Elements.GetInteger(PdfImage.Keys.Height);
@@ -143,10 +173,15 @@ public class PdfParser
         return null;
     }
 
-    private static byte[] ExportAsPngImage(PdfDictionary image, ref int count)
+    private static byte[] ExportAsPngImage(PdfDictionary image)
     {
         int width = image.Elements.GetInteger(PdfImage.Keys.Width);
         int height = image.Elements.GetInteger(PdfImage.Keys.Height);
+
+        if(width == 0 || height == 0)
+        {
+            return null;
+        }
 
         var canUnfilter = image.Stream.TryUnfilter();
         byte[] decodedBytes;
@@ -164,9 +199,14 @@ public class PdfParser
         }
 
         int bitsPerComponent = 0;
-        while (decodedBytes.Length - ((width * height) * bitsPerComponent / 8) != 0)
+        while (decodedBytes.Length - ((width * height) * bitsPerComponent / 8) > 0)
         {
             bitsPerComponent++;
+        }
+
+        if(decodedBytes.Length - ((width * height) * bitsPerComponent / 8) != 0)  // must be 0!!!
+        {
+            return null;
         }
 
         PixelFormat pixelFormat;
