@@ -3,6 +3,7 @@ using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
+using E.Standard.WebGIS.Tools.Export;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Abstraction;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Extensions;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Models;
@@ -45,6 +46,7 @@ public class GeoReference : IApiServerToolLocalizable<GeoReference>,
     const string GeorefImageDownloadProjectionId = "image-georef-download-prj";
     const string GeorefImageLoadId = "image-georef-load-image";
     const string GeorefImageSelectedImagesId = "image-georef-selected-images";
+    const string GeorefValidationError = "image-georef-validation-error";
 
     #region IApiButton
 
@@ -318,6 +320,11 @@ public class GeoReference : IApiServerToolLocalizable<GeoReference>,
             }
         });
 
+        if (!String.IsNullOrEmpty(e[GeorefValidationError]))
+        {
+            uiElements.Add(new UIValidationErrorSummary(e[GeorefValidationError]));
+        }
+
         List<IUISetter> uiSetter = new List<IUISetter>();
         if (!String.IsNullOrEmpty(e[GeorefImageLoadId]))
         {
@@ -346,7 +353,8 @@ public class GeoReference : IApiServerToolLocalizable<GeoReference>,
         var file = e.GetFile("upload-file");
         if (file == null)
         {
-            throw new Exception("No file uploaded");
+            e[GeorefValidationError] = "No file uploaded";
+            return OnAddImageDilaog(bridge, e, localizer);
         }
 
 
@@ -369,7 +377,8 @@ public class GeoReference : IApiServerToolLocalizable<GeoReference>,
 
         if (imagePackages.Where(p => p.ImageData != null).Any() == false)
         {
-            throw new Exception(localizer.Localize("exception-cant-read-image:body"));
+            e[GeorefValidationError] = localizer.Localize("exception-cant-read-image:body");
+            return OnAddImageDilaog(bridge, e, localizer);
         }
 
         List<string> imageUrls = new List<string>();
