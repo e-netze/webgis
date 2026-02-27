@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+## 8.26.901
+
+## Fixed
+
 - Download GPX from measure/edit sketch not worked correctly
 
 ## 8.26.901
