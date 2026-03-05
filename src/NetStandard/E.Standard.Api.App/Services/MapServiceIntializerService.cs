@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using E.Standard.WebGIS.Core.Extensions;
 
 namespace E.Standard.Api.App.Services;
 
@@ -675,12 +676,7 @@ public class MapServiceInitializerService
         {
             var connectionParameter = requestFormParameters[$"custom.{serviceId}.connection"];
 
-            string connectionString = String.Empty;
-            try
-            {
-                connectionString = _crypto.StaticDefaultDecrypt(connectionParameter);
-            }
-            catch { }
+            string connectionString = _crypto.StaticDefaultDecrypt_Aes_or_Legacy3Des_or_Empty(connectionParameter);
 
             if (!String.IsNullOrEmpty(connectionString))
             {
@@ -706,7 +702,7 @@ public class MapServiceInitializerService
 
     public string EncodeCustomServiceConnectionString(string url, string displayName, string user, string password, CmsDocument.UserIdentification ui)
     {
-        return $"{_crypto.StaticDefaultEncrypt($"url={url};name={displayName};usr={user};pwd={password}", CryptoResultStringType.Hex)}";
+        return $"{_crypto.StaticDefaultEncrypt_Aes($"url={url};name={displayName};usr={user};pwd={password}", CryptoResultStringType.Hex)}";
     }
 
     public bool IsCustomService(string serviceId) => serviceId != null && serviceId.StartsWith(CustomServicePrefix) && !serviceId.Contains("@");

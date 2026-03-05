@@ -259,7 +259,7 @@ public class DeployService : ICmsTool
                     memoryStream.Position = 0;
 
                     var base64 = Convert.ToBase64String(memoryStream.ToArray());
-                    var encryptedBytes = Encoding.UTF8.GetBytes(_cryptoService.StaticEncrypt(
+                    var encryptedBytes = Encoding.UTF8.GetBytes(_cryptoService.StaticEncrypt_Aes(
                                 base64,
                                 deploy.Secret,
                                 Security.Cryptography.CryptoResultStringType.Hex));

@@ -20,7 +20,7 @@ public partial class CryptoImpl
 
     #region AES Base
 
-    private byte[] AES_Encrypt(byte[] bytesToBeEncrypted, byte[] passwordBytes, int keySize = 128, bool useRandomSalt = true)
+    private byte[] Encrypt_Aes(byte[] bytesToBeEncrypted, byte[] passwordBytes, int keySize = 128, bool useRandomSalt = true)
     {
         byte[] encryptedBytes = null;
 
@@ -74,7 +74,7 @@ public partial class CryptoImpl
         return encryptedBytes;
     }
 
-    private byte[] AES_Decrypt(byte[] bytesToBeDecrypted, byte[] passwordBytes, int keySize = 128, bool useRandomSalt = true)
+    private byte[] Decrypt_Aes(byte[] bytesToBeDecrypted, byte[] passwordBytes, int keySize = 128, bool useRandomSalt = true)
     {
         byte[] decryptedBytes = null;
 
@@ -137,7 +137,7 @@ public partial class CryptoImpl
             passwordBytes = algorithm.ComputeHash(passwordBytes);
         }
 
-        return AES_Encrypt(bytesToBeEncrypted, passwordBytes, GetKeySize(strength), useRandomSalt);
+        return Encrypt_Aes(bytesToBeEncrypted, passwordBytes, GetKeySize(strength), useRandomSalt);
     }
 
     public byte[] DecryptBytes(byte[] bytesToBeEncrypted, string password, CryptoStrength strength = CryptoStrength.AES128, bool useRandomSalt = true)
@@ -149,7 +149,7 @@ public partial class CryptoImpl
             passwordBytes = algorithm.ComputeHash(passwordBytes);
         }
 
-        return AES_Decrypt(bytesToBeEncrypted, passwordBytes, GetKeySize(strength), useRandomSalt);
+        return Decrypt_Aes(bytesToBeEncrypted, passwordBytes, GetKeySize(strength), useRandomSalt);
     }
 
     #endregion
@@ -173,7 +173,7 @@ public partial class CryptoImpl
             passwordBytes = algorithm.ComputeHash(passwordBytes);
         }
 
-        byte[] bytesEncrypted = AES_Encrypt(bytesToBeEncrypted, passwordBytes, GetKeySize(strength), useRandomSalt);
+        byte[] bytesEncrypted = Encrypt_Aes(bytesToBeEncrypted, passwordBytes, GetKeySize(strength), useRandomSalt);
 
         string result = String.Empty;
 
@@ -215,7 +215,7 @@ public partial class CryptoImpl
             passwordBytes = algorithm.ComputeHash(passwordBytes);
         }
 
-        byte[] bytesDecrypted = AES_Decrypt(bytesToBeDecrypted, passwordBytes, GetKeySize(strength), useRandomSalt);
+        byte[] bytesDecrypted = Decrypt_Aes(bytesToBeDecrypted, passwordBytes, GetKeySize(strength), useRandomSalt);
 
         string result = Encoding.UTF8.GetString(bytesDecrypted);
         if (result == "#string.empty#")
@@ -240,7 +240,7 @@ public partial class CryptoImpl
 
     private static byte[] _static_iv = new byte[8] { 11, 127, 102, 78, 48, 67, 12, 96 };
 
-    public string StaticEncrypt(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
+    public string StaticEncrypt_3Des(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
     {
         byte[] passwordBytes = Encoding.UTF8.GetBytes(StaticPassword24(password));
         byte[] inputbuffer = Encoding.UTF8.GetBytes(text);
@@ -266,7 +266,7 @@ public partial class CryptoImpl
         }
     }
 
-    public string StaticDecrypt(string input, string password)
+    public string StaticDecrypt_3Des(string input, string password)
     {
         List<byte> inputbuffer = new List<byte>();
 
@@ -298,6 +298,67 @@ public partial class CryptoImpl
         }
     }
 
+    public string StaticEncrypt_Aes(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
+    {
+        using var sha = SHA256.Create();
+        byte[] key = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+        // deterministic IV from password (for static encryption)
+        byte[] iv = new byte[16];
+        Array.Copy(key, iv, 16);
+
+        using var aes = Aes.Create();
+        aes.Key = key;
+        aes.IV = iv;
+
+        using var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+        using var ms = new MemoryStream();
+        using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+        using (var sw = new StreamWriter(cs))
+        {
+            sw.Write(text);
+        }
+
+        string result = String.Empty;
+        switch (resultStringType)
+        {
+            case CryptoResultStringType.Base64:
+                result = Convert.ToBase64String(ms.ToArray());
+                break;
+            case CryptoResultStringType.Hex:
+                result = $"0x{string.Concat(ms.ToArray().Select(b => b.ToString("X2")))}";
+                break;
+        }
+
+        return result;
+    }
+
+    public string StaticDecrypt_Aes(string cipherText, string password)
+    {
+        using var sha = SHA256.Create();
+        byte[] key = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+        byte[] iv = new byte[16];
+        Array.Copy(key, iv, 16);
+
+        using var aes = Aes.Create();
+        aes.Key = key;
+        aes.IV = iv;
+
+        using var decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+
+        byte[] buffer = cipherText.StartsWith("0x")
+            ? StringToByteArray(cipherText)
+            : Convert.FromBase64String(cipherText);
+
+        using var ms = new MemoryStream(buffer);
+        using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
+        using var sr = new StreamReader(cs);
+
+        return sr.ReadToEnd();
+    }
+
     private string StaticPassword24(string password)
     {
         if (String.IsNullOrWhiteSpace(password))
@@ -312,14 +373,24 @@ public partial class CryptoImpl
         return password.Substring(0, 24);
     }
 
-    public string StaticDefaultEncrypt(string text, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
+    public string StaticDefaultEncrypt_3Des(string text, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
     {
-        return StaticEncrypt(text, _options.DefaultPassword, resultStringType);
+        return StaticEncrypt_3Des(text, _options.DefaultPassword, resultStringType);
     }
 
-    public string StaticDefaultDecrypt(string input)
+    public string StaticDefaultDecrypt_3Des(string input)
     {
-        return StaticDecrypt(input, _options.DefaultPassword);
+        return StaticDecrypt_3Des(input, _options.DefaultPassword);
+    }
+
+    public string StaticDefaultEncrypt_Aes(string text, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
+    {
+        return StaticEncrypt_Aes(text, _options.DefaultPassword, resultStringType);
+    }
+
+    public string StaticDefaultDecrypt_Aes(string input)
+    {
+        return StaticDecrypt_Aes(input, _options.DefaultPassword);
     }
 
     #endregion

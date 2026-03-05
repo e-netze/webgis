@@ -618,7 +618,6 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
                 visFilterDefinition.AddArgument("sql", whereClause);
                 visFilterDefinition.Signature = visFilterDefinition.CalcSignature(bridge.CryptoService);
                 visFilterDefinitions.Add(visFilterDefinition);
-
             }
         }
 

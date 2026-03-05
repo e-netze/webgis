@@ -49,7 +49,7 @@ static public class VisFilterDefinitionDTOExtensions
 
             return Convert.ToBase64String(
                     SHA256.HashData(System.Text.UTF8Encoding.UTF8.GetBytes(
-                        cryptoService.StaticDefaultEncrypt(
+                        cryptoService.StaticDefaultEncrypt_Aes(
                             string.Join("&", args)
                         )
                     )

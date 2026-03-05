@@ -120,7 +120,7 @@ public class CacheController : ApiBaseController
 
             await file.CopyToAsync(memoryStream);
 
-            var base64 = _cryptoService.StaticDecrypt(
+            var base64 = _cryptoService.StaticDecrypt_Aes(
                 Encoding.UTF8.GetString(memoryStream.ToArray()),
                 _config.Configuration.CmsUploadSecret(id));
             var fileBytes = Convert.FromBase64String(base64);

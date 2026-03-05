@@ -18,7 +18,7 @@ public class DbCache : IKeyValueCache, IDbSchemaProvider
     public DbCache(ICryptoService crypto)
     {
         var tablePostfix = crypto
-                .StaticDefaultEncrypt("webgis_cache", Security.Cryptography.CryptoResultStringType.Hex)
+                .StaticDefaultEncrypt_3Des("webgis_cache", Security.Cryptography.CryptoResultStringType.Hex)
                 .Substring(2, 12)
                 .ToLower();
 

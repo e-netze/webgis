@@ -1,4 +1,6 @@
-﻿namespace E.Standard.Security.Cryptography.Abstractions;
+﻿using System;
+
+namespace E.Standard.Security.Cryptography.Abstractions;
 
 public interface ICryptoService
 {
@@ -17,11 +19,22 @@ public interface ICryptoService
 
     bool VerifyPassword(string cleanPassword, string hash);
 
-    string StaticEncrypt(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64);
-    string StaticDecrypt(string input, string password);
+    [Obsolete("Use StaticEncrypt_Aes instead")]
+    string StaticEncrypt_3Des(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64);
+    [Obsolete("Use StaticDecrypt_Aes instead")]
+    string StaticDecrypt_3Des(string input, string password);
 
-    string StaticDefaultEncrypt(string text, CryptoResultStringType resultStringType = CryptoResultStringType.Base64);
-    string StaticDefaultDecrypt(string input);
+    [Obsolete("Use StaticDefaultEncrypt_Aes instead")]
+    string StaticDefaultEncrypt_3Des(string text, CryptoResultStringType resultStringType = CryptoResultStringType.Base64);
+    [Obsolete("Use StaticDefaultDecrypt_Aes instead")]
+    string StaticDefaultDecrypt_3Des(string input);
+
+    string StaticEncrypt_Aes(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64);
+    string StaticDecrypt_Aes(string input, string password);
+
+    string StaticDefaultEncrypt_Aes(string text, CryptoResultStringType resultStringType = CryptoResultStringType.Base64);
+    string StaticDefaultDecrypt_Aes(string input);
+
 
     string EncryptCookieValue(string value);
 

@@ -54,7 +54,7 @@ public class Redirect : IApiEndpoint
                     return;
                 }
 
-                var url = crypto.StaticDefaultDecrypt(encryptedUrl)
+                var url = crypto.StaticDefaultDecrypt_Aes(encryptedUrl)
                                 .Replace("[LEVEL]", level)
                                 .Replace("[ROW]", row)
                                 .Replace("[COL]", col);
