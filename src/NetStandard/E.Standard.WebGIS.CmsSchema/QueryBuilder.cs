@@ -1,4 +1,5 @@
 ﻿using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Reflection;
@@ -66,7 +67,7 @@ public class QueryBuilderFieldAssistent : SchemaNode, IAutoCreatable, IUI
             return false;
         }
 
-        string path = this.CmsManager.ConnectionString + @"/" + Helper.TrimPathRight(this.RelativePath, 1);
+        string path = $"{this.CmsManager.ConnectionString}/{this.RelativePath.TrimRightRelativeCmsPath(1)}";
 
         List<String> existingFieldnames = new();
         foreach (var item in DocumentFactory.PathInfo(path).GetFiles())

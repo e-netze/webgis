@@ -77,29 +77,32 @@ public class CryptoService : ICryptoService
         catch (Exception ex) { throw new CryptographyException(ex); }
     }
 
-    public string StaticEncrypt_3Des(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
-    {
-        try
-        {
-            return Impl.StaticEncrypt_3Des(text, password, resultStringType);
-        }
-        catch (Exception ex) { throw new CryptographyException(ex); }
-    }
+    //public string StaticEncrypt_3Des(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
+    //{
+    //    try
+    //    {
+    //        return Impl.StaticEncrypt_3Des(text, password, resultStringType);
+    //    }
+    //    catch (Exception ex) { throw new CryptographyException(ex); }
+    //}
 
-    public string StaticDecrypt_3Des(string input, string password)
-    {
-        try
-        {
-            return Impl.StaticDecrypt_3Des(input, password);
-        }
-        catch (Exception ex) { throw new CryptographyException(ex); }
-    }
+    //public string StaticDecrypt_3Des(string input, string password)
+    //{
+    //    try
+    //    {
+    //        return Impl.StaticDecrypt_3Des(input, password);
+    //    }
+    //    catch (Exception ex) { throw new CryptographyException(ex); }
+    //}
 
     public string StaticDefaultEncrypt_3Des(string text, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
     {
         try
         {
+#pragma warning disable 0618
+            // allowed here, because this methode is itself already marked as obsolte (in ICryptoService interface)
             return Impl.StaticDefaultEncrypt_3Des(text, resultStringType);
+#pragma warning restore 0618
         }
         catch (Exception ex) { throw new CryptographyException(ex); }
     }
@@ -108,7 +111,10 @@ public class CryptoService : ICryptoService
     {
         try
         {
+#pragma warning disable 0618
+            // allowed here, because this methode is itself already marked as obsolte (in ICryptoService interface)
             return Impl.StaticDefaultDecrypt_3Des(input);
+#pragma warning restore 0618
         }
         catch (Exception ex) { throw new CryptographyException(ex); }
     }

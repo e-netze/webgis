@@ -17,7 +17,9 @@ static public class CryptoServiceExtensions
 
             try
             {
+#pragma warning disable 0618
                 return crypto.StaticDefaultDecrypt_3Des(input);
+#pragma warning restore 0618
             }
             catch { }
 

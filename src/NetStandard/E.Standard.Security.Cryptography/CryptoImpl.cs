@@ -240,7 +240,7 @@ public partial class CryptoImpl
 
     private static byte[] _static_iv = new byte[8] { 11, 127, 102, 78, 48, 67, 12, 96 };
 
-    public string StaticEncrypt_3Des(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
+    private string StaticEncrypt_3Des(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
     {
         byte[] passwordBytes = Encoding.UTF8.GetBytes(StaticPassword24(password));
         byte[] inputbuffer = Encoding.UTF8.GetBytes(text);
@@ -266,7 +266,7 @@ public partial class CryptoImpl
         }
     }
 
-    public string StaticDecrypt_3Des(string input, string password)
+    private string StaticDecrypt_3Des(string input, string password)
     {
         List<byte> inputbuffer = new List<byte>();
 
@@ -373,11 +373,13 @@ public partial class CryptoImpl
         return password.Substring(0, 24);
     }
 
+    [Obsolete("Use StaticDefaultEncrypt_Aes instead")]
     public string StaticDefaultEncrypt_3Des(string text, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
     {
         return StaticEncrypt_3Des(text, _options.DefaultPassword, resultStringType);
     }
 
+    [Obsolete("Use StaticDefaultDecrypt_Aes instead")]
     public string StaticDefaultDecrypt_3Des(string input)
     {
         return StaticDecrypt_3Des(input, _options.DefaultPassword);

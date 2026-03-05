@@ -19,10 +19,10 @@ public interface ICryptoService
 
     bool VerifyPassword(string cleanPassword, string hash);
 
-    [Obsolete("Use StaticEncrypt_Aes instead")]
-    string StaticEncrypt_3Des(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64);
-    [Obsolete("Use StaticDecrypt_Aes instead")]
-    string StaticDecrypt_3Des(string input, string password);
+    //[Obsolete("Use StaticEncrypt_Aes instead")]
+    //string StaticEncrypt_3Des(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64);
+    //[Obsolete("Use StaticDecrypt_Aes instead")]
+    //string StaticDecrypt_3Des(string input, string password);
 
     [Obsolete("Use StaticDefaultEncrypt_Aes instead")]
     string StaticDefaultEncrypt_3Des(string text, CryptoResultStringType resultStringType = CryptoResultStringType.Base64);

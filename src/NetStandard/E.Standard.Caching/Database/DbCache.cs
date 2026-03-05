@@ -17,10 +17,16 @@ public class DbCache : IKeyValueCache, IDbSchemaProvider
 
     public DbCache(ICryptoService crypto)
     {
+#pragma warning disable 0618
+        // Tablename should have an postfix depending on the encryption of the 
+        // current instance.
+        // StaticDefaultEncrypt_3Des is from legacy but is ok here, because it only a kind of Hash-Prefix-generateor for the tablename
+        // dont change it, or maybe existing instances have create the table new (/setup)
         var tablePostfix = crypto
                 .StaticDefaultEncrypt_3Des("webgis_cache", Security.Cryptography.CryptoResultStringType.Hex)
                 .Substring(2, 12)
                 .ToLower();
+#pragma warning restore 0618
 
         _tableName = $"{"webgis_cache"}_{tablePostfix}";
     }

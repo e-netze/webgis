@@ -63,7 +63,7 @@ public class TableColumnAssistentControl : UserControl
             }
             else if (_node is QueryBuilderFieldAssistent)
             {
-                objects = [_cms.SchemaNodeInstance(_servicePack, Helper.TrimPathRight(_relPath, 2), true)];
+                objects = [_cms.SchemaNodeInstance(_servicePack, _relPath.TrimRightRelativeCmsPath(2), true)];
             }
 
             List<(string name, string aliasname)> fields = new List<(string, string)>();
