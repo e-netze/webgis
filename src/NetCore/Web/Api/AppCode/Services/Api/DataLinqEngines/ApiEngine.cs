@@ -1,6 +1,8 @@
 ﻿using Api.Core.Models.DataLinq;
 using E.DataLinq.Core.Engines.Abstraction;
+using E.DataLinq.Core.Extensions;
 using E.DataLinq.Core.Models;
+using E.DataLinq.Core.Services.Abstraction;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Web;
 using E.Standard.Json;
@@ -20,12 +22,15 @@ public class ApiEngine : IDataLinqSelectEngine, IDataLinqEngineCache
 {
     private readonly IHttpService _http;
     private readonly IConfiguration _config;
+    private readonly IDataLinqEnvironmentService _environment;
 
     public ApiEngine(IHttpService http,
-                     IConfiguration config)
+                     IConfiguration config,
+                     IDataLinqEnvironmentService environment)
     {
         _http = http;
         _config = config;
+        _environment = environment;
     }
 
     #region IDataLinqSelectEngine
@@ -34,7 +39,7 @@ public class ApiEngine : IDataLinqSelectEngine, IDataLinqEngineCache
 
     async public Task<bool> TestConnection(DataLinqEndPoint endPoint)
     {
-        var webConnectionString = new WebConnectionString(endPoint.ConnectionString);
+        var webConnectionString = new WebConnectionString(endPoint.GetConnectionString(_environment));
         var url = _config.DataLinqApiEngineConnectionReplace(webConnectionString.Service);
 
         var requestAuthorization = !String.IsNullOrEmpty(webConnectionString.User) ?
@@ -52,9 +57,9 @@ public class ApiEngine : IDataLinqSelectEngine, IDataLinqEngineCache
     async public Task<(object[] records, bool isOrdered)> SelectAsync(DataLinqEndPoint endPoint, DataLinqEndPointQuery query, NameValueCollection arguments)
     {
         bool isOrdered = false;
-        var webConnectionString = new WebConnectionString(endPoint.ConnectionString);
+        var webConnectionString = new WebConnectionString(endPoint.GetConnectionString(_environment));
 
-        string url = $"{_config.DataLinqApiEngineConnectionReplace(webConnectionString.Service)}/rest/services/{query.Statement.ParseStatementPreCompilerDirectives(arguments, StatementType.Url)}";
+        string url = $"{_config.DataLinqApiEngineConnectionReplace(webConnectionString.Service)}/rest/services/{query.Statement.ParseStatementPreCompilerDirectives(arguments, E.Standard.Api.App.Extensions.StatementType.Url)}";
 
         foreach (var parameterName in arguments.AllKeys)
         {

@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+- Datalinq: Environment variable (test/dev/prod) not applyed to connectionstring in WebGIS Datalinq Engines
+  [DataLinq Issue #41](https://github.com/e-netze/datalinq-community/issues/41)
+
 ## 8.26.901
 
 ## Fixed

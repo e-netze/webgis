@@ -76,9 +76,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
 -->
-<!--
+
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
--->
+
   
   </ItemGroup>
 

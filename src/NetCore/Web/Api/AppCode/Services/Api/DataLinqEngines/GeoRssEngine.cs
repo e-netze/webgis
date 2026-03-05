@@ -1,6 +1,8 @@
 ﻿using Api.Core.Models.DataLinq;
 using E.DataLinq.Core.Engines.Abstraction;
+using E.DataLinq.Core.Extensions;
 using E.DataLinq.Core.Models;
+using E.DataLinq.Core.Services.Abstraction;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Web;
 using E.Standard.ThreadsafeClasses;
@@ -19,12 +21,15 @@ public class GeoRssEngine : IDataLinqSelectEngine, IDataLinqEngineCache
 {
     private readonly IHttpService _http;
     private readonly IConfiguration _config;
+    private readonly IDataLinqEnvironmentService _environment;
 
     public GeoRssEngine(IHttpService http,
-                        IConfiguration config)
+                        IConfiguration config,
+                        IDataLinqEnvironmentService environment)
     {
         _http = http;
         _config = config;
+        _environment = environment;
     }
 
     #region IDataLinqSelectEngine
@@ -34,10 +39,10 @@ public class GeoRssEngine : IDataLinqSelectEngine, IDataLinqEngineCache
     async public Task<(object[] records, bool isOrdered)> SelectAsync(DataLinqEndPoint endPoint, DataLinqEndPointQuery query, NameValueCollection arguments)
     {
         bool isOrdered = false;
-        var webConnectionString = new WebConnectionString(endPoint.ConnectionString);
+        var webConnectionString = new WebConnectionString(endPoint.GetConnectionString(_environment));
 
         string serviceUrl = _config.DataLinqApiEngineConnectionReplace(webConnectionString.Service);
-        string url = $"{serviceUrl}{query.Statement.ParseStatementPreCompilerDirectives(arguments, StatementType.Url)}";
+        string url = $"{serviceUrl}{query.Statement.ParseStatementPreCompilerDirectives(arguments, E.Standard.Api.App.Extensions.StatementType.Url)}";
 
         foreach (var parameterName in arguments.AllKeys)
         {
@@ -126,7 +131,7 @@ public class GeoRssEngine : IDataLinqSelectEngine, IDataLinqEngineCache
 
     async public Task<bool> TestConnection(DataLinqEndPoint endPoint)
     {
-        var webConnectionString = new WebConnectionString(endPoint.ConnectionString);
+        var webConnectionString = new WebConnectionString(endPoint.GetConnectionString(_environment));
         var url = _config.DataLinqApiEngineConnectionReplace(webConnectionString.Service);
 
         var requestAuthorization = !String.IsNullOrEmpty(webConnectionString.User) ?
