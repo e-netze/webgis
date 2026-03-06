@@ -18,6 +18,7 @@ using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
+using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Geometry;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,10 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     private const string ConfigAllowAddFromSelectionMaxVertices = "allow-add-from-selection-max-vertices";
     private const string ConfigAllowDownloadFromSelection = "allow-download-from-selection";
     private const string ConfigDeaultDownloadEpsgCode = "default-download-epsg";
+    private const string ConfigSaveDialogNameMaxLength = "save-name-maxlength";
 
+    private const string SaveDialogValidationMessage = "save-dilaog-validation-message";
+    
     private readonly string[] MobileTools = new string[] { "pointer", "symbol", "freehand", "line", "polygon", "dimline", "share", "save", "open", "upload", "download" };
     private readonly string[] AdvancedTools = new string[] { "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline" };  // Do not use with Internet Explorer
 
@@ -1341,6 +1345,32 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     [ServerToolCommand("save")]
     public ApiEventResponse OnSaveClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
+        List<UIElement> uiElements = new List<UIElement>()
+        {
+            new UILabel(){ label = localizer.Localize("label-name") },
+            new UIBreak(),
+            new UIInputAutocomplete(UIInputAutocomplete.MethodSource(bridge,this.GetType(),"autocomplete-projects"),0){
+                id="mapmarkup-io-save-name",
+                css=UICss.ToClass(new string[]{UICss.ToolParameter}),
+            },
+            new UIHidden(){
+                id="mapmarkup-geojson",
+                css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsGeoJson})
+            }
+        };
+
+        if (!String.IsNullOrEmpty(e[SaveDialogValidationMessage]))
+        {
+            uiElements.Add(new UIValidationErrorSummary(e[SaveDialogValidationMessage]));
+        }
+
+        uiElements.Add(
+            new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand, "save-project")
+            {
+                text = localizer.Localize("save")
+            })
+        );
+
         return new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Pointer },
@@ -1352,21 +1382,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     target=UIElementTarget.modaldialog.ToString(),
                     targettitle = localizer.Localize("tools.save"),
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
-                    elements=new UIElement[]{
-                        new UILabel(){ label = localizer.Localize("label-name") },
-                        new UIBreak(),
-                        new UIInputAutocomplete(UIInputAutocomplete.MethodSource(bridge,this.GetType(),"autocomplete-projects"),0){
-                            id="mapmarkup-io-save-name",
-                            css=UICss.ToClass(new string[]{UICss.ToolParameter}),
-                        },
-                        new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand,"save-project") {
-                            text = localizer.Localize("save")
-                        }),
-                        new UIHidden(){
-                            id="mapmarkup-geojson",
-                            css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsGeoJson})
-                        }
-                    }
+                    elements = uiElements.ToArray()
                 }
             },
             UISetters = new IUISetter[]  // select/highlight tool
@@ -1398,23 +1414,41 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     [ServerToolCommand("save-project")]
     public ApiEventResponse OnSaveProject(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
-        string name = e["mapmarkup-io-save-name"];
-
-        if (!name.IsValidFilename(out string invalidChars))
+        try
         {
-            throw new Exception(String.Format(localizer.Localize("io.exception-invalid-char"), invalidChars));
-        }
+            string name = e["mapmarkup-io-save-name"]?.Trim();
 
-        bridge.Storage.Save(name, e["mapmarkup-geojson"]);
+            if (String.IsNullOrWhiteSpace(name))
+            {
+                throw new Exception(localizer.Localize("io.exception-name-is-empty"));
+            }
 
-        return new ApiEventResponse()
-        {
-            UIElements = new IUIElement[] {
+            if (!name.IsValidFilename(out string invalidChars))
+            {
+                throw new Exception(String.Format(localizer.Localize("io.exception-invalid-char"), invalidChars));
+            }
+
+            if (name.Length > e.GetConfigInt(ConfigSaveDialogNameMaxLength, 40))
+            {
+                throw new Exception(String.Format(localizer.Localize("io.exception-name-to-long"), e.GetConfigInt(ConfigSaveDialogNameMaxLength, 40)));
+            }
+
+            bridge.Storage.Save(name, e["mapmarkup-geojson"]);
+
+            return new ApiEventResponse()
+            {
+                UIElements = new IUIElement[] {
                 new UIEmpty(){
                     target=UIElementTarget.modaldialog.ToString(),
                 }
             }
-        };
+            };
+        }
+        catch (Exception ex)
+        {
+            e[SaveDialogValidationMessage] = ex.Message;
+            return OnSaveClick(bridge, e, localizer);
+        }
     }
 
     [ServerToolCommand("open")]

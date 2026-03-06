@@ -98,6 +98,8 @@ can be changed individually for each object later.
 ## exception-invalid-char: Invalid character in the name. Avoid the following characters: {0}
 ## exception-no-projects-found: No Map-Markup projects have been saved under your user yet. Save a Map-Markup project before using this tool.
 ## confirm-delete-project: Should the Map-Markup project '{mapmarkup-io-load-name}' really be deleted?
+## exception-name-is-empty: Empty name is not allowed
+## exception-name-to-long: Name to long. Maximum {0} letters allowed.
 
 ## extend-current-session: Extend existing Map-Markup
 ## replace-current-session: Replace existing Map-Markup

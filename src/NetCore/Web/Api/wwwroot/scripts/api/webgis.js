@@ -2134,7 +2134,7 @@
                     webgis._toolInfos[client] = result.tools;
 
                     // overriede custom properties
-                    var overrideProperties = ["name", "container", "tooltip", "image", "cursor", "help_urlpath", "priority"]
+                    var overrideProperties = ["name", "container", "tooltip", "image", "cursor", "help_urlpath", "priority", "visibility"]
 
                     let tools = result.tools;
 

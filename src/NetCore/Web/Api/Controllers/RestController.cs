@@ -1,4 +1,5 @@
 ﻿using Api.AppCode.Mvc.Wrapper;
+using Api.Core.AppCode.Exceptions;
 using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Mvc;
 using Api.Core.AppCode.Reflection;
@@ -888,7 +889,9 @@ public class RestController : ApiBaseController
 
             ApiEventResponse apiResponse = null;
 
-            ApiToolEventArguments e = _restService.Tools.CreateApiToolEventArguments(button, eventString, toolOptions);
+            ApiToolEventArguments e = _restService.Tools.CreateApiToolEventArguments(button, eventString, toolOptions)
+                                                  .EnsureAll(ui, _stringLocalizer);
+
 
             #region Files
 
@@ -1085,8 +1088,10 @@ public class RestController : ApiBaseController
             ApiToolEventArguments e = new ApiToolEventArguments(bridge,
                                                                 Request.FormOrQueryParameters(),
                                                                 new string[] { "toolid", "method" },
-                                                                configuration: button.ToolConfiguration(_config));
+                                                                configuration: button.ToolConfiguration(_config))
+                                     .EnsureAll(ui, _stringLocalizer);
             bridge.CurrentEventArguments = e;
+
 
             var dependencyProvider = new ToolDependencyProvider(bridge, e, _stringLocalizer);
 

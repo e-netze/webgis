@@ -10,6 +10,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+## 8.26.1001
+
+## Added
+
+- custom.js: set visibility for tools: ``webgis.usability.toolProperties['webgis.tools.serialization.savemap'] = { visibility: 'hidden' };``
+  [dicussion #408](https://github.com/e-netze/webgis-community/discussions/408)
+
+- api.config: tool section ``<add key="allow-anoymous-access" value="false" />``
+  [dicussion #408](https://github.com/e-netze/webgis-community/discussions/408)
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#werkzeug-konfiguration)
+
+- api.config: Tool MapMarkup - added key ``save-name-maxlength``
+  [dicussion #204](https://github.com/e-netze/webgis-community/discussions/204)
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#werkzeug-mapmarkup)
+
+## Fixed
+
+- Security: Avoid 3DES (use AES) Algorithm
+  [Issue #423](https://github.com/e-netze/webgis-community/issues/423)
+
+  **Breaking Change**
+  CMS Upload only works if both (WebGIS API and WebGIS CMS) have a version >= 8.26.1001.
+  So you have to update WebGIS CMS an WebCMS API in one step.
+
 - Datalinq: Environment variable (test/dev/prod) not applyed to connectionstring in WebGIS Datalinq Engines
   [DataLinq Issue #41](https://github.com/e-netze/datalinq-community/issues/41)
 
