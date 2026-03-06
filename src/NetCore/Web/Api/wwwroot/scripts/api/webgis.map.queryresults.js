@@ -1496,7 +1496,17 @@
                             if (me._queryResultFeatures &&
                                 me._queryResultFeatures.features &&
                                 me._queryResultFeatures.features.length === 1) {
-                                $(map._webgisContainer).find('.webgis-toolbox-tool-item.remove-queryresults').trigger('click');
+                                    const toolboxButton = $(map._webgisContainer)
+                                                            .find('.webgis-toolbox-tool-item.remove-queryresults');
+                                    const quickButton = $(map._webgisContainer)
+                                                            .find('.webgis-tool-button.remove-queryresults');
+
+                                    if (toolboxButton.length > 0) {
+                                        toolboxButton.trigger('click');
+                                    }
+                                    else if (quickButton.length > 0) {
+                                        quickButton.trigger('click');
+                                    }
                             } else {
                                 map.queryResultFeatures.removeFeature($(this).data('feature-oid'));
                             }

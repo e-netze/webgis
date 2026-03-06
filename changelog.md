@@ -37,6 +37,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Datalinq: Environment variable (test/dev/prod) not applyed to connectionstring in WebGIS Datalinq Engines
   [DataLinq Issue #41](https://github.com/e-netze/datalinq-community/issues/41)
 
+- Remove Query Result Button not works on quick search results with service-query-theme
+  [Issue #426](https://github.com/e-netze/webgis-community/issues/426)
+
 ## 8.26.901
 
 ## Fixed

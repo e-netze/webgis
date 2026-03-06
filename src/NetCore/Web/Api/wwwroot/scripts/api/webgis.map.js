@@ -115,7 +115,7 @@
         // Remove all queryresults
         const $queryResultButton = $("<div style='text-align:center'>")
             .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
-            .addClass('webgis-tool-button webgis-dependencies webgis-dependency-queryresultsexists')
+            .addClass('webgis-tool-button webgis-dependencies webgis-dependency-queryresultsexists remove-queryresults')
             .data('map', this)
             .attr('alt', 'Alle Ergebnisse aus der Karte entfernen')
             .appendTo(toolButtonBars)
