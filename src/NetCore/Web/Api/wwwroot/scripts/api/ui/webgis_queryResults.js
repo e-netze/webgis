@@ -1046,6 +1046,12 @@
                                         .attr('href', '')
                                         .attr('onclick', "webgis.iFrameDialog('" + href + "','" + $link.text() + "');return false;");
                                     text = $link.prop('outerHTML');
+                                } else if ($link.attr('target') === 'datalinq_pdf_report') {
+                                    const href = $link.attr('href');
+                                    $link
+                                        .attr('href', '')
+                                        .attr('onclick', "webgis.downloadDataLinqPdf('" + href + "');return false;");
+                                    text = $link.prop('outerHTML');
                                 }
                                 $td.html(text);
                             } else if (text.indexOf("<img ") === 0) {

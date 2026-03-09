@@ -1104,6 +1104,9 @@
                             const linktarget = featureMetadata.linktargets[linkname];
                             if (linktarget === 'dialog') {
                                 webgis.iFrameDialog(featureMetadata.links[linkname], linkname);
+                            }
+                            if (linktarget === 'datalinq_pdf_report') {
+                                webgis.downloadDataLinqPdf(featureMetadata.links[linkname]);
                             } else {
                                 window.open(featureMetadata.links[linkname]);
                             }
