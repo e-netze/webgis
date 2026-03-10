@@ -1,5 +1,6 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
-# FROM mcr.microsoft.com/dotnet/aspnet:10.0.0-noble-chiseled
+﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine-extra
+# FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled-extra
+# FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble
 
 #
 # Container Security

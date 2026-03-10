@@ -99,6 +99,7 @@
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Custom.Core\E.Standard.Custom.Core.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.OpenIdConnect.Extensions\E.Standard.OpenIdConnect.Extensions.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Security.Cryptography\E.Standard.Security.Cryptography.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebApp\E.Standard.WebApp.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebGIS.CmsSchema\E.Standard.WebGIS.CmsSchema.csproj" />
 	  <ProjectReference Include="..\..\..\NetStandard\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
 	  <ProjectReference Include="..\Aspire\webgis.ServiceDefaults\webgis.ServiceDefaults.csproj" />

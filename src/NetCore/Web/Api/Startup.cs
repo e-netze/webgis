@@ -34,6 +34,7 @@ using E.Standard.Security.Cryptography.Extensions.DependencyInjection;
 using E.Standard.Security.Cryptography.Services;
 using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
+using E.Standard.WebApp.Abstraction;
 using E.Standard.WebApp.Extensions;
 using E.Standard.WebGIS.Core.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SDK.Extensions.DependencyInjection;
@@ -507,7 +508,7 @@ public class Startup
 
         #endregion
 
-        app.RegisterApiEndpoints(typeof(Startup));
+        app.RegisterApiEndpoints(typeof(Startup)).RegisterApiEndpoints(typeof(IApiEndpoint));
 
         #region Map Controller Routes
 

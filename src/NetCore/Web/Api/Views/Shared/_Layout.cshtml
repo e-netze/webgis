@@ -124,7 +124,13 @@
 
     <div class="webportal-layout-footer">
         <div class="version">
-            Version @E.Standard.Platform.WebGISVersion.Version
+            <span><strong>Version:</strong> @E.Standard.Platform.WebGISVersion.Version</span>
+            @*
+            <span>&nbsp;|&nbsp;</span>
+			<span><strong>Culture:</strong> @($"{System.Globalization.CultureInfo.CurrentCulture.DisplayName} ({System.Globalization.CultureInfo.CurrentCulture.Name})")</span>
+            <span>&nbsp;|&nbsp;</span>
+            <span><strong>System Time:</strong> @DateTime.Now.ToString()</span>
+            *@
         </div>
     </div>
 

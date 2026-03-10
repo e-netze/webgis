@@ -20,7 +20,8 @@ static public class MarkdownLocalizerOptionsExtensions
             }
             catch (CultureNotFoundException)
             {
-                continue;
+                result.Add(culture, culture.ToUpper());
+                //continue;
             }
         }
 

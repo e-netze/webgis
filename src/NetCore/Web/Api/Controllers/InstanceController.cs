@@ -12,7 +12,9 @@ using E.Standard.WebMapping.Core.Logging.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace Api.Core.Controllers;

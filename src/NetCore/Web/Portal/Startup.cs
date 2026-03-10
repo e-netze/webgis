@@ -21,6 +21,8 @@ using E.Standard.Security.Cryptography.Extensions.DependencyInjection;
 using E.Standard.Security.Cryptography.Services;
 using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
+using E.Standard.WebApp.Abstraction;
+using E.Standard.WebApp.Extensions;
 using E.Standard.WebGIS.Core.Extensions;
 using E.Standard.WebGIS.Core.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SubscriberDatabase.Extensions.DependencyInjection;
@@ -344,6 +346,7 @@ public class Startup
 
         #region Map Controller Endpoints
 
+        app.RegisterApiEndpoints(typeof(Startup)).RegisterApiEndpoints(typeof(IApiEndpoint));
 
         app.MapControllerRoute(
             "hmac",

@@ -2,6 +2,8 @@
 using Cms.AppCode.Extensions.DependencyInjection;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
+using E.Standard.WebApp;
+using E.Standard.WebApp.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,6 +12,7 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication
                     .CreateBuilder(args)
+                    .SetAppLocalization(false)
                     .PerformWebgisCmsSetup(args)
                     .AddWebgisCmsConfiguration();
 

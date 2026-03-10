@@ -10,6 +10,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+## 8.26.1101
+
+## Added
+
+- ``appsettings.json``: DefaultCulture and ``/instance/_culture`` Endpoints
+  [Issue #422](https://github.com/e-netze/webgis-community/issues/422)
+
+## Fixed
+
+- Language can not set by user, whenn running WebGIS in Containers
+  [Issue #421](https://github.com/e-netze/webgis-community/issues/421)
+
 ## 8.26.1001
 
 ## Added

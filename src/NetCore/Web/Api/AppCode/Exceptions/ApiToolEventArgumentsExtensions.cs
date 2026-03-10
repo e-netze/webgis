@@ -1,4 +1,6 @@
-﻿using E.Standard.CMS.Core;
+﻿#nullable enable
+
+using E.Standard.CMS.Core;
 using E.Standard.WebMapping.Core.Api;
 using Microsoft.Extensions.Localization;
 using System;
