@@ -62,8 +62,10 @@ public class MeasurePolygonElement : PolygonElement
                 try
                 {
                     using (var rectPen = Current.Engine.CreatePen(ArgbColor.FromArgb(120, 120, 129), 1))
-                    using (var rectBrush = Current.Engine.CreateSolidBrush(ArgbColor.FromArgb(150, 255, 255, 0)))
-                    using (var fontBrush = Current.Engine.CreateSolidBrush(ArgbColor.Black))
+                    //using (var rectBrush = Current.Engine.CreateSolidBrush(ArgbColor.FromArgb(150, 255, 255, 0)))
+                    //using (var fontBrush = Current.Engine.CreateSolidBrush(ArgbColor.Black))
+                    using (var whiteBrush = Current.Engine.CreateSolidBrush(ArgbColor.White))
+                    using (var blackBrush = Current.Engine.CreateSolidBrush(ArgbColor.Black))
                     using (var font = Current.Engine.CreateFont(Platform.SystemInfo.DefaultFontName, _fontSize * dpiFactor))
                     {
                         double area = calcPolygon.Area;  // [m²]
@@ -72,20 +74,31 @@ public class MeasurePolygonElement : PolygonElement
                         area = area.SquareMetersToSquareUnit(_areaUnit);
                         circumference = circumference.MetersToUnit(_lengthUnit);
                         
-                        var text = $"F: {Math.Round(area, 2)}{_areaUnit.ToSquareAbbreviation()}{System.Environment.NewLine}U: {Math.Round(circumference, 2)}{_lengthUnit.ToAbbreviation()}{System.Environment.NewLine}EPSG:{(_calcPolygon ?? base.Polygon).SrsId}";
+                        var text = $"F: {Math.Round(area, 2)}{_areaUnit.ToSquareAbbreviation()}{System.Environment.NewLine}U: {Math.Round(circumference, 2)}{_lengthUnit.ToAbbreviation()}";
+                        if (_calcPolygon.CanHaveProjectionDistortion())
+                        {
+                            text = $"{text}{System.Environment.NewLine}EPSG:{(_calcPolygon ?? base.Polygon).SrsId}";
+                        }
+
                         var box = canvas.MeasureText(text, font);
 
                         point.X -= box.Width / 2f;
                         point.Y -= box.Height / 1.1f;
 
-                        canvas.FillRectangle(rectBrush, new CanvasRectangleF((float)point.X, (float)point.Y, box.Width, box.Height));
-                        canvas.DrawRectangle(rectPen, new CanvasRectangleF((float)point.X, (float)point.Y, box.Width, box.Height));
+                        //canvas.FillRectangle(rectBrush, new CanvasRectangleF((float)point.X, (float)point.Y, box.Width, box.Height));
+                        //canvas.DrawRectangle(rectPen, new CanvasRectangleF((float)point.X, (float)point.Y, box.Width, box.Height));
 
                         var format = Current.Engine.CreateDrawTextFormat();
                         format.Alignment = StringAlignment.Near;
                         format.LineAlignment = StringAlignment.Near;
 
-                        canvas.DrawText(text, font, fontBrush, new CanvasPointF((float)point.X, (float)point.Y), format);
+                        canvas.DrawOutlineLabel(map, text,
+                                    point,
+                                    font,
+                                    blackBrush,
+                                    whiteBrush,
+                                    format);
+                        //canvas.DrawText(text, font, fontBrush, new CanvasPointF((float)point.X, (float)point.Y), format);
                     }
                 }
                 catch { }

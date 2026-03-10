@@ -18,15 +18,15 @@ public class MeasurePolylineElement : PolylineElement
     private Unit _lengthUnit = Unit.Meter;
 
     public MeasurePolylineElement(Polyline polyline,
-                                 ArgbColor color,
-                                 float width,
-                                 LineDashStyle dashStyle = LineDashStyle.Solid,
-                                 Polyline calcPolyline = null,
-                                 bool labelSegments = false,
-                                 bool labelPointNumbers = false,
-                                 bool labelTotalLength = true,
-                                 float fontSize = 11f,
-                                 string lengthUnit = "m")
+                                  ArgbColor color,
+                                  float width,
+                                  LineDashStyle dashStyle = LineDashStyle.Solid,
+                                  Polyline calcPolyline = null,
+                                  bool labelSegments = false,
+                                  bool labelPointNumbers = false,
+                                  bool labelTotalLength = true,
+                                  float fontSize = 11f,
+                                  string lengthUnit = "m")
         : base(polyline, color, width, dashStyle, fontSize, lengthUnit)
     {
         _calcPolyline = calcPolyline;
@@ -66,22 +66,34 @@ public class MeasurePolylineElement : PolylineElement
                         try
                         {
                             using (var rectPen = Current.Engine.CreatePen(ArgbColor.FromArgb(120, 120, 129), 1))
-                            using (var rectBrush = Current.Engine.CreateSolidBrush(ArgbColor.FromArgb(150, 255, 255, 0)))
-                            using (var fontBrush = Current.Engine.CreateSolidBrush(ArgbColor.Black))
+                            //using (var rectBrush = Current.Engine.CreateSolidBrush(ArgbColor.FromArgb(150, 255, 255, 0)))
+                            //using (var fontBrush = Current.Engine.CreateSolidBrush(ArgbColor.Black))
+                            using (var whiteBrush = Current.Engine.CreateSolidBrush(ArgbColor.White))
+                            using (var blackBrush = Current.Engine.CreateSolidBrush(ArgbColor.Black))
                             using (var font = Current.Engine.CreateFont(Platform.SystemInfo.DefaultFontName, _fontSize * dpiFactor))
                             {
                                 var length = calcPath.Length.MetersToUnit(_lengthUnit);
-                                var text = $"∑: {Math.Round(length, 2)}{_lengthUnit.ToAbbreviation()}{System.Environment.NewLine}EPSG:{(_calcPolyline ?? base.Polyline).SrsId}";
+                                var text = $"∑: {Math.Round(length, 2)}{_lengthUnit.ToAbbreviation()}";
+                                if (_calcPolyline.CanHaveProjectionDistortion()) 
+                                {
+                                    text = $"{text}{ System.Environment.NewLine}EPSG:{(_calcPolyline ?? base.Polyline).SrsId}";
+                                }
                                 var box = canvas.MeasureText(text, font);
 
-                                canvas.FillRectangle(rectBrush, new CanvasRectangleF((float)point.X, (float)point.Y, box.Width, box.Height));
-                                canvas.DrawRectangle(rectPen, new CanvasRectangleF((float)point.X, (float)point.Y, box.Width, box.Height));
+                                //canvas.FillRectangle(rectBrush, new CanvasRectangleF((float)point.X, (float)point.Y, box.Width, box.Height));
+                                //canvas.DrawRectangle(rectPen, new CanvasRectangleF((float)point.X, (float)point.Y, box.Width, box.Height));
 
                                 var format = Current.Engine.CreateDrawTextFormat();
                                 format.Alignment = StringAlignment.Near;
-                                format.LineAlignment = StringAlignment.Near;
+                                format.LineAlignment = StringAlignment.Center;
 
-                                canvas.DrawText(text, font, fontBrush, new CanvasPointF((float)point.X, (float)point.Y), format);
+                                canvas.DrawOutlineLabel(map, text,
+                                    point,
+                                    font,
+                                    blackBrush,
+                                    whiteBrush,
+                                    format);
+                                //canvas.DrawText(text, font, fontBrush, new CanvasPointF((float)point.X, (float)point.Y), format);
                             }
                         }
                         catch { }

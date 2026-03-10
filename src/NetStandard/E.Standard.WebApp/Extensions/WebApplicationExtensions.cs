@@ -81,6 +81,15 @@ static public class WebApplicationExtensions
                     // avoid override culture with Browser-Language
                     options.RequestCultureProviders.Clear();
                 });
+
+                // Wenn Request Localization sollte in der Program.cs 
+                // eventuell auch 
+                //
+                // var app = builder.Build();
+                // app.UseRequestLocalization();
+                //
+                // damit das greift. Hatten wir bisher aber nicht, drum ist es wahrscheinlich nicht notwendig
+
             }
         }
         catch (Exception ex)

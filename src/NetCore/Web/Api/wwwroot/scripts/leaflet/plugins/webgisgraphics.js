@@ -1602,7 +1602,7 @@ L.DimLine = L.LayerCollection.extend({
                 totalLength += len;
 
                 var text = L.svgLabel(insertAt, {
-                    text: Math.round(len * lengthFactor * 100.0) / 100.0 + lengthUnit,
+                    text: (Math.round(len * lengthFactor * 100.0) / 100.0).toLocaleString() + lengthUnit,
                     rotation: -angle,
                     fontSize: this.options.fontSize,
                     alignmentBaseline: 'ideographic' //'central'
@@ -1615,7 +1615,7 @@ L.DimLine = L.LayerCollection.extend({
 
             if (this.options.labelTotalLength && this._latLngs.length > 2) {
                 this.addChildLayer(L.svgText(this._latLngs[this._latLngs.length - 1], {
-                    text: " ∑: " + Math.round(totalLength * lengthFactor * 100.0) / 100.0 + lengthUnit,
+                    text: " ∑: " + (Math.round(totalLength * lengthFactor * 100.0) / 100.0).toLocaleString() + lengthUnit,
                     fontSize: this.options.fontSize * 1.2
                 }));
             }
@@ -1812,7 +1812,7 @@ L.DimPolygon = L.LayerCollection.extend({
 
                 if (this.options.labelEdges) {
                     let text = L.svgLabel(insertAt, {
-                        text: Math.round(len * lengthFactor * digitsRound) / digitsRound + lengthUnit,
+                        text: (Math.round(len * lengthFactor * digitsRound) / digitsRound).toLocaleString() + lengthUnit,
                         rotation: -angle,
                         fontSize: this.options.fontSize,
                         alignmentBaseline: 'ideographic' //'central'
@@ -1828,8 +1828,8 @@ L.DimPolygon = L.LayerCollection.extend({
             if (area > 0) {
                 this.addChildLayer(L.svgText(insertAtArea, {
                     text:
-                        webgis.l10n.get('area')[0] + ": " + Math.round(area * areaFactor * digitsRound) / digitsRound + areaUnit + '\n' +
-                        webgis.l10n.get('circumference')[0] + ": " + Math.round(circumference * lengthFactor * digitsRound) / digitsRound + lengthUnit,
+                        webgis.l10n.get('area')[0] + ": " + (Math.round(area * areaFactor * digitsRound) / digitsRound).toLocaleString() + areaUnit + '\n' +
+                        webgis.l10n.get('circumference')[0] + ": " + (Math.round(circumference * lengthFactor * digitsRound) / digitsRound).toLocaleString() + lengthUnit,
                     fontSize: this.options.fontSize * 1.2,
                     textAnchor: 'middle'
                 }));
@@ -1984,10 +1984,10 @@ L.HectoLine = L.LayerCollection.extend({
                         switch (this.options.unit) {
                             case 'km':
                                 var unitStat = stat / 1000.0;
-                                labelText = Math.round(unitStat * 1000.0) / 1000.0 + 'km';
+                                labelText = (Math.round(unitStat * 1000.0) / 1000.0).toLocaleString() + 'km';
                                 break;
                             default:
-                                labelText = Math.round(stat * 100.0) / 100.0 + 'm';
+                                labelText = (Math.round(stat * 100.0) / 100.0).toLocaleString() + 'm';
                                 break;
                         }
 

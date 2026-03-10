@@ -31,4 +31,12 @@ static public class ShapeExtensions
 
         return false;
     }
+
+    static public bool CanHaveProjectionDistortion(this Shape? shape)
+        => shape switch
+        {
+            null => true,
+            Shape s when s.IsWebMercator() => true,
+            _ => false
+        };
 }

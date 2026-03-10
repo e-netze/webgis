@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - ``appsettings.json``: DefaultCulture and ``/instance/_culture`` Endpoints
   [Issue #422](https://github.com/e-netze/webgis-community/issues/422)
 
+- Appearence of DimLines and DimPolygins (MapMarkup) on PDFs (not yellow box and no EPSG Code)
+  [Issue #434](https://github.com/e-netze/webgis-community/issues/434)
+
 ## Fixed
 
 - Language can not set by user, whenn running WebGIS in Containers
