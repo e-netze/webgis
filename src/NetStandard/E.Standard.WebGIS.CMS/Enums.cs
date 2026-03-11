@@ -229,7 +229,8 @@ public enum BrowserWindowTarget
     opener = 2,
     _parent = 3,
     _top = 4,
-    dialog = 5
+    dialog = 5,
+    datalinq_pdf_report = 6
 }
 
 public enum BrowserWindowTarget2

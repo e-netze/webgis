@@ -3015,6 +3015,49 @@
             }
         });
     };
+    this.downloadDataLinqPdf = function (href) {
+
+        webgis.showProgress('PDF wird erstellt...');
+
+        try {
+            const url = new URL(href, window.location.origin);
+
+            if (!url.searchParams.has('_autoDownload')) {
+                url.searchParams.set('_autoDownload', 'true');
+            }
+
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.top = '0';
+            iframe.style.left = '0';
+            iframe.style.width = '800px';
+            iframe.style.height = '600px';
+            iframe.style.opacity = '0';
+            iframe.style.pointerEvents = 'none';
+            iframe.style.zIndex = '-1';
+            iframe.style.clipPath = 'inset(0 0 0 0)';
+            iframe.src = url.toString();
+
+            const onMessage = (event) => {
+                if (event.data && event.data.type === 'pdfDownloadComplete') {
+                    window.removeEventListener('message', onMessage);
+
+                    webgis.hideProgress('PDF wird erstellt...');
+
+                    if (document.body.contains(iframe)) {
+                        iframe.remove();
+                    }
+                }
+            };
+
+            window.addEventListener('message', onMessage);
+            document.body.appendChild(iframe);
+        } catch (e) {
+            console.error('PDF download failed: ' + e.message);
+            webgis.hideProgress('PDF wird erstellt...');
+            iframe.remove(); 
+        }
+    };
     this.initialParameters = {};
     this.checkResult = function (result) {
         if (result.success == false && result.exception) {
