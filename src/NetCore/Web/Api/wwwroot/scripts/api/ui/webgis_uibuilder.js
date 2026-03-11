@@ -757,6 +757,11 @@
                 }
             }
         }
+        else if (element.type == 'paragraph') {
+            $newElement = $("<div" + elementProperties(element) + "></div>")
+                .addClass("webgis-paragraph")
+                .text(element.text).appendTo($parent);
+        }
         else if (element.type === 'title') {
             $newElement = $("<h1" + elementProperties(element) + "></h1>").html(element.label).appendTo($parent);
         }

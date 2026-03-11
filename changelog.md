@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Appearence of DimLines and DimPolygins (MapMarkup) on PDFs (not yellow box and no EPSG Code)
   [Issue #434](https://github.com/e-netze/webgis-community/issues/434)
 
+- Better error message, when parsing GPX/GeoJson uploaded files failed
+  [Issue #430](https://github.com/e-netze/webgis-community/issues/430)
+
 ## Fixed
 
 - Language can not set by user, whenn running WebGIS in Containers

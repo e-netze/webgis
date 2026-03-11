@@ -158,6 +158,17 @@ ul.toc li {
             padding: 3px 0px 1px 0px;
         }
 
+.webgis-paragraph {
+    font-size: 14px;
+    margin: 10px 0px 2px 0px;
+    color: #555;
+    padding: 0px 0px 2px 4px;
+}
+
+.webgis-modal .webgis-paragraph {
+    font-size: 1.5em;
+}
+
 .webgis-label {
     display: inline-block;
     font-size: 14px;

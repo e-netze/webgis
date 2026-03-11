@@ -4,6 +4,7 @@ using E.Standard.GeoJson;
 using E.Standard.Gpx;
 using E.Standard.Gpx.Schema;
 using E.Standard.Json;
+using E.Standard.Localization.Abstractions;
 using E.Standard.OGC.Schema;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Api;
@@ -20,6 +21,7 @@ public static class ApiToolEventFileExtensions
     static public GeoJsonFeatures GetFeatures(
                     this ApiToolEventArguments.ApiToolEventFile file,
                     ApiToolEventArguments e,
+                    ILocalizer localizer,
                     bool coordinatesToDoubleArray = false,
                     bool setNameProperty = false)
     {
@@ -29,12 +31,26 @@ public static class ApiToolEventFileExtensions
         {
             if (file.FileName.ToLower().EndsWith(".gpx"))
             {
-                geoJsonFeatures = ParseGpx(e, Encoding.UTF8.GetString(file.Data), setNameProperty);
+                try
+                {
+                    geoJsonFeatures = ParseGpx(e, Encoding.UTF8.GetString(file.Data), setNameProperty);
+                }
+                catch(Exception ex)
+                {
+                    throw new Exception(String.Format(localizer.Localize("exceptions.file-parse-error"), "GPX", ex.Message));
+                }
             }
             else if (file.FileName.ToLower().EndsWith(".json")
                 || file.FileName.ToLower().EndsWith(".geojson"))
             {
-                geoJsonFeatures = ParseGeoJson(e, Encoding.UTF8.GetString(file.Data), coordinatesToDoubleArray, setNameProperty);
+                try
+                {
+                    geoJsonFeatures = ParseGeoJson(e, Encoding.UTF8.GetString(file.Data), coordinatesToDoubleArray, setNameProperty);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(String.Format(localizer.Localize("exceptions.file-parse-error"), "GPX", ex.Message));
+                }
             }
             else
             {

@@ -649,7 +649,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                 break;
         }
 
-        var geoJsonFeatures = file.GetFeatures(e, coordinatesToDoubleArray: true, setNameProperty: true);
+        var geoJsonFeatures = file.GetFeatures(e, localizer, coordinatesToDoubleArray: true, setNameProperty: true);
         geoJsonFeatures.Features = geoJsonFeatures?
                                             .Features?
                                             .Where(f => f.Geometry?.coordinates != null &&

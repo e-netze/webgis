@@ -897,10 +897,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                     elements = new IUIElement[]
                     {
-                        new UILabel()
-                        {
-                            label = localizer.Localize("io.upload-label1:body")
-                        },
+                        new UIParagraph(localizer.Localize("io.upload-label1:body")),
                         new UIBreak(2),
                         new UISelect()
                         {
@@ -929,13 +926,13 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
 
     [ServerToolCommand("upload-objects")]
-    public ApiEventResponse OnUploadObject(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnUploadObject(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var format = e["mapmarkup-upload-format"];
         var file = e.GetFile("upload-file");
         var replaceExistingMapMarkup = e["mapmarkup-upload-replaceelements"] == "true";
 
-        GeoJsonFeatures geoJsonFeatures = file.GetFeatures(e);
+        GeoJsonFeatures geoJsonFeatures = file.GetFeatures(e, localizer);
 
         if (geoJsonFeatures?.Features is not null)
         {
@@ -1058,10 +1055,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                                 }
                             }
                         },
-                        new UILabel()
-                        {
-                            label = localizer.Localize("io.download-label1:body")
-                        },
+                        new UIParagraph(localizer.Localize("io.download-label1:body")),
                         new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand, "download-objects")
                         {
                             css = UICss.ToClass(new string[] { UICss.DefaultButtonStyle }),
@@ -1075,10 +1069,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             ConditionResult = true,
                             elements=new IUIElement[]
                             {
-                                new UILabel()
-                                {
-                                    label = localizer.Localize("io.download-label-gpx:body")
-                                }
+                                new UIParagraph(localizer.Localize("io.download-label-gpx:body"))
                             }
                         },
                         new UIConditionDiv()
@@ -1089,10 +1080,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             ConditionResult = true,
                             elements=new IUIElement[]
                             {
-                                new UILabel()
-                                {
-                                    label = localizer.Localize("io.download-label-shape:body")
-                                }
+                                new UIParagraph(localizer.Localize("io.download-label-shape:body"))
                             }
                         },
                         new UIConditionDiv()
@@ -1103,10 +1091,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             ConditionResult = true,
                             elements=new IUIElement[]
                             {
-                                new UILabel()
-                                {
-                                    label = localizer.Localize("io.download-label-json:body")
-                                }
+                                new UIParagraph(localizer.Localize("io.download-label-json:body"))
                             }
                         },
                         new UIHidden(){
