@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Better error message, when parsing GPX/GeoJson uploaded files failed
   [Issue #430](https://github.com/e-netze/webgis-community/issues/430)
 
+- Links in result table: Added ``datalinq_pdf_report`` as type in WebGIS-CMS to directly download DataLinq PDF Reports 
+
 ## Fixed
 
 - Language can not set by user, whenn running WebGIS in Containers
