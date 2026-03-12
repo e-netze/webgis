@@ -1,4 +1,38 @@
-﻿// WebGIS Click Note Plugin
+﻿// WebGIS Simple UI Builder Elements
+// like label, paragraph, etc
+
+webgis.ui.builder["label"] = (map, $newElement, element) => {
+    $newElement.addClass("webgis-label");
+
+    var labels = element.label.split('|');
+
+    const toTxtFunc = element.is_trusted === true
+        ? webgis.asMarkdownOrRawHtml
+        : webgis.asMarkdownOrText;
+
+    if (labels.length == 1) {
+        $newElement.html(toTxtFunc(element.label));
+    } else {
+        for (var label in labels) {
+            $("<p>")
+                .html(toTxtFunc(labels[label]))
+                .appendTo($newElement);
+        }
+    }
+}
+
+webgis.ui.builder["paragraph"] = (map, $newElement, element) => {
+    $newElement
+        .addClass("webgis-paragraph")
+        .text(element.text);
+}
+
+webgis.ui.builder["title.tagname"] = "h1";
+webgis.ui.builder["title"] = (map, $newElement, element) => {
+    $newElement.html(element.label);
+}
+
+// WebGIS Click Note Plugin
 // A simple clickable note that can be dismissed or trigger a callback
 // eg. webgis.ui.showLayerNotVisibleNotification(service, query, $target);
 //     used in query result table, to notify the user that the corresponing layer is invisible   

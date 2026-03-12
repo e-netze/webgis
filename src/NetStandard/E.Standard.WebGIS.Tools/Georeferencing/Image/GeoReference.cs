@@ -294,7 +294,7 @@ public class GeoReference : IApiServerToolLocalizable<GeoReference>,
         {
             uiElements.AddRange(new IUIElement[]
             {
-                new UITitle() { label = $"{localizer.Localize("choose-existing-image")}:" },
+                new UIParagraph(localizer.Localize("choose-existing-image")),
                 new UISelect()
                 {
                     options = options.OrderBy(o => o.label).ToArray(),
@@ -313,7 +313,7 @@ public class GeoReference : IApiServerToolLocalizable<GeoReference>,
         uiElements.AddRange(new IUIElement[]
         {
             new UIBreak(1),
-            new UITitle() { label = $"{localizer.Localize("or-upload-image")}:" },
+            new UIParagraph(localizer.Localize("or-upload-image")),
             new UIUploadFile(this.GetType(), "upload-file") {
                 id = "upload-file",
                 css = UICss.ToClass(new string[]{ UICss.ToolParameter })

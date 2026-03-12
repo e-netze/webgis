@@ -739,31 +739,11 @@
             $parent = $("<div>").addClass('webgis-ui-collapsable-content').css('display', show ? 'block' : 'none').appendTo($collapsable);
         }
         var $newElement = null;
-        if (element.type === 'label') {
-            var labels = element.label.split('|');
-            $newElement = $("<div" + elementProperties(element) + "></div>").addClass('webgis-label').appendTo($parent);
 
-            const toTxtFunc = element.is_trusted === true
-                ? webgis.asMarkdownOrRawHtml
-                : webgis.asMarkdownOrText;
-
-            if (labels.length == 1) {
-                $newElement.html(toTxtFunc(element.label));
-            } else {
-                for (var label in labels) {
-                    $("<p>")
-                        .html(toTxtFunc(labels[label]))
-                        .appendTo($newElement);
-                }
-            }
-        }
-        else if (element.type == 'paragraph') {
-            $newElement = $("<div" + elementProperties(element) + "></div>")
-                .addClass("webgis-paragraph")
-                .text(element.text).appendTo($parent);
-        }
-        else if (element.type === 'title') {
-            $newElement = $("<h1" + elementProperties(element) + "></h1>").html(element.label).appendTo($parent);
+        if (typeof webgis.ui.builder[element.type] === 'function') {
+            const tagName = webgis.ui.builder[element.type + ".tagname"] || "div";
+            $newElement = $("<" + tagName + " " + elementProperties(element, options) + "></" + tagName + ">").appendTo($parent);
+            webgis.ui.builder[element.type](map, $newElement, element, options);
         }
         else if (element.type === 'input-text') {
             $newElement = $("<input type='text' " + elementProperties(element) + "/>").appendTo($parent).add_webgis_form_element_events();
@@ -1570,11 +1550,6 @@
                 multi_select: element.multi_select,
                 selected: element.value,
             });
-        }
-        else if (typeof webgis.ui.builder[element.type] === 'function') {
-            const tagName = webgis.ui.builder[element.type + ".tagname"] || "div";
-            $newElement = $("<" + tagName + " " + elementProperties(element, options) + "></" + tagName + ">").appendTo($parent);
-            webgis.ui.builder[element.type](map, $newElement, element, options);
         }
         else {
             var repeat = element.repeat || 1;

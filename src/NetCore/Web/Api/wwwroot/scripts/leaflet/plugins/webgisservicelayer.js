@@ -67,11 +67,12 @@
         this._isZooming = true;
        
         if (this._imageBounds) {
+            //console.log('overlay has image bounds', this._service.name, this._imageBounds);
             webgis.$(this._image).css('opacity', 0);
         } else {
             webgis.delayed(function (me) {
-                //console.log('fadeout...', $(me._image).hasClass('effects'));
-                webgis.$(this._image).css('opacity', 0);
+                //console.log('fadeout...', me._service.name, $(me._image).hasClass('effects'));
+                webgis.$(me._image).css('opacity', 0);
             }, 500, this);
         }
     },
