@@ -36,7 +36,9 @@ using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
 using E.Standard.WebApp.Abstraction;
 using E.Standard.WebApp.Extensions;
+using E.Standard.WebApp.Options;
 using E.Standard.WebGIS.Core.Extensions.DependencyInjection;
+using E.Standard.WebGIS.Core.Services;
 using E.Standard.WebGIS.SDK.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SubscriberDatabase.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication;
@@ -44,6 +46,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -65,7 +69,7 @@ public class Startup
         Environment = env;
         CustomStartupServices = CustomStartupServiceFactory.LoadCustomStartupServices(WebGISAppliationTarget.Api) ?? new ICustomStartupService[0];
 
-        JsonOptions.SerializerOptions.AddServerDefaults();
+        E.Standard.Json.JsonOptions.SerializerOptions.AddServerDefaults();
     }
 
     public IConfiguration Configuration { get; }
@@ -421,6 +425,33 @@ public class Startup
         });
 
         #endregion
+
+        #region Security
+
+        if(Configuration.DisableAntiForgery())
+        {
+            services.Configure<SecurityOptions>(config =>
+            {
+                config.DisableAntiforgery = true;
+            });
+        }
+
+        #endregion
+
+        #region XForwarted
+
+        if (Configuration.UseXForwardedHeaderMiddleware())
+        {
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor |
+                    ForwardedHeaders.XForwardedProto |
+                    ForwardedHeaders.XForwardedHost;
+            });
+        }
+
+        #endregion
     }
 
     public void Configure(WebApplication app,
@@ -448,6 +479,20 @@ public class Startup
             app.UseExceptionHandler("/Home/Error");
         }
 
+        #region XForwardedHeaders
+
+        if (Configuration.UseXForwardedHeaderMiddleware())
+        {
+            app.UseForwardedHeaders();
+
+            if (Configuration.UseXForwardedHeaderLoggingMiddleware())
+            {
+                app.UseMiddleware<ForwardedHeadersLoggerMiddleware>();
+            }
+        }
+
+        #endregion
+
         app.UseWebgisAppBasePath();
         app.UseStaticFiles(new StaticFileOptions()
         {
@@ -466,6 +511,8 @@ public class Startup
         }
 
         #endregion
+
+
 
         #region DeChunkerMiddleware (nur im PVP Umfeld, wenn Reverse Proxies keine Chunks verstehen)
 

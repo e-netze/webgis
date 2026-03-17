@@ -26,6 +26,10 @@ public class ApiConfigKeys
     public const string LogUsageColumns = ConfigurationSectionName + ":Log_Performance_Columns";
     public const string Trace = ConfigurationSectionName + ":trace";
 
+    public const string SecurityDisableAntiForgery = ConfigurationSectionName + ":security:disable-anti-forgery";
+
+    public const string UseXForwardedHeadersMiddleware = ConfigurationSectionName + ":middleware:use-x-forwarded-headers";
+    public const string UseXForwardedHeadersLoggingMiddleware = ConfigurationSectionName + ":middleware:use-x-forwarded-headers-logging";
 
     public const string StorageRootPath = ConfigurationSectionName + ":storage-rootpath";
     public const string StorageRootPath2 = ConfigurationSectionName + ":storage-rootpath2";
@@ -91,6 +95,7 @@ public class ApiConfigKeys
     public const string GraphicsEninge = ConfigurationSectionName + ":graphics-engine";
 
     public const string UseDeChunkerMiddleware = ConfigurationSectionName + ":use-dechunker-middleware";
+    public const string UseDeChunkerMiddlewareFromSection = ConfigurationSectionName + ":middleware:use-dechunker";
 
     public const string DefaultMarkerColors = ConfigurationSectionName + ":default-marker-colors";
 

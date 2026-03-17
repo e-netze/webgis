@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using static System.Collections.Specialized.BitVector32;
 
 namespace E.Standard.Api.App.Extensions;
 
@@ -245,8 +246,15 @@ static public class ConfigurationServiceExtensions
 
     static public bool UseDeChunkerMiddleware(this ConfigurationService config)
     {
-        return config[ApiConfigKeys.UseDeChunkerMiddleware] == "true";
+        return config[ApiConfigKeys.UseDeChunkerMiddleware] == "true" 
+            || config[ApiConfigKeys.UseDeChunkerMiddlewareFromSection] == "true";
     }
+
+    static public bool UseXForwardedHeaderMiddleware(this IConfiguration config)
+         => "true".Equals(config[$"{ApiConfigKeys.UseXForwardedHeadersMiddleware}"], StringComparison.OrdinalIgnoreCase);
+    static public bool UseXForwardedHeaderLoggingMiddleware(this IConfiguration config)
+         => "true".Equals(config[$"{ApiConfigKeys.UseXForwardedHeadersLoggingMiddleware}"], StringComparison.OrdinalIgnoreCase);
+
 
     #endregion
 
@@ -388,6 +396,10 @@ static public class ConfigurationServiceExtensions
         return null;
     }
 
+    static public bool DisableAntiForgery(this IConfiguration config)
+        => "true".Equals(config[$"{ApiConfigKeys.SecurityDisableAntiForgery}"], StringComparison.OrdinalIgnoreCase);
+
+    
     static public Dictionary<string, string> UrlOutputRedirectionsOrNull(this IConfiguration config)
         => UrlRedirectionsOrNull(config, " => ");
 

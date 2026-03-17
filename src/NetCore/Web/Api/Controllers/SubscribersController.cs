@@ -23,6 +23,7 @@ using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Security.Cryptography.Services;
 using E.Standard.Security.Cryptography.Token;
 using E.Standard.Web.Abstractions;
+using E.Standard.WebApp.Attributes;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebGIS.SDK.Services;
@@ -144,7 +145,7 @@ public class SubscribersController : ApiBaseController
 
     [HttpPost]
     [AppRole(AppRoles.All)]
-    [ValidateAntiForgeryToken]
+    [ConfigurableValidateAntiforgeryToken]
     async public Task<IActionResult> Login(string id, ApiSubscribersLogin login)
     {
         if (_config.AllowSubscriberLogin() == false)
@@ -251,7 +252,7 @@ public class SubscribersController : ApiBaseController
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ConfigurableValidateAntiforgeryToken]
     public IActionResult Register(RegisterSubscriberModel registerSubscriber)
     {
         if (!_config.AllowRegisterNewSubscribers())
@@ -347,7 +348,7 @@ public class SubscribersController : ApiBaseController
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ConfigurableValidateAntiforgeryToken]
     public IActionResult Update(RegisterSubscriberModel updateSubscriber)
     {
         try
@@ -391,7 +392,7 @@ public class SubscribersController : ApiBaseController
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ConfigurableValidateAntiforgeryToken]
     public IActionResult ChangePassword(RegisterSubscriberModel updateSubscriber)
     {
         try
@@ -529,7 +530,7 @@ public class SubscribersController : ApiBaseController
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ConfigurableValidateAntiforgeryToken]
     public IActionResult UpdateClient(UpdateClient client)
     {
         try
@@ -672,7 +673,7 @@ public class SubscribersController : ApiBaseController
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ConfigurableValidateAntiforgeryToken]
     async public Task<IActionResult> UpdatePortalPage(ApiPortalPageDTO page)
     {
         try

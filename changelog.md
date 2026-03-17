@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+## 8.26.1201
+
+## Added
+
+- ``api.config``:
+  **Security:** Disable Antiforgery by configuration (not recommeneded!)
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#security)
+  **Middleware:** Add XForwarded Middleware explicitly (if needed)
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#middleware)
+
 ## 8.26.1101
 
 ## Added

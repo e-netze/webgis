@@ -34,6 +34,7 @@ using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Abstractions;
 using E.Standard.Web.Extensions;
+using E.Standard.WebApp.Attributes;
 using E.Standard.WebGIS.CMS.Extensions;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Models;
@@ -1757,7 +1758,7 @@ public class RestController : ApiBaseController
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ConfigurableValidateAntiforgeryToken]
     public IActionResult Login(RestLoginModel login)
     {
         try
