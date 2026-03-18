@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+- Linux/ContainerImages: Fixed problem with localization (Localization/DefaultCulture)
+  [Issue #422](https://github.com/e-netze/webgis-community/issues/422)
+
 ## 8.26.1201
 
 ## Added

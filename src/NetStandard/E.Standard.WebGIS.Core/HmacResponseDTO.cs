@@ -29,6 +29,10 @@ public class HmacResponseDTO
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string[] userroles { get; set; }
 
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string[] userroleparameteres { get; set; }
+
     public string ToJs()
     {
         StringBuilder sb = new StringBuilder();

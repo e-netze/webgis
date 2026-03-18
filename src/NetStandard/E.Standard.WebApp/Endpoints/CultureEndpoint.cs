@@ -1,4 +1,5 @@
-﻿using E.Standard.WebApp.Abstraction;
+﻿using E.Standard.Platform;
+using E.Standard.WebApp.Abstraction;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using System.Globalization;
@@ -16,7 +17,9 @@ internal class CultureEndpoint : IApiEndpoint
             cultureDisplayName = CultureInfo.CurrentCulture.DisplayName,
             cultureEnglishName = CultureInfo.CurrentCulture.EnglishName,
             cultureUI = CultureInfo.CurrentCulture.Name,
-            currentTimeString = DateTime.Now.ToString()
+            currentTimeString = DateTime.Now.ToString(),
+            numberDecimalSeparator = SystemInfo.CurrentNumberFormat.NumberDecimalSeparator,
+            numberDecimalSeparatorInvariant = SystemInfo.InvariantNumberFormat.NumberDecimalSeparator,
         });
     }
 }

@@ -20,12 +20,12 @@ static public class NumberConverter
     }
     static public double ToPlatformDouble(this string value)
     {
-        if (SystemInfo.IsWindows)
+        //if (SystemInfo.IsWindows)
         {
-            return double.Parse(value.Replace(",", "."), SystemInfo.Nhi);
+            return double.Parse(value.Replace(",", "."), SystemInfo.InvariantNumberFormat);
         }
 
-        return double.Parse(value.Replace(",", SystemInfo.Cnf.NumberDecimalSeparator));
+        //return double.Parse(value.Replace(",", SystemInfo.CurrentNumberFormat.NumberDecimalSeparator));
     }
 
     static public double[] ToPlattformDoubleArray(this string value, char separator = ',')
@@ -47,42 +47,45 @@ static public class NumberConverter
 
     static public float ToPlatformFloat(this string value)
     {
-        if (SystemInfo.IsWindows)
+        // Always use Invaraint for this
+        // Why shoud it be different for linux/ios platforms???
+
+        //if (SystemInfo.IsWindows)
         {
-            return float.Parse(value.Replace(",", "."), SystemInfo.Nhi);
+            return float.Parse(value.Replace(",", "."), SystemInfo.InvariantNumberFormat);
         }
 
-        return float.Parse(value.Replace(",", SystemInfo.Cnf.NumberDecimalSeparator));
+        //return float.Parse(value.Replace(",", SystemInfo.CurrentNumberFormat.NumberDecimalSeparator));
     }
 
     static public bool TryToPlatformDouble(this string value, out double result)
     {
-        if (SystemInfo.IsWindows)
+        //if (SystemInfo.IsWindows)
         {
-            return double.TryParse(value.Replace(",", "."), NumberStyles.Any, SystemInfo.Nhi, out result);
+            return double.TryParse(value.Replace(",", "."), NumberStyles.Any, SystemInfo.InvariantNumberFormat, out result);
         }
 
-        return double.TryParse(value.Replace(",", SystemInfo.Cnf.NumberDecimalSeparator), out result);
+        //return double.TryParse(value.Replace(",", SystemInfo.CurrentNumberFormat.NumberDecimalSeparator), out result);
     }
 
     static public bool TryToPlatformFloat(this string value, out float result)
     {
-        if (SystemInfo.IsWindows)
+        //if (SystemInfo.IsWindows)
         {
-            return float.TryParse(value.Replace(",", "."), NumberStyles.Any, SystemInfo.Nhi, out result);
+            return float.TryParse(value.Replace(",", "."), NumberStyles.Any, SystemInfo.InvariantNumberFormat, out result);
         }
 
-        return float.TryParse(value.Replace(",", SystemInfo.Cnf.NumberDecimalSeparator), out result);
+        //return float.TryParse(value.Replace(",", SystemInfo.CurrentNumberFormat.NumberDecimalSeparator), out result);
     }
 
     static public string ToPlatformNumberString(this double value)
     {
-        return value.ToString(SystemInfo.Nhi);
+        return value.ToString(SystemInfo.InvariantNumberFormat);
     }
 
     static public string ToPlatformNumberString(this float value)
     {
-        return value.ToString(SystemInfo.Nhi);
+        return value.ToString(SystemInfo.InvariantNumberFormat);
     }
 
     static public string ToPlatformDistanceString(this double value)

@@ -92,8 +92,20 @@ public class CacheController : PortalBaseController
             // Refresh CmsUserRoles
             await _api.ApiCmsUserRoles(this.Request);
 
+            var currentUser = this.CurrentPortalUser();
+
             return JsonObject(new
             {
+                currentUser = currentUser is null 
+                        ? null 
+                        : new
+                        {
+                            name = currentUser.Username,
+                            displayName = currentUser.DisplayName,
+                            roles = currentUser.UserRoles,
+                            roleParameters = currentUser.RoleParameters
+                        },
+
                 users = _cache.GetUserNames()
                     .Select(u => new
                     {

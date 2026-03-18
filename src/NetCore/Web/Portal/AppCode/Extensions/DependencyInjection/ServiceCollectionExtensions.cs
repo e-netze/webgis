@@ -192,7 +192,11 @@ static public class ServiceCollectionExtensions
             Console.WriteLine("Added custom service: <ICustomPortalAuthenticationMiddlewareService, ExtendedRoleParametersFromDatabaseCustomAuthenticationMiddlewareService>");
         }
 
-        #endregion
+#if DEBUG
+        services.AddTransient<ICustomPortalAuthenticationMiddlewareService, DebugCustomAuthenticationMiddlewareService>();
+#endif
+
+#endregion
 
         #region Cors
 

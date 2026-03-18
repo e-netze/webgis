@@ -86,6 +86,7 @@ public class HMACController : PortalBaseController
             && pwd == appCachePassword)
         {
             hmacObject.userroles = portalUser.UserRoles;
+            hmacObject.userroleparameteres = portalUser.RoleParameters;
         }
 
         #endregion
