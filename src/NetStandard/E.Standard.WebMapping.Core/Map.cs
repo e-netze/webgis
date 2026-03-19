@@ -1246,6 +1246,10 @@ public class Map : Display, IMap
             clone._graphicsContainer.AddRange(_graphicsContainer);
         }
 
+        clone.TimeEpoch = this.TimeEpoch is not null
+            ? new Dictionary<string, TimeEpochDefinition>(this.TimeEpoch)
+            : null;
+
         return clone;
     }
 

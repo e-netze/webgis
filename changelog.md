@@ -8,10 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ## Added
+
+- TimeFilter UI:
+  * Switcher: **Point in time** / **Span of Time**
+  * Show **All time-dependent services** option only if there is more than one time-dependent service in map 
+
 ## Fixed
 
 - Linux/ContainerImages: Fixed problem with localization (Localization/DefaultCulture)
   [Issue #422](https://github.com/e-netze/webgis-community/issues/422)
+
+- Timefilter: not applyed to print
+  [Issue #438](https://github.com/e-netze/webgis-community/issues/438)
 
 ## 8.26.1201
 

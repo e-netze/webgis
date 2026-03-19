@@ -24,6 +24,8 @@
     "year": "Jahr",
     "month": "Monat",
     "day": "Tag",
+    "point-in-time": "Zeitpunkt",
+    "span-of-time": "Zeitspanne",
 
     "query-results": "Abfrageergebnisse",
     "search-results": "Suchergebnisse",

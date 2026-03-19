@@ -5562,11 +5562,35 @@ select.webgis-not-valid {
 
 .webgis-date-combo .webgis-date-container,
 .webgis-date-combo .webgis-datelabel-container {
-    width: calc(50% - 10px);
+    width: calc(50% - 16px);
     max-width: 148px;
     display: inline-block;
     text-align: right;
 }
+
+.webgis-date-combo.hide-end-date .end-date {
+    display:none;
+}
+
+.webgis-date-combo .webgis-date-combo-tabs {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    margin-top: 4px;
+}
+    .webgis-date-combo .webgis-date-combo-tabs .webgis-datecombo-tab {
+        display: inline-block;
+        width: 50%;
+        padding: 4px;
+        box-sizing: border-box;
+        border-radius: 4px;
+        cursor:pointer;
+    }
+        .webgis-date-combo .webgis-date-combo-tabs .webgis-datecombo-tab.selected {
+            background-color: #b5dbad;
+        }
+
 
 .webgis-date-combo .webgis-datelabel-container {
     text-align: center;
@@ -5593,19 +5617,19 @@ select.webgis-not-valid {
 .webgis-date-combo.year-month-day .webgis-date-container .date-year,
 .webgis-date-combo.year-month-day .webgis-datelabel-container .date-year,
 .webgis-date-combo.year-month-day .webgis-date-container .date-year-end {
-    width: 58px;
+    width: 54px;
     display: inline-block;
 }
 .webgis-date-combo.year-month-day .webgis-date-container .date-month,
 .webgis-date-combo.year-month-day .webgis-datelabel-container .date-month,
 .webgis-date-combo.year-month-day .webgis-date-container .date-month-end {
-    width: 40px;
+    width: 39px;
     display: inline-block;
 }
 .webgis-date-combo.year-month-day .webgis-date-container .date-day,
 .webgis-date-combo.year-month-day .webgis-datelabel-container .date-day,
 .webgis-date-combo.year-month-day .webgis-date-container .date-day-end {
-    width: 40px;
+    width: 39px;
     display: inline-block;
 }
 

@@ -24,6 +24,8 @@
     "year": "Year",
     "month": "Month",
     "day": "Day",
+    "point-in-time": "Point in time",
+    "span-of-time": "Span of time",
 
     "query-results": "Query Results",
     "search-results": "Search Results",

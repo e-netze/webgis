@@ -211,7 +211,7 @@ webgis.ui.definePlugin('webgis_dateCombo', {
         let rangeStartDate = o.start ? new Date(o.start) : now;
         let rangeEndDate = o.end ? new Date(o.end) : rangeStartDate;
 
-        console.log("webgis_dateCombo.options", o);
+        //console.log("webgis_dateCombo.options", o);
 
         let cls = 'year';
         if (o.showMonth) cls += '-month';
@@ -231,8 +231,8 @@ webgis.ui.definePlugin('webgis_dateCombo', {
 
         const $labels = $("<div>").appendTo($container);
         const $combos = $("<div>").appendTo($container);
-        const $dateLabelContainer = $("<div>").addClass('webgis-datelabel-container').appendTo($labels);
-        const $dateContainer = $("<div>").addClass('webgis-date-container').appendTo($combos);
+        const $dateLabelContainer = $("<div>").addClass('webgis-datelabel-container start-date').appendTo($labels);
+        const $dateContainer = $("<div>").addClass('webgis-date-container start-date').appendTo($combos);
 
         // Year
         let $year, $yearEnd;
@@ -268,6 +268,7 @@ webgis.ui.definePlugin('webgis_dateCombo', {
         function daysInMonth(year, month) {
             return new Date(year, month, 0).getDate();
         }
+
         if (o.showDay) {
             let interval = o.interval
 
@@ -283,11 +284,11 @@ webgis.ui.definePlugin('webgis_dateCombo', {
         }
 
         if (o.range) {
-            $labels.append(" - ");
-            $combos.append(" - ");
+            $("<span>").text(" - ").addClass('end-date').appendTo($labels);
+            $("<span>").text(" - ").addClass('end-date').appendTo($combos);
 
-            const $dateEndLabelContainer = $("<div>").addClass('webgis-datelabel-container').appendTo($labels);
-            const $dateEndContainer = $("<div>").addClass('webgis-date-container').appendTo($combos);
+            const $dateEndLabelContainer = $("<div>").addClass('webgis-datelabel-container end-date').appendTo($labels);
+            const $dateEndContainer = $("<div>").addClass('webgis-date-container end-date').appendTo($combos);
 
             if (o.showYear) {
                 let interval = 1;
@@ -316,6 +317,30 @@ webgis.ui.definePlugin('webgis_dateCombo', {
             for (let $e of [$dayEnd, $monthEnd, $yearEnd]) {
                 $e?.appendTo($dateEndContainer);
             }
+
+            const $tabs = $("<div>").addClass('webgis-date-combo-tabs').appendTo($container);
+            $("<div>")
+                .addClass("webgis-datecombo-tab point-in-time")
+                .text(webgis.l10n.get("point-in-time"))
+                .appendTo($tabs)
+                .on('click.webgis_date_combo', function () {
+                    const $this = $(this);
+                    $this.closest('.webgis-date-combo').addClass('hide-end-date');
+                    $this.closest('.webgis-date-combo-tabs').find('.webgis-datecombo-tab').removeClass('selected');
+                    $this.addClass('selected');
+                    updateValue();
+                });
+            $("<div>")
+                .addClass("webgis-datecombo-tab span-of-time")
+                .text(webgis.l10n.get("span-of-time"))
+                .appendTo($tabs)
+                .on('click.webgis_date_combo', function () {
+                    const $this = $(this);
+                    $this.closest('.webgis-date-combo').removeClass('hide-end-date');
+                    $this.closest('.webgis-date-combo-tabs').find('.webgis-datecombo-tab').removeClass('selected');
+                    $this.addClass('selected');
+                    updateValue();
+                });
         }
 
         // Update days when year/month changes
@@ -367,7 +392,12 @@ webgis.ui.definePlugin('webgis_dateCombo', {
         const updateValue = () => {
             this.value_start = getDateFromSelects($year, $month, $day);
             if (o.range) {
-                this.value_end = getDateFromSelects($yearEnd, $monthEnd, $dayEnd, true);
+                if ($container.hasClass('hide-end-date')) {
+                    // if only piont_in_time use same date (+1)
+                    this.value_end = getDateFromSelects($year, $month, $day, true);
+                } else {
+                    this.value_end = getDateFromSelects($yearEnd, $monthEnd, $dayEnd, true);
+                }
             } else {
                 this.value_end = new Date(this.value_start.getTime() + 10000 * 60 * 24 * 364);
             }
@@ -381,13 +411,20 @@ webgis.ui.definePlugin('webgis_dateCombo', {
         this.setDate({ date: o.currentStart, isEnd: false });
         if (o.range) {
             this.setDate({ date: o.currentEnd, isEnd: true });
+
+
+            if (o.currentEnd && !this.startAndEndCombosAreTheSame()) {
+                $container.find(".webgis-datecombo-tab.span-of-time").trigger("click");
+            } else {
+                $container.find(".webgis-datecombo-tab.point-in-time").trigger("click");
+            }
         };
 
         $container.find('select').on('change.webgis_date_combo', updateValue);
         updateValue();
     },
     destroy: function () {
-        console.log('Destroy time filter'); 
+        console.log('Destroy time filter');
         this.$el.off('.webgis_date_combo');
     },
     methods: {
@@ -433,6 +470,21 @@ webgis.ui.definePlugin('webgis_dateCombo', {
 
             // Trigger change to update value
             $container.find('select').trigger('change.webgis_date_combo');
+        },
+        startAndEndCombosAreTheSame: function (options) {
+            const $container = this.$el;
+
+            const dateParts = ["year", "month", "day"];
+            for (let datePart of dateParts) {
+                const $startEl = $container.find(`select.date-${datePart}`);
+                const $endEl = $container.find(`select.date-${datePart}-end`);
+
+                if ($startEl.length === 0 && $endEl.length === 0) break;
+
+                if ($startEl.val() !== $endEl.val()) return false;
+            }
+
+            return true;
         }
     }
 });

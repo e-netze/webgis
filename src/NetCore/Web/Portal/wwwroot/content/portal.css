@@ -2,6 +2,12 @@
     background-color:#e2e2e2;
 }
 
+/* avoid Pull-to-Refresh on iPdads */
+html, body {
+    overscroll-behavior: none;
+    overflow: hidden;
+}
+
 .webgis-page-header {
     font-size:26px;
     font-weight:bold;
