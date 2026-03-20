@@ -27,6 +27,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - MapSeriesPrint: German messages
   [Issue #436](https://github.com/e-netze/webgis-community/issues/436)
 
+- Typos 
+  [Issue #441](https://github.com/e-netze/webgis-community/issues/441)
+
 ## 8.26.1201
 
 ## Added

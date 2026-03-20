@@ -118,7 +118,7 @@
             const start = options[serviceId].start;
             const end = options[serviceId].end;
 
-            console.log("createEpochControl", options);
+            //console.log("createEpochControl", options);
 
             let currentStart, currentEnd;
             const service = options.map.getService(serviceId);
@@ -130,9 +130,9 @@
                 }
             }
 
-            console.log("years", options[serviceId].intervalUnits["years"] === true);
-            console.log("months", options[serviceId].intervalUnits["months"] === true);
-            console.log("days", options[serviceId].intervalUnits["days"] === true);
+            //console.log("years", options[serviceId].intervalUnits["years"] === true);
+            //console.log("months", options[serviceId].intervalUnits["months"] === true);
+            //console.log("days", options[serviceId].intervalUnits["days"] === true);
 
             //$parent.destroy();
             $("<div>").appendTo($parent.empty()).webgis_dateCombo({
@@ -150,8 +150,8 @@
                     //map.setTimeFilter(start ? start.getTime() : null, end ? end.getTime() : null, unit);
                     //console.log('Time filter changed', start, end);
 
-                    $parent.data("start", start);
-                    $parent.data("end", end);
+                    $parent.data("start", start <= end ? start : end);
+                    $parent.data("end", end >= start ? end : start);
                 }
             });
         },

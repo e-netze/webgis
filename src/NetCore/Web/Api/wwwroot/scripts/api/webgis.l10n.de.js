@@ -232,7 +232,7 @@
     "sketch-snapping-fix-direction-orthogonal": "Richtung fixieren: Rechtwicklig",
     "sketch-snapping-fix-distance": "Abstand fixieren",
 
-    "sketch-construct-current-vertex": "Aktuellen Stützpunkt kunstruieren",
+    "sketch-construct-current-vertex": "Aktuellen Stützpunkt konstruieren",
     "sketch-construct-new-vertices": "Neue(n) Stützpunkt(e) konstruieren",
     "sketch-construct-coordiantes": "Koordinaten (absolute)",
     "sketch-construct-direction-distance": "Richtung/Abstand",
