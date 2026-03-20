@@ -8,10 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ## Added
+## Fixed
+
+## 8.26.1203
+
+## Added
 
 - TimeFilter UI:
   * Switcher: **Point in time** / **Span of Time**
   * Show **All time-dependent services** option only if there is more than one time-dependent service in map 
+
+- DataLinq Upgrade: 8.26.1201
 
 ## Fixed
 
