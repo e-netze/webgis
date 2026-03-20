@@ -57,9 +57,9 @@ internal static class ServiceCollectionExtensions
             {
                 options.ResourceMetadata = new()
                 {
-                    Resource = new Uri(config.GetMcpServerUrl()),
+                    Resource = config.GetMcpServerUrl(),
                     ResourceDocumentation = null,
-                    AuthorizationServers = { new Uri(config.GetAuthenticationAuthority()) },
+                    AuthorizationServers = { config.GetAuthenticationAuthority() },
                     ScopesSupported = [/*"mcp:tools"*/"openid", "profile", "role", "email"],
                 };
             });
