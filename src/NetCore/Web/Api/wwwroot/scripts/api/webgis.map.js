@@ -508,7 +508,7 @@
                     if (e.channel === "beforeaddvertex" && activeTool?.max_sketch_vertices
                         && this.sketch.getVerticesCount() >= activeTool.max_sketch_vertices) {  // map series print only allows a certain number of vertices/pages
                         coord.ignore = true;
-                        webgis.toastMessage("Error", `Maximum number of vertices (${activeTool.max_sketch_vertices}) reached.`, null, "warning");
+                        webgis.toastMessage("Error",  `${webgis.l10n.get("max-map-series-pages-reached")}: ${activeTool.max_sketch_vertices}`, null, "warning");
                         return;
                     }
                     

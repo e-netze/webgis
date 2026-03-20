@@ -240,7 +240,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     }
 
     [ServerToolCommand("print")]
-    async public Task<ApiEventResponse> OnPrint(IBridge bridge, ApiToolEventArguments e, ILocalizer<Print> localizer)
+    async public Task<ApiEventResponse> OnPrint(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
     {
         e.ValidateSketch(localizer);
 

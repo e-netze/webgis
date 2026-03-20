@@ -348,5 +348,7 @@
     "select-new-query-results-info": "If this option is enabled, new query results will be automatically selected in the map.",
     "query-layer-not-visible-notification": "The queried layer is hidden in the map. Click here to show it.",
 
-    "create-map-series": "Create map series"
+    // tool mapseries
+    "create-map-series": "Create map series",
+    "max-map-series-pages-reached": "The limit of pages for a map series is reached"
 };

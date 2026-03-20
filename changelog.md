@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Timefilter: not applyed to print
   [Issue #438](https://github.com/e-netze/webgis-community/issues/438)
 
+- QueryResult: show ``showQueryLayerNotVisbleNotification`` only once
+  [Issue #439](https://github.com/e-netze/webgis-community/issues/439)
+
+- MapSeriesPrint: German messages
+  [Issue #436](https://github.com/e-netze/webgis-community/issues/436)
+
 ## 8.26.1201
 
 ## Added

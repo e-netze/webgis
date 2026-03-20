@@ -46,7 +46,7 @@ Beispielsweise durch klicken in die Karte definieren.
 ## exception-shape-not-contains-vertices:
 
 Ups, etwas ist schief gelaufen.
-Die Geometrie der Serie enthölt keine Stützpunkte.
+Die Geometrie der Serie enthält keine Stützpunkte.
 
 ## exception-too-many-pages:
 

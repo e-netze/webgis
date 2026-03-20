@@ -348,5 +348,7 @@
     "select-new-query-results-info": "Wenn diese Methode angewendet wird, werden Abfrageergebnisse in der Karte automatisch selektiert dargestellt.",
     "query-layer-not-visible-notification": "Der abgefrage Layer ist in der Karte ausgeblendet. Hier Klicken zum Einblenden.",
 
-    "create-map-series": "Kartenserie erstellen"
+    // tool mapseries
+    "create-map-series": "Kartenserie erstellen",
+    "max-map-series-pages-reached": "Das Seitenlimit für Kartenserien wurde überschritten"
 };
