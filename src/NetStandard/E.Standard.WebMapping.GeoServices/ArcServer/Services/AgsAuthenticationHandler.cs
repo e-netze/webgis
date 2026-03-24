@@ -46,14 +46,10 @@ internal class AgsAuthenticationHandler
             {
                 var token = _tokenStore.GetToken(mapService);
 
-                if (!String.IsNullOrWhiteSpace(token))
-                {
-                    requestUrl += $"{(requestUrl.Contains("?") ? "&" : "?")}token={token}";
-                }
                 string ret = String.Empty;
                 try
                 {
-                    ret = await _httpService.GetStringAsync(requestUrl,
+                    ret = await _httpService.GetStringAsync(requestUrl.AddAgsToken(token),
                         new RequestAuthorization() { Credentials = mapService.HttpCredentials },
                         timeOutSeconds: mapService.Timeout.ToTimeoutSecondOrDefault());
                 }
@@ -105,14 +101,10 @@ internal class AgsAuthenticationHandler
             {
                 var token = _tokenStore.GetToken(mapService);
 
-                if (!String.IsNullOrWhiteSpace(token))
-                {
-                    requestUrl += $"{(requestUrl.Contains("?") ? "&" : "?")}token={token}";
-                }
                 byte[] data;
                 try
                 {
-                    data = await _httpService.GetDataAsync(requestUrl,
+                    data = await _httpService.GetDataAsync(requestUrl.AddAgsToken(token),
                         new RequestAuthorization() { Credentials = mapService.HttpCredentials },
                         timeOutSeconds: mapService.Timeout.ToTimeoutSecondOrDefault());
                 }
@@ -153,27 +145,35 @@ internal class AgsAuthenticationHandler
             try
             {
                 var token = _tokenStore.GetToken(mapService);
-                string? reverseProxyToken = null;
 
                 var tokenParameter = String.Empty;
+                var staticTokenParameter = String.Empty;
 
                 if (!String.IsNullOrWhiteSpace(token))
                 {
                     tokenParameter = $"{(String.IsNullOrWhiteSpace(postBodyData) ? "" : "&")}token={token}";
                 }
-                else if (!String.IsNullOrWhiteSpace(reverseProxyToken = _tokenStore.GetToken(mapService)))
+                else if (!String.IsNullOrWhiteSpace(mapService.StaticToken))
                 {
-                    reverseProxyToken = reverseProxyToken.Contains("=") ? reverseProxyToken : $"token={reverseProxyToken}";
-                    requestUrl += $"{(requestUrl.Contains("?") ? "&" : "?")}{reverseProxyToken}";
+                    var staticToken = mapService.StaticToken.Contains("=")
+                        ? mapService.StaticToken
+                        : $"token={mapService.StaticToken}";
+                    staticTokenParameter = $"{(requestUrl.Contains("?") ? "&" : "?")}{staticToken}";
                 }
 
                 string ret = String.Empty;
                 try
                 {
-                    ret = await _httpService.PostFormUrlEncodedStringAsync(requestUrl,
-                                                                          $"{postBodyData}{tokenParameter}",
-                                                                          new RequestAuthorization() { Credentials = mapService.HttpCredentials },
-                                                                          timeOutSeconds: mapService.Timeout.ToTimeoutSecondOrDefault());
+                    ret = await _httpService.PostFormUrlEncodedStringAsync(
+                                    String.IsNullOrEmpty(staticTokenParameter) 
+                                        ? requestUrl 
+                                        : $"{requestUrl}{staticTokenParameter}",
+                                    String.IsNullOrEmpty(tokenParameter) 
+                                        ? postBodyData 
+                                        : $"{postBodyData}{tokenParameter}",
+                                    new RequestAuthorization() { Credentials = mapService.HttpCredentials },
+                                    timeOutSeconds: mapService.Timeout.ToTimeoutSecondOrDefault()
+                                );
                 }
                 catch (WebException ex)
                 {
@@ -218,6 +218,7 @@ internal class AgsAuthenticationHandler
                 var token = _tokenStore.GetToken(mapService);
 
                 var tokenParameter = String.Empty;
+                var staticTokenParameter = String.Empty;
 
                 if (!String.IsNullOrWhiteSpace(token))
                 {
@@ -228,16 +229,22 @@ internal class AgsAuthenticationHandler
                     var staticToken = mapService.StaticToken.Contains("=")
                         ? mapService.StaticToken
                         : $"token={mapService.StaticToken}";
-                    requestUrl += $"{(requestUrl.Contains("?") ? "&" : "?")}{staticToken}";
+                    staticTokenParameter = $"{(requestUrl.Contains("?") ? "&" : "?")}{staticToken}";
                 }
 
                 (byte[] data, string contentType) result;
                 try
                 {
-                    result = await _httpService.PostFormUrlEncodedAsync(requestUrl,
-                        Encoding.UTF8.GetBytes($"{postBodyData}{tokenParameter}"),
-                        new RequestAuthorization() { Credentials = mapService.HttpCredentials },
-                        timeOutSeconds: mapService.Timeout.ToTimeoutSecondOrDefault());
+                    result = await _httpService.PostFormUrlEncodedAsync(
+                            String.IsNullOrEmpty(staticTokenParameter) 
+                                ? requestUrl 
+                                : $"{requestUrl}{staticTokenParameter}",
+                            String.IsNullOrEmpty(tokenParameter) 
+                                ? Encoding.UTF8.GetBytes(postBodyData) 
+                                : Encoding.UTF8.GetBytes($"{postBodyData}{tokenParameter}"),
+                            new RequestAuthorization() { Credentials = mapService.HttpCredentials },
+                            timeOutSeconds: mapService.Timeout.ToTimeoutSecondOrDefault()
+                        );
                 }
                 catch (WebException ex)
                 {

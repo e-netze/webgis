@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+- Bug: TokenRequiredError 
+  [Issue #422](https://github.com/e-netze/webgis-community/issues/442)
+
 ## 8.26.1203
 
 ## Added
