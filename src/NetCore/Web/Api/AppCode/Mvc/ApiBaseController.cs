@@ -308,11 +308,11 @@ public class ApiBaseController : Controller
         return JsonView("{\"success\":" + success.ToString().ToLower() + "}");
     }
 
-    async internal Task<IActionResult> ThrowJsonException(Exception ex, int statusCode = 200)
+    async internal Task<IActionResult> ThrowJsonException(Exception ex, int statusCode = 200, LogLevel logLevel = LogLevel.Error)
     {
         //Response.StatusCode = statusCode;
 
-        _logger.LogError(ex, "An json exception is thrown");
+        _logger.Log(logLevel, ex, "An json exception is thrown");
 
         string type = ex.GetType().ToString().ToLower();
         type = type.Substring(type.LastIndexOf(".") + 1);
@@ -397,7 +397,7 @@ public class ApiBaseController : Controller
         public string requestid { get; set; }
 
         public string taskId { get; set; }
-        public string toolId { get; set; }  
+        public string toolId { get; set; }
     }
 
 

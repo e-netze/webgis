@@ -48,6 +48,7 @@ using E.Standard.WebMapping.Core.Api.EventResponse.Models;
 using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Collections;
+using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using Microsoft.AspNetCore.Http;
@@ -1878,7 +1879,11 @@ public class RestController : ApiBaseController
             _logger.LogWarning($"{rwe.Message} User: {ui?.Username} ({String.Join(", ", ui?.Userroles ?? [])})");
 
             _apiLogging.LogReportException(rwe, ui);
-            return await ThrowJsonException(rwe);
+            return await ThrowJsonException(rwe, logLevel: LogLevel.Warning);
+        }
+        catch(InfoException iex)
+        {
+            return await ThrowJsonException(iex, logLevel: LogLevel.Information);
         }
         catch (Exception ex)
         {

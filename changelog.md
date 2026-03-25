@@ -10,8 +10,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+## 8.26.1301
+
+## Added
+
+- Logging: User information logs (like no query found in this area, etc) will only logged
+  in ``webgis-exceptions.log`` if LogLevel is ``Information``
+
+## Fixed
+
 - Bug: TokenRequiredError 
   [Issue #422](https://github.com/e-netze/webgis-community/issues/442)
+
+- Bug: QueryResults 1:n - Linktype ``dialog`` also opens a new browser tab
+  [Issue #443](https://github.com/e-netze/webgis-community/issues/443)
 
 ## 8.26.1203
 
