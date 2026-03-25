@@ -50,7 +50,8 @@ public enum ColumnType : int
 public enum ColumnDataType
 {
     String = 0,
-    Number = 1
+    Number = 1,
+    Number_de = 2
 }
 
 public enum FeatureTableType

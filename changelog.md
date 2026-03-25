@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ## Added
+
+- ResultTable: new sorting algorithm ``number_de``
+  [dicussion #440](https://github.com/e-netze/webgis-community/discussions/440)
+
 ## Fixed
 
 ## 8.26.1301

@@ -391,7 +391,7 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
 
         [DisplayName("Sortier-Algorithmus")]
         [Category("Sortieren")]
-        [Description("Gibt an mit welchen Algorithmus die Spalte in der Tabelle sortiert werden sollte. Standardmäßig wird die Spalte beim Storieren als Zeichenkette (string) interpretiert. Fix implementierte Algorithmen sind hier: string, number, gnr, date_dd_mm_yyyy. Über die custom.js können noch weitere Algorithmen definiert werden.")]
+        [Description("Gibt an mit welchen Algorithmus die Spalte in der Tabelle sortiert werden sollte. Standardmäßig wird die Spalte beim Storieren als Zeichenkette (string) interpretiert. Fix implementierte Algorithmen sind hier: string, number, number_de, gnr, date_dd_mm_yyyy. Über die custom.js können noch weitere Algorithmen definiert werden.")]
         public string SortingAlgorithm { get; set; }
 
 

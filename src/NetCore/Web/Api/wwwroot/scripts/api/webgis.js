@@ -1603,8 +1603,20 @@
     };
     this.sortingAlg["number"] = function (a, b) {
         try {
-            a = parseFloat(a.toString().replaceAll(',', '.'));
-            b = parseFloat(b.toString().replaceAll(',', '.'));
+            a = webgis.parseLocaleFloat(a);
+            b = webgis.parseLocaleFloat(b);
+
+            if (!isNaN(a) && isNaN(b)) return -1;
+            if (isNaN(a) && !isNaN(b)) return 1;
+        } catch (e) {
+            console.log(e);
+        }
+        return webgis.sortingAlg["default"](a, b);
+    };
+    this.sortingAlg["number_de"] = function (a, b) {
+        try {
+            a = webgis.parseGermanFloat(a);
+            b = webgis.parseGermanFloat(b);
 
             if (!isNaN(a) && isNaN(b)) return -1;
             if (isNaN(a) && !isNaN(b)) return 1;
@@ -3519,6 +3531,62 @@ if (!Array.prototype.includes) {  // incoude not supported by IE
     };
 }
 
+webgis.parseLocaleFloat = function (value) {
+    // Return early if already a number
+    if (typeof value === 'number') return value;
+    if (!value) return NaN;
+
+    let str = value.toString().trim();
+
+    // Find last occurrence of dot and comma
+    const lastDot = str.lastIndexOf('.');
+    const lastComma = str.lastIndexOf(',');
+
+    let decimalSeparator = null;
+
+    // Determine which symbol is used as decimal separator
+    if (lastDot > lastComma) {
+        decimalSeparator = '.';
+    } else if (lastComma > lastDot) {
+        decimalSeparator = ',';
+    }
+
+    if (decimalSeparator) {
+        // The other symbol is assumed to be the thousands separator
+        const thousandSeparator = decimalSeparator === '.' ? ',' : '.';
+
+        // Remove all thousands separators
+        str = str.replaceAll(thousandSeparator, '');
+
+        // Normalize decimal separator to dot for parseFloat
+        if (decimalSeparator === ',') {
+            str = str.replace(',', '.');
+        }
+    }
+
+    // Convert to float
+    return parseFloat(str);
+};
+webgis.parseGermanFloat = function (value) {
+    // Return early if already a number
+    if (typeof value === 'number') return value;
+    if (value == null) return NaN;
+
+    let str = String(value).trim();
+
+    if (str === '') return NaN;
+
+    // Remove spaces and currency symbols
+    str = str.replace(/[^\d.,-]/g, '');
+
+    // Remove thousands separators (dots)
+    str = str.replaceAll('.', '');
+
+    // Replace decimal comma with dot
+    str = str.replace(',', '.');
+
+    return parseFloat(str);
+};
 webgis.refParameter = function (v) {
     this.isRefParameter = true;
     this.value = v;
