@@ -9,6 +9,7 @@ using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Models;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
+using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.Core;
@@ -33,6 +34,7 @@ public class RestHelperService
     private readonly UrlHelperService _urlHelper;
     private readonly UploadFilesService _upload;
     private readonly CacheService _cache;
+    private readonly ICryptoService _crypto;
     private readonly IRequestContext _requestContext;
     private readonly IHttpContextAccessor _contextAccessor;
     private readonly IStringLocalizer _stringLocalizer;
@@ -40,6 +42,7 @@ public class RestHelperService
     public RestHelperService(UrlHelperService urlHelper,
                              UploadFilesService upload,
                              CacheService cache,
+                             ICryptoService crypto,
                              IRequestContext requestContext,
                              IHttpContextAccessor httpContextAccessor,
                              IStringLocalizerFactory stringLocalizerFactory)
@@ -47,6 +50,7 @@ public class RestHelperService
         _urlHelper = urlHelper;
         _upload = upload;
         _cache = cache;
+        _crypto = crypto;
         _requestContext = requestContext;
         _contextAccessor = httpContextAccessor;
         _stringLocalizer = stringLocalizerFactory.Create(typeof(RestController));
@@ -55,8 +59,8 @@ public class RestHelperService
     #region Services
 
     public ServiceInfoDTO CreateServiceInfo(
-                ApiBaseController controller, 
-                IMapService service, 
+                ApiBaseController controller,
+                IMapService service,
                 CmsDocument.UserIdentification ui)
     {
         string id = service.Url;
@@ -292,7 +296,7 @@ public class RestHelperService
                 MetadataButtonStyle = layerProps != null ? layerProps.MetadataButtonStyle : MetadataButtonStyle.i_button,
                 MetadataTarget = layerProps != null ? layerProps.MetadataTarget : BrowserWindowTarget2.tab,
                 MetadataTitle = layerProps != null ? layerProps.MetadataTitle : null,
-                time_info = layer.TimeInfo is not null  
+                time_info = layer.TimeInfo is not null
                     ? new ServiceInfoDTO.TimeInfoDTO()
                     {
                         extent = layer.TimeInfo.Extent,
@@ -744,7 +748,11 @@ public class RestHelperService
 
                 #region 1:n Links
 
-                returnFeatures.Append1toNLinks(queryFeatures, query, renderFields, _contextAccessor.HttpContext?.Request?.HeadersCollection());
+                returnFeatures.Append1toNLinks(
+                    queryFeatures, query, renderFields,
+                    requestHeaders: _contextAccessor.HttpContext?.Request?.HeadersCollection(),
+                    crypto: _crypto,
+                    usePayload: true);
 
                 #endregion
 

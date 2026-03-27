@@ -1092,27 +1092,48 @@
             $tabTools.data('feature.metadata', features.metadata);  // Links können sich ändern (add/remove features). Referenz auf Objekt merken und erst beim klick eigentlichen Link auslesen
             for (var l in features.metadata.links) {
                 createToolbarButton($exportBlock,
-                                    l,
-                                    features.metadata.linkimages && features.metadata.linkimages[l] 
-                                        ? features.metadata.linkimages[l] 
-                                        : webgis.css.imgResource('external-link-26.png'))
+                    l,
+                    features.metadata.linkimages && features.metadata.linkimages[l]
+                        ? features.metadata.linkimages[l]
+                        : webgis.css.imgResource('external-link-26.png'))
                     .data('linkname', l)
                     .click(function () {
                         let featureMetadata = $(this).closest('.webgis-result-table-tools').data('feature.metadata');
                         if (featureMetadata) {
                             const linkname = $(this).data('linkname');
                             const linktarget = featureMetadata.linktargets[linkname];
+                            const link = featureMetadata.links[linkname];
 
-                            switch (linktarget) {
-                                case "dialog":
-                                    webgis.iFrameDialog(featureMetadata.links[linkname], linkname);
-                                    break;
-                                case "datalinq_pdf_report":
-                                    webgis.downloadDataLinqPdf(featureMetadata.links[linkname]);
-                                    break;
-                                default:
-                                    window.open(featureMetadata.links[linkname]);
-                                    break;
+                            const func = function (linktarget, name, link) {
+                                switch (linktarget) {
+                                    case "dialog":
+                                        webgis.iFrameDialog(link, name);
+                                        break;
+                                    case "datalinq_pdf_report":
+                                        webgis.downloadDataLinqPdf(link);
+                                        break;
+                                    default:
+                                        window.open(link);
+                                        break;
+                                }
+                            }
+
+                            if (link.indexOf('payload:') == 0) {
+                                webgis.fetch({
+                                    type: 'post',
+                                    url: `${webgis.baseUrl}/rest/resolve-url-payload`,
+                                    data: webgis.hmac.appendHMACData({ payload: link.substr('payload:'.length) }),
+                                    success: function (result) {
+                                        console.log('result', result);
+                                        if (result.success && result.url) {
+                                            func(linktarget, linkname, result.url);
+                                        } else {
+                                            webgis.alert("Can't open link: " + result.message, "Error");
+                                        }
+                                    }
+                                });
+                            } else {
+                                func(linktarget, linkname, featureMetadata.links[linkname]);
                             }
                         }
                     });

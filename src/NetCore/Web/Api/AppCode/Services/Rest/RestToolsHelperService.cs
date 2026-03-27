@@ -475,7 +475,9 @@ public class RestToolsHelperService
                 var linkFeatures = new E.Standard.WebMapping.Core.Collections.FeatureCollection();
                 linkFeatures.Append1toNLinks(featuresResponse.FeaturesForLinks,
                                              featuresResponse.Query as QueryDTO,
-                                             requestHeaders: controller?.Request?.HeadersCollection());
+                                             requestHeaders: controller?.Request?.HeadersCollection(),
+                                             crypto: _crypto,
+                                             usePayload: true);
 
                 response.FeatureCollectionLinks = linkFeatures.Links;
             }
