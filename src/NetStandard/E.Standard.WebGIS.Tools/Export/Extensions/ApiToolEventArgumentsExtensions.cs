@@ -7,9 +7,7 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry.Extensions;
-using Microsoft.Identity.Client;
 using System;
-using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -73,7 +71,7 @@ static internal class ApiToolEventArgumentsExtensions
             .Split('.')
             .FirstOrDefault();
 
-        if(!String.IsNullOrEmpty(pageSizeStr) && Enum.TryParse<PageSize>(pageSizeStr, ignoreCase: true, out var pageSize))
+        if (!String.IsNullOrEmpty(pageSizeStr) && Enum.TryParse<PageSize>(pageSizeStr, ignoreCase: true, out var pageSize))
         {
             return pageSize;
         }
