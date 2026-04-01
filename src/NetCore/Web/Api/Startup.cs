@@ -22,7 +22,6 @@ using E.Standard.Custom.Core;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
 using E.Standard.Custom.Core.Services;
-using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.MessageQueues.Extensions.DependencyInjection;
 using E.Standard.Security.App;
@@ -38,7 +37,6 @@ using E.Standard.WebApp.Abstraction;
 using E.Standard.WebApp.Extensions;
 using E.Standard.WebApp.Options;
 using E.Standard.WebGIS.Core.Extensions.DependencyInjection;
-using E.Standard.WebGIS.Core.Services;
 using E.Standard.WebGIS.SDK.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SubscriberDatabase.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication;
@@ -47,7 +45,6 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -268,7 +265,7 @@ public class Startup
 
         services.AddHttpClient("default", client =>
         {
-            if(ApiGlobals.HttpClientDefaultTimeoutSeconds > 0)
+            if (ApiGlobals.HttpClientDefaultTimeoutSeconds > 0)
             {
                 client.Timeout = TimeSpan.FromSeconds(ApiGlobals.HttpClientDefaultTimeoutSeconds);
             }
@@ -282,7 +279,7 @@ public class Startup
         {
             services.AddHttpClient("default-proxy", client =>
         {
-            if(ApiGlobals.HttpClientDefaultTimeoutSeconds > 0)
+            if (ApiGlobals.HttpClientDefaultTimeoutSeconds > 0)
             {
                 client.Timeout = TimeSpan.FromSeconds(ApiGlobals.HttpClientDefaultTimeoutSeconds);
             }
@@ -428,7 +425,7 @@ public class Startup
 
         #region Security
 
-        if(Configuration.DisableAntiForgery())
+        if (Configuration.DisableAntiForgery())
         {
             services.Configure<SecurityOptions>(config =>
             {

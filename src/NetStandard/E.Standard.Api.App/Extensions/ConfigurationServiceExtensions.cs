@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using static System.Collections.Specialized.BitVector32;
 
 namespace E.Standard.Api.App.Extensions;
 
@@ -246,7 +245,7 @@ static public class ConfigurationServiceExtensions
 
     static public bool UseDeChunkerMiddleware(this ConfigurationService config)
     {
-        return config[ApiConfigKeys.UseDeChunkerMiddleware] == "true" 
+        return config[ApiConfigKeys.UseDeChunkerMiddleware] == "true"
             || config[ApiConfigKeys.UseDeChunkerMiddlewareFromSection] == "true";
     }
 
@@ -399,7 +398,7 @@ static public class ConfigurationServiceExtensions
     static public bool DisableAntiForgery(this IConfiguration config)
         => "true".Equals(config[$"{ApiConfigKeys.SecurityDisableAntiForgery}"], StringComparison.OrdinalIgnoreCase);
 
-    
+
     static public Dictionary<string, string> UrlOutputRedirectionsOrNull(this IConfiguration config)
         => UrlRedirectionsOrNull(config, " => ");
 
@@ -610,6 +609,11 @@ static public class ConfigurationServiceExtensions
     public static string DataLinqApiEncryptionLevel(this IConfiguration config)
     {
         return config[$"{ApiConfigKeys.ConfigurationSectionName}:datalinq:api-encryption-level"];
+    }
+
+    public static bool DataLinqUseCacheTokenForOne2nLinks(this ConfigurationService config)
+    {
+        return "true".Equals(config[$"{ApiConfigKeys.ConfigurationSectionName}:datalinq:use-cache-token-for-one-2-n-links"], StringComparison.OrdinalIgnoreCase);
     }
 
     #endregion

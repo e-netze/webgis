@@ -2,6 +2,7 @@
 //#define ADD_MESSAGEQUEUE
 //#define ADD_REDIS
 //#define ADD_MCP
+//#define ADD_DEVTUNNELS
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -146,6 +147,14 @@ var webgisCms = builder.AddProject<Projects.webgis_cms>("webgis-cms")
                        .WaitFor(webgisApi);
 
 #endregion
+
+#if ADD_DEVTUNNELS
+
+builder.AddDevTunnel("webgis-api-tunnel").WithReference(webgisApi);
+builder.AddDevTunnel("webgis-portal-tunnel").WithReference(webgisPortal);
+builder.AddDevTunnel("webgis-cms-tunnel").WithReference(webgisCms);
+
+#endif
 
 #region MCP
 

@@ -1,6 +1,8 @@
 ﻿using Api.Core.AppCode.Exceptions;
 using Api.Core.AppCode.Reflection;
 using E.Standard.Api.App;
+using E.Standard.Api.App.Endpoints.Metadata;
+using E.Standard.Api.App.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Options;
@@ -20,9 +22,10 @@ public class RoutingEndPointReflectionService
     public RoutingEndPointReflectionService(IHttpContextAccessor context,
                                             IOptionsMonitor<RoutingEndPointReflectionServiceOptions> options)
     {
-        var controllerActionDescriptor = context.HttpContext?.GetEndpoint()?.Metadata?.GetMetadata<ControllerActionDescriptor>();
         _options = options.CurrentValue;
 
+        // Controllers/Action
+        var controllerActionDescriptor = context.HttpContext?.GetEndpoint()?.Metadata?.GetMetadata<ControllerActionDescriptor>();
         if (controllerActionDescriptor != null)
         {
             _controllerAttributes = controllerActionDescriptor.ControllerTypeInfo?.GetCustomAttributes();
@@ -45,6 +48,15 @@ public class RoutingEndPointReflectionService
                         break;
                 }
             }
+
+            return;
+        }
+
+        // Minimal API Endpoints
+        var reflectionMetadata = context.HttpContext?.GetEndpoint()?.Metadata?.GetMetadata<IApiEndpointReflectionMetadata>();
+        if(reflectionMetadata != null)
+        {
+            _actionMethodAttributes = reflectionMetadata.GetAllAttributes();
         }
     }
 
@@ -70,9 +82,9 @@ public class RoutingEndPointReflectionService
         return (T)_actionMethodAttributes?.Where(a => a.GetType().Equals(type)).FirstOrDefault();
     }
 
-    public AppRoles AppRoles => _options.AppRoles;
+    private AppRoles AppRoles => _options.AppRoles;
 
-    public bool AppRoleIsAllowed(AppRoles appRole)
+    private bool AppRoleIsAllowed(AppRoles appRole)
     {
         return _options.AppRoles.HasFlag(AppRoles.All) || _options.AppRoles.HasFlag(appRole);
     }

@@ -4,6 +4,7 @@ using Api.Core.AppCode.Services.Api;
 using Api.Core.AppCode.Services.Api.DataLinqEngines;
 using Api.Core.AppCode.Services.Authentication;
 using Api.Core.AppCode.Services.DataLinq;
+using Api.Core.AppCode.Services.Endpoints;
 using Api.Core.AppCode.Services.Logging;
 using Api.Core.AppCode.Services.Ogc;
 using Api.Core.AppCode.Services.Rest;
@@ -32,12 +33,11 @@ using E.Standard.WebMapping.Core.Extensions.DependencyInjection;
 using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.GeoServices.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Api.Core.AppCode.Extensions.DependencyInjection;
@@ -83,6 +83,8 @@ static public class ServiceCollectionExtensions
         services.AddTransient<IExtendedControllerService, ExtendedControllerService>();
 
         services.AddTransient<CacheClearService>();
+
+        services.AddScoped<SecureEndpointHandlerService>();
 
         services.AddRestServiceFactory(configuration);
 
@@ -316,7 +318,7 @@ static public class ServiceCollectionExtensions
             },
             persistanceOptions: config =>
             {
-                config.ConnectionString = $"{configService[ApiConfigKeys.StorageRootPath]}/webgis.tools.datalinq.endpoints";
+                config.ConnectionString = Path.Combine(configService[ApiConfigKeys.StorageRootPath], "webgis.tools.datalinq.endpoints");
                 if (Enum.TryParse<EncryptionLevel>(configuration.DataLinqApiEncryptionLevel(), true, out EncryptionLevel encryptionLevel))
                 {
                     config.SecureStringEncryptionLevel = encryptionLevel;
@@ -375,6 +377,12 @@ static public class ServiceCollectionExtensions
         services.AddTransient<E.DataLinq.Web.Services.Abstraction.IDataLinqLogger, DataLinqLogger>();
 
         services.AddTransient<IDataLinqCustomSelectArgumentsProvider, DataLinqRoleParameterSelectArgumentsProvider>();
+
+        services.AddDataLinqCacheTokenService(E.DataLinq.Web.Html.Abstractions.DataLinqCacheTokenStorageType.File,
+            config =>
+            {
+                config.FilePath = Path.Combine(configService[ApiConfigKeys.StorageRootPath], "webgis.tools.datalinq.cache");
+            });
 
         return services;
     }

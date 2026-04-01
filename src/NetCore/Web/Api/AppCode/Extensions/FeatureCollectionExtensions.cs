@@ -1,6 +1,8 @@
 ﻿using E.Standard.Api.App.Data;
 using E.Standard.Api.App.DTOs;
 using E.Standard.Extensions.Compare;
+using E.Standard.Security.Cryptography;
+using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
@@ -17,7 +19,9 @@ static public class FeatureCollectionExtensions
                 FeatureCollection queryFeatures,
                 QueryDTO query,
                 bool renderFields = true,
-                NameValueCollection requestHeaders = null)
+                NameValueCollection requestHeaders = null,
+                bool usePayload = false,
+                ICryptoService crypto = null)
     {
         if (renderFields && query?.Fields != null)
         {
@@ -33,23 +37,27 @@ static public class FeatureCollectionExtensions
                                          collFeature,
                                          hotlinkField.HotlinkUrl.ReplaceUrlHeaderPlaceholders(requestHeaders));
 
+                    if (usePayload && crypto is not null)
+                    {
+                        hotLinkUrl = $"payload:{crypto.EncryptTextDefault(hotLinkUrl, CryptoResultStringType.Hex)}";
+                    }
 
                     if (!String.IsNullOrEmpty(hotLinkUrl))
                     {
                         returnFeatures.Links ??= new();
                         returnFeatures.LinkTargets ??= new();
-                        
+
 
                         var colName = hotlinkField.HotlinkName.OrTake(hotlinkField.ColumnName);
                         returnFeatures.Links[colName] = hotLinkUrl;
                         returnFeatures.LinkTargets[colName] = hotlinkField.Target.ToString().ToLowerInvariant();
 
-                        if(!String.IsNullOrEmpty(hotlinkField.ImageExpression) && !ExpressionHasParameters(hotlinkField.ImageExpression))
+                        if (!String.IsNullOrEmpty(hotlinkField.ImageExpression) && !ExpressionHasParameters(hotlinkField.ImageExpression))
                         {
                             returnFeatures.LinkImages ??= new();
                             returnFeatures.LinkImages[colName] = hotlinkField.ImageExpression;
                         }
-                       
+
                     }
                 }
                 catch { }
@@ -78,7 +86,7 @@ static public class FeatureCollectionExtensions
 
     static private bool ExpressionHasParameters(string expression)
     {
-        return expression?.Contains("[") == true 
+        return expression?.Contains("[") == true
             && expression?.Contains("]") == true;
     }
 }

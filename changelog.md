@@ -12,6 +12,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - ResultTable: new sorting algorithm ``number_de``
   [dicussion #440](https://github.com/e-netze/webgis-community/discussions/440)
 
+- WMTS: adding more exotic services
+  [dicussion #447](https://github.com/e-netze/webgis-community/discussions/447)
+
+- DataLinq: parameters of 1:n links from resulttable can be posted to internal datalinq instance (experimental)
+  **api.config** => ``use-cache-token-for-one-2-n-links`` 
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#datalinq)
+
+- Layout for Tablets (``portal/viewerlayouts/w1024.html``): Usability improvments
+  TOC/Tooldialog on the left side, etc
+
+- DataLinq Upgrade: 8.26.1401
+
 ## Fixed
 
 ## 8.26.1301
