@@ -9,6 +9,7 @@ using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Models;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
+using E.Standard.Configuration.Services;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.CMS;
@@ -38,6 +39,7 @@ public class RestHelperService
     private readonly IRequestContext _requestContext;
     private readonly IHttpContextAccessor _contextAccessor;
     private readonly IStringLocalizer _stringLocalizer;
+    private readonly ConfigurationService _config;
 
     public RestHelperService(UrlHelperService urlHelper,
                              UploadFilesService upload,
@@ -45,7 +47,8 @@ public class RestHelperService
                              ICryptoService crypto,
                              IRequestContext requestContext,
                              IHttpContextAccessor httpContextAccessor,
-                             IStringLocalizerFactory stringLocalizerFactory)
+                             IStringLocalizerFactory stringLocalizerFactory,
+                             ConfigurationService config)
     {
         _urlHelper = urlHelper;
         _upload = upload;
@@ -54,6 +57,7 @@ public class RestHelperService
         _requestContext = requestContext;
         _contextAccessor = httpContextAccessor;
         _stringLocalizer = stringLocalizerFactory.Create(typeof(RestController));
+        _config = config;
     }
 
     #region Services
@@ -752,7 +756,7 @@ public class RestHelperService
                     queryFeatures, query, renderFields,
                     requestHeaders: _contextAccessor.HttpContext?.Request?.HeadersCollection(),
                     crypto: _crypto,
-                    usePayload: true);
+                    usePayload: _config.DataLinqUseCacheTokenForOne2nLinks());
 
                 #endregion
 

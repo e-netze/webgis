@@ -1,6 +1,4 @@
-﻿using Azure;
-using E.Standard.CMS.Core;
-using E.Standard.CMS.Core.Schema;
+﻿using E.Standard.CMS.Core;
 using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Platform;
@@ -22,7 +20,6 @@ using E.Standard.WebMapping.Core.Logging.Abstraction;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -707,12 +704,12 @@ public class Chainage : IApiServerToolLocalizableAsync<Chainage>,
             {
                 return null;
             }
-            
+
             var snappedPoint = new Point(
                 apiResult["x"].ToString().ToPlatformDouble(),
                 apiResult["y"].ToString().ToPlatformDouble());
 
-            if(snappedPoint.X == 0D && snappedPoint.Y == 0D)
+            if (snappedPoint.X == 0D && snappedPoint.Y == 0D)
             {
                 return null;
             }

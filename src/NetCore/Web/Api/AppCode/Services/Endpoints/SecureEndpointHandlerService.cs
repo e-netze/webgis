@@ -1,17 +1,20 @@
-﻿using E.Standard.Api.App.Exceptions;
+﻿#nullable enable
+
+using E.Standard.Api.App.Exceptions;
 using E.Standard.Api.App.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.Custom.Core;
 using E.Standard.Extensions.ErrorHandling;
-using E.Standard.Security.App.Json;
 using E.Standard.WebMapping.Core.Exceptions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Security.Authentication;
+using System.Threading.Tasks;
 
-namespace E.Standard.WebApp.Services;
+namespace Api.Core.AppCode.Services.Endpoints;
 
 public class SecureEndpointHandlerService
 {

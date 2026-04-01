@@ -1,0 +1,5 @@
+{
+  "appHost": {
+    "path": "NetCore/Web/Aspire/webgis.AppHost/webgis.AppHost.csproj"
+  }
+}

@@ -11,9 +11,10 @@
     </ItemGroup>
 	
     <ItemGroup>
-      <ProjectReference Include="..\E.Standard.Api.App\E.Standard.Api.App.csproj" />
-      <ProjectReference Include="..\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
-      <ProjectReference Include="..\E.Standard.Custom.Core\E.Standard.Custom.Core.csproj" />
+      <Folder Include="Services\" />
+    </ItemGroup>
+	
+    <ItemGroup>
       <ProjectReference Include="..\E.Standard.Platform\E.Standard.Platform.csproj" />
     </ItemGroup>
 </Project>

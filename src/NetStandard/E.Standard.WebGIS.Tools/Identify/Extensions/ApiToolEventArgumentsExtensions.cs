@@ -2,9 +2,6 @@
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Geometry;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.StaticAssets;
-using Microsoft.Identity.Client;
 using System;
 using System.Linq;
 using System.Threading;
@@ -90,5 +87,5 @@ static internal class ApiToolEventArgumentsExtensions
         && isMultiQuery == true
         && !String.IsNullOrWhiteSpace(e["identify-map-tools"])
         && identifyOptions.Contains("all-identify-tools");
-    
+
 }

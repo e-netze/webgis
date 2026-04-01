@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using E.Standard.Api.App.Extensions;
 
 namespace Api.Core.AppCode.Services.Rest;
 
@@ -477,7 +478,7 @@ public class RestToolsHelperService
                                              featuresResponse.Query as QueryDTO,
                                              requestHeaders: controller?.Request?.HeadersCollection(),
                                              crypto: _crypto,
-                                             usePayload: true);
+                                             usePayload: _config.DataLinqUseCacheTokenForOne2nLinks());
 
                 response.FeatureCollectionLinks = linkFeatures.Links;
             }

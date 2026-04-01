@@ -1682,6 +1682,9 @@ namespace E.Standard.OGC.Schema.wmts_1_0_0 {
         
         /// <remarks/>
         FeatureInfo,
+
+        /// <remarks/>
+        TileJSON
     }
     
     /// <remarks/>

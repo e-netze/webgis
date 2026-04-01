@@ -1,9 +1,10 @@
 ﻿using Api.Core.AppCode.Extensions;
+using Api.Core.AppCode.Extensions.Endpoints;
+using Api.Core.AppCode.Services.Endpoints;
 using E.DataLinq.Web.Models.TokenCache;
 using E.DataLinq.Web.Services.TokenCache;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebApp.Abstraction;
-using E.Standard.WebApp.Services;
 using E.Standard.WebGIS.Api.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -55,9 +56,7 @@ public class ResolveUrlPayload : IApiEndpoint
                     url = resultUrl
                 };
             }))
-           .DisableAntiforgery();
-
-
+           .AddWebGISApiEndpointMetadata();
     }
 
     async private Task<string> DataLinqCacheTokenUrl(
@@ -71,7 +70,7 @@ public class ResolveUrlPayload : IApiEndpoint
                     {
                         DataLinqRoute = dataLinqUrlParts.dataLinqRoute,
                         Payload = dataLinqUrlParts.payload,
-                        
+
                     });
 
         return $"{dataLinqUrlParts.dataLinqUrl}?datalinqCacheToken={tokenResponse.Token}";
