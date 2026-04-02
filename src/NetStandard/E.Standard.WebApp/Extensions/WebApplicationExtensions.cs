@@ -15,7 +15,9 @@ static public class WebApplicationExtensions
                 Type assemblyType)
     {
         var apiEndpointTypes = assemblyType.Assembly.GetTypes()
-            .Where(t => typeof(IApiEndpoint).IsAssignableFrom(t));
+            .Where(t =>
+                 typeof(IApiEndpoint).IsAssignableFrom(t) &&
+                 t.IsClass);
 
         Console.WriteLine("Register ApiEndpoints");
         Console.WriteLine("=====================");
