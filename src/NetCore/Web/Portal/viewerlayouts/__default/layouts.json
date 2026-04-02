@@ -1,11 +1,11 @@
-[
+﻿[
   {
     "width": 1024,
     "templates": [
       {
         "id": "default",
         "name": "Default",
-        "file": "w1024.html"
+        "file": "w1024_touch.html"
       }
     ]
   },

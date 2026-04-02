@@ -22,9 +22,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Layout for Tablets (``portal/viewerlayouts/w1024.html``): Usability improvments
   TOC/Tooldialog on the left side, etc
 
-- DataLinq Upgrade: 8.26.1401
+- DataLinq Upgrade: 8.26.140w
 
 ## Fixed
+
+- Bug: Print Measure Polygon calculate wrong circumference value
+  [Issue #452](https://github.com/e-netze/webgis-community/issues/452)
 
 ## 8.26.1301
 

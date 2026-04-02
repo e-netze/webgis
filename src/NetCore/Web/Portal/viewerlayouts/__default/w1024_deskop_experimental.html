@@ -34,6 +34,39 @@
         box-shadow: 0 1px 5px rgba(0,0,0,0.65);
     }
 
+    #map-container {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        bottom: 0px;
+        right: 0px;
+        box-sizing: border-box;
+    }
+
+    #map {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        bottom: 0px;
+        right: 0px;
+        opacity: 0;
+        border-top: 1px solid #62b851;
+        border-left: 1px solid #62b851;
+        box-sizing: border-box;
+    }
+
+    #query-results {
+        position: absolute;
+        height: 100px;
+        left: 0px;
+        bottom: 0px;
+        right: 0px;
+        opacity: 0;
+        border-top: 1px solid #62b851;
+        border-left: 1px solid #62b851;
+        box-sizing: border-box;
+    }
+
     .leaflet-top {
         top: 75px;
     }
@@ -52,13 +85,20 @@
     }
 
     .webgis-tabs-tab-content-holder {
-        max-height: calc(100% - 173px) !important;
+        max-height: calc(100% - 189px) !important;
         box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
         border-radius: 5px;
     }
 
+    .webgis-space-saving .webgis-tabs-tab-content-holder {
+        max-height: calc(100% - 173px) !important;
+    }
     .leaflet-bottom.leaflet-right {
         display: none;
+    }
+
+    .webgis-search-result-list {
+        max-height: unset;
     }
 </style>
 
@@ -73,10 +113,13 @@
     };
 </script>
 
-<div id='map'
-     style='position:absolute;top:0px;left:0px;bottom:0px;right:0px;opacity:0;border-top:1px solid #62b851;border-left:1px solid #62b851;box-sizing:border-box;'>
+<div id="map-container" class="webgis-splitter" data-direction="horizontal" data-sizes="100%,0">
+    <div id='map' style=''>
+        
+    </div>
+    <div class='query-results-tab-control-container webgis-ui-element-dependency' data-minsize="30">
+    </div>
 </div>
-
 
 <div id="tabs" class="tabs-layout-container-options"
      data-option-add_tools="false"

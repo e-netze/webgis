@@ -132,6 +132,20 @@ var webgisApi = builder.AddProject<Projects.webgis_api>("webgis-api")
 #if ADD_REDIS
                         .WaitFor(redis)
 #endif
+                        .WithUrlForEndpoint("https", ep =>
+                        {
+                            ep.DisplayText = "API";
+                            ep.DisplayOrder = 1;
+                            ep.DisplayLocation = UrlDisplayLocation.SummaryAndDetails;
+                        })
+                        .WithUrlForEndpoint("http", ep => { ep.DisplayLocation = UrlDisplayLocation.DetailsOnly; })
+                        .WithUrlForEndpoint("https", ep => new()
+                        {
+                            DisplayText = "CachClear",
+                            DisplayOrder = 0,
+                            Url = $"{ep.Url}/cache/clear",
+                            DisplayLocation = UrlDisplayLocation.SummaryAndDetails
+                        })
                         ;
 
 
@@ -140,11 +154,33 @@ var webgisPortal = builder.AddProject<Projects.webgis_portal>("webgis-portal")
 #if ADD_IDENTITYSERVER
                           .WaitFor(identityServer)
 #endif
-                          ;
+                          .WithUrlForEndpoint("https", ep =>
+                          {
+                              ep.DisplayText = "Login";
+                              ep.DisplayOrder = 1;
+                              ep.DisplayLocation = UrlDisplayLocation.SummaryAndDetails;
+                          })
+                         .WithUrlForEndpoint("http", ep => { ep.DisplayLocation = UrlDisplayLocation.DetailsOnly; })
+                         .WithUrlForEndpoint("https", ep => new()
+                         {
+                             DisplayText = "Portal",
+                             DisplayOrder = 0,
+                             Url = $"{ep.Url}/default",
+                             DisplayLocation = UrlDisplayLocation.SummaryAndDetails
+                         })
+                         ;
 
 var webgisCms = builder.AddProject<Projects.webgis_cms>("webgis-cms")
                        .WaitFor(webgisPortal)
-                       .WaitFor(webgisApi);
+                       .WaitFor(webgisApi)
+                       .WithUrlForEndpoint("https", ep =>
+                        {
+                            ep.DisplayText = "CMS";
+                            ep.DisplayOrder = 1;
+                            ep.DisplayLocation = UrlDisplayLocation.SummaryAndDetails;
+                        })
+                       .WithUrlForEndpoint("http", ep => { ep.DisplayLocation = UrlDisplayLocation.DetailsOnly; })
+                       ;
 
 #endregion
 

@@ -13,7 +13,6 @@
     <None Remove="credits.html" />
     <None Remove="viewerlayouts\dev\w1200_v0.html" />
     <None Remove="viewerlayouts\dev\w1200_v2.html" />
-    <None Remove="viewerlayouts\__default\w1024.html" />
     <None Remove="viewerlayouts\__default\w1200_desktop.html" />
     <None Remove="viewerlayouts\__default\w1200_touch.html" />
     <None Remove="viewerlayouts\__default\w1200_v2.html" />
@@ -49,7 +48,10 @@
     <Content Include="viewerlayouts\dev\w1200_v0.html">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Include="viewerlayouts\__default\w1024.html">
+    <Content Include="viewerlayouts\__default\w1024_deskop_experimental.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="viewerlayouts\__default\w1024_touch.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="viewerlayouts\__default\w1200_touch.html">

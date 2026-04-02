@@ -144,7 +144,7 @@
 
                     webgis.delayed(function () {
                         singleMarker.fire('click');
-                        if (!map.ui.tabsInSidebar()) {
+                        if ($(window).width() < 1024 && map.ui.tabsInSidebar() === false) {
                             map.events.fire('hidequeryresults');
                         }
                     }, 100);

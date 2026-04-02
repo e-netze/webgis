@@ -69,7 +69,9 @@ public class MeasurePolygonElement : PolygonElement
                     using (var font = Current.Engine.CreateFont(Platform.SystemInfo.DefaultFontName, _fontSize * dpiFactor))
                     {
                         double area = calcPolygon.Area;  // [m²]
-                        double circumference = calcPolygon.Rings.Select(r => r.Length).Sum();  // [m]
+                        double circumference = calcPolygon.Circumference;  // [m]
+                            //.Rings
+                            //.Select(r => r.Circumference).Sum();  // [m]
 
                         area = area.SquareMetersToSquareUnit(_areaUnit);
                         circumference = circumference.MetersToUnit(_lengthUnit);

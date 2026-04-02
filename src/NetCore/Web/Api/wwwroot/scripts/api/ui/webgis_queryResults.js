@@ -387,7 +387,7 @@
                     removeSelection,
                     $(this).hasClass('webgis-result-suppresszoom'));
 
-                if (/*$(window).width() < 1024*/ map.ui.tabsInSidebar() === false) {
+                if ($(window).width() < 1024 && map.ui.tabsInSidebar() === false) {
                     map.events.fire('hidequeryresults');
                 }
 
