@@ -1,6 +1,6 @@
 ﻿webgis.navigatorGeolocationApi = new function () {
     this.isAvailable = function () {
-        return !!navigator.geolocation;
+        return ("geolocation" in navigator) == true; 
     };
     this.name = "Browser/Navigator (Defaut)";
 
