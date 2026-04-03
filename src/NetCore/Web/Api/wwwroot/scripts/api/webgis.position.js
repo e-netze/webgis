@@ -240,6 +240,7 @@ webgis.continuousPosition = new function () {
                     ageSeconds = (new Date().getTime() - pos.timestamp) / 1000,
                     acc = pos.coords.accuracy; // / (webgis.calc.R) * 180.0 / Math.PI;
 
+                webgis.continuousPosition.events.fire('currentposition', webgis.continuousPosition, { lng: lng, lat: lat, age: ageSeconds, acc: acc });
                 if (webgis.continuousPosition._marker)
                     webgis.continuousPosition._map.removeMarker(webgis.continuousPosition._marker);
                 if (this.helmert2d && this.helmert2d.name != '_none') {
@@ -253,6 +254,7 @@ webgis.continuousPosition = new function () {
                     //console.log(lnglat_);
                     lng = lnglat_[0];
                     lat = lnglat_[1];
+                    webgis.continuousPosition.events.fire('currentposition-transformed', webgis.continuousPosition, { lng: lng, lat: lat });
                 }
                 webgis.continuousPosition.events.fire('watchposition', webgis.continuousPosition, pos);
                 var isOk = !(acc > options.minAcc ||

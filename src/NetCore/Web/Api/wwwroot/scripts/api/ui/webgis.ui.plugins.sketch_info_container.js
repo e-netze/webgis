@@ -43,6 +43,21 @@
         $("<tr><td>" + webgis.l10n.get("snap-to-layer") + ":</td><td class='sketch-info-item snap-result-name'></td>")
             .appendTo($tabSnapping);
 
+        if (webgis.isTouchDevice()) {
+            let $tabGps = $("<table><tr><th colspan=2>GPS</th></tr></table>")
+                .appendTo(this.$el);
+
+            $("<tr><td>Pos:</td><td class='sketch-info-item gps-pos-result'></td>")
+                .appendTo($tabGps);
+            $("<tr><td>Pos (transformed)</td><td class='sketch-info-item gps-pos-transformed-result'></td>")
+                .appendTo($tabGps);
+
+            webgis.continuousPosition.events.off("currentposition", this.constructor.onGpsCurrentPosition);
+            webgis.continuousPosition.events.off("currentposition-transformed", this.constructor.onGpsCurrentPositionTransformed);
+            webgis.continuousPosition.events.on("currentposition", this.constructor.onGpsCurrentPosition);
+            webgis.continuousPosition.events.on("currentposition-transformed", this.constructor.onGpsCurrentPositionTransformed);
+        }
+
         let $tabSections = $("<table>")
             .appendTo(this.$el);
 
@@ -121,6 +136,9 @@
             //console.log('off sketch event currentstate');
             sketch.events.off("currentstate", this.constructor.onSketchCurrentStateChanged);
         }
+
+        webgis.continuousPosition.events.off("currentposition", this.constructor.onGpsCurrentPosition);
+        webgis.continuousPosition.events.off("currentposition-transformed", this.constructor.onGpsCurrentPositionTransformed);
     },
     //methods: {
 
@@ -243,6 +261,21 @@
                     }
                 }
             }
+        },
+        onGpsCurrentPosition: function (channel, sender, pos) {
+            const $ = webgis.$;
+
+            console.log(pos);
+            $(".webgis-container")
+                .find('.sketch-info-item.gps-pos-result')
+                .text(pos.lng.toDMS(4) + " / " + pos.lat.toDMS(4));
+        },
+        onGpsCurrentPositionTransformed: function (channel, sender, pos) {
+            const $ = webgis.$;
+
+            $(".webgis-container")
+                .find('.sketch-info-item.gps-pos-transformed-result')
+                .text(pos.lng + " / " + pos.lat);
         }
     }
 });

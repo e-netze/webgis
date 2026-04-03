@@ -3502,6 +3502,19 @@ String.prototype.removeAllSectionDecoration = function (sectionName) {
     return '';
 };
 
+Number.prototype.toDMS = function (decimals = 6) {
+    const abs = Math.abs(this);
+
+    const degrees = Math.floor(abs);
+    const minutesFloat = (abs - degrees) * 60;
+    const minutes = Math.floor(minutesFloat);
+    const seconds = (minutesFloat - minutes) * 60;
+
+    const secondsFixed = seconds.toFixed(decimals);
+
+    return `${degrees}°${minutes}'${secondsFixed}"`;
+};
+
 webgis.firstOrDefault = function (array, f) {
     if (!array)
         return null;
