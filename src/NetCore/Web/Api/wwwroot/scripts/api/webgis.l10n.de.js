@@ -350,5 +350,9 @@
 
     // tool mapseries
     "create-map-series": "Kartenserie erstellen",
-    "max-map-series-pages-reached": "Das Seitenlimit für Kartenserien wurde überschritten"
+    "max-map-series-pages-reached": "Das Seitenlimit für Kartenserien wurde überschritten",
+
+    // geolocation api
+    "select-geolocation-api": "GPS Verortungs API wählen",
+    "select-geolocation-api-info": "Hier kann angegeben werden, welche API zur bestimmung der aktuellen Position verwendet werden sollte."
 };

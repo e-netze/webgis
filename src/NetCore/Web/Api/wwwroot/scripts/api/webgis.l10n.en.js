@@ -350,5 +350,9 @@
 
     // tool mapseries
     "create-map-series": "Create map series",
-    "max-map-series-pages-reached": "The limit of pages for a map series is reached"
+    "max-map-series-pages-reached": "The limit of pages for a map series is reached",
+
+    // geolocation api
+    "select-geolocation-api": "Select GPS location API",
+    "select-geolocation-api-info": "Here you can specify which API should be used to determine the current position."
 };

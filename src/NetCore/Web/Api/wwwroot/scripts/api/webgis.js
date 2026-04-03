@@ -743,6 +743,14 @@
                 }, arg);
             }
         }
+        else if (lib === "geolocation-zeno-connect") {
+            if (!webgis.zenoConnectGeolocationApi) {
+                loading = true;
+                this.loadScript(webgis.baseUrl + '/scripts/api/webgis.position.zeno_connect_geolocation.js', '', function () {
+                    callback(arg);
+                }, arg);
+            }
+        }
         else if (lib === "monaco-editor") {
             if (!window.monaco) {
                 loading = true;

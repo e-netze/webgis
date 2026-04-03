@@ -1,8 +1,14 @@
-﻿webgis.currentPosition_classic = new function () {
+﻿webgis.geolocationApi = new function() {
+    this.isAvailable = function () {
+        return false;
+    };
+};
+
+webgis.currentPosition_classic = new function () {
     this.get = function (options) {
         options = options || { onSuccess: function () { } };
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(options.onSuccess, options.onError || this.onError, { timeout: 30000 });
+        if (webgis.geolocationApi.isAvailable()) {
+            webgis.geolocationApi.getCurrentPosition(options.onSuccess, options.onError || this.onError, { timeout: 30000 });
         }
         else {
             webgis.alert('Ortung wird nicht unterstützt', 'info');
@@ -99,8 +105,8 @@ webgis.currentPosition_watch = new function () {
         };
 
         var w = new watcher(options, options.maxWatch || 1);
-        if (navigator.geolocation) {
-            options.watchId = navigator.geolocation.watchPosition(w.getPosition, w.onError, { timeout: 5000, enableHighAccuracy: webgis.isTouchDevice() });
+        if (webgis.geolocationApi.isAvailable()) {
+            options.watchId = webgis.geolocationApi.watchPosition(w.getPosition, w.onError, { timeout: 5000, enableHighAccuracy: webgis.isTouchDevice() });
             //this.watchIds.push(options.watchId);
         }
         else {
@@ -108,7 +114,7 @@ webgis.currentPosition_watch = new function () {
         }
     };
     this.stopWatch = function (options, bestPosition, lastErr) {
-        navigator.geolocation.clearWatch(options.watchId);
+        webgis.geolocationApi.clearWatch(options.watchId);
         if (!bestPosition) {
             if (options.onError)
                 options.onError(lastErr);
@@ -276,10 +282,10 @@ webgis.continuousPosition = new function () {
             this._watcher.helmert2d = webgis.continuousPosition.helmert2d;
         }
 
-        if (navigator.geolocation) {
+        if (webgis.geolocationApi.isAvailable()) {
             this.events.fire('startwatching', this);
             _isWatching = true;
-            webgis.continuousPosition._watchId = navigator.geolocation.watchPosition(this._watcher.newPosition, function () { }, { timeout: 5000, enableHighAccuracy: webgis.isTouchDevice() });
+            webgis.continuousPosition._watchId = webgis.geolocationApi.watchPosition(this._watcher.newPosition, function () { }, { timeout: 5000, enableHighAccuracy: webgis.isTouchDevice() });
         }
         else {
             webgis.alert('Ortung wird nicht unterstützt', 'info');
@@ -289,7 +295,7 @@ webgis.continuousPosition = new function () {
         this.events.fire('stopwatching', this);
         _isWatching = false;
         if (webgis.continuousPosition._map && webgis.continuousPosition._watchId >= 0) {
-            navigator.geolocation.clearWatch(webgis.continuousPosition._watchId);
+            webgis.geolocationApi.clearWatch(webgis.continuousPosition._watchId);
             if (webgis.continuousPosition._marker != null)
                 webgis.continuousPosition._map.removeMarker(webgis.continuousPosition._marker);
         }
@@ -357,3 +363,56 @@ webgis.continuousPosition = new function () {
         return (webgis.continuousPosition.current && webgis.continuousPosition.current.status === 'ok')
     };
 };
+
+webgis.geolocationApis = new function () {
+    const _apis = [];
+
+    this.add = function (api) {
+        if (this.hasName(api.name)) {
+            return false;
+        }
+
+        _apis.push(api);
+        if (_apis.length === 1) {
+            this.setByName(api.name);
+        }
+
+        return true;
+    };
+
+    this.setByName = function (name) {
+        console.log("try set geolocation api by name:" + name);
+        console.log(_apis);
+        for (let api of _apis) {
+            console.log(api);
+            if (api.name === name) {
+                webgis.geolocationApi = api;
+                console.log("current geolocation api:" + name, api);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    this.currentName = () => webgis.geolocationApi.name || "None";
+
+    this.hasName = function () {
+        for (let api of _apis) {
+            if (api.name === name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    this.getAllNames = function () {
+        var names = [];
+        for (let api of _apis) {
+            names.push(api.name);
+        }
+
+        return names;
+    }
+}
