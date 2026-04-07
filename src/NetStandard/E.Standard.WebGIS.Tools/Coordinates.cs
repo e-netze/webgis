@@ -1,5 +1,6 @@
 ﻿using E.Standard.Extensions.Compare;
 using E.Standard.Extensions.Security;
+using E.Standard.GeoCoding.GeoCode;
 using E.Standard.GeoJson.Extensions;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Platform;
@@ -1042,6 +1043,23 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
         string projectionId = projection.Id.ToString();
 
         string xString, yString, defaultXString = null, defaultYString = null;
+
+        if (projection.DisplayStyle == "utmref")
+        {
+            int digits = projection.Digits >= 1 ? projection.Digits : 5;
+            var utm = new UtmRef();
+            xString = utm.Encode(x, y, digits);
+            yString = string.Empty;                    
+
+            if ($"{projectionId}utmref" == defaultProject || projectionId == defaultProject)
+            {
+                defaultXString = xString;
+                defaultYString = yString;
+            }
+
+            return (xString, yString, defaultXString, defaultYString);
+        }
+
         if (toSRef.IsProjective)
         {
             xString = /*"R:&nbsp;" +*/ Math.Round(x, projection.Digits >= 0 ? projection.Digits : 2).ToString();

@@ -60,6 +60,10 @@ public class GeoLocation
         {
             yield return new GeographicCoordinates();
         }
+        if(new UtmRef().IsValidGeoCode(geoCode))
+        {
+            yield return new UtmRef();
+        }
     }
 
     static public IEnumerable<IGeoCode> Implentations
@@ -71,7 +75,8 @@ public class GeoLocation
                 new GeoRef(),
                 new OpenLocation(),
                 new GeoHash(),
-                new GeographicCoordinates()
+                new GeographicCoordinates(),
+                new UtmRef()
             };
         }
     }
