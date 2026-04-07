@@ -6,6 +6,7 @@
     _currentImageRequestId: '',
     _opacity: 1.0,
     _order: -1,
+    _effects_class: "effects",   // show zoom fadeout effects. Can cause problems on iPhones (browser-tab shuts down!)
 
     onAdd: function (map) {
         this._url = '';
@@ -28,7 +29,12 @@
         if (this._imageEventsAdded === false) {
             this._imageEventsAdded = true;
             var me = this;
-            webgis.$(this._image)/*.css('opacity',0)*/.addClass('webgis-service-image effects');
+
+            if (webgis.isSafari() || webgis.is_iOS) {
+                me._effects_class = "no-effects";
+            }
+
+            webgis.$(this._image).addClass('webgis-service-image ' + me._effects_class);
             webgis.$(this._image).on('load', function () {
                 //me._onImageLoad();
                 
@@ -67,11 +73,11 @@
         this._isZooming = true;
        
         if (this._imageBounds) {
-            //console.log('overlay has image bounds', this._service.name, this._imageBounds);
+            console.log('overlay has image bounds', this._service.name, this._imageBounds);
             webgis.$(this._image).css('opacity', 0);
         } else {
             webgis.delayed(function (me) {
-                //console.log('fadeout...', me._service.name, $(me._image).hasClass('effects'));
+                console.log('fadeout...', me._service.name, $(me._image).hasClass('effects'));
                 webgis.$(me._image).css('opacity', 0);
             }, 500, this);
         }
@@ -619,9 +625,9 @@ L.ImageOverlay.webgis_service = L.ImageOverlay.ImageServiceBase.extend({
                             var $image = webgis.$(me._image);
                             if ($image.css('opacity') > 0 && $image.attr('src').indexOf('/emtpy.gif') < 0) {
                                 $image
-                                    .removeClass('effects')
+                                    .removeClass(me._effects_class)
                                     .css('opacity', 0)//.css('display', '')
-                                    .addClass('effects');
+                                    .addClass(me._effects_class);
 
                                 display = '';
                             }
@@ -1036,9 +1042,9 @@ L.ImageOverlay.webgis_selection = L.ImageOverlay.ImageServiceBase.extend({
                             //console.log('hide image before loading...');
                             if ($image.css('opacity') > 0 /*&& $image.attr('src').indexOf('/emtpy.gif') < 0*/) {
                                 $image
-                                    .removeClass('effects')
+                                    .removeClass(me._effects_class)
                                     .css('opacity', 0).css('display', '')
-                                    .addClass('effects');
+                                    .addClass(me._effects_class);
                             }
                         }
 
