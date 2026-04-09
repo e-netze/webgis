@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace E.Standard.GeoCoding.GeoCode;
 
-public class GeoHash : IGeoCode
+public class GeoHash : IGeoCoder
 {
 
     // vgl http://geohash.co/
@@ -196,8 +196,8 @@ public class GeoHash : IGeoCode
         return Decode(geoCode).IsValid;         // check if phi lam values are possible
     }
 
-
-    public string DisplayName => "GeoHashCode";
+    public string Name => "geohash";
+    public string DisplayName => "Geohash Code";
 
     public string[] Links => new string[] { "https://en.wikipedia.org/wiki/Geohash" };
 

@@ -668,7 +668,10 @@ public class Startup
            new { controller = "OGC", action = "Index" }
            );
 
-        app.AddDataLinqEndpoints();
+        if (Configuration.IncludeDataLinqServices())
+        {
+            app.AddDataLinqEndpoints();
+        }
 
         app.MapControllerRoute(
             "output",

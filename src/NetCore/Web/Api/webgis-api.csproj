@@ -53,11 +53,11 @@
 
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier2022" Version="2.9.11" />
-    <PackageReference Include="E.DataLinq.Core" Version="8.26.1402" />
-    <PackageReference Include="E.DataLinq.Engine.MsSqlServer" Version="8.26.1402" />
-    <PackageReference Include="E.DataLinq.Engine.OracleClient" Version="8.26.1402" />
-    <PackageReference Include="E.DataLinq.Engine.Postgres" Version="8.26.1402" />
-    <PackageReference Include="E.DataLinq.Engine.SQLite" Version="8.26.1402" />
+    <PackageReference Include="E.DataLinq.Core" Version="8.26.1502" />
+    <PackageReference Include="E.DataLinq.Engine.MsSqlServer" Version="8.26.1502" />
+    <PackageReference Include="E.DataLinq.Engine.OracleClient" Version="8.26.1502" />
+    <PackageReference Include="E.DataLinq.Engine.Postgres" Version="8.26.1502" />
+    <PackageReference Include="E.DataLinq.Engine.SQLite" Version="8.26.1502" />
     <PackageReference Include="E.DataLinq.Engine.SqlServer-legacy" Version="8.26.1402" />
     <PackageReference Include="E.DataLinq.Web" Version="8.26.1402" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.5" />

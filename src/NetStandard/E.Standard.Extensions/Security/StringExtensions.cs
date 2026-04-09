@@ -29,17 +29,19 @@ static public class StringExtensions
         return input;
     }
 
-    public static void CheckSecurity(this IEnumerable<string> input)
+    public static IEnumerable<string> CheckSecurity(this IEnumerable<string> input)
     {
         if (input == null)
         {
-            return;
+            return input;
         }
 
         foreach (var testString in input)
         {
             testString.CheckSerucity();
         }
+
+        return input;
     }
 
     public static bool IsUrl(this string input)

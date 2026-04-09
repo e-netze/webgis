@@ -3,6 +3,7 @@ using E.Standard.Configuration.Services;
 using E.Standard.Extensions.Compare;
 using E.Standard.Security.App.Services.Abstraction;
 using gView.GraphicsEngine;
+using Microsoft.Azure.Storage.Blob.Protocol;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Concurrent;
@@ -42,16 +43,17 @@ static public class ConfigurationServiceExtensions
         return 4326;
     }
 
-    static public bool AllowGeoCodesInput(this IConfiguration config)
+    static public bool QuickSearchAllowGeoCodesInput(this IConfiguration config)
     {
-        if (bool.TryParse(config[$"{ApiConfigKeys.AllowGeoCodesInput}"], out bool allow))
-        {
-            return allow;
-        }
+        return !String.IsNullOrWhiteSpace(config[$"{ApiConfigKeys.AllowedGeoCodesInput}"]);
+    }
 
-        return false;
-
-        //return config.Get<bool>(ApiConfigKeys.AllowGeoCodesInput, false);
+    static public string[] QuickSearchAllowedGeoCodesInput(this IConfiguration config)
+    {
+        return config[$"{ApiConfigKeys.AllowedGeoCodesInput}"]?
+                    .Split(",")
+                    .Select(x => x.Trim())
+                    .ToArray();
     }
 
     static public string Pro4DatabaseConnectionString(this ConfigurationService config)
@@ -490,7 +492,9 @@ static public class ConfigurationServiceExtensions
 
     static public bool AllowDataLingCodeEditing(this IConfiguration config)
     {
-        return "true".Equals(config[$"{ApiConfigKeys.ConfigurationSectionName}:datalinq:allow-code-editing"], StringComparison.OrdinalIgnoreCase);
+        return 
+            config.IncludeDataLinqServices() &&
+            "true".Equals(config[$"{ApiConfigKeys.ConfigurationSectionName}:datalinq:allow-code-editing"], StringComparison.OrdinalIgnoreCase);
     }
 
     public static string DataLinqEnvrionment(this IConfiguration config)

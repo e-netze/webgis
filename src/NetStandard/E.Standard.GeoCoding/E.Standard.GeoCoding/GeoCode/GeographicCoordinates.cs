@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace E.Standard.GeoCoding.GeoCode;
 
-public class GeographicCoordinates : IGeoCode
+public class GeographicCoordinates : IGeoCoder
 {
 
     public GeoLocation Decode(string geoCode)
@@ -140,7 +140,9 @@ public class GeographicCoordinates : IGeoCode
         return Decode(geoCode).IsValid;     // check if phi lam values are possible
     }
 
-    public string DisplayName => "geographic Coordinates (phi, lambda)";
+    public string Name => "latlon";
+
+    public string DisplayName => "Geographic Coordinates (Latitude, Longitude)";
 
     public string[] Links => new string[] { "https://www.latlong.net/", "https://en.wikipedia.org/wiki/Geographic_coordinate_system" };
 

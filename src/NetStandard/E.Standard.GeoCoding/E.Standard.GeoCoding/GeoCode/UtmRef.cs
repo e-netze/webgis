@@ -1,21 +1,17 @@
-﻿using Microsoft.Extensions.Primitives;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace E.Standard.GeoCoding.GeoCode;
 
-public class UtmRef : IGeoCode
+public class UtmRef : IGeoCoder
 {
-    private const double SemiMajorAxis = 6378137.0;                  
-    private const double Flattening = 1.0 / 298.257223563;           
+    private const double SemiMajorAxis = 6378137.0;
+    private const double Flattening = 1.0 / 298.257223563;
 
-    private const double UtmScaleFactor = 0.9996;                    
+    private const double UtmScaleFactor = 0.9996;
 
-    private static readonly double e2 = Flattening * (2 - Flattening);            //EccentricitySquared                             
-    private static readonly double ep2 = e2 / (1 - e2);                           //SecondEccentricitySquared
+    private static readonly double e2 = Flattening * (2D - Flattening);            //EccentricitySquared                             
+    private static readonly double ep2 = e2 / (1D - e2);                           //SecondEccentricitySquared
 
     private const string eastingLetters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 
@@ -29,18 +25,19 @@ public class UtmRef : IGeoCode
             return "Latitude or longitude cannot be NaN or Infinity";
         }
 
-        if (lat < -80 || lat > 84)
+        if (lat < -80D || lat > 84D)
         {
             Console.WriteLine("lat value (" + lat + ") not in [-80,84]");
             return "UTM/MGRS not defined beyond -80 to 84 degrees latitude.";
         }
 
-        if (lon < -180 || lon > 180)
+        if (lon < -180D || lon > 180D)
         {
             Console.WriteLine("lat value (" + lat + ") not in [-80,84]");
             return $"Longitude value not in [-180,180]";
         }
 
+        //precesion = Math.Clamp(precesion, 1, 5);
         if (precesion < 1 || precesion > 5)
         {
             return $"Precision value must be between 1 and 5";
@@ -55,17 +52,17 @@ public class UtmRef : IGeoCode
             char latBand = GetLatBand(lat);
 
             // voodoo idk
-            double φ = lat * Math.PI / 180; 
-            double λ = lon * Math.PI / 180; 
-            double λ0 = (utmZone * 6 - 183) * Math.PI / 180; 
+            double φ = lat * Math.PI / 180D;
+            double λ = lon * Math.PI / 180D;
+            double λ0 = (utmZone * 6 - 183) * Math.PI / 180D;
 
             double sinφ = Math.Sin(φ);
             double cosφ = Math.Cos(φ);
             double tanφ = Math.Tan(φ);
 
-            double N = SemiMajorAxis / Math.Sqrt(1 - e2 * sinφ * sinφ); 
-            double T = tanφ * tanφ; 
-            double C = ep2 * cosφ * cosφ; 
+            double N = SemiMajorAxis / Math.Sqrt(1 - e2 * sinφ * sinφ);
+            double T = tanφ * tanφ;
+            double C = ep2 * cosφ * cosφ;
             double A = (λ - λ0) * cosφ;
 
             double M = SemiMajorAxis * (
@@ -109,11 +106,11 @@ public class UtmRef : IGeoCode
 
             return $"{utmZone}{latBand}{gridSquareLetters}{easting.ToString($"D{precesion}")}{northing.ToString($"D{precesion}")}";
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             return "Error computing MGRS: " + e.Message;
-        }       
+        }
     }
 
     public string Encode(GeoLocation geoLocation, int precision)
@@ -234,7 +231,7 @@ public class UtmRef : IGeoCode
             else
             {
                 double targetLat = approxLat;
-                double testNorthing = northing; 
+                double testNorthing = northing;
 
                 double bestNorthing = testNorthing;
                 double bestLatDiff = double.MaxValue;
@@ -256,7 +253,7 @@ public class UtmRef : IGeoCode
             }
 
             // utm zu lat und lon
-            var (lon,lat) =  UtmToLatLon(easting, northing, utmZone, isNorthernHemisphere);
+            var (lon, lat) = UtmToLatLon(easting, northing, utmZone, isNorthernHemisphere);
             GeoLocation loc = new GeoLocation { Latitude = lat, Longitude = lon };
             return loc;
         }
@@ -338,11 +335,13 @@ public class UtmRef : IGeoCode
         return true;
     }
 
-    public string DisplayName => "MRGS/UTMRefCode";
+    public string Name => "mrgs";
+
+    public string DisplayName => "MRGS/UTMRef Code";
 
     public string[] Links => new string[] { "https://en.wikipedia.org/wiki/Military_Grid_Reference_System", "https://de.wikipedia.org/wiki/UTM-Referenzsystem" };
 
-    public string[] Examples => new string[] { "32UMD7403" };
+    public string[] Examples => new string[] { "33TWN3301713224", "33TWN3313" };
 
     #region Helpers
 

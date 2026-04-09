@@ -186,7 +186,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Identity.Web" Version="4.6.0" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="4.7.0" />
     <PackageReference Include="RazorEngine.NetCore" Version="3.1.1" />
 
 		<PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />

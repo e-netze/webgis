@@ -25,6 +25,7 @@ using E.Standard.Configuration.Extensions;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
 using E.Standard.Extensions.Compare;
+using E.Standard.GeoCoding.Extensions.DependencyInjection;
 using E.Standard.Platform;
 using E.Standard.Security.App.Extensions.DependencyInjection;
 using E.Standard.Security.Cryptography;
@@ -146,9 +147,10 @@ static public class ServiceCollectionExtensions
             .Configure<RestSearchHelperServiceOptions>((config) =>
             {
                 config.DefaultQuerySrefId = configuration.DefaultQuerySrefId();
-                config.AllowGeoCodesInput = configuration.AllowGeoCodesInput();
+                config.AllowGeoCodesInput = configuration.QuickSearchAllowGeoCodesInput();
                 config.MaxResultItems = configuration.QuickSearchMaxResultItems();
             })
+            .AddGeoCoders(configuration.QuickSearchAllowedGeoCodesInput())
             .AddTransient<RestSearchHelperService>()
             .AddTransient<RestPrintHelperService>()
             .AddTransient<RestRequestHmacHelperService>()

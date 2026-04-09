@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Added
 
+- GeoCodes: allow GeoCodes (UTMRef, etc) in Coordinates-Tool and Quick Search 
+  [discussion #449](https://github.com/e-netze/webgis-community/discussions/449)
+  [docs GeoCodes](https://docs.webgiscloud.com/de/webgis/annex/geocodes.html)
+  [docs CoordsTool](https://docs.webgiscloud.com/de/webgis/extended_config/etc/xz.html#default-xml)
+  [docs api.config](https://docs.webgiscloud.com/de/webgis/config/api/index.html#abschnitt-proj4-database-geocodes)
+
+- DataLinq Upgrade: 8.26.1502
+
+## Fixed
+
+- Bug: API Crashes on start, if DataLinq is not included in api.config
+
+## 8.26.1402
+
+## Added
+
 - ResultTable: new sorting algorithm ``number_de``
   [dicussion #440](https://github.com/e-netze/webgis-community/discussions/440)
 
@@ -22,7 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Layout for Tablets (``portal/viewerlayouts/w1024.html``): Usability improvments
   TOC/Tooldialog on the left side, etc
 
-- DataLinq Upgrade: 8.26.140w
+- DataLinq Upgrade: 8.26.1402
 
 ## Fixed
 

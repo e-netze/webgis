@@ -1,5 +1,5 @@
 ﻿using E.Standard.Extensions.Compare;
-using E.Standard.Extensions.Security;
+using E.Standard.GeoCoding.Extensions;
 using E.Standard.GeoCoding.GeoCode;
 using E.Standard.GeoJson.Extensions;
 using E.Standard.Localization.Abstractions;
@@ -21,8 +21,10 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
+using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
+using Microsoft.AspNetCore.Routing.Matching;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -177,8 +179,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
     [ServerToolCommand("inputcoordinates-dialog")]
     public ApiEventResponse OnInputCoordinatesDialog(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
-        var lastTableCoord = e.GetWGSFormCoordinatesTable(bridge)
-            .LastOrDefault();
+        var lastTableCoord = e.GetWGSFormCoordinatesTable(bridge).LastOrDefault();
 
         if (lastTableCoord == null)
         {
@@ -186,7 +187,11 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
             lastTableCoord = new Point((bbox[0] + bbox[2]) * 0.5, (bbox[1] + bbox[3]) * 0.5);
         }
 
-        var sRefId = int.Parse(!String.IsNullOrWhiteSpace(e["coordinates-input-proj"]) ? e["coordinates-input-proj"] : e["coordinates-map-srs"]);
+        var projection = Projections(bridge).FirstOrDefault(p => p.Identifier() == e["coordinates-input-proj"]);
+        var geoCoder = projection.TryGetGeoCoderOrNull();
+        var sRefId = projection is not null
+            ? projection.Id
+            : int.Parse(e["coordinates-map-srs"]);
 
         var sRef = bridge.CreateSpatialReference(sRefId);
         var sRef4326 = bridge.CreateSpatialReference(4326);
@@ -196,7 +201,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
             transform.Transform(lastTableCoord);
         }
 
-        RoundCoordiantes(lastTableCoord, sRef);
+        lastTableCoord = lastTableCoord.RoundCoordiantes(sRef);
 
         var projCombo = ProjectionsComboElement(bridge, "coordinates-input-proj");
         projCombo.changetype = UIButton.UIButtonType.servertoolcommand.ToString();
@@ -212,15 +217,25 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                         new UILabel().WithLabel(localizer.Localize("coordinate-system")),
                         projCombo,
                         new UIBreak(),
-                        new UILabel().WithLabel(localizer.Localize("easting")),
+                        new UILabel()
+                            .WithId("coordinates-input-x-label")
+                            .WithLabel(localizer.Localize("easting")),
                         new UIInputText()
                             .WithId("coordinates-input-x-value")
                             .WithStyles(UICss.ToolParameter/*, UICss.ToolParameterPersistent*/),
                         //.WithValue(e["coordinates-input-x-value"]),
                         new UIBreak(),
-                        new UILabel().WithLabel(localizer.Localize("northing")),
+                        new UILabel()
+                            .WithId("coordinates-input-y-label")
+                            .WithLabel(localizer.Localize("northing")),
                         new UIInputText()
                             .WithId("coordinates-input-y-value")
+                            .WithStyles(UICss.ToolParameter/*, UICss.ToolParameterPersistent*/),
+                         new UILabel()
+                            .WithId("coordinates-input-code-label")
+                            .WithLabel(localizer.Localize("code")),
+                        new UIInputText()
+                            .WithId("coordinates-input-code-value")
                             .WithStyles(UICss.ToolParameter/*, UICss.ToolParameterPersistent*/),
                         //.WithValue(e["coordinates-input-y-value"]),
                         new UIBreak(),
@@ -236,8 +251,15 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                 ))
             .AddUISetter(new UISetter("coordinates-input-x-value", lastTableCoord.X.ToString()))
             .AddUISetter(new UISetter("coordinates-input-y-value", lastTableCoord.Y.ToString()))
-            .AddUISetter(new UISetter("coordinates-input-proj", sRefId.ToString()))
-            .AddUISetter(new UISetter("coordinates-input-current-srs", sRefId.ToString()));
+            .AddUISetter(new UISetter("coordinates-input-code-value",
+                                            geoCoder?.Encode(new GeoLocation()
+                                            {
+                                                Longitude = lastTableCoord.X,
+                                                Latitude = lastTableCoord.Y
+                                            }, projection.Digits) ?? ""))
+            .AddUISetter(new UISetter("coordinates-input-proj", projection is not null ? projection.Identifier() : sRefId.ToString()))
+            .AddUISetter(new UISetter("coordinates-input-current-srs", projection is not null ? projection.Identifier() : sRefId.ToString()))
+            .AddCoordiantesCalculatorUISetters(projection);
     }
 
     [ServerToolCommand("inputcoordinates-dialog-change-projection")]
@@ -249,26 +271,48 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
             return null;
         }
 
-        var newSrs = bridge.CreateSpatialReference(int.Parse(e["coordinates-input-proj"]));
-        var currentSrs = bridge.CreateSpatialReference(int.Parse(e["coordinates-input-current-srs"]));
+        var projection = Projections(bridge)
+                .FirstOrDefault(p => p.Identifier() == e["coordinates-input-proj"])
+                .ThrowIfNull(() => $"Unknown projection: {e["coordinates-input-proj"]}");
+        var geoCoder = projection.TryGetGeoCoderOrNull();
+        var currentProjection = Projections(bridge)
+                .FirstOrDefault(p => p.Identifier() == e["coordinates-input-current-srs"])
+                .ThrowIfNull(() => $"Unknown current projection: {e["coordinates-input-current-srs"]}");
+        var currentGeoCoder = currentProjection.TryGetGeoCoderOrNull();
+
+        var newSrs = bridge.CreateSpatialReference(projection.Id);
+        var currentSrs = bridge.CreateSpatialReference(currentProjection.Id);
 
         try
         {
-            var currentPoint = new Point(ParseCoordinateValue(e["coordinates-input-x-value"]), ParseCoordinateValue(e["coordinates-input-y-value"]));
-
-            using (var transformer = new GeometricTransformerPro(currentSrs, newSrs))
+            var currentPoint = currentGeoCoder switch
             {
-                transformer.Transform(currentPoint);
-            }
+                IGeoCoder coder when coder.IsValidGeoCode(e["coordinates-input-code-value"]) 
+                    => coder.Decode(e["coordinates-input-code-value"]).ToPoint(),
+                _   => new Point(
+                            e["coordinates-input-x-value"].ParseCoordinateValue(),
+                            e["coordinates-input-y-value"].ParseCoordinateValue()
+                        )
+            };
 
-            RoundCoordiantes(currentPoint, newSrs);
+            using var transformer = new GeometricTransformerPro(currentSrs, newSrs);
+            transformer.Transform(currentPoint);
+            
+            var point = currentPoint.RoundCoordiantes(newSrs);
 
             return new ApiEventResponse()
-                .AddUISetter(new UISetter("coordinates-input-x-value", currentPoint.X.ToString()))
-                .AddUISetter(new UISetter("coordinates-input-y-value", currentPoint.Y.ToString()))
-                .AddUISetter(new UISetter("coordinates-input-current-srs", newSrs.Id.ToString()))
+                .AddUISetter(new UISetter("coordinates-input-x-value", point.X.ToString()))
+                .AddUISetter(new UISetter("coordinates-input-y-value", point.Y.ToString()))
+                .AddUISetter(new UISetter("coordinates-input-code-value",
+                                            geoCoder?.Encode(new GeoLocation()
+                                            {
+                                                Longitude = currentPoint.X,
+                                                Latitude = currentPoint.Y
+                                            },projection.Digits) ?? ""))
+                .AddUISetter(new UISetter("coordinates-input-current-srs", projection.Identifier()))
                 .AddUISetter(new UISetter("coordinates-input-validation-error", ""))
-                .AddUISetter(new UICssSetter(UICssSetter.SetterType.AddClass, "coordinates-input-validation-error", "webgis-display-none"));
+                .AddUISetter(new UICssSetter(UICssSetter.SetterType.AddClass, "coordinates-input-validation-error", "webgis-display-none"))
+                .AddCoordiantesCalculatorUISetters(projection);
         }
         catch (Exception ex)
         {
@@ -284,9 +328,23 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
     {
         try
         {
-            double x = ParseCoordinateValue(e["coordinates-input-x-value"]);
-            double y = ParseCoordinateValue(e["coordinates-input-y-value"]);
-            var sRef = bridge.CreateSpatialReference(int.Parse(e["coordinates-input-proj"]));
+            var projection = Projections(bridge)
+                .FirstOrDefault(p => p.Identifier() == e["coordinates-input-proj"])
+                .ThrowIfNull(() => $"Unknown projection: {e["coordinates-input-proj"]}");
+            var geoCoder = projection.TryGetGeoCoderOrNull();
+
+            (double x, double y) = geoCoder switch
+            {
+                IGeoCoder coder when coder.IsValidGeoCode(e["coordinates-input-code-value"])
+                    => coder.Decode(e["coordinates-input-code-value"]).ToTuple(),
+                IGeoCoder => throw new InfoException("Invalid code"),
+                _   => (
+                        e["coordinates-input-x-value"].ParseCoordinateValue(),
+                        e["coordinates-input-y-value"].ParseCoordinateValue()
+                      )
+            };
+
+            var sRef = bridge.CreateSpatialReference(projection.Id);
             double lng = x, lat = y;
 
             if (sRef.Id != 4326)
@@ -353,8 +411,8 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
     [ServerToolCommand("setsketchvertex")]
     public ApiEventResponse OnSetSketchVertex(IBridge bridge, ApiToolEventArguments e)
     {
-        double x = ParseCoordinateValue(e["coordinates-input-x-value"]);
-        double y = ParseCoordinateValue(e["coordinates-input-y-value"]);
+        double x = e["coordinates-input-x-value"].ParseCoordinateValue();
+        double y = e["coordinates-input-y-value"].ParseCoordinateValue();
         var sRef = bridge.CreateSpatialReference(int.Parse(e["coordinates-input-proj"]));
         double lng = x, lat = y;
 
@@ -391,14 +449,20 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
         if (!String.IsNullOrWhiteSpace(tableData))
         {
             var data = tableData.Split(';');
-            var projection = Projections(bridge).Where(p => $"{p.Id}{p.DisplayStyle}" == defaultCrs)
-                                                .FirstOrDefault();
+            var projection = Projections(bridge).FirstOrDefault(p => p.Identifier() == defaultCrs);
+            var geoCoder = projection.TryGetGeoCoderOrNull();
 
             var heightColumns = new RasterQueryHelper().HeightNameNodes($"{bridge.AppEtcPath}/coordinates/h.xml");
             var colCount = 3 + heightColumns.Count();
 
             StringBuilder csv = new StringBuilder();
-            csv.Append($"#{separator}Rechtwert{separator}Hochwert");
+            csv.Append(
+                geoCoder switch
+                {
+                    IGeoCoder => $"#{separator}{geoCoder.DisplayName}",
+                    _ => $"#{separator}{localizer.Localize("easting")}{separator}{localizer.Localize("easting")}"
+                }
+                );
 
             #region Zusätzliche Spalten (Höhen)
 
@@ -424,7 +488,12 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
 
                     var projectResult = Project(projection, defaultCrs, sRef, toSRef, worldX, worldY);
 
-                    csv.Append($"{number}{separator}{projectResult.xString}{separator}{projectResult.yString}");
+                    csv.Append(
+                        geoCoder switch
+                        {
+                            IGeoCoder => $"{number}{separator}{projectResult.xString}",
+                            _ => $"{number}{separator}{projectResult.xString}{separator}{projectResult.yString}"
+                        });
 
                     #region Zusätzliche Spalten (Höhen)
 
@@ -455,11 +524,9 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                 .WithDialogTitle("Hochladen (CSV)")
                 .WithStyles(UICss.NarrowFormMarginAuto)
                 .AddChildren(
-                    new UILabel()
-                        .WithLabel(localizer.Localize("upload.label1:body")),
+                    new UIParagraph(localizer.Localize("upload.label1:body")),
                     new UIBreak(2),
-                    new UILabel()
-                        .WithLabel($"{localizer.Localize("upload.label2:body")}:"),
+                    new UIParagraph($"{localizer.Localize("upload.label2:body")}"),
                     ProjectionsComboElement(bridge, "coordinates-upload-projection", false),
                     new UIBreak(2),
                     new UIUploadFile(this.GetType(), "upload-file")
@@ -473,13 +540,13 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
     async public Task<ApiEventResponse> OnUploadFile(IBridge bridge, ApiToolEventArguments e, ILocalizer<Coordinates> localizer)
     {
         var file = e.GetFile("upload-file");
-        int uploadCrs = e.GetInt("coordinates-upload-projection");
+        string uploadProjection = e.GetString("coordinates-upload-projection");
 
         string defaultProject = e.DeviceInfo.IsMobileDevice ? "" : e["coordinates-default-proj"];
 
         int counter = 0;
 
-        if (file != null)
+        if (file is not null)
         {
             var encoding = file.Data.DetectTextByteArrayEncoding() ?? bridge.DefaultTextEncoding;
             var csv = encoding.GetString(file.Data);
@@ -493,70 +560,64 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                 throw new Exception(localizer.Localize(String.Format("upload.exception-too-many-points", maxRows)));
             }
 
-            var sRef = SRefStore.SpatialReferences.ById(uploadCrs);
-            var sRef4326 = SRefStore.SpatialReferences.ById(4326);
-
             var projections = Projections(bridge);
+            var sourceProjection = projections
+                    .FirstOrDefault(p => p.Identifier() == uploadProjection)
+                    .ThrowIfNull(() => $"Unknown source projection {uploadProjection}");
+
+
+            var sRef4326 = SRefStore.SpatialReferences.ById(4326);
+            var (sRef, geoCoder) = sourceProjection.DisplayStyle switch
+            {
+                string geoCoderName when geoCoderName.TryGetGeoCoderByName() is IGeoCoder geoCoderImpl
+                  => (SRefStore.SpatialReferences.ById(sourceProjection.Id), geoCoderImpl),
+                _ => (SRefStore.SpatialReferences.ById(sourceProjection.Id), (IGeoCoder)null)
+            };
+
+
             var features = new WebMapping.Core.Collections.FeatureCollection();
             StringBuilder tableData = new StringBuilder();
 
             for (int i = 1; i < rows.Length; i++)
             {
-                if (String.IsNullOrWhiteSpace(rows[i]))
-                {
-                    continue;
-                }
+                (string number, string xString, string yString) =
+                    geoCoder is not null
+                    ? rows[i].ParseCodeRow(geoCoder, i)
+                    : rows[i].ParseXYRow(i);
 
-                string[] cells = null;
+                counter = int.TryParse(number, out int numberCounter)
+                    ? numberCounter
+                    : Math.Max(counter, i);
 
-                foreach (var c in new char[] { ';', '\t', ' ' })
+                var point = ((Func<Point>)((sRef, geoCoder) switch
                 {
-                    cells = rows[i].Split(c);
-                    if (cells.Length >= 2)
+                    (SpatialReference, null) => () =>
                     {
-                        break;
+                        // Project from XY source to LatLng (4326)
+                        double x = xString.ParseCoordinateValue(), lng = x;
+                        double y = yString.ParseCoordinateValue(), lat = y;
+
+                        GeometricTransformer.Transform2D(
+                                ref lng, ref lat,
+                                sRef.Proj4, !sRef.IsProjective,
+                                sRef4326.Proj4, !sRef4326.IsProjective);
+
+                        return new Point(lng, lat);
                     }
-                }
+                    ,
+                    (SpatialReference, IGeoCoder) => () =>
+                    {
+                        // source is GeoCode
+                        var geoLocation = geoCoder.Decode(xString);
 
-                // Avoid Reflected XSS ... <script... etc
-                cells.CheckSecurity();
+                        double lng = geoLocation.Longitude, lat = geoLocation.Latitude;
+                        return new Point(lng, lat);
+                    }
+                    ,
+                    _ => () => { throw new Exception("Can't transform input coordinate"); }
 
-                string xString, yString, number;
-                if (cells.Length == 2)
-                {
-                    number = i.ToString();
-                    xString = cells[0];
-                    yString = cells[1];
-                }
-                else if (cells.Length >= 3)
-                {
-                    number = cells[0];
-                    xString = cells[1];
-                    yString = cells[2];
-                }
-                else
-                {
-                    throw new Exception(String.Format(localizer.Localize("exception-invalid-row"), rows[i]));
-                }
+                }))();
 
-                if (int.TryParse(number, out int numberCounter))
-                {
-                    counter = numberCounter;
-                }
-                else
-                {
-                    counter = Math.Max(counter, i);
-                }
-
-                double x = ParseCoordinateValue(xString), lng = x;
-                double y = ParseCoordinateValue(yString), lat = y;
-
-                GeometricTransformer.Transform2D(
-                        ref lng, ref lat,
-                        sRef.Proj4, !sRef.IsProjective,
-                        sRef4326.Proj4, !sRef4326.IsProjective);
-
-                var point = new Point(lng, lat);
                 var feature = new WebMapping.Core.Feature()
                 {
                     Shape = point,
@@ -572,7 +633,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                         continue;
                     }
 
-                    var projectionResult = Project(projection, defaultProject, sRef, toSRef, x, y);
+                    var projectionResult = Project(projection, defaultProject, sRef, toSRef, point.X, point.Y);
                     defaultXString = projectionResult.defaultXString ?? defaultXString;
                     defaultYString = projectionResult.defaultYString ?? defaultYString;
 
@@ -588,7 +649,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                     tableData.Append(";");
                 }
 
-                tableData.Append($"{number};{lng};{lat}");
+                tableData.Append($"{number};{point.X};{point.Y}");
 
                 foreach (var heightResult in await new RasterQueryHelper().PerformHeightQueryAsync(bridge, point, $"{bridge.AppEtcPath}/coordinates/h.xml"))
                 {
@@ -769,7 +830,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
 
     #region Helper
 
-    class Projection
+    internal class Projection
     {
         public int Id { get; set; }
         public string DisplayName { get; set; }
@@ -829,118 +890,6 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
         }
 
         return projections.ToArray();
-    }
-
-    private double ParseCoordinateValue(string val)
-    {
-        try
-        {
-            val = val.Trim().Replace(",", ".");
-
-            #region Sonderzeichen für Grad, Minuten, Sekunden durch Leerzeichen ersetzen und doppelte Leererzeichen entfernen
-
-            foreach (var s in new string[] { "°", "\"", "'", "g", "´", "`" })
-            {
-                val = val.Replace(s, " ").Trim();
-            }
-
-            while (val.Contains("  "))
-            {
-                val = val.Replace("  ", " ");
-            }
-
-            int sign = 1;
-            if (val.Contains(":") || val.Split(':').Length == 2)
-            {
-                if (val.ToLower().StartsWith("w:") || val.ToLower().StartsWith("s:"))   // West/South -> negative Koordinaten
-                {
-                    sign = -1;
-                }
-                val = val.Split(':')[1].Trim();
-            }
-
-            #endregion
-
-            string[] v = val.Split(' ');
-
-            switch (v.Length)
-            {
-                case 1:
-                    return v[0].ToPlatformDouble() * sign;
-                case 2:
-                    return (v[0].ToPlatformDouble() + v[1].ToPlatformDouble() / 60D) * sign;
-                case 3:
-                    return (v[0].ToPlatformDouble() + v[1].ToPlatformDouble() / 60D + v[2].ToPlatformDouble() / 3600D) * sign;
-                default:
-                    throw new Exception("Koordinatenwert kann nicht ermittelt werden.");
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Fehler bei der Eingabe: " + val + "\n" + ex.Message);
-        }
-    }
-
-    private void RoundCoordiantes(Point coord, SpatialReference sRef)
-    {
-        if (sRef.IsProjective)
-        {
-            coord.X = Math.Round(coord.X, 2);
-            coord.Y = Math.Round(coord.Y, 2);
-        }
-        else
-        {
-            coord.X = Math.Round(coord.X, 7);
-            coord.Y = Math.Round(coord.Y, 7);
-        }
-    }
-
-    private string Deg2GMS(double deg, int digits)
-    {
-        int g = (int)Math.Floor(deg);
-        deg -= g;
-        int m = (int)Math.Floor(deg * 60);
-        deg -= m / 60.0;
-        double s = Math.Round(deg * 3600.0, 3);
-
-        if (s >= 60.0) { m++; s = 0.0; }
-        if (m == 60.0) { g++; m = 0; }
-
-        //int digits=getCoordDigits();
-        string digs = "";
-        if (digits > 0)
-        {
-            digs = ".";
-        }
-
-        for (int i = 0; i < digits; i++)
-        {
-            digs += "0";
-        }
-
-        return String.Format("{0}°{1:00}'{2:00" + digs + "}''", g, m, s);
-        //return g.ToString()+"°"+m.ToString()+"'"+s.ToString()+"''";
-    }
-    private string Deg2GM(double deg, int digits)
-    {
-        int g = (int)Math.Floor(deg);
-        deg -= g;
-        double m = deg * 60;
-        if (m >= 60.0) { g++; m = 0.0; }
-
-        //int digits=getCoordDigits();
-        string digs = "";
-        if (digits > 0)
-        {
-            digs = ".";
-        }
-
-        for (int i = 0; i < digits; i++)
-        {
-            digs += "0";
-        }
-
-        return String.Format("{0}°{1:00" + digs + "}'", g, m);
     }
 
     async private Task<ApiEventResponse> ClickEventResponse(IBridge bridge, ApiToolEventArguments e, ApiToolEventClick click, bool zoomToResult = false)
@@ -1033,7 +982,12 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
         return response;
     }
 
-    private (string xString, string yString, string defaultXString, string defaultYString) Project(Projection projection, string defaultProject, SpatialReference sRef, SpatialReference toSRef, double x, double y)
+    private (string xString, string yString, string defaultXString, string defaultYString) Project(
+                Projection projection,
+                string defaultProject,
+                SpatialReference sRef,
+                SpatialReference toSRef,
+                double x, double y)
     {
         GeometricTransformer.Transform2D(
                 ref x, ref y,
@@ -1043,22 +997,6 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
         string projectionId = projection.Id.ToString();
 
         string xString, yString, defaultXString = null, defaultYString = null;
-
-        if (projection.DisplayStyle == "utmref")
-        {
-            int digits = projection.Digits >= 1 ? projection.Digits : 5;
-            var utm = new UtmRef();
-            xString = utm.Encode(x, y, digits);
-            yString = string.Empty;                    
-
-            if ($"{projectionId}utmref" == defaultProject || projectionId == defaultProject)
-            {
-                defaultXString = xString;
-                defaultYString = yString;
-            }
-
-            return (xString, yString, defaultXString, defaultYString);
-        }
 
         if (toSRef.IsProjective)
         {
@@ -1076,35 +1014,37 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
             xString = (x > 0 ? "E: " : "W: ");
             yString = (y > 0 ? "N: " : "S: ");
 
-            switch (projection.DisplayStyle)
+            ((Action)(projection.DisplayStyle switch
             {
-                case "dm":
-                    xString += Deg2GM(Math.Abs(x), projection.Digits >= 0 ? projection.Digits : 2);
-                    yString += Deg2GM(Math.Abs(y), projection.Digits >= 0 ? projection.Digits : 2);
-                    if ($"{projectionId}dm" == defaultProject)
-                    {
-                        defaultXString = xString;
-                        defaultYString = yString;
-                    }
-                    break;
-                case "dms":
-                    xString += Deg2GMS(Math.Abs(x), projection.Digits >= 0 ? projection.Digits : 1);
-                    yString += Deg2GMS(Math.Abs(y), projection.Digits >= 0 ? projection.Digits : 1);
-                    if ($"{projectionId}dms" == defaultProject)
-                    {
-                        defaultXString = xString;
-                        defaultYString = yString;
-                    }
-                    break;
-                default:
+                "dm" => () =>
+                {
+                    xString += Math.Abs(x).Deg2GM(projection.Digits);
+                    yString += Math.Abs(y).Deg2GM(projection.Digits);
+                }
+                ,
+                "dms" => () =>
+                {
+                    xString += Math.Abs(x).Deg2GMS(projection.Digits);
+                    yString += Math.Abs(y).Deg2GMS(projection.Digits);
+                }
+                ,
+                string geoCoderName when geoCoderName.TryGetGeoCoderByName() is IGeoCoder geoCoder => () =>
+                {
+                    xString = geoCoder.Encode(x, y, projection.Digits);
+                    yString = string.Empty;
+                }
+                ,
+                _ => () =>
+                {
                     xString += Math.Round(Math.Abs(x), projection.Digits >= 0 ? projection.Digits : 2).ToString();
                     yString += Math.Round(Math.Abs(y), projection.Digits >= 0 ? projection.Digits : 2).ToString();
-                    if (projectionId == defaultProject)
-                    {
-                        defaultXString = xString;
-                        defaultYString = yString;
-                    }
-                    break;
+                }
+            }))();
+
+            if (projection.Identifier().Equals(defaultProject, StringComparison.OrdinalIgnoreCase))
+            {
+                defaultXString = xString;
+                defaultYString = yString;
             }
         }
 
@@ -1123,15 +1063,23 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
             {
                 projCombo.AddOption(new UISelect.Option()
                             .WithLabel(projection.DisplayName)
-                            .WithValue(projection.Id.ToString() + projection.DisplayStyle));
+                            .WithValue(projection.Identifier()));
             }
             else
             {
-                if (projCombo.HasOptionsWhere(o => o.value == projection.Id.ToString()) == false)
+                // append display style only for geocodes
+                // not for DM or DMS, etc
+                var (name, value) = projection.DisplayStyle switch
+                {
+                    string codecName when codecName.TryGetGeoCoderByName() is IGeoCoder geoCode
+                        => (geoCode.DisplayName, projection.Identifier()),
+                    _ => (projection.DisplayName, projection.Identifier(idOnly: true))
+                };
+                if (!projCombo.HasOptionsWhere(o => o.value == value))
                 {
                     projCombo.AddOption(new UISelect.Option()
-                                .WithLabel(projection.DisplayName)
-                                .WithValue(projection.Id.ToString()));
+                                .WithLabel(name)
+                                .WithValue(value));
                 }
             }
         }
@@ -1146,33 +1094,46 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                 IEnumerable<int> removeRows = null)
     {
         var defaultCrs = !String.IsNullOrWhiteSpace(e["coordinates-default-proj"]) ? e["coordinates-default-proj"] : (e.MapCrs.HasValue ? e.MapCrs.Value : 0).ToString();
+        var projection = Projections(bridge).FirstOrDefault(p => p.Identifier() == defaultCrs);
+        var geoCoder = projection.TryGetGeoCoderOrNull();
         var tableData = e[CoordinatesTableId];
 
-        List<IUIElement> header = new List<IUIElement>(new IUIElement[]
+        List<IUIElement> header = new List<IUIElement>(
+            geoCoder switch
             {
-                new UILiteral() { literal = "#" },
-                new UILiteral() { literal = localizer.Localize("easting") },
-                new UILiteral() { literal = localizer.Localize("northing") },
+                IGeoCoder => new UIElement[]
+                {
+                    new UILiteral() { literal = "#" },
+                    new UILiteral() { literal = geoCoder.DisplayName },
+                    new UILiteral() { literal = localizer.Localize("-") }  // dummy column 
+                },
+                _ => new IUIElement[]
+                {
+                    new UILiteral() { literal = "#" },
+                    new UILiteral() { literal = localizer.Localize("easting") },
+                    new UILiteral() { literal = localizer.Localize("northing") },
+                }
             });
 
         var heightColumns = new RasterQueryHelper().HeightNameNodes($"{bridge.AppEtcPath}/coordinates/h.xml");
         heightColumns.ToList().ForEach(c => header.Add(new UILiteral() { literal = c }));
 
         var table = new UITable(new UITableRow(header.ToArray(), isHeader: true))
-        {
-            InsertTypeValue = UITable.TableInsertType.Replace
-        }.WithId(CoordinatesTableId)
-         .WithStyles(UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.TableAlternateRowColor)
-         .WithParameterForServerCommands("download", "change-default-projection", "remove-feature", "inputcoordinates-dialog");
+            {
+                InsertTypeValue = UITable.TableInsertType.Replace
+            }
+            .WithId(CoordinatesTableId)
+            .WithStyles(UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.TableAlternateRowColor)
+            .WithParameterForServerCommands("download", "change-default-projection", "remove-feature", "inputcoordinates-dialog");
 
-        int colCount = header.Count();
+        // 3 (number;phi;lam) + heights
+        int colCount = 3 + heightColumns.Count();   //header.Count();
 
         if (!String.IsNullOrWhiteSpace(tableData))
         {
             var data = tableData.Split(';');
-            var projection = Projections(bridge).Where(p => $"{p.Id}{p.DisplayStyle}" == defaultCrs).FirstOrDefault();
 
-            if (data.Length % colCount == 0 && projection != null)
+            if (data.Length % colCount == 0 && projection is not null)
             {
                 var sRef = SRefStore.SpatialReferences.ById(4326);
                 var toSRef = SRefStore.SpatialReferences.ById(projection.Id);
@@ -1192,11 +1153,11 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                     var projectResult = Project(projection, defaultCrs, sRef, toSRef, worldX, worldY);
 
                     var cols = new List<IUIElement>(new UIElement[]
-                    {
-                        new UILiteral() { literal = number },
-                        new UILiteral() { literal = projectResult.xString },
-                        new UILiteral() { literal = projectResult.yString },
-                    });
+                            {
+                                new UILiteral() { literal = number },
+                                new UILiteral() { literal = projectResult.xString },
+                                new UILiteral() { literal = projectResult.yString },
+                            });
                     var values = new List<string>(new string[]{
                         number,
                         worldX.ToPlatformNumberString(),

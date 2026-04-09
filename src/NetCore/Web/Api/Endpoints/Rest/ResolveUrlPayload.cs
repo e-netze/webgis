@@ -1,4 +1,6 @@
-﻿using Api.Core.AppCode.Extensions;
+﻿#nullable enable
+
+using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Extensions.Endpoints;
 using Api.Core.AppCode.Services.Endpoints;
 using E.DataLinq.Web.Models.TokenCache;
@@ -19,11 +21,11 @@ public class ResolveUrlPayload : IApiEndpoint
     {
 #if DEBUG
         app.MapGet("rest/resolve-url-payload-debug",
-            async (IDataLinqCacheTokenService tokenService) =>
+            async ([FromServices] IDataLinqCacheTokenService? tokenService = null) =>
             {
                 return new
                 {
-                    token = await tokenService.CreateTokenAsync(new TokenCreateRequest()
+                    token = await tokenService!.CreateTokenAsync(new TokenCreateRequest()
                     {
                         DataLinqRoute = "endpoint1@query1@table1",
                         Payload = "x=1,2,3,4"
@@ -39,14 +41,15 @@ public class ResolveUrlPayload : IApiEndpoint
                 SecureEndpointHandlerService endpointHandler,
                 IUrlHelperService urlHelper,
                 ICryptoService crypto,
-                IDataLinqCacheTokenService tokenService
+                // this is optional, because DataLinq can be excluded from api.config
+                [FromServices] IDataLinqCacheTokenService? tokenService = null  // optional: set [FromServices] here because otherweise ASPNET.Core do not know its a Service...
             ) => endpointHandler.HandlerAsync(async (ui) =>
             {
                 var payloadUrl = crypto.DecryptTextDefault(payload);
 
                 var resultUrl = payloadUrl switch
                 {
-                    string url when urlHelper.IsLocalDataLinqReportUrl(url) => await DataLinqCacheTokenUrl(urlHelper, tokenService, payloadUrl),
+                    string url when urlHelper.IsLocalDataLinqReportUrl(url) => await DataLinqCacheTokenUrl(payloadUrl, urlHelper, tokenService),
                     _ => payloadUrl,
                 };
 
@@ -60,10 +63,13 @@ public class ResolveUrlPayload : IApiEndpoint
     }
 
     async private Task<string> DataLinqCacheTokenUrl(
+        string url,
         IUrlHelperService urlHelper,
-        IDataLinqCacheTokenService tokenService,
-        string url)
+        IDataLinqCacheTokenService? tokenService = null
+        )
     {
+        if (tokenService is null) return string.Empty;
+
         var dataLinqUrlParts = urlHelper.ToDataLinqUrlParts(url);
         var tokenResponse = await tokenService.CreateTokenAsync(
                     new TokenCreateRequest()

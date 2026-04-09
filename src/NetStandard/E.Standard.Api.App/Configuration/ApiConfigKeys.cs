@@ -35,7 +35,7 @@ public class ApiConfigKeys
     public const string StorageRootPath2 = ConfigurationSectionName + ":storage-rootpath2";
 
     public const string P4DefaultValue = ConfigurationSectionName + ":p4_default";
-    public const string AllowGeoCodesInput = ConfigurationSectionName + ":allow-geocodes";
+    public const string AllowedGeoCodesInput = ConfigurationSectionName + ":quick-search-allowed-geocodes";
 
     public const string ServerSideConfigurationPath = ConfigurationSectionName + ":server-side-configuration-path";
 
