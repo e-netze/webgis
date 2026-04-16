@@ -138,11 +138,11 @@ namespace E.Standard.GeoCoding.GeoCode.Tests
         [InlineData("31UDQ12345", "Invalid MGRS code: easting and northing must have equal precision")]
         [InlineData("31UDQ", "Invalid precision:")]
         [InlineData("31UDQ12345678901", "Invalid MGRS code:")]
-        public void Decode_InvalidInput_ReturnsExpectedErrorMessage(string geoCode, string expectedErrorSubstring)
+        public void Decode_InvalidInput_ReturnsExpectedErrorMessage(string? geoCode, string expectedErrorSubstring)
         {
             var utm = new UtmRef();
 
-            var result = utm.Decode(geoCode);
+            var result = utm.Decode(geoCode!);
 
             Assert.NotNull(result);
             Assert.NotNull(result.ErrorMessage);
@@ -203,11 +203,11 @@ namespace E.Standard.GeoCoding.GeoCode.Tests
         [InlineData("31UDQ12345")]
         [InlineData("31UDQ")]
         [InlineData("31UDQ12345678901")]
-        public void IsValidGeoCode_ShouldReturnFalse(string utmCode)
+        public void IsValidGeoCode_ShouldReturnFalse(string? utmCode)
         {
             var utm = new UtmRef();
 
-            var result = utm.IsValidGeoCode(utmCode);
+            var result = utm.IsValidGeoCode(utmCode!);
 
             Assert.False(result);
         }

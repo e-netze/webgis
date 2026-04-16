@@ -148,8 +148,8 @@ public class SecureEndpointHandlerService
     {
         _httpContextAccessor.HttpContext!.Response.Headers.TryAdd("Access-Control-Allow-Headers", "*");
         _httpContextAccessor.HttpContext!.Response.Headers.TryAdd("Access-Control-Allow-Origin",
-            (string)_httpContextAccessor.HttpContext!.Request?.Headers["Origin"] != null
-                ? (string)_httpContextAccessor.HttpContext!.Request.Headers["Origin"]
+            (string?)_httpContextAccessor.HttpContext!.Request?.Headers["Origin"] != null
+                ? (string)_httpContextAccessor.HttpContext!.Request.Headers["Origin"]!
                 : "*"
              );
         _httpContextAccessor.HttpContext!.Response.Headers.TryAdd("Access-Control-Allow-Credentials", "true");
