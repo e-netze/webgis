@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Formatting;
+
 using Xunit;
 
 namespace E.Standard.Extensions.Test.Formatting;

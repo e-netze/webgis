@@ -2,6 +2,7 @@
 using System.Text.Json;
 
 namespace E.Standard.Json.Extensions;
+
 static internal class JsonReaderExtensions
 {
     static public object? ExtractValue(this ref Utf8JsonReader reader, JsonSerializerOptions options)

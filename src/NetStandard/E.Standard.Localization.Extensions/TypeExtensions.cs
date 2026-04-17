@@ -1,8 +1,10 @@
-﻿using E.Standard.Localization.Reflection;
+﻿using System.Reflection;
+
+using E.Standard.Localization.Reflection;
 using E.Standard.WebMapping.Core.Api.Abstraction;
-using System.Reflection;
 
 namespace E.Standard.Localization.Extensions;
+
 static public class TypeExtensions
 {
     static public string GetLocalizationNamespace(this Type type)

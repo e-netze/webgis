@@ -1,6 +1,7 @@
-﻿using E.Standard.WebMapping.Core.Geometry;
-using System;
+﻿using System;
 using System.Text;
+
+using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.OracleWorkspace.Types;
 

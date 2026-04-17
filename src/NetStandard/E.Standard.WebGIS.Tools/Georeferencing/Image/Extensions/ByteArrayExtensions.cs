@@ -1,7 +1,9 @@
-﻿using E.Standard.WebGIS.Tools.Georeferencing.Image.Models;
+﻿using System.IO;
+
+using E.Standard.WebGIS.Tools.Georeferencing.Image.Models;
 using E.Standard.WebMapping.Core.Api.Bridge;
+
 using gView.GraphicsEngine;
-using System.IO;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image.Extensions;
 

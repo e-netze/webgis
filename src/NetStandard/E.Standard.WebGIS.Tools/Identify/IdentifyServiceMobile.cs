@@ -1,4 +1,10 @@
-﻿using E.Standard.DependencyInjection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.DependencyInjection;
 using E.Standard.Localization.Abstractions;
 using E.Standard.ThreadSafe;
 using E.Standard.WebGIS.Tools.Extensions;
@@ -15,12 +21,7 @@ using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.DirectoryServices.Protocols;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using static E.Standard.WebMapping.Core.CoreApiGlobals;
 
 namespace E.Standard.WebGIS.Tools.Identify;
@@ -120,7 +121,7 @@ internal class IdentifyServiceMobile
             e.ClearMenuItemValue();
 
             IApiTool button = (IApiTool)bridge.TryGetFriendApiButton(tool, toolId);
-            if(button?.GetType().Equals(tool.GetType()) == true)
+            if (button?.GetType().Equals(tool.GetType()) == true)
             {
                 // do not call yourself
                 return null;
@@ -152,7 +153,7 @@ internal class IdentifyServiceMobile
 
         #endregion
 
-        if (queries == null 
+        if (queries == null
             || (queries.Count() == 0 && !e.UseAllIdentifyTools(isMultiQuery, identifyOptions))
            )
         {
@@ -274,7 +275,7 @@ internal class IdentifyServiceMobile
                 foreach (var toolId in e["identify-map-tools"].Split(','))
                 {
                     var button = bridge.TryGetFriendApiButton(tool, toolId);
-                    if (button is IIdentifyTool 
+                    if (button is IIdentifyTool
                         && button.GetType().IsApiServerTool())
                     {
                         var canIdentifyResults = await ((IIdentifyTool)button).CanIdentifyAsync(bridge, new Point(click.Longitude, click.Latitude), mapScale, availableServiceIds, availableQueryIds);

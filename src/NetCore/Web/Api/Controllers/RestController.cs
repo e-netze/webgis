@@ -1,4 +1,15 @@
-﻿using Api.AppCode.Mvc.Wrapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Security.Authentication;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+
+using Api.AppCode.Mvc.Wrapper;
 using Api.Core.AppCode.Exceptions;
 using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Mvc;
@@ -6,7 +17,7 @@ using Api.Core.AppCode.Reflection;
 using Api.Core.AppCode.Services;
 using Api.Core.AppCode.Services.Authentication;
 using Api.Core.AppCode.Services.Rest;
-using E.DataLinq.Core.Models.AccessTree;
+
 using E.Standard.Api.App;
 using E.Standard.Api.App.Configuration;
 using E.Standard.Api.App.DTOs;
@@ -51,20 +62,11 @@ using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Security.Authentication;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace Api.Controllers;
 
@@ -280,7 +282,7 @@ public class RestController : ApiBaseController
                                         .Split(',')
                                         .Where(s => s == service.Key)
                                         .Count();
-                            if(countServiceIdsFromInputParameter <= countServiceWithSameId)
+                            if (countServiceIdsFromInputParameter <= countServiceWithSameId)
                             {
                                 // already added x times (e.g. collection service items, avoid recursive ...)
                                 continue;
@@ -1881,7 +1883,7 @@ public class RestController : ApiBaseController
             _apiLogging.LogReportException(rwe, ui);
             return await ThrowJsonException(rwe, logLevel: LogLevel.Warning);
         }
-        catch(InfoException iex)
+        catch (InfoException iex)
         {
             return await ThrowJsonException(iex, logLevel: LogLevel.Information);
         }
@@ -1891,7 +1893,7 @@ public class RestController : ApiBaseController
             {
                 ex = tie.InnerException ?? tie;
             }
-            _logger.LogError($"{ex.Message} User: {ui?.Username} ({String.Join(", ",ui?.Userroles ?? [])})");
+            _logger.LogError($"{ex.Message} User: {ui?.Username} ({String.Join(", ", ui?.Userroles ?? [])})");
 
             _mapServiceInitializer.LogException(_requestContext, ex, $"{CurrentControllerName}.{CurrentActionName}",
                 service: Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(this.Request));

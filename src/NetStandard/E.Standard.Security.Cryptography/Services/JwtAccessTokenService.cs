@@ -1,13 +1,16 @@
-﻿using E.Standard.Extensions.Text;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
+using E.Standard.Extensions.Text;
+
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+
 namespace E.Standard.Security.Cryptography.Services;
+
 public class JwtAccessTokenService
 {
     private const string DefaultIssuer = "webgis";

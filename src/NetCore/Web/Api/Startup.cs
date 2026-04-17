@@ -1,9 +1,16 @@
-﻿using Api.Core.AppCode.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Security.Authentication;
+
+using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Extensions.DependencyInjection;
 using Api.Core.AppCode.Middleware;
 using Api.Core.AppCode.Middleware.Authentication;
 using Api.Core.AppCode.Services;
 using Api.Core.AppCode.Services.Worker;
+
 using E.DataLinq.Web.Extensions.DependencyInjection;
 using E.Standard.Api.App;
 using E.Standard.Api.App.Configuration;
@@ -39,6 +46,7 @@ using E.Standard.WebApp.Options;
 using E.Standard.WebGIS.Core.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SDK.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SubscriberDatabase.Extensions.DependencyInjection;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -50,11 +58,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Authentication;
 
 namespace Api;
 

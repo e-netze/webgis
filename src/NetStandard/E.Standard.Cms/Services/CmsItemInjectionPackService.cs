@@ -2,6 +2,7 @@
 using E.Standard.Web.Abstractions;
 
 namespace E.Standard.Cms.Services;
+
 public class CmsItemInjectionPackService
 {
     private readonly CmsItemTransistantInjectionServicePack _servicePack;

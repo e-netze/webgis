@@ -1,6 +1,8 @@
-﻿using E.Standard.WebMapping.Core.Api.UI.Abstractions;
+﻿using System;
+
+using E.Standard.WebMapping.Core.Api.UI.Abstractions;
+
 using Newtonsoft.Json;
-using System;
 
 namespace E.Standard.WebMapping.Core.Api.UI.Elements;
 
@@ -17,5 +19,5 @@ public class UILabel : UIElement, IUIElementLabel
     [JsonProperty(PropertyName = "is_trusted", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("is_trusted")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-    public bool? IsTrusted { get; set; } = null;    
+    public bool? IsTrusted { get; set; } = null;
 }

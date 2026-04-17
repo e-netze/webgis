@@ -1,16 +1,18 @@
-﻿using E.Standard.OpenIdConnect.Extensions;
+﻿using System;
+using System.Linq;
+using System.Text;
+
+using E.Standard.OpenIdConnect.Extensions;
 using E.Standard.Security.App.Extensions;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Security.Cryptography.Services;
 using E.Standard.WebGIS.SubscriberDatabase;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System;
-using System.Linq;
-using System.Text;
 
 namespace Api.Core.Controllers;
 

@@ -1,3 +1,7 @@
+﻿using System;
+using System.Text;
+using System.Threading.Tasks;
+
 using E.Standard.OGC.Schema;
 using E.Standard.OGC.Schema.WMS_C_1_4_0;
 using E.Standard.Platform;
@@ -6,9 +10,6 @@ using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.Tiling;
-using System;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.WMSC;
 

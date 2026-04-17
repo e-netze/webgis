@@ -1,12 +1,14 @@
-﻿using E.Standard.Cms.Configuration.Models;
-using E.Standard.Cms.Configuration.Services;
-using E.Standard.CMS.Core;
-using E.Standard.Extensions.Security;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 
+using E.Standard.Cms.Configuration.Models;
+using E.Standard.Cms.Configuration.Services;
+using E.Standard.CMS.Core;
+using E.Standard.Extensions.Security;
+
 namespace E.Standard.Cms.Extensions;
+
 public static class StringExtensions
 {
     static public string CommandFileName(this string commandLine)

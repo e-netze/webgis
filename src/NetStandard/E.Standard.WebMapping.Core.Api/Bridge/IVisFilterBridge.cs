@@ -16,5 +16,5 @@ public interface IVisFilterBridge : IApiObjectBridge
 public interface IQueryBuilderFieldBridge : IApiObjectBridge
 {
     public string Name { get; }
-    public string Aliasname { get;  }
+    public string Aliasname { get; }
 }

@@ -1,6 +1,7 @@
-﻿using E.Standard.WebMapping.Core.Api.UI;
+﻿using System.Collections.Generic;
+
+using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Geometry;
-using System.Collections.Generic;
 
 namespace E.Standard.WebMapping.Core.Api.EventResponse.Models;
 

@@ -1,10 +1,11 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.Reflection;
-using System;
 
 namespace E.Standard.WebGIS.Tools.Serialization;
 

@@ -1,4 +1,12 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.GeoCoding.Extensions;
 using E.Standard.GeoCoding.GeoCode;
 using E.Standard.GeoJson.Extensions;
@@ -24,14 +32,7 @@ using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
-using Microsoft.AspNetCore.Routing.Matching;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+
 using static E.Standard.WebMapping.Core.Api.ApiToolEventArguments;
 using static E.Standard.WebMapping.Core.CoreApiGlobals;
 
@@ -287,9 +288,9 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
         {
             var currentPoint = currentGeoCoder switch
             {
-                IGeoCoder coder when coder.IsValidGeoCode(e["coordinates-input-code-value"]) 
+                IGeoCoder coder when coder.IsValidGeoCode(e["coordinates-input-code-value"])
                     => coder.Decode(e["coordinates-input-code-value"]).ToPoint(),
-                _   => new Point(
+                _ => new Point(
                             e["coordinates-input-x-value"].ParseCoordinateValue(),
                             e["coordinates-input-y-value"].ParseCoordinateValue()
                         )
@@ -297,7 +298,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
 
             using var transformer = new GeometricTransformerPro(currentSrs, newSrs);
             transformer.Transform(currentPoint);
-            
+
             var point = currentPoint.RoundCoordiantes(newSrs);
 
             return new ApiEventResponse()
@@ -308,7 +309,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                                             {
                                                 Longitude = currentPoint.X,
                                                 Latitude = currentPoint.Y
-                                            },projection.Digits) ?? ""))
+                                            }, projection.Digits) ?? ""))
                 .AddUISetter(new UISetter("coordinates-input-current-srs", projection.Identifier()))
                 .AddUISetter(new UISetter("coordinates-input-validation-error", ""))
                 .AddUISetter(new UICssSetter(UICssSetter.SetterType.AddClass, "coordinates-input-validation-error", "webgis-display-none"))
@@ -338,7 +339,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                 IGeoCoder coder when coder.IsValidGeoCode(e["coordinates-input-code-value"])
                     => coder.Decode(e["coordinates-input-code-value"]).ToTuple(),
                 IGeoCoder => throw new InfoException("Invalid code"),
-                _   => (
+                _ => (
                         e["coordinates-input-x-value"].ParseCoordinateValue(),
                         e["coordinates-input-y-value"].ParseCoordinateValue()
                       )
@@ -1119,9 +1120,9 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
         heightColumns.ToList().ForEach(c => header.Add(new UILiteral() { literal = c }));
 
         var table = new UITable(new UITableRow(header.ToArray(), isHeader: true))
-            {
-                InsertTypeValue = UITable.TableInsertType.Replace
-            }
+        {
+            InsertTypeValue = UITable.TableInsertType.Replace
+        }
             .WithId(CoordinatesTableId)
             .WithStyles(UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.TableAlternateRowColor)
             .WithParameterForServerCommands("download", "change-default-projection", "remove-feature", "inputcoordinates-dialog");

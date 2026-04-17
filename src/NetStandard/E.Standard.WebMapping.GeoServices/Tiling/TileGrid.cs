@@ -1,7 +1,8 @@
+ï»¿using System;
+using System.Collections.Generic;
+
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
 
 namespace E.Standard.WebMapping.GeoServices.Tiling;
 
@@ -196,7 +197,7 @@ public class TileGrid
             }
         }
 
-        // Wenn Maßstab nicht exakt getroffen wurde, muss bei Readability der nächst größere genommen werden!
+        // Wenn MaÃŸstab nicht exakt getroffen wurde, muss bei Readability der nÃ¤chst grÃ¶ÃŸere genommen werden!
         if (_rendering == TileGridRendering.Readability && onScale == false && l > 0)
         {
             l = Math.Max(l - 1, 0);

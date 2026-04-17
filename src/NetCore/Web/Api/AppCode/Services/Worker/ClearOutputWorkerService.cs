@@ -1,7 +1,8 @@
-﻿using E.Standard.Custom.Core.Abstractions;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+
+using E.Standard.Custom.Core.Abstractions;
 
 namespace Api.Core.AppCode.Services.Worker;
 

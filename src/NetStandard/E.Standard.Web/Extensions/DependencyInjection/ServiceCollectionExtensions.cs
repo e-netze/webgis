@@ -1,7 +1,9 @@
-﻿using E.Standard.Web.Abstractions;
+﻿using System;
+
+using E.Standard.Web.Abstractions;
 using E.Standard.Web.Services;
+
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace E.Standard.Web.Extensions.DependencyInjection;
 

@@ -1,8 +1,6 @@
 ﻿#nullable enable
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace E.Standard.Api.App.Endpoints.Metadata;
 

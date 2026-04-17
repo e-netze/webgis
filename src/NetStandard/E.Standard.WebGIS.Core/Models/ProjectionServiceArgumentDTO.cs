@@ -1,6 +1,8 @@
-﻿using E.Standard.WebMapping.Core.Geometry;
+﻿using System.Collections.Generic;
+
+using E.Standard.WebMapping.Core.Geometry;
+
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace E.Standard.WebGIS.Core.Models;
 

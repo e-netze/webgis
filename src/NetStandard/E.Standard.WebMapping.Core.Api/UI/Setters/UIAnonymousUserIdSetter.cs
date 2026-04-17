@@ -1,5 +1,6 @@
-﻿using E.Standard.WebMapping.Core.Api.Bridge;
-using System;
+﻿using System;
+
+using E.Standard.WebMapping.Core.Api.Bridge;
 
 namespace E.Standard.WebMapping.Core.Api.UI.Setters;
 

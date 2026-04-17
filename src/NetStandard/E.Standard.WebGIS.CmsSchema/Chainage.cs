@@ -1,12 +1,13 @@
-﻿using E.Standard.CMS.Core.IO.Abstractions;
+﻿using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
+
+using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.CmsSchema.UI;
-using System;
-using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.CmsSchema;
 
@@ -41,7 +42,7 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
         get { return _expression; }
         set { _expression = value; }
     }
-    
+
     [Browsable(true)]
     [DisplayName("Punkt-Linien Beziehung (SQL)")]
     [Category("~Verknüfung mit Punkt-Linienthema")]
@@ -63,7 +64,7 @@ public class Chainage : NameUrl, ICreatable, IUI, IDisplayName, IEditable, IPers
     [DisplayName("Service URL")]
     [Category("~Oder Abfrage-Service-API")]
     [Description("Hier kann eine URL zu einem Service angegeben werden, der die Stationierung berechnet. Wird hier kein Wert angegeben, wird die Stationierung aus den Punkt- und Linienthemen berechnet. Folgende Patzhalter sind möglich: {x}, {y} ... x,y in WGS84, {x:espgCode}, {y:epsgCode} ... x,y konvertiert nach EPSG-Code, {mapscale} ... current map scale")]
-    public string ServiceUrl { get; set; } = String.Empty; 
+    public string ServiceUrl { get; set; } = String.Empty;
 
     [Browsable(true)]
     [Category("Berechnung")]

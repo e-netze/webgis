@@ -1,4 +1,11 @@
-﻿using E.Standard.CMS.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.CMS.Core;
 using E.Standard.Extensions.Compare;
 using E.Standard.OGC.Schema;
 using E.Standard.OGC.Schema.wms;
@@ -19,13 +26,8 @@ using E.Standard.WebMapping.Core.Proxy;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using E.Standard.WebMapping.GeoServices.OGC.Extensions;
+
 using gView.GraphicsEngine;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.WMS;
 
@@ -1072,7 +1074,7 @@ public class WmsService : IMapService2,
                         .AppendSldVersion(_sldVersion);
 
                     string url = AppendToUrl(
-                        _onlineResourceGetLegendGraphic, 
+                        _onlineResourceGetLegendGraphic,
                         reqArgs.ToString());
                     try
                     {
@@ -1097,7 +1099,7 @@ public class WmsService : IMapService2,
                         {
                             using (var lImage = Current.Engine.CreateBitmap(fileBytes))
                             {
-                                if(lImage?.EngineElement == null)
+                                if (lImage?.EngineElement == null)
                                 {
                                     throw new System.Exception("Response is not an image");
                                 }
@@ -1120,8 +1122,8 @@ public class WmsService : IMapService2,
                                 imageData.Add(layer.Name, fileBytes.ToArray());
                                 layerLabels.Add(layer.Name, layerLabel);
                             }
-                        } 
-                        catch(System.Exception ex)
+                        }
+                        catch (System.Exception ex)
                         {
                             requestContext
                                 .GetRequiredService<IExceptionLogger>()
@@ -1181,8 +1183,8 @@ public class WmsService : IMapService2,
                                  // WMS sucks sometimes...
                                  //
                                 (lImage.Width <= lImage.Height * 2) ||  // Problem bei Kunden: hier wird der Text immer schon in der Legendgraphic angedruckt -> wenn Bild eine gewisse Breite hat, kein Text schreiben 
-                                (lImage.Width <=40)  // Problem bei anderem Kunden: Images (für Raster) sind oft nur 5 Pixel hoch -> trotzdem beschreiften, auch wenn erstes Kriterium greift
-                               )  
+                                (lImage.Width <= 40)  // Problem bei anderem Kunden: Images (für Raster) sind oft nur 5 Pixel hoch -> trotzdem beschreiften, auch wenn erstes Kriterium greift
+                               )
                             {
                                 canvas.DrawText(label, font, blackBrush, new CanvasPointF(40f, y + 3f), stringFormat);
                             }

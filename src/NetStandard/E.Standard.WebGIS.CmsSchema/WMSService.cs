@@ -1,4 +1,10 @@
-﻿using E.Standard.CMS.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
@@ -14,11 +20,6 @@ using E.Standard.Web.Models;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.CmsSchema.UI;
 using E.Standard.WebMapping.Core.Proxy;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.CmsSchema;
 
@@ -139,7 +140,7 @@ public class WMSService : CopyableNode, IAuthentification, IClientCertification,
         _certificate = (string)stream.Load("cert", String.Empty);
         _certificatePwd = CmsCryptoHelper.Decrypt((string)stream.Load("certpwd", String.Empty), "WmsServiceCertificatePassword").Replace(stream.StringReplace);
         _featureCount = (int)stream.Load("featurecount", 30);
-        
+
         this.SLDVersion = (SLD_Version)stream.Load("sld_version", (int)SLD_Version.unused);
         this.LayerOrder = (WMS_LayerOrder)stream.Load("layerorder", (int)WMS_LayerOrder.Up);
         this.Vendor = (WMS_Vendor)stream.Load("vendor", (int)WMS_Vendor.Unknown);

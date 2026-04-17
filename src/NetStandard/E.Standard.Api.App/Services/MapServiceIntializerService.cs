@@ -1,4 +1,10 @@
-﻿using E.Standard.Api.App.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services.Cms;
 using E.Standard.Caching.Abstraction;
 using E.Standard.CMS.Core;
@@ -10,16 +16,11 @@ using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebGIS.Api.Abstractions;
 using E.Standard.WebGIS.CMS;
+using E.Standard.WebGIS.Core.Extensions;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.GeoServices;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Threading.Tasks;
-using E.Standard.WebGIS.Core.Extensions;
 
 namespace E.Standard.Api.App.Services;
 
@@ -449,7 +450,7 @@ public class MapServiceInitializerService
             {
                 serviceMetadataInfo.MetadataLink = serviceLink.LoadString("metadata");
                 serviceMetadataInfo.CopyrightInfoId = serviceLink.LoadString("copyright");
-                
+
                 if (!String.IsNullOrWhiteSpace(((IMapServiceMetadataInfo)service).CopyrightInfoId) && !String.IsNullOrWhiteSpace(cmsName) && cmsName != "cms")
                 {
                     serviceMetadataInfo.CopyrightInfoId += $"@{cmsName}";

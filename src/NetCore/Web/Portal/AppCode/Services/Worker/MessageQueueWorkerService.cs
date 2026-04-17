@@ -1,7 +1,8 @@
-﻿using E.Standard.Custom.Core.Abstractions;
-using E.Standard.MessageQueues.Services.Abstraction;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+
+using E.Standard.Custom.Core.Abstractions;
+using E.Standard.MessageQueues.Services.Abstraction;
 
 namespace Portal.Core.AppCode.Services.Worker;
 

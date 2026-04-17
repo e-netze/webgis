@@ -12,30 +12,30 @@ static public class Extensions
             return path;
         }
 
-        return SystemInfo.IsWindows 
-            ? 
+        return SystemInfo.IsWindows
+            ?
             (
-                path.Contains("/") 
+                path.Contains("/")
                     ? path.ReplaceFolderSeparator("/", @"\")
                     : path
             )
-            : 
+            :
             (
-                  path.Contains("\\") 
+                  path.Contains("\\")
                     ? path.ReplaceFolderSeparator(@"\", "/")
                     : path
             );
     }
 
     static public void CheckIfFileInDirectory(
-        this FileInfo fileInfo, 
+        this FileInfo fileInfo,
         DirectoryInfo directoryInfo)
     {
         var fileDirectory = fileInfo.Directory;
 
         if (fileDirectory == null ||
-            !fileDirectory.FullName.Equals(directoryInfo.FullName, 
-                SystemInfo.IsWindows ? 
+            !fileDirectory.FullName.Equals(directoryInfo.FullName,
+                SystemInfo.IsWindows ?
                     System.StringComparison.OrdinalIgnoreCase :
                     System.StringComparison.Ordinal))
         {

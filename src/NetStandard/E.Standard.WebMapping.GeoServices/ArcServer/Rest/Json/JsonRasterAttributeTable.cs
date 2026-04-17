@@ -1,4 +1,5 @@
-using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.Features;
+﻿using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.Features;
+
 using Newtonsoft.Json;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;

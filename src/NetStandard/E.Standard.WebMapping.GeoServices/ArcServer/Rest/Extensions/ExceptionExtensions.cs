@@ -1,6 +1,7 @@
-﻿using E.Standard.Web.Exceptions;
+﻿using System.Net;
+
+using E.Standard.Web.Exceptions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Exceptions;
-using System.Net;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 

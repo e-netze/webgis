@@ -1,4 +1,10 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Extensions.Text;
 using E.Standard.Platform;
 using E.Standard.Web.Extensions;
@@ -8,12 +14,8 @@ using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.Core.ServiceResponses;
+
 using gView.GraphicsEngine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.Core;
 
@@ -1241,7 +1243,7 @@ public class Map : Display, IMap
 
         clone.DiagnosticsWaringLevel = this.DiagnosticsWaringLevel;
 
-        if(_graphicsContainer?.Any() == true)
+        if (_graphicsContainer?.Any() == true)
         {
             clone._graphicsContainer.AddRange(_graphicsContainer);
         }

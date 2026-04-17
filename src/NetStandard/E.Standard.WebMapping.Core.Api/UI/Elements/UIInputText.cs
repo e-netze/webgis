@@ -1,4 +1,5 @@
-using E.Standard.WebMapping.Core.Api.UI.Abstractions;
+﻿using E.Standard.WebMapping.Core.Api.UI.Abstractions;
+
 using Newtonsoft.Json;
 
 namespace E.Standard.WebMapping.Core.Api.UI.Elements;

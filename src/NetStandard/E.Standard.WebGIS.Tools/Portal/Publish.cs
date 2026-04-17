@@ -1,4 +1,10 @@
-﻿using E.Standard.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Json;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebMapping.Core.Api;
@@ -10,12 +16,8 @@ using E.Standard.WebMapping.Core.Api.IO;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Portal;
 

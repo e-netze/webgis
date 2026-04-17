@@ -1,7 +1,9 @@
-﻿using E.Standard.Azure.Services.Parser;
+﻿using System;
+
+using E.Standard.Azure.Services.Parser;
 using E.Standard.Security.App.Services.Abstraction;
+
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace E.Standard.Azure.Extensions.DependencyInjection;
 

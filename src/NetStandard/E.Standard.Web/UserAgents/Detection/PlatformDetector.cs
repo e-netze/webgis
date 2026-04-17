@@ -1,7 +1,8 @@
 ﻿namespace E.Standard.Web.UserAgents.Detection;
 
-using E.Standard.Web.UserAgents.Constants;
 using System;
+
+using E.Standard.Web.UserAgents.Constants;
 
 /// <summary>
 /// A helper to detect the platform.

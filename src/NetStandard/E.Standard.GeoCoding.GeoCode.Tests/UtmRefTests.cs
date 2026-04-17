@@ -1,8 +1,4 @@
-﻿using E.Standard.GeoCoding.GeoCode;
-using System.Text;
-using Xunit;
-
-namespace E.Standard.GeoCoding.GeoCode.Tests
+﻿namespace E.Standard.GeoCoding.GeoCode.Tests
 {
     public class UtmRefTests
     {

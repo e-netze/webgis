@@ -1,8 +1,9 @@
-﻿using E.Standard.Platform;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
+using E.Standard.Platform;
 
 namespace E.Standard.Json.Converters;
 
@@ -68,7 +69,7 @@ public class StringArrayConverter : JsonConverter<string?[]>
                 writer.WriteStringValue(value);
             }
         }
-        
+
         writer.WriteEndArray();
     }
 }

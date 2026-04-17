@@ -4,18 +4,12 @@ namespace E.Standard.Platform;
 
 public class WebGISVersion
 {
-    private static Version _version = new Version(8, 26, 1502);
+    private static Version _version = new Version(8, 26, 1503);
     private static string _versionString = _version.ToString();
 
     public static Version Version => _version;
 
-    public static string JsVersion
-    {
-        get => _versionString;
-    }
-
-    public static string CssVersion
-    {
-        get => _versionString;
-    }
+    public static string JsVersion => _versionString;
+    
+    public static string CssVersion => _versionString;
 }

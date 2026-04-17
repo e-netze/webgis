@@ -1,3 +1,7 @@
+ï»¿using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
+
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
@@ -6,9 +10,6 @@ using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.CmsSchema.TypeEditor;
 using E.Standard.WebGIS.CmsSchema.UI;
 using E.Standard.WebMapping.Core;
-using System;
-using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.CmsSchema;
 
@@ -51,7 +52,7 @@ public class MapGeneral : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
         get { return _esriDatum; }
         set { _esriDatum = value; }
     }
-    [DisplayName("Name des Browserfensters (für Hotlinks)")]
+    [DisplayName("Name des Browserfensters (fÃ¼r Hotlinks)")]
     [Category("Browserfenster")]
     public string BrowserWindowName
     {
@@ -59,7 +60,7 @@ public class MapGeneral : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
         set { _browserWindowName = value; }
     }
 
-    [DisplayName("Standardkarte für Rolle")]
+    [DisplayName("Standardkarte fÃ¼r Rolle")]
     [Category("UserManagement")]
     public string DefaultForRole
     {
@@ -67,7 +68,7 @@ public class MapGeneral : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
         set { _defaultForRole = value; }
     }
 
-    [DisplayName("Standardkarte für Benutzer")]
+    [DisplayName("Standardkarte fÃ¼r Benutzer")]
     [Category("UserManagement")]
     public string DefaultForUser
     {
@@ -119,7 +120,7 @@ public class MapGeneral : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
     }
 
     [DisplayName("Basemap Transparenz Klassen")]
-    [Description("Gibt Transparenzwerte an, die der Anwender über das Basemap Control auswählen kann")]
+    [Description("Gibt Transparenzwerte an, die der Anwender Ã¼ber das Basemap Control auswÃ¤hlen kann")]
     [Category("Darstellung")]
     public int[] BasemapOpacityClasses
     {

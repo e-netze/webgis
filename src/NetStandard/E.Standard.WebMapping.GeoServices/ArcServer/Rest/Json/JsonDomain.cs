@@ -1,4 +1,5 @@
-using E.Standard.Json.Converters;
+﻿using E.Standard.Json.Converters;
+
 using Newtonsoft.Json;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;

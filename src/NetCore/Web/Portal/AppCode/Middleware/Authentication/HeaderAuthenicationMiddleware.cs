@@ -1,10 +1,13 @@
-﻿using E.Standard.Security.App.Json;
+﻿using System.Threading.Tasks;
+
+using E.Standard.Security.App.Json;
 using E.Standard.WebGIS.Core.Services;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+
 using Portal.Core.AppCode.Extensions;
 using Portal.Core.AppCode.Services.Authentication;
-using System.Threading.Tasks;
 
 namespace Portal.Core.AppCode.Middleware.Authentication;
 

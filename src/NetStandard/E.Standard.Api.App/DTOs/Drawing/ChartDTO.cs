@@ -1,9 +1,11 @@
-using E.Standard.WebMapping.Core.Api.Drawing;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+
+using E.Standard.WebMapping.Core.Api.Drawing;
+
+using Newtonsoft.Json;
 
 namespace E.Standard.Api.App.DTOs.Drawing;
 

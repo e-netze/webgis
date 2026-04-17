@@ -1,4 +1,11 @@
-﻿using E.Standard.CMS.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+using E.Standard.CMS.Core;
 using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Platform;
@@ -17,13 +24,8 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools;
 

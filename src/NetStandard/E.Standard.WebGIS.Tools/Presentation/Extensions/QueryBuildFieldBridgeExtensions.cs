@@ -1,13 +1,14 @@
 ﻿#nullable enable
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 using E.Standard.Extensions.Compare;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace E.Standard.WebGIS.Tools.Presentation.Extensions;
 
@@ -27,7 +28,7 @@ internal static class QueryBuildFieldBridgeExtensions
         foreach (var allowedField in allowedFields)
         {
             var candidate = layerFields.FirstOrDefault(f => allowedField.Name.Equals(f.Name, StringComparison.OrdinalIgnoreCase));
-            
+
             if (candidate != null)
             {
                 result.Add(new Field(

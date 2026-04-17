@@ -1,4 +1,8 @@
-﻿using E.Standard.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Security.Cryptography.Extensions;
 using E.Standard.WebGIS.Core.Reflection;
@@ -12,10 +16,8 @@ using E.Standard.WebMapping.Core.Api.IO;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
+
 using Net.Codecrete.QrCodeGenerator;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace E.Standard.WebGIS.Tools.Serialization;
 

@@ -1,12 +1,14 @@
-﻿using E.Standard.Security.Core.Jwt.Exceptions;
-using Microsoft.IdentityModel.Protocols;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
-using System;
+﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
+
+using E.Standard.Security.Core.Jwt.Exceptions;
+
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 
 namespace E.Standard.Security.Core.Jwt.Extensions;
 

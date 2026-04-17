@@ -1,9 +1,11 @@
-﻿using E.Standard.GeoJson;
-using E.Standard.Platform;
-using gView.GraphicsEngine;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using E.Standard.GeoJson;
+using E.Standard.Platform;
+
+using gView.GraphicsEngine;
 
 namespace E.Standard.WebGIS.Tools.Extensions;
 

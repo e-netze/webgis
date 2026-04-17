@@ -1,4 +1,13 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Extensions.Credentials;
 using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
@@ -11,15 +20,8 @@ using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
+
 using Net.Codecrete.QrCodeGenerator;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace E.Standard.WebGIS.Tools.Serialization;
 

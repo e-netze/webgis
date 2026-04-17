@@ -1,14 +1,15 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 
 namespace E.Standard.WebGIS.Tools.Editing.Extensions;

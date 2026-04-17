@@ -1,8 +1,9 @@
 ﻿namespace E.Standard.Web.UserAgents.Browsers;
 
+using System;
+
 using E.Standard.Web.UserAgents.Constants;
 using E.Standard.Web.UserAgents.Detection;
-using System;
 
 internal abstract class Browser : IBrowser
 {

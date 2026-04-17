@@ -1,9 +1,10 @@
-﻿using E.Standard.Json;
-using E.Standard.Security.Cryptography.Abstractions;
-using E.Standard.Security.Cryptography.Token.Models;
-using System;
+﻿using System;
 using System.Security.Cryptography;
 using System.Text;
+
+using E.Standard.Json;
+using E.Standard.Security.Cryptography.Abstractions;
+using E.Standard.Security.Cryptography.Token.Models;
 
 namespace E.Standard.Security.Cryptography.Token;
 

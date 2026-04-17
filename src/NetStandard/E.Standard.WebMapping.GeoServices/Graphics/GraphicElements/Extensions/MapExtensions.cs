@@ -1,8 +1,8 @@
-﻿using E.Standard.Extensions.IO;
+﻿using System.IO;
+
+using E.Standard.Extensions.IO;
 using E.Standard.WebGIS.CMS;
-using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
-using System.IO;
 
 namespace E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 
@@ -31,7 +31,7 @@ static public class MapExtensions
 
             return $"{outputPath.TrimEnd('/')}/{filename}";
         }
-        
+
         return Path.Combine(outputPath, filename);
     }
 

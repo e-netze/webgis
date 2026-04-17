@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Primitives;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
+
+using Microsoft.Extensions.Primitives;
 
 namespace E.Standard.Platform;
 

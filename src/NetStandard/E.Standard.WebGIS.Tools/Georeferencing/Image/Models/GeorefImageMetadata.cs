@@ -1,6 +1,8 @@
+﻿using System.Collections.Generic;
+
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Extensions;
+
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image.Models;
 

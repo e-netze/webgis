@@ -1,4 +1,11 @@
-﻿using E.Standard.Drawing.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.Drawing.Models;
 using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
@@ -7,7 +14,6 @@ using E.Standard.ThreadSafe;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebGIS.Tools.Identify.Extensions;
-using E.Standard.WebGIS.Tools.MapMarkup.Export;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -21,13 +27,7 @@ using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Reflection;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+
 using static E.Standard.WebMapping.Core.CoreApiGlobals;
 
 namespace E.Standard.WebGIS.Tools.Identify;
@@ -841,7 +841,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
     [ServerToolCommand("download_attachment")]
     async public Task<ApiEventResponse> OnDownloadAttachment(IBridge bridge, ApiToolEventArguments e, ILocalizer<IdentifyDefault> localizer)
     {
-        var attachentInfo = JSerializer.Deserialize<AttachentInfo>( bridge.SecurityDecryptString(e.ServerCommandArgument));
+        var attachentInfo = JSerializer.Deserialize<AttachentInfo>(bridge.SecurityDecryptString(e.ServerCommandArgument));
         var attachmentData = await bridge.GetFeatureAttachmentData(attachentInfo.ServiceId, attachentInfo.Uri);
 
         return new ApiRawDownloadEventResponse(attachentInfo.Name, attachmentData) { ContentType = attachentInfo.Type };

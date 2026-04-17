@@ -1,4 +1,10 @@
-﻿using E.Standard.ArcXml;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.ArcXml;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
@@ -9,11 +15,6 @@ using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.Extensions.Text;
 using E.Standard.WebGIS.CmsSchema.Legacy;
 using E.Standard.WebGIS.CmsSchema.UI;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.CmsSchema;
 

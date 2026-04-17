@@ -1,11 +1,11 @@
-﻿using E.Standard.WebGIS.Tools.Export.Exeption;
+﻿using System;
+using System.Linq;
+
+using E.Standard.WebGIS.Tools.Export.Exeption;
 using E.Standard.WebGIS.Tools.Export.Extensions;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Geometry.Extensions;
-using MathNet.Numerics;
-using System;
-using System.Linq;
 
 namespace E.Standard.WebGIS.Tools.Export.Calc;
 
@@ -30,8 +30,8 @@ internal class SeriesCreator
         double overlappingPercent)
     {
         if (pageWidth <= 0) throw new ArgumentException(nameof(pageWidth));
-        if(pageHeight <= 0) throw new ArgumentException(nameof(pageHeight));
-        if(overlappingPercent < 0 || overlappingPercent > 100) throw new ArgumentException(nameof(overlappingPercent));
+        if (pageHeight <= 0) throw new ArgumentException(nameof(pageHeight));
+        if (overlappingPercent < 0 || overlappingPercent > 100) throw new ArgumentException(nameof(overlappingPercent));
 
         _features = features;
         _pageWidth = pageWidth;
@@ -120,7 +120,7 @@ internal class SeriesCreator
                     var lineSeries = SeriesAlongPolyline(singlePathPolyline, _pageWidth * (100 - 2D * _overlappingPercent) / 100D, maxIterations);
                     series.AddPoints(lineSeries.ToArray());
 
-                    if(maxIterations > 0 && series.PointCount >= maxIterations)
+                    if (maxIterations > 0 && series.PointCount >= maxIterations)
                     {
                         throw new MapSeriesPrintToManyPagesExeption(series.PointCount);
                     }
@@ -167,7 +167,7 @@ internal class SeriesCreator
             throw new ArgumentOutOfRangeException(nameof(spacing));
         }
 
-        if(polyline.PathCount > 1)
+        if (polyline.PathCount > 1)
         {
             throw new ArgumentException("Only single part polylines allowed");
         }

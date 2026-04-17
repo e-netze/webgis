@@ -1,11 +1,13 @@
 ﻿#nullable enable
 
-using E.Standard.Security.Cryptography.Abstractions;
-using E.Standard.WebMapping.Core.Api.EventResponse.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+
+using E.Standard.Security.Cryptography.Abstractions;
+using E.Standard.WebMapping.Core.Api.EventResponse.Models;
+
 using static E.Standard.WebMapping.Core.Api.EventResponse.Models.VisFilterDefinitionDTO;
 
 namespace E.Standard.WebMapping.Core.Api.Extensions;
@@ -78,8 +80,8 @@ static public class VisFilterDefinitionDTOExtensions
 
     static public bool IsTocVisFilter(this VisFilterDefinitionDTO? dto, string serviceId = "")
     {
-        if(dto?.Arguments?.Length != 1 
-            || dto.Arguments[0].Name != "sql" 
+        if (dto?.Arguments?.Length != 1
+            || dto.Arguments[0].Name != "sql"
             || String.IsNullOrEmpty(dto.Arguments[0].Value))
         {
             return false;
@@ -102,7 +104,7 @@ static public class VisFilterDefinitionDTOExtensions
 
     static public string? TocVisFilterLayerId(this VisFilterDefinitionDTO? dto)
     {
-        if(!dto.IsTocVisFilter())
+        if (!dto.IsTocVisFilter())
         {
             throw new InvalidOperationException("Not a TOC vis filter");
         }

@@ -1,4 +1,8 @@
-﻿using E.Standard.Configuration.Services;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
+
+using E.Standard.Configuration.Services;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Models;
 using E.Standard.WebGIS.Api.Abstractions;
@@ -6,9 +10,6 @@ using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Proxy;
 using E.Standard.WebMapping.GeoServices.Tiling;
-using System;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.WMTS;
 

@@ -1,8 +1,9 @@
-﻿using E.Standard.GeoCoding.GeoCode;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+
+using E.Standard.GeoCoding.GeoCode;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace E.Standard.GeoCoding.Extensions.DependencyInjection;
 
@@ -12,7 +13,7 @@ static public class ServiceCollectionExtensions
     {
         public IServiceCollection AddGeoCoders(string[] names)
         {
-            foreach(var geoCoder in GeoCodingGeneralExtensions.AllGeoCoders())
+            foreach (var geoCoder in GeoCodingGeneralExtensions.AllGeoCoders())
             {
                 if (names.Contains("*") || names.Contains(geoCoder.Name, StringComparer.OrdinalIgnoreCase))
                 {

@@ -1,5 +1,6 @@
-﻿using E.Standard.WebMapping.Core.Geometry;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebMapping.Core;
 

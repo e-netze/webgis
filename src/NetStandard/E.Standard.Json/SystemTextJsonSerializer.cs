@@ -1,6 +1,4 @@
-﻿using E.Standard.Json.Abstractions;
-using E.Standard.Json.Converters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -8,7 +6,11 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using E.Standard.Json.Abstractions;
+using E.Standard.Json.Converters;
+
 namespace E.Standard.Json;
+
 internal class SystemTextJsonSerializer : IJSerializer
 {
     internal static JsonSerializerOptions DefaultSerializerOptions =
@@ -110,7 +112,7 @@ internal class SystemTextJsonSerializer : IJSerializer
                             ? propertyElement // throw new ArgumentException($"Unsuppoerted JSON Element ValueKind in GetJsonElementValue: {propertyElement.ValueKind}")
                             : propertyElement
                     };
-                } 
+                }
                 else
                 {
                     result = null;
@@ -126,12 +128,12 @@ internal class SystemTextJsonSerializer : IJSerializer
                 if (dict.ContainsKey(propertyNameParts[i]))
                 {
                     result = ((IDictionary<string, object>)element)[propertyNameParts[i]];
-                } 
+                }
                 else
                 {
                     result = null;
                 }
-                
+
                 if (i < propertyNameParts.Length - 1)
                 {
                     element = result!;
@@ -139,7 +141,7 @@ internal class SystemTextJsonSerializer : IJSerializer
             }
             else if (element is not JsonElement /*&& element?.GetType().GetProperty(propertyNameParts[i]) != null*/)
             {
-                if(element?.GetType().GetProperty(propertyNameParts[i]) != null)
+                if (element?.GetType().GetProperty(propertyNameParts[i]) != null)
                 {
                     result = element?.GetType().GetProperty(propertyNameParts[i]);
                 }

@@ -1,9 +1,11 @@
+Ôªøusing System;
+using System.Collections.Generic;
+
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
+
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
-using System;
-using System.Collections.Generic;
 
 namespace E.Standard.WebMapping.GeoServices.Graphics.Renderer;
 
@@ -53,7 +55,7 @@ internal class DisplayOperations
                 //
                 // Auf 0.1 Pixel runden, sonst kann es bei fast
                 // horizontalen (vertikalen) Linien zu Fehlern kommen
-                // -> Eine h‰lfte (beim Bruch) wird nicht mehr gezeichnet
+                // -> Eine h√§lfte (beim Bruch) wird nicht mehr gezeichnet
                 //
                 x = Math.Round(x, 1);
                 y = Math.Round(y, 1);
@@ -124,7 +126,7 @@ internal class DisplayOperations
                 //
                 // Auf 0.1 Pixel runden, sonst kann es bei fast
                 // horizontalen (vertikalen) Linien zu Fehlern kommen
-                // -> Eine h‰lfte (beim Bruch) wird nicht mehr gezeichnet
+                // -> Eine h√§lfte (beim Bruch) wird nicht mehr gezeichnet
                 //
                 x = Math.Round(x, 1);
                 y = Math.Round(y, 1);

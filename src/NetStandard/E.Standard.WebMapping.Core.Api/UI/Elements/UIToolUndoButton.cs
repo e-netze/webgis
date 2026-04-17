@@ -1,5 +1,6 @@
-﻿using E.Standard.WebMapping.Core.Extensions;
-using System;
+﻿using System;
+
+using E.Standard.WebMapping.Core.Extensions;
 
 namespace E.Standard.WebMapping.Core.Api.UI.Elements;
 

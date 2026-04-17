@@ -1,13 +1,14 @@
-﻿using E.Standard.Platform;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Xml;
+
+using E.Standard.Platform;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.Tiling;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 

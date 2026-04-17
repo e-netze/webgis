@@ -1,12 +1,15 @@
-﻿using E.Standard.Configuration.Services;
+﻿using System;
+using System.IO;
+
+using E.Standard.Configuration.Services;
 using E.Standard.Platform;
 using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
+
 using Microsoft.AspNetCore.Http;
+
 using Portal.Core.AppCode.Configuration;
 using Portal.Core.AppCode.Extensions;
-using System;
-using System.IO;
 
 namespace Portal.Core.AppCode.Services;
 

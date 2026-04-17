@@ -1,10 +1,11 @@
-using E.Standard.CMS.Core.IO.Abstractions;
-using E.Standard.CMS.Core.Schema;
-using E.Standard.CMS.Core.Schema.Abstraction;
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+
+using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.CMS.Core.Schema;
+using E.Standard.CMS.Core.Schema.Abstraction;
 
 namespace E.Standard.WebGIS.CmsSchema;
 
@@ -18,8 +19,8 @@ public class MapConfig : SchemaNode, IEditable
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Vordefinierte Maﬂst‰be")]
-    [Category("Maﬂstab")]
+    [DisplayName("Vordefinierte Ma√üst√§be")]
+    [Category("Ma√üstab")]
     public int[] Scales
     {
         get
@@ -54,8 +55,8 @@ public class MapConfig : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Vordefinierte Maﬂst‰be als Maﬂstabsgrenzen verwenden")]
-    [Category("Maﬂstab")]
+    [DisplayName("Vordefinierte Ma√üst√§be als Ma√üstabsgrenzen verwenden")]
+    [Category("Ma√üstab")]
     public bool UseScaleConstraints
     {
         get { return _useScaleConstraints; }
@@ -63,8 +64,8 @@ public class MapConfig : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Vordefinierte Referenzmaﬂst‰be")]
-    [Category("Referenzmaﬂstab")]
+    [DisplayName("Vordefinierte Referenzma√üst√§be")]
+    [Category("Referenzma√üstab")]
     public int[] RefScales
     {
         get
@@ -99,8 +100,8 @@ public class MapConfig : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Referenzmaﬂstab beim Aufruf")]
-    [Category("Referenzmaﬂstab")]
+    [DisplayName("Referenzma√üstab beim Aufruf")]
+    [Category("Referenzma√üstab")]
     public int RefScale
     {
         get { return _refScale; }

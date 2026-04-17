@@ -1,4 +1,14 @@
-﻿using E.Standard.ArcXml;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Xml;
+
+using E.Standard.ArcXml;
 using E.Standard.ArcXml.Extensions;
 using E.Standard.Extensions.Text;
 using E.Standard.Platform;
@@ -14,16 +24,8 @@ using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
+
 using gView.GraphicsEngine;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace E.Standard.WebMapping.GeoServices.AXL;
 

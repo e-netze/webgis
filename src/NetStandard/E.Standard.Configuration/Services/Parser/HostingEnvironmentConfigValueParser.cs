@@ -1,7 +1,9 @@
-﻿using E.Standard.Security.App.Services.Abstraction;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Text.RegularExpressions;
+
+using E.Standard.Security.App.Services.Abstraction;
+
+using Microsoft.Extensions.Configuration;
 
 namespace E.Standard.Configuration.Services.Parser;
 

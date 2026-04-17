@@ -1,6 +1,7 @@
-﻿using E.Standard.Security.Core.Excetions;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
+
+using E.Standard.Security.Core.Excetions;
 
 namespace E.Standard.Security.App;
 

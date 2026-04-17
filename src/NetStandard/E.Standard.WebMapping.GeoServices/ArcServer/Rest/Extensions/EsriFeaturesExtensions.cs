@@ -1,11 +1,13 @@
 ﻿#nullable enable
 
-using E.Standard.WebMapping.Core.Geometry;
-using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.FeatureServer;
 using System;
 using System.Linq;
 
+using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.FeatureServer;
+
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
+
 static internal class EsriFeaturesExtensions
 {
     static public Shape? AsAggregatedShape(this EsriFeatures esriFeatures, int srsId, bool hasZ, bool hasM)

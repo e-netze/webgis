@@ -1,10 +1,11 @@
-﻿using E.Standard.WebMapping.Core.Reflection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+
+using E.Standard.WebMapping.Core.Reflection;
 
 namespace E.Standard.WebMapping.Core.Extensions;
 

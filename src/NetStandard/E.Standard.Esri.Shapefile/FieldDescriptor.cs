@@ -1,5 +1,6 @@
-﻿using E.Standard.WebMapping.Core.Abstraction;
-using System.IO;
+﻿using System.IO;
+
+using E.Standard.WebMapping.Core.Abstraction;
 
 namespace E.Standard.Esri.Shapefile;
 

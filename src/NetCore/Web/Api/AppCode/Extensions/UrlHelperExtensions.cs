@@ -22,7 +22,7 @@ static internal class UrlHelperExtensions
                     ? url.Substring(url.IndexOf("?") + 1)
                     : "";
 
-            return (datalinqUrl,  route, payloay);
+            return (datalinqUrl, route, payloay);
         }
     }
 }

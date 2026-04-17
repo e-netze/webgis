@@ -1,5 +1,7 @@
-﻿using E.Standard.Extensions.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using E.Standard.Extensions.Collections;
+
 using Xunit;
 
 namespace E.Standard.Extensions.Test.Collections;

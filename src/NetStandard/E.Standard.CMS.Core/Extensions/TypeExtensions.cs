@@ -1,5 +1,6 @@
-﻿using E.Standard.CMS.Core.Exceptions;
-using System;
+﻿using System;
+
+using E.Standard.CMS.Core.Exceptions;
 
 namespace E.Standard.CMS.Core.Extensions;
 

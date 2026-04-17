@@ -1,4 +1,9 @@
-﻿using E.Standard.WebGIS.Tools.Editing.Environment;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebGIS.Tools.Extensions;
@@ -10,10 +15,6 @@ using E.Standard.WebMapping.Core.Api.EventResponse.Models;
 using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Geometry.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing.Services;
 

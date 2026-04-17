@@ -1,7 +1,8 @@
 ﻿#nullable enable
 
-using E.Standard.WebMapping.Core.Geometry;
 using System.Linq;
+
+using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebMapping.Core.Extensions;
 

@@ -1,4 +1,6 @@
-﻿using E.Standard.Localization.Abstractions;
+﻿using System;
+
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Tools.Export.Models;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -9,12 +11,6 @@ using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Export.Extensions;
 
@@ -40,8 +36,8 @@ static internal class PrintSeriesModelExtensions
         e[MapSeriesPrint.MapSeriesPrintQualityId] = model.Quality.ToString();
 
         var response = tool.OnSelectionChanged(bridge, e);
-        
-        if (sketch.CountPoints()> e.GetMaxMapSeriesPages())
+
+        if (sketch.CountPoints() > e.GetMaxMapSeriesPages())
         {
             response.ErrorMessage = response.ErrorMessage = String.Format(localizer.Localize(
                 "io.exception-too-many-pages:body"),
@@ -67,5 +63,5 @@ static internal class PrintSeriesModelExtensions
         return response;
     }
 
-   
+
 }

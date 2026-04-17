@@ -1,8 +1,9 @@
-﻿using E.Standard.Platform;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+
+using E.Standard.Platform;
 
 namespace E.Standard.GeoCoding.GeoCode;
 

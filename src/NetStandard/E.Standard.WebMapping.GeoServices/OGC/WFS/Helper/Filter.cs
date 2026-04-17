@@ -1,13 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Xml;
+
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Miscellaneous;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Xml;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.WFS.Helper;
 

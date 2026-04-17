@@ -1,7 +1,8 @@
-﻿using gView.GraphicsEngine;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
+
+using gView.GraphicsEngine;
 
 namespace E.Standard.Security.Captcha;
 

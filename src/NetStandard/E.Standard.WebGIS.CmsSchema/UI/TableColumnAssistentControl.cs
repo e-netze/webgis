@@ -1,4 +1,10 @@
-﻿using E.Standard.ArcXml;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.ArcXml;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.Schema;
@@ -7,11 +13,6 @@ using E.Standard.CMS.UI.Controls;
 using E.Standard.Web.Models;
 using E.Standard.WebGIS.CmsSchema.Extensions;
 using E.Standard.WebGIS.CmsSchema.Legacy;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.CmsSchema.UI;
 
@@ -158,7 +159,7 @@ public class TableColumnAssistentControl : UserControl
                             }
                         }
                     }
-                    if(obj is ArcServerService agsService)
+                    if (obj is ArcServerService agsService)
                     {
                         fields.AddRange((await agsService.GetAllLayerFields()).Select(f => (f.Name, f.Name)));  // only the name here, ignore the aliases
                     }

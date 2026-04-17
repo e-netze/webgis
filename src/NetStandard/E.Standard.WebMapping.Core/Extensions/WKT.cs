@@ -1,8 +1,9 @@
-using E.Standard.Platform;
-using E.Standard.WebMapping.Core.Geometry;
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using E.Standard.Platform;
+using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebMapping.Core.Extensions;
 
@@ -256,12 +257,12 @@ static public class WKTExtensions
         else if (wkt.StartsWith("MULTIPOINT(", StringComparison.OrdinalIgnoreCase))
         {
             var multiPoint = ReadMultiPoint(pathStrings[0]);
-            for(int i = 1; i < pathStrings.Count; i++)
+            for (int i = 1; i < pathStrings.Count; i++)
             {
                 var additionalMultiPoint = ReadMultiPoint(pathStrings[i]);
                 if (additionalMultiPoint != null)
                 {
-                    foreach(var pt in additionalMultiPoint.ToArray())
+                    foreach (var pt in additionalMultiPoint.ToArray())
                     {
                         multiPoint.AddPoint(pt);
                     }
@@ -385,7 +386,7 @@ static public class WKTExtensions
 
             if (openParenthesesCount < 0)
             {
-                return false; // Schließende Klammer ohne passende öffnende Klammer
+                return false; // SchlieÃŸende Klammer ohne passende Ã¶ffnende Klammer
             }
         }
 

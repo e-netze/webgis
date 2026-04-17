@@ -1,7 +1,9 @@
-﻿using E.Standard.Security.App.KeyVault;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using E.Standard.Security.App.KeyVault;
+
+using Microsoft.Extensions.Configuration;
 
 namespace E.Standard.Security.App;
 

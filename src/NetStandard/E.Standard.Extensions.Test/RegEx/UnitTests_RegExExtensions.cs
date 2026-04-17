@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.RegEx;
+
 using Xunit;
 
 namespace E.Standard.Extensions.Test.RegEx;

@@ -1,9 +1,11 @@
-﻿using E.Standard.WebMapping.Core.Abstraction;
-using E.Standard.WebMapping.Core.Logging.Abstraction;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
+using E.Standard.WebMapping.Core.Abstraction;
+using E.Standard.WebMapping.Core.Logging.Abstraction;
+
 namespace E.Standard.WebMapping.GeoServices.Extensions;
+
 static internal class RequestContextExtensions
 {
     async static public Task<string> LogRequest(

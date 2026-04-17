@@ -1,13 +1,15 @@
-﻿using E.Standard.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+using E.Standard.Json;
 using E.Standard.Security.App.Exceptions;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.App.Services.Abstraction;
 using E.Standard.Security.Cryptography.Abstractions;
+
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace E.Standard.Security.App.Services;
 

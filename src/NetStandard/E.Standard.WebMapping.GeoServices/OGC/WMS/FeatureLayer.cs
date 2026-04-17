@@ -1,3 +1,10 @@
+Ôªøusing System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using System.Xml;
+
 using E.Standard.Extensions.Compare;
 using E.Standard.GeoJson;
 using E.Standard.GeoJson.Extensions;
@@ -11,12 +18,6 @@ using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-using System.Xml;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.WMS;
 
@@ -162,7 +163,7 @@ class OgcWmsLayer : Layer, ILayer2
                 //        break;
                 //}
 
-                // Achenrichtung hier nicht ber¸cksichtigen! Wurde mit Kagis Wasser Profile Dienst getestet und funktioniert!!
+                // Achenrichtung hier nicht ber√ºcksichtigen! Wurde mit Kagis Wasser Profile Dienst getestet und funktioniert!!
                 req.Append("&X=" + (int)imagePoint.X);
                 req.Append("&Y=" + (int)imagePoint.Y);
                 // some services required (i,j) (intergraph)
@@ -428,7 +429,7 @@ class OgcWmsLayer : Layer, ILayer2
 
                             string srsName;
 
-                            #region Features auslesen // Geoland (hier muss im CMS application/vnd.ogc.gml->features angegeben werden... ->features h‰ndisch!!)
+                            #region Features auslesen // Geoland (hier muss im CMS application/vnd.ogc.gml->features angegeben werden... ->features h√§ndisch!!)
 
                             if (service.GetFeatureInfoTarget.ToLower() == "features")
                             {

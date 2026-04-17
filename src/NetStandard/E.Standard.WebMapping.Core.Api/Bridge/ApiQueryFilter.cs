@@ -1,8 +1,9 @@
-﻿using E.Standard.Platform;
-using E.Standard.WebMapping.Core.Geometry;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+
+using E.Standard.Platform;
+using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebMapping.Core.Api.Bridge;
 

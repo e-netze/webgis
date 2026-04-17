@@ -1,5 +1,8 @@
-﻿using E.Standard.Web.Extensions;
-using E.Standard.WebGIS.CMS;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+
+using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Extensions;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Models;
 using E.Standard.WebMapping.Core;
@@ -10,10 +13,8 @@ using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
+
 using gView.GraphicsEngine;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image;
 

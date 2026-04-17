@@ -1,5 +1,6 @@
-﻿using E.DataLinq.Web.Services.Abstraction;
-using System;
+﻿using System;
+
+using E.DataLinq.Web.Services.Abstraction;
 
 namespace Api.Core.AppCode.Services.DataLinq;
 

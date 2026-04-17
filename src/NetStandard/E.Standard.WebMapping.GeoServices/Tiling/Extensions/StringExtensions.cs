@@ -33,7 +33,7 @@ static internal partial class StringExtensions
         }
 
         // Same with Regex (works with every pattern)
-        public  (int Value, string Pattern) MatrixSetIdentifierToIntWithPattern()
+        public (int Value, string Pattern) MatrixSetIdentifierToIntWithPattern()
         {
             // Validate input
             if (string.IsNullOrWhiteSpace(input))
@@ -89,8 +89,8 @@ static internal partial class StringExtensions
                 stringArray[i] = stringArray[i]
                     .Replace("{Style}", style, StringComparison.OrdinalIgnoreCase)
                     .Replace("{TileMatrixSet}", tileMatrixSet, StringComparison.OrdinalIgnoreCase)
-                    .Replace("{TileMatrix}", 
-                        String.Format(tileMatrixPattern, "[LEVEL]"), 
+                    .Replace("{TileMatrix}",
+                        String.Format(tileMatrixPattern, "[LEVEL]"),
                         StringComparison.OrdinalIgnoreCase)
                     .Replace("{TileRow}", "[ROW]", StringComparison.OrdinalIgnoreCase)
                     .Replace("{TileCol}", "[COL]", StringComparison.OrdinalIgnoreCase);

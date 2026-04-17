@@ -1,4 +1,9 @@
-﻿using E.Standard.Extensions.Collections;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Collections;
 using E.Standard.Extensions.Compare;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.Core.Reflection;
@@ -17,11 +22,8 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.GeoServices.Graphics.Extensions;
+
 using gView.GraphicsEngine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 

@@ -11,8 +11,8 @@ public class ApiEndpointReclectionMetadata : IApiEndpointReflectionMetadata
 
     public void Add(Attribute attribute)
     {
-        _attributes = _attributes == null 
-            ? new[] { attribute } 
+        _attributes = _attributes == null
+            ? new[] { attribute }
             : _attributes.Append(attribute).ToArray();
     }
 

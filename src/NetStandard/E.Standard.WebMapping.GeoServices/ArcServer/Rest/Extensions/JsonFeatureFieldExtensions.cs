@@ -1,8 +1,9 @@
 ﻿#nullable enable
 
+using System;
+
 using E.Standard.Platform;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
-using System;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 

@@ -1,6 +1,8 @@
+﻿using System.Collections.Generic;
+
 using E.Standard.Json.Converters;
+
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace E.Standard.Api.App.DTOs;
 

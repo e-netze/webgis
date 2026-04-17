@@ -1,9 +1,11 @@
-﻿using E.Standard.Caching.Abstraction;
+﻿using System;
+
+using E.Standard.Caching.Abstraction;
 using E.Standard.Caching.FileSystem;
 using E.Standard.Caching.InApp;
 using E.Standard.Caching.Services;
+
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace E.Standard.Caching.Extensions.DependencyInjection;
 

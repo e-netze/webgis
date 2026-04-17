@@ -1,4 +1,9 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.GeoJson;
 using E.Standard.GeoJson.Extensions;
 using E.Standard.Json;
@@ -20,10 +25,6 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.MapMarkup;
 
@@ -46,7 +47,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     private const string ConfigSaveDialogNameMaxLength = "save-name-maxlength";
 
     private const string SaveDialogValidationMessage = "save-dilaog-validation-message";
-    
+
     private readonly string[] MobileTools = new string[] { "pointer", "symbol", "freehand", "line", "polygon", "dimline", "share", "save", "open", "upload", "download" };
     private readonly string[] AdvancedTools = new string[] { "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline" };  // Do not use with Internet Explorer
 

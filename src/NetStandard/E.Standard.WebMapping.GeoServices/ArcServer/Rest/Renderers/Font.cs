@@ -1,4 +1,5 @@
-using E.Standard.WebMapping.Core.Renderer;
+﻿using E.Standard.WebMapping.Core.Renderer;
+
 using Newtonsoft.Json;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Renderers;

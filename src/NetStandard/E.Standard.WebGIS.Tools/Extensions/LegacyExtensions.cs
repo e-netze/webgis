@@ -1,4 +1,5 @@
 ﻿namespace E.Standard.WebGIS.Tools.Extensions;
+
 static internal class LegacyExtensions
 {
     static public string ReplaceLegacyMapJsonItems(this string mapJson)

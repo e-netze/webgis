@@ -1,8 +1,10 @@
-﻿using E.Standard.Platform;
+﻿using System.Globalization;
+
+using E.Standard.Platform;
 using E.Standard.WebApp.Abstraction;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using System.Globalization;
 
 namespace E.Standard.WebApp.Endpoints;
 

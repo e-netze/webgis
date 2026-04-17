@@ -1,13 +1,16 @@
 ﻿// build.cs
+using System;
+using System.IO;
+using System.IO.Compression;
+
 using E.Standard.Platform;
+
 using Nuke.Common;
 using Nuke.Common.IO;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
+
 using Serilog;
-using System;
-using System.IO;
-using System.IO.Compression;
 
 class Build : NukeBuild
 {

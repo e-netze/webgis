@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace E.Standard.Json.Abstractions;
+
 internal interface IJSerializer
 {
     string Serialize<TValue>(TValue value, bool pretty = false);

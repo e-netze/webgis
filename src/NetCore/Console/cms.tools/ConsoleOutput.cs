@@ -2,6 +2,7 @@
 using E.Standard.CMS.Core.IO;
 
 namespace cms.tools;
+
 internal class ConsoleOutput : IConsoleOutputStream
 {
     private readonly List<ConsoleStreamFileResult> _resultFiles = new();

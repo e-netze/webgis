@@ -1,8 +1,10 @@
-﻿using E.Standard.Security.App.Services.Abstraction;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection;
+
+using E.Standard.Security.App.Services.Abstraction;
+
+using Newtonsoft.Json;
 
 namespace E.Standard.Configuration;
 

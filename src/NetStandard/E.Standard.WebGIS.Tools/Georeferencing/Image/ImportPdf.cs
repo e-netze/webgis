@@ -1,10 +1,11 @@
-﻿using E.Standard.Plot;
+﻿using System.Collections.Generic;
+using System.IO;
+
+using E.Standard.Plot;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Abstraction;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Models;
+
 using gView.GraphicsEngine;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image;
 
@@ -42,7 +43,7 @@ class ImportPdf : IImportImage
                     }
                 }
             }
-            catch(System.Exception)
+            catch (System.Exception)
             {
                 //File.WriteAllBytes(@$"c:\temp\error_image_{Guid.NewGuid().ToString()}.jpg", imageData);
             }

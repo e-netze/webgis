@@ -1,5 +1,7 @@
-﻿using E.Standard.Extensions.Xml;
-using System.Text;
+﻿using System.Text;
+
+using E.Standard.Extensions.Xml;
+
 using Xunit;
 
 namespace E.Standard.Extensions.Test.Xml;

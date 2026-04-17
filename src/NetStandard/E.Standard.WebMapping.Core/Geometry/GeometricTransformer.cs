@@ -1,7 +1,8 @@
-using Proj4Net.Core;
-using System;
+﻿using System;
 using System.Data;
 using System.Linq;
+
+using Proj4Net.Core;
 
 namespace E.Standard.WebMapping.Core.Geometry;
 
@@ -165,7 +166,7 @@ public sealed class GeometricTransformer : IGeometricTransformer
     private CoordinateReferenceSystem[] ProjectionPipeline(CoordinateReferenceSystem from, CoordinateReferenceSystem to)
     {
         //
-        //  Proj4net ber�cksichtigt nadgrids=@null nicht, wodurch bei Koordinatensystem mit diesem Parametern ein Fehler im Hochwert entsteht!
+        //  Proj4net berücksichtigt nadgrids=@null nicht, wodurch bei Koordinatensystem mit diesem Parametern ein Fehler im Hochwert entsteht!
         //  Workaround: Zuerst nach WGS84 projezieren und dann weiter...
         //
         //  Kontrolle:

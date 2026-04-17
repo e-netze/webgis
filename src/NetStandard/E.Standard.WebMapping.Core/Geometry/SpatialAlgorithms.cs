@@ -1,11 +1,12 @@
-﻿using E.Standard.WebMapping.Core.Abstraction;
-using E.Standard.WebMapping.Core.Extensions;
-using E.Standard.WebMapping.Core.Geometry.Clipper;
-using E.Standard.WebMapping.Core.Geometry.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+
+using E.Standard.WebMapping.Core.Abstraction;
+using E.Standard.WebMapping.Core.Extensions;
+using E.Standard.WebMapping.Core.Geometry.Clipper;
+using E.Standard.WebMapping.Core.Geometry.Extensions;
 
 namespace E.Standard.WebMapping.Core.Geometry;
 

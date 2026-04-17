@@ -142,7 +142,7 @@ static public class StringExtensions
         return str;
     }
 
-    public static string RemoveStartingSlash(this string str) 
+    public static string RemoveStartingSlash(this string str)
         => str.RemoveStarting('/');
 
 
@@ -177,7 +177,7 @@ static public class StringExtensions
 
     public static string ConcatWithSlash(this string str1, string str2)
         => str1.ConcatWith(str2, '/');
-    
+
     public static string AddUriPath(this string str1, string str2)
     {
         if (String.IsNullOrEmpty(str1)) return str2?.RemoveStartingSlashAndBackslash();

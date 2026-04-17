@@ -1,10 +1,12 @@
-﻿using E.Standard.CMS.Core;
-using E.Standard.WebMapping.Core.Api.Abstraction;
-using E.Standard.WebMapping.Core.Api.Reflection;
-using System;
+﻿using System;
 using System.Reflection;
 
+using E.Standard.CMS.Core;
+using E.Standard.WebMapping.Core.Api.Abstraction;
+using E.Standard.WebMapping.Core.Api.Reflection;
+
 namespace E.Standard.WebMapping.Core.Api.Extensions;
+
 static public class ApiButtonExtensions
 {
     public static T CheckToolPolicy<T>(this T button, CmsDocument.UserIdentification ui)

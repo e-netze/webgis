@@ -1,4 +1,7 @@
-﻿using E.Standard.CMS.Core;
+﻿using System;
+using System.Collections.Specialized;
+
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
 using E.Standard.Extensions.ErrorHandling;
@@ -9,8 +12,6 @@ using E.Standard.OGC.Schema.wms_1_3_0;
 using E.Standard.Web.Models;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core.Proxy;
-using System;
-using System.Collections.Specialized;
 
 namespace E.Standard.WebGIS.CmsSchema.UI;
 

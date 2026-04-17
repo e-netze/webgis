@@ -1,7 +1,8 @@
 ﻿namespace E.Standard.Web.UserAgents.Browsers;
 
-using E.Standard.Web.UserAgents.Constants;
 using System;
+
+using E.Standard.Web.UserAgents.Constants;
 
 /// <summary>
 /// A type representing the FireFox browser instance.

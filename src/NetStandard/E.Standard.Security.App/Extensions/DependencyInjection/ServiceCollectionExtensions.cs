@@ -1,7 +1,9 @@
-﻿using E.Standard.Security.App.Services;
+﻿using System;
+
+using E.Standard.Security.App.Services;
 using E.Standard.Security.App.Services.Abstraction;
+
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace E.Standard.Security.App.Extensions.DependencyInjection;
 

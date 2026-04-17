@@ -1,21 +1,24 @@
-﻿using E.Standard.Configuration.Services;
+﻿using System.Collections.Generic;
+using System.Security.Principal;
+using System.Threading.Tasks;
+
+using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Security.App.Extensions;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
+
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using Portal.Core.AppCode;
 using Portal.Core.AppCode.Extensions;
 using Portal.Core.AppCode.Mvc;
 using Portal.Core.AppCode.Reflection;
 using Portal.Core.AppCode.Services;
 using Portal.Core.AppCode.Services.Authentication;
-using System.Collections.Generic;
-using System.Security.Principal;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Core.Reflection.Authentication;
 
@@ -50,7 +53,7 @@ public class HMACController : PortalBaseController
     }
 
     [AuthorizeEndpoint]
-    async public Task<IActionResult> Index(string redirect = null,string pwd = null)
+    async public Task<IActionResult> Index(string redirect = null, string pwd = null)
     {
         PortalUser portalUser = null;
 

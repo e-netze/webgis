@@ -1,9 +1,9 @@
-﻿using E.Standard.Extensions.Compare;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+
+using E.Standard.Extensions.Compare;
 
 namespace E.Standard.Extensions.Security;
 

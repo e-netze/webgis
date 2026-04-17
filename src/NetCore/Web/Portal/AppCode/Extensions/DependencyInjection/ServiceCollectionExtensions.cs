@@ -1,24 +1,25 @@
-﻿using E.Standard.Configuration.Extensions;
+﻿using System;
+using System.Threading.Tasks;
+
+using E.Standard.Configuration.Extensions;
 using E.Standard.Configuration.Extensions.DependencyInjection;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Extensions.Compare;
 using E.Standard.Security.App.Extensions;
 using E.Standard.Security.App.Json;
-using E.Standard.ThreadSafe;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Identity.Client;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+
 using Portal.Core.AppCode.Services;
 using Portal.Core.AppCode.Services.Authentication;
 using Portal.Core.AppCode.Services.WebgisApi;
-using System;
-using System.Threading.Tasks;
 
 namespace Portal.Core.AppCode.Extensions.DependencyInjection;
 
@@ -196,7 +197,7 @@ static public class ServiceCollectionExtensions
         services.AddTransient<ICustomPortalAuthenticationMiddlewareService, DebugCustomAuthenticationMiddlewareService>();
 #endif
 
-#endregion
+        #endregion
 
         #region Cors
 

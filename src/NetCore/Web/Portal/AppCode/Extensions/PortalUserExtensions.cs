@@ -1,14 +1,15 @@
 ﻿#nullable enable
 
-using E.Standard.Custom.Core.Models;
-using E.Standard.Json;
-using E.Standard.OpenIdConnect.Extensions;
-using E.Standard.Security.App.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
+
+using E.Standard.Custom.Core.Models;
+using E.Standard.Json;
+using E.Standard.OpenIdConnect.Extensions;
+using E.Standard.Security.App.Json;
 
 namespace Portal.Core.AppCode.Extensions;
 

@@ -18,7 +18,7 @@ public class WebGISApiClient
         var response = await _httpClient.GetAsync($"{endpoint}");
         response.EnsureSuccessStatusCode();
 
-        if(typeof(T) == typeof(string))
+        if (typeof(T) == typeof(string))
         {
             var str = await response.Content.ReadAsStringAsync();
             return str as T;

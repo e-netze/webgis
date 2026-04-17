@@ -1,6 +1,7 @@
 ﻿using E.Standard.WebMapping.Core.Abstraction;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
+
 static internal class MapExtensions
 {
     static public (int imageWidth, int imageHeight, double dpi, bool modified) CalcImageSizeAndDpi(this IMap map, int maxImageWidth, int maxImageHeight)

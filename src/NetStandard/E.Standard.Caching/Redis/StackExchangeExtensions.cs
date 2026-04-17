@@ -1,7 +1,9 @@
-﻿using E.Standard.Caching.Abstraction;
-using StackExchange.Redis;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using E.Standard.Caching.Abstraction;
+
+using StackExchange.Redis;
 
 namespace E.Standard.Caching.Redis;
 

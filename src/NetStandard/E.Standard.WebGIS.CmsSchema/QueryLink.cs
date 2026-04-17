@@ -1,9 +1,10 @@
+ï»¿using System;
+using System.ComponentModel;
+
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.WebGIS.CMS;
-using System;
-using System.ComponentModel;
 
 namespace E.Standard.WebGIS.CmsSchema;
 
@@ -34,7 +35,7 @@ public class QueryLink : SchemaNodeLink, IEditable
 
     [DisplayName("GeoJuhu Schema")]
     [Category("GeoJuhu")]
-    [Description("Hier können mehrere Schematas mit Beistrich getrennt eingeben werden. Der Wert wird nur berücksichtigt, wenn ein GeoJuhu Schema in der Aufruf-Url übergeben wird. * (Stern) kann angeben werden, wenn eine Thema in jedem Schema abgefragt werden soll.")]
+    [Description("Hier kÃ¶nnen mehrere Schematas mit Beistrich getrennt eingeben werden. Der Wert wird nur berÃ¼cksichtigt, wenn ein GeoJuhu Schema in der Aufruf-Url Ã¼bergeben wird. * (Stern) kann angeben werden, wenn eine Thema in jedem Schema abgefragt werden soll.")]
     public string GeoJuhuSchema
     {
         get { return _geoJuhuSchema; }

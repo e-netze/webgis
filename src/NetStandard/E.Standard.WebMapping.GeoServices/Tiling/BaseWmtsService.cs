@@ -1,4 +1,9 @@
-﻿using E.Standard.OGC.Schema;
+﻿using System;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.OGC.Schema;
 using E.Standard.OGC.Schema.wmts_1_0_0;
 using E.Standard.Platform;
 using E.Standard.WebGIS.CMS;
@@ -7,10 +12,6 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Tiling.Extensions;
-using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.Tiling;
 
@@ -144,7 +145,7 @@ public abstract class BaseWmtsService : TileService, IMapServiceDescription, ISe
 
                     // if SupportedCrs is not set in CMS
                     // use the supportedCRS from the matrixset, eg: <ows:SupportedCRS>urn:ogc:def:crs:EPSG::31256</ows:SupportedCRS>
-                    if (this.SupportedCrs?.Any() != true 
+                    if (this.SupportedCrs?.Any() != true
                         && !String.IsNullOrEmpty(matrixSet.SupportedCRS)
                         && int.TryParse(matrixSet.SupportedCRS.Split(":").Last(), out int supportedCrs))
                     {

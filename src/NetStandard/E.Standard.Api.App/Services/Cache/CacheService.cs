@@ -1,4 +1,11 @@
-﻿using E.Standard.Api.App.Data;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.Api.App.Data;
 using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services.Cms;
@@ -15,14 +22,9 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.Api.App.Services.Cache;
 
@@ -731,10 +733,10 @@ public class CacheService
         return cmsCacheItem._layerProperties[id].ToArray(); // ThreadSafe Copy
     }
 
-    public bool IsServiceQueryBuilderAllowed(string serviceUrl,CmsDocument.UserIdentification ui)
+    public bool IsServiceQueryBuilderAllowed(string serviceUrl, CmsDocument.UserIdentification ui)
     {
         var auth = GetBoolPropertyAuthorization($"{serviceUrl}::allow_querybuilder", ui);
-        if(auth == null)
+        if (auth == null)
         {
             return false;
         }
@@ -1037,7 +1039,7 @@ public class CacheService
         {
             var service = await this.GetOriginalService(serviceUrl, ui, urlHelper);
 
-            if(service is null)
+            if (service is null)
             {
                 throw new Exception($"Service with URL '{serviceUrl}' not found.");
             }

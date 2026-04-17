@@ -1,7 +1,8 @@
-﻿using E.Standard.Extensions.Abstractions;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
+
+using E.Standard.Extensions.Abstractions;
 
 namespace E.Standard.Extensions.ErrorHandling;
 

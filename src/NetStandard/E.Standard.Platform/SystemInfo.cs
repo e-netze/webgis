@@ -1,6 +1,7 @@
-﻿using gView.GraphicsEngine;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Runtime.InteropServices;
+
+using gView.GraphicsEngine;
 
 namespace E.Standard.Platform;
 

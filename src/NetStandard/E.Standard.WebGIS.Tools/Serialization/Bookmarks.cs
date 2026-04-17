@@ -1,4 +1,7 @@
-﻿using E.Standard.Json;
+﻿using System;
+using System.Collections.Generic;
+
+using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
@@ -10,8 +13,6 @@ using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
-using System;
-using System.Collections.Generic;
 
 namespace E.Standard.WebGIS.Tools.Serialization;
 

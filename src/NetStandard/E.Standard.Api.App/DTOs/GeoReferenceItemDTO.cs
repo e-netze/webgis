@@ -1,5 +1,6 @@
-using E.Standard.WebMapping.Core.Api.Bridge;
+﻿using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Models;
+
 using Newtonsoft.Json;
 
 namespace E.Standard.Api.App.DTOs;

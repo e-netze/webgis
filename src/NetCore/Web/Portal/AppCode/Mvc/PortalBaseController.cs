@@ -1,4 +1,12 @@
-﻿using E.Standard.Custom.Core.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Security.Claims;
+using System.Web;
+
+using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
 using E.Standard.Json;
 using E.Standard.Security.App.Exceptions;
@@ -9,6 +17,7 @@ using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebGIS.Core.Mvc.Wrapper;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -16,22 +25,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using Newtonsoft.Json;
+
 using Portal.AppCode.Mvc.Wrapper;
 using Portal.Core.AppCode.Exceptions;
 using Portal.Core.AppCode.Extensions;
 using Portal.Core.AppCode.Services;
 using Portal.Core.AppCode.Services.Authentication;
+
 using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Security.Claims;
-using System.Web;
 
 namespace Portal.Core.AppCode.Mvc;
 

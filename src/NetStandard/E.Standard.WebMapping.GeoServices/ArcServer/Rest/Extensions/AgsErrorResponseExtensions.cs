@@ -1,10 +1,11 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Linq;
+using System.Text;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Exceptions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
-using System;
-using System.Linq;
-using System.Text;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 

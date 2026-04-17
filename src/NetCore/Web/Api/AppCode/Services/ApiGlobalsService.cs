@@ -1,4 +1,11 @@
-﻿using Api.AppCode.Mvc.Wrapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+
+using Api.AppCode.Mvc.Wrapper;
+
 using E.Standard.Api.App;
 using E.Standard.Api.App.Configuration;
 using E.Standard.Api.App.Extensions;
@@ -11,13 +18,9 @@ using E.Standard.WebGIS.Core;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
+
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
 
 namespace Api.Core.AppCode.Services;
 
@@ -51,7 +54,7 @@ public class ApiGlobalsService
         ApiGlobals.AppPluginsPath = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);    //  
         ApiGlobals.AppAssemblyPath = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);   // ist in development umgebung nicht gleich dem AppRootPath (produktiv sollte es das gleiche sein)
         ApiGlobals.WWWRootPath = environment.WebRootPath;
-        
+
         SpatialReferenceCollection.p4DatabaseConnection = config.Pro4DatabaseConnectionString();
         ApiGlobals.HttpClientDefaultTimeoutSeconds = config.HttpClientDefaultTimeoutSeconds();
 
@@ -73,14 +76,14 @@ public class ApiGlobalsService
         ApiGlobals.LogPath = config.LogPath();
         ApiGlobals.LogPerformanceColumns = config.LogPerformanceColumns();
 
-        if(int.TryParse(config[ApiConfigKeys.ToKey("tool-identify:max-vertices-for-hover-highlighting")], out int max))
+        if (int.TryParse(config[ApiConfigKeys.ToKey("tool-identify:max-vertices-for-hover-highlighting")], out int max))
         {
             ApiGlobals.MaxFeatureHoverHighlightVerticesCount = max;
         }
 
         EsriDateExtensions.DateFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-date-format")].OrTake(EsriDateExtensions.DateFormatString);
         EsriDateExtensions.TimeFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-time-format")].OrTake(EsriDateExtensions.TimeFormatString);
-        if(!String.IsNullOrEmpty(config[ApiConfigKeys.ToKey("tool-identify:result-date-time-culture")]))
+        if (!String.IsNullOrEmpty(config[ApiConfigKeys.ToKey("tool-identify:result-date-time-culture")]))
         {
             EsriDateExtensions.CultureInfo = CultureInfo.CreateSpecificCulture(config[ApiConfigKeys.ToKey("tool-identify:result-date-time-culture")]);
         }

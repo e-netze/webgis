@@ -1,4 +1,10 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
@@ -11,11 +17,6 @@ using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing.Extensions;
 
@@ -185,8 +186,8 @@ static internal class ApiToolEventArgumentsExtensions
     static public EditThemeDefinition GetSelectedEditThemeDefinition(this ApiToolEventArguments e)
     {
         var selectedThemeString = e[EditToolServiceDesktop.WebGisEditSelectionThemeId];
-        var selectedTheme = !String.IsNullOrEmpty(selectedThemeString) 
-            ? ApiToolEventArguments.FromArgument<EditThemeDefinition>(selectedThemeString) 
+        var selectedTheme = !String.IsNullOrEmpty(selectedThemeString)
+            ? ApiToolEventArguments.FromArgument<EditThemeDefinition>(selectedThemeString)
             : null;
 
         return selectedTheme;
@@ -293,8 +294,8 @@ static internal class ApiToolEventArgumentsExtensions
         {
             string value = queryDef.Operator switch
             {
-                " in " => String.Format("({0})", 
-                                String.Join(",", 
+                " in " => String.Format("({0})",
+                                String.Join(",",
                                             queryDef.Value
                                                     .Split(',')
                                                     .Select(v => v.Trim().Trim('\''))

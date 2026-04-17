@@ -1,4 +1,12 @@
-﻿using E.Standard.Cms.Abstraction;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Xml;
+
+using E.Standard.Cms.Abstraction;
 using E.Standard.Cms.Configuration.Models;
 using E.Standard.Cms.Configuration.Services;
 using E.Standard.Cms.Extensions;
@@ -15,14 +23,8 @@ using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Security.Cryptography.Services;
 using E.Standard.Web.Abstractions;
 using E.Standard.Web.Models;
+
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml;
 
 namespace E.Standard.Cms.Services;
 
@@ -122,7 +124,7 @@ public class DeployService : ICmsTool
                     {
                         CMSManager.ParseEventArgs pe = (CMSManager.ParseEventArgs)e;
 
-                        console.WriteLine($"scanned {counter} nodes in {(int)(DateTime.Now-currentTime).TotalMilliseconds}ms");
+                        console.WriteLine($"scanned {counter} nodes in {(int)(DateTime.Now - currentTime).TotalMilliseconds}ms");
                         currentTime = DateTime.Now;
                     }
                 }
@@ -136,7 +138,7 @@ public class DeployService : ICmsTool
                     {
                         CMSManager.ParseEventArgs pe = (CMSManager.ParseEventArgs)e;
 
-                        console.WriteLine($"Processed {counter} nodes in {(int)(DateTime.Now-currentTime).TotalMilliseconds}ms");
+                        console.WriteLine($"Processed {counter} nodes in {(int)(DateTime.Now - currentTime).TotalMilliseconds}ms");
                         currentTime = DateTime.Now;
                     }
                 }

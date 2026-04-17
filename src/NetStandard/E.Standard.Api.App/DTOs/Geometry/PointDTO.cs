@@ -1,5 +1,6 @@
+﻿using System.Linq;
+
 using Newtonsoft.Json;
-using System.Linq;
 
 namespace E.Standard.Api.App.DTOs.Geometry;
 

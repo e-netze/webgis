@@ -1,7 +1,8 @@
 ﻿namespace E.Standard.Web.UserAgents.Detection;
 
-using E.Standard.Web.UserAgents.Browsers;
 using System;
+
+using E.Standard.Web.UserAgents.Browsers;
 
 /// <summary>
 /// A class to get browser and platform information.

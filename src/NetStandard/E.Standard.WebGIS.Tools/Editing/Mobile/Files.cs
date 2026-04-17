@@ -1,3 +1,9 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.Linq;
+
 using E.Standard.Drawing.Pro;
 using E.Standard.Json;
 using E.Standard.WebGIS.Core.Reflection;
@@ -9,12 +15,8 @@ using E.Standard.WebMapping.Core.Api.IO;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Reflection;
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
 
 namespace E.Standard.WebGIS.Tools.Editing.Mobile;
 

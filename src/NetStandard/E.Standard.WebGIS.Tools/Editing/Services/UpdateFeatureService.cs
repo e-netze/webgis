@@ -1,4 +1,9 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
@@ -11,10 +16,6 @@ using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing.Services;
 
@@ -170,7 +171,7 @@ internal class UpdateFeatureService
         }
         else
         {
-            if(feature.Shape == null)
+            if (feature.Shape == null)
             {
                 throw new Exception(localizer.Localize("shape.exception-save-no-geometry"));
             }

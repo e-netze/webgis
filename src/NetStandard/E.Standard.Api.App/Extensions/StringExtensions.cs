@@ -1,10 +1,11 @@
-﻿using E.Standard.Security.Cryptography.Abstractions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+
+using E.Standard.Security.Cryptography.Abstractions;
 
 namespace E.Standard.Api.App.Extensions;
 

@@ -1,4 +1,11 @@
-﻿using Cms.AppCode.Extensions.DependencyInjection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Security.Authentication;
+
+using Cms.AppCode.Extensions.DependencyInjection;
+
 using E.DataLinq.Code.Extensions.DependencyInjection;
 using E.Standard.ActiveDirectory.Services.ApplicationSecurity;
 using E.Standard.Azure.Extensions.DependencyInjection;
@@ -27,6 +34,7 @@ using E.Standard.Web.Services;
 using E.Standard.WebApp.Abstraction;
 using E.Standard.WebApp.Extensions;
 using E.Standard.WebGIS.SubscriberDatabase.Extensions.DependencyInjection;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -36,11 +44,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Authentication;
 
 namespace Cms;
 

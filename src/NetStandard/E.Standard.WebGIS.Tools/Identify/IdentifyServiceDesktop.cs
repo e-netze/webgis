@@ -1,4 +1,10 @@
-﻿using E.Standard.DependencyInjection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.DependencyInjection;
 using E.Standard.Extensions.Compare;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Tools.Extensions;
@@ -15,11 +21,6 @@ using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Identify;
 
@@ -29,7 +30,7 @@ internal class IdentifyServiceDesktop
     {
         var click = e.ToMapProjectedClickEvent();
 
-        double eventScale =  click.EventScale
+        double eventScale = click.EventScale
                                  .OrTake(e.GetDouble(IdentifyDefault.IdentifyMapScaleId))
                                  .OrTake(e.MapScale ?? 0);
         string allQueries = e[IdentifyDefault.IdentifyAllQueriesId];

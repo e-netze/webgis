@@ -1,6 +1,7 @@
-﻿using E.Standard.Custom.Core.Models;
+﻿using System;
+
+using E.Standard.Custom.Core.Models;
 using E.Standard.Json;
-using System;
 
 namespace E.Standard.Custom.Core.Extensions;
 

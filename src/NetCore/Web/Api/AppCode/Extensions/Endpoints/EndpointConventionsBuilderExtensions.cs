@@ -1,10 +1,12 @@
 ﻿#nullable enable
 
 using Api.Core.AppCode.Reflection;
+
 using E.Standard.Api.App;
 using E.Standard.Api.App.Endpoints.Metadata;
 using E.Standard.Api.App.Reflection;
 using E.Standard.Custom.Core;
+
 using Microsoft.AspNetCore.Builder;
 
 namespace Api.Core.AppCode.Extensions.Endpoints;
@@ -17,8 +19,8 @@ static public class EndpointConventionsBuilderExtensions
                 bool disableAntiforgery = true,
                 // Authentication
                 ApiAuthenticationTypes? authTypes = ApiAuthenticationTypes.Hmac,  // should be the default!!
-                // Etag
-                double? etag_expiraionDays = null, 
+                                                                                  // Etag
+                double? etag_expiraionDays = null,
                 bool etag_appendResponseHeaders = true,
                 // AppRoles
                 AppRoles appRoles = AppRoles.WebgisApi  // should be the default!!
@@ -33,7 +35,7 @@ static public class EndpointConventionsBuilderExtensions
                     reflectionMetadata.Add(new ApiAuthenticationAttribute(authTypes.Value));
                 }
 
-                if(etag_expiraionDays.HasValue)
+                if (etag_expiraionDays.HasValue)
                 {
                     reflectionMetadata.Add(new EtagAttribute(etag_expiraionDays.Value, etag_appendResponseHeaders));
                 }

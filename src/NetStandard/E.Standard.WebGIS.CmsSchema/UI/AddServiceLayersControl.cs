@@ -1,4 +1,9 @@
-﻿using E.Standard.CMS.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
@@ -9,10 +14,6 @@ using E.Standard.OGC.Schema.wms_1_1_1;
 using E.Standard.OGC.Schema.wms_1_3_0;
 using E.Standard.Web.Models;
 using E.Standard.WebGIS.CMS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.CmsSchema.UI;
 

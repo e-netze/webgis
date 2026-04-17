@@ -1,4 +1,12 @@
-﻿using E.Standard.Api.App.DTOs;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.Exceptions.Ogc;
 using E.Standard.Api.App.Services;
 using E.Standard.Api.App.Services.Cache;
@@ -11,15 +19,10 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.ServiceResponses;
+
 using gView.GraphicsEngine;
+
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.Api.App.Ogc;
 
@@ -1654,7 +1657,7 @@ ex.Message +
                 "ogc/wms/watermark/default.gif"
         })
         {
-            FileInfo fi = new FileInfo(System.IO.Path.Combine([ApiGlobals.AppEtcPath, ..path.Split('/')]));
+            FileInfo fi = new FileInfo(System.IO.Path.Combine([ApiGlobals.AppEtcPath, .. path.Split('/')]));
             if (fi.Exists)
             {
                 return fi.FullName;

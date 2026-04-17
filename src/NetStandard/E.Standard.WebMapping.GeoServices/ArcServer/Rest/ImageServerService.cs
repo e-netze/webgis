@@ -1,4 +1,12 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Platform;
 using E.Standard.Web.Extensions;
@@ -13,15 +21,8 @@ using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
+
 using gView.GraphicsEngine;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 
@@ -324,7 +325,7 @@ public class ImageServerService : IMapService2,
                 IDisplay display = _map.DisplayRotation != 0
                     ? Display.TransformedDisplay(_map)
                     : _map;
-                
+
                 var time = _map.GetTimeEpoch(this.Url)?.ToJavascriptEpochArray();
 
                 string path = String.Format("exportImage?bbox={0},{1},{2},{3}&bboxSR={4}&size={5},{6}&imageSR={4}&format={7}&pixelType={8}&noData={9}&noDataInterpretation={10}&interpolation={11}&compressionQuality={12}&bandIds={13}&mosaicRule={14}&renderingRule={15}&time={16}&f=json",

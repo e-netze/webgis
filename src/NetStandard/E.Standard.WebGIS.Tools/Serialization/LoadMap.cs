@@ -1,4 +1,9 @@
-﻿using E.Standard.Extensions.Credentials;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+using E.Standard.Extensions.Credentials;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Security.Core.Extensions;
 using E.Standard.WebGIS.Core.Reflection;
@@ -14,10 +19,6 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace E.Standard.WebGIS.Tools.Serialization;
 

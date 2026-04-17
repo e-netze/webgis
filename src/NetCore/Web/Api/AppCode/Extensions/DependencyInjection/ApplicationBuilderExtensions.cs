@@ -1,4 +1,5 @@
 ﻿using Api.Core.AppCode.Middleware;
+
 using Microsoft.AspNetCore.Builder;
 
 namespace Api.Core.AppCode.Extensions.DependencyInjection;

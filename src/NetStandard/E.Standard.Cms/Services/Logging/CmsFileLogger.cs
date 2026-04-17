@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-using System;
+﻿using System;
+
+using Microsoft.Extensions.Options;
 
 namespace E.Standard.Cms.Services.Logging;
 

@@ -1,8 +1,9 @@
-using E.Standard.CMS.Core.IO.Abstractions;
-using E.Standard.CMS.Core.Schema.Abstraction;
-using System;
+ï»¿using System;
 using System.ComponentModel;
 using System.Text;
+
+using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.CMS.Core.Schema.Abstraction;
 
 namespace E.Standard.WebGIS.CmsSchema;
 
@@ -41,7 +42,7 @@ public class MapFooter : IEditable
         }
     }
     [Browsable(true)]
-    [DisplayName("Zugehörige Links")]
+    [DisplayName("ZugehÃ¶rige Links")]
     [Category("Quellen")]
     public string[] Links
     {
@@ -90,7 +91,7 @@ public class MapFooter : IEditable
         set { _advice = value; }
     }
     [Browsable(true)]
-    [DisplayName("Url für Logo")]
+    [DisplayName("Url fÃ¼r Logo")]
     [Category("Allgemein")]
     public string Logo
     {
@@ -106,7 +107,7 @@ public class MapFooter : IEditable
         set { _logoWidth = value; }
     }
     [Browsable(true)]
-    [DisplayName("Logo Höhe in Pixel")]
+    [DisplayName("Logo HÃ¶he in Pixel")]
     [Category("Allgemein")]
     public int LogoHeight
     {

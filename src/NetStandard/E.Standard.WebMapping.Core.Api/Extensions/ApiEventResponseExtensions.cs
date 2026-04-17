@@ -1,4 +1,7 @@
-﻿using E.Standard.WebMapping.Core.Api.Abstraction;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
@@ -7,8 +10,6 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace E.Standard.WebMapping.Core.Api.Extensions;
 

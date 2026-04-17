@@ -1,5 +1,6 @@
-﻿using E.Standard.Security.Cryptography.Abstractions;
-using System;
+﻿using System;
+
+using E.Standard.Security.Cryptography.Abstractions;
 
 namespace E.Standard.WebGIS.Core.Extensions;
 
@@ -13,7 +14,7 @@ static public class CryptoServiceExtensions
             {
                 return crypto.StaticDefaultDecrypt_Aes(input);
             }
-            catch{ }
+            catch { }
 
             try
             {

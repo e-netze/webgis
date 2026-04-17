@@ -1,5 +1,6 @@
-﻿using E.Standard.Extensions.Abstractions;
-using System;
+﻿using System;
+
+using E.Standard.Extensions.Abstractions;
 
 namespace E.Standard.Security.Cryptography.Exceptions;
 

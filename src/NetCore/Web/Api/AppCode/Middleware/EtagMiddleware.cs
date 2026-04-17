@@ -1,8 +1,10 @@
-﻿using Api.Core.AppCode.Reflection;
-using Api.Core.AppCode.Services;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+
+using Api.Core.AppCode.Reflection;
+using Api.Core.AppCode.Services;
+
+using Microsoft.AspNetCore.Http;
 
 namespace Api.Core.AppCode.Middleware;
 

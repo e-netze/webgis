@@ -1,4 +1,9 @@
-﻿using E.Standard.Localization.Abstractions;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Localization.Abstractions;
 using E.Standard.Platform;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Helpers;
@@ -11,10 +16,6 @@ using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools;
 
@@ -71,9 +72,8 @@ public class MeasureLine : IApiServerToolLocalizable<MeasureLine>,
     }
 
     public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<MeasureLine> localizer)
-    {
-        return null;
-    }
+        => null;
+
 
     #endregion
 
@@ -102,9 +102,7 @@ public class MeasureLine : IApiServerToolLocalizable<MeasureLine>,
     #region IApiButtonResources Member
 
     public void RegisterToolResources(IToolResouceManager toolResourceManager)
-    {
-        toolResourceManager.AddImageResource("measure", Properties.Resources.measure);
-    }
+        => toolResourceManager.AddImageResource("measure", Properties.Resources.measure);
 
     #endregion
 

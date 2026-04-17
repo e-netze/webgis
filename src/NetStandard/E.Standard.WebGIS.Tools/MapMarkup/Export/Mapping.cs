@@ -1,5 +1,6 @@
-﻿using E.Standard.Esri.Shapefile;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using E.Standard.Esri.Shapefile;
 
 namespace E.Standard.WebGIS.Tools.MapMarkup.Export;
 

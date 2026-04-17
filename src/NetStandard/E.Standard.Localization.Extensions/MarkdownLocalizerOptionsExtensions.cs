@@ -1,7 +1,9 @@
-﻿using E.Standard.Localization.Services;
-using System.Globalization;
+﻿using System.Globalization;
+
+using E.Standard.Localization.Services;
 
 namespace E.Standard.Localization.Extensions;
+
 static public class MarkdownLocalizerOptionsExtensions
 {
     static public IDictionary<string, string> SupportedLanguageDictionary(this MarkdownLocalizerOptions options)

@@ -1,5 +1,6 @@
+﻿using System;
+
 using E.Standard.Platform;
-using System;
 
 namespace E.Standard.WebMapping.GeoServices.Topo;
 

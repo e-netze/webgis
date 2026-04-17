@@ -1,15 +1,17 @@
-﻿using Api.Core.AppCode.Exceptions;
-using Api.Core.AppCode.Reflection;
-using E.Standard.Api.App;
-using E.Standard.Api.App.Endpoints.Metadata;
-using E.Standard.Api.App.Reflection;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
+using Api.Core.AppCode.Exceptions;
+using Api.Core.AppCode.Reflection;
+
+using E.Standard.Api.App;
+using E.Standard.Api.App.Endpoints.Metadata;
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.Extensions.Options;
 
 namespace Api.Core.AppCode.Services;
 
@@ -54,7 +56,7 @@ public class RoutingEndPointReflectionService
 
         // Minimal API Endpoints
         var reflectionMetadata = context.HttpContext?.GetEndpoint()?.Metadata?.GetMetadata<IApiEndpointReflectionMetadata>();
-        if(reflectionMetadata != null)
+        if (reflectionMetadata != null)
         {
             _actionMethodAttributes = reflectionMetadata.GetAllAttributes();
         }

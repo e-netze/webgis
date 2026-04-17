@@ -1,7 +1,8 @@
-﻿using E.Standard.ThreadSafe;
-using E.Standard.WebMapping.Core.Abstraction;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using E.Standard.ThreadSafe;
+using E.Standard.WebMapping.Core.Abstraction;
 
 namespace E.Standard.WebMapping.Core.Collections;
 

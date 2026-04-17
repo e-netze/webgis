@@ -1,11 +1,12 @@
-﻿using E.Standard.WebMapping.Core.Abstraction;
+﻿using System;
+
+using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
+
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
-using System;
-using System.Linq;
 
 namespace E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 
@@ -70,12 +71,12 @@ public class MeasurePolygonElement : PolygonElement
                     {
                         double area = calcPolygon.Area;  // [m²]
                         double circumference = calcPolygon.Circumference;  // [m]
-                            //.Rings
-                            //.Select(r => r.Circumference).Sum();  // [m]
+                                                                           //.Rings
+                                                                           //.Select(r => r.Circumference).Sum();  // [m]
 
                         area = area.SquareMetersToSquareUnit(_areaUnit);
                         circumference = circumference.MetersToUnit(_lengthUnit);
-                        
+
                         var text = $"F: {Math.Round(area, 2)}{_areaUnit.ToSquareAbbreviation()}{System.Environment.NewLine}U: {Math.Round(circumference, 2)}{_lengthUnit.ToAbbreviation()}";
                         if (_calcPolygon.CanHaveProjectionDistortion())
                         {

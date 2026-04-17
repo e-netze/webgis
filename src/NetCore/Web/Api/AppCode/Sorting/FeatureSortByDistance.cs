@@ -1,8 +1,9 @@
-﻿using E.Standard.Platform;
+﻿using System;
+using System.Collections.Generic;
+
+using E.Standard.Platform;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
 
 namespace Api.Core.AppCode.Sorting;
 

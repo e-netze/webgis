@@ -1,7 +1,8 @@
-﻿using E.Standard.WebGIS.Tools.Editing.Models;
-using E.Standard.WebMapping.Core.Geometry;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using E.Standard.WebGIS.Tools.Editing.Models;
+using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebGIS.Tools.Editing.Sorting;
 

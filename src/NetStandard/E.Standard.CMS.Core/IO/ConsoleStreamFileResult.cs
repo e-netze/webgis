@@ -1,4 +1,5 @@
 ﻿namespace E.Standard.CMS.Core.IO;
+
 public class ConsoleStreamFileResult
 {
     public ConsoleStreamFileResult(string filename, string contentType, byte[] data)

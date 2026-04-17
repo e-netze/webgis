@@ -1,9 +1,11 @@
-﻿using E.Standard.Json;
+﻿using System;
+
+using E.Standard.Json;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
 using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.GeoServices.Print;
+
 using Microsoft.AspNetCore.Http;
-using System;
 
 namespace Api.Core.AppCode.Extensions;
 

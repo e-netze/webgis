@@ -1,6 +1,7 @@
-﻿using E.Standard.WebMapping.Core.Api.EventResponse.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+
+using E.Standard.WebMapping.Core.Api.EventResponse.Models;
 
 namespace E.Standard.WebMapping.Core.Api.Extensions;
 

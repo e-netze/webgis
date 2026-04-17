@@ -1,4 +1,10 @@
-﻿using E.Standard.Localization.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+
+using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
@@ -13,11 +19,6 @@ using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing.Mobile.Advanced;
 

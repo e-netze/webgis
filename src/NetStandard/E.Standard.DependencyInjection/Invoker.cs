@@ -1,5 +1,6 @@
-﻿using E.Standard.DependencyInjection.Abstractions;
-using System.Reflection;
+﻿using System.Reflection;
+
+using E.Standard.DependencyInjection.Abstractions;
 
 namespace E.Standard.DependencyInjection;
 

@@ -1,4 +1,8 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -7,9 +11,6 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry.Extensions;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Export.Extensions;
 

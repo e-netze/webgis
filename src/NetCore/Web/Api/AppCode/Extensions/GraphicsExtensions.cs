@@ -1,11 +1,13 @@
 ﻿#pragma warning disable CA1416
 
-using E.Standard.Extensions.Credentials;
-using gView.GraphicsEngine;
 using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+
+using E.Standard.Extensions.Credentials;
+
+using gView.GraphicsEngine;
 
 namespace Api.Core.AppCode.Extensions;
 

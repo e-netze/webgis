@@ -1,3 +1,6 @@
+﻿using System;
+using System.Collections.Generic;
+
 using E.Standard.Json;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebMapping.Core.Api;
@@ -8,9 +11,8 @@ using E.Standard.WebMapping.Core.Api.IO;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 
 namespace E.Standard.WebGIS.Tools.Serialization;
 

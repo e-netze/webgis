@@ -1,6 +1,7 @@
-﻿using E.Standard.Platform;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using E.Standard.Platform;
 namespace E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 
 public class UIOpacitySelector : UIOptionContainer

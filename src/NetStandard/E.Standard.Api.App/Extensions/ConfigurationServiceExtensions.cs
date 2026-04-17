@@ -1,16 +1,18 @@
-﻿using E.Standard.Api.App.Configuration;
-using E.Standard.Configuration.Services;
-using E.Standard.Extensions.Compare;
-using E.Standard.Security.App.Services.Abstraction;
-using gView.GraphicsEngine;
-using Microsoft.Azure.Storage.Blob.Protocol;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+
+using E.Standard.Api.App.Configuration;
+using E.Standard.Configuration.Services;
+using E.Standard.Extensions.Compare;
+using E.Standard.Security.App.Services.Abstraction;
+
+using gView.GraphicsEngine;
+
+using Microsoft.Extensions.Configuration;
 
 namespace E.Standard.Api.App.Extensions;
 
@@ -492,7 +494,7 @@ static public class ConfigurationServiceExtensions
 
     static public bool AllowDataLingCodeEditing(this IConfiguration config)
     {
-        return 
+        return
             config.IncludeDataLinqServices() &&
             "true".Equals(config[$"{ApiConfigKeys.ConfigurationSectionName}:datalinq:allow-code-editing"], StringComparison.OrdinalIgnoreCase);
     }

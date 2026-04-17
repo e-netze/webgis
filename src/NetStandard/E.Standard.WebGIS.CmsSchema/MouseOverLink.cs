@@ -1,8 +1,9 @@
+Ôªøusing System;
+using System.ComponentModel;
+
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
-using System;
-using System.ComponentModel;
 
 namespace E.Standard.WebGIS.CmsSchema;
 
@@ -21,7 +22,7 @@ class MouseOverLink : SchemaNodeLink, IEditable
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Minimaler Maﬂstab 1:")]
+    [DisplayName("Minimaler Ma√üstab 1:")]
     public double MinScale
     {
         get { return _minScale; }
@@ -29,7 +30,7 @@ class MouseOverLink : SchemaNodeLink, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Maximaler Maﬂstab 1:")]
+    [DisplayName("Maximaler Ma√üstab 1:")]
     public double MaxScale
     {
         get { return _maxScale; }
@@ -72,7 +73,7 @@ class MouseOverLink : SchemaNodeLink, IEditable
         set { _mapInfoVisible = value; }
     }
     [Browsable(true)]
-    [DisplayName("Mit dem Thema ¸ber TOC mitschalten")]
+    [DisplayName("Mit dem Thema √ºber TOC mitschalten")]
     [Category("Karten Tipps")]
     public bool SetVisibleWithTheme
     {

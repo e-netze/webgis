@@ -1,11 +1,12 @@
-﻿using E.Standard.CMS.Core.Abstractions;
-using E.Standard.CMS.Core.IO.Abstractions;
-using E.Standard.Platform;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
+using E.Standard.CMS.Core.Abstractions;
+using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.Platform;
 
 namespace E.Standard.CMS.Core.IO;
 
@@ -15,8 +16,8 @@ public class FileSystemPathInfo_no_FileInfo_Experiment : IPathInfo, IDatabasePat
 
     public FileSystemPathInfo_no_FileInfo_Experiment(string path)
     {
-        _path = SystemInfo.IsLinux 
-            ? path.ToPlatformPath().RemoveDoubleSlashes() 
+        _path = SystemInfo.IsLinux
+            ? path.ToPlatformPath().RemoveDoubleSlashes()
             : path;
     }
 
@@ -56,7 +57,7 @@ public class FileSystemPathInfo_no_FileInfo_Experiment : IPathInfo, IDatabasePat
 
     public void Create()
     {
-        var di = new DirectoryInfo(_path);  
+        var di = new DirectoryInfo(_path);
         di.Create();
     }
 
@@ -156,7 +157,7 @@ public class FileSystemPathInfo : IPathInfo, IDatabasePath
         _di.Delete(recursive);
     }
 
-    
+
     public IEnumerable<IPathInfo> GetDirectories()
     {
         return _di.GetDirectories().Select(d => new FileSystemPathInfo(d.FullName)).ToArray();

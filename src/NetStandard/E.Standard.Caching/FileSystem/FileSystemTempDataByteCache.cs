@@ -1,8 +1,10 @@
-﻿using E.Standard.Caching.Abstraction;
-using E.Standard.Extensions.Compare;
-using Microsoft.Extensions.Options;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
+
+using E.Standard.Caching.Abstraction;
+using E.Standard.Extensions.Compare;
+
+using Microsoft.Extensions.Options;
 
 namespace E.Standard.Caching.FileSystem;
 

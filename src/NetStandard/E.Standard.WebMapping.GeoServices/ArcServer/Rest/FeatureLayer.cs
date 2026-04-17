@@ -1,4 +1,9 @@
-﻿using E.Standard.Extensions.Collections;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.WebMapping.Core;
@@ -13,11 +18,6 @@ using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.RequestBuilders;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
 using E.Standard.WebMapping.GeoServices.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 
@@ -435,7 +435,7 @@ class FeatureLayer : RestLayer,
                                     ?.SelectMany(g => g.AttachmentInfos)
                                     .Where(i => !String.IsNullOrEmpty(i.Url)) ?? [])
         {
-            var data = attachment.ContentType.IsImageContentType() 
+            var data = attachment.ContentType.IsImageContentType()
                        ? await authHandler.TryGetRawAsync(_service, attachment.Url)
                        : Encoding.UTF8.GetBytes(attachment.Url);
 

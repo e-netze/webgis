@@ -1,9 +1,17 @@
-﻿using Api.Core.AppCode.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+
+using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Mvc;
+
 using E.Standard.Api.App;
 using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.DTOs.Events;
 using E.Standard.Api.App.DTOs.Tools;
+using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
 using E.Standard.Configuration.Services;
@@ -24,15 +32,10 @@ using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using E.Standard.Api.App.Extensions;
 
 namespace Api.Core.AppCode.Services.Rest;
 
@@ -149,7 +152,7 @@ public class RestToolsHelperService
             tool.dependencies = buttonDependencies.ToArray();
         }
 
-        if(apiTool is IApiToolSketchProperties toolSketchProperties)
+        if (apiTool is IApiToolSketchProperties toolSketchProperties)
         {
             var e = CreateApiToolEventArguments(apiTool, "", null);
             tool.MaxSketchVertices = toolSketchProperties.MaxToolSketchVertices(e);

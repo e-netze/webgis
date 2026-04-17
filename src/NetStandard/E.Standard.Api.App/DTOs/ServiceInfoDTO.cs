@@ -1,13 +1,15 @@
-﻿using E.Standard.Api.App.Models.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+using E.Standard.Api.App.Models.Abstractions;
 using E.Standard.CMS.Core;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Extensions;
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace E.Standard.Api.App.DTOs;
 
@@ -224,7 +226,7 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-        public TimeInfoDTO time_info{ get; set; }
+        public TimeInfoDTO time_info { get; set; }
 
         private string _ogcId = null;
 

@@ -1,11 +1,7 @@
-﻿using E.Standard.WebMapping.Core.Editing;
+﻿using System.Reflection;
+
+using E.Standard.WebMapping.Core.Editing;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.Tests.ArcServer.Rest;
 

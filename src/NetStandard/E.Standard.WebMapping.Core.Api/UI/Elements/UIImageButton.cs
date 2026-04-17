@@ -1,7 +1,8 @@
-﻿using E.Standard.WebMapping.Core.Api.Abstraction;
+﻿using System;
+
+using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Extensions;
-using System;
 
 namespace E.Standard.WebMapping.Core.Api.UI.Elements;
 

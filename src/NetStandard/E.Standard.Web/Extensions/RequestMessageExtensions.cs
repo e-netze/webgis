@@ -1,8 +1,9 @@
-﻿using E.Standard.Web.Models;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+
+using E.Standard.Web.Models;
 
 namespace E.Standard.Web.Extensions;
 

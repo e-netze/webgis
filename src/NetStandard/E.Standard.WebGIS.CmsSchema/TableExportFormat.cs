@@ -1,12 +1,13 @@
+ï»¿using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
+
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
-using System;
-using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.CmsSchema;
 
@@ -23,7 +24,7 @@ public class TableExportFormat : CopyableXml, IUI, IEditable, IDisplayName
 
     #region Properties
     [DisplayName("Format String")]
-    [Description("String für die Formatierung einer Zeile. Ein Zeilenumbruch entspricht \\r\\n. Platzhalter für Spalten in eckigen Klammern schreiben. (Beispiel: [KG]+[NR]\\r\\n)")]
+    [Description("String fÃ¼r die Formatierung einer Zeile. Ein Zeilenumbruch entspricht \\r\\n. Platzhalter fÃ¼r Spalten in eckigen Klammern schreiben. (Beispiel: [KG]+[NR]\\r\\n)")]
     [Category("Allgemein")]
     public string FormatString
     {

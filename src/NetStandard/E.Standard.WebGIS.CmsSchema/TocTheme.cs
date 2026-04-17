@@ -1,11 +1,12 @@
+ï»¿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.Security.Reflection;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace E.Standard.WebGIS.CmsSchema;
 
@@ -36,7 +37,7 @@ public class TocTheme : SchemaNodeLink, IPersistable, IDisplayName, IEditable
     }
 
     [DisplayName("Sichtbar")]
-    [Description("Theme ist standardmäßig sichtbar")]
+    [Description("Theme ist standardmÃ¤ÃŸig sichtbar")]
     [Category("Allgemein")]
     public bool Visible
     {
@@ -59,12 +60,12 @@ public class TocTheme : SchemaNodeLink, IPersistable, IDisplayName, IEditable
         set { _legend = value; }
     }
 
-    [DisplayName("Aliasname für Legende")]
+    [DisplayName("Aliasname fÃ¼r Legende")]
     [Category("Allgemein")]
-    [Description("Gibt den Anzeigenamen für dieses Thema in der Legende an.")]
+    [Description("Gibt den Anzeigenamen fÃ¼r dieses Thema in der Legende an.")]
     public string LegendAliasname { get; set; }
 
-    [DisplayName("Refenzmaßstab anwenden")]
+    [DisplayName("RefenzmaÃŸstab anwenden")]
     [Category("Allgemein")]
     public bool RefScale
     {
@@ -72,7 +73,7 @@ public class TocTheme : SchemaNodeLink, IPersistable, IDisplayName, IEditable
         set { _refscale = value; }
     }
     [DisplayName("Download erlauben")]
-    [Description("Daten dieses Themas können heruntergeladen werden.")]
+    [Description("Daten dieses Themas kÃ¶nnen heruntergeladen werden.")]
     [Category("~Download")]
     public bool Downloadable
     {
@@ -80,8 +81,8 @@ public class TocTheme : SchemaNodeLink, IPersistable, IDisplayName, IEditable
         set { _downloadable = value; }
     }
     [DisplayName("Themenbeschriftung")]
-    [Description("Themenbeschriftung kann durch den User geändert werden. Nur für IMS Dienste.")]
-    [Category("~Labeling (nicht mehr unterstützt)")]
+    [Description("Themenbeschriftung kann durch den User geÃ¤ndert werden. Nur fÃ¼r IMS Dienste.")]
+    [Category("~Labeling (nicht mehr unterstÃ¼tzt)")]
     public ThemeLabeling ThemeLabeling
     {
         get { return _labeling; }
@@ -103,7 +104,7 @@ public class TocTheme : SchemaNodeLink, IPersistable, IDisplayName, IEditable
     }
 
     [DisplayName("Ogc Id")]
-    [Description("Id für dieses Thema, das für WMS export verwendet wird. Wenn hier nichts angeben wird, enspricht diese Id der Original Id den Service.")]
+    [Description("Id fÃ¼r dieses Thema, das fÃ¼r WMS export verwendet wird. Wenn hier nichts angeben wird, enspricht diese Id der Original Id den Service.")]
     [Category("~WebGIS 5 OGC")]
     public string OgcId
     {
@@ -295,7 +296,7 @@ public class TocTheme : SchemaNodeLink, IPersistable, IDisplayName, IEditable
             {
                 throw new Exception("In den eingebunden Diensten existieren mehrere Themen mit gleichem Namen");
                 //FormEqualItems dlg = new FormEqualItems(_aliasName, equalNameThemes.ToArray());
-                //dlg.HeaderText = "In den eingebunden Diensten existieren mehrere Themen mit gleichem Namen. Sollen diese Themen auch eingefügt werden?";
+                //dlg.HeaderText = "In den eingebunden Diensten existieren mehrere Themen mit gleichem Namen. Sollen diese Themen auch eingefÃ¼gt werden?";
                 //dlg.ShowSetVisible = dlg.ShowGroup = true;
                 //if (dlg.ShowDialog() == DialogResult.OK)
                 //{

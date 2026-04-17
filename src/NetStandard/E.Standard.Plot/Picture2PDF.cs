@@ -1,10 +1,13 @@
-﻿using E.Standard.Drawing;
+﻿using System.IO;
+
+using E.Standard.Drawing;
 using E.Standard.Web.Abstractions;
+
 using MigraDocCore.DocumentObjectModel.MigraDoc.DocumentObjectModel.Shapes;
+
 using PdfSharpCore;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
-using System.IO;
 
 namespace E.Standard.Plot;
 

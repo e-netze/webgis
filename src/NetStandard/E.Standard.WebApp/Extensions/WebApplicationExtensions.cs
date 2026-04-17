@@ -1,10 +1,12 @@
-﻿using E.Standard.WebApp.Abstraction;
+﻿using System.Globalization;
+
+using E.Standard.WebApp.Abstraction;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Globalization;
 
 namespace E.Standard.WebApp.Extensions;
 
@@ -59,7 +61,7 @@ static public class WebApplicationExtensions
             }
 
             var culture = CultureInfo.GetCultureInfo(cultureName);
-            if(culture is null)
+            if (culture is null)
             {
                 throw new Exception($"Unkown culture {cultureName}. Please set a correct culture in Localization:DefaultCulture");
             }

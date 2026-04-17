@@ -1,13 +1,11 @@
-using System.Net;
+﻿using System.Net;
 
 namespace E.Standard.GeoRSS20;
 
 public class WebFunctions
 {
     public static WebProxy Proxy(string host, int port)
-    {
-        return Proxy(host, port, "", "", "");
-    }
+        => Proxy(host, port, "", "", "");
 
     public static WebProxy Proxy(string server, int port, string user, string password, string domain)
     {

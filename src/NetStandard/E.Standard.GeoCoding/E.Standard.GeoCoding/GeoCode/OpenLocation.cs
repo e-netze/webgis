@@ -1,5 +1,6 @@
-﻿using Google.OpenLocationCode;
-using System;
+﻿using System;
+
+using Google.OpenLocationCode;
 
 namespace E.Standard.GeoCoding.GeoCode;
 

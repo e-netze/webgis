@@ -1,9 +1,10 @@
+ï»¿using System;
+using System.ComponentModel;
+
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.Security.Reflection;
-using System;
-using System.ComponentModel;
 
 namespace E.Standard.WebGIS.CmsSchema;
 
@@ -25,8 +26,8 @@ public class DocumentManagement : SchemaNode, IEditable
         set { _use = value; }
     }
     [Browsable(true)]
-    [DisplayName("eindeutiges Key Feld für Dokumentenmanagement")]
-    [Category("Objektschlüssel")]
+    [DisplayName("eindeutiges Key Feld fÃ¼r Dokumentenmanagement")]
+    [Category("ObjektschlÃ¼ssel")]
     [Editor(typeof(TypeEditor.ThemeFieldsEditor), typeof(TypeEditor.ITypeEditor))]
     public string IdFieldName
     {
@@ -44,7 +45,7 @@ public class DocumentManagement : SchemaNode, IEditable
         set { _schema = value; }
     }
     [Browsable(true)]
-    [DisplayName("Upload von Dokumenten ermöglichen")]
+    [DisplayName("Upload von Dokumenten ermÃ¶glichen")]
     [Category("Upload")]
     [AuthorizablePropertyAttribute("allowupload", false)]
     public bool AllowUpload

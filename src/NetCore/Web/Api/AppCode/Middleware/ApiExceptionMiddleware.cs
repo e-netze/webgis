@@ -1,10 +1,13 @@
-﻿using Api.Core.AppCode.Extensions;
+﻿using System;
+using System.Threading.Tasks;
+
+using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Mvc;
+
 using E.Standard.Api.App;
 using E.Standard.Extensions.Abstractions;
+
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Threading.Tasks;
 
 namespace Api.Core.AppCode.Middleware;
 

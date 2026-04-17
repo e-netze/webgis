@@ -1,5 +1,15 @@
-﻿using Api.Core.AppCode.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Mvc;
+
 using E.Standard.Api.App;
 using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.DTOs.Print;
@@ -31,18 +41,12 @@ using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using E.Standard.WebMapping.GeoServices.Print;
 using E.Standard.WebMapping.GeoServices.Tiling;
+
 using gView.GraphicsEngine;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Api.Core.AppCode.Services.Rest;
 
@@ -294,7 +298,7 @@ public class RestPrintHelperService
             List<LayoutBuilderJob> layoutBuilderJobs = new();
 
             var printOverviewMapDefinition = printSeriesProvider?.GetPrintMapSeriesOverviewPageDefinition(map, _restTools.CreateApiToolEventArguments(tool, "", null));
-                
+
             if (printOverviewMapDefinition is not null)
             {
                 LayoutBuilder mainLayoutBuilder = new LayoutBuilder(

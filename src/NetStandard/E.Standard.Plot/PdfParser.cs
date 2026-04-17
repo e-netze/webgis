@@ -1,14 +1,17 @@
-﻿using E.Standard.Drawing.Pro;
-using gView.GraphicsEngine;
-using PdfSharpCore.Pdf;
-using PdfSharpCore.Pdf.Advanced;
-using PdfSharpCore.Pdf.Filters;
-using PdfSharpCore.Pdf.IO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+
+using E.Standard.Drawing.Pro;
+
+using gView.GraphicsEngine;
+
+using PdfSharpCore.Pdf;
+using PdfSharpCore.Pdf.Advanced;
+using PdfSharpCore.Pdf.Filters;
+using PdfSharpCore.Pdf.IO;
 
 namespace E.Standard.Plot;
 
@@ -178,7 +181,7 @@ public class PdfParser
         int width = image.Elements.GetInteger(PdfImage.Keys.Width);
         int height = image.Elements.GetInteger(PdfImage.Keys.Height);
 
-        if(width == 0 || height == 0)
+        if (width == 0 || height == 0)
         {
             return null;
         }
@@ -204,7 +207,7 @@ public class PdfParser
             bitsPerComponent++;
         }
 
-        if(decodedBytes.Length - ((width * height) * bitsPerComponent / 8) != 0)  // must be 0!!!
+        if (decodedBytes.Length - ((width * height) * bitsPerComponent / 8) != 0)  // must be 0!!!
         {
             return null;
         }

@@ -1,14 +1,18 @@
-﻿using E.Standard.Custom.Core.Abstractions;
-using E.Standard.Json;
-using E.Standard.Security.Cryptography.Abstractions;
-using E.Standard.WebGIS.Core;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using Portal.Core.AppCode.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Json;
+using E.Standard.Security.Cryptography.Abstractions;
+using E.Standard.WebGIS.Core;
+
+using Microsoft.AspNetCore.Http;
+
+using Newtonsoft.Json;
+
+using Portal.Core.AppCode.Extensions;
 
 namespace Portal.Core.AppCode.Services.Authentication;
 

@@ -2,10 +2,7 @@
 
 public class ApiConfigKeys
 {
-    static public string ToKey(string key)
-    {
-        return $"{ConfigurationSectionName}:{key}";
-    }
+    static public string ToKey(string key) => $"{ConfigurationSectionName}:{key}";
 
     public const string ConfigurationSectionName = "Api";
 
@@ -113,7 +110,7 @@ public class ApiConfigKeys
     public const string SupportedLanguages = ConfigurationSectionName + ":supported-languages";
 
     public const string QueryResultsSelectionColor = ConfigurationSectionName + ":query-results:selection-color";
-    public const string QueryResultsHighlightColor = ConfigurationSectionName + ":query-results:highlight-color";  
+    public const string QueryResultsHighlightColor = ConfigurationSectionName + ":query-results:highlight-color";
     public const string QueryResultsBufferColor = ConfigurationSectionName + ":query-results:buffer-color";
     public const string QueryResultsSelectionFillColor = ConfigurationSectionName + ":query-results:selection-fill-color";
     public const string QueryResultsHighlightFillColor = ConfigurationSectionName + ":query-results:highlight-fill-color";

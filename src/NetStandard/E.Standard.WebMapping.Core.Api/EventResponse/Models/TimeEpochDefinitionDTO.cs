@@ -10,5 +10,5 @@ public class TimeEpochDefinitionDTO
 
     [JsonProperty(PropertyName = "epoch")]
     [System.Text.Json.Serialization.JsonPropertyName("epoch")]
-    public long[] Epoch {  get; set; }
+    public long[] Epoch { get; set; }
 }

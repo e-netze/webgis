@@ -1,4 +1,10 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
@@ -19,11 +25,6 @@ using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Geometry.Topology;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 

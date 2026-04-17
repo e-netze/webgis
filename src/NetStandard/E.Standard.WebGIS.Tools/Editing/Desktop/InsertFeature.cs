@@ -1,4 +1,8 @@
-﻿using E.Standard.Extensions.Collections;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Collections;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
@@ -14,9 +18,6 @@ using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Reflection;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing.Desktop;
 
@@ -188,7 +189,7 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
         e["_select"] = "true";
         return await OnSave(bridge, e, localizer);
     }
-    
+
     [ServerToolCommand("save-and-keep-attributes")]
     async public Task<ApiEventResponse> OnSaveKeepAttributes(IBridge bridge, ApiToolEventArguments e, ILocalizer<InsertFeature> localizer)
     {

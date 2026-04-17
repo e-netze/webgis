@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Cors.Infrastructure;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using Portal.Core.AppCode.Extensions;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Portal.Core.AppCode.Services;
 

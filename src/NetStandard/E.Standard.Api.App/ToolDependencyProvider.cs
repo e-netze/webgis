@@ -1,12 +1,15 @@
-﻿using E.Standard.DependencyInjection.Abstractions;
+﻿using System;
+
+using E.Standard.DependencyInjection.Abstractions;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Extensions;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
+
 using Microsoft.Extensions.Localization;
-using System;
 
 namespace E.Standard.Api.App;
+
 public class ToolDependencyProvider : IDependencyProvider
 {
     private readonly IBridge _bridge;

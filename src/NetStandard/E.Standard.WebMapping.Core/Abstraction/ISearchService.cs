@@ -1,6 +1,7 @@
-﻿using E.Standard.Web.Abstractions;
+﻿using System.Threading.Tasks;
+
+using E.Standard.Web.Abstractions;
 using E.Standard.WebMapping.Core.Models;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.Core.Abstraction;
 

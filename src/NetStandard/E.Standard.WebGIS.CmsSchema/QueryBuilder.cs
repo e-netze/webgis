@@ -1,4 +1,9 @@
-﻿using E.Standard.CMS.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
+
+using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
@@ -7,10 +12,6 @@ using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.WebGIS.CmsSchema.UI;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.CmsSchema;
 
@@ -82,14 +83,14 @@ public class QueryBuilderFieldAssistent : SchemaNode, IAutoCreatable, IUI
 
         foreach (TableColumnAssistentControl.Field field in _ctrl.SelectedFields)
         {
-            if(existingFieldnames.Contains(field.FieldName))
+            if (existingFieldnames.Contains(field.FieldName))
             {
                 continue;
             }
 
             QueryBuilderField qbField = new QueryBuilderField();
             qbField.Name = field.FieldName;
-            qbField.Aliasname = field.FieldName == field.AliasName 
+            qbField.Aliasname = field.FieldName == field.AliasName
                 ? ""
                 : field.AliasName;
 

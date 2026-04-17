@@ -1,6 +1,8 @@
-﻿using E.Standard.Extensions.Text;
-using System;
+﻿using System;
 using System.Collections.Specialized;
+
+using E.Standard.Extensions.Text;
+
 using Xunit;
 
 namespace E.Standard.Extensions.Test.Text;

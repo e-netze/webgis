@@ -1,4 +1,9 @@
-﻿using E.Standard.Extensions.Collections;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Collections;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -10,10 +15,6 @@ using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Export.Extensions;
 
@@ -151,7 +152,7 @@ static internal class ApiEventResponseExtensions
                                 Enumerable.Range(0, 50)
                                     .Select(r => new UISelect.Option() { value = r.ToString(), label = $"{r}%" })
                             ),
-                         
+
                          // add info about features count
                          new UIValidationErrorSummary(e[MapSeriesPrint.CreateSeriesValidationErrors]),
 

@@ -1,5 +1,10 @@
 ﻿#nullable enable
 
+using System;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+
 using E.Standard.Json;
 using E.Standard.ThreadsafeClasses;
 using E.Standard.Web.Abstractions;
@@ -9,11 +14,8 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Exceptions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
+
 using Microsoft.Extensions.Logging;
-using System;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Services;
 
@@ -165,11 +167,11 @@ internal class AgsAuthenticationHandler
                 try
                 {
                     ret = await _httpService.PostFormUrlEncodedStringAsync(
-                                    String.IsNullOrEmpty(staticTokenParameter) 
-                                        ? requestUrl 
+                                    String.IsNullOrEmpty(staticTokenParameter)
+                                        ? requestUrl
                                         : $"{requestUrl}{staticTokenParameter}",
-                                    String.IsNullOrEmpty(tokenParameter) 
-                                        ? postBodyData 
+                                    String.IsNullOrEmpty(tokenParameter)
+                                        ? postBodyData
                                         : $"{postBodyData}{tokenParameter}",
                                     new RequestAuthorization() { Credentials = mapService.HttpCredentials },
                                     timeOutSeconds: mapService.Timeout.ToTimeoutSecondOrDefault()
@@ -236,11 +238,11 @@ internal class AgsAuthenticationHandler
                 try
                 {
                     result = await _httpService.PostFormUrlEncodedAsync(
-                            String.IsNullOrEmpty(staticTokenParameter) 
-                                ? requestUrl 
+                            String.IsNullOrEmpty(staticTokenParameter)
+                                ? requestUrl
                                 : $"{requestUrl}{staticTokenParameter}",
-                            String.IsNullOrEmpty(tokenParameter) 
-                                ? Encoding.UTF8.GetBytes(postBodyData) 
+                            String.IsNullOrEmpty(tokenParameter)
+                                ? Encoding.UTF8.GetBytes(postBodyData)
                                 : Encoding.UTF8.GetBytes($"{postBodyData}{tokenParameter}"),
                             new RequestAuthorization() { Credentials = mapService.HttpCredentials },
                             timeOutSeconds: mapService.Timeout.ToTimeoutSecondOrDefault()

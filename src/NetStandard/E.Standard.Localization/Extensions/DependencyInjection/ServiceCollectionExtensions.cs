@@ -1,8 +1,10 @@
 ﻿using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Services;
+
 using Microsoft.Extensions.Localization;
 
 namespace Microsoft.Extensions.DependencyInjection;
+
 static public class ServiceCollectionExtensions
 {
     static public IServiceCollection AddMarkdownLocalizerFactory<TCultureProvider>(

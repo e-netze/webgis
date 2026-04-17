@@ -1,9 +1,11 @@
-﻿using E.Standard.Custom.Core.Abstractions;
-using Microsoft.Extensions.Hosting;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using E.Standard.Custom.Core.Abstractions;
+
+using Microsoft.Extensions.Hosting;
 
 namespace Portal.Core.AppCode.Services;
 

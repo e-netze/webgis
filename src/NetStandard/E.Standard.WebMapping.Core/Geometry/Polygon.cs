@@ -1,7 +1,4 @@
-﻿using E.Standard.WebMapping.Core.Geometry.Clipper;
-using E.Standard.WebMapping.Core.Geometry.Topology;
-using Proj4Net.Core.IO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -9,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Xml;
+
+using E.Standard.WebMapping.Core.Geometry.Clipper;
 
 namespace E.Standard.WebMapping.Core.Geometry;
 

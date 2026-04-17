@@ -1,10 +1,11 @@
-﻿using E.Standard.Api.App.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using E.Standard.Api.App.Configuration;
 using E.Standard.Configuration.Services;
 using E.Standard.Extensions.IO;
 using E.Standard.Platform;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Api.Core.AppCode.Services;
 
@@ -22,7 +23,7 @@ public class ApiConfigurationService
             ? GetStorageRootPath(config)
             : GetStorageRootPath(config).ToPlatformPath();
         this.StorageRootPath2 = GetStorageRootPath2(config).HasHttpUrlSchema()
-            ? GetStorageRootPath2(config) 
+            ? GetStorageRootPath2(config)
             : GetStorageRootPath2(config).ToPlatformPath();
 
         this.UseClearOuputBackgroundTask = GetUseClearOuputBackgroundTask(config);

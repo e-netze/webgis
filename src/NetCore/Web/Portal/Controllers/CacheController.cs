@@ -1,22 +1,25 @@
-﻿using E.Standard.Configuration.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.MessageQueues.Services.Abstraction;
 using E.Standard.Portal.App;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Abstractions;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using Portal.Core.AppCode.Extensions;
 using Portal.Core.AppCode.Mvc;
 using Portal.Core.AppCode.Services;
 using Portal.Core.AppCode.Services.WebgisApi;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Portal.Core.Controllers;
 
@@ -96,8 +99,8 @@ public class CacheController : PortalBaseController
 
             return JsonObject(new
             {
-                currentUser = currentUser is null 
-                        ? null 
+                currentUser = currentUser is null
+                        ? null
                         : new
                         {
                             name = currentUser.Username,

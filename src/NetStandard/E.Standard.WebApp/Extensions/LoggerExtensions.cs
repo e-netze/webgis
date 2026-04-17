@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text;
+
+using Microsoft.Extensions.Logging;
 
 namespace E.Standard.WebApp.Extensions;
 

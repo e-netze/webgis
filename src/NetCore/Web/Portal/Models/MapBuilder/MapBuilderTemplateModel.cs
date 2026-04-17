@@ -1,7 +1,9 @@
-using E.Standard.Json;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Linq;
+
+using E.Standard.Json;
+
+using Newtonsoft.Json;
 
 namespace Portal.Core.Models.MapBuilder;
 

@@ -1,5 +1,6 @@
-﻿using E.Standard.WebMapping.Core.Collections;
-using System.Linq;
+﻿using System.Linq;
+
+using E.Standard.WebMapping.Core.Collections;
 
 namespace E.Standard.WebMapping.Core.Extensions;
 

@@ -1,8 +1,9 @@
-using E.Standard.WebMapping.Core;
-using E.Standard.WebMapping.Core.Geometry;
-using System;
+﻿using System;
 using System.Text;
 using System.Xml;
+
+using E.Standard.WebMapping.Core;
+using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.GML;
 

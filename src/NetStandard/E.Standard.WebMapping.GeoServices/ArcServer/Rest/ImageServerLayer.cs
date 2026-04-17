@@ -1,4 +1,8 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Threading.Tasks;
+using System.Web;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Platform;
 using E.Standard.WebMapping.Core;
@@ -9,9 +13,6 @@ using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
-using System;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 

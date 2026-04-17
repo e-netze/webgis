@@ -1,9 +1,11 @@
-﻿using E.Standard.Security.App.Exceptions;
+﻿using System.Security.Claims;
+
+using E.Standard.Security.App.Exceptions;
 using E.Standard.Security.App.Extensions;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.App.Services.Abstraction;
+
 using Microsoft.Extensions.Options;
-using System.Security.Claims;
 
 namespace E.Standard.OpenIdConnect.Extensions.Services.ApplicationSecurity;
 

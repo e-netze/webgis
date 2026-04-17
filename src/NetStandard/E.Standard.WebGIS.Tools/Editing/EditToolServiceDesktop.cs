@@ -1,4 +1,9 @@
-﻿using E.Standard.Extensions.Collections;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Collections;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
@@ -14,10 +19,6 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing;
 
@@ -448,7 +449,7 @@ internal class EditToolServiceDesktop : IEditToolService
     {
         return new ApiEventResponse()
             .AddUIElements(
-                new UIDiv() { targetwidth="640px" }
+                new UIDiv() { targetwidth = "640px" }
                     .AsDialog(UIElementTarget.modaldialog)
                     .WithTargetTitle(_localizer.Localize("shortcuts"))
                     .AddChild(new UILabel()

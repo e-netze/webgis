@@ -1,6 +1,8 @@
-﻿using E.Standard.Configuration.Providers;
+﻿using System;
+
+using E.Standard.Configuration.Providers;
+
 using Microsoft.Extensions.Configuration;
-using System;
 
 namespace E.Standard.Configuration.Extensions.DependencyInjection;
 

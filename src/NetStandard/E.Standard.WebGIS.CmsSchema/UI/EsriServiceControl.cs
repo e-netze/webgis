@@ -1,13 +1,15 @@
+﻿using System;
+using System.Collections.Specialized;
+using System.Linq;
+
 using E.Standard.ArcXml;
 using E.Standard.ArcXml.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
 using E.Standard.Extensions.Compare;
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Specialized;
-using System.Linq;
 
 namespace E.Standard.WebGIS.CmsSchema.UI;
 
@@ -353,7 +355,7 @@ public class EsriServiceControl : NameUrlUserConrol, IInitParameter, ISubmit
 
                 string mapName = (
                     descriptionResult.mapName?.ToLower() == "layers" || descriptionResult.mapName?.ToLower() == "layer"
-                        ? String.Empty 
+                        ? String.Empty
                         : descriptionResult.mapName
                     ) ?? String.Empty;
                 _nameUrlControl.SetName(mapName.OrTake(_agsService.Service?.Split("/").Last()), true);

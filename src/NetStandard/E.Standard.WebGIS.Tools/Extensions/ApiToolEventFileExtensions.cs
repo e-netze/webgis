@@ -1,4 +1,8 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Extensions.Security;
 using E.Standard.GeoJson;
 using E.Standard.Gpx;
@@ -10,9 +14,6 @@ using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace E.Standard.WebGIS.Tools.Extensions;
 
@@ -35,7 +36,7 @@ public static class ApiToolEventFileExtensions
                 {
                     geoJsonFeatures = ParseGpx(e, Encoding.UTF8.GetString(file.Data), setNameProperty);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw new Exception(String.Format(localizer.Localize("exceptions.file-parse-error"), "GPX", ex.Message));
                 }

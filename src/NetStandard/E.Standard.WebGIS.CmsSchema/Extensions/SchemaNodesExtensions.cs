@@ -1,4 +1,9 @@
-﻿using E.Standard.ArcXml;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.ArcXml;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.Schema;
@@ -8,10 +13,6 @@ using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.CmsSchema.Legacy;
 using E.Standard.WebGIS.CmsSchema.Models;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.CmsSchema.Extensions;
 

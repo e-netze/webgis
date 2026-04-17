@@ -1,13 +1,16 @@
-﻿using E.Standard.MessageQueues.Services.Abstraction;
-using MessageQueueNET.Client;
-using MessageQueueNET.Client.Models;
-using MessageQueueNET.Client.Models.Authentication;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using E.Standard.MessageQueues.Services.Abstraction;
+
+using MessageQueueNET.Client;
+using MessageQueueNET.Client.Models;
+using MessageQueueNET.Client.Models.Authentication;
+
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace E.Standard.MessageQueues.Services;
 
@@ -88,10 +91,10 @@ public class MessageQueueNetService : IMessageQueueService
 
             return true;
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             _logger.LogError("Error on EnqueueAsync: {message}", ex.Message);
-            return false; 
+            return false;
         }
     }
 

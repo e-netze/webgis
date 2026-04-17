@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Security.Claims;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+
 using ModelContextProtocol.AspNetCore.Authentication;
-using System.Security.Claims;
 
 namespace WebGIS.API.MCP.Extensions.DependencyInjection;
 

@@ -1,10 +1,13 @@
 ﻿#nullable enable
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 using E.Standard.Extensions.Compare;
 using E.Standard.Extensions.Security;
 using E.Standard.GeoCoding.Extensions;
 using E.Standard.GeoCoding.GeoCode;
-using E.Standard.Localization.Abstractions;
 using E.Standard.Platform;
 using E.Standard.WebGIS.Tools.Helpers;
 using E.Standard.WebMapping.Core.Api;
@@ -14,9 +17,6 @@ using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace E.Standard.WebGIS.Tools.Extensions;
 
@@ -40,7 +40,7 @@ internal static class CordinatesExtensions
         }
     }
 
-    static public string Identifier(this Coordinates.Projection projection, bool idOnly = false) 
+    static public string Identifier(this Coordinates.Projection projection, bool idOnly = false)
         => idOnly || String.IsNullOrEmpty(projection.DisplayStyle)
             ? projection.Id.ToString()
             : $"{projection.Id}.{projection.DisplayStyle}";
@@ -57,7 +57,7 @@ internal static class CordinatesExtensions
 
     static public string Deg2GMS(this double deg, int digits)
     {
-        digits = digits>=0 ? digits : 1;
+        digits = digits >= 0 ? digits : 1;
 
         int g = (int)Math.Floor(deg);
         deg -= g;
@@ -193,7 +193,7 @@ internal static class CordinatesExtensions
         return cells;
     }
 
-    static public (string, string , string) ParseXYRow(this string row, int rowIndex)
+    static public (string, string, string) ParseXYRow(this string row, int rowIndex)
     {
         var cells = RowCells(row).CheckSecurity().ToArray();
 
@@ -212,7 +212,7 @@ internal static class CordinatesExtensions
         string number = cells?
             .Where(c => int.TryParse(c, out _))
             .FirstOrDefault() ?? rowIndex.ToString();
-        
+
         string code = cells?
             .Where(c => geoCoder.IsValidGeoCode(c) && !int.TryParse(c, out _))  // geocode and not the number cell
             .FirstOrDefault()
@@ -229,7 +229,7 @@ internal static class CordinatesExtensions
     {
         var geoCoder = projection.TryGetGeoCoderOrNull();
 
-        var xySetterType = geoCoder is null 
+        var xySetterType = geoCoder is null
             ? UICssSetter.SetterType.RemoveClass
             : UICssSetter.SetterType.AddClass;
         var codeSetterType = geoCoder is null

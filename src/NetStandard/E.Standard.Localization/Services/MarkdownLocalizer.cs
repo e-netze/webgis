@@ -1,8 +1,10 @@
-﻿using E.Standard.Localization.Models;
-using Microsoft.Extensions.Localization;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Text;
 using System.Text.RegularExpressions;
+
+using E.Standard.Localization.Models;
+
+using Microsoft.Extensions.Localization;
 
 /// <summary>
 /// 

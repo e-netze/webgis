@@ -1,8 +1,9 @@
-﻿using E.Standard.DbConnector.Exceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+
+using E.Standard.DbConnector.Exceptions;
 
 namespace E.Standard.DbConnector;
 

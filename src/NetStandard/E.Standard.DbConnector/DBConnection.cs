@@ -1,13 +1,16 @@
-﻿using E.Standard.DbConnector.Exceptions;
-using Microsoft.Data.SqlClient;
-using Oracle.ManagedDataAccess.Client;
-using System;
+﻿using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
 using System.Text;
 using System.Xml;
+
+using E.Standard.DbConnector.Exceptions;
+
+using Microsoft.Data.SqlClient;
+
+using Oracle.ManagedDataAccess.Client;
 
 namespace E.Standard.DbConnector;
 

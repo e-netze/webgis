@@ -1,9 +1,11 @@
-﻿using E.Standard.WebGIS.Tools.Georeferencing.Image.Abstraction;
-using E.Standard.WebGIS.Tools.Georeferencing.Image.Models;
-using gView.GraphicsEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
+using E.Standard.WebGIS.Tools.Georeferencing.Image.Abstraction;
+using E.Standard.WebGIS.Tools.Georeferencing.Image.Models;
+
+using gView.GraphicsEngine;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image;
 

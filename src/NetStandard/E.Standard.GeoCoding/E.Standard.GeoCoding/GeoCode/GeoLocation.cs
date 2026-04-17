@@ -38,7 +38,7 @@ public class GeoLocation
 
     public string ErrorMessage { get; set; } = "";
 
-    public void Deconstruct(out double x, out double y) 
+    public void Deconstruct(out double x, out double y)
     {
         x = Longitude;
         y = Latitude;

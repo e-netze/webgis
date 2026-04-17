@@ -1,13 +1,14 @@
-﻿using E.Standard.Esri.Shapefile.IO;
+﻿using System;
+using System.IO;
+using System.Text;
+
+using E.Standard.Esri.Shapefile.IO;
 using E.Standard.Json;
 using E.Standard.Platform;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Extensions;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Models;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.IO;
-using System.Text;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image;
 

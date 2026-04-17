@@ -1,9 +1,11 @@
-﻿using E.Standard.Configuration.Services;
+﻿using System;
+
+using E.Standard.Configuration.Services;
 using E.Standard.Configuration.Services.Parser;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.App.Services.Abstraction;
+
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace E.Standard.Configuration.Extensions.DependencyInjection;
 

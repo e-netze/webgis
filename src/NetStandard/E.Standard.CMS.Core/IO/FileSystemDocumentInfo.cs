@@ -1,7 +1,8 @@
-﻿using E.Standard.CMS.Core.IO.Abstractions;
-using E.Standard.Platform;
-using System;
+﻿using System;
 using System.IO;
+
+using E.Standard.CMS.Core.IO.Abstractions;
+using E.Standard.Platform;
 
 namespace E.Standard.CMS.Core.IO;
 
@@ -11,7 +12,7 @@ public class FileSystemDocumentInfo_no_FileInfo_Experiment : IDocumentInfo
 
     public FileSystemDocumentInfo_no_FileInfo_Experiment(string path)
     {
-        _path = SystemInfo.IsLinux 
+        _path = SystemInfo.IsLinux
             ? path.ToPlatformPath().RemoveDoubleSlashes()
             : path;
     }
@@ -20,7 +21,7 @@ public class FileSystemDocumentInfo_no_FileInfo_Experiment : IDocumentInfo
 
     public bool Exists => File.Exists(_path);
 
-    public string Name 
+    public string Name
     {
         get
         {
@@ -35,7 +36,7 @@ public class FileSystemDocumentInfo_no_FileInfo_Experiment : IDocumentInfo
 
     public string FullName => _path;
 
-    public string Extension 
+    public string Extension
     {
         get
         {
@@ -52,7 +53,7 @@ public class FileSystemDocumentInfo_no_FileInfo_Experiment : IDocumentInfo
     {
         get
         {
-            var lastSlash=Math.Max(
+            var lastSlash = Math.Max(
                 _path.LastIndexOf("/"),
                 _path.LastIndexOf("\\")
             );
@@ -85,7 +86,7 @@ public class FileSystemDocumentInfo_no_FileInfo_Experiment : IDocumentInfo
 
     public IDocumentInfo CopyTo(string path, bool overwrite)
     {
-        var fi = new FileInfo(path);    
+        var fi = new FileInfo(path);
         return new FileSystemDocumentInfo(fi.CopyTo(path, overwrite).FullName);
     }
 
@@ -109,8 +110,8 @@ public class FileSystemDocumentInfo : IDocumentInfo
     public FileSystemDocumentInfo(string path)
     {
         _fi = new FileInfo(
-            SystemInfo.IsLinux 
-            ? path.ToPlatformPath().RemoveDoubleSlashes() 
+            SystemInfo.IsLinux
+            ? path.ToPlatformPath().RemoveDoubleSlashes()
             : path);
     }
 

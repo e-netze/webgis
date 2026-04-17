@@ -1,5 +1,7 @@
-﻿using E.Standard.Extensions.Compare;
-using System;
+﻿using System;
+
+using E.Standard.Extensions.Compare;
+
 using Xunit;
 
 namespace E.Standard.Extensions.Test.Compare;

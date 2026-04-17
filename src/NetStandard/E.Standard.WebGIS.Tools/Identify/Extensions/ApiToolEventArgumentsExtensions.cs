@@ -1,10 +1,11 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Linq;
+using System.Threading;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Linq;
-using System.Threading;
 
 namespace E.Standard.WebGIS.Tools.Identify.Extensions;
 

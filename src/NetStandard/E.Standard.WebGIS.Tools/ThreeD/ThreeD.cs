@@ -1,4 +1,9 @@
-﻿using E.Standard.Drawing.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Drawing.Models;
 using E.Standard.Extensions.Compare;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Platform;
@@ -14,10 +19,6 @@ using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.ThreeD;
 

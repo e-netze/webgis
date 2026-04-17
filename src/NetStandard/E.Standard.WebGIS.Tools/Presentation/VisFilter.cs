@@ -1,4 +1,9 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
@@ -7,7 +12,6 @@ using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebGIS.Tools.Identify;
 using E.Standard.WebGIS.Tools.Presentation.Extensions;
 using E.Standard.WebGIS.Tools.Presentation.Models;
-using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
@@ -23,10 +27,6 @@ using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Comparer;
 using E.Standard.WebMapping.Core.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Presentation;
 
@@ -485,7 +485,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
         foreach (var serviceId in tocVisFilterRequest.ServiceLayers.Keys)
         {
             var allowedQueryFilterFields = bridge.GetAllowedQueryBuilderFields(serviceId);
-            if(!allowedQueryFilterFields?.Any() == true)
+            if (!allowedQueryFilterFields?.Any() == true)
             {
                 continue;
             }
@@ -505,7 +505,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
             }
         }
 
-        if(commonFields == null || commonFields.Count == 0)
+        if (commonFields == null || commonFields.Count == 0)
         {
             throw new Exception("No common fields found for query builder");
         }
@@ -525,7 +525,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
 
         string whereClause = e[VisFilterWhereClauseArgumentName]
                              .IfNullOrEmptyTake(() => tocVisFilterRequest.TryGetWhereClause(bridge.RequestVisFilterDefintions()));
-        if(!String.IsNullOrEmpty(whereClause))
+        if (!String.IsNullOrEmpty(whereClause))
         {
             uiQueryBuilder.TrySetWhereClause(whereClause);
         }
@@ -587,7 +587,7 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
         var tocVisFilterRequest = JSerializer.Deserialize<TocVisFilterRequestDTO>(argument);
         var queryBuilderResult = e.QueryBuilderResult(VisFilterQueryBuilderId);
 
-        if(tocVisFilterRequest.ServiceLayers == null || tocVisFilterRequest.ServiceLayers.Count == 0)
+        if (tocVisFilterRequest.ServiceLayers == null || tocVisFilterRequest.ServiceLayers.Count == 0)
         {
             return null;
         }
@@ -602,16 +602,16 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
         {
             bridge.GetAllowedQueryBuilderFields(serviceId)
                 .CheckIfOnlyAllowedQueryFieldsIncludedInResult(queryBuilderResult);
-          
+
 
             foreach (var layerId in tocVisFilterRequest.ServiceLayers[serviceId])
             {
                 var fields = await bridge.GetServiceLayerFields(serviceId, layerId);
-                if(fields.Count() == 0) continue;
+                if (fields.Count() == 0) continue;
 
                 var visFilterDefinition = new VisFilterDefinitionDTO()
                 {
-                    Id = VisFilterDefinitionDTO.CreateTocFilterId(serviceId,layerId),
+                    Id = VisFilterDefinitionDTO.CreateTocFilterId(serviceId, layerId),
                     ServiceId = serviceId,
                     SpanId = spanId
                 };

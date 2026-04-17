@@ -1,4 +1,12 @@
-﻿using E.Standard.CMS.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
+
+using E.Standard.CMS.Core;
 using E.Standard.DbConnector;
 using E.Standard.Platform;
 using E.Standard.Web.Abstractions;
@@ -7,15 +15,9 @@ using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
+
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace E.Standard.WebMapping.GeoServices.Print;
 
@@ -654,7 +656,8 @@ public class LayoutBuilder
                             if (!(p is LayoutPanelCollection))
                             {
                                 p = new LayoutPanelCollection();
-                            } ((LayoutPanelCollection)p).Panels.Add(panel);
+                            }
+                            ((LayoutPanelCollection)p).Panels.Add(panel);
                             GetPanel(panel, type, findAll, ref p);
                         }
                         else

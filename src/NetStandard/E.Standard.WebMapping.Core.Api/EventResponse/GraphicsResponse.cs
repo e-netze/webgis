@@ -1,8 +1,10 @@
-﻿using E.Standard.WebMapping.Core.Api.Bridge;
-using gView.GraphicsEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+
+using E.Standard.WebMapping.Core.Api.Bridge;
+
+using gView.GraphicsEngine;
 
 namespace E.Standard.WebMapping.Core.Api.EventResponse;
 

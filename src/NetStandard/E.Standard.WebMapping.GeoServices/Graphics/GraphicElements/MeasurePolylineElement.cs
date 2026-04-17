@@ -1,10 +1,12 @@
-﻿using E.Standard.WebMapping.Core.Abstraction;
+﻿using System;
+
+using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
+
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
-using System;
 
 namespace E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 
@@ -74,9 +76,9 @@ public class MeasurePolylineElement : PolylineElement
                             {
                                 var length = calcPath.Length.MetersToUnit(_lengthUnit);
                                 var text = $"∑: {Math.Round(length, 2)}{_lengthUnit.ToAbbreviation()}";
-                                if (_calcPolyline.CanHaveProjectionDistortion()) 
+                                if (_calcPolyline.CanHaveProjectionDistortion())
                                 {
-                                    text = $"{text}{ System.Environment.NewLine}EPSG:{(_calcPolyline ?? base.Polyline).SrsId}";
+                                    text = $"{text}{System.Environment.NewLine}EPSG:{(_calcPolyline ?? base.Polyline).SrsId}";
                                 }
                                 var box = canvas.MeasureText(text, font);
 
