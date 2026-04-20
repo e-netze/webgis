@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Print: Error ``Service with url #service not found``
   [Issue #453](https://github.com/e-netze/webgis-community/issues/453)
 
+- MapMarkup: Snapping not works with MapMarkup before zoom/pan
+  [Issue #455](https://github.com/e-netze/webgis-community/issues/455)
+
 ## 8.26.1402
 
 ## Added

@@ -2459,7 +2459,9 @@
         //    webgis.removeHistoryItem($(this.elem).find('#webgis-toolhistory-button'));
         //}
 
-        this.refreshSnapping();
+        if (!this.isGraphicsTool(this._activeTool)) {
+            this.refreshSnapping();  // graphicTools will to this in map.graphics.setTool();
+        }
     };
     this.getActiveTool = function () {
         if (this._activeTool == null)
