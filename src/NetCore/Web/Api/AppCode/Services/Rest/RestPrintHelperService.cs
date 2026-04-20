@@ -44,6 +44,8 @@ using E.Standard.WebMapping.GeoServices.Tiling;
 
 using gView.GraphicsEngine;
 
+using MathNet.Numerics.Distributions;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
@@ -638,7 +640,9 @@ public class RestPrintHelperService
 
                 var firstFeature = queryFeatures.Features.First();
 
-                if (firstFeature.Oid != null && firstFeature.Oid.Contains(":"))
+                if (firstFeature.Oid != null 
+                    && firstFeature.Oid.Contains(":")
+                    && !firstFeature.Oid.IsSearchServiceFeatureOid()) // search service do not have cms queries
                 {
                     var query = await _cache.GetQuery(firstFeature.Oid.Split(':')[0], firstFeature.Oid.Split(':')[1], ui, urlHelper: _urlHelper);
                     if (query != null)

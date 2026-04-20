@@ -263,7 +263,8 @@ public class RestSearchHelperService
             {
                 var feature = new E.Standard.WebMapping.Core.Feature();
 
-                feature.GlobalOid = /*!String.IsNullOrWhiteSpace(item.Id) ? item.Id :*/ "#service:#default:" + counter++;
+                feature.GlobalOid = (counter++).ToSearchServiceFeatureOid();
+
                 if (item.Geometry != null)
                 {
                     feature.Shape = item.Geometry;

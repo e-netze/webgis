@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Bug: API Crashes on start, if DataLinq is not included in api.config
 
+- Print: Error ``Service with url #service not found``
+  [Issue #453](https://github.com/e-netze/webgis-community/issues/453)
+
 ## 8.26.1402
 
 ## Added
