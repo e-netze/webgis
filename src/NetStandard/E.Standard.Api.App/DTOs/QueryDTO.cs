@@ -464,13 +464,11 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
 
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
-    public string QueryGlobalId
-    {
-        get
-        {
-            return this.Service != null ? this.Service.Url + ":" + this.id : this.id;
-        }
-    }
+    public string QueryGlobalId => 
+        this.Service != null 
+        ? $"{this.Service.Url}:{this.id}" 
+        : this.id;
+
 
     async public Task<FeatureCollection> PerformAsync(IRequestContext requestContext, ApiQueryFilter filter, string appendFilterClause = "", int limit = 0, double mapScale = 0D)
     {

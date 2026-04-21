@@ -237,9 +237,8 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
     [ServerToolCommand("selectionchanged")]
     public ApiEventResponse OnSelectionChanged(IBridge bridge, ApiToolEventArguments e)
-    {
-        return new ApiEventResponse().CalcPrintSericesDimension(bridge, e);
-    }
+        => new ApiEventResponse().CalcPrintSericesDimension(bridge, e);
+    
 
     [ServerToolCommand("print")]
     async public Task<ApiEventResponse> OnPrint(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
@@ -599,8 +598,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
     [ServerToolCommand("upload")]
     public ApiEventResponse OnUploadClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
-    {
-        return new ApiEventResponse()
+        => new ApiEventResponse()
             .AddUIElements(
                 new UIDiv()
                     .AsDialog()
@@ -627,7 +625,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                             .WithId("upload-file")
                             .WithStyles(UICss.ToolParameter)
                     ));
-    }
+    
 
     [ServerToolCommand("upload-series")]
     public ApiEventResponse OnUploadObject(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
@@ -653,10 +651,8 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
     [ServerToolCommand("create-series-from-features")]
     public Task<ApiEventResponse> OnCreateSeriesFromFeatures(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
-    {
-
-        return new ApiEventResponse().AddCreateMapSeriesFromFeaturesDialog(this, bridge, e, localizer);
-    }
+        => new ApiEventResponse().AddCreateMapSeriesFromFeaturesDialog(this, bridge, e, localizer);
+    
 
     [ServerToolCommand("create-series-from-features-calc")]
     async public Task<ApiEventResponse> OnCreateSeriesFromFeaturesCalc(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
@@ -845,7 +841,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     {
         var mapFrames = mapPrototype?.GraphicsContainer?.Where(e => e is MapFrameElement).ToArray();
 
-        if (mapFrames?.Any() == false) return null;
+        if (mapFrames?.Any() == false) { return null; }
 
         Envelope extent = null;
         mapFrames
@@ -876,10 +872,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
             extent);
     }
 
-    private string GetMapSericesPrintPageName(int index)
-    {
-        return $"{index:000}";
-    }
+    private string GetMapSericesPrintPageName(int index) => $"{index:000}";
 
     #endregion
 

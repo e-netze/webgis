@@ -10,6 +10,7 @@ using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Extensions;
+using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Geometry.Extensions;
 
 namespace E.Standard.WebGIS.Tools.Export.Extensions;
@@ -23,9 +24,17 @@ static internal class PrintSeriesModelExtensions
         ApiToolEventArguments e,
         ILocalizer localizer)
     {
-        var sketch = !String.IsNullOrEmpty(model.SketchWKT) ? model.SketchWKT.ShapeFromWKT() : null;
+        var sketch = !String.IsNullOrEmpty(model.SketchWKT) 
+            ? model.SketchWKT.ShapeFromWKT() 
+            : null;
 
-        if (sketch is null)
+        if(sketch is Point singlePoint)
+        {
+            // Tool requires a multipoint!!
+            sketch = new MultiPoint([singlePoint]); 
+        }
+
+        if (sketch is not MultiPoint)
         {
             throw new Exception(localizer.Localize("io.exception-shape-not-contains-vertices:body"));
         }

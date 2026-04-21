@@ -564,8 +564,7 @@ internal class IdentifyServiceDesktop
 
     #region Helper
 
-    private void SetPointerTool(ApiEventResponse response)
-    {
+    private void SetPointerTool(ApiEventResponse response) =>
         response
             .SetActiveToolType(ToolType.click)
             .SetActiveToolCursor(ToolCursor.Custom_Pan_Info)
@@ -574,7 +573,7 @@ internal class IdentifyServiceDesktop
                 new UICssSetter(UICssSetter.SetterType.AddClass, IdentifyDefault.SketchButtonContainerId, UICss.HiddenUIElement),
                 new UICssSetter(UICssSetter.SetterType.AddClass, IdentifyDefault.SketchBufferContainerId, UICss.HiddenUIElement),
                 new UISetter(IdentifyDefault.SketchCanApplyBufferId, "false"));
-    }
+    
 
     #endregion
 }

@@ -64,9 +64,8 @@ public class RoutingEndPointReflectionService
 
     public T GetCustomAttribute<T>()
         where T : Attribute
-    {
-        return GetActionMethodCustomAttribute<T>() ?? GetControllerCustomAttribute<T>();
-    }
+        => GetActionMethodCustomAttribute<T>() ?? GetControllerCustomAttribute<T>();
+    
 
     public T GetControllerCustomAttribute<T>()
         where T : Attribute

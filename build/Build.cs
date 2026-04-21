@@ -395,5 +395,9 @@ class Build : NukeBuild
                 .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebMapping.Core.Api.Tests" / "E.Standard.WebMapping.Core.Api.Tests.csproj")
                 .SetProcessWorkingDirectory(RootDirectory)
             );
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebMapping.Core.Tests" / "E.Standard.WebMapping.Core.Tests.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
         });
 }

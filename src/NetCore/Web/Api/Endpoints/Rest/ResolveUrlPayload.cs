@@ -71,7 +71,10 @@ public class ResolveUrlPayload : IApiEndpoint
         IDataLinqCacheTokenService? tokenService = null
         )
     {
-        if (tokenService is null) return string.Empty;
+        if (tokenService is null)
+        {
+            return string.Empty;
+        }
 
         var dataLinqUrlParts = urlHelper.ToDataLinqUrlParts(url);
         var tokenResponse = await tokenService.CreateTokenAsync(

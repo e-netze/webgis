@@ -1958,11 +1958,11 @@ public class RestPrintHelperService
             : base(layoutBuilder, pageName, mapRotation, mapScale)
         {
             this.ExtentShape = extentShape;
-            this.extentShapeEpsg = extentShapeEpsg;
+            this.ExtentShapeEpsg = extentShapeEpsg;
         }
 
         public T ExtentShape { get; }
-        public int extentShapeEpsg { get; }
+        public int ExtentShapeEpsg { get; }
 
         override public void SetMapExtent(LayoutBuilder layoutBuilder)
         {
@@ -1984,14 +1984,14 @@ public class RestPrintHelperService
             layoutBuilder.Scale = this.MapScale;
 
             mapCenter = new Point(mapCenter);
-            if (extentShapeEpsg > 0)
+            if (ExtentShapeEpsg > 0)
             {
                 var mapSrs = layoutBuilder.PageMapSrs(layoutBuilder.Map.SpatialReference.Id);
-                if (mapSrs != extentShapeEpsg)
+                if (mapSrs != ExtentShapeEpsg)
                 {
                     using (var transformer = new GeometricTransformerPro(
                             ApiGlobals.SRefStore.SpatialReferences,
-                            extentShapeEpsg,
+                            ExtentShapeEpsg,
                             mapSrs))
                     {
                         transformer.Transform(mapCenter);
@@ -2005,14 +2005,14 @@ public class RestPrintHelperService
         private void ZoomToEnvelope(LayoutBuilder layoutBuilder, Envelope mapExtent)
         {
             mapExtent = new Envelope(mapExtent);
-            if (extentShapeEpsg > 0)
+            if (ExtentShapeEpsg > 0)
             {
                 var mapSrs = layoutBuilder.PageMapSrs(layoutBuilder.Map.SpatialReference.Id);
-                if (mapSrs != extentShapeEpsg)
+                if (mapSrs != ExtentShapeEpsg)
                 {
                     using (var transformer = new GeometricTransformerPro(
                             ApiGlobals.SRefStore.SpatialReferences,
-                            extentShapeEpsg,
+                            ExtentShapeEpsg,
                             mapSrs))
                     {
                         transformer.Transform(mapExtent);

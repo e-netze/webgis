@@ -48,8 +48,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
     private const string SaveDialogValidationMessage = "save-dilaog-validation-message";
 
-    private readonly string[] MobileTools = new string[] { "pointer", "symbol", "freehand", "line", "polygon", "dimline", "share", "save", "open", "upload", "download" };
-    private readonly string[] AdvancedTools = new string[] { "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline" };  // Do not use with Internet Explorer
+    protected readonly string[] MobileTools = [ "pointer", "symbol", "freehand", "line", "polygon", "dimline", "share", "save", "open", "upload", "download" ];
+    protected readonly string[] AdvancedTools = [ "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline" ];  // Do not use with Internet Explorer
 
     #region IApiServerTool Member
 
@@ -288,10 +288,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         };
     }
 
-    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
-    {
-        return new ApiEventResponse();
-    }
+    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer) => new ApiEventResponse();
+    
 
     #endregion
 
@@ -362,17 +360,16 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
     [ServerToolCommand("pointer")]
     public ApiEventResponse OnPointerClick(IBridge bridge, ApiToolEventArguments e)
-    {
-        return new ApiEventResponse()
+        => new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Pointer },
             UIElements = new IUIElement[] {
-                new UIEmpty() {
-                    target = $"#{toolContainerId}" //UIElementTarget.tool_sidebar_left.ToString()
+                    new UIEmpty() {
+                        target = $"#{toolContainerId}" //UIElementTarget.tool_sidebar_left.ToString()
+                    }
                 }
-            }
         };
-    }
+    
 
     [ServerToolCommand("symbol")]
     async public Task<ApiEventResponse> OnSymbolToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
@@ -613,21 +610,18 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
     [ServerToolCommand("polygon")]
     public Task<ApiEventResponse> OnPolygonToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
-    {
-        return On2DToolClick(bridge, e, GraphicsTool.Polygon, localizer);
-    }
+        => On2DToolClick(bridge, e, GraphicsTool.Polygon, localizer);
+    
 
     [ServerToolCommand("rectangle")]
     public Task<ApiEventResponse> OnRectangleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
-    {
-        return On2DToolClick(bridge, e, GraphicsTool.Rectangle, localizer);
-    }
+        => On2DToolClick(bridge, e, GraphicsTool.Rectangle, localizer);
+    
 
     [ServerToolCommand("circle")]
     public Task<ApiEventResponse> OnCircleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
-    {
-        return On2DToolClick(bridge, e, GraphicsTool.Circle, localizer);
-    }
+        => On2DToolClick(bridge, e, GraphicsTool.Circle, localizer);
+    
 
     [ServerToolCommand("distance_circle")]
     public ApiEventResponse OnDistanceCircleClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
@@ -882,8 +876,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
     [ServerToolCommand("upload")]
     public ApiEventResponse OnUploadClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
-    {
-        return new ApiEventResponse()
+        => new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Pointer },
             UIElements = new IUIElement[]
@@ -923,7 +916,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                  new UISetter("webgis-mapmarkup-tool", "pointer")
             }
         };
-    }
+    
 
 
     [ServerToolCommand("upload-objects")]
@@ -1527,12 +1520,11 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
     [ServerToolCommand("share")]
     public ApiEventResponse OnShareClick(IBridge bridge, ApiToolEventArguments e)
-    {
-        return new ApiEventResponse()
+        => new ApiEventResponse()
         {
             ActiveTool = new Serialization.ShareMap()
         };
-    }
+    
 
     #endregion
 

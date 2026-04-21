@@ -251,8 +251,10 @@ static public class WKTExtensions
 
         if (wkt.StartsWith("POINT(", StringComparison.OrdinalIgnoreCase))
         {
-            string[] xy = pathStrings[0].Split(' ');
-            return new Point(xy[0].ToPlatformDouble(), xy[1].ToPlatformDouble());
+            //string[] xy = pathStrings[0].Split(' ');
+            //return new Point(xy[0].ToPlatformDouble(), xy[1].ToPlatformDouble());
+            return ReadPoint(pathStrings[0]);
+
         }
         else if (wkt.StartsWith("MULTIPOINT(", StringComparison.OrdinalIgnoreCase))
         {
@@ -393,107 +395,114 @@ static public class WKTExtensions
         return openParenthesesCount == 0;
     }
 
+    private static Point ReadPoint(string coords)
+    {
+        string[] xy = coords.Split(' ');
+        int pointSrsId = 0;
+        Point newPoint = null;
+
+        if (xy.Length == 2)
+        {
+            newPoint = new Point(xy[0].ToPlatformDouble(), xy[1].ToPlatformDouble());
+        }
+        else if (xy.Length > 2)
+        {
+            object meta = null, mValue = null, m2Value = null;
+            double zValue = 0.0;
+            bool hasZ = false;
+
+            for (int i = 2; i < xy.Length; i++)
+            {
+                if (xy[i].StartsWith("meta:"))
+                {
+                    meta = xy[i];
+                }
+                else if (xy[i].StartsWith("m:"))
+                {
+                    mValue = xy[i].Substring("m:".Length);
+                    if (mValue.ToString().TryToPlatformDouble(out double doubleMValue))
+                    {
+                        mValue = doubleMValue;
+                    }
+                }
+                else if (xy[i].StartsWith("m2:"))
+                {
+                    m2Value = xy[i].Substring("m2:".Length);
+                    if (m2Value.ToString().TryToPlatformDouble(out double doubleM2Value))
+                    {
+                        m2Value = doubleM2Value;
+                    }
+                }
+                else if (xy[i].StartsWith("z:"))
+                {
+                    hasZ = (xy[i].Substring(2).TryToPlatformDouble(out zValue));
+                }
+                else if (xy[i].StartsWith("srs:"))
+                {
+                    pointSrsId = int.Parse(xy[i].Substring(4));
+                }
+            }
+
+            if (meta != null)
+            {
+                newPoint = new PointM3(xy[0].ToPlatformDouble(),
+                                           xy[1].ToPlatformDouble(),
+                                           zValue,
+                                           mValue, m2Value, meta);
+            }
+            else if (m2Value != null)
+            {
+                newPoint = new PointM2(xy[0].ToPlatformDouble(),
+                                           xy[1].ToPlatformDouble(),
+                                           zValue,
+                                           mValue, m2Value);
+            }
+            else if (mValue != null)
+            {
+                newPoint = new PointM(xy[0].ToPlatformDouble(),
+                                          xy[1].ToPlatformDouble(),
+                                          zValue,
+                                          mValue);
+            }
+            else if (hasZ)
+            {
+                newPoint = new Point(xy[0].ToPlatformDouble(),
+                                         xy[1].ToPlatformDouble(),
+                                         zValue);
+            }
+            else if (pointSrsId > 0)
+            {
+                newPoint = new Point(xy[0].ToPlatformDouble(), xy[1].ToPlatformDouble());
+            }
+            else
+            {
+                throw new Exception("Syntax error:" + coords);
+            }
+        }
+        //else if(xy.Length == 3 && xy[2].StartsWith("meta:"))
+        //{
+        //    pColl.AddPoint(new PointM(xy[0].ToPlatformDouble(), xy[1].ToPlatformDouble(), xy[2]));
+        //}
+        else
+        {
+            throw new Exception("Syntax error:" + coords);
+        }
+
+        if (newPoint != null && pointSrsId > 0)
+        {
+            newPoint.SrsId = pointSrsId;
+        }
+
+        return newPoint;
+    }
+
     private static PointCollection ReadPointCollection(string pathString)
     {
         PointCollection pColl = new PointCollection();
 
         foreach (string coords in pathString.Split(','))
         {
-            string[] xy = coords.Split(' ');
-            int pointSrsId = 0;
-            Point newPoint = null;
-
-            if (xy.Length == 2)
-            {
-                pColl.AddPoint(newPoint = new Point(xy[0].ToPlatformDouble(), xy[1].ToPlatformDouble()));
-            }
-            else if (xy.Length > 2)
-            {
-                object meta = null, mValue = null, m2Value = null;
-                double zValue = 0.0;
-                bool hasZ = false;
-
-                for (int i = 2; i < xy.Length; i++)
-                {
-                    if (xy[i].StartsWith("meta:"))
-                    {
-                        meta = xy[i];
-                    }
-                    else if (xy[i].StartsWith("m:"))
-                    {
-                        mValue = xy[i].Substring("m:".Length);
-                        if (mValue.ToString().TryToPlatformDouble(out double doubleMValue))
-                        {
-                            mValue = doubleMValue;
-                        }
-                    }
-                    else if (xy[i].StartsWith("m2:"))
-                    {
-                        m2Value = xy[i].Substring("m2:".Length);
-                        if (m2Value.ToString().TryToPlatformDouble(out double doubleM2Value))
-                        {
-                            m2Value = doubleM2Value;
-                        }
-                    }
-                    else if (xy[i].StartsWith("z:"))
-                    {
-                        hasZ = (xy[i].Substring(2).TryToPlatformDouble(out zValue));
-                    }
-                    else if (xy[i].StartsWith("srs:"))
-                    {
-                        pointSrsId = int.Parse(xy[i].Substring(4));
-                    }
-                }
-
-                if (meta != null)
-                {
-                    pColl.AddPoint(newPoint = new PointM3(xy[0].ToPlatformDouble(),
-                                               xy[1].ToPlatformDouble(),
-                                               zValue,
-                                               mValue, m2Value, meta));
-                }
-                else if (m2Value != null)
-                {
-                    pColl.AddPoint(newPoint = new PointM2(xy[0].ToPlatformDouble(),
-                                               xy[1].ToPlatformDouble(),
-                                               zValue,
-                                               mValue, m2Value));
-                }
-                else if (mValue != null)
-                {
-                    pColl.AddPoint(newPoint = new PointM(xy[0].ToPlatformDouble(),
-                                              xy[1].ToPlatformDouble(),
-                                              zValue,
-                                              mValue));
-                }
-                else if (hasZ)
-                {
-                    pColl.AddPoint(newPoint = new Point(xy[0].ToPlatformDouble(),
-                                             xy[1].ToPlatformDouble(),
-                                             zValue));
-                }
-                else if (pointSrsId > 0)
-                {
-                    pColl.AddPoint(newPoint = new Point(xy[0].ToPlatformDouble(), xy[1].ToPlatformDouble()));
-                }
-                else
-                {
-                    throw new Exception("Syntax error:" + pathString);
-                }
-            }
-            //else if(xy.Length == 3 && xy[2].StartsWith("meta:"))
-            //{
-            //    pColl.AddPoint(new PointM(xy[0].ToPlatformDouble(), xy[1].ToPlatformDouble(), xy[2]));
-            //}
-            else
-            {
-                throw new Exception("Syntax error:" + pathString);
-            }
-
-            if (newPoint != null && pointSrsId > 0)
-            {
-                newPoint.SrsId = pointSrsId;
-            }
+            pColl.AddPoint(ReadPoint(coords));
         }
         return pColl;
     }
