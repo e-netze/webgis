@@ -2,6 +2,8 @@
 //#define ADD_MESSAGEQUEUE
 //#define ADD_REDIS
 //#define ADD_MCP
+//#define ADD_GVIEW
+//#define ADD_POSTGRES
 //#define ADD_DEVTUNNELS
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -89,7 +91,7 @@ var redis = builder
 #endregion
 #endif
 
-#if POSTGRES
+#if ADD_POSTGRES
 
 var postgresPassword = builder.AddParameter("postgresql-password", "postgres");
 
@@ -106,7 +108,7 @@ var postgres = builder
 
 #endif
 
-#if GVIEW
+#if ADD_GVIEW
 var gViewServer = builder
                     .AddgViewServer("gview-server", httpPort: 61656)
                     .Build()
