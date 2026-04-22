@@ -688,7 +688,7 @@ path.webgis-leaflet-interactive {
 .webgis-uibutton-container {
     margin: 10px 0px;
     text-align: right;
-    white-space: nowrap;
+    white-space: normal;
 }
 
     .webgis-uibutton-container .uibutton {

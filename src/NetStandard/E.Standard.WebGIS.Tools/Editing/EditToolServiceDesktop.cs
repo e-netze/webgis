@@ -421,7 +421,7 @@ internal class EditToolServiceDesktop : IEditToolService
     }
 
     [ServerToolCommand("massattributation")]
-    public ApiEventResponse OnMassatributation(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnMassattributation(IBridge bridge, ApiToolEventArguments e)
     {
         return new ApiEventResponse()
         {

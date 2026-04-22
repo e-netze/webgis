@@ -4,8 +4,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Security;
 using E.Standard.Platform;
 using E.Standard.Web.Abstractions;
+using E.Standard.Web.Models;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
@@ -17,7 +19,7 @@ namespace E.Standard.WebMapping.GeoServices.SearchService;
 
 public class SolrSearchService : ISearchService
 {
-    protected string _name, _id;
+    protected string _name, _id, _user, _pwd;
     protected string _serviceUrl, _suggestedTextField, _thumbnailField, _geometryField, _subtextField, _link;
     protected int _rows = 5;
     protected SpatialReference _sRef = null, _sRef4326 = null;
@@ -35,6 +37,8 @@ public class SolrSearchService : ISearchService
         _subtextField = node.LoadString("subtext");
         _link = node.LoadString("link");
         _rows = (int)node.Load("rows", 5);
+        _user = (string)node.Load("user", String.Empty);
+        _pwd = CmsCryptoHelper.Decrypt((string)node.Load("pwd", String.Empty), "searchservice");
 
         int projId = (int)node.Load("projid", -1);
         if (projId > 0 /* && projId != 4326*/)
@@ -72,7 +76,12 @@ public class SolrSearchService : ISearchService
         string url = String.Format(_serviceUrl, term).Replace("{term}", term).Replace("[term]", term);
         url += "&rows=" + (rows > 0 ? rows : _rows);
 
-        string json = await httpService.GetStringAsync(url, encoding: Encoding.UTF8);
+        RequestAuthorization auth = (!string.IsNullOrEmpty(_user) && !string.IsNullOrEmpty(_pwd))
+            ? new RequestAuthorization { AuthType = "Basic", Username = _user, Password = _pwd }
+            : null;
+
+        string json = await httpService.GetStringAsync(url, auth, encoding: Encoding.UTF8);
+
         var lucType = JsonConvert.DeserializeObject<LucType>(json);
 
         List<SearchServiceItem> items = new List<SearchServiceItem>();

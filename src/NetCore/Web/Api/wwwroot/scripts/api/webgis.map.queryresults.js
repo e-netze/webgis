@@ -952,7 +952,7 @@
                     }
 
                     if (service.hasEditLayerPermission(query.layerid, 'massattributation')) {
-                        createToolbarButton($editingBlock, webgis.l10n.get(editToolMassattributionId), webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-mass', 'tools'), webgis.l10n.get(editToolMassattributionId + '.tooltip'))
+                        createToolbarButton($editingBlock, editToolMassattributionId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-mass', 'tools'), editToolMassattributionId + '.tooltip')
                             .css('display', 'none')
                             .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
                             .click(function () {

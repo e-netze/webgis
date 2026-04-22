@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
+using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
@@ -18,6 +19,7 @@ namespace E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(SelectionInfoDependent = true, MapCrsDependent = true)]
+[LocalizationNamespace("tools.editing.massattribution")]
 public class MassAttributation : IApiServerToolAsync, IApiChildTool
 {
     #region IApiServerTool Member
