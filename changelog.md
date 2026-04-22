@@ -32,6 +32,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Bug: can't open side-by-side app in AppBuilder
   [Issue #457](https://github.com/e-netze/webgis-community/issues/457)
 
+- Tooltip mass attribution tool added:
+  [Issue #446](https://github.com/e-netze/webgis-community/issues/446)
+
 ## 8.26.1402
 
 ## Added
