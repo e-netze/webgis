@@ -2053,8 +2053,8 @@ webgis.tools.boxEvent = function (map, e, box, crs) {
         this.world.Y = ll[1] * .5 + ur[1] * .5;
     }
 
-    var p1 = map.frameworkElement.latLngToLayerPoint([box[0], box[1]]);
-    var p2 = map.frameworkElement.latLngToLayerPoint([box[2], box[3]]);
+    var p1 = map.frameworkElement.latLngToLayerPoint([box[1], box[0]]);
+    var p2 = map.frameworkElement.latLngToLayerPoint([box[3], box[2]]);
     //console.log(p1, p2);
 
     this.toEventString = function (map, tool) {
