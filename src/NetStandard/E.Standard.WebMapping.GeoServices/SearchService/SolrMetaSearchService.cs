@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using E.Standard.CMS.Core;
 using E.Standard.Json;
 using E.Standard.Web.Abstractions;
+using E.Standard.Web.Models;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
@@ -96,7 +97,12 @@ public class SolrMetaSearchService : SolrSearchService, ISearchService2
         //}
 
         //string json = await dotNETConnector.DownloadXmlAsync(url, _connector, null);
-        string json = await httpService.GetStringAsync(url, encoding: Encoding.UTF8);
+
+        RequestAuthorization auth = (!string.IsNullOrEmpty(_user) && !string.IsNullOrEmpty(_pwd))
+            ? new RequestAuthorization { AuthType = "Basic", Username = _user, Password = _pwd }
+            : null;
+
+        string json = await httpService.GetStringAsync(url, auth, encoding: Encoding.UTF8);
         var lucType = JsonConvert.DeserializeObject<LucType>(json);
 
         List<SearchServiceItem> items = new List<SearchServiceItem>();
