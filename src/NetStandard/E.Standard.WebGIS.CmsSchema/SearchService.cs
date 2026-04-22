@@ -5,14 +5,19 @@ using System.Threading.Tasks;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.Schema.Abstraction;
+using E.Standard.CMS.Core.Security;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
+using E.Standard.Extensions.Text;
 using E.Standard.WebGIS.CMS;
 
 namespace E.Standard.WebGIS.CmsSchema;
 
 public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
 {
+    private string _user = String.Empty;
+    private string _pwd = String.Empty;
+
     public SearchService()
     {
         this.Create = true;
@@ -82,6 +87,23 @@ public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
     {
         get { return _target; }
         set { _target = value; }
+    }
+
+    [DisplayName("Username")]
+    [Category("~Anmeldungs-Credentials")]
+    public string Username
+    {
+        get { return _user; }
+        set { _user = value; }
+    }
+
+    [DisplayName("Password")]
+    [Category("~Anmeldungs-Credentials")]
+    [PasswordPropertyText(true)]
+    public string Password
+    {
+        get { return _pwd; }
+        set { _pwd = value; }
     }
 
     private string _suggestedText = "textsuggest";
@@ -163,7 +185,8 @@ public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
         this.ServiceUrl = (string)stream.Load("serviceUrl", String.Empty);
         this.IndexName = (string)stream.Load("indexname", String.Empty);
         this.Target = (SearchServiceTarget)stream.Load("target", (int)SearchServiceTarget.Solr);
-
+        _user = (string)stream.Load("user", String.Empty);
+        _pwd = CmsCryptoHelper.Decrypt((string)stream.Load("pwd", String.Empty), "searchservice").Replace(stream.StringReplace);
         this.SuggestedText = (string)stream.Load("suggestedtext", String.Empty);
         this.Thumbnail = (string)stream.Load("thumbnail", String.Empty);
         this.Geometry = (string)stream.Load("geo", String.Empty);
@@ -187,7 +210,8 @@ public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
         }
 
         stream.Save("target", (int)this.Target);
-
+        stream.Save("user", _user);
+        stream.Save("pwd", CmsCryptoHelper.Encrypt(stream.FireParseBoforeEncryptValue(_pwd), "searchservice"));
         stream.Save("suggestedtext", this.SuggestedText);
         stream.Save("thumbnail", this.Thumbnail);
         stream.Save("geo", this.Geometry);
