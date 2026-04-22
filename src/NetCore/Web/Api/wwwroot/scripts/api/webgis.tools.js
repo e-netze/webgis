@@ -2055,7 +2055,7 @@ webgis.tools.boxEvent = function (map, e, box, crs) {
 
     var p1 = map.frameworkElement.latLngToLayerPoint([box[1], box[0]]);
     var p2 = map.frameworkElement.latLngToLayerPoint([box[3], box[2]]);
-    console.log(p1, p2);
+    //console.log(p1, p2);
 
     this.toEventString = function (map, tool) {
         var ret = '';
