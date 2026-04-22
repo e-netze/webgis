@@ -35,6 +35,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Tooltip mass attribution tool added:
   [Issue #446](https://github.com/e-netze/webgis-community/issues/446)
 
+- Ignore wrong/error elevation-values in GPX files
+  [Issue #430](https://github.com/e-netze/webgis-community/issues/430)
+
 ## 8.26.1402
 
 ## Added
