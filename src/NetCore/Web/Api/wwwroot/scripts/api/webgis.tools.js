@@ -2055,12 +2055,12 @@ webgis.tools.boxEvent = function (map, e, box, crs) {
 
     var p1 = map.frameworkElement.latLngToLayerPoint([box[1], box[0]]);
     var p2 = map.frameworkElement.latLngToLayerPoint([box[3], box[2]]);
-    //console.log(p1, p2);
+    console.log(p1, p2);
 
     this.toEventString = function (map, tool) {
         var ret = '';
         ret += "box=" + box[0] + "," + box[1] + "," + box[2] + "," + box[3] + "|crs=" + (crs ? crs : "4326") + "|";
-        ret += "boxsize=" + Math.abs((p2.y - p1.y)) + "," + Math.abs((p2.x - p1.x)) + "|";
+        ret += "boxsize=" + Math.abs((p2.x - p1.x)) + "," + Math.abs((p2.y - p1.y)) + "|";
         ret += 'mapcrs=' + map.crsId();
    
         var toolParameters = webgis.tools.toolParameterString(map, tool);
