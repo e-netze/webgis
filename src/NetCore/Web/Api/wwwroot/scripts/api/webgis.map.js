@@ -2764,7 +2764,7 @@
             for (let t in container.tools) {
                 const tool = this._tools[container.tools[t]];
 
-                console.log(tool.id, tool.visibility);
+                //console.log(tool.id, tool.visibility);
                 if (!tool || tool.visibility === 'hidden')
                     continue;
 
