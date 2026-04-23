@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ## Added
+## Fixed
+
+## 8.26.1702
+
+## Added
 
 - GeoCodes: allow GeoCodes (UTMRef, etc) in Coordinates-Tool and Quick Search 
   [discussion #449](https://github.com/e-netze/webgis-community/discussions/449)
