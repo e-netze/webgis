@@ -19,11 +19,12 @@ namespace E.Standard.WebMapping.GeoServices.SearchService;
 
 public class SolrSearchService : ISearchService
 {
-    protected string _name, _id, _user, _pwd;
+    protected string _name, _id;
     protected string _serviceUrl, _suggestedTextField, _thumbnailField, _geometryField, _subtextField, _link;
     protected int _rows = 5;
     protected SpatialReference _sRef = null, _sRef4326 = null;
     protected ISpatialReferenceStore _sRefStore = null;
+    private readonly RequestAuthorization _requestAuthorization;
 
     public SolrSearchService(CmsNode node)
     {
@@ -37,8 +38,9 @@ public class SolrSearchService : ISearchService
         _subtextField = node.LoadString("subtext");
         _link = node.LoadString("link");
         _rows = (int)node.Load("rows", 5);
-        _user = (string)node.Load("user", String.Empty);
-        _pwd = CmsCryptoHelper.Decrypt((string)node.Load("pwd", String.Empty), "searchservice");
+        _requestAuthorization = RequestAuthorization.FromHttpAuthSchemeOrNull(
+                username: node.LoadString("user"), 
+                password: CmsCryptoHelper.Decrypt(node.LoadString("pwd"), "searchservice"));
 
         int projId = (int)node.Load("projid", -1);
         if (projId > 0 /* && projId != 4326*/)
@@ -76,11 +78,7 @@ public class SolrSearchService : ISearchService
         string url = String.Format(_serviceUrl, term).Replace("{term}", term).Replace("[term]", term);
         url += "&rows=" + (rows > 0 ? rows : _rows);
 
-        RequestAuthorization auth = (!string.IsNullOrEmpty(_user) && !string.IsNullOrEmpty(_pwd))
-            ? new RequestAuthorization { AuthType = "Basic", Username = _user, Password = _pwd }
-            : null;
-
-        string json = await httpService.GetStringAsync(url, auth, encoding: Encoding.UTF8);
+        string json = await httpService.GetStringAsync(url, GetRequestAuthorization(), encoding: Encoding.UTF8);
 
         var lucType = JsonConvert.DeserializeObject<LucType>(json);
 
@@ -242,6 +240,8 @@ public class SolrSearchService : ISearchService
         }
         return null;
     }
+
+    protected RequestAuthorization GetRequestAuthorization() => _requestAuthorization;
 
     #endregion
 

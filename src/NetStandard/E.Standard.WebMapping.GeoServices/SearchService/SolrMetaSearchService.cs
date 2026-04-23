@@ -96,13 +96,7 @@ public class SolrMetaSearchService : SolrSearchService, ISearchService2
         //    url += $"&fq=geowgs:[{ queryBBox.MinY },{ queryBBox.MinX } TO { queryBBox.MaxY },{ queryBBox.MaxX }]";
         //}
 
-        //string json = await dotNETConnector.DownloadXmlAsync(url, _connector, null);
-
-        RequestAuthorization auth = (!string.IsNullOrEmpty(_user) && !string.IsNullOrEmpty(_pwd))
-            ? new RequestAuthorization { AuthType = "Basic", Username = _user, Password = _pwd }
-            : null;
-
-        string json = await httpService.GetStringAsync(url, auth, encoding: Encoding.UTF8);
+        string json = await httpService.GetStringAsync(url, base.GetRequestAuthorization(), encoding: Encoding.UTF8);
         var lucType = JsonConvert.DeserializeObject<LucType>(json);
 
         List<SearchServiceItem> items = new List<SearchServiceItem>();

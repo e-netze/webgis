@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - DataLinq Upgrade: 8.26.1502
 
+- Basic Authentication for SOLR search services
+  [Issue #456](https://github.com/e-netze/webgis-community/issues/456)
+
 ## Fixed
 
 - Bug: API Crashes on start, if DataLinq is not included in api.config
@@ -37,6 +40,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Ignore wrong/error elevation-values in GPX files
   [Issue #430](https://github.com/e-netze/webgis-community/issues/430)
+
+- UI (wrapping Buttongroups)
+  [Issue #454](https://github.com/e-netze/webgis-community/issues/454)
 
 ## 8.26.1402
 
