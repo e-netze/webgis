@@ -452,10 +452,7 @@ internal class EditToolServiceDesktop : IEditToolService
                 new UIDiv() { targetwidth = "640px" }
                     .AsDialog(UIElementTarget.modaldialog)
                     .WithTargetTitle(_localizer.Localize("shortcuts"))
-                    .AddChild(new UILabel()
-                    {
-                        label = _localizer.Localize("shortcuts:body")
-                    })
+                    .AddChild(new UIParagraph(_localizer.Localize("shortcuts:body")))
             );
     }
 

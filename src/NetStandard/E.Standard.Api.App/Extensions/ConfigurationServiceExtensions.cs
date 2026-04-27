@@ -45,19 +45,6 @@ static public class ConfigurationServiceExtensions
         return 4326;
     }
 
-    static public bool QuickSearchAllowGeoCodesInput(this IConfiguration config)
-    {
-        return !String.IsNullOrWhiteSpace(config[$"{ApiConfigKeys.AllowedGeoCodesInput}"]);
-    }
-
-    static public string[] QuickSearchAllowedGeoCodesInput(this IConfiguration config)
-    {
-        return config[$"{ApiConfigKeys.AllowedGeoCodesInput}"]?
-                    .Split(",")
-                    .Select(x => x.Trim())
-                    .ToArray();
-    }
-
     static public string Pro4DatabaseConnectionString(this ConfigurationService config)
     {
         return config[ApiConfigKeys.Proj4DatabaseConnectionString];
@@ -671,6 +658,19 @@ static public class ConfigurationServiceExtensions
         }
 
         return 5;
+    }
+
+    static public bool QuickSearchAllowGeoCodesInput(this IConfiguration config)
+    {
+        return !String.IsNullOrWhiteSpace(config[$"{ApiConfigKeys.AllowedGeoCodesInput}"]);
+    }
+
+    static public string[] QuickSearchAllowedGeoCodesInput(this IConfiguration config)
+    {
+        return config[$"{ApiConfigKeys.AllowedGeoCodesInput}"]?
+                    .Split(",")
+                    .Select(x => x.Trim())
+                    .ToArray();
     }
 
     #endregion

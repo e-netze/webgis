@@ -24,7 +24,7 @@ webgis.ui.builder["label"] = (map, $newElement, element) => {
 webgis.ui.builder["paragraph"] = (map, $newElement, element) => {
     $newElement
         .addClass("webgis-paragraph")
-        .text(element.text);
+        .html(webgis.asMarkdownOrText(element.text));
 }
 
 webgis.ui.builder["title.tagname"] = "h1";
