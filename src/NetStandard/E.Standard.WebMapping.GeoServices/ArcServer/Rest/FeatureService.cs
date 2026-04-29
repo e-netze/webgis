@@ -457,7 +457,7 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
                     }
 
                     //
-                    // Spatial Reference auf Feature setzten,
+                    // Spatial Reference auf Feature setzen,
                     // damit später beim speichern die richtige Projektion an den
                     // FeatureServer übergeben wird.
                     //

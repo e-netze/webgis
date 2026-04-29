@@ -2986,7 +2986,7 @@
     };
     this.copyString = function (val) {
         if (val) {
-            var $temp = $("<input>")
+            var $temp = $("<textarea>")
                 .css({
                     height: '0px',
                     position: 'absolute',

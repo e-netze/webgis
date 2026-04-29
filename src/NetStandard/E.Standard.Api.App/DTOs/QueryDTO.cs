@@ -283,6 +283,10 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
         [JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public string FileExtension { get; set; }
+
+        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public string Description { get; set; }
     }
 
     public class FeatureTransfer : IQueryFeatureTransferBridge, IAuthClone<FeatureTransfer>

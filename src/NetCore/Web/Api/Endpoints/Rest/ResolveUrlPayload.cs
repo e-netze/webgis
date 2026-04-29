@@ -56,11 +56,11 @@ public class ResolveUrlPayload : IApiEndpoint
                     _ => payloadUrl,
                 };
 
-                return new
+                return await endpointHandler.ApiJsonResult(new
                 {
                     success = true,
                     url = resultUrl
-                };
+                });
             }))
            .AddWebGISApiEndpointMetadata();
     }

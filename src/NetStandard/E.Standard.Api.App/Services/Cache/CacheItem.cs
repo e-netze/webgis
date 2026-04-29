@@ -569,7 +569,8 @@ public class CmsCacheItem
                                             Id = exportFormatNode.Url,
                                             Name = exportFormatNode.Name,
                                             FileExtension = exportFormatNode.Load("fileext", "txt")?.ToString(),
-                                            FormatString = exportFormatNode.LoadString("formatstring")
+                                            FormatString = exportFormatNode.LoadString("formatstring"),
+                                            Description = exportFormatNode.LoadString("description")
                                         };
                                         exportFormats.Add(new AuthObject<QueryDTO.TableExportFormat>(exportFormat, CmsDocument.GetAuthNodeFast(cms, exportFormatNode.NodeXPath)));
                                     }

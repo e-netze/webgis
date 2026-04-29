@@ -21,7 +21,6 @@ using Api.Core.AppCode.Services.Rest;
 using E.Standard.Api.App;
 using E.Standard.Api.App.Configuration;
 using E.Standard.Api.App.DTOs;
-using E.Standard.Api.App.DTOs.Print;
 using E.Standard.Api.App.DTOs.Tools;
 using E.Standard.Api.App.DTOs.Transformations;
 using E.Standard.Api.App.Exceptions;
@@ -46,7 +45,6 @@ using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Abstractions;
 using E.Standard.Web.Extensions;
 using E.Standard.WebApp.Attributes;
-using E.Standard.WebGIS.CMS.Extensions;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebGIS.Core.Reflection;
@@ -1598,97 +1596,6 @@ public class RestController : ApiBaseController
 
     #endregion
 
-    #region Export Features
-
-    async public Task<IActionResult> ExportFeatures(string serviceId, string queryId, string featureIds, string queryFeatures, string format)
-    {
-        return await SecureMethodHandlerAsync(async (ui) =>
-        {
-            string name = String.Empty, exportText = String.Empty, fileTitle = String.Empty;
-            string fileExtension = "csv";
-
-            if (!String.IsNullOrEmpty(serviceId) && !String.IsNullOrEmpty(queryId))
-            {
-                var query = await _cache.GetQuery(serviceId, queryId, ui, urlHelper: _urlHelper);
-                if (query == null)
-                {
-                    throw new Exception("Query not found");
-                }
-
-                var oids = featureIds.Split(',').Select(id => long.Parse(id)).ToArray();
-                var filter = new E.Standard.WebMapping.Core.Api.Bridge.ApiOidsFilter(oids);
-                filter.QueryGeometry = false;
-
-                var engine = new QueryEngine();
-                if (await engine.PerformAsync(_requestContext, query, filter, advancedQueryMethod: QueryEngine.AdvancedQueryMethod.Normal))
-                {
-                    var tableExportFormat = query.TableExportFormats?
-                                                 .Where(f => f.Id == format)
-                                                 .FirstOrDefault();
-
-
-                    fileTitle = $"{queryId}_{Guid.NewGuid():N}";
-
-                    FeatureCollection features = await _restService.Helper.PrepareFeatureCollection(engine.Features, query, null, ui, null, renderFields: tableExportFormat == null);
-                    features.OrderByIds(oids);
-
-                    if (tableExportFormat != null)
-                    {
-                        fileExtension = tableExportFormat.FileExtension;
-                        name = $"{tableExportFormat.Name}.{fileExtension}";
-
-                        exportText = features.ToPattern(tableExportFormat.FormatString);
-                    }
-                    else
-                    {
-                        switch (format)
-                        {
-                            case "_csv":
-                            case "_csv_excel":
-                            default:
-                                exportText = features.ToCsv(excel: format == "_csv_excel");
-                                name = query.Name + ".csv";
-                                break;
-                        }
-                    }
-                }
-            }
-            else if (!String.IsNullOrEmpty(queryFeatures))
-            {
-                fileTitle = $"{Guid.NewGuid():N}";
-
-                var featureCollection = JSerializer.Deserialize<QueryFeaturesDTO>(queryFeatures);
-
-                switch (format)
-                {
-                    case "_csv":
-                    case "_csv_excel":
-                    default:
-                        exportText = featureCollection.ToCsv(excel: format == "_csv_excel");
-                        name = "table.csv";
-                        break;
-                }
-            }
-
-            string fileName = $"{fileTitle}.{fileExtension}";
-            System.IO.File.WriteAllText($"{_urlHelper.OutputPath()}/{fileName}".ToPlatformPath(), exportText, _config.DefaultTextDownloadEncoding());
-
-            if (String.IsNullOrWhiteSpace(fileName))
-            {
-                throw new Exception("Unknown error");
-            }
-
-            return await JsonObject(new
-            {
-                success = true,
-                downloadid = _crypto.EncryptTextDefault(fileName, CryptoResultStringType.Hex),
-                name = name
-            });
-        });
-    }
-
-    #endregion
-
     #region Snapping
 
     [HttpPost]
@@ -1704,52 +1611,52 @@ public class RestController : ApiBaseController
 
     #region Download
 
-    async public Task<IActionResult> Download(string id, string n = "", string contentType = "application/octet-stream")
-    {
-        return await SecureMethodHandlerAsync(async (ui) =>
-        {
-            string fileName = _crypto.DecryptTextDefault(id);
+    //async public Task<IActionResult> Download(string id, string n = "", string contentType = "application/octet-stream")
+    //{
+    //    return await SecureMethodHandlerAsync(async (ui) =>
+    //    {
+    //        string fileName = _crypto.DecryptTextDefault(id);
 
-            fileName = fileName.Replace("\\", "/");
+    //        fileName = fileName.Replace("\\", "/");
 
-            if (fileName.Contains(@"/../"))
-            {
-                throw new IOException("Not allowed");
-            }
+    //        if (fileName.Contains(@"/../"))
+    //        {
+    //            throw new IOException("Not allowed");
+    //        }
 
-            string filePath = _urlHelper.OutputPath().AddUriPath(fileName);
+    //        string filePath = _urlHelper.OutputPath().AddUriPath(fileName);
 
-            // ToDo: Wird nicht in der Cloud funktionieren, weil es da keine Output Verzeichnis gibt...
-            if (fileName.ToLower().EndsWith(".pdf"))
-            {
-                string clientFileName = "webgis-map_" + DateTime.Now.ToShortDateString() + "_" + DateTime.Now.ToLongTimeString() + ".pdf";
-                var nvc = new NameValueCollection();
-                nvc.Add("content-disposition", $"attachment; filename=\"{System.Net.WebUtility.UrlEncode(clientFileName)}\"");
-                return RawResponse((await filePath.BytesFromUri(_http))?.ToArray(), "application/pdf", nvc);
-            }
-            else /*if (n.ToLower().EndsWith(".gpx") || fileName.ToLower().EndsWith(".gpx") ||
-                       n.ToLower().EndsWith(".csv") || fileName.ToLower().EndsWith(".csv") ||
-                       n.ToLower().EndsWith(".json") || fileName.ToLower().EndsWith(".json") ||
-                       n.ToLower().EndsWith(".zip") || fileName.ToLower().EndsWith(".zip"))*/
-            {
-                string clientFileName = n;
-                var nvc = new NameValueCollection();
+    //        // ToDo: Wird nicht in der Cloud funktionieren, weil es da keine Output Verzeichnis gibt...
+    //        if (fileName.ToLower().EndsWith(".pdf"))
+    //        {
+    //            string clientFileName = "webgis-map_" + DateTime.Now.ToShortDateString() + "_" + DateTime.Now.ToLongTimeString() + ".pdf";
+    //            var nvc = new NameValueCollection();
+    //            nvc.Add("content-disposition", $"attachment; filename=\"{System.Net.WebUtility.UrlEncode(clientFileName)}\"");
+    //            return RawResponse((await filePath.BytesFromUri(_http))?.ToArray(), "application/pdf", nvc);
+    //        }
+    //        else /*if (n.ToLower().EndsWith(".gpx") || fileName.ToLower().EndsWith(".gpx") ||
+    //                   n.ToLower().EndsWith(".csv") || fileName.ToLower().EndsWith(".csv") ||
+    //                   n.ToLower().EndsWith(".json") || fileName.ToLower().EndsWith(".json") ||
+    //                   n.ToLower().EndsWith(".zip") || fileName.ToLower().EndsWith(".zip"))*/
+    //        {
+    //            string clientFileName = n;
+    //            var nvc = new NameValueCollection();
 
-                if (contentType == "application/octet-stream")
-                {
-                    nvc.Add("content-disposition", $"attachment; filename=\"{System.Net.WebUtility.UrlEncode(clientFileName)}\"");
-                }
-                var data = await filePath.BytesFromUri(_http); // System.IO.File.ReadAllBytes(filePath);
+    //            if (contentType == "application/octet-stream")
+    //            {
+    //                nvc.Add("content-disposition", $"attachment; filename=\"{System.Net.WebUtility.UrlEncode(clientFileName)}\"");
+    //            }
+    //            var data = await filePath.BytesFromUri(_http); // System.IO.File.ReadAllBytes(filePath);
 
-                if (!(n ?? String.Empty).StartsWith("print_"))  // Ausdruch kann über die Druckvorschau öfter gedruckt werden.
-                {
-                    filePath.TryDelete();
-                }
+    //            if (!(n ?? String.Empty).StartsWith("print_"))  // Ausdruch kann über die Druckvorschau öfter gedruckt werden.
+    //            {
+    //                filePath.TryDelete();
+    //            }
 
-                return RawResponse(data.ToArray(), contentType, nvc);
-            }
-        });
-    }
+    //            return RawResponse(data.ToArray(), contentType, nvc);
+    //        }
+    //    });
+    //}
 
     #endregion
 

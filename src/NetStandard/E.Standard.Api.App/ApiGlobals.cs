@@ -35,6 +35,9 @@ static public class ApiGlobals
 
     public static int MaxFeatureHoverHighlightVerticesCount = 1000;
 
+    public const string DownloadFileExtension = ".download";
+    public const string PrintOutputPrefix = "_print_";
+
     #endregion
 
     static public bool IsInDeveloperMode

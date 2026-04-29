@@ -13,9 +13,6 @@ namespace E.Standard.WebGIS.CmsSchema;
 
 public class TableExportFormat : CopyableXml, IUI, IEditable, IDisplayName
 {
-    private string _formatstring = String.Empty;
-    private string _fileextension = "txt";
-
     public TableExportFormat()
     {
         base.StoreUrl = false;
@@ -23,22 +20,23 @@ public class TableExportFormat : CopyableXml, IUI, IEditable, IDisplayName
     }
 
     #region Properties
+
     [DisplayName("Format String")]
     [Description("String für die Formatierung einer Zeile. Ein Zeilenumbruch entspricht \\r\\n. Platzhalter für Spalten in eckigen Klammern schreiben. (Beispiel: [KG]+[NR]\\r\\n)")]
     [Category("Allgemein")]
-    public string FormatString
-    {
-        get { return _formatstring; }
-        set { _formatstring = value; }
-    }
+    public string FormatString { get; set; } = "";
+
     [DisplayName("Datei Erweiterung")]
     [Description("Die fertig erstellte Exportdatei hat die hier angegebene Datei Erweiterung")]
     [Category("Allgemein")]
-    public string FileExtension
-    {
-        get { return _fileextension; }
-        set { _fileextension = value; }
-    }
+    public string FileExtension { get; set; } = "txt";
+
+    [DisplayName("Beschreibung")]
+    [Description("Wird dem Anwender im Download/Copy-To-Clipboard dialog angezeigt")]
+    [Category("Allgemein")]
+
+    public string Description { get; set; } = "";
+
     #endregion
 
     #region IUI Member
@@ -61,16 +59,18 @@ public class TableExportFormat : CopyableXml, IUI, IEditable, IDisplayName
     {
         base.Load(stream);
 
-        _formatstring = (string)stream.Load("formatstring", String.Empty);
-        _fileextension = (string)stream.Load("fileext", "txt");
+        this.FormatString = (string)stream.Load("formatstring", String.Empty);
+        this.FileExtension = (string)stream.Load("fileext", "txt");
+        this.Description = (string)stream.Load("description", String.Empty);
     }
 
     public override void Save(IStreamDocument stream)
     {
         base.Save(stream);
 
-        stream.Save("formatstring", _formatstring);
-        stream.Save("fileext", _fileextension);
+        stream.Save("formatstring", this.FormatString);
+        stream.Save("fileext", this.FileExtension);
+        stream.Save("description", this.Description);
     }
 
     #endregion

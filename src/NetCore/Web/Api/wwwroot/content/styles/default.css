@@ -169,6 +169,10 @@ ul.toc li {
     font-size: 1.5em;
 }
 
+.webgis-modal-content .webgis-paragraph {
+    font-size: 1em;
+}
+
 .webgis-label {
     display: inline-block;
     font-size: 14px;

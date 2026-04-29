@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
+using E.Standard.Extensions.Security;
 using E.Standard.Platform;
 using E.Standard.Web.Abstractions;
 
@@ -141,15 +142,48 @@ static public class IOExtensions
     {
         try
         {
-            if (uri.StartsWith("http://") || uri.StartsWith("https://"))
+            if (uri.IsUrl())
             {
-                // Do nothing
+                return;
             }
-            else
-            {
-                File.Delete(uri.ToPlatformPath());
-            }
+
+            File.Delete(uri.ToPlatformPath());
         }
         catch { }
+    }
+
+    static public string TryMoveFile(this string uri, string newName)
+    {
+        try
+        {
+            if (uri.IsUrl())
+            {
+                return uri;
+            }
+
+            System.IO.File.Move(uri, newName);
+            return newName;
+        }
+        catch
+        {
+            return uri;
+        }
+    }
+
+    static public string TryAddExtension(this string uri, string extension)
+    {
+        try
+        {
+            if (uri.IsUrl())
+            {
+                return uri;
+            }
+
+            return uri.TryMoveFile($"{uri}{extension}");
+        }
+        catch
+        {
+            return uri;
+        }
     }
 }

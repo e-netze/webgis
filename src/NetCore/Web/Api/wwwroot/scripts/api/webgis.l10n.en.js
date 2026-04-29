@@ -169,6 +169,10 @@
 
     "results-has-changed-warning": "The queried data has changed in location or quantity since the project was saved. The completeness and accuracy of the displayed results can no longer be guaranteed. Please review the results. If the data is still correct, you can avoid this warning by saving the project again with the current results.",
 
+    "copy-to-clipboard": "Copy to Clipboard",
+    "download": "Download",
+    "upload": "Upload",
+
     // print
     "print-extent": "Print extent",
 

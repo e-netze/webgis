@@ -169,6 +169,10 @@
 
     "results-has-changed-warning": "Die abgefragen Daten haben sich seit dem Speichern des Projektes in der Lage bzw. Anzahl geändert. Eine Vollständigkeit und Richtigkeit der angezeigten Ergebnisse kann nicht mehr garantiert werden. Bitte überprüfen sie die Ergebnisse. Sind die Daten immer noch korrekt, können sie diese Warnung vermeiden, indem sie das Projekt mit den aktuellen Ergebnissen noch einmal speichern.",
 
+    "copy-to-clipboard": "In die Zwischenablage kopiern",
+    "download": "Herunterladen",
+    "upload": "Hochladen",
+
     // print
     "print-extent": "Druckbereich",
 

@@ -2,15 +2,24 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Reflection;
 using System.Security.Authentication;
 using System.Threading.Tasks;
 
+using Api.Core.AppCode.Extensions;
+
+using E.Standard.Api.App;
 using E.Standard.Api.App.Exceptions;
 using E.Standard.Api.App.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.Custom.Core;
+using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Custom.Core.Extensions;
 using E.Standard.Extensions.ErrorHandling;
+using E.Standard.Json;
+using E.Standard.WebGIS.Core.Models.Abstraction;
 using E.Standard.WebMapping.Core.Exceptions;
 
 using Microsoft.AspNetCore.Http;
@@ -22,18 +31,21 @@ public class SecureEndpointHandlerService
 {
     private ILogger<SecureEndpointHandlerService> _logger;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IEnumerable<ICustomApiService> _customServices;
 
     public SecureEndpointHandlerService(
             ILogger<SecureEndpointHandlerService> logger,
-            IHttpContextAccessor httpContextAccessor
+            IHttpContextAccessor httpContextAccessor,
+            IEnumerable<ICustomApiService> customServices
         )
     {
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
+        _customServices = customServices;
     }
 
-    async public Task<object> HandlerAsync(
-            Func<CmsDocument.UserIdentification, Task<object>> func,
+    async public Task<IResult> HandlerAsync(
+            Func<CmsDocument.UserIdentification, Task<IResult>> func,
             ApiAuthenticationTypes authTypes = ApiAuthenticationTypes.Hmac
         )
     {
@@ -92,7 +104,7 @@ public class SecureEndpointHandlerService
 
     #region Helper
 
-    protected object HandleAuthenticationException()
+    protected IResult HandleAuthenticationException()
     {
         // TODO
         //if (Request.Method.ToString() == "POST")
@@ -110,7 +122,7 @@ public class SecureEndpointHandlerService
         //return RedirectToAction("Login");
     }
 
-    private object ThrowJsonException(Exception ex, int statusCode = 200, LogLevel logLevel = LogLevel.Error)
+    private IResult ThrowJsonException(Exception ex, int statusCode = 200, LogLevel logLevel = LogLevel.Error)
     {
         _logger.Log(logLevel, ex, "An json exception is thrown");
 
@@ -123,11 +135,11 @@ public class SecureEndpointHandlerService
                                ex is ReportWarningException ? ((ReportWarningException)ex).RequestId : null);
     }
 
-    private object JsonViewSuccess(bool success, string exceptionMessage = "", string exceptionType = "", string? requestId = null)
+    private IResult JsonViewSuccess(bool success, string exceptionMessage = "", string exceptionType = "", string? requestId = null)
     {
         if (!success && !String.IsNullOrEmpty(exceptionMessage))
         {
-            return new
+            return Results.Json(new
             {
                 success = success,
                 exception = exceptionMessage,
@@ -135,9 +147,9 @@ public class SecureEndpointHandlerService
                 requestid = requestId,
                 //taskId = _httpContextAccessor.HttpContext!.Request.FormOrQuery("taskId"),
                 //toolId = _httpContextAccessor.HttpContext!.Request.FormOrQuery("toolId")
-            };
+            });
         }
-        return new { success = success };
+        return Results.Json(new { success = success });
     }
 
     private void AddNoCacheHeaders()
@@ -157,6 +169,64 @@ public class SecureEndpointHandlerService
         _httpContextAccessor.HttpContext!.Response.Headers.TryAdd("Access-Control-Allow-Credentials", "true");
         // is this also required? Maybe after an OPTION request
         // response.Headers.TryAdd("Access-Control-Allow-Methods", "*");
+    }
+
+    #endregion
+
+    #region Return Json
+
+    async internal ValueTask<IResult> ApiJsonResult(object obj, bool pretty = false)
+    {
+        var httpContext = _httpContextAccessor.HttpContext!;
+
+        if (_customServices.Any())
+        {
+            var json = JSerializer.Serialize(obj, pretty || ApiGlobals.IsDevelopmentEnvironment);
+
+            await _customServices.HandleApiResultObject(obj as IWatchable, json, _httpContextAccessor.HttpContext?.User?.Identity?.Name);
+        }
+
+        httpContext.Response
+            .AddNoCacheHeaders()
+            .AddApiCorsHeaders(httpContext.Request);
+
+        return Results.Json(obj);
+    }
+
+    internal IResult ApiRawResponse(byte[] responseBytes, string contentType, NameValueCollection headers)
+    {
+        var httpContext = _httpContextAccessor.HttpContext!;
+
+        if (headers != null)
+        {
+            foreach (string header in headers)
+            {
+                httpContext.Response.Headers.Append(header, headers[header]);
+            }
+        }
+
+        httpContext.Response.AddApiCorsHeaders(httpContext.Request);
+
+        return ApiFileRespoinse(responseBytes, contentType);
+    }
+
+    internal IResult ApiRawResponse(byte[] responseBytes, string contentType, string filename)
+    {
+        var httpContext = _httpContextAccessor.HttpContext!;
+
+        httpContext.Response.AddApiCorsHeaders(httpContext.Request);
+
+        return ApiFileRespoinse(responseBytes, contentType, filename);
+    }
+
+    private IResult ApiFileRespoinse(byte[] data, string contentType, string fileName = "")
+    {
+        //if (!String.IsNullOrWhiteSpace(fileName))
+        //{
+        //    _httpContextAccessor.HttpContext!.Response.Headers.TryAdd("Content-Disposition", $"attachment; filename=\"{fileName}\"");
+        //}
+
+        return Results.File(data, contentType, fileName);
     }
 
     #endregion

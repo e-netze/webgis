@@ -323,9 +323,9 @@ public class RestToolsHelperService
         {
             var downloadResponse = (ApiRawDownloadEventResponse)apiResponse;
 
-            string fileName = $"tmp{Guid.NewGuid().ToString("N").ToLower()}.dat";
+            string fileName = $"tmp{Guid.NewGuid().ToString("N").ToLower()}{ApiGlobals.DownloadFileExtension}";
 
-            await downloadResponse.RawBytes.SaveOrUpload($"{_urlHelper.OutputPath()}/{fileName}");
+            await downloadResponse.RawBytes.SaveOrUpload(System.IO.Path.Combine(_urlHelper.OutputPath(),fileName));
 
             return await controller.JsonObject(new
             {
@@ -513,9 +513,9 @@ public class RestToolsHelperService
             response.PrintContent = new PrintContentDTO()
             {
                 Url = ((ApiPrintEventResponse)apiResponse).Url,
-                preview = ((ApiPrintEventResponse)apiResponse).PreviewUrl,
+                Preview = ((ApiPrintEventResponse)apiResponse).PreviewUrl,
                 Length = ((ApiPrintEventResponse)apiResponse).Length,
-                DownloadId = _crypto.EncryptTextDefault(outputRelFileName, CryptoResultStringType.Hex)
+                EncryptedFilename = _crypto.EncryptTextDefault(outputRelFileName, CryptoResultStringType.Hex)
             };
         }
 

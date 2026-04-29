@@ -866,8 +866,18 @@
                 url: webgis.baseUrl + '/rest/exportfeatures',
                 data: webgis.hmac.appendHMACData(data),
                 success: function (result) {
-                    if (result.success === true && result.downloadid) {
+                    if (!result.success) return;
+
+                    if (result.clipboard_data) {
+                        result.downloadUrl = webgis.baseUrl + '/rest/exportfeatures';
+                        result.downloadData = webgis.$.extend(data, { forceDownload: true });
+                        webgis.ui.showClipboardDataDialog(result);
+                        return;
+                    }
+
+                    if (result.downloadid) {
                         window.open(webgis.baseUrl + '/rest/download?id=' + result.downloadid + '&n=' + result.name);
+                        return;
                     }
                 }
             });

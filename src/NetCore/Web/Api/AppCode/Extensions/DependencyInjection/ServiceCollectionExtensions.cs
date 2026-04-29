@@ -85,6 +85,7 @@ static public class ServiceCollectionExtensions
         services.AddLookupService();
         services.AddTransient<ICustomApiInteractionService, CustomApiInteractionService>();
         services.AddTransient<IExtendedControllerService, ExtendedControllerService>();
+        services.AddTransient<ExportGeoFeaturesService>();
 
         services.AddTransient<CacheClearService>();
 

@@ -1589,7 +1589,7 @@
 
                 let defaultValue;
                 if (servercommand === "_event_handler_onupdatecombo") {
-                    // Beim Updaten von (kaskadierenden) Combos den persistent wert setzten
+                    // Beim Updaten von (kaskadierenden) Combos den persistent Wert setzen
                     // Falls der Wert null ist. Damit werden auch Combos in der 2.ten kaskading Stufe befüllt
                     // auch wenn das darüber liegenden erst durch den Request befüllt wird.
                     defaultValue=map.getPersistentToolParameter(tool, e.id)

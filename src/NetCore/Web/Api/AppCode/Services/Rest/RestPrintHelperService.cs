@@ -12,6 +12,7 @@ using Api.Core.AppCode.Mvc;
 
 using E.Standard.Api.App;
 using E.Standard.Api.App.DTOs;
+using E.Standard.Api.App.DTOs.ApiResult;
 using E.Standard.Api.App.DTOs.Print;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services;
@@ -546,7 +547,7 @@ public class RestPrintHelperService
 
                 #endregion
 
-                string outputPath = map.AsOutputFilename(@$"print_{Guid.NewGuid().ToString("N").ToLower()}.png");
+                string outputPath = map.AsOutputFilename(@$"{ApiGlobals.PrintOutputPrefix}{Guid.NewGuid().ToString("N").ToLower()}.png");
                 if (await layoutBuilder.Draw(outputPath))
                 {
                     images.Add(layoutBuilder, outputPath);
@@ -559,14 +560,14 @@ public class RestPrintHelperService
             string coordinatesFormat = form["attachCoordinates"];
             string coordinatesField = form["attachCoordinatesField"];
 
-            string fileName = "print_" + Guid.NewGuid().ToString("N").ToLower(), previewFileName = String.Empty;
+            string fileName = $"{ApiGlobals.PrintOutputPrefix}{Guid.NewGuid().ToString("N").ToLower()}", previewFileName = String.Empty;
 
             #region Preview
 
             if (images.Count > 0)
             {
                 byte[] previewData = E.Standard.Drawing.Pro.ImageOperations.Scaledown(await images.Values.First().BytesFromUri(_requestContext.Http), 300);
-                await previewData.SaveOrUpload(map.AsOutputFilename(previewFileName = fileName + "_preview.jpg"));
+                await previewData.SaveOrUpload(map.AsOutputFilename(previewFileName = $"{fileName}_preview.jpg"));
             }
 
             #endregion
@@ -856,7 +857,7 @@ public class RestPrintHelperService
         {
             throw new Exception("Internal error: can't crate map image");
         }
-
+        
         if (httpRequest.Form["worldfile"].ToString().ToLower() == "true")
         {
             #region WorldFile
@@ -935,7 +936,7 @@ public class RestPrintHelperService
         }
         else
         {
-            return await PrintResponse(controller, $"mapimage.{format}", imageResponse.ImagePath);
+            return await PrintResponse(controller, $"mapimage.{format}", imageResponse?.ImagePath);
         }
     }
 
@@ -1836,10 +1837,12 @@ public class RestPrintHelperService
             });
         }
 
-        return await controller.JsonObject(new
+        filePath = filePath.TryAddExtension(ApiGlobals.DownloadFileExtension);
+
+        return await controller.JsonObject(new DownloadDTO()
         {
-            name = name,
-            downloadid = _crypto.EncryptTextDefault(new FileInfo(filePath).Name, CryptoResultStringType.Hex)
+            Name = name,
+            EncryptedFilename = _crypto.EncryptTextDefault(new FileInfo(filePath).Name, CryptoResultStringType.Hex)
         });
     }
 
