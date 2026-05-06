@@ -56,7 +56,7 @@ public class ArcServerWmtsService : CopyableNode, IAuthentification, ICreatable,
     public string[] ResourceURLs { get; set; }
 
     [DisplayName("Rendering")]
-    [Description("Für Luftbilder 'Quality' verwenden. Für Ortspläne (mit Text) 'Readablility'...")]
+    [Description("Für Luftbilder 'Quality' verwenden. Für Ortspläne (mit Text) 'Readablility'. Für MapServices mit Layern und Maßstabsgrenzen 'ScaleDependentLayers'")]
     public TileGridRendering Rendering { get; set; }
 
     [DisplayName("Max. Level")]

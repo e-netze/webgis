@@ -178,32 +178,42 @@ public class TileGrid
             return -1;
         }
 
-        double res = double.MinValue, dpm = dpi / 0.0254, mapScale = mapResolution * dpm;
-        int l = -1;
+        double res = double.MinValue, dpm = dpi / 0.0254, mapScale = mapResolution * dpm, tileCacheDpm = dpm;
+        int bestLevel = -1;
+
+        (tileCacheDpm, mapResolution) = _rendering switch
+        {
+            TileGridRendering.ScaleDependentLayers => (96D / 0.0254, mapResolution * dpi/96D),  // use the 96.0 dpi and a "fake" mapresolution
+            _ => (dpm, mapResolution)
+        };
 
         bool onScale = false;
         foreach (TileGridLevel level in _levels)
         {
-            double levelScale = level.Resolution * dpm;
+            double levelScale = level.Resolution * tileCacheDpm;
             double scaleComp = Math.Round(levelScale / mapScale, 5);
 
             if ((level.Resolution < mapResolution || scaleComp == 1.0) &&
                 level.Resolution > res)
             {
                 res = level.Resolution;
-                l = level.Level;
-
+                bestLevel = level.Level;
                 onScale = scaleComp == 1.0;
             }
         }
 
         // Wenn Maßstab nicht exakt getroffen wurde, muss bei Readability der nächst größere genommen werden!
-        if (_rendering == TileGridRendering.Readability && onScale == false && l > 0)
+        if (
+            _rendering == TileGridRendering.Readability 
+            && onScale == false 
+            && bestLevel > 0)
         {
-            l = Math.Max(l - 1, 0);
+            bestLevel = Math.Max(bestLevel - 1, 0);
         }
 
-        return (l >= 0) ? l : this.MinResolutionLevel;
+        return (bestLevel >= 0) 
+            ? bestLevel 
+            : this.MinResolutionLevel;
     }
 
     public int GetNextLowerLevel(int level)

@@ -10,6 +10,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+## 8.26.1801
+
+## Added
+
+- TileCache Rendering Mode: ScaleDependentLayers (for printing cached MapServices)
+  [Issue #458](https://github.com/e-netze/webgis-community/issues/458)
+
+- Map Series Print: api.config - allow increase max intersection iterations
+  [Issue #464](https://github.com/e-netze/webgis-community/issues/464)
+
+## Fixed
+
 ## 8.26.1702
 
 ## Added

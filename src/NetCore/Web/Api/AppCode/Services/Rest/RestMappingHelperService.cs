@@ -18,6 +18,7 @@ using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
 using E.Standard.Configuration.Services;
 using E.Standard.Extensions;
+using E.Standard.Extensions.Text;
 using E.Standard.Json;
 using E.Standard.Platform;
 using E.Standard.Security.Cryptography.Abstractions;
@@ -94,8 +95,8 @@ public class RestMappingHelperService /*: IDisposable*/
             throw new Exception("Unknown service: " + id);
         }
 
-        map.ImageWidth = int.Parse(request.FormOrQuery("width"));
-        map.ImageHeight = int.Parse(request.FormOrQuery("height"));
+        map.ImageWidth = request.FormOrQuery("width").ParseInvariantToRoundedInt();
+        map.ImageHeight = request.FormOrQuery("height").ParseInvariantToRoundedInt();
         map.AddTimeEpoch(id, request.FormOrQuery("time_epoch")?.UrlParameterToTimeEpoch());
 
         string[] bbox = request.FormOrQuery("bbox").ToString().Split(',');
@@ -810,7 +811,7 @@ public class RestMappingHelperService /*: IDisposable*/
             tocVisFilter.CheckSignature(_crypto);
 
             var layer = service.Layers.FindByLayerId(tocVisFilter.TocVisFilterLayerId());
-            if (layer == null) continue;
+            if (layer == null) { continue; }
 
             layer.Filter = layer.Filter.AppendWhereClause(tocVisFilter.TocVisFilterWhereClause());
         }

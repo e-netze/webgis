@@ -62,6 +62,12 @@ static internal class ApiToolEventArgumentsExtensions
     static public int GetMaxMapSeriesPages(this ApiToolEventArguments e)
         => e.GetConfigInt(MapSeriesPrint.ConfigMaxPages, 5);
 
+    static public int GetMaxMapSeriesInterations(this ApiToolEventArguments e)
+        => e.GetMaxMapSeriesPages() * 10;
+
+    static public int GetMaxMapSeriesIntersectionInterations(this ApiToolEventArguments e)
+        => e.GetConfigInt(MapSeriesPrint.ConfigMaxIntersectionIterations, 0).OrTake(e.GetMaxMapSeriesInterations() * 5);
+
     static public string GetMapSeriesOverviewLayout(this ApiToolEventArguments e)
         => e.GetConfigValue(MapSeriesPrint.ConfigOverviewPageLayout)
             .OrTake("layout_map_services_overview.xml");

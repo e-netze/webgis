@@ -33,6 +33,8 @@ using E.Standard.WebMapping.Core.Reflection;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 using E.Standard.WebMapping.GeoServices.Tiling;
 
+using MathNet.Numerics.LinearAlgebra;
+
 using static E.Standard.WebMapping.Core.Api.UI.Elements.UICollapsableElement;
 
 namespace E.Standard.WebGIS.Tools.Export;
@@ -60,6 +62,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     public const string ConfigDefaultQuality = "default-quality";
     public const string ConfigDefaultFormat = "default-format";
     public const string ConfigMaxPages = "max-pages";
+    public const string ConfigMaxIntersectionIterations = "max-intersection-iterations";
     public const string ConfigOverviewPageLayout = "overview-page-layout";
     public const string ConfigOverviewPageFormat = "overview-page-format";
 
@@ -691,12 +694,11 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
         MultiPoint sketch = new();
         try
         {
-            int maxIterations = e.GetMaxMapSeriesPages() * 10;
             sketch = seriesType switch
             {
-                SeriesType.AlongPolylines => seriesCreator.SeriesAlongPolylines(maxIterations),
-                SeriesType.IntersectionRaster => seriesCreator.IntersectionRaster(maxIterations),
-                SeriesType.BoundingBoxRaster => seriesCreator.BoundingBoxRaster(maxIterations),
+                SeriesType.AlongPolylines => seriesCreator.SeriesAlongPolylines(e.GetMaxMapSeriesInterations()),
+                SeriesType.IntersectionRaster => seriesCreator.IntersectionRaster(e.GetMaxMapSeriesIntersectionInterations()),
+                SeriesType.BoundingBoxRaster => seriesCreator.BoundingBoxRaster(e.GetMaxMapSeriesInterations()),
                 _ => throw new NotSupportedException($"Series type '{seriesType}' is not supported.")
             };
         }

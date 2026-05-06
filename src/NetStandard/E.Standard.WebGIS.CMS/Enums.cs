@@ -170,7 +170,8 @@ public enum TileGridOrientation
 public enum TileGridRendering
 {
     Quality = 0,
-    Readability = 1
+    Readability = 1,
+    ScaleDependentLayers = 2
 }
 
 public enum CommaFormat

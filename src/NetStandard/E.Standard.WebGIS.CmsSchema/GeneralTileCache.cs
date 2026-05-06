@@ -46,7 +46,7 @@ public class GeneralTileCache : CopyableNode, ICreatable, IEditable, IUI, IDispl
     #region Properties
 
     [DisplayName("Rendering")]
-    [Description("Für Luftbilder 'Quality' verwenden. Für Ortspläne (mit Text) 'Readablility'...")]
+    [Description("Für Luftbilder 'Quality' verwenden. Für Ortspläne (mit Text) 'Readablility'. Für MapServices mit Layern und Maßstabsgrenzen 'ScaleDependentLayers'")]
     public TileGridRendering Rendering
     {
         get { return _rendering; }
