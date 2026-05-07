@@ -17,6 +17,7 @@ using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Security.App.Services.Abstraction;
 
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
 namespace E.Standard.Cms.Configuration.Services;

@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Security.Authentication;
 
 using Cms.AppCode.Extensions.DependencyInjection;
+using Cms.AppCode.Services;
 
 using E.DataLinq.Code.Extensions.DependencyInjection;
 using E.Standard.ActiveDirectory.Services.ApplicationSecurity;
@@ -44,11 +45,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Authentication;
 
 namespace Cms;
 
@@ -347,7 +343,7 @@ public class Startup
 #endif
         });
 
-#endregion
+        #endregion
 
         services.AddTransient<CmsItemInjectionPackService>();
     }

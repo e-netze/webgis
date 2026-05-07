@@ -8,6 +8,7 @@ using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
 using E.Standard.Extensions.Compare;
+using E.Standard.Localization.Abstractions;
 
 using Newtonsoft.Json;
 

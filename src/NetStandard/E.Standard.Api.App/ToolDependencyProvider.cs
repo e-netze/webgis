@@ -8,6 +8,8 @@ using E.Standard.WebMapping.Core.Api.Bridge;
 
 using Microsoft.Extensions.Localization;
 
+using static E.Standard.Localization.Abstractions.ILocalizer;
+
 namespace E.Standard.Api.App;
 
 public class ToolDependencyProvider : IDependencyProvider

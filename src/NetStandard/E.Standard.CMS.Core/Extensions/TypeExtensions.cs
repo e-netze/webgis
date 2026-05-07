@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Reflection;
 
 using E.Standard.CMS.Core.Exceptions;
+using E.Standard.Localization.Reflection;
 
 namespace E.Standard.CMS.Core.Extensions;
 

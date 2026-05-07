@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.UI.Abstraction;
+using E.Standard.CMS.UI.Extensions;
+using E.Standard.Localization.Abstractions;
 
 using Newtonsoft.Json;
 
@@ -141,7 +143,7 @@ public class NameUrlControl : UserControl, IInitParameter
 
     public string NameToUrl(string name)
     {
-        if (String.IsNullOrEmpty(name)) return "";
+        if (String.IsNullOrEmpty(name)) { return ""; }
 
         name = name.ToLower();
         if (txtUrl.RegexReplace != null)
