@@ -12,5 +12,5 @@ public class SketchPropertiesDTO
     [JsonProperty("element_height", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("element_height")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-    public double? ElementHeight { get; set; }   
+    public double? ElementHeight { get; set; }
 }

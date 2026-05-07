@@ -1,13 +1,4 @@
-﻿using E.Standard.Extensions.Text;
-using E.Standard.Web.Abstractions;
-using E.Standard.Web.Exceptions;
-using E.Standard.Web.Extensions;
-using E.Standard.Web.Models;
-using gView.GraphicsEngine;
-using gView.GraphicsEngine.Abstraction;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,6 +9,18 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+
+using E.Standard.Extensions.Text;
+using E.Standard.Web.Abstractions;
+using E.Standard.Web.Exceptions;
+using E.Standard.Web.Extensions;
+using E.Standard.Web.Models;
+
+using gView.GraphicsEngine;
+using gView.GraphicsEngine.Abstraction;
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace E.Standard.Web.Services;
 

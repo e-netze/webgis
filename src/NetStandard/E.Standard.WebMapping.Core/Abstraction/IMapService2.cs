@@ -1,5 +1,6 @@
-﻿using E.Standard.WebMapping.Core.ServiceResponses;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using E.Standard.WebMapping.Core.ServiceResponses;
 
 namespace E.Standard.WebMapping.Core.Abstraction;
 

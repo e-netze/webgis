@@ -1,13 +1,20 @@
-﻿using Api.Core.AppCode.Extensions.Razor;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+using Api.Core.AppCode.Extensions.Razor;
 using Api.Core.AppCode.Services;
 using Api.Core.AppCode.Services.Api;
 using Api.Core.AppCode.Services.Api.DataLinqEngines;
 using Api.Core.AppCode.Services.Authentication;
 using Api.Core.AppCode.Services.DataLinq;
+using Api.Core.AppCode.Services.Endpoints;
 using Api.Core.AppCode.Services.Logging;
 using Api.Core.AppCode.Services.Ogc;
 using Api.Core.AppCode.Services.Rest;
 using Api.Core.Models.DataLinq;
+
 using E.DataLinq.Core;
 using E.DataLinq.Core.Engines.Abstraction;
 using E.DataLinq.Core.Services.Abstraction;
@@ -24,6 +31,7 @@ using E.Standard.Configuration.Extensions;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
 using E.Standard.Extensions.Compare;
+using E.Standard.GeoCoding.Extensions.DependencyInjection;
 using E.Standard.Platform;
 using E.Standard.Security.App.Extensions.DependencyInjection;
 using E.Standard.Security.Cryptography;
@@ -32,13 +40,9 @@ using E.Standard.WebMapping.Core.Extensions.DependencyInjection;
 using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.GeoServices.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Api.Core.AppCode.Extensions.DependencyInjection;
 
@@ -81,8 +85,11 @@ static public class ServiceCollectionExtensions
         services.AddLookupService();
         services.AddTransient<ICustomApiInteractionService, CustomApiInteractionService>();
         services.AddTransient<IExtendedControllerService, ExtendedControllerService>();
+        services.AddTransient<ExportGeoFeaturesService>();
 
         services.AddTransient<CacheClearService>();
+
+        services.AddScoped<SecureEndpointHandlerService>();
 
         services.AddRestServiceFactory(configuration);
 
@@ -144,9 +151,10 @@ static public class ServiceCollectionExtensions
             .Configure<RestSearchHelperServiceOptions>((config) =>
             {
                 config.DefaultQuerySrefId = configuration.DefaultQuerySrefId();
-                config.AllowGeoCodesInput = configuration.AllowGeoCodesInput();
+                config.AllowGeoCodesInput = configuration.QuickSearchAllowGeoCodesInput();
                 config.MaxResultItems = configuration.QuickSearchMaxResultItems();
             })
+            .AddGeoCoders(configuration.QuickSearchAllowedGeoCodesInput())
             .AddTransient<RestSearchHelperService>()
             .AddTransient<RestPrintHelperService>()
             .AddTransient<RestRequestHmacHelperService>()
@@ -316,7 +324,7 @@ static public class ServiceCollectionExtensions
             },
             persistanceOptions: config =>
             {
-                config.ConnectionString = $"{configService[ApiConfigKeys.StorageRootPath]}/webgis.tools.datalinq.endpoints";
+                config.ConnectionString = Path.Combine(configService[ApiConfigKeys.StorageRootPath], "webgis.tools.datalinq.endpoints");
                 if (Enum.TryParse<EncryptionLevel>(configuration.DataLinqApiEncryptionLevel(), true, out EncryptionLevel encryptionLevel))
                 {
                     config.SecureStringEncryptionLevel = encryptionLevel;
@@ -375,6 +383,12 @@ static public class ServiceCollectionExtensions
         services.AddTransient<E.DataLinq.Web.Services.Abstraction.IDataLinqLogger, DataLinqLogger>();
 
         services.AddTransient<IDataLinqCustomSelectArgumentsProvider, DataLinqRoleParameterSelectArgumentsProvider>();
+
+        services.AddDataLinqCacheTokenService(E.DataLinq.Web.Html.Abstractions.DataLinqCacheTokenStorageType.File,
+            config =>
+            {
+                config.FilePath = Path.Combine(configService[ApiConfigKeys.StorageRootPath], "webgis.tools.datalinq.cache");
+            });
 
         return services;
     }

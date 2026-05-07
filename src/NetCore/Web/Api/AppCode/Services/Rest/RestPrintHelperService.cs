@@ -1,7 +1,18 @@
-﻿using Api.Core.AppCode.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Mvc;
+
 using E.Standard.Api.App;
 using E.Standard.Api.App.DTOs;
+using E.Standard.Api.App.DTOs.ApiResult;
 using E.Standard.Api.App.DTOs.Print;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services;
@@ -31,18 +42,14 @@ using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using E.Standard.WebMapping.GeoServices.Print;
 using E.Standard.WebMapping.GeoServices.Tiling;
+
 using gView.GraphicsEngine;
+
+using MathNet.Numerics.Distributions;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Api.Core.AppCode.Services.Rest;
 
@@ -294,7 +301,7 @@ public class RestPrintHelperService
             List<LayoutBuilderJob> layoutBuilderJobs = new();
 
             var printOverviewMapDefinition = printSeriesProvider?.GetPrintMapSeriesOverviewPageDefinition(map, _restTools.CreateApiToolEventArguments(tool, "", null));
-                
+
             if (printOverviewMapDefinition is not null)
             {
                 LayoutBuilder mainLayoutBuilder = new LayoutBuilder(
@@ -540,7 +547,7 @@ public class RestPrintHelperService
 
                 #endregion
 
-                string outputPath = map.AsOutputFilename(@$"print_{Guid.NewGuid().ToString("N").ToLower()}.png");
+                string outputPath = map.AsOutputFilename(@$"{ApiGlobals.PrintOutputPrefix}{Guid.NewGuid().ToString("N").ToLower()}.png");
                 if (await layoutBuilder.Draw(outputPath))
                 {
                     images.Add(layoutBuilder, outputPath);
@@ -553,14 +560,14 @@ public class RestPrintHelperService
             string coordinatesFormat = form["attachCoordinates"];
             string coordinatesField = form["attachCoordinatesField"];
 
-            string fileName = "print_" + Guid.NewGuid().ToString("N").ToLower(), previewFileName = String.Empty;
+            string fileName = $"{ApiGlobals.PrintOutputPrefix}{Guid.NewGuid().ToString("N").ToLower()}", previewFileName = String.Empty;
 
             #region Preview
 
             if (images.Count > 0)
             {
                 byte[] previewData = E.Standard.Drawing.Pro.ImageOperations.Scaledown(await images.Values.First().BytesFromUri(_requestContext.Http), 300);
-                await previewData.SaveOrUpload(map.AsOutputFilename(previewFileName = fileName + "_preview.jpg"));
+                await previewData.SaveOrUpload(map.AsOutputFilename(previewFileName = $"{fileName}_preview.jpg"));
             }
 
             #endregion
@@ -634,7 +641,9 @@ public class RestPrintHelperService
 
                 var firstFeature = queryFeatures.Features.First();
 
-                if (firstFeature.Oid != null && firstFeature.Oid.Contains(":"))
+                if (firstFeature.Oid != null 
+                    && firstFeature.Oid.Contains(":")
+                    && !firstFeature.Oid.IsSearchServiceFeatureOid()) // search service do not have cms queries
                 {
                     var query = await _cache.GetQuery(firstFeature.Oid.Split(':')[0], firstFeature.Oid.Split(':')[1], ui, urlHelper: _urlHelper);
                     if (query != null)
@@ -848,7 +857,7 @@ public class RestPrintHelperService
         {
             throw new Exception("Internal error: can't crate map image");
         }
-
+        
         if (httpRequest.Form["worldfile"].ToString().ToLower() == "true")
         {
             #region WorldFile
@@ -927,7 +936,7 @@ public class RestPrintHelperService
         }
         else
         {
-            return await PrintResponse(controller, $"mapimage.{format}", imageResponse.ImagePath);
+            return await PrintResponse(controller, $"mapimage.{format}", imageResponse?.ImagePath);
         }
     }
 
@@ -1828,10 +1837,12 @@ public class RestPrintHelperService
             });
         }
 
-        return await controller.JsonObject(new
+        filePath = filePath.TryAddExtension(ApiGlobals.DownloadFileExtension);
+
+        return await controller.JsonObject(new DownloadDTO()
         {
-            name = name,
-            downloadid = _crypto.EncryptTextDefault(new FileInfo(filePath).Name, CryptoResultStringType.Hex)
+            Name = name,
+            EncryptedFilename = _crypto.EncryptTextDefault(new FileInfo(filePath).Name, CryptoResultStringType.Hex)
         });
     }
 
@@ -1950,11 +1961,11 @@ public class RestPrintHelperService
             : base(layoutBuilder, pageName, mapRotation, mapScale)
         {
             this.ExtentShape = extentShape;
-            this.extentShapeEpsg = extentShapeEpsg;
+            this.ExtentShapeEpsg = extentShapeEpsg;
         }
 
         public T ExtentShape { get; }
-        public int extentShapeEpsg { get; }
+        public int ExtentShapeEpsg { get; }
 
         override public void SetMapExtent(LayoutBuilder layoutBuilder)
         {
@@ -1976,14 +1987,14 @@ public class RestPrintHelperService
             layoutBuilder.Scale = this.MapScale;
 
             mapCenter = new Point(mapCenter);
-            if (extentShapeEpsg > 0)
+            if (ExtentShapeEpsg > 0)
             {
                 var mapSrs = layoutBuilder.PageMapSrs(layoutBuilder.Map.SpatialReference.Id);
-                if (mapSrs != extentShapeEpsg)
+                if (mapSrs != ExtentShapeEpsg)
                 {
                     using (var transformer = new GeometricTransformerPro(
                             ApiGlobals.SRefStore.SpatialReferences,
-                            extentShapeEpsg,
+                            ExtentShapeEpsg,
                             mapSrs))
                     {
                         transformer.Transform(mapCenter);
@@ -1997,14 +2008,14 @@ public class RestPrintHelperService
         private void ZoomToEnvelope(LayoutBuilder layoutBuilder, Envelope mapExtent)
         {
             mapExtent = new Envelope(mapExtent);
-            if (extentShapeEpsg > 0)
+            if (ExtentShapeEpsg > 0)
             {
                 var mapSrs = layoutBuilder.PageMapSrs(layoutBuilder.Map.SpatialReference.Id);
-                if (mapSrs != extentShapeEpsg)
+                if (mapSrs != ExtentShapeEpsg)
                 {
                     using (var transformer = new GeometricTransformerPro(
                             ApiGlobals.SRefStore.SpatialReferences,
-                            extentShapeEpsg,
+                            ExtentShapeEpsg,
                             mapSrs))
                     {
                         transformer.Transform(mapExtent);

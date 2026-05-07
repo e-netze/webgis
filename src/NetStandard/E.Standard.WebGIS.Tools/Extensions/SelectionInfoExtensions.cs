@@ -1,7 +1,8 @@
-﻿using E.Standard.WebMapping.Core.Api;
-using E.Standard.WebMapping.Core.Api.Bridge;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+
+using E.Standard.WebMapping.Core.Api;
+using E.Standard.WebMapping.Core.Api.Bridge;
 
 namespace E.Standard.WebGIS.Tools.Extensions;
 

@@ -1,8 +1,9 @@
-﻿using E.Standard.WebGIS.Tools.Editing.Environment;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 

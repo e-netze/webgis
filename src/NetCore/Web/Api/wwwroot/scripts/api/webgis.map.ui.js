@@ -97,7 +97,7 @@
         if (selector) {
             var clonedOptions = this._cloneOptions(options);
             //
-            // auf Standardwerte setzten, damit es nach dem speichern für jedes Layout (Desktop & Mobil funitoniert)
+            // auf Standardwerte setzen, damit es nach dem speichern für jedes Layout (Desktop & Mobil funitoniert)
             //
 
             //

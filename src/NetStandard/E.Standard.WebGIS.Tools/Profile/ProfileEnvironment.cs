@@ -1,8 +1,9 @@
-﻿using E.Standard.WebMapping.Core.Api.Bridge;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Xml;
+
+using E.Standard.WebMapping.Core.Api.Bridge;
 
 namespace E.Standard.WebGIS.Tools.Profile;
 

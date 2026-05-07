@@ -1,7 +1,10 @@
 ﻿
+using System.Collections.Generic;
+
 using Api;
 using Api.Core.AppCode.Extensions.DependencyInjection;
 using Api.Core.AppCode.Services;
+
 using E.Standard.Api.App.Services;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.Caching.Services;
@@ -10,15 +13,17 @@ using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
+using E.Standard.WebApp.Extensions;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Collections.Generic;
 
 var builder = WebApplication
                     .CreateBuilder(args)
+                    .SetAppLocalization(false)
                     .PerformWebgisApiSetup(args)
                     .AddWebgisApiConfiguration();
 

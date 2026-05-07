@@ -1,6 +1,8 @@
-﻿using E.Standard.Custom.Core.Abstractions;
+﻿using System;
+
+using E.Standard.Custom.Core.Abstractions;
+
 using Microsoft.AspNetCore.Hosting;
-using System;
 
 namespace Portal.Core.AppCode.Services;
 

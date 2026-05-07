@@ -1,15 +1,18 @@
 ﻿#nullable enable
 
-using E.Standard.Custom.Core.Abstractions;
-using E.Standard.Security.App.Json;
-using E.Standard.WebGIS.Core.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using Portal.Core.AppCode.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Security.App.Json;
+using E.Standard.WebGIS.Core.Services;
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+
+using Portal.Core.AppCode.Extensions;
 
 namespace Portal.Core.AppCode.Middleware.Authentication;
 

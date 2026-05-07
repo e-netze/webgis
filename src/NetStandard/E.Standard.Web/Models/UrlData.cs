@@ -1,5 +1,6 @@
-﻿using E.Standard.Web.Abstractions;
-using System;
+﻿using System;
+
+using E.Standard.Web.Abstractions;
 
 namespace E.Standard.Web.Models;
 

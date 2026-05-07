@@ -1,7 +1,9 @@
-﻿using E.Standard.Security.Cryptography.Abstractions;
+﻿using System;
+
+using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Security.Cryptography.Services;
+
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace E.Standard.Security.Cryptography.Extensions.DependencyInjection;
 

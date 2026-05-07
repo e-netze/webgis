@@ -1,4 +1,7 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using System;
+using System.Threading.Tasks;
+
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Mobile.Advanced.Extentions;
@@ -7,8 +10,6 @@ using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Api.Reflection;
-using System;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 

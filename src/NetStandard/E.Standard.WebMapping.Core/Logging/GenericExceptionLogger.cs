@@ -1,7 +1,8 @@
-﻿using E.Standard.CMS.Core;
+﻿using System;
+
+using E.Standard.CMS.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
-using System;
 
 namespace E.Standard.WebMapping.Core.Logging;
 

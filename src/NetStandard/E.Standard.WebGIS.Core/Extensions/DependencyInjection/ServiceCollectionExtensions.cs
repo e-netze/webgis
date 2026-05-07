@@ -1,6 +1,8 @@
-﻿using E.Standard.WebGIS.Core.Services;
+﻿using System;
+
+using E.Standard.WebGIS.Core.Services;
+
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace E.Standard.WebGIS.Core.Extensions.DependencyInjection;
 

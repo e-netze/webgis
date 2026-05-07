@@ -99,6 +99,8 @@ besser zu unterscheiden, können sie später über das hier angegeben Feld ident
 ## exception-invalid-char: Ungültiges Zeichen im Namen. Vermeinden Sie folgende Zeichen: {0}
 ## exception-no-projects-found: Unter ihrem Benutzer sind bisher noch keine Map-Markup Projete gespeichert worden. Speichern sie ein Map-Markup Projekt, bevor sie dieses Werkzeug verwenden.
 ## confirm-delete-project: Soll das Map-Markup Projekt '{mapmarkup-io-load-name}' wirklich gelöscht werden?
+## exception-name-is-empty: Der Name darf nicht leer sein
+## exception-name-to-long: Der Name ist zu lang. Verwenden sie maximal {0} Zeichen.
 
 ## extend-current-session: Bestehendes Map-Markup erweitern
 ## replace-current-session: Bestehendes Map-Markup ersetzen

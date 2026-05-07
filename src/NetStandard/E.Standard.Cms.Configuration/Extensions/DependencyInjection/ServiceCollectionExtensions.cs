@@ -1,6 +1,8 @@
-﻿using E.Standard.Cms.Configuration.Services;
+﻿using System;
+
+using E.Standard.Cms.Configuration.Services;
+
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace E.Standard.Cms.Configuration.Extensions.DependencyInjection;
 

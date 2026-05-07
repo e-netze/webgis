@@ -24,6 +24,8 @@
     "year": "Jahr",
     "month": "Monat",
     "day": "Tag",
+    "point-in-time": "Zeitpunkt",
+    "span-of-time": "Zeitspanne",
 
     "query-results": "Abfrageergebnisse",
     "search-results": "Suchergebnisse",
@@ -167,6 +169,10 @@
 
     "results-has-changed-warning": "Die abgefragen Daten haben sich seit dem Speichern des Projektes in der Lage bzw. Anzahl geändert. Eine Vollständigkeit und Richtigkeit der angezeigten Ergebnisse kann nicht mehr garantiert werden. Bitte überprüfen sie die Ergebnisse. Sind die Daten immer noch korrekt, können sie diese Warnung vermeiden, indem sie das Projekt mit den aktuellen Ergebnissen noch einmal speichern.",
 
+    "copy-to-clipboard": "In die Zwischenablage kopiern",
+    "download": "Herunterladen",
+    "upload": "Hochladen",
+
     // print
     "print-extent": "Druckbereich",
 
@@ -230,7 +236,7 @@
     "sketch-snapping-fix-direction-orthogonal": "Richtung fixieren: Rechtwicklig",
     "sketch-snapping-fix-distance": "Abstand fixieren",
 
-    "sketch-construct-current-vertex": "Aktuellen Stützpunkt kunstruieren",
+    "sketch-construct-current-vertex": "Aktuellen Stützpunkt konstruieren",
     "sketch-construct-new-vertices": "Neue(n) Stützpunkt(e) konstruieren",
     "sketch-construct-coordiantes": "Koordinaten (absolute)",
     "sketch-construct-direction-distance": "Richtung/Abstand",
@@ -346,5 +352,11 @@
     "select-new-query-results-info": "Wenn diese Methode angewendet wird, werden Abfrageergebnisse in der Karte automatisch selektiert dargestellt.",
     "query-layer-not-visible-notification": "Der abgefrage Layer ist in der Karte ausgeblendet. Hier Klicken zum Einblenden.",
 
-    "create-map-series": "Kartenserie erstellen"
+    // tool mapseries
+    "create-map-series": "Kartenserie erstellen",
+    "max-map-series-pages-reached": "Das Seitenlimit für Kartenserien wurde überschritten",
+
+    // geolocation api
+    "select-geolocation-api": "GPS Verortungs API wählen",
+    "select-geolocation-api-info": "Hier kann angegeben werden, welche API zur bestimmung der aktuellen Position verwendet werden sollte."
 };

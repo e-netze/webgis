@@ -1,9 +1,11 @@
-﻿using E.Standard.Plot;
+﻿using System.Collections.Generic;
+using System.IO;
+
+using E.Standard.Plot;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Abstraction;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Models;
+
 using gView.GraphicsEngine;
-using System.Collections.Generic;
-using System.IO;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image;
 
@@ -25,18 +27,25 @@ class ImportPdf : IImportImage
 
         foreach (var imageData in imageDatas)
         {
-            using (var stream = new MemoryStream(imageData))
-            using (var bitmap = Current.Engine.CreateBitmap(stream))
+            try
             {
-                if (bitmap.Width > 256 && bitmap.Height > 256)
+                using (var stream = new MemoryStream(imageData))
+                using (var bitmap = Current.Engine.CreateBitmap(stream))
                 {
-                    imagePackages.Add(new ImportPackage()
+                    if (bitmap.Width > 256 && bitmap.Height > 256)
                     {
-                        Name = $"{fileTitle}-{++counter}",
-                        ImageExtension = "jpg",
-                        ImageData = imageData
-                    });
+                        imagePackages.Add(new ImportPackage()
+                        {
+                            Name = $"{fileTitle}-{++counter}",
+                            ImageExtension = "jpg",
+                            ImageData = imageData
+                        });
+                    }
                 }
+            }
+            catch (System.Exception)
+            {
+                //File.WriteAllBytes(@$"c:\temp\error_image_{Guid.NewGuid().ToString()}.jpg", imageData);
             }
         }
 

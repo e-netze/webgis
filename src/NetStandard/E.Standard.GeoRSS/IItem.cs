@@ -1,5 +1,6 @@
+﻿using System.Collections.Generic;
+
 using E.Standard.GeoRSS.Abstraction;
-using System.Collections.Generic;
 
 namespace E.Standard.GeoRSS20;
 

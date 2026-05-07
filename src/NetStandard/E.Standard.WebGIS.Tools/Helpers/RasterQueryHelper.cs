@@ -1,18 +1,4 @@
-﻿using E.Standard.ArcXml;
-using E.Standard.ArcXml.Extensions;
-using E.Standard.ArcXml.Models;
-using E.Standard.Drawing.Models;
-using E.Standard.Json;
-using E.Standard.Platform;
-using E.Standard.WebGIS.CMS;
-using E.Standard.WebMapping.Core.Abstraction;
-using E.Standard.WebMapping.Core.Api.Bridge;
-using E.Standard.WebMapping.Core.Geometry;
-using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
-using gView.GraphicsEngine;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,6 +6,22 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+
+using E.Standard.ArcXml;
+using E.Standard.ArcXml.Extensions;
+using E.Standard.ArcXml.Models;
+using E.Standard.Drawing.Models;
+using E.Standard.Json;
+using E.Standard.Platform;
+using E.Standard.WebGIS.CMS;
+using E.Standard.WebMapping.Core.Api.Bridge;
+using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
+
+using gView.GraphicsEngine;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace E.Standard.WebGIS.Tools.Helpers;
 
@@ -340,7 +342,7 @@ class RasterQueryHelper
                             .FirstOrDefault()?
                             .Value;
 
-                        if(pixelValue is not null)
+                        if (pixelValue is not null)
                         {
                             res = new double[] { ToDouble(pixelValue) };
                             text.Append(string.Format(hadNode.Attributes["expression"].Value, res[0]));

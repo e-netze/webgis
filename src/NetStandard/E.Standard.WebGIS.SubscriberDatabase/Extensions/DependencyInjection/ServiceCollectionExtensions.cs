@@ -1,6 +1,8 @@
-﻿using E.Standard.WebGIS.SubscriberDatabase.Services;
+﻿using System;
+
+using E.Standard.WebGIS.SubscriberDatabase.Services;
+
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace E.Standard.WebGIS.SubscriberDatabase.Extensions.DependencyInjection;
 

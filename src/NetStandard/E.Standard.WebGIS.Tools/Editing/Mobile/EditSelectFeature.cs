@@ -1,4 +1,10 @@
-﻿using E.Standard.Localization.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Models;
@@ -15,11 +21,7 @@ using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Reflection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using static E.Standard.WebMapping.Core.CoreApiGlobals;
 
 namespace E.Standard.WebGIS.Tools.Editing.Mobile;

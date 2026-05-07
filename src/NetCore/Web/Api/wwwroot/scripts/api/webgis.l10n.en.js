@@ -24,6 +24,8 @@
     "year": "Year",
     "month": "Month",
     "day": "Day",
+    "point-in-time": "Point in time",
+    "span-of-time": "Span of time",
 
     "query-results": "Query Results",
     "search-results": "Search Results",
@@ -166,6 +168,10 @@
     "msg-no-services-available": "Unfortunately, there is no service available for this topic group",
 
     "results-has-changed-warning": "The queried data has changed in location or quantity since the project was saved. The completeness and accuracy of the displayed results can no longer be guaranteed. Please review the results. If the data is still correct, you can avoid this warning by saving the project again with the current results.",
+
+    "copy-to-clipboard": "Copy to Clipboard",
+    "download": "Download",
+    "upload": "Upload",
 
     // print
     "print-extent": "Print extent",
@@ -346,5 +352,11 @@
     "select-new-query-results-info": "If this option is enabled, new query results will be automatically selected in the map.",
     "query-layer-not-visible-notification": "The queried layer is hidden in the map. Click here to show it.",
 
-    "create-map-series": "Create map series"
+    // tool mapseries
+    "create-map-series": "Create map series",
+    "max-map-series-pages-reached": "The limit of pages for a map series is reached",
+
+    // geolocation api
+    "select-geolocation-api": "Select GPS location API",
+    "select-geolocation-api-info": "Here you can specify which API should be used to determine the current position."
 };

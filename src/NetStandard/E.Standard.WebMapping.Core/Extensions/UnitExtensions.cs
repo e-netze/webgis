@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.Core.Extensions;
 
-public enum Unit {
+public enum Unit
+{
     Meter,
     Kilometer,
     Mile,
@@ -127,7 +123,7 @@ public static class UnitExtensions
             Unit.Ar => true,
             _ => false
         };
-    
+
     public static double ToMeters(this double number, Unit unit)
         => number * unit.ToConversionFactor();
 

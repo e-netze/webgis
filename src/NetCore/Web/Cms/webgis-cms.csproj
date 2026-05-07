@@ -70,13 +70,13 @@
 
   <ItemGroup>
 	<PackageReference Include="BuildBundlerMinifier2022" Version="2.9.11" />
-    <PackageReference Include="E.DataLinq.Code" Version="8.26.202" />
-    <PackageReference Include="E.DataLinq.Core" Version="8.26.202" />
-    <PackageReference Include="E.DataLinq.Web.Api.Client" Version="8.26.202" />
+    <PackageReference Include="E.DataLinq.Code" Version="8.26.1802" />
+    <PackageReference Include="E.DataLinq.Core" Version="8.26.1802" />
+    <PackageReference Include="E.DataLinq.Web.Api.Client" Version="8.26.1802" />
     <PackageReference Include="jquery.TypeScript.DefinitelyTyped" Version="3.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.3">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -99,6 +99,7 @@
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Custom.Core\E.Standard.Custom.Core.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.OpenIdConnect.Extensions\E.Standard.OpenIdConnect.Extensions.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Security.Cryptography\E.Standard.Security.Cryptography.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebApp\E.Standard.WebApp.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebGIS.CmsSchema\E.Standard.WebGIS.CmsSchema.csproj" />
 	  <ProjectReference Include="..\..\..\NetStandard\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
 	  <ProjectReference Include="..\Aspire\webgis.ServiceDefaults\webgis.ServiceDefaults.csproj" />

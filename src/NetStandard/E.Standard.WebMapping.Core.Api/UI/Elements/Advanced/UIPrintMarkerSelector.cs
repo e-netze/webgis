@@ -32,8 +32,8 @@ public class UIPrintMarkerSelector : UIOptionContainer
                 {
                     new UISelect()
                     {
-                        css = UICss.ToClass(new[] { 
-                            UICss.ToolParameter, 
+                        css = UICss.ToClass(new[] {
+                            UICss.ToolParameter,
                             UICss.ToolParameterPersistent,
                             button?.GetType().ToToolId() switch {
                                 "webgis.tools.mapseriesprint" => UICss.MapSeriesPrintShowQueryMarkersSelect,
@@ -74,8 +74,8 @@ public class UIPrintMarkerSelector : UIOptionContainer
                 {
                     new UISelect()
                     {
-                        css = UICss.ToClass(new[] { 
-                            UICss.ToolParameter, 
+                        css = UICss.ToClass(new[] {
+                            UICss.ToolParameter,
                             UICss.ToolParameterPersistent,
                             button?.GetType().ToToolId() switch {
                                 "webgis.tools.mapseriesprint" => UICss.MapSeriesPrintShowCoordinateMarkersSelect,
@@ -115,7 +115,7 @@ public class UIPrintMarkerSelector : UIOptionContainer
                 new UISelect()
                     {
                         css = UICss.ToClass(new[] {
-                            UICss.ToolParameter, 
+                            UICss.ToolParameter,
                             UICss.ToolParameterPersistent,
                             button?.GetType().ToToolId() switch {
                                 "webgis.tools.mapseriesprint" => UICss.MapSeriesPrintShowChainageMarkersSelect,

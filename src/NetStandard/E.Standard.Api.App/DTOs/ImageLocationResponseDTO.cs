@@ -1,4 +1,5 @@
-using E.Standard.WebMapping.Core.Api.EventResponse.Abstraction;
+﻿using E.Standard.WebMapping.Core.Api.EventResponse.Abstraction;
+
 using Newtonsoft.Json;
 
 namespace E.Standard.Api.App.DTOs;

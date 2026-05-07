@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
+
+using Microsoft.Extensions.Configuration;
 
 namespace E.Standard.Configuration.Providers;
 

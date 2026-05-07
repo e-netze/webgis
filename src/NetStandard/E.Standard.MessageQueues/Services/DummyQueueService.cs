@@ -1,6 +1,7 @@
-﻿using E.Standard.MessageQueues.Services.Abstraction;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+
+using E.Standard.MessageQueues.Services.Abstraction;
 
 namespace E.Standard.MessageQueues.Services;
 

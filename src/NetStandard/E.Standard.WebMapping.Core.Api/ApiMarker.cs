@@ -1,4 +1,5 @@
-using E.Standard.Drawing.Models;
+﻿using E.Standard.Drawing.Models;
+
 using Newtonsoft.Json;
 
 namespace E.Standard.WebMapping.Core.Api;

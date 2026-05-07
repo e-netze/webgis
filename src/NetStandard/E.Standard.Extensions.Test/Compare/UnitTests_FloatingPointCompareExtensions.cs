@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Compare;
+
 using Xunit;
 
 namespace E.Standard.Extensions.Test.Compare;

@@ -2,7 +2,7 @@
 
 namespace E.Standard.GeoCoding.GeoCode;
 
-public class GeoRef : IGeoCode
+public class GeoRef : IGeoCoder
 {
     private const string zones = "ABCDEFGHJKLMNPQRSTUVWXYZ";      //24 zones
 
@@ -256,8 +256,9 @@ public class GeoRef : IGeoCode
         return Decode(geoCode).IsValid;         // check if phi lam values are possible
     }
 
+    public string Name => "georef";
 
-    public string DisplayName => "GeoRefCode";
+    public string DisplayName => "World Geographic Reference System";
 
     public string[] Links => new string[] { "https://en.wikipedia.org/wiki/World_Geographic_Reference_System" };
 

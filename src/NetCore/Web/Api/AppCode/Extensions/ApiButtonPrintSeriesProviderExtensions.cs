@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using Api.Core.AppCode.Services;
+
 using E.Standard.Api.App.DTOs;
 using E.Standard.Web.Abstractions;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -24,7 +25,7 @@ static internal class ApiButtonPrintSeriesProviderExtensions
         double scale,
         Shape toolSketch)
     {
-        if(provider is null) return new GraphicsContainer();
+        if (provider is null) return new GraphicsContainer();
 
         var layoutBuilder = new LayoutBuilder(
                         map.Clone(null),

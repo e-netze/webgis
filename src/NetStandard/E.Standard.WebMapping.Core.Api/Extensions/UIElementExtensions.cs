@@ -1,10 +1,11 @@
-﻿using E.Standard.Extensions.Collections;
-using E.Standard.WebMapping.Core.Api.UI.Abstractions;
-using E.Standard.WebMapping.Core.Api.UI.Elements;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using E.Standard.Extensions.Collections;
+using E.Standard.WebMapping.Core.Api.UI.Abstractions;
+using E.Standard.WebMapping.Core.Api.UI.Elements;
+
 using static E.Standard.WebMapping.Core.Api.UI.Elements.UICollapsableElement;
 
 namespace E.Standard.WebMapping.Core.Api.Extensions;
@@ -267,11 +268,11 @@ static public class UIElementExtensions
     static public T WithSize<T>(this T element, int width = 0, int height = 0)
         where T : UIElement
     {
-        if(width > 0)
+        if (width > 0)
         {
             element.targetwidth = $"{width}px";
         }
-        if(height > 0)
+        if (height > 0)
         {
             element.targetheight = $"{height}px";
         }

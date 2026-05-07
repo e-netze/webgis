@@ -743,6 +743,14 @@
                 }, arg);
             }
         }
+        else if (lib === "geolocation-zeno-connect") {
+            if (!webgis.zenoConnectGeolocationApi) {
+                loading = true;
+                this.loadScript(webgis.baseUrl + '/scripts/api/webgis.position.zeno_connect_geolocation.js', '', function () {
+                    callback(arg);
+                }, arg);
+            }
+        }
         else if (lib === "monaco-editor") {
             if (!window.monaco) {
                 loading = true;
@@ -1603,8 +1611,20 @@
     };
     this.sortingAlg["number"] = function (a, b) {
         try {
-            a = parseFloat(a.toString().replaceAll(',', '.'));
-            b = parseFloat(b.toString().replaceAll(',', '.'));
+            a = webgis.parseLocaleFloat(a);
+            b = webgis.parseLocaleFloat(b);
+
+            if (!isNaN(a) && isNaN(b)) return -1;
+            if (isNaN(a) && !isNaN(b)) return 1;
+        } catch (e) {
+            console.log(e);
+        }
+        return webgis.sortingAlg["default"](a, b);
+    };
+    this.sortingAlg["number_de"] = function (a, b) {
+        try {
+            a = webgis.parseGermanFloat(a);
+            b = webgis.parseGermanFloat(b);
 
             if (!isNaN(a) && isNaN(b)) return -1;
             if (isNaN(a) && !isNaN(b)) return 1;
@@ -2134,7 +2154,7 @@
                     webgis._toolInfos[client] = result.tools;
 
                     // overriede custom properties
-                    var overrideProperties = ["name", "container", "tooltip", "image", "cursor", "help_urlpath", "priority"]
+                    var overrideProperties = ["name", "container", "tooltip", "image", "cursor", "help_urlpath", "priority", "visibility"]
 
                     let tools = result.tools;
 
@@ -2966,7 +2986,7 @@
     };
     this.copyString = function (val) {
         if (val) {
-            var $temp = $("<input>")
+            var $temp = $("<textarea>")
                 .css({
                     height: '0px',
                     position: 'absolute',
@@ -3014,6 +3034,49 @@
                     onclose();
             }
         });
+    };
+    this.downloadDataLinqPdf = function (href) {
+
+        webgis.showProgress('PDF wird erstellt...');
+
+        try {
+            const url = new URL(href, window.location.origin);
+
+            if (!url.searchParams.has('_autoDownload')) {
+                url.searchParams.set('_autoDownload', 'true');
+            }
+
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.top = '0';
+            iframe.style.left = '0';
+            iframe.style.width = '800px';
+            iframe.style.height = '600px';
+            iframe.style.opacity = '0';
+            iframe.style.pointerEvents = 'none';
+            iframe.style.zIndex = '-1';
+            iframe.style.clipPath = 'inset(0 0 0 0)';
+            iframe.src = url.toString();
+
+            const onMessage = (event) => {
+                if (event.data && event.data.type === 'pdfDownloadComplete') {
+                    window.removeEventListener('message', onMessage);
+
+                    webgis.hideProgress('PDF wird erstellt...');
+
+                    if (document.body.contains(iframe)) {
+                        iframe.remove();
+                    }
+                }
+            };
+
+            window.addEventListener('message', onMessage);
+            document.body.appendChild(iframe);
+        } catch (e) {
+            console.error('PDF download failed: ' + e.message);
+            webgis.hideProgress('PDF wird erstellt...');
+            iframe.remove(); 
+        }
     };
     this.initialParameters = {};
     this.checkResult = function (result) {
@@ -3439,6 +3502,19 @@ String.prototype.removeAllSectionDecoration = function (sectionName) {
     return '';
 };
 
+Number.prototype.toDMS = function (decimals = 6) {
+    const abs = Math.abs(this);
+
+    const degrees = Math.floor(abs);
+    const minutesFloat = (abs - degrees) * 60;
+    const minutes = Math.floor(minutesFloat);
+    const seconds = (minutesFloat - minutes) * 60;
+
+    const secondsFixed = seconds.toFixed(decimals);
+
+    return `${degrees}°${minutes}'${secondsFixed}"`;
+};
+
 webgis.firstOrDefault = function (array, f) {
     if (!array)
         return null;
@@ -3476,6 +3552,62 @@ if (!Array.prototype.includes) {  // incoude not supported by IE
     };
 }
 
+webgis.parseLocaleFloat = function (value) {
+    // Return early if already a number
+    if (typeof value === 'number') return value;
+    if (!value) return NaN;
+
+    let str = value.toString().trim();
+
+    // Find last occurrence of dot and comma
+    const lastDot = str.lastIndexOf('.');
+    const lastComma = str.lastIndexOf(',');
+
+    let decimalSeparator = null;
+
+    // Determine which symbol is used as decimal separator
+    if (lastDot > lastComma) {
+        decimalSeparator = '.';
+    } else if (lastComma > lastDot) {
+        decimalSeparator = ',';
+    }
+
+    if (decimalSeparator) {
+        // The other symbol is assumed to be the thousands separator
+        const thousandSeparator = decimalSeparator === '.' ? ',' : '.';
+
+        // Remove all thousands separators
+        str = str.replaceAll(thousandSeparator, '');
+
+        // Normalize decimal separator to dot for parseFloat
+        if (decimalSeparator === ',') {
+            str = str.replace(',', '.');
+        }
+    }
+
+    // Convert to float
+    return parseFloat(str);
+};
+webgis.parseGermanFloat = function (value) {
+    // Return early if already a number
+    if (typeof value === 'number') return value;
+    if (value == null) return NaN;
+
+    let str = String(value).trim();
+
+    if (str === '') return NaN;
+
+    // Remove spaces and currency symbols
+    str = str.replace(/[^\d.,-]/g, '');
+
+    // Remove thousands separators (dots)
+    str = str.replaceAll('.', '');
+
+    // Replace decimal comma with dot
+    str = str.replace(',', '.');
+
+    return parseFloat(str);
+};
 webgis.refParameter = function (v) {
     this.isRefParameter = true;
     this.value = v;

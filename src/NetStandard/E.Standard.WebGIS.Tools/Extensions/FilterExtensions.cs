@@ -1,7 +1,9 @@
-﻿using E.Standard.WebMapping.Core.Api;
+﻿using System;
+
+using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
+
 using static E.Standard.WebMapping.Core.CoreApiGlobals;
 
 namespace E.Standard.WebGIS.Tools.Extensions;

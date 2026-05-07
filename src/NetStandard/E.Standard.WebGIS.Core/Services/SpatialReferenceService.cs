@@ -1,8 +1,10 @@
-﻿using E.Standard.Security.App.Services.Abstraction;
+﻿using System;
+
+using E.Standard.Security.App.Services.Abstraction;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Geometry;
+
 using Microsoft.Extensions.Options;
-using System;
 
 namespace E.Standard.WebGIS.Core.Services;
 

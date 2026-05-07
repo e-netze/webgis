@@ -1,4 +1,7 @@
-﻿using cms.tools;
+﻿using System.Security.Authentication;
+
+using cms.tools;
+
 using E.Standard.Cms.Abstraction;
 using E.Standard.Cms.Configuration.Extensions.DependencyInjection;
 using E.Standard.Cms.Services;
@@ -7,9 +10,9 @@ using E.Standard.Configuration.Extensions.DependencyInjection;
 using E.Standard.Extensions.Compare;
 using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Security.Authentication;
 
 try
 {

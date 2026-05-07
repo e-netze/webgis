@@ -1,7 +1,9 @@
-﻿using Api.Core.AppCode.Extensions;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Text;
+
+using Api.Core.AppCode.Extensions;
+
+using Microsoft.AspNetCore.Http;
 
 namespace Api.Core.AppCode;
 

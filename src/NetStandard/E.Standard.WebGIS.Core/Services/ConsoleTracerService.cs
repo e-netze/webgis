@@ -1,6 +1,8 @@
-﻿using E.Standard.Extensions.Formatting;
+﻿using System;
+
+using E.Standard.Extensions.Formatting;
+
 using Microsoft.Extensions.Options;
-using System;
 
 namespace E.Standard.WebGIS.Core.Services;
 

@@ -1,4 +1,8 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -7,11 +11,6 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry.Extensions;
-using Microsoft.Identity.Client;
-using System;
-using System.Collections;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Export.Extensions;
 
@@ -63,6 +62,12 @@ static internal class ApiToolEventArgumentsExtensions
     static public int GetMaxMapSeriesPages(this ApiToolEventArguments e)
         => e.GetConfigInt(MapSeriesPrint.ConfigMaxPages, 5);
 
+    static public int GetMaxMapSeriesInterations(this ApiToolEventArguments e)
+        => e.GetMaxMapSeriesPages() * 10;
+
+    static public int GetMaxMapSeriesIntersectionInterations(this ApiToolEventArguments e)
+        => e.GetConfigInt(MapSeriesPrint.ConfigMaxIntersectionIterations, 0).OrTake(e.GetMaxMapSeriesInterations() * 5);
+
     static public string GetMapSeriesOverviewLayout(this ApiToolEventArguments e)
         => e.GetConfigValue(MapSeriesPrint.ConfigOverviewPageLayout)
             .OrTake("layout_map_services_overview.xml");
@@ -73,7 +78,7 @@ static internal class ApiToolEventArgumentsExtensions
             .Split('.')
             .FirstOrDefault();
 
-        if(!String.IsNullOrEmpty(pageSizeStr) && Enum.TryParse<PageSize>(pageSizeStr, ignoreCase: true, out var pageSize))
+        if (!String.IsNullOrEmpty(pageSizeStr) && Enum.TryParse<PageSize>(pageSizeStr, ignoreCase: true, out var pageSize))
         {
             return pageSize;
         }

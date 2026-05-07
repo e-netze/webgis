@@ -14,7 +14,7 @@
 			"title": "Hintergrund Durchlässigkeit (0-1)",
 			"name": "basemap-opacity",
 			"inputType": "number",
-			"value": 0.5
+			"value": "0.5"
 		},
 		{
 			"title": "Karten Vergleichs-Dienst",

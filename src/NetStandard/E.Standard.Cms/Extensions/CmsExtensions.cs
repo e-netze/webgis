@@ -1,13 +1,15 @@
-﻿using E.Standard.Cms.Configuration.Models;
+﻿using System;
+using System.Data;
+
+using E.Standard.Cms.Configuration.Models;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.Plattform;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Schema;
-using System;
-using System.Data;
 
 namespace E.Standard.Cms.Extensions;
+
 static public class CmsExtensions
 {
     public static void AddCmsSecrets(this CmsReplace replace, CmsConfig.CmsItem cmsItem, CmsConfig.DeployItem deploy)

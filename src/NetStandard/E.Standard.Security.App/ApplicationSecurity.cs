@@ -1,9 +1,10 @@
-﻿using E.Standard.Security.App.Reflection;
-using E.Standard.Security.App.Services;
-using E.Standard.Security.App.Services.Abstraction;
-using System;
+﻿using System;
 using System.Reflection;
 using System.Security.Claims;
+
+using E.Standard.Security.App.Reflection;
+using E.Standard.Security.App.Services;
+using E.Standard.Security.App.Services.Abstraction;
 
 namespace E.Standard.Security.App;
 

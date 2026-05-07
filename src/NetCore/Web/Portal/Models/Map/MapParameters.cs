@@ -1,19 +1,23 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Compare;
+using E.Standard.Extensions.Formatting;
 using E.Standard.Json;
 using E.Standard.Platform;
 using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
 using E.Standard.WebMapping.Core.Geometry;
+
 using Microsoft.AspNetCore.Http;
+
 using Newtonsoft.Json;
+
 using Portal.Core.AppCode.Exceptions;
 using Portal.Core.AppCode.Services.WebgisApi;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using E.Standard.Extensions.Formatting;
 
 namespace Portal.Core.Models.Map;
 

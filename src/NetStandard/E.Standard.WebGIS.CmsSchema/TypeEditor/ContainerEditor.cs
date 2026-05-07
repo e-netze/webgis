@@ -1,10 +1,12 @@
+﻿using System;
+
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
+
 using Newtonsoft.Json;
-using System;
 
 namespace E.Standard.WebGIS.CmsSchema.TypeEditor;
 

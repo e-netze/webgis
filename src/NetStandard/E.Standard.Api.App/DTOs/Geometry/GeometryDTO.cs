@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace E.Standard.Api.App.DTOs.Geometry;
 
@@ -36,7 +36,7 @@ public class GeometryDTO
             geometry = new PointDTO((WebMapping.Core.Geometry.Point)shape);
         }
 
-        if(shape is WebMapping.Core.Geometry.MultiPoint)
+        if (shape is WebMapping.Core.Geometry.MultiPoint)
         {
             geometry = new MultiPointDTO((WebMapping.Core.Geometry.MultiPoint)shape);
         }

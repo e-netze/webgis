@@ -1,11 +1,13 @@
-﻿using Api.Core.Models.DataLinq;
-using E.DataLinq.Core;
-using E.DataLinq.Core.Reflection;
-using E.Standard.Platform;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
+using Api.Core.Models.DataLinq;
+
+using E.DataLinq.Core;
+using E.DataLinq.Core.Reflection;
+using E.Standard.Platform;
 
 namespace Api.Core.AppCode.Extensions.Razor;
 

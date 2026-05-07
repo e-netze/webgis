@@ -1,11 +1,13 @@
-﻿using E.Standard.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using E.Standard.Json;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Models;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using static E.Standard.WebMapping.Core.Api.ApiToolEventArguments;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image.Extensions;

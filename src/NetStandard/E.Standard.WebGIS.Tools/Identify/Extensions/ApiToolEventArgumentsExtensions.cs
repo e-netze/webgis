@@ -1,13 +1,11 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Linq;
+using System.Threading;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Geometry;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.StaticAssets;
-using Microsoft.Identity.Client;
-using System;
-using System.Linq;
-using System.Threading;
 
 namespace E.Standard.WebGIS.Tools.Identify.Extensions;
 
@@ -90,5 +88,5 @@ static internal class ApiToolEventArgumentsExtensions
         && isMultiQuery == true
         && !String.IsNullOrWhiteSpace(e["identify-map-tools"])
         && identifyOptions.Contains("all-identify-tools");
-    
+
 }

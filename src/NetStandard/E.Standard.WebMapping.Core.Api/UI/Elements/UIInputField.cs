@@ -18,7 +18,7 @@ public class UIInputField<TInput> : UIDiv, IUIInputField
     internal UIInputField()
     {
         this.css = "webgis-inputfield";
-        
+
         _label = new UILabel();
         _input = new TInput();
 

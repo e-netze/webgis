@@ -1,14 +1,17 @@
-﻿using Api.Core.AppCode.Mvc;
-using Api.Core.AppCode.Services;
-using E.Standard.Custom.Core.Abstractions;
-using E.Standard.Web.Abstractions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
+using Api.Core.AppCode.Mvc;
+using Api.Core.AppCode.Services;
+
+using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Web.Abstractions;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 namespace Api.Core.Controllers;
 
 public class CustomContentController : ApiBaseController

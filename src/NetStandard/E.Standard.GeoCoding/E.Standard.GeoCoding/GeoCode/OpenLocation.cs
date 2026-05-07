@@ -1,9 +1,10 @@
-﻿using Google.OpenLocationCode;
-using System;
+﻿using System;
+
+using Google.OpenLocationCode;
 
 namespace E.Standard.GeoCoding.GeoCode;
 
-public class OpenLocation : IGeoCode
+public class OpenLocation : IGeoCoder
 {
     private const string codeDigits = "23456789CFGHJMPQRVWX";
 
@@ -82,7 +83,8 @@ public class OpenLocation : IGeoCode
         return OpenLocationCode.IsValid(geoCode) && OpenLocationCode.IsFull(geoCode) && Decode(geoCode).IsValid; ;
     }
 
-    public string DisplayName => "OpenLocationCode";
+    public string Name => "pluscode";
+    public string DisplayName => "Google Plus Codes";
 
     public string[] Links => new string[] { "https://plus.codes/howitworks" };
 

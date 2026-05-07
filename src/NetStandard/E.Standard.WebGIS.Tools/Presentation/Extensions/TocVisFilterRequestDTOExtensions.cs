@@ -1,7 +1,8 @@
-﻿using E.Standard.WebMapping.Core.Api.EventResponse.Models;
-using E.Standard.WebMapping.Core.Api.Extensions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+
+using E.Standard.WebMapping.Core.Api.EventResponse.Models;
+using E.Standard.WebMapping.Core.Api.Extensions;
 
 namespace E.Standard.WebGIS.Tools.Presentation.Extensions;
 

@@ -1,9 +1,11 @@
-﻿using E.Standard.Platform;
-using System;
+﻿using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using E.Standard.Platform;
+
 namespace E.Standard.Json.Converters;
+
 public class StringConverter : JsonConverter<string>
 {
     public override string Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

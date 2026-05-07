@@ -49,10 +49,11 @@
 #define use_lines
 
 
-using E.Standard.WebMapping.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+
+using E.Standard.WebMapping.Core.Extensions;
 //using System.Text;          //for Int128.AsString() & StringBuilder
 //using System.IO;            //debugging with streamReader & StreamWriter
 //using System.Windows.Forms; //debugging to clipboard
@@ -5296,28 +5297,28 @@ public class Clipper : ClipperBase
                             }
                         }
                         else
-                          if (Poly2ContainsPoly1(outrec.Pts, outrec2.Pts))
-                        {
-                            //OutRec1 is contained by OutRec2 ...
-                            outrec2.IsHole = outrec.IsHole;
-                            outrec.IsHole = !outrec2.IsHole;
-                            outrec2.FirstLeft = outrec.FirstLeft;
-                            outrec.FirstLeft = outrec2;
-                            if (m_UsingPolyTree)
+                            if (Poly2ContainsPoly1(outrec.Pts, outrec2.Pts))
                             {
-                                FixupFirstLefts2(outrec, outrec2);
+                                //OutRec1 is contained by OutRec2 ...
+                                outrec2.IsHole = outrec.IsHole;
+                                outrec.IsHole = !outrec2.IsHole;
+                                outrec2.FirstLeft = outrec.FirstLeft;
+                                outrec.FirstLeft = outrec2;
+                                if (m_UsingPolyTree)
+                                {
+                                    FixupFirstLefts2(outrec, outrec2);
+                                }
                             }
-                        }
-                        else
-                        {
-                            //the 2 polygons are separate ...
-                            outrec2.IsHole = outrec.IsHole;
-                            outrec2.FirstLeft = outrec.FirstLeft;
-                            if (m_UsingPolyTree)
+                            else
                             {
-                                FixupFirstLefts1(outrec, outrec2);
+                                //the 2 polygons are separate ...
+                                outrec2.IsHole = outrec.IsHole;
+                                outrec2.FirstLeft = outrec.FirstLeft;
+                                if (m_UsingPolyTree)
+                                {
+                                    FixupFirstLefts1(outrec, outrec2);
+                                }
                             }
-                        }
                         op2 = op; //ie get ready for the next iteration
                     }
                     op2 = op2.Next;

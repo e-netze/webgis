@@ -1,4 +1,11 @@
-﻿using E.Standard.Drawing.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.Drawing.Models;
 using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
@@ -7,7 +14,6 @@ using E.Standard.ThreadSafe;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebGIS.Tools.Identify.Extensions;
-using E.Standard.WebGIS.Tools.MapMarkup.Export;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -21,13 +27,7 @@ using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Reflection;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+
 using static E.Standard.WebMapping.Core.CoreApiGlobals;
 
 namespace E.Standard.WebGIS.Tools.Identify;
@@ -280,18 +280,9 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
 
     #region IApiTool Member
 
-    virtual public WebMapping.Core.Api.ToolType Type
-    {
-        get { return WebMapping.Core.Api.ToolType.click; }
-    }
+    virtual public WebMapping.Core.Api.ToolType Type => WebMapping.Core.Api.ToolType.click;
 
-    public ToolCursor Cursor
-    {
-        get
-        {
-            return ToolCursor.Custom_Pan_Info;
-        }
-    }
+    public ToolCursor Cursor => ToolCursor.Custom_Pan_Info;
 
     #endregion
 
@@ -310,31 +301,20 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
 
     #region IApiButtonDependency Member
 
-    public VisibilityDependency ButtonDependencies
-    {
-        get
-        {
-            return VisibilityDependency.QueriesExists;
-        }
-    }
+    public VisibilityDependency ButtonDependencies => VisibilityDependency.QueriesExists;
 
     #endregion
 
     #region IApiToolMarker
 
-    public ApiMarker Marker
+    public ApiMarker Marker => new ApiMarker()
     {
-        get
-        {
-            return new ApiMarker()
-            {
-                ImageUrl = UIImageButton.ToolResourceImage(this, "identify-marker"),
-                ImageSize = new Dimension(25, 41),
-                Anchor = new Position(12, 0),
-                PopupAnchor = new Position(0, 0)
-            };
-        }
-    }
+        ImageUrl = UIImageButton.ToolResourceImage(this, "identify-marker"),
+        ImageSize = new Dimension(25, 41),
+        Anchor = new Position(12, 0),
+        PopupAnchor = new Position(0, 0)
+    };
+
 
     #endregion
 
@@ -363,8 +343,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
 
     [ServerToolCommand("pointer")]
     public ApiEventResponse OnPointerToolClick(IBridge bridge, ApiToolEventArguments e)
-    {
-        return new ApiEventResponse()
+        => new ApiEventResponse()
         {
             ActiveToolType = e.AsDefaultTool ? null : this.Type,
             ToolCursor = ToolCursor.Custom_Pan_Info,
@@ -375,12 +354,11 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
                 new UISetter(SketchCanApplyBufferId, "false")
             }
         };
-    }
+
 
     [ServerToolCommand("rectangle")]
     public ApiEventResponse OnRectangleToolClick(IBridge bridge, ApiToolEventArguments e)
-    {
-        return new ApiEventResponse()
+        => new ApiEventResponse()
         {
             ActiveToolType = e.AsDefaultTool ? null : WebMapping.Core.Api.ToolType.box,
             ToolCursor = ToolCursor.Custom_Rectangle,
@@ -391,12 +369,11 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
                 new UISetter(SketchCanApplyBufferId, "false")
             }
         };
-    }
+
 
     [ServerToolCommand("circle")]
     public ApiEventResponse OnCircleToolClick(IBridge bridge, ApiToolEventArguments e)
-    {
-        return new ApiEventResponse()
+        => new ApiEventResponse()
         {
             ActiveToolType = e.AsDefaultTool ? null : ToolType.sketchcircle,
             ToolCursor = ToolCursor.Custom_Pen,
@@ -407,12 +384,11 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
                 new UISetter(SketchCanApplyBufferId, "false")
             }
         };
-    }
+
 
     [ServerToolCommand("line")]
     public ApiEventResponse OnLineToolClick(IBridge bridge, ApiToolEventArguments e)
-    {
-        return new ApiEventResponse()
+        => new ApiEventResponse()
         {
             ActiveToolType = e.AsDefaultTool ? null : WebMapping.Core.Api.ToolType.sketch1d,
             ToolCursor = ToolCursor.Custom_Pen,
@@ -423,12 +399,10 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
                 new UISetter(SketchCanApplyBufferId, "true")
             }
         };
-    }
 
     [ServerToolCommand("polygon")]
     public ApiEventResponse OnPolygonToolClick(IBridge bridge, ApiToolEventArguments e)
-    {
-        return new ApiEventResponse()
+        => new ApiEventResponse()
         {
             ActiveToolType = e.AsDefaultTool ? null : WebMapping.Core.Api.ToolType.sketch2d,
             ToolCursor = ToolCursor.Custom_Pen,
@@ -439,7 +413,6 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
                 new UISetter(SketchCanApplyBufferId, "true")
             }
         };
-    }
 
     [ServerToolCommand("sketchfromgeometry")]
     async public Task<ApiEventResponse> OnSketchFromGeometry(IBridge bridge, ApiToolEventArguments e, ILocalizer<IdentifyDefault> localizer)
@@ -841,7 +814,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
     [ServerToolCommand("download_attachment")]
     async public Task<ApiEventResponse> OnDownloadAttachment(IBridge bridge, ApiToolEventArguments e, ILocalizer<IdentifyDefault> localizer)
     {
-        var attachentInfo = JSerializer.Deserialize<AttachentInfo>( bridge.SecurityDecryptString(e.ServerCommandArgument));
+        var attachentInfo = JSerializer.Deserialize<AttachentInfo>(bridge.SecurityDecryptString(e.ServerCommandArgument));
         var attachmentData = await bridge.GetFeatureAttachmentData(attachentInfo.ServiceId, attachentInfo.Uri);
 
         return new ApiRawDownloadEventResponse(attachentInfo.Name, attachmentData) { ContentType = attachentInfo.Type };

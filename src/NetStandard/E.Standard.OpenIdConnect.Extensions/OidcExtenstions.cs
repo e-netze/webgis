@@ -1,10 +1,11 @@
 ﻿#nullable enable
 
-using E.Standard.Json;
-using E.Standard.Security.App.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+
+using E.Standard.Json;
+using E.Standard.Security.App.Json;
 
 namespace E.Standard.OpenIdConnect.Extensions;
 

@@ -1,7 +1,7 @@
-﻿using E.Standard.WebMapping.Core.Api.UI.Abstractions;
-using System;
-using System.IO;
+﻿using System;
 using System.Linq;
+
+using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 
 namespace E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 
@@ -28,7 +28,7 @@ public class UIValidationError : UIDiv
 public class UIValidationErrorSummary : UIDiv
 {
     public UIValidationErrorSummary(string errorMessage) : this([errorMessage]) { }
-    
+
     public UIValidationErrorSummary(string[] errorMessages)
     {
         errorMessages = errorMessages?.Where(errorMessages => !String.IsNullOrWhiteSpace(errorMessages)).ToArray();

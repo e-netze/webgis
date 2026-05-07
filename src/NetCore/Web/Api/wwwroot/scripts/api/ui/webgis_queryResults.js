@@ -124,13 +124,13 @@
                     if (layer != null && layer.selectable === false)
                         selectable = false;
                 }
-
-                webgis.ui.showLayerNotVisibleNotification(service, query, $parent);
             }
             if (query && $.inArray(query.name, includedQueries) < 0) {
                 includedQueries.push(query.name);
             }
         }
+
+        webgis.ui.showLayerNotVisibleNotification(service, query, $parent);
 
         map.getSelection('selection').remove();
         map.getSelection('custom').remove();
@@ -387,7 +387,7 @@
                     removeSelection,
                     $(this).hasClass('webgis-result-suppresszoom'));
 
-                if (/*$(window).width() < 1024*/ map.ui.tabsInSidebar() === false) {
+                if ($(window).width() < 1024 && map.ui.tabsInSidebar() === false) {
                     map.events.fire('hidequeryresults');
                 }
 
@@ -1045,6 +1045,12 @@
                                     $link
                                         .attr('href', '')
                                         .attr('onclick', "webgis.iFrameDialog('" + href + "','" + $link.text() + "');return false;");
+                                    text = $link.prop('outerHTML');
+                                } else if ($link.attr('target') === 'datalinq_pdf_report') {
+                                    const href = $link.attr('href');
+                                    $link
+                                        .attr('href', '')
+                                        .attr('onclick', "webgis.downloadDataLinqPdf('" + href + "');return false;");
                                     text = $link.prop('outerHTML');
                                 }
                                 $td.html(text);

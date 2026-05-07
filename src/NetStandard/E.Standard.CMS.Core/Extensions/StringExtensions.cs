@@ -2,6 +2,7 @@
 using System.Text;
 
 namespace E.Standard.CMS.Core.Extensions;
+
 static internal class StringExtensions
 {
     static public string ToValidNodeUrl(this string url)
@@ -25,7 +26,7 @@ static internal class StringExtensions
     }
 }
 
-static public class  PublicStringExtensions
+static public class PublicStringExtensions
 {
     static public string TrimRightRelativeCmsPath(this string path, int trim)
     {

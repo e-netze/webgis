@@ -45,7 +45,7 @@ internal class DeployVersionModel
     [ModelProperty(Prompt = "Default Calc Crs",
                    DefaultValue = "3857",
                    Placeholder = "default-calc-crs")]
-    public string DefaultCalcCrs { get; set; } 
+    public string DefaultCalcCrs { get; set; }
 
     //[ModelProperty(Prompt = "UI Color Code (light color)",
     //               DefaultValue = "#b5dbad",

@@ -1,7 +1,9 @@
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using Microsoft.Extensions.Configuration;
+
+using Newtonsoft.Json;
 
 namespace E.Standard.Configuration.Providers;
 

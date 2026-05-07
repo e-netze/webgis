@@ -1,8 +1,10 @@
-﻿using E.Standard.CMS.Core.Security;
-using E.Standard.Extensions.Compare;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using E.Standard.CMS.Core.Security;
+using E.Standard.Extensions.Compare;
+
 using static E.Standard.CMS.Core.CmsDocument;
 
 namespace E.Standard.CMS.Core.Extensions;

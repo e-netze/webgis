@@ -1,9 +1,10 @@
 ﻿#nullable enable
 
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+
+using Newtonsoft.Json;
 
 namespace E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 
@@ -171,12 +172,12 @@ public class UIQueryBuilder : UICollapsableElement
         [JsonProperty("alias", NullValueHandling = NullValueHandling.Ignore)]
         [System.Text.Json.Serialization.JsonPropertyName("alias")]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-        public string? Aliasname { get; set;  }
+        public string? Aliasname { get; set; }
 
         [JsonProperty("operators")]
         [System.Text.Json.Serialization.JsonPropertyName("operators")]
         public IEnumerable<string> Operators { get; set; }
-        
+
         [JsonProperty("value_template")]
         [System.Text.Json.Serialization.JsonPropertyName("value_template")]
         public string ValueTemplate { get; set; }

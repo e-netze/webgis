@@ -1,4 +1,9 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Localization.Reflection;
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
@@ -9,14 +14,12 @@ using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
 using E.Standard.WebMapping.Core.Api.Reflection;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 
 [Export(typeof(IApiButton))]
 [AdvancedToolProperties(SelectionInfoDependent = true, MapCrsDependent = true)]
+[LocalizationNamespace("tools.editing.massattribution")]
 public class MassAttributation : IApiServerToolAsync, IApiChildTool
 {
     #region IApiServerTool Member

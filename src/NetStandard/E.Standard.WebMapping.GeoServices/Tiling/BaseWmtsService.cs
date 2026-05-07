@@ -1,3 +1,8 @@
+﻿using System;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 using E.Standard.OGC.Schema;
 using E.Standard.OGC.Schema.wmts_1_0_0;
 using E.Standard.Platform;
@@ -6,10 +11,7 @@ using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.ServiceResponses;
-using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using E.Standard.WebMapping.GeoServices.Tiling.Extensions;
 
 namespace E.Standard.WebMapping.GeoServices.Tiling;
 
@@ -21,7 +23,7 @@ public abstract class BaseWmtsService : TileService, IMapServiceDescription, ISe
     protected readonly string _style;
     protected readonly string _imageFormat;
     protected readonly int _maxLevel;
-    protected readonly string[] _tileUrls;
+    protected string[] _tileUrls;
 
     public BaseWmtsService(
                 string url,
@@ -60,16 +62,6 @@ public abstract class BaseWmtsService : TileService, IMapServiceDescription, ISe
         if (_tileUrls == null || _tileUrls.Length == 0)
         {
             _tileUrls = new string[1];  // ??
-        }
-
-        for (int i = 0; i < _tileUrls.Length; i++)
-        {
-            _tileUrls[i] = _tileUrls[i]
-                .Replace("{Style}", _style)
-                .Replace("{TileMatrixSet}", _tileMatrixSet)
-                .Replace("{TileMatrix}", "[LEVEL]")
-                .Replace("{TileRow}", "[ROW]")
-                .Replace("{TileCol}", "[COL]");
         }
 
         _maxLevel = maxLevel;
@@ -131,6 +123,7 @@ public abstract class BaseWmtsService : TileService, IMapServiceDescription, ISe
             #endregion
 
             SpatialReference sRef = null;
+            string tileMatrixPattern = "{0}";
             if (response != null && response.Contents != null)
             {
                 if (response.Contents.TileMatrixSet.Length > 0)
@@ -152,16 +145,17 @@ public abstract class BaseWmtsService : TileService, IMapServiceDescription, ISe
 
                     // if SupportedCrs is not set in CMS
                     // use the supportedCRS from the matrixset, eg: <ows:SupportedCRS>urn:ogc:def:crs:EPSG::31256</ows:SupportedCRS>
-                    if (this.SupportedCrs?.Any() != true 
+                    if (this.SupportedCrs?.Any() != true
                         && !String.IsNullOrEmpty(matrixSet.SupportedCRS)
                         && int.TryParse(matrixSet.SupportedCRS.Split(":").Last(), out int supportedCrs))
                     {
                         this.SupportedCrs = [supportedCrs];
                     }
 
+                    tileMatrixPattern = (matrixSet.TileMatrix.FirstOrDefault()?.Identifier?.Value ?? "0").MatrixSetIdentifierToIntWithPattern().Pattern;
                     foreach (var tileMatrix in matrixSet.TileMatrix)
                     {
-                        var level = int.Parse(tileMatrix.Identifier.Value);
+                        var level = tileMatrix.Identifier.Value.MatrixSetIdentifierToInt();
                         if (_maxLevel >= 0 && level > _maxLevel)
                         {
                             continue;
@@ -183,6 +177,8 @@ public abstract class BaseWmtsService : TileService, IMapServiceDescription, ISe
                     }
                 }
             }
+
+            _tileUrls = _tileUrls.ReplaceTileUrlConstants(_style, _tileMatrixSet, tileMatrixPattern);
 
             OGC.WMS.OgcWmsLayer layer = new OGC.WMS.OgcWmsLayer("_alllayers", "0", this, queryable: false);
             this.Layers.SetItems(new ILayer[] { layer });

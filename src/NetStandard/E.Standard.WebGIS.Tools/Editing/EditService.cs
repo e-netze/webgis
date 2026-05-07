@@ -1,4 +1,10 @@
-﻿using E.Standard.DbConnector;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.DbConnector;
 using E.Standard.Extensions;
 using E.Standard.Extensions.Compare;
 using E.Standard.Extensions.IO;
@@ -12,11 +18,6 @@ using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing;
 

@@ -1,6 +1,7 @@
-﻿using Microsoft.Azure.Storage;
+﻿using System.Threading.Tasks;
+
+using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
-using System.Threading.Tasks;
 
 namespace E.Standard.Azure.Storage;
 

@@ -1,8 +1,10 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Security.App.Services.Abstraction;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
 
 #nullable enable
 
@@ -48,7 +50,7 @@ public class MigrateSubscriberDatabaseService : SubscriberDatabaseService
 
     protected override string GetConnectionString(ISecurityConfigurationService config, IOptionsMonitor<SubscriberDatabaseServiceOptions> options) =>
         config[$"{options.CurrentValue.ConnectionStringConfigurationKey}-mig"];
-    
+
 
     public bool HasMigrationSettings() => this.CreateInstance() != null;
 }

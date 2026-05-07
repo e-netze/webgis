@@ -1,8 +1,14 @@
-﻿webgis.currentPosition_classic = new function () {
+﻿webgis.geolocationApi = new function() {
+    this.isAvailable = function () {
+        return false;
+    };
+};
+
+webgis.currentPosition_classic = new function () {
     this.get = function (options) {
         options = options || { onSuccess: function () { } };
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(options.onSuccess, options.onError || this.onError, { timeout: 30000 });
+        if (webgis.geolocationApi.isAvailable()) {
+            webgis.geolocationApi.getCurrentPosition(options.onSuccess, options.onError || this.onError, { timeout: 30000 });
         }
         else {
             webgis.alert('Ortung wird nicht unterstützt', 'info');
@@ -99,8 +105,8 @@ webgis.currentPosition_watch = new function () {
         };
 
         var w = new watcher(options, options.maxWatch || 1);
-        if (navigator.geolocation) {
-            options.watchId = navigator.geolocation.watchPosition(w.getPosition, w.onError, { timeout: 5000, enableHighAccuracy: webgis.isTouchDevice() });
+        if (webgis.geolocationApi.isAvailable()) {
+            options.watchId = webgis.geolocationApi.watchPosition(w.getPosition, w.onError, { timeout: 5000, enableHighAccuracy: webgis.isTouchDevice() });
             //this.watchIds.push(options.watchId);
         }
         else {
@@ -108,7 +114,7 @@ webgis.currentPosition_watch = new function () {
         }
     };
     this.stopWatch = function (options, bestPosition, lastErr) {
-        navigator.geolocation.clearWatch(options.watchId);
+        webgis.geolocationApi.clearWatch(options.watchId);
         if (!bestPosition) {
             if (options.onError)
                 options.onError(lastErr);
@@ -234,6 +240,7 @@ webgis.continuousPosition = new function () {
                     ageSeconds = (new Date().getTime() - pos.timestamp) / 1000,
                     acc = pos.coords.accuracy; // / (webgis.calc.R) * 180.0 / Math.PI;
 
+                webgis.continuousPosition.events.fire('currentposition', webgis.continuousPosition, { lng: lng, lat: lat, age: ageSeconds, acc: acc });
                 if (webgis.continuousPosition._marker)
                     webgis.continuousPosition._map.removeMarker(webgis.continuousPosition._marker);
                 if (this.helmert2d && this.helmert2d.name != '_none') {
@@ -247,6 +254,7 @@ webgis.continuousPosition = new function () {
                     //console.log(lnglat_);
                     lng = lnglat_[0];
                     lat = lnglat_[1];
+                    webgis.continuousPosition.events.fire('currentposition-transformed', webgis.continuousPosition, { lng: lng, lat: lat });
                 }
                 webgis.continuousPosition.events.fire('watchposition', webgis.continuousPosition, pos);
                 var isOk = !(acc > options.minAcc ||
@@ -276,10 +284,10 @@ webgis.continuousPosition = new function () {
             this._watcher.helmert2d = webgis.continuousPosition.helmert2d;
         }
 
-        if (navigator.geolocation) {
+        if (webgis.geolocationApi.isAvailable()) {
             this.events.fire('startwatching', this);
             _isWatching = true;
-            webgis.continuousPosition._watchId = navigator.geolocation.watchPosition(this._watcher.newPosition, function () { }, { timeout: 5000, enableHighAccuracy: webgis.isTouchDevice() });
+            webgis.continuousPosition._watchId = webgis.geolocationApi.watchPosition(this._watcher.newPosition, function () { }, { timeout: 5000, enableHighAccuracy: webgis.isTouchDevice() });
         }
         else {
             webgis.alert('Ortung wird nicht unterstützt', 'info');
@@ -289,7 +297,7 @@ webgis.continuousPosition = new function () {
         this.events.fire('stopwatching', this);
         _isWatching = false;
         if (webgis.continuousPosition._map && webgis.continuousPosition._watchId >= 0) {
-            navigator.geolocation.clearWatch(webgis.continuousPosition._watchId);
+            webgis.geolocationApi.clearWatch(webgis.continuousPosition._watchId);
             if (webgis.continuousPosition._marker != null)
                 webgis.continuousPosition._map.removeMarker(webgis.continuousPosition._marker);
         }
@@ -298,14 +306,43 @@ webgis.continuousPosition = new function () {
         webgis.continuousPosition._marker = null;
         webgis.continuousPosition._watcher = null;
     };
+    this.pause = function (callback) {
+        console.log("webgis.continuousPosition: pause watching...");
+        webgis.geolocationApi.clearWatch(webgis.continuousPosition._watchId);
+        if (callback) callback();
+    };
+    this.resume = function (callback) {
+        if (this._watcher && webgis.geolocationApi.isAvailable()) {
+            console.log("webgis.continuousPosition: resume watching...");
+            webgis.continuousPosition._watchId = webgis.geolocationApi.watchPosition(this._watcher.newPosition, function () { }, { timeout: 5000, enableHighAccuracy: webgis.isTouchDevice() });
+        };
+        if (callback) callback();
+    };
     this.current = null;
     this.isWatching = function () { return _isWatching; };
     this.showInfo = function () {
         $('body').webgis_modal({
             title: 'GPS Messinfo',
             onload: function ($content) {
+                $("<h3>").text(webgis.l10n.get('select-geolocation-api')).appendTo($content);
+
+                const $geolocationApiSelect = $("<select>")
+                    .addClass("webgis-input")
+                    .appendTo($content)
+                    .change(function (e) {
+                        webgis.geolocationApis.setByName($(this).val());
+                    });
+
+                for (var name of webgis.geolocationApis.getAllNames()) {
+                    $("<option>")
+                        .val(name)
+                        .text(name)
+                        .appendTo($geolocationApiSelect);
+                }
+                $geolocationApiSelect.val(webgis.geolocationApis.currentName());
+
                 if (webgis.currentPosition.useWithSketchTool) {
-                    $("<h3>Genauigkeit</h3>").appendTo($content);
+                    $("<h3>Accuracy</h3>").appendTo($content);
                     $("<table class='webgis-result-table'>" +
                         "<tr><td class='webgis-result-table-header'>Min Acc</td><td>" + webgis.currentPosition.minAcc + "m</td></tr>" +
                         "<tr><td class='webgis-result-table-header'>Max Age</td><td>" + webgis.currentPosition.maxAgeSeconds + "s</td></tr></table>")
@@ -315,7 +352,7 @@ webgis.continuousPosition = new function () {
                     webgis.continuousPosition._watcher.helmert2d &&
                     webgis.continuousPosition._watcher.helmert2d.name !== '_none') {
                     var helmert2d = webgis.continuousPosition._watcher.helmert2d;
-                    $("<h3>Trafo: Lokale Helmert Transform.</h3>").appendTo($content);
+                    $("<h3>Trafo: Local Helmert Transform.</h3>").appendTo($content);
                     $("<table class='webgis-result-table'>" +
                         "<tr><td class='webgis-result-table-header'>Name</td><td>" + helmert2d.name + "</td></tr>" +
                         "<tr><td class='webgis-result-table-header'>SRef [EPSG]</td><td>" + helmert2d.srs + "</td></tr>" +
@@ -330,15 +367,15 @@ webgis.continuousPosition = new function () {
                     if (webgis.continuousPosition._watcher.helmert2d._request_pos) {
                         $("<h3>Trafo: Bestimmungsort/Qualität</h3>").appendTo($content);
                         $("<table class='webgis-result-table'>" +
-                            "<tr><td class='webgis-result-table-header'>Beitengrad</td><td>" + webgis.continuousPosition._watcher.helmert2d._request_pos.coords.latitude + "</td></tr>" +
-                            "<tr><td class='webgis-result-table-header'>Längengrad</td><td>" + webgis.continuousPosition._watcher.helmert2d._request_pos.coords.longitude + "</td></tr>" +
-                            "<tr><td class='webgis-result-table-header'>Genauigkeit [m]</td><td>" + webgis.continuousPosition._watcher.helmert2d._request_pos.coords.accuracy + "</td></tr>" +
-                            "<tr><td class='webgis-result-table-header'>Alter [sec]</td><td>" + ((new Date().getTime() - webgis.continuousPosition._watcher.helmert2d._request_pos.timestamp) / 1000) + "</td></tr>" +
-                            "<tr><td class='webgis-result-table-header'>Räuml. Gültigkeit[m]</td><td>" + webgis.continuousPosition._watcher.helmert2d._request_pos._trans_spatial_validity + "</td></tr>" +
+                            "<tr><td class='webgis-result-table-header'>Latitude</td><td>" + webgis.continuousPosition._watcher.helmert2d._request_pos.coords.latitude + "</td></tr>" +
+                            "<tr><td class='webgis-result-table-header'>Longitude</td><td>" + webgis.continuousPosition._watcher.helmert2d._request_pos.coords.longitude + "</td></tr>" +
+                            "<tr><td class='webgis-result-table-header'>Accuracy [m]</td><td>" + webgis.continuousPosition._watcher.helmert2d._request_pos.coords.accuracy + "</td></tr>" +
+                            "<tr><td class='webgis-result-table-header'>Age [sec]</td><td>" + ((new Date().getTime() - webgis.continuousPosition._watcher.helmert2d._request_pos.timestamp) / 1000) + "</td></tr>" +
+                            "<tr><td class='webgis-result-table-header'>Spatial Validity[m]</td><td>" + webgis.continuousPosition._watcher.helmert2d._request_pos._trans_spatial_validity + "</td></tr>" +
                             "</table>")
                             .appendTo($content);
                     }
-                    $("<br/><button>Transformation temporär verwerfen</button>")
+                    $("<br/><button>Temporarily discard transformation</button>")
                         .addClass('webgis-button')
                         .appendTo($content)
                         .click(function () {
@@ -350,10 +387,74 @@ webgis.continuousPosition = new function () {
                     $("<p>Für die aktuelle Messung wird keine lokale Transformation verwendet!</p>").appendTo($content);
                 }
             },
-            width: '330px', height: '690px'
+            width: '640px', height: '690px'
         });
     };
     this.isOk = function () {
         return (webgis.continuousPosition.current && webgis.continuousPosition.current.status === 'ok')
     };
 };
+
+webgis.geolocationApis = new function () {
+    const _apis = [];
+
+    this.add = function (api) {
+        if (this.hasName(api.name)) {
+            return false;
+        }
+
+        _apis.push(api);
+        if (_apis.length === 1) {
+            this.setByName(api.name);
+        }
+
+        return true;
+    };
+
+    this.setByName = function (name) {
+        console.log("try set geolocation api by name:" + name);
+        for (let api of _apis) {
+            console.log(api);
+            if (api.name === name) {
+                if (webgis.continuousPosition.isWatching()) {
+                    webgis.continuousPosition.pause(function () {
+                        webgis.geolocationApi = api;
+                        console.log("current geolocation api:" + name, api);
+
+                        webgis.continuousPosition.resume();
+                    });
+
+                    return true;
+                }
+
+                webgis.geolocationApi = api;
+                console.log("current geolocation api:" + name, api);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    this.currentName = () => webgis.geolocationApi.name || "None";
+
+    this.hasName = function () {
+        for (let api of _apis) {
+            if (api.name === name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    this.getAllNames = function () {
+        var names = [];
+        for (let api of _apis) {
+            names.push(api.name);
+        }
+
+        return names;
+    }
+}

@@ -1,5 +1,7 @@
-using Api.Core.Models.Storage;
+﻿using Api.Core.Models.Storage;
+
 using Cms.Models;
+
 using E.Standard.Api.App.DTOs;
 using E.Standard.Caching.FileSystem;
 using E.Standard.Cms.Configuration.Models;
@@ -19,7 +21,9 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 using E.Standard.WebMapping.GeoServices.LuceneServer.Models;
+
 using Portal.Core.Models.Portal;
+
 using Xunit.Abstractions;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]

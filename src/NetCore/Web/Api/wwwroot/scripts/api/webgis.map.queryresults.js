@@ -144,7 +144,7 @@
 
                     webgis.delayed(function () {
                         singleMarker.fire('click');
-                        if (!map.ui.tabsInSidebar()) {
+                        if ($(window).width() < 1024 && map.ui.tabsInSidebar() === false) {
                             map.events.fire('hidequeryresults');
                         }
                     }, 100);
@@ -866,8 +866,18 @@
                 url: webgis.baseUrl + '/rest/exportfeatures',
                 data: webgis.hmac.appendHMACData(data),
                 success: function (result) {
-                    if (result.success === true && result.downloadid) {
+                    if (!result.success) return;
+
+                    if (result.clipboard_data) {
+                        result.downloadUrl = webgis.baseUrl + '/rest/exportfeatures';
+                        result.downloadData = webgis.$.extend(data, { forceDownload: true });
+                        webgis.ui.showClipboardDataDialog(result);
+                        return;
+                    }
+
+                    if (result.downloadid) {
                         window.open(webgis.baseUrl + '/rest/download?id=' + result.downloadid + '&n=' + result.name);
+                        return;
                     }
                 }
             });
@@ -952,7 +962,7 @@
                     }
 
                     if (service.hasEditLayerPermission(query.layerid, 'massattributation')) {
-                        createToolbarButton($editingBlock, webgis.l10n.get(editToolMassattributionId), webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-mass', 'tools'), webgis.l10n.get(editToolMassattributionId + '.tooltip'))
+                        createToolbarButton($editingBlock, editToolMassattributionId, webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-mass', 'tools'), editToolMassattributionId + '.tooltip')
                             .css('display', 'none')
                             .addClass('webgis-dependencies webgis-dependency-hasselection webgis-dependency-activetool ' + editToolIdClass)
                             .click(function () {
@@ -1092,20 +1102,48 @@
             $tabTools.data('feature.metadata', features.metadata);  // Links können sich ändern (add/remove features). Referenz auf Objekt merken und erst beim klick eigentlichen Link auslesen
             for (var l in features.metadata.links) {
                 createToolbarButton($exportBlock,
-                                    l,
-                                    features.metadata.linkimages && features.metadata.linkimages[l] 
-                                        ? features.metadata.linkimages[l] 
-                                        : webgis.css.imgResource('external-link-26.png'))
+                    l,
+                    features.metadata.linkimages && features.metadata.linkimages[l]
+                        ? features.metadata.linkimages[l]
+                        : webgis.css.imgResource('external-link-26.png'))
                     .data('linkname', l)
                     .click(function () {
                         let featureMetadata = $(this).closest('.webgis-result-table-tools').data('feature.metadata');
                         if (featureMetadata) {
                             const linkname = $(this).data('linkname');
                             const linktarget = featureMetadata.linktargets[linkname];
-                            if (linktarget === 'dialog') {
-                                webgis.iFrameDialog(featureMetadata.links[linkname], linkname);
+                            const link = featureMetadata.links[linkname];
+
+                            const func = function (linktarget, name, link) {
+                                switch (linktarget) {
+                                    case "dialog":
+                                        webgis.iFrameDialog(link, name);
+                                        break;
+                                    case "datalinq_pdf_report":
+                                        webgis.downloadDataLinqPdf(link);
+                                        break;
+                                    default:
+                                        window.open(link);
+                                        break;
+                                }
+                            }
+
+                            if (link.indexOf('payload:') == 0) {
+                                webgis.fetch({
+                                    type: 'post',
+                                    url: `${webgis.baseUrl}/rest/resolve-url-payload`,
+                                    data: webgis.hmac.appendHMACData({ payload: link.substr('payload:'.length) }),
+                                    success: function (result) {
+                                        console.log('result', result);
+                                        if (result.success && result.url) {
+                                            func(linktarget, linkname, result.url);
+                                        } else {
+                                            webgis.alert("Can't open link: " + result.message, "Error");
+                                        }
+                                    }
+                                });
                             } else {
-                                window.open(featureMetadata.links[linkname]);
+                                func(linktarget, linkname, featureMetadata.links[linkname]);
                             }
                         }
                     });
@@ -1496,7 +1534,17 @@
                             if (me._queryResultFeatures &&
                                 me._queryResultFeatures.features &&
                                 me._queryResultFeatures.features.length === 1) {
-                                $(map._webgisContainer).find('.webgis-toolbox-tool-item.remove-queryresults').trigger('click');
+                                    const toolboxButton = $(map._webgisContainer)
+                                                            .find('.webgis-toolbox-tool-item.remove-queryresults');
+                                    const quickButton = $(map._webgisContainer)
+                                                            .find('.webgis-tool-button.remove-queryresults');
+
+                                    if (toolboxButton.length > 0) {
+                                        toolboxButton.trigger('click');
+                                    }
+                                    else if (quickButton.length > 0) {
+                                        quickButton.trigger('click');
+                                    }
                             } else {
                                 map.queryResultFeatures.removeFeature($(this).data('feature-oid'));
                             }

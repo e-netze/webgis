@@ -115,7 +115,7 @@
         // Remove all queryresults
         const $queryResultButton = $("<div style='text-align:center'>")
             .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
-            .addClass('webgis-tool-button webgis-dependencies webgis-dependency-queryresultsexists')
+            .addClass('webgis-tool-button webgis-dependencies webgis-dependency-queryresultsexists remove-queryresults')
             .data('map', this)
             .attr('alt', 'Alle Ergebnisse aus der Karte entfernen')
             .appendTo(toolButtonBars)
@@ -508,7 +508,7 @@
                     if (e.channel === "beforeaddvertex" && activeTool?.max_sketch_vertices
                         && this.sketch.getVerticesCount() >= activeTool.max_sketch_vertices) {  // map series print only allows a certain number of vertices/pages
                         coord.ignore = true;
-                        webgis.toastMessage("Error", `Maximum number of vertices (${activeTool.max_sketch_vertices}) reached.`, null, "warning");
+                        webgis.toastMessage("Error",  `${webgis.l10n.get("max-map-series-pages-reached")}: ${activeTool.max_sketch_vertices}`, null, "warning");
                         return;
                     }
                     
@@ -2459,7 +2459,9 @@
         //    webgis.removeHistoryItem($(this.elem).find('#webgis-toolhistory-button'));
         //}
 
-        this.refreshSnapping();
+        if (!this.isGraphicsTool(this._activeTool)) {
+            this.refreshSnapping();  // graphicTools will to this in map.graphics.setTool();
+        }
     };
     this.getActiveTool = function () {
         if (this._activeTool == null)
@@ -2761,7 +2763,9 @@
             
             for (let t in container.tools) {
                 const tool = this._tools[container.tools[t]];
-                if (!tool)
+
+                //console.log(tool.id, tool.visibility);
+                if (!tool || tool.visibility === 'hidden')
                     continue;
 
                 // if tool.container is an array => take arry otherwise [ tool.container ]

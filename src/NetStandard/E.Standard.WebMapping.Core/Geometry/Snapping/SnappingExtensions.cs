@@ -1,5 +1,6 @@
-﻿using E.Standard.WebMapping.Core.Geometry.Extensions;
-using System;
+﻿using System;
+
+using E.Standard.WebMapping.Core.Geometry.Extensions;
 
 namespace E.Standard.WebMapping.Core.Geometry.Snapping;
 

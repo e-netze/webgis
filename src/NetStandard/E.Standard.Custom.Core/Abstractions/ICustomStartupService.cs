@@ -1,5 +1,6 @@
 ﻿using E.Standard.Configuration.Services;
 using E.Standard.Security.Cryptography.Services;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -34,6 +34,7 @@
     <ProjectReference Include="..\E.Standard.DocumentReader\E.Standard.DocumentReader.csproj" />
     <ProjectReference Include="..\E.Standard.Drawing\E.Standard.Drawing.csproj" />
     <ProjectReference Include="..\E.Standard.Esri.Shapefile\E.Standard.Esri.Shapefile.csproj" />
+    <ProjectReference Include="..\E.Standard.GeoCoding\E.Standard.GeoCoding\E.Standard.GeoCoding.csproj" />
     <ProjectReference Include="..\E.Standard.GeoJson\E.Standard.GeoJson.csproj" />
     <ProjectReference Include="..\E.Standard.Gpx\E.Standard.Gpx.csproj" />
     <ProjectReference Include="..\E.Standard.Localization.Extensions\E.Standard.Localization.Extensions.csproj" />

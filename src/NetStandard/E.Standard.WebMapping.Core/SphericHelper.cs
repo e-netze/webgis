@@ -1,6 +1,7 @@
-﻿using E.Standard.WebMapping.Core.Abstraction;
+﻿using System;
+
+using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
 
 namespace E.Standard.WebMapping.Core;
 

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace E.Standard.Extensions.Text;
@@ -118,7 +120,7 @@ static public class StringExtensions
 
     public static string RemoveEnding(this string str, char ending)
     {
-        if (String.IsNullOrEmpty(str)) return str;
+        if (String.IsNullOrEmpty(str)) { return str; }
 
         while (str.EndsWith(ending))
         {
@@ -132,7 +134,7 @@ static public class StringExtensions
 
     public static string RemoveStarting(this string str, char ending)
     {
-        if (String.IsNullOrEmpty(str)) return str;
+        if (String.IsNullOrEmpty(str)) { return str; }
 
         while (str.StartsWith(ending))
         {
@@ -142,13 +144,13 @@ static public class StringExtensions
         return str;
     }
 
-    public static string RemoveStartingSlash(this string str) 
+    public static string RemoveStartingSlash(this string str)
         => str.RemoveStarting('/');
 
 
     public static string RemoveEndingSlashAndBackslash(this string str)
     {
-        if (String.IsNullOrEmpty(str)) return str;
+        if (String.IsNullOrEmpty(str)) { return str; }
 
         while (str.EndsWith('/') || str.EndsWith('\\'))
         {
@@ -158,7 +160,7 @@ static public class StringExtensions
     }
     public static string RemoveStartingSlashAndBackslash(this string str)
     {
-        if (String.IsNullOrEmpty(str)) return str;
+        if (String.IsNullOrEmpty(str)) { return str; }
 
         while (str.StartsWith('/') || str.StartsWith('\\'))
         {
@@ -169,24 +171,74 @@ static public class StringExtensions
 
     public static string ConcatWith(this string str1, string str2, char concatChar)
     {
-        if (String.IsNullOrEmpty(str1)) return str2;
-        if (String.IsNullOrEmpty(str2)) return str1;
+        if (String.IsNullOrEmpty(str1)) { return str2; }
+        if (String.IsNullOrEmpty(str2)) { return str1; }
 
         return $"{str1.RemoveEnding(concatChar)}{concatChar}{str2.RemoveStarting(concatChar)}";
     }
 
     public static string ConcatWithSlash(this string str1, string str2)
         => str1.ConcatWith(str2, '/');
-    
+
     public static string AddUriPath(this string str1, string str2)
     {
-        if (String.IsNullOrEmpty(str1)) return str2?.RemoveStartingSlashAndBackslash();
-        if (String.IsNullOrEmpty(str2)) return str1.RemoveEndingSlashAndBackslash();
+        if (String.IsNullOrEmpty(str1)) { return str2?.RemoveStartingSlashAndBackslash(); }
+        if (String.IsNullOrEmpty(str2)) { return str1.RemoveEndingSlashAndBackslash(); }
 
         char uriSeparator = str1.Contains('\\')
             ? '\\'
             : '/';
 
         return $"{str1.RemoveEndingSlashAndBackslash()}{uriSeparator}{str2.RemoveStartingSlashAndBackslash()}";
+    }
+
+    public static int ParseInvariantToRoundedInt(this string str)
+    {
+        if (str is null)
+        {
+            throw new ArgumentNullException();
+        }
+
+        if (int.TryParse(str, out int result))
+        {
+            return result;
+        }
+
+        if(str.Contains(","))
+        {
+            throw new FormatException($"{str}: invalid format");
+        }
+
+        if (double.TryParse(str, CultureInfo.InvariantCulture.NumberFormat, out double doubleResult))
+        {
+            return (int)Math.Round(doubleResult, 0, MidpointRounding.AwayFromZero);
+        }
+
+        throw new FormatException($"{str} is not an number and can't be parsed or rounded as int");
+    }
+
+    public static int ParseInvarianteToFlooredInt(this string str)
+    {
+        if (str is null)
+        {
+            throw new ArgumentNullException();
+        }
+
+        if (int.TryParse(str, out int result))
+        {
+            return result;
+        }
+
+        if (str.Contains(","))
+        {
+            throw new FormatException($"{str}: invalid format");
+        }
+
+        if (double.TryParse(str, CultureInfo.InvariantCulture.NumberFormat, out double doubleResult))
+        {
+            return (int)Math.Floor(doubleResult);
+        }
+
+        throw new FormatException($"{str} is not an number and can't be parsed or rounded as int");
     }
 }

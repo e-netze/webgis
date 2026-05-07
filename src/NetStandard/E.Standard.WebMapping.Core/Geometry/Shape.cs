@@ -1,11 +1,12 @@
-﻿using E.Standard.Platform;
-using E.Standard.WebMapping.Core.Filters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Xml;
+
+using E.Standard.Platform;
+using E.Standard.WebMapping.Core.Filters;
 
 namespace E.Standard.WebMapping.Core.Geometry;
 

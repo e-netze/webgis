@@ -1,11 +1,12 @@
-﻿using E.Standard.Esri.Shapefile.IO;
-using E.Standard.WebMapping.Core;
-using E.Standard.WebMapping.Core.Abstraction;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Text;
+
+using E.Standard.Esri.Shapefile.IO;
+using E.Standard.WebMapping.Core;
+using E.Standard.WebMapping.Core.Abstraction;
 
 namespace E.Standard.Esri.Shapefile;
 

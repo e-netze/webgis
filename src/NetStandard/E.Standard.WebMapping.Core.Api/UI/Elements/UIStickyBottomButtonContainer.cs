@@ -5,6 +5,6 @@ public class UIStickyBottomButtonContainer : UIElement
     public UIStickyBottomButtonContainer()
         : base("div")
     {
-        css= "webgis-sticky-bottom-button-container";
+        css = "webgis-sticky-bottom-button-container";
     }
 }

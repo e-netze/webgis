@@ -1,10 +1,11 @@
-using E.Standard.DbConnector;
-using E.Standard.DbConnector.Schema;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+
+using E.Standard.DbConnector;
+using E.Standard.DbConnector.Schema;
 
 namespace E.Standard.WebMapping.Core.Geometry;
 

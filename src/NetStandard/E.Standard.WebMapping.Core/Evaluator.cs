@@ -1,7 +1,8 @@
-using E.Standard.Platform;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+
+using E.Standard.Platform;
 
 namespace E.Standard.WebMapping.Core;
 

@@ -1,9 +1,10 @@
-﻿using E.Standard.WebMapping.Core;
-using E.Standard.WebMapping.Core.Api.Bridge;
-using E.Standard.WebMapping.Core.Geometry;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using E.Standard.WebMapping.Core;
+using E.Standard.WebMapping.Core.Api.Bridge;
+using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebGIS.Tools.Editing.Extensions;
 

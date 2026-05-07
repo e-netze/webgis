@@ -2,6 +2,9 @@
 //#define ADD_MESSAGEQUEUE
 //#define ADD_REDIS
 //#define ADD_MCP
+//#define ADD_GVIEW
+//#define ADD_POSTGRES
+//#define ADD_DEVTUNNELS
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -88,7 +91,7 @@ var redis = builder
 #endregion
 #endif
 
-#if POSTGRES
+#if ADD_POSTGRES
 
 var postgresPassword = builder.AddParameter("postgresql-password", "postgres");
 
@@ -105,7 +108,7 @@ var postgres = builder
 
 #endif
 
-#if GVIEW
+#if ADD_GVIEW
 var gViewServer = builder
                     .AddgViewServer("gview-server", httpPort: 61656)
                     .Build()
@@ -131,6 +134,20 @@ var webgisApi = builder.AddProject<Projects.webgis_api>("webgis-api")
 #if ADD_REDIS
                         .WaitFor(redis)
 #endif
+                        .WithUrlForEndpoint("https", ep =>
+                        {
+                            ep.DisplayText = "API";
+                            ep.DisplayOrder = 1;
+                            ep.DisplayLocation = UrlDisplayLocation.SummaryAndDetails;
+                        })
+                        .WithUrlForEndpoint("http", ep => { ep.DisplayLocation = UrlDisplayLocation.DetailsOnly; })
+                        .WithUrlForEndpoint("https", ep => new()
+                        {
+                            DisplayText = "CachClear",
+                            DisplayOrder = 0,
+                            Url = $"{ep.Url}/cache/clear",
+                            DisplayLocation = UrlDisplayLocation.SummaryAndDetails
+                        })
                         ;
 
 
@@ -139,13 +156,43 @@ var webgisPortal = builder.AddProject<Projects.webgis_portal>("webgis-portal")
 #if ADD_IDENTITYSERVER
                           .WaitFor(identityServer)
 #endif
-                          ;
+                          .WithUrlForEndpoint("https", ep =>
+                          {
+                              ep.DisplayText = "Login";
+                              ep.DisplayOrder = 1;
+                              ep.DisplayLocation = UrlDisplayLocation.SummaryAndDetails;
+                          })
+                         .WithUrlForEndpoint("http", ep => { ep.DisplayLocation = UrlDisplayLocation.DetailsOnly; })
+                         .WithUrlForEndpoint("https", ep => new()
+                         {
+                             DisplayText = "Portal",
+                             DisplayOrder = 0,
+                             Url = $"{ep.Url}/default",
+                             DisplayLocation = UrlDisplayLocation.SummaryAndDetails
+                         })
+                         ;
 
 var webgisCms = builder.AddProject<Projects.webgis_cms>("webgis-cms")
                        .WaitFor(webgisPortal)
-                       .WaitFor(webgisApi);
+                       .WaitFor(webgisApi)
+                       .WithUrlForEndpoint("https", ep =>
+                        {
+                            ep.DisplayText = "CMS";
+                            ep.DisplayOrder = 1;
+                            ep.DisplayLocation = UrlDisplayLocation.SummaryAndDetails;
+                        })
+                       .WithUrlForEndpoint("http", ep => { ep.DisplayLocation = UrlDisplayLocation.DetailsOnly; })
+                       ;
 
 #endregion
+
+#if ADD_DEVTUNNELS
+
+builder.AddDevTunnel("webgis-api-tunnel").WithReference(webgisApi);
+builder.AddDevTunnel("webgis-portal-tunnel").WithReference(webgisPortal);
+builder.AddDevTunnel("webgis-cms-tunnel").WithReference(webgisCms);
+
+#endif
 
 #region MCP
 

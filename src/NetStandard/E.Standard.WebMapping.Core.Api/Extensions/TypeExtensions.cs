@@ -1,8 +1,10 @@
-﻿using E.Standard.Extensions.Reflection;
+﻿using System;
+
+using E.Standard.Extensions.Reflection;
 using E.Standard.WebMapping.Core.Api.Abstraction;
-using System;
 
 namespace E.Standard.WebMapping.Core.Api.Extensions;
+
 static public class TypeExtensions
 {
     static public bool IsApiToolOrButtonNonAsync(this Type type)

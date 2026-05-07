@@ -1,10 +1,11 @@
-﻿using E.Standard.WebMapping.Core.Api.Bridge;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using E.Standard.WebMapping.Core.Api.Bridge;
+
 namespace E.Standard.WebGIS.Tools.Editing.Extensions;
+
 internal static class CollectionExtensions
 {
     static public IEnumerable<IQueryBridge> FilterByEditThemeTags(this IEnumerable<IQueryBridge> queries, IBridge bridge, string[] tags)

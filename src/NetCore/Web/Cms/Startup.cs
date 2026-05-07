@@ -1,5 +1,11 @@
-﻿using Cms.AppCode.Extensions.DependencyInjection;
-using Cms.AppCode.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Security.Authentication;
+
+using Cms.AppCode.Extensions.DependencyInjection;
+
 using E.DataLinq.Code.Extensions.DependencyInjection;
 using E.Standard.ActiveDirectory.Services.ApplicationSecurity;
 using E.Standard.Azure.Extensions.DependencyInjection;
@@ -25,7 +31,10 @@ using E.Standard.Security.Cryptography.Extensions.DependencyInjection;
 using E.Standard.Security.Cryptography.Services;
 using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
+using E.Standard.WebApp.Abstraction;
+using E.Standard.WebApp.Extensions;
 using E.Standard.WebGIS.SubscriberDatabase.Extensions.DependencyInjection;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -36,7 +45,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -384,6 +392,8 @@ public class Startup
             }
 
             app.UseDatalinqCodeAuthentication();
+
+            app.RegisterApiEndpoints(typeof(Startup)).RegisterApiEndpoints(typeof(IApiEndpoint));
 
             app.UseMvc(routes =>
             {

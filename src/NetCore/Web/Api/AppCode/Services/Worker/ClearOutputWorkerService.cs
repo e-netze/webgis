@@ -1,13 +1,18 @@
-﻿using E.Standard.Custom.Core.Abstractions;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+
+using E.Standard.Api.App;
+using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Extensions.Security;
+using E.Standard.Web.Extensions;
 
 namespace Api.Core.AppCode.Services.Worker;
 
 public class ClearOutputWorkerService : IWorkerService
 {
     private readonly ApiConfigurationService _apiConfig;
+    private readonly string[] _extensionFilters = new string[] { "*.json", "*.pdf", "*.zip", "*.png", "*.jpg", "*.jpeg", "*.csv", "*.txt", "*.dat", $"*{ApiGlobals.DownloadFileExtension}" };
 
     public ClearOutputWorkerService(ApiConfigurationService apiConfig)
     {
@@ -18,38 +23,45 @@ public class ClearOutputWorkerService : IWorkerService
 
     public Task<bool> DoWork()
     {
-        #region Clear Output
+        if(!_apiConfig.UseClearOuputBackgroundTask)
+        {
+            return Task.FromResult(true);
+        }
+
+        var outputPath = _apiConfig.OutputPath;
+        if (outputPath.IsUrl()) // if output is an Url (https://....) => Service, dont run cleanup
+        {
+            return Task.FromResult(true);
+        }
 
         try
-        {
-            if (_apiConfig.UseClearOuputBackgroundTask)
-            {
-                var outputPath = _apiConfig.OutputPath;
+        { 
+            #region Clear Output
 
-                if (!outputPath.ToLower().StartsWith("http://") && !outputPath.ToLower().StartsWith("https://"))
+            foreach (string extensionFilter in _extensionFilters)
+            {
+                foreach (var file in new DirectoryInfo(outputPath).GetFiles(extensionFilter))
                 {
-                    foreach (string extension in new string[] { "*.json", "*pdf", "*.zip", "*.png", "*.jpg", "*.jpeg", "*.csv" })
+                    int totalSeconds = extensionFilter switch
                     {
-                        foreach (var file in new DirectoryInfo(outputPath).GetFiles(extension))
-                        {
-                            if ((DateTime.UtcNow - file.CreationTimeUtc).TotalMinutes >= 10)
-                            {
-                                try
-                                {
-                                    file.Delete();
-                                }
-                                catch { }
-                            }
-                        }
+                        "*.pdf" when file.Name.StartsWith(ApiGlobals.PrintOutputPrefix) => 3600,  // Print PDF
+                        "*.zip" when file.Name.StartsWith(ApiGlobals.PrintOutputPrefix) => 3600,  // Print Zips
+                        "*.jpg" when (file.Name.StartsWith(ApiGlobals.PrintOutputPrefix) && file.Name.Contains("_preview")) => 3600,  // Print previews
+                        _ => 60
+                    };
+
+                    if ((DateTime.UtcNow - file.CreationTimeUtc).TotalSeconds >= totalSeconds)
+                    {
+                        file.FullName.TryDelete();
                     }
                 }
             }
+            
+            #endregion
         }
         catch { }
 
         return Task.FromResult(true);
-
-        #endregion
     }
 
     public Task<bool> Init()

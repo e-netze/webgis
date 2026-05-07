@@ -1,6 +1,7 @@
-﻿using E.Standard.Maths.Primitives;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using E.Standard.Maths.Primitives;
 
 namespace E.Standard.Maths.Extensions.Speric;
 

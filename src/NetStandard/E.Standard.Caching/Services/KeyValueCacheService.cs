@@ -1,12 +1,14 @@
-﻿using E.Standard.Caching.Abstraction;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using E.Standard.Caching.Abstraction;
 using E.Standard.Caching.Extensions;
 using E.Standard.Extensions.Compare;
 using E.Standard.Security.App.Services.Abstraction;
 using E.Standard.Security.Cryptography.Abstractions;
+
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace E.Standard.Caching.Services;
 
@@ -250,7 +252,7 @@ public class MigrateKeyValueCacheService : KeyValueCacheService
 
     public bool HasMigrationSettings()
     {
-        if(!String.IsNullOrEmpty(_config[this.CacheProviderConfigValue]) 
+        if (!String.IsNullOrEmpty(_config[this.CacheProviderConfigValue])
             && _config[_options.CacheProviderConfigValue] != _config[this.CacheProviderConfigValue])
         {
             return true;
@@ -262,7 +264,7 @@ public class MigrateKeyValueCacheService : KeyValueCacheService
             return true;
         }
 
-        return false;   
+        return false;
     }
 
     protected override void IntializeConnectionStrings(ISecurityConfigurationService config, KeyValueCacheServiceOptions options)

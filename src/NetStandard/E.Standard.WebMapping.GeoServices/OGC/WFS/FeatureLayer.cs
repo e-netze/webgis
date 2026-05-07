@@ -1,4 +1,10 @@
-﻿using E.Standard.Web.Models;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Xml;
+
+using E.Standard.Web.Models;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -8,11 +14,6 @@ using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.OGC.Extensions;
 using E.Standard.WebMapping.GeoServices.OGC.GML;
 using E.Standard.WebMapping.GeoServices.OGC.WFS.Helper;
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.WFS;
 

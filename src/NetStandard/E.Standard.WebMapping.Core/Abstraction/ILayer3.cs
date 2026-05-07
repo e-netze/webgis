@@ -1,5 +1,6 @@
-﻿using E.Standard.WebMapping.Core.Filters;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+
+using E.Standard.WebMapping.Core.Filters;
 
 namespace E.Standard.WebMapping.Core.Abstraction;
 

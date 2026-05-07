@@ -1,4 +1,8 @@
-﻿using E.Standard.OGC.Schema;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.OGC.Schema;
 using E.Standard.OGC.Schema.wfs;
 using E.Standard.Web.Models;
 using E.Standard.WebGIS.CMS;
@@ -8,9 +12,6 @@ using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.OGC.Extensions;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.WFS;
 

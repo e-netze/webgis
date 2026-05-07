@@ -67,6 +67,7 @@
         }
     };
     var initUI = function (parent, options) {
+        console.log('webgis_tabs.options', options)
         var $parent = $(parent);
         parent._map = options.map;
         var $div = $("<div class='webgis-tabs-holder webgis-ui-trans'></div>")

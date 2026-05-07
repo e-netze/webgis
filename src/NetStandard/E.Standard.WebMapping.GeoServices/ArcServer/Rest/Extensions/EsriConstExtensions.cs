@@ -1,5 +1,6 @@
-﻿using E.Standard.WebMapping.Core;
-using System;
+﻿using System;
+
+using E.Standard.WebMapping.Core;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 

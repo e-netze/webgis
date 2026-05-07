@@ -1,7 +1,9 @@
-﻿using E.Standard.Security.Cryptography.Abstractions;
+﻿using System;
+
+using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Security.Cryptography.Exceptions;
+
 using Microsoft.Extensions.Options;
-using System;
 
 namespace E.Standard.Security.Cryptography.Services;
 
@@ -77,38 +79,80 @@ public class CryptoService : ICryptoService
         catch (Exception ex) { throw new CryptographyException(ex); }
     }
 
-    public string StaticEncrypt(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
+    //public string StaticEncrypt_3Des(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
+    //{
+    //    try
+    //    {
+    //        return Impl.StaticEncrypt_3Des(text, password, resultStringType);
+    //    }
+    //    catch (Exception ex) { throw new CryptographyException(ex); }
+    //}
+
+    //public string StaticDecrypt_3Des(string input, string password)
+    //{
+    //    try
+    //    {
+    //        return Impl.StaticDecrypt_3Des(input, password);
+    //    }
+    //    catch (Exception ex) { throw new CryptographyException(ex); }
+    //}
+
+    public string StaticDefaultEncrypt_3Des(string text, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
     {
         try
         {
-            return Impl.StaticEncrypt(text, password, resultStringType);
+#pragma warning disable 0618
+            // allowed here, because this methode is itself already marked as obsolte (in ICryptoService interface)
+            return Impl.StaticDefaultEncrypt_3Des(text, resultStringType);
+#pragma warning restore 0618
         }
         catch (Exception ex) { throw new CryptographyException(ex); }
     }
 
-    public string StaticDecrypt(string input, string password)
+    public string StaticDefaultDecrypt_3Des(string input)
     {
         try
         {
-            return Impl.StaticDecrypt(input, password);
+#pragma warning disable 0618
+            // allowed here, because this methode is itself already marked as obsolte (in ICryptoService interface)
+            return Impl.StaticDefaultDecrypt_3Des(input);
+#pragma warning restore 0618
         }
         catch (Exception ex) { throw new CryptographyException(ex); }
     }
 
-    public string StaticDefaultEncrypt(string text, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
+    public string StaticEncrypt_Aes(string text, string password, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
     {
         try
         {
-            return Impl.StaticDefaultEncrypt(text, resultStringType);
+            return Impl.StaticEncrypt_Aes(text, password, resultStringType);
         }
         catch (Exception ex) { throw new CryptographyException(ex); }
     }
 
-    public string StaticDefaultDecrypt(string input)
+    public string StaticDecrypt_Aes(string input, string password)
     {
         try
         {
-            return Impl.StaticDefaultDecrypt(input);
+            return Impl.StaticDecrypt_Aes(input, password);
+        }
+        catch (Exception ex) { throw new CryptographyException(ex); }
+    }
+
+    public string StaticDefaultEncrypt_Aes(string text, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
+    {
+        try
+        {
+            return Impl.StaticDefaultEncrypt_Aes(text, resultStringType);
+        }
+        catch (Exception ex) { throw new CryptographyException(ex); }
+    }
+
+    public string StaticDefaultDecrypt_Aes(string input)
+    {
+        try
+        {
+            return Impl.StaticDefaultDecrypt_Aes(input);
         }
         catch (Exception ex) { throw new CryptographyException(ex); }
     }

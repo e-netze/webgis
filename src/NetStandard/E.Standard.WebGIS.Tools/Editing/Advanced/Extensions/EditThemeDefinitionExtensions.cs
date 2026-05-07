@@ -1,8 +1,9 @@
-﻿using E.Standard.WebGIS.Tools.Editing.Environment;
+﻿using System.Threading.Tasks;
+
+using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Api.Bridge;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 

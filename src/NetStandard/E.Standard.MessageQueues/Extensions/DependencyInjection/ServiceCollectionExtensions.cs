@@ -1,7 +1,9 @@
-﻿using E.Standard.MessageQueues.Services;
+﻿using System;
+
+using E.Standard.MessageQueues.Services;
 using E.Standard.MessageQueues.Services.Abstraction;
+
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace E.Standard.MessageQueues.Extensions.DependencyInjection;
 

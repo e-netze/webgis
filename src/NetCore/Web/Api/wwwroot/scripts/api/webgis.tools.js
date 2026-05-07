@@ -1589,7 +1589,7 @@
 
                 let defaultValue;
                 if (servercommand === "_event_handler_onupdatecombo") {
-                    // Beim Updaten von (kaskadierenden) Combos den persistent wert setzten
+                    // Beim Updaten von (kaskadierenden) Combos den persistent Wert setzen
                     // Falls der Wert null ist. Damit werden auch Combos in der 2.ten kaskading Stufe befüllt
                     // auch wenn das darüber liegenden erst durch den Request befüllt wird.
                     defaultValue=map.getPersistentToolParameter(tool, e.id)
@@ -2053,14 +2053,14 @@ webgis.tools.boxEvent = function (map, e, box, crs) {
         this.world.Y = ll[1] * .5 + ur[1] * .5;
     }
 
-    var p1 = map.frameworkElement.latLngToLayerPoint([box[0], box[1]]);
-    var p2 = map.frameworkElement.latLngToLayerPoint([box[2], box[3]]);
+    var p1 = map.frameworkElement.latLngToLayerPoint([box[1], box[0]]);
+    var p2 = map.frameworkElement.latLngToLayerPoint([box[3], box[2]]);
     //console.log(p1, p2);
 
     this.toEventString = function (map, tool) {
         var ret = '';
         ret += "box=" + box[0] + "," + box[1] + "," + box[2] + "," + box[3] + "|crs=" + (crs ? crs : "4326") + "|";
-        ret += "boxsize=" + Math.abs((p2.y - p1.y)) + "," + Math.abs((p2.x - p1.x)) + "|";
+        ret += "boxsize=" + Math.abs((p2.x - p1.x)) + "," + Math.abs((p2.y - p1.y)) + "|";
         ret += 'mapcrs=' + map.crsId();
    
         var toolParameters = webgis.tools.toolParameterString(map, tool);

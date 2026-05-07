@@ -1,16 +1,19 @@
-﻿using Api.Core.AppCode.Extensions;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Services;
 using Api.Core.AppCode.Services.Authentication;
+
 using E.Standard.Api.App.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.Custom.Core;
 using E.Standard.OpenIdConnect.Extensions;
 using E.Standard.Security.App.Json;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Api.Core.AppCode.Middleware.Authentication;
 

@@ -1,7 +1,8 @@
-﻿using E.Standard.Json.Abstractions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+
+using E.Standard.Json.Abstractions;
 
 namespace E.Standard.Json;
 

@@ -1,5 +1,13 @@
-﻿using Api.Core.AppCode.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Mvc;
+
 using E.Standard.Api.App;
 using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.Services.Cache;
@@ -13,14 +21,9 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Api.Core.AppCode.Services.Rest;
 
@@ -31,18 +34,21 @@ public class RestSearchHelperService
     private readonly CacheService _cache;
     private readonly RestSearchHelperServiceOptions _config;
     private readonly IHttpService _http;
+    private readonly IEnumerable<IGeoCoder> _geoCoders;
 
     public RestSearchHelperService(UrlHelperService urlHelper,
                                    RestQueryHelperService restQueryHelper,
                                    CacheService cache,
                                    IOptions<RestSearchHelperServiceOptions> config,
-                                   IHttpService http)
+                                   IHttpService http,
+                                   IEnumerable<IGeoCoder> geoCoders)
     {
         _urlHelper = urlHelper;
         _restQueryHelper = restQueryHelper;
         _cache = cache;
         _config = config.Value;
         _http = http;
+        _geoCoders = geoCoders;
     }
 
     async public Task<IActionResult> PerformSearchServiceAsync(ApiBaseController controller,
@@ -113,14 +119,14 @@ public class RestSearchHelperService
             if (_config.AllowGeoCodesInput)
             {
                 StringBuilder sbGeoCodes = new StringBuilder();
-                foreach (var geoCode in GeoLocation.Implentations)
+                foreach (var geoCoder in _geoCoders)
                 {
                     if (sbGeoCodes.Length > 0)
                     {
                         sbGeoCodes.Append(", ");
                     }
 
-                    sbGeoCodes.Append(geoCode.DisplayName);
+                    sbGeoCodes.Append(geoCoder.DisplayName);
                 }
 
                 if (!String.IsNullOrWhiteSpace(sbGeoCodes.ToString()))
@@ -218,7 +224,7 @@ public class RestSearchHelperService
             if (_config.AllowGeoCodesInput)
             {
 
-                foreach (var geoCoder in GeoLocation.ValidGeoCoders(term))
+                foreach (var geoCoder in _geoCoders.Where(g => g.IsValidGeoCode(term)))
                 {
                     var geoLocation = geoCoder.Decode(term);
                     if (String.IsNullOrEmpty(geoLocation.ErrorMessage))
@@ -257,7 +263,8 @@ public class RestSearchHelperService
             {
                 var feature = new E.Standard.WebMapping.Core.Feature();
 
-                feature.GlobalOid = /*!String.IsNullOrWhiteSpace(item.Id) ? item.Id :*/ "#service:#default:" + counter++;
+                feature.GlobalOid = (counter++).ToSearchServiceFeatureOid();
+
                 if (item.Geometry != null)
                 {
                     feature.Shape = item.Geometry;
@@ -425,16 +432,16 @@ public class RestSearchHelperService
         List<AutocomplteItemMetadata> metadataList = new List<AutocomplteItemMetadata>();
         try
         {
-            foreach (var geoCode in GeoLocation.Implentations)
+            foreach (var geoCoder in _geoCoders)
             {
                 metadataList.Add(new AutocomplteItemMetadata()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    TypeName = geoCode.DisplayName,
-                    Sample = String.Join(";", geoCode.Examples),
+                    TypeName = geoCoder.DisplayName,
+                    Sample = String.Join(";", geoCoder.Examples),
                     SampleSeparator = ";",
-                    Link = geoCode.Links.FirstOrDefault(),
-                    Description = geoCode.Description("de")
+                    Link = geoCoder.Links.FirstOrDefault(),
+                    Description = geoCoder.Description("de")
                 });
             }
         }

@@ -1,15 +1,19 @@
-﻿using E.Standard.CMS.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Security;
 using E.Standard.Platform;
 using E.Standard.Web.Abstractions;
+using E.Standard.Web.Models;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.SearchService;
 
@@ -20,6 +24,7 @@ public class SolrSearchService : ISearchService
     protected int _rows = 5;
     protected SpatialReference _sRef = null, _sRef4326 = null;
     protected ISpatialReferenceStore _sRefStore = null;
+    private readonly RequestAuthorization _requestAuthorization;
 
     public SolrSearchService(CmsNode node)
     {
@@ -33,6 +38,9 @@ public class SolrSearchService : ISearchService
         _subtextField = node.LoadString("subtext");
         _link = node.LoadString("link");
         _rows = (int)node.Load("rows", 5);
+        _requestAuthorization = RequestAuthorization.FromHttpAuthSchemeOrNull(
+                username: node.LoadString("user"), 
+                password: CmsCryptoHelper.Decrypt(node.LoadString("pwd"), "searchservice"));
 
         int projId = (int)node.Load("projid", -1);
         if (projId > 0 /* && projId != 4326*/)
@@ -70,7 +78,8 @@ public class SolrSearchService : ISearchService
         string url = String.Format(_serviceUrl, term).Replace("{term}", term).Replace("[term]", term);
         url += "&rows=" + (rows > 0 ? rows : _rows);
 
-        string json = await httpService.GetStringAsync(url, encoding: Encoding.UTF8);
+        string json = await httpService.GetStringAsync(url, GetRequestAuthorization(), encoding: Encoding.UTF8);
+
         var lucType = JsonConvert.DeserializeObject<LucType>(json);
 
         List<SearchServiceItem> items = new List<SearchServiceItem>();
@@ -231,6 +240,8 @@ public class SolrSearchService : ISearchService
         }
         return null;
     }
+
+    protected RequestAuthorization GetRequestAuthorization() => _requestAuthorization;
 
     #endregion
 

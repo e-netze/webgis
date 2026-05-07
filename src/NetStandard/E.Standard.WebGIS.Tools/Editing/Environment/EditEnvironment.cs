@@ -1,4 +1,15 @@
-﻿using E.Standard.CMS.Core.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Xml;
+
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.DbConnector;
 using E.Standard.DbConnector.Exceptions;
 using E.Standard.Extensions;
@@ -26,17 +37,8 @@ using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Editing;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace E.Standard.WebGIS.Tools.Editing.Environment;
 
@@ -1575,7 +1577,7 @@ class EditEnvironment
                                     id = id,
                                     css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange }),
                                     date_only = fieldNode.Attributes["date_only"]?.Value.ToLower() == "true" || fieldNodeType == "date_dateonly"
-                                });  
+                                });
                             }
                             parentElement.AddChild(new UIBreak());
 
@@ -3214,7 +3216,7 @@ class EditEnvironment
                     return (value: System.Guid.NewGuid().ToString("B"), setIt: true);
                 }
                 break;
-            case "guid_v7":  
+            case "guid_v7":
                 if (editTask == EditFeatureCommand.Insert)
                 {
                     return (value: System.Guid.CreateVersion7().ToString("N"), setIt: true);

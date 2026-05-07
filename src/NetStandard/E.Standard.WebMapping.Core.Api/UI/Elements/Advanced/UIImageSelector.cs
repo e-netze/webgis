@@ -1,5 +1,6 @@
+﻿using System.Collections.Generic;
+
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 

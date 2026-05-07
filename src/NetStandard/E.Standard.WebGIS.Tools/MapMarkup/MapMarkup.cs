@@ -1,4 +1,9 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.GeoJson;
 using E.Standard.GeoJson.Extensions;
 using E.Standard.Json;
@@ -18,11 +23,8 @@ using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
+using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.MapMarkup;
 
@@ -42,9 +44,12 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     private const string ConfigAllowAddFromSelectionMaxVertices = "allow-add-from-selection-max-vertices";
     private const string ConfigAllowDownloadFromSelection = "allow-download-from-selection";
     private const string ConfigDeaultDownloadEpsgCode = "default-download-epsg";
+    private const string ConfigSaveDialogNameMaxLength = "save-name-maxlength";
 
-    private readonly string[] MobileTools = new string[] { "pointer", "symbol", "freehand", "line", "polygon", "dimline", "share", "save", "open", "upload", "download" };
-    private readonly string[] AdvancedTools = new string[] { "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline" };  // Do not use with Internet Explorer
+    private const string SaveDialogValidationMessage = "save-dilaog-validation-message";
+
+    protected readonly string[] MobileTools = [ "pointer", "symbol", "freehand", "line", "polygon", "dimline", "share", "save", "open", "upload", "download" ];
+    protected readonly string[] AdvancedTools = [ "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline" ];  // Do not use with Internet Explorer
 
     #region IApiServerTool Member
 
@@ -283,10 +288,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         };
     }
 
-    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
-    {
-        return new ApiEventResponse();
-    }
+    public ApiEventResponse OnEvent(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer) => new ApiEventResponse();
+    
 
     #endregion
 
@@ -357,17 +360,16 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
     [ServerToolCommand("pointer")]
     public ApiEventResponse OnPointerClick(IBridge bridge, ApiToolEventArguments e)
-    {
-        return new ApiEventResponse()
+        => new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Pointer },
             UIElements = new IUIElement[] {
-                new UIEmpty() {
-                    target = $"#{toolContainerId}" //UIElementTarget.tool_sidebar_left.ToString()
+                    new UIEmpty() {
+                        target = $"#{toolContainerId}" //UIElementTarget.tool_sidebar_left.ToString()
+                    }
                 }
-            }
         };
-    }
+    
 
     [ServerToolCommand("symbol")]
     async public Task<ApiEventResponse> OnSymbolToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
@@ -608,21 +610,18 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
     [ServerToolCommand("polygon")]
     public Task<ApiEventResponse> OnPolygonToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
-    {
-        return On2DToolClick(bridge, e, GraphicsTool.Polygon, localizer);
-    }
+        => On2DToolClick(bridge, e, GraphicsTool.Polygon, localizer);
+    
 
     [ServerToolCommand("rectangle")]
     public Task<ApiEventResponse> OnRectangleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
-    {
-        return On2DToolClick(bridge, e, GraphicsTool.Rectangle, localizer);
-    }
+        => On2DToolClick(bridge, e, GraphicsTool.Rectangle, localizer);
+    
 
     [ServerToolCommand("circle")]
     public Task<ApiEventResponse> OnCircleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
-    {
-        return On2DToolClick(bridge, e, GraphicsTool.Circle, localizer);
-    }
+        => On2DToolClick(bridge, e, GraphicsTool.Circle, localizer);
+    
 
     [ServerToolCommand("distance_circle")]
     public ApiEventResponse OnDistanceCircleClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
@@ -877,8 +876,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
     [ServerToolCommand("upload")]
     public ApiEventResponse OnUploadClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
-    {
-        return new ApiEventResponse()
+        => new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Pointer },
             UIElements = new IUIElement[]
@@ -893,10 +891,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
                     elements = new IUIElement[]
                     {
-                        new UILabel()
-                        {
-                            label = localizer.Localize("io.upload-label1:body")
-                        },
+                        new UIParagraph(localizer.Localize("io.upload-label1:body")),
                         new UIBreak(2),
                         new UISelect()
                         {
@@ -921,17 +916,17 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                  new UISetter("webgis-mapmarkup-tool", "pointer")
             }
         };
-    }
+    
 
 
     [ServerToolCommand("upload-objects")]
-    public ApiEventResponse OnUploadObject(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnUploadObject(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var format = e["mapmarkup-upload-format"];
         var file = e.GetFile("upload-file");
         var replaceExistingMapMarkup = e["mapmarkup-upload-replaceelements"] == "true";
 
-        GeoJsonFeatures geoJsonFeatures = file.GetFeatures(e);
+        GeoJsonFeatures geoJsonFeatures = file.GetFeatures(e, localizer);
 
         if (geoJsonFeatures?.Features is not null)
         {
@@ -1054,10 +1049,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                                 }
                             }
                         },
-                        new UILabel()
-                        {
-                            label = localizer.Localize("io.download-label1:body")
-                        },
+                        new UIParagraph(localizer.Localize("io.download-label1:body")),
                         new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand, "download-objects")
                         {
                             css = UICss.ToClass(new string[] { UICss.DefaultButtonStyle }),
@@ -1071,10 +1063,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             ConditionResult = true,
                             elements=new IUIElement[]
                             {
-                                new UILabel()
-                                {
-                                    label = localizer.Localize("io.download-label-gpx:body")
-                                }
+                                new UIParagraph(localizer.Localize("io.download-label-gpx:body"))
                             }
                         },
                         new UIConditionDiv()
@@ -1085,10 +1074,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             ConditionResult = true,
                             elements=new IUIElement[]
                             {
-                                new UILabel()
-                                {
-                                    label = localizer.Localize("io.download-label-shape:body")
-                                }
+                                new UIParagraph(localizer.Localize("io.download-label-shape:body"))
                             }
                         },
                         new UIConditionDiv()
@@ -1099,10 +1085,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             ConditionResult = true,
                             elements=new IUIElement[]
                             {
-                                new UILabel()
-                                {
-                                    label = localizer.Localize("io.download-label-json:body")
-                                }
+                                new UIParagraph(localizer.Localize("io.download-label-json:body"))
                             }
                         },
                         new UIHidden(){
@@ -1341,6 +1324,32 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     [ServerToolCommand("save")]
     public ApiEventResponse OnSaveClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
+        List<UIElement> uiElements = new List<UIElement>()
+        {
+            new UILabel(){ label = localizer.Localize("label-name") },
+            new UIBreak(),
+            new UIInputAutocomplete(UIInputAutocomplete.MethodSource(bridge,this.GetType(),"autocomplete-projects"),0){
+                id="mapmarkup-io-save-name",
+                css=UICss.ToClass(new string[]{UICss.ToolParameter}),
+            },
+            new UIHidden(){
+                id="mapmarkup-geojson",
+                css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsGeoJson})
+            }
+        };
+
+        if (!String.IsNullOrEmpty(e[SaveDialogValidationMessage]))
+        {
+            uiElements.Add(new UIValidationErrorSummary(e[SaveDialogValidationMessage]));
+        }
+
+        uiElements.Add(
+            new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand, "save-project")
+            {
+                text = localizer.Localize("save")
+            })
+        );
+
         return new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Pointer },
@@ -1352,21 +1361,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     target=UIElementTarget.modaldialog.ToString(),
                     targettitle = localizer.Localize("tools.save"),
                     css = UICss.ToClass(new string[]{ UICss.NarrowFormMarginAuto }),
-                    elements=new UIElement[]{
-                        new UILabel(){ label = localizer.Localize("label-name") },
-                        new UIBreak(),
-                        new UIInputAutocomplete(UIInputAutocomplete.MethodSource(bridge,this.GetType(),"autocomplete-projects"),0){
-                            id="mapmarkup-io-save-name",
-                            css=UICss.ToClass(new string[]{UICss.ToolParameter}),
-                        },
-                        new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand,"save-project") {
-                            text = localizer.Localize("save")
-                        }),
-                        new UIHidden(){
-                            id="mapmarkup-geojson",
-                            css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsGeoJson})
-                        }
-                    }
+                    elements = uiElements.ToArray()
                 }
             },
             UISetters = new IUISetter[]  // select/highlight tool
@@ -1398,23 +1393,41 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     [ServerToolCommand("save-project")]
     public ApiEventResponse OnSaveProject(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
-        string name = e["mapmarkup-io-save-name"];
-
-        if (!name.IsValidFilename(out string invalidChars))
+        try
         {
-            throw new Exception(String.Format(localizer.Localize("io.exception-invalid-char"), invalidChars));
-        }
+            string name = e["mapmarkup-io-save-name"]?.Trim();
 
-        bridge.Storage.Save(name, e["mapmarkup-geojson"]);
+            if (String.IsNullOrWhiteSpace(name))
+            {
+                throw new Exception(localizer.Localize("io.exception-name-is-empty"));
+            }
 
-        return new ApiEventResponse()
-        {
-            UIElements = new IUIElement[] {
+            if (!name.IsValidFilename(out string invalidChars))
+            {
+                throw new Exception(String.Format(localizer.Localize("io.exception-invalid-char"), invalidChars));
+            }
+
+            if (name.Length > e.GetConfigInt(ConfigSaveDialogNameMaxLength, 40))
+            {
+                throw new Exception(String.Format(localizer.Localize("io.exception-name-to-long"), e.GetConfigInt(ConfigSaveDialogNameMaxLength, 40)));
+            }
+
+            bridge.Storage.Save(name, e["mapmarkup-geojson"]);
+
+            return new ApiEventResponse()
+            {
+                UIElements = new IUIElement[] {
                 new UIEmpty(){
                     target=UIElementTarget.modaldialog.ToString(),
                 }
             }
-        };
+            };
+        }
+        catch (Exception ex)
+        {
+            e[SaveDialogValidationMessage] = ex.Message;
+            return OnSaveClick(bridge, e, localizer);
+        }
     }
 
     [ServerToolCommand("open")]
@@ -1507,12 +1520,11 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
     [ServerToolCommand("share")]
     public ApiEventResponse OnShareClick(IBridge bridge, ApiToolEventArguments e)
-    {
-        return new ApiEventResponse()
+        => new ApiEventResponse()
         {
             ActiveTool = new Serialization.ShareMap()
         };
-    }
+    
 
     #endregion
 

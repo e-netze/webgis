@@ -1,5 +1,14 @@
-﻿using Api.Core.AppCode.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
+
+using Api.Core.AppCode.Mvc;
 using Api.Core.AppCode.Services;
+
 using E.Standard.Api.App;
 using E.Standard.Api.App.Configuration;
 using E.Standard.Api.App.Extensions;
@@ -10,16 +19,10 @@ using E.Standard.MessageQueues.Services.Abstraction;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Security.Cryptography.Services;
 using E.Standard.Web.Abstractions;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace Api.Core.Controllers;
 
@@ -120,7 +123,7 @@ public class CacheController : ApiBaseController
 
             await file.CopyToAsync(memoryStream);
 
-            var base64 = _cryptoService.StaticDecrypt(
+            var base64 = _cryptoService.StaticDecrypt_Aes(
                 Encoding.UTF8.GetString(memoryStream.ToArray()),
                 _config.Configuration.CmsUploadSecret(id));
             var fileBytes = Convert.FromBase64String(base64);

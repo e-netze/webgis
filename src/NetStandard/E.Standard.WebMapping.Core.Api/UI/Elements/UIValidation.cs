@@ -1,5 +1,6 @@
+﻿using System;
+
 using Newtonsoft.Json;
-using System;
 
 namespace E.Standard.WebMapping.Core.Api.UI.Elements;
 

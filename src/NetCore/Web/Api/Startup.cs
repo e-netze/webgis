@@ -1,9 +1,16 @@
-﻿using Api.Core.AppCode.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Security.Authentication;
+
+using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Extensions.DependencyInjection;
 using Api.Core.AppCode.Middleware;
 using Api.Core.AppCode.Middleware.Authentication;
 using Api.Core.AppCode.Services;
 using Api.Core.AppCode.Services.Worker;
+
 using E.DataLinq.Web.Extensions.DependencyInjection;
 using E.Standard.Api.App;
 using E.Standard.Api.App.Configuration;
@@ -22,7 +29,6 @@ using E.Standard.Custom.Core;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
 using E.Standard.Custom.Core.Services;
-using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.MessageQueues.Extensions.DependencyInjection;
 using E.Standard.Security.App;
@@ -34,25 +40,24 @@ using E.Standard.Security.Cryptography.Extensions.DependencyInjection;
 using E.Standard.Security.Cryptography.Services;
 using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
+using E.Standard.WebApp.Abstraction;
 using E.Standard.WebApp.Extensions;
+using E.Standard.WebApp.Options;
 using E.Standard.WebGIS.Core.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SDK.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SubscriberDatabase.Extensions.DependencyInjection;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Authentication;
 
 namespace Api;
 
@@ -64,7 +69,7 @@ public class Startup
         Environment = env;
         CustomStartupServices = CustomStartupServiceFactory.LoadCustomStartupServices(WebGISAppliationTarget.Api) ?? new ICustomStartupService[0];
 
-        JsonOptions.SerializerOptions.AddServerDefaults();
+        E.Standard.Json.JsonOptions.SerializerOptions.AddServerDefaults();
     }
 
     public IConfiguration Configuration { get; }
@@ -263,7 +268,7 @@ public class Startup
 
         services.AddHttpClient("default", client =>
         {
-            if(ApiGlobals.HttpClientDefaultTimeoutSeconds > 0)
+            if (ApiGlobals.HttpClientDefaultTimeoutSeconds > 0)
             {
                 client.Timeout = TimeSpan.FromSeconds(ApiGlobals.HttpClientDefaultTimeoutSeconds);
             }
@@ -277,7 +282,7 @@ public class Startup
         {
             services.AddHttpClient("default-proxy", client =>
         {
-            if(ApiGlobals.HttpClientDefaultTimeoutSeconds > 0)
+            if (ApiGlobals.HttpClientDefaultTimeoutSeconds > 0)
             {
                 client.Timeout = TimeSpan.FromSeconds(ApiGlobals.HttpClientDefaultTimeoutSeconds);
             }
@@ -420,6 +425,33 @@ public class Startup
         });
 
         #endregion
+
+        #region Security
+
+        if (Configuration.DisableAntiForgery())
+        {
+            services.Configure<SecurityOptions>(config =>
+            {
+                config.DisableAntiforgery = true;
+            });
+        }
+
+        #endregion
+
+        #region XForwarted
+
+        if (Configuration.UseXForwardedHeaderMiddleware())
+        {
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor |
+                    ForwardedHeaders.XForwardedProto |
+                    ForwardedHeaders.XForwardedHost;
+            });
+        }
+
+        #endregion
     }
 
     public void Configure(WebApplication app,
@@ -447,6 +479,20 @@ public class Startup
             app.UseExceptionHandler("/Home/Error");
         }
 
+        #region XForwardedHeaders
+
+        if (Configuration.UseXForwardedHeaderMiddleware())
+        {
+            app.UseForwardedHeaders();
+
+            if (Configuration.UseXForwardedHeaderLoggingMiddleware())
+            {
+                app.UseMiddleware<ForwardedHeadersLoggerMiddleware>();
+            }
+        }
+
+        #endregion
+
         app.UseWebgisAppBasePath();
         app.UseStaticFiles(new StaticFileOptions()
         {
@@ -465,6 +511,8 @@ public class Startup
         }
 
         #endregion
+
+
 
         #region DeChunkerMiddleware (nur im PVP Umfeld, wenn Reverse Proxies keine Chunks verstehen)
 
@@ -507,7 +555,7 @@ public class Startup
 
         #endregion
 
-        app.RegisterApiEndpoints(typeof(Startup));
+        app.RegisterApiEndpoints(typeof(Startup)).RegisterApiEndpoints(typeof(IApiEndpoint));
 
         #region Map Controller Routes
 
@@ -623,7 +671,10 @@ public class Startup
            new { controller = "OGC", action = "Index" }
            );
 
-        app.AddDataLinqEndpoints();
+        if (Configuration.IncludeDataLinqServices())
+        {
+            app.AddDataLinqEndpoints();
+        }
 
         app.MapControllerRoute(
             "output",

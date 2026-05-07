@@ -1,7 +1,8 @@
-﻿using E.Standard.WebMapping.Core.Api.Bridge;
-using E.Standard.WebMapping.Core.Geometry;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+
+using E.Standard.WebMapping.Core.Api.Bridge;
+using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebGIS.Tools.Identify.Abstractions;
 

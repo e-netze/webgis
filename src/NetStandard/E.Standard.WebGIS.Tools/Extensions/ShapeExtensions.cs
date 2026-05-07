@@ -1,5 +1,6 @@
-﻿using E.Standard.WebMapping.Core.Geometry;
-using System;
+﻿using System;
+
+using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebGIS.Tools.Extensions;
 

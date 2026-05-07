@@ -1,6 +1,7 @@
-﻿using E.Standard.WebMapping.Core;
-using System;
+﻿using System;
 using System.IO;
+
+using E.Standard.WebMapping.Core;
 
 namespace E.Standard.Api.App;
 
@@ -33,6 +34,9 @@ static public class ApiGlobals
     public static int HttpClientDefaultTimeoutSeconds = 0;
 
     public static int MaxFeatureHoverHighlightVerticesCount = 1000;
+
+    public const string DownloadFileExtension = ".download";
+    public const string PrintOutputPrefix = "_print_";
 
     #endregion
 

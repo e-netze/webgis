@@ -1,7 +1,16 @@
-﻿using Cms.AppCode;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Text;
+using System.Xml;
+
+using Cms.AppCode;
 using Cms.AppCode.Mvc;
 using Cms.AppCode.Services;
 using Cms.Models;
+
 using E.Standard.Cms.Configuration.Models;
 using E.Standard.Cms.Configuration.Services;
 using E.Standard.Cms.Services;
@@ -13,15 +22,9 @@ using E.Standard.Extensions.ErrorHandling;
 using E.Standard.Security.App.Reflection;
 using E.Standard.Security.App.Services;
 using E.Standard.Security.Cryptography.Abstractions;
+
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Xml;
 
 namespace Cms.Controllers;
 
@@ -81,9 +84,9 @@ public class IOController : ApplicationSecurityController
             bool forLinux =
                 Request.Form["for-linux"] == "checked" ||
                 Request.Form["for-linux"] == "on" ||
-                Request.Form["for-linux"] == "true"; 
+                Request.Form["for-linux"] == "true";
 
-            var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), ExportCms, 
+            var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), ExportCms,
                 new CmsExportDefinition()
                 {
                     ForLinux = forLinux
@@ -137,8 +140,8 @@ public class IOController : ApplicationSecurityController
 
             process.WriteLine($"export {archivePath}");
 
-            string xml = childDocumentInfo is IXmlConverter xmlConverter 
-                ? xmlConverter.ReadAllAsXmlString() 
+            string xml = childDocumentInfo is IXmlConverter xmlConverter
+                ? xmlConverter.ReadAllAsXmlString()
                 : childDocumentInfo.ReadAll();
 
             var entry = archive.CreateEntry(archivePath);
@@ -321,12 +324,12 @@ public class IOController : ApplicationSecurityController
                                     if (xmlConverter.WriteXmlData(Encoding.UTF8.GetString(bytes), importDefinition.ImportType == ImportType.UpdateAll))
                                     {
                                         process.WriteLine("create/update file " + entryPath);
-                                    } 
+                                    }
                                     else
                                     {
                                         process.WriteLine("skip existing file " + entryPath);
                                     }
-                                } 
+                                }
                                 else
                                 {
                                     if (documentInfo.Exists && importDefinition.ImportType == ImportType.OnlyNew)
@@ -418,7 +421,7 @@ public class IOController : ApplicationSecurityController
             if (String.IsNullOrEmpty(id) ||
                id != Request.Form["confirm-id"])
             {
-                ViewData["FormError"]= "Insert the correct Cms-Id to confirm clearing the Cms.";
+                ViewData["FormError"] = "Insert the correct Cms-Id to confirm clearing the Cms.";
                 return View();
             }
 

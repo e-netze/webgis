@@ -1,4 +1,9 @@
-﻿using E.Standard.Extensions.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Text;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
 using E.Standard.Web.Extensions;
@@ -13,11 +18,8 @@ using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Geometry;
+
 using gView.GraphicsEngine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Profile;
 

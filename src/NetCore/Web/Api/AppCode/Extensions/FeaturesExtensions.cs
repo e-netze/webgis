@@ -1,5 +1,6 @@
-﻿using E.Standard.Api.App.DTOs;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using E.Standard.Api.App.DTOs;
 
 namespace Api.Core.AppCode.Extensions;
 

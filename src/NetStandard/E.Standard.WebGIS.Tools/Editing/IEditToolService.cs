@@ -1,7 +1,8 @@
-﻿using E.Standard.WebMapping.Core.Api;
+﻿using System.Threading.Tasks;
+
+using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing;
 

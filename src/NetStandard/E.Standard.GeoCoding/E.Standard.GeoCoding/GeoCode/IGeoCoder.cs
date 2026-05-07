@@ -1,6 +1,6 @@
 ﻿namespace E.Standard.GeoCoding.GeoCode;
 
-public interface IGeoCode
+public interface IGeoCoder
 {
     string Encode(double lon, double lat, int precesion);
 
@@ -9,6 +9,8 @@ public interface IGeoCode
     GeoLocation Decode(string geoCode);
 
     bool IsValidGeoCode(string geoCode);
+
+    string Name { get; }
 
     string DisplayName { get; }
 

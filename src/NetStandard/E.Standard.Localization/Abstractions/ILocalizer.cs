@@ -22,5 +22,5 @@ public interface ILocalizer
 }
 public interface ILocalizer<T> : ILocalizer
 {
-      
+
 }

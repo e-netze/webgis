@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 
 namespace E.Standard.WebGIS.SubscriberDatabase.Extensions;
+
 internal static class MongoDbExtensions
 {
     static public FilterDefinition<TDocument> EqId<TDocument>(this FilterDefinitionBuilder<TDocument> builder, string id) where TDocument : class

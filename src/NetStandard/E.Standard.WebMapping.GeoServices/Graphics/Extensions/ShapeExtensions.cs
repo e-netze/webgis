@@ -1,12 +1,14 @@
-﻿using E.Standard.Web.Extensions;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using E.Standard.Web.Extensions;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
+
 using gView.GraphicsEngine;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.Graphics.Extensions;
 

@@ -1,8 +1,9 @@
-﻿using E.Standard.WebMapping.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 

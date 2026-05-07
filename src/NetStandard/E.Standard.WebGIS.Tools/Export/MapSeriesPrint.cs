@@ -1,4 +1,10 @@
-﻿using E.Standard.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Export.Calc;
@@ -26,11 +32,9 @@ using E.Standard.WebMapping.Core.Geometry.Extensions;
 using E.Standard.WebMapping.Core.Reflection;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 using E.Standard.WebMapping.GeoServices.Tiling;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using MathNet.Numerics.LinearAlgebra;
+
 using static E.Standard.WebMapping.Core.Api.UI.Elements.UICollapsableElement;
 
 namespace E.Standard.WebGIS.Tools.Export;
@@ -58,6 +62,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     public const string ConfigDefaultQuality = "default-quality";
     public const string ConfigDefaultFormat = "default-format";
     public const string ConfigMaxPages = "max-pages";
+    public const string ConfigMaxIntersectionIterations = "max-intersection-iterations";
     public const string ConfigOverviewPageLayout = "overview-page-layout";
     public const string ConfigOverviewPageFormat = "overview-page-format";
 
@@ -235,12 +240,11 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
     [ServerToolCommand("selectionchanged")]
     public ApiEventResponse OnSelectionChanged(IBridge bridge, ApiToolEventArguments e)
-    {
-        return new ApiEventResponse().CalcPrintSericesDimension(bridge, e);
-    }
+        => new ApiEventResponse().CalcPrintSericesDimension(bridge, e);
+    
 
     [ServerToolCommand("print")]
-    async public Task<ApiEventResponse> OnPrint(IBridge bridge, ApiToolEventArguments e, ILocalizer<Print> localizer)
+    async public Task<ApiEventResponse> OnPrint(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
     {
         e.ValidateSketch(localizer);
 
@@ -597,8 +601,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
     [ServerToolCommand("upload")]
     public ApiEventResponse OnUploadClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
-    {
-        return new ApiEventResponse()
+        => new ApiEventResponse()
             .AddUIElements(
                 new UIDiv()
                     .AsDialog()
@@ -625,7 +628,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                             .WithId("upload-file")
                             .WithStyles(UICss.ToolParameter)
                     ));
-    }
+    
 
     [ServerToolCommand("upload-series")]
     public ApiEventResponse OnUploadObject(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
@@ -651,10 +654,8 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
 
     [ServerToolCommand("create-series-from-features")]
     public Task<ApiEventResponse> OnCreateSeriesFromFeatures(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
-    {
-
-        return new ApiEventResponse().AddCreateMapSeriesFromFeaturesDialog(this, bridge, e, localizer);
-    }
+        => new ApiEventResponse().AddCreateMapSeriesFromFeaturesDialog(this, bridge, e, localizer);
+    
 
     [ServerToolCommand("create-series-from-features-calc")]
     async public Task<ApiEventResponse> OnCreateSeriesFromFeaturesCalc(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapSeriesPrint> localizer)
@@ -693,12 +694,11 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
         MultiPoint sketch = new();
         try
         {
-            int maxIterations = e.GetMaxMapSeriesPages() * 10;
             sketch = seriesType switch
             {
-                SeriesType.AlongPolylines => seriesCreator.SeriesAlongPolylines(maxIterations),
-                SeriesType.IntersectionRaster => seriesCreator.IntersectionRaster(maxIterations),
-                SeriesType.BoundingBoxRaster => seriesCreator.BoundingBoxRaster(maxIterations),
+                SeriesType.AlongPolylines => seriesCreator.SeriesAlongPolylines(e.GetMaxMapSeriesInterations()),
+                SeriesType.IntersectionRaster => seriesCreator.IntersectionRaster(e.GetMaxMapSeriesIntersectionInterations()),
+                SeriesType.BoundingBoxRaster => seriesCreator.BoundingBoxRaster(e.GetMaxMapSeriesInterations()),
                 _ => throw new NotSupportedException($"Series type '{seriesType}' is not supported.")
             };
         }
@@ -843,7 +843,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
     {
         var mapFrames = mapPrototype?.GraphicsContainer?.Where(e => e is MapFrameElement).ToArray();
 
-        if (mapFrames?.Any() == false) return null;
+        if (mapFrames?.Any() == false) { return null; }
 
         Envelope extent = null;
         mapFrames
@@ -874,10 +874,7 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
             extent);
     }
 
-    private string GetMapSericesPrintPageName(int index)
-    {
-        return $"{index:000}";
-    }
+    private string GetMapSericesPrintPageName(int index) => $"{index:000}";
 
     #endregion
 

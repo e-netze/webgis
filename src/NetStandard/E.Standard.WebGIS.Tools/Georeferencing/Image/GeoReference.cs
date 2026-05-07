@@ -1,4 +1,8 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
@@ -18,10 +22,8 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Geometry;
+
 using MathNet.Numerics.LinearAlgebra;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image;
 
@@ -45,6 +47,7 @@ public class GeoReference : IApiServerToolLocalizable<GeoReference>,
     const string GeorefImageDownloadProjectionId = "image-georef-download-prj";
     const string GeorefImageLoadId = "image-georef-load-image";
     const string GeorefImageSelectedImagesId = "image-georef-selected-images";
+    const string GeorefValidationError = "image-georef-validation-error";
 
     #region IApiButton
 
@@ -292,7 +295,7 @@ public class GeoReference : IApiServerToolLocalizable<GeoReference>,
         {
             uiElements.AddRange(new IUIElement[]
             {
-                new UITitle() { label = $"{localizer.Localize("choose-existing-image")}:" },
+                new UIParagraph(localizer.Localize("choose-existing-image")),
                 new UISelect()
                 {
                     options = options.OrderBy(o => o.label).ToArray(),
@@ -311,12 +314,17 @@ public class GeoReference : IApiServerToolLocalizable<GeoReference>,
         uiElements.AddRange(new IUIElement[]
         {
             new UIBreak(1),
-            new UITitle() { label = $"{localizer.Localize("or-upload-image")}:" },
+            new UIParagraph(localizer.Localize("or-upload-image")),
             new UIUploadFile(this.GetType(), "upload-file") {
                 id = "upload-file",
                 css = UICss.ToClass(new string[]{ UICss.ToolParameter })
             }
         });
+
+        if (!String.IsNullOrEmpty(e[GeorefValidationError]))
+        {
+            uiElements.Add(new UIValidationErrorSummary(e[GeorefValidationError]));
+        }
 
         List<IUISetter> uiSetter = new List<IUISetter>();
         if (!String.IsNullOrEmpty(e[GeorefImageLoadId]))
@@ -346,7 +354,8 @@ public class GeoReference : IApiServerToolLocalizable<GeoReference>,
         var file = e.GetFile("upload-file");
         if (file == null)
         {
-            throw new Exception("No file uploaded");
+            e[GeorefValidationError] = "No file uploaded";
+            return OnAddImageDilaog(bridge, e, localizer);
         }
 
 
@@ -369,7 +378,8 @@ public class GeoReference : IApiServerToolLocalizable<GeoReference>,
 
         if (imagePackages.Where(p => p.ImageData != null).Any() == false)
         {
-            throw new Exception(localizer.Localize("exception-cant-read-image:body"));
+            e[GeorefValidationError] = localizer.Localize("exception-cant-read-image:body");
+            return OnAddImageDilaog(bridge, e, localizer);
         }
 
         List<string> imageUrls = new List<string>();

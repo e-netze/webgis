@@ -1,6 +1,8 @@
-﻿using E.Standard.WebMapping.Core.Geometry;
+﻿using System.Collections.Generic;
+
+using E.Standard.WebMapping.Core.Geometry;
+
 using gView.GraphicsEngine;
-using System.Collections.Generic;
 
 namespace E.Standard.WebMapping.Core.Abstraction;
 

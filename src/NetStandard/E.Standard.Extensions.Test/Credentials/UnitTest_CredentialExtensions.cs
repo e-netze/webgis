@@ -1,4 +1,5 @@
 ﻿using E.Standard.Extensions.Credentials;
+
 using Xunit;
 
 namespace E.Standard.Extensions.Test.Credentials;

@@ -1,3 +1,7 @@
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
+
 using E.Standard.Configuration.Services;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Models;
@@ -6,9 +10,6 @@ using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Proxy;
 using E.Standard.WebMapping.GeoServices.Tiling;
-using System;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.WMTS;
 
@@ -165,7 +166,7 @@ public class WmtsService : BaseWmtsService, IMapServiceDescription
                 var crypto = requestContext.GetRequiredService<ICryptoService>();
                 var urlHelper = requestContext.GetRequiredService<IUrlHelperService>();
 
-                result.tileUrl = $"{urlHelper.AppRootUrl()}/tilecache/redirect/{this.Url}/{crypto.StaticDefaultEncrypt(result.tileUrl, Security.Cryptography.CryptoResultStringType.Hex)}/[LEVEL]/[ROW]/[COL]";
+                result.tileUrl = $"{urlHelper.AppRootUrl()}/tilecache/redirect/{this.Url}/{crypto.StaticDefaultEncrypt_Aes(result.tileUrl, Security.Cryptography.CryptoResultStringType.Hex)}/[LEVEL]/[ROW]/[COL]";
             }
             else
             {

@@ -1,13 +1,14 @@
-﻿using E.Standard.Esri.Shapefile;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+using E.Standard.Esri.Shapefile;
 using E.Standard.Esri.Shapefile.IO;
 using E.Standard.GeoJson;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace E.Standard.WebGIS.Tools.MapMarkup.Export;
 

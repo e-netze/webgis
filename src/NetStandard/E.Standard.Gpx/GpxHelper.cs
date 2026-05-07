@@ -1,6 +1,7 @@
-﻿using E.Standard.Gpx.Schema;
+﻿using System;
+
+using E.Standard.Gpx.Schema;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
 
 namespace E.Standard.Gpx;
 

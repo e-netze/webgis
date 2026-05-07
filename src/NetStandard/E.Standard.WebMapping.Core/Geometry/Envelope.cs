@@ -1,9 +1,10 @@
-﻿using E.Standard.Platform;
-using System;
+﻿using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
+
+using E.Standard.Platform;
 
 namespace E.Standard.WebMapping.Core.Geometry;
 

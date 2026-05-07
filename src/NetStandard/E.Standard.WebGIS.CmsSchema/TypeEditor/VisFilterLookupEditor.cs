@@ -1,11 +1,13 @@
-using E.Standard.CMS.Core.UI.Abstraction;
-using E.Standard.CMS.UI.Controls;
-using E.Standard.WebGIS.CMS;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+
+using E.Standard.CMS.Core.UI.Abstraction;
+using E.Standard.CMS.UI.Controls;
+using E.Standard.WebGIS.CMS;
+
+using Newtonsoft.Json;
 
 namespace E.Standard.WebGIS.CmsSchema.TypeEditor;
 

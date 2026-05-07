@@ -1,10 +1,17 @@
-﻿using Api.Core.AppCode.Exceptions;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Api.Core.AppCode.Exceptions;
 using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Mvc;
 using Api.Core.AppCode.Reflection;
 using Api.Core.AppCode.Services;
 using Api.Core.AppCode.Services.Api;
 using Api.Core.AppCode.Services.Authentication;
+
 using E.Standard.Api.App;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Models;
@@ -23,20 +30,17 @@ using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Security.Cryptography.Services;
 using E.Standard.Security.Cryptography.Token;
 using E.Standard.Web.Abstractions;
+using E.Standard.WebApp.Attributes;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebGIS.SDK.Services;
 using E.Standard.WebGIS.SubscriberDatabase;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Api.Core.Controllers;
 
@@ -144,7 +148,7 @@ public class SubscribersController : ApiBaseController
 
     [HttpPost]
     [AppRole(AppRoles.All)]
-    [ValidateAntiForgeryToken]
+    [ConfigurableValidateAntiforgeryToken]
     async public Task<IActionResult> Login(string id, ApiSubscribersLogin login)
     {
         if (_config.AllowSubscriberLogin() == false)
@@ -251,7 +255,7 @@ public class SubscribersController : ApiBaseController
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ConfigurableValidateAntiforgeryToken]
     public IActionResult Register(RegisterSubscriberModel registerSubscriber)
     {
         if (!_config.AllowRegisterNewSubscribers())
@@ -347,7 +351,7 @@ public class SubscribersController : ApiBaseController
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ConfigurableValidateAntiforgeryToken]
     public IActionResult Update(RegisterSubscriberModel updateSubscriber)
     {
         try
@@ -391,7 +395,7 @@ public class SubscribersController : ApiBaseController
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ConfigurableValidateAntiforgeryToken]
     public IActionResult ChangePassword(RegisterSubscriberModel updateSubscriber)
     {
         try
@@ -529,7 +533,7 @@ public class SubscribersController : ApiBaseController
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ConfigurableValidateAntiforgeryToken]
     public IActionResult UpdateClient(UpdateClient client)
     {
         try
@@ -672,7 +676,7 @@ public class SubscribersController : ApiBaseController
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ConfigurableValidateAntiforgeryToken]
     async public Task<IActionResult> UpdatePortalPage(ApiPortalPageDTO page)
     {
         try

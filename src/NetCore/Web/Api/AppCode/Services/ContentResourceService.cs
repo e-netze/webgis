@@ -1,7 +1,9 @@
-﻿using E.Standard.Platform;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.IO;
+
+using E.Standard.Platform;
+
+using Microsoft.AspNetCore.Http;
 
 namespace Api.Core.AppCode.Services;
 
@@ -19,7 +21,7 @@ public class ContentResourceService
         byte[] resourceBytes = null;
 
         id = id?.Replace("~", ".");
-        if(id.Contains("\\") || id.Contains("/"))
+        if (id.Contains("\\") || id.Contains("/"))
         {
             throw new UnauthorizedAccessException();
         }

@@ -1,13 +1,16 @@
-﻿using E.Standard.Configuration.Services;
-using E.Standard.Custom.Core.Models;
-using E.Standard.Web.Extensions;
-using E.Standard.WebGIS.Core;
-using Microsoft.AspNetCore.Http;
-using Portal.Core.AppCode.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+
+using E.Standard.Configuration.Services;
+using E.Standard.Custom.Core.Models;
+using E.Standard.Web.Extensions;
+using E.Standard.WebGIS.Core;
+
+using Microsoft.AspNetCore.Http;
+
+using Portal.Core.AppCode.Extensions;
 
 namespace Portal.Core.AppCode.Services.Authentication;
 
@@ -102,7 +105,7 @@ public class HeaderAuthenticationService
             foreach (var extendedRoleParameter in extendedRoleParametersFromHeaders)
             {
                 var headerValues = headers.GetValues($"{extendedRoleParametersFromHeadersPrefix}{extendedRoleParameter}");
-                
+
                 if (headerValues != null)
                 {
                     foreach (var value in headerValues.Where(h => !String.IsNullOrEmpty(h)))

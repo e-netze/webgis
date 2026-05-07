@@ -1,14 +1,16 @@
-﻿using E.Standard.Caching.Services;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Caching.Services;
 using E.Standard.Configuration.Services;
 using E.Standard.Extensions.Compare;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Extensions;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
+
 using Portal.Core.AppCode.Extensions;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Portal.Core.AppCode.Services.Authentication;
 

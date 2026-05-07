@@ -1,14 +1,16 @@
-﻿using E.Standard.WebMapping.Core;
-using E.Standard.WebMapping.Core.Abstraction;
-using E.Standard.WebMapping.Core.Collections;
-using E.Standard.WebMapping.Core.Geometry;
-using E.Standard.WebMapping.Core.ServiceResponses;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using E.Standard.WebMapping.Core;
+using E.Standard.WebMapping.Core.Abstraction;
+using E.Standard.WebMapping.Core.Collections;
+using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.ServiceResponses;
+
 namespace E.Standard.WebMapping.GeoServices;
+
 public class MapServiceCollectionService : IMapService, IMapServiceCollection
 {
     #region IMapService

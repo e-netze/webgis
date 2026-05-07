@@ -1,5 +1,13 @@
 ﻿#nullable enable
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
+
 using E.Standard.Json;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -11,13 +19,6 @@ using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.FeatureServer;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.Geometry;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 
@@ -456,7 +457,7 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
                     }
 
                     //
-                    // Spatial Reference auf Feature setzten,
+                    // Spatial Reference auf Feature setzen,
                     // damit später beim speichern die richtige Projektion an den
                     // FeatureServer übergeben wird.
                     //

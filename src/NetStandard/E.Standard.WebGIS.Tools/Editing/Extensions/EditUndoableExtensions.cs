@@ -1,6 +1,7 @@
-﻿using E.Standard.WebGIS.Tools.Editing.Environment;
+﻿using System;
+
+using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebMapping.Core.Editing;
-using System;
 
 namespace E.Standard.WebGIS.Tools.Editing.Extensions;
 

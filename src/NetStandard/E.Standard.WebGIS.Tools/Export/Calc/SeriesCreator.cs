@@ -1,11 +1,11 @@
-﻿using E.Standard.WebGIS.Tools.Export.Exeption;
+﻿using System;
+using System.Linq;
+
+using E.Standard.WebGIS.Tools.Export.Exeption;
 using E.Standard.WebGIS.Tools.Export.Extensions;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Geometry.Extensions;
-using MathNet.Numerics;
-using System;
-using System.Linq;
 
 namespace E.Standard.WebGIS.Tools.Export.Calc;
 
@@ -29,9 +29,9 @@ internal class SeriesCreator
         double pageHeight,
         double overlappingPercent)
     {
-        if (pageWidth <= 0) throw new ArgumentException(nameof(pageWidth));
-        if(pageHeight <= 0) throw new ArgumentException(nameof(pageHeight));
-        if(overlappingPercent < 0 || overlappingPercent > 100) throw new ArgumentException(nameof(overlappingPercent));
+        if (pageWidth <= 0) { throw new ArgumentException(nameof(pageWidth)); }
+        if (pageHeight <= 0) { throw new ArgumentException(nameof(pageHeight)); }
+        if (overlappingPercent < 0 || overlappingPercent > 100) { throw new ArgumentException(nameof(overlappingPercent)); }
 
         _features = features;
         _pageWidth = pageWidth;
@@ -81,7 +81,7 @@ internal class SeriesCreator
 
     public MultiPoint IntersectionRaster(int maxIterations)
     {
-        var raster = BoundingBoxRaster(maxIterations * 5);
+        var raster = BoundingBoxRaster(maxIterations);
         var intersectRaster = new MultiPoint();
         int iterations = 0;
 
@@ -120,7 +120,7 @@ internal class SeriesCreator
                     var lineSeries = SeriesAlongPolyline(singlePathPolyline, _pageWidth * (100 - 2D * _overlappingPercent) / 100D, maxIterations);
                     series.AddPoints(lineSeries.ToArray());
 
-                    if(maxIterations > 0 && series.PointCount >= maxIterations)
+                    if (maxIterations > 0 && series.PointCount >= maxIterations)
                     {
                         throw new MapSeriesPrintToManyPagesExeption(series.PointCount);
                     }
@@ -145,10 +145,10 @@ internal class SeriesCreator
         foreach (var feature in features)
         {
             var env = feature.Shape.ShapeEnvelope;
-            if (minX == null || env.MinX < minX) minX = env.MinX;
-            if (minY == null || env.MinY < minY) minY = env.MinY;
-            if (maxX == null || env.MaxX > maxX) maxX = env.MaxX;
-            if (maxY == null || env.MaxY > maxY) maxY = env.MaxY;
+            if (minY == null || env.MinY < minY) { minY = env.MinY; }
+            if (maxX == null || env.MaxX > maxX) { maxX = env.MaxX; }
+            if (maxY == null || env.MaxY > maxY) { maxY = env.MaxY; }
+            if (minX == null || env.MinX < minX) { minX = env.MinX; }
         }
         return new Envelope(minX ?? 0, minY ?? 0, maxX ?? 0, maxY ?? 0);
     }
@@ -167,7 +167,7 @@ internal class SeriesCreator
             throw new ArgumentOutOfRangeException(nameof(spacing));
         }
 
-        if(polyline.PathCount > 1)
+        if (polyline.PathCount > 1)
         {
             throw new ArgumentException("Only single part polylines allowed");
         }

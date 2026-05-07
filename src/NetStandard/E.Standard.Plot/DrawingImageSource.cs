@@ -1,7 +1,9 @@
-﻿using E.Standard.Web.Abstractions;
-using MigraDocCore.DocumentObjectModel.MigraDoc.DocumentObjectModel.Shapes;
-using System;
+﻿using System;
 using System.IO;
+
+using E.Standard.Web.Abstractions;
+
+using MigraDocCore.DocumentObjectModel.MigraDoc.DocumentObjectModel.Shapes;
 
 namespace E.Standard.Drawing;
 

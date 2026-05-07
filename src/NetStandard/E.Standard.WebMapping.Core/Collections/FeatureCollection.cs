@@ -1,12 +1,13 @@
-﻿using E.Standard.Extensions.Formatting;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+using E.Standard.Extensions.Formatting;
 using E.Standard.ThreadSafe;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace E.Standard.WebMapping.Core.Collections;
 

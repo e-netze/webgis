@@ -1,13 +1,17 @@
-﻿using Api.Core.AppCode.Exceptions;
-using Api.Core.AppCode.Reflection;
-using E.Standard.Api.App;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
+using Api.Core.AppCode.Exceptions;
+using Api.Core.AppCode.Reflection;
+
+using E.Standard.Api.App;
+using E.Standard.Api.App.Endpoints.Metadata;
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.Extensions.Options;
 
 namespace Api.Core.AppCode.Services;
 
@@ -20,9 +24,10 @@ public class RoutingEndPointReflectionService
     public RoutingEndPointReflectionService(IHttpContextAccessor context,
                                             IOptionsMonitor<RoutingEndPointReflectionServiceOptions> options)
     {
-        var controllerActionDescriptor = context.HttpContext?.GetEndpoint()?.Metadata?.GetMetadata<ControllerActionDescriptor>();
         _options = options.CurrentValue;
 
+        // Controllers/Action
+        var controllerActionDescriptor = context.HttpContext?.GetEndpoint()?.Metadata?.GetMetadata<ControllerActionDescriptor>();
         if (controllerActionDescriptor != null)
         {
             _controllerAttributes = controllerActionDescriptor.ControllerTypeInfo?.GetCustomAttributes();
@@ -45,14 +50,22 @@ public class RoutingEndPointReflectionService
                         break;
                 }
             }
+
+            return;
+        }
+
+        // Minimal API Endpoints
+        var reflectionMetadata = context.HttpContext?.GetEndpoint()?.Metadata?.GetMetadata<IApiEndpointReflectionMetadata>();
+        if (reflectionMetadata != null)
+        {
+            _actionMethodAttributes = reflectionMetadata.GetAllAttributes();
         }
     }
 
     public T GetCustomAttribute<T>()
         where T : Attribute
-    {
-        return GetActionMethodCustomAttribute<T>() ?? GetControllerCustomAttribute<T>();
-    }
+        => GetActionMethodCustomAttribute<T>() ?? GetControllerCustomAttribute<T>();
+    
 
     public T GetControllerCustomAttribute<T>()
         where T : Attribute
@@ -70,9 +83,9 @@ public class RoutingEndPointReflectionService
         return (T)_actionMethodAttributes?.Where(a => a.GetType().Equals(type)).FirstOrDefault();
     }
 
-    public AppRoles AppRoles => _options.AppRoles;
+    private AppRoles AppRoles => _options.AppRoles;
 
-    public bool AppRoleIsAllowed(AppRoles appRole)
+    private bool AppRoleIsAllowed(AppRoles appRole)
     {
         return _options.AppRoles.HasFlag(AppRoles.All) || _options.AppRoles.HasFlag(appRole);
     }

@@ -1,4 +1,5 @@
 ﻿using Cms.AppCode.Middleware;
+
 using Microsoft.AspNetCore.Builder;
 
 namespace Cms.AppCode.Extensions.DependencyInjection;

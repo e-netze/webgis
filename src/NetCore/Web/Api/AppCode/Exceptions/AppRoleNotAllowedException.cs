@@ -1,5 +1,6 @@
-﻿using E.Standard.Api.App;
-using System;
+﻿using System;
+
+using E.Standard.Api.App;
 
 namespace Api.Core.AppCode.Exceptions;
 

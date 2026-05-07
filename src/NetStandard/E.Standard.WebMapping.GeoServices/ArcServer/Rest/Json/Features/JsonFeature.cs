@@ -1,6 +1,8 @@
+﻿using System.Dynamic;
+
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.Geometry;
+
 using Newtonsoft.Json;
-using System.Dynamic;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.Features;
 

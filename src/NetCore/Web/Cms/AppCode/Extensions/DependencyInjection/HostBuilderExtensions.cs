@@ -1,7 +1,9 @@
-﻿using E.Standard.Configuration.Extensions.DependencyInjection;
+﻿using System;
+
+using E.Standard.Configuration.Extensions.DependencyInjection;
 using E.Standard.Json;
+
 using Microsoft.Extensions.Hosting;
-using System;
 
 namespace Cms.AppCode.Extensions.DependencyInjection;
 

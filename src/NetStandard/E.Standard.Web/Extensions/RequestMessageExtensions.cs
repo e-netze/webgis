@@ -1,8 +1,9 @@
-﻿using E.Standard.Web.Models;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+
+using E.Standard.Web.Models;
 
 namespace E.Standard.Web.Extensions;
 
@@ -29,13 +30,13 @@ static public class RequestMessageExtensions
 
             if (!String.IsNullOrEmpty(username) &&
                 !String.IsNullOrEmpty(password) &&
-                authType?.ToLower() == "basic")
+                authType?.Equals("basic", StringComparison.OrdinalIgnoreCase) == true)
             {
                 requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic",
                     Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}")));
             }
             else if (!String.IsNullOrEmpty(authentication.AccessToken) &&
-                    authType?.ToLower() == "bearer")
+                    authType?.Equals("bearer", StringComparison.OrdinalIgnoreCase) == true)
             {
                 requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authentication.AccessToken);
             }

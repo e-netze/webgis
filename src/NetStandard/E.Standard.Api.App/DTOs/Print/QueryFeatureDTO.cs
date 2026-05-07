@@ -1,9 +1,11 @@
-using E.Standard.Api.App.DTOs.Geometry;
-using E.Standard.Json;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using E.Standard.Api.App.DTOs.Geometry;
+using E.Standard.Json;
+
+using Newtonsoft.Json;
 
 namespace E.Standard.Api.App.DTOs.Print;
 

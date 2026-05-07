@@ -1,13 +1,16 @@
-﻿using E.Standard.Configuration;
-using E.Standard.Configuration.Services;
-using E.Standard.Extensions.Compare;
-using Microsoft.Extensions.Configuration;
-using Portal.Core.AppCode.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+
+using E.Standard.Configuration;
+using E.Standard.Configuration.Services;
+using E.Standard.Extensions.Compare;
+
+using Microsoft.Extensions.Configuration;
+
+using Portal.Core.AppCode.Configuration;
 
 namespace Portal.Core.AppCode.Extensions;
 

@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using Portal.Core.AppCode.Configuration;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
+
+using Microsoft.Extensions.Configuration;
+
+using Portal.Core.AppCode.Configuration;
 
 namespace Portal.Core.AppCode.Services;
 

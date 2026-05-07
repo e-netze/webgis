@@ -1,15 +1,17 @@
-﻿using E.Standard.Api.App.Exceptions.Ogc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
+
+using E.Standard.Api.App.Exceptions.Ogc;
 using E.Standard.CMS.Core;
 using E.Standard.Custom.Core;
 using E.Standard.Json;
 using E.Standard.OpenIdConnect.Extensions;
 using E.Standard.Security.App.Exceptions;
+
 using MongoDB.Driver.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Principal;
 
 namespace E.Standard.Api.App.Extensions;
 

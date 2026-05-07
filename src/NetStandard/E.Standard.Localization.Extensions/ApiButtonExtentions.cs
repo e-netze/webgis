@@ -1,4 +1,5 @@
 ﻿using E.Standard.WebMapping.Core.Api.Abstraction;
+
 using Microsoft.Extensions.Localization;
 
 namespace E.Standard.Localization.Extensions;

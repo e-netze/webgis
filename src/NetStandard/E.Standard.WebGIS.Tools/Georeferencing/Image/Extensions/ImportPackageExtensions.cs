@@ -1,11 +1,13 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.IO;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Models;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Geometry;
+
 using gView.GraphicsEngine;
-using System;
-using System.IO;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image.Extensions;
 

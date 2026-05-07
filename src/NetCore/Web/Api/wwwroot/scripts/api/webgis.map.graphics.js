@@ -147,6 +147,10 @@
 
         this._tool = tool;
 
+        if (this._tool !== 'pointer') {
+            this._map.refreshSnapping();
+        }
+
         if (this._map.getActiveTool() && this._map.getActiveTool().is_graphics_tool === true) {
             //console.log(this._tool);
             this._map._refreshToolBubbles(this._map.getActiveTool(),

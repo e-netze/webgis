@@ -1,15 +1,17 @@
-﻿using E.Standard.Api.App.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml;
+
+using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Models.Abstractions;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core.Api.Bridge;
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
 
 namespace E.Standard.Api.App.DTOs;
 
@@ -195,7 +197,7 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
                     xml.Append($@" attribute_picker_field=""{editField.AttributePickerField.EscapeXmlString()}""");
                 }
 
-                if(editField.DomainProBbehaviour)
+                if (editField.DomainProBbehaviour)
                 {
                     xml.Append(@" domain_pro_behaviour=""true""");
                 }

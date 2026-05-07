@@ -1,7 +1,8 @@
 ﻿namespace E.Standard.Web.UserAgents.Browsers;
 
-using E.Standard.Web.UserAgents.Constants;
 using System;
+
+using E.Standard.Web.UserAgents.Constants;
 
 /// <summary>
 /// Represents an instance of Edge Browser

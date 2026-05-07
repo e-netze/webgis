@@ -1,8 +1,8 @@
 ﻿#nullable enable
 
-using E.Standard.WebMapping.Core.Extensions;
-using System;
 using System.Collections.Generic;
+
+using E.Standard.WebMapping.Core.Extensions;
 
 namespace E.Standard.WebMapping.Core.Comparer;
 

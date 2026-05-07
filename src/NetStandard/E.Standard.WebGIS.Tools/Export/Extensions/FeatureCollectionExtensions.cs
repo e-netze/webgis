@@ -1,9 +1,10 @@
 ﻿#nullable enable
 
-using E.Standard.WebMapping.Core.Collections;
-using E.Standard.WebMapping.Core.Geometry;
 using System;
 using System.Linq;
+
+using E.Standard.WebMapping.Core.Collections;
+using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebGIS.Tools.Export.Extensions;
 

@@ -1,13 +1,14 @@
-﻿using gView.GraphicsEngine;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Runtime.InteropServices;
+
+using gView.GraphicsEngine;
 
 namespace E.Standard.Platform;
 
 public class SystemInfo
 {
-    static public NumberFormatInfo Nhi = System.Globalization.CultureInfo.InvariantCulture.NumberFormat;
-    static public NumberFormatInfo Cnf = System.Globalization.CultureInfo.CurrentCulture.NumberFormat;
+    static public NumberFormatInfo InvariantNumberFormat = System.Globalization.CultureInfo.InvariantCulture.NumberFormat;
+    static public NumberFormatInfo CurrentNumberFormat = System.Globalization.CultureInfo.CurrentCulture.NumberFormat;
 
     static public bool IsLinux = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
     static public bool IsWindows = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);

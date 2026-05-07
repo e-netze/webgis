@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Security.Claims;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+
 using ModelContextProtocol.AspNetCore.Authentication;
-using System.Security.Claims;
 
 namespace WebGIS.API.MCP.Extensions.DependencyInjection;
 
@@ -57,9 +59,9 @@ internal static class ServiceCollectionExtensions
             {
                 options.ResourceMetadata = new()
                 {
-                    Resource = new Uri(config.GetMcpServerUrl()),
+                    Resource = config.GetMcpServerUrl(),
                     ResourceDocumentation = null,
-                    AuthorizationServers = { new Uri(config.GetAuthenticationAuthority()) },
+                    AuthorizationServers = { config.GetAuthenticationAuthority() },
                     ScopesSupported = [/*"mcp:tools"*/"openid", "profile", "role", "email"],
                 };
             });

@@ -1,6 +1,8 @@
-﻿using E.Standard.Security.App.Services.Abstraction;
+﻿using System.Text.RegularExpressions;
+
+using E.Standard.Security.App.Services.Abstraction;
+
 using Microsoft.Extensions.Options;
-using System.Text.RegularExpressions;
 
 namespace E.Standard.Azure.Services.Parser;
 

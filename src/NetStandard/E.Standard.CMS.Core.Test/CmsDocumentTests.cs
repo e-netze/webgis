@@ -1,6 +1,8 @@
-﻿using E.Standard.CMS.Core.Extensions;
+﻿using System.Reflection;
+
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.Security;
-using System.Reflection;
+
 using static E.Standard.CMS.Core.CmsDocument;
 
 namespace E.Standard.CMS.Core.Test;

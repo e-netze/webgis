@@ -1,14 +1,16 @@
-﻿using E.Standard.Api.App.Extensions;
-using E.Standard.Api.App.Models.Abstractions;
-using E.Standard.Web.Abstractions;
-using E.Standard.WebMapping.Core.Api.EventResponse;
-using E.Standard.WebMapping.Core.Collections;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using E.Standard.Api.App.Extensions;
+using E.Standard.Api.App.Models.Abstractions;
+using E.Standard.Web.Abstractions;
+using E.Standard.WebMapping.Core.Api.EventResponse;
+using E.Standard.WebMapping.Core.Collections;
+
+using Newtonsoft.Json;
 
 namespace E.Standard.Api.App.DTOs;
 
@@ -67,8 +69,8 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
                                         ImageWidth = f.ImageSize?.width,
                                         ImageHeight = f.ImageSize?.height
                                     }),
-                HasAttachments = features.HasAttachments == true 
-                    ? true 
+                HasAttachments = features.HasAttachments == true
+                    ? true
                     : null,
                 Warnings = features.Warnings?.ToArray(),
                 Informations = features.Informations?.ToArray(),

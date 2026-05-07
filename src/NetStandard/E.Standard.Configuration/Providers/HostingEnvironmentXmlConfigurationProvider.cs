@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+
+using Microsoft.Extensions.Configuration;
 
 namespace E.Standard.Configuration.Providers;
 

@@ -1,7 +1,8 @@
-﻿using E.Standard.WebGIS.Tools.Identify;
-using E.Standard.WebMapping.Core.Api;
-using System;
+﻿using System;
 using System.Linq;
+
+using E.Standard.WebGIS.Tools.Identify;
+using E.Standard.WebMapping.Core.Api;
 
 namespace E.Standard.WebGIS.Tools.Extensions;
 

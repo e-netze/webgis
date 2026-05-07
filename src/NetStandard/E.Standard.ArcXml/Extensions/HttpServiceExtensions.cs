@@ -1,16 +1,18 @@
-﻿using E.Standard.ArcXml.Models;
-using E.Standard.Extensions.Compare;
-using E.Standard.Platform;
-using E.Standard.Web.Abstractions;
-using E.Standard.Web.Extensions;
-using E.Standard.Web.Models;
-using gView.GraphicsEngine.Abstraction;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+
+using E.Standard.ArcXml.Models;
+using E.Standard.Extensions.Compare;
+using E.Standard.Platform;
+using E.Standard.Web.Abstractions;
+using E.Standard.Web.Extensions;
+using E.Standard.Web.Models;
+
+using gView.GraphicsEngine.Abstraction;
 
 namespace E.Standard.ArcXml.Extensions;
 

@@ -18,7 +18,7 @@ static public class HtmlExtensions
                 markdown.Append("md:");
             }
 
-            markdown.Append(converter.Convert(html));
+            markdown.Append(converter.Convert(html ?? ""));
 
             return markdown.ToString();
         }

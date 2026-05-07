@@ -1,12 +1,15 @@
-﻿using E.Standard.Configuration.Services;
-using E.Standard.Custom.Core.Abstractions;
-using E.Standard.Security.App.Json;
-using Microsoft.AspNetCore.Builder;
-using Portal.Core.AppCode.Middleware;
-using Portal.Core.AppCode.Middleware.Authentication;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using E.Standard.Configuration.Services;
+using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Security.App.Json;
+
+using Microsoft.AspNetCore.Builder;
+
+using Portal.Core.AppCode.Middleware;
+using Portal.Core.AppCode.Middleware.Authentication;
 
 namespace Portal.Core.AppCode.Extensions.DependencyInjection;
 

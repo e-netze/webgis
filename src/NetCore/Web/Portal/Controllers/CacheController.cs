@@ -1,22 +1,25 @@
-﻿using E.Standard.Configuration.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.MessageQueues.Services.Abstraction;
 using E.Standard.Portal.App;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Abstractions;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using Portal.Core.AppCode.Extensions;
 using Portal.Core.AppCode.Mvc;
 using Portal.Core.AppCode.Services;
 using Portal.Core.AppCode.Services.WebgisApi;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Portal.Core.Controllers;
 
@@ -92,8 +95,20 @@ public class CacheController : PortalBaseController
             // Refresh CmsUserRoles
             await _api.ApiCmsUserRoles(this.Request);
 
+            var currentUser = this.CurrentPortalUser();
+
             return JsonObject(new
             {
+                currentUser = currentUser is null
+                        ? null
+                        : new
+                        {
+                            name = currentUser.Username,
+                            displayName = currentUser.DisplayName,
+                            roles = currentUser.UserRoles,
+                            roleParameters = currentUser.RoleParameters
+                        },
+
                 users = _cache.GetUserNames()
                     .Select(u => new
                     {

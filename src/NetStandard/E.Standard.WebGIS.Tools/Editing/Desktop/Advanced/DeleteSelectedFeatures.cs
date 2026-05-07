@@ -1,4 +1,8 @@
-﻿using E.Standard.Localization.Abstractions;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
@@ -11,10 +15,8 @@ using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.GeoServices.Graphics.Extensions;
+
 using gView.GraphicsEngine;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing.Desktop.Advanced;
 

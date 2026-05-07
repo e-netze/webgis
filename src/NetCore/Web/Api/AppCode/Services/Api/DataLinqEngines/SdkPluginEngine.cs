@@ -1,23 +1,29 @@
-﻿using Api.Core.Models.DataLinq;
-using E.DataLinq.Core.Engines.Abstraction;
-using E.DataLinq.Core.Models;
-using E.Standard.WebGIS.SDK.DataLinq;
-using E.Standard.WebGIS.SDK.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Dynamic;
 using System.Threading.Tasks;
+
+using Api.Core.Models.DataLinq;
+
+using E.DataLinq.Core.Engines.Abstraction;
+using E.DataLinq.Core.Extensions;
+using E.DataLinq.Core.Models;
+using E.DataLinq.Core.Services.Abstraction;
+using E.Standard.WebGIS.SDK.DataLinq;
+using E.Standard.WebGIS.SDK.Services;
 
 namespace Api.Core.AppCode.Services.Api.DataLinqEngines;
 
 public class SdkPluginEngine : IDataLinqSelectEngine
 {
     private readonly SDKPluginManagerService _sdkPlugins;
+    private readonly IDataLinqEnvironmentService _environment;
 
-    public SdkPluginEngine(SDKPluginManagerService sdkPlugins)
+    public SdkPluginEngine(SDKPluginManagerService sdkPlugins, IDataLinqEnvironmentService environment)
     {
         _sdkPlugins = sdkPlugins;
+        _environment = environment;
     }
 
     public int EndpointType => (int)WebGISCustomEndPointTypes.WebGIS_Api;
@@ -49,7 +55,7 @@ public class SdkPluginEngine : IDataLinqSelectEngine
         }
 
         // ToDo: Plugins sollten InitAsync und SelectAsync implementieren
-        plugin.Init(endPoint.ConnectionString);
+        plugin.Init(endPoint.GetConnectionString(_environment));
         var records = await plugin.Select(statement);
 
         if (arguments["_original"] == "true")

@@ -1,4 +1,4 @@
-#column_type: Spalten Typ
+﻿#column_type: Spalten Typ
 
 Typ der Tabellen-Spalte.
 
@@ -51,9 +51,10 @@ Flag unbedingt vermieden werden, da damit eine Cross-Site-Scripting Schwachstell
 
 #sorting_algorithm: Sortier-Algorithmus
 
-Gibt an mit welchen Algorithmus die Spalte in der Tabelle sortiert werden sollte. Standardmäßig wird
-die Spalte beim Storieren als Zeichenkette (string) interpretiert. Fix implementierte Algorithmen für
-Datum sind: date_dd_mm_yyyy. Über die custom.js können noch weitere Algorithmen definiert werden.
+Gibt an mit welchen Algorithmus die Spalte in der Tabelle sortiert werden sollte. Standardmäßig 
+wird die Spalte beim Storieren als Zeichenkette (string) interpretiert. Fix implementierte Algorithmen 
+sind hier: string, number, number_de, gnr, date_dd_mm_yyyy. Über die custom.js können noch weitere 
+Algorithmen definiert werden.
 
 #category_sorting_algorithm: Sortieren
 

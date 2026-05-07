@@ -1,5 +1,6 @@
-﻿using E.Standard.WebMapping.Core.Logging.Abstraction;
-using System;
+﻿using System;
+
+using E.Standard.WebMapping.Core.Logging.Abstraction;
 
 namespace E.Standard.WebMapping.Core.Logging;
 

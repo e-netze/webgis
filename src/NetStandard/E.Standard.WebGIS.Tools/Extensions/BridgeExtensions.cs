@@ -1,8 +1,9 @@
-﻿using E.Standard.Json;
+﻿using System;
+using System.Collections.Generic;
+
+using E.Standard.Json;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
-using System;
-using System.Collections.Generic;
 
 namespace E.Standard.WebGIS.Tools.Extensions;
 

@@ -1,4 +1,5 @@
 ﻿namespace E.Standard.Web.Test;
+
 public class HttpEncodingTests
 {
     [Theory]

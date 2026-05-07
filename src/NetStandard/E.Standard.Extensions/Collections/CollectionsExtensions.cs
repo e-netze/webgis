@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Primitives;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+
+using Microsoft.Extensions.Primitives;
 
 namespace E.Standard.Extensions.Collections;
 

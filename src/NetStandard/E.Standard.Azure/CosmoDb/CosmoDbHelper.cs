@@ -1,7 +1,8 @@
 ﻿//using Microsoft.Azure.Documents;
-using Microsoft.Azure.Cosmos;
 using System;
 using System.Threading.Tasks;
+
+using Microsoft.Azure.Cosmos;
 
 namespace E.Standard.Azure.CosmoDb;
 

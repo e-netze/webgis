@@ -1,7 +1,7 @@
 ﻿webgis.l10n = new function () {
     this.language = 'de';
     this.defaultLanguage = 'de';
-    this.supportedLanguage = {};
+    this.supportedLanguages = {};
     this.literals = [];
 
     this.get = function (id) {

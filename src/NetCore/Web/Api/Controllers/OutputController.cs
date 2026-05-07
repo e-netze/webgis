@@ -1,12 +1,15 @@
-﻿using Api.Core.AppCode.Mvc;
-using Api.Core.AppCode.Services;
-using E.Standard.Platform;
-using E.Standard.Web.Abstractions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+
+using Api.Core.AppCode.Mvc;
+using Api.Core.AppCode.Services;
+
+using E.Standard.Platform;
+using E.Standard.Web.Abstractions;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Api.Core.Controllers;
 
@@ -44,7 +47,7 @@ public class OutputController : ApiBaseController
         {
             // ensure the file is in the output path!!
             fileInfo.CheckIfFileInDirectory(new DirectoryInfo(_urlHelper.OutputPath()));
-        } 
+        }
         catch
         {
             return StatusCode(403);

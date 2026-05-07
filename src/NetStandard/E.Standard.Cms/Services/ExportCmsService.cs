@@ -1,4 +1,10 @@
-﻿using E.Standard.Cms.Abstraction;
+﻿using System;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Xml;
+
+using E.Standard.Cms.Abstraction;
 using E.Standard.Cms.Configuration.Models;
 using E.Standard.Cms.Configuration.Services;
 using E.Standard.Cms.Extensions;
@@ -8,12 +14,6 @@ using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
 using E.Standard.Extensions.ErrorHandling;
 using E.Standard.Web.Abstractions;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using System;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Xml;
 
 namespace E.Standard.Cms.Services;
 
@@ -44,7 +44,7 @@ public class ExportCmsService : ICmsTool
         try
         {
             var cmsId = context.CmsId;
-           
+
             CmsConfig.CmsItem? cmsItem = null;
             //bool isDynamicCms = false;
 
@@ -107,7 +107,7 @@ public class ExportCmsService : ICmsTool
     }
 
     private void ExportPath(CmsToolContext context, IConsoleOutputStream console, CMSManager cms, ZipArchive archive, IPathInfo pathInfo, string rootPath)
-    { 
+    {
         if (console.IsCanceled)
         {
             return;
@@ -118,7 +118,7 @@ public class ExportCmsService : ICmsTool
 
         foreach (var childPathInfo in pathInfo.GetDirectories())
         {
-            var archivePath = ArchivePath(context.CmsId, rootPath, 
+            var archivePath = ArchivePath(context.CmsId, rootPath,
                 exportDefintion.ForLinux
                     ? childPathInfo.FullName.ToLower()
                     : childPathInfo.FullName
@@ -130,7 +130,7 @@ public class ExportCmsService : ICmsTool
 
         foreach (var childDocumentInfo in pathInfo.GetFiles())
         {
-            var archivePath = ArchivePath(context.CmsId, rootPath, 
+            var archivePath = ArchivePath(context.CmsId, rootPath,
                 exportDefintion.ForLinux
                     ? $"{childDocumentInfo.Directory.FullName.ToLower()}/{childDocumentInfo.Name}"
                     : childDocumentInfo.FullName
@@ -138,8 +138,8 @@ public class ExportCmsService : ICmsTool
 
             console.WriteLine($"export {archivePath}");
 
-            string xml = childDocumentInfo is IXmlConverter xmlConverter 
-                ? xmlConverter.ReadAllAsXmlString() 
+            string xml = childDocumentInfo is IXmlConverter xmlConverter
+                ? xmlConverter.ReadAllAsXmlString()
                 : childDocumentInfo.ReadAll();
 
             var entry = archive.CreateEntry(archivePath);

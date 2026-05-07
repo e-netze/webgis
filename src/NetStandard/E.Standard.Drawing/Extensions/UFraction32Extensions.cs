@@ -1,5 +1,6 @@
-﻿using ExifLibrary;
-using System;
+﻿using System;
+
+using ExifLibrary;
 
 namespace E.Standard.Drawing.Extensions;
 

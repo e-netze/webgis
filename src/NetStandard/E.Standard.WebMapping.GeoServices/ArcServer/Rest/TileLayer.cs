@@ -1,9 +1,10 @@
-﻿using E.Standard.WebMapping.Core;
+﻿using System;
+using System.Threading.Tasks;
+
+using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Filters;
-using System;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 

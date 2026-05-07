@@ -1,7 +1,8 @@
-﻿using E.Standard.WebMapping.Core.Collections;
+﻿using System.Threading.Tasks;
+
+using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.ServiceResponses;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.Core.Abstraction;
 

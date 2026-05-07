@@ -1,15 +1,18 @@
-﻿using Api.Core.AppCode.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Services;
 using Api.Core.AppCode.Services.Authentication;
+
 using E.Standard.Api.App.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Exceptions;
 using E.Standard.Extensions.Compare;
+
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Api.Core.AppCode.Middleware.Authentication;
 

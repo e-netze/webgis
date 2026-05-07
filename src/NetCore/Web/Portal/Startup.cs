@@ -1,4 +1,10 @@
-﻿using E.Standard.Azure.Extensions.DependencyInjection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Security.Authentication;
+
+using E.Standard.Azure.Extensions.DependencyInjection;
 using E.Standard.Azure.Storage;
 using E.Standard.Caching.Extensions.DependencyInjection;
 using E.Standard.Caching.Services;
@@ -21,9 +27,12 @@ using E.Standard.Security.Cryptography.Extensions.DependencyInjection;
 using E.Standard.Security.Cryptography.Services;
 using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
+using E.Standard.WebApp.Abstraction;
+using E.Standard.WebApp.Extensions;
 using E.Standard.WebGIS.Core.Extensions;
 using E.Standard.WebGIS.Core.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SubscriberDatabase.Extensions.DependencyInjection;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -31,17 +40,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using Portal.Core.AppCode.Configuration;
 using Portal.Core.AppCode.Extensions;
 using Portal.Core.AppCode.Extensions.DependencyInjection;
 using Portal.Core.AppCode.Middleware;
 using Portal.Core.AppCode.Services;
 using Portal.Core.AppCode.Services.Worker;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Authentication;
 
 namespace Portal;
 
@@ -344,6 +349,7 @@ public class Startup
 
         #region Map Controller Endpoints
 
+        app.RegisterApiEndpoints(typeof(Startup)).RegisterApiEndpoints(typeof(IApiEndpoint));
 
         app.MapControllerRoute(
             "hmac",

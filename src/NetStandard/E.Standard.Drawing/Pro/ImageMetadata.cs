@@ -1,7 +1,9 @@
-﻿using E.Standard.Drawing.Extensions;
-using ExifLibrary;
-using System;
+﻿using System;
 using System.IO;
+
+using E.Standard.Drawing.Extensions;
+
+using ExifLibrary;
 
 namespace E.Standard.Drawing.Pro;
 

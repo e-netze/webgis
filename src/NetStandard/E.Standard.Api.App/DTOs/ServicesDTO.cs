@@ -1,7 +1,8 @@
-﻿using E.Standard.Api.App.Models.Abstractions;
-using E.Standard.Api.App.Services.Cache;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
+
+using E.Standard.Api.App.Models.Abstractions;
+using E.Standard.Api.App.Services.Cache;
 
 namespace E.Standard.Api.App.DTOs;
 

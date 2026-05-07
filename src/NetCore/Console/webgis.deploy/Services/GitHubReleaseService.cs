@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 
 namespace webgis.deploy.Services;
+
 public class GitHubReleaseService
 {
     private readonly HttpClient _httpClient;

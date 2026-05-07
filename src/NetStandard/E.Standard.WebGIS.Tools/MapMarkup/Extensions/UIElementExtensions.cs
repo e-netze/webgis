@@ -1,14 +1,16 @@
-﻿using E.Standard.Localization.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
-using System;
-using System.Collections.Generic;
 
 namespace E.Standard.WebGIS.Tools.MapMarkup.Extensions;
+
 static internal class UIElementExtensions
 {
     #region By Symbol Type (line, point, text)

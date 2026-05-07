@@ -1,8 +1,9 @@
+﻿using System;
+using System.Threading.Tasks;
+
 using E.Standard.Web.Abstractions;
 using E.Standard.Web.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.Core.ServiceResponses;
 

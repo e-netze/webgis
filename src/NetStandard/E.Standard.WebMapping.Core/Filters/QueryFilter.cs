@@ -1,10 +1,11 @@
-using E.Standard.WebMapping.Core.Abstraction;
-using E.Standard.WebMapping.Core.Geometry;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+
+using E.Standard.WebMapping.Core.Abstraction;
+using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebMapping.Core.Filters;
 

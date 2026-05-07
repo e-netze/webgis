@@ -1,7 +1,9 @@
-﻿using E.Standard.Api.App.Services;
+﻿using System;
+
+using E.Standard.Api.App.Services;
 using E.Standard.Api.App.Services.Cms;
+
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace E.Standard.Api.App.Extensions.DependencyInjection;
 

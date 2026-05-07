@@ -1,8 +1,10 @@
-﻿using E.Standard.Cms.Abstraction;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+
+using E.Standard.Cms.Abstraction;
+
+using Microsoft.Extensions.Options;
 
 namespace E.Standard.Cms.Services.Logging;
 

@@ -1,11 +1,12 @@
-﻿using E.Standard.WebMapping.Core.Api;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace E.Standard.WebGIS.Tools.Identify.Extensions;
 

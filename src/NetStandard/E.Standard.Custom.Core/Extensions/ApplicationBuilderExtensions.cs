@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
-using System;
+﻿using System;
+
+using Microsoft.AspNetCore.Builder;
 
 namespace E.Standard.Custom.Core.Extensions;
+
 static public class ApplicationBuilderExtensions
 {
     static public IApplicationBuilder UseWebgisAppBasePath(this IApplicationBuilder app)

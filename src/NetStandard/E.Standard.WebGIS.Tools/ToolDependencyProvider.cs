@@ -1,10 +1,12 @@
-﻿using E.Standard.DependencyInjection.Abstractions;
+﻿using System;
+
+using E.Standard.DependencyInjection.Abstractions;
 using E.Standard.Localization.Abstractions;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
-using System;
 
 namespace E.Standard.WebGIS.Tools;
+
 internal class ToolDependencyProvider : IDependencyProvider
 {
     private readonly IBridge _bridge;

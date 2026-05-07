@@ -1,12 +1,15 @@
-﻿using E.Standard.Configuration.Services;
+﻿using System;
+using System.IO;
+
+using E.Standard.Configuration.Services;
 using E.Standard.Platform;
 using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
+
 using Microsoft.AspNetCore.Http;
+
 using Portal.Core.AppCode.Configuration;
 using Portal.Core.AppCode.Extensions;
-using System;
-using System.IO;
 
 namespace Portal.Core.AppCode.Services;
 
@@ -52,7 +55,7 @@ public class CustomContentService
 
     public string TempPortalToken(string pageId, string username)
     {
-        return _crypto.StaticDefaultEncrypt($"{pageId};{username}", resultStringType: CryptoResultStringType.Hex);
+        return _crypto.StaticDefaultEncrypt_Aes($"{pageId};{username}", resultStringType: CryptoResultStringType.Hex);
     }
 
     public bool PageMapDefaultCssExists(string pageId)
@@ -134,7 +137,7 @@ public class CustomContentService
 
     public (string pageId, string username) FromTempPortalToken(string token)
     {
-        var param = _crypto.StaticDefaultDecrypt(token).Split(';');
+        var param = _crypto.StaticDefaultDecrypt_Aes(token).Split(';');
 
         if (param.Length != 2)
         {

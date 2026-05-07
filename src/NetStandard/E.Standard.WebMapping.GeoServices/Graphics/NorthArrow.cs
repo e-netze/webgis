@@ -1,7 +1,9 @@
-﻿using E.Standard.Platform;
+﻿using System;
+
+using E.Standard.Platform;
+
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
-using System;
 
 namespace E.Standard.WebMapping.GeoServices.Graphics;
 

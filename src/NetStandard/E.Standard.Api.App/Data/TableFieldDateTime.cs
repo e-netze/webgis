@@ -1,10 +1,11 @@
-﻿using E.Standard.Web.Abstractions;
-using E.Standard.WebGIS.CMS;
-using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
+
+using E.Standard.Web.Abstractions;
+using E.Standard.WebGIS.CMS;
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 
 namespace E.Standard.Api.App.Data;
 
@@ -36,7 +37,7 @@ public sealed class TableFieldDateTime : TableField
             {
                 td = Convert.ToDateTime(value);
             }
-            
+
             switch (DisplayType)
             {
                 case DateFieldDisplayType.ShortDate:

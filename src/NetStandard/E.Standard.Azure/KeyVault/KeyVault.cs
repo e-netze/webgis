@@ -1,8 +1,10 @@
-﻿using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
-using E.Standard.Security.App.KeyVault;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+
+using E.Standard.Security.App.KeyVault;
 
 namespace E.Standard.Azure.KeyVault;
 

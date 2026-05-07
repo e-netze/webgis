@@ -2,10 +2,7 @@
 
 public class ApiConfigKeys
 {
-    static public string ToKey(string key)
-    {
-        return $"{ConfigurationSectionName}:{key}";
-    }
+    static public string ToKey(string key) => $"{ConfigurationSectionName}:{key}";
 
     public const string ConfigurationSectionName = "Api";
 
@@ -26,12 +23,16 @@ public class ApiConfigKeys
     public const string LogUsageColumns = ConfigurationSectionName + ":Log_Performance_Columns";
     public const string Trace = ConfigurationSectionName + ":trace";
 
+    public const string SecurityDisableAntiForgery = ConfigurationSectionName + ":security:disable-anti-forgery";
+
+    public const string UseXForwardedHeadersMiddleware = ConfigurationSectionName + ":middleware:use-x-forwarded-headers";
+    public const string UseXForwardedHeadersLoggingMiddleware = ConfigurationSectionName + ":middleware:use-x-forwarded-headers-logging";
 
     public const string StorageRootPath = ConfigurationSectionName + ":storage-rootpath";
     public const string StorageRootPath2 = ConfigurationSectionName + ":storage-rootpath2";
 
     public const string P4DefaultValue = ConfigurationSectionName + ":p4_default";
-    public const string AllowGeoCodesInput = ConfigurationSectionName + ":allow-geocodes";
+    public const string AllowedGeoCodesInput = ConfigurationSectionName + ":quick-search:allowed-geocodes";
 
     public const string ServerSideConfigurationPath = ConfigurationSectionName + ":server-side-configuration-path";
 
@@ -91,6 +92,7 @@ public class ApiConfigKeys
     public const string GraphicsEninge = ConfigurationSectionName + ":graphics-engine";
 
     public const string UseDeChunkerMiddleware = ConfigurationSectionName + ":use-dechunker-middleware";
+    public const string UseDeChunkerMiddlewareFromSection = ConfigurationSectionName + ":middleware:use-dechunker";
 
     public const string DefaultMarkerColors = ConfigurationSectionName + ":default-marker-colors";
 
@@ -108,7 +110,7 @@ public class ApiConfigKeys
     public const string SupportedLanguages = ConfigurationSectionName + ":supported-languages";
 
     public const string QueryResultsSelectionColor = ConfigurationSectionName + ":query-results:selection-color";
-    public const string QueryResultsHighlightColor = ConfigurationSectionName + ":query-results:highlight-color";  
+    public const string QueryResultsHighlightColor = ConfigurationSectionName + ":query-results:highlight-color";
     public const string QueryResultsBufferColor = ConfigurationSectionName + ":query-results:buffer-color";
     public const string QueryResultsSelectionFillColor = ConfigurationSectionName + ":query-results:selection-fill-color";
     public const string QueryResultsHighlightFillColor = ConfigurationSectionName + ":query-results:highlight-fill-color";

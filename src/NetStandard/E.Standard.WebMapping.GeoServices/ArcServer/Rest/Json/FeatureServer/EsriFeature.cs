@@ -1,8 +1,10 @@
 ﻿#nullable enable
 
-using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.Geometry;
-using Newtonsoft.Json;
 using System.Collections.Generic;
+
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.Geometry;
+
+using Newtonsoft.Json;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.FeatureServer;
 

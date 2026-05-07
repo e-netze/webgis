@@ -371,7 +371,7 @@ namespace E.Standard.Gpx.Schema {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.topografix.com/GPX/1/1")]
     public partial class wptType {
         
-        private decimal eleField;
+        private /*decimal*/ string eleField;
         
         private bool eleFieldSpecified;
         
@@ -432,7 +432,7 @@ namespace E.Standard.Gpx.Schema {
         private decimal lonField;
         
         /// <remarks/>
-        public decimal ele {
+        public string ele {
             get {
                 return this.eleField;
             }

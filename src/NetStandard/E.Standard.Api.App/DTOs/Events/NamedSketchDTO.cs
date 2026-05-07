@@ -1,4 +1,5 @@
-using E.Standard.WebMapping.Core.Api.UI;
+﻿using E.Standard.WebMapping.Core.Api.UI;
+
 using Newtonsoft.Json;
 
 namespace E.Standard.Api.App.DTOs.Events;

@@ -1,9 +1,10 @@
-﻿using E.Standard.CMS.Core;
+﻿using System;
+
 using E.Standard.CMS.Core.Extensions;
 using E.Standard.Platform;
-using System;
 
 namespace E.Standard.WebGIS.CmsSchema.Extensions;
+
 internal static class StringExtensions
 {
     //public static string UrlEncodePassword(this string password)
@@ -48,7 +49,7 @@ internal static class StringExtensions
 
         schemaNodePath = schemaNodePath.TrimStart('/', '\\');
 
-        
+
 
         return $"{trimedPath}/{schemaNodePath}";
     }

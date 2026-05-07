@@ -1,19 +1,21 @@
-﻿using E.Standard.Configuration.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Security.App.Extensions;
 using E.Standard.Security.App.Json;
 using E.Standard.WebApp.Extensions;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Services;
-using Microsoft.AspNetCore.Authentication;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using Portal.Core.AppCode.Configuration;
 using Portal.Core.AppCode.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Portal.Core.AppCode.Middleware.Authentication;
 

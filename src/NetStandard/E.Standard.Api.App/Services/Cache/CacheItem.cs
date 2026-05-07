@@ -1,20 +1,21 @@
-﻿using E.Standard.Api.App.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using E.Standard.Api.App.Data;
 using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.Exceptions;
 using E.Standard.Api.App.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
-using E.Standard.Extensions.Compare;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.Reflection;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace E.Standard.Api.App.Services.Cache;
 
@@ -568,7 +569,8 @@ public class CmsCacheItem
                                             Id = exportFormatNode.Url,
                                             Name = exportFormatNode.Name,
                                             FileExtension = exportFormatNode.Load("fileext", "txt")?.ToString(),
-                                            FormatString = exportFormatNode.LoadString("formatstring")
+                                            FormatString = exportFormatNode.LoadString("formatstring"),
+                                            Description = exportFormatNode.LoadString("description")
                                         };
                                         exportFormats.Add(new AuthObject<QueryDTO.TableExportFormat>(exportFormat, CmsDocument.GetAuthNodeFast(cms, exportFormatNode.NodeXPath)));
                                     }
@@ -1280,7 +1282,7 @@ public class CmsCacheItem
                                 queryBuilderFields.Add(new AuthObject<QueryBuilderField>(queryBuilderField, CmsDocument.GetAuthNodeFast(cms, queryBuildFieldNode.NodeXPath)));
                             }
 
-                            if(queryBuilderFields.Count > 0)
+                            if (queryBuilderFields.Count > 0)
                             {
                                 if (_queryBuilderFields.ContainsKey(serviceUrlKey))
                                 {

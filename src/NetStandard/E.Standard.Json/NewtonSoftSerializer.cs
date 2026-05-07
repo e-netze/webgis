@@ -1,12 +1,15 @@
-﻿using E.Standard.Json.Abstractions;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
+using E.Standard.Json.Abstractions;
+
+using Newtonsoft.Json.Linq;
+
 namespace E.Standard.Json;
+
 internal class NewtonSoftSerializer : IJSerializer
 {
     public T? Deserialize<T>([StringSyntax("Json")] string json)

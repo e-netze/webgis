@@ -1,9 +1,10 @@
-﻿using E.Standard.WebMapping.Core.Exceptions;
-using E.Standard.WebMapping.Core.Geometry.Clipper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+
+using E.Standard.WebMapping.Core.Exceptions;
+using E.Standard.WebMapping.Core.Geometry.Clipper;
 
 namespace E.Standard.WebMapping.Core.Geometry.Topology;
 

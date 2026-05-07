@@ -1,10 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Extensions;
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace E.Standard.WebMapping.Core.Api.UI.Elements;
 
@@ -141,7 +143,7 @@ public class UISelect : UIValidation
                     "webgis.tools.mapseriesprint" => UICss.MapSeriesPrintToolQuality,
                     _ => UICss.PrintToolQuality
                 },
-                UICss.ToolParameter, 
+                UICss.ToolParameter,
                 UICss.ToolParameterPersistent }),
             defaultvalue = qualities.Keys.First().ToString(),
             options = qualities.Keys.OrderBy(dpi => dpi)

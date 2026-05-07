@@ -1,7 +1,15 @@
 ﻿#pragma warning disable CA1416
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Mvc;
+
 using E.Standard.Api.App;
 using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.Extensions;
@@ -10,8 +18,8 @@ using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
 using E.Standard.Configuration.Services;
 using E.Standard.Extensions;
+using E.Standard.Extensions.Text;
 using E.Standard.Json;
-using E.Standard.OGC.Schema.wfs_1_0_0;
 using E.Standard.Platform;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebGIS.CMS;
@@ -26,15 +34,10 @@ using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 using E.Standard.WebMapping.GeoServices.Tiling;
+
 using gView.GraphicsEngine;
+
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Api.Core.AppCode.Services.Rest;
 
@@ -92,8 +95,8 @@ public class RestMappingHelperService /*: IDisposable*/
             throw new Exception("Unknown service: " + id);
         }
 
-        map.ImageWidth = int.Parse(request.FormOrQuery("width"));
-        map.ImageHeight = int.Parse(request.FormOrQuery("height"));
+        map.ImageWidth = request.FormOrQuery("width").ParseInvariantToRoundedInt();
+        map.ImageHeight = request.FormOrQuery("height").ParseInvariantToRoundedInt();
         map.AddTimeEpoch(id, request.FormOrQuery("time_epoch")?.UrlParameterToTimeEpoch());
 
         string[] bbox = request.FormOrQuery("bbox").ToString().Split(',');
@@ -353,7 +356,7 @@ public class RestMappingHelperService /*: IDisposable*/
                 var filter = new E.Standard.WebMapping.Core.Filters.QueryFilter(layer.IdFieldName, -1, 0);
                 filter.Where = layer.IdFieldName + " in (" + fIds + ")";
 
-                
+
 
                 switch (request.FormOrQuery("selection").ToString().ToLower())
                 {
@@ -808,7 +811,7 @@ public class RestMappingHelperService /*: IDisposable*/
             tocVisFilter.CheckSignature(_crypto);
 
             var layer = service.Layers.FindByLayerId(tocVisFilter.TocVisFilterLayerId());
-            if (layer == null) continue;
+            if (layer == null) { continue; }
 
             layer.Filter = layer.Filter.AppendWhereClause(tocVisFilter.TocVisFilterWhereClause());
         }

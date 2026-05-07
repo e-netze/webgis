@@ -1,14 +1,17 @@
-﻿using E.Standard.CMS.Core;
-using E.Standard.Web.Abstractions;
-using E.Standard.WebMapping.Core.Abstraction;
-using E.Standard.WebMapping.Core.Geometry;
-using E.Standard.WebMapping.Core.Models;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using E.Standard.CMS.Core;
+using E.Standard.Web.Abstractions;
+using E.Standard.Web.Models;
+using E.Standard.WebMapping.Core.Abstraction;
+using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Models;
+
+using Newtonsoft.Json;
 
 namespace E.Standard.WebMapping.GeoServices.SearchService;
 
@@ -29,8 +32,7 @@ public class SolrMetaSpatialSearchService : SolrMetaSearchService, ISearchServic
             url += $"&fq=geowgs:[{queryBBox.MinY},{queryBBox.MinX} TO {queryBBox.MaxY},{queryBBox.MaxX}]";
         }
 
-        //string json = await dotNETConnector.DownloadXmlAsync(url, _connector, null);
-        string json = await httpService.GetStringAsync(url, encoding: Encoding.UTF8);
+        string json = await httpService.GetStringAsync(url, base.GetRequestAuthorization(), encoding: Encoding.UTF8);
         var lucType = JsonConvert.DeserializeObject<LucType>(json);
 
         List<SearchServiceItem> items = new List<SearchServiceItem>();

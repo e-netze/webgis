@@ -1,4 +1,5 @@
 ﻿namespace cms.tools;
+
 public class CommandLine
 {
     public CommandLine(string[] args)

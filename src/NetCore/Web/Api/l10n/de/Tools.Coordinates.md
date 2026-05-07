@@ -33,9 +33,9 @@ Hier muss das Koordinatensystem angegeben werden, in dem die Koordinaten der CSV
 
 ## sketch:
 
-### label1: Hier kann GPX oder GeoJson File hochgeladen werden, das als Sketch übernommen wird.
+### label1: Hier können GPX oder GeoJson File hochgeladen werden, das als Sketch übernommen wird.
 ### exception-no-geometry-candidates: In der Datei wurden keine passenden Sketch Kanditaten für die Geometrie {0} gefunden.
-
+   
 # download:
 
 ## sketch:

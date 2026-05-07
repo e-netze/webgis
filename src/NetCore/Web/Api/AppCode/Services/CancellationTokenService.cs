@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-using System.Threading;
+﻿using System.Threading;
+
+using Microsoft.Extensions.Options;
 
 namespace Api.Core.AppCode.Services;
 

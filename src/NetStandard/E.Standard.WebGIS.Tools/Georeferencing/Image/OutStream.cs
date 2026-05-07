@@ -1,4 +1,8 @@
-﻿using E.Standard.WebGIS.Core.Reflection;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Extensions;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api;
@@ -6,9 +10,6 @@ using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Api.Reflection;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Georeferencing.Image;
 

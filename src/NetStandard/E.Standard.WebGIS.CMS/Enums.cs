@@ -50,7 +50,8 @@ public enum ColumnType : int
 public enum ColumnDataType
 {
     String = 0,
-    Number = 1
+    Number = 1,
+    Number_de = 2
 }
 
 public enum FeatureTableType
@@ -169,7 +170,8 @@ public enum TileGridOrientation
 public enum TileGridRendering
 {
     Quality = 0,
-    Readability = 1
+    Readability = 1,
+    ScaleDependentLayers = 2
 }
 
 public enum CommaFormat
@@ -229,7 +231,8 @@ public enum BrowserWindowTarget
     opener = 2,
     _parent = 3,
     _top = 4,
-    dialog = 5
+    dialog = 5,
+    datalinq_pdf_report = 6
 }
 
 public enum BrowserWindowTarget2

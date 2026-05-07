@@ -1,6 +1,7 @@
-﻿using E.Standard.Api.App.DTOs;
-using System.IO;
+﻿using System.IO;
 using System.Xml;
+
+using E.Standard.Api.App.DTOs;
 
 namespace E.Standard.Api.App.Extensions;
 

@@ -1,9 +1,12 @@
-#nullable enable
+﻿#nullable enable
+
+using System;
 
 using E.Standard.Security.Cryptography.Abstractions;
+
 using Microsoft.AspNetCore.Http;
+
 using Newtonsoft.Json;
-using System;
 
 namespace Api.Core.AppCode.Services.Authentication;
 

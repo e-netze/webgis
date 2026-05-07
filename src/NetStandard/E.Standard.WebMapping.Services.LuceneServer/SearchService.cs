@@ -1,4 +1,10 @@
-﻿using E.Standard.CMS.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
+
+using E.Standard.CMS.Core;
 using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Web.Abstractions;
@@ -8,14 +14,10 @@ using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
 using E.Standard.WebMapping.GeoServices.LuceneServer.Extentions;
 using E.Standard.WebMapping.GeoServices.LuceneServer.Models;
+
 using LuceneServerNET.Client;
 using LuceneServerNET.Core;
 using LuceneServerNET.Core.Language;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.LuceneServer;
 

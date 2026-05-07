@@ -1,11 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
 using E.Standard.Json;
 using E.Standard.Maths.Extensions.Speric;
 using E.Standard.Maths.Primitives;
 using E.Standard.WebMapping.Core.Geometry;
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace E.Standard.GeoJson;
 

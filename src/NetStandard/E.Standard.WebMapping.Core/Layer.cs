@@ -1,10 +1,11 @@
-﻿using E.Standard.WebMapping.Core.Abstraction;
-using E.Standard.WebMapping.Core.Collections;
-using E.Standard.WebMapping.Core.Filters;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
+
+using E.Standard.WebMapping.Core.Abstraction;
+using E.Standard.WebMapping.Core.Collections;
+using E.Standard.WebMapping.Core.Filters;
 
 namespace E.Standard.WebMapping.Core;
 

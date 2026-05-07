@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
-using System;
 
 namespace Api.Core.AppCode.Services;
 

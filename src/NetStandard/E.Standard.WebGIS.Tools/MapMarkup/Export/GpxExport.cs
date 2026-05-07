@@ -1,11 +1,12 @@
-﻿using E.Standard.GeoJson;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+using E.Standard.GeoJson;
 using E.Standard.Gpx;
 using E.Standard.Gpx.Schema;
 using E.Standard.OGC.Schema;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace E.Standard.WebGIS.Tools.MapMarkup.Export;
 
@@ -41,7 +42,10 @@ class GpxExport : IExport
                 string toolType = feature.GetPropery<string>("_meta.tool");
                 string text = feature.GetPropery<string>("_meta.text");
 
-                if (toolType == "line")
+                if (toolType == "line"
+                    || (feature.Geometry?.type.Equals("linestring", StringComparison.OrdinalIgnoreCase) == true ||
+                        feature.Geometry?.type.Equals("multilinestring", StringComparison.OrdinalIgnoreCase) == true)
+                        )
                 {
                     var trk = GpxHelper.FromPolyline(_gpx, feature.ToShape() as Polyline);
                     if (trk != null)
@@ -51,7 +55,8 @@ class GpxExport : IExport
                         _featuresCount++;
                     }
                 }
-                else if (toolType == "symbol" || toolType == "text" || toolType == "point")
+                else if ((toolType == "symbol" || toolType == "text" || toolType == "point")
+                         || (feature.Geometry?.type.Equals("point", StringComparison.OrdinalIgnoreCase) == true))
                 {
                     wptType pointType = GpxHelper.FromPoint(feature.ToShape() as Point);
                     if (pointType != null)

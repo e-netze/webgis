@@ -1,4 +1,8 @@
-﻿using E.Standard.Extensions.Text;
+﻿using System;
+using System.Text;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Text;
 using E.Standard.Platform;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -7,10 +11,8 @@ using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
+
 using Newtonsoft.Json;
-using System;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 

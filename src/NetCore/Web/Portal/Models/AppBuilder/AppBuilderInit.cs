@@ -1,6 +1,7 @@
-﻿using E.Standard.Security.Cryptography;
+﻿using System;
+
+using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
-using System;
 
 namespace Portal.Core.Models.AppBuilder;
 

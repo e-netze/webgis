@@ -1,13 +1,14 @@
-﻿using E.Standard.Extensions;
-using E.Standard.Extensions.IO;
-using E.Standard.Json;
-using E.Standard.Web.Abstractions;
-using E.Standard.WebGIS.CMS;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
+
+using E.Standard.Extensions;
+using E.Standard.Extensions.IO;
+using E.Standard.Json;
+using E.Standard.Web.Abstractions;
+using E.Standard.WebGIS.CMS;
 
 namespace E.Standard.Api.App.Data;
 
@@ -75,7 +76,7 @@ public sealed class TableFieldData : TableField
 
                 _simpleDomains = domains;
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine("Exception@TableFieldData.InitRendering");
                 Console.WriteLine($"  SimpleDomainValue: {_simpleDomainValue}");

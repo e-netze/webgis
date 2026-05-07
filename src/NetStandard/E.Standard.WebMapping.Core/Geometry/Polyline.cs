@@ -326,7 +326,7 @@ public sealed class Polyline : Shape
 
     public override bool IsValid()
     {
-        if(this._paths is null || this._paths.Count == 0)
+        if (this._paths is null || this._paths.Count == 0)
         {
             return false;
         }

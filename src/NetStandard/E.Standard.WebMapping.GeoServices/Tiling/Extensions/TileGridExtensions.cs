@@ -1,8 +1,9 @@
-﻿using E.Standard.WebGIS.CMS;
+﻿using System.Collections.Generic;
+
+using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.Tiling.Models;
-using System.Collections.Generic;
 
 namespace E.Standard.WebMapping.GeoServices.Tiling.Extensions;
 

@@ -1,5 +1,6 @@
-﻿using E.Standard.CMS.Core.Security;
-using System;
+﻿using System;
+
+using E.Standard.CMS.Core.Security;
 
 namespace E.Standard.CMS.Core.Extensions;
 

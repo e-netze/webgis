@@ -1,14 +1,15 @@
+﻿using System;
+using System.Collections.Specialized;
+using System.Linq;
+
 using E.Standard.ArcXml;
 using E.Standard.ArcXml.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.UI.Abstraction;
 using E.Standard.CMS.UI.Controls;
 using E.Standard.Extensions.Compare;
-using E.Standard.Localization.Abstractions;
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Specialized;
-using System.Linq;
 
 namespace E.Standard.WebGIS.CmsSchema.UI;
 

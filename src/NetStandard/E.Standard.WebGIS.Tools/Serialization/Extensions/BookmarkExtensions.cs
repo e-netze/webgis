@@ -1,8 +1,10 @@
-﻿using E.Standard.Localization.Abstractions;
+﻿using System;
+
+using E.Standard.Localization.Abstractions;
 using E.Standard.WebMapping.Core.Api.Bridge;
-using System;
 
 namespace E.Standard.WebGIS.Tools.Serialization.Extensions;
+
 static internal class BookmarkExtensions
 {
     static public void ThrowIfAnonymous(this IBridgeUser user, ILocalizer<Bookmarks> localizer)

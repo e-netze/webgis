@@ -1,11 +1,12 @@
-﻿using E.Standard.Extensions.Compare;
+﻿using System;
+using System.Threading.Tasks;
+
+using E.Standard.Extensions.Compare;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
-using System;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Editing.Mobile.Advanced.Extentions;
 

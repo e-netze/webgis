@@ -1,8 +1,10 @@
+﻿using System.Collections.Generic;
+
 using E.Standard.Api.App.DTOs.Tools;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.EventResponse.Models;
+
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace E.Standard.Api.App.DTOs.Events;
 

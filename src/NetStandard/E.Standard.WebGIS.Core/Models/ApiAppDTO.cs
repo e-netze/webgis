@@ -1,3 +1,5 @@
+﻿using E.Standard.Json.Converters;
+
 using Newtonsoft.Json;
 
 namespace E.Standard.WebGIS.Core.Models;
@@ -30,6 +32,7 @@ public class ApiAppDTO
 
         [JsonProperty(PropertyName = "value")]
         [System.Text.Json.Serialization.JsonPropertyName("value")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(StringConverter))]
         public string Value { get; set; }
 
         [JsonProperty(PropertyName = "type")]
@@ -56,6 +59,7 @@ public class ApiAppDTO
 
             [JsonProperty(PropertyName = "value")]
             [System.Text.Json.Serialization.JsonPropertyName("value")]
+            [System.Text.Json.Serialization.JsonConverter(typeof(StringConverter))]
             public string Value { get; set; }
         }
     }

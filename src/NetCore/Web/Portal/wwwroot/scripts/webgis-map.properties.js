@@ -284,6 +284,31 @@
 
             $("<br><br>").appendTo($content);
         }
+
+        $("<div>")
+            .addClass("webgis-property-content-title2")
+            .text(webgis.l10n.get('select-geolocation-api'))
+            .appendTo($content);
+
+        const $geolocationApiSelect = $("<select>")
+            .addClass("webgis-input")
+            .appendTo($content)
+            .change(function (e) {
+                webgis.geolocationApis.setByName($(this).val());
+            });
+
+        for (var name of webgis.geolocationApis.getAllNames()) {
+            $("<option>")
+                .val(name)
+                .text(name)
+                .appendTo($geolocationApiSelect);
+        }
+        $geolocationApiSelect.val(webgis.geolocationApis.currentName());
+
+        $("<div>")
+            .text(webgis.l10n.get('select-geolocation-api-info'))
+            .css({ "fontSize": "0.9em", "margin": "7px 2px", "color": "#777" })
+            .appendTo($content);
     };
 
     let addFavoritesPage = function ($parent) {

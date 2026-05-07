@@ -1,11 +1,12 @@
-﻿using E.Standard.ArcXml;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using E.Standard.ArcXml;
 using E.Standard.ArcXml.Extensions;
 using E.Standard.ArcXml.Models;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace E.Standard.WebGIS.Tools.Profile.QueryEngines;
 

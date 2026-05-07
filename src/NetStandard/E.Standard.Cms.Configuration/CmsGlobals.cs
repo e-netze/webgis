@@ -1,5 +1,6 @@
-﻿using E.Standard.Platform;
-using System;
+﻿using System;
+
+using E.Standard.Platform;
 
 namespace E.Standard.Cms.Configuration;
 

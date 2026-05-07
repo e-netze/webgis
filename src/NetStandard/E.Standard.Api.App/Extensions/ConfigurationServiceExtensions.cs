@@ -1,15 +1,18 @@
-﻿using E.Standard.Api.App.Configuration;
-using E.Standard.Configuration.Services;
-using E.Standard.Extensions.Compare;
-using E.Standard.Security.App.Services.Abstraction;
-using gView.GraphicsEngine;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+
+using E.Standard.Api.App.Configuration;
+using E.Standard.Configuration.Services;
+using E.Standard.Extensions.Compare;
+using E.Standard.Security.App.Services.Abstraction;
+
+using gView.GraphicsEngine;
+
+using Microsoft.Extensions.Configuration;
 
 namespace E.Standard.Api.App.Extensions;
 
@@ -40,18 +43,6 @@ static public class ConfigurationServiceExtensions
         }
 
         return 4326;
-    }
-
-    static public bool AllowGeoCodesInput(this IConfiguration config)
-    {
-        if (bool.TryParse(config[$"{ApiConfigKeys.AllowGeoCodesInput}"], out bool allow))
-        {
-            return allow;
-        }
-
-        return false;
-
-        //return config.Get<bool>(ApiConfigKeys.AllowGeoCodesInput, false);
     }
 
     static public string Pro4DatabaseConnectionString(this ConfigurationService config)
@@ -245,8 +236,15 @@ static public class ConfigurationServiceExtensions
 
     static public bool UseDeChunkerMiddleware(this ConfigurationService config)
     {
-        return config[ApiConfigKeys.UseDeChunkerMiddleware] == "true";
+        return config[ApiConfigKeys.UseDeChunkerMiddleware] == "true"
+            || config[ApiConfigKeys.UseDeChunkerMiddlewareFromSection] == "true";
     }
+
+    static public bool UseXForwardedHeaderMiddleware(this IConfiguration config)
+         => "true".Equals(config[$"{ApiConfigKeys.UseXForwardedHeadersMiddleware}"], StringComparison.OrdinalIgnoreCase);
+    static public bool UseXForwardedHeaderLoggingMiddleware(this IConfiguration config)
+         => "true".Equals(config[$"{ApiConfigKeys.UseXForwardedHeadersLoggingMiddleware}"], StringComparison.OrdinalIgnoreCase);
+
 
     #endregion
 
@@ -388,6 +386,10 @@ static public class ConfigurationServiceExtensions
         return null;
     }
 
+    static public bool DisableAntiForgery(this IConfiguration config)
+        => "true".Equals(config[$"{ApiConfigKeys.SecurityDisableAntiForgery}"], StringComparison.OrdinalIgnoreCase);
+
+
     static public Dictionary<string, string> UrlOutputRedirectionsOrNull(this IConfiguration config)
         => UrlRedirectionsOrNull(config, " => ");
 
@@ -479,7 +481,9 @@ static public class ConfigurationServiceExtensions
 
     static public bool AllowDataLingCodeEditing(this IConfiguration config)
     {
-        return "true".Equals(config[$"{ApiConfigKeys.ConfigurationSectionName}:datalinq:allow-code-editing"], StringComparison.OrdinalIgnoreCase);
+        return
+            config.IncludeDataLinqServices() &&
+            "true".Equals(config[$"{ApiConfigKeys.ConfigurationSectionName}:datalinq:allow-code-editing"], StringComparison.OrdinalIgnoreCase);
     }
 
     public static string DataLinqEnvrionment(this IConfiguration config)
@@ -600,6 +604,11 @@ static public class ConfigurationServiceExtensions
         return config[$"{ApiConfigKeys.ConfigurationSectionName}:datalinq:api-encryption-level"];
     }
 
+    public static bool DataLinqUseCacheTokenForOne2nLinks(this ConfigurationService config)
+    {
+        return "true".Equals(config[$"{ApiConfigKeys.ConfigurationSectionName}:datalinq:use-cache-token-for-one-2-n-links"], StringComparison.OrdinalIgnoreCase);
+    }
+
     #endregion
 
     #region Folders
@@ -649,6 +658,19 @@ static public class ConfigurationServiceExtensions
         }
 
         return 5;
+    }
+
+    static public bool QuickSearchAllowGeoCodesInput(this IConfiguration config)
+    {
+        return !String.IsNullOrWhiteSpace(config[$"{ApiConfigKeys.AllowedGeoCodesInput}"]);
+    }
+
+    static public string[] QuickSearchAllowedGeoCodesInput(this IConfiguration config)
+    {
+        return config[$"{ApiConfigKeys.AllowedGeoCodesInput}"]?
+                    .Split(",")
+                    .Select(x => x.Trim())
+                    .ToArray();
     }
 
     #endregion

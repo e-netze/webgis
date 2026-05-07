@@ -2,7 +2,7 @@
 
 namespace E.Standard.WebMapping.Core.Abstraction;
 
-public interface IServiceAttachmentProvider 
+public interface IServiceAttachmentProvider
 {
     Task<byte[]> GetServiceAttachementData(IRequestContext requestContext, string attachmentUri);
 }

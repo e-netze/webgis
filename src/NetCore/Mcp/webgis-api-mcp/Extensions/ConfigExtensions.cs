@@ -15,7 +15,7 @@ internal static class ConfigExtensions
     static public string[] GetAuthenticationScopes(this IConfiguration config)
     {
         var scopes = config.GetValue<string>("Authentication:Scopes", String.Empty) ?? String.Empty;
-        return scopes.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s=>s.Trim()).ToArray();
+        return scopes.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray();
     }
 
     static public string GetAuthenticationAudience(this IConfiguration config)

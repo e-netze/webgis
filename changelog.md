@@ -10,6 +10,189 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+## 8.26.1801
+
+## Added
+
+- TileCache Rendering Mode: ScaleDependentLayers (for printing cached MapServices)
+  [Issue #458](https://github.com/e-netze/webgis-community/issues/458)
+
+- Map Series Print: api.config - allow increase max intersection iterations
+  [Issue #464](https://github.com/e-netze/webgis-community/issues/464)
+
+## Fixed
+
+## 8.26.1702
+
+## Added
+
+- GeoCodes: allow GeoCodes (UTMRef, etc) in Coordinates-Tool and Quick Search 
+  [discussion #449](https://github.com/e-netze/webgis-community/discussions/449)
+  [docs GeoCodes](https://docs.webgiscloud.com/de/webgis/annex/geocodes.html)
+  [docs CoordsTool](https://docs.webgiscloud.com/de/webgis/extended_config/etc/xz.html#default-xml)
+  [docs api.config](https://docs.webgiscloud.com/de/webgis/config/api/index.html#abschnitt-proj4-database-geocodes)
+
+- DataLinq Upgrade: 8.26.1502
+
+- Basic Authentication for SOLR search services
+  [Issue #456](https://github.com/e-netze/webgis-community/issues/456)
+
+## Fixed
+
+- Bug: API Crashes on start, if DataLinq is not included in api.config
+
+- Print: Error ``Service with url #service not found``
+  [Issue #453](https://github.com/e-netze/webgis-community/issues/453)
+
+- MapMarkup: Snapping not works with MapMarkup before zoom/pan
+  [Issue #455](https://github.com/e-netze/webgis-community/issues/455)
+
+- MapSeriesPrint: Save/Load failed, if series only had one page
+
+- Bug: can't open side-by-side app in AppBuilder
+  [Issue #457](https://github.com/e-netze/webgis-community/issues/457)
+
+- Tooltip mass attribution tool added:
+  [Issue #446](https://github.com/e-netze/webgis-community/issues/446)
+
+- Ignore wrong/error elevation-values in GPX files
+  [Issue #430](https://github.com/e-netze/webgis-community/issues/430)
+
+- UI (wrapping Buttongroups)
+  [Issue #454](https://github.com/e-netze/webgis-community/issues/454)
+
+## 8.26.1402
+
+## Added
+
+- ResultTable: new sorting algorithm ``number_de``
+  [dicussion #440](https://github.com/e-netze/webgis-community/discussions/440)
+
+- WMTS: adding more exotic services
+  [dicussion #447](https://github.com/e-netze/webgis-community/discussions/447)
+
+- DataLinq: parameters of 1:n links from resulttable can be posted to internal datalinq instance (experimental)
+  **api.config** => ``use-cache-token-for-one-2-n-links`` 
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#datalinq)
+
+- Layout for Tablets (``portal/viewerlayouts/w1024.html``): Usability improvments
+  TOC/Tooldialog on the left side, etc
+
+- DataLinq Upgrade: 8.26.1402
+
+## Fixed
+
+- Bug: Print Measure Polygon calculate wrong circumference value
+  [Issue #452](https://github.com/e-netze/webgis-community/issues/452)
+
+## 8.26.1301
+
+## Added
+
+- Logging: User information logs (like no query found in this area, etc) will only logged
+  in ``webgis-exceptions.log`` if LogLevel is ``Information``
+
+## Fixed
+
+- Bug: TokenRequiredError 
+  [Issue #422](https://github.com/e-netze/webgis-community/issues/442)
+
+- Bug: QueryResults 1:n - Linktype ``dialog`` also opens a new browser tab
+  [Issue #443](https://github.com/e-netze/webgis-community/issues/443)
+
+## 8.26.1203
+
+## Added
+
+- TimeFilter UI:
+  * Switcher: **Point in time** / **Span of Time**
+  * Show **All time-dependent services** option only if there is more than one time-dependent service in map 
+
+- DataLinq Upgrade: 8.26.1201
+
+## Fixed
+
+- Linux/ContainerImages: Fixed problem with localization (Localization/DefaultCulture)
+  [Issue #422](https://github.com/e-netze/webgis-community/issues/422)
+
+- Timefilter: not applyed to print
+  [Issue #438](https://github.com/e-netze/webgis-community/issues/438)
+
+- QueryResult: show ``showQueryLayerNotVisbleNotification`` only once
+  [Issue #439](https://github.com/e-netze/webgis-community/issues/439)
+
+- MapSeriesPrint: German messages
+  [Issue #436](https://github.com/e-netze/webgis-community/issues/436)
+
+- Typos 
+  [Issue #441](https://github.com/e-netze/webgis-community/issues/441)
+
+## 8.26.1201
+
+## Added
+
+- ``api.config``:
+  **Security:** Disable Antiforgery by configuration (not recommeneded!)
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#security)
+  **Middleware:** Add XForwarded Middleware explicitly (if needed)
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#middleware)
+
+## 8.26.1101
+
+## Added
+
+- ``appsettings.json``: DefaultCulture and ``/instance/_culture`` Endpoints
+  [Issue #422](https://github.com/e-netze/webgis-community/issues/422)
+
+- Appearence of DimLines and DimPolygins (MapMarkup) on PDFs (not yellow box and no EPSG Code)
+  [Issue #434](https://github.com/e-netze/webgis-community/issues/434)
+
+- Better error message, when parsing GPX/GeoJson uploaded files failed
+  [Issue #430](https://github.com/e-netze/webgis-community/issues/430)
+
+- Links in result table: Added ``datalinq_pdf_report`` as type in WebGIS-CMS to directly download DataLinq PDF Reports 
+
+## Fixed
+
+- Language can not set by user, whenn running WebGIS in Containers
+  [Issue #421](https://github.com/e-netze/webgis-community/issues/421)
+
+## 8.26.1001
+
+## Added
+
+- custom.js: set visibility for tools: ``webgis.usability.toolProperties['webgis.tools.serialization.savemap'] = { visibility: 'hidden' };``
+  [dicussion #408](https://github.com/e-netze/webgis-community/discussions/408)
+
+- api.config: tool section ``<add key="allow-anoymous-access" value="false" />``
+  [dicussion #408](https://github.com/e-netze/webgis-community/discussions/408)
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#werkzeug-konfiguration)
+
+- api.config: Tool MapMarkup - added key ``save-name-maxlength``
+  [dicussion #204](https://github.com/e-netze/webgis-community/discussions/204)
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#werkzeug-mapmarkup)
+
+## Fixed
+
+- Security: Avoid 3DES (use AES) Algorithm
+  [Issue #423](https://github.com/e-netze/webgis-community/issues/423)
+
+  **Breaking Change**
+  CMS Upload only works if both (WebGIS API and WebGIS CMS) have a version >= 8.26.1001.
+  So you have to update WebGIS CMS an WebCMS API in one step.
+
+- Datalinq: Environment variable (test/dev/prod) not applyed to connectionstring in WebGIS Datalinq Engines
+  [DataLinq Issue #41](https://github.com/e-netze/datalinq-community/issues/41)
+
+- Remove Query Result Button not works on quick search results with service-query-theme
+  [Issue #426](https://github.com/e-netze/webgis-community/issues/426)
+
+## 8.26.901
+
+## Fixed
+
+- Download GPX from measure/edit sketch not worked correctly
+
 ## 8.26.901
 
 ## Added

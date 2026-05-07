@@ -1,5 +1,6 @@
+﻿using System.Threading;
+
 using E.Standard.WebMapping.Core.Geometry.Clipper;
-using System.Threading;
 
 namespace E.Standard.WebMapping.Core.Geometry;
 

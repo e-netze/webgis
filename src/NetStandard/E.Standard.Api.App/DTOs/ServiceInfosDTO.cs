@@ -1,8 +1,9 @@
-﻿using E.Standard.Api.App.Extensions;
+﻿using System;
+using System.Text;
+
+using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Models.Abstractions;
 using E.Standard.Api.App.Services.Cache;
-using System;
-using System.Text;
 
 namespace E.Standard.Api.App.DTOs;
 

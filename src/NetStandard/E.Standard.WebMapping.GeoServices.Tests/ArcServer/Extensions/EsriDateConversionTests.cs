@@ -1,5 +1,6 @@
-﻿using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
-using System.Globalization;
+﻿using System.Globalization;
+
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 
 namespace E.Standard.WebMapping.GeoServices.Tests.ArcServer.Extensions;
 
@@ -38,7 +39,7 @@ public class EsriDateConversionTests
         // 2020-01-01T00:00:00.000Z in milliseconds since Unix epoch
         long esriMillis = 1577836800000;
         var result = esriMillis.EsriDateToString();
-        Assert.Equal("01/01/2020", result); 
+        Assert.Equal("01/01/2020", result);
     }
 
     [Fact]

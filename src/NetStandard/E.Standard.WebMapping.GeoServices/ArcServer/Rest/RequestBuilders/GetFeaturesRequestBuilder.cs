@@ -7,16 +7,24 @@ namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.RequestBuilders;
 
 public class GetFeaturesRequestBuilder : BaseRequestBuilder<GetFeaturesRequestBuilder>
 {
-    public GetFeaturesRequestBuilder()
-    {
-        _self = this;
-    }
+    public GetFeaturesRequestBuilder() 
+        => (_self) = (this);
+
 
     new public GetFeaturesRequestBuilder WithFormat(string format) => base.WithFormat(format);
 
     new public GetFeaturesRequestBuilder WithGeometry(Shape shape, int shapeSrefId = 0)
         => base.WithGeometry(shape, shapeSrefId);
 
+    // esriSpatialRelIntersects |
+    // esriSpatialRelContains |
+    // esriSpatialRelCrosses |
+    // esriSpatialRelEnvelopeIntersects |
+    // esriSpatialRelIndexIntersects |
+    // esriSpatialRelOverlaps |
+    // esriSpatialRelTouches |
+    // esriSpatialRelWithin |
+    // esriSpatialRelRelation
     new public GetFeaturesRequestBuilder WithSpatialRelation(string spatialRelation)
         => base.WithSpatialRelation(spatialRelation);
 

@@ -1,6 +1,7 @@
-﻿using E.Standard.WebMapping.Core.Geometry.Topology;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+
+using E.Standard.WebMapping.Core.Geometry.Topology;
 
 namespace E.Standard.WebMapping.Core.Geometry.Extensions;
 

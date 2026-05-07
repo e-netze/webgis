@@ -1,18 +1,20 @@
-﻿using E.Standard.Api.App.Extensions;
+﻿using System;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+
+using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.Configuration.Services;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebApp.Abstraction;
 using E.Standard.WebGIS.Api.Abstractions;
 using E.Standard.WebMapping.Core.Abstraction;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using System;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Api.Core.Endpoints.TileCache;
 
@@ -54,7 +56,7 @@ public class Redirect : IApiEndpoint
                     return;
                 }
 
-                var url = crypto.StaticDefaultDecrypt(encryptedUrl)
+                var url = crypto.StaticDefaultDecrypt_Aes(encryptedUrl)
                                 .Replace("[LEVEL]", level)
                                 .Replace("[ROW]", row)
                                 .Replace("[COL]", col);

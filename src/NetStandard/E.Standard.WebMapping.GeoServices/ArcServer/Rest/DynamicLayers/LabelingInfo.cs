@@ -1,6 +1,8 @@
+﻿using System;
+
 using E.Standard.WebMapping.Core;
+
 using Newtonsoft.Json;
-using System;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.DynamicLayers;
 

@@ -1,6 +1,7 @@
 ﻿using System.Xml.Linq;
 
 namespace webgis.deploy.Extensions;
+
 static internal class ConfigExtensions
 {
     static public string GetXmlConfigValue(this string configFilePath, string key)

@@ -1,5 +1,6 @@
-﻿using E.Standard.Custom.Core.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using E.Standard.Custom.Core.Models;
 
 namespace Portal.Core.Models.Auth;
 

@@ -2,6 +2,7 @@
 using System.Linq;
 
 namespace E.Standard.Extensions.Reflection;
+
 public static class TypeExtensions
 {
     static public bool ImplementsAnyInterface(this Type type, params Type[] interfaces)
