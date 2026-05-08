@@ -28,8 +28,26 @@ Print a map series in PDF format.
 # create:
 ## method: Method
 ### bbox-grid: Bounding Box Grid
+
+A regular grid is created over the complete
+bounding box of the selected objects.
+
 ### intersection-grid: Intersection Grid
-### along-polyline: Along a Polyline
+
+A regular grid is created,
+but only pages that intersect at least one object are generated.
+
+### along-polyline: Along a Line
+
+For line geometries, the grid is generated along the line.
+The pages are rotated according to the line direction.
+
+### one-per-feature: One Page per Feature
+
+Exactly one page is generated for each object.
+The center point is placed at the center of the object.  
+Each individual object must fit completely onto a single page!
+
 ## overlapping-percent: Overlapping (Percent)
 ## start: Create Series
 
@@ -72,3 +90,8 @@ or the paper format to create fewer pages.
 The calculation of the series exceeds the maximum number of allowed iterations >{0} 
 and cannot be performed.
 Change the scale or the paper format to create fewer pages.
+
+## exception-not-all-features-fit:
+
+Not all objects fit onto a single page at the selected map scale.  
+Please use a smaller scale denominator.

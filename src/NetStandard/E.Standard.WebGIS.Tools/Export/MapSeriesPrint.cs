@@ -699,14 +699,19 @@ internal class MapSeriesPrint : IApiServerToolLocalizable<MapSeriesPrint>,
                 SeriesType.AlongPolylines => seriesCreator.SeriesAlongPolylines(e.GetMaxMapSeriesInterations()),
                 SeriesType.IntersectionRaster => seriesCreator.IntersectionRaster(e.GetMaxMapSeriesIntersectionInterations()),
                 SeriesType.BoundingBoxRaster => seriesCreator.BoundingBoxRaster(e.GetMaxMapSeriesInterations()),
+                SeriesType.OnePerFeature => seriesCreator.OnePerFeature(e.GetMaxMapSeriesPages()),
                 _ => throw new NotSupportedException($"Series type '{seriesType}' is not supported.")
             };
         }
-        catch (MapSeriesPrintToManyPagesExeption ex)
+        catch (MapSeriesPrintCreateException ex)
+        {
+            e[CreateSeriesValidationErrors] = localizer.Localize($"create-series-from-features.{ex.Message}:body");
+        }
+        catch (MapSeriesPrintToManyPagesExeption exToManyInterations)
         {
             e[CreateSeriesValidationErrors] = String.Format(localizer.Localize(
                 "create-series-from-features.exception-to-many-iterations:body"),
-                                    ex.Iterations);
+                                    exToManyInterations.Iterations);
         }
 
         // Set parameters for map series print for recalc rects etc...

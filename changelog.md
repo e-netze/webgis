@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ## Added
+
+- MapSeriesPrint: Added "Create One per Feature" Method.
+  Increased Usability with creation descrtion and preview.
+  [Issue #464](https://github.com/e-netze/webgis-community/issues/464)
+
 ## Fixed
 
 ## 8.26.1801

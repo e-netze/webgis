@@ -9,3 +9,11 @@ internal class MapSeriesPrintToManyPagesExeption : Exception
 
     public int Iterations { get; }
 }
+
+ internal class MapSeriesPrintCreateException : Exception
+{
+    public MapSeriesPrintCreateException(string message) : base(message)
+    {
+        
+    }
+}

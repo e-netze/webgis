@@ -163,6 +163,7 @@ ul.toc li {
     margin: 10px 0px 2px 0px;
     color: #555;
     padding: 0px 0px 2px 4px;
+    line-height: 1.4;
 }
 
 .webgis-modal .webgis-paragraph {
@@ -4105,7 +4106,7 @@ div.webgis-copy {
     background-color: #ffcccc !important;
     padding: 4px;
     border-radius: 4px;
-    margin: 8px 0px;
+    margin: 8px auto;
     max-width: 595px;
 }
 

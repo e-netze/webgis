@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 
 using E.Standard.Extensions.Collections;
 using E.Standard.Localization.Abstractions;
+using E.Standard.WebGIS.Tools.Export.Calc;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.UI;
+using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
@@ -130,52 +132,80 @@ static internal class ApiEventResponseExtensions
              .Select(l => l.Substring(MapSeriesPrint.PrintLayoutOptionPrefix.Length)));
         var printFormats = bridge.GetPrintFormats();
 
+        var seriesTypePreviewDict = new Dictionary<SeriesType, string>
+        {
+            { SeriesType.BoundingBoxRaster, $"{ bridge.AppRootUrl }/content/api/img/map-series-print/bounding-box-raster.png" },
+            { SeriesType.IntersectionRaster, $"{ bridge.AppRootUrl }/content/api/img/map-series-print/intersection-raster.png" },
+            { SeriesType.AlongPolylines, $"{ bridge.AppRootUrl }/content/api/img/map-series-print/along-polylines.png" },
+            { SeriesType.OnePerFeature, $"{ bridge.AppRootUrl }/content/api/img/map-series-print/one-per-feature.png" }
+        };
+
         response
             .AddUIElements(
                 new UIDiv()
                     .AsDialog()
+                    .WithSize(width: 700, height: 450)
                     .WithDialogTitle(localizer.Localize("create-series-from-features"))
                     .AddChildren(e.AddRequiredMapSeriesPrintCreateFromFeaturesHiddenElements())
                     .AddChildren(
-                         new UILabel()
-                            .WithLabel(localizer.Localize("create.method")),
-                         new UISelect()
-                            .WithId(MapSeriesPrint.ParameterSeriesType)
-                            .AsPersistantToolParameter()
-                            .AddPossibleSeriesTypeOptions(features, localizer),
-                         new UILabel()
-                            .WithLabel(localizer.Localize("create.overlapping-percent")),
-                         new UISelect()
-                            .WithId(MapSeriesPrint.ParameterOverlappingPercent)
-                            .AsPersistantToolParameter()
-                            .AddOptions(
-                                Enumerable.Range(0, 50)
-                                    .Select(r => new UISelect.Option() { value = r.ToString(), label = $"{r}%" })
-                            ),
+                        new UIColumns()
+                           .WithColumn(300,
+                             new UILabel()
+                                .WithLabel(localizer.Localize("create.method")),
+                             new UISelect()
+                                .WithId(MapSeriesPrint.ParameterSeriesType)
+                                .AsPersistantToolParameter()
+                                .AddPossibleSeriesTypeOptions(features, localizer),
+                             new UIDiv()
+                                .AddChildren(seriesTypePreviewDict.Keys.Select(seriesType =>
+                                {
+                                    var seriesTypeAsIntString = ((int)seriesType).ToString();
+                                    return new UIConditionDiv()
+                                    {
+                                        ConditionType = UIConditionDiv.ConditionTypes.ElementValue,
+                                        ContitionElementId = MapSeriesPrint.ParameterSeriesType,
+                                        ConditionArguments = [ seriesTypeAsIntString ],
+                                        ConditionResult = true,
+                                    }.AddChildren(
+                                        seriesType.AsPreviewImage(bridge),
+                                        seriesType.AsUIParagraphWithDescription(localizer)
+                                    );
+                                }))
+                           )
+                           .WithColumn(300,
+                             new UILabel()
+                                .WithLabel(localizer.Localize("create.overlapping-percent")),
+                             new UISelect()
+                                .WithId(MapSeriesPrint.ParameterOverlappingPercent)
+                                .AsPersistantToolParameter()
+                                .AddOptions(
+                                    Enumerable.Range(0, 50)
+                                        .Select(r => new UISelect.Option() { value = r.ToString(), label = $"{r}%" })
+                                ),
 
-                         // add info about features count
-                         new UIValidationErrorSummary(e[MapSeriesPrint.CreateSeriesValidationErrors]),
-
-                         // add layout /format/scale selectors
-                         new UILabel()
-                            .WithLabel(localizer.Localize("layout")),
-                         new UISelect(UIButton.UIButtonType.servertoolcommand, "seleectionchanged")
-                            .WithId($"{MapSeriesPrint.MapSeriesPrintLayoutId}-create")
-                            .AsToolParameter(UICss.MapSeriesPrintToolLayout, UICss.ToolInitializationParameterImportant)
-                            .AddOptions(printLayouts.Select(l => new UISelect.Option()
-                                                                        .WithValue(l.Id)
-                                                                        .WithLabel(l.Name))),
-                        new UILabel()
-                            .WithLabel(localizer.Localize("format")),
-                        UISelect.PrintFormats(tool, $"{MapSeriesPrint.MapSeriesPrintFormatId}-create", printFormats, UIButton.UIButtonType.servertoolcommand, "selectionchanged", defaultValue: e.GetConfigValue(MapSeriesPrint.ConfigDefaultFormat)),
-                        new UILabel()
-                            .WithLabel(localizer.Localize("print-scale")),
-                        UISelect.Scales($"{MapSeriesPrint.MapSeriesPrintScaleId}-create", UIButton.UIButtonType.servertoolcommand, "selectionchanged", allowAddValues: true, scales: e.GetConfigArray<int>("scales"))
-                            .AsToolParameter(),
-                        new UIButtonContainer()
-                            .AddChildren(
-                                new UIButton(UIButton.UIButtonType.servertoolcommand, "create-series-from-features-calc")
-                                    .WithText(localizer.Localize("create.start")))
+                             // add layout /format/scale selectors
+                             new UILabel()
+                                .WithLabel(localizer.Localize("layout")),
+                             new UISelect(UIButton.UIButtonType.servertoolcommand, "seleectionchanged")
+                                .WithId($"{MapSeriesPrint.MapSeriesPrintLayoutId}-create")
+                                .AsToolParameter(UICss.MapSeriesPrintToolLayout, UICss.ToolInitializationParameterImportant)
+                                .AddOptions(printLayouts.Select(l => new UISelect.Option()
+                                                                            .WithValue(l.Id)
+                                                                            .WithLabel(l.Name))),
+                            new UILabel()
+                                .WithLabel(localizer.Localize("format")),
+                            UISelect.PrintFormats(tool, $"{MapSeriesPrint.MapSeriesPrintFormatId}-create", printFormats, UIButton.UIButtonType.servertoolcommand, "selectionchanged", defaultValue: e.GetConfigValue(MapSeriesPrint.ConfigDefaultFormat)),
+                            new UILabel()
+                                .WithLabel(localizer.Localize("print-scale")),
+                            UISelect.Scales($"{MapSeriesPrint.MapSeriesPrintScaleId}-create", UIButton.UIButtonType.servertoolcommand, "selectionchanged", allowAddValues: true, scales: e.GetConfigArray<int>("scales"))
+                                .AsToolParameter(),
+                            new UIButtonContainer()
+                                .AddChildren(
+                                    new UIButton(UIButton.UIButtonType.servertoolcommand, "create-series-from-features-calc")
+                                        .WithText(localizer.Localize("create.start")))
+                        ),
+                        // add info about features count
+                        new UIValidationErrorSummary(e[MapSeriesPrint.CreateSeriesValidationErrors])
                     )
             )
             .AddUISetter(new UIApplyPersistentParametersSetter(tool))
