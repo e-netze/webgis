@@ -111,19 +111,4 @@ public class InstanceController : ApiBaseController
             InstanceRoles = _apiConfig.InstanceRoles
         });
     }
-
-    //async public Task<IActionResult> Crash()
-    //{
-    //    try
-    //    {
-    //        int div = 0;
-
-    //        var x = 100 / div;
-    //        return null;
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        throw ex;
-    //    }
-    //}
 }

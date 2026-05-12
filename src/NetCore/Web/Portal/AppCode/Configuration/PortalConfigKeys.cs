@@ -51,6 +51,10 @@ public class PortalConfigKeys
     public const string SecurityWindowsAuthenticationLdapFormat = ConfigurationSectionName + ":portal-windows-authentication-ldap-format";
     public const string SecurityWindowsAuthenticationLdapDirectory = ConfigurationSectionName + ":portal-windows-authentication-ldap-directory";
 
+    public const string SecuritySecureEndpointUrlPassword = ConfigurationSectionName + ":security:secure-endpoint-url-password";
+    public const string SecuritySecureEndpointBasicAuthUsername = ConfigurationSectionName + ":security:secure-endpoint-basicauth-username";
+    public const string SecuritySecureEndpointBasicAuthPassword = ConfigurationSectionName + ":security:secure-endpoint-basicauth-password";
+
     public const string AllowSubscriberAccessPageSettings = ConfigurationSectionName + ":allow-subscriber-user-access-page-settings";
     public const string SubscriberDbConnectionString = ConfigurationSectionName + ":subscriber-db-connectionstring";
 
@@ -58,8 +62,6 @@ public class PortalConfigKeys
     public const string UseCustomRecommendationJs = ConfigurationSectionName + ":use-custom-recommendation-js";
     public const string QueryCustomMapLayout = ConfigurationSectionName + ":query-custom-map-layout";
     public const string AllowMapUIMaster = ConfigurationSectionName + ":allow-map-ui-master";
-
-    public const string AppCacheListPassword = ConfigurationSectionName + ":app-cache-list-pwd";
 
     public const string KeyValueCacheProvider = ConfigurationSectionName + ":cache-provider";
     public const string KeyValueCacheConnectionString = ConfigurationSectionName + ":cache-connectionstring";

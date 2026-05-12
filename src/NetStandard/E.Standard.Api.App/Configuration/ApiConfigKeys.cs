@@ -24,6 +24,9 @@ public class ApiConfigKeys
     public const string Trace = ConfigurationSectionName + ":trace";
 
     public const string SecurityDisableAntiForgery = ConfigurationSectionName + ":security:disable-anti-forgery";
+    public const string SecuritySecureEndpointUrlPassword = ConfigurationSectionName + ":security:secure-endpoint-url-password";
+    public const string SecuritySecureEndpointBasicAuthUsername = ConfigurationSectionName + ":security:secure-endpoint-basicauth-username";
+    public const string SecuritySecureEndpointBasicAuthPassword = ConfigurationSectionName + ":security:secure-endpoint-basicauth-password";
 
     public const string UseXForwardedHeadersMiddleware = ConfigurationSectionName + ":middleware:use-x-forwarded-headers";
     public const string UseXForwardedHeadersLoggingMiddleware = ConfigurationSectionName + ":middleware:use-x-forwarded-headers-logging";
@@ -105,7 +108,6 @@ public class ApiConfigKeys
 
     public const string SecuritySetupPassword = ConfigurationSectionName + ":security-setup-pwd";
     public const string SecurityAddCustomServiceHostBlacklist = ConfigurationSectionName + ":security-add-custom-services-host-blacklist";
-    public const string AppCacheListPassword = ConfigurationSectionName + ":app-cache-list-pwd";
 
     public const string SupportedLanguages = ConfigurationSectionName + ":supported-languages";
 

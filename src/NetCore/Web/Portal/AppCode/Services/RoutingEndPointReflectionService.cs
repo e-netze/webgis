@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using E.Standard.WebApp.Abstraction;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace Portal.Core.AppCode.Services;
 
-public class RoutingEndPointReflectionService
+public class RoutingEndPointReflectionService : IEndPointReflectionProvider
 {
     private readonly IEnumerable<Attribute> _controllerAttributes;
     private readonly IEnumerable<Attribute> _actionMethodAttributes;

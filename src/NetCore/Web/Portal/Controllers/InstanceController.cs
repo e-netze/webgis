@@ -9,6 +9,8 @@ using E.Standard.Platform;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Security.Cryptography.Services;
+using E.Standard.WebApp.Options;
+using E.Standard.WebApp.Reflection;
 using E.Standard.WebGIS.Core.Models;
 
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +32,8 @@ public class InstanceController : PortalBaseController
     private readonly WebgisApiService _webgisApiService;
     private readonly KeyValueCacheService _keyValueCache;
     private readonly CryptoServiceOptions _cryptoServiceOptions;
+    private readonly JwtAccessTokenService _tokenService;
+    private readonly SecurityOptions _securityOptions;
 
     public InstanceController(ILogger<InstanceController> logger,
                               UrlHelperService urlHelper,
@@ -39,6 +43,8 @@ public class InstanceController : PortalBaseController
                               IOptions<ApplicationSecurityConfig> appSecurityConfig,
                               ICryptoService crypto,
                               IOptions<CryptoServiceOptions> cryptoServiceOptions,
+                              JwtAccessTokenService tokenService,
+                              IOptions<SecurityOptions> securityOptions,
                               IEnumerable<ICustomPortalSecurityService> customSecurity = null)
         : base(logger, urlHelper, appSecurityConfig, customSecurity, crypto)
     {
@@ -48,6 +54,8 @@ public class InstanceController : PortalBaseController
         _webgisApiService = webgisApiService;
         _keyValueCache = keyValueCache;
         _cryptoServiceOptions = cryptoServiceOptions.Value;
+        _tokenService = tokenService;
+        _securityOptions = securityOptions.Value;
     }
 
     public IActionResult Index()
@@ -55,7 +63,7 @@ public class InstanceController : PortalBaseController
         return Info().Result;
     }
 
-    async public Task<IActionResult> Info(string pwd = "")
+    async public Task<IActionResult> Info(string token = "")
     {
         var info = new PortalInfoDTO()
         {
@@ -67,7 +75,8 @@ public class InstanceController : PortalBaseController
             CryptoCompatibilityHash = _cryptoServiceOptions.GenerateHashCode()
         };
 
-        if (!String.IsNullOrWhiteSpace(pwd) && pwd == _config.AppCacheListPassword())
+        if (!string.IsNullOrEmpty(token)
+            && _securityOptions.EndpointAuthorizationBearerUsername.Equals(_tokenService.ValidateToken(token)?.Identity?.Name))
         {
             info.Headers = new Dictionary<string, string>();
 

@@ -299,11 +299,6 @@ static public class ConfigurationServiceExtensions
                     ?? Array.Empty<string>();
     }
 
-    static public string AppCacheListPassword(this ConfigurationService config)
-    {
-        return config[ApiConfigKeys.AppCacheListPassword];
-    }
-
     #endregion
 
     #region AppRoles
@@ -387,7 +382,16 @@ static public class ConfigurationServiceExtensions
     }
 
     static public bool DisableAntiForgery(this IConfiguration config)
-        => "true".Equals(config[$"{ApiConfigKeys.SecurityDisableAntiForgery}"], StringComparison.OrdinalIgnoreCase);
+        => "true".Equals(config[ApiConfigKeys.SecurityDisableAntiForgery], StringComparison.OrdinalIgnoreCase);
+
+    static public string SecureEndpointUrlPassword(this IConfiguration config)
+        => config[ApiConfigKeys.SecuritySecureEndpointUrlPassword] ?? "";
+
+    static public string SecureEndpointBasicAuthUsername(this IConfiguration config)
+        => config[ApiConfigKeys.SecuritySecureEndpointBasicAuthUsername] ?? "";
+
+    static public string SecureEndpointBasicAuthPassword(this IConfiguration config)
+        => config[ApiConfigKeys.SecuritySecureEndpointBasicAuthPassword] ?? "";
 
 
     static public Dictionary<string, string> UrlOutputRedirectionsOrNull(this IConfiguration config)

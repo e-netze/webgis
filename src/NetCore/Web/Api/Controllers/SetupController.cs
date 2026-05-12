@@ -18,14 +18,15 @@ using E.Standard.Extensions.Compare;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Security.Cryptography.Exceptions;
 using E.Standard.Web.Abstractions;
+using E.Standard.WebApp.Reflection;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
 
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Api.Core.Controllers;
 
+[EndpointAuthorization(AuthorizationType = EndpointAuthorizationType.BearerToken | EndpointAuthorizationType.Localhost)]
 public class SetupController : ApiBaseController
 {
     private readonly ILogger<SetupController> _logger;
@@ -63,7 +64,7 @@ public class SetupController : ApiBaseController
         _expectableUserRolesNamesProviders = expectableUserRolesNamesProviders;
     }
 
-    public IActionResult Index(string token)
+    public IActionResult Index()
     {
         var setupPassword = _config.SecuritySetupPassword();
 
@@ -74,16 +75,6 @@ public class SetupController : ApiBaseController
 
         try
         {
-            string decryptedToken = String.IsNullOrEmpty(token)
-                ? token
-                : _crypto.DecryptTextDefault(token);
-
-            if (token != "{B69E8A3B-B6CE-4E06-841B-6574861D1920}"
-               && new Uri(Request.GetDisplayUrl()).Host != "localhost")
-            {
-                return StatusCode(403);
-            }
-
             var setup = new Setup();
             string setupResponse = setup.Start(_cache, _keyValueCache, _subscriberDb, _expectableUserRolesNamesProviders);
 
@@ -124,7 +115,7 @@ public class SetupController : ApiBaseController
             foreach (var key in _keyValueCache.GetAllKeys())
             {
                 string val = _keyValueCache.Get(key);
-                migrateResponse.Append($"Migriage {key}...");
+                migrateResponse.Append($"Migriate {key}...");
                 _migrateKeyValueCacheService.Set(key, val);
                 migrateResponse.Append(Environment.NewLine);
             }

@@ -90,6 +90,24 @@ static public class CompareExtenstions
         return value;
     }
 
+    static public bool OrTake(this bool currentBoolValue, bool alternativeBoolValue)
+        => currentBoolValue ? currentBoolValue : alternativeBoolValue;
+
+    static public bool? OrTake(this bool? currentBoolValue,  bool? alternativeBoolValue)
+    {
+        if (currentBoolValue.HasValue)
+        {
+            if (!alternativeBoolValue.HasValue)
+            {
+                return currentBoolValue.Value;
+            }
+
+            return currentBoolValue.Value.OrTake(alternativeBoolValue.Value);
+        }
+
+        return alternativeBoolValue;
+    }
+
     static public IEnumerable<T> OrEmpty<T>(this IEnumerable<T> values)
     {
         if (values == null)

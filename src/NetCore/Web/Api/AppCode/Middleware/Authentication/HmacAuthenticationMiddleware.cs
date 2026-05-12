@@ -11,6 +11,7 @@ using E.Standard.CMS.Core;
 using E.Standard.Custom.Core;
 using E.Standard.OpenIdConnect.Extensions;
 using E.Standard.Security.App.Exceptions;
+using E.Standard.WebApp.Abstraction;
 
 using Microsoft.AspNetCore.Http;
 
@@ -26,7 +27,7 @@ public class HmacAuthenticationMiddleware
     }
 
     async public Task Invoke(HttpContext httpContext,
-                             RoutingEndPointReflectionService endpointReflection,
+                             IEndPointReflectionProvider endpointReflection,
                              HmacAuthenticationService hmacAuth)
     {
         if (httpContext.User.ApplyAuthenticationMiddleware(endpointReflection, ApiAuthenticationTypes.Hmac) ||

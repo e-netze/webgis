@@ -19,7 +19,7 @@ static public class EndpointConventionsBuilderExtensions
                 bool disableAntiforgery = true,
                 // Authentication
                 ApiAuthenticationTypes? authTypes = ApiAuthenticationTypes.Hmac,  // should be the default!!
-                                                                                  // Etag
+                // Etag
                 double? etag_expiraionDays = null,
                 bool etag_appendResponseHeaders = true,
                 // AppRoles

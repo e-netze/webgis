@@ -11,6 +11,7 @@ using E.Standard.CMS.Core;
 using E.Standard.Custom.Core;
 using E.Standard.OpenIdConnect.Extensions;
 using E.Standard.Security.App.Json;
+using E.Standard.WebApp.Abstraction;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -30,7 +31,7 @@ public class ApiCookieAuthenticationMiddleware
     }
 
     public async Task Invoke(HttpContext httpContext,
-                             RoutingEndPointReflectionService endpointReflection,
+                             IEndPointReflectionProvider endpointReflection,
                              ApiCookieAuthenticationService cookies,
                              IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfigMonitor)
     {

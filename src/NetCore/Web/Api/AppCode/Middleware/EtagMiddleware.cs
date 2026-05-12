@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Api.Core.AppCode.Reflection;
 using Api.Core.AppCode.Services;
 
+using E.Standard.WebApp.Abstraction;
+
 using Microsoft.AspNetCore.Http;
 
 namespace Api.Core.AppCode.Middleware;
@@ -18,7 +20,7 @@ public class EtagMiddleware
     }
 
     public async Task Invoke(HttpContext context,
-                             RoutingEndPointReflectionService endpointReflection,
+                             IEndPointReflectionProvider endpointReflection,
                              EtagService etag)
     {
         var etagAttribute = endpointReflection.GetCustomAttribute<EtagAttribute>();

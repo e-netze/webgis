@@ -29,6 +29,7 @@ using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
 using E.Standard.WebApp.Abstraction;
 using E.Standard.WebApp.Extensions;
+using E.Standard.WebApp.Options;
 using E.Standard.WebGIS.Core.Extensions;
 using E.Standard.WebGIS.Core.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SubscriberDatabase.Extensions.DependencyInjection;
@@ -282,6 +283,19 @@ public class Startup
             config.SupportedLanguages = Configuration.SupportedLanguages();
             config.DefaultLanguage = config.SupportedLanguages.First();
         });
+
+        #endregion
+
+        #region Security
+
+        services.Configure<SecurityOptions>(config =>
+        {
+            config.EndpointAuthorizationUrlPassword = Configuration.SecureEndpointUrlPassword();
+            config.EndpointAuthorizationBasicUsername = Configuration.SecureEndpointBasicAuthUsername();
+            config.EndpointAuthorizationBasicPassword = Configuration.SecureEndpointBasicAuthPassword();
+            config.EndpointAuthorizationBearerUsername = "admin";
+        });
+
 
         #endregion
 

@@ -12,6 +12,7 @@ using E.Standard.CMS.Core;
 using E.Standard.Custom.Core;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
+using E.Standard.WebApp.Abstraction;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
 
 using Microsoft.AspNetCore.Http;
@@ -28,7 +29,7 @@ public class ClientIdAndSecretAuthenticationMiddleware
     }
 
     async public Task Invoke(HttpContext httpContext,
-                             RoutingEndPointReflectionService endpointReflection,
+                             IEndPointReflectionProvider endpointReflection,
                              SubscriberDatabaseService subscriberDbService,
                              IEnumerable<ICustomApiSubscriberClientnameService> customSubscriberClientnameServices = null)
     {

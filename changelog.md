@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   Increased Usability with creation descrtion and preview.
   [Issue #464](https://github.com/e-netze/webgis-community/issues/464)
 
+- Endpoint Security (cache/clear) etc, ``<section name="security">``
+  api.config [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#security)
+  portal.config [docs](https://docs.webgiscloud.com/de/webgis/config/portal/index.html#abschnitt-security)
+
 ## Fixed
 
 ## 8.26.1801

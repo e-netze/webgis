@@ -19,10 +19,13 @@ using E.Standard.MessageQueues.Services.Abstraction;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Security.Cryptography.Services;
 using E.Standard.Web.Abstractions;
+using E.Standard.WebApp.Options;
+using E.Standard.WebApp.Reflection;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Api.Core.Controllers;
 
@@ -35,6 +38,7 @@ public class CacheController : ApiBaseController
     private readonly IServiceProvider _serviceProvider;
     private readonly ICryptoService _cryptoService;
     private readonly IEnumerable<ICacheClearableService> _cacheClearableServices;
+    private readonly SecurityOptions _securityOptions;
 
     public CacheController(ILogger<CacheController> logger,
                            ConfigurationService config,
@@ -44,6 +48,7 @@ public class CacheController : ApiBaseController
                            IServiceProvider serviceProvider,
                            ICryptoService cryptoService,
                            IHttpService http,
+                           IOptions<SecurityOptions> securityOptions,
                            IEnumerable<ICacheClearableService> cacheClearableServices,
                            IEnumerable<ICustomApiService> customServices = null)
         : base(logger, urlHelper, http, customServices)
@@ -55,6 +60,7 @@ public class CacheController : ApiBaseController
         _cacheClearableServices = cacheClearableServices;
         _serviceProvider = serviceProvider;
         _cryptoService = cryptoService;
+        _securityOptions = securityOptions.Value;
     }
 
     public IActionResult Index()
@@ -62,6 +68,10 @@ public class CacheController : ApiBaseController
         return ViewResult();
     }
 
+    [EndpointAuthorization(
+        AuthorizationType = EndpointAuthorizationType.UrlPassword | EndpointAuthorizationType.Basic | EndpointAuthorizationType.BearerToken,
+        AllowIfNotConfigured = true
+        )]
     async public Task<IActionResult> Clear(string id = "")
     {
         await _clearCache.ClearCache(id);
@@ -178,6 +188,10 @@ public class CacheController : ApiBaseController
         }
     }
 
+    [EndpointAuthorization(
+        AuthorizationType = EndpointAuthorizationType.UrlPassword | EndpointAuthorizationType.Basic | EndpointAuthorizationType.BearerToken,
+        AllowIfNotConfigured = true
+        )]
     public Task<IActionResult> OgcClear()
     {
         _clearCache.OgcClearCache();
@@ -185,6 +199,9 @@ public class CacheController : ApiBaseController
         return JsonViewSuccess(true);
     }
 
+    [EndpointAuthorization(
+            AuthorizationType = EndpointAuthorizationType.UrlPassword | EndpointAuthorizationType.Basic | EndpointAuthorizationType.BearerToken
+        )]
     async public Task<IActionResult> Collect()
     {
         var mem1 = GC.GetTotalMemory(false) / 1024.0 / 1024.0;
@@ -198,22 +215,16 @@ public class CacheController : ApiBaseController
         return await JsonObject(new { succeeded = true, mem1 = mem1, mem2 = mem2 });
     }
 
+    [EndpointAuthorization(AuthorizationType = EndpointAuthorizationType.UrlPassword | EndpointAuthorizationType.Basic)]
     async public Task<IActionResult> List(string pwd)
     {
-        var appCachePassword = _config.AppCacheListPassword();
+        var result = new Dictionary<string, object>();
 
-        if (!String.IsNullOrWhiteSpace(appCachePassword) && pwd == appCachePassword)
+        foreach (var cacheClearableService in _cacheClearableServices)
         {
-            var result = new Dictionary<string, object>();
-
-            foreach (var cacheClearableService in _cacheClearableServices)
-            {
-                result.Add(cacheClearableService.GetType().Name, await cacheClearableService.GetCacheObject());
-            }
-
-            return await JsonObject(result);
+            result.Add(cacheClearableService.GetType().Name, await cacheClearableService.GetCacheObject());
         }
 
-        return await JsonViewSuccess(false, "not allowed");
+        return await JsonObject(result);
     }
 }

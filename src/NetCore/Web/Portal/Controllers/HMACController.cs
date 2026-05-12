@@ -7,6 +7,8 @@ using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Security.App.Extensions;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
+using E.Standard.Security.Cryptography.Services;
+using E.Standard.WebApp.Options;
 
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +34,8 @@ public class HMACController : PortalBaseController
     private readonly ConfigurationService _configService;
     private readonly ICryptoService _crypto;
     private readonly ApplicationSecurityConfig _appSecurityConfig;
+    private readonly JwtAccessTokenService _tokenService;
+    private readonly SecurityOptions _securityOptions;
 
     public HMACController(ILogger<HMACController> logger,
                           UrlHelperService urlHelper,
@@ -40,6 +44,8 @@ public class HMACController : PortalBaseController
                           ConfigurationService configService,
                           ICryptoService crypto,
                           IOptions<ApplicationSecurityConfig> appSecurityConfig,
+                          JwtAccessTokenService tokenService,
+                          IOptions<SecurityOptions> securityOptions,
                           IEnumerable<ICustomPortalSecurityService> customSecurity = null)
         : base(logger, urlHelper, appSecurityConfig, customSecurity, crypto)
     {
@@ -50,10 +56,12 @@ public class HMACController : PortalBaseController
         _configService = configService;
         _crypto = crypto;
         _appSecurityConfig = appSecurityConfig.Value;
+        _tokenService = tokenService;
+        _securityOptions = securityOptions.Value;
     }
 
     [AuthorizeEndpoint]
-    async public Task<IActionResult> Index(string redirect = null, string pwd = null)
+    async public Task<IActionResult> Index(string redirect = null, string token = null)
     {
         PortalUser portalUser = null;
 
@@ -84,9 +92,8 @@ public class HMACController : PortalBaseController
 
         #region Add Roles when correct password is given
 
-        string appCachePassword = _configService.AppCacheListPassword();
-        if (!string.IsNullOrWhiteSpace(appCachePassword)
-            && pwd == appCachePassword)
+        if(!string.IsNullOrEmpty(token)
+            && _securityOptions.EndpointAuthorizationBearerUsername.Equals(_tokenService.ValidateToken(token)?.Identity?.Name))
         {
             hmacObject.userroles = portalUser.UserRoles;
             hmacObject.userroleparameteres = portalUser.RoleParameters;

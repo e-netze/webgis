@@ -1,12 +1,22 @@
-﻿@using E.Standard.Api.App.Extensions 
+﻿@using E.Standard.Api.App.Extensions
+@using E.Standard.Security.Cryptography.Services
+@using E.Standard.WebApp.Options
+@using E.Standard.WebGIS.Api.Abstractions
+@using Microsoft.Extensions.Options
+
 @model E.Standard.WebGIS.SubscriberDatabase.SubscriberDb.Subscriber
 @inject E.Standard.Configuration.Services.ConfigurationService config
 @inject E.Standard.Security.Cryptography.Abstractions.ICryptoService crypto
+@inject IUrlHelperService UrlHelper
+@inject JwtAccessTokenService TokenService
+@inject IOptions<SecurityOptions> SecurityOptions
 
 @{
     ViewBag.Title = "Api Clients";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+
 
 <div style="padding:10px">
 
@@ -22,45 +32,115 @@
 
 @if (config.IsAdminSubscriber(Model?.Name))
 {
-    <div class="webgis-api-tile" onclick="document.location='@Url.Action("adminsubscribers")'">
-        <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
-        <span class="webgis-api-tile-title">Admin Subscribers</span>
-        <span class="webgis-api-tile-description">
-            Manage API Subscribers
-        </span>
-    </div>
+        <h3>Setup</h3>
+        <div class="webgis-api-tile" onclick="document.location='@Url.Action("adminsubscribers")'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Admin Subscribers</span>
+            <span class="webgis-api-tile-description">
+                Manage API Subscribers
+            </span>
+        </div>
 
-    <div class="webgis-api-tile" onclick="document.location='@Url.Action("index","setup", new { token=crypto.EncryptTextDefault("{B69E8A3B-B6CE-4E06-841B-6574861D1920}", E.Standard.Security.Cryptography.CryptoResultStringType.Hex) })'">
-        <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
-        <span class="webgis-api-tile-title">Setup</span>
-        <span class="webgis-api-tile-description">
-            Setup Database(s) or check Database state...
-        </span>
-    </div>
+
+        <h3>Database/Setup</h3>
+        <div class="webgis-api-tile" onclick="document.location='@Url.Action("index", "setup", new { token = TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10) })'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Setup</span>
+            <span class="webgis-api-tile-description">
+                Setup Database(s) or check Database state...
+            </span>
+        </div>
+        <div class="webgis-api-tile" onclick="document.location='@Url.Action("migrate", "setup", new { token = TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10) })'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Migrate (Setup)</span>
+            <span class="webgis-api-tile-description">
+                Migrate Database(s)
+            </span>
+        </div>
+
+        <h3>API Cache</h3>
+        <div class="webgis-api-tile" onclick="document.location='@Url.Action("clear", "cache", new { token = TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10) })'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Cache Clear</span>
+            <span class="webgis-api-tile-description">
+                Clear the API cache
+            </span>
+        </div>
+
+        <div class="webgis-api-tile" onclick="document.location='@Url.Action("collect", "cache", new { token = TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10) })'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Collect Garbage</span>
+            <span class="webgis-api-tile-description">
+                Force Gargabe Collector
+            </span>
+        </div>
+
+        <h3>Portal Cache</h3>
+        <div class="webgis-api-tile" onclick="document.location='@($"{UrlHelper.PortalUrl()}/cache/clear?token={TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10)}")'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Cache Clear</span>
+            <span class="webgis-api-tile-description">
+                Clear the Portal/User cache
+            </span>
+        </div>
+
+        <div class="webgis-api-tile" onclick="document.location='@($"{UrlHelper.PortalUrl()}/cache/collect?token={TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10)}")'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Collect Garbage</span>
+            <span class="webgis-api-tile-description">
+                Force Gargabe Collector
+            </span>
+        </div>
+
+        <h3>Portal Diagnostics...</h3> 
+
+        <div class="webgis-api-tile" onclick="document.location='@($"{UrlHelper.PortalUrl()}/cache/list?token={TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10)}")'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">List Usercache</span>
+            <span class="webgis-api-tile-description">
+                List users in user cache
+            </span>
+        </div>
+
+        <div class="webgis-api-tile" onclick="document.location='@($"{UrlHelper.PortalUrl()}/hmac?token={TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10)}")'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Current User Keys</span>
+            <span class="webgis-api-tile-description">
+                Show current users HMAC Keys and roles
+            </span>
+        </div>
+
+        <div class="webgis-api-tile" onclick="document.location='@($"{UrlHelper.PortalUrl()}/instance/info?f=pjson&token={TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10)}")'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Instance Info</span>
+            <span class="webgis-api-tile-description">
+                Instance Info with request headers
+            </span>
+        </div>
 }
 else
 {
 
     if (config.SubscriberToolClientsAvailable())
     {
-    <div class="webgis-api-tile" onclick="document.location='@Url.Action("clients")'">
-        <img class="webgis-api-tile-image" src="~/content/api/img/api-100.png" />
-        <span class="webgis-api-tile-title">API Clients</span>
-        <span class="webgis-api-tile-description">
-            Manage your API Clients
-        </span>
-    </div>
+        <div class="webgis-api-tile" onclick="document.location='@Url.Action("clients")'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/api-100.png" />
+            <span class="webgis-api-tile-title">API Clients</span>
+            <span class="webgis-api-tile-description">
+                Manage your API Clients
+            </span>
+        </div>
     }
 
     if (config.SubscriberToolPortalsAvailable())
     {
-    <div class="webgis-api-tile" onclick="document.location='@Url.Action("portalpages")'">
-        <img class="webgis-api-tile-image" src="~/content/api/img/portal-100.png" />
-        <span class="webgis-api-tile-title">Portal Pages</span>
-        <span class="webgis-api-tile-description">
-            Manage your Portal Pages
-        </span>
-    </div>
+        <div class="webgis-api-tile" onclick="document.location='@Url.Action("portalpages")'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/portal-100.png" />
+            <span class="webgis-api-tile-title">Portal Pages</span>
+            <span class="webgis-api-tile-description">
+                Manage your Portal Pages
+            </span>
+        </div>
     }
 }
 

@@ -6,12 +6,13 @@ using E.DataLinq.Web.Reflection;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Reflection;
 using E.Standard.Custom.Core;
+using E.Standard.WebApp.Abstraction;
 
 namespace Api.Core.AppCode.Extensions;
 
 static public class UserIdentificationExtensions
 {
-    static public bool ApplyAuthenticationMiddleware(this ClaimsPrincipal claimsPrincipal, RoutingEndPointReflectionService endpointReflection, ApiAuthenticationTypes authType)
+    static public bool ApplyAuthenticationMiddleware(this ClaimsPrincipal claimsPrincipal, IEndPointReflectionProvider endpointReflection, ApiAuthenticationTypes authType)
     {
         if (claimsPrincipal.IsAuthenticatedApiUser())
         {
@@ -24,7 +25,7 @@ static public class UserIdentificationExtensions
                apiAuthenticationAttribute.AuthenticationTypes.HasFlag(authType);
     }
 
-    static public bool ApplyDataLinqHostAuthentication(this ClaimsPrincipal claimsPrincipal, RoutingEndPointReflectionService endpointReflection, HostAuthenticationTypes authType)
+    static public bool ApplyDataLinqHostAuthentication(this ClaimsPrincipal claimsPrincipal, IEndPointReflectionProvider endpointReflection, HostAuthenticationTypes authType)
     {
         if (claimsPrincipal.IsAuthenticatedApiUser())
         {
