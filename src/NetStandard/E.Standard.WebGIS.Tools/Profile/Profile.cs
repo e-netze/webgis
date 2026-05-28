@@ -478,11 +478,11 @@ public class CreateProfile : IApiServerToolLocalizable<CreateProfile>,
 
             //gr.DrawLine(pen, distanceH/2, -70, distanceH/2, distanceV + 20);    // Mittelstrich
 
-            string filename = $"profile_{Guid.NewGuid().ToString("N").ToLower()}";
+            string filename = $"_profile_{Guid.NewGuid().ToString("N").ToLower()}";
 
             await bitmap.SaveOrUpload(bridge.OutputPath.AddUriPath($"{filename}.png"), ImageFormat.Png);
             byte[] previewData = Drawing.Pro.ImageOperations.Scaledown(System.IO.File.ReadAllBytes(bridge.OutputPath.AddUriPath($"{filename}.png")), 300);
-            await previewData.SaveOrUpload(bridge.OutputPath.AddUriPath($"preview_{filename}.png"));
+            await previewData.SaveOrUpload(bridge.OutputPath.AddUriPath($"{filename}_preview.png"));
 
             #region Create Pdf
 
@@ -502,7 +502,7 @@ public class CreateProfile : IApiServerToolLocalizable<CreateProfile>,
                 {
                     Url = bridge.OutputUrl + "/" + filename + ".pdf",
                     Path = bridge.OutputPath + "/" + filename + ".pdf",
-                    PreviewUrl = bridge.OutputUrl + "/preview_" + filename + ".png",
+                    PreviewUrl = bridge.OutputUrl + "/" + filename + "_preview.png",
                     Length = output.Length
                 };
             }

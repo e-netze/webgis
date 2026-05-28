@@ -37,6 +37,7 @@ static public class ApiGlobals
 
     public const string DownloadFileExtension = ".download";
     public const string PrintOutputPrefix = "_print_";
+    public const string ProfileOutputPrefix = "_profile_";
 
     #endregion
 

@@ -75,6 +75,8 @@ public class Download : IApiEndpoint
                    => $"webgis-map_{DateTime.Now.ToShortDateString()}_{DateTime.Now.ToLongTimeString()}.pdf",
             ".zip" when n.StartsWith(ApiGlobals.PrintOutputPrefix) 
                    => $"webgis-map_{DateTime.Now.ToShortDateString()}_{DateTime.Now.ToLongTimeString()}.zip",
+            ".pdf" when fileName.StartsWith(ApiGlobals.ProfileOutputPrefix)
+                => $"webgis-profile_{DateTime.Now.ToShortDateString()}_{DateTime.Now.ToLongTimeString()}.pdf",
             //".zip" => n,
             ApiGlobals.DownloadFileExtension => n,
             _ => throw new Exception("Forbiden file extension")

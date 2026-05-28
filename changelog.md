@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ## Added
+## Fixed
+
+## 8.26.2201
+
+## Added
 
 - MapSeriesPrint: Added "Create One per Feature" Method.
   Increased Usability with creation descrtion and preview.
@@ -18,6 +23,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   portal.config [docs](https://docs.webgiscloud.com/de/webgis/config/portal/index.html#abschnitt-security)
 
 ## Fixed
+
+- Tool Profile: Can't download print PDF document
+  [Issue #479](https://github.com/e-netze/webgis-community/issues/479)
 
 ## 8.26.1801
 
