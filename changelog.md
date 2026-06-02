@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 ## Fixed
 
+- Tool Coordinates: Remove all vertices
+  [Issue 471](https://github.com/e-netze/webgis-community/issues/471)
+
+- Measuring Tools: Change tool => UI is not updating sketch values
+  [Issue #465](https://github.com/e-netze/webgis-community/issues/465)
+
+- Tool Identify: Line/Polyselection not always works in desktop/professional layout
+  [discussion #399](https://github.com/e-netze/webgis-community/discussions/399)
+
 ## 8.26.2201
 
 ## Added

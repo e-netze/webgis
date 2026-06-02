@@ -11,7 +11,7 @@ static public class ShapeExtensions
     static public void TransformTo(this Shape? shape, SpatialReference? sRef)
       => shape.TransformTo(sRef?.Id ?? 0);
 
-    static public void TransformTo(this Shape? shape, int sRefId)
+    static public Shape? TransformTo(this Shape? shape, int sRefId)
     {
         if (shape?.SrsId > 0 && sRefId > 0 && shape.SrsId != sRefId)
         {
@@ -21,6 +21,8 @@ static public class ShapeExtensions
                 shape.SrsId = sRefId;
             }
         }
+
+        return shape;
     }
 
     static public bool IsWebMercator(this Shape? shape)

@@ -432,13 +432,9 @@ public class ApiToolEventArguments
         return (T)(object)this.GetInt(propertyName);
     }
 
-    public string MenuItemValue
-    {
-        get
-        {
-            return this["menuitem-value"];
-        }
-    }
+    public string MenuItemValue => this["menuitem-value"];
+        
+    public string MenuItemCommand => this["menuitem-item-command"];
 
     public void ClearMenuItemValue()
     {
@@ -589,6 +585,15 @@ public class ApiToolEventArguments
 
     public Shape Sketch { get; private set; }
     public Shape SketchWgs84 { get; private set; }
+
+    public void SetSketch(Shape sketchWgs84, Shape sketch)
+    {
+        this.SketchWgs84 = sketchWgs84;
+        this.Sketch = sketch;
+
+        this["_sketchWgs84"] = this.SketchWgs84?.WKTFromShape();
+        this["_sketch"] = this.Sketch?.WKTFromShape();
+    }
 
     public SketchInfoClass SketchInfo { get; private set; }
 

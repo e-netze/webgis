@@ -3557,8 +3557,8 @@
                 this.redrawMarkers();
             }
         }
-        //console.log('fromJson', json);
-        //console.log('fromJson', _vertices);
+        // console.log('fromJson', json);
+        // console.log('fromJson', _vertices);
 
         this._isDirty = false;
     };
@@ -3612,6 +3612,9 @@
             }
         }
         this.events.fire('onchanged', this);
+
+        // console.log('fromJsonFast', json);
+        // console.log('fromJsonFast', _vertices);
 
         this._isDirty = false;
     };

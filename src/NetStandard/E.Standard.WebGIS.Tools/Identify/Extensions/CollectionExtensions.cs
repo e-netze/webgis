@@ -23,6 +23,9 @@ static internal class CollectionExtensions
         {
             id = id,
             title = "Favoriten",
+            icon = !String.IsNullOrEmpty(e[IdentifyDefault.IdentifyCurrentApplyTool])
+                ? UIImageButton.ToolResourceImage(tool, e[IdentifyDefault.IdentifyCurrentApplyTool])
+                : null,
             CollapseState = UICollapsableElement.CollapseStatus.Collapsed,
             ExpandBehavior = UICollapsableElement.ExpandBehaviorMode.Exclusive
         });
@@ -46,6 +49,9 @@ static internal class CollectionExtensions
         {
             id = id,
             title = "Sichtbare Themen",
+            icon = !String.IsNullOrEmpty(e[IdentifyDefault.IdentifyCurrentApplyTool])
+                ? UIImageButton.ToolResourceImage(tool, e[IdentifyDefault.IdentifyCurrentApplyTool])
+                : null,
             CollapseState = UICollapsableElement.CollapseStatus.Collapsed,
             ExpandBehavior = UICollapsableElement.ExpandBehaviorMode.Exclusive
         });
@@ -69,6 +75,9 @@ static internal class CollectionExtensions
         {
             id = id,
             title = "Nicht sichtbare Themen",
+            icon = !String.IsNullOrEmpty(e[IdentifyDefault.IdentifyCurrentApplyTool])
+                ? UIImageButton.ToolResourceImage(tool, e[IdentifyDefault.IdentifyCurrentApplyTool])
+                : null,
             CollapseState = UICollapsableElement.CollapseStatus.Collapsed,
             ExpandBehavior = UICollapsableElement.ExpandBehaviorMode.Exclusive
         });
@@ -93,6 +102,9 @@ static internal class CollectionExtensions
         {
             id = id,
             title = hasExcludedQueries ? "Weitere Themem" : "Alle Themen",
+            icon = !String.IsNullOrEmpty(e[IdentifyDefault.IdentifyCurrentApplyTool])
+                ? UIImageButton.ToolResourceImage(tool, e[IdentifyDefault.IdentifyCurrentApplyTool])
+                : null,
             CollapseState = UICollapsableElement.CollapseStatus.Collapsed,
             ExpandBehavior = UICollapsableElement.ExpandBehaviorMode.Exclusive
         });

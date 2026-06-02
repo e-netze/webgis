@@ -187,8 +187,8 @@ public class Bookmarks : IApiButton,
     {
         bridge.CurrentUser.ThrowIfAnonymous(localizer);
 
-        var bookmarkName = e["menuitem-value"];
-        var command = e["menuitem-item-command"];
+        var bookmarkName = e.MenuItemValue;
+        var command = e.MenuItemCommand;
 
         ApiEventResponse apiResponse = null;
 

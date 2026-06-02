@@ -176,7 +176,7 @@ public class UICss
 
     public const string TableAlternateRowColor = "webgis-table-alternate-row-color";
 
-    public const string EmptyOnChangeSketch = "webgis-ui-emtpy-onchage-sketch";
+    public const string EmptyOnChangeSketch = "webgis-ui-emtpy-onchange-sketch";
 
     public const string Narrow = "webgis-narrow";
     public const string NarrowForm = "webgis-narrow-form";

@@ -859,6 +859,9 @@
         $('.webgis-query-combo.require-ui-refresh').each(function (i, e) {
             $(e).webgis_queryCombo('refresh');
         });
+
+        this.recalcSketchPropertyElements();
+
         this._map.events.fire('onrefreshuielements', this._map);
     };
     this._cloneOptions = function (options) {
@@ -2094,6 +2097,31 @@
                     });
             }
         }
+    };
+
+    this.recalcSketchPropertyElements = function () {
+        if (!this._map.sketch) return;
+
+        if (!this.hasSketchPropertyElements()) return;
+
+        const prop = this._map.sketch.calcProperties("X", "Y");
+        if (prop.length || prop.set_values)
+            $(".webgis-sketch-length").val(webgis.calc.round(prop.length || 0, 2));
+        if (prop.circumference || prop.set_values || 0)
+            $(".webgis-sketch-circumference").val(webgis.calc.round(prop.circumference || 0, 2));
+        if (prop.area || prop.set_values)
+            $(".webgis-sketch-area").val(webgis.calc.round(prop.area || 0, 2));
+        
+    };
+    this.hasSketchPropertyElements = function () {
+        const lengthElements = $(".webgis-sketch-length");
+        const circumferenceElements = $(".webgis-sketch-circumference");
+        const areaElements = $(".webgis-sketch-area");
+
+        return (
+            lengthElements.length +
+            circumferenceElements.length +
+            areaElements.length) > 0;
     };
 
     $(this._map._webgisContainer).find('.webgis-map-title').click(function (e) {

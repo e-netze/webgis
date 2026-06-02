@@ -107,7 +107,9 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                 new UISetter("coordinates-default-proj",
                              !String.IsNullOrWhiteSpace(e["coordinates-default-proj"]) ? e["coordinates-default-proj"] : (e.MapCrs.HasValue ? e.MapCrs.Value : 0).ToString()),
                 new UISetter(CoordinatesCounter,
-                             !String.IsNullOrWhiteSpace(e[CoordinatesCounter]) ? (int.Parse(e[CoordinatesCounter]) + 1).ToString() : "0"));
+                             !String.IsNullOrWhiteSpace(e[CoordinatesCounter]) && e[CoordinatesCounter] != "0"
+                             ? (int.Parse(e[CoordinatesCounter]) + 1).ToString() 
+                             : "0"));
 
             div.AddChild(CreateTable(bridge, e, localizer));
         }
@@ -968,10 +970,12 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
             }
 
             response.AddUIElement(new UITable(new UITableRow(cols.ToArray(), values: values.ToArray())
-                                                       .WithStyles(UICss.ToolResultElement(this.GetType())))
+                                                    .WithStyles(UICss.ToolResultElement(this.GetType())))
+
             {
                 InsertTypeValue = UITable.TableInsertType.Append
-            }.WithId(CoordinatesTableId));
+            }
+            .WithId(CoordinatesTableId));
 
             response.AddUISetter(new UISetter(CoordinatesCounter, counter.ToString()));
         }

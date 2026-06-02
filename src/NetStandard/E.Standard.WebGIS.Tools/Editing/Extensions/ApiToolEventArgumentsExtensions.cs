@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -372,6 +373,10 @@ static internal class ApiToolEventArgumentsExtensions
     }
 
     #endregion
+
+    static public bool FromApplyGeometryCommand(this ApiToolEventArguments e) => e["_method"] == "apply";
+    static public bool FromApplyBoxCommand(this ApiToolEventArguments e) => e["_method"] == "box";
+    static public bool FromAnyApplyCommand(this ApiToolEventArguments e) => e.FromApplyBoxCommand() || e.FromApplyGeometryCommand();
 
     public static bool RequireCrsP4Parameters(this ApiToolEventArguments e, int sketchCrsId)
     {

@@ -21,6 +21,8 @@ using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Extensions;
+using E.Standard.WebGIS.Tools.Editing.Extensions;
 
 namespace E.Standard.WebGIS.Tools.Identify;
 
@@ -28,7 +30,31 @@ internal class IdentifyServiceDesktop
 {
     async public Task<ApiEventResponse> OnEvent(IApiTool tool, IBridge bridge, ApiToolEventArguments e, ILocalizer localizer)
     {
+        #region Get Shape from "apply" request or stored in IdentityCurrentQueryShape request
+
+        // Fallback: use the last/current geometry
+        if (e.AsDefaultTool == false
+            && !String.IsNullOrEmpty(e[IdentifyDefault.IdentityCurrentQueryShape])
+            && !e.FromAnyApplyCommand()) // do not use current query shape, if any apply command (box, apply (gometry)) is send
+        {
+            e.SetSketch(e[IdentifyDefault.IdentityCurrentQueryShape].ShapeFromWKT(), null);
+        }
+
         var click = e.ToMapProjectedClickEvent();
+        Shape queryShape = click.Sketch;
+
+        if (queryShape != null && queryShape.ShapeEnvelope.HasValidExtent == false)
+        {
+            queryShape = null;
+        }
+
+        if (e.FromApplyGeometryCommand())
+        {
+            queryShape = e.ApplyBuffer(queryShape, click.SRef, e.CalcCrs);
+            queryShape.SrsId = e.CalcCrs ?? queryShape.SrsId;
+        }
+
+        #endregion
 
         double eventScale = click.EventScale
                                  .OrTake(e.GetDouble(IdentifyDefault.IdentifyMapScaleId))
@@ -201,14 +227,6 @@ internal class IdentifyServiceDesktop
         #endregion
 
         #region Create Filter
-
-        Shape queryShape = click.Sketch;
-        if (queryShape != null && queryShape.ShapeEnvelope.HasValidExtent == false)
-        {
-            queryShape = null;
-        }
-
-        queryShape = e.ApplyBuffer(queryShape, click.SRef, e.CalcCrs);
 
         ApiSpatialFilter filter = new ApiSpatialFilter()
         {
@@ -387,9 +405,9 @@ internal class IdentifyServiceDesktop
             {
                 int count = found[query];
 
-                var legendImageUrl = queryFilters.ContainsKey(query) ?
-                    await query.LegendItemImageUrlAsync(bridge.RequestContext, queryFilters[query]) :
-                    String.Empty;
+                var legendImageUrl = queryFilters.ContainsKey(query) 
+                    ? await query.LegendItemImageUrlAsync(bridge.RequestContext, queryFilters[query]) 
+                    : String.Empty;
                 var text = query.Name + (count > 0 ? "&nbsp;[" + count + "]" : "");
                 var value = query is IdentifyToolQuery ? ((IdentifyToolQuery)query).Url : bridge.GetQueryThemeId(query);
                 var icon = !String.IsNullOrWhiteSpace(legendImageUrl) ? bridge.AppRootUrl + legendImageUrl : null;
@@ -500,15 +518,12 @@ internal class IdentifyServiceDesktop
                 UISetters = new List<IUISetter>()
             };
 
-            switch (e["_method"])
-            {
-                case "box":
-                    response.ToolCursor = ToolCursor.Custom_Rectangle;
-                    break;
-                case "apply":
-                    response.ToolCursor = ToolCursor.Custom_Pen;
-                    break;
-            }
+            response.ToolCursor =
+                e.FromApplyBoxCommand()
+                    ? ToolCursor.Custom_Rectangle
+                    : e.FromApplyGeometryCommand()
+                        ? ToolCursor.Custom_Pen
+                        : null;
 
             #endregion
         }
@@ -546,7 +561,19 @@ internal class IdentifyServiceDesktop
 
         if (response.UISetters != null)
         {
-            response.UISetters.Add(new UISetter("identify-tool-selection-method", e["_method"]));
+            if (e.FromAnyApplyCommand())
+            {
+                response.UISetters.Add(new UISetter(IdentifyDefault.IdentifyToolSelectionMethodId, e["_method"]));
+                response.UISetters.Add(new UISetter(IdentifyDefault.IdentityCurrentQueryShape,
+                        e.FromApplyBoxCommand() switch
+                        {
+                            // do not store this for box, this is send anyway
+                            true => "",  
+                            // otherwise store the (bufferd) shape in wgs84 for later use.
+                            _ => queryShape.TransformTo(Epsg.WGS84)?.WKTFromShape()
+                        }));
+                response.UISetters.Add(new UIUpdatePersistentParametersSetter(tool));
+            }
         }
 
         if (errors.Length > 0)

@@ -551,15 +551,11 @@
                     webgis.tools.fireActiveToolEvents(this, e, coord);
                 }, this);
                 this.sketch.events.on(['onchanged', 'onremoved', 'onchangegeometrytype'], function (e) {
-                    var prop = this.sketch.calcProperties("X", "Y");
-                    if (prop.length || prop.set_values)
-                        $('.webgis-sketch-length').val(webgis.calc.round(prop.length || 0, 2));
-                    if (prop.circumference || prop.set_values || 0)
-                        $('.webgis-sketch-circumference').val(webgis.calc.round(prop.circumference || 0, 2));
-                    if (prop.area || prop.set_values)
-                        $('.webgis-sketch-area').val(webgis.calc.round(prop.area || 0, 2));
+                    console.log('sketch changed...');
 
-                    $(".webgis-ui-emtpy-onchage-sketch").empty();   // zB 3D Messen Tabelle nach jeder änderung des Sketches wieder verwerfen
+                    this.ui.recalcSketchPropertyElements();
+
+                    $(".webgis-ui-emtpy-onchange-sketch").empty();   // zB 3D Messen Tabelle nach jeder änderung des Sketches wieder verwerfen
                 }, this);
                 this.sketch.events.on(['onvertexadded'], function (e, sender, coord) {
                     webgis.tools.fireActiveToolEvents(this, e, coord);
@@ -2569,6 +2565,8 @@
         if (!this._toolPersistence[context])
             this._toolPersistence[context] = [];
         this._toolPersistence[context][paramId] = val;
+
+        console.log("setPersistentToolParameter", context, paramId, val);
     };
     this.getPersistentToolParameter = function (tool, paramId, prefix) {
         var params = this.getPersistentToolParameters(tool, prefix);
@@ -2627,7 +2625,7 @@
             var $e = $('#' + id + '.webgis-tool-parameter-persistent');
             if ($e.length > 0) {
                 params[id] = $e.val();
-                console.log(' updated parameter', id, params[id]);
+                console.log(' updated parameter', context, id, params[id]);
             }
         }
     };

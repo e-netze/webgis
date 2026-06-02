@@ -1601,7 +1601,9 @@
         });
 
         var ptp = map != null ? map.getPersistentToolParameters(tool) : [];
+        //console.log('ptp', ptp);
         for (var id in ptp) {
+            //console.log(id, $('#' + id).length, webgis.tools.toParameterValue(ptp[id]));
             if ($('#' + id).length === 0) {
                 ret += (ret !== '' ? '|' : '');
                 ret += id + '=' + webgis.tools.toParameterValue(ptp[id]);
