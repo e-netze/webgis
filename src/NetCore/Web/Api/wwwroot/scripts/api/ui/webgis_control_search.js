@@ -66,7 +66,9 @@
 
         $elem.attr('data-service', options.search_service);
         $elem.attr('data-source', webgis.baseUrl + '/rest/search/' + options.search_service + '?c=query&');
-        $elem.attr('data-search-categories', options.search_categories).attr('data-minlength', 0);
+        $elem.attr('data-search-categories', options.search_categories)
+            .attr('data-minlength', webgis.usability.quickSearch.minLength || 0)
+            .attr('data-debounce-delay', webgis.usability.quickSearch.debounceDelay || 0);
         $elem.addClass('webgis-autocomplete');
 
         if (options.on_select) {

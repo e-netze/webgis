@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ## Added
+
+- Quicksearch: make ``minLength`` and ``debounceDelay`` configurable
+  [Issue #469](https://github.com/e-netze/webgis-community/issues/469)
+
 ## Fixed
 
 - Tool Coordinates: Remove all vertices

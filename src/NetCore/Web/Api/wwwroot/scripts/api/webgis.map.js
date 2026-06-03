@@ -2566,7 +2566,7 @@
             this._toolPersistence[context] = [];
         this._toolPersistence[context][paramId] = val;
 
-        console.log("setPersistentToolParameter", context, paramId, val);
+        //console.log("setPersistentToolParameter", context, paramId, val);
     };
     this.getPersistentToolParameter = function (tool, paramId, prefix) {
         var params = this.getPersistentToolParameters(tool, prefix);

@@ -107,7 +107,9 @@ webgis.usability = {
             default: true,
             geocodes: false
         },
-        selectFirstOnEnter: false
+        selectFirstOnEnter: false,
+        debounceDelay: 0,
+        minLength: 0
     },
 
     sketchTools: {

@@ -2415,6 +2415,8 @@
             });
         }
     };
+    this._autoCompleteDebounceTimer = null,
+    this._autoCompleteCurrentRequest = null,
     this._appendAutocomplete = function ($parent) {
         if (!$parent)
             return;
@@ -2492,48 +2494,83 @@
                         async: true,
                         displayKey: 'label',
                         source: function (query, processSync, processAsync) {
+                            var typeaheadContext = this;
+                            var $e = $(e);
 
                             if (query === '~') {
                                 console.log('dummy request');
-                                return;  // dummy call to refresh empty input boxes with dependencies (see webgis_topbar.js line ~312)
+                                return;
                             }
 
-                            var $element = $(this.$el[0].parentElement.parentElement).children(".webgis-autocomplete").first(); // Ugly!!!
-                            //console.log($element);
-                            var $ctrl = $element; // $(e); //$(this).find('.webgis-autocomplete');
-                            var s = $ctrl.attr('data-source'); //.dataset.source;
-                            $ctrl.parent().parent().find('.webgis-input,.webgis-autocomplete-parameter').each(function (j, h) {
-                                s += '&' + (h.name || h.id) + '=' + encodeURIComponent($(h).val());
-                            });
-                            if ($(e).attr('data-search-categories')) {
-                                s += '&categories=' + encodeURIComponent($(e).attr('data-search-categories'));
-                            }
-                            if (webgis.advancedOptions && webgis.advancedOptions.quicksearch_custom_parameters && s.indexOf('/search/')>0) {
-                                s += '&' + webgis.advancedOptions.quicksearch_custom_parameters;
-                            }
-                            s += webgis.hmac.urlParameters() + '&_autocomplete_item_style=label';
-                            return webgis.ajax({
-                                url: s,
-                                type: 'get',
-                                data: { term: query },
-                                success: function (data) {
-                                    //console.log(data);
-                                    //data = data.slice(0, 12);  // should be sliced on the server
-                                    if ($element.data('data-append-items')) {
-                                        for (var i in $element.data('data-append-items')) {
-                                            try {
-                                                var clone = Object.assign({}, $element.data('data-append-items')[i]);
-                                                clone.value = (clone.value || '').replaceAll('{0}', query);
-                                                clone.label = (clone.label || '').replaceAll('{0}', query);
-                                                data.push(clone);
-                                            } catch (e) { }
+                            const queryFunc = function (typeaheadContext, $e) {
+                                var $element = $(typeaheadContext.$el[0].parentElement.parentElement)
+                                    .children(".webgis-autocomplete")
+                                    .first();
+
+                                var $ctrl = $element;
+                                var s = $ctrl.attr('data-source');
+
+                                $ctrl.parent().parent()
+                                    .find('.webgis-input,.webgis-autocomplete-parameter')
+                                    .each(function (j, h) {
+                                        s += '&' + (h.name || h.id) + '=' + encodeURIComponent($(h).val());
+                                    });
+
+                                if ($e.attr('data-search-categories')) {
+                                    s += '&categories=' + encodeURIComponent($e.attr('data-search-categories'));
+                                }
+
+                                if (
+                                    webgis.advancedOptions &&
+                                    webgis.advancedOptions.quicksearch_custom_parameters &&
+                                    s.indexOf('/search/') > 0
+                                ) {
+                                    s += '&' + webgis.advancedOptions.quicksearch_custom_parameters;
+                                }
+
+                                s += webgis.hmac.urlParameters() + '&_autocomplete_item_style=label';
+
+                                webgis._autoCompleteCurrentRequest = webgis.ajax({
+                                    url: s,
+                                    type: 'get',
+                                    data: { term: query },
+
+                                    success: function (data) {
+                                        if ($element.data('data-append-items')) {
+                                            for (var i in $element.data('data-append-items')) {
+                                                try {
+                                                    var clone = Object.assign({}, $element.data('data-append-items')[i]);
+                                                    clone.value = (clone.value || '').replaceAll('{0}', query);
+                                                    clone.label = (clone.label || '').replaceAll('{0}', query);
+                                                    data.push(clone);
+                                                } catch (e) { }
+                                            }
+                                        }
+
+                                        processAsync(data);
+                                    },
+
+                                    error: function (xhr, status) {
+                                        if (status !== 'abort') {
+                                            processAsync([]);
                                         }
                                     }
-                                    processAsync(data);
-                                },
-                                error: function () {
+                                });
+                            };
+
+                            var debounceDelay = $e.attr("data-debounce-delay") ? parseInt($e.attr("data-debounce-delay")) : 0
+
+                            if (queryFunc, webgis.usability.quickSearch.debounceDelay) {
+                                clearTimeout(webgis._autoCompleteDebounceTimer);
+
+                                if (webgis._autoCompleteCurrentRequest && webgis._autoCompleteCurrentRequest.readyState !== 4) {
+                                    webgis._autoCompleteCurrentRequest.abort();
                                 }
-                            });
+
+                                webgis._autoCompleteDebounceTimer = setTimeout(function () { queryFunc(typeaheadContext, $e); }, debounceDelay);
+                            } else {
+                                queryFunc(typeaheadContext, $e);
+                            }
                         },
                         templates: {
                             empty: [
