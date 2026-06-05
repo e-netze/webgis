@@ -195,8 +195,6 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
     {
         var response = await OnSave(bridge, e, localizer);
 
-        response.ActiveTool = this;
-
         EditEnvironment editEnvironment = new EditEnvironment(bridge, e);
         var feature = editEnvironment.GetFeature(bridge, e);
 
@@ -210,8 +208,6 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
     {
         var response = await OnSave(bridge, e, localizer);
 
-        response.ActiveTool = this;
-
         EditEnvironment editEnvironment = new EditEnvironment(bridge, e);
         var feature = editEnvironment.GetFeature(bridge, e);
 
@@ -224,8 +220,6 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
     async public Task<ApiEventResponse> OnSaveAndContinueSketchKeepAttributes(IBridge bridge, ApiToolEventArguments e, ILocalizer<InsertFeature> localizer)
     {
         var response = await OnSave(bridge, e, localizer);
-
-        response.ActiveTool = this;
 
         EditEnvironment editEnvironment = new EditEnvironment(bridge, e);
         var feature = editEnvironment.GetFeature(bridge, e);

@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Tool Identify: Line/Polyselection not always works in desktop/professional layout
   [discussion #399](https://github.com/e-netze/webgis-community/discussions/399)
 
+- Editing: save-and-continue-sketch not worked with desktop/professional layout
+
 ## 8.26.2201
 
 ## Added
