@@ -1468,14 +1468,21 @@
                            assembly="E.Standard.WebGIS.CmsSchema.dll"
                            instance="E.Standard.WebGIS.CmsSchema.EditingSnappingSchemeLink" />
           </schema-node>
-		  <schema-node name="Validations">
-			 <schema-node name="*" createmode="user" itemorder="true"
-						  prompt="Neue Editmask Validation"
-						  deletable="true"
-					      assembly="E.Standard.WebGIS.CmsSchema.dll"
+		      <schema-node name="Validations">
+			      <schema-node name="*" createmode="user" itemorder="true"
+						    prompt="Neue Editmask Validation"
+						    deletable="true"
+					          assembly="E.Standard.WebGIS.CmsSchema.dll"
 			              instance="E.Standard.WebGIS.CmsSchema.EditingMaskValidation" />
-		  </schema-node>
-        </schema-node>
+		      </schema-node>
+					<schema-node name="CommitActions" itemorder="true">
+						<schema-node name="*" createmode="user" itemorder="true"
+						    prompt="Neue Editmask Commit Action"
+						    deletable="true"
+					          assembly="E.Standard.WebGIS.CmsSchema.dll"
+			              instance="E.Standard.WebGIS.CmsSchema.EditingCommitAction" />
+					</schema-node>
+      </schema-node>
       <!--</schema-node>-->
     </schema-node>
   </schema-template>

@@ -192,6 +192,17 @@ static public class StringExtensions
         return $"{str1.RemoveEndingSlashAndBackslash()}{uriSeparator}{str2.RemoveStartingSlashAndBackslash()}";
     }
 
+    public static string AddUrlQueryString(this string url, string queryString)
+    {
+        if (String.IsNullOrEmpty(queryString)) { return url; }
+
+        queryString = queryString.TrimStart('?', '&');
+
+        return url.Contains('?')
+            ? $"{url}&{queryString}"
+            : $"{url}?{queryString}";
+    }
+
     public static int ParseInvariantToRoundedInt(this string str)
     {
         if (str is null)

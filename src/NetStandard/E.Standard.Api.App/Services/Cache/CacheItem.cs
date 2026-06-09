@@ -17,6 +17,8 @@ using E.Standard.WebMapping.Core.Api.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+using static E.Standard.Api.App.DTOs.EditThemeDTO;
+
 namespace E.Standard.Api.App.Services.Cache;
 
 public class CmsCacheItem
@@ -895,6 +897,39 @@ public class CmsCacheItem
                                 if (maskValidations.Count > 0)
                                 {
                                     editTheme.MaskValidations = maskValidations.ToArray();
+                                }
+
+                                #endregion
+
+                                #region Edit Commit Actions
+
+                                var editCommitActions = new List<AuthObject<EditThemeDTO.CommitAction>>();
+                                foreach (CmsNode cmsEditingComitActionNode in cmsHlp.GetCmsEditingCommitActionNodes(cmsEditingTheme))
+                                {
+                                    var commitAction = new EditThemeDTO.CommitAction()
+                                    {
+                                        Name = cmsEditingComitActionNode.Name,
+                                        ActionTiming = (EditCommitActionTiming)cmsEditingComitActionNode.Load("timing", (int)EditCommitActionTiming.Before_Insert),
+                                        ActionProtocol = (EditCommitActionProtocol)cmsEditingComitActionNode.Load("protocol", (int)EditCommitActionProtocol.Http_Get),
+                                        ActionTarget = cmsEditingComitActionNode.LoadString("target"),
+                                        ActionPayload = cmsEditingComitActionNode.LoadString("payload")
+                                    };
+
+                                    string actionHeaders = cmsEditingComitActionNode.LoadString("headers");
+                                    if (!String.IsNullOrWhiteSpace(actionHeaders))
+                                    {
+                                        commitAction.ActionHeaders = System.Text.Json.JsonSerializer.Deserialize<string[]>(actionHeaders);
+                                    }
+
+                                    if (commitAction.IsValid())
+                                    {
+                                        editCommitActions.Add(new AuthObject<EditThemeDTO.CommitAction>(commitAction
+                                            , CmsDocument.GetAuthNodeFast(cms, cmsEditingComitActionNode.NodeXPath)));
+                                    }
+                                }
+                                if (editCommitActions.Count > 0)
+                                {
+                                    editTheme.CommitActions = editCommitActions.ToArray();
                                 }
 
                                 #endregion

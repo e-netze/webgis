@@ -43,7 +43,8 @@ public class HttpService : IHttpService
 
     async public Task<byte[]> GetDataAsync(string url,
                                            RequestAuthorization? authorization = null,
-                                           int timeOutSeconds = 20)
+                                           int timeOutSeconds = 20,
+                                           IEnumerable<KeyValuePair<string, string>>? headers = null)
     {
         url = PrepareUrl(url);
 
@@ -53,6 +54,7 @@ public class HttpService : IHttpService
             //request.Headers.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0"));
 
             request.AddAuthentication(authorization);
+            request.AddRequestHeaders(headers);
 
             using (var cts = new CancellationTokenSource(timeOutSeconds * 1000))
             {
@@ -123,18 +125,20 @@ public class HttpService : IHttpService
     async public Task<string> GetStringAsync(string url,
                                              RequestAuthorization? authorization = null,
                                              int timeOutSeconds = 20,
-                                             Encoding? encoding = null)
+                                             Encoding? encoding = null,
+                                             IEnumerable<KeyValuePair<string, string>>? headers = null)
     {
-        var bytes = await GetDataAsync(url, authorization, timeOutSeconds);
+        var bytes = await GetDataAsync(url, authorization, timeOutSeconds, headers);
 
         return EncodeBytes(bytes, encoding);
     }
 
     async public Task<IBitmap> GetImageAsync(string url,
                                             RequestAuthorization? authentication = null,
-                                            int timeOutSeconds = 20)
+                                            int timeOutSeconds = 20,
+                                            IEnumerable<KeyValuePair<string, string>>? headers = null)
     {
-        using (var ms = new MemoryStream(await GetDataAsync(url)))
+        using (var ms = new MemoryStream(await GetDataAsync(url, authentication, timeOutSeconds, headers)))
         {
             return Current.Engine.CreateBitmap(ms);
         }
@@ -142,7 +146,8 @@ public class HttpService : IHttpService
 
     public Task<IEnumerable<T>> GetDataAsync<T>(IEnumerable<T> data,
                                                 RequestAuthorization? authorization = null,
-                                                int timeOutSeconds = 20)
+                                                int timeOutSeconds = 20,
+                                                IEnumerable<KeyValuePair<string, string>>? headers = null)
         where T : IUrlData
     {
         var tasks = data.Select(d =>
@@ -151,7 +156,7 @@ public class HttpService : IHttpService
                 try
                 {
                     d.Exception = null;
-                    d.Data = await GetDataAsync(d.Url, authorization, timeOutSeconds);
+                    d.Data = await GetDataAsync(d.Url, authorization, timeOutSeconds, headers);
                 }
                 catch (Exception ex)
                 {
@@ -173,7 +178,8 @@ public class HttpService : IHttpService
     async public Task<string> PostFormUrlEncodedStringAsync(string url,
                                                             string postData,
                                                             RequestAuthorization? authorization = null,
-                                                            int timeOutSeconds = 20)
+                                                            int timeOutSeconds = 20,
+                                                            IEnumerable<KeyValuePair<string, string>>? headers = null)
     {
         url = PrepareUrl(url);
 
@@ -183,6 +189,7 @@ public class HttpService : IHttpService
         })
         {
             request.AddAuthentication(authorization);
+            request.AddRequestHeaders(headers);
 
             using (var cts = new CancellationTokenSource(timeOutSeconds * 1000))
             {
@@ -225,7 +232,8 @@ public class HttpService : IHttpService
     async public Task<(byte[] data, string contentType)> PostFormUrlEncodedAsync(string url,
                                                       byte[] postData,
                                                       RequestAuthorization? authorization = null,
-                                                      int timeOutSeconds = 20)
+                                                      int timeOutSeconds = 20,
+                                                      IEnumerable<KeyValuePair<string, string>>? headers = null)
     {
         var dataString = Encoding.UTF8.GetString(postData);
 
@@ -237,6 +245,7 @@ public class HttpService : IHttpService
         })
         {
             request.AddAuthentication(authorization);
+            request.AddRequestHeaders(headers);
 
             using (var cts = new CancellationTokenSource(timeOutSeconds * 1000))
             {
@@ -286,7 +295,8 @@ public class HttpService : IHttpService
     async public Task<(byte[] data, string contentType)> PostDataAsync(string url,
                                             byte[] postData,
                                             RequestAuthorization? authorization = null,
-                                            int timeOutSeconds = 20)
+                                            int timeOutSeconds = 20,
+                                            IEnumerable<KeyValuePair<string, string>>? headers = null)
     {
         url = PrepareUrl(url);
 
@@ -296,6 +306,7 @@ public class HttpService : IHttpService
         })
         {
             request.AddAuthentication(authorization);
+            request.AddRequestHeaders(headers);
 
             using (var cts = new CancellationTokenSource(timeOutSeconds * 1000))
             {
@@ -344,7 +355,8 @@ public class HttpService : IHttpService
     async public Task<string> PostJsonAsync(string url,
                                             string json,
                                             RequestAuthorization? authorization = null,
-                                            int timeOutSeconds = 20)
+                                            int timeOutSeconds = 20,
+                                            IEnumerable<KeyValuePair<string, string>>? headers = null)
     {
         url = PrepareUrl(url);
 
@@ -354,6 +366,7 @@ public class HttpService : IHttpService
         })
         {
             request.AddAuthentication(authorization);
+            request.AddRequestHeaders(headers);
 
             using (var cts = new CancellationTokenSource(timeOutSeconds * 1000))
             {
@@ -397,9 +410,10 @@ public class HttpService : IHttpService
                                            string xml,
                                            RequestAuthorization? authorization = null,
                                            int timeOutSeconds = 20,
-                                           Encoding? encoding = null)
+                                           Encoding? encoding = null,
+                                           IEnumerable<KeyValuePair<string, string>>? headers = null)
     {
-        var xmlData = await PostDataAsync(url, (encoding ?? Encoding.UTF8).GetBytes(xml), authorization, timeOutSeconds);
+        var xmlData = await PostDataAsync(url, (encoding ?? Encoding.UTF8).GetBytes(xml), authorization, timeOutSeconds, headers);
 
         return EncodeBytes(xmlData.data, encoding);
     }
@@ -408,7 +422,8 @@ public class HttpService : IHttpService
                                          IEnumerable<KeyValuePair<string, string>> values,
                                          RequestAuthorization? authorization = null,
                                          int timeOutSeconds = 20,
-                                         Encoding? encoding = null)
+                                         Encoding? encoding = null,
+                                         IEnumerable<KeyValuePair<string, string>>? headers = null)
     {
         url = PrepareUrl(url);
 
@@ -418,6 +433,7 @@ public class HttpService : IHttpService
         })
         {
             request.AddAuthentication(authorization);
+            request.AddRequestHeaders(headers);
 
             using (var cts = new CancellationTokenSource(timeOutSeconds * 1000))
             {
@@ -491,7 +507,8 @@ public class HttpService : IHttpService
                                          string fileName,
                                          string formFieldName = "file",
                                          RequestAuthorization? authorization = null,
-                                         int timeOutSeconds = 20)
+                                         int timeOutSeconds = 20,
+                                         IEnumerable<KeyValuePair<string, string>>? headers = null)
     {
         url = PrepareUrl(url);
 
@@ -506,6 +523,7 @@ public class HttpService : IHttpService
             })
             {
                 request.AddAuthentication(authorization);
+                request.AddRequestHeaders(headers);
 
                 using (var cts = new CancellationTokenSource(timeOutSeconds * 1000))
                 {

@@ -8,4 +8,7 @@ internal static class ModelExtensions
 {
     static public bool IsValid(this EditThemeDTO.MaskValidation maskValidation)
         => !String.IsNullOrEmpty(maskValidation?.FieldName);
+
+    static public bool IsValid(this EditThemeDTO.CommitAction commitAction)
+        => !String.IsNullOrEmpty(commitAction.ActionTarget);
 }

@@ -55,7 +55,7 @@ public class EditingMaskValidation : CopyableXml, IUI, ICreatable, IDisplayName
 
     override public string CreateAs(bool appendRoot)
     {
-        return "s" + GuidEncoder.Encode(Guid.NewGuid()); //Guid.NewGuid().ToString("N");
+        return $"s{GuidEncoder.Encode(Guid.NewGuid())}";
     }
 
     override public Task<bool> CreatedAsync(string FullName)

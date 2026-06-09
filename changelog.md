@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Quicksearch: make ``minLength`` and ``debounceDelay`` configurable
   [Issue #469](https://github.com/e-netze/webgis-community/issues/469)
 
+- Editing: Before/After Commit Actions
+  sending HTTP GET/POST Request to a service before and/or after an insert/update/delete
+
 ## Fixed
 
 - Tool Coordinates: Remove all vertices

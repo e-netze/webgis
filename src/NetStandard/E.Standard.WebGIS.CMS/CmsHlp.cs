@@ -717,6 +717,11 @@ public class CmsHlp
         return _cms.SelectNodes(_ui, editingTheme.NodeXPath + "/validations/*");
     }
 
+    public CmsNodeCollection GetCmsEditingCommitActionNodes(CmsNode editingTheme)
+    {
+        return _cms.SelectNodes(_ui, editingTheme.NodeXPath + "/commitactions/*");
+    }
+
     #endregion
 
     #region VisFilter

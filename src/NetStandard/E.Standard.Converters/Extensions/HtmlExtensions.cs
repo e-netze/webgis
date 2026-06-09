@@ -43,4 +43,30 @@ static public class HtmlExtensions
 
         return false;
     }
+
+    static public bool IsJson(this string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return false;
+        }
+
+        json = json.Trim();
+
+        if ((!json.StartsWith("{") || !json.EndsWith("}")) &&
+            (!json.StartsWith("[") || !json.EndsWith("]")))
+        {
+            return false;
+        }
+
+        try
+        {
+            System.Text.Json.JsonDocument.Parse(json);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

@@ -40,12 +40,15 @@ using E.Standard.WebMapping.Core.Geometry;
 
 using Newtonsoft.Json;
 
+using Npgsql.Replication.PgOutput.Messages;
+
 namespace E.Standard.WebGIS.Tools.Editing.Environment;
 
 class EditEnvironment
 {
     private readonly List<HistoryItem> _historyItems = new List<HistoryItem>();
     private readonly string _fieldPrefix;
+    private readonly CommitActionService _commitActionService;
 
     private EditEnvironment(string appAssemblyPath, string appEtcPath, string editFieldPrefix)
     {
@@ -53,6 +56,8 @@ class EditEnvironment
 
         this.AppAssemblyPath = appAssemblyPath;
         this.EditRootPath = appEtcPath + @"/editing";
+
+        _commitActionService = new CommitActionService(this);
     }
 
     public EditEnvironment(IBridge bridge, ApiToolEventArguments e, EditThemeDefinition defaultEditThemeDefintion = null, string editFieldPrefix = null)
@@ -664,10 +669,26 @@ class EditEnvironment
                 }
             }
 
+            #region Before Commit Actions 
+
+            await _commitActionService.FireActions(editTheme, CommitActionService.Timing.Before, command, features);
+
+            #endregion
+
+            #region Commit
+
             if (!await ws.Commit())
             {
                 throw new Exception(ws.LastErrorMessage);
             }
+
+            #endregion
+
+            #region After Commit Actions
+
+            await _commitActionService.FireActions(editTheme, CommitActionService.Timing.After, command, features);
+
+            #endregion
 
             if (ws is IFeatureWorkspaceUndo)
             {
@@ -757,10 +778,22 @@ class EditEnvironment
                 }
             }
 
+            #region Before Commit Actions 
+
+            await _commitActionService.FireActions(editTheme, CommitActionService.Timing.Before, EditFeatureCommand.Delete, features);
+
+            #endregion
+
             if (!await ws.Commit())
             {
                 throw new Exception(ws.LastErrorMessage);
             }
+
+            #region After Commit Actions 
+
+            await _commitActionService.FireActions(editTheme, CommitActionService.Timing.After, EditFeatureCommand.Delete, features);
+
+            #endregion
         }
         finally
         {
@@ -2639,6 +2672,39 @@ class EditEnvironment
             }
         }
 
+        public IEnumerable<CommitAction> CommitActions
+        {
+            get
+            {
+                if (_node == null || _node.SelectSingleNode("edit:mask", _ns) == null)
+                {
+                    return Array.Empty<CommitAction>();
+                }
+
+                List<CommitAction> commitActions = new();
+                XmlNode maskNode = _node.SelectSingleNode("edit:mask", _ns);
+
+                foreach (XmlNode commitActionNode in maskNode.SelectNodes("edit:commit_actions/edit:commit_action[@target and @timing and @protocol]", _ns))
+                {
+                    var commitAction = new CommitAction()
+                    {
+                        Name=commitActionNode.Attributes["name"]?.Value ?? "Action",
+                        Timing = (EditCommitActionTiming)int.Parse(commitActionNode.Attributes["timing"].Value),
+                        Protocol = (EditCommitActionProtocol)int.Parse(commitActionNode.Attributes["protocol"].Value),
+                        Target = commitActionNode.Attributes["target"].Value,
+                        Payload = commitActionNode.Attributes["payload"]?.Value ?? "",
+                        Headers = !string.IsNullOrWhiteSpace(commitActionNode.Attributes["headers"]?.Value)
+                            ? JSerializer.Deserialize<string[]>(commitActionNode.Attributes["headers"].Value)
+                            : []
+                    };
+
+                    commitActions.Add(commitAction);
+                }
+
+                return commitActions;
+            }
+        }
+
         #region Helper
 
         private string GeometryTypeValue
@@ -2750,6 +2816,15 @@ class EditEnvironment
             public string Message { get; set; }
         }
 
+        public class CommitAction
+        {
+            public string Name { get; init; }
+            public EditCommitActionTiming Timing { get; init; }
+            public EditCommitActionProtocol Protocol { get; init; }
+            public string Target { get; init; }
+            public string Payload { get; init; }
+            public string[] Headers { get; init; }
+        }
 
         #endregion
     }
