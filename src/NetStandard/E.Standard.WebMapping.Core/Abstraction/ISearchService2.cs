@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using E.Standard.CMS.Core;
 using E.Standard.Web.Abstractions;
 using E.Standard.WebMapping.Core.Models;
 
@@ -13,5 +14,11 @@ public interface ISearchService2 : ISearchService
     Task<SearchTypeMetadata> GetTypeMetadataAsync(IHttpService httpService, string metaId);
     Task<IEnumerable<SearchTypeMetadata>> GetTypesMetadataAsync(IHttpService httpService);
 
-    Task<SearchServiceItems> Query2Async(IHttpService httpService, string term, int rows, IEnumerable<string> categories, int targetProjId = 4326);
+    Task<SearchServiceItems> Query2Async(
+        IHttpService httpService,
+        CmsDocument.UserIdentification ui, 
+        string term,
+        int rows,
+        IEnumerable<string> categories,
+        int targetProjId = 4326);
 }

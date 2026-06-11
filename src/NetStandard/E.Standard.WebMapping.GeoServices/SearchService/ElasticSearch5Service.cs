@@ -64,16 +64,16 @@ public class ElasticSearch5Service : ISearchService2
 
     public string CopyrightId { get; set; }
 
-    async public Task<SearchServiceItems> QueryAsync(IHttpService httpService, string term, int rows, int targetProjId = 4326)
+    async public Task<SearchServiceItems> QueryAsync(IHttpService httpService, CmsDocument.UserIdentification ui, string term, int rows, int targetProjId = 4326)
     {
-        return await Query2Async(httpService, term, rows, null, targetProjId);
+        return await Query2Async(httpService, ui, term, rows, null, targetProjId);
     }
 
     #endregion
 
     #region  ISearchService2
 
-    async public Task<SearchServiceItems> Query2Async(IHttpService httpService, string term, int rows, IEnumerable<string> categories, int targetProjId = 4326)
+    async public Task<SearchServiceItems> Query2Async(IHttpService httpService, CmsDocument.UserIdentification ui, string term, int rows, IEnumerable<string> categories, int targetProjId = 4326)
     {
         string analizedTerm = AnalyseTerm(term, categories);
         string url = String.Format(_serviceUrl + "/item/_search?q={0}", analizedTerm).Replace("{term}", analizedTerm).Replace("[term]", analizedTerm);

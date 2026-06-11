@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Editing: Before/After Commit Actions
   sending HTTP GET/POST Request to a service before and/or after an insert/update/delete
 
+- SOLR Search: Added placehoders ``{{roles}}`` and ``{{namespace-roles}}`` (EXPERIMENTAL, NOT SUPPORTED!)
+  [Issue #481](https://github.com/e-netze/webgis-community/issues/481)
+
 ## Fixed
 
 - Tool Coordinates: Remove all vertices

@@ -877,7 +877,17 @@ public class CmsDocument : IDisposable
         }
         public string[] Userroles
         {
-            get { return _userroles; }
+            get 
+            {
+#if DEBUG
+                //if(_userroles?.Any() != true)
+                //{
+                //    // fake some roles here
+                //    return ["header-role::FOO", "nt-role::BAR"];
+                //}
+#endif
+                return _userroles;
+            }
         }
         public string[] UserrolesParameters
         {
@@ -920,7 +930,7 @@ public class CmsDocument : IDisposable
         #endregion
     }
 
-    #endregion
+#endregion
 
     public CmsDocument Copy()
     {

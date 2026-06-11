@@ -24,26 +24,6 @@ static public class GeneralExtensions
                         .FirstOrDefault();
     }
 
-    static public string RemoveAuthPrefix(this string authName)
-    {
-        if (authName != null && authName.Contains("::"))
-        {
-            return authName.Substring(authName.IndexOf("::") + 2);
-        }
-
-        return authName;
-    }
-
-    static public IEnumerable<string> RemoveAuthPrfix(this IEnumerable<string> authNames)
-    {
-        if (authNames == null)
-        {
-            return null;
-        }
-
-        return authNames.Select(a => a.RemoveAuthPrefix());
-    }
-
     static public bool IsNonePortalId(this string portalId)
     {
         return Const.NonePortalId.Equals(portalId);

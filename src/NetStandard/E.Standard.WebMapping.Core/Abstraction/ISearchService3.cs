@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using E.Standard.CMS.Core;
 using E.Standard.Web.Abstractions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
@@ -9,5 +10,12 @@ namespace E.Standard.WebMapping.Core.Abstraction;
 
 public interface ISearchService3 : ISearchService2
 {
-    Task<SearchServiceItems> Query3Async(IHttpService httpService, string term, int rows, IEnumerable<string> categories, Envelope queryBBox, int targetProjId = 4326);
+    Task<SearchServiceItems> Query3Async(
+        IHttpService httpService,
+        CmsDocument.UserIdentification ui,
+        string term, 
+        int rows, 
+        IEnumerable<string> categories, 
+        Envelope queryBBox, 
+        int targetProjId = 4326);
 }
