@@ -95,6 +95,9 @@ public class JsonLayer
     [System.Text.Json.Serialization.JsonPropertyName("supportsDynamicLegends")]
     public bool SupportsDynamicLegends { get; set; } = false;
 
+    [JsonProperty("dateFieldsTimeReference")]
+    [System.Text.Json.Serialization.JsonPropertyName("dateFieldsTimeReference")]
+    public JsonDateFieldsTimeReference? DateFieldsTimeReference { get; set; }
 
     public string FullName
     {

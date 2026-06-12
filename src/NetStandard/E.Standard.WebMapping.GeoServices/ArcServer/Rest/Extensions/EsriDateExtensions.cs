@@ -11,10 +11,17 @@ static public class EsriDateExtensions
     static public string TimeFormatString = "HH:mm:ss";
     static public CultureInfo CultureInfo = CultureInfo.CurrentCulture;
 
-    static public DateTimeOffset EsriDateToDateTimeOffset(this long esriDateTime)
-        => new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(esriDateTime);
+    static public DateTimeOffset EsriDateToDateTimeOffset(this long esriDateTime, TimeZoneInfo? timeZone = null)
+    {
+        var utc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(esriDateTime);
+        if (timeZone is null || timeZone == TimeZoneInfo.Utc)
+        {
+            return utc;
+        }
+        return TimeZoneInfo.ConvertTime(new DateTimeOffset(utc), timeZone);
+    }
 
-    static public string EsriDateToString(this object? dateValue, string? dateFormat = null, string? timeFormat = null)
+    static public string EsriDateToString(this object? dateValue, string? dateFormat = null, string? timeFormat = null, TimeZoneInfo? timeZone = null)
     {
         if (dateValue is null)
         {
@@ -23,7 +30,10 @@ static public class EsriDateExtensions
 
         if (long.TryParse(dateValue.ToString(), out long esriDate) /*&& esriDate > 0*/)  // there can be dates before 1.1.1970
         {
-            DateTime td = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(esriDate);
+            DateTime utcDt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(esriDate);
+            DateTime td = (timeZone is null || timeZone == TimeZoneInfo.Utc)
+                ? utcDt
+                : TimeZoneInfo.ConvertTimeFromUtc(utcDt, timeZone);
 
             //return td.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
 

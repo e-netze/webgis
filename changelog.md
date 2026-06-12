@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-## Added
+### Added
+
+- Esri Map Service Query Results with Dates: consider time-zone
+  [Issue #484](https://github.com/e-netze/webgis-community/issues/484)
+
+## 8.26.2401
+
+### Added
 
 - Quicksearch: make ``minLength`` and ``debounceDelay`` configurable
   [Issue #469](https://github.com/e-netze/webgis-community/issues/469)
@@ -18,7 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - SOLR Search: Added placehoders ``{{roles}}`` and ``{{namespace-roles}}`` (EXPERIMENTAL, NOT SUPPORTED!)
   [Issue #481](https://github.com/e-netze/webgis-community/issues/481)
 
-## Fixed
+### Fixed
 
 - Tool Coordinates: Remove all vertices
   [Issue 471](https://github.com/e-netze/webgis-community/issues/471)
@@ -33,7 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 8.26.2201
 
-## Added
+### Added
 
 - MapSeriesPrint: Added "Create One per Feature" Method.
   Increased Usability with creation descrtion and preview.
@@ -43,14 +50,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   api.config [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#security)
   portal.config [docs](https://docs.webgiscloud.com/de/webgis/config/portal/index.html#abschnitt-security)
 
-## Fixed
+### Fixed
 
 - Tool Profile: Can't download print PDF document
   [Issue #479](https://github.com/e-netze/webgis-community/issues/479)
 
 ## 8.26.1801
 
-## Added
+### Added
 
 - TileCache Rendering Mode: ScaleDependentLayers (for printing cached MapServices)
   [Issue #458](https://github.com/e-netze/webgis-community/issues/458)
@@ -58,11 +65,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Map Series Print: api.config - allow increase max intersection iterations
   [Issue #464](https://github.com/e-netze/webgis-community/issues/464)
 
-## Fixed
+### Fixed
 
 ## 8.26.1702
 
-## Added
+### Added
 
 - GeoCodes: allow GeoCodes (UTMRef, etc) in Coordinates-Tool and Quick Search 
   [discussion #449](https://github.com/e-netze/webgis-community/discussions/449)
@@ -75,7 +82,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Basic Authentication for SOLR search services
   [Issue #456](https://github.com/e-netze/webgis-community/issues/456)
 
-## Fixed
+### Fixed
 
 - Bug: API Crashes on start, if DataLinq is not included in api.config
 
@@ -101,7 +108,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 8.26.1402
 
-## Added
+### Added
 
 - ResultTable: new sorting algorithm ``number_de``
   [dicussion #440](https://github.com/e-netze/webgis-community/discussions/440)
@@ -118,7 +125,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - DataLinq Upgrade: 8.26.1402
 
-## Fixed
+### Fixed
 
 - Bug: Print Measure Polygon calculate wrong circumference value
   [Issue #452](https://github.com/e-netze/webgis-community/issues/452)
@@ -130,7 +137,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Logging: User information logs (like no query found in this area, etc) will only logged
   in ``webgis-exceptions.log`` if LogLevel is ``Information``
 
-## Fixed
+### Fixed
 
 - Bug: TokenRequiredError 
   [Issue #422](https://github.com/e-netze/webgis-community/issues/442)
@@ -140,7 +147,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 8.26.1203
 
-## Added
+### Added
 
 - TimeFilter UI:
   * Switcher: **Point in time** / **Span of Time**
@@ -148,7 +155,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - DataLinq Upgrade: 8.26.1201
 
-## Fixed
+### Fixed
 
 - Linux/ContainerImages: Fixed problem with localization (Localization/DefaultCulture)
   [Issue #422](https://github.com/e-netze/webgis-community/issues/422)
@@ -167,7 +174,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 8.26.1201
 
-## Added
+### Added
 
 - ``api.config``:
   **Security:** Disable Antiforgery by configuration (not recommeneded!)
