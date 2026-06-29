@@ -208,8 +208,7 @@
         }
         var $btn = $("<span class='webgis-toolbox-tool-item-span'><img src='" + img + "' /><span class='webgis-toolbox-tool-item-label'>&nbsp;" + tool.name + "</span></span>")
             .appendTo($li)
-            .attr('alt', tool.name + ": " + tool.tooltip)
-            .attr('title', tool.name + ": " + tool.tooltip);
+            .tooltip(tool.name + ": " + tool.tooltip);
 
         if (useFavoritePriority === true && tool.favorite_priority) {
             $li.attr('data-priority', tool.favorite_priority);

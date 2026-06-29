@@ -3459,6 +3459,11 @@ String.prototype.replaceAll = function (search, replacement) {
         return target;
     }
 };
+String.prototype.removeHtmlCommandCharcters = function () {
+    return this
+        .replaceAll("&shy;", "")  // Soft hyphen
+        ;
+};
 String.prototype.highlightText = function (words) {
     if (typeof (words) === 'string') {
         words = [words];
@@ -3729,6 +3734,16 @@ webgis.compatiblity = new function () {
         return id;
     };
 };
+
+(function ($) {
+    $.fn.tooltip = function (text) {
+        text = text.removeHtmlCommandCharcters();
+        
+        return this.each(function () {
+            $(this).attr({ title: text, alt: text });
+        });
+    };
+}(window.jExt || window.jQuery));
 
 webgis.help = {};
 

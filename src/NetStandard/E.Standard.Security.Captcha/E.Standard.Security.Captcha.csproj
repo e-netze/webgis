@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\E.Standard.Drawing\E.Standard.Drawing.csproj" />
     <ProjectReference Include="..\E.Standard.Security.Core\E.Standard.Security.Core.csproj" />
     <ProjectReference Include="..\E.Standard.Security.Cryptography\E.Standard.Security.Cryptography.csproj" />
   </ItemGroup>

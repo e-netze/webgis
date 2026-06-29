@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 
+using E.Standard.Drawing;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
 
@@ -101,6 +102,8 @@ public class MapFrameElement : IGraphicElement
             using var font = Current.Engine.CreateFont("Arial", 10f * (float)map.Dpi / 96.0f, FontStyle.Regular);
 
             var size = canvas.MeasureText(_name, font);
+            size.Width *= 1.15f;
+            size.Height *= 1.15f;
 
             var rect = new CanvasRectangleF(
                 scaleX < 0 ? size.Width * scaleX : 0f,
