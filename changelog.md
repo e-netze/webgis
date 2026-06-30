@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Esri Map Service Query Results with Dates: consider time-zone
   [Issue #484](https://github.com/e-netze/webgis-community/issues/484)
 
+### Fixed
+
+- TilingService Bug & Improovments:
+  [Issue #480](https://github.com/e-netze/webgis-community/issues/480)
+
 ## 8.26.2401
 
 ### Added

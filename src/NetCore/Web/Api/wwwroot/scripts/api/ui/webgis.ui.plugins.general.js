@@ -488,3 +488,14 @@ webgis.ui.definePlugin('webgis_dateCombo', {
         }
     }
 });
+
+webgis.ui.definePlugin("webgis_ui_element", {
+    defaults: {
+        tooltip: "",
+    },
+    init: function () {
+        let tooltip = (this.options.tooltip || "").removeHtmlCommandCharcters();
+
+        this.$el.attr({ title: tooltip, alt: tooltip });
+    }
+});

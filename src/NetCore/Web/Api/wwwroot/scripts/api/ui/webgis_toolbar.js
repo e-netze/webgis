@@ -207,9 +207,9 @@
             img = tool.hasui == true ? webgis.css.imgResource('enter-26.png','ui') : webgis.css.imgResource(tool.image, 'tools');
         }
         var $btn = $("<span class='webgis-toolbox-tool-item-span'><img src='" + img + "' /><span class='webgis-toolbox-tool-item-label'>&nbsp;" + tool.name + "</span></span>")
-            .appendTo($li)
-            .tooltip(tool.name + ": " + tool.tooltip);
-
+            .webgis_ui_element({ tooltip: tool.name + ": " + tool.tooltip })
+            .appendTo($li);
+           
         if (useFavoritePriority === true && tool.favorite_priority) {
             $li.attr('data-priority', tool.favorite_priority);
             var $insertBefore = null;

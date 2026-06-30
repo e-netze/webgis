@@ -3735,16 +3735,6 @@ webgis.compatiblity = new function () {
     };
 };
 
-(function ($) {
-    $.fn.tooltip = function (text) {
-        text = text.removeHtmlCommandCharcters();
-        
-        return this.each(function () {
-            $(this).attr({ title: text, alt: text });
-        });
-    };
-}(window.jExt || window.jQuery));
-
 webgis.help = {};
 
 (window.jExt || window.jQuery)(document).ready(function () {

@@ -85,6 +85,8 @@
                        instance="E.Standard.WebGIS.CmsSchema.ServiceLayer2" />
             </schema-node>
 
+            <schema-template-include target="ThemeProperties" />
+            <schema-template-include target="Presentations"/>
             <schema-template-include target="ServiceTocs" />
 
             <link-template assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -107,6 +109,8 @@
 							   instance="E.Standard.WebGIS.CmsSchema.ServiceLayer2" />
 				  </schema-node>
 
+          <schema-template-include target="ThemeProperties" />
+          <schema-template-include target="Presentations"/>
 				  <schema-template-include target="ServiceTocs" />
 
 				  <link-template assembly="E.Standard.WebGIS.CmsSchema.dll"

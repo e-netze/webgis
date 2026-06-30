@@ -156,9 +156,17 @@ public abstract class BaseWmtsService : TileService, IMapServiceDescription, ISe
                     foreach (var tileMatrix in matrixSet.TileMatrix)
                     {
                         var level = tileMatrix.Identifier.Value.MatrixSetIdentifierToInt();
-                        if (_maxLevel >= 0 && level > _maxLevel)
+                        if (_maxLevel >= 0)
                         {
-                            continue;
+                            if (HideBeyondMaxLevel && level == _maxLevel + 1)
+                            {
+                                base.MinScale = Math.Max(base.MinScale, tileMatrix.ScaleDenominator * 96.0 / this.TileGrid.Dpi);  // set minscale for printing
+                            }
+
+                            if(level > _maxLevel)
+                            {
+                                continue;
+                            }
                         }
 
                         this.TileGrid.AddLevel(level, tileMatrix.ScaleDenominator / (this.TileGrid.Dpi / 0.0254));

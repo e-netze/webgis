@@ -16,12 +16,14 @@ public class TileGridService : TileService
 {
     private readonly string _configUrl, _tileUrl;
     private string _layerName = "_alllayers";
+    private readonly int _maxLevel;
 
-    public TileGridService(string configUrl, string tileUrl, CMS.Core.CmsNode layerNode, bool hideBeyondMaxLevel)
+    public TileGridService(string configUrl, string tileUrl, CMS.Core.CmsNode layerNode, int maxLevel, bool hideBeyondMaxLevel)
         : base(hideBeyondMaxLevel)
     {
         _configUrl = configUrl;
         _tileUrl = tileUrl;
+        _maxLevel = maxLevel;
 
         base.Server = _tileUrl;
 
@@ -106,8 +108,23 @@ public class TileGridService : TileService
                     continue;
                 }
 
+                int level = int.Parse(LevelID.InnerText);
+
+                if (_maxLevel >= 0)
+                {
+                    if (HideBeyondMaxLevel && level == _maxLevel + 1)
+                    {
+                        base.MinScale = Math.Max(base.MinScale, Resolution.InnerText.ToPlatformDouble() * (96.0 / 0.0254));  // set minscale for printing
+                    }
+
+                    if (level > _maxLevel)
+                    {
+                        continue;
+                    }
+                }
+
                 TileGrid.AddLevel(
-                    int.Parse(LevelID.InnerText),
+                    level,
                     Resolution.InnerText.ToPlatformDouble());
             }
 
@@ -128,7 +145,7 @@ public class TileGridService : TileService
 
     override public IMapService Clone(IMap parent)
     {
-        TileGridService clone = new TileGridService(_configUrl, _tileUrl, null, base.HideBeyondMaxLevel);
+        TileGridService clone = new TileGridService(_configUrl, _tileUrl, null, _maxLevel, base.HideBeyondMaxLevel);
         clone._layerName = _layerName;
 
         base.Clone(clone, parent);

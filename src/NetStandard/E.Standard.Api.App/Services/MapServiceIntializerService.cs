@@ -150,6 +150,7 @@ public class MapServiceInitializerService
                     serviceLink.Target.LoadString("serviceconfigurl"),
                     serviceLink.Target.LoadString("tileurl"),
                     cms.SelectSingleNode(null, serviceLink.Target.NodeXPath + "/themes/*", "id", "0"),
+                    (int)serviceLink.Target.Load("maxlevel", -1),
                     (bool)serviceLink.Target.Load("hide_beyond_maxlevel", false));
 
                 authUser = serviceLink.Target.LoadString("user");
