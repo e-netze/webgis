@@ -119,7 +119,11 @@ webgis.usability = {
     },
 
     allowTocVisFilters: false,
-    defaultBufferDistance: 30
+    defaultBufferDistance: 30,
+
+    show_presentation_metadata_in_copyright: true,
+    show_metadata_i_button_toc: true,
+    show_link_button_in_toc: true
 };
 
 webgis.colorScheme = 'default';

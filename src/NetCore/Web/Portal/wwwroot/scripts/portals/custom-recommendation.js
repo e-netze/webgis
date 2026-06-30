@@ -53,6 +53,8 @@ webgis.usability.presentationTocSearch = !webgis.isMobileDevice();
 webgis.usability.useGraphicsMarkerPopups = false;  // Info Container für Grafiken (MapMarkup) anzeigen
 webgis.usability.toolSketchOnlyEditableIfToolTabIsActive = true;
 
+webgis.usability.show_metadata_i_button_toc = webgis.isMobileDevice() !== true;
+
 webgis.usability.allowDarkmode = true;
 webgis.usability.allowStyleClassSelection = true;
 webgis.usability.allowLanguageSelection = true;

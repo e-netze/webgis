@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Esri Map Service Query Results with Dates: consider time-zone
   [Issue #484](https://github.com/e-netze/webgis-community/issues/484)
 
+- Show Service and Layer Metadatalinks in Copyright & Info Section
+  - custom.js: ``show_presentation_metadata_in_copyright``: ``true``;
+
+- custom.js: added usability constants:
+  - ``show_metadata_i_button_toc``: ``true``
+  - ``show_link_button_in_toc``: ``true``  // custom-recommendation => ``webgis.usability.show_metadata_i_button_toc = webgis.isMobileDevice() !== true;``
+
 ### Fixed
 
 - TilingService Bug & Improovments:

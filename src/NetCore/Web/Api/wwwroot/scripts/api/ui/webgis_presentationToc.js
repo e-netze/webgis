@@ -854,6 +854,7 @@
                     let $descriptionTabContent = $("<div class='webgis-tab-content'>")
                         .css('display', 'none')
                         .attr('data-tab', 2)
+                        .data('map', map)
                         .appendTo($content);
 
                     let descriptionCount = 0;
@@ -876,15 +877,53 @@
                                 .text(service.name)
                                 .appendTo($descriptionTabContent);
 
+                            // metadata
+                            let $metadata = $("<div>")
+                                .addClass('webgis-service-metadata-link');
+
                             if (service.metadata_link) {
-                                let $metadata = $("<div>")
-                                    .addClass('webgis-service-metadata-link')
-                                    .appendTo($descriptionTabContent);
                                 $("<a>")
                                     .attr('href', service.metadata_link)
                                     .attr('target', '_blank')
                                     .text(webgis.l10n.get("metadata-link"))
                                     .appendTo($metadata);
+                            }
+
+                            if (webgis.usability.show_presentation_metadata_in_copyright) {
+                                let $metadataList = $("<ul>")
+                                    .css({ listStyle: "none", margin: 0, padding: "5px 0px" })
+                                    .appendTo($metadata)
+                                for (let p = 0; p < service.presentations.length; p++) {
+                                    let presentation = service.presentations[p];
+                                    if (!presentation.items)
+                                        continue;
+                                    for (let i = 0; i < presentation.items.length; i++) {
+                                        //console.log(presentation, presentation.items[i]);
+                                        let prop = presentation.items[i];
+                                        if (prop.metadata) {
+                                            let $metadata_item = $("<li>")
+                                                .css({ padding: "4px 4px 4px 26px", cursor: "pointer", position: "relative" })
+                                                .appendTo($metadataList)
+                                                .data('metadata', prop.metadata)
+                                                .data('metadata_target', prop.metadata_target)
+                                                .attr('title', prop.metadata_title)
+                                                .text(presentation.name)
+                                                .click(function (event) {
+                                                    event.stopPropagation();
+                                                    _showMetadataLink($(this));
+                                                });
+                                            $("<span style='position:absolute;left:5px;' class='webgis-api-icon webgis-api-icon-info'></span>")
+                                                .prependTo($metadata_item);
+                                        }
+                                    }
+                                }
+
+                                if ($metadataList.children().length > 0) {
+                                    $metadataList.appendTo($metadata);
+                                }
+                            }
+                            if ($metadata.children().length > 0) {
+                                $metadata.appendTo($descriptionTabContent)
                             }
 
                             if (service.servicedescription) {
@@ -1389,6 +1428,7 @@
                 let hasMetadata_iButton =
                     prop.style !== 'info' &&
                     (prop.group_metadata || prop.metadata) &&
+                    webgis.usability.show_metadata_i_button_toc &&
                     prop.metadata_button_style == 'i_button';
 
                 if (prop.group_metadata && $group_li != null
@@ -1569,22 +1609,26 @@
                         
                     switch (prop[metadata_prefix + 'metadata_button_style']) {
                         case 'link_button':
-                            let $li = $("<li>")
-                                .addClass('webgis-presentation_toc-item link-button')
-                                .attr('data-order', $item_li.attr('data-order'))
-                                .appendTo($item_li.parent());
+                            if (webgis.usability.show_link_button_in_toc) {
+                                let $li = $("<li>")
+                                    .addClass('webgis-presentation_toc-item link-button')
+                                    .attr('data-order', $item_li.attr('data-order'))
+                                    .appendTo($item_li.parent());
 
-                            $metadataButton
-                                .addClass('webgis-button')
-                                .text(prop[metadata_prefix + 'metadata_title'])
-                                .appendTo($li);
+                                $metadataButton
+                                    .addClass('webgis-button')
+                                    .text(prop[metadata_prefix + 'metadata_title'])
+                                    .appendTo($li);
+                            }
                             break;
                         default:
-                            hasMetadata_iButton = true;
-                            $metadataButton
-                                .css({ position: 'absolute', left: '26px', 'marginTop': '2px' })
-                                .addClass('webgis-api-icon webgis-api-icon-info').prependTo($item_li)
-                                .attr('title', prop.metadata_title);
+                            if (webgis.usability.show_metadata_i_button_toc) {
+                                hasMetadata_iButton = true;
+                                $metadataButton
+                                    .css({ position: 'absolute', left: '26px', 'marginTop': '2px' })
+                                    .addClass('webgis-api-icon webgis-api-icon-info').prependTo($item_li)
+                                    .attr('title', prop.metadata_title);
+                            }
                             break;
                     }
 
@@ -2128,7 +2172,8 @@
     };
 
     let _showMetadataLink = function ($sender) {
-        let map = $sender.closest('.webgis-presentation_toc-holder').get(0)._map,
+        let map = $sender.closest('.webgis-tab-content').data("map")
+            || $sender.closest('.webgis-presentation_toc-holder').get(0)._map,
             url = webgis.tools.replaceCustomToolUrl(map, $sender.data('metadata')),
             target = $sender.data('metadata_target');
 
