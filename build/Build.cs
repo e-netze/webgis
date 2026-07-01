@@ -158,6 +158,31 @@ class Build : NukeBuild
                 }
             }
 
+            var libDpb = new[]
+            {
+                 "api/artifacts/*.pdb",
+                 "portal/artifacts/*.pdb",
+                 "cms/artifacts/*.pdb",
+            };
+
+            Log.Information($"Delete thirdparty PDB Files");
+            // eg. libskia.pdb is > 82 MB!!!
+            foreach (var pattern in libDpb)
+            {
+                foreach (var pdbFile in (RootDirectory / "publish" / Platform).GlobFiles(pattern))
+                {
+                    if(pdbFile.ToString().Contains("E.Standard.", StringComparison.OrdinalIgnoreCase)
+                      || pdbFile.ToString().Contains("webgis-", StringComparison.OrdinalIgnoreCase)
+                      || pdbFile.ToString().Contains("webgis.", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    Log.Information($"Deleting {pdbFile}");
+                    pdbFile.DeleteFile();
+                }
+            }
+
             Log.Information($"Set Version {Version} to webgis.js");
             var jsGlobs = new[]
             {
