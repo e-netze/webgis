@@ -3037,10 +3037,13 @@
             $temp.remove();
         }
     };
-    this.iFrameDialog = function (url, title) {
+    this.iFrameDialog = function (url, title, width, height) {
+        
         $('body').webgis_modal({
             id: 'webgis-iframe-dialog',
             title: title,
+            width: width,
+            height: height,
             titleButtons: [{
                 img: webgis.css.imgResource('open-in-window_26.png',''),
                 url: url,

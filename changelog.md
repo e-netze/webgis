@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - ``show_metadata_i_button_toc``: ``true``
   - ``show_link_button_in_toc``: ``true``  // custom-recommendation => ``webgis.usability.show_metadata_i_button_toc = webgis.isMobileDevice() !== true;``
 
+- Metadata: CMS configurable popup dialog size
+  [Issue #459](https://github.com/e-netze/webgis-community/issues/459)
+
 ### Fixed
 
 - TilingService Bug & Improovments:

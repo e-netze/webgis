@@ -79,6 +79,12 @@ public sealed class PresentationDTO : IHtml
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public string metadata_button_style { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public int? metadata_dialog_width { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public int? metadata_dialog_height { get; set; }
 
         public string group_metadata { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -90,6 +96,12 @@ public sealed class PresentationDTO : IHtml
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public string group_metadata_button_style { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public int? group_metadata_dialog_width { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public int? group_metadata_dialog_height { get; set; }
 
         //[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         //[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]

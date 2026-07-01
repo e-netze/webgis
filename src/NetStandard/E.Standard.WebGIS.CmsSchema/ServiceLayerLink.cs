@@ -78,6 +78,16 @@ public class ServiceLayerLink : SchemaNodeLink, IPersistable, IEditable
     [Description("Gibt an, wie der Link geöffnet wird (tab => neuer Tab, dialog => in Dialogfenster im Viewer).")]
     public BrowserWindowTarget2 MetadataTarget { get; set; }
 
+    [DisplayName("Metadaten Dialog Breite (Width)")]
+    [Description("Breite des Dialogs (Pixel), wenn type 'dialog'. 0 => default width")]
+    [Category("Metadaten")]
+    public int MetadataDialogWidth { get; set; }
+
+    [DisplayName("Metadaten Dialog Höhe (Height)")]
+    [Description("Höhe des Dialogs (Pixel), wenn type 'dialog'. 0 => default height")]
+    [Category("Metadaten")]
+    public int MetadataDialogHeight { get; set; }
+
     [DisplayName("Metadaten Titel")]
     [Category("Metadaten")]
     [Description("Hier kann ein Titel für den Metadaten Button angeben werden.")]
@@ -161,6 +171,8 @@ public class ServiceLayerLink : SchemaNodeLink, IPersistable, IEditable
         this.MetadataTarget = (BrowserWindowTarget2)(int)stream.Load("metadata_target", (int)BrowserWindowTarget2.tab);
         this.MetadataTitle = (string)stream.Load("metadata_title", String.Empty);
         this.MetadataLinkButtonStyle = (MetadataButtonStyle)stream.Load("metadata_button_style", (int)MetadataButtonStyle.i_button);
+        this.MetadataDialogWidth = (int)stream.Load("metadata_dialog_width", (int)0);
+        this.MetadataDialogHeight = (int)stream.Load("metadata_dialog_height", (int)0);
     }
 
     public override void Save(IStreamDocument stream)
@@ -191,6 +203,15 @@ public class ServiceLayerLink : SchemaNodeLink, IPersistable, IEditable
         if (this.MetadataLinkButtonStyle != MetadataButtonStyle.i_button)
         {
             stream.Save("metadata_button_style", (int)this.MetadataLinkButtonStyle);
+        }
+
+        if (this.MetadataDialogWidth > 0)
+        {
+            stream.Save("metadata_dialog_width", this.MetadataDialogWidth);
+        }
+        if (this.MetadataDialogHeight > 0)
+        {
+            stream.Save("metadata_dialog_height", this.MetadataDialogHeight);
         }
     }
 

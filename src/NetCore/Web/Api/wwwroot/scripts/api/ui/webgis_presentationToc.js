@@ -906,6 +906,8 @@
                                                 .appendTo($metadataList)
                                                 .data('metadata', prop.metadata)
                                                 .data('metadata_target', prop.metadata_target)
+                                                .data('metadata_dialog_width', prop.metadata_dialog_width)
+                                                .data('metadata_dialog_height', prop.metadata_dialog_height)
                                                 .attr('title', prop.metadata_title)
                                                 .text(presentation.name)
                                                 .click(function (event) {
@@ -1604,7 +1606,9 @@
                     let $metadataButton = $("<span></span>")
                         .data('metadata', prop[metadata_prefix + 'metadata'])
                         .data('metadata_target', prop[metadata_prefix + 'metadata_target'])
-                        .data('metadata_title', prop[metadata_prefix + 'metadata_title']);
+                        .data('metadata_title', prop[metadata_prefix + 'metadata_title'])
+                        .data('metadata_dialog_width', prop[metadata_prefix + 'metadata_dialog_width'])
+                        .data('metadata_dialog_height', prop[metadata_prefix + 'metadata_dialog_height']);
                         
                         
                     switch (prop[metadata_prefix + 'metadata_button_style']) {
@@ -2179,7 +2183,11 @@
 
         switch (target) {
             case 'dialog':
-                webgis.iFrameDialog(url, $sender.data('metadata_title') || "Metadaten");
+                webgis.iFrameDialog(
+                    url,
+                    $sender.data('metadata_title') || "Metadaten",
+                    $sender.data('metadata_dialog_width'),
+                    $sender.data('metadata_dialog_height'));
                 break;
             default:
                 window.open(url);

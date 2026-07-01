@@ -5,6 +5,7 @@ using System.Text;
 
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
+using E.Standard.Extensions.Compare;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 
@@ -446,6 +447,8 @@ public class CmsHlp
             MetadataTarget = (BrowserWindowTarget2)link.Load("metadata_target", (int)BrowserWindowTarget2.tab),
             MetadataTitle = link.LoadString("metadata_title"),
             MetadataButtonStyle = (MetadataButtonStyle)link.Load("metadata_button_style", (int)MetadataButtonStyle.i_button),
+            MetadataDialogWidth = ((int?)link.Load("metadata_dialog_width", (int)0)).TakeNullIfZero(),
+            MetadataDialogHeight = ((int?)link.Load("metadata_dialog_height", (int)0)).TakeNullIfZero(),
             IsContainerDefault = (bool)link.Load("containerdefault", false),
             Group = groupNode != null ? groupNode.Name : String.Empty,
             GroupStyle = groupNode != null ? (PresentationGroupStyle)groupNode.Load("checkmode", (int)PresentationGroupStyle.Button) : PresentationGroupStyle.Dropdown,
@@ -486,6 +489,8 @@ public class CmsHlp
         public BrowserWindowTarget2 MetadataTarget { get; set; }
         public string MetadataTitle { get; set; }
         public MetadataButtonStyle MetadataButtonStyle { get; set; }
+        public int? MetadataDialogWidth { get; set; }
+        public int? MetadataDialogHeight { get; set; }
 
         //public bool AllowAsDynamicMarkers { get; set; }
 

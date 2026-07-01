@@ -68,6 +68,16 @@ static public class CompareExtenstions
         return alternativeIntValue;
     }
 
+    static public int? TakeNullIfZero(this int? currentIntValue)
+    {
+        if (currentIntValue.HasValue && currentIntValue.Value == 0) 
+        {
+            return null;
+        }
+
+        return currentIntValue;
+    }
+
     static public T OrTakeEnum<T>(this T currentValue, T alternativeValue)
         where T : System.Enum
     {

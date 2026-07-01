@@ -292,6 +292,13 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
         [System.Text.Json.Serialization.JsonIgnore]
         public MetadataButtonStyle MetadataButtonStyle { get; set; }
 
+        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public int? MetadataDialogWidth { get; set; }
+        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public int? MetadataDialogHeight { get; set; }
+
         #region IHtml Member
 
         public string ToHtmlString()

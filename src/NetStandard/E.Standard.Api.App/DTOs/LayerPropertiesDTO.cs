@@ -16,6 +16,7 @@ public sealed class LayerPropertiesDTO : ILayerProperties
     public string Aliasname { get; set; }
     [JsonProperty("metadata")]
     [System.Text.Json.Serialization.JsonPropertyName("metadata")]
+    
     public string Metadata { get; set; }
     [JsonProperty("metadata_title")]
     [System.Text.Json.Serialization.JsonPropertyName("metadata_title")]
@@ -29,6 +30,13 @@ public sealed class LayerPropertiesDTO : ILayerProperties
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
     public MetadataButtonStyle MetadataButtonStyle { get; set; }
+    [JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
+    public int? MetadataDialogWidth { get; set; }
+    [JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
+    public int? MetadataDialogHeight { get; set; }
+
     [JsonProperty("ogcid")]
     [System.Text.Json.Serialization.JsonPropertyName("ogcid")]
     public string OgcId { get; set; }

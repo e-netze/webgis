@@ -220,6 +220,8 @@ static public class DynamicServiceExtensions
                             metadata_button_style = String.IsNullOrEmpty(layer.metadata) ? null : layer.MetadataButtonStyle.ToString().ToLower(),
                             metadata_target = String.IsNullOrEmpty(layer.metadata) ? null :  layer.MetadataTarget.ToString().ToLower(),
                             metadata_title =  String.IsNullOrEmpty(layer.metadata) ? null : layer.MetadataTitle?.ToString(),
+                            metadata_dialog_width = String.IsNullOrEmpty(layer.metadata) ? null : layer.MetadataDialogWidth,
+                            metadata_dialog_height = String.IsNullOrEmpty(layer.metadata) ? null : layer.MetadataDialogHeight,
                             item_order = ++order
                         }
                     };
