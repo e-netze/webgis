@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+### Fixed
+
+## 8.26.2804
+
+### Added
 
 - Esri Map Service Query Results with Dates: consider time-zone
   [Issue #484](https://github.com/e-netze/webgis-community/issues/484)
