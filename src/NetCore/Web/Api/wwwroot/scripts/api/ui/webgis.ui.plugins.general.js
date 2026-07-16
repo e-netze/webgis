@@ -494,7 +494,7 @@ webgis.ui.definePlugin("webgis_ui_element", {
         tooltip: "",
     },
     init: function () {
-        let tooltip = (this.options.tooltip || "").removeHtmlCommandCharcters();
+        let tooltip = (this.options.tooltip || "").removeHtmlCommandCharacters();
 
         this.$el.attr({ title: tooltip, alt: tooltip });
     }
