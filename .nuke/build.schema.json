@@ -107,6 +107,10 @@
           "type": "string",
           "description": "Configuration to build - Default is 'Release'"
         },
+        "DockerExe": {
+          "type": "string",
+          "description": "Docker exe file name"
+        },
         "Platform": {
           "type": "string",
           "description": "Platform to build - win-x64/linux-x64"

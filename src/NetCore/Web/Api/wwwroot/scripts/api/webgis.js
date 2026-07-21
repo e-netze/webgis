@@ -3462,7 +3462,7 @@ String.prototype.replaceAll = function (search, replacement) {
         return target;
     }
 };
-String.prototype.removeHtmlCommandCharcters = function () {
+String.prototype.removeHtmlCommandCharacters = function () {
     return this
         .replaceAll("&shy;", "")  // Soft hyphen
         ;

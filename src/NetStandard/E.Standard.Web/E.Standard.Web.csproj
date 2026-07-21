@@ -13,7 +13,7 @@
 	</ItemGroup>
 	
   <ItemGroup>
-	  <PackageReference Include="gView.GraphicsEngine" Version="6.25.1401" />
+	 <!-- <PackageReference Include="gView.GraphicsEngine" Version="6.25.1401" />-->
   </ItemGroup>
 
   <ItemGroup>

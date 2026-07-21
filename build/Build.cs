@@ -31,6 +31,9 @@ class Build : NukeBuild
     [Parameter("Platform to build - win-x64/linux-x64")]
     readonly string Platform = SystemInfo.IsLinux ? "linux-x64" : "win-x64";
 
+    [Parameter("Docker exe file name")]
+    readonly string DockerExe = "docker";
+
     Target Clean => _ => _
         .Before(Restore)
         .Executes(() =>
@@ -228,7 +231,7 @@ class Build : NukeBuild
                     : RootDirectory / "publish" / Platform;
                 string imagePostfix = isInternal ? "-internal" : "";
 
-                ProcessTasks.StartProcess("docker",
+                ProcessTasks.StartProcess(DockerExe,
                     $"build -t webgis-cms{imagePostfix}:{Version} -f Dockerfile .",
                     workingDirectory: Path.Combine(platformDir, "cms"),
                     logger: (oType, txt) =>
@@ -236,7 +239,7 @@ class Build : NukeBuild
                         Log.Information($"{txt}");
                     })
                     .AssertZeroExitCode();
-                ProcessTasks.StartProcess("docker",
+                ProcessTasks.StartProcess(DockerExe,
                     $"build -t webgis-api{imagePostfix}:{Version} -f Dockerfile .",
                     workingDirectory: Path.Combine(platformDir, "api"),
                     logger: (oType, txt) =>
@@ -244,7 +247,7 @@ class Build : NukeBuild
                         Log.Information($"{txt}");
                     })
                     .AssertZeroExitCode();
-                ProcessTasks.StartProcess("docker",
+                ProcessTasks.StartProcess(DockerExe,
                     $"build -t webgis-portal{imagePostfix}:{Version} -f Dockerfile .",
                     workingDirectory: Path.Combine(platformDir, "portal"),
                     logger: (oType, txt) =>
@@ -254,21 +257,21 @@ class Build : NukeBuild
                     .AssertZeroExitCode();
 
                 // tag to latest
-                ProcessTasks.StartProcess("docker",
+                ProcessTasks.StartProcess(DockerExe,
                     $"tag webgis-cms{imagePostfix}:{Version} webgis-cms{imagePostfix}:latest",
                     logger: (oType, txt) =>
                     {
                         Log.Information($"{txt}");
                     })
                     .AssertZeroExitCode();
-                ProcessTasks.StartProcess("docker",
+                ProcessTasks.StartProcess(DockerExe,
                     $"tag webgis-api{imagePostfix}:{Version} webgis-api{imagePostfix}:latest",
                     logger: (oType, txt) =>
                     {
                         Log.Information($"{txt}");
                     })
                     .AssertZeroExitCode();
-                ProcessTasks.StartProcess("docker",
+                ProcessTasks.StartProcess(DockerExe,
                     $"tag webgis-portal{imagePostfix}:{Version} webgis-portal{imagePostfix}:latest",
                     logger: (oType, txt) =>
                     {
