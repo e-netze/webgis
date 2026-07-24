@@ -1,4 +1,9 @@
-﻿body{
+﻿:root {
+    --brand-primary:       #82c828;
+    --brand-primary-light: #d9e7d6;
+}
+
+body{
     background-color:#e2e2e2;
 }
 
@@ -27,7 +32,7 @@ html, body {
     font-size: 18px;
     font-weight: bold;
     padding: 5px;
-    background: #b5dbad;
+    background: var(--brand-primary-light);
     color: white;
     position: relative;
     white-space: nowrap;
@@ -87,7 +92,7 @@ html, body {
     background:url('img/nav-down.png') no-repeat left center;
 }
 .webgis-page-category-item-selected .webgis-page-category-item-title {
-    background: #b5dbad url('img/nav-up.png') no-repeat left center;
+    background: var(--brand-primary-light) url('img/nav-up.png') no-repeat left center;
     color: #333;
     border-radius: 4px 4px 0px 0px;
 }
@@ -107,7 +112,7 @@ html, body {
     width: 140px;
     height: 140px;
     background-color: #f6f6f6;
-    /*border: 1px solid #b5dbad;*/
+    /*border: 1px solid var(--brand-primary-light);*/
     box-sizing:border-box;
     color: white;
     margin: 6px 4px 0px 0px;
@@ -233,7 +238,7 @@ html, body {
     cursor: pointer;
     width: 120px;
     height: 26px;
-    background-color: #b5dbad;
+    background-color: var(--brand-primary-light);
     color: #333;
     margin: 5px;
     background-image: url('img/plus-32-w.png');
@@ -251,7 +256,7 @@ html, body {
     cursor: pointer;
     width: 140px;
     height: 26px;
-    background-color: #b5dbad;
+    background-color: var(--brand-primary-light);
     color: #333;
     margin: 5px;
     background-image: url('img/css-32-w.png');
@@ -410,7 +415,7 @@ MapCollection new
 
 
         #category-content .webgis-page-category-header.changing {
-            background-color: #b5dbad;
+            background-color: var(--brand-primary-light);
         }
 
     #category-content .webgis-page-category-header td {
@@ -555,15 +560,14 @@ MapCollection new
         min-height: 20px;
         cursor: pointer;
         padding: 12px 8px 12px 40px;
-        border-bottom: 1px solid #eee;
-        border-left: 1px solid #eee;
+        border-bottom: 1px solid var(--ui-border);
         font-size: 16px;
         background-position:2px center;
         background-repeat:no-repeat;
     }
 
         .webgis-map-app-menu li:hover {
-            background-color:#efefef;
+            background-color: var(--ui-surface-raised);
         }
 
         .webgis-map-app-menu li.maps {
@@ -671,10 +675,12 @@ MapCollection new
         }
 
             .webgis-properties .webgis-properties-tabs .webgis-property-tab:hover {
-                background-color:#efefef;
+                background-color: var(--ui-surface-raised);
             }
             .webgis-properties .webgis-properties-tabs .webgis-property-tab.selected {
-                background-color: #eee;
+                background-color: var(--brand-primary-light);
+                color: var(--ui-text-selected);
+                border-bottom: var(--ui-border-width-item-selected) solid var(--brand-primary);
             }
 
     .webgis-properties .webgis-properties-contents {
@@ -712,14 +718,4 @@ MapCollection new
     .webgis-properties .webgis-properties-contents {
         left: 36px;
     }
-}
-
-/***** Darkmode ******/
-body.webgis-dark .webgis-properties .webgis-properties-tabs .webgis-property-tab:hover {
-    background-color: #555;
-}
-
-body.webgis-dark .webgis-properties .webgis-properties-tabs .webgis-property-tab.selected {
-    background-color: #666;
-    color:#efefef;
 }

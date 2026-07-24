@@ -400,7 +400,7 @@
             basemapOpacity = 0.5;
         } else if (colorScheme === '_bg-light') {
             $container.addClass('light');
-            $('body').addClass('_webgis-light');
+            $('body').addClass('webgis-light');
         }
 
         webgis.css.changeColorScheme(colorScheme);

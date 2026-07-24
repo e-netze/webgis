@@ -1317,7 +1317,7 @@ class EditEnvironment
                                 {
                                     @readonly = true,
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             else
@@ -1535,7 +1535,7 @@ class EditEnvironment
                                 {
                                     id = id,
                                     options = options.ToArray(),
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange }),
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange }),
                                     dependency_field_ids = whereKeyParameters?.Select(p => $"{fieldPrefix}_{p}").ToArray(),
                                     dependency_field_ids_callback_toolid = whereKeyParameters != null && whereKeyParameters.Count() > 0 ? onUpdateComboCallbackToolId : null,
                                     allow_pro_behaviour = fieldNode.Attributes["domain_pro_behaviour"]?.Value?.ToLower() == "true" ? true : null,
@@ -1562,7 +1562,7 @@ class EditEnvironment
                                 {
                                     @readonly = true,
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             else
@@ -1577,7 +1577,7 @@ class EditEnvironment
                                     }, true))
                                 {
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             parentElement.AddChild(new UIBreak());
@@ -1600,7 +1600,7 @@ class EditEnvironment
                                 {
                                     @readonly = true,
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             else
@@ -1608,7 +1608,7 @@ class EditEnvironment
                                 parentElement.AddChild(inputElement = new UIDatePicker()
                                 {
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange }),
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange }),
                                     date_only = fieldNode.Attributes["date_only"]?.Value.ToLower() == "true" || fieldNodeType == "date_dateonly"
                                 });
                             }
@@ -1631,7 +1631,7 @@ class EditEnvironment
                                 {
                                     @readonly = true,
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             else
@@ -1658,7 +1658,7 @@ class EditEnvironment
                                 {
                                     @readonly = true,
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             else
@@ -1666,7 +1666,7 @@ class EditEnvironment
                                 parentElement.AddChild(inputElement = new UIUploadFileEdit(editThemeDef.ServiceId, editThemeDef.EditThemeId, field)
                                 {
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             parentElement.AddChild(new UIBreak());
@@ -1684,7 +1684,7 @@ class EditEnvironment
                             {
                                 @readonly = @readonly == true || readonlyOperators.Contains(editOperation),
                                 id = id,
-                                css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                             });
                             parentElement.AddChild(new UIBreak());
 
@@ -1703,7 +1703,7 @@ class EditEnvironment
                             {
                                 @readonly = @readonly == true || readonlyOperators.Contains(editOperation),
                                 id = id,
-                                css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                             });
                             parentElement.AddChild(new UIBreak());
 

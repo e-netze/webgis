@@ -533,10 +533,20 @@
         if (webgis.mapBuilder && $('.webgis-mapbuilder-description-raw').length > 0) {
             $('.webgis-mapbuilder-description-raw').val(webgis.mapBuilder.mapDescription);
         }
-        $('.input-setborder-onchange').change(function () {
-            $(this).css('border', '2px solid #b5dbad');
-        }).keydown(function () {
-            $(this).css('border', '2px solid #b5dbad');
+
+        // change input, on change
+        $('.input-change-style-onchange').on('input change', function () {
+            
+            var original = $(this).data('original-value');
+            var current = $(this).val();
+            console.log('changed', original, current);
+
+            $(this).toggleClass('changed', current !== original);
+        });
+        $('.input-change-style-onchange').each(function () {
+            $(this)
+                .data('original-value', $(this).val())
+                .removeClass('input-change-style-onchange');  // avoid setting this again...
         });
 
         if (webgis.globals && webgis.globals.portal) {

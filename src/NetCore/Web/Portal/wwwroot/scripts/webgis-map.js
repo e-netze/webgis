@@ -50,6 +50,7 @@ webgis.mapInitializer = (function (m) {
     console.log('webgis.globals.urlParameters', webgis.globals.urlParameters);
 
     $(document).ready(function () {
+        webgis.$("body").addClass("webgis-viewer");
 
         var info = "<table style='color:#aaa'>";
         info += "<tr><td>API-Version</td><td>" + webgis.api_version + "</td></tr>";
