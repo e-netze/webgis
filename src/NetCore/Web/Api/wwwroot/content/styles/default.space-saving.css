@@ -1,43 +1,40 @@
-﻿.webgis-container.webgis-space-saving .webgis-toolbox-tool-item .webgis-toolbox-tool-item-label {
+﻿.webgis-container.webgis-space-saving {
+    /* Fonts */
+    --webgis-ui-font-size-tool-label: 7.5px;
+
+    /* Borders */
+    --webgis-ui-border-width-button: 1px;
+
+    /* Size, Padding, ... */
+    --webgis-ui-tool-item-img-size: 20px;
+    --webgis-ui-tool-item-padding: 5px;
+
+    --webgis-ui-presentation-toc-title-expanded-padding: 2px 20px 2px 30px;
+    --webgis-ui-presentation-toc-title-padding: 2px 20px 2px 5px;
+
+    --webgis-ui-presentation-toc-item-padding: 4px 8px;
+    --webgis-ui-presentation-toc-item-marign: 2px;
+    --webgis-ui-presentation-toc-item-font-size: 13px;
+    --webgis-ui-presentation-toc-item-legend-size: 24px;
+
+    --webgis-ui-button-padding: 8px 8px;
+    --webgis-ui-button-font-size: 12px;
+
+    --webgis-ui-input-padding: 4px 6px;
+}
+
+.webgis-container.webgis-space-saving .webgis-toolbox-tool-item .webgis-toolbox-tool-item-label {
     /*display: none !important;*/
-    font-size: 7.5px;
     margin: 0px -5px;
 }
 
-body.webgis-space-saving .webgis-ui-imagebutton .webgis-ui-imagebutton-text {
-    font-size: 7.5px !important;
-}
-
-.webgis-container.webgis-space-saving .webgis-toolbox-tool-item span img {
-    width: 20px;
-}
-
 .webgis-container.webgis-space-saving .webgis-result-table-tools .webgis-toolbox-tool-item span img {
-    width: 20px;
     margin-left: 3px;
-}
-
-.webgis-container.webgis-space-saving .webgis-presentation_toc-item,
-.webgis-container.webgis-space-saving .webgis-presentation_toc-legend,
-.webgis-container.webgis-space-saving .webgis-presentation_toc-item-group {
-    padding: 4px 8px;
-    font-size: 13px;
-    margin: 2px;
 }
 
     .webgis-container.webgis-space-saving .webgis-presentation_toc-item.webgis-presentation_toc-dyncontent-item {
         padding: 2px 8px 2px 28px;
     }
-
-.webgis-container.webgis-space-saving .webgis-expanded .webgis-presentation_toc-title-text {
-    padding: 2px 20px 2px 30px;
-}
-
-.webgis-container.webgis-space-saving .webgis-presentation_toc-title-legend-icon {
-    width: 24px;
-    height: 24px;
-    background-size: 20px 20px;
-}
 
 .webgis-container.webgis-space-saving .webgis-tab-control-tab-content .webgis-result-table.features .webgis-result-table-header {
     top: 68px;
@@ -45,10 +42,6 @@ body.webgis-space-saving .webgis-ui-imagebutton .webgis-ui-imagebutton-text {
 
 .webgis-container.webgis-space-saving .webgis-tab-control-tab-content.tools-collapsed .webgis-result-table.features .webgis-result-table-header {
     top: 20px;
-}
-
-.webgis-container.webgis-space-saving .webgis-toolbox-tool-item {
-    padding: 5px;
 }
 
 .webgis-container.webgis-space-saving .webgis-contextmenu.icons li {
@@ -63,29 +56,8 @@ body.webgis-space-saving .webgis-ui-imagebutton .webgis-ui-imagebutton-text {
     font-size: 1.25em;
 }
 
-.webgis-container.webgis-space-saving .uibutton {
-    padding: 8px 8px;
-    font-size: 12px;
-    border-width: 1px;
-}
-
-    .webgis-container.webgis-space-saving .uibutton.uibutton-option-rect {
-        padding: 8px 8px;
-        font-size: 8px;
-        border-width: 1px;
-        background-size: 20px;
-    }
-
-
-
 .webgis-container.webgis-space-saving #edit-editmask-container .webgis-editfield-container {
     padding: 3px 0px;
-}
-
-.webgis-container.webgis-space-saving .webgis-input,
-.webgis-container.webgis-space-saving .webgis-textarea,
-.webgis-container.webgis-space-saving .webgis-select {
-    padding: 4px 4px;
 }
 
 .webgis-container.webgis-space-saving .webgis-toolbox-tool-block.webgis-tips .webgis-toolbox-tool-block-content {

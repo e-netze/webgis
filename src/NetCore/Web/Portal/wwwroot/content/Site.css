@@ -736,6 +736,6 @@ input[type="checkbox"].input-validation-error {
     top: 0px;
     left: 0px;
     max-height: 100px;
-    background-color: #b5dbad;
+    background-color: var(--webgis-brand-primary-light);
     padding: 4px;
 }

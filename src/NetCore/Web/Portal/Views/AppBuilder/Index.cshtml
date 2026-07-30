@@ -19,6 +19,10 @@
 }
 
 <link href="@(apiUrl)/content/styles/default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+@if (!String.IsNullOrWhiteSpace(customContent.PortalCustomContentRootPath) && customContent.ApiPageDefaultCssExists(Model.PortalId))
+{
+    <link href="@(customContent.CustomScriptContent(Model.PortalId, Model.CurrentUsername, "default.css", WebGISVersion.CssVersion))" rel="stylesheet" />
+}
 <link href="@(apiUrl)/content/api/ui.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 
 <link href="~/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />

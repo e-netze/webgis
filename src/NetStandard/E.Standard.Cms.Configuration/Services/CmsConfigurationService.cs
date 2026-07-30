@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 
 using E.Standard.Cms.Configuration.Models;
@@ -208,6 +209,34 @@ public class CmsConfigurationService
 
         var item = Instance.CmsItems?.Where(i => i.Id == cmsId).FirstOrDefault();
         return item?.SecretsPassword ?? String.Empty;
+    }
+
+    public string GetCustomCss(string cmsId)
+    {
+        var cmsItem = String.IsNullOrEmpty(cmsId)
+                ? Instance.CmsItems?.FirstOrDefault()
+                : Instance.CmsItems?.FirstOrDefault(i => cmsId.Equals(i.Id, StringComparison.InvariantCultureIgnoreCase));
+
+        if (String.IsNullOrEmpty(cmsItem?.Path))
+        {
+            return String.Empty;
+        }
+
+        StringBuilder css = new();
+
+        string parent = Directory.GetParent(cmsItem.Path).FullName;
+
+        foreach (var fileName in String.IsNullOrEmpty(cmsId)
+                                    ? new string[] { "site.css" }
+                                    : new string[] { "site.css", $"site.{cmsId}.css" })
+        {
+            if (File.Exists(Path.Combine(parent, fileName)))
+            {
+                css.AppendLine(File.ReadAllText(Path.Combine(parent, fileName)));
+            }
+        }
+
+        return css.ToString();
     }
 
     #region Helper

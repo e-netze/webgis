@@ -1,4 +1,4 @@
-.webgis-plugin-collectorpro-container
+﻿.webgis-plugin-collectorpro-container
 .tab1
 .select2-container {
     box-sizing: border-box;
@@ -97,7 +97,7 @@
 
 .select2-dropdown {
     background-color: white;
-    border: 1px solid #b5dbad;
+    border: 1px solid var(--webgis-brand-primary-light);
     /*border-radius: 4px;*/
     box-sizing: border-box;
     display: block;
@@ -195,7 +195,7 @@
 .tab1
 .select2-container--default .select2-selection--single {
     /*background-color: #fff;*/
-    border: 1px solid #b5dbad;
+    border: 1px solid var(--webgis-brand-primary-light);
     /*border-radius: 4px;*/
 }
 

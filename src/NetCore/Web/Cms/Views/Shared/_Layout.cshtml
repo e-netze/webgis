@@ -5,7 +5,8 @@
 
 @model object;
 @{
-    var isCmsView = Model is Cms.Models.CmsModel;
+    var cmsModel = Model as Cms.Models.CmsModel;
+    var isCmsView = cmsModel is not null;
 }
 <!DOCTYPE html>
 <html>
@@ -30,6 +31,15 @@
     {
         <link rel="stylesheet" href="~/css/@CCS.Instance.Company/site.css?@(CmsGlobals.CssVersion)" />
     }
+
+
+    <style>
+
+        @Html.Raw(CCS.GetCustomCss(cmsModel?.CmsId))
+
+    </style>    
+    
+
 </head>
 <body>
     <nav class="webportal-layout-header navbar navbar-fixed-top">

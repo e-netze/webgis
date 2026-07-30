@@ -8,36 +8,35 @@
 .webgis-container.light,
 body.webgis-light {
     /* Brand */
-    --brand-primary:        #2c78bb;
-    --brand-primary-light:  transparent;   /* #ccc */
+    --webgis-brand-primary:        #2c78bb;
+    --webgis-brand-primary-light:  #eee;   /* #ccc */
  
     /* Surfaces */
-    --ui-surface:           #fafafa;
-    --ui-surface-raised:    #f0f0f0;
-    --ui-surface-sunken:    #fcfcfc;
-    --ui-surface-hover:     #ccc;
-    --ui-surface-muted:     #dcdcdc;
+    --webgis-ui-surface:           #fafafa;
+    --webgis-ui-surface-sunken:    #fcfcfc;
+    --webgis-ui-surface-hover:     #ccc;
+    --webgis-ui-surface-muted:     #dcdcdc;
 
     /* Text */
-    --ui-text:              #000;
-    --ui-text-selected :    #2c78bb;
-    --ui-text-label:        #333;
-    --ui-text-muted:        #545454;
-    --ui-text-dark-bg:      #fff;
-    --ui-text-highlighted-bg:  #0078d4;
+    --webgis-ui-text:              #000;
+    --webgis-ui-text-selected :    #2c78bb;
+    --webgis-ui-text-label:        #333;
+    --webgis-ui-text-disabled:     #545454;
+    --webgis-ui-text-dark-bg:      #fff;
+    --webgis-ui-text-highlighted-bg:  #0078d4;
 
     /* Borders */
-    --ui-border:            #ddd;
-    --ui-border-subtle:     #e2e2e2;
-    --ui-border-info:       #fbed80;
-    --ui-border-width-item-selected: 3px;
+    --webgis-ui-border:            #ddd;
+    --webgis-ui-border-subtle:     #e2e2e2;
+    --webgis-ui-border-info:       #fbed80;
+    --webgis-ui-border-width-item-selected: 3px;
 
     /* Status Colors */
-    --ui-status-error-bg:        #ffcccc;
-    --ui-status-error-bg-strong: #ff8888;
-    --ui-status-warning-bg:      #ffffaa;
-    --ui-status-highlighted-bg:  #ffffaa;
-    --ui-status-info-bg:         #ffffaa;
-    --ui-status-success-bg:      #e0ffe0;
-    --ui-status-accent-bg:       #fa7c03;
+    --webgis-ui-status-error-bg:        #ffcccc;
+    --webgis-ui-status-error-bg-strong: #ff8888;
+    --webgis-ui-status-warning-bg:      #ffffaa;
+    --webgis-ui-status-highlighted-bg:  #ffffaa;
+    --webgis-ui-status-info-bg:         #ffffaa;
+    --webgis-ui-status-success-bg:      #e0ffe0;
+    --webgis-ui-status-accent-bg:       #fa7c03;
 }

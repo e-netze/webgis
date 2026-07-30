@@ -1,5 +1,11 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
 for details on configuring this project to bundle and minify static web assets. */
+:root {
+    /* Brand */
+    --webgis-brand-primary: #59c134;
+    --webgis-brand-primary-light: color-mix(in oklch, var(--webgis-brand-primary) 25%, white);
+}
+
 body {
     padding-top: 50px;
     padding-bottom: 20px;
@@ -131,8 +137,8 @@ CMS
 }
 
 .navbar {
-    background-color: #fff !important;
-    color: #333;
+    background-color: var(--webgis-brand-primary) !important;
+    color: #fff;
 }
 
 .cms-navbar {
@@ -174,7 +180,7 @@ CMS
         }
 
         .cms-navbar .item:last-child .text {
-            background-color: #b5dbad;
+            background-color: var(--webgis-brand-primary-light);
             color: #333;
             padding-left: 34px;
             background-image: url('../images/refresh-26.png');
@@ -183,12 +189,12 @@ CMS
         }
 
         .cms-navbar .item:last-child .pin {
-            background-color: #b5dbad;
+            background-color: var(--webgis-brand-primary-light);
             display: table-cell;
         }
 
         .cms-navbar .item:last-child .right {
-            border-left: 12px solid #b5dbad;
+            border-left: 12px solid var(--webgis-brand-primary-light);
         }
 
         .cms-navbar .item.hidden {
@@ -207,7 +213,7 @@ CMS
     }
 
         .pin-list-items .cms-pin-item:hover {
-            background: #b5dbad;
+            background: var(--webgis-brand-primary-light);
         }
 
         .pin-list-items .cms-pin-item .pin {
@@ -315,7 +321,7 @@ CMS
         cursor: pointer;
         display: inline-block;
         margin: 1px;
-        border: 1px solid #82c828;
+        border: 1px solid var(--webgis-brand-primary);
         border-radius: 18px;
     }
 
@@ -432,7 +438,7 @@ CMS
 
         .cms-content .node.selected {
             /*box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.15);*/
-            border: 2px solid #b5dbad;
+            border: 2px solid var(--webgis-brand-primary-light);
         }
 
         .cms-content .node.parent:hover {
@@ -506,43 +512,43 @@ CMS
             }
 
             .cms-content .node .node-tools .node-menu {
-                background-color: #b5dbad;
+                background-color: var(--webgis-brand-primary-light);
                 background-image: url('../images/menu-26-w.png');
                 display: none !important;
             }
 
             .cms-content .node .node-tools .node-properties {
-                background-color: #b5dbad;
+                background-color: var(--webgis-brand-primary-light);
                 background-image: url('../images/config-26.png');
             }
 
             .cms-content .node .node-tools .node-target-properties {
-                background-color: #b5dbad;
+                background-color: var(--webgis-brand-primary-light);
                 background-image: url('../images/config-target-26.png');
             }
 
             .cms-content .node .node-tools .node-delete {
-                background-color: #b5dbad;
+                background-color: var(--webgis-brand-primary-light);
                 background-image: url('../images/delete-26.png');
             }
 
             .cms-content .node .node-tools .node-copy {
-                background-color: #b5dbad;
+                background-color: var(--webgis-brand-primary-light);
                 background-image: url('../images/copy-26.png');
             }
 
             .cms-content .node .node-tools .node-cut {
-                background-color: #b5dbad;
+                background-color: var(--webgis-brand-primary-light);
                 background-image: url('../images/cut-26.png');
             }
 
             .cms-content .node .node-tools .node-refresh {
-                background-color: #b5dbad;
+                background-color: var(--webgis-brand-primary-light);
                 background-image: url('../images/refresh-26.png');
             }
 
             .cms-content .node .node-tools .node-security {
-                background-color: #b5dbad;
+                background-color: var(--webgis-brand-primary-light);
                 background-image: url('../images/security-26.png');
                 display: inline-block;
             }
@@ -568,12 +574,12 @@ CMS
                     }
 
         .cms-content .node.current {
-            background-color: #b5dbad;
+            background-color: var(--webgis-brand-primary-light);
             color: #333;
         }
 
         .cms-content .node.sorting {
-            background-color: #b5dbad;
+            background-color: var(--webgis-brand-primary-light);
             color: #333;
         }
 
@@ -888,7 +894,7 @@ tr.cms-form-table.exclusive {
         display: inline-block;
         width: 5%;
         height: 22px;
-        background-color: #b5dbad;
+        background-color: var(--webgis-brand-primary-light);
         color: #fff;
         border: 1px solid #ccc;
         border-radius: 4px;
@@ -903,7 +909,7 @@ tr.cms-form-table.exclusive {
         display: inline-block;
         width: 30px;
         height: 26px;
-        background-color: #b5dbad;
+        background-color: var(--webgis-brand-primary-light);
         color: #fff;
         border: 1px solid #ccc;
         border-radius: 4px;
@@ -930,7 +936,7 @@ tr.cms-form-table.exclusive {
     color: #333;
     font-size: 16px;
     padding: 4px 4px 4px 24px;
-    border-bottom: 1px solid #82c828;
+    border-bottom: 1px solid var(--webgis-brand-primary);
     position: relative;
     border-radius: 2px;
 }
@@ -988,7 +994,7 @@ tr.cms-form-table.exclusive {
             color: #333;
             padding: 4px 4px 4px 24px;
             cursor: pointer;
-            border-bottom: 1px solid #b5dbad;
+            border-bottom: 1px solid var(--webgis-brand-primary-light);
             /*border-radius: 6px;*/
         }
 
@@ -1089,7 +1095,7 @@ tr.cms-form-table.exclusive {
             }
 
         .cms-form .cms-form-table th {
-            background-color: #b5dbad;
+            background-color: var(--webgis-brand-primary-light);
             color: #333;
             white-space: nowrap;
         }
@@ -1187,13 +1193,13 @@ button {
     background-color: #e0e0e0;
     color: #000;
     padding: 8px 36px 8px 36px;
-    border: 1px solid #82c828;
+    border: 1px solid var(--webgis-brand-primary);
     border-radius: 18px;
     outline: none !important;
 }
 
     button:hover {
-        color: #82c828;
+        color: var(--webgis-brand-primary);
         background-color: #fff;
         box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.15);
     }
@@ -1239,7 +1245,7 @@ input.cms-search {
     border-left: none;
     border-right: none;
     background-color: transparent;
-    color: #333;
+    color: #fff;
     max-width: 800px;
 }
 
@@ -1279,6 +1285,10 @@ input.cms-search {
 
 .input-container .tt-menu {
     z-index: 2147483647;
+}
+
+.navbar-brand:hover {
+    color: #fff;
 }
 
 .navbar-search-button {
@@ -1379,7 +1389,7 @@ input.cms-search {
     height: 150px;
     display: inline-block;
     margin: 5px 5px 5px 0px;
-    background-color: #b5dbad;
+    background-color: var(--webgis-brand-primary-light);
     border-radius: 5px;
     color: #333;
     cursor: pointer;

@@ -1290,7 +1290,6 @@
                         .attr("title", webgis.l10n.get("legend"))
                         .attr("alt", webgis.l10n.get("legend"))
                         .appendTo($li) // Legend icon
-                        .css('background-image', 'url(' + webgis.css.imgResource('legend-24.png', 'toc') + ')')
                         .click(function () {
                             let serviceCollection = collectServices($(this));
                             if (serviceCollection && serviceCollection.services != null) {
@@ -1999,9 +1998,10 @@
                     service.map.events.fire('hidepresentations');
                 }
 
-                let $collapse = $(this).parent().find('.webgis-presentation_toc-basemap-collapse');
-                if ($collapse.hasClass('expanded'))
-                    $collapse.trigger('click');
+                // led it be expanded... or as it is ;)
+                // let $collapse = $(this).parent().find('.webgis-presentation_toc-basemap-collapse');
+                // if ($collapse.hasClass('expanded'))
+                //     $collapse.trigger('click');
             });
             $item_li.data("resetPreview", function () {
                 this.data("resetPreviewTimer").Start();
@@ -2036,12 +2036,12 @@
             }
         }
 
-        $ul.find('li.webgis-presentation_toc-basemap-item.webgis-presentation_toc-basemap-item-block').each(function (i, e) {
-            if (i >= 3) {
-                $(e).css('display','none');
-            }
-        });
-        $ul.find('.webgis-presentation_toc-basemap-collapse').removeClass('expanded');
+        // $ul.find('li.webgis-presentation_toc-basemap-item.webgis-presentation_toc-basemap-item-block').each(function (i, e) {
+        //     if (i >= 3) {
+        //         $(e).css('display','none');
+        //     }
+        // });
+        $ul.find('.webgis-presentation_toc-basemap-collapse').removeClass('expanded').trigger('click');
     };
     let removeService = function (e, service, parent) {
         if (service.isBasemap) {

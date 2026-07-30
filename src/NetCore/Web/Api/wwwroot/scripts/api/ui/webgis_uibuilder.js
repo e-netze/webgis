@@ -734,7 +734,7 @@
                     }
                 });
             $("<h2><img src='" + webgis.css.imgResource(show ? "expanded-26.png" : "collapsed-26.png", "ui") + "' class='collapse-arrow' >" +
-                (element.type === 'optionscontainer' ? "&nbsp;<div class='webgis-ui-selected-option' style='display:inline-block;position:relative;top:7px;height:28px;overflow:hidden'></div>" : "") +
+                (element.type === 'optionscontainer' ? "&nbsp;<div class='webgis-ui-selected-option' style='display:inline-block;height:28px;overflow:hidden'></div>" : "") +
                 (element.icon ? "&nbsp;<img src='" + webgis.css.imgResource(element.icon) + "'/>" : "") +
                 "&nbsp;" + element.title + "</h2>").appendTo($collapsableTitle);
             $parent = $("<div>").addClass('webgis-ui-collapsable-content').css('display', show ? 'block' : 'none').appendTo($collapsable);

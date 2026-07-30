@@ -212,12 +212,12 @@ ul#menu {
 }
 
     .featured .content-wrapper {
-        background-color: #b5dbad;
-        background-image: -ms-linear-gradient(left, #b5dbad 0%, #a4d4e6 100%);
-        background-image: -o-linear-gradient(left, #b5dbad 0%, #a4d4e6 100%);
-        background-image: -webkit-gradient(linear, left top, right top, color-stop(0, #b5dbad ), color-stop(1, #a4d4e6));
-        background-image: -webkit-linear-gradient(left, #b5dbad 0%, #a4d4e6 100%);
-        background-image: linear-gradient(left, #b5dbad 0%, #a4d4e6 100%);
+        background-color: var(--webgis-brand-primary-light);
+        background-image: -ms-linear-gradient(left, var(--webgis-brand-primary-light) 0%, #a4d4e6 100%);
+        background-image: -o-linear-gradient(left, var(--webgis-brand-primary-light) 0%, #a4d4e6 100%);
+        background-image: -webkit-gradient(linear, left top, right top, color-stop(0, var(--webgis-brand-primary-light) ), color-stop(1, #a4d4e6));
+        background-image: -webkit-linear-gradient(left, var(--webgis-brand-primary-light) 0%, #a4d4e6 100%);
+        background-image: linear-gradient(left, var(--webgis-brand-primary-light) 0%, #a4d4e6 100%);
         color: #3e5667;
         padding: 20px 40px 30px 40px;
     }
@@ -443,7 +443,7 @@ textarea {
 }
 
     input:focus, textarea:focus {
-        border: 1px solid #b5dbad;
+        border: 1px solid var(--webgis-brand-primary-light);
     }
 
     input[type="checkbox"] {
@@ -456,9 +456,9 @@ input[type="submit"],
 input[type="button"],
 button,
 .button {
-    background-color: #b5dbad;
+    background-color: var(--webgis-brand-primary-light);
     color: #303030;
-    border: 2px solid #82C828;
+    border: 2px solid var(--webgis-brand-primary);
     padding: 7px 16px;
     cursor: pointer;
     margin: 1px;
@@ -477,7 +477,7 @@ button,
     input[type="button"]:hover,
     button:hover,
     .button:hover {
-        color: #82C828;
+        color: var(--webgis-brand-primary);
         background-color:#fff;
         box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.15);
     }
@@ -511,7 +511,7 @@ button,
 }
 
 .message-success {
-    color: #b5dbad;
+    color: var(--webgis-brand-primary-light);
     font-size: 1.3em;
     font-weight: bold;
     margin: 20px 0 10px 0;
@@ -782,7 +782,7 @@ tr.pager td {
     height: 108px;
     background-color: #fff;
     margin: 0px 5px 5px 0px;
-    border: 2px solid #b5dbad;
+    border: 2px solid var(--webgis-brand-primary-light);
     cursor: pointer;
     color: #000;
     border-radius: 6px;
@@ -815,7 +815,7 @@ tr.pager td {
     top: 0px;
     left: 0px;
     height: 108px;
-    background-color: #b5dbad;
+    background-color: var(--webgis-brand-primary-light);
     padding: 10px;
     box-sizing: border-box;
     border-radius: 4px 0px 0px 4px;
@@ -849,9 +849,9 @@ tr.pager td {
     bottom: 0px;
     width: 36px;
     margin: 0px;
-    border-top: 2px solid #82C828;
-    border-bottom: 2px solid #82C828;
-    border-right: 2px solid #82C828;
+    border-top: 2px solid var(--webgis-brand-primary);
+    border-bottom: 2px solid var(--webgis-brand-primary);
+    border-right: 2px solid var(--webgis-brand-primary);
     background-image: url(../content/api/img/fore-26-g.png);
     background-position: center bottom;
     background-repeat: no-repeat;
@@ -926,7 +926,7 @@ tr.pager td {
     }
 
     .webgis-wizard-tab-active {
-            background-color: #b5dbad;
+            background-color: var(--webgis-brand-primary-light);
             margin-right: 10px;
             color: #000; 
     }
