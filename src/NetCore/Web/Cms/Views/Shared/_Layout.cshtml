@@ -1,5 +1,4 @@
-﻿@using Cms.AppCode
-@using E.Standard.Cms.Configuration.Services
+﻿@using E.Standard.Cms.Configuration.Services
 @using E.Standard.Cms.Configuration
 @inject CmsConfigurationService CCS
 
@@ -26,6 +25,8 @@
         <link href="~/lib/webportal-layout/webportal-layout.css?@(CmsGlobals.CssVersion)" rel="stylesheet" />
         <link href="~/css/site.min.css?@(CmsGlobals.CssVersion)" rel="stylesheet" />
     </environment>
+
+    <link href="~/css/site.custom.css" rel="stylesheet" />
 
     @if (!String.IsNullOrWhiteSpace(CCS.Instance?.Company))
     {

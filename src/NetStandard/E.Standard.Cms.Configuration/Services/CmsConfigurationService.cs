@@ -214,7 +214,7 @@ public class CmsConfigurationService
     public string GetCustomCss(string cmsId)
     {
         var cmsItem = String.IsNullOrEmpty(cmsId)
-                ? Instance.CmsItems?.FirstOrDefault()
+                ? Instance.CmsItems?.FirstOrDefault()  // simply take the first one...
                 : Instance.CmsItems?.FirstOrDefault(i => cmsId.Equals(i.Id, StringComparison.InvariantCultureIgnoreCase));
 
         if (String.IsNullOrEmpty(cmsItem?.Path))
@@ -227,8 +227,8 @@ public class CmsConfigurationService
         string parent = Directory.GetParent(cmsItem.Path).FullName;
 
         foreach (var fileName in String.IsNullOrEmpty(cmsId)
-                                    ? new string[] { "site.css" }
-                                    : new string[] { "site.css", $"site.{cmsId}.css" })
+                                    ? new string[] { "cms.css" }
+                                    : new string[] { "cms.css", $"cms.{cmsId}.css" })
         {
             if (File.Exists(Path.Combine(parent, fileName)))
             {

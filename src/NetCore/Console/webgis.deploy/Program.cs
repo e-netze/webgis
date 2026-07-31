@@ -272,6 +272,7 @@ try
     Console.WriteLine("Create Custom CSS");
     cssService.ModifyDefaultCss(profile, Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)), company);
     cssService.ModifyPortalCss(profile, Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)), company);
+    cssService.ModifySiteCss(profile, Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)));
 
     #endregion
 

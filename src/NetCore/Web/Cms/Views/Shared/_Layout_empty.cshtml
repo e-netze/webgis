@@ -3,8 +3,14 @@
 @using E.Standard.Cms.Configuration.Services
 @inject CmsConfigurationService CCS
 
+@model object;
 @{
-
+    var cmsId = Model switch
+    {
+        Cms.Models.CmsModel cmsModel => cmsModel.CmsId,
+        Cms.Models.DeployModel deployModel => deployModel.CmsItem?.Id,
+        _ => null
+    };
 }
 <!DOCTYPE html>
 <html>
@@ -24,10 +30,19 @@
         <link rel="stylesheet" href="~/css/site.css?@(CmsGlobals.JsVersion)" />
     </environment>
 
+    <link href="~/css/site.custom.css" rel="stylesheet" />
+
     @if (!String.IsNullOrWhiteSpace(CCS.Instance?.Company))
     {
         <link rel="stylesheet" href="~/css/@CCS.Instance.Company/site.css" />
     }
+
+    <style>
+
+            @Html.Raw(CCS.GetCustomCss(cmsId))
+
+    </style>
+
 </head>
 <body>
     <environment include="Development">

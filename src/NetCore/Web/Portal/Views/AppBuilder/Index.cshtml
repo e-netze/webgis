@@ -23,6 +23,10 @@
 {
     <link href="@(customContent.CustomScriptContent(Model.PortalId, Model.CurrentUsername, "default.css", WebGISVersion.CssVersion))" rel="stylesheet" />
 }
+@if (customContent.PageMapDefaultCssExists(Model.PortalId))
+{
+    <link href="@(portalContentUrl)/content/portals/@(Model.PortalId)/map-default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+}
 <link href="@(apiUrl)/content/api/ui.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 
 <link href="~/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />

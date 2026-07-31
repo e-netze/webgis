@@ -28,6 +28,11 @@
 
 <link href="@(apiUrl)/content/styles/default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 
+@if (!String.IsNullOrEmpty(config.Company()))
+{
+    <link href="@(apiUrl)/customcontent/defaultcss?company=@(config.Company())&@(WebGISVersion.CssVersion)" rel="stylesheet" />
+}
+
 @if (!String.IsNullOrWhiteSpace(customContent.PortalCustomContentRootPath) && customContent.ApiPageDefaultCssExists(Model.PortalPageId))
 {
     <link href="@(customContent.CustomScriptContent(Model.PortalPageId, Model.CurrentUsername, "default.css", WebGISVersion.CssVersion))" rel="stylesheet" />
