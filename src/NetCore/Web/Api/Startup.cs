@@ -82,6 +82,8 @@ public class Startup
     {
         services.AddEssentialWebgisApiServices(Configuration);
 
+        services.AddBrandStyleService();
+
         services.AddApplicationSecurityConfiguration();
 
         var securityConfig = new ApplicationSecurityConfig().LoadFromJsonFile();

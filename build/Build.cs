@@ -412,6 +412,10 @@ class Build : NukeBuild
                 .SetProcessWorkingDirectory(RootDirectory)
             );
             DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebApp.Test" / "E.Standard.WebApp.Test.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
+            DotNetTasks.DotNetTest(s => s
                 .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebGIS.Tools.Tests" / "E.Standard.WebGIS.Tools.Tests.csproj")
                 .SetProcessWorkingDirectory(RootDirectory)
             );

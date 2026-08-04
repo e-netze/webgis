@@ -17,7 +17,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@CmsGlobals.SchemaName - Cms</title>
+    <title>@CmsGlobals.SchemaNameCapital CMS</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -25,12 +25,13 @@
         <link rel="stylesheet" href="~/css/site.css?@(CmsGlobals.JsVersion)" />
     </environment>
     <environment exclude="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/b rap/dist/css/bootstrap.css" />
         <link href="~/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />
         <link rel="stylesheet" href="~/css/site.css?@(CmsGlobals.JsVersion)" />
     </environment>
 
-    <link href="~/css/site.custom.css" rel="stylesheet" />
+    <link href="~/css/site.overrides.css" rel="stylesheet" />
+    <style>:root { @Html.Raw(StyleService.GetBrandVariablesFromEnvironment()) }</style>
 
     @if (!String.IsNullOrWhiteSpace(CCS.Instance?.Company))
     {

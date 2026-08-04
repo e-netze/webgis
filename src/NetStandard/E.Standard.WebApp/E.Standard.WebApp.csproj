@@ -11,10 +11,6 @@
     </ItemGroup>
 	
     <ItemGroup>
-      <Folder Include="Services\" />
-    </ItemGroup>
-	
-    <ItemGroup>
       <ProjectReference Include="..\E.Standard.Extensions\E.Standard.Extensions.csproj" />
       <ProjectReference Include="..\E.Standard.Platform\E.Standard.Platform.csproj" />
       <ProjectReference Include="..\E.Standard.Security.Cryptography\E.Standard.Security.Cryptography.csproj" />

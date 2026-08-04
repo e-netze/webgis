@@ -46,7 +46,8 @@
         <link href="@(portalContentUrl)/content/Site.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
     </environment>
 
-    <link href="~/content/site.custom.css" rel="stylesheet" />
+    <link href="~/content/site.overrides.css" rel="stylesheet" />
+    <style>:root { @Html.Raw(StyleService.GetBrandVariablesFromEnvironment()) }</style>
 
     <script type="text/javascript">
         function moveDown(dir) {

@@ -1,7 +1,11 @@
 ﻿:root {
     /* Brand */
-    --webgis-brand-primary: #59c134;
+    --webgis-brand-primary: #82C828;
     --webgis-brand-primary-light: color-mix(in oklch, var(--webgis-brand-primary) 15%, white);
+    --webgis-brand-logo: url();
+    
+    --webgis-ui-surface-navbar: var(--webgis-brand-primary);
+    --webgis-ui-text-navbar: #fff;
 }
 
     html {
@@ -964,8 +968,8 @@
 
         .navbar,
         .navbar .webgis-button {
-            background-color: #fff !important;
-            color: #333 !important;
+            background-color: var(--webgis-ui-surface-navbar) !important;
+            color: var(--webgis-ui-text-navbar) !important;
         }
 
     .navbar-collapse {
@@ -981,21 +985,21 @@
         max-width: 100%;
     }
 
-    .navbar-brand {
-        color: #333 !important;
-        padding-left: 32px;
-        background-repeat: no-repeat;
-        background-position: left center;
-        background-image: url(../images/logos/gview5_48x48-w.png);
-        background-size: 24px;
-        display: inline-block;
-        padding-top: 0.3125rem;
-        padding-bottom: 0.3125rem;
-        margin-right: 1rem;
-        font-size: 1.25rem;
-        line-height: inherit;
-        white-space: nowrap;
-    }
+.navbar-brand {
+    color: var(--webgis-ui-text-navbar) !important;
+    padding-left: 42px;
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-image: var(--webgis-brand-logo);
+    background-size: 36px;
+    display: inline-block;
+    padding-top: 0.3125rem;
+    padding-bottom: 0.3125rem;
+    margin-right: 1rem;
+    font-size: 1.25rem;
+    line-height: inherit;
+    white-space: nowrap;
+}
 
 
     .webportal-layout-main-container {

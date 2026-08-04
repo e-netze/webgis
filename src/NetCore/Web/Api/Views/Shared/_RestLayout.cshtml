@@ -16,9 +16,10 @@
     <environment names="Staging,Production">
         <link href="~/content/Site.css" rel="stylesheet" />
     </environment>
-    <link href="~/content/site.custom.css" rel="stylesheet" />
+    <link href="~/content/site.overrides.css" rel="stylesheet" />
+    <style>:root { @Html.Raw(StyleService.GetBrandVariablesFromEnvironment()) }</style>
 
-    <link href="~/content/styles/default.css" rel="stylesheet" />
+    @* <link href="~/content/styles/default.css" rel="stylesheet" /> *@
 
     <script src="~/scripts/jquery-3.4.1.min.js"></script>
     <link href="~/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />

@@ -70,7 +70,7 @@ internal class CssService
 
         string targetPath =
             String.IsNullOrEmpty(subFolder)
-            ? Path.Combine(originalFi.Directory.FullName, originalFi.Name.Substring(0, originalFi.Name.Length-originalFi.Extension.Length) + ".custom.css")
+            ? Path.Combine(originalFi.Directory.FullName, originalFi.Name.Substring(0, originalFi.Name.Length-originalFi.Extension.Length) + ".overrides.css")
             : Path.Combine(originalFi.Directory.FullName, subFolder, originalFi.Name);
 
         ModifyCSS(originalFi.FullName, cssModifyFi.FullName, targetPath, cssAppendFi.Exists ? cssAppendFi.FullName : string.Empty);

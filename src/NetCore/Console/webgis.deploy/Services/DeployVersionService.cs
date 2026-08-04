@@ -170,7 +170,7 @@ internal class DeployVersionService
                       "modifiers": [
                         /*
                         {
-                          "pattern": "#59c134",  // CI Color (Button Borders, etc)   (--webgis-brand-primary)
+                          "pattern": "#82C828",  // CI Color (Button Borders, etc)   (--webgis-brand-primary)
                           "replace": "#aaa"
                         },
                         {

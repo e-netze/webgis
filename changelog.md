@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+
+- CSS Custom WebGIS Brand Properties (Variables)
+  [Issue #473](https://github.com/e-netze/webgis-community/issues/473)
+  [docs](https://docs.webgiscloud.com/de/webgis/config/css-styling/index.html)
+
+  **!! Braking Change !!**
+  This change may cause changes in existing stylings of the viewer!
+
 ### Fixed
 
 ## 8.26.2804

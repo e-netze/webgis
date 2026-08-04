@@ -128,6 +128,11 @@ var gViewWebApps = builder
 
 var webgisApi = builder.AddProject<Projects.webgis_api>("webgis-api")
                         .WithReplicas(1)
+                        //.WithEnvironment(e => e.EnvironmentVariables.Add("CSS_WEBGIS_BRAND_PRIMARY", "#00a"))
+                        //.WithEnvironment(e => e.EnvironmentVariables.Add("CSS_WEBGIS_BRAND_PRIMARY_LIGHT", "#faf"))
+                        .WithEnvironment(e => e.EnvironmentVariables.Add("CSS_WEBGIS_UI_SURFACE_NAVBAR", "#222"))
+                        .WithEnvironment(e => e.EnvironmentVariables.Add("CSS_WEBGIS_UI_TEXT_NAVBAR", "#fff"))
+                        .WithEnvironment(e => e.EnvironmentVariables.Add("CSS_WEBGIS_BRAND_LOGO", "url(https://media.ffycdn.net/eu/energie-steiermark/prPBs9mfkKG17xtTVTPv.svg)"))
 #if ADD_MESSAGEQUEUE
                         .WaitFor(mq)
 #endif
@@ -153,6 +158,9 @@ var webgisApi = builder.AddProject<Projects.webgis_api>("webgis-api")
 
 var webgisPortal = builder.AddProject<Projects.webgis_portal>("webgis-portal")
                           .WaitFor(webgisApi)
+                          .WithEnvironment(e => e.EnvironmentVariables.Add("CSS_WEBGIS_UI_SURFACE_NAVBAR", "#222"))
+                          .WithEnvironment(e => e.EnvironmentVariables.Add("CSS_WEBGIS_UI_TEXT_NAVBAR", "#fff"))
+                          .WithEnvironment(e => e.EnvironmentVariables.Add("CSS_WEBGIS_BRAND_LOGO", "url(https://media.ffycdn.net/eu/energie-steiermark/prPBs9mfkKG17xtTVTPv.svg)"))
 #if ADD_IDENTITYSERVER
                           .WaitFor(identityServer)
 #endif
@@ -173,6 +181,9 @@ var webgisPortal = builder.AddProject<Projects.webgis_portal>("webgis-portal")
                          ;
 
 var webgisCms = builder.AddProject<Projects.webgis_cms>("webgis-cms")
+                       .WithEnvironment(e => e.EnvironmentVariables.Add("CSS_WEBGIS_UI_SURFACE_NAVBAR", "#222"))
+                       .WithEnvironment(e => e.EnvironmentVariables.Add("CSS_WEBGIS_UI_TEXT_NAVBAR", "#fff"))
+                       .WithEnvironment(e => e.EnvironmentVariables.Add("CSS_WEBGIS_BRAND_LOGO", "url(https://media.ffycdn.net/eu/energie-steiermark/prPBs9mfkKG17xtTVTPv.svg)"))
                        .WaitFor(webgisPortal)
                        .WaitFor(webgisApi)
                        .WithUrlForEndpoint("https", ep =>

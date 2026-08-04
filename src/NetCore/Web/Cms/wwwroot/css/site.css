@@ -2,8 +2,13 @@
 for details on configuring this project to bundle and minify static web assets. */
 :root {
     /* Brand */
-    --webgis-brand-primary: #59c134;
+    --webgis-brand-primary: #82C828;
     --webgis-brand-primary-light: color-mix(in oklch, var(--webgis-brand-primary) 25%, white);
+    --webgis-brand-primary-light-text-color: #333;
+    --webgis-brand-logo: url();
+
+    --webgis-ui-surface-navbar: var(--webgis-brand-primary);
+    --webgis-ui-text-navbar: #fff;
 }
 
 body {
@@ -137,8 +142,26 @@ CMS
 }
 
 .navbar {
-    background-color: var(--webgis-brand-primary) !important;
-    color: #fff;
+    background-color: var(--webgis-ui-surface-navbar) !important;
+    color: var(--webgis-ui-text-navbar);
+    padding: 0.5rem 1rem;
+    box-sizing: border-box;
+}
+
+.navbar-brand {
+    color: var(--webgis-ui-text-navbar) !important;
+    padding-left: 42px;
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-image: var(--webgis-brand-logo);
+    background-size: 36px;
+    display: inline-block;
+    padding-top: 0.8125rem;
+    padding-bottom: 0.3125rem;
+    margin-right: 1rem;
+    font-size: 22px;
+    line-height: inherit;
+    white-space: nowrap;
 }
 
 .cms-navbar {
@@ -181,7 +204,7 @@ CMS
 
         .cms-navbar .item:last-child .text {
             background-color: var(--webgis-brand-primary-light);
-            color: #333;
+            color: var(--webgis-brand-primary-light-text-color);
             padding-left: 34px;
             background-image: url('../images/refresh-26.png');
             background-position: 5px center;
@@ -438,7 +461,7 @@ CMS
 
         .cms-content .node.selected {
             /*box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.15);*/
-            border: 2px solid var(--webgis-brand-primary-light);
+            border: 2px solid var(--webgis-brand-primary);
         }
 
         .cms-content .node.parent:hover {
@@ -574,13 +597,13 @@ CMS
                     }
 
         .cms-content .node.current {
-            background-color: var(--webgis-brand-primary-light);
-            color: #333;
+            background-color: var(--webgis-brand-primary);
+            color: #fff;
         }
 
         .cms-content .node.sorting {
             background-color: var(--webgis-brand-primary-light);
-            color: #333;
+            color: var(--webgis-brand-primary-light-text-color);
         }
 
     .cms-content .sortable > .node {
@@ -811,7 +834,7 @@ tr.cms-form-table.exclusive {
 
     .modaldialog-blocker .modaldialog-modal.has-buttons .modaldialog-body {
         bottom: 50px;
-        background-color: #efefef;
+        background-color: #fff;
     }
 
     .modaldialog-blocker .modaldialog-modal .modaldialog-buttons {
@@ -847,13 +870,13 @@ tr.cms-form-table.exclusive {
 
     .propertygrid-property-wrapper .propertygrid-label {
         position: absolute;
-        top: -14px;
-        left: 2px;
-        background-color: #efefef;
-        color: #555;
+        top: -13px;
+        left: 8px;
+        /*background-color: #efefef;*/
+        color: var(--webgis-brand-primary);
         padding:0px 8px;
-        border-radius:8px;
-        border: 1px solid #ccc;
+        /*border-radius:8px;
+        border: 1px solid #ccc;*/
     }
 
     .propertygrid-property-wrapper.borderless .propertygrid-label {
@@ -870,10 +893,21 @@ tr.cms-form-table.exclusive {
         .propertygrid-property-wrapper .propertygrid-value select {
             width: 100%;
             border: none;
+            border-bottom: 1px solid #ccc;
+            /*border-radius: 6px;*/
+        }
+
+        .propertygrid-property-wrapper .propertygrid-value input {
+            padding: 2px 8px;
+        }
+        .propertygrid-property-wrapper .propertygrid-value select {
+            padding: 2px 4px;
         }
 
             .propertygrid-property-wrapper .propertygrid-value input:focus,
             .propertygrid-property-wrapper .propertygrid-value select:focus {
+                border-bottom: 1px solid #aaa;
+                background: #efefef;
                 outline: none;
             }
 
@@ -932,14 +966,20 @@ tr.cms-form-table.exclusive {
     background-repeat: no-repeat;
     background-position: 4px 8px;
     cursor: pointer;
-    background-color: #e0e0e0;
+    background-color: #fcfcfc;
     color: #333;
     font-size: 16px;
     padding: 4px 4px 4px 24px;
-    border-bottom: 1px solid var(--webgis-brand-primary);
+    border-bottom: 1px solid #ececec;
     position: relative;
     border-radius: 2px;
 }
+
+    .propertygrid-category .propertygrid-category-title:has(+ .propertygrid-category-body:not([style*="display: none"])) {
+        background-color: var(--webgis-brand-primary-light);
+        color: var(--webgis-brand-primary-light-text-color);
+        border-bottom: 2px solid var(--webgis-brand-primary);
+    }
 
 .propertygrid-category.collapsed .propertygrid-category-title {
     background-image: url(../images/collapsed-empty-16.png);
@@ -990,30 +1030,47 @@ tr.cms-form-table.exclusive {
             background-image: url(../images/expanded-16.png);
             background-repeat: no-repeat;
             background-position: 4px 6px;
-            background-color: #e0e0e0;
+            background-color: #fcfcfc;
             color: #333;
             padding: 4px 4px 4px 24px;
             cursor: pointer;
-            border-bottom: 1px solid var(--webgis-brand-primary-light);
+            border-bottom: 1px solid #ececec;
             /*border-radius: 6px;*/
         }
 
-        .cms-form .cms-form-groupbox.collapsed .text {
-            background-image: url(../images/collapsed-empty-16.png);
-        }
+            .cms-form .cms-form-groupbox .text:has(+ .body:not([style*="display: none"])) {
+                background-color: var(--webgis-brand-primary-light);
+                color: var(--webgis-brand-primary-light-text-color);
+                border-bottom: 2px solid var(--webgis-brand-primary);
+            }
+
+            .cms-form .cms-form-groupbox.collapsed .text {
+                background-image: url(../images/collapsed-empty-16.png);
+            }
 
     .cms-form input,
     .cms-form select,
     .cms-form textarea {
         width: 100%;
-        border: none;
+        border:none;
+        border-bottom: 1px solid #ccc;
+        /*border-radius: 6px;*/
+        padding: 2px 5px;
+    }
+
+    .cms-form input,
+    .cms-form textarea {
+        padding: 2px 5px;
+    }
+    .cms-form select {
+        padding: 2px 1px;
     }
 
         .cms-form input:focus,
         .cms-form select:focus,
         .cms-form textarea:focus {
-            width: 100%;
-            border: none;
+            border-bottom: 1px solid #aaa;
+            background: #efefef;
             outline: none;
         }
 
@@ -1027,19 +1084,18 @@ tr.cms-form-table.exclusive {
     }
 
         .cms-form .input-container .label {
-            color: #555 !important;
-            background-color: #efefef;
+            color: var(--webgis-brand-primary) !important;
+            /*background-color: #efefef;
             border-radius: 8px;
-            border: 1px solid #ccc;
+            border: 1px solid #ccc;*/
             position: absolute;
             left: 4px;
-            top: -14px;
+            top: -12px;
             font-size: 100%;
             font-weight: normal;
             padding: 2px 8px;
         }
 
-        .cms-form .input-container.required,
         .cms-form .input-container.required input,
         .cms-form .input-container.required select {
             background-color: #ffffaa;
@@ -1096,8 +1152,9 @@ tr.cms-form-table.exclusive {
 
         .cms-form .cms-form-table th {
             background-color: var(--webgis-brand-primary-light);
-            color: #333;
+            color: var(--webgis-brand-primary-light-text-color);
             white-space: nowrap;
+            font-weight:normal;
         }
 
     .cms-form .cms-form-checkbox {
@@ -1391,7 +1448,7 @@ input.cms-search {
     margin: 5px 5px 5px 0px;
     background-color: var(--webgis-brand-primary-light);
     border-radius: 5px;
-    color: #333;
+    color: var(--webgis-brand-primary-light-text-color);
     cursor: pointer;
     position: relative;
     background-repeat: no-repeat;

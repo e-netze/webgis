@@ -29,6 +29,7 @@ using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
 using E.Standard.WebApp.Abstraction;
 using E.Standard.WebApp.Extensions;
+using E.Standard.WebApp.Extensions.DependencyInjection;
 using E.Standard.WebApp.Options;
 using E.Standard.WebGIS.Core.Extensions;
 using E.Standard.WebGIS.Core.Extensions.DependencyInjection;
@@ -78,6 +79,7 @@ public class Startup
         services
             .AddEssentialWebgisPortalServices()
             .AddWebgisPortalAuthenticationServices(Configuration)
+            .AddBrandStyleService()
             .AddMvc(o =>
             {
                 o.EnableEndpointRouting = false;

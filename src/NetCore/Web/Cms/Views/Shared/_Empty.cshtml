@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@CmsGlobals.SchemaName - Cms</title>
+    <title>@CmsGlobals.SchemaNameCapital CMS</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -16,7 +16,8 @@
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
 
-    <link href="~/css/site.custom.css" rel="stylesheet" />
+    <link href="~/css/site.overrides.css" rel="stylesheet" />
+    <style>:root { @Html.Raw(StyleService.GetBrandVariablesFromEnvironment()) }</style>
 </head>
 <body>
 

@@ -1,31 +1,26 @@
 ﻿.webgis-container, body {
     /* Brand */
-    --webgis-brand-primary: #59c134;
+    --webgis-brand-primary: #82C828  /*#59c134*/;
     --webgis-brand-primary-light_: #ebf1ea; /*#d9e7d6*/ /*#b5dbad*/
     --webgis-brand-primary-light: color-mix(in oklch, var(--webgis-brand-primary) 15%, white);
     --webgis-brand-primary-dark: color-mix(in oklab, var(--webgis-brand-primary) 60%, black);
-
     /* Button */
     --webgis-brand-button-bg: var(--webgis-brand-primary-light);
     --webgis-brand-button-col: var(--webgis-ui-text-selected);
     --webgis-brand-button-border: var(--webgis-brand-primary);
-
     --webgis-brand-button-hover-bg: #fff;
     --webgis-brand-button-hover-col: #333;
     --webgis-brand-button-hover-border: var(--webgis-brand-primary);
-
     --webgis-brand-button-cancel-bg: var(--webgis-ui-surface-sunken);
     --webgis-brand-button-cancel-col: var(--webgis-ui-text-disabled);
     --webgis-brand-button-cancel-border: var(--webgis-brand-primary);
-
     --webgis-brand-button-danger-bg: #faa;
     --webgis-brand-button-danger-col: #333;
     --webgis-brand-button-danger-border: #f00;
-
     /* Surfaces */
     --webgis-ui-surface: #fff;
     --webgis-ui-surface-hover: #efefef;
-    --webgis-ui-surface-sunken: #f6f6f6;
+    --webgis-ui-surface-sunken: #efefef/*#f6f6f6*/;
     --webgis-ui-surface-splitter: #e0e0e0;
     --webgis-ui-surface-header: var(--webgis-ui-surface-sunken);
     --webgis-ui-surface-disabled: #aaa;
@@ -42,7 +37,6 @@
     --webgis-ui-text-highlighted-bg: #000;
     /* Fonts */
     --webgis-ui-font-size-tool-label: 8.5px;
-
     /* Borders */
     --webgis-ui-border: #ccc;
     --webgis-ui-border-subtle: #e0e0e0;
@@ -68,26 +62,20 @@
     --webgis-ui-bubble-park: #aaa;
     --webgis-ui-bubble-parked-bg: #fa7c03;
     --webgis-ui-bubble-contextmenu-bg: #026894;
-
     /* Size, Padding, Margin... */
     --webgis-ui-tool-item-img-size: 26px;
     --webgis-ui-tool-item-padding: 12px;
     --webgis-ui-tool-item-margin: 3px;
-
     --webgis-ui-presentation-toc-title-padding: 5px 20px 5px 5px;
     --webgis-ui-presentation-toc-title-margin: -5px 8px -5px 20px;
-
-    --webgis-ui-presentation-toc-title-expanded-padding:5px 20px 5px 30px;
+    --webgis-ui-presentation-toc-title-expanded-padding: 5px 20px 5px 30px;
     --webgis-ui-presentation-toc-title-expanded-margin: -5px -5px -5px -5px;
-
     --webgis-ui-presentation-toc-item-padding: 8px;
     --webgis-ui-presentation-toc-item-marign: 3px;
     --webgis-ui-presentation-toc-item-font-size: 14px;
     --webgis-ui-presentation-toc-item-legend-size: 30px;
-
     --webgis-ui-button-padding: 10px 14px;
     --webgis-ui-button-font-size: 14px;
-
     --webgis-ui-input-padding: 8px 5px;
     --webgis-ui-input-font-size: 14px;
 }
