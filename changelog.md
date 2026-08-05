@@ -18,6 +18,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## 8.26.3101
+
+### Added
+
+- DataLinq Update: 8.26.3101
+  fixed/solved:
+  [DataLinq Issue #49](https://github.com/e-netze/datalinq-community/issues/49)
+  [DataLinq Issue #47](https://github.com/e-netze/datalinq-community/issues/47)
+
+- WebGIS Help: 
+  * Admin Pages in english (with switch to german)
+  * User Manuel in user selected language (with switch en/de)
+
+
 ## 8.26.2804
 
 ### Added
