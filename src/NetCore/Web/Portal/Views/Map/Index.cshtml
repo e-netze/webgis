@@ -201,8 +201,8 @@
             webgis.l10n.language='@Model.Language' || webgis.localStorage.get('map.properties.language') || webgis.l10n.language;
             webgis.l10n.supportedLanguages = @Html.Raw(JSerializer.Serialize(@Model.SupportedLanguages));
 
-            webgis.help.url = '@config.MapViewerHelpUrl()';
-            webgis.help.rootUrl = '@config.MapViewerHelpRootUrl()';
+            webgis.help.url = '@config.MapViewerHelpUrl()'.replaceAll("{language}", webgis.l10n.language || 'de');
+            webgis.help.rootUrl = '@config.MapViewerHelpRootUrl()'.replaceAll("{language}", webgis.l10n.language || 'de');
 
             @if (Model.Parameters != null)
             {

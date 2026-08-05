@@ -1127,7 +1127,7 @@ function manageUIMaster(portalId, mapCategory) {
                         .addClass('uibutton-cancel uibutton')
                         .appendTo($top)
                         .click(function () {
-                            window.open('https://docs.webgiscloud.com/de/webgis/apps/map_builder/uimaster/index.html');
+                            window.open('https://docs.webgiscloud.com/en/webgis/apps/map_builder/uimaster/index.html');
                         });
 
                     // Editor
@@ -1246,7 +1246,7 @@ function editMapDescription() {
                 .addClass('uibutton-cancel uibutton')
                 .appendTo($top)
                 .click(function () {
-                    window.open('https://docs.webgiscloud.com/de/webgis/apps/map_builder/mapdescription/index.html');
+                    window.open('https://docs.webgiscloud.com/en/webgis/apps/map_builder/mapdescription/index.html');
                 });
 
             // Editor

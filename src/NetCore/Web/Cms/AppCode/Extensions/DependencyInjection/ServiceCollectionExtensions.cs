@@ -42,7 +42,7 @@ static public class ServiceCollectionExtensions
             .AddDataLinqCodeService(
             configAction: config =>
             {
-                config.ProjectWebSite = "https://docs.webgiscloud.com/de/datalinq/operation.html";
+                config.ProjectWebSite = "https://docs.webgiscloud.com/en/datalinq/operation.html";
 
                 var dataLinqInstances = new List<DataLinqCodeOptions.DataLinqInstance>();
 
