@@ -564,6 +564,7 @@ MapCollection new
         font-size: 16px;
         background-position: 2px center;
         background-repeat: no-repeat;
+        background-size: 26px;
     }
 
         .webgis-map-app-menu li:hover {
@@ -675,6 +676,7 @@ MapCollection new
             font-size: 14px;
             background-position: 4px center;
             background-repeat: no-repeat;
+            background-size: 26px;
             box-sizing: border-box;
         }
 

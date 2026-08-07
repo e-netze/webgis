@@ -87,10 +87,7 @@ public class ShareMap : IApiServerButtonLocalizable<ShareMap>,
                     targettitle = localizer.Localize("name"),
                     elements = new IUIElement[]
                     {
-                        new UILabel()
-                        {
-                            label = localizer.Localize("label1:body")
-                        },
+                        new UIParagraph(localizer.Localize("label1:body")),
                         durationSelect,
                         new UIHidden(){
                             id="serialization-share-mapjson",

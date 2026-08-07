@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   **!! Braking Change !!**
   This change may cause changes in existing stylings of the viewer!
 
+- custom.js: added usability constant ``expandBasemapsOnAddServices`` to control whether the
+  basemap group in the TOC stays expanded/collapsed when services are added to the map
+  [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#hintergrundkarten-basemaps)
+
 ### Fixed
 
 ## 8.26.3101

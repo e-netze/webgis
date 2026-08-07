@@ -560,6 +560,7 @@
 
                     $("<img>")
                         .attr('src', webgis.css.imgResource("admin-26.png", "ui"))
+                        .css('width','26px')
                         .appendTo($mapProperties);
                     
                     if (hasLegend) {
@@ -2036,12 +2037,9 @@
             }
         }
 
-        // $ul.find('li.webgis-presentation_toc-basemap-item.webgis-presentation_toc-basemap-item-block').each(function (i, e) {
-        //     if (i >= 3) {
-        //         $(e).css('display','none');
-        //     }
-        // });
-        $ul.find('.webgis-presentation_toc-basemap-collapse').removeClass('expanded').trigger('click');
+        $ul.find('.webgis-presentation_toc-basemap-collapse')
+            .toggleClass('expanded', !webgis.usability.expandBasemapsOnAddServices || false)
+            .trigger('click');
     };
     let removeService = function (e, service, parent) {
         if (service.isBasemap) {

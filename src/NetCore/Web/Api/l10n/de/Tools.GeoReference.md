@@ -8,12 +8,15 @@ Dokumente hochlanden zum georeferenzieren.
 
 # label1:
 
-Mit diesem Werkzeug können Dateien hochgeladen und verortet werden.
-|Diese Dateien können dabei MS-Excel, CSV oder Textdaten sein. 
+md:Mit diesem Werkzeug können Dateien hochgeladen und verortet werden.
+
+Diese Dateien können dabei MS-Excel, CSV oder Textdaten sein. 
 Bei MS-Excel und CSV wird versucht jede Zeile zu verorten.
-|In der ersten Zeile muss dabei der Spaltenname stehen. 
+
+In der ersten Zeile muss dabei der Spaltenname stehen. 
 Bei einfachen Textdateien wird versucht jede Zeile zu verorten.
-|Verortet werden beispielsweise Adressen oder Ortsnamen. 
+
+Verortet werden beispielsweise Adressen oder Ortsnamen. 
 Mit diesem Werkzeug werden keine Koordinaten verortet. 
 Koordinaten können in Form von CSV Dateien über das Koordinaten 
 Abfragewerkzeug hochgeladen werden.

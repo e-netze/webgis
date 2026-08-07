@@ -1029,7 +1029,7 @@
                 $newElement.css({
                     backgroundImage: 'url(' + imgSrc + ')',
                     backgroundPosition: '2px 10px',
-                    //backgroundSize: 'auto 26px',
+                    backgroundSize: 'auto 26px',
                     backgroundRepeat: 'no-repeat',
                 });
             }

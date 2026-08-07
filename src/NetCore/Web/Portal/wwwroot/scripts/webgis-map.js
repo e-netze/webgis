@@ -1209,6 +1209,7 @@ webgis.mapInitializer = (function (m) {
             $("<li>")
                 .text(webgis.l10n.get('viewer-settings')+"...")
                 .css("backgroundImage", "url(" + webgis.css.imgResource("admin-26.png", "ui") + ")")
+                .css("backgroundSize", "26px")
                 .appendTo($ul)
                 .click(function (e) {
                     $('body').webgis_mapProperties({

@@ -177,6 +177,7 @@ body.webgis-viewer {
     padding-left:34px;
     background-repeat:no-repeat;
     background-position: 3px 4px;
+    background-size: 26px;
 }
 
     .webgis-contextmenu.icons li.checked {
@@ -248,6 +249,7 @@ body.webgis-viewer {
             background-position: 4px center;
             background-repeat: no-repeat;
             background-image:url(../api/img/tab-control/triangle-right_26@1.png);
+            background-size: 26px;
         }
 
             .webgis-contextmenu-blocker ul.webgis-contextmenu li.webgis-contextmenu-item:hover {
@@ -261,7 +263,7 @@ body.webgis-viewer {
         }
 
 .webgis-paragraph {
-    font-size: 14px;
+    font-size: 12.5px;
     margin: 10px 0px 2px 0px;
     color: #555;
     padding: 0px 0px 2px 4px;
@@ -269,13 +271,14 @@ body.webgis-viewer {
 }
 
 .webgis-modal .webgis-paragraph {
-    font-size: 1.5em;
+    /*font-size: 1.5em;*/
 }
 
+/*
 .webgis-modal-content .webgis-paragraph {
     font-size: 1em;
 }
-
+*/
 .webgis-label {
     display: inline-block;
     font-size: 14px;
@@ -422,6 +425,7 @@ body.webgis-viewer {
         color: #333;
         background-color: var(--webgis-ui-surface);
         border-bottom: 1px solid var(--webgis-brand-primary-light);
+        background-size: 26px;
         padding: 9px 0px 9px 36px;
         margin-top: 0px;
         border-top: 1px solid var(--webgis-brand-primary-light);
@@ -1001,6 +1005,7 @@ img.tile {
         height: 30px;
         background-position: center;
         background-repeat: no-repeat;
+        background-size: var(--webgis-ui-tool-item-img-size);
         text-align: center;
     }
 
@@ -1532,6 +1537,7 @@ tr.webgis-border-bottom td{
     background-image: url(../api/img/ui/enter-26.png);
     background-position: 4px center;
     background-repeat: no-repeat;
+    background-size: 26px;
 }
 
     .webgis-presentation_toc-menu-item:hover {
@@ -1753,6 +1759,10 @@ tr.webgis-border-bottom td{
     margin-top:5px;
 }
 
+.webgis-presentation_toc-checkable-icon {
+    width: 16px;
+}
+
 /* Content search  */
 .webgis-content-search-holder {
     max-width: 640px;
@@ -1878,6 +1888,7 @@ tr.webgis-border-bottom td{
             position: absolute;
             left: 12px;
             top: 12px;
+            width: 16px;
         }
 
         .webgis-addservices_toc-content.tiles .webgis-addservices_toc-item .webgis-addservices_toc-info {
@@ -2168,14 +2179,18 @@ tr.webgis-border-bottom td{
     padding:5px 0 5px 0;
     font-weight:bold;
 }
-/*************************************************************/
 
+.webgis-service_toc-checkable-icon {
+    width:16px;
+    height:16px;
+}
+/*************************************************************/
 .webgis-icon-down {
-    padding-left:28px;
-    cursor:pointer;
-    background-image:url("../../content/api/img/down.png");
-    background-repeat:no-repeat;
-    background-position:center left;
+    padding-left: 28px;
+    cursor: pointer;
+    background-image: url("../../content/api/img/down.png");
+    background-repeat: no-repeat;
+    background-position: center left;
 }
 
 .webgis-ui-trans {
@@ -2238,9 +2253,11 @@ tr.webgis-border-bottom td{
     background: var(--webgis-brand-primary-light);
     border-bottom: var(--webgis-ui-border-width-item-selected) solid var(--webgis-brand-primary);
 }
-    .webgis-tabs-tab img {
-        margin:2px
-    }
+.webgis-tabs-tab img {
+    margin: 2px;
+    padding: 3px;
+    width: 26px;
+}
 .webgis-tabs-tab-text {
     position: absolute;
     top: 32px;
@@ -2732,6 +2749,7 @@ td.webgis-tab-header {
         top:7px;
         background-position:center;
         background-repeat:no-repeat;
+        background-size: 16px;
         cursor:pointer;
     }
     .webgis-toolbox-tool-item-group-details .webgis-toolbox-tool-item.checkable .webgis-checkbox:hover {
@@ -2940,6 +2958,7 @@ td.webgis-tab-header {
     border-radius: 4px;
     background-position: center center;
     background-repeat: no-repeat;
+    background-size: var(--webgis-ui-tool-item-img-size);
     cursor: pointer;
     margin: 2px;
 }
@@ -3053,6 +3072,7 @@ body.webgis-ui-holder {
     background-color: var(--webgis-ui-surface);
     background-position: center 4px;
     background-repeat: no-repeat;
+    background-size: var(--webgis-ui-tool-item-img-size);
     box-sizing: border-box;
     position: relative;
     vertical-align: top;
@@ -3292,6 +3312,7 @@ body.webgis-ui-holder {
     background-repeat: no-repeat;
     background-position: center;
     background-color: var(--webgis-ui-surface-sunken);
+    background-size: 26px;
     border-top: 1px solid var(--webgis-brand-primary-light);
     border-bottom: 1px solid var(--webgis-brand-primary-light);
     /*box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);*/
@@ -3396,7 +3417,7 @@ body.webgis-ui-holder {
 .webgis-input,
 .webgis-textarea,
 .webgis-select {
-    background: var(--webgis-ui-surface-sunken);
+    background: var(--webgis-ui-surface);
     border: 1px solid var(--webgis-ui-border);
     font-size: var(--webgis-ui-input-font-size);
     width: 289px;
@@ -5220,6 +5241,7 @@ select.webgis-not-valid {
         background-position: 4px center;
         background-repeat: no-repeat;
         background-color: var(--webgis-ui-surface);
+        background-size: 26px;
         position:relative;
     }
 

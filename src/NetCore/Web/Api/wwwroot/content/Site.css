@@ -1,9 +1,10 @@
 ﻿:root {
     /* Brand */
     --webgis-brand-primary: #82C828;
-    --webgis-brand-primary-light: color-mix(in oklch, var(--webgis-brand-primary) 15%, white);
-    --webgis-brand-logo: url();
-    
+    --webgis-brand-primary-light: color-mix(in oklch, var(--webgis-brand-primary) 25%, white);
+    --webgis-brand-primary-light-text-color: #333;
+    --webgis-brand-logo: url(logos/logo-white-32x32.png);
+
     --webgis-ui-surface-navbar: var(--webgis-brand-primary);
     --webgis-ui-text-navbar: #fff;
 }
