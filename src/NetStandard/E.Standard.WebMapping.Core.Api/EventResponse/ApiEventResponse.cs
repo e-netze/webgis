@@ -98,6 +98,7 @@ public class ApiEventResponse
 
     public string ErrorMessage { get; set; }
     //public MarkerDefinition Marker { get; set; }
+    public string InfoMessage { get; set; }
 
     public ApiEventResponse Append(ApiEventResponse response)
     {

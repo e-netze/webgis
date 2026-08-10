@@ -17,6 +17,7 @@ using E.Standard.CMS.Core;
 using E.Standard.Configuration.Services;
 using E.Standard.DependencyInjection;
 using E.Standard.DependencyInjection.Abstractions;
+using E.Standard.Extensions.Compare;
 using E.Standard.Json;
 using E.Standard.Localization.Extensions;
 using E.Standard.Security.Cryptography;
@@ -827,10 +828,10 @@ public class RestToolsHelperService
             response.RemoveQueryFeaturesById = _restHelper.PrepareFeatureGlobalsOids(apiResponse.RemoveQueryFeaturesById,
                                                                                      apiResponse.RemoveFeaturesQueries.Select(q => q as QueryDTO)).ToArray();
         }
-        if (!String.IsNullOrEmpty(apiResponse.ErrorMessage))
-        {
-            response.ErrorMessage = apiResponse.ErrorMessage;
-        }
+
+        response.ErrorMessage = apiResponse.ErrorMessage.OrTake(null);
+        response.InfoMessage = apiResponse.InfoMessage.OrTake(null);
+        
         if (!String.IsNullOrEmpty(apiResponse.FireCustomMapEvent))
         {
             response.FireCustomMapEvent = apiResponse.FireCustomMapEvent;

@@ -983,8 +983,19 @@
         var responseInfos = [];
 
         if (response.error_message) {
-            responseWarnings.push(response.error_message);
-            responsWarningIsError = true;
+            if (response.error_message.indexOf("dialog:") === 0) {
+                webgis.alert(response.error_message.substring("dialog:".length), "Error");
+            } else { 
+                responseWarnings.push(response.error_message);
+                responsWarningIsError = true;
+            }
+        }
+        if (response.info_message) {
+            if (response.info_message.indexOf("dialog:") === 0) {
+                webgis.alert(response.info_message.substring("dialog:".length), "Info");
+            } else { 
+                responseInfos.push(response.info_message);
+            }
         }
 
         if (response.action === 'download' && response.downloadId) {
