@@ -186,6 +186,32 @@ class Build : NukeBuild
                 }
             }
 
+            var libXml = new[]
+            {
+                 "api/artifacts/*.xml",
+                 "portal/artifacts/*.xml",
+                 "cms/artifacts/*.xml",
+            };
+
+            Log.Information($"Delete thirdparty doc-XML Files");
+            foreach (var pattern in libXml)
+            {
+                foreach (var xmlFile in (RootDirectory / "publish" / Platform).GlobFiles(pattern))
+                {
+                    var fileName = Path.GetFileName(xmlFile.ToString());
+
+                    if (fileName.Contains("webgis", StringComparison.OrdinalIgnoreCase)
+                      || fileName.StartsWith("e.standard.", StringComparison.OrdinalIgnoreCase)
+                      || fileName.StartsWith("e.datalinq.", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    Log.Information($"Deleting {xmlFile}");
+                    xmlFile.DeleteFile();
+                }
+            }
+
             Log.Information($"Set Version {Version} to webgis.js");
             var jsGlobs = new[]
             {

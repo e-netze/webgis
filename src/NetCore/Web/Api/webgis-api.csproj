@@ -51,6 +51,11 @@
     </Content>
   </ItemGroup>
 
+  <PropertyGroup>
+    <!-- copy E.DataLinq.Web.xml: required to show all DataLinq Helper Methods in doku -->
+    <CopyDocumentationFilesFromPackages>true</CopyDocumentationFilesFromPackages>
+  </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier2022" Version="2.9.11" />
     <PackageReference Include="E.DataLinq.Core" Version="8.26.3101" />
