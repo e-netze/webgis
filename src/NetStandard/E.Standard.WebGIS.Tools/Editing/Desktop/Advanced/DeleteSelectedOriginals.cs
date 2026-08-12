@@ -152,7 +152,8 @@ public class DeleteSelectedOriginals : IApiServerToolAsync, IApiChildTool
             throw new ArgumentException("Can't find edit theme for selelction");
         }
 
-        if (!await editEnvironment.DeleteFeatures(editTheme, features))
+        var commitResult = await editEnvironment.DeleteFeatures(editTheme, features);
+        if (!commitResult)
         {
             throw new Exception("Löschen ist nicht möglich");
         }
@@ -169,7 +170,7 @@ public class DeleteSelectedOriginals : IApiServerToolAsync, IApiChildTool
                     Title = u.ToTitle(editTheme)
                 }).ToArray()
             /*, RefreshSelection = true*/
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 
     #endregion

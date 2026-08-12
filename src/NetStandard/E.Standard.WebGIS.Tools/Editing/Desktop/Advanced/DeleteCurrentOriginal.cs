@@ -141,7 +141,8 @@ public class DeleteCurrentOriginal : IApiServerTool, IApiChildTool
             throw new Exception("Can't query source feature");
         }
 
-        if (!await editEnvironment.DeleteFeature(editTheme, originalFeature))
+        var commitResult = await editEnvironment.DeleteFeature(editTheme, originalFeature);
+        if (!commitResult)
         {
             throw new Exception("Löschen ist nicht möglich");
         }
@@ -158,7 +159,7 @@ public class DeleteCurrentOriginal : IApiServerTool, IApiChildTool
                     Title = u.ToTitle(editTheme)
                 }).ToArray()
             /*, RefreshSelection = true*/
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 
     #endregion

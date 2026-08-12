@@ -54,6 +54,18 @@ public class EditingCommitAction : CopyableXml, IUI, ICreatable, IDisplayName
         
     public string ActionPayload { get; set; } // content
 
+    [DisplayName("Success Message")]
+    [Description("""
+        Eine Message, die im Viewer ausgegeben wird, wenn diese Commit Action erfolgreich 
+        ausgeführt wurde (unabhängig davon, ob das Timing Before oder After ist). Im Text 
+        können Platzhalter [FELDNAME] angeführt werden, um Werte aus dem aktuellen Feature 
+        in die Message einzufügen.
+        Die Message wird per default als Toast Message angezeigt und verschwindet nach einigen 
+        Sekunden wieder automatisch. Sollte die Nachricht in einem Dialog angezeigt werden, muss 
+        sit mit "dialog:" beginnen.
+        """)]
+    public string SuccessMessage { get; set; }
+
     #endregion
 
     #region IUI Member
@@ -110,6 +122,7 @@ public class EditingCommitAction : CopyableXml, IUI, ICreatable, IDisplayName
         this.ActionProtocol = (EditCommitActionProtocol)stream.Load(PersistNames.EditingCommitAction.ActionProtocol, (int)EditCommitActionProtocol.Http_Get);
         this.ActionTarget = (string)stream.Load(PersistNames.EditingCommitAction.ActionTarget, string.Empty);
         this.ActionPayload = (string)stream.Load(PersistNames.EditingCommitAction.ActionPayload, string.Empty);
+        this.SuccessMessage = (string)stream.Load(PersistNames.EditingCommitAction.SuccessMessage, string.Empty);
 
         string headersJson = (string)stream.Load(PersistNames.EditingCommitAction.ActionHeaders, String.Empty);
         this.ActionHeaders =
@@ -126,6 +139,7 @@ public class EditingCommitAction : CopyableXml, IUI, ICreatable, IDisplayName
         stream.Save(PersistNames.EditingCommitAction.ActionProtocol, (int)this.ActionProtocol);
         stream.Save(PersistNames.EditingCommitAction.ActionTarget, this.ActionTarget ?? String.Empty);
         stream.Save(PersistNames.EditingCommitAction.ActionPayload, this.ActionPayload ?? String.Empty);
+        stream.Save(PersistNames.EditingCommitAction.SuccessMessage, this.SuccessMessage ?? String.Empty);
 
         var headers = this.ActionHeaders?.Where(x => !String.IsNullOrWhiteSpace(x));
         if (headers?.Any() == true)

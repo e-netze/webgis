@@ -669,7 +669,7 @@ class EditEnvironment
 
             #region Before Commit Actions 
 
-            await _commitActionService.FireActions(editTheme, CommitActionService.Timing.Before, command, features);
+            var beforeCommitMessages = await _commitActionService.FireActions(editTheme, CommitActionService.Timing.Before, command, features);
 
             #endregion
 
@@ -684,7 +684,7 @@ class EditEnvironment
 
             #region After Commit Actions
 
-            await _commitActionService.FireActions(editTheme, CommitActionService.Timing.After, command, features);
+            var afterCommitMessages = await _commitActionService.FireActions(editTheme, CommitActionService.Timing.After, command, features);
 
             #endregion
 
@@ -692,6 +692,14 @@ class EditEnvironment
             {
                 this.CommitedObjectIds = ((IFeatureWorkspaceUndo)ws).CommitedObjectIds;
             }
+
+            var commitFeatureResult = new CommitFeatureResult(true);
+            foreach (var commitActionSuccessMessage in beforeCommitMessages.Concat(afterCommitMessages))
+            {
+                commitFeatureResult.AddInfoMessage(commitActionSuccessMessage);
+            }
+
+            return commitFeatureResult;
         }
         finally
         {
@@ -700,16 +708,14 @@ class EditEnvironment
                 ws.DisConnect();
             }
         }
-
-        return true;
     }
 
-    async public Task<bool> DeleteFeature(EditTheme editTheme, WebMapping.Core.Feature feature)
+    async public Task<CommitFeatureResult> DeleteFeature(EditTheme editTheme, WebMapping.Core.Feature feature)
     {
         return await DeleteFeatures(editTheme, new WebMapping.Core.Feature[] { feature });
     }
 
-    async public Task<bool> DeleteFeatures(EditTheme editTheme, IEnumerable<WebMapping.Core.Feature> features)
+    async public Task<CommitFeatureResult> DeleteFeatures(EditTheme editTheme, IEnumerable<WebMapping.Core.Feature> features)
     {
         if (editTheme == null)
         {
@@ -778,20 +784,30 @@ class EditEnvironment
 
             #region Before Commit Actions 
 
-            await _commitActionService.FireActions(editTheme, CommitActionService.Timing.Before, EditFeatureCommand.Delete, features);
+            var beforeCommitMessages = await _commitActionService.FireActions(editTheme, CommitActionService.Timing.Before, EditFeatureCommand.Delete, features);
 
             #endregion
 
+#if !DEBUG
             if (!await ws.Commit())
             {
                 throw new Exception(ws.LastErrorMessage);
             }
+#endif
 
             #region After Commit Actions 
 
-            await _commitActionService.FireActions(editTheme, CommitActionService.Timing.After, EditFeatureCommand.Delete, features);
+            var afterCommitMessages = await _commitActionService.FireActions(editTheme, CommitActionService.Timing.After, EditFeatureCommand.Delete, features);
 
             #endregion
+
+            var commitFeatureResult = new CommitFeatureResult(true);
+            foreach (var commitActionSuccessMessage in beforeCommitMessages.Concat(afterCommitMessages))
+            {
+                commitFeatureResult.AddInfoMessage(commitActionSuccessMessage);
+            }
+
+            return commitFeatureResult;
         }
         finally
         {
@@ -800,7 +816,6 @@ class EditEnvironment
                 ws.DisConnect();
             }
         }
-        return true;
     }
 
     public IEnumerable<int> CommitedObjectIds { get; private set; }
@@ -885,7 +900,7 @@ class EditEnvironment
         return (true, updatedFeatures, updatedFeaturesQueries);
     }
 
-    #endregion
+#endregion
 
     #region Undo Environment
 
@@ -2693,7 +2708,8 @@ class EditEnvironment
                         Payload = commitActionNode.Attributes["payload"]?.Value ?? "",
                         Headers = !string.IsNullOrWhiteSpace(commitActionNode.Attributes["headers"]?.Value)
                             ? JSerializer.Deserialize<string[]>(commitActionNode.Attributes["headers"].Value)
-                            : []
+                            : [],
+                        SuccessMessage = commitActionNode.Attributes["success_message"]?.Value ?? ""
                     };
 
                     commitActions.Add(commitAction);
@@ -2822,6 +2838,7 @@ class EditEnvironment
             public string Target { get; init; }
             public string Payload { get; init; }
             public string[] Headers { get; init; }
+            public string SuccessMessage { get; init; }
         }
 
         #endregion

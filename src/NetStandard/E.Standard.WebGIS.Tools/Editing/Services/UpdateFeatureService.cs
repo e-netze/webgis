@@ -240,7 +240,7 @@ internal class UpdateFeatureService
         var feature = editEnvironment.GetFeature(bridge, e);
         var editTheme = editEnvironment[e];
 
-        await editEnvironment.DeleteFeature(editTheme, feature);
+        var commitResult = await editEnvironment.DeleteFeature(editTheme, feature);
         var editThemeDef = editEnvironment.EditThemeDefinition;
 
         if (editEnvironment?.EditThemeDefinition != null)
@@ -282,7 +282,7 @@ internal class UpdateFeatureService
             }
         }
 
-        return response;
+        return response.ApplyCommitFeatureResult(commitResult);
     }
 
     async public Task<ApiEventResponse> DeleteSelectedFeatures(IBridge bridge,
@@ -295,11 +295,13 @@ internal class UpdateFeatureService
         var filter = new ApiOidsFilter(e.SelectionInfo.ObjectIds.ToArray())
         {
             QueryGeometry = false,
-            Fields = QueryFields.Id
+            Fields = editTheme.HasCommitSuccessMessagePlaceholders(EditEnvironment.EditFeatureCommand.Delete)
+                ? QueryFields.All
+                : QueryFields.Id
         };
 
         var features = await bridge.QueryLayerAsync(e.SelectionInfo.ServiceId, e.SelectionInfo.LayerId, filter);
-        await editEnvironment.DeleteFeatures(editTheme, features);
+        var commitResult = await editEnvironment.DeleteFeatures(editTheme, features);
 
         var editThemeDef = editEnvironment.EditThemeDefinition;
 
@@ -327,7 +329,7 @@ internal class UpdateFeatureService
             ClientCommands = new ApiClientButtonCommand[] { ApiClientButtonCommand.removequeryresults }
         };
 
-        return response;
+        return response.ApplyCommitFeatureResult(commitResult);
     }
 
     #region Helper

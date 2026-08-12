@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   basemap group in the TOC stays expanded/collapsed when services are added to the map
   [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#hintergrundkarten-basemaps)
 
+- CMS Editing Commit Action: new ``Success Message`` property. It is shown in the viewer after a
+  commit action was executed successfully (Insert/Update/Delete, regardless of Before/After timing).
+  The message text may contain ``[FIELDNAME]`` placeholders that are resolved with the values of the
+  current feature. By default the message is shown as a toast notification; prefixing it with
+  ``dialog:`` shows it in a dialog instead.
+
 ### Fixed
 
 ## 8.26.3101

@@ -245,6 +245,10 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
                 xml.Append($@" protocol=""{(int)commitAction.ActionProtocol}"" ");
                 xml.Append($@" target=""{commitAction.ActionTarget.EscapeXmlString()}"" ");
                 xml.Append($@" payload=""{commitAction.ActionPayload.EscapeXmlString()}"" ");
+                if (!String.IsNullOrEmpty(commitAction.SuccessMessage))
+                {
+                    xml.Append($@" success_message=""{commitAction.SuccessMessage.EscapeXmlString()}"" ");
+                }
                 if(commitAction.ActionHeaders?.Any(x=>!String.IsNullOrWhiteSpace(x)) == true)
                 {
                     xml.Append($@" headers=""{JSerializer.Serialize(commitAction.ActionHeaders.Where(x => !String.IsNullOrWhiteSpace(x)).ToArray()).EscapeXmlString()}"" ");
@@ -576,6 +580,9 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
 
         [PersistName(PersistNames.EditingCommitAction.ActionPayload)]
         public string ActionPayload { get; set;  } // content
+
+        [PersistName(PersistNames.EditingCommitAction.SuccessMessage)]
+        public string SuccessMessage { get; set; }
     }
 
     #endregion

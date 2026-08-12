@@ -24,7 +24,7 @@ internal class CommitActionService
         _editEnvironment = editEnvironment;
     }
 
-    public async Task FireActions(
+    public async Task<IEnumerable<string>> FireActions(
             EditTheme editTheme, 
             Timing timing, 
             EditFeatureCommand command,
@@ -35,7 +35,9 @@ internal class CommitActionService
             .Where(c => c.Timing == GetCommitTiming(timing, command))
             .ToArray();
 
-        if (commitActions?.Any() != true) { return; }  // nothing to do... OK
+        if (commitActions?.Any() != true) { return []; }  // nothing to do... OK
+
+        List<string> successMessages = new();
 
         foreach (var feature in features)
         {
@@ -56,8 +58,16 @@ internal class CommitActionService
                 {
                     throw new Exception($"{commitAction.Timing} commit action '{commitAction.Name}' causes an error", ex);
                 }
+
+                // triggered after every successful commit action, regardless of Before/After timing
+                if (!String.IsNullOrWhiteSpace(commitAction.SuccessMessage))
+                {
+                    successMessages.Add(Globals.SolveExpression(feature, commitAction.SuccessMessage));
+                }
             }
         }
+
+        return successMessages;
     }
 
     #region Perfom Protocol

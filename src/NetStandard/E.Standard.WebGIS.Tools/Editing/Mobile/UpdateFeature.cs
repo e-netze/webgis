@@ -299,7 +299,7 @@ public class UpdateFeature : IApiServerToolLocalizable<Edit>,
         var feature = editEnvironment.GetFeature(bridge, e);
         var editTheme = editEnvironment[e];
 
-        await editEnvironment.DeleteFeature(editTheme, feature);
+        var commitResult = await editEnvironment.DeleteFeature(editTheme, feature);
 
         return new ApiRawJsonEventResponse(new
         {
@@ -308,7 +308,7 @@ public class UpdateFeature : IApiServerToolLocalizable<Edit>,
             {
                 e["serviceid"]
             }
-        });
+        }).ApplyCommitFeatureResult(commitResult);
     }
 
     [ServerToolCommand("select-by-legend")]
