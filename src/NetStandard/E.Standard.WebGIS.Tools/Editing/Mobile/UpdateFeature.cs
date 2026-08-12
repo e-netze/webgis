@@ -346,7 +346,7 @@ public class UpdateFeature : IApiServerToolLocalizable<Edit>,
         var feature = editEnvironment.GetFeature(bridge, e);
         var editThemeDef = editEnvironment.EditThemeDefinition;
 
-        await editEnvironment.UpdateFeature(editTheme, feature);
+        var commitResult = await editEnvironment.UpdateFeature(editTheme, feature);
 
         var oid = e[$"_{EditAttributesFieldPrefix}_globaloid"].ParseFeatureGlobalOid();
 
@@ -372,7 +372,7 @@ public class UpdateFeature : IApiServerToolLocalizable<Edit>,
                     target = UIElementTarget.modaldialog.ToString(),
                 }
             }
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 
     #endregion

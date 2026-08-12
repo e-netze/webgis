@@ -181,7 +181,7 @@ internal class UpdateFeatureService
             }
         }
 
-        await editEnvironment.UpdateFeature(editTheme, feature);
+        var commitResult = await editEnvironment.UpdateFeature(editTheme, feature);
 
         var editThemeDef = editEnvironment.EditThemeDefinition;
 
@@ -228,7 +228,7 @@ internal class UpdateFeatureService
             ReplaceFeaturesQueries = await bridge.GetLayerQueries(query),
             ReplaceQueryFeatures = editedFeatures,
             ReplaceFeatureSpatialReference = sRef
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 
     async public Task<ApiEventResponse> DeleteFeature(IBridge bridge,

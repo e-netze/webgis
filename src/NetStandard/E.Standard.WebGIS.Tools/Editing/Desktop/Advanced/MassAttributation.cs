@@ -148,7 +148,7 @@ public class MassAttributation : IApiServerToolAsync, IApiChildTool
         var editTheme = editEnvironment[e];
         var selection = e.SelectionInfo;
 
-        await editEnvironment.MassAttributeFeatures(editTheme, featureTemplate, selection.ObjectIds);
+        var commitResult = await editEnvironment.MassAttributeFeatures(editTheme, featureTemplate, selection.ObjectIds);
 
         #region Updating QueryResults
 
@@ -185,7 +185,7 @@ public class MassAttributation : IApiServerToolAsync, IApiChildTool
                 {
                     Title = u.ToTitle(editTheme, "Massenattributierung")
                 }).ToArray()
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 
     [ServerToolCommand("select-by-legend")]

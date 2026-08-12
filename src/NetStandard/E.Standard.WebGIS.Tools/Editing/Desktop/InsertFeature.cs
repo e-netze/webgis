@@ -155,14 +155,14 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
         var editTheme = editEnvironment[e];
         var editThemeDef = editEnvironment.EditThemeDefinition;
 
-        await editEnvironment.InsertFeature(editTheme, feature);
+        var commitResult = await editEnvironment.InsertFeature(editTheme, feature);
 
         //var response = new ApiEventResponse()
         //{
         //    ActiveTool = new Edit()
         //};
 
-        var response = await OnButtonClick(bridge, e);
+        var response = (await OnButtonClick(bridge, e)).ApplyCommitFeatureResult(commitResult);
 
         if (e["_select"] == "true")
         {

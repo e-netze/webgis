@@ -270,22 +270,22 @@ class EditEnvironment
 
     #region Database Operatoins (Insert, Udate, Delete)
 
-    async public Task<bool> InsertFeature(EditTheme editTheme, WebMapping.Core.Feature feature)
+    async public Task<CommitFeatureResult> InsertFeature(EditTheme editTheme, WebMapping.Core.Feature feature)
     {
         return await CommitFeaturesAsync(editTheme, new WebMapping.Core.Feature[] { feature }, EditFeatureCommand.Insert);
     }
 
-    async public Task<bool> InserFeatures(EditTheme editTheme, IEnumerable<WebMapping.Core.Feature> features)
+    async public Task<CommitFeatureResult> InserFeatures(EditTheme editTheme, IEnumerable<WebMapping.Core.Feature> features)
     {
         return await CommitFeaturesAsync(editTheme, features, EditFeatureCommand.Insert);
     }
 
-    async public Task<bool> UpdateFeature(EditTheme editTheme, WebMapping.Core.Feature feature)
+    async public Task<CommitFeatureResult> UpdateFeature(EditTheme editTheme, WebMapping.Core.Feature feature)
     {
         return await CommitFeaturesAsync(editTheme, new WebMapping.Core.Feature[] { feature }, EditFeatureCommand.Update);
     }
 
-    async public Task<bool> MassAttributeFeatures(EditTheme editTheme, WebMapping.Core.Feature featureTemplate, int[] objectIds)
+    async public Task<CommitFeatureResult> MassAttributeFeatures(EditTheme editTheme, WebMapping.Core.Feature featureTemplate, int[] objectIds)
     {
         return await CommitFeaturesAsync(editTheme,
                                          objectIds.Select(objectId =>
@@ -298,7 +298,7 @@ class EditEnvironment
                                          EditFeatureCommand.MassAttribution);
     }
 
-    async public Task<bool> TransferFeatures(EditTheme editTheme,
+    async public Task<CommitFeatureResult> TransferFeatures(EditTheme editTheme,
                                              IEnumerable<WebMapping.Core.Feature> features,
                                              bool pipelineSuppressAutovalues,
                                              bool pipelineSuppressValidation)
@@ -309,7 +309,7 @@ class EditEnvironment
                                          pipelineSuppressValidation: pipelineSuppressValidation);
     }
 
-    async public Task<bool> UpdateFeatures(EditTheme editTheme, IEnumerable<WebMapping.Core.Feature> features)
+    async public Task<CommitFeatureResult> UpdateFeatures(EditTheme editTheme, IEnumerable<WebMapping.Core.Feature> features)
     {
         return await CommitFeaturesAsync(editTheme, features, EditFeatureCommand.Update);
     }
@@ -323,7 +323,7 @@ class EditEnvironment
         Transfer = 4
     }
 
-    async private Task<bool> CommitFeaturesAsync(EditTheme editTheme,
+    async private Task<CommitFeatureResult> CommitFeaturesAsync(EditTheme editTheme,
                                                  IEnumerable<WebMapping.Core.Feature> features,
                                                  EditFeatureCommand command,
                                                  bool pipelineSuppressAutovalues = false,

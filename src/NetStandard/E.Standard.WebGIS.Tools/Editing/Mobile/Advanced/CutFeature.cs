@@ -8,6 +8,7 @@ using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
+using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -201,6 +202,8 @@ public class CutFeature : IApiServerToolAsync, IApiChildTool
         // Eventuell den Update erst als letztes machen, damit Orignal Feature erst am schluss überschrieben wird?
         //
 
+        CommitFeatureResult commitResult = null;
+
         if (newShapes != null)
         {
             var newFeatures = newShapes.Select(shape =>
@@ -212,7 +215,8 @@ public class CutFeature : IApiServerToolAsync, IApiChildTool
                   return feature;
               });
 
-            if (!await editEnvironment.InserFeatures(editTheme, newFeatures))
+            commitResult = await editEnvironment.InserFeatures(editTheme, newFeatures);
+            if (!commitResult)
             {
                 throw new Exception("Fehler bei INSERT");
             }
@@ -228,7 +232,7 @@ public class CutFeature : IApiServerToolAsync, IApiChildTool
             //RefreshSelection = true,
 
             UISetters = await bridge.RequiredDeleteOriginalSetters(newShapes, originalShape)
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 
     #endregion

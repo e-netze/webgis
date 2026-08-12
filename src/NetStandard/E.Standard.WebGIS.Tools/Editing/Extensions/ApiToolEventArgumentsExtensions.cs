@@ -16,6 +16,7 @@ using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
+using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 
@@ -26,6 +27,32 @@ static internal class ApiToolEventArgumentsExtensions
     public static bool UseDesktopBehavior(this ApiToolEventArguments e)
     {
         return e.HasElement("div", new[] { "query-results-tab-control-container" });
+    }
+
+    public static ApiEventResponse ApplyCommitFeatureResult(this ApiEventResponse response, CommitFeatureResult result)
+    {
+        if (response == null || result == null)
+        {
+            return response;
+        }
+
+        if (result.ErrorMessages.Any())
+        {
+            var errorMessage = string.Join(System.Environment.NewLine, result.ErrorMessages);
+            response.ErrorMessage = string.IsNullOrEmpty(response.ErrorMessage)
+                ? errorMessage
+                : string.Join(System.Environment.NewLine, response.ErrorMessage, errorMessage);
+        }
+
+        if (result.InfoMessages.Any())
+        {
+            var infoMessage = string.Join(System.Environment.NewLine, result.InfoMessages);
+            response.InfoMessage = string.IsNullOrEmpty(response.InfoMessage)
+                ? infoMessage
+                : string.Join(System.Environment.NewLine, response.InfoMessage, infoMessage);
+        }
+
+        return response;
     }
 
     public static IEditToolService EditToolServiceInstance(this ApiToolEventArguments e, IApiTool sender, ILocalizer localizer)

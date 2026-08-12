@@ -5,6 +5,7 @@ using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
+using E.Standard.WebGIS.Tools.Editing.Extensions;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -145,7 +146,7 @@ public class ExplodeFeature : IApiServerToolAsync, IApiChildTool
         var originalFeature = features[0];
         var originalShape = originalFeature.Shape;
 
-        await _explodeService.ExplodeAndInsertAsync(editEnvironment, editTheme, originalFeature);
+        var commitResult = await _explodeService.ExplodeAndInsertAsync(editEnvironment, editTheme, originalFeature);
 
         return new ApiEventResponse()
         {
@@ -155,7 +156,7 @@ public class ExplodeFeature : IApiServerToolAsync, IApiChildTool
             },
             RefreshServices = new string[] { editThemeDef.ServiceId },
             UISetters = await bridge.RequiredDeleteOriginalSetters(originalShape.Multiparts, originalShape)
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 
     #endregion

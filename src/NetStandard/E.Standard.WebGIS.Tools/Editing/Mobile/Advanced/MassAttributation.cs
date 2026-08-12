@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
+using E.Standard.WebGIS.Tools.Editing.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
@@ -143,7 +144,7 @@ public class MassAttributation : IApiServerToolAsync, IApiChildTool
         var editTheme = editEnvironment[e];
         var selection = e.SelectionInfo;
 
-        await editEnvironment.MassAttributeFeatures(editTheme, feature, selection.ObjectIds);
+        var commitResult = await editEnvironment.MassAttributeFeatures(editTheme, feature, selection.ObjectIds);
 
         #region Updating QueryResults
 
@@ -173,7 +174,7 @@ public class MassAttributation : IApiServerToolAsync, IApiChildTool
             ReplaceQueryFeatures = updatedFeatures.Count > 0 ? updatedFeatures : null,
             ReplaceFeaturesQueries = await bridge.GetLayerQueries(query),
             ReplaceFeatureSpatialReference = sRef,
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 
     [ServerToolCommand("select-by-legend")]

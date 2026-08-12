@@ -560,7 +560,8 @@ public class ClipFeatures : IApiServerToolLocalizableAsync<ClipFeatures>,
             newFeatures = newFeatures.ExplodeMultipartFeatures().ToList();
         }
 
-        if (!await editEnvironment.InserFeatures(editTheme, newFeatures))
+        var commitResult = await editEnvironment.InserFeatures(editTheme, newFeatures);
+        if (!commitResult)
         {
             throw new Exception(localizer.Localize(L10nKeys.ErrorOnInsert));
         }
@@ -576,7 +577,7 @@ public class ClipFeatures : IApiServerToolLocalizableAsync<ClipFeatures>,
                 newFeatures.Select(f => f.Shape),
                 affectedFeatures.Select(f => f.Shape),
                 affectedFeatures.Select(f => f.Oid))
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 
     #region Old Methods
@@ -837,7 +838,8 @@ public class ClipFeatures : IApiServerToolLocalizableAsync<ClipFeatures>,
             newFeatures = newFeatures.ExplodeMultipartFeatures().ToList();
         }
 
-        if (!await editEnvironment.InserFeatures(editTheme, newFeatures))
+        var commitResult = await editEnvironment.InserFeatures(editTheme, newFeatures);
+        if (!commitResult)
         {
             throw new Exception("Fehler bei INSERT");
         }
@@ -861,7 +863,7 @@ public class ClipFeatures : IApiServerToolLocalizableAsync<ClipFeatures>,
                 newFeatures.Select(f => f.Shape),
                 affectedFeatures.Select(f => f.Shape),
                 affectedFeatures.Select(f => f.Oid))
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 
     #endregion

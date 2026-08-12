@@ -259,7 +259,7 @@ public class InsertFeature : IApiServerToolLocalizableAsync<InsertFeature>,
         var editTheme = editEnvironment[e];
         var editThemeDef = editEnvironment.EditThemeDefinition;
 
-        await editEnvironment.InsertFeature(editTheme, feature);
+        var commitResult = await editEnvironment.InsertFeature(editTheme, feature);
 
         var response = await OnEditThemeChanged(bridge, e);
 
@@ -280,7 +280,7 @@ public class InsertFeature : IApiServerToolLocalizableAsync<InsertFeature>,
             await bridge.SetUserFavoritesItemAsync(new Edit(), "Edit", editEnvironment.EditThemeDefinition.ServiceId + "," + editEnvironment.EditThemeDefinition.LayerId + "," + editEnvironment.EditThemeDefinition.EditThemeId);
         }
 
-        return response;
+        return response.ApplyCommitFeatureResult(commitResult);
     }
 
     [ServerToolCommand("saveandselect")]
@@ -355,7 +355,7 @@ public class InsertFeature : IApiServerToolLocalizableAsync<InsertFeature>,
             }
         }
 
-        await editEnvironment.InsertFeature(editTheme, feature);
+        var commitResult = await editEnvironment.InsertFeature(editTheme, feature);
 
         return new ApiRawJsonEventResponse(new
         {
@@ -364,7 +364,7 @@ public class InsertFeature : IApiServerToolLocalizableAsync<InsertFeature>,
             {
                 e["serviceid"]
             }
-        });
+        }).ApplyCommitFeatureResult(commitResult);
     }
 
     [ServerToolCommand("select-by-legend")]

@@ -8,6 +8,8 @@ using E.Standard.Localization.Reflection;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
+using E.Standard.WebGIS.Tools.Editing.Extensions;
+using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -324,6 +326,8 @@ public class ClipFeature : IApiServerToolAsync, IApiChildTool, IApiButtonResourc
             throw new Exception("Cut not supported for this shape/geometry-type");
         }
 
+        CommitFeatureResult commitResult = null;
+
         if (newShapes.Count() > 0)
         {
             var newFeatures = newShapes.Select(shape =>
@@ -335,7 +339,8 @@ public class ClipFeature : IApiServerToolAsync, IApiChildTool, IApiButtonResourc
                   return feature;
               });
 
-            if (!await editEnvironment.InserFeatures(editTheme, newFeatures))
+            commitResult = await editEnvironment.InserFeatures(editTheme, newFeatures);
+            if (!commitResult)
             {
                 throw new Exception("Fehler bei INSERT");
             }
@@ -361,7 +366,7 @@ public class ClipFeature : IApiServerToolAsync, IApiChildTool, IApiButtonResourc
                 }
             },
             UISetters = await bridge.RequiredDeleteOriginalSetters(newShapes, originalShape)
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 
     #endregion
