@@ -28,6 +28,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Allows the test project to access internal types (e.g. EditThemeExtensions, ApiToolEventArgumentsExtensions) -->
+    <InternalsVisibleTo Include="E.Standard.WebGIS.Tools.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
     <ProjectReference Include="..\E.Standard.DbConnector\E.Standard.DbConnector.csproj" />
     <ProjectReference Include="..\E.Standard.DependencyInjection\E.Standard.DependencyInjection.csproj" />
