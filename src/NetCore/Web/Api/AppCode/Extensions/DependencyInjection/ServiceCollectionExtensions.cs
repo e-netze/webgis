@@ -322,6 +322,9 @@ static public class ServiceCollectionExtensions
                 config.AddToRazorBlackList(configuration.DataLinqRazorBlackListItems());
 
                 config.AddSupportedEndPointTypes<WebGISCustomEndPointTypes>();
+
+                var imageRequestWhileList = configuration.GetSection(ApiConfigKeys.ToKey("datalinq:ImageRequestWhiteList")).Get<string[]>() ?? [];
+                config.AddToImageRequestWhiteList(imageRequestWhileList);
             },
             persistanceOptions: config =>
             {
