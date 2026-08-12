@@ -11,14 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - CSS Custom WebGIS Brand Properties (Variables)
   [Issue #473](https://github.com/e-netze/webgis-community/issues/473)
-  [docs](https://docs.webgiscloud.com/de/webgis/config/css-styling/index.html)
+  [docs](https://docs.webgiscloud.com/en/webgis/config/css-styling/index.html)
 
   **!! Braking Change !!**
   This change may cause changes in existing stylings of the viewer!
 
 - custom.js: added usability constant ``expandBasemapsOnAddServices`` to control whether the
   basemap group in the TOC stays expanded/collapsed when services are added to the map
-  [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#hintergrundkarten-basemaps)
+  [docs](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#hintergrundkarten-basemaps)
 
 - CMS Editing Commit Action: new ``Success Message`` property. It is shown in the viewer after a
   commit action was executed successfully (Insert/Update/Delete, regardless of Before/After timing).
@@ -26,7 +26,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   current feature. By default the message is shown as a toast notification; prefixing it with
   ``dialog:`` shows it in a dialog instead.
 
+- DataLinq Configuration:
+  Added ``datalinq:ImageRequestWhiteList:0`` array to ``api.config``
+  [docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#datalinq)
+
 ### Fixed
+
+- MapMarkup: draw rectangle with distance/direction Tool
+  [Issue #497](https://github.com/e-netze/webgis-community/issues/497)
 
 ## 8.26.3101
 

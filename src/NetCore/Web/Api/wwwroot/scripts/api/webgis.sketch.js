@@ -798,6 +798,9 @@
                 }
             }
             else if (_geometryType === 'rectangle') {
+                if (fireEvents) {
+                    this.events.fire('beforeaddvertex', this, vertex);
+                }
                 var rectBounds = [[0, 0], [0, 0]];
                 if (_vertices.length === 0) {
                     _vertices.push(vertex);
