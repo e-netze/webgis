@@ -10,6 +10,7 @@ using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
 using E.Standard.Json;
 using E.Standard.WebGIS.CMS;
+using E.Standard.WebGIS.CMS.Reflection;
 using E.Standard.WebMapping.Core.Api.Bridge;
 
 using Newtonsoft.Json;
@@ -558,11 +559,22 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
 
     public class CommitAction
     {
+        [PersistNodeName]
         public string Name { get; set; }
+        
+        [PersistName(PersistNames.EditingCommitAction.ActionTiming, DefaultValue = EditCommitActionTiming.Before_Insert)]
         public EditCommitActionTiming ActionTiming { get; set; } // before/after
+
+        [PersistName(PersistNames.EditingCommitAction.ActionProtocol, DefaultValue = EditCommitActionProtocol.Http_Get)]
         public EditCommitActionProtocol ActionProtocol { get; set; } // HTTP_GET, HTTP_POST
+
+        [PersistName(PersistNames.EditingCommitAction.ActionTarget)]
         public string ActionTarget { get; set; }  // Url
+
+        [PersistName(PersistNames.EditingCommitAction.ActionHeaders)]
         public string[] ActionHeaders { get; set; } // HTTP Headers (ContentType, Authorization)
+
+        [PersistName(PersistNames.EditingCommitAction.ActionPayload)]
         public string ActionPayload { get; set;  } // content
     }
 

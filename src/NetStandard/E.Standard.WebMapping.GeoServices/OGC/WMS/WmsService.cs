@@ -233,7 +233,7 @@ public class WmsService : IMapService2,
                 try
                 {
 
-                    string url = _server.Replace("[webgis-username]", Map.Environment.UserString(webgisConst.UserName));
+                    string url = _server.Replace("[webgis-username]", Map.Environment.UserString(WebGISConst.UserName));
                     if (_version == WMS_Version.version_1_1_1)
                     {
                         Serializer<WMT_MS_Capabilities> ser = new Serializer<WMT_MS_Capabilities>();
@@ -577,7 +577,7 @@ public class WmsService : IMapService2,
 
             string url = AppendToUrl(_onlineResourceGetMap,
                                      reqArgs.ToString()).Replace("[webgis-username]",
-                                     Map.Environment.UserString(webgisConst.UserName));
+                                     Map.Environment.UserString(WebGISConst.UserName));
             try
             {
                 if (requestContext.Trace)
@@ -855,7 +855,7 @@ public class WmsService : IMapService2,
         if (replaceKeys && url.Contains("[") && url.Contains("]"))
         {
             url = CmsHlp.ReplaceFilterKeys(this.Map, null,
-                this.Map.Environment.UserValue(webgisConst.UserIdentification, null) as CmsDocument.UserIdentification,
+                this.Map.Environment.UserValue(WebGISConst.UserIdentification, null) as CmsDocument.UserIdentification,
                 url);
         }
 

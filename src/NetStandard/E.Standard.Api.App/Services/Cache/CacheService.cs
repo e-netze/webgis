@@ -316,9 +316,9 @@ public class CacheService
 
                 Map map = new Map("init");
                 map.Environment.SetUserValue("WebAppPath", ApiGlobals.AppRootPath);
-                map.Environment.SetUserValue(webgisConst.EtcPath, ApiGlobals.AppEtcPath);
-                map.Environment.SetUserValue(webgisConst.OutputPath, urlHelper?.OutputPath());
-                map.Environment.SetUserValue(webgisConst.OutputUrl, urlHelper?.OutputUrl());
+                map.Environment.SetUserValue(WebGISConst.EtcPath, ApiGlobals.AppEtcPath);
+                map.Environment.SetUserValue(WebGISConst.OutputPath, urlHelper?.OutputPath());
+                map.Environment.SetUserValue(WebGISConst.OutputUrl, urlHelper?.OutputUrl());
 
                 using (var serviceProviderScope = this.ServiceProvider.CreateScope())
                 {

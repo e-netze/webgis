@@ -25,7 +25,7 @@ public class SolrMetaSearchService : SolrSearchService, ISearchService2
     public SolrMetaSearchService(IMap map, CmsNode node)
         : base(node)
     {
-        _metaJsonFile = System.IO.Path.Combine(map.Environment.UserString(webgisConst.EtcPath), "search", $"{this.Id}.json");
+        _metaJsonFile = System.IO.Path.Combine(map.Environment.UserString(WebGISConst.EtcPath), "search", $"{this.Id}.json");
     }
 
     #region ISearchService2

@@ -18,6 +18,8 @@ using E.Standard.WebMapping.Core.Api.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+using E.Standard.WebGIS.CMS.Extensions;
+
 namespace E.Standard.Api.App.Services.Cache;
 
 public class CmsCacheItem
@@ -85,8 +87,8 @@ public class CmsCacheItem
             try
             {
                 Map map = new Map("init");
-                map.Environment.SetUserValue(webgisConst.AppConfigPath, ApiGlobals.AppConfigPath);
-                map.Environment.SetUserValue(webgisConst.EtcPath, ApiGlobals.AppEtcPath);
+                map.Environment.SetUserValue(WebGISConst.AppConfigPath, ApiGlobals.AppConfigPath);
+                map.Environment.SetUserValue(WebGISConst.EtcPath, ApiGlobals.AppEtcPath);
 
                 var cmsHlp = new CmsHlp(cms, map);
 
@@ -908,20 +910,7 @@ public class CmsCacheItem
                                 var editCommitActions = new List<AuthObject<EditThemeDTO.CommitAction>>();
                                 foreach (CmsNode cmsEditingComitActionNode in cmsHlp.GetCmsEditingCommitActionNodes(cmsEditingTheme))
                                 {
-                                    var commitAction = new EditThemeDTO.CommitAction()
-                                    {
-                                        Name = cmsEditingComitActionNode.Name,
-                                        ActionTiming = (EditCommitActionTiming)cmsEditingComitActionNode.Load("timing", (int)EditCommitActionTiming.Before_Insert),
-                                        ActionProtocol = (EditCommitActionProtocol)cmsEditingComitActionNode.Load("protocol", (int)EditCommitActionProtocol.Http_Get),
-                                        ActionTarget = cmsEditingComitActionNode.LoadString("target"),
-                                        ActionPayload = cmsEditingComitActionNode.LoadString("payload")
-                                    };
-
-                                    string actionHeaders = cmsEditingComitActionNode.LoadString("headers");
-                                    if (!String.IsNullOrWhiteSpace(actionHeaders))
-                                    {
-                                        commitAction.ActionHeaders = System.Text.Json.JsonSerializer.Deserialize<string[]>(actionHeaders);
-                                    }
+                                    var commitAction = new EditThemeDTO.CommitAction().BindCmsNode(cmsEditingComitActionNode);
 
                                     if (commitAction.IsValid())
                                     {

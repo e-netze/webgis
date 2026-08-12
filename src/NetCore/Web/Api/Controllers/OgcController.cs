@@ -224,7 +224,7 @@ public class OgcController : ApiBaseController
                     string transformation = _ogcRequest.TransformationResrictions(serviceInfo, srs);
                     if (!String.IsNullOrWhiteSpace(transformation))
                     {
-                        transformations.Add(E.Standard.WebGIS.CMS.webgisConst.Transformation + "-" + serviceInfo.id + "-" + srs, transformation);
+                        transformations.Add(E.Standard.WebGIS.CMS.WebGISConst.Transformation + "-" + serviceInfo.id + "-" + srs, transformation);
                     }
                 }
             }

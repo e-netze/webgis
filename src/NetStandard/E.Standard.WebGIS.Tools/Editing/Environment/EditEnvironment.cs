@@ -40,8 +40,6 @@ using E.Standard.WebMapping.Core.Geometry;
 
 using Newtonsoft.Json;
 
-using Npgsql.Replication.PgOutput.Messages;
-
 namespace E.Standard.WebGIS.Tools.Editing.Environment;
 
 class EditEnvironment
@@ -2688,7 +2686,7 @@ class EditEnvironment
                 {
                     var commitAction = new CommitAction()
                     {
-                        Name=commitActionNode.Attributes["name"]?.Value ?? "Action",
+                        Name = commitActionNode.Attributes["name"]?.Value ?? "Action",
                         Timing = (EditCommitActionTiming)int.Parse(commitActionNode.Attributes["timing"].Value),
                         Protocol = (EditCommitActionProtocol)int.Parse(commitActionNode.Attributes["protocol"].Value),
                         Target = commitActionNode.Attributes["target"].Value,

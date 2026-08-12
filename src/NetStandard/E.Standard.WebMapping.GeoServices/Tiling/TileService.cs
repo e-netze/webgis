@@ -479,10 +479,10 @@ public abstract class TileService : IMapService, IPrintableMapService, IMapServi
                         var from = _map.SpatialReference;
                         var to = CoreApiGlobals.SRefStore.SpatialReferences.ById(this.SupportedCrs[0]);
 
-                        var transformation = _map.Environment.UserString(webgisConst.Transformation + "-" + this.Url + "-" + _map.SpatialReference.Id);
+                        var transformation = _map.Environment.UserString(WebGISConst.Transformation + "-" + this.Url + "-" + _map.SpatialReference.Id);
                         if (String.IsNullOrEmpty(transformation) && this.Url.Contains("@"))
                         {
-                            transformation = _map.Environment.UserString(webgisConst.Transformation + "-" + this.Url.Split('@')[0] + "-" + _map.SpatialReference.Id);
+                            transformation = _map.Environment.UserString(WebGISConst.Transformation + "-" + this.Url.Split('@')[0] + "-" + _map.SpatialReference.Id);
                         }
 
                         if (!String.IsNullOrWhiteSpace(transformation))

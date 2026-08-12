@@ -200,7 +200,7 @@ class OgcWmsLayer : Layer, ILayer2
             string url = service.AppendToUrl(service.GetFeatureInfoOnlineResouce, req.ToString().Replace(" ", "%20"));
             if (this.Service != null && this.Service.Map != null)
             {
-                url = url.Replace("[webgis-username]", this.Service.Map.Environment.UserString(webgisConst.UserName));
+                url = url.Replace("[webgis-username]", this.Service.Map.Environment.UserString(WebGISConst.UserName));
             }
 
             var httpService = requestContext.Http;

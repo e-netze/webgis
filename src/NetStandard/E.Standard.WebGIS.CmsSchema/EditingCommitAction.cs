@@ -106,12 +106,12 @@ public class EditingCommitAction : CopyableXml, IUI, ICreatable, IDisplayName
     {
         base.Load(stream);
 
-        this.ActionTiming = (EditCommitActionTiming)stream.Load("timing", (int)EditCommitActionTiming.Before_Insert);
-        this.ActionProtocol = (EditCommitActionProtocol)stream.Load("protocol", (int)EditCommitActionProtocol.Http_Get);
-        this.ActionTarget = (string)stream.Load("target", string.Empty);
-        this.ActionPayload = (string)stream.Load("payload", string.Empty);
+        this.ActionTiming = (EditCommitActionTiming)stream.Load(PersistNames.EditingCommitAction.ActionTiming, (int)EditCommitActionTiming.Before_Insert);
+        this.ActionProtocol = (EditCommitActionProtocol)stream.Load(PersistNames.EditingCommitAction.ActionProtocol, (int)EditCommitActionProtocol.Http_Get);
+        this.ActionTarget = (string)stream.Load(PersistNames.EditingCommitAction.ActionTarget, string.Empty);
+        this.ActionPayload = (string)stream.Load(PersistNames.EditingCommitAction.ActionPayload, string.Empty);
 
-        string headersJson = (string)stream.Load("headers", String.Empty);
+        string headersJson = (string)stream.Load(PersistNames.EditingCommitAction.ActionHeaders, String.Empty);
         this.ActionHeaders =
             String.IsNullOrWhiteSpace(headersJson)
                 ? [""]
@@ -122,15 +122,15 @@ public class EditingCommitAction : CopyableXml, IUI, ICreatable, IDisplayName
     {
         base.Save(stream);
 
-        stream.Save("timing", (int)this.ActionTiming);
-        stream.Save("protocol", (int)this.ActionProtocol);
-        stream.Save("target", this.ActionTarget ?? String.Empty);
-        stream.Save("payload", this.ActionPayload ?? String.Empty);
+        stream.Save(PersistNames.EditingCommitAction.ActionTiming, (int)this.ActionTiming);
+        stream.Save(PersistNames.EditingCommitAction.ActionProtocol, (int)this.ActionProtocol);
+        stream.Save(PersistNames.EditingCommitAction.ActionTarget, this.ActionTarget ?? String.Empty);
+        stream.Save(PersistNames.EditingCommitAction.ActionPayload, this.ActionPayload ?? String.Empty);
 
         var headers = this.ActionHeaders?.Where(x => !String.IsNullOrWhiteSpace(x));
         if (headers?.Any() == true)
         {
-            stream.Save("headers", System.Text.Json.JsonSerializer.Serialize(headers));
+            stream.Save(PersistNames.EditingCommitAction.ActionHeaders, System.Text.Json.JsonSerializer.Serialize(headers));
         }
     }
 

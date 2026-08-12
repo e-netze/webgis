@@ -20,7 +20,7 @@ static public class MapExtensions
 
     static public string AsOutputFilename(this IMap map, string filename)
     {
-        var outputPath = map.Environment.UserString(webgisConst.OutputPath);
+        var outputPath = map.Environment.UserString(WebGISConst.OutputPath);
 
         if (outputPath.HasHttpUrlSchema())
         {
@@ -37,7 +37,7 @@ static public class MapExtensions
 
     static public string AsOutputUrl(this IMap map, string filename)
     {
-        var outputUrl = map.Environment.UserString(webgisConst.OutputUrl);
+        var outputUrl = map.Environment.UserString(WebGISConst.OutputUrl);
 
         if (outputUrl.EndsWith("/"))
         {

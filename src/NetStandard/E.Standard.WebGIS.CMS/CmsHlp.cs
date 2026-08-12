@@ -23,7 +23,7 @@ public class CmsHlp
         _map = map;
         if (_map != null)
         {
-            _ui = _map.Environment.UserValue(webgisConst.UserIdentification, null) as CmsDocument.UserIdentification;
+            _ui = _map.Environment.UserValue(WebGISConst.UserIdentification, null) as CmsDocument.UserIdentification;
         }
     }
 
@@ -767,24 +767,24 @@ public class CmsHlp
                 {
                     if (key.ToLower() == "sessionid")
                     {
-                        filter = filter.Replace(startingBracket + key + endingBracket, map.Environment.UserString(webgisConst.SessionId));
+                        filter = filter.Replace(startingBracket + key + endingBracket, map.Environment.UserString(WebGISConst.SessionId));
                     }
                     if (key.ToLower() == "username")
                     {
-                        filter = filter.Replace(startingBracket + key + endingBracket, (map.Environment.UserString(webgisConst.UserName)).RemoveUserIdentificationNamespace());
+                        filter = filter.Replace(startingBracket + key + endingBracket, (map.Environment.UserString(WebGISConst.UserName)).RemoveUserIdentificationNamespace());
                     }
                     if (key.ToLower() == "username_short")
                     {
-                        filter = filter.Replace(startingBracket + key + endingBracket, (map.Environment.UserString(webgisConst.UserName)).RemoveUserIdentificationNamespace()
+                        filter = filter.Replace(startingBracket + key + endingBracket, (map.Environment.UserString(WebGISConst.UserName)).RemoveUserIdentificationNamespace()
                                                                                                                                          .RemoveUserIdentificationDomain());
                     }
                     if (key.ToLower() == "username_full")
                     {
-                        filter = filter.Replace(startingBracket + key + endingBracket, map.Environment.UserString(webgisConst.UserName));
+                        filter = filter.Replace(startingBracket + key + endingBracket, map.Environment.UserString(WebGISConst.UserName));
                     }
                     if (key.ToLower() == "username_domain")
                     {
-                        filter = filter.Replace(startingBracket + key + endingBracket, map.Environment.UserString(webgisConst.UserName).UsernameDomain());
+                        filter = filter.Replace(startingBracket + key + endingBracket, map.Environment.UserString(WebGISConst.UserName).UsernameDomain());
                     }
                 }
                 else if (ui != null)

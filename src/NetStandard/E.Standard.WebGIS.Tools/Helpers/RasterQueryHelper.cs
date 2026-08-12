@@ -240,7 +240,7 @@ class RasterQueryHelper
                 };
 
 
-                agsService.PreInit(String.Empty, server, service, user, pwd, token, map.Environment.UserString(webgisConst.AppConfigPath), null);
+                agsService.PreInit(String.Empty, server, service, user, pwd, token, map.Environment.UserString(WebGISConst.AppConfigPath), null);
                 await agsService.InitAsync(map, bridge.RequestContext);
 
                 if (hadNode.Attributes["projectionMethod"] != null && hadNode.Attributes["projectionMethod"].Value.ToLower() == "map")
@@ -324,7 +324,7 @@ class RasterQueryHelper
                     TokenExpiration = tokenExpiration
                 };
 
-                imageService.PreInit(String.Empty, server, service, user, pwd, token, map.Environment.UserString(webgisConst.AppConfigPath), null);
+                imageService.PreInit(String.Empty, server, service, user, pwd, token, map.Environment.UserString(WebGISConst.AppConfigPath), null);
                 await imageService.InitAsync(map, bridge.RequestContext);
 
                 var layer = imageService?.Layers.FirstOrDefault();
