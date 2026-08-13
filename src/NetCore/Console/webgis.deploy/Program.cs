@@ -11,7 +11,7 @@ string workDirectory = Environment.CurrentDirectory; // Path.GetDirectoryName(As
 
 Console.WriteLine($"******************************************");
 Console.WriteLine($"*                                        *");
-Console.WriteLine($"*      WebGIS.Deploy Tool {DeployVersionService.DeployToolVersion}       *");
+Console.WriteLine($"*      WebGIS.Deploy Tool {DeployVersionService.DeployToolVersion}      *");
 #if INTERNAL
 Console.WriteLine($"*             !!!!!!!!!!!!!!             *");
 Console.WriteLine($"*             !! INTERNAL !!             *");
@@ -26,7 +26,9 @@ bool runAutomated = false;
 
 string profile = String.Empty,
        version = String.Empty;
+#if !INTERNAL
 bool downloadLatest = false;
+#endif
 bool deployCms = false,
      deployPortal = false,
      deployApi = false;
@@ -50,10 +52,12 @@ try
                     profile = args[i + 1];
                     runAutomated = true;
                     break;
+#if !INTERNAL
                 case "-d":
                 case "--download-latest":
                     downloadLatest = true;
                     break;
+#endif
                 case "-v":
                 case "--version":
                     version = args[i + 1];
