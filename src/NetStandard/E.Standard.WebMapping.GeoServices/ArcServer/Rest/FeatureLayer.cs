@@ -79,8 +79,9 @@ class FeatureLayer : RestLayer,
                                ? "1=1"
                                : $"{this.IdFieldName}>0");
         var requestBuilder = new GetFeaturesRequestBuilder();
+        SpatialFilter spatialFilter = filter as SpatialFilter;
 
-        if (filter is SpatialFilter spatialFilter)
+        if (spatialFilter != null)
         {
             inSrefId = spatialFilter.FilterSpatialReference != null
                 ? spatialFilter.FilterSpatialReference.Id
@@ -89,6 +90,36 @@ class FeatureLayer : RestLayer,
             requestBuilder
                 .WithGeometry(spatialFilter.QueryShape, inSrefId)
                 .WithSpatialRelationIntersects();
+        }
+
+        int resolvedInSrefId =
+            _service.ProjectionMethode switch
+            {
+                ServiceProjectionMethode.Map => inSrefId.OrTake(_service.Map.SpatialReference?.Id ?? 0),
+                ServiceProjectionMethode.Userdefined => inSrefId.OrTake(_service.ProjectionId),
+                _ => inSrefId
+            },
+            resolvedOutSrefId =
+            _service.ProjectionMethode switch
+            {
+                ServiceProjectionMethode.Map => outSrefId.OrTake(_service.Map.SpatialReference?.Id ?? 0),
+                ServiceProjectionMethode.Userdefined => outSrefId.OrTake(_service.ProjectionId),
+                _ => outSrefId
+            };
+
+        var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
+
+        // ArcGIS Server internally pre-filters spatial queries against the bounding box of
+        // the query geometry (with a row limit applied at that stage) and only clips against
+        // the real geometry afterwards. This can silently drop matching features (in the
+        // worst case down to 0 results), unless the query shape is itself an Envelope (where
+        // shape == bbox, so no clipping is needed and the bug can't manifest). "returnIdsOnly"
+        // queries are not affected, so fetch the ids first and then the features in id-batches.
+        // Currently applied to all non-countOnly queries (not just spatial ones) for testing.
+        if (!countOnly)
+        {
+            return await GetFeaturesViaIdsWorkaroundAsync(
+                spatialFilter, filter, features, featuresReqUrl, where, resolvedInSrefId, resolvedOutSrefId, authHandler, requestContext);
         }
 
         requestBuilder
@@ -100,26 +131,12 @@ class FeatureLayer : RestLayer,
             .WithTimeEpoch(filter.TimeEpoch)
             .WithOrderByFields(filter.OrderBy)
             .WithResultRecordCount(null)  // always set null with AGS: otherwise Pagination Errors and bad performance
-            .WithInSpatialReferenceId(
-                _service.ProjectionMethode switch
-                {
-                    ServiceProjectionMethode.Map => inSrefId.OrTake(_service.Map.SpatialReference?.Id ?? 0),
-                    ServiceProjectionMethode.Userdefined => inSrefId.OrTake(_service.ProjectionId),
-                    _ => inSrefId
-                })
-            .WithOutSpatialReferenceId(
-                _service.ProjectionMethode switch
-                {
-                    ServiceProjectionMethode.Map => outSrefId.OrTake(_service.Map.SpatialReference?.Id ?? 0),
-                    ServiceProjectionMethode.Userdefined => outSrefId.OrTake(_service.ProjectionId),
-                    _ => outSrefId
-                })
+            .WithInSpatialReferenceId(resolvedInSrefId)
+            .WithOutSpatialReferenceId(resolvedOutSrefId)
             .WithDatumTransformation(_service.DatumTransformations?.FirstOrDefault() ?? 0)
             .WithReturnZ(this.HasZ, ignoreIfFalse: true)
             .WithReturnM(this.HasM, ignoreIfFalse: true)
             .WithFormat("json");
-
-        var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
         if (countOnly)
         {
@@ -162,10 +179,89 @@ class FeatureLayer : RestLayer,
             jsonFeatureResponse = JSerializer.Deserialize<JsonFeatureResponse>(featuresResponse);
         }
 
+        AppendJsonFeaturesTo(jsonFeatureResponse, features, filter);
+
+        features.Query = filter;
+        features.Layer = this;
+
+        features.HasMore = jsonFeatureResponse.ExceededTransferLimit;
+
+        return -1;
+    }
+
+    /// <summary>
+    /// Workaround for the ArcGIS Server spatial-query bbox/TOP bug: resolves the full,
+    /// correct set of matching object ids first (via "returnIdsOnly", which is not affected
+    /// by the bug), then fetches the actual features in id-batches (a pure objectId lookup,
+    /// likewise unaffected). The result count is capped at
+    /// <see cref="AgsQuerySettings.MaxSpatialQueryResultCap"/> to bound worst-case transfer
+    /// size/traffic; if more matches exist, <c>FeatureCollection.HasMore</c> is set.
+    /// Also used for plain attribute queries (<paramref name="spatialFilter"/> is <c>null</c>
+    /// in that case) - the ids-first approach is correct there too, just not strictly
+    /// necessary to work around the bbox/TOP bug (which only affects spatial queries).
+    /// </summary>
+    private async Task<int> GetFeaturesViaIdsWorkaroundAsync(
+        SpatialFilter spatialFilter,
+        QueryFilter filter,
+        FeatureCollection features,
+        string featuresReqUrl,
+        string where,
+        int resolvedInSrefId,
+        int resolvedOutSrefId,
+        AgsAuthenticationHandler authHandler,
+        IRequestContext requestContext)
+    {
+        var queryService = new QueryService();
+
+        var queryParams = new IdsWorkaroundQueryParams
+        {
+            Geometry = spatialFilter?.QueryShape,
+            GeometrySrefId = spatialFilter?.FilterSpatialReference != null ? spatialFilter.FilterSpatialReference.Id : 0,
+            Where = where,
+            OutFields = String.IsNullOrWhiteSpace(filter.SubFields)
+                ? "*"
+                : filter.SubFields.Replace(" ", ","),
+            OrderByFields = filter.OrderBy,
+            TimeEpoch = filter.TimeEpoch,
+            InSrefId = resolvedInSrefId,
+            OutSrefId = resolvedOutSrefId,
+            DatumTransformationId = _service.DatumTransformations?.FirstOrDefault() ?? 0,
+            ReturnZ = this.HasZ,
+            ReturnM = this.HasM,
+            ReturnGeometry = filter.QueryGeometry
+        };
+
+        var (ids, hasMore) = await queryService.GetObjectIdsAsync(
+            _service, featuresReqUrl, authHandler, requestContext, queryParams, this.IdFieldName, AgsQuerySettings.MaxSpatialQueryResultCap);
+
+        var jsonFeatureResponses = await queryService.GetFeaturesByObjectIdsAsync(
+            _service, featuresReqUrl, authHandler, requestContext, queryParams, ids);
+
+        foreach (var jsonFeatureResponse in jsonFeatureResponses)
+        {
+            AppendJsonFeaturesTo(jsonFeatureResponse, features, filter);
+        }
+
+        features.Query = filter;
+        features.Layer = this;
+
+        features.HasMore = hasMore || jsonFeatureResponses.Any(r => r.ExceededTransferLimit);
+
+        return -1;
+    }
+
+    /// <summary>
+    /// Converts the features contained in a single ArcGIS Server JSON query response into
+    /// <see cref="Feature"/> instances and appends them to <paramref name="features"/>.
+    /// Used both for the "normal" query path and for merging the batched responses of the
+    /// spatial-query ids-workaround (see <see cref="GetFeaturesViaSpatialIdsWorkaroundAsync"/>).
+    /// </summary>
+    private void AppendJsonFeaturesTo(JsonFeatureResponse jsonFeatureResponse, FeatureCollection features, QueryFilter filter)
+    {
         List<string> dateColumns = new List<string>();
         Dictionary<string, string> fieldAliases = new();
 
-        foreach (var field in jsonFeatureResponse.Fields)
+        foreach (var field in jsonFeatureResponse.Fields ?? [])
         {
             if (field.Name != null && field.Type != null && field.Type == "esriFieldTypeDate")
             {
@@ -174,7 +270,7 @@ class FeatureLayer : RestLayer,
             fieldAliases[field.Name] = field.Alias;
         }
 
-        foreach (var jsonFeature in jsonFeatureResponse.Features)
+        foreach (var jsonFeature in jsonFeatureResponse.Features ?? [])
         {
             Feature feature = new Feature();
 
@@ -304,13 +400,6 @@ class FeatureLayer : RestLayer,
 
             features.Add(feature);
         }
-
-        features.Query = filter;
-        features.Layer = this;
-
-        features.HasMore = jsonFeatureResponse.ExceededTransferLimit;
-
-        return -1;
     }
 
     override public ILayer Clone(IMapService parent)

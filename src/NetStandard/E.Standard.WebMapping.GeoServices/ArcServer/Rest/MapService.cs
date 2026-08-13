@@ -93,6 +93,18 @@ public class MapService : IMapService2,
 
     public string ServiceShortname { get { return _mapServiceName; } }
 
+    /// <summary>
+    /// The maxRecordCount reported by the service (i.e. the maximum number of records the
+    /// service returns/accepts per query request). 0 if the service does not report it
+    /// (e.g. older ArcGIS Server versions) - in that case callers should fall back to
+    /// <see cref="AgsQuerySettings.DefaultMaxRecordCountFallback"/>.
+    /// </summary>
+    public int MaxRecordCount
+    {
+        get;
+        private set;
+    }
+
     public string ID
     {
         get;
@@ -418,6 +430,7 @@ public class MapService : IMapService2,
 
                 _maxImageWidth = jsonService.MaxImageWidth;
                 _maxImageHeight = jsonService.MaxImageHeight;
+                this.MaxRecordCount = jsonService.MaxRecordCount;
 
                 pLogger.Success = true;
 
@@ -1196,6 +1209,7 @@ public class MapService : IMapService2,
 
         clone._maxImageWidth = this._maxImageWidth;
         clone._maxImageHeight = this._maxImageHeight;
+        clone.MaxRecordCount = this.MaxRecordCount;
 
         clone.SupportedCrs = this.SupportedCrs;
         clone._serviceThemes = _serviceThemes;

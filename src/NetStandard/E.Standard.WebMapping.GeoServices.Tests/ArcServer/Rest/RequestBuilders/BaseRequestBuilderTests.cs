@@ -158,6 +158,20 @@ public class BaseRequestBuilderTests
     }
 
     [Fact]
+    public void WithObjectIds_ShouldAppendCommaSeparatedIds()
+    {
+        // Arrange
+        var builder = new GetFeaturesRequestBuilder();
+
+        // Act
+        builder.WithObjectIds(new long[] { 1, 2, 3 });
+        var result = builder.Build();
+
+        // Assert
+        Assert.Equal("objectIds=1,2,3", result);
+    }
+
+    [Fact]
     public void WithDynamicLayers_ShouldAppendDynamicLayersParameter()
     {
         // Arrange

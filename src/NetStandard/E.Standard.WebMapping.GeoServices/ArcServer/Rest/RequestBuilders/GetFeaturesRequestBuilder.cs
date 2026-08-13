@@ -1,5 +1,7 @@
 ﻿#nullable enable
 
+using System.Collections.Generic;
+
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Geometry;
 
@@ -33,6 +35,9 @@ public class GetFeaturesRequestBuilder : BaseRequestBuilder<GetFeaturesRequestBu
 
     new public GetFeaturesRequestBuilder WithWhereClause(string where)
         => base.WithWhereClause(where);
+
+    new public GetFeaturesRequestBuilder WithObjectIds(IEnumerable<long> objectIds)
+        => base.WithObjectIds(objectIds);
 
     new public GetFeaturesRequestBuilder WithTimeEpoch(TimeEpochDefinition? timeEpoch)
         => base.WithTimeEpoch(timeEpoch);

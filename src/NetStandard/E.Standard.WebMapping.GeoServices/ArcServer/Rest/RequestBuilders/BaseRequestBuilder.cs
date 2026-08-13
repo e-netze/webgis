@@ -183,6 +183,9 @@ public class BaseRequestBuilder<T> where T : BaseRequestBuilder<T>
     protected T WithWhereClause(string where)
         => Append($"where={where}");
 
+    protected T WithObjectIds(IEnumerable<long> objectIds)
+        => Append($"objectIds={string.Join(",", objectIds)}");
+
     protected T WithOrderByFields(string fields)
         => Append($"orderByFields={fields}");
 
