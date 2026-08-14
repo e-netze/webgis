@@ -828,17 +828,15 @@
         let exportButtonClick = function (e) {
             e.stopPropagation();
 
-            var $table = $(this)
-                .closest('.webgis-table-panel-content')
-                .find('.webgis-table-container')
-                .children('table');
-
             // Server Side
 
-            // collect featureIds from table (includes sorting)
+            // collect featureIds from the full result set (includes sorting/reorder) - NOT from
+            // the table DOM, since with paging active the DOM only contains the current page's
+            // rows. "features" is the same closure-bound, already sorted/reordered collection
+            // used to build the (paged) table, so this covers all pages.
             var featureIds = [], uniqueFeatureIds = true;
-            $table.find('tr[data-id]').each(function () {
-                var featureId = $(this).attr('data-id');
+            $.each(features.features, function (i, feature) {
+                var featureId = feature.oid;
                 if (featureId.indexOf(':') >= 0) {
                     var parts = featureId.split(':');
                     featureId = parts[parts.length - 1];
