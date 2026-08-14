@@ -1075,6 +1075,16 @@ img.tile {
             background-image: url('../api/img/tools/pan.png');
         }
 
+        .webgis-result-table-menucell .menubutton.webgis-row-btn-more {
+            font-size: 14px;
+            line-height: 30px;
+            color: var(--webgis-ui-text-secondary, #888);
+            opacity: 0.6;
+        }
+            .webgis-result-table-menucell .menubutton.webgis-row-btn-more:hover {
+                opacity: 1;
+            }
+
         .webgis-result-table-menucell .menubutton.attachments {
             visibility: hidden;
         }

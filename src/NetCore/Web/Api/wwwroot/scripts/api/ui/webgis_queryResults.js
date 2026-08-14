@@ -713,6 +713,10 @@
                 return false;
             })
             .on('click', 'td.webgis-result-table-cell', _event_cellClick)
+            .on('click', '.webgis-row-btn-more', function (e) {
+                e.stopPropagation();
+                _showRowContextMenu($(this).closest('tr.webgis-result'), e);
+            })
             .on('click', '.webgis-row-btn-edit-attrs', function (e) {
                 e.stopPropagation();
                 var args = [], map = $(this).data('map');
@@ -1056,6 +1060,17 @@
                             }
                         }
 
+                        // Dropdown-Button fuer die Werkzeuge dieser Zeile: bietet einen sichtbaren,
+                        // klickbaren Zugang zu denselben Werkzeugen wie das (wenig entdeckte)
+                        // Rechtsklick-Kontextmenue - siehe https://github.com/e-netze/webgis-community/discussions/451
+                        if (options.addZoomTo || options.appendAdvancedFeatureButtons) {
+                            $("<div>")
+                                .addClass('menubutton inline webgis-row-btn-more')
+                                .attr('title', webgis.l10n.get('row-tools-menu'))
+                                .text('\u25BE')
+                                .appendTo($td);
+                        }
+
                         $("<div><img src='" + img.url + "' style='max-height:32px'/></div>")
                             .addClass('menubutton inline marker')
                             .appendTo($td);
@@ -1306,6 +1321,7 @@
 
         var items = [];
         $tr.find('.menubutton')
+            .not('.webgis-row-btn-more')
             .each(function (i, menubutton) {
                 var $menubutton = $(menubutton);
                 var cssInlineStyle = $menubutton.attr('style');
