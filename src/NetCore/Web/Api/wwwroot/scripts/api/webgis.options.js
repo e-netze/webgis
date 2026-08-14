@@ -128,7 +128,10 @@ webgis.usability = {
     expandBasemapsOnAddServices: false,
 
     queryResultsTable: {
-        pageSize: 100  // Anzahl Zeilen pro Seite in der Ergebnistabelle (client-seitiges Paging)
+        pageSize: 100,       // Anzahl Zeilen pro Seite in der Ergebnistabelle (client-seitiges Paging)
+        pagingThreshold: 1000 // Paging greift erst, wenn mehr als so viele Ergebnisse vorhanden sind
+                              // (z.B. 1000 = bisheriges Verhalten bleibt bei "klassischen" AGS-Ergebnismengen
+                              // unveraendert, Paging startet erst darueber hinaus)
     }
 };
 

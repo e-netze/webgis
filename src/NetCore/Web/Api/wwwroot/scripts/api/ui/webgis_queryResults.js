@@ -685,12 +685,15 @@
 
         // Paging: bei sehr vielen Ergebnissen (mehrere Tausend Zeilen) wird nur eine Seite
         // gleichzeitig ins DOM gerendert (siehe renderPage weiter unten) - reduziert DOM-Groesse
-        // und Reflows zusaetzlich zur Event-Delegation. Bleibt die Ergebnismenge <= pageSize,
-        // verhaelt sich alles exakt wie bisher (keine Pager-UI, alle Zeilen auf einmal).
+        // und Reflows zusaetzlich zur Event-Delegation. Bleibt die Ergebnismenge <= pagingThreshold,
+        // verhaelt sich alles exakt wie bisher (keine Pager-UI, alle Zeilen auf einmal) - z.B.
+        // "klassische" AGS-Ergebnismengen bis 1000 sollen ihr bisheriges Verhalten behalten.
         var allFeatures = features.features || [];
         var totalFeatures = allFeatures.length;
-        var pageSizeSetting = (webgis.usability.queryResultsTable && webgis.usability.queryResultsTable.pageSize) || 0;
-        var usePaging = pageSizeSetting > 0 && totalFeatures > pageSizeSetting;
+        var queryResultsTableOptions = webgis.usability.queryResultsTable || {};
+        var pageSizeSetting = queryResultsTableOptions.pageSize || 0;
+        var pagingThreshold = queryResultsTableOptions.pagingThreshold > 0 ? queryResultsTableOptions.pagingThreshold : pageSizeSetting;
+        var usePaging = pageSizeSetting > 0 && totalFeatures > pagingThreshold;
         var pageSize = usePaging ? pageSizeSetting : totalFeatures;
         var totalPages = usePaging ? Math.ceil(totalFeatures / pageSize) : 1;
         var currentPage = 0;
