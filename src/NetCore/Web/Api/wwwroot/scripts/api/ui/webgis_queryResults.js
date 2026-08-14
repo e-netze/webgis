@@ -611,6 +611,27 @@
         },
         selectRow: function (options) {
             var $this = $(this);
+            var state = $this.data('webgis-queryResultsTable-state');
+
+            // Bei aktivem Paging kann sich die gesuchte Zeile auf einer anderen als der
+            // aktuell angezeigten Seite befinden (z.B. Karten-Highlight-Sync nach Klick auf ein
+            // Feature in der Karte) - in dem Fall erst zur passenden Seite wechseln.
+            if (state && state.usePaging && state.renderPage) {
+                var idx = -1;
+                for (var i = 0; i < state.allFeatures.length; i++) {
+                    if (state.allFeatures[i].oid === options.dataId) {
+                        idx = i;
+                        break;
+                    }
+                }
+
+                if (idx >= 0) {
+                    var targetPage = Math.floor(idx / state.pageSize);
+                    if (targetPage !== state.getCurrentPage()) {
+                        state.renderPage(targetPage);
+                    }
+                }
+            }
 
             $this.find('.' + $.fn.webgis_queryResultsTable.selectedRowClass).removeClass($.fn.webgis_queryResultsTable.selectedRowClass);
             var $row = $this.find(".webgis-result[data-id='" + options.dataId + "']")
@@ -661,6 +682,19 @@
         var mapSeriesToolIdClass = 'webgis-tools-mapseriesprint';
 
         var reorderable = options.reorderable === true && hasUnionFeatures === false;
+
+        // Paging: bei sehr vielen Ergebnissen (mehrere Tausend Zeilen) wird nur eine Seite
+        // gleichzeitig ins DOM gerendert (siehe renderPage weiter unten) - reduziert DOM-Groesse
+        // und Reflows zusaetzlich zur Event-Delegation. Bleibt die Ergebnismenge <= pageSize,
+        // verhaelt sich alles exakt wie bisher (keine Pager-UI, alle Zeilen auf einmal).
+        var allFeatures = features.features || [];
+        var totalFeatures = allFeatures.length;
+        var pageSizeSetting = (webgis.usability.queryResultsTable && webgis.usability.queryResultsTable.pageSize) || 0;
+        var usePaging = pageSizeSetting > 0 && totalFeatures > pageSizeSetting;
+        var pageSize = usePaging ? pageSizeSetting : totalFeatures;
+        var totalPages = usePaging ? Math.ceil(totalFeatures / pageSize) : 1;
+        var currentPage = 0;
+        var renderPage = null; // wird unten gesetzt, falls es ueberhaupt Zeilen gibt
 
         var $tab = $("<table>")
             .addClass('webgis-result-table features')
@@ -740,8 +774,6 @@
                 args["feature-oid"] = $(this).data('oid');
                 webgis.tools.onButtonClick(map, { command: 'show_attachments', type: 'servertoolcommand_ext', id: identityToolId, map: map }, this, null, args);
             });
-
-        var $rows = [];
 
         if (features.features.length > 0) {
             var property;
@@ -830,9 +862,17 @@
 
             var hasHiddenProperties = hiddenProperties.length > 0;
 
-            // Rows
-            for (var i = 0, to = features.features.length; i < to; i++) {
-                var feature = features.features[i];
+            // Rows - baut die Zeilen fuer den Feature-Bereich [start, end) auf und haengt sie
+            // per Batch-Append an $tab an. Wird bei aktivem Paging bei jedem Seitenwechsel neu
+            // aufgerufen (vorherige Datenzeilen werden zuerst entfernt), sonst nur einmal fuer
+            // alle Zeilen.
+            var renderRows = function (start, end) {
+                $tab.children('tr.webgis-result').remove();
+
+                var $rows = [];
+
+                for (var i = start; i < end; i++) {
+                    var feature = allFeatures[i];
 
                 if (!feature.__queryId && feature.oid && feature.oid.indexOf(':') > 0) {
                     var qid = feature.oid.split(':');
@@ -1084,29 +1124,114 @@
 
                     unionIndex++;
                 }
+                }
+
+                // Append all rows to the DOM in one go instead of per row - avoids repeated
+                // reflows when rendering large result sets (several thousand rows).
+                $tab.append($rows);
+            };
+
+            var $pagerTop = null, $pagerBottom = null;
+
+            var updatePagerUI = function () {
+                if (!usePaging) return;
+
+                var rangeStart = currentPage * pageSize + 1;
+                var rangeEnd = Math.min(rangeStart + pageSize - 1, totalFeatures);
+                var text = 'Seite ' + (currentPage + 1) + ' / ' + totalPages +
+                    ' (Ergebnisse ' + rangeStart + '\u2013' + rangeEnd + ' von ' + totalFeatures + ')';
+
+                $.each([$pagerTop, $pagerBottom], function (i, $bar) {
+                    if (!$bar) return;
+                    $bar.find('.webgis-table-pager-info').text(text);
+                    $bar.find('.webgis-table-pager-prev').prop('disabled', currentPage <= 0);
+                    $bar.find('.webgis-table-pager-next').prop('disabled', currentPage >= totalPages - 1);
+                });
+            };
+
+            renderPage = function (pageIndex) {
+                pageIndex = Math.max(0, Math.min(pageIndex, totalPages - 1));
+                currentPage = pageIndex;
+
+                var start = currentPage * pageSize;
+                var end = Math.min(start + pageSize, totalFeatures);
+
+                renderRows(start, end);
+                updatePagerUI();
+            };
+
+            if (usePaging) {
+                var buildPagerBar = function () {
+                    var $bar = $("<div>").addClass('webgis-table-pager');
+
+                    $("<button type='button'>")
+                        .addClass('webgis-table-pager-prev')
+                        .attr('title', 'Zurück')
+                        .text('◀')
+                        .appendTo($bar)
+                        .on('click', function (e) {
+                            e.stopPropagation();
+                            renderPage(currentPage - 1);
+                        });
+
+                    $("<span>").addClass('webgis-table-pager-info').appendTo($bar);
+
+                    $("<button type='button'>")
+                        .addClass('webgis-table-pager-next')
+                        .attr('title', 'Weiter')
+                        .text('▶')
+                        .appendTo($bar)
+                        .on('click', function (e) {
+                            e.stopPropagation();
+                            renderPage(currentPage + 1);
+                        });
+
+                    return $bar;
+                };
+
+                $pagerTop = buildPagerBar().insertBefore($tab);
+                $pagerBottom = buildPagerBar().insertAfter($tab);
             }
 
-            // Append all rows to the DOM in one go instead of per row - avoids repeated
-            // reflows when rendering large result sets (several thousand rows).
-            $tab.append($rows);
+            renderPage(0);
 
             if (reorderable) {
                 webgis.require('sortable', function () {
                     Sortable.create($tab.get(0), {
                         handle: '.webgis-reorder-handle',
                         onSort: function (e) {
-                            var orderedIds = [];
+                            var orderedPageIds = [];
                             $tab.children('tr.reorderable')
                                 .each(function (i, item) {
-                                    orderedIds.push($(item).attr('data-id'));
+                                    orderedPageIds.push($(item).attr('data-id'));
                                 });
-                            //console.log(orderedIds);
-                            map.queryResultFeatures.reorderFeatures(orderedIds);
+
+                            // Nur das Segment der aktuell angezeigten Seite durch die neue,
+                            // im DOM gelesene Reihenfolge ersetzen - sonst wuerden bei aktivem
+                            // Paging die Features aller anderen Seiten aus dem Ergebnis fallen,
+                            // da reorderFeatures() die uebergebene Liste als vollstaendiges
+                            // Ergebnis interpretiert.
+                            var fullOrderedIds = allFeatures.map(function (f) { return f.oid; });
+                            var pageStart = currentPage * pageSize;
+                            for (var oi = 0; oi < orderedPageIds.length; oi++) {
+                                fullOrderedIds[pageStart + oi] = orderedPageIds[oi];
+                            }
+
+                            //console.log(fullOrderedIds);
+                            map.queryResultFeatures.reorderFeatures(fullOrderedIds);
                         }
                     });
                 });
             }
         }
+
+        $target.data('webgis-queryResultsTable-state', {
+            usePaging: usePaging,
+            allFeatures: allFeatures,
+            pageSize: pageSize,
+            renderPage: renderPage,
+            getCurrentPage: function () { return currentPage; }
+        });
 
         var $triggerClickItems = $tab.find('.trigger-click');
         if ($triggerClickItems.length > 0) {

@@ -125,7 +125,11 @@ webgis.usability = {
     show_metadata_i_button_toc: true,
     show_link_button_in_toc: true,
 
-    expandBasemapsOnAddServices: false
+    expandBasemapsOnAddServices: false,
+
+    queryResultsTable: {
+        pageSize: 100  // Anzahl Zeilen pro Seite in der Ergebnistabelle (client-seitiges Paging)
+    }
 };
 
 webgis.colorScheme = 'default';

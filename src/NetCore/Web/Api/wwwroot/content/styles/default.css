@@ -891,6 +891,38 @@ img.tile {
         width:auto !important;
     }
 
+.webgis-table-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 4px 6px;
+    background-color: var(--webgis-ui-surface-sunken);
+    font-size: 11px;
+}
+
+    .webgis-table-pager button {
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        background-color: var(--webgis-brand-primary);
+        color: #fff;
+        width: 22px;
+        height: 22px;
+        line-height: 22px;
+        padding: 0;
+        font-size: 11px;
+    }
+
+        .webgis-table-pager button:disabled {
+            opacity: .35;
+            cursor: default;
+        }
+
+    .webgis-table-pager .webgis-table-pager-info {
+        white-space: nowrap;
+    }
+
 .webgis-result-table-header {
     background-color: var(--webgis-ui-surface-sunken);
     /*font-weight:bold;*/
@@ -2460,16 +2492,17 @@ tr.webgis-border-bottom td{
                 position: absolute;
                 right: 26px;
                 top: 1px;
-                width: 26px;
+                min-width: 26px;
                 height: 22px;
                 background-color: var(--webgis-brand-primary);
                 color: #fff;
-                border-radius: 12px;
+                border-radius: 11px;
                 text-align: center;
                 font-size: 10px;
                 display: block;
-                padding: 4px 0px;
+                padding: 4px 6px;
                 box-sizing: border-box;
+                white-space: nowrap;
             }
 
             .webgis-tab-control .webgis-tab-control-tabbar .webgis-tab-control-tab .close-button {

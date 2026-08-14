@@ -503,14 +503,12 @@
             }
 
             var counter = tabOptions.counter, text;
-            if (tabOptions.counter >= 1000) {
-                var k = Math.round(counter / 1000);
-                text = k + "K" + (k * 1000 < counter ? '+' : '');
-            } else {
-                text = counter.toString();
-            }
+            // Exakten Wert anzeigen (mit Tausenderpunkt) statt gerundeter "K"-Abkuerzung -
+            // die K-Abkuerzung war ok, solange 1000 das AGS-Maximum war, ist aber seit dem
+            // Ids-Workaround (mehr als 1000 Ergebnisse moeglich) zu ungenau.
+            text = counter.toLocaleString('de-DE');
 
-            $counter.text(text);
+            $counter.text(text).attr('title', text);
         }
     }
 
