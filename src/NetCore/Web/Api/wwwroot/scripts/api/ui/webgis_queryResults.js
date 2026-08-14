@@ -666,6 +666,83 @@
             .addClass('webgis-result-table features')
             .appendTo($target);
 
+        // Event delegation: bind once on $tab instead of per row/cell/button - this avoids
+        // registering thousands of individual jQuery handlers for large result sets (which was
+        // the main performance bottleneck for tables with many thousand rows).
+        $tab
+            .on('contextmenu', 'tr.webgis-result', function (e) {
+                e.stopPropagation();
+                _showRowContextMenu($(this), e);
+                return false;
+            })
+            .on('click', 'td.webgis-result-table-cell', _event_cellClick)
+            .on('click', '.webgis-row-btn-edit-attrs', function (e) {
+                e.stopPropagation();
+                var args = [], map = $(this).data('map');
+                args["feature-oid"] = $(this).data('oid')
+                args["edittheme"] = $(this).data('edittheme').themeid;
+                args["edit-map-scale"] = map.scale();
+                args["edit-map-crsid"] = map.calcCrs().id;
+
+                if (!$(this).hasClass('webgis-triggered-by-shortcut')) {
+                    map.setViewFocus($(this).closest('tr').data('feature-bbox'), 0.3);
+                }
+                webgis.tools.onButtonClick(map, { command: 'editattributes', type: 'servertoolcommand_ext', id: editAttributesToolId, map: map }, this, null, args);
+            })
+            .on('click', '.webgis-row-btn-edit-update', function (e) {
+                e.stopPropagation();
+                var args = [], map = $(this).data('map');
+                args["feature-oid"] = $(this).data('oid')
+                args["edittheme"] = $(this).data('edittheme').themeid;
+                args["edit-map-scale"] = map.scale();
+                args["edit-map-crsid"] = map.calcCrs().id;
+
+                // there should view focus_sketch form server command reponse
+                //map.setViewFocus($(this).closest('tr').data('feature-bbox'), 0.3);
+                webgis.tools.onButtonClick(map, { command: 'updatefeature', type: 'servertoolcommand', id: editToolId, map: map }, this, null, args);
+            })
+            .on('click', '.webgis-row-btn-edit-delete', function (e) {
+                e.stopPropagation();
+                var args = [], map = $(this).data('map');
+                args["feature-oid"] = $(this).data('oid')
+                args["edittheme"] = $(this).data('edittheme').themeid;
+                args["edit-map-scale"] = map.scale();
+                args["edit-map-crsid"] = map.calcCrs().id;
+
+                if (!$(this).hasClass('webgis-triggered-by-shortcut')) {
+                    map.setViewFocus($(this).closest('tr').data('feature-bbox'), 0.3);
+                }
+                webgis.tools.onButtonClick(map, { command: 'deletefeature', type: 'servertoolcommand', id: editToolId, map: map }, this, null, args);
+            })
+            .on('click', '.webgis-row-btn-mapseries', function (e) {
+                e.stopPropagation();
+                const $this = $(this);
+                let args = [], map = $this.data('map');
+                args["service-id"] = $this.data('serviceId');
+                args["query-id"] = $this.data('queryId');
+                args["feature-ids"] = $this.data('oid')
+                webgis.tools.onButtonClick(map, { command: 'create-series-from-features', type: 'servertoolcommand', id: mapSeriesToolId, map: map }, this, null, args);
+            })
+            .on('click', '.webgis-row-btn-filter-set', function (e) {
+                e.stopPropagation();
+                var args = [];
+                args["feature_oid"] = $(this).data('oid');
+                args["filter_id"] = $(this).data('filterid');
+                webgis.tools.onButtonClick(map, { command: 'setfeaturefilter', type: 'servertoolcommand_ext', id: filterToolId, map: map }, this, null, args);
+            })
+            .on('click', '.webgis-row-btn-filter-unset', function () {
+                var args = [];
+                args["feature_oid"] = $(this).data('oid');
+                webgis.tools.onButtonClick(map, { command: 'unsetfeaturefilter', type: 'servertoolcommand_ext', id: filterToolId, map: $(this).data('map') }, this, null, args);
+            })
+            .on('click', '.webgis-row-btn-attachments', function () {
+                var args = [], map = $(this).data('map');
+                args["feature-oid"] = $(this).data('oid');
+                webgis.tools.onButtonClick(map, { command: 'show_attachments', type: 'servertoolcommand_ext', id: identityToolId, map: map }, this, null, args);
+            });
+
+        var $rows = [];
+
         if (features.features.length > 0) {
             var property;
             // Header Row
@@ -779,13 +856,9 @@
                     var $tr = $('<tr>')
                         .addClass('webgis-result')
                         .attr('data-id', feature.oid)
-                        .data('feature-bbox', feature.bounds)
-                        .appendTo($tab)
-                        .contextmenu(function (e) {
-                            e.stopPropagation();
-                            _showRowContextMenu($(this), e);
-                            return false;
-                        });
+                        .data('feature-bbox', feature.bounds);
+
+                    $rows.push($tr[0]);
 
                     if (unionIndex === 0) {
                         var img = map.queryResultFeatures.markerImg(feature._fIndex);
@@ -826,94 +899,47 @@
 
                                         // edit attributes
                                         $("<div>")
-                                            .addClass('menubutton inline webgis-dependencies webgis-dependency-not-activetool ' + editToolIdClass + ' ' + mapSeriesToolIdClass)
+                                            .addClass('menubutton inline webgis-dependencies webgis-dependency-not-activetool ' + editToolIdClass + ' ' + mapSeriesToolIdClass + ' webgis-row-btn-edit-attrs')
                                             .attr('title', edittheme.name + ': ' + webgis.l10n.get("edit-attributes"))
                                             .attr('shortcut', 'e')
                                             .data('edittheme', edittheme)
                                             .data('map', map)
                                             .data('oid', feature.oid)
                                             .css('background-image', 'url(' + webgis.css.imgResource('edit-attributes-26.png', 'tools') + ')')
-                                            .appendTo($td)
-                                            .click(function (e) {
-                                                e.stopPropagation();
-                                                var args = [], map = $(this).data('map');
-                                                args["feature-oid"] = $(this).data('oid')
-                                                args["edittheme"] = $(this).data('edittheme').themeid;
-                                                args["edit-map-scale"] = map.scale();
-                                                args["edit-map-crsid"] = map.calcCrs().id;
-
-                                                if (!$(this).hasClass('webgis-triggered-by-shortcut')) {
-                                                    map.setViewFocus($(this).closest('tr').data('feature-bbox'), 0.3);
-                                                }
-                                                webgis.tools.onButtonClick(map, { command: 'editattributes', type: 'servertoolcommand_ext', id: editAttributesToolId, map: map }, this, null, args);
-                                            });
+                                            .appendTo($td);
                                         //edit update
                                         $("<div>")
-                                            .addClass('menubutton inline webgis-dependencies webgis-dependency-activetool ' + editToolIdClass)
+                                            .addClass('menubutton inline webgis-dependencies webgis-dependency-activetool ' + editToolIdClass + ' webgis-row-btn-edit-update')
                                             .attr('title', edittheme.name + ": " + webgis.l10n.get("edit-geometry-and-attributes"))
                                             .attr('shortcut', 'e')
                                             .data('edittheme', edittheme)
                                             .data('map', map)
                                             .data('oid', feature.oid)
                                             .css('background-image', 'url(' + webgis.css.imgResource('webgis-tools-editing-edit-update.png', 'tools') + ')')
-                                            .appendTo($td)
-                                            .click(function (e) {
-                                                e.stopPropagation();
-                                                var args = [], map = $(this).data('map');
-                                                args["feature-oid"] = $(this).data('oid')
-                                                args["edittheme"] = $(this).data('edittheme').themeid;
-                                                args["edit-map-scale"] = map.scale();
-                                                args["edit-map-crsid"] = map.calcCrs().id;
-
-                                                // there should view focus_sketch form server command reponse
-                                                //map.setViewFocus($(this).closest('tr').data('feature-bbox'), 0.3);
-                                                webgis.tools.onButtonClick(map, { command: 'updatefeature', type: 'servertoolcommand', id: editToolId, map: map }, this, null, args);
-                                            });
+                                            .appendTo($td);
                                         //edit delete
                                         $("<div>")
-                                            .addClass('menubutton webgis-dependencies webgis-dependency-activetool ' + editToolIdClass)
+                                            .addClass('menubutton webgis-dependencies webgis-dependency-activetool ' + editToolIdClass + ' webgis-row-btn-edit-delete')
                                             .attr('title', edittheme.name + ": " + webgis.l10n.get("edit-delete"))
                                             .attr('shortcut', 'd')
                                             .data('edittheme', edittheme)
                                             .data('map', map)
                                             .data('oid', feature.oid)
                                             .css('background-image', 'url(' + webgis.css.imgResource('webgis-tools-editing-edit-delete.png', 'tools') + ')')
-                                            .appendTo($td)
-                                            .click(function (e) {
-                                                e.stopPropagation();
-                                                var args = [], map = $(this).data('map');
-                                                args["feature-oid"] = $(this).data('oid')
-                                                args["edittheme"] = $(this).data('edittheme').themeid;
-                                                args["edit-map-scale"] = map.scale();
-                                                args["edit-map-crsid"] = map.calcCrs().id;
-
-                                                if (!$(this).hasClass('webgis-triggered-by-shortcut')) {
-                                                    map.setViewFocus($(this).closest('tr').data('feature-bbox'), 0.3);
-                                                }
-                                                webgis.tools.onButtonClick(map, { command: 'deletefeature', type: 'servertoolcommand', id: editToolId, map: map }, this, null, args);
-                                            });
+                                            .appendTo($td);
                                     }
                                 }
 
                                 if (feature.__serviceId && feature.__queryId) {
                                     $("<div>")
-                                        .addClass('menubutton inline webgis-dependencies webgis-dependency-activetool ' + mapSeriesToolIdClass)
+                                        .addClass('menubutton inline webgis-dependencies webgis-dependency-activetool ' + mapSeriesToolIdClass + ' webgis-row-btn-mapseries')
                                         .attr('title', webgis.l10n.get("create-map-series"))
                                         .data('map', map)
                                         .data('serviceId', feature.__serviceId)
                                         .data('queryId', feature.__queryId)
                                         .data('oid', feature.oid.split(':')[2])
                                         .css('background-image', 'url(' + webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-mapseriesprint-print', 'tools') + ')')
-                                        .appendTo($td)
-                                        .click(function (e) {
-                                            e.stopPropagation();
-                                            const $this = $(this);
-                                            let args = [], map = $this.data('map');
-                                            args["service-id"] = $this.data('serviceId');
-                                            args["query-id"] = $this.data('queryId');
-                                            args["feature-ids"] = $this.data('oid')
-                                            webgis.tools.onButtonClick(map, { command: 'create-series-from-features', type: 'servertoolcommand', id: mapSeriesToolId, map: map }, this, null, args);
-                                        });
+                                        .appendTo($td);
                                 }
                             }
 
@@ -927,21 +953,13 @@
                                                 var filter = service.getFilter(filterId.split('~')[1]);
                                                 if (filter) {
                                                     $("<div>")
-                                                        .addClass('menubutton')
+                                                        .addClass('menubutton webgis-row-btn-filter-set')
                                                         .attr('title', filter.name)
                                                         .data('map', map)
                                                         .data('oid', feature.oid)
                                                         .data('filterid', filterId)
                                                         .css('background-image', 'url(' + webgis.css.imgResource('filter-26.png', 'tools') + ')')
-                                                        .appendTo($td)
-                                                        .click(function (e) {
-                                                            e.stopPropagation();
-
-                                                            var args = [];
-                                                            args["feature_oid"] = $(this).data('oid');
-                                                            args["filter_id"] = $(this).data('filterid');
-                                                            webgis.tools.onButtonClick(map, { command: 'setfeaturefilter', type: 'servertoolcommand_ext', id: filterToolId, map: map }, this, null, args);
-                                                        });
+                                                        .appendTo($td);
                                                 }
                                             }
                                         }
@@ -949,35 +967,24 @@
 
                                 $("<div>")
                                     .addClass('menubutton')
-                                    .addClass('webgis-dependencies webgis-dependency-hasfilters')
+                                    .addClass('webgis-dependencies webgis-dependency-hasfilters webgis-row-btn-filter-unset')
                                     .attr('title', 'Alle entfernen')
                                     .attr('data-applicable-filters', features.metadata.applicable_filters)
                                     .data('map', map)
                                     .data('oid', feature.oid)
                                     .css('background-image', 'url(' + webgis.css.imgResource('filter-remove-26.png', 'tools') + ')')
-                                    .appendTo($td)
-                                    .click(function () {
-                                        var args = [];
-                                        args["feature_oid"] = $(this).data('oid');
-                                        webgis.tools.onButtonClick(map, { command: 'unsetfeaturefilter', type: 'servertoolcommand_ext', id: filterToolId, map: $(this).data('map') }, this, null, args);
-                                    });
+                                    .appendTo($td);
                             }
 
                             if (features.metadata && features.metadata.has_attachments) {
                                 $("<div>")
-                                    .addClass('menubutton inline attachments')
+                                    .addClass('menubutton inline attachments webgis-row-btn-attachments')
                                     .attr("id", 'attachments-' + feature.oid.replaceAll('@','-').replaceAll(':', '-'))
                                     .attr('title', 'Attachements')
                                     .data('map', map)
                                     .data('oid', feature.oid)
                                     //.css('background-image', 'url(' + webgis.css.imgResource('attachments-26-b.png', 'tools') + ')')
-                                    .appendTo($td)
-                                    .click(function () {
-                                        var args = [], map = $(this).data('map');
-                                        args["feature-oid"] = $(this).data('oid');
-
-                                        webgis.tools.onButtonClick(map, { command: 'show_attachments', type: 'servertoolcommand_ext', id: identityToolId, map: map }, this, null, args);
-                                    });
+                                    .appendTo($td);
                             }
 
                             // custom buttons, eg. google navigation
@@ -999,6 +1006,8 @@
                                             .attr('target', '_blank')
                                             .attr('title', singleResultButton.name)
                                             .appendTo($td);
+
+                                        $td.addClass('has-link');  // stop row-click propagation for this menucell, same as for property cells containing links
                                     }
                                 }
                             }
@@ -1031,14 +1040,14 @@
                             continue;
 
                         var $td = $("<td class='webgis-result-table-cell'>")
-                            .appendTo($tr)
-                            .click(_event_cellClick);
+                            .appendTo($tr);
 
                         if (featureProperties.hasOwnProperty(property)) {
                             var text = featureProperties[property];
 
                             
                             if (text.indexOf("<a ") >= 0) {  // ToDo: kann man das besser machen?
+                                $td.addClass('has-link');
                                 const $link = $(text);
                                 if ($link.attr('target') === 'dialog') {
                                     const href = $link.attr('href');
@@ -1073,9 +1082,13 @@
                         }
                     }
 
-                    unionIndex++;e
+                    unionIndex++;
                 }
             }
+
+            // Append all rows to the DOM in one go instead of per row - avoids repeated
+            // reflows when rendering large result sets (several thousand rows).
+            $tab.append($rows);
 
             if (reorderable) {
                 webgis.require('sortable', function () {

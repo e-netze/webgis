@@ -1181,44 +1181,49 @@
             appendAdvancedFeatureButtons: useTabControl
         });
 
-        $content.find('a').each(function (i, a) {
-            $(a).closest('td').click(function (e) { e.stopPropagation(); });
-        });
-        $content.find('.webgis-result[data-id]').each(function (i, resultrow) {
-            var $resultrow = $(resultrow);
-            $resultrow
-                .click(function (e) {
-                    e.stopPropagation();
+        // Event delegation: bind once on $content instead of per row - this avoids registering
+        // per-row click/hover/menubutton handlers for large result sets (main performance
+        // bottleneck for tables with many thousand rows). $content is reused/emptied across
+        // repeated showTable() calls (see above), so a namespace is used to safely replace
+        // previous bindings instead of stacking duplicates.
+        $content.off('.webgisQueryResultsTable');
 
+        $content.on('click.webgisQueryResultsTable', 'td.has-link', function (e) {
+            e.stopPropagation();
+        });
+
+        $content
+            .on('click.webgisQueryResultsTable', '.webgis-result[data-id]', function (e) {
+                e.stopPropagation();
+
+                var $row = $(this).closest('.webgis-result');
+                var featureOid = $row.attr('data-id');
+                var feature = map.queryResultFeatures.getFeature(featureOid);
+                if (feature) {
+                    map.queryResultFeatures.handlers.featureResultClick(feature,
+                        $row.hasClass($.fn.webgis_queryResultsTable.selectedRowClass),
+                        $row.hasClass('webgis-result-suppresszoom'));
+                }
+            })
+            .on('mouseenter.webgisQueryResultsTable', '.webgis-result[data-id]', function (e) {
+                if (map.hoverSketch) {
                     var $row = $(this).closest('.webgis-result');
                     var featureOid = $row.attr('data-id');
+
                     var feature = map.queryResultFeatures.getFeature(featureOid);
-                    if (feature) {
-                        map.queryResultFeatures.handlers.featureResultClick(feature,
-                            $row.hasClass($.fn.webgis_queryResultsTable.selectedRowClass),
-                            $row.hasClass('webgis-result-suppresszoom'));
-                    }
-                })
-                .on('mouseenter', function (e) {
-                    if (map.hoverSketch) {
-                        var $row = $(this).closest('.webgis-result');
-                        var featureOid = $row.attr('data-id');
 
-                        var feature = map.queryResultFeatures.getFeature(featureOid);
+                    //console.log('enter:' + feature.oid);
 
-                        //console.log('enter:' + feature.oid);
-
-                        if (feature && feature.hover_geometry) {
-                            map.hoverSketch.fromJson(feature.hover_geometry, false, true);  // append = false, readonly = true
-                        }
+                    if (feature && feature.hover_geometry) {
+                        map.hoverSketch.fromJson(feature.hover_geometry, false, true);  // append = false, readonly = true
                     }
-                })
-                .on('mouseleave', function (e) {
-                    if (map.hoverSketch) {
-                        map.hoverSketch.hide();
-                    }
-                });
-        });
+                }
+            })
+            .on('mouseleave.webgisQueryResultsTable', '.webgis-result[data-id]', function (e) {
+                if (map.hoverSketch) {
+                    map.hoverSketch.hide();
+                }
+            });
 
         var refreshHeaderMenuButtons = function () {
             var $headerCheck = $content.find('.webgis-result-table-header.webgis-result-table-menucell .menubutton.checkbox')
@@ -1246,45 +1251,41 @@
         }
 
         // Menucell - Rows
-        $content.find('.webgis-result[data-id] .webgis-result-table-menucell .menubutton.checkbox')
-            .click(function (e) {
-                e.stopPropagation();
+        $content.on('click.webgisQueryResultsTable', '.webgis-result[data-id] .webgis-result-table-menucell .menubutton.checkbox', function (e) {
+            e.stopPropagation();
 
-                var featureOid = $(this).closest('.webgis-result').attr('data-id');
-                var feature = map.queryResultFeatures.getFeature(featureOid);
-                if (feature) {
-                    $(this).toggleClass('checked');
-                    feature._tableChecked = $(this).hasClass('checked');
-                }
+            var featureOid = $(this).closest('.webgis-result').attr('data-id');
+            var feature = map.queryResultFeatures.getFeature(featureOid);
+            if (feature) {
+                $(this).toggleClass('checked');
+                feature._tableChecked = $(this).hasClass('checked');
+            }
 
-                refreshHeaderMenuButtons();
-            });
+            refreshHeaderMenuButtons();
+        });
 
-        $content.find('.webgis-result[data-id] .webgis-result-table-menucell .menubutton.zoom')
-            .click(function (e) {
-                e.stopPropagation();
-                var featureOid = $(this).closest('.webgis-result').attr('data-id');
-                var feature = map.queryResultFeatures.getFeature(featureOid);
-                if (feature && feature.bounds) {
-                    map.zoomToBoundsOrScale(feature.bounds, webgis.featureZoomMinScale(feature));
-                }
-            });
-        $content.find('.webgis-result[data-id] .webgis-result-table-menucell .menubutton.pan')
-            .click(function (e) {
-                e.stopPropagation();
-                var featureOid = $(this).closest('.webgis-result').attr('data-id');
-                var feature = map.queryResultFeatures.getFeature(featureOid);
-                if (feature && feature.bounds) {
-                    var center = [(feature.bounds[0] + feature.bounds[2]) * 0.5, (feature.bounds[1] + feature.bounds[3]) * 0.5];
-                    map.setCenter(center, 0.3);
-                }
-            });
-        $content.find('.webgis-result[data-id] .webgis-result-table-menucell .menubutton.marker')
-            .click(function (e) {
-                e.stopPropagation();
+        $content.on('click.webgisQueryResultsTable', '.webgis-result[data-id] .webgis-result-table-menucell .menubutton.zoom', function (e) {
+            e.stopPropagation();
+            var featureOid = $(this).closest('.webgis-result').attr('data-id');
+            var feature = map.queryResultFeatures.getFeature(featureOid);
+            if (feature && feature.bounds) {
+                map.zoomToBoundsOrScale(feature.bounds, webgis.featureZoomMinScale(feature));
+            }
+        });
+        $content.on('click.webgisQueryResultsTable', '.webgis-result[data-id] .webgis-result-table-menucell .menubutton.pan', function (e) {
+            e.stopPropagation();
+            var featureOid = $(this).closest('.webgis-result').attr('data-id');
+            var feature = map.queryResultFeatures.getFeature(featureOid);
+            if (feature && feature.bounds) {
+                var center = [(feature.bounds[0] + feature.bounds[2]) * 0.5, (feature.bounds[1] + feature.bounds[3]) * 0.5];
+                map.setCenter(center, 0.3);
+            }
+        });
+        $content.on('click.webgisQueryResultsTable', '.webgis-result[data-id] .webgis-result-table-menucell .menubutton.marker', function (e) {
+            e.stopPropagation();
 
-                $(this).closest('tr').trigger('click');
-            });
+            $(this).closest('tr').trigger('click');
+        });
 
         // Menucell - Header
         $content.find('.webgis-result-table-header.webgis-result-table-menucell .menubutton.checkbox')
