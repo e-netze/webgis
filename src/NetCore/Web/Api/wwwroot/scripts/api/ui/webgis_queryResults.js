@@ -1138,12 +1138,13 @@
 
                 var rangeStart = currentPage * pageSize + 1;
                 var rangeEnd = Math.min(rangeStart + pageSize - 1, totalFeatures);
-                var text = 'Seite ' + (currentPage + 1) + ' / ' + totalPages +
-                    ' (Ergebnisse ' + rangeStart + '\u2013' + rangeEnd + ' von ' + totalFeatures + ')';
+                var infoText = 'Ergebnisse ' + rangeStart + '\u2013' + rangeEnd + ' von ' + totalFeatures;
 
                 $.each([$pagerTop, $pagerBottom], function (i, $bar) {
                     if (!$bar) return;
-                    $bar.find('.webgis-table-pager-info').text(text);
+                    $bar.find('.webgis-table-pager-info').text(infoText);
+                    $bar.find('.webgis-table-pager-of').text(' / ' + totalPages);
+                    $bar.find('.webgis-table-pager-page-input').val(currentPage + 1);
                     $bar.find('.webgis-table-pager-prev').prop('disabled', currentPage <= 0);
                     $bar.find('.webgis-table-pager-next').prop('disabled', currentPage >= totalPages - 1);
                 });
@@ -1158,11 +1159,26 @@
 
                 renderRows(start, end);
                 updatePagerUI();
+
+                // Neu gerenderte Zeilen koennen menubuttons enthalten, deren Sichtbarkeit vom
+                // aktiven Werkzeug abhaengt (z.B. webgis-dependency-activetool, etwa der
+                // Map-Series-Button) - refreshUIElements() muss daher nach jedem Seitenwechsel
+                // erneut aufgerufen werden, sonst blitzen diese Buttons kurz sichtbar auf.
+                map.ui.refreshUIElements();
             };
 
             if (usePaging) {
                 var buildPagerBar = function () {
                     var $bar = $("<div>").addClass('webgis-table-pager');
+
+                    var jumpToPage = function ($input) {
+                        var val = parseInt($input.val(), 10);
+                        if (!isNaN(val)) {
+                            renderPage(val - 1);
+                        } else {
+                            $input.val(currentPage + 1);
+                        }
+                    };
 
                     $("<button type='button'>")
                         .addClass('webgis-table-pager-prev')
@@ -1174,7 +1190,28 @@
                             renderPage(currentPage - 1);
                         });
 
-                    $("<span>").addClass('webgis-table-pager-info').appendTo($bar);
+                    var $pageInput = $("<input type='number' min='1'>")
+                        .addClass('webgis-table-pager-page-input')
+                        .attr('title', 'Zu Seite springen')
+                        .attr('max', totalPages)
+                        .val(currentPage + 1)
+                        .appendTo($bar)
+                        .on('click', function (e) {
+                            e.stopPropagation();
+                        })
+                        .on('keydown', function (e) {
+                            e.stopPropagation();
+                            if (e.which === 13 || e.keyCode === 13) {
+                                e.preventDefault();
+                                jumpToPage($(this));
+                            }
+                        })
+                        .on('change', function (e) {
+                            e.stopPropagation();
+                            jumpToPage($(this));
+                        });
+
+                    $("<span>").addClass('webgis-table-pager-of').appendTo($bar);
 
                     $("<button type='button'>")
                         .addClass('webgis-table-pager-next')
@@ -1185,6 +1222,8 @@
                             e.stopPropagation();
                             renderPage(currentPage + 1);
                         });
+
+                    $("<span>").addClass('webgis-table-pager-info').appendTo($bar);
 
                     return $bar;
                 };

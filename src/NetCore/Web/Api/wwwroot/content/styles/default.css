@@ -923,6 +923,20 @@ img.tile {
         white-space: nowrap;
     }
 
+    .webgis-table-pager .webgis-table-pager-page-input {
+        width: 42px;
+        height: 20px;
+        text-align: center;
+        border: 1px solid var(--webgis-ui-border, #ccc);
+        border-radius: 3px;
+        font-size: 11px;
+        padding: 0;
+    }
+
+    .webgis-table-pager .webgis-table-pager-of {
+        white-space: nowrap;
+    }
+
 .webgis-result-table-header {
     background-color: var(--webgis-ui-surface-sunken);
     /*font-weight:bold;*/
