@@ -354,6 +354,7 @@
     "select-new-query-results-info": "Wenn diese Methode angewendet wird, werden Abfrageergebnisse in der Karte automatisch selektiert dargestellt.",
     "query-layer-not-visible-notification": "Der abgefrage Layer ist in der Karte ausgeblendet. Hier Klicken zum Einblenden.",
     "query-max-results-reached": "Das Limit von {count} Ergebnissen wurde erreicht. Es wurden eventuell nicht alle Treffer geladen. Grenzen Sie die Abfrage weiter ein (z.B. kleineres Suchgebiet oder zusätzliche Filter), um alle Treffer zu erhalten.",
+    "query-result-list-truncated": "Es werden nur die ersten {count} von insgesamt {total} Ergebnissen angezeigt. Öffnen Sie die Tabellenansicht, um alle Ergebnisse zu sehen.",
 
     // tool mapseries
     "create-map-series": "Kartenserie erstellen",

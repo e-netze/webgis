@@ -132,6 +132,12 @@ webgis.usability = {
         pagingThreshold: 1000 // Paging greift erst, wenn mehr als so viele Ergebnisse vorhanden sind
                               // (z.B. 1000 = bisheriges Verhalten bleibt bei "klassischen" AGS-Ergebnismengen
                               // unveraendert, Paging startet erst darueber hinaus)
+    },
+
+    queryResultsList: {
+        maxItems: 1000 // Ergebnisliste (zB mobile Ansicht, kein Paging) rendert maximal so viele Eintraege.
+                        // Bei mehr Ergebnissen wird ein Hinweis angezeigt, dass alle Ergebnisse in der
+                        // Tabellenansicht (webgis_queryResultsTable) verfuegbar sind.
     }
 };
 

@@ -288,11 +288,24 @@
 
         var reorderAble = map.queryResultFeatures.reorderAble();
 
+        var maxListItems = (webgis.usability.queryResultsList && webgis.usability.queryResultsList.maxItems) || 1000;
+        var isTruncated = features && features.length > maxListItems;
+        var renderFeatures = isTruncated ? features.slice(0, maxListItems) : features;
+
+        if (isTruncated) {
+            $("<div>")
+                .addClass('webgis-result-list-truncated-notice')
+                .text(webgis.l10n.get('query-result-list-truncated')
+                    .replace('{count}', renderFeatures.length)
+                    .replace('{total}', features.length))
+                .appendTo($parent);
+        }
+
         var $ul = $("<ol class='webgis-geojuhu-results'>")
             .data('map', map)
             .appendTo($parent);
-        for (var f in features) {
-            var feature = features[f];
+        for (var f in renderFeatures) {
+            var feature = renderFeatures[f];
             var query = dynamicContentQuery;
             if (!query && feature.oid.substring(0, 1) !== '#') { // Searchservice result....
                 var qid = feature.oid.split(':');
