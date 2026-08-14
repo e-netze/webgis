@@ -17,6 +17,7 @@ using E.Standard.Extensions.Compare;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.GeoServices.ArcServer;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 
 using Microsoft.AspNetCore.Hosting;
@@ -79,6 +80,19 @@ public class ApiGlobalsService
         if (int.TryParse(config[ApiConfigKeys.ToKey("tool-identify:max-vertices-for-hover-highlighting")], out int max))
         {
             ApiGlobals.MaxFeatureHoverHighlightVerticesCount = max;
+        }
+
+        if (int.TryParse(config[ApiConfigKeys.ToKey("tool-identify:ags-spatial-query-max-result-cap")], out int agsSpatialQueryMaxResultCap))
+        {
+            AgsQuerySettings.MaxSpatialQueryResultCap = agsSpatialQueryMaxResultCap;
+        }
+        if (int.TryParse(config[ApiConfigKeys.ToKey("tool-identify:ags-spatial-query-default-max-record-count-fallback")], out int agsQueryDefaultMaxRecordCountFallback))
+        {
+            AgsQuerySettings.DefaultMaxRecordCountFallback = agsQueryDefaultMaxRecordCountFallback;
+        }
+        if (int.TryParse(config[ApiConfigKeys.ToKey("tool-identify:ags-spatial-query-max-parallel-batch-requests")], out int agsQueryMaxParallelBatchRequests))
+        {
+            AgsQuerySettings.MaxParallelBatchRequests = agsQueryMaxParallelBatchRequests;
         }
 
         EsriDateExtensions.DateFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-date-format")].OrTake(EsriDateExtensions.DateFormatString);

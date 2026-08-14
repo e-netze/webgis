@@ -1,4 +1,4 @@
-namespace E.Standard.WebMapping.GeoServices.ArcServer;
+﻿namespace E.Standard.WebMapping.GeoServices.ArcServer;
 
 /// <summary>
 /// Global, process-wide configuration for the ArcGIS Server spatial-query workaround
@@ -9,6 +9,13 @@ namespace E.Standard.WebMapping.GeoServices.ArcServer;
 /// As a workaround, a "return ids only" query (which is not affected by this bug) is issued
 /// first, followed by chunked "query by objectIds" requests to fetch the actual features.
 /// </summary>
+/// <remarks>
+/// All properties can be overridden via api.config, section "tool-identify":
+/// <c>ags-spatial-query-max-result-cap</c> (<see cref="MaxSpatialQueryResultCap"/>),
+/// <c>ags-spatial-query-default-max-record-count-fallback</c> (<see cref="DefaultMaxRecordCountFallback"/>),
+/// <c>ags-spatial-query-max-parallel-batch-requests</c> (<see cref="MaxParallelBatchRequests"/>).
+/// See ApiGlobalsService for where these are read.
+/// </remarks>
 public static class AgsQuerySettings
 {
     /// <summary>
@@ -19,7 +26,7 @@ public static class AgsQuerySettings
     /// first <see cref="MaxSpatialQueryResultCap"/> are used and the result is flagged as
     /// truncated (<c>FeatureCollection.HasMore</c>).
     /// </summary>
-    public static int MaxSpatialQueryResultCap { get; set; } = 10000;
+    public static int MaxSpatialQueryResultCap { get; set; } = 2000;
 
     /// <summary>
     /// Batch size used to fetch features by objectIds when the ArcGIS Server service does not
