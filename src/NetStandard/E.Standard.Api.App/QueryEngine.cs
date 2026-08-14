@@ -577,6 +577,10 @@ public class QueryEngine
                 {
                     await layer.GetFeaturesAsync(filter, features, requestContext);
 
+                    if (features.HasMore)
+                    {
+                        this.HasMore = true;
+                    }
                 }
 
                 if (features.Count == 0 && !String.IsNullOrWhiteSpace(features.ResultText))
@@ -619,6 +623,13 @@ public class QueryEngine
         //    throw ex;
         //}
         this.Features = features;
+
+        // Note: intentionally not using features.AddWarning(...) here - that surfaces as a
+        // blocking, modal "Verstanden"-dialog (see webgis-result-warning-panel), which is too
+        // heavy-handed for this case. Instead, this.HasMore is exposed to the client via
+        // FeaturesDTO.Meta.HasMore, which renders a small, persistent (non-dismissible)
+        // notification bar above the results table (see webgis.map.queryresults.js).
+        features.HasMore = this.HasMore;
 
         if (this.Features != null)
         {

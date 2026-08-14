@@ -353,6 +353,7 @@
     "select-new-query-results": "Select new query results", 
     "select-new-query-results-info": "If this option is enabled, new query results will be automatically selected in the map.",
     "query-layer-not-visible-notification": "The queried layer is hidden in the map. Click here to show it.",
+    "query-max-results-reached": "The limit of {count} results has been reached. Not all matching features may have been loaded. Narrow the query (e.g. smaller search area or additional filters) to retrieve all results.",
 
     // tool mapseries
     "create-map-series": "Create map series",

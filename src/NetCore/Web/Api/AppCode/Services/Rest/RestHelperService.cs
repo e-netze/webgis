@@ -803,6 +803,12 @@ public class RestHelperService
 
                 #endregion
 
+                #region HasMore
+
+                returnFeatures.HasMore = queryFeatures.HasMore;
+
+                #endregion
+
                 #region Warnings/Information
 
                 if (queryFeatures.Warnings != null)

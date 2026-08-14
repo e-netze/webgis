@@ -1203,6 +1203,14 @@ img.tile {
                 max-height: 26px;
             }
 
+.webgis-result-maxreached-notification {
+    background-color: var(--webgis-brand-button-danger-bg);
+    color: #000;
+    padding: 4px 8px;
+    font-size: 12px;
+    line-height: 16px;
+}
+
 .webgis-result-warning-panel {
     position: sticky;
     left: 0px;

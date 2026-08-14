@@ -49,7 +49,7 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
             }
         }
 
-        if (tool != Meta.Tool.Unknown || select || features.Links != null || features.TableFieldDefintions != null)
+        if (tool != Meta.Tool.Unknown || select || features.Links != null || features.TableFieldDefintions != null || features.HasMore)
         {
             this.metadata = new Meta()
             {
@@ -70,6 +70,9 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
                                         ImageHeight = f.ImageSize?.height
                                     }),
                 HasAttachments = features.HasAttachments == true
+                    ? true
+                    : null,
+                HasMore = features.HasMore == true
                     ? true
                     : null,
                 Warnings = features.Warnings?.ToArray(),
@@ -387,6 +390,11 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
         [System.Text.Json.Serialization.JsonPropertyName("has_attachments")]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public bool? HasAttachments { get; set; }
+
+        [JsonProperty("has_more", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonPropertyName("has_more")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public bool? HasMore { get; set; }
 
         [JsonProperty("warnings", NullValueHandling = NullValueHandling.Ignore)]
         [System.Text.Json.Serialization.JsonPropertyName("warnings")]

@@ -703,6 +703,13 @@
 
         webgis.ui.showLayerNotVisibleNotification(service, query, $content);
 
+        if (features.metadata && features.metadata.has_more === true) {
+            $("<div>")
+                .addClass('webgis-result-maxreached-notification')
+                .text(webgis.l10n.get('query-max-results-reached').replace('{count}', features.features.length))
+                .appendTo($content);
+        }
+
         if (!webgis.usability.tableToolsContainerExtended) {
             $tabToolsContainer.addClass('collapsed');
             $content.addClass('tools-collapsed');
