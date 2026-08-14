@@ -129,6 +129,7 @@
     "edit-geometry-and-attributes": "Geometrie und Sachdaten bearbeiten",
     "edit-delete": "Objekt löschen",
     "export-transfer": "Export/Transfer",
+    "export-in-progress": "Ergebnisse werden exportiert...",
     "center": "Zentrieren",
 
     "content-search-info": "Neben der Schnellsuche (Orte finden) kann auch nach Inhalten (Themen) in der aktuellen Karte gesucht werden. Werden die gewünschten Inhalte auch dort nicht angezeigt, kann auch noch in Karten-Diensten gesucht werden. Wird ein Thema in Diensten gefunden, kann dieser auch in die aktuelle Karte eingebunden werden.",

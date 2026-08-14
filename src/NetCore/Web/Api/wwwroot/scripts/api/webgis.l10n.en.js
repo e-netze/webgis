@@ -129,6 +129,7 @@
     "edit-geometry-and-attributes": "Edit geometry and attributes",
     "edit-delete": "Delete object",
     "export-transfer": "Export/Transfer",
+    "export-in-progress": "Exporting results...",
     "center": "Center",
 
     "content-search-info": "In addition to the quick search (find places), you can also search for content (topics) in the current map. If the desired content is not shown there either, you can also search in map services. If a topic is found in services, it can be added to the current map.",
