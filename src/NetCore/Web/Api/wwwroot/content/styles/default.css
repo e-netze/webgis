@@ -1076,13 +1076,22 @@ img.tile {
         }
 
         .webgis-result-table-menucell .menubutton.webgis-row-btn-more {
-            font-size: 14px;
-            line-height: 30px;
-            color: var(--webgis-ui-text-secondary, #888);
-            opacity: 0.6;
+            position: relative;
+            opacity: 0.75;
         }
             .webgis-result-table-menucell .menubutton.webgis-row-btn-more:hover {
                 opacity: 1;
+            }
+            .webgis-result-table-menucell .menubutton.webgis-row-btn-more::before {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 15px;
+                height: 2px;
+                background-color: var(--webgis-ui-text-label);
+                box-shadow: 0 -5px 0 var(--webgis-ui-text-label), 0 5px 0 var(--webgis-ui-text-label);
+                transform: translate(-50%, -50%);
             }
 
         .webgis-result-table-menucell .menubutton.attachments {

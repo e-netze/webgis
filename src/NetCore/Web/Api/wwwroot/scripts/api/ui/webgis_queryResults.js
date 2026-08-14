@@ -1067,7 +1067,6 @@
                             $("<div>")
                                 .addClass('menubutton inline webgis-row-btn-more')
                                 .attr('title', webgis.l10n.get('row-tools-menu'))
-                                .text('\u25BE')
                                 .appendTo($td);
                         }
 
