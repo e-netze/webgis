@@ -863,6 +863,7 @@
                 type: 'post',
                 url: webgis.baseUrl + '/rest/exportfeatures',
                 data: webgis.hmac.appendHMACData(data),
+                progress: 'Ergebnisse werden exportiert...',
                 success: function (result) {
                     if (!result.success) return;
 
