@@ -8,6 +8,55 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+
+- ArcGIS Server (AGS) spatial query workaround: ArcGIS Server internally queries its underlying
+  database using only the bounding box of a spatial query geometry (not the actual shape) and
+  applies the requested result limit already at that stage, so the final (correctly clipped)
+  result can end up with far fewer features than actually match - in the worst case 0, even
+  though matching features exist. WebGIS now works around this by querying feature IDs first
+  (which AGS returns correctly, without the bbox limitation) and then fetching the features in
+  batches by ID. This applies to all `FeatureLayer` queries against a `MapServer`/`FeatureServer`,
+  not just spatial ones, and is capped by a configurable maximum result count to protect
+  performance.
+
+  New configurable settings in `api.config`, section `tool-identify`:
+  - `ags-spatial-query-max-result-cap` (default 10000)
+  - `ags-spatial-query-default-max-record-count-fallback` (default 1000)
+  - `ags-spatial-query-max-parallel-batch-requests` (default 4)
+  [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#werkzeug-identify)
+
+- Query results table (`webgis_queryResultsTable`): client-side paging for large result sets to
+  keep the table responsive when many features are loaded (e.g. via the AGS workaround above).
+  Paging only kicks in once the result count exceeds a configurable threshold, so existing/smaller
+  result sets keep their previous, unpaged behavior. Includes a jump-to-page input and an exact
+  result counter (previously abbreviated, e.g. "3K...").
+
+  New configurable options in `custom.js`, `webgis.usability.queryResultsTable`:
+  - `pageSize` (default 100)
+  - `pagingThreshold` (default 1000)
+  [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#ergebnisliste)
+
+- Query results list (`webgis_queryResultsList`, used e.g. in the mobile view without paging):
+  now renders at most a configurable number of entries. If more results are available, a static
+  notice above the list informs the user how many of the total results are shown and that the
+  table view can be opened to see all of them.
+
+  New configurable option in `custom.js`, `webgis.usability.queryResultsList.maxItems`
+  (default 1000).
+  [docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#ergebnisliste)
+
+- Query results table/list: when the AGS spatial-query workaround (or any other query) actually
+  hits its configured result limit, a persistent, non-dismissible notification is now shown above
+  the results, stating how many results were loaded and that the query should be narrowed down to
+  retrieve all matching features.
+
+- Query results table: each row now has a dedicated "..." (menu) button before the marker/bubble
+  icon, opening the same tools menu previously only reachable via right-click.
+  [Discussion #451](https://github.com/e-netze/webgis-community/discussions/451)
+
+- Query results export (CSV, etc.): the export now includes all query results, not just the
+  features of the currently displayed table page. A progress indicator is shown while exporting.
+
 ### Fixed
 
 ## 8.26.3201
