@@ -17,4 +17,15 @@ class JsonFeatureIdsResponse
     [JsonProperty("objectIds")]
     [System.Text.Json.Serialization.JsonPropertyName("objectIds")]
     public long[] ObjectIds { get; set; }
+
+    /// <summary>
+    /// Set to <c>true</c> if the requested <c>resultRecordCount</c> caused the server to clamp
+    /// the returned ids to the service's <c>maxRecordCount</c>. Only reliably reported by
+    /// ArcGIS Server >= 11.5; AGS 11.2 clamps the same way but does NOT set this flag (see
+    /// <see cref="AgsQuerySettings"/>/<c>QueryService</c> for details) - do not rely on this
+    /// being <c>false</c> as proof that no clamping occurred on older AGS versions.
+    /// </summary>
+    [JsonProperty("exceededTransferLimit")]
+    [System.Text.Json.Serialization.JsonPropertyName("exceededTransferLimit")]
+    public bool ExceededTransferLimit { get; set; }
 }

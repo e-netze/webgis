@@ -105,6 +105,19 @@ public class MapService : IMapService2,
         private set;
     }
 
+    /// <summary>
+    /// The ArcGIS REST API version reported by the service (<c>currentVersion</c>, e.g. 10.91,
+    /// 11.2, 11.5, ...). 0 if the service does not report it. Useful to distinguish
+    /// version-dependent ArcGIS Server quirks, e.g. around the <c>returnIdsOnly</c> +
+    /// <c>resultRecordCount</c>/<c>exceededTransferLimit</c> behavior used by the ids-first
+    /// query workaround (see <see cref="AgsQuerySettings"/>).
+    /// </summary>
+    public double AgsVersion
+    {
+        get;
+        private set;
+    }
+
     public string ID
     {
         get;
@@ -431,6 +444,7 @@ public class MapService : IMapService2,
                 _maxImageWidth = jsonService.MaxImageWidth;
                 _maxImageHeight = jsonService.MaxImageHeight;
                 this.MaxRecordCount = jsonService.MaxRecordCount;
+                this.AgsVersion = jsonService.CurrentVersion;
 
                 pLogger.Success = true;
 
@@ -1210,6 +1224,7 @@ public class MapService : IMapService2,
         clone._maxImageWidth = this._maxImageWidth;
         clone._maxImageHeight = this._maxImageHeight;
         clone.MaxRecordCount = this.MaxRecordCount;
+        clone.AgsVersion = this.AgsVersion;
 
         clone.SupportedCrs = this.SupportedCrs;
         clone._serviceThemes = _serviceThemes;
