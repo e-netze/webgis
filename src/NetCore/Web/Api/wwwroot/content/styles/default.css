@@ -1015,6 +1015,7 @@ img.tile {
 
         .webgis-result-table-menucell .menubutton.checkbox {
             background-image: url('../api/img/toc/check0.png');
+            background-size:16px;
         }
             .webgis-result-table-menucell .menubutton.checkbox.checked {
                 background-image: url('../api/img/toc/check1.png');
@@ -1644,6 +1645,7 @@ tr.webgis-border-bottom td{
         background-position:center;
         background-repeat:no-repeat;
         background-image:url(../api/img/toc/check0.png);
+        background-size:16px;
     }
 
 .webgis-presentation_toc-item {
@@ -2012,12 +2014,17 @@ tr.webgis-border-bottom td{
             background-image: url(../api/img/toc/check0.png);
             background-repeat: no-repeat;
             background-position: left 3px;
+            background-size: 16px;
             padding: 4px 0px 4px 18px;
         }
 
             .webgis-addservices_toc-content.tiles .webgis-addservices_toc-item.selected .webgis-addservices_toc-item-info .webgis-addservices-servicelayer.visible {
                 background-image: url(../api/img/toc/check1.png);
             }
+
+.webgis-addservices_toc-item.webgis-addservices_toc-checkable .webgis-addservices_toc-checkable-icon {
+    max-height: 16px;
+}
 
 .webgis-service-info {
 }
@@ -2638,12 +2645,12 @@ td.webgis-tab-header {
                 border-bottom: var(--webgis-ui-border-width-item-selected) solid var(--webgis-brand-primary);
                 color: var(--webgis-ui-text-selected);
             }
-        }
 
         .webgis-edittheme-tree .webgis-edittheme-tree-theme-list .webgis-edittheme-tree-theme-list-item .checkbox {
             background-repeat: no-repeat;
             background-position: center;
             background-image: url('../api/img/toc/check0.png');
+            background-size: 16px;
             position: absolute;
             left: 0px;
             top: 0px;
@@ -3177,6 +3184,7 @@ body.webgis-ui-holder {
 .webgis-ui-collapsable-title h2 img {
     vertical-align: middle;
     position:unset;
+    max-height:26px;
 }
 
 .webgis-ui-droplist {
@@ -4260,6 +4268,7 @@ body.webgis-ui-holder {
     border: 1px solid #bcbbbb;
     border-radius: 6px;
     cursor: pointer;
+    background-size:26px;
 }
     .webgis-result-history-holder .webgis-result-history-item:hover {
         background-color: var(--webgis-brand-primary-light);
@@ -5397,6 +5406,7 @@ select.webgis-not-valid {
         background-position: center;
         background-image: url(../api/img/toc/check0.png);
         background-color: var(--webgis-ui-surface-hover);
+        background-size: 16px;
         border-radius:8px;
         float:right;
     }

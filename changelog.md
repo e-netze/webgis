@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Fixed
 
+## 8.26.3202
+
+### Fixed
+
+- Styling Bugs: image and background-size corrections:
+  [Issue #498](https://github.com/e-netze/webgis-community/issues/498)
+
 ## 8.26.3201
 
 ### Added
