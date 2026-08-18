@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+
+- CMS DeployService: deployments can now define an optional ``services`` allow-list to restrict
+  which services (ArcGIS Server, ImageServer, WMS, WMTS, ...) are actually included in the
+  exported target XML. Services are matched by their url-name (folder name) or, for the rare
+  case of duplicate folder names across different service types, by their full relative path.
+  Services not listed are skipped during export. Leaving the list empty/unset keeps the previous
+  behavior of exporting all services.
+
 ### Fixed
 
 ## 8.26.3202

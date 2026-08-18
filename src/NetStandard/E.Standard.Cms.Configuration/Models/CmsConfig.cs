@@ -146,6 +146,18 @@ public class CmsConfig : PropertiesParserBaseClass
         [System.Text.Json.Serialization.JsonPropertyName("environment")]
         public DeployEnvironment Environment { get; set; }
 
+        /// <summary>
+        /// Optionale Allow-Liste von Dienst-Ids (url-name des Dienst-Ordners, z.B. "meindienst"),
+        /// die bei einem Deploy tatsächlich in das Ziel-XML übernommen werden sollen.
+        /// Alternativ kann auch der volle relative Pfad ab dem CMS-Root angegeben werden
+        /// (z.B. "services/arcgisserver/mapserver/meindienst"), falls der url-name allein
+        /// nicht eindeutig ist (z.B. gleicher Name bei unterschiedlichen Diensttypen).
+        /// Ist die Liste null/leer, werden alle Dienste unverändert exportiert.
+        /// </summary>
+        [JsonProperty(PropertyName = "services")]
+        [System.Text.Json.Serialization.JsonPropertyName("services")]
+        public IEnumerable<string> Services { get; set; }
+
         public override void Parse(IConfigValueParser parser)
         {
             base.Parse(parser);

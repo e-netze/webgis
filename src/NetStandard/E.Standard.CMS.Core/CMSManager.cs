@@ -1672,9 +1672,20 @@ public partial class CMSManager
 
     async public Task<XmlDocument> Export(CmsItemTransistantInjectionServicePack servicePack,
                                           bool ignoreAuthentification = false,
-                                          ParseEncryptedValue onParseBeforeEncryptValue = null)
+                                          ParseEncryptedValue onParseBeforeEncryptValue = null,
+                                          IEnumerable<string> serviceIdsFilter = null)
     {
         _isDir = new Dictionary<string, bool>();
+
+        HashSet<string> serviceIdsFilterSet = serviceIdsFilter?
+            .Where(id => !String.IsNullOrWhiteSpace(id))
+            .Select(id => id.Trim().Replace(@"\", "/").ToLower())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        if (serviceIdsFilterSet != null && serviceIdsFilterSet.Count == 0)
+        {
+            serviceIdsFilterSet = null;
+        }
 
         List<ExportAuthNode> authNodes = new List<ExportAuthNode>();
         ExportAppendAcl(this.Root + @"\root.acl", authNodes);
@@ -1686,7 +1697,7 @@ public partial class CMSManager
             xmlStream.OnParseBeforeEncryptValue += onParseBeforeEncryptValue;
         }
 
-        ExportDirectory(servicePack, xmlStream, this.Root, authNodes);
+        ExportDirectory(servicePack, xmlStream, this.Root, authNodes, serviceIdsFilterSet);
 
         #region Authentification
 
@@ -1728,7 +1739,7 @@ public partial class CMSManager
         return xmlStream.XmlDocument();
     }
 
-    public void ExportDirectory(CmsItemTransistantInjectionServicePack servicePack, IStreamDocument xmlStream, IPathInfo parent, List<ExportAuthNode> authNodes)
+    public void ExportDirectory(CmsItemTransistantInjectionServicePack servicePack, IStreamDocument xmlStream, IPathInfo parent, List<ExportAuthNode> authNodes, HashSet<string> serviceIdsFilter = null)
     {
         string relPath;
 
@@ -1838,6 +1849,19 @@ public partial class CMSManager
                         continue;
                     }
 
+                    if (serviceIdsFilter != null &&
+                        AttributeValue(schemaNode, "filtertype") == "service")
+                    {
+                        string fullRelPath = (String.IsNullOrEmpty(relPath) ? String.Empty : relPath + "/") + title;
+
+                        if (!serviceIdsFilter.Contains(itemName) &&
+                            !serviceIdsFilter.Contains(fullRelPath))
+                        {
+                            // Dienst ist nicht in der Allow-Liste des Deploys -> ignorieren (inkl. Unterknoten)
+                            continue;
+                        }
+                    }
+
                     //if (schemaNode.Attributes["itemname"] != null)
                     //    itemName = schemaNode.Attributes["itemname"].Value;
 
@@ -1864,7 +1888,7 @@ public partial class CMSManager
                             obj.Save(xmlStream);
                         }
                     }
-                    ExportDirectory(servicePack, xmlStream, di, authNodes);
+                    ExportDirectory(servicePack, xmlStream, di, authNodes, serviceIdsFilter);
                 }
             }
         }
