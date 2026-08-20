@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- TileService: `CreateImageUrlTemplate` dropped non-standard ports (e.g. `http://localhost:5001/...`)
+  when building the `{s}` domain template for tile Urls served from multiple servers/aliases,
+  since only the host name was used. The port is now kept whenever it isn't the scheme's
+  standard port (80/443); for scheme-relative Urls (`//host:port/...`), where the actual
+  scheme is unknown, an explicitly given port is always kept as-is.
+
 ## 8.26.3202
 
 ### Fixed
