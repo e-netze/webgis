@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   since only the host name was used. The port is now kept whenever it isn't the scheme's
   standard port (80/443); for scheme-relative Urls (`//host:port/...`), where the actual
   scheme is unknown, an explicitly given port is always kept as-is.
+- Styling: (MapBuild Sidebar)
+- Coordinates Tool: CSV export ("Koordinaten herunterladen") showed "Rechtswert" twice as column
+  header instead of "Rechtswert" and "Hochwert" (Easting/Northing).
+  [Issue #499](https://github.com/e-netze/webgis-community/issues/499)
 
 ## 8.26.3202
 

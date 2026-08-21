@@ -463,7 +463,7 @@ public class Coordinates : IApiServerToolLocalizableAsync<Coordinates>,
                 geoCoder switch
                 {
                     IGeoCoder => $"#{separator}{geoCoder.DisplayName}",
-                    _ => $"#{separator}{localizer.Localize("easting")}{separator}{localizer.Localize("easting")}"
+                    _ => $"#{separator}{localizer.Localize("easting")}{separator}{localizer.Localize("northing")}"
                 }
                 );
 
