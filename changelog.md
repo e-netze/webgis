@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+### Fixed
+
+## 8.26.3402
+
+### Added
 
 - CMS DeployService: deployments can now define an optional ``services`` allow-list to restrict
   which services (ArcGIS Server, ImageServer, WMS, WMTS, ...) are actually included in the
