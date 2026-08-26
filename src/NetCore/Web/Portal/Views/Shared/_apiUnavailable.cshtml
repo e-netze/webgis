@@ -1,0 +1,111 @@
+﻿@model System.Exception
+
+@using Microsoft.Extensions.Hosting
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Environment
+
+@{
+    Layout = null;
+
+    // Retry interval in seconds. Grows slightly with every reload attempt (via query string "n"),
+    // capped at 15s, so we don't hammer the api endlessly while it is (re)starting.
+    int attempt = 0;
+    int.TryParse(Context.Request.Query["n"], out attempt);
+    int refreshSeconds = Math.Min(3 + attempt, 15);
+    int nextAttempt = attempt + 1;
+
+    string separator = Context.Request.QueryString.HasValue ? "&" : "?";
+    string refreshUrl = $"{Context.Request.Path}{Context.Request.QueryString}{separator}n={nextAttempt}";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="refresh" content="@(refreshSeconds);url=@(refreshUrl)" />
+    <title>WebGIS wird gestartet ...</title>
+
+    <style>
+        body {
+            background: #808080;
+            text-align: center;
+            font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+        }
+        .message-box {
+            max-width: 800px;
+            text-align: left;
+            margin: auto;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+            overflow:hidden;
+        }
+            .message-box h1 {
+                color: #80c826;
+                background: #f8f8f8;
+                padding:20px;
+                margin:0px;
+                font-weight:normal;
+            }
+
+            .message-box h2 {
+                padding: 20px 20px 0px 20px;
+                font-weight: normal;
+                color: #444;
+                margin: 0px;
+                display: flex;
+                align-items: center;
+            }
+
+            .message-box .message {
+                padding: 20px;
+                color: #666;
+            }
+
+            .message-box .stacktrace {
+                padding: 20px;
+                color:#acacac;
+                font-size:12px;
+            }
+
+            .hourglass {
+                display: inline-block;
+                margin-right: 15px;
+                font-size: 28px;
+                animation: spin 1.6s linear infinite;
+            }
+
+            @@keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(180deg); }
+            }
+    </style>
+</head>
+<body>
+    <div class="message-box">
+        <h1>WebGIS</h1>
+        <h2><span class="hourglass">⏳</span> The WebGIS Api is starting ...</h2>
+        <div class="message">
+            The application could not yet connect to the WebGIS Api. This is normal right after the Api has been
+            started and usually only takes a few seconds.<br /><br />
+            This page will automatically reload every @(refreshSeconds) seconds; as soon as the Api is ready, the
+            application will be displayed normally. You don't need to do anything.
+        </div>
+        <h2><span class="hourglass">⏳</span> Die WebGIS Api wird gerade gestartet ...</h2>
+        <div class="message">
+            Die Anwendung konnte noch keine Verbindung zur WebGIS Api herstellen. Das ist unmittelbar nach dem Start
+            der Api normal und dauert in der Regel nur wenige Sekunden.<br /><br />
+            Diese Seite lädt sich automatisch alle @(refreshSeconds) Sekunden neu, sobald die Api bereit ist, wird die
+            Anwendung ganz normal angezeigt. Sie müssen nichts weiter tun.
+        </div>
+
+        @if (Environment.IsDevelopment() && Model != null)
+        {
+            <p class="stacktrace">
+                @(Model.Message)<br />
+                @Html.Raw(Model.StackTrace?.Replace("\n", "<br>"))
+            </p>
+        }
+    </div>
+</body>
+</html>

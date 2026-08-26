@@ -144,6 +144,11 @@ public class AuthController : PortalBaseController
         }
         catch (Exception ex)
         {
+            if (IsApiUnavailableException(ex))
+            {
+                return View("_apiUnavailable", ex);
+            }
+
             return JsonViewSuccess(false, ex.Message);
         }
     }

@@ -384,8 +384,37 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
 
     protected IActionResult ExceptionView(Exception ex)
     {
+        if (IsApiUnavailableException(ex))
+        {
+            _logger.LogWarning(ex, "WebGIS Api currently not reachable");
+            return View("_apiUnavailable", ex);
+        }
+
         LogException(ex);
         return View("_exception", ex);
+    }
+
+    /// <summary>
+    /// Erkennt Ausnahmen, die typischerweise auftreten, wenn die WebGIS Api (noch) nicht erreichbar ist
+    /// (z.B. während des Starts der Api oder eines Deployments). In diesem Fall soll dem Anwender keine
+    /// generische Fehlerseite, sondern ein Hinweis mit automatischem Neuladen angezeigt werden.
+    /// </summary>
+    protected static bool IsApiUnavailableException(Exception ex)
+    {
+        while (ex != null)
+        {
+            if (ex is System.Net.Http.HttpRequestException ||
+                ex is System.Net.Sockets.SocketException ||
+                ex is System.Threading.Tasks.TaskCanceledException ||
+                ex is TimeoutException)
+            {
+                return true;
+            }
+
+            ex = ex.InnerException;
+        }
+
+        return false;
     }
 
     protected IActionResult JsonObject(object obj)
