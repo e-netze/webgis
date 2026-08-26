@@ -6,23 +6,29 @@ namespace webgis.deploy.Services;
 
 internal class DeployVersionService
 {
-    public static readonly Version DeployToolVersion = new Version(8, 26, 3201);
+    public static readonly Version DeployToolVersion = new Version(8, 26, 3501);
 
 #if INTERNAL
-    private const string ZipPrefix = "webgis_internal";
+    private const string DefaultZipPrefix = "webgis_internal";
 #else
-    private const string ZipPrefix = "webgis";
+    private const string DefaultZipPrefix = "webgis";
 #endif
+    private const string PortableZipPrefix = "webgis_portable";
+
+    private readonly string ZipPrefix;
 
     private readonly string _versionsDirectory;
     private readonly DeployRepositoryService _deployRepositoryService;
     private readonly IOService _ioService;
 
     public DeployVersionService(DeployRepositoryService repositoryService,
-                                IOService ioService)
+                                IOService ioService,
+                                bool portable = false)
     {
         _deployRepositoryService = repositoryService;
         _ioService = ioService;
+
+        ZipPrefix = portable ? PortableZipPrefix : DefaultZipPrefix;
 
         _versionsDirectory =
             Path.Combine(_deployRepositoryService.RepositoryRootDirectoryInfo().Parent.FullName, "download");

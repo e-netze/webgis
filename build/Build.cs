@@ -82,6 +82,8 @@ class Build : NukeBuild
             Log.Information("Compile WebGIS CMS");
 
             bool isInternal = Configuration.Contains("Internal", StringComparison.OrdinalIgnoreCase);
+            bool isPortable = Configuration.Contains("Portable", StringComparison.OrdinalIgnoreCase);
+            string publishProfileSuffix = isInternal ? "_internal" : isPortable ? "_portable" : "";
 
             (RootDirectory / "publish" / Platform / "cms" / "artifacts").DeleteDirectory();
             DotNetTasks.DotNetBuild(s => s
@@ -89,7 +91,7 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetProperty("DeployOnBuild", "true")
                 //.SetOutputDirectory(RootDirectory / "publish" / Platform / "cms" / "artifacts")
-                .SetPublishProfile(isInternal ? $"{Platform}_internal" : Platform)
+                .SetPublishProfile($"{Platform}{publishProfileSuffix}")
                 .SetRuntime(Platform)
             //.EnableNoRestore()
             );
@@ -102,7 +104,7 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetProperty("DeployOnBuild", "true")
                 //.SetOutputDirectory(RootDirectory / "publish" / Platform / "api" / "artifacts")
-                .SetPublishProfile(isInternal ? $"{Platform}_internal" : Platform)
+                .SetPublishProfile($"{Platform}{publishProfileSuffix}")
                 .SetRuntime(Platform)
             //.EnableNoRestore()
             );
@@ -115,12 +117,16 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetProperty("DeployOnBuild", "true")
                 //.SetOutputDirectory(RootDirectory / "publish" / Platform / "portal" / "artifacts")
-                .SetPublishProfile(isInternal ? $"{Platform}_internal" : Platform)
+                .SetPublishProfile($"{Platform}{publishProfileSuffix}")
                 .SetRuntime(Platform)
             //.EnableNoRestore()
             );
 
             Log.Information("Compile WebGIS Tools");
+
+            // cms.tools only has a plain and a "_portable" publish profile (no "_internal" one),
+            // so the "_internal" suffix from publishProfileSuffix must not be applied here.
+            string toolsPublishProfile = isPortable ? $"{Platform}_portable" : Platform;
 
             (RootDirectory / "publish" / Platform / "tools" / "cms.tools" / "artifacts").DeleteDirectory();
             DotNetTasks.DotNetBuild(s => s
@@ -128,7 +134,7 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetProperty("DeployOnBuild", "true")
                 .SetOutputDirectory(RootDirectory / "publish" / Platform / "tools" / "cms.tools" / "artifacts")
-                .SetPublishProfile(Platform)
+                .SetPublishProfile(toolsPublishProfile)
             //.EnableNoRestore()
             );
         });

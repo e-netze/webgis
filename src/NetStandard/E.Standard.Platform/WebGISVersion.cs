@@ -4,7 +4,7 @@ namespace E.Standard.Platform;
 
 public class WebGISVersion
 {
-    private static Version _version = new Version(8, 26, 3402);
+    private static Version _version = new Version(8, 26, 3501);
     private static string _versionString = _version.ToString();
 
     public static Version Version => _version;
