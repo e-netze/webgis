@@ -367,5 +367,12 @@
 
     // geolocation api
     "select-geolocation-api": "GPS Verortungs API wählen",
-    "select-geolocation-api-info": "Hier kann angegeben werden, welche API zur bestimmung der aktuellen Position verwendet werden sollte."
+    "select-geolocation-api-info": "Hier kann angegeben werden, welche API zur bestimmung der aktuellen Position verwendet werden sollte.",
+
+    // sketch info overlay display mode (user preference)
+    "sketch-info-display-mode": "Sketch-Info Anzeige",
+    "sketch-info-display-mode-info": "Legt fest, wie die Sketch-Info (Geometrie-, Segment-, Snapping- und Konstruktionsinformationen) beim Zeichnen/Editieren über der Koordinatenanzeige eingeblendet wird.",
+    "sketch-info-display-mode-default": "Standard",
+    "sketch-info-display-mode-hidden": "Nicht anzeigen",
+    "sketch-info-display-mode-minimal": "Nur Snapping/Konstruktion"
 };

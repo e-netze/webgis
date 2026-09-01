@@ -1,7 +1,8 @@
 ﻿webgis.ui.definePlugin('webgis_sketchInfoContainer', {
     defaults: {
         map: null,
-        readonly: false
+        readonly: false,
+        minimal: false // if true: only show snapping/construction info, hide geometry type/segment/section details
     },
     init: function () {
         const $ = this.$;
@@ -70,6 +71,13 @@
         let $tabSections = $("<table>")
             .appendTo(this.$el);
 
+        if (options.minimal === true) {
+            // Only snapping/construction info is relevant in minimal mode.
+            $tabGeneral.css('display', 'none');
+            $tabSegment.css('display', 'none');
+            $tabSections.css('display', 'none');
+        }
+
         const sketch = options.sketch =
             options.map.graphics._isGraphicsToolActive() === true
             ? options.map.graphics._sketch
@@ -81,10 +89,12 @@
             {
                 sketch: sketch,
                 elem: this.$el,
+                tabGeneral: $tabGeneral,
                 tabSegment: $tabSegment,
                 divConstruction: $divConstruction,
                 tabSnapping: $tabSnapping,
-                tabSections: $tabSections
+                tabSections: $tabSections,
+                minimal: options.minimal === true
             });
         }
 
@@ -166,10 +176,12 @@
 
             $elem.find('.sketch-info-item').text('');
 
+            const $tabGeneral = this.tabGeneral;
             const $tabSegment = this.tabSegment;
             const $divConstruction = this.divConstruction;
             const $tabSnapping = this.tabSnapping;
             const $tabSections = this.tabSections;
+            const minimal = this.minimal === true; // user preference: only show snapping/construction info
 
             let constructionMode = webgis.sketch.construct ? webgis.sketch.construct.getConstructionMode(sketch) : null
 
@@ -275,6 +287,14 @@
                         validParts++;
                     }
                 }
+            }
+
+            if (minimal) {
+                // User preference "sketch-info-display-mode" = "minimal": only snapping/construction
+                // info is relevant, hide geometry type, segment and section details entirely.
+                $tabGeneral.css('display', 'none');
+                $tabSegment.css('display', 'none');
+                $tabSections.css('display', 'none');
             }
         },
         onGpsCurrentPosition: function (channel, sender, pos) {
