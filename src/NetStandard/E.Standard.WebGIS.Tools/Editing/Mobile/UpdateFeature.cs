@@ -138,6 +138,11 @@ public class UpdateFeature : IApiServerToolLocalizable<Edit>,
             {
                 mask.UIElements.First().target = UIElementTarget.tool_modaldialog_noblocking.ToString();
                 //mask.UIElements[0].target = "#" + EditMaskContainerId;
+
+                if (tool is not DeleteFeature)
+                {
+                    mask.UIElements = mask.UIElements.Append(new UISketchInfoContainer(allowFallback: false)).ToArray();
+                }
             }
 
             response.UIElements = mask.UIElements;

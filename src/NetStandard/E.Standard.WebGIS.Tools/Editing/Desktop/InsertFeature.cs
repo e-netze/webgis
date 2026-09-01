@@ -60,6 +60,8 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
                                                                  UIElementTarget.@default.ToString()
                                                                  /*UIElementTarget.tool_modaldialog_noblocking.ToString()*/);
 
+        response.UIElements = response.UIElements.Append(new UISketchInfoContainer(allowFallback: false)).ToArray();
+
         response.ToolCursor = ToolCursor.Custom_Pen;
         response.ActiveToolType = ToolType.sketchany;
 

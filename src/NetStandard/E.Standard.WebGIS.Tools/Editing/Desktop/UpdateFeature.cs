@@ -113,6 +113,7 @@ public class UpdateFeature : IApiServerTool, IApiChildTool, IApiToolPersistenceC
                 ))
                 .TryAddApplyEditingThemeProperty(e);
 
+        response.UIElements = response.UIElements.Append(new UISketchInfoContainer(allowFallback: false)).ToArray();
 
         response.ToolCursor = ToolCursor.Custom_Pen;
         response.ActiveToolType = ToolType.sketchany;

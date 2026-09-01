@@ -2393,11 +2393,19 @@
         if (tool && (tool.type == 'clientbutton' || tool.type == 'serverbutton')) { // nur tools können active Tool sein;
             return;
         }
-        if (tool !== this._activeTool && this._sketchInfoOverlayContent) {
+        if (tool !== this._activeTool && this._sketchInfoOverlayContent &&
+            (!tool || tool.id !== this._sketchInfoOverlayToolId)) {
             // Tool changes (or gets deactivated) without necessarily rebuilding the tool dialog
             // (e.g. closing the dialog) -> make sure no stale sketch-info content is left behind.
             // NOTE: empty only the inner content wrapper here, not the outer overlay container -
             // the latter also holds the persistent "x" close button, which must survive tool switches.
+            //
+            // The tool.id check (instead of only comparing object identity against _activeTool)
+            // matters because some tools (eg. Edit's UpdateFeature) get activated via a *second*,
+            // client-triggered OnButtonClick round-trip whose neutral response carries no UI - the
+            // overlay content for that tool was already built moments earlier (onbuildtoolui already
+            // recorded _sketchInfoOverlayToolId for it), so it must survive this later setActiveTool
+            // call even though the tool *instance* differs from the previous _activeTool.
             this._sketchInfoOverlayContent.empty();
             this.updateSketchInfoOverlayVisibility();
         }
