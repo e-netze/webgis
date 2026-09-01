@@ -62,7 +62,9 @@ A value <= 0 indicates that the maximum number of features that can be returned 
 Maximum number of features to retrieve in a query. 
 A value <= 0 indicates that the maximum number of features that can be returned by the FeatureServer in a request will be retrieved.
 
-#category_max_features: Advanced Properties ... #category_network_tracer: Special
+#category_max_features: Advanced Properties
+
+#category_network_tracer: Special
 
 #network_tracer: Network Tracer
 

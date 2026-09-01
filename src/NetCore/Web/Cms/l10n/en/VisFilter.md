@@ -24,6 +24,12 @@ The values ​​for VALUE in the specified query must be unique for selection l
 
 #category_set_layer_visibility: Filter
 
+#category_gdi_properties: Only when using a service with GDI
+
+#lookup_tables: Selection list
+
+#category_lookup_tables: Selection list
+
 #sql_injection_white_list: SQL Injection Whitelist
 
 Here you can specify a string containing characters that will be ignored by the SQL injection check. e.g.: ><&'\"

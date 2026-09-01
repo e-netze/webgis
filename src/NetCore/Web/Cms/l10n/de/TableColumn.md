@@ -39,6 +39,10 @@ nur die Anzeige an der Oberfläche wird unterdrückt.
 Einfache Übersetzung von Werten. Eingabebeispiel: 0,1,2=ja,nein,vielleicht. Alternativ kann
 eine Url zu einem JSON Array mit name,value Werten angegeben werden, beispielsweise eine DataLinq PlainText Query.
 
+#field_names: Feldnamen
+
+Liste der Felder, deren Werte (mit Leerzeichen getrennt) zu einem Anzeigewert zusammengefügt werden.
+
 #simple_domains: Simple Domains
 
 #raw_html: Raw Html

@@ -25,13 +25,19 @@ If the user zooms in further than this tiling service allows, the tiles will no 
 
 #category_tile_url: Layers
 
+#resolutions: Resolutions
+
 #tile_url: URL for tiles
 
 #tile_path: File system path for tiles (optional)
 
+#category_tile_path: Optional
+
+#domains: Domains for URL
+
 These domains are randomly inserted in the URL at the placeholder {0}.
 
-#category_tile_path: Optional
+#category_domains: Optional
 
 #tile_width: Width in pixels
 

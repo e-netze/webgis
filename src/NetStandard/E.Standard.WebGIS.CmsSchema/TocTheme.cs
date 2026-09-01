@@ -83,7 +83,7 @@ public class TocTheme : SchemaNodeLink, IPersistable, IDisplayName, IEditable
         set { _labeling = value; }
     }
 
-    [Category("Nur wenn Dienst mit Gdi verwendet wird")]
+    [Category("#category_gdi_properties")]
     [AuthorizablePropertyArray("gdiproperties")]
     [Editor(typeof(TypeEditor.GdiPropertiesEditThemeEditor),
             typeof(TypeEditor.ITypeEditor))]

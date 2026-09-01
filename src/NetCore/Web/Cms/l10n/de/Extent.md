@@ -20,6 +20,8 @@
 
 #category_origin_x: Ebenen
 
+#resolutions: Auflösungen (Resolutions)
+
 #origin_x: Ursprung Rechtswert (OriginX)
 
 #origin_y: Ursprung Hochwert (OriginY)

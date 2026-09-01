@@ -19,8 +19,8 @@ public class MapConfig : SchemaNode, IEditable
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Vordefinierte Ma�st�be")]
-    [Category("Ma�stab")]
+    [DisplayName("#scales")]
+    [Category("#category_scales")]
     public int[] Scales
     {
         get
@@ -64,8 +64,8 @@ public class MapConfig : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Vordefinierte Referenzma�st�be")]
-    [Category("Referenzma�stab")]
+    [DisplayName("#ref_scales")]
+    [Category("#category_ref_scales")]
     public int[] RefScales
     {
         get

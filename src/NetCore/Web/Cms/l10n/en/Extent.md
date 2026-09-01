@@ -20,6 +20,8 @@
 
 #category_origin_x: Planes
 
+#resolutions: Resolutions
+
 #origin_x: Origin Easting (OriginX)
 
 #origin_y: Origin Northing (OriginY)

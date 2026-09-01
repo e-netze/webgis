@@ -87,16 +87,16 @@ public class SearchService : CopyableXml, IEditable, IUI, IDisplayName
         set { _target = value; }
     }
 
-    [DisplayName("Username")]
-    [Category("~Anmeldungs-Credentials")]
+    [DisplayName("#username")]
+    [Category("~#category_credentials")]
     public string Username
     {
         get { return _user; }
         set { _user = value; }
     }
 
-    [DisplayName("Password")]
-    [Category("~Anmeldungs-Credentials")]
+    [DisplayName("#password")]
+    [Category("~#category_credentials")]
     [PasswordPropertyText(true)]
     public string Password
     {

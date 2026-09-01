@@ -31,3 +31,9 @@ unnter Sonstiges/Copyright definiert sein.
 
 #category_copyright_info: Allgemein
 
+#username: Username
+
+#password: Password
+
+#category_credentials: Anmeldungs-Credentials
+

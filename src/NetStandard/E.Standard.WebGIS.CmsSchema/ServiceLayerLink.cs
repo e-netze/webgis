@@ -72,14 +72,12 @@ public class ServiceLayerLink : SchemaNodeLink, IPersistable, IEditable
     [Category("#category_metadata_target")]
     public BrowserWindowTarget2 MetadataTarget { get; set; }
 
-    [DisplayName("Metadaten Dialog Breite (Width)")]
-    [Description("Breite des Dialogs (Pixel), wenn type 'dialog'. 0 => default width")]
-    [Category("Metadaten")]
+    [DisplayName("#metadata_dialog_width")]
+    [Category("#category_metadata_dialog_width")]
     public int MetadataDialogWidth { get; set; }
 
-    [DisplayName("Metadaten Dialog Höhe (Height)")]
-    [Description("Höhe des Dialogs (Pixel), wenn type 'dialog'. 0 => default height")]
-    [Category("Metadaten")]
+    [DisplayName("#metadata_dialog_height")]
+    [Category("#category_metadata_dialog_height")]
     public int MetadataDialogHeight { get; set; }
 
     [DisplayName("#metadata_title")]

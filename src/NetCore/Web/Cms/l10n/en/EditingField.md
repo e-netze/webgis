@@ -36,7 +36,7 @@ Here, the field is displayed but cannot be changed by the user.
 Readonly fields are NOT written to the database when saving and are for informational purposes only. 
 Exception: Readonly fields for which an AutoValue is specified are also written to the database when saving.
 
-#mass_attributable #category_clientside_validation: Validation
+#category_clientside_validation: Validation
 
 #clientside_validation: Client-side validation
 
@@ -119,4 +119,29 @@ This can be done using a static expression (if the same table is used for differ
 
 #category_db_order_by: optional: Database Domain
 
-#db_order_b
+#db_order_by: Database Order By (Field)
+
+#category_domain_list: optional: Domain List
+
+#domain_list: Database Display Field (Alias)
+
+#category_domain_pro_behaviour: optional: Domain Behaviour (experimental)
+
+#domain_pro_behaviour: Pro Behaviour
+
+Specifies whether the selection list should have extended behavior. 
+The extended behavior depends on the WebGIS instance configuration. 
+(Setting webgis.usability.select_pro_behaviour = "select2" in custom.js enables searching for 
+items in this selection list. This makes entry easier for selection lists with many items.)
+
+#category_attribute_picker_query: optional: Attribute Picker
+
+#attribute_picker_query: Attribute Picker Query
+
+The query from which an attribute should be retrieved. Format service-id@query-id
+
+#category_attribute_picker_field: optional: Attribute Picker
+
+#attribute_picker_field: Attribute Picker Field
+
+The field from the query that should be adopted during attribute picking.

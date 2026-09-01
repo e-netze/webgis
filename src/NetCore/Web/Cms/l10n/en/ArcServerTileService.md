@@ -19,7 +19,7 @@ Use 'Quality' for aerial images. Use 'Readability' for maps (with text)...
 If the user zooms in further than this tiling service allows, the tiles will no longer be displayed. 
 By default (value = false), the service is still displayed, and the tiles are rendered accordingly "enlarged/blurred."
 
-#hide_beyond_max_level #username: Username
+#username: Username
 
 #category_username: Login credentials
 

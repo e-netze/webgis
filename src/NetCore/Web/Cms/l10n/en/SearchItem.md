@@ -2,6 +2,12 @@
 
 #category_method: General
 
+#search_fields: Search fields
+
+Fields in which this expression is searched.
+
+#category_search_fields: General
+
 #visible: Visible
 
 Specifies whether the field is displayed in the search form. 

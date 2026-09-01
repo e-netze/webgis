@@ -90,7 +90,7 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
         set { _setlayervis = value; }
     }
 
-    [Category("~~Nur wenn Dienst mit Gdi verwendet wird")]
+    [Category("~~#category_gdi_properties")]
     [AuthorizablePropertyArray("gdiproperties")]
     [Editor(typeof(TypeEditor.GdiPropertiesVisFilterEditor), typeof(TypeEditor.ITypeEditor))]
     [ObsoleteCmsPropeperty]
@@ -107,8 +107,8 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Auswahlliste")]
-    [Category("~Auswahlliste")]
+    [DisplayName("#lookup_tables")]
+    [Category("~#category_lookup_tables")]
     [Editor(typeof(TypeEditor.VisFilterLookupEditor), typeof(TypeEditor.ITypeEditor))]
     public LookupTable[] LookupTables
     {

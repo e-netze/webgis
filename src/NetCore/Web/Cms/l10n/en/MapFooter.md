@@ -6,6 +6,14 @@
 
 #category_copyright_link: Copyright
 
+#sources: Display names of the links
+
+#category_sources: Sources
+
+#footer_links: Related links
+
+#category_footer_links: Sources
+
 #advice: Notice Text
 
 #category_advice: General

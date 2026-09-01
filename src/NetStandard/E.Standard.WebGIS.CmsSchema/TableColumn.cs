@@ -444,7 +444,7 @@ public class TableColumn : CopyableXml, IUI, IEditable, IDisplayName, IForcePeri
         private string[] _fieldNames = null;
 
         #region Properties
-        [DisplayName("Feld Names")]
+        [DisplayName("#field_names")]
         [Editor(typeof(TypeEditor.ThemeFieldsEditor), typeof(TypeEditor.ITypeEditor))]
         public string[] FieldNames
         {

@@ -61,6 +61,8 @@ verwendet.
 
 #category_projection_id: Kartenprojektion
 
+#category_datum_transformations: Kartenprojektion
+
 #show_in_legend: Service nimmt an der Legende teil
 
 Gibt an, ob der Dienst in der Legendendarstellung erscheint
@@ -143,6 +145,10 @@ Notwendig zB. für WMS Dienste
 #map_extent_url: Name der Kartenausdehnung
 
 #category_map_extent_url: OGC Export
+
+#supported_crs: Unterstützte Koordinatensysteme (CRS)
+
+#category_supported_crs: OGC Export
 
 #warning_level: Warning Level
 

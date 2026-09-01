@@ -9,3 +9,9 @@ String for formatting a line. A line break is represented by. Placeholders for c
 The finished exported file has the file extension specified here.
 
 #category_file_extension: General
+
+#description: Description
+
+Displayed to the user in the download/copy-to-clipboard dialog
+
+#category_description: General

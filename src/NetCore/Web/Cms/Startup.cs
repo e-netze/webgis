@@ -340,7 +340,7 @@ public class Startup
         {
             config.SupportedLanguages = ["de", "en"];
 #if DEBUG
-            config.DefaultLanguage = "de";
+            config.DefaultLanguage = "en";
 #else
             config.DefaultLanguage = config.SupportedLanguages.First();
 #endif

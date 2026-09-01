@@ -22,13 +22,19 @@ angezeigt und die Tiles entsprechend \"vergrößert/unscharf\" dargestellt.
 
 #category_tile_url: Ebenen
 
+#resolutions: Auflösungen (Resolutions)
+
 #tile_url: Url für Tiles
 
 #tile_path: Dateisystem-Pfad für Tiles (optional)
 
-Dieses Domains werden in der Url zufällig beim Platzhalter {0} einsetzt
-
 #category_tile_path: Optional
+
+#domains: Domains für Url
+
+Diese Domains werden in der Url zufällig beim Platzhalter {0} eingesetzt.
+
+#category_domains: Optional
 
 #tile_width: Breite in Pixel
 

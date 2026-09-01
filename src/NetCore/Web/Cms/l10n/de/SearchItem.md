@@ -2,6 +2,12 @@
 
 #category_method: Allgemein
 
+#search_fields: Suchfelder
+
+Felder in denen für diesen Ausdruck gesucht wird.
+
+#category_search_fields: Allgemein
+
 #visible: Sichtbar
 
 Gibt an, ob das Feld in der Suchmaske angezeigt wird. Nicht sichbare Felder sind beispielsweise sinnvoll, 

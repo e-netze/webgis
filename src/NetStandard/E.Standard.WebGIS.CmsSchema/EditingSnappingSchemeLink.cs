@@ -22,8 +22,8 @@ public class EditingSnappingSchemeLink : Link
     [DisplayName("#end_points")]
     public bool EndPoints { get; set; }
 
-    [Category("Topologie")]
-    [DisplayName("Fixieren auf:")]
+    [Category("#category_fix_to")]
+    [DisplayName("#fix_to")]
     public string[] FixTo { get; set; }
 
     #endregion

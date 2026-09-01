@@ -65,3 +65,5 @@ application/xml oder text/xml oder text/html
 
 #category_meta_data_format: WebGIS 5 OGC
 
+#category_gdi_properties: Nur wenn Dienst mit Gdi verwendet wird
+

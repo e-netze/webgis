@@ -62,3 +62,5 @@ If nothing is specified here, this ID corresponds to the original ID of the serv
 application/xml or text/xml or text/html
 
 #category_meta_data_format: WebGIS 5 OGC
+
+#category_gdi_properties: Only when using a service with GDI

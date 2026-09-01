@@ -40,6 +40,10 @@
 
 #waring_level: Warning Level
 
+#category_waring_level: Diagnostics
+
+#basemap_opacity_classes: Basemap Opacity Classes
+
 Specifies transparency values ​​that the user can select via the Basemap Control
 
-#category_waring_level: Diagnostics
+#category_basemap_opacity_classes: Display

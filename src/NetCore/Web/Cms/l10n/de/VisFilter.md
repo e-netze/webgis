@@ -24,6 +24,12 @@ Die Werte für VALUE aus der angeführten Abfrage müssen für Auswahllisten ein
 
 #category_set_layer_visibility: Filter
 
+#category_gdi_properties: Nur wenn Dienst mit Gdi verwendet wird
+
+#lookup_tables: Auswahlliste
+
+#category_lookup_tables: Auswahlliste
+
 #sql_injection_white_list: Sql Injektion Whitelist
 
 Hier kann ein String mit Zeichen angegeben werden, die von der SQL-Injektion überprüfung ignoriert

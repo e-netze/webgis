@@ -74,7 +74,7 @@ public class Presentation : CopyableXml, ICreatable, IEditable, IUI, IDisplayNam
         set { _description = value; }
     }
 
-    [Category("~(WebGIS 4) Nur wenn Dienst mit Gdi verwendet wird")]
+    [Category("~#category_use_for_basemap")]
     [AuthorizablePropertyArray("gdiproperties")]
     [Editor(typeof(TypeEditor.GdiPropertiesPresentationEditor),
             typeof(TypeEditor.ITypeEditor))]
@@ -243,7 +243,7 @@ public class Presentation : CopyableXml, ICreatable, IEditable, IUI, IDisplayNam
         private string _gdi_groupname = String.Empty;
         private PresentationGroupStyle _gdi_groupstyle = PresentationGroupStyle.Button;
         private bool _gdi_isContainerDefault = false;
-        private string parentUrl = String.Empty;
+        private string _parentUrl = String.Empty;
         private string _gdi_containerurl = String.Empty;
         private bool _visWithService = true;
 
@@ -306,14 +306,14 @@ public class Presentation : CopyableXml, ICreatable, IEditable, IUI, IDisplayNam
             {
                 if (value != null)
                 {
-                    parentUrl = value.Url;
+                    _parentUrl = value.Url;
                 }
             }
         }
 
         public override string ToString()
         {
-            string url = parentUrl;
+            string url = _parentUrl;
             if (_gdi_groupname != null)
             {
                 switch (_gdi_groupstyle)
@@ -455,9 +455,16 @@ public class PresentationGroupGdi : NameUrl, IUI, ICreatable, IDisplayName, IEdi
     [Category("#category_metadata_target")]
     public BrowserWindowTarget2 MetadataTarget { get; set; }
 
-    [DisplayName("Metadaten Titel")]
-    [Category("Metadaten")]
-    [Description("Hier kann ein Titel f�r den Metadaten Button angeben werden.")]
+    [DisplayName("#metadata_dialog_width")]
+    [Category("#category_metadata_dialog_width")]
+    public int MetadataDialogWidth { get; set; }
+
+    [DisplayName("#metadata_dialog_height")]
+    [Category("#category_metadata_dialog_height")]
+    public int MetadataDialogHeight { get; set; }
+
+    [DisplayName("#metadata_title")]
+    [Category("#category_metadata_title")]
     public string MetadataTitle { get; set; }
 
     [DisplayName("#metadata_link_button_style")]
@@ -657,14 +664,20 @@ public class PresentationLinkGdi : SchemaNodeLink, IEditable, IDisplayName
         get; set;
     }
 
-    [DisplayName("Metadaten Target")]
-    [Category("Metadaten")]
-    [Description("Gibt an, wie der Link ge�ffnet wird (tab => neuer Tab, dialog => in Dialogfenster im Viewer).")]
+    [DisplayName("#metadata_target")]
+    [Category("#category_metadata_target")]
     public BrowserWindowTarget2 MetadataTarget { get; set; }
 
-    [DisplayName("Metadaten Titel")]
-    [Category("Metadaten")]
-    [Description("Hier kann ein Titel f�r den Metadaten Button angeben werden.")]
+    [DisplayName("#metadata_dialog_width")]
+    [Category("#category_metadata_dialog_width")]
+    public int MetadataDialogWidth { get; set; }
+
+    [DisplayName("#metadata_dialog_height")]
+    [Category("#category_metadata_dialog_height")]
+    public int MetadataDialogHeight { get; set; }
+
+    [DisplayName("#metadata_title")]
+    [Category("#category_metadata_title")]
     public string MetadataTitle { get; set; }
 
     [DisplayName("#metadata_link_button_style")]
@@ -705,7 +718,7 @@ public class PresentationLinkGdi : SchemaNodeLink, IEditable, IDisplayName
         this.MetadataLinkButtonStyle = (MetadataButtonStyle)stream.Load("metadata_button_style", (int)MetadataButtonStyle.i_button);
         this.MetadataDialogWidth = (int)stream.Load("metadata_dialog_width", (int)0);
         this.MetadataDialogHeight = (int)stream.Load("metadata_dialog_height", (int)0);
-
+        
         //this.ShowDynamicMarkers = (bool)stream.Load("showdynamicmarkers", false);
 
         this.UIGroupName = (string)stream.Load("ui_group", String.Empty);

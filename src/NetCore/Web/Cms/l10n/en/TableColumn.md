@@ -44,6 +44,10 @@ Fields that are not visible are still transmitted to the client, for example, fo
 
 Simple translation of values. Input example: 0,1,2=yes,no,maybe. Alternatively, a URL to a JSON array with name,value values ​​can be specified, for example, a DataLinq PlainText query.
 
+#field_names: Field names
+
+List of fields whose values (separated by spaces) are combined into a single display value.
+
 #simple_domains: Simple Domains
 
 #raw_html: Raw HTML

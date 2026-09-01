@@ -26,8 +26,8 @@ public class GdiTools : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Radien [m]")]
-    [Category("Umgebungskreis")]
+    [DisplayName("#marker_circle_radii")]
+    [Category("#category_marker_circle_radii")]
     public int[] MarkerCircleRadii
     {
         get;

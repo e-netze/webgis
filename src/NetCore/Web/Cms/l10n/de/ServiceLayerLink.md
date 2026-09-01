@@ -40,6 +40,18 @@ Gibt an, wie der Link geöffnet wird (tab => neuer Tab, dialog => in Dialogfenst
 
 #category_metadata_target: Metadaten
 
+#metadata_dialog_width: Metadaten Dialog Breite (Width)
+
+Breite des Dialogs (Pixel), wenn type 'dialog'. 0 => default width
+
+#category_metadata_dialog_width: Metadaten
+
+#metadata_dialog_height: Metadaten Dialog Höhe (Height)
+
+Höhe des Dialogs (Pixel), wenn type 'dialog'. 0 => default height
+
+#category_metadata_dialog_height: Metadaten
+
 #metadata_title: Metadaten Titel
 
 Hier kann ein Titel für den Metadaten Button angeben werden.

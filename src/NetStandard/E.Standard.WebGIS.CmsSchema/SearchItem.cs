@@ -38,9 +38,8 @@ public class SearchItem : CopyableXml, IUI, IEditable, IDisplayName, ICopyable
 
     #region Properties
 
-    [DisplayName("Suchfelder")]
-    [Description("Felder in denen für diesen Ausdruck gesucht wird.")]
-    [Category("Allgemein")]
+    [DisplayName("#search_fields")]
+    [Category("#category_search_fields")]
     [Editor(typeof(TypeEditor.ThemeFieldsEditor), typeof(TypeEditor.ITypeEditor))]
     public string[] Fields
     {

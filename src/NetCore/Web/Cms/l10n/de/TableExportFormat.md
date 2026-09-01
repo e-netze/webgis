@@ -11,3 +11,9 @@ Die fertig erstellte Exportdatei hat die hier angegebene Datei Erweiterung
 
 #category_file_extension: Allgemein
 
+#description: Beschreibung
+
+Wird dem Anwender im Download/Copy-To-Clipboard dialog angezeigt
+
+#category_description: Allgemein
+

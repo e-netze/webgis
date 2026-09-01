@@ -27,3 +27,9 @@ The index name is already defined in the service URL for most search services. T
 Displays the copyright information assigned to this service. This information must be defined under Miscellaneous/Copyright.
 
 #category_copyright_info: General
+
+#username: Username
+
+#password: Password
+
+#category_credentials: Login Credentials

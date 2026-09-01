@@ -166,7 +166,7 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     }
 
     [Browsable(true)]
-    [Category("Kartenprojektion")]
+    [Category("#category_datum_transformations")]
     public int[] DatumTransformations
     {
         get; set;
@@ -269,8 +269,8 @@ public class ServiceLink : Link, IEditable, ISchemaNode, IOnCreateCmsNode, IDisp
     public string BasemapPreviewImageUrl { get; set; } = "";
 
     public int[] _supportedCrs = null;
-    [DisplayName("Supported CRS")]
-    [Category("~OGC Export")]
+    [DisplayName("#supported_crs")]
+    [Category("~#category_supported_crs")]
     public int[] SupportedCrs
     {
         get { return _supportedCrs; }

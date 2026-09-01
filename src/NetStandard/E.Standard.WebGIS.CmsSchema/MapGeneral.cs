@@ -118,8 +118,8 @@ public class MapGeneral : CopyableNode, IUI, ICreatable, IEditable, IDisplayName
         get; set;
     }
 
-    [DisplayName("Basemap Transparenz Klassen")]
-    [Category("Darstellung")]
+    [DisplayName("#basemap_opacity_classes")]
+    [Category("#category_basemap_opacity_classes")]
     public int[] BasemapOpacityClasses
     {
         get; set;

@@ -18,8 +18,8 @@ public class MapFooter : IEditable
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Anzeigenamen der Links")]
-    [Category("Quellen")]
+    [DisplayName("#sources")]
+    [Category("#category_sources")]
     public string[] Sources
     {
         get
@@ -42,8 +42,8 @@ public class MapFooter : IEditable
         }
     }
     [Browsable(true)]
-    [DisplayName("Zugeh�rige Links")]
-    [Category("Quellen")]
+    [DisplayName("#footer_links")]
+    [Category("#category_footer_links")]
     public string[] Links
     {
         get

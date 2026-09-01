@@ -353,7 +353,7 @@ public class GeneralTileCacheProperties : SchemaNode, IEditable
         set { _projId = value; }
     }
 
-    [DisplayName("Auflösungen (Resolutions)")]
+    [DisplayName("#resolutions")]
     [Category("#category_tile_url")]
     public double[] Resolutions
     {
@@ -378,8 +378,8 @@ public class GeneralTileCacheProperties : SchemaNode, IEditable
     }
 
     private string _domains;
-    [DisplayName("Domains für Url")]
-    [Category("Optional")]
+    [DisplayName("#domains")]
+    [Category("#category_domains")]
     public string[] Domains
     {
         get

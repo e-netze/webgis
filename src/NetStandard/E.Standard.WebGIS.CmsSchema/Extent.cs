@@ -74,7 +74,7 @@ public class Extent : CopyableXml, IEditable, IUI
         set { _projId = value; }
     }
 
-    [DisplayName("Aufl�sungen (Resolutions)")]
+    [DisplayName("#resolutions")]
     [Category("#category_origin_x")]
     public double[] Resolutions
     {

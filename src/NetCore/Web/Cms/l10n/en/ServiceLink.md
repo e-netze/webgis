@@ -58,9 +58,11 @@ Only one transformation can be passed when querying; the first transformation li
 
 #category_show_in_toc: TOC
 
-#category_projection_method: Map projection
+#category_projection_methode: Map projection
 
 #category_projection_id: Map projection
+
+#category_datum_transformations: Map projection
 
 #show_in_legend: Service participates in the legend
 
@@ -144,6 +146,10 @@ The URL to an image that is displayed as a preview image for the tile in the vie
 #map_extent_url: Map Extent Name
 
 #category_map_extent_url: OGC Export
+
+#supported_crs: Supported coordinate reference systems (CRS)
+
+#category_supported_crs: OGC Export
 
 #warning_level: Warning Level
 
