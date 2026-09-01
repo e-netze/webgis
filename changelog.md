@@ -59,6 +59,36 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## 8.26.3402
+
+### Added
+
+- CMS DeployService: deployments can now define an optional ``services`` allow-list to restrict
+  which services (ArcGIS Server, ImageServer, WMS, WMTS, ...) are actually included in the
+  exported target XML. Services are matched by their url-name (folder name) or, for the rare
+  case of duplicate folder names across different service types, by their full relative path.
+  Services not listed are skipped during export. Leaving the list empty/unset keeps the previous
+  behavior of exporting all services.
+
+### Fixed
+
+- TileService: `CreateImageUrlTemplate` dropped non-standard ports (e.g. `http://localhost:5001/...`)
+  when building the `{s}` domain template for tile Urls served from multiple servers/aliases,
+  since only the host name was used. The port is now kept whenever it isn't the scheme's
+  standard port (80/443); for scheme-relative Urls (`//host:port/...`), where the actual
+  scheme is unknown, an explicitly given port is always kept as-is.
+- Styling: (MapBuild Sidebar)
+- Coordinates Tool: CSV export ("Koordinaten herunterladen") showed "Rechtswert" twice as column
+  header instead of "Rechtswert" and "Hochwert" (Easting/Northing).
+  [Issue #499](https://github.com/e-netze/webgis-community/issues/499)
+
+## 8.26.3202
+
+### Fixed
+
+- Styling Bugs: image and background-size corrections:
+  [Issue #498](https://github.com/e-netze/webgis-community/issues/498)
+
 ## 8.26.3201
 
 ### Added

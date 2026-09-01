@@ -1061,6 +1061,7 @@ img.tile {
 
         .webgis-result-table-menucell .menubutton.checkbox {
             background-image: url('../api/img/toc/check0.png');
+            background-size:16px;
         }
             .webgis-result-table-menucell .menubutton.checkbox.checked {
                 background-image: url('../api/img/toc/check1.png');
@@ -1726,6 +1727,7 @@ tr.webgis-border-bottom td{
         background-position:center;
         background-repeat:no-repeat;
         background-image:url(../api/img/toc/check0.png);
+        background-size:16px;
     }
 
 .webgis-presentation_toc-item {
@@ -2094,12 +2096,17 @@ tr.webgis-border-bottom td{
             background-image: url(../api/img/toc/check0.png);
             background-repeat: no-repeat;
             background-position: left 3px;
+            background-size: 16px;
             padding: 4px 0px 4px 18px;
         }
 
             .webgis-addservices_toc-content.tiles .webgis-addservices_toc-item.selected .webgis-addservices_toc-item-info .webgis-addservices-servicelayer.visible {
                 background-image: url(../api/img/toc/check1.png);
             }
+
+.webgis-addservices_toc-item.webgis-addservices_toc-checkable .webgis-addservices_toc-checkable-icon {
+    max-height: 16px;
+}
 
 .webgis-service-info {
 }
@@ -2721,12 +2728,12 @@ td.webgis-tab-header {
                 border-bottom: var(--webgis-ui-border-width-item-selected) solid var(--webgis-brand-primary);
                 color: var(--webgis-ui-text-selected);
             }
-        }
 
         .webgis-edittheme-tree .webgis-edittheme-tree-theme-list .webgis-edittheme-tree-theme-list-item .checkbox {
             background-repeat: no-repeat;
             background-position: center;
             background-image: url('../api/img/toc/check0.png');
+            background-size: 16px;
             position: absolute;
             left: 0px;
             top: 0px;
@@ -3260,6 +3267,7 @@ body.webgis-ui-holder {
 .webgis-ui-collapsable-title h2 img {
     vertical-align: middle;
     position:unset;
+    max-height:26px;
 }
 
 .webgis-ui-droplist {
@@ -4343,6 +4351,7 @@ body.webgis-ui-holder {
     border: 1px solid #bcbbbb;
     border-radius: 6px;
     cursor: pointer;
+    background-size:26px;
 }
     .webgis-result-history-holder .webgis-result-history-item:hover {
         background-color: var(--webgis-brand-primary-light);
@@ -5000,6 +5009,47 @@ div.webgis-copy {
 
 
 /********** Sketch: Info Container, Markers  ****************/
+
+/* Overlay docked directly above the current-coordinates display (.webgis-currentcoords-container).
+   Positioning (left/right/width/bottom) is calculated/kept in sync in webgis.map.js.
+   No "top"/"height" is set here on purpose: the box grows upwards as content is added, since
+   only "bottom" stays fixed. Faded out / non-interactive by default; slides up + fades in via
+   .webgis-visible (mouse over map and the overlay actually has content). */
+.webgis-sketch-info-container-overlay {
+    z-index: 9997; /* below .webgis-currentcoords-container (9998), but above the map */
+    pointer-events: none;
+    box-sizing: border-box;
+    /* opaque background so map content behind (labels, features, ...) doesn't shine through
+       the gaps between the individual info-tables, plus a subtle "floating" shadow so the
+       block reads as an overlay on top of the map, matching the coordinate display below it */
+    background-color: var(--webgis-ui-surface-sunken);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
+    padding: 4px;
+    /* temporary overlay: slide in/out from below (towards the coordinate display) + fade,
+       to make clear this is a transient, floating panel and not a fixed part of the map */
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.25s ease-in, transform 0.25s ease-in;
+}
+
+    .webgis-sketch-info-container-overlay.webgis-visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+        transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+    }
+
+    /* Content scrolls internally (long sketches with many sections/snapping info, ...); the "x"
+       close button (sibling, see below) stays fixed in the top-right corner instead of scrolling
+       away with it. Right padding keeps the text clear of that button. */
+    .webgis-sketch-info-container-overlay-content {
+        max-height: 60vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 26px;
+        box-sizing: border-box;
+    }
+
 .webgis-sketch-info-container-holder {
     width: 100%;
     bottom: 10px;
@@ -5023,8 +5073,20 @@ div.webgis-copy {
             }
 
                 .webgis-sketch-info-container-holder table tr td.sketch-info-item {
-                    width:100%;
+                    width: 100%;
+                    background-color: var(--webgis-ui-surface);
+                    border: 1px solid #aaa;
                 }
+
+    /* Segment table doubles as a shortcut into the "Direction/Distance" construction tool
+       while sketching a line/polygon - give it a pointer cursor + subtle hover feedback. */
+    .webgis-sketch-info-container-holder table.sketch-segment-clickable {
+        cursor: pointer;
+    }
+
+        .webgis-sketch-info-container-holder table.sketch-segment-clickable:hover {
+            background-color: var(--webgis-ui-surface-hover, rgba(0, 0, 0, 0.05));
+        }
 
 .webgis-sketch-draggable-vertex.dragging {
     cursor: move !important;
@@ -5480,6 +5542,7 @@ select.webgis-not-valid {
         background-position: center;
         background-image: url(../api/img/toc/check0.png);
         background-color: var(--webgis-ui-surface-hover);
+        background-size: 16px;
         border-radius:8px;
         float:right;
     }

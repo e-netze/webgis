@@ -180,6 +180,7 @@ class ConsoleService
         Console.WriteLine("  -cms,     --deploy-cms      Deploy WebGis CMS");
         Console.WriteLine("  -portal,  --deploy-portal   Deploy WebGIS Portal");
         Console.WriteLine("  -api,     --deploy-api      Deploy WebGIS API");
+        Console.WriteLine("            --portable        Only list/use portable (self-contained) ZIPs, skip GitHub download");
         Console.WriteLine();
         Console.WriteLine("Examples:");
         Console.WriteLine("  webgis.deploy -p production -v latest --download-latest --deploy-cms --deploy-portal --deploy-api");

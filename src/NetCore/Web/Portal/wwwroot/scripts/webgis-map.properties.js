@@ -276,6 +276,26 @@
                     })
                     .val(webgis.usability.userPreferences.get(key));
             }
+            else if (pref.type === 'select' && pref.options) {
+                const $select = $("<select>")
+                    .addClass('webgis-input')
+                    .data('key', key)
+                    .appendTo($content)
+                    .change(function () {
+                        const $this = $(this);
+                        webgis.usability.userPreferences.set($this.data('key'), $this.val());
+                    });
+
+                for (var o in pref.options) {
+                    const optionValue = pref.options[o];
+                    $("<option>")
+                        .attr('value', optionValue)
+                        .text(webgis.l10n.get(key + '-' + optionValue))
+                        .appendTo($select);
+                }
+
+                $select.val(webgis.usability.userPreferences.get(key) || pref.options[0]);
+            }
 
             $("<div>")
                 .text(webgis.l10n.get(key + '-info'))
@@ -471,7 +491,11 @@ webgis.usability.userPreferences = webgis.usability.userPreferences ||
             available: function (map) {
                 return map && map.ui.getQueryResultTabControl() !== null
             },
-        }, 
+        },
+        "sketch-info-display-mode": {
+            type: "select",
+            options: ["default", "hidden", "minimal"]
+        },
     }
 };
 

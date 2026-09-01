@@ -88,7 +88,20 @@ public class Startup
 
         #region Http Client Service
 
-        services.AddHttpClient("default").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
+        services.AddHttpClient("default", client =>
+        {
+            if (int.TryParse(Configuration[PortalConfigKeys.HttpClientDefaultTimeoutSeconds], out int timeoutSeconds) && timeoutSeconds > 0)
+            {
+                client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+            }
+            else
+            {
+                // Default kept short (unlike HttpClient's built-in default of 100s): this client mostly
+                // calls the internal WebGIS Api on the same host/network. A shorter timeout lets the
+                // "Api is starting" retry page kick in quickly instead of a long, silent wait.
+                client.Timeout = TimeSpan.FromSeconds(20);
+            }
+        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
         {
 #pragma warning disable SYSLIB0039 // allow old protocols (tls, tls11)
             SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13 | SslProtocols.Tls | SslProtocols.Tls11,

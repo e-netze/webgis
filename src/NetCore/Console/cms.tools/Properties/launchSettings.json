@@ -2,7 +2,7 @@
   "profiles": {
     "cms.tools": {
       "commandName": "Project",
-      "commandLineArgs": "--command deploy --cmsid ccgis_5.2 --deployment \"Testsystem (localhost)\""
+      "commandLineArgs": "--command deploy --cmsid webgis-custom --deployment \"default\""
     }
   }
 }

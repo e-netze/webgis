@@ -70,8 +70,8 @@
             $toolSidebarTopContent = null,
             $toolAsideContent = null;
 
-        if (options.map && options.tool && options.tool.id) {
-            options.map.events.fire('onbuildtoolui');
+        if (options.map && options.tool && options.tool.id && options.suppressOnBuildToolUi !== true) {
+            options.map.events.fire('onbuildtoolui', options.tool.id);
         }
 
         if (!options.toolDialogId) {
@@ -1452,16 +1452,45 @@
             }
         }
         else if (element.type === "sketch-info-container") {
-            var showSketchInfo = true;
+            // User preference (Burger menu -> Einstellungen -> Benutzer Einstellungen) lets the
+            // user turn the sketch info overlay off entirely, or reduce it to only the
+            // snapping/construction info (hiding geometry type/segment/section details).
+            var sketchInfoDisplayMode = (webgis.usability.userPreferences && webgis.usability.userPreferences.get)
+                ? (webgis.usability.userPreferences.get("sketch-info-display-mode") || "default")
+                : "default";
+
+            var showSketchInfo = sketchInfoDisplayMode !== "hidden";
             if (webgis.useMobileCurrent() ||                                          // 1. auf kleien mobilegeräten nicht anzeigen
                 (webgis.isMobileDevice() && webgis.usability.clickBubble == false))   // 2. auf Mobilen Geräten ohne Bubble => mach keinen Sinn
                 showSketchInfo = false;
 
-            if (showSketchInfo) {  
-                $newElement = $("<div></div>").appendTo($parent);
-                if ($.fn.webgis_sketchInfoContainer) {
-                    $newElement.webgis_sketchInfoContainer({ map: options.map });
+            if (showSketchInfo) {
+                // Preferred: render as an overlay docked above the coordinate display (grows
+                // upwards, only visible while the cursor is over the map), instead of taking up
+                // space in the tool dialog itself.
+                var $sketchInfoTarget = options.map && options.map.sketchInfoOverlayContainer ?
+                    options.map.sketchInfoOverlayContainer() :
+                    null;
+
+                var sketchInfoMinimal = sketchInfoDisplayMode === "minimal";
+
+                if ($sketchInfoTarget) {
+                    $sketchInfoTarget.empty(); // remove/destroy any previous instance
+                    $newElement = $("<div></div>").appendTo($sketchInfoTarget);
+                    if ($.fn.webgis_sketchInfoContainer) {
+                        $newElement.webgis_sketchInfoContainer({ map: options.map, minimal: sketchInfoMinimal });
+                    }
+                    options.map.updateSketchInfoOverlayVisibility();
+                } else if (element.allow_fallback !== false) {
+                    // Fallback (e.g. layouts without a .webgis-currentcoords-container): keep
+                    // the previous behaviour and render inline in the tool dialog.
+                    $newElement = $("<div></div>").appendTo($parent);
+                    if ($.fn.webgis_sketchInfoContainer) {
+                        $newElement.webgis_sketchInfoContainer({ map: options.map, minimal: sketchInfoMinimal });
+                    }
                 }
+                // else: no overlay container available and fallback explicitly disabled
+                // (element.allow_fallback === false) -> the element is simply not rendered.
             }
         }
         else if (element.type === 'sharelink-buttons')

@@ -94,4 +94,6 @@ public class PortalConfigKeys
     public const string ExtendedRoleParametersHeader = ConfigurationSectionName + ":portal_extended_role_parameters_header";
 
     public const string SupportedLanguages = ConfigurationSectionName + ":supported-languages";
+
+    public const string HttpClientDefaultTimeoutSeconds = ConfigurationSectionName + ":httpclient:default-timeout-seconds";
 }

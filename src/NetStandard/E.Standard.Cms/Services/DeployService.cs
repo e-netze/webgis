@@ -221,6 +221,12 @@ public class DeployService : ICmsTool
 
             counter = 0;
             console.WriteLine("Export");
+
+            if (deploy.Services?.Any() == true)
+            {
+                console.WriteLine($"Service filter active: only the following services will be included: {String.Join(", ", deploy.Services)}");
+            }
+
             var document = cms.Export(_servicePack, deploy.IgnoreAuthentification, (ref string valueToEncrypt) =>
             {
                 if (valueToEncrypt.ContainsSecretPlaceholders())
@@ -228,7 +234,7 @@ public class DeployService : ICmsTool
                     //process.WriteLine("beforeEncryptValue " + valueToEncrypt);
                     valueToEncrypt = replace.ReplaceSecrets(valueToEncrypt);
                 }
-            }).Result;
+            }, deploy.Services).Result;
 
             #region Perform Replace
 

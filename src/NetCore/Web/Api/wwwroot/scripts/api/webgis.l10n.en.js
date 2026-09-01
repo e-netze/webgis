@@ -93,6 +93,15 @@
     "point": "Point",
     "polyline": "(Poly)line",
     "polygon": "Polygon (area)",
+    "dimline": "Dimension line",
+    "dimpolygon": "Dimension polygon",
+    "hectoline": "Hectometer line",
+    "rectangle": "Rectangle",
+    "circle": "Circle",
+    "distance_circle": "Buffer circle",
+    "compass_rose": "Compass rose",
+    "text": "Text",
+    "freehand": "Freehand drawing",
 
     "angle": "Angle",
     "cancel": "Cancel",
@@ -362,5 +371,12 @@
 
     // geolocation api
     "select-geolocation-api": "Select GPS location API",
-    "select-geolocation-api-info": "Here you can specify which API should be used to determine the current position."
+    "select-geolocation-api-info": "Here you can specify which API should be used to determine the current position.",
+
+    // sketch info overlay display mode (user preference)
+    "sketch-info-display-mode": "Sketch info display",
+    "sketch-info-display-mode-info": "Controls how the sketch info (geometry, segment, snapping and construction information) is shown above the coordinate display while drawing/editing.",
+    "sketch-info-display-mode-default": "Default",
+    "sketch-info-display-mode-hidden": "Do not show",
+    "sketch-info-display-mode-minimal": "Snapping/construction only"
 };

@@ -31,7 +31,8 @@ bool downloadLatest = false;
 #endif
 bool deployCms = false,
      deployPortal = false,
-     deployApi = false;
+     deployApi = false,
+     portable = false;
 
 var consoleService = new ConsoleService();
 
@@ -74,13 +75,16 @@ try
                 case "--deploy-api":
                     deployApi = true;
                     break;
+                case "--portable":
+                    portable = true;
+                    break;
             }
         }
     }
 
     var ioService = new IOService();
     var repoService = new DeployRepositoryService(ioService, workDirectory);
-    var versionService = new DeployVersionService(repoService, ioService);
+    var versionService = new DeployVersionService(repoService, ioService, portable);
     var cssService = new CssService(repoService);
     var securityService = new SecurityService(repoService);
 
@@ -94,7 +98,7 @@ try
     }
 
 #if !INTERNAL
-    if (downloadLatest || consoleService.DoYouWant("to download the latest version from GitHub"))
+    if (!portable && (downloadLatest || consoleService.DoYouWant("to download the latest version from GitHub")))
     {
         var githubReleaseService = new GitHubReleaseService("e-netze", "webgis");
 
