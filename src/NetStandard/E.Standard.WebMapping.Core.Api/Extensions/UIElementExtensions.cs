@@ -458,4 +458,18 @@ static public class UIElementExtensions
     }
 
     #endregion
+
+    #region Columns
+
+    static public T WithColumn<T>(this T element, int columnWidth, params IUIElement[] columnElements)
+        where T : UIColumns
+    {
+        var column = new UIColumn(columnWidth);
+        column.AddChildren(columnElements);
+        element.AddChild(column);
+
+        return element;
+    }
+
+    #endregion
 }

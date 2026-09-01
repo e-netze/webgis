@@ -455,8 +455,9 @@ public class PresentationGroupGdi : NameUrl, IUI, ICreatable, IDisplayName, IEdi
     [Category("#category_metadata_target")]
     public BrowserWindowTarget2 MetadataTarget { get; set; }
 
-    [DisplayName("#metadata_title")]
-    [Category("#category_metadata_title")]
+    [DisplayName("Metadaten Titel")]
+    [Category("Metadaten")]
+    [Description("Hier kann ein Titel f�r den Metadaten Button angeben werden.")]
     public string MetadataTitle { get; set; }
 
     [DisplayName("#metadata_link_button_style")]
@@ -528,6 +529,8 @@ public class PresentationGroupGdi : NameUrl, IUI, ICreatable, IDisplayName, IEdi
         this.MetadataTarget = (BrowserWindowTarget2)(int)stream.Load("metadata_target", (int)BrowserWindowTarget2.tab);
         this.MetadataTitle = (string)stream.Load("metadata_title", String.Empty);
         this.MetadataLinkButtonStyle = (MetadataButtonStyle)stream.Load("metadata_button_style", (int)MetadataButtonStyle.i_button);
+        this.MetadataDialogWidth = (int)stream.Load("metadata_dialog_width", (int)0);
+        this.MetadataDialogHeight = (int)stream.Load("metadata_dialog_height", (int)0);
     }
     public override void Save(IStreamDocument stream)
     {
@@ -545,6 +548,15 @@ public class PresentationGroupGdi : NameUrl, IUI, ICreatable, IDisplayName, IEdi
         if (this.MetadataLinkButtonStyle != MetadataButtonStyle.i_button)
         {
             stream.Save("metadata_button_style", (int)this.MetadataLinkButtonStyle);
+        }
+
+        if (this.MetadataDialogWidth > 0)
+        {
+            stream.Save("metadata_dialog_width", this.MetadataDialogWidth);
+        }
+        if (this.MetadataDialogHeight > 0)
+        {
+            stream.Save("metadata_dialog_height", this.MetadataDialogHeight);
         }
     }
 }
@@ -645,12 +657,14 @@ public class PresentationLinkGdi : SchemaNodeLink, IEditable, IDisplayName
         get; set;
     }
 
-    [DisplayName("#metadata_target")]
-    [Category("#category_metadata_target")]
+    [DisplayName("Metadaten Target")]
+    [Category("Metadaten")]
+    [Description("Gibt an, wie der Link ge�ffnet wird (tab => neuer Tab, dialog => in Dialogfenster im Viewer).")]
     public BrowserWindowTarget2 MetadataTarget { get; set; }
 
-    [DisplayName("#metadata_title")]
-    [Category("#category_metadata_title")]
+    [DisplayName("Metadaten Titel")]
+    [Category("Metadaten")]
+    [Description("Hier kann ein Titel f�r den Metadaten Button angeben werden.")]
     public string MetadataTitle { get; set; }
 
     [DisplayName("#metadata_link_button_style")]
@@ -689,6 +703,8 @@ public class PresentationLinkGdi : SchemaNodeLink, IEditable, IDisplayName
         this.MetadataTarget = (BrowserWindowTarget2)stream.Load("metadata_target", (int)BrowserWindowTarget2.tab);
         this.MetadataTitle = (string)stream.Load("metadata_title", String.Empty);
         this.MetadataLinkButtonStyle = (MetadataButtonStyle)stream.Load("metadata_button_style", (int)MetadataButtonStyle.i_button);
+        this.MetadataDialogWidth = (int)stream.Load("metadata_dialog_width", (int)0);
+        this.MetadataDialogHeight = (int)stream.Load("metadata_dialog_height", (int)0);
 
         //this.ShowDynamicMarkers = (bool)stream.Load("showdynamicmarkers", false);
 
@@ -716,6 +732,14 @@ public class PresentationLinkGdi : SchemaNodeLink, IEditable, IDisplayName
         if (this.MetadataLinkButtonStyle != MetadataButtonStyle.i_button)
         {
             stream.Save("metadata_button_style", (int)this.MetadataLinkButtonStyle);
+        }
+        if (this.MetadataDialogWidth > 0)
+        {
+            stream.Save("metadata_dialog_width", this.MetadataDialogWidth);
+        }
+        if (this.MetadataDialogHeight > 0)
+        {
+            stream.Save("metadata_dialog_height", this.MetadataDialogHeight);
         }
 
         //if(this.ShowDynamicMarkers)

@@ -1,4 +1,4 @@
-(function ($) {
+Ôªø(function ($) {
     "use strict";
     $.fn.webgis_modal = function (method) {
         if (methods[method]) {
@@ -156,6 +156,15 @@
         let isEnlargeable = useMobileFullscreenDockPanels === false && (options.dock === 'left' || options.dock === 'right');
         let isCollapssable = isEnlargeable && !options.closebutton;
 
+        function toModalSize(val) {
+            if (val === undefined || val === null) return val;
+            var s = String(val).trim();
+            return /^\d+(\.\d+)?$/.test(s) ? s + 'px' : s;
+        }
+
+        options.width = toModalSize(options.width);
+        options.height = toModalSize(options.height);
+
         var framePos = options.framepos ?
             options.framepos :
             (((useMobile && options.dock === 'center') || (useMobileFullscreenDockPanels && options.dock !== 'center')) ?
@@ -165,18 +174,18 @@
         // Absolute wenn sich das ganze innerhalb eines webgis-container abspielen soll
         //var blockerPosition = $(parent).css('position') === "absolute" || $(parent).css('position') === "relative" ? "absolute" : "fixed";
        
-        // Immer fixed => funktionerrt dann auch f¸r Dialog, wenn API auf Drittseiten eingebunden ist, auf denen gescrollt werden muss
+        // Immer fixed => funktionerrt dann auch f√ºr Dialog, wenn API auf Drittseiten eingebunden ist, auf denen gescrollt werden muss
         var blockerPosition = 'fixed';
 
         var $blocker = $("<div id='" + dialogId(options) + "' style='z-index:9999;position:" + blockerPosition + ";left:0px;right:0px;top:0px;bottom:0px;background:rgba(0,0,0," + options.blocker_alpha + ");' class='webgis-modal'></div>");
 
-        var $frame = $("<div id='" + (options.hasBlocker === true ? '' : dialogId(options)) + "' style='z-index:1000;position:absolute;" + framePos + "background:white;opacity:0;" + (useMobile === true ? "" : "display:none;") + "' class='webgis-modal-body " + options.dock + "'></div>").appendTo($blocker);
+        var $frame = $("<div id='" + (options.hasBlocker === true ? '' : dialogId(options)) + "' style='z-index:1000;position:absolute;" + framePos + "background:var(--webgis-ui-surface);opacity:0;" + (useMobile === true ? "" : "display:none;") + "' class='webgis-modal-body " + options.dock + "'></div>").appendTo($blocker);
         var pPos, mPos;
         if (useMobile === true) {
-            pPos = "left:0px;top:44px;right:0px;bottom:0px";
+            pPos = "left:0px;top:calc(43px + var(--webgis-ui-border-width-item-selected));right:0px;bottom:0px";
         }
         else {
-            pPos = "left:0px;top:44px;right:0px;bottom:0px";
+            pPos = "left:0px;top:calc(43px + var(--webgis-ui-border-width-item-selected));right:0px;bottom:0px";
         }
         var $content = $("<div id='webgis-modal-content' class='webgis-modal-content' style='z-index:1;position:absolute;overflow:auto;" + pPos + "'></div>");
         if (options.content)
@@ -190,10 +199,10 @@
         });
         if (options.blockerclickclose) {
 
-            // Im Chrome kann es durch ziehen zum schlieﬂen kommen
+            // Im Chrome kann es durch ziehen zum schlie√üen kommen
             // Das passiert beispeilsweise, wenn ein Wert aus dem Dialog kopiert wird und beim ziehen dann 
-            // die Mause ¸ber dem grauen Bereich (Blocker) losgelasssen wird (chrome wirft click-event!!)
-            // -> Darum Koordinaten merken, wann Mouse gedr¸ckt wird.
+            // die Mause √ºber dem grauen Bereich (Blocker) losgelasssen wird (chrome wirft click-event!!)
+            // -> Darum Koordinaten merken, wann Mouse gedr√ºckt wird.
 
             $blocker.on('mousedown', function (e) {
                 $(this).data('mousedown_x', e.originalEvent.offsetX);

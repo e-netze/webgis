@@ -8,6 +8,7 @@ using E.Standard.Api.App.Exceptions;
 using E.Standard.Api.App.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
+using E.Standard.Extensions.Compare;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -16,6 +17,8 @@ using E.Standard.WebMapping.Core.Api.Reflection;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
+using E.Standard.WebGIS.CMS.Extensions;
 
 namespace E.Standard.Api.App.Services.Cache;
 
@@ -84,8 +87,8 @@ public class CmsCacheItem
             try
             {
                 Map map = new Map("init");
-                map.Environment.SetUserValue(webgisConst.AppConfigPath, ApiGlobals.AppConfigPath);
-                map.Environment.SetUserValue(webgisConst.EtcPath, ApiGlobals.AppEtcPath);
+                map.Environment.SetUserValue(WebGISConst.AppConfigPath, ApiGlobals.AppConfigPath);
+                map.Environment.SetUserValue(WebGISConst.EtcPath, ApiGlobals.AppEtcPath);
 
                 var cmsHlp = new CmsHlp(cms, map);
 
@@ -329,10 +332,13 @@ public class CmsCacheItem
                                                     metadata_target = String.IsNullOrEmpty(cmsPresentation.MetadataLink) ? null : cmsPresentation.MetadataTarget.ToString().ToLower(),
                                                     metadata_title = String.IsNullOrEmpty(cmsPresentation.MetadataLink) ? null : cmsPresentation.MetadataTitle,
                                                     metadata_button_style = String.IsNullOrEmpty(cmsPresentation.MetadataLink) ? null : cmsPresentation.MetadataButtonStyle.ToString().ToLower(),
+                                                    metadata_dialog_width = String.IsNullOrEmpty(cmsPresentation.MetadataLink) ? null : cmsPresentation.MetadataDialogWidth,
+                                                    metadata_dialog_height = String.IsNullOrEmpty(cmsPresentation.MetadataLink) ? null: cmsPresentation.MetadataDialogHeight,
                                                     group_metadata = cmsPresentation.GroupMetadataLink,
                                                     group_metadata_target = String.IsNullOrEmpty(cmsPresentation.GroupMetadataLink) ? null : cmsPresentation.GroupMetadataTarget?.ToString().ToLower(),
                                                     group_metadata_title = String.IsNullOrEmpty(cmsPresentation.GroupMetadataLink) ? null : cmsPresentation.GroupMetadataTitle,
                                                     group_metadata_button_style = String.IsNullOrEmpty(cmsPresentation.GroupMetadataLink) ? null : cmsPresentation.GroupMetadataButtonStyle?.ToString().ToLower(),
+
                                                     ui_groupname = String.IsNullOrWhiteSpace(cmsPresentation.UIGroupName) ? null : cmsPresentation.UIGroupName,
                                                     //allow_as_dynamic_markers = cmsPresentation.AllowAsDynamicMarkers == true ? (bool?)true : null
                                                 };
@@ -899,6 +905,26 @@ public class CmsCacheItem
 
                                 #endregion
 
+                                #region Edit Commit Actions
+
+                                var editCommitActions = new List<AuthObject<EditThemeDTO.CommitAction>>();
+                                foreach (CmsNode cmsEditingComitActionNode in cmsHlp.GetCmsEditingCommitActionNodes(cmsEditingTheme))
+                                {
+                                    var commitAction = new EditThemeDTO.CommitAction().BindCmsNode(cmsEditingComitActionNode);
+
+                                    if (commitAction.IsValid())
+                                    {
+                                        editCommitActions.Add(new AuthObject<EditThemeDTO.CommitAction>(commitAction
+                                            , CmsDocument.GetAuthNodeFast(cms, cmsEditingComitActionNode.NodeXPath)));
+                                    }
+                                }
+                                if (editCommitActions.Count > 0)
+                                {
+                                    editTheme.CommitActions = editCommitActions.ToArray();
+                                }
+
+                                #endregion
+
                                 var editingLayerNode = cmsHlp.GetCmsEditingThemeLayerNode(cmsEditingTheme);
 
                                 if (editingLayerNode != null)
@@ -1021,6 +1047,8 @@ public class CmsCacheItem
                                     layerProps.MetadataTarget = (BrowserWindowTarget2)layerPropertyNode.Load("metadata_target", (int)BrowserWindowTarget2.tab);
                                     layerProps.MetadataTitle = layerPropertyNode.LoadString("metadata_title");
                                     layerProps.MetadataButtonStyle = (MetadataButtonStyle)layerPropertyNode.Load("metadata_button_style", (int)MetadataButtonStyle.i_button);
+                                    layerProps.MetadataDialogWidth = ((int?)layerPropertyNode.Load("metadata_dialog_width", 0)).TakeNullIfZero();
+                                    layerProps.MetadataDialogHeight = ((int?)layerPropertyNode.Load("metadata_dialog_height", 0)).TakeNullIfZero();
 
                                     layerProps.Visible = (bool)layerPropertyNode.Load("visible", true);
                                     layerProps.Locked = (bool)layerPropertyNode.Load("locked", false);

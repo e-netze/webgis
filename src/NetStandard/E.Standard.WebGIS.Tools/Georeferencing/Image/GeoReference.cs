@@ -788,10 +788,7 @@ public class GeoReference : IApiServerToolLocalizable<GeoReference>,
         uiElements.Add(CreateToolbarUI(bridge, e, localizer));
         if (e.MapOverlayServices.Count() == 0)
         {
-            uiElements.Add(new UILabel()
-            {
-                label = localizer.Localize("label1:body")
-            });
+            uiElements.Add(new UIParagraph(localizer.Localize("label1:body")));
         }
         uiElements.Add(new UIStaticOverlayControl()
         {

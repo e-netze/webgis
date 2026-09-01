@@ -28,8 +28,25 @@ Karten Serie im PDF Format drucken.
 # create:
 ## method: Methode
 ### bbox-grid: Bounding Box Raster
+
+Es wird ein regelmäßiger Raster über die gesamte
+Boundingbox der selektierten Objekte gelegt.
+
 ### intersection-grid: Schnitt Raster
+
+Es wird ein regelmäßiger Raster gelegt,
+aber nur die Seiten werden erzeugt, die mindestens ein Objekt schneiden.
+
 ### along-polyline: Entlang einer Linie
+
+Bei Liniengeometrien wird der Raster entlang der Linie erzeugt.
+Die Seiten sind entsprechend der Linienrichtung gedreht.
+
+### one-per-feature: Eine Seite pro (Geo)Objekt
+
+Es wird genau eine Seite je Objekt erzeugt.
+Der Mittelpunkt liegt im Zentrum des Objekts. 
+Jedes einzelne Objekt muss vollständig auf eine Seite passen!
 
 ## overlapping-percent: Überlappung (Prozent)
 ## start: Serie erstellen
@@ -73,3 +90,8 @@ oder das Papierformat, um weniger Seiten zu erstellen.
 Das Berechnen der Serie übersteigt die maximale Anzahl der erlaubten Iterationen >{0}
 und kann nicht durchgeführt werden. Verändern sie den Maßstab
 oder das Papierformat, um weniger Seiten zu erstellen.
+
+## exception-not-all-features-fit:
+
+Nicht alle Objekte passen im gewählten Maßstab auf eine Druckseite. Bitte erhöhen sie den 
+Druckmaßstab.

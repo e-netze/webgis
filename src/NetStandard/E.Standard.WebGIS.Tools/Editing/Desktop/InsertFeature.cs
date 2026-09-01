@@ -60,6 +60,8 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
                                                                  UIElementTarget.@default.ToString()
                                                                  /*UIElementTarget.tool_modaldialog_noblocking.ToString()*/);
 
+        response.UIElements = response.UIElements.Append(new UISketchInfoContainer(allowFallback: false)).ToArray();
+
         response.ToolCursor = ToolCursor.Custom_Pen;
         response.ActiveToolType = ToolType.sketchany;
 
@@ -155,14 +157,14 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
         var editTheme = editEnvironment[e];
         var editThemeDef = editEnvironment.EditThemeDefinition;
 
-        await editEnvironment.InsertFeature(editTheme, feature);
+        var commitResult = await editEnvironment.InsertFeature(editTheme, feature);
 
         //var response = new ApiEventResponse()
         //{
         //    ActiveTool = new Edit()
         //};
 
-        var response = await OnButtonClick(bridge, e);
+        var response = (await OnButtonClick(bridge, e)).ApplyCommitFeatureResult(commitResult);
 
         if (e["_select"] == "true")
         {
@@ -195,8 +197,6 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
     {
         var response = await OnSave(bridge, e, localizer);
 
-        response.ActiveTool = this;
-
         EditEnvironment editEnvironment = new EditEnvironment(bridge, e);
         var feature = editEnvironment.GetFeature(bridge, e);
 
@@ -210,8 +210,6 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
     {
         var response = await OnSave(bridge, e, localizer);
 
-        response.ActiveTool = this;
-
         EditEnvironment editEnvironment = new EditEnvironment(bridge, e);
         var feature = editEnvironment.GetFeature(bridge, e);
 
@@ -224,8 +222,6 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
     async public Task<ApiEventResponse> OnSaveAndContinueSketchKeepAttributes(IBridge bridge, ApiToolEventArguments e, ILocalizer<InsertFeature> localizer)
     {
         var response = await OnSave(bridge, e, localizer);
-
-        response.ActiveTool = this;
 
         EditEnvironment editEnvironment = new EditEnvironment(bridge, e);
         var feature = editEnvironment.GetFeature(bridge, e);

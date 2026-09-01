@@ -53,6 +53,8 @@ webgis.usability.presentationTocSearch = !webgis.isMobileDevice();
 webgis.usability.useGraphicsMarkerPopups = false;  // Info Container für Grafiken (MapMarkup) anzeigen
 webgis.usability.toolSketchOnlyEditableIfToolTabIsActive = true;
 
+webgis.usability.show_metadata_i_button_toc = webgis.isMobileDevice() !== true;
+
 webgis.usability.allowDarkmode = true;
 webgis.usability.allowStyleClassSelection = true;
 webgis.usability.allowLanguageSelection = true;
@@ -72,6 +74,8 @@ webgis.usability.highlightFeatureOnMarkerClick = true;
 webgis.usability.allowViewerLayoutTemplateSelection = true;
 webgis.usability.quickSearch.displayMetadata.geocodes = true;
 webgis.usability.quickSearch.selectFirstOnEnter = true;
+webgis.usability.quickSearch.minLength = 0;
+webgis.usability.quickSearch.debounceDelay = 300;
 
 webgis.usability.useAdvancedKeyShortcutHandling = true;
 webgis.usability.showQueryLayerNotVisbleNotification = true;

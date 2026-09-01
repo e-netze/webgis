@@ -7,6 +7,7 @@ using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Extensions.Compare;
 using E.Standard.Security.App.Extensions;
 using E.Standard.Security.App.Json;
+using E.Standard.WebApp.Abstraction;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -41,7 +42,7 @@ static public class ServiceCollectionExtensions
         services.AddTransient<ViewerLayoutService>();
 
         services.AddHttpContextAccessor();
-        services.AddScoped<RoutingEndPointReflectionService>();  // Scoped => eine Instanz pro Http Request!!
+        services.AddScoped<IEndPointReflectionProvider, RoutingEndPointReflectionService>();  // Scoped => eine Instanz pro Http Request!!
 
         return services;
     }

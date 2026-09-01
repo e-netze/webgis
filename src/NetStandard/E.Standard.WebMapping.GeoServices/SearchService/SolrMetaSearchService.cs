@@ -12,6 +12,7 @@ using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
+using E.Standard.WebMapping.GeoServices.SearchService.Extensions;
 
 using Newtonsoft.Json;
 
@@ -24,7 +25,7 @@ public class SolrMetaSearchService : SolrSearchService, ISearchService2
     public SolrMetaSearchService(IMap map, CmsNode node)
         : base(node)
     {
-        _metaJsonFile = System.IO.Path.Combine(map.Environment.UserString(webgisConst.EtcPath), "search", $"{this.Id}.json");
+        _metaJsonFile = System.IO.Path.Combine(map.Environment.UserString(WebGISConst.EtcPath), "search", $"{this.Id}.json");
     }
 
     #region ISearchService2
@@ -86,9 +87,10 @@ public class SolrMetaSearchService : SolrSearchService, ISearchService2
         return Task.FromResult<IEnumerable<SearchTypeMetadata>>(metas);
     }
 
-    async public Task<SearchServiceItems> Query2Async(IHttpService httpService, string term, int rows, IEnumerable<string> categories, int targetProjId = 4326)
+    async public Task<SearchServiceItems> Query2Async(IHttpService httpService, CmsDocument.UserIdentification ui, string term, int rows, IEnumerable<string> categories, int targetProjId = 4326)
     {
-        string url = String.Format(_serviceUrl, term).Replace("{term}", term).Replace("[term]", term);
+        term = term.ToSafeSolrTerm();
+        string url = _serviceUrl.ReplaceSolrTermPlaceholder(term).ReplaceRolesPlaceholder(ui);
         url += "&rows=" + (rows > 0 ? rows : _rows);
 
         //if (queryBBox != null)

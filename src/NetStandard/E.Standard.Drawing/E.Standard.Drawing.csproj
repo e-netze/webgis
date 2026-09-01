@@ -13,9 +13,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="ExifLibNet" Version="2.1.4" />
-		<PackageReference Include="gView.GraphicsEngine" Version="6.25.1401" />
-		<PackageReference Include="gView.GraphicsEngine.GdiPlus" Version="6.25.1401" />
-		<PackageReference Include="gView.GraphicsEngine.Skia" Version="6.25.1401" />
+		<PackageReference Include="gView.GraphicsEngine" Version="8.26.2801" />
+		<PackageReference Include="gView.GraphicsEngine.GdiPlus" Version="8.26.2801" />
+		<PackageReference Include="gView.GraphicsEngine.Skia3x" Version="8.26.2801" />
 	</ItemGroup>	
 	
 </Project>

@@ -11,7 +11,7 @@ string workDirectory = Environment.CurrentDirectory; // Path.GetDirectoryName(As
 
 Console.WriteLine($"******************************************");
 Console.WriteLine($"*                                        *");
-Console.WriteLine($"*      WebGIS.Deploy Tool {DeployVersionService.DeployToolVersion}       *");
+Console.WriteLine($"*      WebGIS.Deploy Tool {DeployVersionService.DeployToolVersion}      *");
 #if INTERNAL
 Console.WriteLine($"*             !!!!!!!!!!!!!!             *");
 Console.WriteLine($"*             !! INTERNAL !!             *");
@@ -26,10 +26,13 @@ bool runAutomated = false;
 
 string profile = String.Empty,
        version = String.Empty;
+#if !INTERNAL
 bool downloadLatest = false;
+#endif
 bool deployCms = false,
      deployPortal = false,
-     deployApi = false;
+     deployApi = false,
+     portable = false;
 
 var consoleService = new ConsoleService();
 
@@ -50,10 +53,12 @@ try
                     profile = args[i + 1];
                     runAutomated = true;
                     break;
+#if !INTERNAL
                 case "-d":
                 case "--download-latest":
                     downloadLatest = true;
                     break;
+#endif
                 case "-v":
                 case "--version":
                     version = args[i + 1];
@@ -70,13 +75,16 @@ try
                 case "--deploy-api":
                     deployApi = true;
                     break;
+                case "--portable":
+                    portable = true;
+                    break;
             }
         }
     }
 
     var ioService = new IOService();
     var repoService = new DeployRepositoryService(ioService, workDirectory);
-    var versionService = new DeployVersionService(repoService, ioService);
+    var versionService = new DeployVersionService(repoService, ioService, portable);
     var cssService = new CssService(repoService);
     var securityService = new SecurityService(repoService);
 
@@ -90,7 +98,7 @@ try
     }
 
 #if !INTERNAL
-    if (downloadLatest || consoleService.DoYouWant("to download the latest version from GitHub"))
+    if (!portable && (downloadLatest || consoleService.DoYouWant("to download the latest version from GitHub")))
     {
         var githubReleaseService = new GitHubReleaseService("e-netze", "webgis");
 
@@ -272,6 +280,7 @@ try
     Console.WriteLine("Create Custom CSS");
     cssService.ModifyDefaultCss(profile, Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)), company);
     cssService.ModifyPortalCss(profile, Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)), company);
+    cssService.ModifySiteCss(profile, Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)));
 
     #endregion
 

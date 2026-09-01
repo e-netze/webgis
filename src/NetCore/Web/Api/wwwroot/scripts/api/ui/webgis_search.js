@@ -68,7 +68,7 @@
             //elem._map.events.on('onaddservice', addService, elem);
             //elem._map.events.on('onremoveservice', removeService, elem);
         }
-        var $input = $("<input style='position:absolute;left:" + left + "px;background-color:white;width:100%;max-width:" + (320 - (left + 35)) + "px;right:" + (options.detail_search == false ? "36px" : "71px") + "' class='webgis-search-input' type='text' placeholder='Schnellsuche...' />").appendTo($elem)
+        var $input = $("<input style='position:absolute;left:" + left + "px;background-color:var(--webgis-ui-surface);width:100%;max-width:" + (320 - (left + 35)) + "px;right:" + (options.detail_search == false ? "36px" : "71px") + "' class='webgis-search-input' type='text' placeholder='Schnellsuche...' />").appendTo($elem)
             .keyup('enterKey', function (e) {
             if (e.keyCode == 13)
                 $.webgis_search_query(this);

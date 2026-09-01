@@ -1419,7 +1419,7 @@ public class LayoutBuilder
     {
         if (val.Contains(":") && map != null)
         {
-            CmsDocument.UserIdentification ui = map.Environment.UserValue(webgisConst.UserIdentification, null) as CmsDocument.UserIdentification;
+            CmsDocument.UserIdentification ui = map.Environment.UserValue(WebGISConst.UserIdentification, null) as CmsDocument.UserIdentification;
 
             if (val.StartsWith("role-parameter:") && ui != null)
             {

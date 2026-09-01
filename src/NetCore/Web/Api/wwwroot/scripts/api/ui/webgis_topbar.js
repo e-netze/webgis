@@ -109,7 +109,7 @@
             //$elem.data('map').events.on('onremoveservice', removeService, elem);
         }
         if (options.quick_search === true) {
-            var $inputContainer = $("<div style='position:absolute;top:0px;bottom:0px;right:" + (right + 35) + "px;background-color:white;left:0px'></div>").appendTo($elem);
+            var $inputContainer = $("<div style='position:absolute;top:0px;bottom:0px;right:" + (right + 35) + "px;background-color:var(--webgis-ui-surface);left:0px'></div>").appendTo($elem);
             var $input = $("<input style='width:100%' class='webgis-search-input' type='text' placeholder='"+webgis.l10n.get("quick-search")+"...' />")
                 .appendTo($inputContainer)
                 .data('autocomplete-onenter', function (e) {

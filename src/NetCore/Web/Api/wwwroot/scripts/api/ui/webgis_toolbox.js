@@ -328,8 +328,9 @@
         else {
             img = tool.hasui == true ? webgis.css.imgResource('enter-26.png','ui') : webgis.css.imgResource(tool.image, 'tools');
         }
-        $("<span class='webgis-toolbox-tool-item-span'><img src='" + img + "' /><span class='webgis-toolbox-tool-item-label'>&nbsp;" + tool.name + "</span></span>").appendTo($li)
-            .attr('alt', tool.name + ": " + tool.tooltip).attr('title', tool.name + ": " + tool.tooltip);
+        $("<span class='webgis-toolbox-tool-item-span'><img src='" + img + "' /><span class='webgis-toolbox-tool-item-label'>&nbsp;" + tool.name + "</span></span>")
+            .webgis_ui_element({ tooltip: tool.name + ": " + tool.tooltip })
+            .appendTo($li);
         $li.get(0).tool = tool;
         if (tool.dependencies && tool.dependencies.length > 0) {
             $li.addClass('webgis-dependencies');

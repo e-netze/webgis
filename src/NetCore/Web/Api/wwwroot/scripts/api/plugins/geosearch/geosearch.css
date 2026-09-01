@@ -1,4 +1,4 @@
-#geosearch-container {
+﻿#geosearch-container {
     /*max-width: 98%;*/
     /*max-width: 1200px;*/
     padding:10px;
@@ -113,9 +113,9 @@
 }
 
 #startSearch {
-    background-color: #b5dbad;
+    background-color: var(--webgis-brand-primary-light);
     color: #303030;
-    border: 2px solid #82C828;
+    border: 2px solid var(--webgis-brand-primary);
     padding: 8px 16px;
     cursor: pointer;
     margin: 64px 1px 1px 1px;
@@ -133,7 +133,7 @@
 
     #startSearch:hover {
         background-color: #fff;
-        color: #82C828
+        color: var(--webgis-brand-primary)
     }
 
 .logo {
@@ -157,7 +157,7 @@
     margin:0px;
     padding:8px;
 }
-.webgis-geojuhu-results-list .webgis-geojuhu-result-list:hover { background-color:#b5dbad;}
+.webgis-geojuhu-results-list .webgis-geojuhu-result-list:hover { background-color:var(--webgis-brand-primary-light);}
 .webgis-geojuhu-result-list:nth-child(odd) { background-color: #fff; }
 .webgis-geojuhu-result-list:nth-child(even) { background-color:#ecf0f1; }
 

@@ -50,6 +50,7 @@ webgis.mapInitializer = (function (m) {
     console.log('webgis.globals.urlParameters', webgis.globals.urlParameters);
 
     $(document).ready(function () {
+        webgis.$("body").addClass("webgis-viewer");
 
         var info = "<table style='color:#aaa'>";
         info += "<tr><td>API-Version</td><td>" + webgis.api_version + "</td></tr>";
@@ -1208,6 +1209,7 @@ webgis.mapInitializer = (function (m) {
             $("<li>")
                 .text(webgis.l10n.get('viewer-settings')+"...")
                 .css("backgroundImage", "url(" + webgis.css.imgResource("admin-26.png", "ui") + ")")
+                .css("backgroundSize", "26px")
                 .appendTo($ul)
                 .click(function (e) {
                     $('body').webgis_mapProperties({

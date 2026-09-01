@@ -42,6 +42,7 @@ using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
 using E.Standard.WebApp.Abstraction;
 using E.Standard.WebApp.Extensions;
+using E.Standard.WebApp.Extensions.DependencyInjection;
 using E.Standard.WebApp.Options;
 using E.Standard.WebGIS.Core.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SDK.Extensions.DependencyInjection;
@@ -80,6 +81,8 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddEssentialWebgisApiServices(Configuration);
+
+        services.AddBrandStyleService();
 
         services.AddApplicationSecurityConfiguration();
 
@@ -428,13 +431,16 @@ public class Startup
 
         #region Security
 
-        if (Configuration.DisableAntiForgery())
+        services.Configure<SecurityOptions>(config =>
         {
-            services.Configure<SecurityOptions>(config =>
-            {
-                config.DisableAntiforgery = true;
-            });
-        }
+            config.DisableAntiforgery = Configuration.DisableAntiForgery();
+
+            config.EndpointAuthorizationUrlPassword = Configuration.SecureEndpointUrlPassword();
+            config.EndpointAuthorizationBasicUsername = Configuration.SecureEndpointBasicAuthUsername();
+            config.EndpointAuthorizationBasicPassword = Configuration.SecureEndpointBasicAuthPassword();
+            config.EndpointAuthorizationBearerUsername = "admin";
+        });
+
 
         #endregion
 
@@ -512,8 +518,6 @@ public class Startup
 
         #endregion
 
-
-
         #region DeChunkerMiddleware (nur im PVP Umfeld, wenn Reverse Proxies keine Chunks verstehen)
 
         if (config.UseDeChunkerMiddleware())
@@ -552,6 +556,12 @@ public class Startup
             app.UseMiddleware<CustomAuthenticationMiddleware>();
         }
         app.UseMiddleware<ApiCookieAuthenticationMiddleware>();
+
+        #endregion
+
+        #region Authorization (eg. cache/clear, ...)
+
+        app.AddEndpointAuthorizationMiddleware();
 
         #endregion
 

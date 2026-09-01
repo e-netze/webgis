@@ -55,16 +55,16 @@ public class MapServiceInitializerService
 
         map.Environment.SetUserValue("username", ui?.Username ?? String.Empty /*"anonymous"*/);
 
-        map.Environment.SetUserValue(webgisConst.OutputPath, _urlHelper.OutputPath());
-        map.Environment.SetUserValue(webgisConst.OutputUrl, _urlHelper.OutputUrl());
-        map.Environment.SetUserValue(webgisConst.EtcPath, ApiGlobals.AppEtcPath);
+        map.Environment.SetUserValue(WebGISConst.OutputPath, _urlHelper.OutputPath());
+        map.Environment.SetUserValue(WebGISConst.OutputUrl, _urlHelper.OutputUrl());
+        map.Environment.SetUserValue(WebGISConst.EtcPath, ApiGlobals.AppEtcPath);
 
-        map.Environment.SetUserValue(webgisConst.SessionId, ui?.PublicKey ?? String.Empty);
-        map.Environment.SetUserValue(webgisConst.AppConfigPath, ApiGlobals.AppConfigPath);
-        map.Environment.SetUserValue(webgisConst.UserName, ui?.Username ?? String.Empty);
+        map.Environment.SetUserValue(WebGISConst.SessionId, ui?.PublicKey ?? String.Empty);
+        map.Environment.SetUserValue(WebGISConst.AppConfigPath, ApiGlobals.AppConfigPath);
+        map.Environment.SetUserValue(WebGISConst.UserName, ui?.Username ?? String.Empty);
 
-        map.Environment.SetUserValue(webgisConst.UserIdentification, ui);
-        map.Environment.SetUserValue(webgisConst.ShowWarningInPrintLayout, _config.ShowWarningsInPrintLayout());
+        map.Environment.SetUserValue(WebGISConst.UserIdentification, ui);
+        map.Environment.SetUserValue(WebGISConst.ShowWarningInPrintLayout, _config.ShowWarningsInPrintLayout());
 
         return map;
     }
@@ -150,6 +150,7 @@ public class MapServiceInitializerService
                     serviceLink.Target.LoadString("serviceconfigurl"),
                     serviceLink.Target.LoadString("tileurl"),
                     cms.SelectSingleNode(null, serviceLink.Target.NodeXPath + "/themes/*", "id", "0"),
+                    (int)serviceLink.Target.Load("maxlevel", -1),
                     (bool)serviceLink.Target.Load("hide_beyond_maxlevel", false));
 
                 authUser = serviceLink.Target.LoadString("user");

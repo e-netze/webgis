@@ -224,7 +224,8 @@ public class CutFeatures : IApiServerToolAsync, IApiChildTool
             throw new Exception("Der Verschnitt liefert kein Ergebnis");
         }
 
-        if (!await editEnvironment.InserFeatures(editTheme, newFeatures))
+        var commitResult = await editEnvironment.InserFeatures(editTheme, newFeatures);
+        if (!commitResult)
         {
             throw new Exception("Fehler bei INSERT");
         }
@@ -242,7 +243,7 @@ public class CutFeatures : IApiServerToolAsync, IApiChildTool
                 newFeatures.Select(f => f.Shape),
                 affectedFeatures.Select(f => f.Shape),
                 affectedFeatures.Select(f => f.Oid))
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 
     #endregion

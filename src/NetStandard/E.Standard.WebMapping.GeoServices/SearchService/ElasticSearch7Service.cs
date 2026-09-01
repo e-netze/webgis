@@ -64,18 +64,18 @@ public class ElasticSearch7Service : ISearchService3
 
     public string CopyrightId { get; set; }
 
-    public Task<SearchServiceItems> QueryAsync(IHttpService httpService, string term, int rows, int targetProjId = 4326)
+    public Task<SearchServiceItems> QueryAsync(IHttpService httpService, CmsDocument.UserIdentification ui, string term, int rows, int targetProjId = 4326)
     {
-        return Query2Async(httpService, term, rows, null, targetProjId);
+        return Query2Async(httpService, ui, term, rows, null, targetProjId);
     }
 
     #endregion
 
     #region  ISearchService2
 
-    public Task<SearchServiceItems> Query2Async(IHttpService httpService, string term, int rows, IEnumerable<string> categories, int targetProjId = 4326)
+    public Task<SearchServiceItems> Query2Async(IHttpService httpService, CmsDocument.UserIdentification ui, string term, int rows, IEnumerable<string> categories, int targetProjId = 4326)
     {
-        return Query3Async(httpService, term, rows, categories, null, targetProjId);
+        return Query3Async(httpService, ui, term, rows, categories, null, targetProjId);
     }
 
     async public Task<IEnumerable<SearchServiceAggregationBucket>> TypesAsync(IHttpService httpService)
@@ -184,7 +184,7 @@ public class ElasticSearch7Service : ISearchService3
 
     #region ISearchService3
 
-    async public Task<SearchServiceItems> Query3Async(IHttpService httpService, string term, int rows, IEnumerable<string> categories, Envelope queryBBox, int targetProjId = 4326)
+    async public Task<SearchServiceItems> Query3Async(IHttpService httpService, CmsDocument.UserIdentification ui, string term, int rows, IEnumerable<string> categories, Envelope queryBBox, int targetProjId = 4326)
     {
         string analizedTerm = AnalyseTerm(term, categories);
         //string url = String.Format(_serviceUrl + "/_search?q={0}", analizedTerm).Replace("{term}", analizedTerm).Replace("[term]", analizedTerm);

@@ -168,7 +168,7 @@ public class RestSearchHelperService
                             null :
                             new Envelope(form["bbox"].Split(',').Select(n => n.ToPlatformDouble()).ToArray());
 
-                        var searchItems = await ((ISearchService3)service).Query3Async(_http, term, rows, categories, queryBBox);
+                        var searchItems = await ((ISearchService3)service).Query3Async(_http, ui, term, rows, categories, queryBBox);
                         if (searchItems != null)
                         {
                             searchItemsList.AddRange(searchItems.Items);
@@ -178,7 +178,7 @@ public class RestSearchHelperService
                     {
                         string[] categories = String.IsNullOrEmpty(form["categories"]) ? null : form["categories"].Split(',');
 
-                        var searchItems = await ((ISearchService2)service).Query2Async(_http, term, rows, categories);
+                        var searchItems = await ((ISearchService2)service).Query2Async(_http, ui, term, rows, categories);
                         if (searchItems != null)
                         {
                             searchItemsList.AddRange(searchItems.Items);
@@ -186,7 +186,7 @@ public class RestSearchHelperService
                     }
                     else
                     {
-                        var searchItems = await service.QueryAsync(_http, term, rows);
+                        var searchItems = await service.QueryAsync(_http, ui, term, rows);
                         if (searchItems != null)
                         {
                             searchItemsList.AddRange(searchItems.Items);

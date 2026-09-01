@@ -1,13 +1,25 @@
-﻿using System.Security.Authentication;
+﻿using System.Reflection;
+using System.Security.Authentication;
 
 using cms.tools;
 
 using E.Standard.Cms.Abstraction;
 using E.Standard.Cms.Configuration.Extensions.DependencyInjection;
+using E.Standard.Cms.Configuration.Models;
 using E.Standard.Cms.Services;
 using E.Standard.Cms.Services.Logging;
+using E.Standard.Configuration;
+using E.Standard.Configuration.Extensions;
 using E.Standard.Configuration.Extensions.DependencyInjection;
+using E.Standard.Custom.Core;
+using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Custom.Core.Extensions;
+using E.Standard.Custom.Core.Services;
 using E.Standard.Extensions.Compare;
+using E.Standard.Extensions.Security;
+using E.Standard.Security.Cryptography;
+using E.Standard.Security.Cryptography.Extensions.DependencyInjection;
+using E.Standard.Security.Cryptography.Services;
 using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
 
@@ -33,7 +45,7 @@ try
         configBuilder.AddHostingEnviromentJsonConfiguration();
     });
 
-    builder.ConfigureServices(services =>
+    builder.ConfigureServices((context, services) =>
     {
         #region HttpClient
 
@@ -71,6 +83,43 @@ try
         services.AddTransient<ClearCmsService>();
         services.AddTransient<ReloadSchemeService>();
         services.AddTransient<ExportCmsService>();
+
+        #region Cryptography
+
+        var appConfig = new JsonAppConfiguration("cms.config");
+        CmsConfig cmsConfig = appConfig.Exists
+            ? appConfig.Deserialize<CmsConfig>()
+            : new CmsConfig();
+
+        var CustomStartupServices = CustomStartupServiceFactory.LoadCustomStartupServices(WebGISAppliationTarget.Cms) ?? new ICustomStartupService[0];
+
+        if (!CustomStartupServices.ImplementsCryptographyService(context.Configuration))
+        {
+            services.AddCrytpographyService<CryptoService>(config =>
+            {
+                string keyPath = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
+                try
+                {
+                    if (!String.IsNullOrEmpty(cmsConfig.SharedCrptoKeysPath))
+                    {
+                        keyPath = cmsConfig.SharedCrptoKeysPath;
+                    }
+                }
+                catch { }
+                config.LoadOrCreate(keyPath.AppendToDefaultConfigPaths().ToArray(), typeof(CustomPasswords));
+            });
+        }
+
+        foreach (var cmsItem in cmsConfig.CmsItems ?? [])
+        {
+            foreach (var deployment in cmsItem.Deployments?
+                                              .Where(d => d.Target.IsUrl()) ?? [])
+            {
+                services.AddKeyedSingleton($"cms-upload-{cmsItem.Id}-{deployment.Name}", JwtAccessTokenService.Create(deployment.Secret));
+            }
+        }
+
+        #endregion
     });
 
     var app = builder.Build();

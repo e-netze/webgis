@@ -107,7 +107,9 @@ webgis.usability = {
             default: true,
             geocodes: false
         },
-        selectFirstOnEnter: false
+        selectFirstOnEnter: false,
+        debounceDelay: 0,
+        minLength: 0
     },
 
     sketchTools: {
@@ -117,7 +119,13 @@ webgis.usability = {
     },
 
     allowTocVisFilters: false,
-    defaultBufferDistance: 30
+    defaultBufferDistance: 30,
+
+    show_presentation_metadata_in_copyright: true,
+    show_metadata_i_button_toc: true,
+    show_link_button_in_toc: true,
+
+    expandBasemapsOnAddServices: false
 };
 
 webgis.colorScheme = 'default';

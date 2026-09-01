@@ -30,7 +30,7 @@ public class ExplodeFeatureService
         };
     }
 
-    async internal Task ExplodeAndInsertAsync(EditEnvironment editEnvironment,
+    async internal Task<CommitFeatureResult> ExplodeAndInsertAsync(EditEnvironment editEnvironment,
                                               EditEnvironment.EditTheme editTheme,
                                               Feature originalFeature)
     {
@@ -51,9 +51,12 @@ public class ExplodeFeatureService
             return feature;
         });
 
-        if (!await editEnvironment.InserFeatures(editTheme, newFeatures))
+        var commitResult = await editEnvironment.InserFeatures(editTheme, newFeatures);
+        if (!commitResult)
         {
             throw new Exception("Unknon error: Can't insert new features");
         }
+
+        return commitResult;
     }
 }

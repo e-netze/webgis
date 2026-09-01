@@ -303,6 +303,8 @@ public class RestHelperService
                 MetadataButtonStyle = layerProps != null ? layerProps.MetadataButtonStyle : MetadataButtonStyle.i_button,
                 MetadataTarget = layerProps != null ? layerProps.MetadataTarget : BrowserWindowTarget2.tab,
                 MetadataTitle = layerProps != null ? layerProps.MetadataTitle : null,
+                MetadataDialogWidth = layerProps?.MetadataDialogWidth,
+                MetadataDialogHeight = layerProps?.MetadataDialogHeight,
                 time_info = layer.TimeInfo is not null
                     ? new ServiceInfoDTO.TimeInfoDTO()
                     {

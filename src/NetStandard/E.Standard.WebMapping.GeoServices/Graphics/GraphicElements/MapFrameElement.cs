@@ -6,6 +6,7 @@ using E.Standard.WebMapping.Core.Geometry;
 
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
+using gView.GraphicsEngine.Skia;
 
 namespace E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 
@@ -101,6 +102,15 @@ public class MapFrameElement : IGraphicElement
             using var font = Current.Engine.CreateFont("Arial", 10f * (float)map.Dpi / 96.0f, FontStyle.Regular);
 
             var size = canvas.MeasureText(_name, font);
+
+            float factor = Current.Engine switch
+            {
+                SkiaGraphicsEngine => 1.4f,
+                _ => 1f
+            };
+
+            size.Width *= factor;
+            size.Height *= factor;
 
             var rect = new CanvasRectangleF(
                 scaleX < 0 ? size.Width * scaleX : 0f,

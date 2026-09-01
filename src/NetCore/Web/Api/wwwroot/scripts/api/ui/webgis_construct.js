@@ -549,6 +549,13 @@
                 response.ui.tool = tool;
                 response.ui.title = null;
                 response.ui.closebutton = false;
+                // This is a small, embedded construction-tool popup (opened from the coordinate
+                // display / sketch context menu while another tool, eg. MeasureLine/MapMarkup, is
+                // actually active) - not a real tool-dialog (re)build. Firing 'onbuildtoolui' with
+                // this tool's id would make webgis.map.js think the *active* tool changed and wipe
+                // the sketch-info overlay content, which then never gets repopulated since the
+                // actually active tool isn't rebuilding its UI. See sketch_info_container / map.js.
+                response.ui.suppressOnBuildToolUi = true;
 
                 $parent.webgis_uibuilder(response.ui);
             }
@@ -642,6 +649,9 @@
                 response.ui.tool = tool;
                 response.ui.title = null;
                 response.ui.closebutton = false;
+                // Embedded construction-tool popup, not a real tool-dialog (re)build - see comment
+                // in the 'inputcoordinates-sketch-xyabsolute' handler above for why this matters.
+                response.ui.suppressOnBuildToolUi = true;
 
                 $parent.webgis_uibuilder(response.ui);
             }
@@ -721,6 +731,9 @@
                 response.ui.tool = tool;
                 response.ui.title = null;
                 response.ui.closebutton = false;
+                // Embedded construction-tool popup, not a real tool-dialog (re)build - see comment
+                // in the 'inputcoordinates-sketch-xyabsolute' handler above for why this matters.
+                response.ui.suppressOnBuildToolUi = true;
 
                 $parent.webgis_uibuilder(response.ui);
             }
@@ -777,6 +790,9 @@
                 response.ui.tool = tool;
                 response.ui.title = null;
                 response.ui.closebutton = false;
+                // Embedded construction-tool popup, not a real tool-dialog (re)build - see comment
+                // in the 'inputcoordinates-sketch-xyabsolute' handler above for why this matters.
+                response.ui.suppressOnBuildToolUi = true;
 
                 $parent.webgis_uibuilder(response.ui);
             }

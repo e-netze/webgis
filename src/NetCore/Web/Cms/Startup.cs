@@ -34,6 +34,7 @@ using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
 using E.Standard.WebApp.Abstraction;
 using E.Standard.WebApp.Extensions;
+using E.Standard.WebApp.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SubscriberDatabase.Extensions.DependencyInjection;
 
 using Microsoft.AspNetCore.Authentication;
@@ -94,6 +95,8 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddBrandStyleService();
+
         services.AddApplicationSecurityConfiguration();
 
         var securityConfig = new ApplicationSecurityConfig().LoadFromJsonFile();

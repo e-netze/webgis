@@ -21,4 +21,11 @@ static public class CmsGlobals
     static public IFormatProvider Nhi = System.Globalization.CultureInfo.InvariantCulture.NumberFormat;
 
     static public string SchemaName = "webgis";
+
+    static public string SchemaNameCapital =>
+        SchemaName.ToLowerInvariant() switch
+        {
+            "webgis" => "WebGIS",
+            _ => SchemaName.ToUpper()
+        };
 }

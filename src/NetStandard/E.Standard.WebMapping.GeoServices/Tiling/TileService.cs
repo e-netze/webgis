@@ -403,8 +403,25 @@ public abstract class TileService : IMapService, IPrintableMapService, IMapServi
         List<string> domains = new List<string>();
         foreach (var imageUrl in imageUrls)
         {
-            var uri = new Uri(imageUrl);
-            var host = uri.Host;
+            // imageUrl may come without a scheme (e.g. "//gistiles1/...").
+            // Uri can't parse a scheme-relative Url directly (and would otherwise
+            // fall back to a "file" Uri, corrupting host/port/query parsing), so
+            // a dummy scheme is prepended for parsing purposes only. Since the actual
+            // scheme (http/https) is unknown for scheme-relative Urls, IsDefaultPort
+            // can't be trusted here (e.g. a browser could load the page via https while
+            // the tile Url is a scheme-relative "//host:443/..." - comparing against
+            // http's default port 80 would then be wrong) - so for scheme-relative Urls
+            // the port is kept exactly as it was explicitly given (none => none).
+            var isSchemeRelative = imageUrl.StartsWith("//");
+            var uri = new Uri(isSchemeRelative ? $"http:{imageUrl}" : imageUrl);
+
+            var authority = imageUrl.Substring(isSchemeRelative ? 2 : uri.GetLeftPart(UriPartial.Scheme).Length);
+            var hostAndPort = authority.Split('/')[0];
+            var hasExplicitPort = hostAndPort.Contains(":");
+
+            var host = isSchemeRelative
+                ? (hasExplicitPort ? $"{uri.Host}:{uri.Port}" : uri.Host)
+                : (uri.IsDefaultPort ? uri.Host : $"{uri.Host}:{uri.Port}");
 
             if (domains.Contains(host))
             {
@@ -412,7 +429,7 @@ public abstract class TileService : IMapService, IPrintableMapService, IMapServi
             }
             domains.Add(host);
 
-            var scheme = (imageUrl.StartsWith("//")) ? "//" : $"{uri.Scheme}://";
+            var scheme = isSchemeRelative ? "//" : $"{uri.Scheme}://";
 
             string tileUrl = $"{scheme}{{s}}{uri.PathAndQuery}";
             if (uniqueTileUrl == null)
@@ -479,10 +496,10 @@ public abstract class TileService : IMapService, IPrintableMapService, IMapServi
                         var from = _map.SpatialReference;
                         var to = CoreApiGlobals.SRefStore.SpatialReferences.ById(this.SupportedCrs[0]);
 
-                        var transformation = _map.Environment.UserString(webgisConst.Transformation + "-" + this.Url + "-" + _map.SpatialReference.Id);
+                        var transformation = _map.Environment.UserString(WebGISConst.Transformation + "-" + this.Url + "-" + _map.SpatialReference.Id);
                         if (String.IsNullOrEmpty(transformation) && this.Url.Contains("@"))
                         {
-                            transformation = _map.Environment.UserString(webgisConst.Transformation + "-" + this.Url.Split('@')[0] + "-" + _map.SpatialReference.Id);
+                            transformation = _map.Environment.UserString(WebGISConst.Transformation + "-" + this.Url.Split('@')[0] + "-" + _map.SpatialReference.Id);
                         }
 
                         if (!String.IsNullOrWhiteSpace(transformation))

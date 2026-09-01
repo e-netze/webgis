@@ -46,6 +46,7 @@ class EditEnvironment
 {
     private readonly List<HistoryItem> _historyItems = new List<HistoryItem>();
     private readonly string _fieldPrefix;
+    private readonly CommitActionService _commitActionService;
 
     private EditEnvironment(string appAssemblyPath, string appEtcPath, string editFieldPrefix)
     {
@@ -53,6 +54,8 @@ class EditEnvironment
 
         this.AppAssemblyPath = appAssemblyPath;
         this.EditRootPath = appEtcPath + @"/editing";
+
+        _commitActionService = new CommitActionService(this);
     }
 
     public EditEnvironment(IBridge bridge, ApiToolEventArguments e, EditThemeDefinition defaultEditThemeDefintion = null, string editFieldPrefix = null)
@@ -265,22 +268,22 @@ class EditEnvironment
 
     #region Database Operatoins (Insert, Udate, Delete)
 
-    async public Task<bool> InsertFeature(EditTheme editTheme, WebMapping.Core.Feature feature)
+    async public Task<CommitFeatureResult> InsertFeature(EditTheme editTheme, WebMapping.Core.Feature feature)
     {
         return await CommitFeaturesAsync(editTheme, new WebMapping.Core.Feature[] { feature }, EditFeatureCommand.Insert);
     }
 
-    async public Task<bool> InserFeatures(EditTheme editTheme, IEnumerable<WebMapping.Core.Feature> features)
+    async public Task<CommitFeatureResult> InserFeatures(EditTheme editTheme, IEnumerable<WebMapping.Core.Feature> features)
     {
         return await CommitFeaturesAsync(editTheme, features, EditFeatureCommand.Insert);
     }
 
-    async public Task<bool> UpdateFeature(EditTheme editTheme, WebMapping.Core.Feature feature)
+    async public Task<CommitFeatureResult> UpdateFeature(EditTheme editTheme, WebMapping.Core.Feature feature)
     {
         return await CommitFeaturesAsync(editTheme, new WebMapping.Core.Feature[] { feature }, EditFeatureCommand.Update);
     }
 
-    async public Task<bool> MassAttributeFeatures(EditTheme editTheme, WebMapping.Core.Feature featureTemplate, int[] objectIds)
+    async public Task<CommitFeatureResult> MassAttributeFeatures(EditTheme editTheme, WebMapping.Core.Feature featureTemplate, int[] objectIds)
     {
         return await CommitFeaturesAsync(editTheme,
                                          objectIds.Select(objectId =>
@@ -293,7 +296,7 @@ class EditEnvironment
                                          EditFeatureCommand.MassAttribution);
     }
 
-    async public Task<bool> TransferFeatures(EditTheme editTheme,
+    async public Task<CommitFeatureResult> TransferFeatures(EditTheme editTheme,
                                              IEnumerable<WebMapping.Core.Feature> features,
                                              bool pipelineSuppressAutovalues,
                                              bool pipelineSuppressValidation)
@@ -304,7 +307,7 @@ class EditEnvironment
                                          pipelineSuppressValidation: pipelineSuppressValidation);
     }
 
-    async public Task<bool> UpdateFeatures(EditTheme editTheme, IEnumerable<WebMapping.Core.Feature> features)
+    async public Task<CommitFeatureResult> UpdateFeatures(EditTheme editTheme, IEnumerable<WebMapping.Core.Feature> features)
     {
         return await CommitFeaturesAsync(editTheme, features, EditFeatureCommand.Update);
     }
@@ -318,7 +321,7 @@ class EditEnvironment
         Transfer = 4
     }
 
-    async private Task<bool> CommitFeaturesAsync(EditTheme editTheme,
+    async private Task<CommitFeatureResult> CommitFeaturesAsync(EditTheme editTheme,
                                                  IEnumerable<WebMapping.Core.Feature> features,
                                                  EditFeatureCommand command,
                                                  bool pipelineSuppressAutovalues = false,
@@ -664,15 +667,39 @@ class EditEnvironment
                 }
             }
 
+            #region Before Commit Actions 
+
+            var beforeCommitMessages = await _commitActionService.FireActions(editTheme, CommitActionService.Timing.Before, command, features);
+
+            #endregion
+
+            #region Commit
+
             if (!await ws.Commit())
             {
                 throw new Exception(ws.LastErrorMessage);
             }
 
+            #endregion
+
+            #region After Commit Actions
+
+            var afterCommitMessages = await _commitActionService.FireActions(editTheme, CommitActionService.Timing.After, command, features);
+
+            #endregion
+
             if (ws is IFeatureWorkspaceUndo)
             {
                 this.CommitedObjectIds = ((IFeatureWorkspaceUndo)ws).CommitedObjectIds;
             }
+
+            var commitFeatureResult = new CommitFeatureResult(true);
+            foreach (var commitActionSuccessMessage in beforeCommitMessages.Concat(afterCommitMessages))
+            {
+                commitFeatureResult.AddInfoMessage(commitActionSuccessMessage);
+            }
+
+            return commitFeatureResult;
         }
         finally
         {
@@ -681,16 +708,14 @@ class EditEnvironment
                 ws.DisConnect();
             }
         }
-
-        return true;
     }
 
-    async public Task<bool> DeleteFeature(EditTheme editTheme, WebMapping.Core.Feature feature)
+    async public Task<CommitFeatureResult> DeleteFeature(EditTheme editTheme, WebMapping.Core.Feature feature)
     {
         return await DeleteFeatures(editTheme, new WebMapping.Core.Feature[] { feature });
     }
 
-    async public Task<bool> DeleteFeatures(EditTheme editTheme, IEnumerable<WebMapping.Core.Feature> features)
+    async public Task<CommitFeatureResult> DeleteFeatures(EditTheme editTheme, IEnumerable<WebMapping.Core.Feature> features)
     {
         if (editTheme == null)
         {
@@ -757,10 +782,32 @@ class EditEnvironment
                 }
             }
 
+            #region Before Commit Actions 
+
+            var beforeCommitMessages = await _commitActionService.FireActions(editTheme, CommitActionService.Timing.Before, EditFeatureCommand.Delete, features);
+
+            #endregion
+
+#if !DEBUG
             if (!await ws.Commit())
             {
                 throw new Exception(ws.LastErrorMessage);
             }
+#endif
+
+            #region After Commit Actions 
+
+            var afterCommitMessages = await _commitActionService.FireActions(editTheme, CommitActionService.Timing.After, EditFeatureCommand.Delete, features);
+
+            #endregion
+
+            var commitFeatureResult = new CommitFeatureResult(true);
+            foreach (var commitActionSuccessMessage in beforeCommitMessages.Concat(afterCommitMessages))
+            {
+                commitFeatureResult.AddInfoMessage(commitActionSuccessMessage);
+            }
+
+            return commitFeatureResult;
         }
         finally
         {
@@ -769,7 +816,6 @@ class EditEnvironment
                 ws.DisConnect();
             }
         }
-        return true;
     }
 
     public IEnumerable<int> CommitedObjectIds { get; private set; }
@@ -854,7 +900,7 @@ class EditEnvironment
         return (true, updatedFeatures, updatedFeaturesQueries);
     }
 
-    #endregion
+#endregion
 
     #region Undo Environment
 
@@ -1284,7 +1330,7 @@ class EditEnvironment
                                 {
                                     @readonly = true,
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             else
@@ -1502,7 +1548,7 @@ class EditEnvironment
                                 {
                                     id = id,
                                     options = options.ToArray(),
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange }),
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange }),
                                     dependency_field_ids = whereKeyParameters?.Select(p => $"{fieldPrefix}_{p}").ToArray(),
                                     dependency_field_ids_callback_toolid = whereKeyParameters != null && whereKeyParameters.Count() > 0 ? onUpdateComboCallbackToolId : null,
                                     allow_pro_behaviour = fieldNode.Attributes["domain_pro_behaviour"]?.Value?.ToLower() == "true" ? true : null,
@@ -1529,7 +1575,7 @@ class EditEnvironment
                                 {
                                     @readonly = true,
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             else
@@ -1544,7 +1590,7 @@ class EditEnvironment
                                     }, true))
                                 {
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             parentElement.AddChild(new UIBreak());
@@ -1567,7 +1613,7 @@ class EditEnvironment
                                 {
                                     @readonly = true,
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             else
@@ -1575,7 +1621,7 @@ class EditEnvironment
                                 parentElement.AddChild(inputElement = new UIDatePicker()
                                 {
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange }),
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange }),
                                     date_only = fieldNode.Attributes["date_only"]?.Value.ToLower() == "true" || fieldNodeType == "date_dateonly"
                                 });
                             }
@@ -1598,7 +1644,7 @@ class EditEnvironment
                                 {
                                     @readonly = true,
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             else
@@ -1625,7 +1671,7 @@ class EditEnvironment
                                 {
                                     @readonly = true,
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             else
@@ -1633,7 +1679,7 @@ class EditEnvironment
                                 parentElement.AddChild(inputElement = new UIUploadFileEdit(editThemeDef.ServiceId, editThemeDef.EditThemeId, field)
                                 {
                                     id = id,
-                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                    css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                                 });
                             }
                             parentElement.AddChild(new UIBreak());
@@ -1651,7 +1697,7 @@ class EditEnvironment
                             {
                                 @readonly = @readonly == true || readonlyOperators.Contains(editOperation),
                                 id = id,
-                                css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                             });
                             parentElement.AddChild(new UIBreak());
 
@@ -1670,7 +1716,7 @@ class EditEnvironment
                             {
                                 @readonly = @readonly == true || readonlyOperators.Contains(editOperation),
                                 id = id,
-                                css = UICss.ToClass(new string[] { parameterType, UICss.InputSetBorderOnChange })
+                                css = UICss.ToClass(new string[] { parameterType, UICss.InputChangeStyleOnChange })
                             });
                             parentElement.AddChild(new UIBreak());
 
@@ -2639,6 +2685,40 @@ class EditEnvironment
             }
         }
 
+        public IEnumerable<CommitAction> CommitActions
+        {
+            get
+            {
+                if (_node == null || _node.SelectSingleNode("edit:mask", _ns) == null)
+                {
+                    return Array.Empty<CommitAction>();
+                }
+
+                List<CommitAction> commitActions = new();
+                XmlNode maskNode = _node.SelectSingleNode("edit:mask", _ns);
+
+                foreach (XmlNode commitActionNode in maskNode.SelectNodes("edit:commit_actions/edit:commit_action[@target and @timing and @protocol]", _ns))
+                {
+                    var commitAction = new CommitAction()
+                    {
+                        Name = commitActionNode.Attributes["name"]?.Value ?? "Action",
+                        Timing = (EditCommitActionTiming)int.Parse(commitActionNode.Attributes["timing"].Value),
+                        Protocol = (EditCommitActionProtocol)int.Parse(commitActionNode.Attributes["protocol"].Value),
+                        Target = commitActionNode.Attributes["target"].Value,
+                        Payload = commitActionNode.Attributes["payload"]?.Value ?? "",
+                        Headers = !string.IsNullOrWhiteSpace(commitActionNode.Attributes["headers"]?.Value)
+                            ? JSerializer.Deserialize<string[]>(commitActionNode.Attributes["headers"].Value)
+                            : [],
+                        SuccessMessage = commitActionNode.Attributes["success_message"]?.Value ?? ""
+                    };
+
+                    commitActions.Add(commitAction);
+                }
+
+                return commitActions;
+            }
+        }
+
         #region Helper
 
         private string GeometryTypeValue
@@ -2750,6 +2830,16 @@ class EditEnvironment
             public string Message { get; set; }
         }
 
+        public class CommitAction
+        {
+            public string Name { get; init; }
+            public EditCommitActionTiming Timing { get; init; }
+            public EditCommitActionProtocol Protocol { get; init; }
+            public string Target { get; init; }
+            public string Payload { get; init; }
+            public string[] Headers { get; init; }
+            public string SuccessMessage { get; init; }
+        }
 
         #endregion
     }

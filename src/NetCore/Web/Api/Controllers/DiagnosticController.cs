@@ -7,7 +7,6 @@ using Api.Core.AppCode.Mvc;
 using Api.Core.AppCode.Services;
 using Api.Core.Models.Diagnostic;
 
-using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.Api.App.Services.Cms;
@@ -16,6 +15,7 @@ using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Extensions.Compare;
 using E.Standard.Web.Abstractions;
+using E.Standard.WebApp.Reflection;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core.Abstraction;
 
@@ -24,6 +24,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Api.Core.Controllers;
 
+[EndpointAuthorization(AuthorizationType = EndpointAuthorizationType.UrlPassword | EndpointAuthorizationType.Basic)]
 public class DiagnosticController : ApiBaseController
 {
     private readonly ILogger<DiagnosticController> _logger;
@@ -33,7 +34,6 @@ public class DiagnosticController : ApiBaseController
     private readonly UrlHelperService _urlHelper;
     private readonly CmsDocumentsService _cmsDocuments;
     private readonly IRequestContext _requestContext;
-
     public DiagnosticController(ILogger<DiagnosticController> logger,
                                 CacheService cache,
                                 ConfigurationService config,
@@ -59,14 +59,9 @@ public class DiagnosticController : ApiBaseController
         return ViewResult();
     }
 
+
     async public Task<IActionResult> Services(string pwd)
     {
-        var appCachePassword = _config.AppCacheListPassword();
-        if (String.IsNullOrWhiteSpace(appCachePassword) || pwd != appCachePassword)
-        {
-            return await JsonViewSuccess(false, "not allowed");
-        }
-
         try
         {
             Dictionary<string, CmsDocument> cmsDocumentCache = new Dictionary<string, CmsDocument>();
@@ -87,6 +82,11 @@ public class DiagnosticController : ApiBaseController
                 catch (Exception ex)
                 {
                     rootElement.AddElement(new DiagnosticElement() { Name = serviceUrl, Text = ex.Message, Status = DiagnosticElementStatus.Missing });
+                    continue;
+                }
+
+                if (service is IMapServiceCollection)
+                {
                     continue;
                 }
 
@@ -120,7 +120,7 @@ public class DiagnosticController : ApiBaseController
 
                 CmsHlp cmsHlp = new CmsHlp(cmsDocument, map);
 
-                #region Chech Themes
+                #region Check Themes
 
                 var themeNodes = cmsHlp.GetServiceThemes(service.Url.Split('@')[0]);
 
@@ -166,12 +166,6 @@ public class DiagnosticController : ApiBaseController
 
     async public Task<IActionResult> CmsTree(string pwd, string username = "", string roles = "", string instanceRoles = "")
     {
-        var appCachePassword = _config.AppCacheListPassword();
-        if (String.IsNullOrWhiteSpace(appCachePassword) || pwd != appCachePassword)
-        {
-            return await JsonViewSuccess(false, "not allowed");
-        }
-
         try
         {
             CmsDocument.UserIdentification ui = new CmsDocument.UserIdentification(

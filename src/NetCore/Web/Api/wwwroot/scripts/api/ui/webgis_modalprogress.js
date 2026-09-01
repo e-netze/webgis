@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
     "use strict";
     $.fn.webgis_modalprogress = function (method) {
         if (methods[method]) {
@@ -40,7 +40,7 @@
                 }
                 else {
                     settings.onload = function ($content) {
-                        $content.css({ padding: '10px', background: 'white', color: 'black'/*, borderRadius: '0 0 10px 10px'*/ });
+                        $content.css({ padding: '10px', background: 'var(--webgis-ui-surface)', color: 'var(--webgis-ui-text)'/*, borderRadius: '0 0 10px 10px'*/ });
                         $content.parent().css({ /*borderRadius: '10px',*/ background: '' })
                             .addClass('webgis-tabs-tab-header')
                             .css('font-size', '1em')

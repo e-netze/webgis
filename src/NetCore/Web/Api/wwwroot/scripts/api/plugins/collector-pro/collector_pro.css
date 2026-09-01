@@ -1,4 +1,4 @@
-#collector-container {
+﻿#collector-container {
     /*max-width: 98%;*/
     /*max-width: 1200px;*/
     padding:10px;
@@ -71,7 +71,7 @@
         border-color: #eee;
         border-width: 1px 1px 0;
         border-style: solid solid none;
-        background-color: #b5dbad;
+        background-color: var(--webgis-brand-primary-light);
     }
 
 .tabHeaderIcon {
@@ -105,9 +105,9 @@
     text-align: center;
     min-width: 200px;
     display: inline-block;
-    background-color: #b5dbad;
+    background-color: var(--webgis-brand-primary-light);
     color: #333;
-    border: 2px solid #82C828;
+    border: 2px solid var(--webgis-brand-primary);
     padding: 6px;
     cursor: pointer;
     margin: 1px;
@@ -123,7 +123,7 @@
 
     .button:hover {
         background-color: #fff;
-        color: #82C828;
+        color: var(--webgis-brand-primary);
     }
 
 .button.forward {
@@ -211,7 +211,7 @@
     width: calc(100% - 274px);       /* 250px Width Label + 2x 1px Border links/rechts + 2x 7px Padding + 4px margin-right */
     max-width: 400px;
     padding: 6px 2px;
-    border: 1px solid #b5dbad;
+    border: 1px solid var(--webgis-brand-primary-light);
     font-size: 14px;
 }
 
@@ -271,7 +271,7 @@ span.alias {
     padding: 5px;
     position: relative;
     font-size: 16px;
-    background: #b5dbad;
+    background: var(--webgis-brand-primary-light);
     clear: left;
 }
 
@@ -303,7 +303,7 @@ span.alias {
 
 .collectorpro-presentation_toc-title.webgis-expanded
 .collectorpro-presentation_toc-title-text {
-    background: #b5dbad none repeat scroll 0 0 !important;
+    background: var(--webgis-brand-primary-light) none repeat scroll 0 0 !important;
 }
 
 .summary-category {
@@ -311,7 +311,7 @@ span.alias {
     padding: 5px;
     /*font-weight: bold;*/
     margin-bottom: 2px;
-    background-color: #b5dbad;
+    background-color: var(--webgis-brand-primary-light);
     color: #000;
     margin-top: 14px;
 }

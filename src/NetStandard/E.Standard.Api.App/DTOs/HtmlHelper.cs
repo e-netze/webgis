@@ -48,7 +48,7 @@ public sealed class HtmlHelper
 
     public static string ToNextLevelLink(string next, string name, string styles = "", string color = "#", string background = "")
     {
-        return $"<a onclick=\"moveDown('{next}');return false;\" href='' style='text-decoration:none;padding:0px;{styles}'><div style='background:{background.OrTake("#b5dbad")};color:{color.OrTake("#333")};border:2px solid #82c828;cursor:pointer;width:98%;padding:5px;margin-top:4px;border-radius:20px'><div class='enter-button'></div><span style='position:relative;top:-7px;left:5px'>" + name + "</span></div></a>";
+        return $"<a onclick=\"moveDown('{next}');return false;\" href='' style='text-decoration:none;padding:0px;{styles}'><div style='background:{background.OrTake("var(--webgis-brand-primary-light)")};color:{color.OrTake("#333")};border:2px solid var(--webgis-brand-primary);cursor:pointer;width:98%;padding:5px;margin-top:4px;border-radius:20px'><div class='enter-button'></div><span style='position:relative;top:-7px;left:5px'>{name}</span></div></a>";
     }
 
     public static string ToTable(string[] headers, object[] values)

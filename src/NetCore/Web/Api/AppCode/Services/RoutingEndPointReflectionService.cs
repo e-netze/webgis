@@ -8,6 +8,7 @@ using Api.Core.AppCode.Reflection;
 
 using E.Standard.Api.App;
 using E.Standard.Api.App.Endpoints.Metadata;
+using E.Standard.WebApp.Abstraction;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -15,7 +16,7 @@ using Microsoft.Extensions.Options;
 
 namespace Api.Core.AppCode.Services;
 
-public class RoutingEndPointReflectionService
+internal class RoutingEndPointReflectionService : IEndPointReflectionProvider
 {
     private readonly IEnumerable<Attribute> _controllerAttributes;
     private readonly IEnumerable<Attribute> _actionMethodAttributes;

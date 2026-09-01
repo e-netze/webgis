@@ -5,6 +5,9 @@ using E.Standard.Json;
 
 using ExCSS;
 
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Driver;
+
 using webgis.deploy.Extensions;
 using webgis.deploy.Models;
 
@@ -29,9 +32,16 @@ internal class CssService
         ModifyCSS(profile, Path.Combine(targetPath, "webgis-portal", "wwwroot", "content", "portal.css"), Path.Combine("companies", company));
     }
 
+    public void ModifySiteCss(string profile, string targetPath)
+    {
+        ModifyCSS(profile, Path.Combine(targetPath, "webgis-api", "wwwroot", "content", "site.css"));
+        ModifyCSS(profile, Path.Combine(targetPath, "webgis-portal", "wwwroot", "content", "site.css"));
+        ModifyCSS(profile, Path.Combine(targetPath, "webgis-cms", "wwwroot", "css", "site.css"));
+    }
+
     #region Perform Modification
 
-    private void ModifyCSS(string profile, string originalCssFile, string subFolder)
+    private void ModifyCSS(string profile, string originalCssFile, string subFolder = "")
     {
         var originalFi = new FileInfo(originalCssFile);
         Console.WriteLine($"Build {originalFi.Name} css overrides...");
@@ -58,7 +68,10 @@ internal class CssService
 
         var cssAppendFi = new FileInfo(Path.Combine(cssModifyDi.FullName, "append.css"));
 
-        string targetPath = Path.Combine(originalFi.Directory.FullName, subFolder, originalFi.Name);
+        string targetPath =
+            String.IsNullOrEmpty(subFolder)
+            ? Path.Combine(originalFi.Directory.FullName, originalFi.Name.Substring(0, originalFi.Name.Length-originalFi.Extension.Length) + ".overrides.css")
+            : Path.Combine(originalFi.Directory.FullName, subFolder, originalFi.Name);
 
         ModifyCSS(originalFi.FullName, cssModifyFi.FullName, targetPath, cssAppendFi.Exists ? cssAppendFi.FullName : string.Empty);
     }
@@ -67,7 +80,7 @@ internal class CssService
     {
         var config = JSerializer.Deserialize<ModifyCssModel>(System.IO.File.ReadAllText(configFile));
 
-        var parser = new StylesheetParser();
+        var parser = new StylesheetParser(includeUnknownDeclarations: true, includeUnknownRules: true);
         var stylesheet = parser.Parse(System.IO.File.ReadAllText(originalCssFile));
 
         StringBuilder sbAll = new StringBuilder();
@@ -148,26 +161,24 @@ internal class CssService
         {
             foreach (var modifier in config.ModifierDefinitions)
             {
-                string pattern = modifier.Pattern;
-                if (pattern.IsColor())
-                {
-                    pattern = pattern.ToCssRgbColor();
-                }
-                if (properties[property].ToLower().Contains(pattern))
+                string patternAlternative = modifier.Pattern.IsColor()
+                    ? modifier.Pattern.ToCssRgbColor()  // colors came as rgb(r,g,b)
+                    : modifier.Pattern;
+
+                if (properties[property].Contains(modifier.Pattern, StringComparison.OrdinalIgnoreCase))
                 {
                     modificationInRule = true;
                     if (config.Mode == "shrink")
                     {
-                        sbShrink.Append($"    {property}: {properties[property].ToLower().Replace(pattern, modifier.Replace)};{Environment.NewLine}");
-
-                        //Console.WriteLine(modifier.Add != null ? modifier.Add.ToString() : "add == null");
-                        //if (modifier.Add != null)
-                        //{
-                        //    foreach(var addKey in modifier.Add.Keys.Where(k => k != property))
-                        //    {
-                        //        sbShrink.Append($"    {addKey}: {modifier.Add[addKey]};{Environment.NewLine}");
-                        //    }
-                        //}
+                        sbShrink.Append($"    {property}: {properties[property].Replace(modifier.Pattern, modifier.Replace, StringComparison.OrdinalIgnoreCase)};{Environment.NewLine}");
+                    }
+                }
+                else if (properties[property].Contains(patternAlternative, StringComparison.OrdinalIgnoreCase))
+                {
+                    modificationInRule = true;
+                    if (config.Mode == "shrink")
+                    {
+                        sbShrink.Append($"    {property}: {properties[property].Replace(patternAlternative, modifier.Replace, StringComparison.OrdinalIgnoreCase)};{Environment.NewLine}");
                     }
                 }
             }

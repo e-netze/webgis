@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -51,6 +52,17 @@ static public class RequestMessageExtensions
                 url += (url.Contains("?") ? "&" : "?") + tokenParameter;
 
                 requestMessage.RequestUri = new Uri(url);
+            }
+        }
+    }
+
+    static public void AddRequestHeaders(this HttpRequestMessage requestMessage, IEnumerable<KeyValuePair<string, string>>? headers)
+    {
+        if (headers != null)
+        {
+            foreach (var header in headers)
+            {
+                requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
             }
         }
     }

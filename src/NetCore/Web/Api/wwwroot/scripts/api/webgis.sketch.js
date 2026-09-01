@@ -798,6 +798,9 @@
                 }
             }
             else if (_geometryType === 'rectangle') {
+                if (fireEvents) {
+                    this.events.fire('beforeaddvertex', this, vertex);
+                }
                 var rectBounds = [[0, 0], [0, 0]];
                 if (_vertices.length === 0) {
                     _vertices.push(vertex);
@@ -1545,6 +1548,11 @@
         else {
             this._snappedVertex = null;
         }
+        // Captured before being overwritten below, so we can tell whether the snap state actually
+        // changed (entered/left a snap target) - needed so the "leaving snap" fix below doesn't
+        // fire currentstate on every single mouse move (which caused visible overlay flicker).
+        var hadSnapResult = this._moverMarker != null && this._moverMarker.snapResult ? true : false;
+
         if (this._moverMarker == null) {
             this._moverMarker = webgis.createMarker({
                 lat: latlng.lat, lng: latlng.lng, draggable: false, icon: "sketch_mover"
@@ -1583,6 +1591,16 @@
         else {
             //this._moverMarker.unbindTooltip();
             this.hideConstructMover();
+
+            // Only fire when a snap target was actually left (transition snapped -> unsnapped) -
+            // NOT on every plain mouse move without snapping, otherwise the sketch-info overlay
+            // re-renders constantly while just moving the mouse and visibly flickers. Callers like
+            // the vertex-drag handler ('drag' event on marker) rely solely on this call to keep the
+            // overlay's snapping section in sync, since - unlike onMapMouseMove - they don't fire
+            // currentstate again on their own afterwards.
+            if (hadSnapResult) {
+                this.fireCurrentState();
+            }
         }
     };
 
@@ -3557,8 +3575,8 @@
                 this.redrawMarkers();
             }
         }
-        //console.log('fromJson', json);
-        //console.log('fromJson', _vertices);
+        // console.log('fromJson', json);
+        // console.log('fromJson', _vertices);
 
         this._isDirty = false;
     };
@@ -3612,6 +3630,9 @@
             }
         }
         this.events.fire('onchanged', this);
+
+        // console.log('fromJsonFast', json);
+        // console.log('fromJsonFast', _vertices);
 
         this._isDirty = false;
     };

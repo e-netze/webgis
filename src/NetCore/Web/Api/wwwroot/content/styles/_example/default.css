@@ -136,7 +136,7 @@ button {
 
 /************ GeoJuhu Results ****************/
     .webgis-geojuhu-results .webgis-geojuhu-result:hover {
-        background-color:#b5dbad;
+        background-color:var(--webgis-brand-primary-light);
     }
 
 /* Farben */

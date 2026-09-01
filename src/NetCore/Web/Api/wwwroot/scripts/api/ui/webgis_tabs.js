@@ -137,7 +137,8 @@
                     .css({
                         position: 'absolute', right: 3, top: 3, width: 32, height: 32, cursor: 'pointer', margin: -2,
                         backgroundRepeat: 'no-repeat', backgroundPosition: 'center',
-                        backgroundImage: 'url(' + webgis.css.imgResource('legend-24.png', 'toc') + ')'
+                        backgroundImage: 'url(' + webgis.css.imgResource('legend-24.png', 'toc') + ')',
+                        backgroundSize: 26
                     })
                     .appendTo($header)
                     .data('map',options.map)

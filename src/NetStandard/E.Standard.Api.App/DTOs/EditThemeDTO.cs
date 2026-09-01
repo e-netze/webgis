@@ -8,7 +8,9 @@ using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Models.Abstractions;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
+using E.Standard.Json;
 using E.Standard.WebGIS.CMS;
+using E.Standard.WebGIS.CMS.Reflection;
 using E.Standard.WebMapping.Core.Api.Bridge;
 
 using Newtonsoft.Json;
@@ -81,6 +83,10 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
     public IEnumerable<AuthObject<MaskValidation>> MaskValidations { get; set; }
+
+    [JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
+    public IEnumerable<AuthObject<CommitAction>> CommitActions { get; set; }
 
     public XmlNode GenerateMaskXml(CmsDocument.UserIdentification ui)
     {
@@ -222,6 +228,34 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
                 xml.Append($@"<edit:validation field=""{maskValidation.FieldName.EscapeXmlString()}"" operator=""{maskValidation.Operator.ToXmlOperatorString()}"" validator=""{maskValidation.Validator.EscapeXmlString()}"" message=""{maskValidation.Message.EscapeXmlString()}"" />");
             }
             xml.Append("</edit:validations>");
+        }
+
+        #endregion
+
+        #region Commit Actions
+
+        if (AuthObject<CommitAction>.QueryObjectArray(CommitActions, ui).Any())
+        {
+            xml.Append("<edit:commit_actions>");
+            foreach (var commitAction in AuthObject<CommitAction>.QueryObjectArray(CommitActions, ui))
+            {
+                xml.Append("<edit:commit_action ");
+                xml.Append($@"name=""{commitAction.Name}"" ");
+                xml.Append($@" timing=""{(int)commitAction.ActionTiming}"" ");
+                xml.Append($@" protocol=""{(int)commitAction.ActionProtocol}"" ");
+                xml.Append($@" target=""{commitAction.ActionTarget.EscapeXmlString()}"" ");
+                xml.Append($@" payload=""{commitAction.ActionPayload.EscapeXmlString()}"" ");
+                if (!String.IsNullOrEmpty(commitAction.SuccessMessage))
+                {
+                    xml.Append($@" success_message=""{commitAction.SuccessMessage.EscapeXmlString()}"" ");
+                }
+                if(commitAction.ActionHeaders?.Any(x=>!String.IsNullOrWhiteSpace(x)) == true)
+                {
+                    xml.Append($@" headers=""{JSerializer.Serialize(commitAction.ActionHeaders.Where(x => !String.IsNullOrWhiteSpace(x)).ToArray()).EscapeXmlString()}"" ");
+                }
+                xml.Append("/>");
+            }
+            xml.Append("</edit:commit_actions>");
         }
 
         #endregion
@@ -525,6 +559,30 @@ public sealed class EditThemeDTO : VersionDTO, IHtml, IEditThemeBridge
         public MaskValidationOperators Operator { get; set; }
         public string Validator { get; set; }
         public string Message { get; set; }
+    }
+
+    public class CommitAction
+    {
+        [PersistNodeName]
+        public string Name { get; set; }
+        
+        [PersistName(PersistNames.EditingCommitAction.ActionTiming, DefaultValue = EditCommitActionTiming.Before_Insert)]
+        public EditCommitActionTiming ActionTiming { get; set; } // before/after
+
+        [PersistName(PersistNames.EditingCommitAction.ActionProtocol, DefaultValue = EditCommitActionProtocol.Http_Get)]
+        public EditCommitActionProtocol ActionProtocol { get; set; } // HTTP_GET, HTTP_POST
+
+        [PersistName(PersistNames.EditingCommitAction.ActionTarget)]
+        public string ActionTarget { get; set; }  // Url
+
+        [PersistName(PersistNames.EditingCommitAction.ActionHeaders)]
+        public string[] ActionHeaders { get; set; } // HTTP Headers (ContentType, Authorization)
+
+        [PersistName(PersistNames.EditingCommitAction.ActionPayload)]
+        public string ActionPayload { get; set;  } // content
+
+        [PersistName(PersistNames.EditingCommitAction.SuccessMessage)]
+        public string SuccessMessage { get; set; }
     }
 
     #endregion

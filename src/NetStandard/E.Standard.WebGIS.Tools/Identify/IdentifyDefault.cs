@@ -64,6 +64,8 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
     public const string IdentifyWhereClause = "webgis-identify-where";
     public const string IdentifyForceCheckboxes = "webgis-identify-forece-checkboxex";
     public const string IdentifyUiPrefix = "webgis-identify-ui-prefix";
+    public const string IdentityCurrentQueryShape = "identify-tool-current-queryshape";
+    public const string IdentifyCurrentApplyTool = "identify-tool-current-applytool";
 
     public const string IdentifyFeatureLimiit = "webgis-identify-feature-limit";
     public const string IdentifyIgnoreQueryShape = "webgis-identify-ignore-query-shame";
@@ -219,11 +221,22 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
                                 new UISelect.Option() { label = localizer.Localize("meters"), value = "m" },
                                 new UISelect.Option() { label = localizer.Localize("kilometers"), value = "km" }
                             }
+                        },
+                        new UIHidden
+                        {
+                            id= IdentityCurrentQueryShape,
+                            css=UICss.ToClass(new string[] {  UICss.ToolParameter, UICss.ToolParameterPersistent }),
+                        },
+                        new UIHidden
+                        {
+                            id= IdentifyCurrentApplyTool,
+                            css=UICss.ToClass(new string[] {  UICss.ToolParameter, UICss.ToolParameterPersistent }),
                         }
                     }
                 });
 
                 uiSetters.Add(new UISetter(SketchBufferUnitId, e[SketchBufferUnitId].OrTake("m")));
+                uiSetters.Add(new UISetter(IdentityCurrentQueryShape, e[IdentityCurrentQueryShape]));
             }
 
             uiElements.Add(new UIDiv()
@@ -351,6 +364,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
             {
                 new UICssSetter(UICssSetter.SetterType.AddClass, SketchButtonContainerId, UICss.HiddenUIElement),
                 new UICssSetter(UICssSetter.SetterType.AddClass, SketchBufferContainerId, UICss.HiddenUIElement),
+                new UISetter(IdentifyCurrentApplyTool, ""),
                 new UISetter(SketchCanApplyBufferId, "false")
             }
         };
@@ -366,6 +380,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
             {
                 new UICssSetter(UICssSetter.SetterType.AddClass, SketchButtonContainerId, UICss.HiddenUIElement),
                 new UICssSetter(UICssSetter.SetterType.AddClass, SketchBufferContainerId, UICss.HiddenUIElement),
+                new UISetter(IdentifyCurrentApplyTool, "rectangle"),
                 new UISetter(SketchCanApplyBufferId, "false")
             }
         };
@@ -381,6 +396,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
             {
                 new UICssSetter(UICssSetter.SetterType.RemoveClass, SketchButtonContainerId, UICss.HiddenUIElement),
                 new UICssSetter(UICssSetter.SetterType.AddClass, SketchBufferContainerId, UICss.HiddenUIElement),
+                new UISetter(IdentifyCurrentApplyTool, "circle"),
                 new UISetter(SketchCanApplyBufferId, "false")
             }
         };
@@ -396,6 +412,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
             {
                 new UICssSetter(UICssSetter.SetterType.RemoveClass, SketchButtonContainerId, UICss.HiddenUIElement),
                 new UICssSetter(UICssSetter.SetterType.RemoveClass, SketchBufferContainerId, UICss.HiddenUIElement),
+                new UISetter(IdentifyCurrentApplyTool, "line"),
                 new UISetter(SketchCanApplyBufferId, "true")
             }
         };
@@ -410,6 +427,7 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
             {
                 new UICssSetter(UICssSetter.SetterType.RemoveClass, SketchButtonContainerId, UICss.HiddenUIElement),
                 new UICssSetter(UICssSetter.SetterType.RemoveClass, SketchBufferContainerId, UICss.HiddenUIElement),
+                new UISetter(IdentifyCurrentApplyTool, "polygon"),
                 new UISetter(SketchCanApplyBufferId, "true")
             }
         };

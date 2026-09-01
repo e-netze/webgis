@@ -3,15 +3,21 @@
 @using E.Standard.Cms.Configuration.Services
 @inject CmsConfigurationService CCS
 
+@model object;
 @{
-
+    var cmsId = Model switch
+    {
+        Cms.Models.CmsModel cmsModel => cmsModel.CmsId,
+        Cms.Models.DeployModel deployModel => deployModel.CmsItem?.Id,
+        _ => null
+    };
 }
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@CmsGlobals.SchemaName - Cms</title>
+    <title>@CmsGlobals.SchemaNameCapital CMS</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -19,15 +25,25 @@
         <link rel="stylesheet" href="~/css/site.css?@(CmsGlobals.JsVersion)" />
     </environment>
     <environment exclude="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/b rap/dist/css/bootstrap.css" />
         <link href="~/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />
         <link rel="stylesheet" href="~/css/site.css?@(CmsGlobals.JsVersion)" />
     </environment>
+
+    <link href="~/css/site.overrides.css" rel="stylesheet" />
+    <style>:root { @Html.Raw(StyleService.GetBrandVariablesFromEnvironment()) }</style>
 
     @if (!String.IsNullOrWhiteSpace(CCS.Instance?.Company))
     {
         <link rel="stylesheet" href="~/css/@CCS.Instance.Company/site.css" />
     }
+
+    <style>
+
+            @Html.Raw(CCS.GetCustomCss(cmsId))
+
+    </style>
+
 </head>
 <body>
     <environment include="Development">

@@ -104,6 +104,7 @@
                 margin-right: 5px;
                 vertical-align: middle;
                 filter: invert(1);
+                max-height: 26px;
             }
 
             .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item .webportal-layout-sidebar-item-firstletter {

@@ -5,6 +5,7 @@ using System.Linq;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Security.App.Json;
+using E.Standard.WebApp.Extensions.DependencyInjection;
 
 using Microsoft.AspNetCore.Builder;
 
@@ -93,6 +94,8 @@ static public class ApplicationBuilderExtensions
                 builder.UseMiddleware<HeaderAuthenicationMiddleware>();
             }
         }
+
+        builder.AddEndpointAuthorizationMiddleware();
 
         if (customAuthentications != null && customAuthentications.Count() > 0)
         {

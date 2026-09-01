@@ -72,6 +72,16 @@ public class ServiceLayerLink : SchemaNodeLink, IPersistable, IEditable
     [Category("#category_metadata_target")]
     public BrowserWindowTarget2 MetadataTarget { get; set; }
 
+    [DisplayName("Metadaten Dialog Breite (Width)")]
+    [Description("Breite des Dialogs (Pixel), wenn type 'dialog'. 0 => default width")]
+    [Category("Metadaten")]
+    public int MetadataDialogWidth { get; set; }
+
+    [DisplayName("Metadaten Dialog Höhe (Height)")]
+    [Description("Höhe des Dialogs (Pixel), wenn type 'dialog'. 0 => default height")]
+    [Category("Metadaten")]
+    public int MetadataDialogHeight { get; set; }
+
     [DisplayName("#metadata_title")]
     [Category("#category_metadata_title")]
     public string MetadataTitle { get; set; }
@@ -151,6 +161,8 @@ public class ServiceLayerLink : SchemaNodeLink, IPersistable, IEditable
         this.MetadataTarget = (BrowserWindowTarget2)(int)stream.Load("metadata_target", (int)BrowserWindowTarget2.tab);
         this.MetadataTitle = (string)stream.Load("metadata_title", String.Empty);
         this.MetadataLinkButtonStyle = (MetadataButtonStyle)stream.Load("metadata_button_style", (int)MetadataButtonStyle.i_button);
+        this.MetadataDialogWidth = (int)stream.Load("metadata_dialog_width", (int)0);
+        this.MetadataDialogHeight = (int)stream.Load("metadata_dialog_height", (int)0);
     }
 
     public override void Save(IStreamDocument stream)
@@ -181,6 +193,15 @@ public class ServiceLayerLink : SchemaNodeLink, IPersistable, IEditable
         if (this.MetadataLinkButtonStyle != MetadataButtonStyle.i_button)
         {
             stream.Save("metadata_button_style", (int)this.MetadataLinkButtonStyle);
+        }
+
+        if (this.MetadataDialogWidth > 0)
+        {
+            stream.Save("metadata_dialog_width", this.MetadataDialogWidth);
+        }
+        if (this.MetadataDialogHeight > 0)
+        {
+            stream.Save("metadata_dialog_height", this.MetadataDialogHeight);
         }
     }
 

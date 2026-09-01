@@ -6,23 +6,29 @@ namespace webgis.deploy.Services;
 
 internal class DeployVersionService
 {
-    public static readonly Version DeployToolVersion = new Version(8, 26, 301);
+    public static readonly Version DeployToolVersion = new Version(8, 26, 3501);
 
 #if INTERNAL
-    private const string zipPrefix = "webgis_internal";
+    private const string DefaultZipPrefix = "webgis_internal";
 #else
-    private const string zipPrefix = "webgis";
+    private const string DefaultZipPrefix = "webgis";
 #endif
+    private const string PortableZipPrefix = "webgis_portable";
+
+    private readonly string ZipPrefix;
 
     private readonly string _versionsDirectory;
     private readonly DeployRepositoryService _deployRepositoryService;
     private readonly IOService _ioService;
 
     public DeployVersionService(DeployRepositoryService repositoryService,
-                                IOService ioService)
+                                IOService ioService,
+                                bool portable = false)
     {
         _deployRepositoryService = repositoryService;
         _ioService = ioService;
+
+        ZipPrefix = portable ? PortableZipPrefix : DefaultZipPrefix;
 
         _versionsDirectory =
             Path.Combine(_deployRepositoryService.RepositoryRootDirectoryInfo().Parent.FullName, "download");
@@ -38,8 +44,8 @@ internal class DeployVersionService
         var di = new DirectoryInfo(_versionsDirectory);
 
         return di
-            .GetFiles($"{zipPrefix}-{Platform.PlatformName}-*.zip")
-            .Select(f => f.Name.Substring(zipPrefix.Length + Platform.PlatformName.Length + 2, f.Name.Length - zipPrefix.Length - Platform.PlatformName.Length - 2 - f.Extension.Length))
+            .GetFiles($"{ZipPrefix}-{Platform.PlatformName}-*.zip")
+            .Select(f => f.Name.Substring(ZipPrefix.Length + Platform.PlatformName.Length + 2, f.Name.Length - ZipPrefix.Length - Platform.PlatformName.Length - 2 - f.Extension.Length))
             .Where(n => Version.TryParse(n, out var version))
             .OrderByDescending(n => Version.Parse(n));
     }
@@ -156,8 +162,9 @@ internal class DeployVersionService
     {
         var defaultCssDirectory = new DirectoryInfo(Path.Combine(_deployRepositoryService.ProfileDirectory(profile), "css-modify", "default.css"));
         var portalCssDirectory = new DirectoryInfo(Path.Combine(_deployRepositoryService.ProfileDirectory(profile), "css-modify", "portal.css"));
+        var siteCssDirectory = new DirectoryInfo(Path.Combine(_deployRepositoryService.ProfileDirectory(profile), "css-modify", "site.css"));
 
-        foreach (var di in new List<DirectoryInfo>() { defaultCssDirectory, portalCssDirectory })
+        foreach (var di in new List<DirectoryInfo>() { defaultCssDirectory, portalCssDirectory, siteCssDirectory })
         {
             if (!di.Exists)
             {
@@ -167,14 +174,16 @@ internal class DeployVersionService
                     {
                       "mode": "shrink",
                       "modifiers": [
-                        /*{
-                          "pattern": "#b5dbad",  // CI Color 
-                          "replace": "#ccc"
+                        /*
+                        {
+                          "pattern": "#82C828",  // CI Color (Button Borders, etc)   (--webgis-brand-primary)
+                          "replace": "#aaa"
                         },
                         {
-                          "pattern": "#82C828",  // CI Color (Button Borders, etc) 
-                          "replace": "#aaa"
-                        }*/
+                          "pattern": "#b5dbad",  // CI Color (--webgis-brand-primary-light)
+                          "replace": "#ccc"
+                        },
+                        */
                       ]
                     }
                     
@@ -188,7 +197,7 @@ internal class DeployVersionService
 
     #region Helper
 
-    private string ZipFile(string version) => $"{zipPrefix}-{Platform.PlatformName}-{version}.zip";
+    private string ZipFile(string version) => $"{ZipPrefix}-{Platform.PlatformName}-{version}.zip";
 
     #endregion
 }

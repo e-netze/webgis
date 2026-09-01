@@ -272,11 +272,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         if (!e.UseMobileBehavior())
         {
             uiElements.Add(new UIGraphicsInfoStage());
-        }
-
-        if (!e.UseMobileBehavior())
-        {
             uiElements.Add(new UIGraphicsInfoContainer());
+            uiElements.Add(new UISketchInfoContainer(allowFallback: false));
         }
 
         return new ApiEventResponse()

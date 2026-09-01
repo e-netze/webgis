@@ -4,14 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-using E.Standard.Drawing.Pro;
-
 using gView.GraphicsEngine;
 
 using PdfSharpCore.Pdf;
 using PdfSharpCore.Pdf.Advanced;
 using PdfSharpCore.Pdf.Filters;
 using PdfSharpCore.Pdf.IO;
+
+using E.Standard.Drawing.Pro;
 
 namespace E.Standard.Plot;
 
@@ -83,7 +83,10 @@ public class PdfParser
         for (int e = 0; e < contents.Elements.Count; e++)
         {
             var image = contents.Elements.GetObject(e) as PdfDictionary;
-            if (image?.Stream is null) continue;
+            if (image?.Stream is null)
+            {
+                continue;
+            }
 
             //FlateDecode flate = new FlateDecode();
             //var decodedBytes = flate.Decode(image.Stream.Value, new FilterParms(new PdfDictionary()));

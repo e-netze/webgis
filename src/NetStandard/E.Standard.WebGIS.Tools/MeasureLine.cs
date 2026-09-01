@@ -61,7 +61,6 @@ public class MeasureLine : IApiServerToolLocalizable<MeasureLine>,
             response
                 .AddUIElements(
                     new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand, "calc-3d-length")
-                        .WithStyles(UICss.CancelButtonStyle)
                         .WithText(localizer.Localize("3d.determine-3d-length"))),
                     new UITable()
                         .WithId(Table3dLengthContainerId)

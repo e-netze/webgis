@@ -11,7 +11,7 @@ using E.Standard.WebMapping.Core.Abstraction;
 
 namespace E.Standard.WebGIS.CMS;
 
-public class webgisConst
+public class WebGISConst
 {
     static public string OutputPath { get { return "OutputPath"; } }
     static public string OutputUrl { get { return "OutputUrl"; } }

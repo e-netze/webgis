@@ -85,6 +85,8 @@
                        instance="E.Standard.WebGIS.CmsSchema.ServiceLayer2" />
             </schema-node>
 
+            <schema-template-include target="ThemeProperties" />
+            <schema-template-include target="Presentations"/>
             <schema-template-include target="ServiceTocs" />
 
             <link-template assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -107,6 +109,8 @@
 							   instance="E.Standard.WebGIS.CmsSchema.ServiceLayer2" />
 				  </schema-node>
 
+          <schema-template-include target="ThemeProperties" />
+          <schema-template-include target="Presentations"/>
 				  <schema-template-include target="ServiceTocs" />
 
 				  <link-template assembly="E.Standard.WebGIS.CmsSchema.dll"
@@ -1474,8 +1478,15 @@
 						  deletable="true"
 					      assembly="E.Standard.WebGIS.CmsSchema.dll"
 			              instance="E.Standard.WebGIS.CmsSchema.EditingMaskValidation" />
-		  </schema-node>
-        </schema-node>
+		      </schema-node>
+					<schema-node name="CommitActions" itemorder="true">
+						<schema-node name="*" createmode="user" itemorder="true"
+						    prompt="Neue Editmask Commit Action"
+						    deletable="true"
+					          assembly="E.Standard.WebGIS.CmsSchema.dll"
+			              instance="E.Standard.WebGIS.CmsSchema.EditingCommitAction" />
+					</schema-node>
+      </schema-node>
       <!--</schema-node>-->
     </schema-node>
   </schema-template>

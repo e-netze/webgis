@@ -138,6 +138,11 @@ public class UpdateFeature : IApiServerToolLocalizable<Edit>,
             {
                 mask.UIElements.First().target = UIElementTarget.tool_modaldialog_noblocking.ToString();
                 //mask.UIElements[0].target = "#" + EditMaskContainerId;
+
+                if (tool is not DeleteFeature)
+                {
+                    mask.UIElements = mask.UIElements.Append(new UISketchInfoContainer(allowFallback: false)).ToArray();
+                }
             }
 
             response.UIElements = mask.UIElements;
@@ -299,7 +304,7 @@ public class UpdateFeature : IApiServerToolLocalizable<Edit>,
         var feature = editEnvironment.GetFeature(bridge, e);
         var editTheme = editEnvironment[e];
 
-        await editEnvironment.DeleteFeature(editTheme, feature);
+        var commitResult = await editEnvironment.DeleteFeature(editTheme, feature);
 
         return new ApiRawJsonEventResponse(new
         {
@@ -308,7 +313,7 @@ public class UpdateFeature : IApiServerToolLocalizable<Edit>,
             {
                 e["serviceid"]
             }
-        });
+        }).ApplyCommitFeatureResult(commitResult);
     }
 
     [ServerToolCommand("select-by-legend")]
@@ -346,7 +351,7 @@ public class UpdateFeature : IApiServerToolLocalizable<Edit>,
         var feature = editEnvironment.GetFeature(bridge, e);
         var editThemeDef = editEnvironment.EditThemeDefinition;
 
-        await editEnvironment.UpdateFeature(editTheme, feature);
+        var commitResult = await editEnvironment.UpdateFeature(editTheme, feature);
 
         var oid = e[$"_{EditAttributesFieldPrefix}_globaloid"].ParseFeatureGlobalOid();
 
@@ -372,7 +377,7 @@ public class UpdateFeature : IApiServerToolLocalizable<Edit>,
                     target = UIElementTarget.modaldialog.ToString(),
                 }
             }
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 
     #endregion

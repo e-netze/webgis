@@ -245,6 +245,11 @@ public class ToolEventResponseDTO
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string ErrorMessage { get; set; }
 
+    [JsonProperty(PropertyName = "info_message", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("info_message")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string InfoMessage { get; set; }
+
     [JsonProperty(PropertyName = "fire_custom_map_event", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("fire_custom_map_event")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]

@@ -8,6 +8,7 @@ using E.Standard.Api.App.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.Custom.Core;
 using E.Standard.Security.App.Services;
+using E.Standard.WebApp.Abstraction;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
 
 using Microsoft.AspNetCore.Http;
@@ -24,7 +25,7 @@ public class BasicAuthenticationMiddleware
     }
 
     public async Task InvokeAsync(HttpContext httpContext,
-                                  RoutingEndPointReflectionService endpointReflection,
+                                  IEndPointReflectionProvider endpointReflection,
                                   BotDetectionService botDetection,
                                   SubscriberDatabaseService subscriberDb)
     {

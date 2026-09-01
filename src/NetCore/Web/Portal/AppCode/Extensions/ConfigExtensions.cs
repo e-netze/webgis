@@ -93,11 +93,6 @@ static public class ConfigExtensions
         return config.Get<bool>(PortalConfigKeys.AllowMapUIMaster, false);
     }
 
-    static public string AppCacheListPassword(this ConfigurationService config)
-    {
-        return config[PortalConfigKeys.AppCacheListPassword];
-    }
-
     static public string[] SupportedLanguages(this IConfiguration config)
     {
         var supportedLanguagesString = config[PortalConfigKeys.SupportedLanguages];
@@ -156,6 +151,15 @@ static public class ConfigExtensions
 
         return config.AllowedSecurityMethods().Any(m => "anonym".Equals(m, StringComparison.OrdinalIgnoreCase));
     }
+
+    static public string SecureEndpointUrlPassword(this IConfiguration config)
+       => config[PortalConfigKeys.SecuritySecureEndpointUrlPassword] ?? "";
+
+    static public string SecureEndpointBasicAuthUsername(this IConfiguration config)
+        => config[PortalConfigKeys.SecuritySecureEndpointBasicAuthUsername] ?? "";
+
+    static public string SecureEndpointBasicAuthPassword(this IConfiguration config)
+        => config[PortalConfigKeys.SecuritySecureEndpointBasicAuthPassword] ?? "";
 
     #endregion
 
@@ -265,7 +269,7 @@ static public class ConfigExtensions
 
     static public string MapViewerHelpUrl(this ConfigurationService config)
     {
-        return config[PortalConfigKeys.MapViewHelpUrl].OrTake("https://docs.webgiscloud.com/manual/mapviewer/index.html");
+        return config[PortalConfigKeys.MapViewHelpUrl].OrTake("https://docs.webgiscloud.com/{language}/manual/mapviewer/index.html");
     }
 
     static public string MapViewerHelpRootUrl(this ConfigurationService config)

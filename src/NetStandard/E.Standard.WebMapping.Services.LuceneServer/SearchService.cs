@@ -65,17 +65,17 @@ public class SearchService : ISearchService3, IDisposable
     public string Id { get; set; }
     public string CopyrightId { get; set; }
 
-    public Task<SearchServiceItems> QueryAsync(IHttpService httpService, string term, int rows, int targetProjId = 4326)
+    public Task<SearchServiceItems> QueryAsync(IHttpService httpService, CmsDocument.UserIdentification ui, string term, int rows, int targetProjId = 4326)
     {
-        return Query2Async(httpService, term, rows, null, targetProjId);
+        return Query2Async(httpService, ui, term, rows, null, targetProjId);
     }
 
-    public Task<SearchServiceItems> Query2Async(IHttpService httpService, string term, int rows, IEnumerable<string> categories, int targetProjId = 4326)
+    public Task<SearchServiceItems> Query2Async(IHttpService httpService, CmsDocument.UserIdentification ui, string term, int rows, IEnumerable<string> categories, int targetProjId = 4326)
     {
-        return Query3Async(httpService, term, rows, categories, null, targetProjId);
+        return Query3Async(httpService, ui, term, rows, categories, null, targetProjId);
     }
 
-    async public Task<SearchServiceItems> Query3Async(IHttpService httpService, string term, int rows, IEnumerable<string> categories, Envelope queryBBox, int targetProjId = 4326)
+    async public Task<SearchServiceItems> Query3Async(IHttpService httpService, CmsDocument.UserIdentification ui, string term, int rows, IEnumerable<string> categories, Envelope queryBBox, int targetProjId = 4326)
     {
         List<SearchServiceItem> searchItems = new List<SearchServiceItem>();
 

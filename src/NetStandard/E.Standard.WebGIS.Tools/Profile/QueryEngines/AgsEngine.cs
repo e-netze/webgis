@@ -33,7 +33,7 @@ internal class AgsEngine
             TokenExpiration = 600
         };
 
-        agsService.PreInit(String.Empty, server, service, user, pwd, string.Empty, map.Environment.UserString(webgisConst.AppConfigPath), null);
+        agsService.PreInit(String.Empty, server, service, user, pwd, string.Empty, map.Environment.UserString(WebGISConst.AppConfigPath), null);
         await agsService.InitAsync(map, bridge.RequestContext);
 
         agsService.ProjectionId = profile.SrsId;

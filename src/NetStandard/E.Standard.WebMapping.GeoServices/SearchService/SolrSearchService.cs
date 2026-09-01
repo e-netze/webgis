@@ -12,6 +12,7 @@ using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
+using E.Standard.WebMapping.GeoServices.SearchService.Extensions;
 
 using Newtonsoft.Json;
 
@@ -68,14 +69,15 @@ public class SolrSearchService : ISearchService
 
     public string CopyrightId { get; set; }
 
-    async public Task<SearchServiceItems> QueryAsync(IHttpService httpService, string term, int rows, int targetProjId = 4326)
+    async public Task<SearchServiceItems> QueryAsync(IHttpService httpService, CmsDocument.UserIdentification ui, string term, int rows, int targetProjId = 4326)
     {
         if (this is ISearchService2)
         {
-            return await ((ISearchService2)this).Query2Async(httpService, term, rows, null, targetProjId);
+            return await ((ISearchService2)this).Query2Async(httpService, ui, term, rows, null, targetProjId);
         }
 
-        string url = String.Format(_serviceUrl, term).Replace("{term}", term).Replace("[term]", term);
+        term = term.ToSafeSolrTerm();
+        string url = _serviceUrl.ReplaceSolrTermPlaceholder(term).ReplaceRolesPlaceholder(ui);
         url += "&rows=" + (rows > 0 ? rows : _rows);
 
         string json = await httpService.GetStringAsync(url, GetRequestAuthorization(), encoding: Encoding.UTF8);

@@ -7,12 +7,151 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-## Added
-## Fixed
+### Added
+### Fixed
+
+## 8.26.3402
+
+### Added
+
+- CMS DeployService: deployments can now define an optional ``services`` allow-list to restrict
+  which services (ArcGIS Server, ImageServer, WMS, WMTS, ...) are actually included in the
+  exported target XML. Services are matched by their url-name (folder name) or, for the rare
+  case of duplicate folder names across different service types, by their full relative path.
+  Services not listed are skipped during export. Leaving the list empty/unset keeps the previous
+  behavior of exporting all services.
+
+### Fixed
+
+- TileService: `CreateImageUrlTemplate` dropped non-standard ports (e.g. `http://localhost:5001/...`)
+  when building the `{s}` domain template for tile Urls served from multiple servers/aliases,
+  since only the host name was used. The port is now kept whenever it isn't the scheme's
+  standard port (80/443); for scheme-relative Urls (`//host:port/...`), where the actual
+  scheme is unknown, an explicitly given port is always kept as-is.
+- Styling: (MapBuild Sidebar)
+- Coordinates Tool: CSV export ("Koordinaten herunterladen") showed "Rechtswert" twice as column
+  header instead of "Rechtswert" and "Hochwert" (Easting/Northing).
+  [Issue #499](https://github.com/e-netze/webgis-community/issues/499)
+
+## 8.26.3202
+
+### Fixed
+
+- Styling Bugs: image and background-size corrections:
+  [Issue #498](https://github.com/e-netze/webgis-community/issues/498)
+
+## 8.26.3201
+
+### Added
+
+- CSS Custom WebGIS Brand Properties (Variables)
+  [Issue #473](https://github.com/e-netze/webgis-community/issues/473)
+  [docs](https://docs.webgiscloud.com/en/webgis/config/css-styling/index.html)
+
+  **!! Braking Change !!**
+  This change may cause changes in existing stylings of the viewer!
+
+- custom.js: added usability constant ``expandBasemapsOnAddServices`` to control whether the
+  basemap group in the TOC stays expanded/collapsed when services are added to the map
+  [docs](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#hintergrundkarten-basemaps)
+
+- CMS Editing Commit Action: new ``Success Message`` property. It is shown in the viewer after a
+  commit action was executed successfully (Insert/Update/Delete, regardless of Before/After timing).
+  The message text may contain ``[FIELDNAME]`` placeholders that are resolved with the values of the
+  current feature. By default the message is shown as a toast notification; prefixing it with
+  ``dialog:`` shows it in a dialog instead.
+
+- DataLinq Configuration:
+  Added ``datalinq:ImageRequestWhiteList:0`` array to ``api.config``
+  [docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#datalinq)
+
+### Fixed
+
+- MapMarkup: draw rectangle with distance/direction Tool
+  [Issue #497](https://github.com/e-netze/webgis-community/issues/497)
+
+## 8.26.3101
+
+### Added
+
+- DataLinq Update: 8.26.3101
+  fixed/solved:
+  [DataLinq Issue #49](https://github.com/e-netze/datalinq-community/issues/49)
+  [DataLinq Issue #47](https://github.com/e-netze/datalinq-community/issues/47)
+
+- WebGIS Help: 
+  * Admin Pages in english (with switch to german)
+  * User Manuel in user selected language (with switch en/de)
+
+
+## 8.26.2804
+
+### Added
+
+- Esri Map Service Query Results with Dates: consider time-zone
+  [Issue #484](https://github.com/e-netze/webgis-community/issues/484)
+
+- Show Service and Layer Metadatalinks in Copyright & Info Section
+  - custom.js: ``show_presentation_metadata_in_copyright``: ``true``;
+
+- custom.js: added usability constants:
+  - ``show_metadata_i_button_toc``: ``true``
+  - ``show_link_button_in_toc``: ``true``  // custom-recommendation => ``webgis.usability.show_metadata_i_button_toc = webgis.isMobileDevice() !== true;``
+
+- Metadata: CMS configurable popup dialog size
+  [Issue #459](https://github.com/e-netze/webgis-community/issues/459)
+
+### Fixed
+
+- TilingService Bug & Improovments:
+  [Issue #480](https://github.com/e-netze/webgis-community/issues/480)
+
+## 8.26.2401
+
+### Added
+
+- Quicksearch: make ``minLength`` and ``debounceDelay`` configurable
+  [Issue #469](https://github.com/e-netze/webgis-community/issues/469)
+
+- Editing: Before/After Commit Actions
+  sending HTTP GET/POST Request to a service before and/or after an insert/update/delete
+
+- SOLR Search: Added placehoders ``{{roles}}`` and ``{{namespace-roles}}`` (EXPERIMENTAL, NOT SUPPORTED!)
+  [Issue #481](https://github.com/e-netze/webgis-community/issues/481)
+
+### Fixed
+
+- Tool Coordinates: Remove all vertices
+  [Issue 471](https://github.com/e-netze/webgis-community/issues/471)
+
+- Measuring Tools: Change tool => UI is not updating sketch values
+  [Issue #465](https://github.com/e-netze/webgis-community/issues/465)
+
+- Tool Identify: Line/Polyselection not always works in desktop/professional layout
+  [discussion #399](https://github.com/e-netze/webgis-community/discussions/399)
+
+- Editing: save-and-continue-sketch not worked with desktop/professional layout
+
+## 8.26.2201
+
+### Added
+
+- MapSeriesPrint: Added "Create One per Feature" Method.
+  Increased Usability with creation descrtion and preview.
+  [Issue #464](https://github.com/e-netze/webgis-community/issues/464)
+
+- Endpoint Security (cache/clear) etc, ``<section name="security">``
+  api.config [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#security)
+  portal.config [docs](https://docs.webgiscloud.com/de/webgis/config/portal/index.html#abschnitt-security)
+
+### Fixed
+
+- Tool Profile: Can't download print PDF document
+  [Issue #479](https://github.com/e-netze/webgis-community/issues/479)
 
 ## 8.26.1801
 
-## Added
+### Added
 
 - TileCache Rendering Mode: ScaleDependentLayers (for printing cached MapServices)
   [Issue #458](https://github.com/e-netze/webgis-community/issues/458)
@@ -20,11 +159,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Map Series Print: api.config - allow increase max intersection iterations
   [Issue #464](https://github.com/e-netze/webgis-community/issues/464)
 
-## Fixed
+### Fixed
 
 ## 8.26.1702
 
-## Added
+### Added
 
 - GeoCodes: allow GeoCodes (UTMRef, etc) in Coordinates-Tool and Quick Search 
   [discussion #449](https://github.com/e-netze/webgis-community/discussions/449)
@@ -37,7 +176,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Basic Authentication for SOLR search services
   [Issue #456](https://github.com/e-netze/webgis-community/issues/456)
 
-## Fixed
+### Fixed
 
 - Bug: API Crashes on start, if DataLinq is not included in api.config
 
@@ -63,7 +202,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 8.26.1402
 
-## Added
+### Added
 
 - ResultTable: new sorting algorithm ``number_de``
   [dicussion #440](https://github.com/e-netze/webgis-community/discussions/440)
@@ -80,7 +219,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - DataLinq Upgrade: 8.26.1402
 
-## Fixed
+### Fixed
 
 - Bug: Print Measure Polygon calculate wrong circumference value
   [Issue #452](https://github.com/e-netze/webgis-community/issues/452)
@@ -92,7 +231,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Logging: User information logs (like no query found in this area, etc) will only logged
   in ``webgis-exceptions.log`` if LogLevel is ``Information``
 
-## Fixed
+### Fixed
 
 - Bug: TokenRequiredError 
   [Issue #422](https://github.com/e-netze/webgis-community/issues/442)
@@ -102,7 +241,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 8.26.1203
 
-## Added
+### Added
 
 - TimeFilter UI:
   * Switcher: **Point in time** / **Span of Time**
@@ -110,7 +249,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - DataLinq Upgrade: 8.26.1201
 
-## Fixed
+### Fixed
 
 - Linux/ContainerImages: Fixed problem with localization (Localization/DefaultCulture)
   [Issue #422](https://github.com/e-netze/webgis-community/issues/422)
@@ -129,7 +268,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 8.26.1201
 
-## Added
+### Added
 
 - ``api.config``:
   **Security:** Disable Antiforgery by configuration (not recommeneded!)

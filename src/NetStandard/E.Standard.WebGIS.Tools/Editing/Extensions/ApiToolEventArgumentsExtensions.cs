@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
+using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 
@@ -25,6 +27,63 @@ static internal class ApiToolEventArgumentsExtensions
     public static bool UseDesktopBehavior(this ApiToolEventArguments e)
     {
         return e.HasElement("div", new[] { "query-results-tab-control-container" });
+    }
+
+    public static ApiEventResponse ApplyCommitFeatureResult(this ApiEventResponse response, CommitFeatureResult result)
+    {
+        if (response == null || result == null)
+        {
+            return response;
+        }
+
+        if (result.ErrorMessages.Any())
+        {
+            response.ErrorMessage = CombineMessages(response.ErrorMessage, result.ErrorMessages);
+        }
+
+        if (result.InfoMessages.Any())
+        {
+            response.InfoMessage = CombineMessages(response.InfoMessage, result.InfoMessages);
+        }
+
+        return response;
+    }
+
+    /// <summary>
+    /// A message can carry a prefix (currently only "dialog:"). When combining several messages
+    /// into one, that prefix must only appear once, at the very beginning of the combined message,
+    /// instead of once per contained message.
+    /// </summary>
+    private const string DialogMessagePrefix = "dialog:";
+
+    private static string CombineMessages(string existingMessage, IEnumerable<string> additionalMessages)
+    {
+        var messages = new List<string>();
+        if (!string.IsNullOrEmpty(existingMessage))
+        {
+            messages.Add(existingMessage);
+        }
+        messages.AddRange(additionalMessages);
+
+        bool hasDialogPrefix = false;
+        var cleanedMessages = new List<string>();
+
+        foreach (var message in messages)
+        {
+            if (message != null && message.StartsWith(DialogMessagePrefix, StringComparison.Ordinal))
+            {
+                hasDialogPrefix = true;
+                cleanedMessages.Add(message.Substring(DialogMessagePrefix.Length));
+            }
+            else
+            {
+                cleanedMessages.Add(message);
+            }
+        }
+
+        var combinedMessage = string.Join(System.Environment.NewLine, cleanedMessages);
+
+        return hasDialogPrefix ? DialogMessagePrefix + combinedMessage : combinedMessage;
     }
 
     public static IEditToolService EditToolServiceInstance(this ApiToolEventArguments e, IApiTool sender, ILocalizer localizer)
@@ -372,6 +431,10 @@ static internal class ApiToolEventArgumentsExtensions
     }
 
     #endregion
+
+    static public bool FromApplyGeometryCommand(this ApiToolEventArguments e) => e["_method"] == "apply";
+    static public bool FromApplyBoxCommand(this ApiToolEventArguments e) => e["_method"] == "box";
+    static public bool FromAnyApplyCommand(this ApiToolEventArguments e) => e.FromApplyBoxCommand() || e.FromApplyGeometryCommand();
 
     public static bool RequireCrsP4Parameters(this ApiToolEventArguments e, int sketchCrsId)
     {

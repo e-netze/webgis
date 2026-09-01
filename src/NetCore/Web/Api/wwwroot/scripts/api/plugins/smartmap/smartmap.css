@@ -24,7 +24,7 @@
     width: calc(100% - 10px);       /* 2x 1px Border links/rechts + 2x 4px Padding links/rechts */
     max-width: 400px;
     padding: 6px 4px;
-    border: 1px solid #b5dbad;
+    border: 1px solid var(--webgis-brand-primary-light);
     font-size: 14px;
     z-index: 1000;
     margin-bottom: 10px;

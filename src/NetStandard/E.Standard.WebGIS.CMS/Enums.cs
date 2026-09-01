@@ -402,6 +402,23 @@ public enum EditingInsertAction
     SaveAndContinueAtLatestestSketchVertexAndKeepAllAttributes = 5
 }
 
+public enum EditCommitActionTiming
+{
+    Before_Insert = 0,
+    After_Insert = 1,
+    Before_Update = 2,
+    After_Update = 3,
+    Before_Delete = 4,
+    After_Delete = 5
+}
+
+public enum EditCommitActionProtocol
+{
+    Http_Get = 0,
+    Http_Post = 1,
+}
+
+
 [Flags]
 public enum EditingRights
 {

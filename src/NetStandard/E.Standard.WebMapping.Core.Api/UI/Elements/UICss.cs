@@ -90,7 +90,7 @@ public class UICss
     public const string OptionContainerWithLabels = "contains-labels";
     public const string ImageButtonWithLabelsContaier = "image-button-container contains-labels";
 
-    public const string InputSetBorderOnChange = "input-setborder-onchange";
+    public const string InputChangeStyleOnChange = "input-change-style-onchange";
     public const string InputAutocomplete = "webgis-autocomplete";
 
     public const string PrintToolLayout = "webgis-print-tool-layout";
@@ -176,7 +176,7 @@ public class UICss
 
     public const string TableAlternateRowColor = "webgis-table-alternate-row-color";
 
-    public const string EmptyOnChangeSketch = "webgis-ui-emtpy-onchage-sketch";
+    public const string EmptyOnChangeSketch = "webgis-ui-emtpy-onchange-sketch";
 
     public const string Narrow = "webgis-narrow";
     public const string NarrowForm = "webgis-narrow-form";

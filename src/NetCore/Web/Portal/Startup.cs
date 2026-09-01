@@ -29,6 +29,8 @@ using E.Standard.Web.Extensions.DependencyInjection;
 using E.Standard.Web.Services;
 using E.Standard.WebApp.Abstraction;
 using E.Standard.WebApp.Extensions;
+using E.Standard.WebApp.Extensions.DependencyInjection;
+using E.Standard.WebApp.Options;
 using E.Standard.WebGIS.Core.Extensions;
 using E.Standard.WebGIS.Core.Extensions.DependencyInjection;
 using E.Standard.WebGIS.SubscriberDatabase.Extensions.DependencyInjection;
@@ -77,6 +79,7 @@ public class Startup
         services
             .AddEssentialWebgisPortalServices()
             .AddWebgisPortalAuthenticationServices(Configuration)
+            .AddBrandStyleService()
             .AddMvc(o =>
             {
                 o.EnableEndpointRouting = false;
@@ -85,7 +88,20 @@ public class Startup
 
         #region Http Client Service
 
-        services.AddHttpClient("default").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
+        services.AddHttpClient("default", client =>
+        {
+            if (int.TryParse(Configuration[PortalConfigKeys.HttpClientDefaultTimeoutSeconds], out int timeoutSeconds) && timeoutSeconds > 0)
+            {
+                client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+            }
+            else
+            {
+                // Default kept short (unlike HttpClient's built-in default of 100s): this client mostly
+                // calls the internal WebGIS Api on the same host/network. A shorter timeout lets the
+                // "Api is starting" retry page kick in quickly instead of a long, silent wait.
+                client.Timeout = TimeSpan.FromSeconds(20);
+            }
+        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
         {
 #pragma warning disable SYSLIB0039 // allow old protocols (tls, tls11)
             SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13 | SslProtocols.Tls | SslProtocols.Tls11,
@@ -282,6 +298,19 @@ public class Startup
             config.SupportedLanguages = Configuration.SupportedLanguages();
             config.DefaultLanguage = config.SupportedLanguages.First();
         });
+
+        #endregion
+
+        #region Security
+
+        services.Configure<SecurityOptions>(config =>
+        {
+            config.EndpointAuthorizationUrlPassword = Configuration.SecureEndpointUrlPassword();
+            config.EndpointAuthorizationBasicUsername = Configuration.SecureEndpointBasicAuthUsername();
+            config.EndpointAuthorizationBasicPassword = Configuration.SecureEndpointBasicAuthPassword();
+            config.EndpointAuthorizationBearerUsername = "admin";
+        });
+
 
         #endregion
 

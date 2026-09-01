@@ -1,7 +1,8 @@
 ﻿webgis.ui.definePlugin('webgis_sketchInfoContainer', {
     defaults: {
         map: null,
-        readonly: false
+        readonly: false,
+        minimal: false // if true: only show snapping/construction info, hide geometry type/segment/section details
     },
     init: function () {
         const $ = this.$;
@@ -22,7 +23,16 @@
             .appendTo($tabGeneral);
 
         let $tabSegment = $("<table><tr><th colspan=2>" + webgis.l10n.get("segment") + "</th></tr></table>")
-            .appendTo(this.$el);
+            .addClass('sketch-segment-clickable')
+            .attr('title', webgis.l10n.get("sketch-construct-direction-distance"))
+            .appendTo(this.$el)
+            .click(function () {
+                var map = $(this).closest('.webgis-sketch-info-container-holder').data('map');
+                var sketch = map && (map.graphics._isGraphicsToolActive() === true ? map.graphics._sketch : map.toolSketch());
+                if (sketch && sketch.ui && sketch.ui.openDirectionDistanceModal) {
+                    sketch.ui.openDirectionDistanceModal();
+                }
+            });
 
         $("<tr><td>" + webgis.l10n.get("segment-length") + ":</td><td class='sketch-info-item segment-length'></td>")
             .appendTo($tabSegment);
@@ -61,17 +71,30 @@
         let $tabSections = $("<table>")
             .appendTo(this.$el);
 
-        const sketch = options.sketch = options.map.toolSketch();
+        if (options.minimal === true) {
+            // Only snapping/construction info is relevant in minimal mode.
+            $tabGeneral.css('display', 'none');
+            $tabSegment.css('display', 'none');
+            $tabSections.css('display', 'none');
+        }
+
+        const sketch = options.sketch =
+            options.map.graphics._isGraphicsToolActive() === true
+            ? options.map.graphics._sketch
+            : options.map.toolSketch();
+
         if (sketch) {
             sketch.events.off('currentstate', this.constructor.onSketchCurrentStateChanged);
             sketch.events.on('currentstate', this.constructor.onSketchCurrentStateChanged,
             {
                 sketch: sketch,
                 elem: this.$el,
+                tabGeneral: $tabGeneral,
                 tabSegment: $tabSegment,
                 divConstruction: $divConstruction,
                 tabSnapping: $tabSnapping,
-                tabSections: $tabSections
+                tabSections: $tabSections,
+                minimal: options.minimal === true
             });
         }
 
@@ -153,17 +176,21 @@
 
             $elem.find('.sketch-info-item').text('');
 
+            const $tabGeneral = this.tabGeneral;
             const $tabSegment = this.tabSegment;
             const $divConstruction = this.divConstruction;
             const $tabSnapping = this.tabSnapping;
             const $tabSections = this.tabSections;
+            const minimal = this.minimal === true; // user preference: only show snapping/construction info
 
             let constructionMode = webgis.sketch.construct ? webgis.sketch.construct.getConstructionMode(sketch) : null
 
             var geometryType = info.geometryType;
             $elem.find('.sketch-info-item.sketch-geometrytype').text(webgis.l10n.get(geometryType));
 
-            if (!constructionMode && $.inArray(geometryType, ["polygon", "polyline"]) >= 0) {
+            // Dimline/hectoline behave like polyline (segment length/azimuth per section),
+            // dimpolygon behaves like polygon - both should show the same segment info.
+            if (!constructionMode && $.inArray(geometryType, ["polygon", "polyline", "dimline", "dimpolygon", "hectoline"]) >= 0) {
                 $tabSegment.css('display', 'block');
                 $divConstruction.css('display', 'none');
 
@@ -260,6 +287,14 @@
                         validParts++;
                     }
                 }
+            }
+
+            if (minimal) {
+                // User preference "sketch-info-display-mode" = "minimal": only snapping/construction
+                // info is relevant, hide geometry type, segment and section details entirely.
+                $tabGeneral.css('display', 'none');
+                $tabSegment.css('display', 'none');
+                $tabSections.css('display', 'none');
             }
         },
         onGpsCurrentPosition: function (channel, sender, pos) {

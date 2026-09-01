@@ -37,10 +37,7 @@ public class GeoReference : IApiServerButtonLocalizable<GeoReference>,
                     targettitle = localizer.Localize("georeference-document"),
                     elements=new IUIElement[]
                     {
-                        new UILabel()
-                        {
-                            label = localizer.Localize("label1:body")
-                        },
+                        new UIParagraph(localizer.Localize("label1:body")),
                         new UIBreak(2),
                         new UIUploadFile(this.GetType(), "upload-file") {
                             id = "upload-file",

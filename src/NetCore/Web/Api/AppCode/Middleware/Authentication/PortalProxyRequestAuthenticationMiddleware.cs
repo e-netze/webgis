@@ -10,6 +10,7 @@ using E.Standard.CMS.Core;
 using E.Standard.Custom.Core;
 using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
+using E.Standard.WebApp.Abstraction;
 
 using Microsoft.AspNetCore.Http;
 
@@ -25,7 +26,7 @@ public class PortalProxyRequestAuthenticationMiddleware
     }
 
     async public Task Invoke(HttpContext httpContext,
-                             RoutingEndPointReflectionService endpointReflection,
+                             IEndPointReflectionProvider endpointReflection,
                              ICryptoService crypto)
     {
         if (httpContext.User.ApplyAuthenticationMiddleware(endpointReflection, ApiAuthenticationTypes.PortalProxyRequest))

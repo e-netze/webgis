@@ -148,10 +148,99 @@
         map.events.fire('resize', map, {});
     }, 1000, this);
     this._currentCoordsContainer = null;
+    this._sketchInfoOverlayContainer = null;
+    this._sketchInfoOverlayContent = null;
+    this._mouseOverMap = false;
+    this._mouseOverSketchInfoOverlay = false;
+    this._sketchInfoOverlayHideTimer = null;
+    this._sketchInfoOverlayDismissed = false;
+    // Id of the tool the overlay content currently belongs to; used to tell a real tool switch
+    // (content must be cleared) apart from a partial UI update within the same tool, eg. the
+    // MapMarkup tool re-rendering its style panel while drawing (content must be kept in that case).
+    this._sketchInfoOverlayToolId = null;
     this._currentCursorPosition = { lat: null, lng: null };
     this._mouseDownContainerPointer = null;
     this._mouseDown = false, this._mouseDownOffset = null, this._mouseMovePrevOffset = null;
     this.guid = webgis.guid();
+
+    // Returns the container that hosts the sketch-info-container UI element's content
+    // (docked above the current-coordinates display, inside the overlay - next to its
+    // persistent "x" close button). Returns null if the current layout does not provide
+    // a coordinate display (fallback: element is inserted into the tool dialog instead,
+    // see webgis_uibuilder.js).
+    this.sketchInfoOverlayContainer = function () {
+        return this._sketchInfoOverlayContent && this._sketchInfoOverlayContent.length > 0 ?
+            this._sketchInfoOverlayContent :
+            null;
+    };
+
+    // (Re-)calculates the horizontal position of the sketch-info overlay so it always
+    // matches the current-coordinates display (left/right/width may differ between skins),
+    // and docks it directly above that display (bottom = coords.bottom + coords.outerHeight()).
+    this._positionSketchInfoOverlay = function () {
+        if (!this._sketchInfoOverlayContainer || !this._currentCoordsContainer || this._currentCoordsContainer.length === 0) {
+            return;
+        }
+        var $coords = this._currentCoordsContainer;
+        var coordsBottom = parseFloat($coords.css('bottom')) || 0;
+
+        this._sketchInfoOverlayContainer.css({
+            position: 'absolute',
+            left: $coords.css('left'),
+            right: $coords.css('right'),
+            width: $coords.css('width'),
+            bottom: (coordsBottom + $coords.outerHeight()) + 'px'
+        });
+    };
+
+    // Shows/hides the sketch-info overlay: only visible while the cursor is over the
+    // map (or currently over the overlay itself, so buttons inside it - eg. "stop ortho
+    // mode" - stay usable), the overlay actually has content (ie. a sketch tool populated it),
+    // and the user hasn't temporarily dismissed it via its "x" close button.
+    // Hiding happens after a short grace period, so the cursor has time to move from the map
+    // onto the overlay (which lives outside the actual map element) before it fades out -
+    // otherwise the fade-out/slide-out animation makes it near-impossible to catch in time.
+    this.updateSketchInfoOverlayVisibility = function () {
+        if (!this._sketchInfoOverlayContainer) {
+            return;
+        }
+        if (this._sketchInfoOverlayHideTimer) {
+            clearTimeout(this._sketchInfoOverlayHideTimer);
+            this._sketchInfoOverlayHideTimer = null;
+        }
+
+        var hasContent = this._sketchInfoOverlayContent && this._sketchInfoOverlayContent.children().length > 0;
+        var hovering = (this._mouseOverMap === true || this._mouseOverSketchInfoOverlay === true) &&
+            this._sketchInfoOverlayDismissed !== true;
+
+        if (hasContent && hovering) {
+            this._sketchInfoOverlayContainer.toggleClass('webgis-visible', true);
+        } else if (!hasContent) {
+            // nothing to show (eg. right after switching tools) -> hide immediately
+            this._sketchInfoOverlayContainer.toggleClass('webgis-visible', false);
+        } else {
+            var map = this;
+            this._sketchInfoOverlayHideTimer = setTimeout(function () {
+                map._sketchInfoOverlayHideTimer = null;
+                map._sketchInfoOverlayContainer.toggleClass('webgis-visible', false);
+            }, 250);
+        }
+    };
+
+    // Called after a construction-tool modal (opened via the coordinate display or the sketch-info
+    // overlay's segment area, eg. "Coordinates (absolute)"/"Direction/Distance") has closed.
+    // Such modals cover the map, so the browser fires a real "mouseout" on the map element while
+    // they're open; closing them doesn't fire a "mouseover" on its own since the cursor doesn't
+    // necessarily move. Without this, the sketch-info overlay would stay hidden until the next
+    // actual mouse movement over the map, even though the user is still actively sketching.
+    this.notifySketchConstructionModalClosed = function () {
+        this._mouseOverMap = true;
+        this._sketchInfoOverlayDismissed = false;
+        if (this._sketchInfoOverlayContainer) {
+            this._positionSketchInfoOverlay();
+        }
+        this.updateSketchInfoOverlayVisibility();
+    };
 
     var _calcCrsId = 0;
     var _zoomBoundsAtZoomstart = null;
@@ -201,10 +290,83 @@
                         e.stopPropagation();
                         webgis.showCrsInfo(parseInt($(this).html()));
                     });
+                var _map = this;
                 $(this._currentCoordsContainer).click(function (e) {
                     e.stopPropagation();
-                    $(this).closest('.webgis-container').find(".webgis-toolbox-tool-item[data-toolid='webgis.tools.coordinates']").trigger('click');
+
+                    var sketch = _map.toolSketch ? _map.toolSketch() : null;
+
+                    if (sketch && sketch.ui && sketch.ui.openXYAbsoluteModal) {
+                        // A sketch/graphics tool is currently active: open the "Coordinates (absolute)"
+                        // construction tool instead of the XYZ query tool.
+                        sketch.ui.openXYAbsoluteModal();
+                    }
+                    else {
+                        $(this).closest('.webgis-container').find(".webgis-toolbox-tool-item[data-toolid='webgis.tools.coordinates']").trigger('click');
+                    }
                 });
+
+                // Overlay container for sketch-info (segment length, snapping, ...), docked directly
+                // above the coordinate display. Grows upwards, since only "bottom" is fixed.
+                this._sketchInfoOverlayContainer = $("<div>")
+                    .addClass('webgis-sketch-info-container-overlay')
+                    .insertBefore(this._currentCoordsContainer);
+                this._positionSketchInfoOverlay();
+
+                // Persistent "x" button to temporarily dismiss the overlay (eg. if it happens to
+                // cover something on the map the user needs to see/click). Lives outside the
+                // content wrapper below, so it survives the content being emptied/rebuilt.
+                $("<div>")
+                    .addClass('webgis-button-close-24')
+                    .attr('title', webgis.l10n.get('close') || '')
+                    .appendTo(this._sketchInfoOverlayContainer)
+                    .click(function (e) {
+                        e.stopPropagation();
+                        _map._sketchInfoOverlayDismissed = true;
+                        _map.updateSketchInfoOverlayVisibility();
+                    });
+
+                // Content wrapper: this is where webgis_uibuilder.js appends the actual
+                // sketch-info-container element/plugin. Kept separate from the close button
+                // above, so emptying/rebuilding the content on tool-switch doesn't remove it.
+                this._sketchInfoOverlayContent = $("<div>")
+                    .addClass('webgis-sketch-info-container-overlay-content')
+                    .appendTo(this._sketchInfoOverlayContainer);
+
+                // Keep the overlay visible while the cursor is over it (it lives outside the
+                // actual map element, so leaving the map fires "mouseout" even though the user
+                // is still interacting with eg. the "stop ortho/trace/fan mode" buttons inside it).
+                this._sketchInfoOverlayContainer.on('mouseenter', function () {
+                    _map._mouseOverSketchInfoOverlay = true;
+                    _map.updateSketchInfoOverlayVisibility();
+                }).on('mouseleave', function () {
+                    _map._mouseOverSketchInfoOverlay = false;
+                    _map.updateSketchInfoOverlayVisibility();
+                });
+
+                // Clear stale sketch-info content whenever a (new) tool dialog is being built for a
+                // *different* tool than before, so content of a previously active tool doesn't linger
+                // when switching tools. Also un-dismiss the overlay again in that case, so a "x"-closed
+                // overlay reappears for the next (or restarted) sketch tool.
+                // NOTE: tools like MapMarkup issue additional partial UI updates for the *same* tool
+                // while drawing (eg. selecting the "line"/"polygon" sub-tool re-renders just their style
+                // panel) - onbuildtoolui fires for those too, but must NOT clear the sketch-info content
+                // in that case, since it isn't re-added with each of those partial updates and would
+                // otherwise be wiped out and never repopulated for the rest of the drawing session.
+                this.events.on('onbuildtoolui', function (e, toolId) {
+                    if (this._sketchInfoOverlayContent && toolId !== this._sketchInfoOverlayToolId) {
+                        this._sketchInfoOverlayContent.empty();
+                        this._sketchInfoOverlayDismissed = false;
+                        this.updateSketchInfoOverlayVisibility();
+                    }
+                    this._sketchInfoOverlayToolId = toolId;
+                }, this);
+
+                // Keep the overlay's left/right/width in sync with the coordinate display, eg.
+                // when the sidebar is resized (splitter drag) or collapsed/expanded, not just once at startup.
+                this.events.on('resize', function () {
+                    this._positionSketchInfoOverlay();
+                }, this);
             }
 
             felem.on("zoomstart", function () {
@@ -469,9 +631,21 @@
             }, this);
             felem.on("mouseout", function (e) {
                //console.log('mouseout', e);
+                this._mouseOverMap = false;
+                this.updateSketchInfoOverlayVisibility();
             }, this);
             felem.on("mouseover", function (e) {
                 //console.log('mouseover', e);
+                this._mouseOverMap = true;
+                // "Un-dismiss" a previously "x"-closed overlay: re-entering the map after having
+                // left it is a fresh interaction, so the overlay should be allowed to show again.
+                this._sketchInfoOverlayDismissed = false;
+                // Re-sync width/position with the coordinate display right before it may become
+                // visible, in case the sidebar was resized/collapsed without a map "resize" event.
+                if (this._sketchInfoOverlayContainer) {
+                    this._positionSketchInfoOverlay();
+                }
+                this.updateSketchInfoOverlayVisibility();
                 if (e.originalEvent.buttons === 0) {  
                     
                     // if no button is pressed, remove BBOX if exists
@@ -551,15 +725,11 @@
                     webgis.tools.fireActiveToolEvents(this, e, coord);
                 }, this);
                 this.sketch.events.on(['onchanged', 'onremoved', 'onchangegeometrytype'], function (e) {
-                    var prop = this.sketch.calcProperties("X", "Y");
-                    if (prop.length || prop.set_values)
-                        $('.webgis-sketch-length').val(webgis.calc.round(prop.length || 0, 2));
-                    if (prop.circumference || prop.set_values || 0)
-                        $('.webgis-sketch-circumference').val(webgis.calc.round(prop.circumference || 0, 2));
-                    if (prop.area || prop.set_values)
-                        $('.webgis-sketch-area').val(webgis.calc.round(prop.area || 0, 2));
+                    console.log('sketch changed...');
 
-                    $(".webgis-ui-emtpy-onchage-sketch").empty();   // zB 3D Messen Tabelle nach jeder änderung des Sketches wieder verwerfen
+                    this.ui.recalcSketchPropertyElements();
+
+                    $(".webgis-ui-emtpy-onchange-sketch").empty();   // zB 3D Messen Tabelle nach jeder änderung des Sketches wieder verwerfen
                 }, this);
                 this.sketch.events.on(['onvertexadded'], function (e, sender, coord) {
                     webgis.tools.fireActiveToolEvents(this, e, coord);
@@ -2223,6 +2393,22 @@
         if (tool && (tool.type == 'clientbutton' || tool.type == 'serverbutton')) { // nur tools können active Tool sein;
             return;
         }
+        if (tool !== this._activeTool && this._sketchInfoOverlayContent &&
+            (!tool || tool.id !== this._sketchInfoOverlayToolId)) {
+            // Tool changes (or gets deactivated) without necessarily rebuilding the tool dialog
+            // (e.g. closing the dialog) -> make sure no stale sketch-info content is left behind.
+            // NOTE: empty only the inner content wrapper here, not the outer overlay container -
+            // the latter also holds the persistent "x" close button, which must survive tool switches.
+            //
+            // The tool.id check (instead of only comparing object identity against _activeTool)
+            // matters because some tools (eg. Edit's UpdateFeature) get activated via a *second*,
+            // client-triggered OnButtonClick round-trip whose neutral response carries no UI - the
+            // overlay content for that tool was already built moments earlier (onbuildtoolui already
+            // recorded _sketchInfoOverlayToolId for it), so it must survive this later setActiveTool
+            // call even though the tool *instance* differs from the previous _activeTool.
+            this._sketchInfoOverlayContent.empty();
+            this.updateSketchInfoOverlayVisibility();
+        }
         if (this.isSketchTool(this._activeTool)) {
 
             // Readonly Sketches müssen nicht gespeichert werden
@@ -2569,6 +2755,8 @@
         if (!this._toolPersistence[context])
             this._toolPersistence[context] = [];
         this._toolPersistence[context][paramId] = val;
+
+        //console.log("setPersistentToolParameter", context, paramId, val);
     };
     this.getPersistentToolParameter = function (tool, paramId, prefix) {
         var params = this.getPersistentToolParameters(tool, prefix);
@@ -2627,7 +2815,7 @@
             var $e = $('#' + id + '.webgis-tool-parameter-persistent');
             if ($e.length > 0) {
                 params[id] = $e.val();
-                console.log(' updated parameter', id, params[id]);
+                console.log(' updated parameter', context, id, params[id]);
             }
         }
     };

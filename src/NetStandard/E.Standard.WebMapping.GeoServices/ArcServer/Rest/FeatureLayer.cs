@@ -35,6 +35,9 @@ class FeatureLayer : RestLayer,
     private new readonly MapService _service;
     private readonly string _id = String.Empty;
     private ThreadSafe.ThreadSafeDictionary<string, JsonDomain> _domains = null;
+#nullable enable
+    public TimeZoneInfo? DateFieldsTimeZone { get; set; }
+#nullable restore
 
     public FeatureLayer(string name, string id, IMapService service, bool queryable, bool supportsDynamicLegends)
         : base(name, id, service, queryable: queryable)
@@ -273,7 +276,7 @@ class FeatureLayer : RestLayer,
                     feature.Attributes.Add(new Core.Attribute(
                                 name,
                                 fieldAliases.ContainsKey(name) ? fieldAliases[name] : name,
-                                value.EsriDateToString()));
+                                value.EsriDateToString(timeZone: this.DateFieldsTimeZone)));
                 }
                 else
                 {
@@ -334,6 +337,7 @@ class FeatureLayer : RestLayer,
         clone.HasM = this.HasM;
         clone.HasZ = this.HasZ;
         clone.HasAttachments = this.HasAttachments;
+        clone.DateFieldsTimeZone = this.DateFieldsTimeZone;
 
         base.CloneParentLayerIdsTo(clone);
         return clone;
@@ -388,7 +392,10 @@ class FeatureLayer : RestLayer,
 
     async public Task<IEnumerable<string>> HasAttachmentsFor(IRequestContext requestContext, IEnumerable<string> ids)
     {
-        if (!this.HasAttachments) return [];
+        if (!this.HasAttachments)
+        {
+            return [];
+        }
 
         string attachmentReqUrl = $"{_service.Service}/{this._id}/queryAttachments?returnUrl=true&f=pjson&objectIds={String.Join(",", ids)}";
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
@@ -412,7 +419,10 @@ class FeatureLayer : RestLayer,
 
     async public Task<IFeatureAttachments> GetAttachmentsFor(IRequestContext requestContext, string id)
     {
-        if (!this.HasAttachments) return null;
+        if (!this.HasAttachments)
+        {
+            return null;
+        }
 
         var result = new FeatureAttachements();
 

@@ -940,7 +940,7 @@ public class AxlService : IMapService2,
                         bQuery.Where = WebGIS.CMS.Globals.EncUmlaute(where, this.Umlaute2Wildcard);
                         xWriter.WriteRaw(bQuery.ArcXML(_nfi));
 
-                        AXLaddHighlightSymbol(ref xWriter, LayerType.polygon, AxlHelper.ColorToString((ArgbColor)_map.Environment.UserValue(webgisConst.BufferColor, ArgbColor.Gray)), "fdiagonal", 0.6);
+                        AXLaddHighlightSymbol(ref xWriter, LayerType.polygon, AxlHelper.ColorToString((ArgbColor)_map.Environment.UserValue(WebGISConst.BufferColor, ArgbColor.Gray)), "fdiagonal", 0.6);
 
                         //xWriter.WriteStartElement("SIMPLERENDERER");
                         //xWriter.WriteStartElement("SIMPLEPOLYGONSYMBOL");

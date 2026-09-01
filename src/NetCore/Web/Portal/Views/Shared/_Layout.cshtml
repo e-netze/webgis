@@ -19,6 +19,9 @@
     <title>@ViewBag.Title</title>
     <link href="@(portalContentUrl)/content/Site.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 
+    <link href="~/content/site.overrides.css" rel="stylesheet" />
+    <style>:root { @Html.Raw(StyleService.GetBrandVariablesFromEnvironment()) }</style>
+
 </head>
 <body style="background-color:#E2E2E2; width: 100%; padding:20px 0px">
 

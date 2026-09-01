@@ -405,7 +405,8 @@ public class MergeFeatures : IApiServerToolLocalizableAsync<MergeFeatures>, IApi
 
         #region Insert Feature
 
-        if (!await editEnvironment.InsertFeature(editTheme, newFeature))
+        var commitResult = await editEnvironment.InsertFeature(editTheme, newFeature);
+        if (!commitResult)
         {
             throw new Exception("Can't update feature");
         }
@@ -422,6 +423,6 @@ public class MergeFeatures : IApiServerToolLocalizableAsync<MergeFeatures>, IApi
             RefreshSelection = true,
 
             UISetters = await bridge.RequiredDeleteOriginalSetters(newFeature.Shape, selectedFeatures.Select(f => f.Shape))
-        };
+        }.ApplyCommitFeatureResult(commitResult);
     }
 }

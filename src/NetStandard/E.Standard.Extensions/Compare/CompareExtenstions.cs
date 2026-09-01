@@ -68,6 +68,16 @@ static public class CompareExtenstions
         return alternativeIntValue;
     }
 
+    static public int? TakeNullIfZero(this int? currentIntValue)
+    {
+        if (currentIntValue.HasValue && currentIntValue.Value == 0) 
+        {
+            return null;
+        }
+
+        return currentIntValue;
+    }
+
     static public T OrTakeEnum<T>(this T currentValue, T alternativeValue)
         where T : System.Enum
     {
@@ -88,6 +98,24 @@ static public class CompareExtenstions
         }
 
         return value;
+    }
+
+    static public bool OrTake(this bool currentBoolValue, bool alternativeBoolValue)
+        => currentBoolValue ? currentBoolValue : alternativeBoolValue;
+
+    static public bool? OrTake(this bool? currentBoolValue,  bool? alternativeBoolValue)
+    {
+        if (currentBoolValue.HasValue)
+        {
+            if (!alternativeBoolValue.HasValue)
+            {
+                return currentBoolValue.Value;
+            }
+
+            return currentBoolValue.Value.OrTake(alternativeBoolValue.Value);
+        }
+
+        return alternativeBoolValue;
     }
 
     static public IEnumerable<T> OrEmpty<T>(this IEnumerable<T> values)

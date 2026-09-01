@@ -271,6 +271,8 @@ public class MapService : IMapService2,
                                     : null
                             };
 
+                            layer.DateFieldsTimeZone = TryFindTimeZone(jsonLayer.DateFieldsTimeReference?.TimeZone);
+
                             if (jsonLayer.Fields != null)
                             {
                                 foreach (var field in jsonLayer.Fields)
@@ -1206,6 +1208,9 @@ public class MapService : IMapService2,
         clone.ServiceDescription = this.ServiceDescription;
         clone.CopyrightText = this.CopyrightText;
 
+
+
+
         clone.ExportMapFormat = this.ExportMapFormat;
 
         clone.LayerProperties = this.LayerProperties;
@@ -1694,6 +1699,17 @@ public class MapService : IMapService2,
 
         return p[p.Length - 1];
     }
+
+    #nullable enable
+    private static TimeZoneInfo? TryFindTimeZone(string? timeZoneId)
+    {
+        if (string.IsNullOrWhiteSpace(timeZoneId) || timeZoneId.Equals("UTC", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+        return TimeZoneInfo.TryFindSystemTimeZoneById(timeZoneId, out var tz) ? tz : null;
+    }
+#nullable restore
 
     #endregion
 

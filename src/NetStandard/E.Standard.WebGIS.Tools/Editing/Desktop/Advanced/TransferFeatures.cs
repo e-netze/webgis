@@ -9,6 +9,7 @@ using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Advanced.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Environment;
+using E.Standard.WebGIS.Tools.Editing.Extensions;
 using E.Standard.WebGIS.Tools.Editing.Models;
 using E.Standard.WebGIS.Tools.Editing.Services;
 using E.Standard.WebGIS.Tools.Extensions;
@@ -298,6 +299,7 @@ public class TransferFeatures : IApiServerToolAsync,
         featureTransfer.Targets.ThrowIfNullOrEmpty(() => $"No targets are available in feature transfer {featureTransfer.Name}");
 
         var refreshServiceIds = new List<string>();
+        var commitResults = new List<CommitFeatureResult>();
 
         if (featureTransfer.Method == CMS.FeatureTransferMethod.Move)
         {
@@ -416,9 +418,10 @@ public class TransferFeatures : IApiServerToolAsync,
                 targetFeatures.Add(targetFeature);
             }
 
-            await editEnvironment.TransferFeatures(editTheme, targetFeatures,
+            var commitResult = await editEnvironment.TransferFeatures(editTheme, targetFeatures,
                                                    target.PipelineSuppressAutovalues,
                                                    target.PipelineSuppressValidation);
+            commitResults.Add(commitResult);
 
             refreshServiceIds.Add(target.ServiceId);
         }
@@ -429,6 +432,11 @@ public class TransferFeatures : IApiServerToolAsync,
             new ApiEventResponse() { ActiveTool = new Edit() };
 
         response.RefreshServices = refreshServiceIds.Distinct().ToArray();
+
+        foreach (var commitResult in commitResults)
+        {
+            response.ApplyCommitFeatureResult(commitResult);
+        }
 
         return response;
     }

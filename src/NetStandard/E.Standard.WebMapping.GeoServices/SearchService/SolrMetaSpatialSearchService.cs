@@ -10,6 +10,7 @@ using E.Standard.Web.Models;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Models;
+using E.Standard.WebMapping.GeoServices.SearchService.Extensions;
 
 using Newtonsoft.Json;
 
@@ -22,9 +23,10 @@ public class SolrMetaSpatialSearchService : SolrMetaSearchService, ISearchServic
     {
     }
 
-    async public Task<SearchServiceItems> Query3Async(IHttpService httpService, string term, int rows, IEnumerable<string> categories, Envelope queryBBox, int targetProjId = 4326)
+    async public Task<SearchServiceItems> Query3Async(IHttpService httpService, CmsDocument.UserIdentification ui, string term, int rows, IEnumerable<string> categories, Envelope queryBBox, int targetProjId = 4326)
     {
-        string url = String.Format(_serviceUrl, term).Replace("{term}", term).Replace("[term]", term);
+        term = term.ToSafeSolrTerm();
+        string url = _serviceUrl.ReplaceSolrTermPlaceholder(term).ReplaceRolesPlaceholder(ui);
         url += "&rows=" + (rows > 0 ? rows : _rows);
 
         if (queryBBox != null)

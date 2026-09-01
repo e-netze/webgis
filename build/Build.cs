@@ -31,6 +31,9 @@ class Build : NukeBuild
     [Parameter("Platform to build - win-x64/linux-x64")]
     readonly string Platform = SystemInfo.IsLinux ? "linux-x64" : "win-x64";
 
+    [Parameter("Docker exe file name")]
+    readonly string DockerExe = "docker";
+
     Target Clean => _ => _
         .Before(Restore)
         .Executes(() =>
@@ -79,6 +82,8 @@ class Build : NukeBuild
             Log.Information("Compile WebGIS CMS");
 
             bool isInternal = Configuration.Contains("Internal", StringComparison.OrdinalIgnoreCase);
+            bool isPortable = Configuration.Contains("Portable", StringComparison.OrdinalIgnoreCase);
+            string publishProfileSuffix = isInternal ? "_internal" : isPortable ? "_portable" : "";
 
             (RootDirectory / "publish" / Platform / "cms" / "artifacts").DeleteDirectory();
             DotNetTasks.DotNetBuild(s => s
@@ -86,7 +91,7 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetProperty("DeployOnBuild", "true")
                 //.SetOutputDirectory(RootDirectory / "publish" / Platform / "cms" / "artifacts")
-                .SetPublishProfile(isInternal ? $"{Platform}_internal" : Platform)
+                .SetPublishProfile($"{Platform}{publishProfileSuffix}")
                 .SetRuntime(Platform)
             //.EnableNoRestore()
             );
@@ -99,7 +104,7 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetProperty("DeployOnBuild", "true")
                 //.SetOutputDirectory(RootDirectory / "publish" / Platform / "api" / "artifacts")
-                .SetPublishProfile(isInternal ? $"{Platform}_internal" : Platform)
+                .SetPublishProfile($"{Platform}{publishProfileSuffix}")
                 .SetRuntime(Platform)
             //.EnableNoRestore()
             );
@@ -112,12 +117,16 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetProperty("DeployOnBuild", "true")
                 //.SetOutputDirectory(RootDirectory / "publish" / Platform / "portal" / "artifacts")
-                .SetPublishProfile(isInternal ? $"{Platform}_internal" : Platform)
+                .SetPublishProfile($"{Platform}{publishProfileSuffix}")
                 .SetRuntime(Platform)
             //.EnableNoRestore()
             );
 
             Log.Information("Compile WebGIS Tools");
+
+            // cms.tools only has a plain and a "_portable" publish profile (no "_internal" one),
+            // so the "_internal" suffix from publishProfileSuffix must not be applied here.
+            string toolsPublishProfile = isPortable ? $"{Platform}_portable" : Platform;
 
             (RootDirectory / "publish" / Platform / "tools" / "cms.tools" / "artifacts").DeleteDirectory();
             DotNetTasks.DotNetBuild(s => s
@@ -125,7 +134,7 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetProperty("DeployOnBuild", "true")
                 .SetOutputDirectory(RootDirectory / "publish" / Platform / "tools" / "cms.tools" / "artifacts")
-                .SetPublishProfile(Platform)
+                .SetPublishProfile(toolsPublishProfile)
             //.EnableNoRestore()
             );
         });
@@ -155,6 +164,57 @@ class Build : NukeBuild
                 {
                     Log.Information($"Deleting {globFile}");
                     globFile.DeleteFile();
+                }
+            }
+
+            var libDpb = new[]
+            {
+                 "api/artifacts/*.pdb",
+                 "portal/artifacts/*.pdb",
+                 "cms/artifacts/*.pdb",
+            };
+
+            Log.Information($"Delete thirdparty PDB Files");
+            // eg. libskia.pdb is > 82 MB!!!
+            foreach (var pattern in libDpb)
+            {
+                foreach (var pdbFile in (RootDirectory / "publish" / Platform).GlobFiles(pattern))
+                {
+                    if(pdbFile.ToString().Contains("E.Standard.", StringComparison.OrdinalIgnoreCase)
+                      || pdbFile.ToString().Contains("webgis-", StringComparison.OrdinalIgnoreCase)
+                      || pdbFile.ToString().Contains("webgis.", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    Log.Information($"Deleting {pdbFile}");
+                    pdbFile.DeleteFile();
+                }
+            }
+
+            var libXml = new[]
+            {
+                 "api/artifacts/*.xml",
+                 "portal/artifacts/*.xml",
+                 "cms/artifacts/*.xml",
+            };
+
+            Log.Information($"Delete thirdparty doc-XML Files");
+            foreach (var pattern in libXml)
+            {
+                foreach (var xmlFile in (RootDirectory / "publish" / Platform).GlobFiles(pattern))
+                {
+                    var fileName = Path.GetFileName(xmlFile.ToString());
+
+                    if (fileName.Contains("webgis", StringComparison.OrdinalIgnoreCase)
+                      || fileName.StartsWith("e.standard.", StringComparison.OrdinalIgnoreCase)
+                      || fileName.StartsWith("e.datalinq.", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    Log.Information($"Deleting {xmlFile}");
+                    xmlFile.DeleteFile();
                 }
             }
 
@@ -203,7 +263,7 @@ class Build : NukeBuild
                     : RootDirectory / "publish" / Platform;
                 string imagePostfix = isInternal ? "-internal" : "";
 
-                ProcessTasks.StartProcess("docker",
+                ProcessTasks.StartProcess(DockerExe,
                     $"build -t webgis-cms{imagePostfix}:{Version} -f Dockerfile .",
                     workingDirectory: Path.Combine(platformDir, "cms"),
                     logger: (oType, txt) =>
@@ -211,7 +271,7 @@ class Build : NukeBuild
                         Log.Information($"{txt}");
                     })
                     .AssertZeroExitCode();
-                ProcessTasks.StartProcess("docker",
+                ProcessTasks.StartProcess(DockerExe,
                     $"build -t webgis-api{imagePostfix}:{Version} -f Dockerfile .",
                     workingDirectory: Path.Combine(platformDir, "api"),
                     logger: (oType, txt) =>
@@ -219,7 +279,7 @@ class Build : NukeBuild
                         Log.Information($"{txt}");
                     })
                     .AssertZeroExitCode();
-                ProcessTasks.StartProcess("docker",
+                ProcessTasks.StartProcess(DockerExe,
                     $"build -t webgis-portal{imagePostfix}:{Version} -f Dockerfile .",
                     workingDirectory: Path.Combine(platformDir, "portal"),
                     logger: (oType, txt) =>
@@ -229,21 +289,21 @@ class Build : NukeBuild
                     .AssertZeroExitCode();
 
                 // tag to latest
-                ProcessTasks.StartProcess("docker",
+                ProcessTasks.StartProcess(DockerExe,
                     $"tag webgis-cms{imagePostfix}:{Version} webgis-cms{imagePostfix}:latest",
                     logger: (oType, txt) =>
                     {
                         Log.Information($"{txt}");
                     })
                     .AssertZeroExitCode();
-                ProcessTasks.StartProcess("docker",
+                ProcessTasks.StartProcess(DockerExe,
                     $"tag webgis-api{imagePostfix}:{Version} webgis-api{imagePostfix}:latest",
                     logger: (oType, txt) =>
                     {
                         Log.Information($"{txt}");
                     })
                     .AssertZeroExitCode();
-                ProcessTasks.StartProcess("docker",
+                ProcessTasks.StartProcess(DockerExe,
                     $"tag webgis-portal{imagePostfix}:{Version} webgis-portal{imagePostfix}:latest",
                     logger: (oType, txt) =>
                     {
@@ -381,6 +441,10 @@ class Build : NukeBuild
             );
             DotNetTasks.DotNetTest(s => s
                 .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.Web.Test" / "E.Standard.Web.Test.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebApp.Test" / "E.Standard.WebApp.Test.csproj")
                 .SetProcessWorkingDirectory(RootDirectory)
             );
             DotNetTasks.DotNetTest(s => s

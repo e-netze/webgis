@@ -5,6 +5,7 @@ using System.Text;
 
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Extensions;
+using E.Standard.Extensions.Compare;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 
@@ -22,7 +23,7 @@ public class CmsHlp
         _map = map;
         if (_map != null)
         {
-            _ui = _map.Environment.UserValue(webgisConst.UserIdentification, null) as CmsDocument.UserIdentification;
+            _ui = _map.Environment.UserValue(WebGISConst.UserIdentification, null) as CmsDocument.UserIdentification;
         }
     }
 
@@ -446,6 +447,8 @@ public class CmsHlp
             MetadataTarget = (BrowserWindowTarget2)link.Load("metadata_target", (int)BrowserWindowTarget2.tab),
             MetadataTitle = link.LoadString("metadata_title"),
             MetadataButtonStyle = (MetadataButtonStyle)link.Load("metadata_button_style", (int)MetadataButtonStyle.i_button),
+            MetadataDialogWidth = ((int?)link.Load("metadata_dialog_width", (int)0)).TakeNullIfZero(),
+            MetadataDialogHeight = ((int?)link.Load("metadata_dialog_height", (int)0)).TakeNullIfZero(),
             IsContainerDefault = (bool)link.Load("containerdefault", false),
             Group = groupNode != null ? groupNode.Name : String.Empty,
             GroupStyle = groupNode != null ? (PresentationGroupStyle)groupNode.Load("checkmode", (int)PresentationGroupStyle.Button) : PresentationGroupStyle.Dropdown,
@@ -486,6 +489,8 @@ public class CmsHlp
         public BrowserWindowTarget2 MetadataTarget { get; set; }
         public string MetadataTitle { get; set; }
         public MetadataButtonStyle MetadataButtonStyle { get; set; }
+        public int? MetadataDialogWidth { get; set; }
+        public int? MetadataDialogHeight { get; set; }
 
         //public bool AllowAsDynamicMarkers { get; set; }
 
@@ -717,6 +722,11 @@ public class CmsHlp
         return _cms.SelectNodes(_ui, editingTheme.NodeXPath + "/validations/*");
     }
 
+    public CmsNodeCollection GetCmsEditingCommitActionNodes(CmsNode editingTheme)
+    {
+        return _cms.SelectNodes(_ui, editingTheme.NodeXPath + "/commitactions/*");
+    }
+
     #endregion
 
     #region VisFilter
@@ -757,24 +767,24 @@ public class CmsHlp
                 {
                     if (key.ToLower() == "sessionid")
                     {
-                        filter = filter.Replace(startingBracket + key + endingBracket, map.Environment.UserString(webgisConst.SessionId));
+                        filter = filter.Replace(startingBracket + key + endingBracket, map.Environment.UserString(WebGISConst.SessionId));
                     }
                     if (key.ToLower() == "username")
                     {
-                        filter = filter.Replace(startingBracket + key + endingBracket, (map.Environment.UserString(webgisConst.UserName)).RemoveUserIdentificationNamespace());
+                        filter = filter.Replace(startingBracket + key + endingBracket, (map.Environment.UserString(WebGISConst.UserName)).RemoveUserIdentificationNamespace());
                     }
                     if (key.ToLower() == "username_short")
                     {
-                        filter = filter.Replace(startingBracket + key + endingBracket, (map.Environment.UserString(webgisConst.UserName)).RemoveUserIdentificationNamespace()
+                        filter = filter.Replace(startingBracket + key + endingBracket, (map.Environment.UserString(WebGISConst.UserName)).RemoveUserIdentificationNamespace()
                                                                                                                                          .RemoveUserIdentificationDomain());
                     }
                     if (key.ToLower() == "username_full")
                     {
-                        filter = filter.Replace(startingBracket + key + endingBracket, map.Environment.UserString(webgisConst.UserName));
+                        filter = filter.Replace(startingBracket + key + endingBracket, map.Environment.UserString(WebGISConst.UserName));
                     }
                     if (key.ToLower() == "username_domain")
                     {
-                        filter = filter.Replace(startingBracket + key + endingBracket, map.Environment.UserString(webgisConst.UserName).UsernameDomain());
+                        filter = filter.Replace(startingBracket + key + endingBracket, map.Environment.UserString(WebGISConst.UserName).UsernameDomain());
                     }
                 }
                 else if (ui != null)

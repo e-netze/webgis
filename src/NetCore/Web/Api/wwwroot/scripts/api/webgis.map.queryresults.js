@@ -2166,8 +2166,24 @@
         }
 
         //console.log(".webgis-tool-result-" + toolid.replaceAll('.', '-'));
-        $(".webgis-tool-result-" + toolid.replaceAll('.', '-')).remove();
-        $(".webgis-tool-result-counter-" + toolid.replaceAll('.', '-')).val('0');
+        const resultElementSelector = ".webgis-tool-result-" + toolid.replaceAll('.', '-');
+        const resultCounterElementSelector = ".webgis-tool-result-counter-" + toolid.replaceAll('.', '-');
+
+        // check if reslutElement is persistant
+        if ($(resultElementSelector).hasClass("webgis-tool-parameter-persistent")) {
+            this._map.setPersistentToolParameter(toolid, $(resultElementSelector).attr('id'), "");
+        }
+        // check if reslutElement parent is persistant: in table, the result element is a row and the table is persistant (coordinates tool)
+        if ($(resultElementSelector).parent().hasClass("webgis-tool-parameter-persistent")) {
+            this._map.setPersistentToolParameter(toolid, $(resultElementSelector).parent().attr('id'), "");
+        }
+        // check if the counter is persistant
+        if ($(resultCounterElementSelector).hasClass("webgis-tool-parameter-persistent")) {
+            this._map.setPersistentToolParameter(toolid, $(resultCounterElementSelector).attr('id'), "0");
+        }
+
+        $(resultElementSelector).remove();
+        $(resultCounterElementSelector).val("0");
 
         this._map.ui.refreshUIElements();
     };

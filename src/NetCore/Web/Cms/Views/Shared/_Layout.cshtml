@@ -1,11 +1,11 @@
-﻿@using Cms.AppCode
-@using E.Standard.Cms.Configuration.Services
+﻿@using E.Standard.Cms.Configuration.Services
 @using E.Standard.Cms.Configuration
 @inject CmsConfigurationService CCS
 
 @model object;
 @{
-    var isCmsView = Model is Cms.Models.CmsModel;
+    var cmsModel = Model as Cms.Models.CmsModel;
+    var isCmsView = cmsModel is not null;
 }
 <!DOCTYPE html>
 <html>
@@ -13,7 +13,7 @@
     @*<link rel="manifest" href="manifest.json">*@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@CmsGlobals.SchemaName - Cms</title>
+    <title>@CmsGlobals.SchemaNameCapital CMS</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -26,10 +26,22 @@
         <link href="~/css/site.min.css?@(CmsGlobals.CssVersion)" rel="stylesheet" />
     </environment>
 
+    <link href="~/css/site.overrides.css" rel="stylesheet" />
+    <style>:root { @Html.Raw(StyleService.GetBrandVariablesFromEnvironment()) }</style>
+
     @if (!String.IsNullOrWhiteSpace(CCS.Instance?.Company))
     {
         <link rel="stylesheet" href="~/css/@CCS.Instance.Company/site.css?@(CmsGlobals.CssVersion)" />
     }
+
+
+    <style>
+
+        @Html.Raw(CCS.GetCustomCss(cmsModel?.CmsId))
+
+    </style>    
+    
+
 </head>
 <body>
     <nav class="webportal-layout-header navbar navbar-fixed-top">
@@ -38,7 +50,7 @@
                 <table>
                     <tr>
                         <td style="white-space:nowrap" class="navbar-brand-holder">
-                            <div class="navbar-brand">@(CmsGlobals.SchemaName) Cms</div>
+                                <div class="navbar-brand">@(CmsGlobals.SchemaNameCapital) CMS</div>
                         </td>
                         @if (isCmsView)
                         {

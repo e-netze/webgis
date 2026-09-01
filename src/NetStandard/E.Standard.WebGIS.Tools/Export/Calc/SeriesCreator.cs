@@ -7,13 +7,16 @@ using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Geometry.Extensions;
 
+using Microsoft.AspNetCore.Components.Forms;
+
 namespace E.Standard.WebGIS.Tools.Export.Calc;
 
 internal enum SeriesType
 {
     BoundingBoxRaster = 0,
     IntersectionRaster = 1,
-    AlongPolylines = 2
+    AlongPolylines = 2,
+    OnePerFeature = 3
 }
 
 internal class SeriesCreator
@@ -131,7 +134,30 @@ internal class SeriesCreator
         return series;
     }
 
+    public MultiPoint OnePerFeature(int max)
+    {
+        if (_features.Count > max)
+        {
+            throw new MapSeriesPrintToManyPagesExeption(_features.Count);
+        }
 
+        MultiPoint series = new MultiPoint();
+
+        foreach (var feature in _features)
+        {
+            var point = new Point(feature.Shape.ShapeEnvelope.CenterPoint);
+            var pageEnvelope = new Envelope(point, _pageWidth, _pageHeight);
+
+            if (!pageEnvelope.Contains(feature.Shape.ShapeEnvelope))
+            {
+                throw new MapSeriesPrintCreateException("exception-not-all-features-fit");
+            }
+
+            series.AddPoint(point);
+        }
+
+        return series;
+    }
 
     #region Helpers
 

@@ -35,6 +35,7 @@ using E.Standard.GeoCoding.Extensions.DependencyInjection;
 using E.Standard.Platform;
 using E.Standard.Security.App.Extensions.DependencyInjection;
 using E.Standard.Security.Cryptography;
+using E.Standard.WebApp.Abstraction;
 using E.Standard.WebGIS.Api.Abstractions;
 using E.Standard.WebMapping.Core.Extensions.DependencyInjection;
 using E.Standard.WebMapping.Core.Logging;
@@ -170,7 +171,7 @@ static public class ServiceCollectionExtensions
                                                       Action<RoutingEndPointReflectionServiceOptions> configureOptions)
     {
         services.Configure<RoutingEndPointReflectionServiceOptions>(configureOptions);
-        services.AddScoped<RoutingEndPointReflectionService>();  // Scoped => eine Instanz pro Http Request!!
+        services.AddScoped<IEndPointReflectionProvider, RoutingEndPointReflectionService>();  // Scoped => eine Instanz pro Http Request!!
         return services;
     }
 
@@ -321,6 +322,9 @@ static public class ServiceCollectionExtensions
                 config.AddToRazorBlackList(configuration.DataLinqRazorBlackListItems());
 
                 config.AddSupportedEndPointTypes<WebGISCustomEndPointTypes>();
+
+                var imageRequestWhileList = configuration.GetSection(ApiConfigKeys.ToKey("datalinq:ImageRequestWhiteList")).Get<string[]>() ?? [];
+                config.AddToImageRequestWhiteList(imageRequestWhileList);
             },
             persistanceOptions: config =>
             {

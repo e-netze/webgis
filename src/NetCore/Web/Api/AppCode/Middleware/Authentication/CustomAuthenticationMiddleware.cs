@@ -11,6 +11,7 @@ using E.Standard.CMS.Core;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Exceptions;
 using E.Standard.Extensions.Compare;
+using E.Standard.WebApp.Abstraction;
 
 using Microsoft.AspNetCore.Http;
 
@@ -30,7 +31,7 @@ public class CustomAuthenticationMiddleware
 
     async public Task Invoke(HttpContext httpContext,
                              UrlHelperService urlHelper,
-                             RoutingEndPointReflectionService endpointReflection,
+                             IEndPointReflectionProvider endpointReflection,
                              ApiCookieAuthenticationService cookies,
                              IEnumerable<ICustomApiAuthenticationMiddlewareService> customAuthentications = null)
     {

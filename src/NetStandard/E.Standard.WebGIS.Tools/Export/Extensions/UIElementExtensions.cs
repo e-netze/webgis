@@ -14,23 +14,17 @@ static internal class UIElementExtensions
         FeatureCollection features,
         ILocalizer localizer)
     {
-        var shapeProto = features.GeometryPrototype();
-
         select.AddOptions(
-            new UISelect.Option()
-                .WithValue(((int)SeriesType.IntersectionRaster).ToString())
-                .WithLabel(localizer.Localize("create.method.intersection-grid")),
-            new UISelect.Option()
-                .WithValue(((int)SeriesType.BoundingBoxRaster).ToString())
-                .WithLabel(localizer.Localize("create.method.bbox-grid")));
+            SeriesType.IntersectionRaster.AsUISelectOption(localizer),
+            SeriesType.BoundingBoxRaster.AsUISelectOption(localizer),
+            SeriesType.OnePerFeature.AsUISelectOption(localizer)
+            );
 
-        if (shapeProto is Polyline)
+        select.AddOptions(features.GeometryPrototype() switch
         {
-            select.AddOption(
-                new UISelect.Option()
-                    .WithValue(((int)SeriesType.AlongPolylines).ToString())
-                    .WithLabel(localizer.Localize("create.method.along-polyline")));
-        }
+            Polyline => [SeriesType.AlongPolylines.AsUISelectOption(localizer)],
+            _ => []
+        });
 
         return select;
     }

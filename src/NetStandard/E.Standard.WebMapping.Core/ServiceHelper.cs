@@ -60,12 +60,12 @@ public class ServiceHelper
             return true;
         }
 
-        if (service.MinScale >= 1.0 && map.MapScale < service.MinScale + 0.5)
+        if (service.MinScale >= 1.0 && Math.Round(map.MapScale) < Math.Round(service.MinScale))
         {
             return false;
         }
 
-        if (service.MaxScale >= 1.0 && map.MapScale > service.MaxScale - 0.5)
+        if (service.MaxScale >= 1.0 && Math.Round(map.MapScale) > Math.Round(service.MaxScale))
         {
             return false;
         }

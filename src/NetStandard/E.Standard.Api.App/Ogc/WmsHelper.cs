@@ -632,9 +632,9 @@ public class WmsHelper
 
         var httpService = requestContext.Http;
         var map = services[0].Map;
-        map.Environment.SetUserValue(WebGIS.CMS.webgisConst.OutputPath, urlHelper.OutputPath());
-        map.Environment.SetUserValue(WebGIS.CMS.webgisConst.OutputUrl, urlHelper.OutputUrl());
-        map.Environment.SetUserValue(WebGIS.CMS.webgisConst.UserIdentification, ui);
+        map.Environment.SetUserValue(WebGIS.CMS.WebGISConst.OutputPath, urlHelper.OutputPath());
+        map.Environment.SetUserValue(WebGIS.CMS.WebGISConst.OutputUrl, urlHelper.OutputUrl());
+        map.Environment.SetUserValue(WebGIS.CMS.WebGISConst.UserIdentification, ui);
 
         if (map is WebMapping.Core.Map)
         {
@@ -980,8 +980,8 @@ public class WmsHelper
         #region Map Initialializaion
 
         var map = services[0].Map;
-        map.Environment.SetUserValue(WebGIS.CMS.webgisConst.OutputPath, urlHelper.OutputPath());
-        map.Environment.SetUserValue(WebGIS.CMS.webgisConst.OutputUrl, urlHelper.OutputUrl());
+        map.Environment.SetUserValue(WebGIS.CMS.WebGISConst.OutputPath, urlHelper.OutputPath());
+        map.Environment.SetUserValue(WebGIS.CMS.WebGISConst.OutputUrl, urlHelper.OutputUrl());
 
         for (int i = services.Length - 1; i >= 0; i--)
         {
@@ -1221,8 +1221,8 @@ public class WmsHelper
         #region Map Initialializaion
 
         var map = services[0].Map;
-        map.Environment.SetUserValue(WebGIS.CMS.webgisConst.OutputPath, urlHelper.OutputPath());
-        map.Environment.SetUserValue(WebGIS.CMS.webgisConst.OutputUrl, urlHelper.OutputUrl());
+        map.Environment.SetUserValue(WebGIS.CMS.WebGISConst.OutputPath, urlHelper.OutputPath());
+        map.Environment.SetUserValue(WebGIS.CMS.WebGISConst.OutputUrl, urlHelper.OutputUrl());
 
         #endregion
 

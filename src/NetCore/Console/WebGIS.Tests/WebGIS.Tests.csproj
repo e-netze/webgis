@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Drawing\E.Standard.Drawing.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Plot\E.Standard.Plot.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.WebMapping.Core\E.Standard.WebMapping.Core.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Web\E.Standard.Web.csproj" />

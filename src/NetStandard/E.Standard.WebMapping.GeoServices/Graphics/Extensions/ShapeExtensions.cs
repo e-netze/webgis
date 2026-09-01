@@ -34,8 +34,8 @@ static public class ShapeExtensions
         var graphicsService = new GraphicsService();
 
         var map = new Map();
-        map.Environment.SetUserValue(webgisConst.OutputPath, bridge.OutputPath);
-        map.Environment.SetUserValue(webgisConst.OutputUrl, bridge.OutputUrl);
+        map.Environment.SetUserValue(WebGISConst.OutputPath, bridge.OutputPath);
+        map.Environment.SetUserValue(WebGISConst.OutputUrl, bridge.OutputUrl);
 
         map.Services.Add(graphicsService);
         await graphicsService.InitAsync(map, bridge.RequestContext);

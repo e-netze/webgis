@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace E.Standard.WebApp.Attributes;
+namespace E.Standard.WebApp.Reflection;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class ConfigurableValidateAntiforgeryTokenAttribute : Attribute, IAsyncAuthorizationFilter

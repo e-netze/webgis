@@ -4,14 +4,22 @@
 
 <h1 align="center">WebGIS</h1><br>
 <p align="center">
-  <a href="https://www.e-netze.at/"><img src="https://img.shields.io/badge/Website-Energienetze Steiermark-green?style=flat-round"></a>
-  <a href="https://docs.webgiscloud.com/de/webgis/index.html"><img src="https://img.shields.io/badge/Documentation-Online-green?style=flat-round"></a>
+  <a href="https://www.e-netze.at/">
+    <img src="https://img.shields.io/badge/Website-Energienetze Steiermark-green?style=flat-round">
+ </a>
+  <a href="https://docs.webgiscloud.com/de/webgis/index.html">
+    <img src="https://img.shields.io/badge/Documentation-Online-green?style=flat-round">
+  </a>
+  <a href="https://github.com/orgs/e-netze/packages?tab=packages&q=webgis">
+    <img alt="Docker" src="https://img.shields.io/badge/Docker-ghcr.io%2Fe--netze-2496ED?style=flat-square&logo=docker" />
+  </a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg">
   <img src="https://img.shields.io/badge/Version-7.25.2801-brightgreen">
   <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey">
+  <img alt=".NET" src="https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet" />
 </p><br>
 
 ## Table of contents

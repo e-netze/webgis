@@ -1308,7 +1308,7 @@ public class Bridge : IBridge
 
                 foreach (string term in terms)
                 {
-                    var searchItems = await ((ISearchService2)service).Query2Async(_http, term, 5, categoriesArray);
+                    var searchItems = await ((ISearchService2)service).Query2Async(_http, _userIdentification, term, 5, categoriesArray);
                     if (searchItems?.Items != null)
                     {
                         searchItemsDict[term].AddRange(searchItems.Items);

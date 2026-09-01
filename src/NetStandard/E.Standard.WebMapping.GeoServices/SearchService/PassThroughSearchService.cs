@@ -39,7 +39,7 @@ public class PassThroughSearchService : ISearchService
 
     public string CopyrightId { get; set; }
 
-    async public Task<SearchServiceItems> QueryAsync(IHttpService httpService, string term, int rows, int targetProjId = 4326)
+    async public Task<SearchServiceItems> QueryAsync(IHttpService httpService, CmsDocument.UserIdentification ui, string term, int rows, int targetProjId = 4326)
     {
 
         string json = await httpService.GetStringAsync(String.Format(_serviceUrl, term));

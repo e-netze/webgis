@@ -47,6 +47,8 @@ public class ClearOutputWorkerService : IWorkerService
                         "*.pdf" when file.Name.StartsWith(ApiGlobals.PrintOutputPrefix) => 3600,  // Print PDF
                         "*.zip" when file.Name.StartsWith(ApiGlobals.PrintOutputPrefix) => 3600,  // Print Zips
                         "*.jpg" when (file.Name.StartsWith(ApiGlobals.PrintOutputPrefix) && file.Name.Contains("_preview")) => 3600,  // Print previews
+                        "*.pdf" when file.Name.StartsWith(ApiGlobals.ProfileOutputPrefix) => 3600,  // Print PDF
+                        "*.png" when(file.Name.StartsWith(ApiGlobals.ProfileOutputPrefix) && file.Name.Contains("_preview")) => 3600,  // Print previews
                         _ => 60
                     };
 
