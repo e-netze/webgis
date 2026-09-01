@@ -22,7 +22,16 @@
             .appendTo($tabGeneral);
 
         let $tabSegment = $("<table><tr><th colspan=2>" + webgis.l10n.get("segment") + "</th></tr></table>")
-            .appendTo(this.$el);
+            .addClass('sketch-segment-clickable')
+            .attr('title', webgis.l10n.get("sketch-construct-direction-distance"))
+            .appendTo(this.$el)
+            .click(function () {
+                var map = $(this).closest('.webgis-sketch-info-container-holder').data('map');
+                var sketch = map && (map.graphics._isGraphicsToolActive() === true ? map.graphics._sketch : map.toolSketch());
+                if (sketch && sketch.ui && sketch.ui.openDirectionDistanceModal) {
+                    sketch.ui.openDirectionDistanceModal();
+                }
+            });
 
         $("<tr><td>" + webgis.l10n.get("segment-length") + ":</td><td class='sketch-info-item segment-length'></td>")
             .appendTo($tabSegment);
@@ -61,7 +70,11 @@
         let $tabSections = $("<table>")
             .appendTo(this.$el);
 
-        const sketch = options.sketch = options.map.toolSketch();
+        const sketch = options.sketch =
+            options.map.graphics._isGraphicsToolActive() === true
+            ? options.map.graphics._sketch
+            : options.map.toolSketch();
+
         if (sketch) {
             sketch.events.off('currentstate', this.constructor.onSketchCurrentStateChanged);
             sketch.events.on('currentstate', this.constructor.onSketchCurrentStateChanged,
@@ -163,7 +176,9 @@
             var geometryType = info.geometryType;
             $elem.find('.sketch-info-item.sketch-geometrytype').text(webgis.l10n.get(geometryType));
 
-            if (!constructionMode && $.inArray(geometryType, ["polygon", "polyline"]) >= 0) {
+            // Dimline/hectoline behave like polyline (segment length/azimuth per section),
+            // dimpolygon behaves like polygon - both should show the same segment info.
+            if (!constructionMode && $.inArray(geometryType, ["polygon", "polyline", "dimline", "dimpolygon", "hectoline"]) >= 0) {
                 $tabSegment.css('display', 'block');
                 $divConstruction.css('display', 'none');
 

@@ -867,36 +867,7 @@
                             .click(function () {
                                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
                                 if (sketch) {
-                                    $('body').webgis_modal({
-                                        title: webgis.l10n.get("sketch-construct-direction-distance"),
-                                        id: "webgis-sketch-dir-dist-modal",
-                                        onload: function ($content) {
-                                            $content.webgis_dirDistControl({
-                                                azimut: azimut,
-                                                azimut_unit: 'deg',
-                                                azimut_readonly: sketch._fixedDirectionVector ? true : false,
-                                                distance: dist,
-                                                distance_unit: 'm',
-                                                distance_readonly: sketch._fixedDistance ? true : false,
-                                                on_apply: function (result) {
-                                                    var vertices = sketch.getConstructionVerticesPro(),
-                                                        lastVertex = sketch.getReferenceVertexPro();
-
-                                                    var p = map.construct.distanceDirection(lastVertex, result.azimut_deg, result.distance_m, result.z_angle_deg);
-
-                                                    if (p) {
-                                                        sketch._snappedVertex = p;
-                                                        sketch.addVertexCoords(p.x, p.y, true); // x,y sind dummy -> es wird sowie der Snapped Vertex genommen...
-                                                        $('body').webgis_modal('close', { id: 'webgis-sketch-dir-dist-modal' });
-                                                    }
-                                                }
-                                            });
-                                        },
-                                        onclose: function () {
-                                        },
-                                        width: '320',
-                                        height: '380px'
-                                    });
+                                    sketch.ui.openDirectionDistanceModal();
                                 }
                             });
                     }
@@ -1001,16 +972,96 @@
         $_menuItem($container, webgis.l10n.get("sketch-construct-coordiantes"), webgis.css.imgResource('sketch_xy-26.png', 'tools'))
             .click(function () {
                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
-                $('body').webgis_modal({
-                    title: webgis.l10n.get("sketch-construct-coordiantes"),
-                    //id: 'webgis-sketch-xy-aboslute',
-                    width: '340px',
-                    height: '400px',
-                    onload: function ($content) {
-                        $content.webgis_xyAbsoluteControl({ map: map, sketch: sketch });
+                if (sketch) {
+                    sketch.ui.openXYAbsoluteModal();
+                }
+            });
+    };
+
+    // Opens the "Coordinates (absolute)" construction tool for the current sketch.
+    // Also used as the click target for the current-coordinates display while a sketch/graphics
+    // tool is active (instead of activating the XYZ query tool).
+    this.openXYAbsoluteModal = function () {
+        var map = sketch.map;
+
+        $('body').webgis_modal({
+            title: webgis.l10n.get("sketch-construct-coordiantes"),
+            //id: 'webgis-sketch-xy-aboslute',
+            width: '340px',
+            height: '400px',
+            onload: function ($content) {
+                $content.webgis_xyAbsoluteControl({ map: map, sketch: sketch });
+            },
+            onclose: function () {
+                if (map && map.notifySketchConstructionModalClosed) {
+                    map.notifySketchConstructionModalClosed();
+                }
+            }
+        });
+
+        return true;
+    };
+
+    // Opens the "Direction/Distance" construction tool for the current sketch.
+    // Also used as the click target for the sketch-info overlay's segment area.
+    this.openDirectionDistanceModal = function () {
+        if (_isSimplePoint() || sketch._contextVertexIndex != null)
+            return false;
+
+        var vertices = sketch._getRawVertices();
+        if (vertices.length === 0)
+            return false;
+
+        var map = sketch.map;
+        var azimut = 0, dist = 0;
+        if (sketch._moverLine) {
+            var latLngs = sketch._moverLine.getLatLngs();
+            if (latLngs.length >= 2) {
+                azimut = map.construct.azimutFromWGS84(latLngs[0].lng, latLngs[0].lat, latLngs[1].lng, latLngs[1].lat);
+                dist = map.construct.distFromWGS84(latLngs[0].lng, latLngs[0].lat, latLngs[1].lng, latLngs[1].lat);
+            }
+        }
+
+        $('body').webgis_modal({
+            title: webgis.l10n.get("sketch-construct-direction-distance"),
+            id: "webgis-sketch-dir-dist-modal",
+            onload: function ($content) {
+                $content.webgis_dirDistControl({
+                    azimut: azimut,
+                    azimut_unit: 'deg',
+                    azimut_readonly: sketch._fixedDirectionVector ? true : false,
+                    distance: dist,
+                    distance_unit: 'm',
+                    distance_readonly: sketch._fixedDistance ? true : false,
+                    on_apply: function (result) {
+                        var vertices = sketch.getConstructionVerticesPro(),
+                            lastVertex = sketch.getReferenceVertexPro();
+
+                        var p = map.construct.distanceDirection(lastVertex, result.azimut_deg, result.distance_m, result.z_angle_deg);
+
+                        if (p) {
+                            sketch._snappedVertex = p;
+                            sketch.addVertexCoords(p.x, p.y, true); // x,y sind dummy -> es wird sowie der Snapped Vertex genommen...
+                            $('body').webgis_modal('close', { id: 'webgis-sketch-dir-dist-modal' });
+                            // 'close' (unlike the "x" button/blocker click) doesn't fire onclose - restore
+                            // the overlay's map-hover state here too so it reappears after Apply.
+                            if (map && map.notifySketchConstructionModalClosed) {
+                                map.notifySketchConstructionModalClosed();
+                            }
+                        }
                     }
                 });
-            });
+            },
+            onclose: function () {
+                if (map && map.notifySketchConstructionModalClosed) {
+                    map.notifySketchConstructionModalClosed();
+                }
+            },
+            width: '320',
+            height: '380px'
+        });
+
+        return true;
     };
 
     this._addSnapppingMenuItem = function ($container) {
