@@ -135,9 +135,6 @@ public class InsertFeature : IApiServerToolLocalizableAsync<InsertFeature>,
                 },
                 new UIBreak(2),
                 new UISketchInfoContainer()
-                {
-
-                }
             });
         }
 
