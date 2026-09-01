@@ -1,6 +1,48 @@
 var CMS = new function () {
     this.id = '';
     this.appRootUrl = '';
+    var _languageStorageKey = 'cms-language';
+    this.language = '';
+    this.defaultLanguage = 'en';
+    this.supportedLanguages = ['de', 'en'];
+    // Reads the last used language from localStorage (falling back to the
+    // server-side default) so the UI keeps showing the user's preferred
+    // language on the next visit.
+    this.initLanguage = function (defaultLanguage, supportedLanguages) {
+        if (defaultLanguage) {
+            this.defaultLanguage = defaultLanguage;
+        }
+        if (supportedLanguages && supportedLanguages.length) {
+            this.supportedLanguages = supportedLanguages;
+        }
+        var stored = null;
+        try {
+            stored = window.localStorage.getItem(_languageStorageKey);
+        }
+        catch (e) { }
+        this.language = (stored && this.supportedLanguages.indexOf(stored) !== -1)
+            ? stored
+            : this.defaultLanguage;
+        this.updateLanguageSwitcherUI();
+    };
+    // Switches the CMS UI language, persists the choice in localStorage and
+    // reloads the page so all node/property data is re-fetched translated.
+    this.setLanguage = function (lang) {
+        if (!lang || this.supportedLanguages.indexOf(lang) === -1 || lang === this.language) {
+            return;
+        }
+        this.language = lang;
+        try {
+            window.localStorage.setItem(_languageStorageKey, lang);
+        }
+        catch (e) { }
+        document.location.reload();
+    };
+    this.updateLanguageSwitcherUI = function () {
+        $('.navbar-language-btn').each(function () {
+            $(this).toggleClass('active', $(this).attr('data-lang') === CMS.language);
+        });
+    };
     var _db = null;
     this.init = function () {
         _db = new CMS.db();
@@ -41,7 +83,7 @@ var CMS = new function () {
             }
         }
         //console.log('fetch', 'cms/' + action);
-        fetch('cms/' + action, {
+        fetch('cms/' + action + '?_ul=' + encodeURIComponent(CMS.language || ''), {
             method: 'POST',
             //headers: {
             //    'Content-Type': 'application/json'

@@ -1385,6 +1385,30 @@ input.cms-search {
         background-image: url('../images/refresh-26.png');
     }
 
+.navbar-language-switcher-holder {
+    white-space: nowrap;
+    vertical-align: middle;
+    padding-left: 10px;
+}
+
+.navbar-language-btn {
+    padding: 5px 10px;
+    border-color: rgba(255,255,255,0.4);
+    background-color: transparent;
+    color: var(--webgis-ui-text-navbar);
+}
+
+    .navbar-language-btn:hover {
+        background-color: rgba(255,255,255,0.2);
+        color: var(--webgis-ui-text-navbar);
+    }
+
+    .navbar-language-btn.active {
+        background-color: #fff;
+        color: var(--webgis-brand-primary);
+        font-weight: bold;
+    }
+
 .error-message {
     border: 1px solid #f00;
     border-radius: 5px;
