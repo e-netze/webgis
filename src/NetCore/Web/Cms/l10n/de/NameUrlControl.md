@@ -3,4 +3,4 @@
 
 #url: Url
 
-Kurzname, für Url Aufrufe (nur Kleinbuchstaben und Nummern)
+Kurzname, fÃ¼r Url Aufrufe (nur Kleinbuchstaben und Nummern)

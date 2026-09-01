@@ -1,4 +1,4 @@
-﻿function updateContent(path) {
+function updateContent(path, onComplete) {
     $('childnodes').empty();
     $('#cms-search').focus().val('');
 
@@ -166,6 +166,10 @@
             var converter = new showdown.Converter(),
                 html = converter.makeHtml(result.description);
             $('#main-container').descriptionPanel({ id: path, text: html });
+        }
+
+        if (typeof onComplete === 'function') {
+            onComplete(result);
         }
     });
 }
@@ -390,7 +394,50 @@ $(document).ready(function () {
     }
 
     document.copyNodePath = [];
-    updateContent(document.currentPath = '');
+
+    // If a "_cp" (current path) query parameter is present - set when the
+    // language switcher reloads the page - restore the tree position it
+    // carried instead of always starting at the CMS root. The parameter is
+    // then stripped from the URL again so a later manual page refresh (F5)
+    // still goes back to the root, as before.
+    var _restorePath = '';
+    try {
+        _restorePath = new URLSearchParams(window.location.search).get('_cp') || '';
+    } catch (e) { }
+
+    if (_restorePath) {
+        // updateContent() only returns the direct ancestor chain (navItems)
+        // plus the target node's own children (nodes) - unlike manual,
+        // click-by-click navigation it does NOT rebuild the sibling branches
+        // at each ancestor level (those only get added incrementally as the
+        // user expands each level). Walk down the path segment by segment,
+        // exactly as manual navigation would, so the tree ends up showing
+        // the same sibling nodes as before the reload.
+        var _segments = _restorePath.split('/').filter(function (s) { return s !== ''; });
+        var _ancestorPaths = [''];
+        var _current = '';
+        for (var _i = 0; _i < _segments.length; _i++) {
+            _current += (_current ? '/' : '') + _segments[_i];
+            _ancestorPaths.push(_current);
+        }
+
+        (function expandNext(index) {
+            if (index >= _ancestorPaths.length) {
+                return;
+            }
+            updateContent(_ancestorPaths[index], function () {
+                expandNext(index + 1);
+            });
+        })(0);
+    } else {
+        updateContent(document.currentPath = '');
+    }
+
+    if (_restorePath && window.history && window.history.replaceState) {
+        var _cleanUrl = new URL(window.location.href);
+        _cleanUrl.searchParams.delete('_cp');
+        window.history.replaceState(null, '', _cleanUrl.toString());
+    }
 
     $('.navbar-search-button').trigger('click');
 });

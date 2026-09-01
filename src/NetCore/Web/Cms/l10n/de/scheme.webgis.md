@@ -14,9 +14,9 @@
 #presentations: Darstellungsvarianten
 #LayerSwitcher: Layer-Schaltungen
 #extents: Rechtecksausdehnungen
-#OverlayServices: Überblendbare Dienste
+#OverlayServices: Ãœberblendbare Dienste
 #StandaloneQuery: Vorgeschaltene Suche
-#StandaloneQueryMaps: Möglich Kartenaufrufe
+#StandaloneQueryMaps: MÃ¶glich Kartenaufrufe
 #Editing: Editing
 #Editthemes: Edit Themen
 #Snapthemes: Snap Themen
@@ -31,7 +31,7 @@
 #processingserver: Processing Server
 #bookmarks: Bookmarks
 #MapConfig: Kartenkonfiguration
-#OverviewMap: Übersichtskarte
+#OverviewMap: Ãœbersichtskarte
 #Themes: Themen (readonly)
 #ThemesProperties: Themen (Eigenschaften)
 #ims: ArcIMS
@@ -46,12 +46,12 @@
 #wmsc: Tiled WMS (WMS-C)
 #wmts: WMTS
 #QueryTheme: Abfragethema (Dienst-Thema)
-#QueryTocTheme: Toc Thema für diese Abfrage (nur falls nicht ident mit Abfragethema)
+#QueryTocTheme: Toc Thema fÃ¼r diese Abfrage (nur falls nicht ident mit Abfragethema)
 #SearchItems: Suchfelder
 #TableColumns: Tabelle
 #Advanced Settings: Erweiterte Einstellungen
 #chainage: Stationierung
-#chainagelinetheme: Linienthema für Stationierung
+#chainagelinetheme: Linienthema fÃ¼r Stationierung
 #chainagepointtheme: Punktthema mit Stationierungswerten (optional)
 #CustomTools: Benutzerdefinierte Werkzeuge
 #ExportFormats: Exportierbare/Benutzerdefinierte Formate
@@ -62,13 +62,13 @@
 #GeneralVectorTileCache: Allgemeine Vector Tile Caches
 #Properties: Eigenschaften
 #ServiceCollection: Dienste Sammlung
-#SpatialConstraintService: Dienst für räumliche Einschränkungen
+#SpatialConstraintService: Dienst fÃ¼r rÃ¤umliche EinschrÃ¤nkungen
 #Links: Linksammlung
 #Fallback: Fallback
 #containers: Container
 #gdi: Karten Viewer
 #gdi-custom: GDI Schemata
-#addservices: Hinzufügbare Dienste
+#addservices: HinzufÃ¼gbare Dienste
 #searchservices: Such Dienste
 #copyright: Copyright Infos
 #mapservicecollections: Kartendienst Sammlungen

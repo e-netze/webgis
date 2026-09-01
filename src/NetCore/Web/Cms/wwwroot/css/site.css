@@ -1391,22 +1391,28 @@ input.cms-search {
     padding-left: 10px;
 }
 
-.navbar-language-btn {
-    padding: 5px 10px;
-    border-color: rgba(255,255,255,0.4);
+.navbar-language-select {
+    padding: 5px 8px;
+    height: 34px;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 4px;
     background-color: transparent;
     color: var(--webgis-ui-text-navbar);
 }
 
-    .navbar-language-btn:hover {
+    .navbar-language-select:hover {
         background-color: rgba(255,255,255,0.2);
-        color: var(--webgis-ui-text-navbar);
     }
 
-    .navbar-language-btn.active {
+    .navbar-language-select:focus {
+        outline: none;
         background-color: #fff;
         color: var(--webgis-brand-primary);
-        font-weight: bold;
+    }
+
+    .navbar-language-select option {
+        color: #000;
+        background-color: #fff;
     }
 
 .error-message {

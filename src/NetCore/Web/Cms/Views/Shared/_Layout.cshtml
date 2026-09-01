@@ -82,16 +82,16 @@
                             <td style="width:100%"></td>
                         }
                         <td class="navbar-language-switcher-holder">
-                            <div id="navbar-language-switcher" class="btn-group" role="group" aria-label="Language">
+                            <select id="navbar-language-switcher"
+                                    class="navbar-language-select"
+                                    title="Language"
+                                    aria-label="Language"
+                                    onchange="CMS.setLanguage(this.value)">
                                 @foreach (var lang in supportedLanguages)
                                 {
-                                    <button type="button"
-                                            class="btn btn-default navbar-language-btn"
-                                            data-lang="@lang"
-                                            title="@lang"
-                                            onclick="CMS.setLanguage('@lang')">@lang.ToUpperInvariant()</button>
+                                    <option value="@lang">@lang.ToUpperInvariant()</option>
                                 }
-                            </div>
+                            </select>
                         </td>
 
                     </tr>
@@ -138,7 +138,7 @@
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/lib/sortable/sortable.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
-        <script src="~/js/cms/cms.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/js/cms/cms.js" asp-append-version="true"></script>
         <script src="~/js/cms/cms.db.js?@(CmsGlobals.JsVersion)"></script>
         <script src="~/lib/webportal-layout/webportal-layout.js?@(CmsGlobals.JsVersion)"></script>
         <script src="~/js/cms/jquey-extenstions.js?@(CmsGlobals.JsVersion)"></script>
@@ -155,7 +155,7 @@
         <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="~/lib/sortable/sortable.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
-        <script src="~/js/cms/cms.min.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/js/cms/cms.min.js" asp-append-version="true"></script>
         <script src="~/lib/webportal-layout/webportal-layout.js?@(CmsGlobals.JsVersion)"></script>
         <script src="~/lib/typeahead/typeahead.bundle.js"></script>
         <script src="~/lib/bootbox.js/bootbox.min.js"></script>
