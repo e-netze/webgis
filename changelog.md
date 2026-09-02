@@ -8,7 +8,40 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+
+- Sketch-Info-Overlay: sketch/graphics tools that show a ``UISketchInfoContainer`` (e.g. measuring
+  tools) no longer render it inline in the tool dialog. Instead it now floats as an overlay directly
+  above the coordinate display, growing upward as more info (snapping, construction tool) is shown.
+  It automatically hides when the mouse leaves the map area, is visually styled as an overlay
+  (shadow), animates in/out, and can be temporarily dismissed with an "x" button. Its width now
+  matches the width of the coordinate display/side frame.
+- Sketch-Info-Overlay: also shown for the MapMarkup tool (Polyline/Polygon and, behaving the same
+  way, Dimline/DimPolygon/Hectoline). All other MapMarkup geometry types now at least show their
+  localized geometry type.
+- Sketch-Info-Overlay: clicking the coordinate display while a sketch/graphics tool is active now
+  opens the "Coordinates (absolute)" construction tool instead of the XYZ tool; clicking the segment
+  area of the overlay opens the "Direction/Distance" construction tool.
+- Sketch-Info-Overlay: also shown while editing features with the Edit tool (Desktop
+  Insert/UpdateFeature, Mobile UpdateFeature) - without falling back to the inline rendering on
+  layouts that don't support the overlay.
+- ``UISketchInfoContainer``: new ``allow_fallback`` parameter. If the map has no overlay container
+  (e.g. old/stripped-down mobile layouts) and ``allow_fallback`` is ``false``, the container is not
+  rendered at all instead of falling back to the previous inline rendering.
+- New user preference "Sketch-Info Anzeige" (Burger menu -> Einstellungen -> Benutzer Einstellungen)
+  to control how the Sketch-Info-Overlay behaves: ``Standard`` (as before), ``Nicht anzeigen``
+  (never show it) or ``Nur Snapping/Konstruktion`` (only show snapping/construction tool info).
+  Admins can set a default via
+  ``webgis.defaults["user.preferences.sketch-info-display-mode"] = "minimal";`` (``default``/``hidden``/``minimal``).
+
 ### Fixed
+
+- Sketch-Info-Overlay content was wiped and never restored after using embedded construction popups
+  (Coordinates absolute, sketch from geometry, upload/download sketch), because their server
+  responses fired ``onbuildtoolui``/``setActiveTool`` for a different (internal) tool id than the
+  actually active tool.
+- Sketch-Info-Overlay: snapping info stayed stale (kept showing the last snapped object) after
+  leaving a snapped object while dragging an existing sketch vertex, instead of clearing like it
+  correctly does while drawing new vertices.
 
 ## 8.26.3402
 
