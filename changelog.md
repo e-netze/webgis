@@ -24,9 +24,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Sketch-Info-Overlay: also shown while editing features with the Edit tool (Desktop
   Insert/UpdateFeature, Mobile UpdateFeature) - without falling back to the inline rendering on
   layouts that don't support the overlay.
-- ``UISketchInfoContainer``: new ``allow_fallback`` parameter. If the map has no overlay container
-  (e.g. old/stripped-down mobile layouts) and ``allow_fallback`` is ``false``, the container is not
-  rendered at all instead of falling back to the previous inline rendering.
 - New user preference "Sketch-Info Anzeige" (Burger menu -> Einstellungen -> Benutzer Einstellungen)
   to control how the Sketch-Info-Overlay behaves: ``Standard`` (as before), ``Nicht anzeigen``
   (never show it) or ``Nur Snapping/Konstruktion`` (only show snapping/construction tool info).
@@ -34,14 +31,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   ``webgis.defaults["user.preferences.sketch-info-display-mode"] = "minimal";`` (``default``/``hidden``/``minimal``).
 
 ### Fixed
-
-- Sketch-Info-Overlay content was wiped and never restored after using embedded construction popups
-  (Coordinates absolute, sketch from geometry, upload/download sketch), because their server
-  responses fired ``onbuildtoolui``/``setActiveTool`` for a different (internal) tool id than the
-  actually active tool.
-- Sketch-Info-Overlay: snapping info stayed stale (kept showing the last snapped object) after
-  leaving a snapped object while dragging an existing sketch vertex, instead of clearing like it
-  correctly does while drawing new vertices.
 
 ## 8.26.3402
 
