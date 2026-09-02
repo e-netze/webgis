@@ -1,11 +1,22 @@
-﻿@using E.Standard.Cms.Configuration.Services
+﻿@using System.Linq
+@using E.Standard.Cms.Configuration.Services
 @using E.Standard.Cms.Configuration
+@using E.Standard.Localization.Services
+@using Microsoft.Extensions.Options
 @inject CmsConfigurationService CCS
+@inject IOptions<MarkdownLocalizerOptions> LocalizerOptions
 
 @model object;
 @{
     var cmsModel = Model as Cms.Models.CmsModel;
     var isCmsView = cmsModel is not null;
+
+    var supportedLanguages = (LocalizerOptions.Value?.SupportedLanguages?.Length ?? 0) > 0
+        ? LocalizerOptions.Value.SupportedLanguages
+        : new[] { "de", "en" };
+    var defaultLanguage = !String.IsNullOrEmpty(LocalizerOptions.Value?.DefaultLanguage)
+        ? LocalizerOptions.Value.DefaultLanguage
+        : supportedLanguages[0];
 }
 <!DOCTYPE html>
 <html>
@@ -66,6 +77,22 @@
                                 <button class="tool order desc">AZ</button>
                             </td>
                         }
+                        else
+                        {
+                            <td style="width:100%"></td>
+                        }
+                        <td class="navbar-language-switcher-holder">
+                            <select id="navbar-language-switcher"
+                                    class="navbar-language-select"
+                                    title="Language"
+                                    aria-label="Language"
+                                    onchange="CMS.setLanguage(this.value)">
+                                @foreach (var lang in supportedLanguages)
+                                {
+                                    <option value="@lang">@lang.ToUpperInvariant()</option>
+                                }
+                            </select>
+                        </td>
 
                     </tr>
                 </table>
@@ -111,7 +138,7 @@
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/lib/sortable/sortable.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
-        <script src="~/js/cms/cms.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/js/cms/cms.js" asp-append-version="true"></script>
         <script src="~/js/cms/cms.db.js?@(CmsGlobals.JsVersion)"></script>
         <script src="~/lib/webportal-layout/webportal-layout.js?@(CmsGlobals.JsVersion)"></script>
         <script src="~/js/cms/jquey-extenstions.js?@(CmsGlobals.JsVersion)"></script>
@@ -128,17 +155,18 @@
         <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="~/lib/sortable/sortable.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
-        <script src="~/js/cms/cms.min.js?@(CmsGlobals.JsVersion)"></script>
+        <script src="~/js/cms/cms.min.js" asp-append-version="true"></script>
         <script src="~/lib/webportal-layout/webportal-layout.js?@(CmsGlobals.JsVersion)"></script>
         <script src="~/lib/typeahead/typeahead.bundle.js"></script>
         <script src="~/lib/bootbox.js/bootbox.min.js"></script>
         <script src="~/lib/showdown/showdown.min.js"></script>
     </environment>
 
-    @RenderSection("Scripts", required: false)
-
     <script type="text/javascript">
         CMS.appRootUrl = '@(ViewData["AppRootUrl"] ?? String.Empty)';
+        CMS.initLanguage('@defaultLanguage', [@Html.Raw(string.Join(",", supportedLanguages.Select(l => $"'{l}'")))]);
     </script>
+
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

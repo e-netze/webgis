@@ -3,6 +3,71 @@
     this.id = '';
     this.appRootUrl = '';
 
+    var _languageStorageKey = 'cms-language';
+
+    this.language = '';
+    this.defaultLanguage = 'en';
+    this.supportedLanguages = ['de', 'en'];
+
+    // Reads the last used language from localStorage (falling back to the
+    // server-side default) so the UI keeps showing the user's preferred
+    // language on the next visit.
+    this.initLanguage = function (defaultLanguage, supportedLanguages) {
+        if (defaultLanguage) {
+            this.defaultLanguage = defaultLanguage;
+        }
+        if (supportedLanguages && supportedLanguages.length) {
+            this.supportedLanguages = supportedLanguages;
+        }
+
+        var stored = null;
+        try {
+            stored = window.localStorage.getItem(_languageStorageKey);
+        } catch (e) { }
+
+        this.language = (stored && this.supportedLanguages.indexOf(stored) !== -1)
+            ? stored
+            : this.defaultLanguage;
+
+        this.updateLanguageSwitcherUI();
+    };
+
+    // Switches the CMS UI language, persists the choice in localStorage and
+    // reloads the page so all node/property/tree data is re-fetched translated.
+    // A full reload is required here (not an in-place refresh): the tree and
+    // pin-list renderers are incremental and skip already-rendered nodes by
+    // path, so they never redraw stale (old-language) node text in place.
+    // To avoid losing the user's position, the current tree path is carried
+    // along via a transient "_cp" query parameter and restored after reload.
+    this.setLanguage = function (lang) {
+        if (!lang || this.supportedLanguages.indexOf(lang) === -1 || lang === this.language) {
+            return;
+        }
+
+        this.language = lang;
+        try {
+            window.localStorage.setItem(_languageStorageKey, lang);
+        } catch (e) { }
+
+        var url = new URL(document.location.href);
+        if (typeof document.currentPath === 'string' && document.currentPath) {
+            url.searchParams.set('_cp', document.currentPath);
+        } else {
+            url.searchParams.delete('_cp');
+        }
+
+        var newUrl = url.toString();
+        if (newUrl === document.location.href) {
+            document.location.reload();
+        } else {
+            document.location.href = newUrl;
+        }
+    };
+
+    this.updateLanguageSwitcherUI = function () {
+        $('#navbar-language-switcher').val(CMS.language);
+    };
+
     var _db = null;
     this.init = function() {
         _db = new CMS.db();
@@ -47,7 +112,7 @@
         }
 
         //console.log('fetch', 'cms/' + action);
-        fetch('cms/' + action, {
+        fetch('cms/' + action + '?_ul=' + encodeURIComponent(CMS.language || ''), {
                 method: 'POST',
                 //headers: {
                 //    'Content-Type': 'application/json'

@@ -19,9 +19,8 @@ public class TocTheme : SchemaNodeLink, IPersistable, IDisplayName, IEditable
     private string _ogcId = String.Empty, _abstract/*, _ogcGroup = String.Empty*/;
 
     #region Properties
-    [DisplayName("Aliasname")]
-    [Description("Aliasname, der im TOC angezeigt wird")]
-    [Category("Allgemein")]
+    [DisplayName("#alias_name")]
+    [Category("#category_alias_name")]
     public string AliasName
     {
         get { return _aliasName; }
@@ -36,60 +35,55 @@ public class TocTheme : SchemaNodeLink, IPersistable, IDisplayName, IEditable
         }
     }
 
-    [DisplayName("Sichtbar")]
-    [Description("Theme ist standardmäßig sichtbar")]
-    [Category("Allgemein")]
+    [DisplayName("#visible")]
+    [Category("#category_visible")]
     public bool Visible
     {
         get { return _visible; }
         set { _visible = value; }
     }
-    [DisplayName("Gesperrt (Locked)")]
-    [Description("Thema ist gesperrt. Ist im TOC nicht sichtbar und kann somit nicht geschalten werden.")]
-    [Category("Allgemein")]
+    [DisplayName("#locked")]
+    [Category("#category_locked")]
     public bool Locked
     {
         get { return _locked; }
         set { _locked = value; }
     }
-    [DisplayName("In der Legende anzeigen")]
-    [Category("Allgemein")]
+    [DisplayName("#legend")]
+    [Category("#category_legend")]
     public bool Legend
     {
         get { return _legend; }
         set { _legend = value; }
     }
 
-    [DisplayName("Aliasname für Legende")]
-    [Category("Allgemein")]
-    [Description("Gibt den Anzeigenamen für dieses Thema in der Legende an.")]
+    [DisplayName("#legend_aliasname")]
+    [Category("#category_legend_aliasname")]
     public string LegendAliasname { get; set; }
 
-    [DisplayName("Refenzmaßstab anwenden")]
-    [Category("Allgemein")]
+    [DisplayName("#ref_scale")]
+    [Category("#category_ref_scale")]
     public bool RefScale
     {
         get { return _refscale; }
         set { _refscale = value; }
     }
-    [DisplayName("Download erlauben")]
-    [Description("Daten dieses Themas können heruntergeladen werden.")]
-    [Category("~Download")]
+    [DisplayName("#downloadable")]
+    [Category("~#category_downloadable")]
     public bool Downloadable
     {
         get { return _downloadable; }
         set { _downloadable = value; }
     }
-    [DisplayName("Themenbeschriftung")]
-    [Description("Themenbeschriftung kann durch den User geändert werden. Nur für IMS Dienste.")]
-    [Category("~Labeling (nicht mehr unterstützt)")]
+    [DisplayName("#theme_labeling")]
+    [Category("~#category_theme_labeling")]
     public ThemeLabeling ThemeLabeling
     {
         get { return _labeling; }
         set { _labeling = value; }
     }
 
-    [Category("Nur wenn Dienst mit Gdi verwendet wird")]
+    [Category("#category_gdi_properties")]
     [AuthorizablePropertyArray("gdiproperties")]
     [Editor(typeof(TypeEditor.GdiPropertiesEditThemeEditor),
             typeof(TypeEditor.ITypeEditor))]
@@ -103,18 +97,17 @@ public class TocTheme : SchemaNodeLink, IPersistable, IDisplayName, IEditable
         }
     }
 
-    [DisplayName("Ogc Id")]
-    [Description("Id für dieses Thema, das für WMS export verwendet wird. Wenn hier nichts angeben wird, enspricht diese Id der Original Id den Service.")]
-    [Category("~WebGIS 5 OGC")]
+    [DisplayName("#ogc_id")]
+    [Category("~#category_ogc_id")]
     public string OgcId
     {
         get { return _ogcId; }
         set { _ogcId = value; }
     }
 
-    [DisplayName("Zusammenfassung (abstract)")]
+    [DisplayName("#abstract")]
     [Description("")]
-    [Category("~WebGIS 5 OGC")]
+    [Category("~#category_abstract")]
     [Editor(typeof(TypeEditor.MultilineStringEditor), typeof(TypeEditor.ITypeEditor))]
     public string Abstract
     {
@@ -122,16 +115,15 @@ public class TocTheme : SchemaNodeLink, IPersistable, IDisplayName, IEditable
         set { _abstract = value; }
     }
 
-    [DisplayName("Metadaten Link")]
-    [Category("~WebGIS 5 OGC")]
+    [DisplayName("#meta_data")]
+    [Category("~#category_meta_data")]
     public string MetaData
     {
         get { return _metadata; }
         set { _metadata = value; }
     }
-    [DisplayName("Metadaten Format")]
-    [Description("application/xml oder text/xml oder text/html")]
-    [Category("~WebGIS 5 OGC")]
+    [DisplayName("#meta_data_format")]
+    [Category("~#category_meta_data_format")]
     public string MetaDataFormat
     {
         get { return _metadataFormat; }
@@ -296,7 +288,7 @@ public class TocTheme : SchemaNodeLink, IPersistable, IDisplayName, IEditable
             {
                 throw new Exception("In den eingebunden Diensten existieren mehrere Themen mit gleichem Namen");
                 //FormEqualItems dlg = new FormEqualItems(_aliasName, equalNameThemes.ToArray());
-                //dlg.HeaderText = "In den eingebunden Diensten existieren mehrere Themen mit gleichem Namen. Sollen diese Themen auch eingefügt werden?";
+                //dlg.HeaderText = "In den eingebunden Diensten existieren mehrere Themen mit gleichem Namen. Sollen diese Themen auch eingef�gt werden?";
                 //dlg.ShowSetVisible = dlg.ShowGroup = true;
                 //if (dlg.ShowDialog() == DialogResult.OK)
                 //{

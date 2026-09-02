@@ -15,8 +15,8 @@ public class GdiTools : SchemaNode, IEditable
     #region Properties
 
     [Browsable(true)]
-    [DisplayName("Höhenprofil-Konfiguration")]
-    [Category("Höhenprofil")]
+    [DisplayName("#vertical_alignment_config")]
+    [Category("#category_vertical_alignment_config")]
     [Editor(typeof(TypeEditor.ProfilesConfigEditor),
         typeof(TypeEditor.ITypeEditor))]
     public string VerticalAlignmentConfig
@@ -26,8 +26,8 @@ public class GdiTools : SchemaNode, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Radien [m]")]
-    [Category("Umgebungskreis")]
+    [DisplayName("#marker_circle_radii")]
+    [Category("#category_marker_circle_radii")]
     public int[] MarkerCircleRadii
     {
         get;

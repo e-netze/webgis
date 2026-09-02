@@ -17,7 +17,7 @@ public class EditThemeLink : SchemaNodeLink, IEditable
     private string _editThemeId = String.Empty;
 
     #region Properties
-    [DisplayName("Alias Name")]
+    [DisplayName("#alias_name")]
     public string AliasName
     {
         get { return _aliasname; }
@@ -61,7 +61,7 @@ public class GdiPropertiesEditTheme : AuthorizableArrayItem
 
     #region Properties
 
-    [DisplayName("Alias Name")]
+    [DisplayName("#alias_name")]
     public string AliasName
     {
         get { return _aliasname; }
@@ -75,7 +75,7 @@ public class GdiPropertiesEditTheme : AuthorizableArrayItem
         set { _editThemeId = value; }
     }
 
-    [DisplayName("(webGIS 5) Edit Service")]
+    [DisplayName("#edit_service")]
     public bool EditService
     {
         get { return _editService; }
@@ -83,7 +83,7 @@ public class GdiPropertiesEditTheme : AuthorizableArrayItem
     }
 
     // Falls "false" wird dieses EditThema im WebGIS5 nicht angezeigt. Wurde bspw. bei St�rungspools verwendet: 2 Themen bei St�rfallen => eines f�r Collector, eines f�r WebGIS
-    [DisplayName("(webGIS 5) Visible")]
+    [DisplayName("#visible")]
     public bool Visible
     {
         get; set;

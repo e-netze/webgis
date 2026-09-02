@@ -23,8 +23,8 @@ public class MapPrintLayout : CopyableXml, IEditable, IUI, IDisplayName, ICreata
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Layout Xml File")]
-    [Category("Allgemein")]
+    [DisplayName("#layout_file")]
+    [Category("#category_layout_file")]
     [Editor(typeof(TypeEditor.PrintLayoutEditor),
             typeof(TypeEditor.ITypeEditor))]
     public string LayoutFile
@@ -40,9 +40,8 @@ public class MapPrintLayout : CopyableXml, IEditable, IUI, IDisplayName, ICreata
     }
 
     [Browsable(true)]
-    [DisplayName("Fixe Layout-Parameter")]
-    [Category("Allgemein")]
-    [Description("z.B.: SCALE_OV_MAP1=50000,DARSTELLUNGSVAR_OV_MAP1=OEK50,...")]
+    [DisplayName("#parameters")]
+    [Category("#category_parameters")]
     public string Parameters
     {
         get { return _parameters; }

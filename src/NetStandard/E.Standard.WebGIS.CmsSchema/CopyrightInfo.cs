@@ -20,56 +20,56 @@ public class CopyrightInfo : CopyableXml, IEditable, IUI, IDisplayName
     #region Properties
 
     [Browsable(true)]
-    [DisplayName("Copyright Text")]
-    [Category("Copyright")]
+    [DisplayName("#copyright")]
+    [Category("#category_copyright")]
     public string Copyright
     {
         get; set;
     }
 
     [Browsable(true)]
-    [DisplayName("Copyright Link")]
-    [Category("Copyright")]
+    [DisplayName("#copyright_link")]
+    [Category("#category_copyright_link")]
     public string CopyrightLink
     {
         get; set;
     }
 
     [Browsable(true)]
-    [DisplayName("Copyright Link Text")]
-    [Category("Copyright")]
+    [DisplayName("#copyright_link_text")]
+    [Category("#category_copyright_link_text")]
     public string CopyrightLinkText
     {
         get; set;
     }
 
     [Browsable(true)]
-    [DisplayName("Hinweis Text")]
-    [Category("Allgemein")]
+    [DisplayName("#advice")]
+    [Category("#category_advice")]
     public string Advice
     {
         get; set;
     }
 
     [Browsable(true)]
-    [DisplayName("Url für Logo")]
-    [Category("Allgemein")]
+    [DisplayName("#logo")]
+    [Category("#category_logo")]
     public string Logo
     {
         get; set;
     }
 
     [Browsable(true)]
-    [DisplayName("Logo Breite in Pixel")]
-    [Category("Allgemein")]
+    [DisplayName("#logo_width")]
+    [Category("#category_logo_width")]
     public int LogoWidth
     {
         get; set;
     }
 
     [Browsable(true)]
-    [DisplayName("Logo Höhe in Pixel")]
-    [Category("Allgemein")]
+    [DisplayName("#logo_height")]
+    [Category("#category_logo_height")]
     public int LogoHeight
     {
         get; set;

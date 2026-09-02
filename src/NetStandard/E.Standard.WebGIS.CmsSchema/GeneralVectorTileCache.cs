@@ -144,7 +144,7 @@ public class GeneralVectorTileCacheProperties : SchemaNode, IEditable
 {
     #region Properties
 
-    [DisplayName("Styles Json Url")]
+    [DisplayName("#styles_json_url")]
     public string StylesJsonUrl { get; set; } = "";
 
     public string PreviewImageUrl { get; set; } = "";

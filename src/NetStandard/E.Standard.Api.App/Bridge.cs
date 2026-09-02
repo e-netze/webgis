@@ -44,6 +44,8 @@ using E.Standard.WebMapping.Core.Models;
 
 using Microsoft.Extensions.Localization;
 
+using static E.Standard.Localization.Abstractions.ILocalizer;
+
 namespace E.Standard.Api.App;
 
 public class Bridge : IBridge
@@ -1831,7 +1833,7 @@ public class Bridge : IBridge
             return new Localizer<TClass>(_stringLocalizer);
         }
 
-        public string Localize(string key)
+        public string Localize(string key, LocalizeMode mode = LocalizeMode.NamespaceWithFallbackToKey, LocalizerDefaultValue defaultValue = LocalizerDefaultValue.OriginalKey)
         {
             var val = _stringLocalizer[$"{_localizationNamespace}.{key}"];
 
@@ -1840,7 +1842,7 @@ public class Bridge : IBridge
                 val = _stringLocalizer[key];
             }
 
-            return val.Value;
+            return val.GetValue(defaultValue);
         }
     }
 

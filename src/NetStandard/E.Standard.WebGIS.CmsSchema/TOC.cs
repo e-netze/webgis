@@ -22,8 +22,8 @@ public class TOC : CopyableNode, IUI, ICreatable, IDisplayName, IEditable
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Auswahlmethode")]
-    [Category("Verhalten")]
+    [DisplayName("#check_mode")]
+    [Category("#category_check_mode")]
     public TocGroupCheckMode CheckMode
     {
         get { return _mode; }

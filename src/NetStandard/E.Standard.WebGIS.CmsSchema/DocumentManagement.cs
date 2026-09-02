@@ -17,8 +17,8 @@ public class DocumentManagement : SchemaNode, IEditable
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Dokumentenmanagement verwenden")]
-    [Category("Allgemein")]
+    [DisplayName("#use")]
+    [Category("#category_use")]
     [AuthorizablePropertyAttribute("use", false)]
     public bool Use
     {
@@ -26,8 +26,8 @@ public class DocumentManagement : SchemaNode, IEditable
         set { _use = value; }
     }
     [Browsable(true)]
-    [DisplayName("eindeutiges Key Feld für Dokumentenmanagement")]
-    [Category("Objektschlüssel")]
+    [DisplayName("#id_field_name")]
+    [Category("#category_id_field_name")]
     [Editor(typeof(TypeEditor.ThemeFieldsEditor), typeof(TypeEditor.ITypeEditor))]
     public string IdFieldName
     {
@@ -35,8 +35,8 @@ public class DocumentManagement : SchemaNode, IEditable
         set { _idField = value; }
     }
     [Browsable(true)]
-    [DisplayName("Server Schema Dokumentenmanagement")]
-    [Category("Allgemein")]
+    [DisplayName("#schema")]
+    [Category("#category_schema")]
     [Editor(typeof(TypeEditor.DocumentManagementServerSchemaEditor),
         typeof(TypeEditor.ITypeEditor))]
     public string Schema
@@ -45,8 +45,8 @@ public class DocumentManagement : SchemaNode, IEditable
         set { _schema = value; }
     }
     [Browsable(true)]
-    [DisplayName("Upload von Dokumenten ermöglichen")]
-    [Category("Upload")]
+    [DisplayName("#allow_upload")]
+    [Category("#category_allow_upload")]
     [AuthorizablePropertyAttribute("allowupload", false)]
     public bool AllowUpload
     {

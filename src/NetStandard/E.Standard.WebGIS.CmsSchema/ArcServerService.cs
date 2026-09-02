@@ -60,64 +60,58 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
 
     #region Properties
 
-    [DisplayName("Darstellungsvariaten bereitstellen")]
-    [Description("Darastellungsvarianten werden nicht mehr parametriert, sondern werden dynamisch aus dem TOC des Dienstes erstellt. Das Level gibt an, bis zu welcher Ebene Untergruppen erstellt werden. Layer unterhalb des maximalen Levels werden zu einer Checkbox-Darstellungsvariante zusammengeasst.")]
+    [DisplayName("#dynamic_presentations")]
     public WebMapping.Core.ServiceDynamicPresentations DynamicPresentations { get; set; }
 
-    [DisplayName("Abfragen bereitstellen")]
-    [Description("Abfragen werden nicht mehr parametriert, sondern werden zur Laufzeit für alle (Feature) Layer eine Abfrage erstellt (ohne Suchbegriffe, nur Identify)")]
+    [DisplayName("#dynamic_queries")]
     public WebMapping.Core.ServiceDynamicQueries DynamicQueries { get; set; }
 
-    [DisplayName("Dynamisches Verhalten")]
-    [Description("Gibt an, wie mit Layern umgegangen wird, die nicht beim erstellen oder nach einem Refresh im CMS unter Themen gelistet werden. AutoAppendNewLayers ... neue Themen werden beim Initialisieren des Dienstes (nach einem cache/clear) der Karte hinzugefügt und können über den TOC geschalten werden. UseStrict ... nur jene Themen, die unter Themen aufgelistet sind, kommen auch in der Karte vor. SealedLayers_UseServiceDefaults ... des wird keine Layerschaltung an den Dienst übergeben. Das bewirkt, dass immer die Defaultschaltung aus dem Layer angezeigt wird. Diese Options macht nur beim Fallback(druck)services für VTC Dienste Sinn!")]
+    [DisplayName("#dynamic_dehavior")]
     public WebMapping.Core.DynamicDehavior DynamicDehavior { get; set; }
 
-    [DisplayName("Service-Typ")]
-    [Description("Watermark Services werden immer ganz oben gezeichnet und können vom Anwender nicht transparent geschalten oder ausgelendet werden. Watermark Services können neben Wasserzeichen auch Polygondecker enthalten.")]
+    [DisplayName("#service_type")]
     public WebMapping.Core.ImageServiceType ServiceType { get; set; }
 
-    [DisplayName("Allow QueryBuilder (Darstellungsfilter aus TOC")]
-    [Description("Der Anwender kann aus dem TOC Filter als mit deinen SQL Edititor setzen.")]
+    [DisplayName("#allow_query_builder")]
     [AuthorizableProperty("allow_querybuilder", false)]
     public bool AllowQueryBuilder { get; set; }
 
-    [DisplayName("Karten Server")]
-    [Category("Service")]
+    [DisplayName("#server")]
+    [Category("#category_server")]
     public string Server
     {
         get { return _server; }
         set { _server = value; }
     }
-    [DisplayName("Karten Dienst")]
-    [Category("Service")]
+    [DisplayName("#service")]
+    [Category("#category_service")]
     public string Service
     {
         get { return _service; }
         set { _service = value; }
     }
-    [DisplayName("Karten Dienst Url")]
-    [Category("Service")]
+    [DisplayName("#service_url")]
+    [Category("#category_service_url")]
     public string ServiceUrl
     {
         get { return _serviceUrl; }
         set { _serviceUrl = value; }
     }
 
-    [DisplayName("Export Map Format")]
-    [Category("Service")]
-    [Description("Bei 'Json' wird das Ergebnis ins Outputverzeichnis von ArcGIS Server gelegt und dort vom Client abgeholt. Hat der Client keinen Zugriff auf dieses Output Verzeichnis, kann als Option 'Image' gewählt werden. Es wird dann vom ArcGIS Server keine Bild abgelegt sondern direkt übergeben.")]
+    [DisplayName("#export_map_format")]
+    [Category("#category_export_map_format")]
     public AGSExportMapFormat ExportMapFormat { get; set; }
 
-    [DisplayName("Username")]
-    [Category("~Anmeldungs-Credentials")]
+    [DisplayName("#username")]
+    [Category("~#category_username")]
     public string Username
     {
         get { return _user; }
         set { _user = value; }
     }
 
-    [DisplayName("Password")]
-    [Category("~Anmeldungs-Credentials")]
+    [DisplayName("#password")]
+    [Category("~#category_password")]
     [PasswordPropertyText(true)]
     public string Password
     {
@@ -125,14 +119,14 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         set { _pwd = value; }
     }
 
-    [DisplayName("Token")]
-    [Category("~Anmeldungs-Token")]
+    [DisplayName("#token")]
+    [Category("~#category_token")]
     [PasswordPropertyText(true)]
     [Editor(typeof(TypeEditor.TokenAuthentificationEditor), typeof(TypeEditor.ITypeEditor))]
     public string Token { get; set; }
 
-    [Category("~Anmeldungs-Credentials")]
-    [DisplayName("Ticket-Gültigkeit [min]")]
+    [Category("~#category_ticket_expiration")]
+    [DisplayName("#ticket_expiration")]
     public int TicketExpiration
     {
         get { return _expiration; }
@@ -140,8 +134,8 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
     }
 
     /*
-    [Category("Rest")]
-    [DisplayName("Ticket-ClientId")]
+    [Category("#category_client_i_d")]
+    [DisplayName("#client_i_d")]
     [Description("")]
     public string ClientID
     {
@@ -150,8 +144,8 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
     }
      * */
 
-    [DisplayName("GetSelection Methode")]
-    [Category("~~Selektion")]
+    [DisplayName("#get_selection_method")]
+    [Category("~~#category_get_selection_method")]
     public AGSGetSelectionMothod GetSelectionMethod
     {
         get { return _selectionMethod; }
@@ -571,7 +565,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
 
         #region Queries
 
-        var nameurlControl = new NameUrlControl();
+        var nameurlControl = new NameUrlControl(_servicePack);
         if (refresh == false && AutoImportQueries == true)
         {
             urls.Clear();
@@ -783,36 +777,6 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         return ret;
     }
 
-    [Category("~~Soap")]
-    public string SoapServiceUrl
-    {
-        get
-        {
-            return GetSoapUrl(_serviceUrl);
-        }
-    }
-
-    [Category("~~Soap")]
-    public string SoapServer
-    {
-        get
-        {
-            return GetSoapUrl(_server);
-        }
-    }
-    private string GetSoapUrl(string serviceUrl)
-    {
-        if (serviceUrl.ToLower().Contains("/rest/"))
-        {
-            int pos = serviceUrl.ToLower().IndexOf("/rest/");
-            string soapUrl = serviceUrl.Substring(0, pos + 1) + serviceUrl.Substring(pos + 6, serviceUrl.Length - pos - 6);
-            return soapUrl;
-        }
-
-        return serviceUrl;
-    }
-
-
     internal static string ShortLayerName(string layername)
     {
         if (layername.Contains("\\"))
@@ -822,23 +786,6 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         }
 
         return layername;
-    }
-
-    private static JsonLayer MapLayerInfoByID(IEnumerable<JsonLayer> infos, int id)
-    {
-        if (id < 0)
-        {
-            return null;
-        }
-
-        foreach (var info in infos)
-        {
-            if (info.Id == id)
-            {
-                return info;
-            }
-        }
-        return null;
     }
 
     private string ParentLayerName(JsonLayer layer, IEnumerable<JsonLayer> layers)

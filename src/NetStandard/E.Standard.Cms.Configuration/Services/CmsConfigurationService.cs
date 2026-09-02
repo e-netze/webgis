@@ -8,14 +8,18 @@ using System.Xml;
 
 using E.Standard.Cms.Configuration.Models;
 using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.Plattform;
 using E.Standard.CMS.Core.Schema;
 using E.Standard.CMS.Schema;
 using E.Standard.Configuration;
 using E.Standard.Json;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Security.App.Services.Abstraction;
 
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
 namespace E.Standard.Cms.Configuration.Services;
@@ -23,11 +27,19 @@ namespace E.Standard.Cms.Configuration.Services;
 public class CmsConfigurationService
 {
     private readonly CmsConfigurationServiceOptions _options;
+    private readonly IServiceProvider _serviceProvider;
 
     public CmsConfigurationService(
         IOptionsMonitor<CmsConfigurationServiceOptions> optionsMonitor,
-        IEnumerable<IConfigValueParser> configValueParsers)
+        IEnumerable<IConfigValueParser> configValueParsers,
+        IStringLocalizerFactory stringLocalizer,
+        IServiceProvider serviceProvider)
     {
+        // NOTE: stringLocalizer is intentionally not cached in a field here.
+        // CmsConfigurationService is a Singleton, but the language (per-request,
+        // via ICultureProvider/"_ul") must be resolved per-call, so Translate()
+        // resolves a fresh IStringLocalizerFactory from _serviceProvider on every call.
+        _serviceProvider = serviceProvider;
         _options = optionsMonitor.CurrentValue;
 
         var appConfig = new JsonAppConfiguration("cms.config");
@@ -58,7 +70,7 @@ public class CmsConfigurationService
             doc.Load(_options.ContentPath + "/schemes/" + cmsItem.Scheme + "/schema.xml");
 
             CMS[cmsItem.Id] = new E.Standard.CMS.Core.CMSManager(doc);
-            CMS[cmsItem.Id].SetConnectionString(new CmsItemTransistantInjectionServicePack(null), cmsItem.Path);
+            CMS[cmsItem.Id].SetConnectionString(new CmsItemTransistantInjectionServicePack(null, stringLocalizer), cmsItem.Path);
             CMS[cmsItem.Id].CmsDisplayName = cmsItem.Name;
             CMS[cmsItem.Id].CmsSchemaName = cmsItem.Scheme;
 
@@ -81,6 +93,19 @@ public class CmsConfigurationService
     {
         try
         {
+            // Resolve a fresh IStringLocalizerFactory per call (instead of caching it
+            // once in the constructor): CmsConfigurationService is a Singleton, but the
+            // language depends on the current request (ICultureProvider reads "_ul" from
+            // the query string), so the localizer must be created per-call to reflect it.
+            var localizer = _serviceProvider.GetRequiredService<IStringLocalizerFactory>()
+                .CreateCmsLocalizer(typeof(CmsConfigurationService));
+
+            string localized = localizer.Localize($"scheme.webgis.{key}", ILocalizer.LocalizeMode.ExcactKeyOnly, ILocalizer.LocalizerDefaultValue.Null);
+            if (!String.IsNullOrEmpty(localized))
+            {
+                return localized;
+            }
+
             if (TranslationDictionary == null)
             {
                 return key;

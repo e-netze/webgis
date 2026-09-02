@@ -39,13 +39,13 @@ public class WFSService : CopyableNode, IAuthentification, IClientCertification,
     }
 
     #region Properties
-    [DisplayName("Karten Server")]
+    [DisplayName("#server")]
     public string Server
     {
         get { return _server; }
         set { _server = value; }
     }
-    [DisplayName("WFS Version")]
+    [DisplayName("#version")]
     public WFS_Version Version
     {
         get { return _version; }
@@ -53,7 +53,7 @@ public class WFSService : CopyableNode, IAuthentification, IClientCertification,
     }
 
 
-    [DisplayName("GML3/Srs Axen berücksichtigen")]
+    [DisplayName("#interpert_srs_axis")]
     public bool InterpertSrsAxis
     {
         get { return _interpretSrsAxis; }
@@ -63,16 +63,16 @@ public class WFSService : CopyableNode, IAuthentification, IClientCertification,
 
     #region IAuthentification Member
 
-    [DisplayName("Username")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#username")]
+    [Category("#category_username")]
     public string Username
     {
         get { return _user; }
         set { _user = value; }
     }
 
-    [DisplayName("Password")]
-    [Category("Anmeldungs-Credentials")]
+    [DisplayName("#password")]
+    [Category("#category_password")]
     [PasswordPropertyText(true)]
     public string Password
     {
@@ -80,8 +80,8 @@ public class WFSService : CopyableNode, IAuthentification, IClientCertification,
         set { _pwd = value; }
     }
 
-    [DisplayName("Token")]
-    [Category("Anmeldungs-Token")]
+    [DisplayName("#token")]
+    [Category("#category_token")]
     [PasswordPropertyText(true)]
     [Editor(typeof(TypeEditor.TokenAuthentificationEditor), typeof(TypeEditor.ITypeEditor))]
     public string Token { get; set; }
@@ -89,8 +89,8 @@ public class WFSService : CopyableNode, IAuthentification, IClientCertification,
     #endregion
 
     #region IClientCertification
-    [Category("Anmeldung")]
-    [DisplayName("Optional: Client Certificate")]
+    [Category("#category_client_certificate")]
+    [DisplayName("#client_certificate")]
     [Editor(typeof(TypeEditor.ClientCertificateEditor), typeof(TypeEditor.ITypeEditor))]
     public string ClientCertificate
     {

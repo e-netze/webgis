@@ -82,7 +82,7 @@ public class UILink : CopyableXml, ICreatable, IUI, IDisplayName, IEditable
         set { _link = value; }
     }
 
-    [DisplayName("Browser Fenster Attribute")]
+    [DisplayName("#browser_window_props")]
     //[TypeConverter(typeof(ExpandableObjectConverter))]
     public TableColumn.BrowserWindowProperties BrowserWindowProps
     {
@@ -91,7 +91,7 @@ public class UILink : CopyableXml, ICreatable, IUI, IDisplayName, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Vorschau Bild")]
+    [DisplayName("#thumb_nail")]
     public string ThumbNail
     {
         get { return _thumbnail; }
@@ -99,7 +99,7 @@ public class UILink : CopyableXml, ICreatable, IUI, IDisplayName, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Beschreibung")]
+    [DisplayName("#description")]
     [Editor(typeof(TypeEditor.MultilineStringEditor), typeof(TypeEditor.ITypeEditor))]
     public string Description
     {

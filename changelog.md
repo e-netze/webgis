@@ -57,7 +57,38 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Query results export (CSV, etc.): the export now includes all query results, not just the
   features of the currently displayed table page. A progress indicator is shown while exporting.
 
+- Sketch-Info-Overlay: sketch/graphics tools that show a ``UISketchInfoContainer`` (e.g. measuring
+  tools) no longer render it inline in the tool dialog. Instead it now floats as an overlay directly
+  above the coordinate display, growing upward as more info (snapping, construction tool) is shown.
+  It automatically hides when the mouse leaves the map area, is visually styled as an overlay
+  (shadow), animates in/out, and can be temporarily dismissed with an "x" button. Its width now
+  matches the width of the coordinate display/side frame.
+- Sketch-Info-Overlay: also shown for the MapMarkup tool (Polyline/Polygon and, behaving the same
+  way, Dimline/DimPolygon/Hectoline). All other MapMarkup geometry types now at least show their
+  localized geometry type.
+- Sketch-Info-Overlay: clicking the coordinate display while a sketch/graphics tool is active now
+  opens the "Coordinates (absolute)" construction tool instead of the XYZ tool; clicking the segment
+  area of the overlay opens the "Direction/Distance" construction tool.
+- Sketch-Info-Overlay: also shown while editing features with the Edit tool (Desktop
+  Insert/UpdateFeature, Mobile UpdateFeature) - without falling back to the inline rendering on
+  layouts that don't support the overlay.
+- New user preference "Sketch-Info Anzeige" (Burger menu -> Einstellungen -> Benutzer Einstellungen)
+  to control how the Sketch-Info-Overlay behaves: ``Standard`` (as before), ``Nicht anzeigen``
+  (never show it) or ``Nur Snapping/Konstruktion`` (only show snapping/construction tool info).
+  Admins can set a default via
+  ``webgis.defaults["user.preferences.sketch-info-display-mode"] = "minimal";`` (``default``/``hidden``/``minimal``).
+
+- CMS: the CMS app is now multilingual (German/English). Schema class ``DisplayName``/
+  ``Category``/``Description`` attributes can reference ``#key`` markdown entries localized via
+  ``l10n/de|en`` files; the navbar now has a language dropdown, persisted in ``localStorage``.
+
 ### Fixed
+
+- CMS: switching the CMS language now correctly re-translates the tree/category labels (previously
+  frozen to the startup language) and reloads while restoring the current tree position instead of
+  always jumping to the root node.
+- CMS: fixed several German ``l10n`` markdown files that were saved with the wrong encoding, showing
+  ``?`` instead of umlauts (ü/ö/ä).
 
 ## 8.26.3402
 
@@ -77,7 +108,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   since only the host name was used. The port is now kept whenever it isn't the scheme's
   standard port (80/443); for scheme-relative Urls (`//host:port/...`), where the actual
   scheme is unknown, an explicitly given port is always kept as-is.
-- Styling: (MapBuild Sidebar)
+- Styling: (MapBuilder Sidebar)
 - Coordinates Tool: CSV export ("Koordinaten herunterladen") showed "Rechtswert" twice as column
   header instead of "Rechtswert" and "Hochwert" (Easting/Northing).
   [Issue #499](https://github.com/e-netze/webgis-community/issues/499)

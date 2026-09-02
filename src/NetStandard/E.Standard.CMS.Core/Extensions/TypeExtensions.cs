@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Reflection;
 
 using E.Standard.CMS.Core.Exceptions;
+using E.Standard.Localization.Reflection;
 
 namespace E.Standard.CMS.Core.Extensions;
 
@@ -43,5 +45,21 @@ public static class TypeExtensions
         {
             throw new CmsCreateInstanceException($"Can't create instance from type {type}", ex);
         }
+    }
+
+    static public string GetLocalizationNamespace(this Type type)
+    {
+        if (type is null)
+        {
+            throw new ArgumentNullException(nameof(type));
+        }
+
+        var lsa = type.GetCustomAttribute<LocalizationNamespaceAttribute>();
+        if (lsa is not null)
+        {
+            return lsa.Namespace;
+        }
+
+        return type.Name.ToLowerInvariant();
     }
 }

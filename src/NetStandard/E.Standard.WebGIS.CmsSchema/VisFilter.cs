@@ -36,8 +36,8 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
     #region Properties
 
     [Browsable(true)]
-    [DisplayName("Betroffene Layer")]
-    [Category("Filter")]
+    [DisplayName("#layer_names")]
+    [Category("#category_layer_names")]
     [Editor(typeof(TypeEditor.SelectLayersEditor), typeof(TypeEditor.ITypeEditor))]
     public string LayerNames
     {
@@ -52,8 +52,8 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("SQL Filter")]
-    [Category("Filter")]
+    [DisplayName("#filter")]
+    [Category("#category_filter")]
     public string Filter
     {
         get
@@ -67,9 +67,8 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Anzeigetyp")]
-    [Category("Filter")]
-    [Description("Gibt an, ob der Filter im Werkzeugdialog angezeigt wird. Gesperrte Filter (locked) werden nicht angezeigt und sind automatisch immer gesetzt (der Benutzer kann den Filter nicht zurücksetzen). Unsichtbare (invisible) Filter werde nicht im Werkzeugdialog angezeigt und sind auch nicht automisch gesetzt. Diese Option ist nur sinnvoll, wenn der Filter z.B. nur als Abfragefilter verwendet werden soll.")]
+    [DisplayName("#type")]
+    [Category("#category_type")]
     public VisFilterType Type
     {
         get
@@ -83,16 +82,15 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Betroffene Layer sichtbar schalten")]
-    [Category("Filter")]
-    [Description("Gibt an, ob die betroffen Layer beim Setzen des Filters automatisch sichtbar geschalten werden sollen. Dieser Parameter wird nur berücksichtigt, wenn der Anwender den Filter in der Benutzeroberfläche setzt. Wird der Filter als Url-Parameter übergeben, muss die Sichtbarkeit der Layer extra über Url-Parameter (sichtbar, darstelllungsvariante) gesetzt werden.")]
+    [DisplayName("#set_layer_visibility")]
+    [Category("#category_set_layer_visibility")]
     public bool SetLayerVisibility
     {
         get { return _setlayervis; }
         set { _setlayervis = value; }
     }
 
-    [Category("~~Nur wenn Dienst mit Gdi verwendet wird")]
+    [Category("~~#category_gdi_properties")]
     [AuthorizablePropertyArray("gdiproperties")]
     [Editor(typeof(TypeEditor.GdiPropertiesVisFilterEditor), typeof(TypeEditor.ITypeEditor))]
     [ObsoleteCmsPropeperty]
@@ -109,9 +107,8 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Auswahlliste")]
-    [Description("Hier kann für jeden Suchbegriff eine Auswahlliste definiert werden. Liefert das SQL Statement als Spalten 'VALUE' und 'NAME' zurück (SELECT f1 as NAME, f2 as VALUE FROM ....) werden diese für die Auswahlliste verwendet. Ansonsten wird die erste Spalte, sowohl für 'VALUE' und 'NAME' verwendet. Die Werte für VALUE aus der angeführten Abfrage müssen für Auswahllisten eindeutig sein.")]
-    [Category("~Auswahlliste")]
+    [DisplayName("#lookup_tables")]
+    [Category("~#category_lookup_tables")]
     [Editor(typeof(TypeEditor.VisFilterLookupEditor), typeof(TypeEditor.ITypeEditor))]
     public LookupTable[] LookupTables
     {
@@ -123,19 +120,17 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
     }
 
     [Browsable(true)]
-    [DisplayName("Sql Injektion Whitelist")]
-    [Category("~Sicherheit")]
-    [Description("Hier kann ein String mit Zeichen angegeben werden, die von der SQL-Injektion überprüfung ignoriert werden. zB: ><&'\"")]
+    [DisplayName("#sql_injection_white_list")]
+    [Category("~#category_sql_injection_white_list")]
     public string SqlInjectionWhiteList
     {
         get; set;
     }
 
     [Browsable(true)]
-    [DisplayName("Optional: Lookup Layer")]
-    [Category("~Auswahlliste")]
+    [DisplayName("#lookup_layer")]
+    [Category("~#category_lookup_layer")]
     [Editor(typeof(TypeEditor.SelectLayersEditor), typeof(TypeEditor.ITypeEditor))]
-    [Description("Werden die Lookup-Werte nicht über eine Datenbank oder eine DataLinq Query abgeohlt, sondern direkt von einem Layer des Dienstes, dann dieser Layer hier eingestellt werden. Bei der Auswahlliste muss dann nur noch ein '#' als Connection String eingestellt werden. Die Angabe dieses Layers ist nur notwendig, wenn die betroffenen Layer für diesesn Filter sich auf mehrere Themen beziehen. Wird über diesen Filter nur ein Layer gefilter, ist dieser auch automatisch der Layer für die Lookup Tabelle, wenn hier nichts anderes angeführt wurde.")]
     public string LookupLayer
     {
         get; set;
@@ -300,11 +295,10 @@ public class VisFilter : CopyableXml, ICreatable, IEditable, IUI, IDisplayName
 
         public Lookuptype LookupType { get { return _type; } set { _type = value; } }
 
-        [DisplayName("Key-Feld")]
+        [DisplayName("#key")]
         public string Key { get { return _key; } set { _key = value; } }
 
-        [DisplayName("Auswahlliste")]
-        [Description("Auswahlliste für dieses Key-Feld")]
+        [DisplayName("#look_up")]
         [Editor(typeof(TypeEditor.LookUpEditor), typeof(TypeEditor.ITypeEditor))]
         public LookUp LookUp
         {

@@ -21,19 +21,16 @@ public class TableExportFormat : CopyableXml, IUI, IEditable, IDisplayName
 
     #region Properties
 
-    [DisplayName("Format String")]
-    [Description("String für die Formatierung einer Zeile. Ein Zeilenumbruch entspricht \\r\\n. Platzhalter für Spalten in eckigen Klammern schreiben. (Beispiel: [KG]+[NR]\\r\\n)")]
-    [Category("Allgemein")]
+    [DisplayName("#format_string")]
+    [Category("#category_format_string")]
     public string FormatString { get; set; } = "";
 
-    [DisplayName("Datei Erweiterung")]
-    [Description("Die fertig erstellte Exportdatei hat die hier angegebene Datei Erweiterung")]
-    [Category("Allgemein")]
+    [DisplayName("#file_extension")]
+    [Category("#category_file_extension")]
     public string FileExtension { get; set; } = "txt";
 
-    [DisplayName("Beschreibung")]
-    [Description("Wird dem Anwender im Download/Copy-To-Clipboard dialog angezeigt")]
-    [Category("Allgemein")]
+    [DisplayName("#description")]
+    [Category("#category_description")]
 
     public string Description { get; set; } = "";
 

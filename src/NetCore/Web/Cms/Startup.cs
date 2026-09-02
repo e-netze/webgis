@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Security.Authentication;
 
 using Cms.AppCode.Extensions.DependencyInjection;
+using Cms.AppCode.Services;
 
 using E.DataLinq.Code.Extensions.DependencyInjection;
 using E.Standard.ActiveDirectory.Services.ApplicationSecurity;
@@ -330,6 +331,20 @@ public class Startup
         services.AddTransient<ClearCmsService>();
         services.AddTransient<ReloadSchemeService>();
         services.AddTransient<ExportCmsService>();
+
+        #endregion
+
+        #region Localization
+
+        services.AddMarkdownLocalizerFactory<CultureProvider>(config =>
+        {
+            config.SupportedLanguages = ["de", "en"];
+#if DEBUG
+            config.DefaultLanguage = "en";
+#else
+            config.DefaultLanguage = config.SupportedLanguages.First();
+#endif
+        });
 
         #endregion
 

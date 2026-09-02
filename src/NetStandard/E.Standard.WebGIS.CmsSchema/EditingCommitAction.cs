@@ -23,47 +23,22 @@ public class EditingCommitAction : CopyableXml, IUI, ICreatable, IDisplayName
 
     #region Properties
 
-    [DisplayName("Timing")]
-    [Description("Gibt an, ob die Action vor oder nach dem Speichen des Objektes passiert")]
+    [DisplayName("#timing")]
     public EditCommitActionTiming ActionTiming { get; set; } // before/after
 
-    [DisplayName("Protocol")]
-    [Description("Gibt an, über welches Protokol die Action aufgerufen wird")]
+    [DisplayName("#protocol")]
     public EditCommitActionProtocol ActionProtocol { get; set; } // HTTP_GET, HTTP_POST
 
-    [DisplayName("Target")]
-    [Description("""
-        Gibt das Ziel der Action an. Bei HTTP ist das Ziel die Url der Action.
-        Target kann Platzhalter [FELDNAME] angefürht werden, um Werte an das 
-        Ziel zu übergeben.
-        """)]
-        
+    [DisplayName("#target")]
     public string ActionTarget { get; set; }  // Url
 
-    [DisplayName("Headers")]
-    [Description("Hier können Header angegeben werden, die beim HTTP Request beispielsweise zur Authentifizierung oder zur Angabe eines Content-Types verwendet werden können.")]
+    [DisplayName("#headers")]
     public string[] ActionHeaders { get; set; } // HTTP Headers (ContentType, Authorization)
 
-    [DisplayName("Payload")]
-    [Description("""
-        Die Daten, die an die Action übergeben werden. Bei HTTP_GET können das Url-Parameter sein, 
-        bei HTTP_POST ist der Payload der Request Body.
-        Im Text können Platzhalter [FELDNAME] angeführt werden, um Werte aus dem aktuellen Feature 
-        an das Ziel (Target) zu übergeben.
-        """)]
-        
+    [DisplayName("#payload")]
     public string ActionPayload { get; set; } // content
 
-    [DisplayName("Success Message")]
-    [Description("""
-        Eine Message, die im Viewer ausgegeben wird, wenn diese Commit Action erfolgreich 
-        ausgeführt wurde (unabhängig davon, ob das Timing Before oder After ist). Im Text 
-        können Platzhalter [FELDNAME] angeführt werden, um Werte aus dem aktuellen Feature 
-        in die Message einzufügen.
-        Die Message wird per default als Toast Message angezeigt und verschwindet nach einigen 
-        Sekunden wieder automatisch. Sollte die Nachricht in einem Dialog angezeigt werden, muss 
-        sit mit "dialog:" beginnen.
-        """)]
+    [DisplayName("#success_message")]
     public string SuccessMessage { get; set; }
 
     #endregion

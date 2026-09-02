@@ -33,8 +33,8 @@ public class TocGroup : CopyableNode, IUI, ICreatable, IDisplayName, IEditable
 
     #region Properties
     [Browsable(true)]
-    [DisplayName("Auswahlmethode")]
-    [Category("Verhalten")]
+    [DisplayName("#check_mode")]
+    [Category("#category_check_mode")]
     public TocGroupCheckMode CheckMode
     {
         get { return _mode; }
@@ -42,17 +42,16 @@ public class TocGroup : CopyableNode, IUI, ICreatable, IDisplayName, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Sichtbar")]
-    [Category("Allgemein")]
-    [Description("Gibt den default Schaltzustand einer Gruppe an. Dieser ist nur bei 'CheckMode=Lock' relevant!")]
+    [DisplayName("#visible")]
+    [Category("#category_visible")]
     public bool Visible
     {
         get { return _visible; }
         set { _visible = value; }
     }
 
-    [DisplayName("Link auf Metadaten")]
-    [Category("Allgemein")]
+    [DisplayName("#meta_data")]
+    [Category("#category_meta_data")]
     public string MetaData
     {
         get { return _metadata; }
@@ -60,8 +59,8 @@ public class TocGroup : CopyableNode, IUI, ICreatable, IDisplayName, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Erweiterbar (Dropdownable)")]
-    [Category("Verhalten")]
+    [DisplayName("#drop_downable")]
+    [Category("#category_drop_downable")]
     public bool DropDownable
     {
         get { return _dropdownable; }
@@ -69,17 +68,16 @@ public class TocGroup : CopyableNode, IUI, ICreatable, IDisplayName, IEditable
     }
 
     [Browsable(true)]
-    [DisplayName("Erweitert (beim Start)")]
-    [Category("Verhalten")]
+    [DisplayName("#collapsed")]
+    [Category("#category_collapsed")]
     public bool Collapsed
     {
         get { return _collapsed; }
         set { _collapsed = value; }
     }
 
-    [DisplayName("Ogc Id")]
-    [Description("Id für dieses Thema, das für WMS export verwendet wird (nur relevant, wenn die Gruppe für das 'Aufklappen' gesprerrt ist). Wenn hier nichts angeben wird, enspricht diese Id dem Namen.")]
-    [Category("~WebGIS 5 OGC")]
+    [DisplayName("#ogc_id")]
+    [Category("~#category_ogc_id")]
     public string OgcId
     {
         get { return _ogcId; }

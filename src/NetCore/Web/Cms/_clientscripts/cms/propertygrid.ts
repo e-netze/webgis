@@ -102,7 +102,7 @@
                         $(this).next('.propertygrid-category-body').slideToggle();
                     });
                 }
-                if (categoryCollapsed === true) {
+                if (categoryCollapsed === true || categoryObsolete === true) {
                     $category.addClass('collapsed').children('.propertygrid-category-body').css('display', 'none');
                 }
                 if (categoryObsolete === true) {
@@ -192,7 +192,7 @@
 
                 if (property.description) {
                     var $descriptionPanel = $("<div>").addClass('propertygrid-property-description').appendTo(/*$category.find('.propertygrid-category-body')*/$propWrapper);
-                    var descriptions = property.description.split('\n');
+                    var descriptions = property.description.split('\n\n');
                     for (var d = 0; d < descriptions.length; d++) {
                         $descriptionPanel.append($("<p>").html(descriptions[d]));
                     }

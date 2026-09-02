@@ -33,7 +33,9 @@ using E.Standard.CMS.Schema.Reflection;
 using E.Standard.CMS.UI;
 using E.Standard.CMS.UI.Controls;
 using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Extensions.Compare;
 using E.Standard.Json;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Security.App.Reflection;
 using E.Standard.Security.App.Services;
 using E.Standard.Security.Cryptography;
@@ -42,6 +44,9 @@ using E.Standard.Web.Abstractions;
 using E.Standard.WebGIS.CmsSchema.TypeEditor;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+
+using webgis_cms.AppCode.Extensions;
 
 namespace Cms.Controllers;
 
@@ -53,6 +58,8 @@ public class CmsController : ApplicationSecurityController
     private readonly IHttpService _http;
     private readonly ICmsLogger _cmsLogger;
     private readonly IEnumerable<ICustomCmsSecurityService> _customSecurityServices;
+    private readonly IStringLocalizerFactory _localizerFactory;
+    private readonly ILocalizer _localizer;
 
     private readonly CmsItemTransistantInjectionServicePack _servicePack;
 
@@ -65,6 +72,7 @@ public class CmsController : ApplicationSecurityController
             CmsItemInjectionPackService instanceService,
             ICmsLogger cmsLogger,
             IEnumerable<ICustomCmsSecurityService> customCmsSecurityServices,
+            IStringLocalizerFactory stringLocalizerFactory,
             IEnumerable<ICustomCmsPageSecurityService> customSecurity = null)
         : base(ccs, urlHelperService, applicationSecurityUserManager, customSecurity, crypto, instanceService)
     {
@@ -75,6 +83,9 @@ public class CmsController : ApplicationSecurityController
 
         _servicePack = instanceService.ServicePack;
         _customSecurityServices = customCmsSecurityServices;
+
+        _localizerFactory = stringLocalizerFactory;
+        _localizer = stringLocalizerFactory.CreateCmsLocalizer(typeof(CmsController));
     }
 
     public IActionResult Index(string id = "")
@@ -299,7 +310,7 @@ public class CmsController : ApplicationSecurityController
                 {
                     Action = "new",
                     Name = creatable.Attributes["name"]?.Value,
-                    Prompt = creatable.Attributes["prompt"]?.Value ?? "Neues Element...",
+                    Prompt = creatable.Attributes["prompt"].LocalizeAttribute(_localizer).OrTake($"{_localizer.Localize("new-element")}..."),
                     Path = path
                 });
             }
@@ -309,7 +320,7 @@ public class CmsController : ApplicationSecurityController
                 {
                     Action = "link",
                     Name = linkable.Attributes["name"]?.Value,
-                    Prompt = linkable.Attributes["prompt"]?.Value ?? "Element(e) hinzufügen...",
+                    Prompt = linkable.Attributes["prompt"].LocalizeAttribute(_localizer).OrTake($"{_localizer.Localize("add-element-s")}..."),
                     Path = path
                 });
             }
@@ -432,6 +443,7 @@ public class CmsController : ApplicationSecurityController
                 throw new Exception("Can't initialize node instance");
             }
 
+            var localizer = _localizerFactory.CreateCmsLocalizer(instance.GetType());
             string displayName = null;
             if (!String.IsNullOrWhiteSpace(subProperty))
             {
@@ -455,7 +467,7 @@ public class CmsController : ApplicationSecurityController
                     var displayNameAttribute = subPropertyInfo.GetCustomAttribute<System.ComponentModel.DisplayNameAttribute>();
                     if (displayNameAttribute != null)
                     {
-                        displayName = displayNameAttribute.DisplayName;
+                        displayName = displayNameAttribute.LocalizedDisplayName(localizer);
                     }
                 }
             }
@@ -491,9 +503,9 @@ public class CmsController : ApplicationSecurityController
                 var editProperty = new NodeProperty()
                 {
                     Name = propertyInfo.Name,
-                    DisplayName = displayNameAttribute?.DisplayName ?? propertyInfo.Name,
-                    Category = categoryAttribute?.Category ?? "Allgemein",
-                    Description = descriptionAttribute?.Description ?? String.Empty,
+                    DisplayName = displayNameAttribute?.LocalizedDisplayName(localizer) ?? propertyInfo.Name,
+                    Category = (categoryAttribute?.LocalizedCategory(localizer)).OrTake(localizer.Localize("general")).OrTake("General"),
+                    Description = displayNameAttribute?.LocalizedDescription(localizer).OrTake(descriptionAttribute?.Description ?? String.Empty),
                     ReadOnly = (propertyInfo.CanWrite == false) || (readOnlyAttribute != null && readOnlyAttribute.IsReadOnly == true),
                     HasEditor = editorAttribute != null,
                     IsPassword = (passwordAttribute != null && passwordAttribute.Password == true) ? true : null,
@@ -1032,6 +1044,7 @@ public class CmsController : ApplicationSecurityController
         {
             var instance = _ccs.CMS[id].SchemaNodeInstance(_servicePack, path, false, true);
 
+            var localizer = _localizerFactory.CreateCmsLocalizer(instance.GetType());
             string displayName = null;
             var subProperties = property.Split('.');
             for (int s = 0; s < subProperties.Length; s++)
@@ -1060,7 +1073,7 @@ public class CmsController : ApplicationSecurityController
             var displayNameAttribute = propertyInfo.GetCustomAttribute<DisplayNameAttribute>();
             if (displayNameAttribute != null)
             {
-                displayName = displayNameAttribute.DisplayName;
+                displayName = displayNameAttribute.LocalizedDisplayName(localizer);
             }
 
             if (editorAttribute != null)
@@ -1400,7 +1413,7 @@ public class CmsController : ApplicationSecurityController
                     var control = ((IUI)creatable).GetUIControl(true);
                     return Json(new
                     {
-                        displayName = toolSchemaNode.Attributes["prompt"]?.Value ?? "Neues Element",
+                        displayName = toolSchemaNode.Attributes["prompt"].LocalizeAttribute(_localizer).OrTake(_localizer.Localize("new-element")),
                         path = path,
                         name = name,
                         controls = control.ChildControls
@@ -1417,7 +1430,7 @@ public class CmsController : ApplicationSecurityController
 
                 return Json(new
                 {
-                    displayName = toolSchemaNode.Attributes["prompt"]?.Value ?? "Links",
+                    displayName = toolSchemaNode.Attributes["prompt"].LocalizeAttribute(_localizer).OrTake(_localizer.Localize("links")),
                     path = path,
                     name = name,
                     controls = new IUIControl[] {
