@@ -30,7 +30,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   Admins can set a default via
   ``webgis.defaults["user.preferences.sketch-info-display-mode"] = "minimal";`` (``default``/``hidden``/``minimal``).
 
+- CMS: the CMS app is now multilingual (German/English). Schema class ``DisplayName``/
+  ``Category``/``Description`` attributes can reference ``#key`` markdown entries localized via
+  ``l10n/de|en`` files; the navbar now has a language dropdown, persisted in ``localStorage``.
+
 ### Fixed
+
+- CMS: switching the CMS language now correctly re-translates the tree/category labels (previously
+  frozen to the startup language) and reloads while restoring the current tree position instead of
+  always jumping to the root node.
+- CMS: fixed several German ``l10n`` markdown files that were saved with the wrong encoding, showing
+  ``?`` instead of umlauts (ü/ö/ä).
 
 ## 8.26.3402
 
@@ -50,7 +60,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   since only the host name was used. The port is now kept whenever it isn't the scheme's
   standard port (80/443); for scheme-relative Urls (`//host:port/...`), where the actual
   scheme is unknown, an explicitly given port is always kept as-is.
-- Styling: (MapBuild Sidebar)
+- Styling: (MapBuilder Sidebar)
 - Coordinates Tool: CSV export ("Koordinaten herunterladen") showed "Rechtswert" twice as column
   header instead of "Rechtswert" and "Hochwert" (Easting/Northing).
   [Issue #499](https://github.com/e-netze/webgis-community/issues/499)
