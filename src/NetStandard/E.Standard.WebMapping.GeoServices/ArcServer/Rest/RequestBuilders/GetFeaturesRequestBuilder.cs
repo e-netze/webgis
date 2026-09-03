@@ -51,6 +51,9 @@ public class GetFeaturesRequestBuilder : BaseRequestBuilder<GetFeaturesRequestBu
     new public GetFeaturesRequestBuilder WithResultRecordCount(int? count)
         => base.WithResultRecordCount(count);
 
+    new public GetFeaturesRequestBuilder WithResultOffset(int? offset)
+        => base.WithResultOffset(offset);
+
     new public GetFeaturesRequestBuilder WithInSpatialReferenceId(int sRefId)
         => base.WithInSpatialReferenceId(sRefId);
 

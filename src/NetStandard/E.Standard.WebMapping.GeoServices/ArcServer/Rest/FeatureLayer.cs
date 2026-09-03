@@ -15,6 +15,7 @@ using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Renderer;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.QueryStrategies;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.RequestBuilders;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
 using E.Standard.WebMapping.GeoServices.Extensions;
@@ -67,7 +68,6 @@ class FeatureLayer : RestLayer,
     async public Task<int> GetFeaturesProAsync(QueryFilter filter, FeatureCollection features, bool countOnly, IRequestContext requestContext)
     {
         string featuresReqUrl = $"{_service.Service}/{this._id}/query";
-        var jsonFeatureResponse = new JsonFeatureResponse();
         int outSrefId =
                 (filter.FeatureSpatialReference != null)
                     ? filter.FeatureSpatialReference.Id
@@ -113,15 +113,24 @@ class FeatureLayer : RestLayer,
         // the query geometry (with a row limit applied at that stage) and only clips against
         // the real geometry afterwards. This can silently drop matching features (in the
         // worst case down to 0 results), unless the query shape is itself an Envelope (where
-        // shape == bbox, so no clipping is needed and the bug can't manifest). "returnIdsOnly"
-        // queries are not affected, so fetch the ids first and then the features in id-batches.
-        // Currently applied to all non-countOnly queries (not just spatial ones) for testing.
+        // shape == bbox, so no clipping is needed and the bug can't manifest). How this is
+        // handled - and whether it needs handling at all - depends on the service's configured
+        // <see cref="MapService.QueryStrategy"/>; see <see cref="AgsQueryStrategyFactory"/>.
+        // A countOnly request uses "returnCountOnly", which is not affected by the bug (the
+        // count reflects the real query geometry, not just its bbox - see AgsQuerySettings/
+        // BoundingBoxProblemAgsQueryStrategy remarks), so it never needs a strategy and is
+        // always answered by the plain request below, regardless of QueryStrategy.
         if (!countOnly)
         {
-            return await GetFeaturesViaIdsWorkaroundAsync(
-                spatialFilter, filter, features, featuresReqUrl, where, resolvedInSrefId, resolvedOutSrefId, authHandler, requestContext);
+            var queryStrategy = await AgsQueryStrategyFactory.GetStrategyAsync(
+                _service, spatialFilter, featuresReqUrl, where, resolvedInSrefId, authHandler, requestContext);
+
+            return await queryStrategy.GetFeaturesAsync(
+                _service, this, spatialFilter, filter, features, featuresReqUrl, where, resolvedInSrefId, resolvedOutSrefId, authHandler, requestContext);
         }
 
+        // From here on this is exclusively the countOnly path - the feature-returning path
+        // above always returns via the strategy.
         requestBuilder
             .WithOutFields(
                 String.IsNullOrWhiteSpace(filter.SubFields)
@@ -136,127 +145,36 @@ class FeatureLayer : RestLayer,
             .WithDatumTransformation(_service.DatumTransformations?.FirstOrDefault() ?? 0)
             .WithReturnZ(this.HasZ, ignoreIfFalse: true)
             .WithReturnM(this.HasM, ignoreIfFalse: true)
+            .WithReturnCountOnly(true)
+            .WithReturnIdsOnly(true)
+            .WithReturnGeometry(false)
             .WithFormat("json");
 
-        if (countOnly)
-        {
-            requestBuilder
-                .WithReturnCountOnly(true)
-                .WithReturnIdsOnly(true)
-                .WithReturnGeometry(false);
+        string featuresResponse = await requestContext.LogRequest(
+            _service.Server,
+            _service.ServiceShortname,
+            requestBuilder.Build(),
+            "getfeatures",
+            (requestBody) => authHandler.TryPostAsync(
+                _service,
+                featuresReqUrl,
+                requestBody));
 
-            string featuresResponse = await requestContext.LogRequest(
-                _service.Server,
-                _service.ServiceShortname,
-                requestBuilder.Build(),
-                "getfeatures",
-                (requestBody) => authHandler.TryPostAsync(
-                    _service,
-                    featuresReqUrl,
-                    requestBody));
+        var jsonFeatureCountResponse = JSerializer.Deserialize<JsonFeatureCountResponse>(featuresResponse);
 
-            var jsonFeatureCountResponse = JSerializer.Deserialize<JsonFeatureCountResponse>(featuresResponse);
-
-            return jsonFeatureCountResponse.Count;
-        }
-        else
-        {
-            requestBuilder
-                .WithReturnCountOnly(false)
-                .WithReturnIdsOnly(false)
-                .WithReturnGeometry(filter.QueryGeometry);
-
-            string featuresResponse = await requestContext.LogRequest(
-                _service.Server,
-                _service.ServiceShortname,
-                requestBuilder.Build(),
-                "getfeatures",
-                (requestBody) => authHandler.TryPostAsync(
-                    _service,
-                    featuresReqUrl,
-                    requestBody));
-
-            jsonFeatureResponse = JSerializer.Deserialize<JsonFeatureResponse>(featuresResponse);
-        }
-
-        AppendJsonFeaturesTo(jsonFeatureResponse, features, filter);
-
-        features.Query = filter;
-        features.Layer = this;
-
-        features.HasMore = jsonFeatureResponse.ExceededTransferLimit;
-
-        return -1;
-    }
-
-    /// <summary>
-    /// Workaround for the ArcGIS Server spatial-query bbox/TOP bug: resolves the full,
-    /// correct set of matching object ids first (via "returnIdsOnly", which is not affected
-    /// by the bug), then fetches the actual features in id-batches (a pure objectId lookup,
-    /// likewise unaffected). The result count is capped at
-    /// <see cref="AgsQuerySettings.MaxSpatialQueryResultCap"/> to bound worst-case transfer
-    /// size/traffic; if more matches exist, <c>FeatureCollection.HasMore</c> is set.
-    /// Also used for plain attribute queries (<paramref name="spatialFilter"/> is <c>null</c>
-    /// in that case) - the ids-first approach is correct there too, just not strictly
-    /// necessary to work around the bbox/TOP bug (which only affects spatial queries).
-    /// </summary>
-    private async Task<int> GetFeaturesViaIdsWorkaroundAsync(
-        SpatialFilter spatialFilter,
-        QueryFilter filter,
-        FeatureCollection features,
-        string featuresReqUrl,
-        string where,
-        int resolvedInSrefId,
-        int resolvedOutSrefId,
-        AgsAuthenticationHandler authHandler,
-        IRequestContext requestContext)
-    {
-        var queryService = new QueryService();
-
-        var queryParams = new IdsWorkaroundQueryParams
-        {
-            Geometry = spatialFilter?.QueryShape,
-            GeometrySrefId = spatialFilter?.FilterSpatialReference != null ? spatialFilter.FilterSpatialReference.Id : 0,
-            Where = where,
-            OutFields = String.IsNullOrWhiteSpace(filter.SubFields)
-                ? "*"
-                : filter.SubFields.Replace(" ", ","),
-            OrderByFields = filter.OrderBy,
-            TimeEpoch = filter.TimeEpoch,
-            InSrefId = resolvedInSrefId,
-            OutSrefId = resolvedOutSrefId,
-            DatumTransformationId = _service.DatumTransformations?.FirstOrDefault() ?? 0,
-            ReturnZ = this.HasZ,
-            ReturnM = this.HasM,
-            ReturnGeometry = filter.QueryGeometry
-        };
-
-        var (ids, hasMore) = await queryService.GetObjectIdsAsync(
-            _service, featuresReqUrl, authHandler, requestContext, queryParams, this.IdFieldName, AgsQuerySettings.MaxSpatialQueryResultCap);
-
-        var jsonFeatureResponses = await queryService.GetFeaturesByObjectIdsAsync(
-            _service, featuresReqUrl, authHandler, requestContext, queryParams, ids);
-
-        foreach (var jsonFeatureResponse in jsonFeatureResponses)
-        {
-            AppendJsonFeaturesTo(jsonFeatureResponse, features, filter);
-        }
-
-        features.Query = filter;
-        features.Layer = this;
-
-        features.HasMore = hasMore || jsonFeatureResponses.Any(r => r.ExceededTransferLimit);
-
-        return -1;
+        return jsonFeatureCountResponse.Count;
     }
 
     /// <summary>
     /// Converts the features contained in a single ArcGIS Server JSON query response into
     /// <see cref="Feature"/> instances and appends them to <paramref name="features"/>.
-    /// Used both for the "normal" query path and for merging the batched responses of the
-    /// spatial-query ids-workaround (see <see cref="GetFeaturesViaSpatialIdsWorkaroundAsync"/>).
+    /// Used both for the "normal" query path and by the <see cref="QueryStrategies.IAgsQueryStrategy"/>
+    /// implementations (see <see cref="QueryStrategies.AgsQueryStrategyFactory"/>) to merge
+    /// their (possibly batched/paged) responses. Internal (not private) so those strategy
+    /// classes, which live in a separate file/namespace to keep this class readable, can call
+    /// it too.
     /// </summary>
-    private void AppendJsonFeaturesTo(JsonFeatureResponse jsonFeatureResponse, FeatureCollection features, QueryFilter filter)
+    internal void AppendJsonFeaturesTo(JsonFeatureResponse jsonFeatureResponse, FeatureCollection features, QueryFilter filter)
     {
         List<string> dateColumns = new List<string>();
         Dictionary<string, string> fieldAliases = new();

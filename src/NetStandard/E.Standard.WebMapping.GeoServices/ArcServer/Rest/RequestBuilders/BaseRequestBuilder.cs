@@ -195,6 +195,13 @@ public class BaseRequestBuilder<T> where T : BaseRequestBuilder<T>
     protected T WithResultRecordCount(int? count)
         => Append($"resultRecordCount={count}");
 
+    protected T WithResultOffset(int? offset)
+        => offset switch
+        {
+            null or 0 => _self,
+            _ => Append($"resultOffset={offset}")
+        };
+
     protected T WithInSpatialReferenceId(int inSrefId)
     {
         if (inSrefId > 0)

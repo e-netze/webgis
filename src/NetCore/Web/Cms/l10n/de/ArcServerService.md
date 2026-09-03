@@ -21,6 +21,17 @@ Das bewirkt, dass immer die Defaultschaltung aus dem Layer angezeigt wird. Diese
 Watermark Services werden immer ganz oben gezeichnet und können vom Anwender nicht transparent geschalten oder ausgelendet werden. 
 Watermark Services können neben Wasserzeichen auch Polygondecker enthalten.
 
+#ags_query_strategy: Abfrage-Strategie
+
+Legt fest, wie räumliche Abfragen (Query mit Linie/Fläche) gegen diesen ArcGIS Server Dienst 
+ausgeführt werden. Manche ArcGIS Server Instanzen/Datenbanken liefern bei solchen Abfragen über 
+den Standard-Mechanismus ("Default") zu wenige oder gar keine Treffer (bekannter ArcGIS Server 
+Bug: intern wird bei räumlichen Abfragen zunächst nur die Bounding Box der Abfragefigur mit 
+einem Limit (TOP) an die Datenbank übergeben, der eigentliche Verschnitt mit der Figur erfolgt 
+erst danach - dadurch können Treffer verloren gehen). Ist dieser Dienst davon betroffen, kann 
+hier auf "BoundingBoxProblem" umgestellt werden (etwas langsamer, dafür korrekt). Gilt für alle 
+Karten, die diesen Dienst verwenden.
+
 #allow_query_builder: Allow QueryBuilder (Darstellungsfilter aus TOC
 
 Der Anwender kann aus dem TOC Filter als mit deinen SQL Edititor setzen.

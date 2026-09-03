@@ -23,6 +23,7 @@ using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.DynamicLayers;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.QueryStrategies;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Renderers;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.RequestBuilders;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
@@ -117,6 +118,22 @@ public class MapService : IMapService2,
         get;
         private set;
     }
+
+    /// <summary>
+    /// Selects how <see cref="FeatureLayer"/> queries this service for features (see
+    /// <see cref="AgsQueryStrategy"/> for the available strategies and why they exist). Not
+    /// every ArcGIS Server instance/backing database is affected by the same query quirks, so
+    /// this is configurable per service rather than hardcoded; resolved via
+    /// <see cref="AgsQueryStrategyFactory.GetStrategy"/>. Defaults to
+    /// <see cref="AgsQueryStrategy.Default"/> (plain paginated queries) - services known to be
+    /// affected by the spatial-query bbox/TOP bug need to opt into
+    /// <see cref="AgsQueryStrategy.BoundingBoxProblem"/>.
+    /// </summary>
+    public AgsQueryStrategy QueryStrategy
+    {
+        get;
+        set;
+    } = AgsQueryStrategy.Default;
 
     public string ID
     {
@@ -1225,6 +1242,7 @@ public class MapService : IMapService2,
         clone._maxImageHeight = this._maxImageHeight;
         clone.MaxRecordCount = this.MaxRecordCount;
         clone.AgsVersion = this.AgsVersion;
+        clone.QueryStrategy = this.QueryStrategy;
 
         clone.SupportedCrs = this.SupportedCrs;
         clone._serviceThemes = _serviceThemes;

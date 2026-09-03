@@ -72,6 +72,9 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
     [DisplayName("#service_type")]
     public WebMapping.Core.ImageServiceType ServiceType { get; set; }
 
+    [DisplayName("#ags_query_strategy")]
+    public WebMapping.Core.AgsQueryStrategy QueryStrategy { get; set; }
+
     [DisplayName("#allow_query_builder")]
     [AuthorizableProperty("allow_querybuilder", false)]
     public bool AllowQueryBuilder { get; set; }
@@ -175,6 +178,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         this.DynamicPresentations = (WebMapping.Core.ServiceDynamicPresentations)stream.Load("dynamic_presentations", (int)WebMapping.Core.ServiceDynamicPresentations.Manually);
         this.DynamicQueries = (WebMapping.Core.ServiceDynamicQueries)stream.Load("dynamic_queries", (int)WebMapping.Core.ServiceDynamicQueries.Manually);
         this.ServiceType = (WebMapping.Core.ImageServiceType)stream.Load("service_type", (int)WebMapping.Core.ImageServiceType.Normal);
+        this.QueryStrategy = (WebMapping.Core.AgsQueryStrategy)stream.Load("agsquerystrategy", (int)WebMapping.Core.AgsQueryStrategy.Default);
         this.DynamicDehavior = (WebMapping.Core.DynamicDehavior)stream.Load("dynamic_behavior", (int)WebMapping.Core.DynamicDehavior.AutoAppendNewLayers);
         this.AllowQueryBuilder = (bool)stream.Load("allow_querybuilder", false);
     }
@@ -198,6 +202,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         stream.Save("dynamic_presentations", (int)this.DynamicPresentations);
         stream.Save("dynamic_queries", (int)this.DynamicQueries);
         stream.Save("service_type", (int)this.ServiceType);
+        stream.Save("agsquerystrategy", (int)this.QueryStrategy);
         stream.Save("dynamic_behavior", (int)this.DynamicDehavior);
         stream.Save("allow_querybuilder", this.AllowQueryBuilder);
     }

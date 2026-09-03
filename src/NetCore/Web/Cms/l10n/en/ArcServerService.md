@@ -20,6 +20,17 @@ This means that the default settings from the layer are always displayed. This o
 Watermark services are always drawn at the very top and cannot be made transparent or hidden by the user.
 Watermark services can also contain polygon markers in addition to watermarks.
 
+#ags_query_strategy: Query strategy
+
+Specifies how spatial queries (query with a line/polygon shape) are executed against this 
+ArcGIS Server service. Some ArcGIS Server instances/databases return too few or even zero 
+results for such queries via the standard mechanism ("Default"): a known ArcGIS Server bug 
+where, internally, only the bounding box of the query shape (already limited by a TOP/record- 
+count) is passed to the database first, and clipping against the actual shape only happens 
+afterwards - which can silently drop matching features. If this service is affected, switch 
+this to "BoundingBoxProblem" (somewhat slower, but correct). Applies to every map using this 
+service.
+
 #allow_query_builder: Allow QueryBuilder (Display filter from TOC)
 
 The user can set filters from the TOC using your SQL editor.

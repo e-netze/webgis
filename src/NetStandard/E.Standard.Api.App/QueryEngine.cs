@@ -409,7 +409,7 @@ public class QueryEngine
                                 // ignore
                                 if (!(layer is IRasterlayer || layer.Fields.OrEmpty().Count() == 0 || IsSpecialPlaceholder(featureFieldName)))
                                 {
-                                    features.AddWarning($"field ignored (not found in layer): {featureFieldName}");
+                                    features.AddWarning($"field ignored (not found in layer): {featureFieldName}, column {tableField.ColumnName}");
                                 }
                                 if (featureFieldName == "*" && layer.Fields != null)
                                 {

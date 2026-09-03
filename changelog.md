@@ -13,16 +13,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   database using only the bounding box of a spatial query geometry (not the actual shape) and
   applies the requested result limit already at that stage, so the final (correctly clipped)
   result can end up with far fewer features than actually match - in the worst case 0, even
-  though matching features exist. WebGIS now works around this by querying feature IDs first
-  (which AGS returns correctly, without the bbox limitation) and then fetching the features in
-  batches by ID. This applies to all `FeatureLayer` queries against a `MapServer`/`FeatureServer`,
-  not just spatial ones, and is capped by a configurable maximum result count to protect
-  performance.
+  though matching features exist. ESRI confirms this behavior but considers it "as designed".
+
+  Since not every AGS instance/database is actually affected, this is opt-in per service via a
+  new `QueryStrategy` property on the ArcGIS Server service definition (CMS): `Default` (regular
+  query, unchanged behavior) or `BoundingBoxProblem` (enables the workaround below).
+
+  When `BoundingBoxProblem` is selected, the actual strategy used per query is still decided
+  dynamically, always preferring the cheaper `Default` behavior whenever it is safe:
+  - queries without a spatial filter, or with an `Envelope`/`Point` query geometry, can never
+    trigger the bug (bounding box == geometry) and always use `Default`;
+  - otherwise, a cheap upfront `returnCountOnly` request against the bounding box of the query
+    geometry checks whether the number of candidates ArcGIS Server would clip against even
+    reaches the service's result limit; if not, `Default` already returns the full, correct
+    result;
+  - only if the bug could actually apply, WebGIS falls back to querying feature IDs first
+    (`returnIdsOnly`, not affected by the bbox limitation) and then fetches the features in
+    batches by ID. A further upfront `returnCountOnly` request against the *real* query
+    geometry/where-clause decides whether the (comparatively small) result can be resolved via a
+    single unbounded ID request, or whether keyset paging is required to safely handle very large
+    result sets (with guards against non-progressing pages, excessive wall-clock time, and a
+    configurable maximum result count to protect performance).
 
   New configurable settings in `api.config`, section `tool-identify`:
-  - `ags-spatial-query-max-result-cap` (default 10000)
+  - `ags-spatial-query-max-result-cap` (default 2000)
   - `ags-spatial-query-default-max-record-count-fallback` (default 1000)
   - `ags-spatial-query-max-parallel-batch-requests` (default 4)
+  - `ags-spatial-query-ids-timeout-seconds` (default 20)
+  - `ags-spatial-query-ids-paging-threshold` (default 50000)
   [docs](https://docs.webgiscloud.com/de/webgis/config/api/index.html#werkzeug-identify)
 
 - Query results table (`webgis_queryResultsTable`): client-side paging for large result sets to

@@ -132,6 +132,7 @@ public class MapServiceInitializerService
                     mapService.CreatePresentationsDynamic = ((ServiceDynamicPresentations)serviceLink.Target.Load("dynamic_presentations", (int)ServiceDynamicPresentations.Manually));
                     mapService.CreateQueriesDynamic = ((ServiceDynamicQueries)serviceLink.Target.Load("dynamic_queries", (int)ServiceDynamicQueries.Manually));
                     mapService.ImageServiceType = ((ImageServiceType)serviceLink.Target.Load("service_type", (int)ImageServiceType.Normal));
+                    mapService.QueryStrategy = ((AgsQueryStrategy)serviceLink.Target.Load("agsquerystrategy", (int)AgsQueryStrategy.Default));
 
                     service = mapService;
                 }

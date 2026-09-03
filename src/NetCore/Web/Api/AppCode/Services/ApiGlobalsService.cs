@@ -94,6 +94,14 @@ public class ApiGlobalsService
         {
             AgsQuerySettings.MaxParallelBatchRequests = agsQueryMaxParallelBatchRequests;
         }
+        if (int.TryParse(config[ApiConfigKeys.ToKey("tool-identify:ags-spatial-query-ids-timeout-seconds")], out int agsQueryIdsTimeoutSeconds))
+        {
+            AgsQuerySettings.GetObjectIdsTimeoutSeconds = agsQueryIdsTimeoutSeconds;
+        }
+        if (int.TryParse(config[ApiConfigKeys.ToKey("tool-identify:ags-spatial-query-ids-paging-threshold")], out int agsQueryIdsPagingThreshold))
+        {
+            AgsQuerySettings.IdsPagingCandidateCountThreshold = agsQueryIdsPagingThreshold;
+        }
 
         EsriDateExtensions.DateFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-date-format")].OrTake(EsriDateExtensions.DateFormatString);
         EsriDateExtensions.TimeFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-time-format")].OrTake(EsriDateExtensions.TimeFormatString);

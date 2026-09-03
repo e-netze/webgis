@@ -180,3 +180,34 @@ public enum TimePeriod
     Decades = 9,
     Centuries = 10
 }
+
+/// <summary>
+/// Selects how ArcGIS Server (AGS) feature-layer queries are executed against a MapService.
+/// Not every ArcGIS Server instance/backing database behaves the same way with respect to
+/// known ArcGIS Server query quirks (e.g. a spatial-query bounding-box/TOP bug, where AGS
+/// pre-filters spatial queries against the bounding box of the query geometry - with a row
+/// limit already applied at that stage - and only clips against the real geometry afterwards,
+/// which can silently drop matching features, in the worst case down to 0 results). This is
+/// therefore configurable per service rather than hardcoded. See
+/// E.Standard.WebMapping.GeoServices.ArcServer.Rest.QueryStrategies for the concrete strategy
+/// implementations selecting on this flag.
+/// </summary>
+public enum AgsQueryStrategy
+{
+    /// <summary>
+    /// Plain, "textbook" ArcGIS Server pagination. Correct and most efficient for ArcGIS
+    /// Server instances/databases that are not affected by known query quirks. Default for
+    /// services without an explicit, opted-in strategy.
+    /// </summary>
+    Default = 0,
+
+    /// <summary>
+    /// Workaround for the ArcGIS Server spatial-query bounding-box/TOP bug: resolves the
+    /// matching object ids first (via "returnIdsOnly", not affected by the bug), then fetches
+    /// the actual features in id-batches (a pure objectId lookup, likewise unaffected). More
+    /// expensive than <see cref="Default"/>, so only meant to be opted-in for services/
+    /// databases actually exhibiting the bug.
+    /// </summary>
+    BoundingBoxProblem = 1,
+}
+
