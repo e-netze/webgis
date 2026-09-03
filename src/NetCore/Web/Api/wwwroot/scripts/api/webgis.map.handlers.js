@@ -102,7 +102,26 @@
             }
 
             if (webgis.tools) {
-                webgis.tools.onMapMouseMove(this, e);
+                // Sketch/tool mousemove handling (snapping, tracing, sketch-info overlay, ...) can be
+                // relatively expensive (eg. topology snapping on large networks). Native mousemove events
+                // can fire faster than the browser can render/process them; if every single event is
+                // handled synchronously, a burst of queued events can pile up and process one after another,
+                // blocking the UI thread and causing the map/UI to flicker or become unresponsive until the
+                // backlog is cleared. Coalesce bursts to at most one (the latest) update per animation frame.
+                _map._pendingMouseMoveEvent = e;
+                if (!_map._mouseMoveRafScheduled) {
+                    _map._mouseMoveRafScheduled = true;
+                    (window.requestAnimationFrame || window.setTimeout)(function () {
+                        _map._mouseMoveRafScheduled = false;
+                        var pendingEvent = _map._pendingMouseMoveEvent;
+                        _map._pendingMouseMoveEvent = null;
+                        if (pendingEvent) {
+                            webgis.tools.onMapMouseMove(_map, pendingEvent);
+                        }
+                    });
+                }
+                // old method: can block UI
+                // webgis.tools.onMapMouseMove(this, e);
             }
 
             var ctrlKeyBox = _map._toolBoxLayer != null &&
