@@ -75,6 +75,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Query results export (CSV, etc.): the export now includes all query results, not just the
   features of the currently displayed table page. A progress indicator is shown while exporting.
 
+- CMS: the CMS app is now multilingual (German/English). Schema class ``DisplayName``/
+  ``Category``/``Description`` attributes can reference ``#key`` markdown entries localized via
+  ``l10n/de|en`` files; the navbar now has a language dropdown, persisted in ``localStorage``.
+
+### Fixed
+
+## 8.26.3701
+
+### Added
+
 - Sketch-Info-Overlay: sketch/graphics tools that show a ``UISketchInfoContainer`` (e.g. measuring
   tools) no longer render it inline in the tool dialog. Instead it now floats as an overlay directly
   above the coordinate display, growing upward as more info (snapping, construction tool) is shown.
@@ -96,17 +106,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   Admins can set a default via
   ``webgis.defaults["user.preferences.sketch-info-display-mode"] = "minimal";`` (``default``/``hidden``/``minimal``).
 
-- CMS: the CMS app is now multilingual (German/English). Schema class ``DisplayName``/
-  ``Category``/``Description`` attributes can reference ``#key`` markdown entries localized via
-  ``l10n/de|en`` files; the navbar now has a language dropdown, persisted in ``localStorage``.
-
 ### Fixed
 
-- CMS: switching the CMS language now correctly re-translates the tree/category labels (previously
-  frozen to the startup language) and reloads while restoring the current tree position instead of
-  always jumping to the root node.
-- CMS: fixed several German ``l10n`` markdown files that were saved with the wrong encoding, showing
-  ``?`` instead of umlauts (ü/ö/ä).
+- site.overlay.css: not loaded corretly in portal pages, when app is behind a reverse proxy.
 
 ## 8.26.3402
 
