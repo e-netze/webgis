@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+### Fixed
+
+## 8.26.3701
+
+### Added
 
 - Sketch-Info-Overlay: sketch/graphics tools that show a ``UISketchInfoContainer`` (e.g. measuring
   tools) no longer render it inline in the tool dialog. Instead it now floats as an overlay directly
