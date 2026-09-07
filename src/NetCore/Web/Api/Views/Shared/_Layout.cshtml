@@ -9,15 +9,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=9,10,edge" />
 
     <title>@ViewBag.Title</title>
-    <environment names="Development">
-        <link href="~/content/Site.css" rel="stylesheet" />
-    </environment>
-
-    <environment names="Staging,Production">
-        <link href="~/content/Site.css" rel="stylesheet" />
-    </environment>
-
+    
+    <link href="~/content/Site.css" rel="stylesheet" />
     <link href="~/content/site.overrides.css" rel="stylesheet" />
+
     <style>:root { @Html.Raw(StyleService.GetBrandVariablesFromEnvironment()) }</style>
 
     <script type="text/javascript">

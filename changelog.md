@@ -32,6 +32,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- site.overlay.css: not loaded corretly in portal pages, when app is behind a reverse proxy.
+
 ## 8.26.3402
 
 ### Added
