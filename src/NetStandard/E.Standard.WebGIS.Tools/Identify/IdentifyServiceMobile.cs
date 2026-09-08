@@ -187,7 +187,6 @@ internal class IdentifyServiceMobile
         {
             QueryShape = queryShape,
             FilterSpatialReference = click.SRef,
-            //FeatureSpatialReference = click.SRef
         };
 
         #endregion

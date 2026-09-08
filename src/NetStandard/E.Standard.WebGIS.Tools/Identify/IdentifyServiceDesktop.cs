@@ -51,7 +51,6 @@ internal class IdentifyServiceDesktop
         if (e.FromApplyGeometryCommand())
         {
             queryShape = e.ApplyBuffer(queryShape, click.SRef, e.CalcCrs);
-            queryShape.SrsId = e.CalcCrs ?? queryShape.SrsId;
         }
 
         #endregion
