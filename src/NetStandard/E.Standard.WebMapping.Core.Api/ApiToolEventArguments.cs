@@ -542,6 +542,7 @@ public class ApiToolEventArguments
                 if (sketch != null)
                 {
                     transformer.Transform(sketch);
+                    sketch.SrsId = sRef.Id;
                 }
             }
         }

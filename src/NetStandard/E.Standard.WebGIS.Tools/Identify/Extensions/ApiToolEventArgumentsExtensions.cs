@@ -42,6 +42,7 @@ static internal class ApiToolEventArgumentsExtensions
             e.AsDefaultTool == false &&
             e[IdentifyDefault.SketchCanApplyBufferId] == "true")
         {
+            var queryShapeSrefId = queryShape.SrsId;
             var bufferDistance = e.GetDouble(IdentifyDefault.SketchBufferDistanceId);
             if (!double.IsNaN(bufferDistance) && bufferDistance != 0.0)
             {
@@ -77,6 +78,8 @@ static internal class ApiToolEventArgumentsExtensions
                         }
                     }
                 }
+
+                queryShape.SrsId = queryShapeSrefId;
             }
         }
 
