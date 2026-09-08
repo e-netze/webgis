@@ -27,6 +27,16 @@ namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.QueryStrategies;
 /// first. Each page is appended directly (no separate ids-resolution round trip), so this is
 /// noticeably cheaper than <see cref="BoundingBoxProblemAgsQueryStrategy"/> and is therefore
 /// the default (see <see cref="AgsQueryStrategy.Default"/>).
+/// <para>
+/// Guard: the number of round trips is bounded to roughly <c>cap / pageSize</c> (see
+/// <c>maxRequests</c> below). If that many requests weren't enough to either exhaust the
+/// result or reach the cap, the pages must have been consistently short/near-empty - the same
+/// symptom the bbox/TOP bug produces (many bbox candidates get clipped away, only a few
+/// genuine matches per page). Rather than looping hundreds of times chasing the cap, this
+/// aborts early and reports the result as truncated (<c>HasMore=true</c>); an administrator can
+/// then opt this service into <see cref="AgsQueryStrategy.BoundingBoxProblem"/> if the service
+/// is indeed affected.
+/// </para>
 /// </summary>
 internal sealed class DefaultAgsQueryStrategy : IAgsQueryStrategy
 {
@@ -63,9 +73,29 @@ internal sealed class DefaultAgsQueryStrategy : IAgsQueryStrategy
         int resultOffset = 0;
         int totalCount = 0;
         bool hasMore = false;
+        int requestCount = 0;
+
+        // Upper bound on the number of round trips: if the pages were consistently full (the
+        // "textbook" case this strategy assumes), this many requests would already be enough to
+        // reach the cap. If they are not - i.e. we keep getting mostly short/near-empty pages
+        // and still haven't reached the cap after this many requests - that is itself a strong
+        // signal that this service is actually affected by the bbox/TOP bug (see
+        // BoundingBoxProblemAgsQueryStrategy) despite being configured for the Default strategy.
+        // Rather than looping potentially hundreds of times to eventually reach (or fall short
+        // of) the cap, abort early and report the result as truncated; an administrator can then
+        // opt this service into AgsQueryStrategy.BoundingBoxProblem in the CMS if desired.
+        int maxRequests = (int)Math.Ceiling((double)cap / pageSize) + 1;
 
         while (true)
         {
+            if (requestCount >= maxRequests)
+            {
+                hasMore = true;
+                break;
+            }
+
+            requestCount++;
+
             var requestBuilder = new GetFeaturesRequestBuilder();
 
             if (spatialFilter != null)
