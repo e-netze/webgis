@@ -6,10 +6,12 @@ addition to the task-specific skills in `.github/prompts/*.prompt.md`.
 ## Commit policy
 
 - **Do not commit automatically** after implementing a change, even if it builds and looks done.
-  Only commit when the user explicitly confirms the task is finished (e.g. "fertig", "das kann
-  eingecheckt werden", "commit"). Report what changed and that it's ready, then wait.
+- Follow `.github/prompts/commit.prompt.md`: when asked to commit, by default only output a short,
+  one-sentence commit message (optionally with a short keyword bullet list) for the user to use
+  themselves — do not run `git commit`. Only perform the actual commit yourself when explicitly
+  told to (e.g. "commit yourself").
 - This applies per logical change/task, not just once per session — after every new implemented
-  change, wait for a fresh confirmation before committing it.
+  change, wait for a fresh commit request before proposing/making a commit for it.
 
 ## Build verification
 
@@ -54,3 +56,5 @@ patterns, so no step gets silently skipped:
   `RestHelperService.PrepareFeatureCollection` silently dropping un-copied fields).
 - **New client-side usability option** overridable via `custom.js` →
   `add-client-usability-option.prompt.md`.
+- **Committing changes** (proposing a commit message vs. actually committing) →
+  `commit.prompt.md`.
