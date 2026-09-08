@@ -14,7 +14,9 @@
     int nextAttempt = attempt + 1;
 
     string separator = Context.Request.QueryString.HasValue ? "&" : "?";
-    string refreshUrl = $"{Context.Request.Path}{Context.Request.QueryString}{separator}n={nextAttempt}";
+    // Include PathBase (e.g. the IIS application path "/webgis") - Request.Path alone only contains the
+    // path relative to the application root and would drop it, redirecting to the wrong (server-root) url.
+    string refreshUrl = $"{Context.Request.PathBase}{Context.Request.Path}{Context.Request.QueryString}{separator}n={nextAttempt}";
 }
 
 <!DOCTYPE html>
