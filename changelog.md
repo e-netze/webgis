@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+
+- CMS DeployService: the ``services`` allow-list configured for a deployment is now also applied
+  when scanning for warnings before a deploy. Only warnings belonging to services included in the
+  list (or all services, if the list is empty/unset) are reported/block the deploy.
+
 ### Fixed
 
 ## 8.26.3701

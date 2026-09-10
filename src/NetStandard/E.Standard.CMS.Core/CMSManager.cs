@@ -937,14 +937,14 @@ public partial class CMSManager
 
     #region Warnings
     public event EventHandler OnParseWaring = null;
-    public List<Warning> Warnings()
+    public List<Warning> Warnings(IEnumerable<string> serviceIdsFilter = null)
     {
         List<Warning> warnings = new List<Warning>();
-        Warnings(DocumentFactory.PathInfo(_root.ToPlattformPath()), warnings);
+        Warnings(DocumentFactory.PathInfo(_root.ToPlattformPath()), warnings, BuildServiceIdsFilterSet(serviceIdsFilter));
 
         return warnings;
     }
-    private void Warnings(IPathInfo di, List<Warning> warnings)
+    private void Warnings(IPathInfo di, List<Warning> warnings, HashSet<string> serviceIdsFilter = null)
     {
         //var dt = DateTime.UtcNow;
         var directories = di.GetDirectories();
@@ -952,7 +952,20 @@ public partial class CMSManager
 
         foreach (var subDir in directories)
         {
-            Warnings(subDir, warnings);
+            if (serviceIdsFilter != null &&
+                subDir.FullName.Length > _root.Length)
+            {
+                string relPath = subDir.FullName.Substring(_root.Length + 1, subDir.FullName.Length - _root.Length - 1).ToLower();
+                XmlNode subDirSchemaNode = this.SchemaNode(relPath, true);
+
+                if (!IsServiceAllowedByFilter(subDirSchemaNode, subDir.Name.ToLower(), relPath.Replace(@"\", "/"), serviceIdsFilter))
+                {
+                    // Dienst ist nicht in der Allow-Liste des Deploys -> Warnungen darin ignorieren
+                    continue;
+                }
+            }
+
+            Warnings(subDir, warnings, serviceIdsFilter);
         }
 
         //dt = DateTime.UtcNow;
@@ -1677,15 +1690,7 @@ public partial class CMSManager
     {
         _isDir = new Dictionary<string, bool>();
 
-        HashSet<string> serviceIdsFilterSet = serviceIdsFilter?
-            .Where(id => !String.IsNullOrWhiteSpace(id))
-            .Select(id => id.Trim().Replace(@"\", "/").ToLower())
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        if (serviceIdsFilterSet != null && serviceIdsFilterSet.Count == 0)
-        {
-            serviceIdsFilterSet = null;
-        }
+        HashSet<string> serviceIdsFilterSet = BuildServiceIdsFilterSet(serviceIdsFilter);
 
         List<ExportAuthNode> authNodes = new List<ExportAuthNode>();
         ExportAppendAcl(this.Root + @"\root.acl", authNodes);
@@ -1849,13 +1854,11 @@ public partial class CMSManager
                         continue;
                     }
 
-                    if (serviceIdsFilter != null &&
-                        AttributeValue(schemaNode, "filtertype") == "service")
+                    if (serviceIdsFilter != null)
                     {
                         string fullRelPath = (String.IsNullOrEmpty(relPath) ? String.Empty : relPath + "/") + title;
 
-                        if (!serviceIdsFilter.Contains(itemName) &&
-                            !serviceIdsFilter.Contains(fullRelPath))
+                        if (!IsServiceAllowedByFilter(schemaNode, itemName, fullRelPath, serviceIdsFilter))
                         {
                             // Dienst ist nicht in der Allow-Liste des Deploys -> ignorieren (inkl. Unterknoten)
                             continue;
@@ -2139,6 +2142,45 @@ public partial class CMSManager
         }
 
         return node.Attributes[attribute].Value;
+    }
+
+    /// <summary>
+    /// Normalisiert eine Liste von Dienst-Ids (url-name oder voller relativer Pfad) zu einem
+    /// case-insensitive HashSet. Gibt null zurück, wenn keine Einschränkung gilt (leer/null).
+    /// </summary>
+    private static HashSet<string> BuildServiceIdsFilterSet(IEnumerable<string> serviceIdsFilter)
+    {
+        HashSet<string> serviceIdsFilterSet = serviceIdsFilter?
+            .Where(id => !String.IsNullOrWhiteSpace(id))
+            .Select(id => id.Trim().Replace(@"\", "/").ToLower())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        if (serviceIdsFilterSet != null && serviceIdsFilterSet.Count == 0)
+        {
+            serviceIdsFilterSet = null;
+        }
+
+        return serviceIdsFilterSet;
+    }
+
+    /// <summary>
+    /// Prüft, ob ein CMS-Knoten (Dienst) gemäß Service-Filter exportiert/geprüft werden soll.
+    /// Nur Knoten mit schema-Attribut filtertype="service" werden überhaupt gefiltert; alle
+    /// anderen Knoten (Ordner, Themes, ...) sind davon nicht betroffen.
+    /// </summary>
+    private static bool IsServiceAllowedByFilter(XmlNode schemaNode, string itemName, string fullRelPath, HashSet<string> serviceIdsFilter)
+    {
+        if (serviceIdsFilter == null || schemaNode == null)
+        {
+            return true;
+        }
+
+        if (schemaNode.Attributes["filtertype"]?.Value != "service")
+        {
+            return true;
+        }
+
+        return serviceIdsFilter.Contains(itemName) || serviceIdsFilter.Contains(fullRelPath);
     }
     #endregion
 
