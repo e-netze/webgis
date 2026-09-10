@@ -157,7 +157,13 @@ public class DeployService : ICmsTool
             console.WriteLine("============================================================");
 
             console.WriteLine("Scann for warnings");
-            var warnings = cms.Warnings();
+
+            if (deploy.Services?.Any() == true)
+            {
+                console.WriteLine($"Service filter active: only scanning services included in the deploy: {String.Join(", ", deploy.Services)}");
+            }
+
+            var warnings = cms.Warnings(deploy.Services);
 
             var fiWarnings = deploy.Target.WarningsFileInfo();
             if (fiWarnings.Exists)
