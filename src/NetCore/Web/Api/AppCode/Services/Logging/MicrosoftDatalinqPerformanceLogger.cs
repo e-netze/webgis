@@ -1,5 +1,7 @@
 ﻿#nullable enable
 
+using System.Runtime.CompilerServices;
+
 using E.Standard.CMS.Core;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 
@@ -16,15 +18,18 @@ public class MicrosoftDatalinqPerformanceLogger : IDatalinqPerformanceLogger
         _logger = logger;
     }
 
+    public bool IsEnabled => _logger.IsEnabled(LogLevel.Warning);
+
     public void Flush() { }
 
-
-    public ILog Start(CmsDocument.UserIdentification ui, string server, string service, string cmd, string message)
+    public ILog Start(CmsDocument.UserIdentification ui, string server, string service, string cmd,
+        [InterpolatedStringHandlerArgument("")] UsagePerformanceLogMessage message = default)
     {
         return new MicrosoftLog(
             _logger,
             null, ui,
-            "WebGIS.API DataLinq Performance", server, service, cmd, message
+            "datalinq", LoggingEventIds.Datalinq,
+            "WebGIS.API DataLinq Performance", server, service, cmd, message.ToString()
             );
     }
 }

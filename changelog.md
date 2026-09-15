@@ -90,25 +90,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   automatically when ``Api:logging-type`` is ``microsoft``. Previously only the file based
   ``SimpleServiceRequestLogger`` was available.
 
-### Fixed
-
-- Performance logging (``webgis_performance.csv``): print requests are now recorded like
-  ``GetMap``/``GetSelection``/``GetLegend`` requests were before. Previously they were not logged
-  at all. The actual print/layout composition (``RestPrintHelperService``) is now logged as
-  ``GetPrint``, with the print layout, scale and DPI captured; the underlying per-service map
-  image used while composing a print (formerly ``IPrintableMapService.GetPrintMapAsync``, renamed
-  to ``GetPrintImageAsync``) is logged separately as ``GetPrintImage``.
-  [Issue #461](https://github.com/e-netze/webgis-community/issues/461)
-
-- Performance logging (``webgis_performance.csv``): the ``REQUEST;SERVER;SERVICE;MS;SUCCESS``
-  columns were previously built by splitting a freeform, hand-built message string on spaces,
-  even though the command/server/service values were already passed as separate typed
-  parameters. This required every caller to carefully format its message as exactly matching
-  space-separated tokens, and was already producing misaligned columns in several services
-  (e.g. missing/shifted ``SERVER``/``SERVICE`` values). These columns are now populated directly
-  from the typed parameters; the optional message is written as a new, trailing ``MESSAGE``
-  column instead.
-
 - Performance logging (``webgis_performance.csv``): the ``GetPrint`` entry now also reports the
   map center (``X``/``Y``) and the requested print scale (``SCALE``), previously always ``0``.
   ``SERVICE`` now shows ``{LayoutName}-{Size}.{Orientation}-{Dpi}dpi`` (e.g.
@@ -118,6 +99,55 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   never sent a map name to the server in the first place (only regular ``GetMap``/
   ``GetSelection``/``GetLegend`` requests did); the print request now includes it too, so it is
   populated the same way for all of these.
+  [Issue #461](https://github.com/e-netze/webgis-community/issues/461)
+
+- ``Api:logging-type: microsoft`` (``Microsoft.Extensions.Logging`` based performance logging, as
+  an alternative to the CSV files, which remain fully supported/unchanged for existing setups)
+  has been modernized further:
+  - Every log line now carries a stable ``EventId`` (per ``GeoServiceCommand``, and one each for
+    OGC/Usage/DataLinq/Warnings/Exceptions/GeoService-request-tracing), so log backends
+    (Seq, Application Insights, ...) can filter/alert on a specific request kind independent of
+    the free-text message.
+  - A failed request (``ILog.Success == false``) is now logged at ``Warning`` instead of always
+    ``Information``, so failures surface via plain log-level filters/alerts without having to
+    parse message text - and are no longer silently dropped when only ``Warning``-and-above is
+    configured.
+  - New ``System.Diagnostics.Metrics``/``System.Diagnostics.ActivitySource`` instrumentation
+    (``WebGIS.GeoServices``, see ``webgis.ServiceDefaults``) records request duration/count and a
+    trace span for every GeoService/OGC/Usage/DataLinq performance-logged request, independent of
+    the configured log level. A ``GetPrint`` request now shows up as a distributed trace with
+    child spans for the individual services it fetched, and duration/error-rate dashboards can be
+    built without parsing log lines at all.
+  - Every request in the API pipeline now runs inside an ``ILogger`` scope (request id, path,
+    method), so all log lines belonging to one request can be correlated (also exported via
+    OpenTelemetry, since log scopes are included there).
+  - ``IUsagePerformanceLogger``/``IDatalinqPerformanceLogger`` now build their message lazily
+    (``IsEnabled`` short-circuit), matching ``IGeoServicePerformanceLogger``/
+    ``IOgcPerformanceLogger`` - no more unnecessary string concatenation when disabled.
+  - The simple, fixed-level loggers (``MicrosoftWarningsLogger``, ``MicrosoftExceptionLogger``,
+    ``MicrosoftGeoServiceRequestLogger``) now use compile-time generated ``[LoggerMessage]``
+    logging methods instead of hand-written ``IsEnabled`` checks.
+  - ``MicrosoftExceptionLogger`` now passes the ``Exception`` itself to the logger (instead of
+    ``ex.Message``/``ex.StackTrace`` as plain strings), so it is captured natively (full stack
+    trace, exception grouping) by providers that support it.
+  - Trace span names are more "speaking" now, making it possible to tell requests apart in a
+    trace list without opening each one: the ASP.NET Core root span (previously named after the
+    generic route template, e.g. ``POST rest/services/{id}/{request}``, identical for every
+    request to that route) is now renamed to the actual resolved request path (e.g.
+    ``POST rest/services/12345/GetMap``); the query string is deliberately left out to avoid
+    leaking sensitive query parameters (e.g. HMAC tokens) into the tracing backend. This rename
+    has to happen via ``EnrichWithHttpResponse`` (fired at request end) rather than
+    ``EnrichWithHttpRequest`` (fired at request start), since the ASP.NET Core instrumentation
+    itself renames the span from the resolved route pattern once routing has run - which happens
+    in between the two and would otherwise overwrite an earlier rename. The nested
+    ``WebGIS.GeoServices`` span (previously just the generic header, e.g. "WebGIS.API GeoService
+    Performance", identical for every GeoService request) is now named
+    ``{category}:{command} {service}`` (e.g. ``geoservice:GetMap MyMapService``).
+
+### Fixed
+
+- ``MicrosoftWarningsLogger``/``MicrosoftExceptionLogger`` logged the ``service`` value twice
+  instead of ``server``/``service`` (a copy-paste mistake in the message placeholders).
 
 ## 8.26.3701
 

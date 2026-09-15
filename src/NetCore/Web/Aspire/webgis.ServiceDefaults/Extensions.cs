@@ -48,14 +48,39 @@ public static class Extensions
             {
                 metrics.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
-                    .AddRuntimeInstrumentation();
+                    .AddRuntimeInstrumentation()
+                    // WebGIS domain metrics (GeoService/OGC/Usage/DataLinq performance logging) -
+                    // see Api.Core.AppCode.Services.Logging.GeoServiceTelemetry.
+                    .AddMeter("WebGIS.GeoServices");
             })
             .WithTracing(tracing =>
             {
-                tracing.AddAspNetCoreInstrumentation()
+                tracing.AddAspNetCoreInstrumentation(o =>
+                {
+                    // By default AspNetCore instrumentation names spans after the route
+                    // *template* (e.g. "POST rest/services/{id}/{request}"), so every request to
+                    // a given route looks identical in a trace list. Renaming the span to the
+                    // actual resolved request path makes it possible to tell requests apart (e.g.
+                    // which service id / GetMap vs. GetSelection) without opening each trace.
+                    //
+                    // This has to happen in EnrichWithHttpResponse (fired at request end), not
+                    // EnrichWithHttpRequest (fired at request start): the instrumentation itself
+                    // (re-)sets the DisplayName from the resolved route pattern once routing has
+                    // run, which happens *after* EnrichWithHttpRequest but *before*
+                    // EnrichWithHttpResponse - so setting it at request start would just get
+                    // overwritten again.
+                    o.EnrichWithHttpResponse = (activity, httpResponse) =>
+                    {
+                        var request = httpResponse.HttpContext.Request;
+                        activity.DisplayName = $"{request.Method} {request.PathBase}{request.Path}";
+                    };
+                })
                     // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
                     //.AddGrpcClientInstrumentation()
-                    .AddHttpClientInstrumentation();
+                    .AddHttpClientInstrumentation()
+                    // WebGIS domain traces (GeoService/OGC/Usage/DataLinq performance logging) -
+                    // see Api.Core.AppCode.Services.Logging.GeoServiceTelemetry.
+                    .AddSource("WebGIS.GeoServices");
             });
 
         builder.AddOpenTelemetryExporters();

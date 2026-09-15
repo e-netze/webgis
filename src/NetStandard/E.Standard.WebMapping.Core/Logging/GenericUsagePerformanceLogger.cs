@@ -1,4 +1,6 @@
-﻿using E.Standard.CMS.Core;
+﻿using System.Runtime.CompilerServices;
+
+using E.Standard.CMS.Core;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 
 namespace E.Standard.WebMapping.Core.Logging;
@@ -13,8 +15,11 @@ public class GenericUsagePerformanceLogger<TLogger> : IUsagePerformanceLogger
         _logger = logger;
     }
 
+    virtual public bool IsEnabled => true;
+
     virtual public void Flush() { }
 
-    public ILog Start(CmsDocument.UserIdentification ui, string server, string service, string cmd, string message)
-        => _logger.Clone(ui).PerformanceLogger(server, service, cmd, message);
+    public ILog Start(CmsDocument.UserIdentification ui, string server, string service, string cmd,
+        [InterpolatedStringHandlerArgument("")] UsagePerformanceLogMessage message = default)
+        => _logger.Clone(ui).PerformanceLogger(server, service, cmd, message.ToString());
 }

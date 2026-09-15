@@ -10,4 +10,6 @@ public class NullUsagePerformanceLogger : GenericUsagePerformanceLogger<NullLogg
     {
 
     }
+
+    override public bool IsEnabled => false;
 }

@@ -1,5 +1,7 @@
 ﻿#nullable enable
 
+using System.Runtime.CompilerServices;
+
 using E.Standard.CMS.Core;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 
@@ -16,14 +18,18 @@ public class MicrosoftUsagePerformanceLogger : IUsagePerformanceLogger
         _logger = logger;
     }
 
+    public bool IsEnabled => _logger.IsEnabled(LogLevel.Warning);
+
     public void Flush() { }
 
-    public ILog Start(CmsDocument.UserIdentification ui, string server, string service, string cmd, string message)
+    public ILog Start(CmsDocument.UserIdentification ui, string server, string service, string cmd,
+        [InterpolatedStringHandlerArgument("")] UsagePerformanceLogMessage message = default)
     {
         return new MicrosoftLog(
             _logger,
             null, ui,
-            "WebGIS.API Usage Performance", server, service, cmd, message
+            "usage", LoggingEventIds.Usage,
+            "WebGIS.API Usage Performance", server, service, cmd, message.ToString()
             );
     }
 }

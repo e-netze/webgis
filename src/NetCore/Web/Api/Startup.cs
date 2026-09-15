@@ -475,6 +475,10 @@ public class Startup
     {
         Console.WriteLine("Startup.Configure...");
 
+        // Wraps the whole request (incl. exception handling) in an ILogger scope carrying the
+        // request correlation id/path/method - see RequestLoggingScopeMiddleware.
+        app.UseMiddleware<RequestLoggingScopeMiddleware>();
+
         if (Environment.IsDevelopment())
         {
             //app.UseDeveloperExceptionPage();

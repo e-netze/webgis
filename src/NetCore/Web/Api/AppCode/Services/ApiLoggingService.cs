@@ -53,7 +53,7 @@ public class ApiLoggingService
                     controller?.CurrentActionName ?? String.Empty,
                     controller?.CurrentActionName ?? String.Empty,
                     eventType,
-                    button?.GetType().ToToolId() ?? String.Empty
+                    $"{button?.GetType().ToToolId() ?? String.Empty}"
                 );
         }
 
@@ -69,7 +69,7 @@ public class ApiLoggingService
                 controller?.CurrentActionName ?? String.Empty,
                 controller?.CurrentActionName ?? String.Empty,
                 command,
-                message
+                $"{message}"
             );
         }
 

@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Api.Core.AppCode.Services.Logging;
 
-public class MicrosoftWarningsLogger : IWarningsLogger
+public partial class MicrosoftWarningsLogger : IWarningsLogger
 {
-    private ILogger<MicrosoftWarningsLogger> _logger;
+    private readonly ILogger<MicrosoftWarningsLogger> _logger;
 
     public MicrosoftWarningsLogger(ILogger<MicrosoftWarningsLogger> logger)
     {
@@ -17,7 +17,8 @@ public class MicrosoftWarningsLogger : IWarningsLogger
     public void Flush() { }
 
     public void LogString(CmsDocument.UserIdentification ui, string server, string service, string command, string message, int performaceMilliseconds = 0)
-    {
-        _logger.LogWarning("WebGIS.API: {server} {service} {command} {message} - {username}", service, service, command, message, ui?.Username ?? "");
-    }
+        => LogWarningCore(server, service, command, message, ui?.Username ?? "");
+
+    [LoggerMessage(EventId = LoggingEventIds.Warning, Level = LogLevel.Warning, Message = "WebGIS.API: {server} {service} {command} {message} - {username}")]
+    private partial void LogWarningCore(string server, string service, string command, string message, string username);
 }

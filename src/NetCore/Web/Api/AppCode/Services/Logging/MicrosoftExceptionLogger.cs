@@ -8,9 +8,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Api.Core.AppCode.Services.Logging;
 
-public class MicrosoftExceptionLogger : IExceptionLogger
+public partial class MicrosoftExceptionLogger : IExceptionLogger
 {
-    private ILogger<MicrosoftExceptionLogger> _logger;
+    private readonly ILogger<MicrosoftExceptionLogger> _logger;
 
     public MicrosoftExceptionLogger(ILogger<MicrosoftExceptionLogger> logger)
     {
@@ -20,17 +20,23 @@ public class MicrosoftExceptionLogger : IExceptionLogger
     public void Flush() { }
 
     public void LogException(CmsDocument.UserIdentification ui, string server, string service, string command, Exception ex)
-    {
-        _logger.LogError("WebGIS.API: {server} {service} {command} {message} {stacktrace} - {username}", service, service, command, ex.Message, ex.StackTrace, ui?.Username ?? "");
-    }
+        => LogExceptionForUser(ex, server, service, command, ui?.Username ?? "");
 
     public void LogException(IMap map, string server, string service, string command, Exception ex)
-    {
-        _logger.LogError("WebGIS.API: {server} {service} {command} {message} {stacktrace} - {map}", service, service, command, ex.Message, ex.StackTrace, map?.Name);
-    }
+        => LogExceptionForMap(ex, server, service, command, map?.Name ?? "");
 
     public void LogString(CmsDocument.UserIdentification ui, string server, string service, string command, string message, int performaceMilliseconds = 0)
-    {
-        _logger.LogError("WebGIS.API: {server} {service} {command} {message} - {username}", service, service, command, message, ui?.Username ?? "");
-    }
+        => LogErrorString(server, service, command, message, ui?.Username ?? "");
+
+    // Passing the Exception itself (instead of ex.Message/ex.StackTrace as plain strings) lets
+    // the logging provider capture it natively (full stack trace, exception grouping in
+    // Application Insights/Seq/...), instead of just flattened text.
+    [LoggerMessage(EventId = LoggingEventIds.ExceptionForUser, Level = LogLevel.Error, Message = "WebGIS.API: {server} {service} {command} - {username}")]
+    private partial void LogExceptionForUser(Exception exception, string server, string service, string command, string username);
+
+    [LoggerMessage(EventId = LoggingEventIds.ExceptionForMap, Level = LogLevel.Error, Message = "WebGIS.API: {server} {service} {command} - {map}")]
+    private partial void LogExceptionForMap(Exception exception, string server, string service, string command, string map);
+
+    [LoggerMessage(EventId = LoggingEventIds.ExceptionString, Level = LogLevel.Error, Message = "WebGIS.API: {server} {service} {command} {message} - {username}")]
+    private partial void LogErrorString(string server, string service, string command, string message, string username);
 }
