@@ -120,6 +120,16 @@ try
         }
 
         #endregion
+
+        #region Localization
+
+        services.AddMarkdownLocalizerFactory<CultureProvider>(config =>
+        {
+            config.SupportedLanguages = ["en"];
+            config.DefaultLanguage = "en";
+        });
+
+        #endregion
     });
 
     var app = builder.Build();
