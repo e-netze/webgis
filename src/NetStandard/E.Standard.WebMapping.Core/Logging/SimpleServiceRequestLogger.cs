@@ -27,7 +27,7 @@ public class SimpleServiceRequestLogger : IGeoServiceRequestLogger
 
     #region IWebGISLogger Member
 
-    public void LogString(string server, string service, string command, string msg, int performaceMilliseconds = 0)
+    public void LogString(string server, string service, string command, string msg, int performaceMilliseconds = 0, bool success = true)
     {
         lock (thisLock)
         {

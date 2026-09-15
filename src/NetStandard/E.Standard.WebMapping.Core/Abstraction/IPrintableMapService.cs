@@ -7,5 +7,5 @@ namespace E.Standard.WebMapping.Core.Abstraction;
 public interface IPrintableMapService
 {
     //ServiceResponse GetPrintMap();
-    Task<ServiceResponse> GetPrintMapAsync(IRequestContext requestContext);
+    Task<ServiceResponse> GetPrintImageAsync(IRequestContext requestContext);
 }

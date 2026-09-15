@@ -191,7 +191,7 @@ public class RestMappingHelperService /*: IDisposable*/
             case ServiceResponseType.Html:
                 if (service is IPrintableMapService)
                 {
-                    response = await ((IPrintableMapService)service).GetPrintMapAsync(_requestContext);
+                    response = await ((IPrintableMapService)service).GetPrintImageAsync(_requestContext);
                 }
 
                 break;

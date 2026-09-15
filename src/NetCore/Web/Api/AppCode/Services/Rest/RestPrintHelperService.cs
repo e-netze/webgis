@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -35,6 +36,7 @@ using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
@@ -230,6 +232,26 @@ public class RestPrintHelperService
                 sketchLabelMode: sketchLabelMode
             );
 
+        // Populate the map's extent/scale with the requested print center/scale (otherwise still
+        // the default, empty 0,0/0 extent at this point) purely so performance logging (X/Y/SCALE
+        // columns) reflects the actual print request; the per-page/per-service extents used for
+        // the actual rendering are computed independently further below and are not affected.
+        map.SetScale(printScale, map.ImageWidth, map.ImageHeight, mapDefinition.Center[0], mapDefinition.Center[1]);
+
+        var printLayout = String.IsNullOrEmpty(layoutId)
+            ? null
+            : _cache.GetPrintLayouts(_urlHelper.GetCustomGdiScheme(), ui).Where(l => l.Id == layoutId).FirstOrDefault();
+
+        // Performance logging for the actual print/layout request (as opposed to the per-service
+        // GetPrintImage requests it composes internally): server/service carry the print layout
+        // and scale/dpi, since there is no single "GIS server/service" involved in a print.
+        string printLayoutDescriptor = !String.IsNullOrEmpty(layoutId)
+            ? $"{layoutId}:{layoutFormat}:{layoutDpi}dpi"
+            : $"{layoutFormat}:{layoutDpi}dpi";
+
+        using var pLogger = _requestContext.GetRequiredService<IGeoServicePerformanceLogger>()
+            .StartGetPrint(map, printLayout?.Name ?? layoutId, printLayoutDescriptor);
+
         // toolSketch must transfomed to map spatialreference
         // eg. toolSketch is 31256 and map is 3857...
         // otherwise map series print dont work with WebMercator and calcCrs = 31256
@@ -280,7 +302,6 @@ public class RestPrintHelperService
 
             #endregion
 
-            var printLayout = _cache.GetPrintLayouts(_urlHelper.GetCustomGdiScheme(), ui).Where(l => l.Id == layoutId).FirstOrDefault();
             if (printLayout == null)
             {
                 throw new Exception("Unkown layout id=" + layoutId);
@@ -425,7 +446,7 @@ public class RestPrintHelperService
                     var imageSizeOv = layoutBuilder.OverviewMapPixels;
                     if (imageSizeOv.Width > 0 && imageSizeOv.Height > 0)
                     {
-                        var ovMap = _mapServiceInitializer.Map(_requestContext, ui);
+                        var ovMap = _mapServiceInitializer.Map(_requestContext, ui, httpRequest.MapName());
 
                         var ovService = mapDefinition.Services.Where(s => _cache.GetOriginalService(s.Id, ui, _urlHelper).Result is TileService)
                                                               .Select(s => _cache.GetService(s.Id, ovMap, ui, _urlHelper).Result)
@@ -706,6 +727,8 @@ public class RestPrintHelperService
             // Damit kann man die Funktion auf für den PrintServer verwenden...
             if ("base64".Equals(form["result_format"], StringComparison.InvariantCultureIgnoreCase))
             {
+                pLogger.Success = errorRespones.HasErrors == false;
+
                 return await controller.JsonObject(new
                 {
                     name = fileName,
@@ -718,6 +741,8 @@ public class RestPrintHelperService
             }
 
             await outputFileBytes.SaveOrUpload(map.AsOutputFilename(fileName));
+
+            pLogger.Success = errorRespones.HasErrors == false;
 
             return await controller.JsonObject(new
             {
@@ -746,6 +771,8 @@ public class RestPrintHelperService
 
             if (mapResponse is ImageLocation)
             {
+                pLogger.Success = true;
+
                 return await controller.JsonObject(new
                 {
                     url = ((ImageLocation)mapResponse).ImageUrl,
@@ -1290,7 +1317,7 @@ public class RestPrintHelperService
             throw new ArgumentException("mapDefintion == null");
         }
 
-        var map = _mapServiceInitializer.Map(_requestContext, ui);
+        var map = _mapServiceInitializer.Map(_requestContext, ui, httpRequest.MapName());
 
         var graphicFeatuers = new List<E.Standard.Api.App.DTOs.FeatureDTO>();
         if (graphics?.features != null)

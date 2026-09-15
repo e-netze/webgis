@@ -233,11 +233,17 @@ static public class ServiceCollectionExtensions
         }
 
         if (configuration[ApiConfigKeys.LoggingLogServiceRequests]?.Equals("true", StringComparison.OrdinalIgnoreCase) == true
-            && !String.IsNullOrEmpty(configuration[ApiConfigKeys.LogPath])
             && configuration[ApiConfigKeys.Trace] == "true")
         {
-            services.AddSingleton<IGeoServiceRequestLogger, SimpleServiceRequestLogger>(
-                _ => new SimpleServiceRequestLogger(configuration[ApiConfigKeys.LogPath], 50));
+            if (loggingType == "microsoft")
+            {
+                services.AddSingleton<IGeoServiceRequestLogger, MicrosoftGeoServiceRequestLogger>();
+            }
+            else if (!String.IsNullOrEmpty(configuration[ApiConfigKeys.LogPath]))
+            {
+                services.AddSingleton<IGeoServiceRequestLogger, SimpleServiceRequestLogger>(
+                    _ => new SimpleServiceRequestLogger(configuration[ApiConfigKeys.LogPath], 50));
+            }
         }
 
 

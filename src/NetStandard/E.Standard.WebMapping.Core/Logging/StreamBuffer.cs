@@ -26,7 +26,7 @@ public class StreamBuffer
             _header = "SESSIONID;REQUESTID;DATE;TIME;MAP";
         }
 
-        _header += ";REQUEST;SERVER;SERVICE;MS;SUCCESS";
+        _header += ";REQUEST;SERVER;SERVICE;MS;SUCCESS;MESSAGE";
     }
 
     public void Append(string msg)

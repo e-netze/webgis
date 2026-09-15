@@ -57,7 +57,7 @@ public class ApiLoggingService
                 );
         }
 
-        return new NullLog();
+        return NullLog.Instance;
     }
 
     public ILog UsagePerformaceLogger(ApiBaseController controller, string command, string message, CmsDocument.UserIdentification ui)
@@ -73,6 +73,6 @@ public class ApiLoggingService
             );
         }
 
-        return new NullLog();
+        return NullLog.Instance;
     }
 }

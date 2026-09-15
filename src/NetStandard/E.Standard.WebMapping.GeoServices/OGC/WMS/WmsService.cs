@@ -224,7 +224,7 @@ public class WmsService : IMapService2,
 
         try
         {
-            using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, this.Service, "Init", ""))
+            using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartInit(this.Map, this.Server, this.Service))
             {
                 _map = map;
                 _layers = new LayerCollection(this);
@@ -336,7 +336,7 @@ public class WmsService : IMapService2,
 
         var httpService = requestContext.Http;
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, this.Service, "GetMap", ""))
+        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetMap(this.Map, this.Server, this.Service))
         {
             if (!ServiceHelper.VisibleInScale(this, _map))
             {
@@ -999,7 +999,7 @@ public class WmsService : IMapService2,
     {
         var httpService = requestContext.Http;
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, this.Service, "GetLegend", ""))
+        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetLegend(this.Map, this.Server, this.Service))
         {
             if (_map == null)
             {

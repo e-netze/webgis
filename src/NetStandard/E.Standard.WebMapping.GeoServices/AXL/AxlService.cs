@@ -203,7 +203,7 @@ public class AxlService : IMapService2,
 
         try
         {
-            using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, this.Service, "Init", ""))
+            using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartInit(this.Map, this.Server, this.Service))
             {
                 _map = map;
                 _layers = new LayerCollection(this);
@@ -504,7 +504,7 @@ public class AxlService : IMapService2,
 
         var httpService = requestContext.Http;
 
-        using (var pLog = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, this.Service, "GetMap", ""))
+        using (var pLog = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetMap(this.Map, this.Server, this.Service))
         {
             //_connector.LogString("webgis4.log", "Start Map Request: " + _service);
 
@@ -784,7 +784,7 @@ public class AxlService : IMapService2,
 
         var httpService = requestContext.Http;
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, this.Service, "GetSelection", ""))
+        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetSelection(this.Map, this.Server, this.Service))
         {
             double mapScale = _map.MapScale;
             double refScale = this.RefScale;
@@ -2251,7 +2251,7 @@ public class AxlService : IMapService2,
 
         var httpService = requestContext.Http;
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, this.Service, "GetLegend", ""))
+        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetLegend(this.Map, this.Server, this.Service))
         {
             //_connector.LogString("webgis4.log", "Start Legend Request: " + _service);
 

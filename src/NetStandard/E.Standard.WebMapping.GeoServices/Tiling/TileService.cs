@@ -10,6 +10,7 @@ using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using E.Standard.WebMapping.GeoServices.Tiling.Models;
@@ -458,7 +459,18 @@ public abstract class TileService : IMapService, IPrintableMapService, IMapServi
 
     #region IPrintableService Member
 
-    async public Task<ServiceResponse> GetPrintMapAsync(IRequestContext requestContext)
+    async public Task<ServiceResponse> GetPrintImageAsync(IRequestContext requestContext)
+    {
+        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetPrintImage(this.Map, this.Server, this.Service))
+        {
+            var response = await GetPrintImageInternalAsync(requestContext);
+            pLogger.Success = response is not ExceptionResponse and not ErrorResponse;
+
+            return response;
+        }
+    }
+
+    async private Task<ServiceResponse> GetPrintImageInternalAsync(IRequestContext requestContext)
     {
         try
         {
@@ -509,7 +521,7 @@ public abstract class TileService : IMapService, IPrintableMapService, IMapServi
 
                         geoTransform = new GeometricTransformerPro(from, to);
 
-                        //Console.WriteLine($"TileService.GetPrintMapAsync: Tramsform from { from.Id } to { to.Id }");
+                        //Console.WriteLine($"TileService.GetPrintImageAsync: Tramsform from { from.Id } to { to.Id }");
                     }
                 }
 

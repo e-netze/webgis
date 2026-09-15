@@ -7,6 +7,7 @@ using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 
@@ -314,45 +315,49 @@ public class WatermarkService : IMapService, IPrintableMapService
 
     #region IPrintableService Member
 
-    async public Task<ServiceResponse> GetPrintMapAsync(IRequestContext requestContext)
+    async public Task<ServiceResponse> GetPrintImageAsync(IRequestContext requestContext)
     {
         if (_map == null)
         {
             return new ExceptionResponse(-1, this.ID, new Exception("Map==NULL"));
         }
 
-        var httpService = requestContext.Http;
-        string extraMessage = String.Empty;
-
-        try
+        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetPrintImage(this.Map, this.Server, this.Service))
         {
-            using (var watermark = await _watermarkPath.ImageFromUri(httpService))
-            using (var bitmap = Current.Engine.CreateBitmap(_map.ImageWidth, _map.ImageHeight))
-            using (var canvas = bitmap.CreateCanvas())
+            var httpService = requestContext.Http;
+            string extraMessage = String.Empty;
+
+            try
             {
-                Random r = new Random(DateTime.Now.Millisecond);
-                for (int y = 0; y < bitmap.Height; y += bitmap.Height / 3)
+                using (var watermark = await _watermarkPath.ImageFromUri(httpService))
+                using (var bitmap = Current.Engine.CreateBitmap(_map.ImageWidth, _map.ImageHeight))
+                using (var canvas = bitmap.CreateCanvas())
                 {
-                    for (int x = 0; x < bitmap.Width; x += bitmap.Width / 3)
+                    Random r = new Random(DateTime.Now.Millisecond);
+                    for (int y = 0; y < bitmap.Height; y += bitmap.Height / 3)
                     {
-                        canvas.DrawBitmap(watermark,
-                            new CanvasRectangle(x + r.Next(100) - 50, y + r.Next(100) - 50, watermark.Width, watermark.Height),
-                            new CanvasRectangle(0, 0, watermark.Width, watermark.Height));
+                        for (int x = 0; x < bitmap.Width; x += bitmap.Width / 3)
+                        {
+                            canvas.DrawBitmap(watermark,
+                                new CanvasRectangle(x + r.Next(100) - 50, y + r.Next(100) - 50, watermark.Width, watermark.Height),
+                                new CanvasRectangle(0, 0, watermark.Width, watermark.Height));
+                        }
                     }
+
+                    string filename = "wm_" + Guid.NewGuid().ToString("N") + ".png";
+
+                    bitmap.Save(extraMessage = _map.AsOutputFilename(filename), ImageFormat.Png);
+                    pLogger.Success = true;
+                    return new ImageLocation(
+                        _map.Services.IndexOf(this), this.ID,
+                        _map.AsOutputFilename(filename),
+                        _map.AsOutputUrl(filename));
                 }
-
-                string filename = "wm_" + Guid.NewGuid().ToString("N") + ".png";
-
-                bitmap.Save(extraMessage = _map.AsOutputFilename(filename), ImageFormat.Png);
-                return new ImageLocation(
-                    _map.Services.IndexOf(this), this.ID,
-                    _map.AsOutputFilename(filename),
-                    _map.AsOutputUrl(filename));
             }
-        }
-        catch (Exception ex)
-        {
-            return new ExceptionResponse(_map.Services.IndexOf(this), this.ID, new Exception(ex.Message + " - " + extraMessage));
+            catch (Exception ex)
+            {
+                return new ExceptionResponse(_map.Services.IndexOf(this), this.ID, new Exception(ex.Message + " - " + extraMessage));
+            }
         }
     }
 

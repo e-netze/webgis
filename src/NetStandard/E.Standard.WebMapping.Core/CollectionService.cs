@@ -602,7 +602,7 @@ public class CollectionService : IMapService, IEnumerable<IMapService>, IPrintab
                         }
                         else if (_service is IPrintableMapService)
                         {
-                            _response = await ((IPrintableMapService)_service).GetPrintMapAsync(requestContext);
+                            _response = await ((IPrintableMapService)_service).GetPrintImageAsync(requestContext);
                         }
                     }
 
@@ -987,9 +987,15 @@ public class CollectionService : IMapService, IEnumerable<IMapService>, IPrintab
 
     #region IPrintableService Member
 
-    async public Task<ServiceResponse> GetPrintMapAsync(IRequestContext requestContext)
+    async public Task<ServiceResponse> GetPrintImageAsync(IRequestContext requestContext)
     {
-        return await GetMapAsync(requestContext);
+        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetPrintImage(this.Map, this.Server, this.Service))
+        {
+            var response = await GetMapAsync(requestContext);
+            pLogger.Success = response is not ExceptionResponse and not ErrorResponse;
+
+            return response;
+        }
     }
 
     #endregion

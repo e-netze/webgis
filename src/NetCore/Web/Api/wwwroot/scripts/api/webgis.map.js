@@ -3778,6 +3778,7 @@
         var data = {
             graphics: graphicsJson,
             map: mapJson,
+            mapname: this.name,
             queryResultFeatures: options.showQueryMarkers === true || options.attachQueryResults ?
                 JSON.stringify(this.queryResultFeatures._queryResultFeatures, null, 2) :
                 null,

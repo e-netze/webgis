@@ -11,6 +11,7 @@ using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 
@@ -115,62 +116,66 @@ internal class PrintImageService : IStaticOverlayService, IPrintableMapService
 
     #region IPrintableService
 
-    async public Task<ServiceResponse> GetPrintMapAsync(IRequestContext requestContext)
+    async public Task<ServiceResponse> GetPrintImageAsync(IRequestContext requestContext)
     {
-        if (_georefImageMetadata?.TopLeft == null ||
-            _georefImageMetadata?.TopRight == null ||
-            _georefImageMetadata?.BottomLeft == null)
+        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetPrintImage(this.Map, this.Server, this.Service))
         {
-            return new EmptyImage(-1, this.ID); ;
-        }
-
-        string filetitle = $"georefimage_{System.Guid.NewGuid().ToString("N").ToLower()}.png";
-        string filename = Map.AsOutputFilename(filetitle);
-        string fileurl = Map.AsOutputUrl(filetitle);
-
-        using (var ms = new MemoryStream(_bridge.GetGeorefImageData(_ower, _georefImageMetadata)))
-        using (var sourceBitmap = Current.Engine.CreateBitmap(ms))
-        {
-            using (var targetBitmap = Current.Engine.CreateBitmap(this.Map.ImageWidth, this.Map.ImageHeight))
-            using (var targetGr = targetBitmap.CreateCanvas())
+            if (_georefImageMetadata?.TopLeft == null ||
+                _georefImageMetadata?.TopRight == null ||
+                _georefImageMetadata?.BottomLeft == null)
             {
-                targetGr.InterpolationMode = InterpolationMode.Bicubic;
-
-                using (var transformer = new GeometricTransformerPro(CoreApiGlobals.SRefStore, 4326, this.Map.SpatialReference?.Id ?? 0))
-                {
-                    _georefImageMetadata.ProjectWorld(transformer);
-                }
-
-                var p1 = new Point(_georefImageMetadata.TopLeft.X, _georefImageMetadata.TopLeft.Y);
-                var p2 = new Point(_georefImageMetadata.TopRight.X, _georefImageMetadata.TopRight.Y);
-                var p3 = new Point(_georefImageMetadata.BottomLeft.X, _georefImageMetadata.BottomLeft.Y);
-
-                p1 = this.Map.WorldToImage(p1);
-                p2 = this.Map.WorldToImage(p2);
-                p3 = this.Map.WorldToImage(p3);
-
-                //p1.X -= .5f; p1.Y -= .5f;
-                //p2.X += .5f; p2.Y -= .5f;
-                //p3.X -= .5f; p3.Y += .5f;
-
-                CanvasPointF[] points = new CanvasPointF[]{
-                                                            new CanvasPointF((float)p1.X,(float)p1.Y),
-                                                            new CanvasPointF((float)p2.X,(float)p2.Y),
-                                                            new CanvasPointF((float)p3.X,(float)p3.Y),
-                                                        };
-
-                targetGr.DrawBitmap(
-                        sourceBitmap,
-                        points,
-                        new CanvasRectangleF(0f, 0f, sourceBitmap.Width, sourceBitmap.Height)
-                    );
-
-                await targetBitmap.SaveOrUpload(filename, ImageFormat.Png);
+                pLogger.Success = true;
+                return new EmptyImage(-1, this.ID); ;
             }
+
+            string filetitle = $"georefimage_{System.Guid.NewGuid().ToString("N").ToLower()}.png";
+            string filename = Map.AsOutputFilename(filetitle);
+            string fileurl = Map.AsOutputUrl(filetitle);
+
+            using (var ms = new MemoryStream(_bridge.GetGeorefImageData(_ower, _georefImageMetadata)))
+            using (var sourceBitmap = Current.Engine.CreateBitmap(ms))
+            {
+                using (var targetBitmap = Current.Engine.CreateBitmap(this.Map.ImageWidth, this.Map.ImageHeight))
+                using (var targetGr = targetBitmap.CreateCanvas())
+                {
+                    targetGr.InterpolationMode = InterpolationMode.Bicubic;
+
+                    using (var transformer = new GeometricTransformerPro(CoreApiGlobals.SRefStore, 4326, this.Map.SpatialReference?.Id ?? 0))
+                    {
+                        _georefImageMetadata.ProjectWorld(transformer);
+                    }
+
+                    var p1 = new Point(_georefImageMetadata.TopLeft.X, _georefImageMetadata.TopLeft.Y);
+                    var p2 = new Point(_georefImageMetadata.TopRight.X, _georefImageMetadata.TopRight.Y);
+                    var p3 = new Point(_georefImageMetadata.BottomLeft.X, _georefImageMetadata.BottomLeft.Y);
+
+                    p1 = this.Map.WorldToImage(p1);
+                    p2 = this.Map.WorldToImage(p2);
+                    p3 = this.Map.WorldToImage(p3);
+
+                    //p1.X -= .5f; p1.Y -= .5f;
+                    //p2.X += .5f; p2.Y -= .5f;
+                    //p3.X -= .5f; p3.Y += .5f;
+
+                    CanvasPointF[] points = new CanvasPointF[]{
+                                                                new CanvasPointF((float)p1.X,(float)p1.Y),
+                                                                new CanvasPointF((float)p2.X,(float)p2.Y),
+                                                                new CanvasPointF((float)p3.X,(float)p3.Y),
+                                                            };
+
+                    targetGr.DrawBitmap(
+                            sourceBitmap,
+                            points,
+                            new CanvasRectangleF(0f, 0f, sourceBitmap.Width, sourceBitmap.Height)
+                        );
+
+                    await targetBitmap.SaveOrUpload(filename, ImageFormat.Png);
+                }
+            }
+
+            pLogger.Success = true;
+            return new ImageLocation(-1, this.ID, filename, fileurl);
         }
-
-
-        return new ImageLocation(-1, this.ID, filename, fileurl);
     }
 
     #endregion

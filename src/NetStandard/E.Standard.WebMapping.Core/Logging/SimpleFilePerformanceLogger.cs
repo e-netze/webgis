@@ -50,8 +50,7 @@ public class SimpleFilePerformanceLogger : ILog
             TimeSpan ts = (n - _startTime);
             try
             {
-                //if (ts.TotalMilliseconds > 0)
-                _logger.LogString(this.Server, this.Service, this.Command, _msg + " " + ts.TotalMilliseconds + " " + _success.ToString(), Convert.ToInt32(ts.TotalMilliseconds));
+                _logger.LogString(this.Server, this.Service, this.Command, _msg, Convert.ToInt32(ts.TotalMilliseconds), _success);
             }
             catch { }
         }

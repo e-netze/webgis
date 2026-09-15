@@ -847,7 +847,7 @@ public class WmsHelper
                 case WebMapping.Core.ServiceResponseType.Html:
                     if (map.Services[0] is IPrintableMapService)
                     {
-                        serviceResponse = await ((IPrintableMapService)map.Services[0]).GetPrintMapAsync(requestContext);
+                        serviceResponse = await ((IPrintableMapService)map.Services[0]).GetPrintImageAsync(requestContext);
                     }
 
                     break;

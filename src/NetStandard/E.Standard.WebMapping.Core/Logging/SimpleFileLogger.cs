@@ -27,7 +27,7 @@ public class SimpleFileLogger : IWebGISLogger
 
     #region IWebGISLogger Member
 
-    public void LogString(string server, string service, string commad, string msg, int performaceMilliseconds = 0)
+    public void LogString(string server, string service, string commad, string msg, int performaceMilliseconds = 0, bool success = true)
     {
         lock (thisLock)
         {

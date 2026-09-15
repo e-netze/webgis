@@ -203,7 +203,7 @@ public class MapService : IMapService2,
         _initErrorResponse = null;
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(map, this.Server, _mapServiceName, "Init", $"Init {this.Server} {this.Service.Replace(" ", "_")}"))
+        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartInit(map, this.Server, _mapServiceName))
         {
             try
             {
@@ -501,7 +501,7 @@ public class MapService : IMapService2,
 
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, _mapServiceName, "GetMap", $"GetMap {this.Service}"))
+        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetMap(this.Map, this.Server, _mapServiceName))
         {
             if (!ServiceHelper.VisibleInScale(this, this.Map))
             {
@@ -791,7 +791,7 @@ public class MapService : IMapService2,
 
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, _mapServiceName, "GetSelection", $"GetSelection {this.Service}"))
+        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetSelection(this.Map, this.Server, _mapServiceName))
         {
             try
             {
@@ -1427,7 +1427,7 @@ public class MapService : IMapService2,
 
             if (!useDynamcLegendQuery)
             {
-                using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, _mapServiceName, "GetLegend", $"GetLegend {this.Service}"))
+                using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetLegend(this.Map, this.Server, _mapServiceName))
                 {
                     string dynamicLayerRequestUrl = $"{this.Service}/legend";
                     string jsonLegendAnswer = await authHandler.TryPostAsync(

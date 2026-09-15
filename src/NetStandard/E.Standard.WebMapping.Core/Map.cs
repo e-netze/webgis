@@ -832,7 +832,7 @@ public class Map : Display, IMap
                         }
                         else if (_service is IPrintableMapService)
                         {
-                            _response = await ((IPrintableMapService)_service).GetPrintMapAsync(requestContext);
+                            _response = await ((IPrintableMapService)_service).GetPrintImageAsync(requestContext);
                         }
                     }
 

@@ -84,7 +84,40 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   when scanning for warnings before a deploy. Only warnings belonging to services included in the
   list (or all services, if the list is empty/unset) are reported/block the deploy.
 
+- ``IGeoServiceRequestLogger`` (raw GeoService request/response tracing, enabled via
+  ``Api:trace``/``Api:logging-log-service-requests``) now has a ``Microsoft.Extensions.Logging``
+  based implementation (``MicrosoftGeoServiceRequestLogger``, logged at ``LogLevel.Trace``), used
+  automatically when ``Api:logging-type`` is ``microsoft``. Previously only the file based
+  ``SimpleServiceRequestLogger`` was available.
+
 ### Fixed
+
+- Performance logging (``webgis_performance.csv``): print requests are now recorded like
+  ``GetMap``/``GetSelection``/``GetLegend`` requests were before. Previously they were not logged
+  at all. The actual print/layout composition (``RestPrintHelperService``) is now logged as
+  ``GetPrint``, with the print layout, scale and DPI captured; the underlying per-service map
+  image used while composing a print (formerly ``IPrintableMapService.GetPrintMapAsync``, renamed
+  to ``GetPrintImageAsync``) is logged separately as ``GetPrintImage``.
+  [Issue #461](https://github.com/e-netze/webgis-community/issues/461)
+
+- Performance logging (``webgis_performance.csv``): the ``REQUEST;SERVER;SERVICE;MS;SUCCESS``
+  columns were previously built by splitting a freeform, hand-built message string on spaces,
+  even though the command/server/service values were already passed as separate typed
+  parameters. This required every caller to carefully format its message as exactly matching
+  space-separated tokens, and was already producing misaligned columns in several services
+  (e.g. missing/shifted ``SERVER``/``SERVICE`` values). These columns are now populated directly
+  from the typed parameters; the optional message is written as a new, trailing ``MESSAGE``
+  column instead.
+
+- Performance logging (``webgis_performance.csv``): the ``GetPrint`` entry now also reports the
+  map center (``X``/``Y``) and the requested print scale (``SCALE``), previously always ``0``.
+  ``SERVICE`` now shows ``{LayoutName}-{Size}.{Orientation}-{Dpi}dpi`` (e.g.
+  ``Standard-A4.Landscape-150dpi``) instead of embedding the scale that now has its own column.
+  ``MAPNAME`` was also missing for all print-related entries (``GetPrint``, ``GetPrintImage`` and
+  the ``GetMap`` requests issued internally while composing a print) because the print request
+  never sent a map name to the server in the first place (only regular ``GetMap``/
+  ``GetSelection``/``GetLegend`` requests did); the print request now includes it too, so it is
+  populated the same way for all of these.
 
 ## 8.26.3701
 

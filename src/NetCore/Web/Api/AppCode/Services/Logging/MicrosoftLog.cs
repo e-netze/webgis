@@ -54,6 +54,11 @@ internal class MicrosoftLog : ILog
 
     public void Dispose()
     {
+        if(!_logger.IsEnabled(LogLevel.Information))
+        {
+            return;
+        }
+
         long durationTicks = DateTime.UtcNow.Ticks - _ticks;
 
         _logger.LogInformation(StructuredMessage,

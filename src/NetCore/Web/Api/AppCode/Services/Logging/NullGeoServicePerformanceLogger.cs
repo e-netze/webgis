@@ -10,4 +10,6 @@ public class NullGeoServicePerformanceLogger : GenericGeoServicePerformanceLogge
     {
 
     }
+
+    override public bool IsEnabled => false;
 }

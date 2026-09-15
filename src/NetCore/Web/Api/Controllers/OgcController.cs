@@ -246,7 +246,7 @@ public class OgcController : ApiBaseController
                 throw new OgcArgumentException("REQUEST parameter missing");
             }
 
-            using (var logger = _ogcPerformanceLogger.Start(map, string.Empty, id, $"{arguments["service"]}/{arguments["request"]}", String.Empty))
+            using (var logger = _ogcPerformanceLogger.Start($"{arguments["service"]}/{arguments["request"]}", map, string.Empty, id))
             {
                 try
                 {

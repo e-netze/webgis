@@ -106,7 +106,7 @@ public class WmtsService : BaseWmtsService, IMapServiceAuthentication
         return responseString;
     }
 
-    // Called from TileService.GetPrintMapAsync
+    // Called from TileService.GetPrintImageAsync
     async override internal Task<TileData> DownloadTile(IRequestContext requestContext, TileData tileData)
     {
         try

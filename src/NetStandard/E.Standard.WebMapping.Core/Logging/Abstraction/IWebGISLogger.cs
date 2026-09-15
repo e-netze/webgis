@@ -7,7 +7,7 @@ public interface IWebGISLogger :
     IClone<IWebGISLogger, IMap>,
     IClone<IWebGISLogger, CmsDocument.UserIdentification>
 {
-    void LogString(string server, string service, string cmd, string msg, int performaceMilliseconds = 0);
+    void LogString(string server, string service, string cmd, string msg, int performaceMilliseconds = 0, bool success = true);
 
     ILog PerformanceLogger(string server, string service, string cmd, string message);
 }

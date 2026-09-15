@@ -22,4 +22,6 @@ public class NullLog : ILog
     {
 
     }
+
+    static public ILog Instance { get; } = new NullLog();   
 }

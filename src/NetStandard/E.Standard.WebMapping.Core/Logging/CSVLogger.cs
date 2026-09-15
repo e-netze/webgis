@@ -170,7 +170,7 @@ public class CSVLogger : IWebGISLogger
 
     #region IWebGISLogger Member
 
-    public void LogString(string server, string service, string command, string msg, int performaceMilliseconds = 0)
+    public void LogString(string server, string service, string command, string msg, int performaceMilliseconds = 0, bool success = true)
     {
         if (_buffer == null)
         {
@@ -246,7 +246,12 @@ public class CSVLogger : IWebGISLogger
                         }
 
                     }
-                    sb.Append(msg.Replace(" ", ";"));
+
+                    // REQUEST;SERVER;SERVICE;MS;SUCCESS;MESSAGE - populated directly from the typed
+                    // parameters (previously reconstructed by splitting the free-text "msg" on spaces,
+                    // which required every caller to duplicate server/service/cmd inside the message).
+                    sb.Append($"{command};{server};{service};{performaceMilliseconds};{success};");
+                    sb.Append(String.IsNullOrEmpty(msg) ? String.Empty : msg.Replace(";", ",").Replace("\r", " ").Replace("\n", " "));
 
                     _buffer.Append(sb.ToString() + "\r\n");
                 }

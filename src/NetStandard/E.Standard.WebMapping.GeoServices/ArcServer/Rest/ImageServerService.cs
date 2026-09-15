@@ -247,7 +247,7 @@ public class ImageServerService : IMapService2,
 
         var httpService = requestContext.Http;
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, Service, "Init", "Init " + this.Server + " " + this.Service.Replace(" ", "_")))
+        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartInit(this.Map, this.Server, Service))
         {
             try
             {
@@ -318,7 +318,7 @@ public class ImageServerService : IMapService2,
 
         var httpService = requestContext.Http;
 
-        using (var pLog = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, this._service, "GetMap", "GetMap " + _server))
+        using (var pLog = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetMap(this.Map, this.Server, this._service))
         {
             try
             {
@@ -658,7 +658,7 @@ public class ImageServerService : IMapService2,
                 return new ImageLocation(this.Map.Services.IndexOf(this),
                     this.ID, String.Empty, FixLegendUrl);
             }
-            using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Start(this.Map, this.Server, _service, "GetLegend", ""))
+            using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetLegend(this.Map, this.Server, _service))
             {
                 var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
                 string requestUrl = $"{this._serviceUrl}/legend?bandids={_bandIDs}&renderingRule={HttpUtility.UrlEncode(RenderingRule)}&f=pjson";
