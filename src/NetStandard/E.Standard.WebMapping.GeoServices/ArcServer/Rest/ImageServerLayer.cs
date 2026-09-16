@@ -10,9 +10,11 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
+using E.Standard.WebMapping.GeoServices.Extensions;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 
@@ -63,6 +65,12 @@ class ImageServerLayer : RestLayer, ILayer2
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
         string featuresResponse = await authHandler.TryGetAsync(_service, featuresReqUrl);
+        if (requestContext.Trace)
+        {
+            requestContext.GetRequiredService<IGeoServiceRequestLogger>()
+                .LogString(_service.Service, _service._imageServiceName, "initasync-service", featuresResponse, featuresReqUrl);
+        }
+
         var jsonRasterResponse = JSerializer.Deserialize<JsonImageServerIdentifyResponse>(featuresResponse);
 
         JsonRasterAttributeTable rasterAttributeTable = null;

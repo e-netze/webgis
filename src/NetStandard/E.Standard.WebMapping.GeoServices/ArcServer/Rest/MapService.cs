@@ -215,7 +215,7 @@ public class MapService : IMapService2,
                 if (requestContext.Trace)
                 {
                     requestContext.GetRequiredService<IGeoServiceRequestLogger>()
-                        .LogString(this.Service, _mapServiceName, "initasync-service", jsonStringAnswer);
+                        .LogString(this.Service, _mapServiceName, "initasync-service", jsonStringAnswer, this.Server);
                 }
 
                 JsonService jsonService = JSerializer.Deserialize<JsonService>(jsonStringAnswer);
@@ -231,7 +231,7 @@ public class MapService : IMapService2,
                 if (requestContext.Trace)
                 {
                     requestContext.GetRequiredService<IGeoServiceRequestLogger>()
-                        .LogString($"{this.Service}/layers", _mapServiceName, "initasync-layers", jsonStringAnswer);
+                        .LogString($"{this.Service}/layers", _mapServiceName, "initasync-layers", jsonStringAnswer, $"{this.Service}/layers");
                 }
 
                 JsonLayers jsonLayers = JSerializer.Deserialize<JsonLayers>(jsonStringAnswer); // equiv with map description

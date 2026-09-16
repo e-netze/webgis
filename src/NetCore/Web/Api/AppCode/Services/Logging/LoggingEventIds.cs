@@ -19,6 +19,7 @@ internal static class LoggingEventIds
     public const int ExceptionForMap = 502;
     public const int ExceptionString = 503;
     public const int GeoServiceRequest = 600;
+    public const int GeoServiceRequestWithBody = 601;
 
     // Dynamic ids for the Start/Dispose performance-logger family, where the command is either a
     // fixed GeoServiceCommand or (for OGC) an arbitrary "service/request" string only known at

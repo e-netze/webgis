@@ -144,6 +144,35 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     Performance", identical for every GeoService request) is now named
     ``{category}:{command} {service}`` (e.g. ``geoservice:GetMap MyMapService``).
 
+- Logging sinks: ``Api``, ``Cms`` and ``Portal`` now export logs/metrics/traces via
+  OpenTelemetry (OTLP) in Release builds too, not just local development - simply set the
+  standard ``OTEL_EXPORTER_OTLP_ENDPOINT`` environment variable, no rebuild needed. This makes it
+  straightforward to plug WebGIS into most modern observability backends (OpenTelemetry
+  Collector, Grafana/Loki/Tempo, Elastic, Seq, Jaeger, Datadog, Azure Monitor, ...), since they
+  all accept OTLP natively.
+
+  Additionally, all three hosts now run [Serilog](https://serilog.net/) alongside the existing
+  ``ILogger`` pipeline (augmenting rather than replacing it), purely config-driven via a new
+  ``Serilog`` section in ``appsettings.json`` - with no such section, nothing changes. This
+  allows writing log events directly into SQL Server or PostgreSQL without needing an
+  OpenTelemetry Collector (``Serilog.Sinks.MSSqlServer``/``Serilog.Sinks.PostgreSQL``). There is
+  currently no well-maintained Serilog sink for Oracle; Oracle-only setups should use the OTLP
+  path instead.
+
+  Both are also configurable purely via the `_config` directory (which is typically the only
+  thing mounted/editable in a Kubernetes deployment, e.g. via a ConfigMap volume): an optional
+  ``_config/logging.json`` is merged into the configuration the same way ``appsettings.json`` is
+  (so the ``Serilog``/``Logging``/``OTEL_*`` keys shown in the docs can be placed there instead),
+  and an optional ``_config/logging.env`` (simple ``KEY=VALUE`` lines, like a Docker
+  ``--env-file``) is loaded as real process environment variables before the app starts, for the
+  cases (like the standard OpenTelemetry ``OTEL_*`` variables) where an env var is more natural
+  than nested JSON. Both are no-ops if the file doesn't exist. The shared loading logic
+  (``ConfigDirectory``, ``EnvFileLoader``, ``AddConfigDirectoryJsonFile()``) lives in
+  ``E.Standard.Configuration``, so all three hosts behave identically.
+
+  See [docs/logging.md](docs/logging.md) for configuration examples.
+  [Issue #461](https://github.com/e-netze/webgis-community/issues/461)
+
 ### Fixed
 
 - ``MicrosoftWarningsLogger``/``MicrosoftExceptionLogger`` logged the ``service`` value twice

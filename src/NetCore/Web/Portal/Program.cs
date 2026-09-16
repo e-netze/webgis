@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 using E.Standard.Caching.Services;
+using E.Standard.Configuration;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Localization.Abstractions;
@@ -17,16 +18,28 @@ using Microsoft.Extensions.Options;
 using Portal;
 using Portal.Core.AppCode.Extensions.DependencyInjection;
 
+// _config/logging.env (optional): "KEY=VALUE" per line, loaded as real process environment
+// variables before the host builder captures them - see EnvFileLoader for details. Must run
+// before WebApplication.CreateBuilder(args), which is what actually snapshots environment
+// variables into IConfiguration.
+EnvFileLoader.LoadConfigDirectoryEnvFile("logging.env");
 
 var builder = WebApplication
                     .CreateBuilder(args)
                     .SetAppLocalization(false)
                     .PerformWebgisPortalSetup(args)
-                    .AddWebgisPortalConfiguration();
+                    .AddWebgisPortalConfiguration()
+                    .AddLoggingEngine();
 
 #if DEBUG // aspire
 builder.AddServiceDefaults();
 #else
+// Service discovery / HTTP-client resilience (the rest of AddServiceDefaults) are Aspire-dev
+// concerns, but OpenTelemetry (logging/metrics/tracing, incl. WebGIS.GeoServices) is a real
+// production feature: it stays inert unless OTEL_EXPORTER_OTLP_ENDPOINT is configured, so
+// enabling it here lets an admin point WebGIS at any OTLP-compatible backend (Grafana, Elastic,
+// Seq, Jaeger, ...) without a rebuild.
+builder.ConfigureOpenTelemetry();
 builder.AddDefaultHealthChecks();
 #endif
 

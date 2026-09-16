@@ -9,8 +9,10 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
+using E.Standard.WebMapping.GeoServices.Extensions;
 
 using Newtonsoft.Json;
 
@@ -87,6 +89,12 @@ class RasterLayer : RestLayer, ILayer2, IRasterlayer
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
         string featuresResponse = await authHandler.TryPostAsync(_service, featuresReqUrl, postBodyData.ToString());
+        if (requestContext.Trace)
+        {
+            var requestLogger = requestContext.GetRequiredService<IGeoServiceRequestLogger>();
+
+            requestLogger.LogString(_service.Server, _service.Service, "GetFeatures", featuresResponse, postBodyData.ToString());
+        }
         var jsonRasterResponse = JsonConvert.DeserializeObject<JsonRasterResponse>(featuresResponse);
 
         if (jsonRasterResponse.Results != null)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 
 using E.Standard.WebMapping.Core.Abstraction;
@@ -21,9 +21,11 @@ static internal class RequestContextExtensions
 
         if (requestContext.Trace)
         {
+            // requestBody and response are passed separately (not pre-concatenated), so
+            // structured loggers/trace tooling can keep the response - typically JSON -
+            // recognizable as such instead of it being buried behind a text prefix.
             requestContext.GetRequiredService<IGeoServiceRequestLogger>()
-                .LogString(server, service, method,
-                $"{requestBody}{Environment.NewLine}=>{Environment.NewLine}{response}");
+                .LogString(server, service, method, response, requestBody);
         }
 
         return response;

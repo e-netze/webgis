@@ -67,6 +67,13 @@
     <PackageReference Include="E.DataLinq.Web" Version="8.26.3101" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.AzureStorage" Version="3.1.24" />
+    <!-- Optional, config-driven Microsoft.Extensions.Logging sinks (SQL Server/PostgreSQL) - see
+         docs/logging.md. Serilog.AspNetCore/Serilog.Settings.Configuration are already brought
+         in transitively via E.Standard.WebApp's AddLoggingEngine(); only the sink-specific
+         packages need to be referenced here. -->
+    <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.PostgreSQL" Version="2.3.0" />
+    <PackageReference Include="Serilog.Sinks.PostgreSQL.Configuration" Version="1.0.1" />
     <!--<PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />-->
   </ItemGroup>
@@ -117,7 +124,6 @@
   <ItemGroup>
     <Folder Include="Models\Rest\Json\" />
     <Folder Include="wwwroot\content\api\img\tools\akt\" />
-    <Folder Include="_config\" />
   </ItemGroup>	
 
   <ItemGroup>

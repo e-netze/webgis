@@ -9,8 +9,17 @@
     <ItemGroup>
 	    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
-	
+
     <ItemGroup>
+      <!-- Logging engine used by AddLoggingEngine() - see Extensions/WebApplicationExtensions.cs.
+           Kept here (not in each host's own .csproj) so there is a single place to change if
+           the logging engine is ever replaced. -->
+      <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+      <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\E.Standard.Configuration\E.Standard.Configuration.csproj" />
       <ProjectReference Include="..\E.Standard.Extensions\E.Standard.Extensions.csproj" />
       <ProjectReference Include="..\E.Standard.Platform\E.Standard.Platform.csproj" />
       <ProjectReference Include="..\E.Standard.Security.Cryptography\E.Standard.Security.Cryptography.csproj" />

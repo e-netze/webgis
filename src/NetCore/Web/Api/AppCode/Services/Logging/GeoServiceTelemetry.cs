@@ -46,4 +46,41 @@ internal static class GeoServiceTelemetry
         _requestDuration.Record(durationMs, tags);
         _requestCount.Add(1, tags);
     }
+
+    /// <summary>
+    /// Attaches a WebGIS request-audit entry (<c>IGeoServiceRequestLogger.LogString</c>) as
+    /// an OpenTelemetry span event on the currently active Activity - typically the
+    /// "geoservice:{command} {service}" span started by <c>MicrosoftLog</c> around the whole
+    /// request. This makes the entry show up directly on that span in a trace viewer (e.g. the
+    /// Aspire dashboard's trace detail view), in addition to (and independent of) whatever the
+    /// "microsoft" <c>IGeoServiceRequestLogger</c> implementation separately writes via
+    /// <c>Microsoft.Extensions.Logging</c> at <c>LogLevel.Trace</c> - so it is unaffected by that
+    /// logger's minimum level. <see cref="Activity.IsAllDataRequested"/> is checked first so tags
+    /// aren't allocated when nothing is listening/sampling. <paramref name="requestBody"/> and
+    /// <paramref name="message"/> (the response) are kept as separate tags - not concatenated -
+    /// so a JSON response is still recognizable as JSON by tooling that inspects the tag value.
+    /// </summary>
+    public static void RecordRequestEvent(string server, string service, string command, string message, string requestBody = null)
+    {
+        var activity = Activity.Current;
+        if (activity is null || !activity.IsAllDataRequested)
+        {
+            return;
+        }
+
+        var tags = new ActivityTagsCollection
+        {
+            { "webgis.server", server ?? string.Empty },
+            { "webgis.service", service ?? string.Empty },
+            { "webgis.command", command ?? string.Empty },
+            { "webgis.requestResult", message ?? string.Empty },
+        };
+
+        if (!string.IsNullOrEmpty(requestBody))
+        {
+            tags["webgis.requestBody"] = requestBody;
+        }
+
+        activity.AddEvent(new ActivityEvent("webgis.geoservice.request", tags: tags));
+    }
 }

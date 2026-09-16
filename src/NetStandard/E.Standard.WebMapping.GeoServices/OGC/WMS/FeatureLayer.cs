@@ -216,8 +216,7 @@ class OgcWmsLayer : Layer, ILayer2
             {
                 var requestLogger = requestContext.GetRequiredService<IGeoServiceRequestLogger>();
 
-                requestLogger.LogString(_service.Server, _service.Service, "GetFeatures", "WMS Request: " + url);
-                requestLogger.LogString(_service.Server, _service.Service, "GetFeatures", "WMS Response: " + resp);
+                requestLogger.LogString(_service.Server, _service.Service, "GetFeatures", resp, url);
             }
 
             string respLower = resp.ToLower();

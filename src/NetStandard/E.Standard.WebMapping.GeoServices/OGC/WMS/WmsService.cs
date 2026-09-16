@@ -580,12 +580,6 @@ public class WmsService : IMapService2,
                                      Map.Environment.UserString(WebGISConst.UserName));
             try
             {
-                if (requestContext.Trace)
-                {
-                    requestContext.GetRequiredService<IGeoServiceRequestLogger>()
-                        .LogString(this.Server, this.Service, "GetMap", "WMS Request: " + url);
-                }
-
                 string filename = $"wms{Guid.NewGuid().ToString("N").ToLower()}.{_imgExtension}";
                 string filePath = _map.AsOutputFilename(filename);
                 string fileUrl = _map.AsOutputUrl(filename);
@@ -598,12 +592,16 @@ public class WmsService : IMapService2,
                 {
                     var errorMessage = Encoding.UTF8.GetString(imageData);
 
-                    Console.WriteLine($"Ivalid WMS Request: {url}");
-
                     return new ErrorResponse(_map.Services.IndexOf(this), _id, errorMessage, url);
                 }
 
                 var fileBytes = new MemoryStream(imageData);
+
+                if (requestContext.Trace)
+                {
+                    requestContext.GetRequiredService<IGeoServiceRequestLogger>()
+                        .LogString(this.Server, this.Service, "GetMap", message: $"imagedata: byte[{imageData.Length}]", requestBody: url);
+                }
 
                 if (_map.DisplayRotation != 0.0)
                 {
