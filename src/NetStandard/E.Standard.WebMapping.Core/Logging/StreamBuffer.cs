@@ -43,6 +43,26 @@ public class StreamBuffer
         }
     }
 
+    /// <summary>
+    /// Same as <see cref="Append(string)"/>, but appends directly from the caller's
+    /// <see cref="StringBuilder"/> (<see cref="StringBuilder.Append(StringBuilder)"/> copies the
+    /// chunks over without allocating an intermediate string) - lets hot-path callers like
+    /// <c>CSVLogger.LogString</c> avoid a <c>sb.ToString()</c> allocation per log line.
+    /// </summary>
+    public void Append(StringBuilder msg)
+    {
+        lock (thisLock)
+        {
+            _buffer.Append(msg);
+            if (_buffer.Length < _bufferLength)
+            {
+                return;
+            }
+
+            FlushBuffer();
+        }
+    }
+
     public void Flush()
     {
         lock (thisLock)

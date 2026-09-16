@@ -40,6 +40,11 @@ public class CSVLogger : IWebGISLogger
 
     private Dictionary<LogColumn, string> _columns = null;
 
+    // Pre-split/pre-prefixed ($-custom column) lookup keys for LogColumn.Custom, computed once
+    // here instead of re-Split()'ing and re-concatenating "logstring:" + name on every single
+    // LogString(...) call (the per-request hot path).
+    private string[] _customLogStringKeys = null;
+
     public CSVLogger(IMap map, CSVLogger logger)
     {
         _bufferLength = logger._bufferLength;
@@ -48,6 +53,7 @@ public class CSVLogger : IWebGISLogger
         _maxMB = logger._maxMB;
         _digits = logger._digits;
         _columns = logger._columns;
+        _customLogStringKeys = logger._customLogStringKeys;
 
         _map = map;
 
@@ -156,6 +162,10 @@ public class CSVLogger : IWebGISLogger
             {
                 _columns = null;
             }
+            else if (_columns.TryGetValue(LogColumn.Custom, out string customColumnsJoined) && !String.IsNullOrEmpty(customColumnsJoined))
+            {
+                _customLogStringKeys = Array.ConvertAll(customColumnsJoined.Split(';'), c => "logstring:" + c);
+            }
         }
 
         _buffer = buffer;
@@ -181,17 +191,23 @@ public class CSVLogger : IWebGISLogger
         {
             try
             {
+                // Captured once so Date/Time columns (and both branches below) stay consistent
+                // and DateTime.Now isn't queried repeatedly per log line.
+                var now = DateTime.Now;
+
                 StringBuilder sb = new StringBuilder();
 
                 if (_map != null)
                 {
                     if (_columns == null)
                     {
-                        sb.Append((string)_map.Environment.UserValue("SessionID", String.Empty) + ";");
-                        sb.Append(_map.RequestId.ToSimpleRequestId() + ";");
-                        sb.Append(DateTime.Now.ToShortDateString() + ";");
-                        sb.Append(DateTime.Now.ToLongTimeString() + ";");
-                        sb.Append(_map.Name + ";");
+                        sb.Append((string)_map.Environment.UserValue("SessionID", String.Empty)).Append(';');
+                        sb.Append(_map.RequestId.ToSimpleRequestId()).Append(';');
+                        AppendDate(sb, now);
+                        sb.Append(';');
+                        AppendTime(sb, now);
+                        sb.Append(';');
+                        sb.Append(_map.Name).Append(';');
                     }
                     else
                     {
@@ -200,46 +216,53 @@ public class CSVLogger : IWebGISLogger
                             switch (column)
                             {
                                 case LogColumn.SessionId:
-                                    sb.Append((string)_map.Environment.UserValue("SessionID", String.Empty) + ";");
+                                    sb.Append((string)_map.Environment.UserValue("SessionID", String.Empty)).Append(';');
                                     break;
                                 case LogColumn.RequestId:
-                                    sb.Append(_map.RequestId.ToSimpleRequestId() + ";");
+                                    sb.Append(_map.RequestId.ToSimpleRequestId()).Append(';');
                                     break;
                                 case LogColumn.Date:
-                                    sb.Append(DateTime.Now.ToShortDateString() + ";");
+                                    AppendDate(sb, now);
+                                    sb.Append(';');
                                     break;
                                 case LogColumn.Time:
-                                    sb.Append(DateTime.Now.ToLongTimeString() + ";");
+                                    AppendTime(sb, now);
+                                    sb.Append(';');
                                     break;
                                 case LogColumn.MapName:
-                                    sb.Append(_map.Name + ";");
+                                    sb.Append(_map.Name).Append(';');
                                     break;
                                 case LogColumn.ClientIp:
-                                    sb.Append((string)_map.Environment.UserValue("ClientIp", String.Empty) + ";");
+                                    sb.Append((string)_map.Environment.UserValue("ClientIp", String.Empty)).Append(';');
                                     break;
                                 case LogColumn.UserName:
                                     if (_map != null)
                                     {
-                                        sb.Append((string)_map.Environment.UserValue("username", String.Empty) + ";");
+                                        sb.Append((string)_map.Environment.UserValue("username", String.Empty)).Append(';');
                                     }
                                     else
                                     {
-                                        sb.Append($"{_username ?? String.Empty};");
+                                        sb.Append(_username ?? String.Empty).Append(';');
                                     }
                                     break;
                                 case LogColumn.X:
-                                    sb.Append(Math.Round(_map.Extent.CenterPoint.X, 2).ToString() + ";");
+                                    // StringBuilder.Append(double) formats via a stack-allocated
+                                    // buffer internally (no intermediate ToString() allocation).
+                                    sb.Append(Math.Round(_map.Extent.CenterPoint.X, 2)).Append(';');
                                     break;
                                 case LogColumn.Y:
-                                    sb.Append(Math.Round(_map.Extent.CenterPoint.Y, 2).ToString() + ";");
+                                    sb.Append(Math.Round(_map.Extent.CenterPoint.Y, 2)).Append(';');
                                     break;
                                 case LogColumn.Scale:
-                                    sb.Append(Math.Round(_map.MapScale).ToString() + ";");
+                                    sb.Append(Math.Round(_map.MapScale)).Append(';');
                                     break;
                                 case LogColumn.Custom:
-                                    foreach (string customCol in _columns[column].Split(';'))
+                                    if (_customLogStringKeys != null)
                                     {
-                                        sb.Append(_map.Environment.UserString("logstring:" + customCol) + ";");
+                                        foreach (string logStringKey in _customLogStringKeys)
+                                        {
+                                            sb.Append(_map.Environment.UserString(logStringKey)).Append(';');
+                                        }
                                     }
                                     break;
                             }
@@ -250,23 +273,101 @@ public class CSVLogger : IWebGISLogger
                     // REQUEST;SERVER;SERVICE;MS;SUCCESS;MESSAGE - populated directly from the typed
                     // parameters (previously reconstructed by splitting the free-text "msg" on spaces,
                     // which required every caller to duplicate server/service/cmd inside the message).
-                    sb.Append($"{command};{server};{service};{performaceMilliseconds};{success};");
-                    sb.Append(String.IsNullOrEmpty(msg) ? String.Empty : msg.Replace(";", ",").Replace("\r", " ").Replace("\n", " "));
+                    sb.Append(command).Append(';')
+                      .Append(server).Append(';')
+                      .Append(service).Append(';')
+                      .Append(performaceMilliseconds).Append(';')
+                      .Append(success).Append(';');
+                    AppendSanitized(sb, msg);
+                    sb.Append("\r\n");
 
-                    _buffer.Append(sb.ToString() + "\r\n");
+                    // Appends the StringBuilder's chunks directly into the buffer's own
+                    // StringBuilder - no sb.ToString() allocation for the whole log line.
+                    _buffer.Append(sb);
                 }
                 else
                 {
-                    sb.Append($"{DateTime.Now.ToShortDateString()};");
-                    sb.Append($"{DateTime.Now.ToLongTimeString()};");
-                    sb.Append($"{_username};");
-                    sb.Append($"{command};");
-                    sb.Append($"{msg};");
+                    AppendDate(sb, now);
+                    sb.Append(';');
+                    AppendTime(sb, now);
+                    sb.Append(';');
+                    sb.Append(_username).Append(';');
+                    sb.Append(command).Append(';');
+                    sb.Append(msg).Append(';');
+                    sb.Append("\r\n");
 
-                    _buffer.Append(sb.ToString() + "\r\n");
+                    _buffer.Append(sb);
                 }
             }
             catch { }
+        }
+    }
+
+    /// <summary>
+    /// Appends <paramref name="now"/>'s short-date part (same output as
+    /// <see cref="DateTime.ToShortDateString"/>) via <see cref="DateTime.TryFormat"/> into a
+    /// stack-allocated buffer, avoiding the string allocation <c>ToShortDateString()</c> would
+    /// otherwise produce on every log line.
+    /// </summary>
+    private static void AppendDate(StringBuilder sb, DateTime now)
+    {
+        Span<char> buffer = stackalloc char[16];
+        if (now.TryFormat(buffer, out int written, "d"))
+        {
+            sb.Append(buffer[..written]);
+        }
+        else
+        {
+            sb.Append(now.ToShortDateString());
+        }
+    }
+
+    /// <summary>
+    /// Same as <see cref="AppendDate"/>, but for the long-time part
+    /// (<see cref="DateTime.ToLongTimeString"/> equivalent, format "T").
+    /// </summary>
+    private static void AppendTime(StringBuilder sb, DateTime now)
+    {
+        Span<char> buffer = stackalloc char[16];
+        if (now.TryFormat(buffer, out int written, "T"))
+        {
+            sb.Append(buffer[..written]);
+        }
+        else
+        {
+            sb.Append(now.ToLongTimeString());
+        }
+    }
+
+    /// <summary>
+    /// Appends <paramref name="msg"/> to <paramref name="sb"/> in a single pass, replacing ';'
+    /// (the CSV column separator) with ',' and CR/LF with ' ' as it goes - equivalent to the
+    /// previous <c>msg.Replace(";", ",").Replace("\r", " ").Replace("\n", " ")</c> chain, but
+    /// without allocating a new string for every Replace() call (msg is often a sizeable JSON
+    /// payload).
+    /// </summary>
+    private static void AppendSanitized(StringBuilder sb, string msg)
+    {
+        if (String.IsNullOrEmpty(msg))
+        {
+            return;
+        }
+
+        foreach (char c in msg)
+        {
+            switch (c)
+            {
+                case ';':
+                    sb.Append(',');
+                    break;
+                case '\r':
+                case '\n':
+                    sb.Append(' ');
+                    break;
+                default:
+                    sb.Append(c);
+                    break;
+            }
         }
     }
 
