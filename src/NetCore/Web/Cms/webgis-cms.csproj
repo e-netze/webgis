@@ -85,13 +85,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.114" />
-    <!-- Optional, config-driven Microsoft.Extensions.Logging sinks (SQL Server/PostgreSQL) - see
-         docs/logging.md. Serilog.AspNetCore/Serilog.Settings.Configuration are already brought
-         in transitively via E.Standard.WebApp's AddLoggingEngine(); only the sink-specific
-         packages need to be referenced here. -->
+    <!-- Optional, config-driven Microsoft.Extensions.Logging sinks (SQL Server/PostgreSQL/Seq) -
+         see docs/logging.md. Serilog.AspNetCore/Serilog.Settings.Configuration are already
+         brought in transitively via E.Standard.WebApp's AddLoggingEngine(); only the
+         sink-specific packages need to be referenced here. -->
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.PostgreSQL" Version="2.3.0" />
     <PackageReference Include="Serilog.Sinks.PostgreSQL.Configuration" Version="1.0.1" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="9.1.0" />
     <!--<PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.6" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />-->
   </ItemGroup>

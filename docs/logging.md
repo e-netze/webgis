@@ -154,7 +154,7 @@ request body, `MicrosoftGeoServiceRequestLogger` logs `requestBody` and `message
 named placeholders (rather than one pre-joined string), so a JSON response is still parsed as
 JSON by log backends that recognize structured fields.
 
-## Serilog sinks (SQL Server / PostgreSQL)
+## Serilog sinks (SQL Server / PostgreSQL / Seq)
 
 For deployments that need logs written directly into a relational database — without
 standing up an OpenTelemetry Collector — `Api`, `Cms` and `Portal` additionally run
@@ -193,11 +193,23 @@ To add a sink, add a `Serilog` section to `appsettings.json` (or
 ### PostgreSQL
 
 The PostgreSQL sink needs its configuration companion package to be loaded explicitly via
-`Using`:
+`Using`, and - unlike `MSSqlServer`, which ships sensible default columns - it has **no**
+built-in defaults: you must always supply a `Columns` section describing which columns to
+write and how. Omitting it fails fast at startup with:
+
+```
+System.InvalidOperationException: 'Columns' section not found in provided configuration path:
+```
+
+The `Columns` section must be a **root-level** key of the configuration - a sibling of
+`Serilog`/`ConnectionStrings`, *not* nested inside `Serilog` (it's easy to assume otherwise,
+since everything else Serilog-related lives under the `Serilog` section). If you do need to
+place it elsewhere (e.g. to avoid a name clash), point at it explicitly via
+`Serilog:WriteTo:Args:configurationPath` (a `Configuration:Section:Path` style key).
 
 ```json
 "ConnectionStrings": {
-  "LogsDb": "Host=pg-host;Port=5432;Database=webgis_logs;Username=webgis;Password=***"
+  "LogsDb": "Host=pg-host;Port=5432;Database=webgis_logs;Username=webgis;******"
 },
 "Serilog": {
   "Using": [ "Serilog.Sinks.PostgreSQL.Configuration" ],
@@ -211,11 +223,47 @@ The PostgreSQL sink needs its configuration companion package to be loaded expli
       }
     }
   ]
+},
+"Columns": {
+  "message": "RenderedMessageColumnWriter",
+  "message_template": "MessageTemplateColumnWriter",
+  "level": {
+    "Name": "LevelColumnWriter",
+    "Args": { "renderAsText": true, "dbType": "Varchar" }
+  },
+  "raise_date": "TimestampColumnWriter",
+  "exception": "ExceptionColumnWriter",
+  "properties": "LogEventSerializedColumnWriter"
 }
 ```
 
 Both sinks are batching sinks (periodic bulk insert), so they have negligible impact on
 request latency.
+
+### Seq
+
+Unlike the DB sinks above, [Seq](https://datalust.co/seq) is not a relational database - it's
+a small, self-hostable log server with its own storage engine and UI (see
+[Viewing & analyzing logs](#viewing--analyzing-logs) below for how to run it). The sink just
+needs a URL and (optionally) an API key - no table/columns to define:
+
+```json
+"Serilog": {
+  "WriteTo": [
+    {
+      "Name": "Seq",
+      "Args": {
+        "serverUrl": "http://seq-host:5341",
+        "apiKey": "******"
+      }
+    }
+  ]
+}
+```
+
+This, too, is a batching sink with negligible latency impact, and can run alongside the SQL
+Server/PostgreSQL sink (e.g. DB for long-term retention, Seq for day-to-day search) - Serilog
+happily writes to any number of configured sinks at once.
 
 ### Oracle
 
@@ -224,7 +272,115 @@ offered for Oracle. If your log backend is Oracle-only, use the OTLP path instea
 an OpenTelemetry Collector with an Oracle/JDBC exporter, or export to an OTLP-native
 backend and query it there).
 
+## Viewing & analyzing logs
+
+Which tool makes sense depends on which sink(s) are enabled:
+
+- **Only the SQL Server/PostgreSQL sink, ad-hoc troubleshooting**: a regular DB client is
+  enough - no extra tool needed. Azure Data Studio/SSMS (SQL Server) or pgAdmin/DBeaver
+  (PostgreSQL). The structured `Properties`/`properties` column is JSON
+  (`NVARCHAR`/`jsonb`), queryable directly, e.g.:
+
+  ```sql
+  -- SQL Server
+  SELECT TOP 100 * FROM Logs
+  WHERE Level = 'Warning' AND JSON_VALUE(Properties, '$.RequestPath') LIKE '%GetMap%'
+  ORDER BY TimeStamp DESC;
+
+  -- PostgreSQL
+  SELECT * FROM logs
+  WHERE level = 'Warning' AND properties->>'RequestPath' LIKE '%GetMap%'
+  ORDER BY raise_date DESC LIMIT 100;
+  ```
+
+  This does not give full-text search, dashboards, alerting, or trace correlation though -
+  it's fine for "quick lookup", not for ongoing analysis.
+
+- **Dashboards/alerting/search - recommended: [Grafana](https://grafana.com/)** (OSS,
+  self-hostable, free). It can be pointed at what's already configured, with no need to add
+  another sink:
+  - Directly at the **SQL Server/PostgreSQL sink table** via Grafana's built-in SQL data
+    sources - dashboards/alerts on top of data already being written today.
+  - At the **OTLP path** via Loki (logs) + Tempo (traces) + Prometheus/Mimir (metrics) - the
+    de-facto open source stack for OpenTelemetry, and a natural fit since `Api`/`Cms`/`Portal`
+    already export OTLP once `OTEL_EXPORTER_OTLP_ENDPOINT` is set (see above). This also
+    enables trace/log/metric correlation (e.g. drilling from a slow `GetMap` trace into its
+    log lines), which the DB sinks alone cannot provide.
+
+- **Simplest "just show me the logs" option, no Grafana setup**:
+  [Seq](https://datalust.co/seq) - single Docker container, understands Serilog's structured
+  events natively, free for a single user/small team, and accepts OTLP directly too (see
+  below for step-by-step setup).
+
+- **Customer already runs a cloud/enterprise observability platform**: point
+  `OTEL_EXPORTER_OTLP_ENDPOINT` at it - Azure Monitor/Application Insights, AWS CloudWatch,
+  Elastic/OpenSearch + Kibana, Datadog, New Relic, ... all accept OTLP natively (directly or
+  via an OpenTelemetry Collector), no code changes required.
+
+### Setting up Seq
+
+Unlike Grafana, Seq has no "SQL data source" concept - it can only show events that were sent
+to it directly, either via OTLP or as a Serilog sink. It **cannot** simply be pointed at an
+already-populated `Logs`/`logs` table in SQL Server/PostgreSQL and browse that in place; if
+that's the goal (view/analyze what the DB sink already collects, without touching anything
+else), use Grafana's built-in SQL data source against that table instead (see above) - no
+dual-write, no extra sink required.
+
+If Seq's own UI/search is still preferred, WebGIS needs to additionally send events to Seq -
+either as the [`Serilog.Sinks.Seq` sink](#seq) documented above (dual-write, alongside the
+existing SQL Server/PostgreSQL sink if any), or via OTLP as described below - both are
+already fully wired up (`Serilog.Sinks.Seq` is a referenced package in `Api`/`Cms`/`Portal`,
+same as the `MSSqlServer`/`PostgreSQL` sink packages).
+
+No WebGIS-specific sink/package is needed for the OTLP route below - Seq
+[natively implements OTLP ingestion](https://docs.datalust.co/docs/ingestion-with-opentelemetry),
+so that path is purely a matter of pointing the existing OTLP exporter at it.
+
+1. Run Seq (persists its data in `<local path>`, replace `<password>` with the initial admin
+   password):
+
+   ```
+   docker run --name seq -d --restart unless-stopped \
+     -e ACCEPT_EULA=Y \
+     -e SEQ_FIRSTRUN_ADMINPASSWORD=<password> \
+     -v <local path>:/data \
+     -p 5341:80 \
+     datalust/seq
+   ```
+
+2. In the Seq UI (`http://<seq-host>:5341`), create a dedicated API key per app under
+   *Settings > API Keys* (recommended, not required) - this makes it easy to tell
+   `Api`/`Cms`/`Portal` traffic apart later in *Data > Ingestion*.
+
+3. Point WebGIS's OTLP exporter at Seq's OTLP endpoint - either as real environment
+   variables, or via `_config/logging.env` (see above):
+
+   ```
+   OTEL_EXPORTER_OTLP_ENDPOINT=http://<seq-host>:5341/ingest/otlp
+   OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+   OTEL_EXPORTER_OTLP_HEADERS=X-Seq-ApiKey=<api-key-from-step-2>
+   ```
+
+   Note the endpoint is Seq's ingestion path (`/ingest/otlp`), not just the host root - the
+   exporter appends `/v1/logs`/`/v1/traces` itself. `OTEL_EXPORTER_OTLP_HEADERS` can be
+   omitted if no API key was created in step 2.
+
+   Alternatively - no traces, but structured events with full property fidelity and less
+   config - add the [`Seq` Serilog sink](#seq) to `_config/logging.json` instead, using the
+   same URL/API key.
+
+4. Restart `Api`/`Cms`/`Portal` (environment variables are only read at process startup, so
+   `_config/logging.env` changes need a restart, unlike `_config/logging.json` which is
+   picked up automatically). Logs and traces (including the GeoService request/performance
+   spans described above) start showing up in the Seq UI immediately - with full trace/span
+   correlation via the *Trace* menu on each event.
+
+The SQL Server/PostgreSQL sink can keep running in parallel if it's already configured (e.g.
+for long-term retention/compliance) - Seq is simply an additional, independent consumer of the
+same telemetry.
+
 ## Notes
+
 
 - All of the above concerns *where application log events go*; it is independent of the
   `Api:logging-type` GeoService performance-logging switch described at the top.
