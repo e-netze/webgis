@@ -18,6 +18,7 @@ internal class MicrosoftLog : ILog
     private readonly ILogger _logger;
     private readonly IMap? _map;
     private readonly CmsDocument.UserIdentification? _ui;
+    private readonly UsernameLoggingMode _usernameMode;
     private readonly string _header;
     private readonly string _category;
     private readonly EventId _eventId;
@@ -29,7 +30,8 @@ internal class MicrosoftLog : ILog
         ILogger logger,
         IMap? map, CmsDocument.UserIdentification? ui,
         string category, EventId eventId,
-        string header, string server, string service, string cmd, string message)
+        string header, string server, string service, string cmd, string message,
+        UsernameLoggingMode usernameMode = UsernameLoggingMode.PlainText)
     {
         this.Server = server;
         this.Service = service;
@@ -38,6 +40,7 @@ internal class MicrosoftLog : ILog
         _logger = logger;
         _map = map;
         _ui = ui;
+        _usernameMode = usernameMode;
         _header = header;
         _category = category;
         _eventId = eventId;
@@ -102,9 +105,14 @@ internal class MicrosoftLog : ILog
             return;
         }
 
+        // ui is used by the Usage/Ogc/Datalinq loggers (map is null there); GeoService
+        // performance logging instead only has a map, whose environment carries the username
+        // the same way CSVLogger/the DB loggers read it.
+        string? rawUsername = _ui?.Username ?? _map?.Environment?.UserValue("username", String.Empty) as string;
+
         _logger.Log(level, _eventId, StructuredMessage,
             _header, this.Server, this.Service, this.Command, this._message, (long)durationMs,
-            _ui?.Username ?? "",
+            UsernameLogging.Apply(_usernameMode, rawUsername) ?? "",
             Math.Round(_map?.MapScale ?? 0), _map?.Extent?.CenterPoint.X, _map?.Extent?.CenterPoint.Y);
     }
 }

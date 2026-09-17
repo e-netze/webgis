@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Api.Core.AppCode.Mvc;
 using Api.Core.AppCode.Services.Logging;
@@ -10,6 +10,7 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 
 using Microsoft.Extensions.Configuration;
 
@@ -34,12 +35,12 @@ public class ApiLoggingService
         {
             var ree = (ReportExceptionException)rwe;
 
-            _requestContext.GetRequiredService<IExceptionLogger>()
+            _requestContext.GetRequiredService<ExceptionLogService>()
                 .LogString(ui, ree.Server, ree.Service, ree.Command, $"Exception: {ree.Message}");
         }
         else
         {
-            _requestContext.GetRequiredService<IExceptionLogger>()
+            _requestContext.GetRequiredService<ExceptionLogService>()
                 .LogString(ui, rwe.Server, rwe.Service, rwe.Command, $"Warning: {rwe.Message}");
         }
     }

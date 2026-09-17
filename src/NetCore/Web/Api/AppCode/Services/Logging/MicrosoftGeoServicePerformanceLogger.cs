@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Api.Core.AppCode.Services.Logging;
@@ -12,10 +13,12 @@ namespace Api.Core.AppCode.Services.Logging;
 public class MicrosoftGeoServicePerformanceLogger : IGeoServicePerformanceLogger
 {
     private ILogger<MicrosoftGeoServicePerformanceLogger> _logger;
+    private readonly UsernameLoggingMode _usernameMode;
 
-    public MicrosoftGeoServicePerformanceLogger(ILogger<MicrosoftGeoServicePerformanceLogger> logger)
+    public MicrosoftGeoServicePerformanceLogger(ILogger<MicrosoftGeoServicePerformanceLogger> logger, IConfiguration configuration)
     {
         _logger = logger;
+        _usernameMode = UsernameLoggingModeResolver.Resolve(configuration);
     }
 
     // Warning (not Information) - a failed request is logged at Warning by MicrosoftLog, so the
@@ -33,7 +36,8 @@ public class MicrosoftGeoServicePerformanceLogger : IGeoServicePerformanceLogger
             _logger,
             map, null,
             "geoservice", cmd.ToEventId(),
-            "WebGIS.API GeoService Performance", server, service, cmd.ToString(), message.ToString()
+            "WebGIS.API GeoService Performance", server, service, cmd.ToString(), message.ToString(),
+            _usernameMode
             );
     }
 }

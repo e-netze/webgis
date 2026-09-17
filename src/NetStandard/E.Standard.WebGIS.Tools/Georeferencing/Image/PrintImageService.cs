@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -12,6 +12,7 @@ using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 
@@ -118,7 +119,7 @@ internal class PrintImageService : IStaticOverlayService, IPrintableMapService
 
     async public Task<ServiceResponse> GetPrintImageAsync(IRequestContext requestContext)
     {
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetPrintImage(this.Map, this.Server, this.Service))
+        using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetPrintImage(this.Map, this.Server, this.Service))
         {
             if (_georefImageMetadata?.TopLeft == null ||
                 _georefImageMetadata?.TopRight == null ||

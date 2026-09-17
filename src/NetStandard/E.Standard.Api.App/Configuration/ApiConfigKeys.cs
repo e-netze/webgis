@@ -86,6 +86,22 @@ public class ApiConfigKeys
     public const string LoggingLogInsightsAppName = ConfigurationSectionName + ":logging-log-insights-appname";
     public const string LoggingLogServiceRequests = ConfigurationSectionName + ":logging-log-service-requests";
 
+    // DB-backed logging.type entries ("sqlserver"/"postgres"/"sqlite") - write the
+    // webgis_performance/webgis_exceptions tables directly into a relational database instead of
+    // (or in addition to) "files"/"microsoft". Tables are created automatically on first use.
+    // Named "logging-*-connectionstring" (not just "sqlserver_connectionstring") because other
+    // unrelated connection strings for these same DB engines can exist elsewhere in the config -
+    // this key is specifically the one used for logging.
+    public const string LoggingSqlServerConnectionString = ConfigurationSectionName + ":logging-sqlserver-connectionstring";
+    public const string LoggingPostgresConnectionString = ConfigurationSectionName + ":logging-postgres-connectionstring";
+    public const string LoggingSqliteConnectionString = ConfigurationSectionName + ":logging-sqlite-connectionstring";
+
+    // Controls how (or whether) usernames are written into performance/exception log entries,
+    // across every configured logging backend: "none", "plaintext" (default, backward-compatible)
+    // or "hash" (one-way SHA-256, for customers who want traceability without storing plain-text
+    // usernames). See UsernameLoggingMode/UsernameLogging in E.Standard.WebMapping.Core.
+    public const string LoggingUsernameMode = ConfigurationSectionName + ":logging-username-mode";
+
     public const string ShowWarningsInPrintLayout = ConfigurationSectionName + ":show_warnings_in_print_output";
 
     public const string DefaultUserLanguage = ConfigurationSectionName + ":default-user-language";

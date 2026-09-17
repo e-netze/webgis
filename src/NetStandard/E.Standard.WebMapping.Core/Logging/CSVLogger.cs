@@ -45,6 +45,12 @@ public class CSVLogger : IWebGISLogger
     // LogString(...) call (the per-request hot path).
     private string[] _customLogStringKeys = null;
 
+    // Controls how the USERNAME column (if configured, see the "USERNAME" case below) is
+    // actually written - as-is, hashed, or not at all - configurable via
+    // Api:logging-username-mode (see UsernameLoggingModeResolver in the API layer). Defaults to
+    // PlainText so behavior is unchanged for anyone not setting the new key.
+    private UsernameLoggingMode _usernameMode = UsernameLoggingMode.PlainText;
+
     public CSVLogger(IMap map, CSVLogger logger)
     {
         _bufferLength = logger._bufferLength;
@@ -54,15 +60,17 @@ public class CSVLogger : IWebGISLogger
         _digits = logger._digits;
         _columns = logger._columns;
         _customLogStringKeys = logger._customLogStringKeys;
+        _usernameMode = logger._usernameMode;
 
         _map = map;
 
         UseServerContainer = false;
     }
-    public CSVLogger(StreamBuffer buffer, IMap map, string columns, int digits)
+    public CSVLogger(StreamBuffer buffer, IMap map, string columns, int digits, UsernameLoggingMode usernameMode = UsernameLoggingMode.PlainText)
     {
         _map = map;
         _digits = digits;
+        _usernameMode = usernameMode;
 
         if (!String.IsNullOrEmpty(columns))
         {
@@ -238,11 +246,11 @@ public class CSVLogger : IWebGISLogger
                                 case LogColumn.UserName:
                                     if (_map != null)
                                     {
-                                        sb.Append((string)_map.Environment.UserValue("username", String.Empty)).Append(';');
+                                        sb.Append(UsernameLogging.Apply(_usernameMode, (string)_map.Environment.UserValue("username", String.Empty))).Append(';');
                                     }
                                     else
                                     {
-                                        sb.Append(_username ?? String.Empty).Append(';');
+                                        sb.Append(UsernameLogging.Apply(_usernameMode, _username) ?? String.Empty).Append(';');
                                     }
                                     break;
                                 case LogColumn.X:
@@ -291,7 +299,7 @@ public class CSVLogger : IWebGISLogger
                     sb.Append(';');
                     AppendTime(sb, now);
                     sb.Append(';');
-                    sb.Append(_username).Append(';');
+                    sb.Append(UsernameLogging.Apply(_usernameMode, _username)).Append(';');
                     sb.Append(command).Append(';');
                     sb.Append(msg).Append(';');
                     sb.Append("\r\n");

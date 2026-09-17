@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -20,6 +20,7 @@ using E.Standard.WebGIS.Core.Extensions;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.GeoServices;
 
 namespace E.Standard.Api.App.Services;
@@ -459,7 +460,7 @@ public class MapServiceInitializerService
                 }
             }
 
-            #region ÃœberprÃ¼fen, ob Server lizenziert
+            #region Überprüfen, ob Server lizenziert
 
             string serverName = serviceLink.Target.LoadString("server");
             if (String.IsNullOrEmpty(serverName) && service != null)
@@ -721,7 +722,7 @@ public class MapServiceInitializerService
                 map = Map(requestContext, null, String.Empty);
             }
 
-            requestContext.GetRequiredService<IExceptionLogger>()
+            requestContext.GetRequiredService<ExceptionLogService>()
                 .LogException(map, server, service, command, ex);
         }
         catch { }

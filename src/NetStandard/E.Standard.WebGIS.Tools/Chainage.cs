@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +24,7 @@ using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 
 using Microsoft.Extensions.Logging;
 
@@ -199,7 +200,7 @@ public class Chainage : IApiServerToolLocalizableAsync<Chainage>,
                     }
                     catch (Exception ex)
                     {
-                        bridge.RequestContext.GetRequiredService<IExceptionLogger>()
+                        bridge.RequestContext.GetRequiredService<ExceptionLogService>()
                             .LogException(CmsDocument.UserIdentification.Anonymous, "", "", "Chainage.CanIdentifyAsync", ex);
                     }
                 }
@@ -452,7 +453,7 @@ public class Chainage : IApiServerToolLocalizableAsync<Chainage>,
 
                 double d, s;
                 Point p = SpatialAlgorithms.Point2PolylineDistance((Polyline)lineFeature.Shape, (Point)feature.Shape, out d, out s);
-                if (d >= 1.0) // Punkt liegt nicht auf der Linie, Punkte müssen auf mind 1m gesnappt sein!!!
+                if (d >= 1.0) // Punkt liegt nicht auf der Linie, Punkte m�ssen auf mind 1m gesnappt sein!!!
                 {
                     continue;
                 }

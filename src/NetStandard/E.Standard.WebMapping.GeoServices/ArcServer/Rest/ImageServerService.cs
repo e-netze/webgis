@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,6 +16,7 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
@@ -248,7 +249,7 @@ public class ImageServerService : IMapService2,
 
         var httpService = requestContext.Http;
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartInit(this.Map, this.Server, Service))
+        using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartInit(this.Map, this.Server, Service))
         {
             try
             {
@@ -321,7 +322,7 @@ public class ImageServerService : IMapService2,
 
         var httpService = requestContext.Http;
 
-        using (var pLog = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetMap(this.Map, this.Server, this._service))
+        using (var pLog = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetMap(this.Map, this.Server, this._service))
         {
             try
             {
@@ -385,7 +386,7 @@ public class ImageServerService : IMapService2,
             }
             catch (System.Exception ex)
             {
-                requestContext.GetRequiredService<IExceptionLogger>()
+                requestContext.GetRequiredService<ExceptionLogService>()
                     .LogException(_map, this.Server, this.Service, "GetMap", ex);
 
                 return new ExceptionResponse(_map.Services.IndexOf(this), _id, ex);
@@ -663,7 +664,7 @@ public class ImageServerService : IMapService2,
                 return new ImageLocation(this.Map.Services.IndexOf(this),
                     this.ID, String.Empty, FixLegendUrl);
             }
-            using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetLegend(this.Map, this.Server, _service))
+            using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetLegend(this.Map, this.Server, _service))
             {
                 var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
                 string requestUrl = $"{this._serviceUrl}/legend?bandids={_bandIDs}&renderingRule={HttpUtility.UrlEncode(RenderingRule)}&f=pjson";

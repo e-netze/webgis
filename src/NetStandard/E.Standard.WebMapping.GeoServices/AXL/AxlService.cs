@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -22,6 +22,7 @@ using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 
@@ -203,7 +204,7 @@ public class AxlService : IMapService2,
 
         try
         {
-            using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartInit(this.Map, this.Server, this.Service))
+            using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartInit(this.Map, this.Server, this.Service))
             {
                 _map = map;
                 _layers = new LayerCollection(this);
@@ -329,8 +330,8 @@ public class AxlService : IMapService2,
 
                 #region Layers
 
-                // TemporÃ¤re Liste => Falls Init mehrfach/gleichzeitg aufgerufen wird
-                // Am schluss dann an LayerCollection Ã¼bergeben
+                // Temporäre Liste => Falls Init mehrfach/gleichzeitg aufgerufen wird
+                // Am schluss dann an LayerCollection übergeben
                 List<Layer> layers = new List<Layer>();
 
                 foreach (XmlNode layerNode in xmldoc.SelectNodes("//LAYERINFO[@name and @id and @type]"))
@@ -387,7 +388,7 @@ public class AxlService : IMapService2,
 
                         string renderer = getRendererFromAXLFile(layerNode);
 
-                        // Rastermarkersymbol nicht hier Ã¼bernehmen bzw. Modifizieren, da die Pfade nicht mehr passen!!!
+                        // Rastermarkersymbol nicht hier übernehmen bzw. Modifizieren, da die Pfade nicht mehr passen!!!
                         if (renderer.Contains("<RASTERMARKERSYMBOL"))
                         {
                             renderer = String.Empty;
@@ -504,7 +505,7 @@ public class AxlService : IMapService2,
 
         var httpService = requestContext.Http;
 
-        using (var pLog = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetMap(this.Map, this.Server, this.Service))
+        using (var pLog = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetMap(this.Map, this.Server, this.Service))
         {
             //_connector.LogString("webgis4.log", "Start Map Request: " + _service);
 
@@ -784,7 +785,7 @@ public class AxlService : IMapService2,
 
         var httpService = requestContext.Http;
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetSelection(this.Map, this.Server, this.Service))
+        using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetSelection(this.Map, this.Server, this.Service))
         {
             double mapScale = _map.MapScale;
             double refScale = this.RefScale;
@@ -869,7 +870,7 @@ public class AxlService : IMapService2,
                 #region Beim ArcMapServer is alles anders
                 if (_arcmapserver == true)
                 {
-                    // Beim ArcMap Server mÃ¼ssen die Layer die Selektiert werden Visible=true sein!!!!
+                    // Beim ArcMap Server müssen die Layer die Selektiert werden Visible=true sein!!!!
                     foreach (Selection selection in selections)
                     {
                         if (selection.Layer == layer)
@@ -912,7 +913,7 @@ public class AxlService : IMapService2,
                     if (selection.Filter.Buffer != null)
                     {
                         #region Buffer
-                        // fÃ¼r Pufferdarstellung im AXL den Targetlayer nicht angeben
+                        // für Pufferdarstellung im AXL den Targetlayer nicht angeben
                         QueryFilter bQuery = selection.Filter.Clone();
                         bQuery.Where = WebGIS.CMS.Globals.EncUmlaute(bQuery.Where, _umlaute2wildcard);
                         bQuery.Buffer.TargetLayer = null;
@@ -1149,7 +1150,7 @@ public class AxlService : IMapService2,
 
             // Bild nicht downloaden!!
             // Original Url verwnden!!
-            // ausser fÃ¼r ArcMapServer!!!
+            // ausser für ArcMapServer!!!
             if (_arcmapserver == true)
             {
                 //using (Bitmap bm = dotNETConnector.DownloadImage(imageUrl, _connector.GetProxy(imageUrl)) /* ASHelper.DownloadImage(mapImg.ImageURL)*/)
@@ -1846,8 +1847,8 @@ public class AxlService : IMapService2,
         if (where != "")
         {
             //
-            // Achtung sonderzeichen sind noch nicht berÃ¼cksichtigt
-            // kÃ¶nnte zu Fehlern in der Legende fÃ¼hren...
+            // Achtung sonderzeichen sind noch nicht berücksichtigt
+            // könnte zu Fehlern in der Legende führen...
             //
             xWriter.WriteAttributeString("where", where);
         }
@@ -1891,7 +1892,7 @@ public class AxlService : IMapService2,
         try
         {
             XmlDocument xmldoc = new XmlDocument();
-            // beim Laden kÃ¶nnen fehler auftreten, wenn im in Ergebnisfeldern < > auftritt 
+            // beim Laden können fehler auftreten, wenn im in Ergebnisfeldern < > auftritt 
             // zb. Einwohner < 5000
             xmldoc.LoadXml(resp);
             //xmldoc.Load(xml);
@@ -2107,7 +2108,7 @@ public class AxlService : IMapService2,
 
         string msg = $"Server : {_server}\r\nService: {_service}\r\n{resp.ErrorMessage.Replace("|", "\r\n")}\r\n{resp.ErrorMessage2.Replace("|", "\r\n")}";
 
-        requestContet.GetRequiredService<IExceptionLogger>()
+        requestContet.GetRequiredService<ExceptionLogService>()
             .LogException(_map, this.Server, this.Service, command, new Exception(msg));
 
         return resp;
@@ -2251,7 +2252,7 @@ public class AxlService : IMapService2,
 
         var httpService = requestContext.Http;
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetLegend(this.Map, this.Server, this.Service))
+        using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetLegend(this.Map, this.Server, this.Service))
         {
             //_connector.LogString("webgis4.log", "Start Legend Request: " + _service);
 
@@ -2417,7 +2418,7 @@ public class AxlService : IMapService2,
                         }
                     }
 
-                    if (!show)  // Layer ausschlieÃŸen
+                    if (!show)  // Layer ausschließen
                     {
                         xWriter.WriteStartElement("LAYER");
                         xWriter.WriteAttributeString("id", layer.ID);

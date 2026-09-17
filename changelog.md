@@ -173,10 +173,52 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   See [docs/logging.md](docs/logging.md) for configuration examples.
   [Issue #461](https://github.com/e-netze/webgis-community/issues/461)
 
-### Fixed
+- ``Api:logging-type`` (GeoService performance/exception logging) is now a comma-separated list
+  instead of a single value, so multiple backends run side by side, e.g. ``"files,microsoft"``
+  logs both ``webgis_performance.csv``/``webgis_exceptions.csv`` *and* through
+  ``Microsoft.Extensions.Logging`` at the same time (previously mutually exclusive). Two new
+  types write into ``webgis_performance``/``webgis_exceptions`` **database** tables, auto-created
+  on first use, no manual schema step: ``sqlserver`` and ``postgres``, plus ``sqlite`` for a
+  dependency-free local file DB - configured via the new
+  ``logging-sqlserver-connectionstring``/``logging-postgres-connectionstring``/
+  ``logging-sqlite-connectionstring``
+  ``_api.config`` keys. Entries for these three types are buffered in memory and written to the
+  database in batches (one connection/transaction per batch of up to 200 entries, flushed at
+  least every 5 seconds, or immediately via the existing ``Instance/Logging?flush=true``
+  endpoint) rather than opening a new DB connection per request, so logging itself does not
+  become a bottleneck under many concurrent requests. GeoService code now starts
+  performance/exception logging through two new injectable aggregator services,
+  ``GeoServicePerformanceLogService``/``ExceptionLogService``
+  (``E.Standard.WebMapping.Core.Logging``), which fan a single ``Start...()``/``LogException()``
+  call out to every backend configured above - callers no longer need to know how many/which
+  backends are active.
+  [Issue #461](https://github.com/e-netze/webgis-community/issues/461)
+
+- The ``sqlserver``/``postgres``/``sqlite`` ``webgis_performance``/``webgis_exceptions`` tables
+  now also carry the same extra per-request columns the ``files`` CSV log already has:
+  ``session_id``, ``map_request_id``, ``client_ip``, ``user``, ``center_x``, ``center_y``,
+  ``scale``. How the ``user`` column/field is populated - for *all*
+  ``IGeoServicePerformanceLogger``/``IExceptionLogger`` backends, not just the database ones -
+  is controlled by the new ``logging-username-mode`` ``_api.config`` key: ``plaintext``
+  (default), ``hash`` (one-way SHA-256 hash, so log rows can still be correlated to "the same
+  user" without persisting personally identifiable information), or ``none`` (username never
+  recorded). Since ``user`` is a reserved word in SQL Server/PostgreSQL, it is always quoted
+  (``"user"``) in generated SQL. Tables created by an earlier version of this feature get the
+  missing columns added automatically (``ALTER TABLE ... ADD ...``) the next time the app
+  starts - no manual migration needed.
+  [Issue #461](https://github.com/e-netze/webgis-community/issues/461)
+
+
 
 - ``MicrosoftWarningsLogger``/``MicrosoftExceptionLogger`` logged the ``service`` value twice
   instead of ``server``/``service`` (a copy-paste mistake in the message placeholders).
+
+- ``Api:logging-type: microsoft`` GeoService performance logging always logged an empty username,
+  regardless of ``logging-username-mode`` - ``MicrosoftGeoServicePerformanceLogger`` never passed
+  a user identification to the underlying log entry in the first place. It now falls back to the
+  username from the map's environment (the same source ``files``/DB logging already use for
+  GeoService requests), so the ``{user}`` placeholder is populated as expected.
+  [Issue #461](https://github.com/e-netze/webgis-community/issues/461)
 
 ## 8.26.3701
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,6 +7,7 @@ using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.Core.ServiceResponses;
 
 namespace E.Standard.WebMapping.Core;
@@ -167,7 +168,7 @@ public class CollectionService : IMapService, IEnumerable<IMapService>, IPrintab
         _services.Clear();
 
         // Passiert alles in Map.Init(), weil die Dienste ja auch den Karten Services zugewiesen sind und dort intialiserit werden
-        // Hinzugefügt zur Collection werden sie dann auch erst dort!!!
+        // Hinzugef�gt zur Collection werden sie dann auch erst dort!!!
 
         //ServiceResponses serviceResponses = new ServiceResponses();
 
@@ -358,7 +359,7 @@ public class CollectionService : IMapService, IEnumerable<IMapService>, IPrintab
         }
         catch (Exception ex)
         {
-            requestContext.GetRequiredService<IExceptionLogger>()
+            requestContext.GetRequiredService<ExceptionLogService>()
                 .LogException(_map, this.Server, this.Service, "GetMap", ex);
 
             throw;
@@ -989,7 +990,7 @@ public class CollectionService : IMapService, IEnumerable<IMapService>, IPrintab
 
     async public Task<ServiceResponse> GetPrintImageAsync(IRequestContext requestContext)
     {
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetPrintImage(this.Map, this.Server, this.Service))
+        using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetPrintImage(this.Map, this.Server, this.Service))
         {
             var response = await GetMapAsync(requestContext);
             pLogger.Success = response is not ExceptionResponse and not ErrorResponse;

@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +13,7 @@ using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.Core.ServiceResponses;
 
 using gView.GraphicsEngine;
@@ -382,8 +383,8 @@ public class Map : Display, IMap
 
             //
             // Sollte nicht mehr notwendig sein, weil die Services jetzt einzelen (mit await) abgerufen werden
-            // Dauert zwar vielleicht ein bisserl l√§nger, daf√ºr resourcen schonender
-            // Grunds√§tzlich sollten die Diente sowieso schnell antworten und ob User 3 oder 5 Sekunden auf ein PDF wartet sollte egal sein
+            // Dauert zwar vielleicht ein bisserl l‰nger, daf¸r resourcen schonender
+            // Grunds‰tzlich sollten die Diente sowieso schnell antworten und ob User 3 oder 5 Sekunden auf ein PDF wartet sollte egal sein
             //
             //while (serviceResponses.Keys.Count < requestCount)
             //{
@@ -436,7 +437,7 @@ public class Map : Display, IMap
                     }
 
                     merger.Add(imagePath,
-                               service is IGraphicsService ? int.MaxValue : _services.IndexOf(service),   // Graphics immer ganz oben, noch √ºber Selektion zeichnen!!
+                               service is IGraphicsService ? int.MaxValue : _services.IndexOf(service),   // Graphics immer ganz oben, noch ¸ber Selektion zeichnen!!
                                service.InitialOpacity * service.OpacityFactor);
                     responseCount++;
                 }
@@ -505,7 +506,7 @@ public class Map : Display, IMap
 
             if (errors.Length > 0 && ((bool)this.Environment.UserValue("show_warnings_in_print_output", true) == true /*|| throwException==true*/))
             {
-                string errorMessage = "In einigen Diensten sind Fehler aufgetreten. Dies kann dazu f√ºhren,dass Daten unvollst√§ngig oder falsch dargestellt werden!\r\n\r\n" + errors.ToString();
+                string errorMessage = "In einigen Diensten sind Fehler aufgetreten. Dies kann dazu f¸hren,dass Daten unvollst‰ngig oder falsch dargestellt werden!\r\n\r\n" + errors.ToString();
                 if (throwException)
                 {
                     throw new DrawMapException(errorMessage);
@@ -865,7 +866,7 @@ public class Map : Display, IMap
                     }
                     catch (Exception ex2)
                     {
-                        requestContext.GetRequiredService<IExceptionLogger>()
+                        requestContext.GetRequiredService<ExceptionLogService>()
                             .LogException(_service?.Map, _service.Server, _service.Service, "GetMap", ex2);
                     }
                 }
@@ -1073,7 +1074,7 @@ public class Map : Display, IMap
                     }
                     catch (Exception ex2)
                     {
-                        requestContext.GetRequiredService<IExceptionLogger>()
+                        requestContext.GetRequiredService<ExceptionLogService>()
                             .LogException(_service?.Map, _service.Server, _service.Service, "GetSelection", ex2);
                     }
                 }
@@ -1172,7 +1173,7 @@ public class Map : Display, IMap
                     }
                     catch (Exception ex)
                     {
-                        requestContext.GetRequiredService<IExceptionLogger>()
+                        requestContext.GetRequiredService<ExceptionLogService>()
                             .LogException(_map, _service.Server, _service.Service, "Init", ex);
 
                         _response = new ExceptionResponse(_map.Services.IndexOf(_service), _service.ID, ex);
@@ -1193,7 +1194,7 @@ public class Map : Display, IMap
             {
                 try
                 {
-                    requestContext.GetRequiredService<IExceptionLogger>()
+                    requestContext.GetRequiredService<ExceptionLogService>()
                         .LogException(_map, _service.Server, _service.Name, "GetMap", ex);
                 }
                 catch { }

@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -37,6 +37,7 @@ using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
@@ -249,7 +250,7 @@ public class RestPrintHelperService
             ? $"{layoutId}:{layoutFormat}:{layoutDpi}dpi"
             : $"{layoutFormat}:{layoutDpi}dpi";
 
-        using var pLogger = _requestContext.GetRequiredService<IGeoServicePerformanceLogger>()
+        using var pLogger = _requestContext.GetRequiredService<GeoServicePerformanceLogService>()
             .StartGetPrint(map, printLayout?.Name ?? layoutId, printLayoutDescriptor);
 
         // toolSketch must transfomed to map spatialreference
@@ -528,7 +529,7 @@ public class RestPrintHelperService
                         fixScaleMap.ImageHeight = (int)fsm.Size.Height;
                         fixScaleMap.Dpi = layoutBuilder.DotsPerInch;
 
-                        // 2x Zommen, fallse ZoommaÃŸstab gleich dem KartenmaÃŸstab -> Bild wird verzerrt!!
+                        // 2x Zommen, fallse Zoommaßstab gleich dem Kartenmaßstab -> Bild wird verzerrt!!
                         fixScaleMap.SetScale(fsm.Scale / 2.0, fixScaleMap.ImageWidth, fixScaleMap.ImageHeight, layoutBuilder.Map.Extent.CenterPoint.X, layoutBuilder.Map.Extent.CenterPoint.Y);
                         fixScaleMap.SetScale(fsm.Scale, fixScaleMap.ImageWidth, fixScaleMap.ImageHeight, layoutBuilder.Map.Extent.CenterPoint.X, layoutBuilder.Map.Extent.CenterPoint.Y);
 
@@ -724,7 +725,7 @@ public class RestPrintHelperService
                 fileName += ".zip";
             }
 
-            // Damit kann man die Funktion auf fÃ¼r den PrintServer verwenden...
+            // Damit kann man die Funktion auf für den PrintServer verwenden...
             if ("base64".Equals(form["result_format"], StringComparison.InvariantCultureIgnoreCase))
             {
                 pLogger.Success = errorRespones.HasErrors == false;
@@ -801,7 +802,7 @@ public class RestPrintHelperService
 
         if (size[0] > displaySize[0] || size[1] > displaySize[1])
         {
-            throw new Exception($"Maximale BildgrÃ¶ÃŸe von {displaySize[0]}x{displaySize[1]} wurde Ã¼berschritten. ÃœberprÃ¼fen Sie die Anzeige-Eigenschaften des Browsers und stellen Sie gegebenfalls ein ZoomverhÃ¤ltnis grÃ¶ÃŸer oder gleich 100% ein.");
+            throw new Exception($"Maximale Bildgröße von {displaySize[0]}x{displaySize[1]} wurde überschritten. Überprüfen Sie die Anzeige-Eigenschaften des Browsers und stellen Sie gegebenfalls ein Zoomverhältnis größer oder gleich 100% ein.");
         }
 
         string mapJson = httpRequest.Form["map"], graphicsJson = httpRequest.Form["graphics"];
@@ -1176,7 +1177,7 @@ public class RestPrintHelperService
 
                 if (presentationDefintion.Check.HasValue == false)
                 {
-                    // Button => alle Layer fÃ¼r diesen Dienst ausschalten
+                    // Button => alle Layer für diesen Dienst ausschalten
                     foreach (var layer in service.Layers)
                     {
                         layer.Visible = false;
@@ -1383,7 +1384,7 @@ public class RestPrintHelperService
 
             #region Service Order
 
-            // Alle Dienste mÃ¼ssen ein Order Flag haben
+            // Alle Dienste müssen ein Order Flag haben
             if (serviceDefinitions.Where(s => !s.Order.HasValue).Count() == 0)
             {
                 serviceDefinitions = serviceDefinitions
@@ -1449,7 +1450,7 @@ public class RestPrintHelperService
                 foreach (var layerDefinition in serviceDefintion.Layers)
                 {
                     var layer = service.Layers.Where(l => l.ID == layerDefinition.Id).FirstOrDefault();
-                    if (layer == null || layer.Name != layerDefinition.Name)  // Ids kÃ¶nnen sich Ã¤ndern, wenn name nicht passt sollte besse name genommen werden
+                    if (layer == null || layer.Name != layerDefinition.Name)  // Ids können sich ändern, wenn name nicht passt sollte besse name genommen werden
                     {
                         layer = layer ?? service.Layers.Where(l => l.Name == layerDefinition.Name).FirstOrDefault();   // Wenn Name gar nicht existiert -> bleibt Ids
                     }
@@ -1790,7 +1791,7 @@ public class RestPrintHelperService
     {
         try
         {
-            // es kann zu fehlern kommen, wenn ungÃ¼ltige geometrien daherkommen, zB Punkte mit coordinates [null, null], ...
+            // es kann zu fehlern kommen, wenn ungültige geometrien daherkommen, zB Punkte mit coordinates [null, null], ...
             return !String.IsNullOrWhiteSpace(graphicsJson) ? JSerializer.Deserialize<FeaturesDTO>(graphicsJson) : null;
         }
         catch

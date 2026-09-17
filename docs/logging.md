@@ -2,14 +2,29 @@
 
 WebGIS has two, mostly independent logging layers:
 
-1. **GeoService performance/request logging** — controlled by the `Api:logging-type`
-   setting in `_api.config` (`files` or `microsoft`). This decides which
-   `IGeoServicePerformanceLogger` / `IGeoServiceRequestLogger` implementation is used to
-   record how long GeoService requests (`GetMap`, `GetSelection`, `GetLegend`,
-   `GetPrintImage`, print jobs, ...) take. `files` writes the classic CSV log files under
-   `Log_Path` (`webgis_performance.csv`, ...); `microsoft` routes the same events through
-   `Microsoft.Extensions.Logging` (`ILogger`), which is the entry point into everything
-   described below.
+1. **GeoService performance/exception logging** — controlled by the `Api:logging-type`
+   setting in `_api.config`, a comma-separated list of one or more of `files`, `microsoft`,
+   `sqlserver`, `postgres`, `sqlite` (e.g. `"files,microsoft"` or `"files,sqlserver"`). Every
+   listed backend is active at the same time - a `GetMap`/`GetSelection`/`GetLegend`/
+   `GetPrintImage`/print-job request is timed and reported to *all* of them via
+   `GeoServicePerformanceLogService` (and exceptions likewise via `ExceptionLogService`),
+   both a thin fan-out over the one or more `IGeoServicePerformanceLogger`/`IExceptionLogger`
+   implementations registered for the configured types:
+   - `files` writes the classic CSV log files under `Log_Path` (`webgis_performance.csv`,
+     `webgis_exceptions.csv`).
+   - `microsoft` routes the same events through `Microsoft.Extensions.Logging` (`ILogger`),
+     which is the entry point into everything described below.
+   - `sqlserver` / `postgres` / `sqlite` write directly into `webgis_performance` /
+     `webgis_exceptions` tables in a relational database, configured via the
+     `logging-sqlserver-connectionstring` / `logging-postgres-connectionstring` /
+     `logging-sqlite-connectionstring` `_api.config` keys. The tables are created automatically on first use - no manual
+     migration step needed. (These are plain, purpose-built tables for GeoService
+     performance/exception data specifically - not to be confused with the general-purpose
+     Serilog DB sinks described further below, which log *application* events into a `Logs`
+     table.)
+
+   All backends are still individually gated by `logging-log-performance`/
+   `logging-log-exceptions` (`true`/`false`), same as before.
 2. **Application/host logging** — the standard `Microsoft.Extensions.Logging` pipeline
    used by ASP.NET Core itself and by the WebGIS internals when `logging-type` is set to
    `microsoft`. This is what this document is about: how an administrator can choose
@@ -42,6 +57,71 @@ to all three (adjust the file names accordingly, e.g. `Cms/appsettings.json`).
 > `Logging:LogLevel` into Serilog's `MinimumLevel` automatically so this standard ASP.NET Core
 > section keeps working as documented. An explicit `Serilog:MinimumLevel`/`Override` entry for
 > the same category always takes precedence over the bridged `Logging:LogLevel` value.
+
+## GeoService performance/exception logging (`Api:logging-type`)
+
+`_api.config` (or the equivalent `Api:*` configuration keys for `Cms`/`Portal`) configures
+the GeoService performance/exception logging layer described above:
+
+```xml
+<!-- Comma-separated list: files, microsoft, sqlserver, postgres, sqlite (any combination) -->
+<add key="logging-type" value="files,microsoft" />
+
+<add key="logging-log-performance" value="true" />
+<add key="logging-log-exceptions" value="true" />
+<add key="Log_Path" value="/path/to/logs" />                 <!-- used by "files" -->
+
+<!-- how usernames are recorded in performance/exception logs: "plaintext" (default), "hash", "none" -->
+<add key="logging-username-mode" value="plaintext" />
+
+<!-- only needed for the DB-backed types below -->
+<add key="logging-sqlserver-connectionstring" value="Server=sql-host;Database=webgis;User Id=webgis;Password=...;" />
+<add key="logging-postgres-connectionstring" value="Host=pg-host;Database=webgis;Username=webgis;Password=...;" />
+<add key="logging-sqlite-connectionstring" value="Data Source=/path/to/logs/webgis.db" />
+```
+
+- Each connection string is a **raw, provider-native** ADO.NET connection string (SQL Server:
+  `Microsoft.Data.SqlClient` syntax; PostgreSQL: `Npgsql` syntax; SQLite:
+  `System.Data.SQLite` syntax) - WebGIS internally prefixes it (`mssql:`/`postgres:`/`sqlite:`)
+  before handing it to `E.Standard.DbConnector`, which dispatches to the matching ADO.NET
+  provider.
+- `webgis_performance`/`webgis_exceptions` are created automatically (`CREATE TABLE IF NOT
+  EXISTS`/equivalent) the first time a request is logged after startup - no manual schema
+  setup or migration is required. If a type is listed in `logging-type` but its connection
+  string key is missing/empty, that type is silently skipped (no table is created, nothing is
+  logged for it).
+- Under high concurrent request volume, opening a new DB connection for every single logged
+  request would itself become a bottleneck. Instead, `sqlserver`/`postgres`/`sqlite` entries are
+  buffered in memory and written in batches: a batch is flushed (one connection, one
+  transaction, one commit for the whole batch) once 200 entries have accumulated, every 5
+  seconds in the background regardless of count (so entries do not sit unwritten for long under
+  low traffic), or immediately via `Instance/Logging?flush=true` (calls `Flush()` on every
+  configured backend). A buffered batch is lost only if the process is killed (not stopped
+  gracefully) or the database is unreachable when a flush is attempted - the same "best effort,
+  never break the actual request" guarantee already applied to the other backends.
+- Besides the base columns (`timestamp_utc`, `server`, `service`, `command`, `map`, `success`/
+  `duration_ms` for `webgis_performance`, `exception_type`/`message`/`stack_trace` for
+  `webgis_exceptions`), both tables also carry the same extra, per-request columns the `files`
+  CSV log already has: `session_id`, `map_request_id`, `client_ip`, `user`, `center_x`,
+  `center_y`, `scale`. Since `user` is a reserved word in SQL Server/PostgreSQL, it is always
+  quoted (`"user"`) in generated SQL - quote it the same way if you query these tables directly.
+  How that column is populated is controlled by `logging-username-mode` (applies uniformly to
+  *all* `IGeoServicePerformanceLogger`/`IExceptionLogger` backends, including `files`/CSV and
+  `microsoft`, not just the DB-backed ones):
+  - `plaintext` (default, for backward compatibility) - the raw username is stored as-is.
+  - `hash` - a SHA-256 hash of the (trimmed, lowercased) username is stored instead, so an
+    administrator can still recognize "the same user" across log rows without storing their
+    actual username.
+  - `none` - the column/field is always left empty; no username is recorded at all.
+
+  If any of these columns are missing from a `webgis_performance`/`webgis_exceptions` table
+  created by an older version of this feature, they are added automatically
+  (`ALTER TABLE ... ADD ...`) the next time the app starts - no manual migration needed. This
+  includes the rename from the older `username_hash` column: it is **not** renamed in place: a
+  new `user` column is added alongside it, and the old `username_hash` column is left in the
+  table unused (drop it manually if desired).
+- `logging-log-performance`/`logging-log-exceptions` still individually gate performance vs.
+  exception logging across *all* configured types (i.e. they are not per-backend).
 
 ## Configuring via `_config` (recommended for production/Kubernetes)
 
@@ -382,7 +462,11 @@ same telemetry.
 ## Notes
 
 
-- All of the above concerns *where application log events go*; it is independent of the
-  `Api:logging-type` GeoService performance-logging switch described at the top.
+- All of the above (Serilog sinks, OTLP, Seq, Grafana, ...) concerns *where application log
+  events go*; it is independent of the `Api:logging-type` GeoService performance/exception
+  logging switch described at the top, which - since it now also supports `sqlserver`/
+  `postgres`/`sqlite` - can end up pointed at the same database server, just a different,
+  purpose-built `webgis_performance`/`webgis_exceptions` table rather than the generic
+  `Logs` table the Serilog DB sinks write to.
 - Multiple sinks can be active at once (e.g. console + OTLP + SQL Server) — enable only
   what you need.

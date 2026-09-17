@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +11,7 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using E.Standard.WebMapping.GeoServices.Tiling.Models;
@@ -461,7 +462,7 @@ public abstract class TileService : IMapService, IPrintableMapService, IMapServi
 
     async public Task<ServiceResponse> GetPrintImageAsync(IRequestContext requestContext)
     {
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetPrintImage(this.Map, this.Server, this.Service))
+        using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetPrintImage(this.Map, this.Server, this.Service))
         {
             var response = await GetPrintImageInternalAsync(requestContext);
             pLogger.Success = response is not ExceptionResponse and not ErrorResponse;

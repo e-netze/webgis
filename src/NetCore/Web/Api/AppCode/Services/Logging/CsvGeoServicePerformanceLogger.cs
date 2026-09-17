@@ -17,7 +17,8 @@ public class CsvGeoServicePerformanceLogger : GenericGeoServicePerformanceLogger
             new StreamBuffer($"{configuration[ApiConfigKeys.LogPath]}/webgis_performance.csv", configuration[ApiConfigKeys.LogPerformanceColumns], BufferMaxMB),
             null,
             configuration[ApiConfigKeys.LogPerformanceColumns],
-            Digits)
+            Digits,
+            UsernameLoggingModeResolver.Resolve(configuration))
         )
     {
         _loggerInstance = base._logger;

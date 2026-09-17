@@ -11,6 +11,7 @@ using Api.Core.AppCode.Services.Authentication;
 using Api.Core.AppCode.Services.DataLinq;
 using Api.Core.AppCode.Services.Endpoints;
 using Api.Core.AppCode.Services.Logging;
+using Api.Core.AppCode.Services.Logging.Db;
 using Api.Core.AppCode.Services.Ogc;
 using Api.Core.AppCode.Services.Rest;
 using Api.Core.Models.DataLinq;
@@ -184,58 +185,93 @@ static public class ServiceCollectionExtensions
 
     static public IServiceCollection AddWebGISLogging(this IServiceCollection services, IConfiguration configuration)
     {
-        var loggingType = configuration[ApiConfigKeys.LoggingType];
+        // Comma-separated so multiple backends can run side by side, e.g. "files,microsoft" or
+        // "files,sqlserver" - performance/exception entries are then written to every configured
+        // backend (see GeoServicePerformanceLogService/ExceptionLogService below).
+        var loggingTypes = (configuration[ApiConfigKeys.LoggingType] ?? String.Empty)
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(type => type.ToLowerInvariant())
+            .ToArray();
 
-        if (loggingType == "files")
+        bool logPerformance = configuration[ApiConfigKeys.LoggingLogPerformance]?.Equals("true", StringComparison.OrdinalIgnoreCase) == true;
+        bool logExceptions = configuration[ApiConfigKeys.LoggingLogExceptions]?.Equals("false", StringComparison.OrdinalIgnoreCase) != true;
+        var usernameMode = UsernameLoggingModeResolver.Resolve(configuration);
+
+        foreach (var loggingType in loggingTypes)
         {
-            if (configuration[ApiConfigKeys.LoggingLogPerformance]?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
+            switch (loggingType)
             {
-                services.AddSingleton<IGeoServicePerformanceLogger, CsvGeoServicePerformanceLogger>();
-                services.AddSingleton<IOgcPerformanceLogger, CsvOgcPerformanceLogger>();
-            }
+                case "files":
+                    if (logPerformance)
+                    {
+                        services.AddSingleton<IGeoServicePerformanceLogger, CsvGeoServicePerformanceLogger>();
+                        services.AddSingleton<IOgcPerformanceLogger, CsvOgcPerformanceLogger>();
+                    }
 
-            if (configuration[ApiConfigKeys.LoggingLogUsage]?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
-            {
-                services.AddSingleton<IUsagePerformanceLogger, CsvUsagePerformaceLogger>();
-                services.AddSingleton<IDatalinqPerformanceLogger, CsvDatalinqPerformanceLogger>();
-            }
+                    if (configuration[ApiConfigKeys.LoggingLogUsage]?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        services.AddSingleton<IUsagePerformanceLogger, CsvUsagePerformaceLogger>();
+                        services.AddSingleton<IDatalinqPerformanceLogger, CsvDatalinqPerformanceLogger>();
+                    }
 
-            services.AddSingleton<IExceptionLogger, FileExceptionLogger>();
-            services.AddSingleton<IWarningsLogger, FileWarningsLogger>();
-        }
-        else if (loggingType == "microsoft")
-        {
-            if (configuration[ApiConfigKeys.LoggingLogPerformance]?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
-            {
-                services.AddSingleton<IGeoServicePerformanceLogger, MicrosoftGeoServicePerformanceLogger>();
-            }
-            if (configuration[ApiConfigKeys.LoggingLogUsage]?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
-            {
-                services.AddSingleton<IUsagePerformanceLogger, MicrosoftUsagePerformanceLogger>();
-            }
-            if (configuration[ApiConfigKeys.LoggingLogOgcPerformance]?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
-            {
-                services.AddSingleton<IOgcPerformanceLogger, MicrosoftOgcPerformanceLogger>();
-            }
-            if (configuration[ApiConfigKeys.LoggingLogDataLinq]?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
-            {
-                services.AddSingleton<IDatalinqPerformanceLogger, MicrosoftDatalinqPerformanceLogger>();
-            }
+                    services.AddSingleton<IExceptionLogger, FileExceptionLogger>();
+                    services.AddSingleton<IWarningsLogger, FileWarningsLogger>();
+                    break;
 
-            if (configuration[ApiConfigKeys.LoggingLogWarnings]?.Equals("false", StringComparison.OrdinalIgnoreCase) != true)
-            {
-                services.AddSingleton<IWarningsLogger, MicrosoftWarningsLogger>();
-            }
-            if (configuration[ApiConfigKeys.LoggingLogExceptions]?.Equals("false", StringComparison.OrdinalIgnoreCase) != true)
-            {
-                services.AddSingleton<IExceptionLogger, MicrosoftExceptionLogger>();
+                case "microsoft":
+                    if (logPerformance)
+                    {
+                        services.AddSingleton<IGeoServicePerformanceLogger, MicrosoftGeoServicePerformanceLogger>();
+                    }
+                    if (configuration[ApiConfigKeys.LoggingLogUsage]?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        services.AddSingleton<IUsagePerformanceLogger, MicrosoftUsagePerformanceLogger>();
+                    }
+                    if (configuration[ApiConfigKeys.LoggingLogOgcPerformance]?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        services.AddSingleton<IOgcPerformanceLogger, MicrosoftOgcPerformanceLogger>();
+                    }
+                    if (configuration[ApiConfigKeys.LoggingLogDataLinq]?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        services.AddSingleton<IDatalinqPerformanceLogger, MicrosoftDatalinqPerformanceLogger>();
+                    }
+
+                    if (configuration[ApiConfigKeys.LoggingLogWarnings]?.Equals("false", StringComparison.OrdinalIgnoreCase) != true)
+                    {
+                        services.AddSingleton<IWarningsLogger, MicrosoftWarningsLogger>();
+                    }
+                    if (logExceptions)
+                    {
+                        services.AddSingleton<IExceptionLogger, MicrosoftExceptionLogger>();
+                    }
+                    break;
+
+                case "sqlserver":
+                case "postgres":
+                case "sqlite":
+                    // Tables are created automatically on first use - see DbLoggingSchema.
+                    var connectionString = DbLoggingConnectionStrings.ForLoggingType(loggingType, configuration);
+                    if (String.IsNullOrEmpty(connectionString))
+                    {
+                        break;
+                    }
+
+                    if (logPerformance)
+                    {
+                        services.AddSingleton<IGeoServicePerformanceLogger>(_ => new DbGeoServicePerformanceLogger(connectionString, usernameMode));
+                    }
+                    if (logExceptions)
+                    {
+                        services.AddSingleton<IExceptionLogger>(_ => new DbExceptionLogger(connectionString, usernameMode));
+                    }
+                    break;
             }
         }
 
         if (configuration[ApiConfigKeys.LoggingLogServiceRequests]?.Equals("true", StringComparison.OrdinalIgnoreCase) == true
             && configuration[ApiConfigKeys.Trace] == "true")
         {
-            if (loggingType == "microsoft")
+            if (loggingTypes.Contains("microsoft"))
             {
                 services.AddSingleton<IGeoServiceRequestLogger, MicrosoftGeoServiceRequestLogger>();
             }
@@ -255,8 +291,16 @@ static public class ServiceCollectionExtensions
         services.IfServiceNotRegistered<IExceptionLogger>(() => services.AddSingleton<IExceptionLogger, NullExceptionLogger>());
         services.IfServiceNotRegistered<IGeoServiceRequestLogger>(() => services.AddSingleton<IGeoServiceRequestLogger, NullLogger>());
 
+        // Single entry point for GeoService/host code (GetRequiredService<GeoServicePerformanceLogService>()/
+        // <ExceptionLogService>()) that fans out to every backend registered above - see their
+        // XML docs. Registered as themselves (not as IGeoServicePerformanceLogger/IExceptionLogger),
+        // so their own IEnumerable<...> constructor injection only ever sees the real backends.
+        services.AddSingleton<GeoServicePerformanceLogService>();
+        services.AddSingleton<ExceptionLogService>();
+
         return services;
     }
+
 
 
     #region DataLinq

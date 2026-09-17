@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,6 +19,7 @@ using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.DynamicLayers;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
@@ -203,7 +204,7 @@ public class MapService : IMapService2,
         _initErrorResponse = null;
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartInit(map, this.Server, _mapServiceName))
+        using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartInit(map, this.Server, _mapServiceName))
         {
             try
             {
@@ -249,8 +250,8 @@ public class MapService : IMapService2,
 
                     #region Layers
 
-                    // TemporÃ¤re Liste => Falls Init mehrfach/gleichzeitg aufgerufen wird
-                    // Am schluss dann an LayerCollection Ã¼bergeben
+                    // Temporäre Liste => Falls Init mehrfach/gleichzeitg aufgerufen wird
+                    // Am schluss dann an LayerCollection übergeben
                     List<Layer> layers = new List<Layer>();
 
                     foreach (var jsonLayer in jsonLayers.Layers)
@@ -499,7 +500,7 @@ public class MapService : IMapService2,
 
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetMap(this.Map, this.Server, _mapServiceName))
+        using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetMap(this.Map, this.Server, _mapServiceName))
         {
             if (!ServiceHelper.VisibleInScale(this, this.Map))
             {
@@ -612,7 +613,7 @@ public class MapService : IMapService2,
                             {
                                 mapLayerId = int.Parse(layer.ID)
                             };
-                            dynamicLayer.definitionExpression = FeatureLayer.UrlEncodeWhere(where);  // Schreibweise nicht mehr gÃ¼ltig ab AGS 10.5
+                            dynamicLayer.definitionExpression = FeatureLayer.UrlEncodeWhere(where);  // Schreibweise nicht mehr gültig ab AGS 10.5
                             dynamicLayers.Add(dynamicLayer);
                         }
                     }
@@ -794,7 +795,7 @@ public class MapService : IMapService2,
 
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetSelection(this.Map, this.Server, _mapServiceName))
+        using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetSelection(this.Map, this.Server, _mapServiceName))
         {
             try
             {
@@ -1048,7 +1049,7 @@ public class MapService : IMapService2,
             catch (Exception ex)
             {
                 requestContext
-                    .GetRequiredService<IExceptionLogger>()
+                    .GetRequiredService<ExceptionLogService>()
                     .LogException(this.Map, this.Server, _mapServiceName, "GetSelection", ex);
 
                 return new ExceptionResponse(this.Map.Services.IndexOf(this), this.ID, ex);
@@ -1440,7 +1441,7 @@ public class MapService : IMapService2,
 
             if (!useDynamcLegendQuery)
             {
-                using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetLegend(this.Map, this.Server, _mapServiceName))
+                using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetLegend(this.Map, this.Server, _mapServiceName))
                 {
                     string dynamicLayerRequestUrl = $"{this.Service}/legend";
                     string jsonLegendAnswer = await requestContext.LogRequest(

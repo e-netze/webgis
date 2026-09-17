@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,6 +7,7 @@ using E.Standard.Platform;
 using E.Standard.Web.Extensions;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 
 using gView.GraphicsEngine;
 using gView.GraphicsEngine.Abstraction;
@@ -138,7 +139,7 @@ class LegendMerger : IDisposable
         }
         catch (Exception ex)
         {
-            _requestContext.GetRequiredService<IExceptionLogger>()
+            _requestContext.GetRequiredService<ExceptionLogService>()
                 .LogException(_map, String.Empty, String.Empty, "MergeLegend", ex);
 
             return (String.Empty, String.Empty);

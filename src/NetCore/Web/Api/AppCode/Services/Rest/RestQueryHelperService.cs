@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -28,6 +28,7 @@ using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -465,7 +466,7 @@ public class RestQueryHelperService
 
                         //
                         // Bei negativen bufferDistance zuerst mergen und dann erst buffern
-                        // => sonst gibt es lauter keine einzelflÃ¤chen pro zb GrundstÃ¼ck
+                        // => sonst gibt es lauter keine einzelflächen pro zb Grundstück
                         //
                         var bufferPolygon = feature.Shape?.CalcBuffer(Math.Max(0, bufferDistance), cts);
                         if (bufferPolygon != null)
@@ -489,7 +490,7 @@ public class RestQueryHelperService
             }
             catch (CancellationException)
             {
-                throw new Exception("Die Pufferoperation ist zu komplex und kann in der vorgegeben Zeit nicht durchfÃ¼hrt werden...");
+                throw new Exception("Die Pufferoperation ist zu komplex und kann in der vorgegeben Zeit nicht durchführt werden...");
             }
         }
 
@@ -677,7 +678,7 @@ public class RestQueryHelperService
                 }
                 catch (InputValidationException)
                 {
-                    throw new InputValidationException("Die Eingabe fÃ¼r " + searchItem.name + " enthÃ¤lt ungÃ¼ltige Zeichen:" + val);
+                    throw new InputValidationException("Die Eingabe für " + searchItem.name + " enthält ungültige Zeichen:" + val);
                 }
 
                 sql = sql
@@ -758,7 +759,7 @@ public class RestQueryHelperService
                 {
                     try
                     {
-                        _requestContext.GetRequiredService<IExceptionLogger>()
+                        _requestContext.GetRequiredService<ExceptionLogService>()
                             .LogException(ui, "webgis", serviceId, "autocomplete", new Exception(conn.errorMessage));
                     }
                     catch { }

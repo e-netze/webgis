@@ -17,6 +17,14 @@ public class DBFactory : IDisposable
         _connection.OleDbConnectionMDB = connectionString;
     }
 
+    /// <summary>
+    /// The DB engine derived from the connection string's prefix (<c>sql:</c>, <c>mssql:</c>,
+    /// <c>postgres:</c>, <c>sqlite:</c>, <c>oracle:</c>) - useful for callers that need to branch
+    /// on dialect (e.g. to build engine-specific DDL) without duplicating <see cref="DBConnection"/>'s
+    /// own prefix-parsing logic.
+    /// </summary>
+    public DBType DatabaseType => _connection.DatabaseType;
+
     private void InitTypeMap()
     {
         if (_typeMap == null)

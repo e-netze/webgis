@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,6 +8,7 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 
@@ -322,7 +323,7 @@ public class WatermarkService : IMapService, IPrintableMapService
             return new ExceptionResponse(-1, this.ID, new Exception("Map==NULL"));
         }
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetPrintImage(this.Map, this.Server, this.Service))
+        using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetPrintImage(this.Map, this.Server, this.Service))
         {
             var httpService = requestContext.Http;
             string extraMessage = String.Empty;

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Api.Core.AppCode.Mvc;
@@ -13,6 +13,7 @@ using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -91,7 +92,7 @@ public class InstanceController : ApiBaseController
     {
         if (Request.Query["flush"] == "true")
         {
-            _requestContext.GetRequiredService<IGeoServicePerformanceLogger>().Flush();
+            _requestContext.GetRequiredService<GeoServicePerformanceLogService>().Flush();
             _requestContext.GetRequiredService<IOgcPerformanceLogger>().Flush();
             _requestContext.GetRequiredService<IUsagePerformanceLogger>().Flush();
             _requestContext.GetRequiredService<IDatalinqPerformanceLogger>().Flush();

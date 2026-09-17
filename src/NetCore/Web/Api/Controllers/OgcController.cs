@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
@@ -25,6 +25,7 @@ using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -170,7 +171,7 @@ public class OgcController : ApiBaseController
             var map = _mapServiceInitializer.Map(_requestContext, ui);
             foreach (string serviceId in id.Split(','))
             {
-                IMapService service = await _cache.GetService(serviceId, map, null, _urlHelper);  // hier immer "null" Ã¼bergeben, weil beim GetCapabilities keine Anmeldung zwingend notwendig sein sollte (fÃ¼r Inspire). Der Fehler fÃ¼r die fehlende Anmeldung kommt dann erst im Kartenbild...
+                IMapService service = await _cache.GetService(serviceId, map, null, _urlHelper);  // hier immer "null" übergeben, weil beim GetCapabilities keine Anmeldung zwingend notwendig sein sollte (für Inspire). Der Fehler für die fehlende Anmeldung kommt dann erst im Kartenbild...
                 if (service == null)
                 {
                     throw new OgcArgumentException("Unknown service");
@@ -192,7 +193,7 @@ public class OgcController : ApiBaseController
 
                     if (!_cache.IsWmsExportable(serviceInfo, ui))
                     {
-                        appendToServiceAbstract += "Dieser Dienst ist geschÃ¼tzt. FÃ¼r eine vollstÃ¤ndige Nutzung ist eine Authentifizierung notwendig.";
+                        appendToServiceAbstract += "Dieser Dienst ist geschützt. Für eine vollständige Nutzung ist eine Authentifizierung notwendig.";
                     }
                 }
                 else
@@ -306,7 +307,7 @@ public class OgcController : ApiBaseController
                 }
                 catch (Exception ex)
                 {
-                    _requestContext.GetRequiredService<IExceptionLogger>()
+                    _requestContext.GetRequiredService<ExceptionLogService>()
                         .LogException(map, String.Empty, id, arguments["service"] + "/" + arguments["request"], ex);
 
                     throw;

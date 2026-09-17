@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +22,7 @@ using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Logging;
 using E.Standard.WebMapping.Core.Proxy;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.Extensions;
@@ -225,7 +226,7 @@ public class WmsService : IMapService2,
 
         try
         {
-            using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartInit(this.Map, this.Server, this.Service))
+            using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartInit(this.Map, this.Server, this.Service))
             {
                 _map = map;
                 _layers = new LayerCollection(this);
@@ -267,7 +268,7 @@ public class WmsService : IMapService2,
                 }
                 catch (System.Exception ex)
                 {
-                    requestContext.GetRequiredService<IExceptionLogger>()
+                    requestContext.GetRequiredService<ExceptionLogService>()
                         .LogException(_map, this.Server, this.Service, "Init", ex);
 
                     _initErrorResponse = new ExceptionResponse(_map.Services.IndexOf(this), this.ID, ex);
@@ -283,8 +284,8 @@ public class WmsService : IMapService2,
 
                 #region Layers
 
-                // TemporÃ¤re Liste => Falls Init mehrfach/gleichzeitg aufgerufen wird
-                // Am schluss dann an LayerCollection Ã¼bergeben
+                // Temporäre Liste => Falls Init mehrfach/gleichzeitg aufgerufen wird
+                // Am schluss dann an LayerCollection übergeben
                 List<Core.Layer> layers = new List<Core.Layer>();
 
                 foreach (CapabilitiesHelper.WMSLayer wmslayer in capsHelper.LayersWithStyle)
@@ -347,7 +348,7 @@ public class WmsService : IMapService2,
 
         var httpService = requestContext.Http;
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetMap(this.Map, this.Server, this.Service))
+        using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetMap(this.Map, this.Server, this.Service))
         {
             if (!ServiceHelper.VisibleInScale(this, _map))
             {
@@ -650,7 +651,7 @@ public class WmsService : IMapService2,
             }
             catch (System.Exception ex)
             {
-                requestContext.GetRequiredService<IExceptionLogger>()
+                requestContext.GetRequiredService<ExceptionLogService>()
                     .LogException(_map, this.Server, this.Service, "GetMap", ex);
 
                 return new ExceptionResponse(_map.Services.IndexOf(this), _id, ex);
@@ -852,10 +853,10 @@ public class WmsService : IMapService2,
     internal string AppendToUrl(string url, string parameters, bool replaceKeys = true)
     {
         //
-        // Wird beim WMS fÃ¼r Gemeinden verwendet. Hier wird der Username fÃ¼r den Filter als URL Parameter Ã¼bergeben
+        // Wird beim WMS für Gemeinden verwendet. Hier wird der Username für den Filter als URL Parameter übergeben
         // zB &ogc_username=[role-parameter:GEM]
-        // Die Ersetzung sollte nicht beim GetCapabilites erfolgen, weil sonst schon der ersetzte String als Onlineparamter zurÃ¼ckkommt... Sollte aber nicht sein,
-        // weil Service (Clone) ja Ã¶ferter verwendet wird...
+        // Die Ersetzung sollte nicht beim GetCapabilites erfolgen, weil sonst schon der ersetzte String als Onlineparamter zurückkommt... Sollte aber nicht sein,
+        // weil Service (Clone) ja öferter verwendet wird...
         //
         if (replaceKeys && url.Contains("[") && url.Contains("]"))
         {
@@ -1004,7 +1005,7 @@ public class WmsService : IMapService2,
     {
         var httpService = requestContext.Http;
 
-        using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetLegend(this.Map, this.Server, this.Service))
+        using (var pLogger = requestContext.GetRequiredService<GeoServicePerformanceLogService>().StartGetLegend(this.Map, this.Server, this.Service))
         {
             if (_map == null)
             {
@@ -1133,7 +1134,7 @@ public class WmsService : IMapService2,
                         catch (System.Exception ex)
                         {
                             requestContext
-                                .GetRequiredService<IExceptionLogger>()
+                                .GetRequiredService<ExceptionLogService>()
                                 .LogException(_map, this.Server, this.Service, "GetLegend",
                                     new System.Exception($"Can't load legend image - {ex.Message}: {Encoding.UTF8.GetString(fileBytes.ToArray())}"));
                         }
@@ -1141,7 +1142,7 @@ public class WmsService : IMapService2,
                     catch (System.Exception ex)
                     {
                         requestContext
-                            .GetRequiredService<IExceptionLogger>()
+                            .GetRequiredService<ExceptionLogService>()
                             .LogException(_map, this.Server, this.Service, "GetLegend", ex);
 
                         return new ExceptionResponse(_map.Services.IndexOf(this), _id, ex);
@@ -1185,12 +1186,12 @@ public class WmsService : IMapService2,
                         else
                         {
                             if ( //
-                                 // Hier wurden einige Chaos Regeln gefÃ¼hrt, weil jeder WMS Legenden anders erzeugt... 
+                                 // Hier wurden einige Chaos Regeln geführt, weil jeder WMS Legenden anders erzeugt... 
                                  // und jeder glaubt, er macht es RICHTIG!??
                                  // WMS sucks sometimes...
                                  //
                                 (lImage.Width <= lImage.Height * 2) ||  // Problem bei Kunden: hier wird der Text immer schon in der Legendgraphic angedruckt -> wenn Bild eine gewisse Breite hat, kein Text schreiben 
-                                (lImage.Width <= 40)  // Problem bei anderem Kunden: Images (fÃ¼r Raster) sind oft nur 5 Pixel hoch -> trotzdem beschreiften, auch wenn erstes Kriterium greift
+                                (lImage.Width <= 40)  // Problem bei anderem Kunden: Images (für Raster) sind oft nur 5 Pixel hoch -> trotzdem beschreiften, auch wenn erstes Kriterium greift
                                )
                             {
                                 canvas.DrawText(label, font, blackBrush, new CanvasPointF(40f, y + 3f), stringFormat);
