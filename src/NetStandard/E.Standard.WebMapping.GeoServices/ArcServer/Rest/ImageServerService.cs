@@ -20,6 +20,7 @@ using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
+using E.Standard.WebMapping.GeoServices.Extensions;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 
 using gView.GraphicsEngine;
@@ -264,7 +265,9 @@ public class ImageServerService : IMapService2,
                 string url = $"{_serviceUrl}?f=json";
                 var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-                string responseString = await authHandler.TryGetAsync(this, url);
+                string responseString = await requestContext.LogRequest(
+                    this.Server, this.ServiceShortname, "get_capabilities",
+                    () => authHandler.TryGetAsync(this, url));
                 JsonImageService jsonImageService = JSerializer.Deserialize<JsonImageService>(responseString);
 
                 this.ServiceDescription = jsonImageService.ServiceDescription.OrTake(jsonImageService.Description);
@@ -350,7 +353,9 @@ public class ImageServerService : IMapService2,
                 string url = $"{_serviceUrl}/{path}";
                 var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-                string responseString = await authHandler.TryGetAsync(this, url);
+                string responseString = await requestContext.LogRequest(
+                    this.Server, this.ServiceShortname, "export_map",
+                    () => authHandler.TryGetAsync(this, url));
                 var jsonResult = JSerializer.Deserialize<JsonExportResponse>(responseString);
 
                 if (!String.IsNullOrEmpty(jsonResult.Href))
@@ -663,7 +668,9 @@ public class ImageServerService : IMapService2,
                 var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
                 string requestUrl = $"{this._serviceUrl}/legend?bandids={_bandIDs}&renderingRule={HttpUtility.UrlEncode(RenderingRule)}&f=pjson";
 
-                string jsonAnswer = await authHandler.TryGetAsync(this, requestUrl);
+                string jsonAnswer = await requestContext.LogRequest(
+                    this.Server, this.ServiceShortname, "legend",
+                    () => authHandler.TryGetAsync(this, requestUrl));
 
                 return await this.RenderRestLegendResponse(requestContext, jsonAnswer, optimize: true);
             }

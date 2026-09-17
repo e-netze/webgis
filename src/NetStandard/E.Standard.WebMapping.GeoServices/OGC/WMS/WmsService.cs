@@ -24,6 +24,7 @@ using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.Core.Proxy;
 using E.Standard.WebMapping.Core.ServiceResponses;
+using E.Standard.WebMapping.GeoServices.Extensions;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 using E.Standard.WebMapping.GeoServices.OGC.Extensions;
 
@@ -238,7 +239,12 @@ public class WmsService : IMapService2,
                     {
                         Serializer<WMT_MS_Capabilities> ser = new Serializer<WMT_MS_Capabilities>();
                         url = AppendToUrl(url, "VERSION=1.1.1&SERVICE=WMS&REQUEST=GetCapabilities", false);
-                        WMT_MS_Capabilities caps = await ser.FromUrlAsync(_ticketHttpService.ModifyUrl(httpService, url), httpService, _requestAuthorization);
+                        string requestUrl = _ticketHttpService.ModifyUrl(httpService, url);
+                        byte[] capsBytes = await requestContext.LogRequest(
+                            this.Server, this.Service, "get_capabilities",
+                            () => httpService.GetDataAsync(requestUrl, _requestAuthorization),
+                            describeResponse: bytes => Encoding.UTF8.GetString(bytes));
+                        WMT_MS_Capabilities caps = ser.FromBytes(capsBytes);
                         capsHelper = new CapabilitiesHelper(caps, _vendor);
                     }
                     else if (_version == WMS_Version.version_1_3_0)
@@ -250,7 +256,12 @@ public class WmsService : IMapService2,
                         ser.AddReplaceNamespace("https://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/2001/XMLSchema-instance");
 
                         url = AppendToUrl(url, "VERSION=1.3.0&SERVICE=WMS&REQUEST=GetCapabilities", false);
-                        WMS_Capabilities caps = await ser.FromUrlAsync(_ticketHttpService.ModifyUrl(httpService, url), httpService, _requestAuthorization);
+                        string requestUrl = _ticketHttpService.ModifyUrl(httpService, url);
+                        byte[] capsBytes = await requestContext.LogRequest(
+                            this.Server, this.Service, "get_capabilities",
+                            () => httpService.GetDataAsync(requestUrl, _requestAuthorization),
+                            describeResponse: bytes => Encoding.UTF8.GetString(bytes));
+                        WMS_Capabilities caps = ser.FromBytes(capsBytes);
                         capsHelper = new CapabilitiesHelper(caps, _vendor);
                     }
                 }
@@ -584,9 +595,11 @@ public class WmsService : IMapService2,
                 string filePath = _map.AsOutputFilename(filename);
                 string fileUrl = _map.AsOutputUrl(filename);
 
-                var imageData = await httpService.GetDataAsync(_ticketHttpService.ModifyUrl(httpService, url),
-                                                               _requestAuthorization,
-                                                               timeOutSeconds: this.Timeout.ToTimeoutSecondOrDefault());
+                var imageData = await requestContext.LogRequest(
+                    this.Server, this.Service, url, "get_map",
+                    (requestUrl) => httpService.GetDataAsync(_ticketHttpService.ModifyUrl(httpService, requestUrl),
+                                                              _requestAuthorization,
+                                                              timeOutSeconds: this.Timeout.ToTimeoutSecondOrDefault()));
 
                 if (imageData.Length > 0 && imageData[0] == '<')
                 {
@@ -596,12 +609,6 @@ public class WmsService : IMapService2,
                 }
 
                 var fileBytes = new MemoryStream(imageData);
-
-                if (requestContext.Trace)
-                {
-                    requestContext.GetRequiredService<IGeoServiceRequestLogger>()
-                        .LogString(this.Server, this.Service, "GetMap", message: $"imagedata: byte[{imageData.Length}]", requestBody: url);
-                }
 
                 if (_map.DisplayRotation != 0.0)
                 {
@@ -1076,9 +1083,11 @@ public class WmsService : IMapService2,
                         reqArgs.ToString());
                     try
                     {
-                        var fileBytes = new MemoryStream(await httpService.GetDataAsync(_ticketHttpService.ModifyUrl(httpService, url),
-                                                                                        _requestAuthorization,
-                                                                                        timeOutSeconds: this.Timeout.ToTimeoutSecondOrDefault()));
+                        var fileBytes = new MemoryStream(await requestContext.LogRequest(
+                            this.Server, this.Service, url, "get_legend_graphic",
+                            (requestUrl) => httpService.GetDataAsync(_ticketHttpService.ModifyUrl(httpService, requestUrl),
+                                                                      _requestAuthorization,
+                                                                      timeOutSeconds: this.Timeout.ToTimeoutSecondOrDefault())));
 
                         //Console.WriteLine("Legend Response:");
                         //Console.WriteLine(_ticketHttpService.ModifyUrl(httpService, url));

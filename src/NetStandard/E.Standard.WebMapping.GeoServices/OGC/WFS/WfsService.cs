@@ -11,6 +11,7 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.ServiceResponses;
+using E.Standard.WebMapping.GeoServices.Extensions;
 using E.Standard.WebMapping.GeoServices.OGC.Extensions;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.WFS;
@@ -161,7 +162,12 @@ public class WfsService : IMapService, IMapServiceSupportedCrs, IMapServiceMetad
             {
                 Serializer<Standard.OGC.Schema.wfs_1_0_0.WFS_CapabilitiesType> ser = new Serializer<Standard.OGC.Schema.wfs_1_0_0.WFS_CapabilitiesType>();
                 url = AppendToUrl(url, "VERSION=1.0.0&SERVICE=WFS&REQUEST=GetCapabilities");
-                Standard.OGC.Schema.wfs_1_0_0.WFS_CapabilitiesType caps = await ser.FromUrlAsync(url, httpService, new RequestAuthorization() { Username = _authUser, Password = _authPassword, ClientCerticate = _x509certificate });
+                var auth = new RequestAuthorization() { Username = _authUser, Password = _authPassword, ClientCerticate = _x509certificate };
+                byte[] capsBytes = await requestContext.LogRequest(
+                    this.Server, this.ServiceShortname, "get_capabilities",
+                    () => httpService.GetDataAsync(url, auth),
+                    describeResponse: bytes => System.Text.Encoding.UTF8.GetString(bytes));
+                Standard.OGC.Schema.wfs_1_0_0.WFS_CapabilitiesType caps = ser.FromBytes(capsBytes);
                 capsHelper = new CapabilitiesHelper(caps);
 
                 _gmlVersion = GML.GmlVersion.v1;
@@ -170,7 +176,12 @@ public class WfsService : IMapService, IMapServiceSupportedCrs, IMapServiceMetad
             {
                 Serializer<Standard.OGC.Schema.wfs_1_1_0.WFS_CapabilitiesType> ser = new Serializer<Standard.OGC.Schema.wfs_1_1_0.WFS_CapabilitiesType>();
                 url = AppendToUrl(url, "VERSION=1.1.0&SERVICE=WFS&REQUEST=GetCapabilities");
-                Standard.OGC.Schema.wfs_1_1_0.WFS_CapabilitiesType caps = await ser.FromUrlAsync(url, httpService, new RequestAuthorization() { Username = _authUser, Password = _authPassword, ClientCerticate = _x509certificate });
+                var auth = new RequestAuthorization() { Username = _authUser, Password = _authPassword, ClientCerticate = _x509certificate };
+                byte[] capsBytes = await requestContext.LogRequest(
+                    this.Server, this.ServiceShortname, "get_capabilities",
+                    () => httpService.GetDataAsync(url, auth),
+                    describeResponse: bytes => System.Text.Encoding.UTF8.GetString(bytes));
+                Standard.OGC.Schema.wfs_1_1_0.WFS_CapabilitiesType caps = ser.FromBytes(capsBytes);
                 capsHelper = new CapabilitiesHelper(caps);
 
                 _gmlVersion = GML.GmlVersion.v3;
@@ -204,8 +215,9 @@ public class WfsService : IMapService, IMapServiceSupportedCrs, IMapServiceMetad
                     break;
             }
             string url = AppendToUrl(_server, "VERSION=" + versionString + "&SERVICE=WFS&REQUEST=DescribeFeatureType&TYPENAME=" + typeNames);
-            //xml = await dotNETConnector.DownloadXmlAsync(url, _conn, null);
-            xml = await httpService.GetStringAsync(url, new RequestAuthorization(_authUser, _authPassword));
+            xml = await requestContext.LogRequest(
+                this.Server, this.ServiceShortname, url, "describefeaturetype",
+                (requestUrl) => httpService.GetStringAsync(requestUrl, new RequestAuthorization(_authUser, _authPassword)));
 
             DescribeFeatureHelper dfh = new DescribeFeatureHelper(xml);
 
@@ -258,14 +270,18 @@ public class WfsService : IMapService, IMapServiceSupportedCrs, IMapServiceMetad
                 {
                     string url = AppendToUrl(_server, "VERSION=1.0.0&SERVICE=WFS&REQUEST=DescribeFeatureType&TYPENAME=" + layer.ID);
 
-                    xml = await httpService.GetStringAsync(url, new RequestAuthorization(_authUser, _authPassword));
+                    xml = await requestContext.LogRequest(
+                        this.Server, this.ServiceShortname, url, "describefeaturetype",
+                        (requestUrl) => httpService.GetStringAsync(requestUrl, new RequestAuthorization(_authUser, _authPassword)));
                 }
                 else if (_version == WFS_Version.version_1_1_0)
                 {
                     string url = AppendToUrl(_server, "SERVICE=WFS");
                     string post = layer.CreateDescribeFeatureType1_1_0("text/xml; subtype=gml/3.1.1");
 
-                    xml = await httpService.PostXmlAsync(url, post, new RequestAuthorization(_authUser, _authPassword));
+                    xml = await requestContext.LogRequest(
+                        this.Server, this.ServiceShortname, post, "describefeaturetype",
+                        (requestBody) => httpService.PostXmlAsync(url, requestBody, new RequestAuthorization(_authUser, _authPassword)));
                 }
 
                 DescribeFeatureHelper dfh = new DescribeFeatureHelper(xml);

@@ -17,7 +17,7 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
-using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.GeoServices.Extensions;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.WMS;
 
@@ -204,20 +204,9 @@ class OgcWmsLayer : Layer, ILayer2
             }
 
             var httpService = requestContext.Http;
-            //string resp = await WebHelper.DownloadStringAsync(url, service._conn.GetProxy(url), null, service.X509Certificate, service.AuthUsername, service.AuthPassword);
-            string resp = await httpService.GetStringAsync(url, new RequestAuthorization() { ClientCerticate = service.X509Certificate, Username = service.AuthUsername, Password = service.AuthPassword });
-
-            //Console.WriteLine("WMS GetFeatures:");
-            //Console.WriteLine(url);
-            //Console.WriteLine(resp);
-            //Console.WriteLine("--------------");
-
-            if (requestContext.Trace && _service != null)
-            {
-                var requestLogger = requestContext.GetRequiredService<IGeoServiceRequestLogger>();
-
-                requestLogger.LogString(_service.Server, _service.Service, "GetFeatures", resp, url);
-            }
+            string resp = await requestContext.LogRequest(
+                _service.Server, _service.Service, url, "getfeatureinfo",
+                (requestUrl) => httpService.GetStringAsync(requestUrl, new RequestAuthorization() { ClientCerticate = service.X509Certificate, Username = service.AuthUsername, Password = service.AuthPassword }));
 
             string respLower = resp.ToLower();
 

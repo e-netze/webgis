@@ -234,7 +234,7 @@ internal sealed class QueryService
             string idsResponseString = await requestContext.LogRequest(
                 service.Server,
                 service.ServiceShortname,
-                requestBuilder.Build(),
+                requestBuilder,
                 "getfeatureids",
                 (requestBody) => authHandler.TryPostAsync(
                     service,
@@ -343,7 +343,7 @@ internal sealed class QueryService
         string idsResponseString = await requestContext.LogRequest(
             service.Server,
             service.ServiceShortname,
-            requestBuilder.Build(),
+            requestBuilder,
             "getfeatureids",
             (requestBody) => authHandler.TryPostAsync(
                 service,
@@ -428,7 +428,7 @@ internal sealed class QueryService
         string countResponseString = await requestContext.LogRequest(
             service.Server,
             service.ServiceShortname,
-            requestBuilder.Build(),
+            requestBuilder,
             logKey,
             (requestBody) => authHandler.TryPostAsync(
                 service,
@@ -491,7 +491,7 @@ internal sealed class QueryService
                 string featuresResponse = await requestContext.LogRequest(
                     service.Server,
                     service.ServiceShortname,
-                    requestBuilder.Build(),
+                    requestBuilder,
                     "getfeaturesbyids",
                     (requestBody) => authHandler.TryPostAsync(
                         service,

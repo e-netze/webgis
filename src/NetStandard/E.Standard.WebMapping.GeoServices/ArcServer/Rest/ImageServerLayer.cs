@@ -10,7 +10,6 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
-using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
@@ -64,12 +63,9 @@ class ImageServerLayer : RestLayer, ILayer2
 
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-        string featuresResponse = await authHandler.TryGetAsync(_service, featuresReqUrl);
-        if (requestContext.Trace)
-        {
-            requestContext.GetRequiredService<IGeoServiceRequestLogger>()
-                .LogString(_service.Service, _service._imageServiceName, "initasync-service", featuresResponse, featuresReqUrl);
-        }
+        string featuresResponse = await requestContext.LogRequest(
+            _service.Server, _service.ServiceShortname, "identify",
+            () => authHandler.TryGetAsync(_service, featuresReqUrl));
 
         var jsonRasterResponse = JSerializer.Deserialize<JsonImageServerIdentifyResponse>(featuresResponse);
 
@@ -80,7 +76,9 @@ class ImageServerLayer : RestLayer, ILayer2
             try
             {
                 string rasterAttributeTableUrl = $"{_service.ServiceUrl}/rasterAttributeTable?f=json&renderingRule={HttpUtility.UrlEncode(_service.RenderingRuleIdentify)}";
-                string rasterAttributeTableResponse = await authHandler.TryGetAsync(_service, rasterAttributeTableUrl);
+                string rasterAttributeTableResponse = await requestContext.LogRequest(
+                    _service.Server, _service.ServiceShortname, "rasteridentify_attributetable",
+                    () => authHandler.TryGetAsync(_service, rasterAttributeTableUrl));
 
                 rasterAttributeTable = JSerializer.Deserialize<JsonRasterAttributeTable>(rasterAttributeTableResponse);
             }

@@ -12,6 +12,7 @@ using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
+using E.Standard.WebMapping.GeoServices.Extensions;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 
@@ -169,7 +170,9 @@ class AnnotationLayer : RestLayer
             var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
             postBodyData.Append($"&returnCountOnly=false&returnIdsOnly=false&returnGeometry={filter.QueryGeometry}");
-            string featuresResponse = await authHandler.TryPostAsync(_service, featuresReqUrl, postBodyData.ToString());
+            string featuresResponse = await requestContext.LogRequest(
+                _service.Server, _service.ServiceShortname, postBodyData.ToString(), "getfeatures",
+                (requestBody) => authHandler.TryPostAsync(_service, featuresReqUrl, requestBody));
 
             jsonFeatureResponse = JSerializer.Deserialize<JsonFeatureResponse>(featuresResponse);
         }

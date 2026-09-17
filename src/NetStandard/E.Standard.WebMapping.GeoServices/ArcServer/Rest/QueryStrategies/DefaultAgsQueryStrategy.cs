@@ -125,7 +125,7 @@ internal sealed class DefaultAgsQueryStrategy : IAgsQueryStrategy
             string featuresResponse = await requestContext.LogRequest(
                 service.Server,
                 service.ServiceShortname,
-                requestBuilder.Build(),
+                requestBuilder,
                 "getfeatures",
                 (requestBody) => authHandler.TryPostAsync(
                     service,

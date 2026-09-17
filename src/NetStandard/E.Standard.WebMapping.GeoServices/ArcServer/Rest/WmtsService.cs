@@ -9,6 +9,7 @@ using E.Standard.WebGIS.Api.Abstractions;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
+using E.Standard.WebMapping.GeoServices.Extensions;
 using E.Standard.WebMapping.GeoServices.Tiling;
 using E.Standard.WebMapping.GeoServices.Tiling.Models;
 
@@ -94,7 +95,9 @@ public class WmtsService : BaseWmtsService, IMapServiceAuthentication
     {
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-        var responseBytes = await authHandler.TryGetRawAsync(this, url);
+        var responseBytes = await requestContext.LogRequest(
+            this.Server, this.ServiceShortname, "get_secured_data",
+            () => authHandler.TryGetRawAsync(this, url));
         return responseBytes;
     }
 
@@ -102,7 +105,9 @@ public class WmtsService : BaseWmtsService, IMapServiceAuthentication
     {
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-        string responseString = await authHandler.TryGetAsync(this, url);
+        string responseString = await requestContext.LogRequest(
+            this.Server, this.ServiceShortname, "download",
+            () => authHandler.TryGetAsync(this, url));
         return responseString;
     }
 

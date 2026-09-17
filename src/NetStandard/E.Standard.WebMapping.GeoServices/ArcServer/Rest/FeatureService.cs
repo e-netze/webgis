@@ -19,6 +19,7 @@ using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.FeatureServer;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json.Geometry;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
+using E.Standard.WebMapping.GeoServices.Extensions;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 
@@ -324,9 +325,11 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
             var authHandler = _requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
             // Feldtypen auslesen
-            string response = await authHandler.TryPostAsync(
-                        _mapServiceAuth,
-                        _mapServiceAuth.Service, "f=json");
+            string response = await _requestContext.LogRequest(
+                        _mapServiceAuth.Server, _mapServiceAuth.ServiceShortname, "f=json", "describe",
+                        (requestBody) => authHandler.TryPostAsync(
+                            _mapServiceAuth,
+                            _mapServiceAuth.Service, requestBody));
 
             _featureLayer = JSerializer.Deserialize<JsonFeatureServerLayer>(response);
 
@@ -557,7 +560,9 @@ public class FeatureService : IFeatureWorkspaceSpatialReference,
         ArgumentNullException.ThrowIfNull(_requestContext, nameof(_requestContext));
 
         var authHandler = _requestContext.GetRequiredService<AgsAuthenticationHandler>();
-        string response = await authHandler.TryPostAsync(_mapServiceAuth, _mapServiceAuth.Service + action, postData);
+        string response = await _requestContext.LogRequest(
+            _mapServiceAuth.Server, _mapServiceAuth.ServiceShortname, postData, action.ToLowerInvariant(),
+            (requestBody) => authHandler.TryPostAsync(_mapServiceAuth, _mapServiceAuth.Service + action, requestBody));
 
         var jsonResponse = JSerializer.Deserialize<JsonFeatureServerResponse>(response)!;
 

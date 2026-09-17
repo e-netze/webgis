@@ -153,7 +153,7 @@ class FeatureLayer : RestLayer,
         string featuresResponse = await requestContext.LogRequest(
             _service.Server,
             _service.ServiceShortname,
-            requestBuilder.Build(),
+            requestBuilder,
             "getfeatures",
             (requestBody) => authHandler.TryPostAsync(
                 _service,
@@ -412,9 +412,9 @@ class FeatureLayer : RestLayer,
             _service.ServiceShortname,
             attachmentReqUrl,
             "gethasattachmentsfor",
-            (requestBody) => authHandler.TryGetAsync(
+            (requestUrl) => authHandler.TryGetAsync(
                 _service,
-                attachmentReqUrl));
+                requestUrl));
 
         var attachmentResponse = JSerializer.Deserialize<JsonAttachmentResponse>(attachmentResponseString);
 
@@ -441,9 +441,9 @@ class FeatureLayer : RestLayer,
             _service.ServiceShortname,
             attachmentReqUrl,
             "getattachmentsfor",
-            (requestBody) => authHandler.TryGetAsync(
+            (requestUrl) => authHandler.TryGetAsync(
                 _service,
-                attachmentReqUrl));
+                requestUrl));
 
         var attachmentResponse = JSerializer.Deserialize<JsonAttachmentResponse>(attachmentResponseString);
 
@@ -453,7 +453,9 @@ class FeatureLayer : RestLayer,
                                     .Where(i => !String.IsNullOrEmpty(i.Url)) ?? [])
         {
             var data = attachment.ContentType.IsImageContentType()
-                       ? await authHandler.TryGetRawAsync(_service, attachment.Url)
+                       ? await requestContext.LogRequest(
+                            _service.Server, _service.ServiceShortname, "getattachmentdata",
+                            () => authHandler.TryGetRawAsync(_service, attachment.Url))
                        : Encoding.UTF8.GetBytes(attachment.Url);
 
             if (data is not null && data.Length > 0)
@@ -578,7 +580,9 @@ class FeatureLayer : RestLayer,
 
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-        string featuresResponse = await authHandler.TryPostAsync(_service, featuresReqUrl, requestBuilder.Build());
+        string featuresResponse = await requestContext.LogRequest(
+            _service.Server, _service.ServiceShortname, requestBuilder, "querydistinctvalues",
+            (requestBody) => authHandler.TryPostAsync(_service, featuresReqUrl, requestBody));
         var jsonFeatureResponse = JSerializer.Deserialize<JsonFeatureResponse>(featuresResponse);
 
         if (jsonFeatureResponse?.Features == null)

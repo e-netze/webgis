@@ -11,6 +11,7 @@ using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.GeoServices.Extensions;
 using E.Standard.WebMapping.GeoServices.OGC.Extensions;
 using E.Standard.WebMapping.GeoServices.OGC.GML;
 using E.Standard.WebMapping.GeoServices.OGC.WFS.Helper;
@@ -88,8 +89,9 @@ public class OgcWfsLayer : Layer, ILayer2
             string url = service._GF_HttpGet;
             httpService.AppendParametersToUrl(url, param);
 
-            //response = await WebHelper.DownloadStringAsync(url, service._conn.GetProxy(url),null, null, service.AuthUsername, service.AuthPassword);
-            response = await httpService.GetStringAsync(url, new RequestAuthorization() { Username = service.AuthUsername, Password = service.AuthPassword });
+            response = await requestContext.LogRequest(
+                service.Server, service.ServiceShortname, param, "getfeature",
+                (requestParams) => httpService.GetStringAsync(url, new RequestAuthorization() { Username = service.AuthUsername, Password = service.AuthPassword }));
         }
         else if (!String.IsNullOrEmpty(service._GF_HttpPost))
         {
@@ -123,9 +125,11 @@ public class OgcWfsLayer : Layer, ILayer2
             }
             //response = await WebHelper.HttpSendRequestAsync(url, "POST",
             //    Encoding.UTF8.GetBytes(wfsFilter), service._conn.GetProxy(url), service.AuthUsername, service.AuthPassword, Encoding.UTF8);
-            response = await httpService.PostXmlAsync(url,
-                                                      wfsFilter,
-                                                      new RequestAuthorization(service.AuthUsername, service.AuthPassword));
+            response = await requestContext.LogRequest(
+                service.Server, service.ServiceShortname, wfsFilter, "getfeature",
+                (requestBody) => httpService.PostXmlAsync(url,
+                                                          requestBody,
+                                                          new RequestAuthorization(service.AuthUsername, service.AuthPassword)));
         }
 
         try

@@ -60,6 +60,16 @@ public class Serializer<T>
     {
         var bytes = await http.GetDataAsync(url, authorization);
 
+        return FromBytes(bytes);
+    }
+
+    /// <summary>
+    /// Deserializes a previously downloaded response. Split out of <see cref="FromUrlAsync"/> so
+    /// callers can fetch the raw bytes themselves (e.g. to pass them through request/response
+    /// audit logging) before handing them to the deserializer.
+    /// </summary>
+    public T FromBytes(byte[] bytes)
+    {
         #region Xml Encoding
 
         Encoding encoding = Encoding.UTF8;

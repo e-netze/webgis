@@ -11,10 +11,11 @@ using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.DynamicLayers;
+using E.Standard.WebMapping.GeoServices.Extensions;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.RequestBuilders;
 
-public class BaseRequestBuilder<T> where T : BaseRequestBuilder<T>
+public class BaseRequestBuilder<T> : IRequestBuilder where T : BaseRequestBuilder<T>
 {
     private readonly StringBuilder _builder = new StringBuilder();
     protected T _self = default!;

@@ -207,32 +207,30 @@ public class MapService : IMapService2,
         {
             try
             {
-                string jsonStringAnswer = await authHandler.TryPostAsync(
-                                this,
-                                this.Service,
-                                ServiceInfoRequestBuilder.DefaultRequest);
-
-                if (requestContext.Trace)
-                {
-                    requestContext.GetRequiredService<IGeoServiceRequestLogger>()
-                        .LogString(this.Service, _mapServiceName, "initasync-service", jsonStringAnswer, this.Server);
-                }
+                string jsonStringAnswer = await requestContext.LogRequest(
+                                this.Server,
+                                this.ServiceShortname,
+                                ServiceInfoRequestBuilder.DefaultRequest,
+                                "initasync-service",
+                                (requestBody) => authHandler.TryPostAsync(
+                                    this,
+                                    this.Service,
+                                    requestBody));
 
                 JsonService jsonService = JSerializer.Deserialize<JsonService>(jsonStringAnswer);
 
                 this.ServiceDescription = jsonService.ServiceDescription.OrTake(jsonService.Description).ToMarkdownString();
                 this.CopyrightText = jsonService.CopyrightText.ToMarkdownString(); ;
 
-                jsonStringAnswer = await authHandler.TryPostAsync(
-                                    this,
-                                    $"{this.Service}/layers",
-                                    ServiceLayersRequestBuilder.DefaultRequest);
-
-                if (requestContext.Trace)
-                {
-                    requestContext.GetRequiredService<IGeoServiceRequestLogger>()
-                        .LogString($"{this.Service}/layers", _mapServiceName, "initasync-layers", jsonStringAnswer, $"{this.Service}/layers");
-                }
+                jsonStringAnswer = await requestContext.LogRequest(
+                                    this.Server,
+                                    this.ServiceShortname,
+                                    ServiceLayersRequestBuilder.DefaultRequest,
+                                    "initasync-layers",
+                                    (requestBody) => authHandler.TryPostAsync(
+                                        this,
+                                        $"{this.Service}/layers",
+                                        requestBody));
 
                 JsonLayers jsonLayers = JSerializer.Deserialize<JsonLayers>(jsonStringAnswer); // equiv with map description
 
@@ -674,7 +672,12 @@ public class MapService : IMapService2,
 
                     #region Image Response
 
-                    byte[] result = await authHandler.TryPostRawAsync(this, requestUrl, requestBuilder.Build());
+                    byte[] result = await requestContext.LogRequest(
+                        this.Service,
+                        this.ServiceShortname,
+                        requestBuilder,
+                        "export_map_image",
+                        (requestBody) => authHandler.TryPostRawAsync(this, requestUrl, requestBody));
 
                     if (result == null || result.Length == 0)
                     {
@@ -716,7 +719,7 @@ public class MapService : IMapService2,
                     string result = await requestContext.LogRequest(
                         this.Service,
                         this.ServiceShortname,
-                        requestBuilder.Build(),
+                        requestBuilder,
                         "export_map",
                         (requestBody) => authHandler.TryPostAsync(
                             this,
@@ -931,7 +934,12 @@ public class MapService : IMapService2,
 
                     requestBuilder.WithFormat("image");
 
-                    byte[] result = await authHandler.TryPostRawAsync(this, dynamicLayerRequestUrl, requestBuilder.Build());
+                    byte[] result = await requestContext.LogRequest(
+                        this.Service,
+                        this.ServiceShortname,
+                        requestBuilder,
+                        "export_map_dynamiclayers_image",
+                        (requestBody) => authHandler.TryPostRawAsync(this, dynamicLayerRequestUrl, requestBody));
 
                     if (result == null || result.Length == 0)
                     {
@@ -979,7 +987,12 @@ public class MapService : IMapService2,
 
                     requestBuilder.WithFormat("json");
 
-                    string dynamicLayerResponse = await authHandler.TryPostAsync(this, dynamicLayerRequestUrl, requestBuilder.Build());
+                    string dynamicLayerResponse = await requestContext.LogRequest(
+                        this.Service,
+                        this.ServiceShortname,
+                        requestBuilder,
+                        "export_map_dynamiclayers",
+                        (requestBody) => authHandler.TryPostAsync(this, dynamicLayerRequestUrl, requestBody));
                     var jsonResult = JSerializer.Deserialize<JsonExportResponse>(dynamicLayerResponse);
 
                     var extent = jsonResult?.Extent != null ? new Envelope(jsonResult.Extent.Xmin, jsonResult.Extent.Ymin, jsonResult.Extent.Xmax, jsonResult.Extent.Ymax) : null;
@@ -1430,10 +1443,15 @@ public class MapService : IMapService2,
                 using (var pLogger = requestContext.GetRequiredService<IGeoServicePerformanceLogger>().StartGetLegend(this.Map, this.Server, _mapServiceName))
                 {
                     string dynamicLayerRequestUrl = $"{this.Service}/legend";
-                    string jsonLegendAnswer = await authHandler.TryPostAsync(
-                            this,
-                            dynamicLayerRequestUrl,
-                            LegendRequestBuilder.DefaultRequest);
+                    string jsonLegendAnswer = await requestContext.LogRequest(
+                            this.Service,
+                            this.ServiceShortname,
+                            LegendRequestBuilder.DefaultRequest,
+                            "legend",
+                            (requestBody) => authHandler.TryPostAsync(
+                                this,
+                                dynamicLayerRequestUrl,
+                                requestBody));
 
                     return await this.RenderRestLegendResponse(requestContext, jsonLegendAnswer, optimize: true);
                 }
@@ -1475,7 +1493,7 @@ public class MapService : IMapService2,
             string jsonQueryLegendAnswer = await requestContext.LogRequest(
                     this.Service,
                     this.ServiceShortname,
-                    requestBuilder.Build(),
+                    requestBuilder,
                     "query_legend",
                     (requestBody) => authHandler.TryPostAsync(
                         this,
@@ -1560,10 +1578,15 @@ public class MapService : IMapService2,
 
             var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-            string jsonAnswer = await authHandler.TryPostAsync(
-                        this,
-                        dynamicLayerRequestUrl,
-                        LegendRequestBuilder.DefaultRequest);
+            string jsonAnswer = await requestContext.LogRequest(
+                        this.Service,
+                        this.ServiceShortname,
+                        LegendRequestBuilder.DefaultRequest,
+                        "legend_layeritems",
+                        (requestBody) => authHandler.TryPostAsync(
+                            this,
+                            dynamicLayerRequestUrl,
+                            requestBody));
             var legendResponse = JSerializer.Deserialize<Legend.LegendResponse>(jsonAnswer);
 
             var layer = legendResponse.Layers.Where(m => m.LayerId.ToString() == layerId).FirstOrDefault();
@@ -1729,7 +1752,9 @@ public class MapService : IMapService2,
     {
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
 
-        return authHandler.TryGetRawAsync(this, attachmentUri);
+        return requestContext.LogRequest(
+            this.Service, this.ServiceShortname, "getserviceattachmentdata",
+            () => authHandler.TryGetRawAsync(this, attachmentUri));
     }
 
     #endregion

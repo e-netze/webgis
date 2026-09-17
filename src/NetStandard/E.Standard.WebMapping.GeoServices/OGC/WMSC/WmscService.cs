@@ -9,6 +9,7 @@ using E.Standard.WebGIS.CMS;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.GeoServices.Extensions;
 using E.Standard.WebMapping.GeoServices.Tiling;
 
 namespace E.Standard.WebMapping.GeoServices.OGC.WMSC;
@@ -45,8 +46,9 @@ public class WmscService : TileService
             this.Map = map;
             var httpService = requestContext.Http;
 
-            //string xml = await WebHelper.DownloadStringAsync(_url + "&REQUEST=DescripeTiles&VERSION=1.1.1&SERVICE=WMS", _proxy);
-            string xml = await httpService.GetStringAsync(_url + "&REQUEST=DescripeTiles&VERSION=1.1.1&SERVICE=WMS");
+            string xml = await requestContext.LogRequest(
+                this.Server, this.ServiceShortname, "describe_tiles",
+                () => httpService.GetStringAsync(_url + "&REQUEST=DescripeTiles&VERSION=1.1.1&SERVICE=WMS"));
 
             Serializer<WMS_DescribeTilesResponse> ser = new Serializer<WMS_DescribeTilesResponse>();
             WMS_DescribeTilesResponse response = ser.FromString(xml, Encoding.UTF8);
