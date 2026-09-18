@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Burger menu (app menu): custom items (e.g. Login/Logout buttons) can now be added via ``custom.js``
   using ``webgis.custom.appMenuItems.add({ name, command, tooltip, image, command_target })``
   [Issue #505](https://github.com/e-netze/webgis-community/issues/505)
+  [Docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/appmenuitems.html)
 
 ### Fixed
 
