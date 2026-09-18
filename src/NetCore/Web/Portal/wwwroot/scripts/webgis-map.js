@@ -1217,6 +1217,28 @@ webgis.mapInitializer = (function (m) {
                     });
                 });
 
+            if (webgis.custom.appMenuItems) {
+                var customAppMenuItems = webgis.custom.appMenuItems.toArray();
+                for (var i in customAppMenuItems) {
+                    var appMenuItem = customAppMenuItems[i];
+
+                    var $li = $("<li>")
+                        .text(appMenuItem.name)
+                        .attr('title', appMenuItem.tooltip)
+                        .addClass('custom')
+                        .appendTo($ul);
+
+                    if (appMenuItem.image) {
+                        $li.css("backgroundImage", "url(" + webgis.css.imgResource(appMenuItem.image, "tools") + ")");
+                    }
+
+                    $li.data('appMenuItem', appMenuItem)
+                        .click(function () {
+                            webgis.custom.appMenuItems.executeCommand($(this).data('appMenuItem'), map);
+                        });
+                }
+            }
+
             $ul.children('li')
                 .click(function () {
                     map.events.fire('onhideappmenu', $target);

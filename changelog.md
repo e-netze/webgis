@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Metadata button: Group Metadata buttons ony shown when ``webgis.usability.show_metadata_i_button_toc`` is true
   [Issue #506](https://github.com/e-netze/webgis-community/issues/506)
 
+- Burger menu (app menu): custom items (e.g. Login/Logout buttons) can now be added via ``custom.js``
+  using ``webgis.custom.appMenuItems.add({ name, command, tooltip, image, command_target })``
+  [Issue #505](https://github.com/e-netze/webgis-community/issues/505)
+
 ### Fixed
 
 ## 8.26.3701
