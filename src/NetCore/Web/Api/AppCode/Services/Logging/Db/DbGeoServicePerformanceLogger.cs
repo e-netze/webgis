@@ -12,7 +12,7 @@ namespace Api.Core.AppCode.Services.Logging.Db;
 
 /// <summary>
 /// Writes GeoService performance entries into a <c>webgis_performance</c> table (SQL Server/
-/// PostgreSQL/SQLite - selected by the connection string's DB-engine prefix, see
+/// PostgreSQL/SQLite/Oracle - selected by the connection string's DB-engine prefix, see
 /// <see cref="DbLoggingConnectionStrings"/>). The table is created automatically on first use
 /// (<see cref="DbLoggingSchema"/>). Entries are buffered in memory and written in batches (one
 /// connection/transaction per batch, not one per request) - see
@@ -57,7 +57,7 @@ public sealed class DbGeoServicePerformanceLogger : IGeoServicePerformanceLogger
         command.CommandText =
             $"insert into {DbLoggingSchema.PerformanceTableName} " +
             "(timestamp_utc, server, service, command, map, success, duration_ms, message, " +
-            "session_id, map_request_id, client_ip, \"user\", center_x, center_y, scale) values " +
+            $"session_id, map_request_id, client_ip, {DbLoggingSchema.QuoteIdentifier(factory.DatabaseType, "user")}, center_x, center_y, scale) values " +
             $"({factory.ParaName("timestamp")}, {factory.ParaName("server")}, {factory.ParaName("service")}, " +
             $"{factory.ParaName("command")}, {factory.ParaName("map")}, {factory.ParaName("success")}, " +
             $"{factory.ParaName("duration")}, {factory.ParaName("message")}, " +

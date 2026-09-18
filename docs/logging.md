@@ -4,8 +4,8 @@ WebGIS has two, mostly independent logging layers:
 
 1. **GeoService performance/exception logging** — controlled by the `Api:logging-type`
    setting in `_api.config`, a comma-separated list of one or more of `files`, `microsoft`,
-   `sqlserver`, `postgres`, `sqlite` (e.g. `"files,microsoft"` or `"files,sqlserver"`). Every
-   listed backend is active at the same time - a `GetMap`/`GetSelection`/`GetLegend`/
+   `sqlserver`, `postgres`, `sqlite`, `oracle` (e.g. `"files,microsoft"` or `"files,sqlserver"`).
+   Every listed backend is active at the same time - a `GetMap`/`GetSelection`/`GetLegend`/
    `GetPrintImage`/print-job request is timed and reported to *all* of them via
    `GeoServicePerformanceLogService` (and exceptions likewise via `ExceptionLogService`),
    both a thin fan-out over the one or more `IGeoServicePerformanceLogger`/`IExceptionLogger`
@@ -14,10 +14,11 @@ WebGIS has two, mostly independent logging layers:
      `webgis_exceptions.csv`).
    - `microsoft` routes the same events through `Microsoft.Extensions.Logging` (`ILogger`),
      which is the entry point into everything described below.
-   - `sqlserver` / `postgres` / `sqlite` write directly into `webgis_performance` /
+   - `sqlserver` / `postgres` / `sqlite` / `oracle` write directly into `webgis_performance` /
      `webgis_exceptions` tables in a relational database, configured via the
      `logging-sqlserver-connectionstring` / `logging-postgres-connectionstring` /
-     `logging-sqlite-connectionstring` `_api.config` keys. The tables are created automatically on first use - no manual
+     `logging-sqlite-connectionstring` / `logging-oracle-connectionstring` `_api.config` keys.
+     The tables are created automatically on first use - no manual
      migration step needed. (These are plain, purpose-built tables for GeoService
      performance/exception data specifically - not to be confused with the general-purpose
      Serilog DB sinks described further below, which log *application* events into a `Logs`
@@ -64,7 +65,7 @@ to all three (adjust the file names accordingly, e.g. `Cms/appsettings.json`).
 the GeoService performance/exception logging layer described above:
 
 ```xml
-<!-- Comma-separated list: files, microsoft, sqlserver, postgres, sqlite (any combination) -->
+<!-- Comma-separated list: files, microsoft, sqlserver, postgres, sqlite, oracle (any combination) -->
 <add key="logging-type" value="files,microsoft" />
 
 <add key="logging-log-performance" value="true" />
@@ -77,12 +78,14 @@ the GeoService performance/exception logging layer described above:
 <!-- only needed for the DB-backed types below -->
 <add key="logging-sqlserver-connectionstring" value="Server=sql-host;Database=webgis;User Id=webgis;Password=...;" />
 <add key="logging-postgres-connectionstring" value="Host=pg-host;Database=webgis;Username=webgis;Password=...;" />
+<add key="logging-oracle-connectionstring" value="Data Source=ora-host:1521/orclpdb;User Id=webgis;Password=...;" />
 <add key="logging-sqlite-connectionstring" value="Data Source=/path/to/logs/webgis.db" />
 ```
 
 - Each connection string is a **raw, provider-native** ADO.NET connection string (SQL Server:
   `Microsoft.Data.SqlClient` syntax; PostgreSQL: `Npgsql` syntax; SQLite:
-  `System.Data.SQLite` syntax) - WebGIS internally prefixes it (`mssql:`/`postgres:`/`sqlite:`)
+  `System.Data.SQLite` syntax; Oracle: `Oracle.ManagedDataAccess` syntax) - WebGIS internally
+  prefixes it (`mssql:`/`postgres:`/`sqlite:`/`oracle:`)
   before handing it to `E.Standard.DbConnector`, which dispatches to the matching ADO.NET
   provider.
 - `webgis_performance`/`webgis_exceptions` are created automatically (`CREATE TABLE IF NOT
@@ -91,7 +94,8 @@ the GeoService performance/exception logging layer described above:
   string key is missing/empty, that type is silently skipped (no table is created, nothing is
   logged for it).
 - Under high concurrent request volume, opening a new DB connection for every single logged
-  request would itself become a bottleneck. Instead, `sqlserver`/`postgres`/`sqlite` entries are
+  request would itself become a bottleneck. Instead, `sqlserver`/`postgres`/`sqlite`/`oracle`
+  entries are
   buffered in memory and written in batches: a batch is flushed (one connection, one
   transaction, one commit for the whole batch) once 200 entries have accumulated, every 5
   seconds in the background regardless of count (so entries do not sit unwritten for long under
@@ -103,8 +107,10 @@ the GeoService performance/exception logging layer described above:
   `duration_ms` for `webgis_performance`, `exception_type`/`message`/`stack_trace` for
   `webgis_exceptions`), both tables also carry the same extra, per-request columns the `files`
   CSV log already has: `session_id`, `map_request_id`, `client_ip`, `user`, `center_x`,
-  `center_y`, `scale`. Since `user` is a reserved word in SQL Server/PostgreSQL, it is always
-  quoted (`"user"`) in generated SQL - quote it the same way if you query these tables directly.
+  `center_y`, `scale`. Since `user` is a reserved word in SQL Server/PostgreSQL/Oracle, it is
+  always quoted in generated SQL - quote it the same way if you query these tables directly
+  (`"user"` for SQL Server/PostgreSQL/SQLite; `"USER"` for Oracle, which folds every other,
+  unquoted column/table name to uppercase - so e.g. `SELECT "USER" FROM webgis_performance`).
   How that column is populated is controlled by `logging-username-mode` (applies uniformly to
   *all* `IGeoServicePerformanceLogger`/`IExceptionLogger` backends, including `files`/CSV and
   `microsoft`, not just the DB-backed ones):
@@ -120,6 +126,10 @@ the GeoService performance/exception logging layer described above:
   includes the rename from the older `username_hash` column: it is **not** renamed in place: a
   new `user` column is added alongside it, and the old `username_hash` column is left in the
   table unused (drop it manually if desired).
+- Oracle has no auto-increment column syntax compatible with every supported version, so its
+  `id` primary key is instead filled via a `BEFORE INSERT` trigger reading from a dedicated
+  sequence (`webgis_performance_seq0`/`webgis_exceptions_seq0`) - the same pattern already used
+  elsewhere in WebGIS for Oracle "serial" columns, created automatically alongside the table.
 - `logging-log-performance`/`logging-log-exceptions` still individually gate performance vs.
   exception logging across *all* configured types (i.e. they are not per-backend).
 

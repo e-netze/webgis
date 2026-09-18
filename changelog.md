@@ -176,13 +176,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - ``Api:logging-type`` (GeoService performance/exception logging) is now a comma-separated list
   instead of a single value, so multiple backends run side by side, e.g. ``"files,microsoft"``
   logs both ``webgis_performance.csv``/``webgis_exceptions.csv`` *and* through
-  ``Microsoft.Extensions.Logging`` at the same time (previously mutually exclusive). Two new
+  ``Microsoft.Extensions.Logging`` at the same time (previously mutually exclusive). Three new
   types write into ``webgis_performance``/``webgis_exceptions`` **database** tables, auto-created
-  on first use, no manual schema step: ``sqlserver`` and ``postgres``, plus ``sqlite`` for a
+  on first use, no manual schema step: ``sqlserver``, ``postgres`` and ``oracle``, plus
+  ``sqlite`` for a
   dependency-free local file DB - configured via the new
   ``logging-sqlserver-connectionstring``/``logging-postgres-connectionstring``/
+  ``logging-oracle-connectionstring``/
   ``logging-sqlite-connectionstring``
-  ``_api.config`` keys. Entries for these three types are buffered in memory and written to the
+  ``_api.config`` keys. Entries for these four types are buffered in memory and written to the
   database in batches (one connection/transaction per batch of up to 200 entries, flushed at
   least every 5 seconds, or immediately via the existing ``Instance/Logging?flush=true``
   endpoint) rather than opening a new DB connection per request, so logging itself does not
@@ -194,7 +196,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   backends are active.
   [Issue #461](https://github.com/e-netze/webgis-community/issues/461)
 
-- The ``sqlserver``/``postgres``/``sqlite`` ``webgis_performance``/``webgis_exceptions`` tables
+- The ``sqlserver``/``postgres``/``sqlite``/``oracle`` ``webgis_performance``/``webgis_exceptions`` tables
   now also carry the same extra per-request columns the ``files`` CSV log already has:
   ``session_id``, ``map_request_id``, ``client_ip``, ``user``, ``center_x``, ``center_y``,
   ``scale``. How the ``user`` column/field is populated - for *all*
@@ -202,12 +204,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   is controlled by the new ``logging-username-mode`` ``_api.config`` key: ``plaintext``
   (default), ``hash`` (one-way SHA-256 hash, so log rows can still be correlated to "the same
   user" without persisting personally identifiable information), or ``none`` (username never
-  recorded). Since ``user`` is a reserved word in SQL Server/PostgreSQL, it is always quoted
-  (``"user"``) in generated SQL. Tables created by an earlier version of this feature get the
+  recorded). Since ``user`` is a reserved word in SQL Server/PostgreSQL/Oracle, it is always
+  quoted (``"user"``, or ``"USER"`` for Oracle, which folds unquoted identifiers to uppercase) in
+  generated SQL. Tables created by an earlier version of this feature get the
   missing columns added automatically (``ALTER TABLE ... ADD ...``) the next time the app
   starts - no manual migration needed.
   [Issue #461](https://github.com/e-netze/webgis-community/issues/461)
 
+- Added ``oracle`` as a fourth database backend for ``Api:logging-type``, on par with
+  ``sqlserver``/``postgres``/``sqlite`` (``logging-oracle-connectionstring`` ``_api.config``
+  key). Since Oracle has no auto-increment column syntax compatible with every supported
+  version, the ``id`` primary key of ``webgis_performance``/``webgis_exceptions`` is instead
+  filled via a ``BEFORE INSERT`` trigger reading from a dedicated sequence, auto-created
+  alongside the table - the same pattern already used elsewhere in WebGIS for Oracle "serial"
+  columns.
+  [Issue #461](https://github.com/e-netze/webgis-community/issues/461)
 
 
 - ``MicrosoftWarningsLogger``/``MicrosoftExceptionLogger`` logged the ``service`` value twice

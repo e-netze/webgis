@@ -249,6 +249,7 @@ static public class ServiceCollectionExtensions
                 case "sqlserver":
                 case "postgres":
                 case "sqlite":
+                case "oracle":
                     // Tables are created automatically on first use - see DbLoggingSchema.
                     var connectionString = DbLoggingConnectionStrings.ForLoggingType(loggingType, configuration);
                     if (String.IsNullOrEmpty(connectionString))

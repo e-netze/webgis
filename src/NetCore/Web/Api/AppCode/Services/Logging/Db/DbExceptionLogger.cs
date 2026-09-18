@@ -12,7 +12,7 @@ namespace Api.Core.AppCode.Services.Logging.Db;
 
 /// <summary>
 /// Writes exceptions/error strings into a <c>webgis_exceptions</c> table (SQL Server/PostgreSQL/
-/// SQLite - selected by the connection string's DB-engine prefix, see
+/// SQLite/Oracle - selected by the connection string's DB-engine prefix, see
 /// <see cref="DbLoggingConnectionStrings"/>). The table is created automatically on first use
 /// (<see cref="DbLoggingSchema"/>). Entries are buffered in memory and written in batches (one
 /// connection/transaction per batch, not one per exception) - see
@@ -61,7 +61,7 @@ public sealed class DbExceptionLogger : IExceptionLogger, IDisposable
         command.Transaction = transaction;
         command.CommandText =
             $"insert into {DbLoggingSchema.ExceptionsTableName} " +
-            "(timestamp_utc, server, service, command, map, \"user\", exception_type, message, stack_trace, " +
+            $"(timestamp_utc, server, service, command, map, {DbLoggingSchema.QuoteIdentifier(factory.DatabaseType, "user")}, exception_type, message, stack_trace, " +
             "session_id, map_request_id, client_ip, center_x, center_y, scale) values " +
             $"({factory.ParaName("timestamp")}, {factory.ParaName("server")}, {factory.ParaName("service")}, " +
             $"{factory.ParaName("command")}, {factory.ParaName("map")}, {factory.ParaName("user")}, " +

@@ -86,7 +86,7 @@ public class ApiConfigKeys
     public const string LoggingLogInsightsAppName = ConfigurationSectionName + ":logging-log-insights-appname";
     public const string LoggingLogServiceRequests = ConfigurationSectionName + ":logging-log-service-requests";
 
-    // DB-backed logging.type entries ("sqlserver"/"postgres"/"sqlite") - write the
+    // DB-backed logging.type entries ("sqlserver"/"postgres"/"sqlite"/"oracle") - write the
     // webgis_performance/webgis_exceptions tables directly into a relational database instead of
     // (or in addition to) "files"/"microsoft". Tables are created automatically on first use.
     // Named "logging-*-connectionstring" (not just "sqlserver_connectionstring") because other
@@ -95,6 +95,7 @@ public class ApiConfigKeys
     public const string LoggingSqlServerConnectionString = ConfigurationSectionName + ":logging-sqlserver-connectionstring";
     public const string LoggingPostgresConnectionString = ConfigurationSectionName + ":logging-postgres-connectionstring";
     public const string LoggingSqliteConnectionString = ConfigurationSectionName + ":logging-sqlite-connectionstring";
+    public const string LoggingOracleConnectionString = ConfigurationSectionName + ":logging-oracle-connectionstring";
 
     // Controls how (or whether) usernames are written into performance/exception log entries,
     // across every configured logging backend: "none", "plaintext" (default, backward-compatible)
