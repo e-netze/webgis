@@ -894,13 +894,33 @@
                                 let $metadataList = $("<ul>")
                                     .css({ listStyle: "none", margin: 0, padding: "5px 0px" })
                                     .appendTo($metadata)
+                                let usedGroupMetaContainerNames = [];
                                 for (let p = 0; p < service.presentations.length; p++) {
                                     let presentation = service.presentations[p];
+                                    console.log(presentation);
                                     if (!presentation.items)
                                         continue;
                                     for (let i = 0; i < presentation.items.length; i++) {
                                         //console.log(presentation, presentation.items[i]);
                                         let prop = presentation.items[i];
+                                        if (prop.group_metadata && usedGroupMetaContainerNames[prop.container] !== true) {
+                                            usedGroupMetaContainerNames[prop.container] = true;
+                                            let $group_metadata_item = $("<li>")
+                                                .css({ padding: "4px 4px 4px 26px", cursor: "pointer", position: "relative", fontWeight:600 })
+                                                .appendTo($metadataList)
+                                                .data('metadata', prop.group_metadata)
+                                                .data('metadata_target', prop.group_metadata_target)
+                                                .data('metadata_dialog_width', prop.group_metadata_dialog_width)
+                                                .data('metadata_dialog_height', prop.group_metadata_dialog_height)
+                                                .attr('title', prop.group_metadata_title)
+                                                .text(prop.container)
+                                                .click(function (event) {
+                                                    event.stopPropagation();
+                                                    _showMetadataLink($(this));
+                                                });
+                                            $("<span style='position:absolute;left:5px' class='webgis-api-icon webgis-api-icon-info'></span>")
+                                                .prependTo($group_metadata_item);
+                                        }
                                         if (prop.metadata) {
                                             let $metadata_item = $("<li>")
                                                 .css({ padding: "4px 4px 4px 26px", cursor: "pointer", position: "relative" })
@@ -1433,7 +1453,7 @@
                     webgis.usability.show_metadata_i_button_toc &&
                     prop.metadata_button_style == 'i_button';
 
-                if (prop.group_metadata && $group_li != null
+                if (prop.group_metadata && $group_li != null && webgis.usability.show_metadata_i_button_toc
                     && $group_li.find('.webgis-api-icon.webgis-api-icon-info').length === 0) {
                     $("<span style='position:absolute;left:5px;' class='webgis-api-icon webgis-api-icon-info'></span>")
                         .prependTo($group_li.children('div'))

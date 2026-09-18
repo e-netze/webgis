@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   when scanning for warnings before a deploy. Only warnings belonging to services included in the
   list (or all services, if the list is empty/unset) are reported/block the deploy.
 
+- Metadata button: Group Metadata buttons ony shown when ``webgis.usability.show_metadata_i_button_toc`` is true
+  [Issue #506](https://github.com/e-netze/webgis-community/issues/506)
+
 ### Fixed
 
 ## 8.26.3701
