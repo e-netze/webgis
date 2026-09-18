@@ -33,6 +33,40 @@ webgis.custom = new function () {
             return _tools;
         };
     };
+    this.appMenuItems = new function () {
+        var _items = [];
+        this.add = function (item) {
+            var appMenuItem = {
+                id: item.id ? 'webgis.appmenuitem.custom.' + item.id : 'customappmenuitem_' + webgis.guid(),
+                name: item.name || webgis.l10n.get("tool"),
+                tooltip: item.tooltip || item.name || '',
+                image: item.image || '',
+                command: item.command || '',
+                command_target: item.command_target
+            };
+
+            _items.push(appMenuItem);
+        };
+        this.toArray = function () {
+            return _items;
+        };
+        this.executeCommand = function (item, map) {
+            var command = item.command;
+
+            if (item.command_target === 'self') {
+                document.location = command;
+            }
+            else if (item.command_target === 'dialog') {
+                webgis.iFrameDialog(command, item.name);
+            }
+            else if (typeof item.command_target === 'function') {
+                item.command_target({ command: command, map: map });
+            }
+            else {
+                window.open(command);
+            }
+        };
+    };
 };
 
 webgis.customEvents = {
