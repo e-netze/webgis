@@ -2444,6 +2444,7 @@
                         } else if (typeof item === 'string') {
                             $(this).typeahead('val', item);
                         }
+                        $(this).trigger('autocomplete-selected');
                     },
                     'typeahead:open': function (e) {
                         webgis._autocompleteFitMenu(this);
@@ -2498,7 +2499,7 @@
                             var $e = $(e);
 
                             if (query === '~') {
-                                console.log('dummy request');
+                                //console.log('dummy request');
                                 return;
                             }
 

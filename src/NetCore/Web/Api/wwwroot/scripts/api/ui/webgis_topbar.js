@@ -236,6 +236,20 @@
         $mask.empty();
         return $mask;
     };
+
+    let _getDependentAutocompletes = function($input) {
+        const $form = $input.closest('form'),
+            name = $input.attr('name');
+
+        return $form.find('.webgis-autocomplete').filter(function () {
+            const $e = $(this),
+                depends_on = $e.data('depends_on');
+
+            return depends_on &&
+                $e.attr('name') !== name &&
+                $.inArray(name, depends_on) >= 0;
+        });
+    }
     
     let buildMask = function (path, query, parent) {
         let $mask = emptyMask(parent);
@@ -280,29 +294,20 @@
                 $input.attr('placeholder', item.examples);
             }
 
-            $input.change(function () {
-                let $input = $(this),
-                    $form = $input.closest('form'),
-                    name = $input.attr('name');
+            $input
+                .on('change input autocomplete-selected', function () {
+                    // beim Verlassen/Bestätigen: Autocomplete der abhängigen Felder neu anstoßen
+                    _getDependentAutocompletes($(this)).each(function () {
+                        const $e = $(this);
 
-                //console.log('changed', $input.val(), $form, $form.find('.webgis-autocomplete').length);
-                $form.find('.webgis-autocomplete').each(function (i, e) {
-                    var $e = $(e),
-                        depends_on = $e.data('depends_on');
-
-                    //console.log('depends_on', depends_on);
-                    if (depends_on && $e.attr('name') !== name) {
-                        if ($.inArray(name, depends_on) >= 0) {
-                            if ($e.val() == '') {  // if empty, change value to force a refresh
-                                $e.val('~');       // this is a dummy request => will not triggered to server (see webgis.js line ~ 2078)
-                                webgis._triggerAutocomplete($e);
-                            }
-                            $e.val('');
+                        if ($e.val() == '') {  // if empty, change value to force a refresh of the list items...
+                            $e.val('~');       // dummy request => will not be triggered to server (see webgis.js line ~2500)
                             webgis._triggerAutocomplete($e);
                         }
-                    }
+                        $e.val('');
+                        webgis._triggerAutocomplete($e);
+                    });
                 });
-            });
         }
         $("<br/><br/><div><div style='display:inline;margin-right:20px' class='webgis-detail-search-hourglass'></div><button type='submit' class='webgis-button webgis-detail-search-button'>" + webgis.l10n.get("search") + "</button></div>")
             .appendTo($form);

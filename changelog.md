@@ -241,6 +241,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- compamy default.css will be loaded in Apps
+  [Issue #508](https://github.com/e-netze/webgis-community/issues/508)
+
+- Detailsearch: reset dependent autocomplete values in ``input`` event
+  [Issue #507](https://github.com/e-netze/webgis-community/issues/507)
+
 ## 8.26.3701
 
 ### Added
