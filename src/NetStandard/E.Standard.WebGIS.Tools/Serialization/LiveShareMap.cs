@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -21,7 +22,9 @@ using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 
-using Net.Codecrete.QrCodeGenerator;
+using Newtonsoft.Json;
+
+using QRCoder;
 
 namespace E.Standard.WebGIS.Tools.Serialization;
 
@@ -291,7 +294,7 @@ public class LiveShareMap : IApiClientToolLocalizable<LiveShareMap>,
                 var responseString = await response.Content.ReadAsStringAsync();
                 var group = JSerializer.Deserialize<HubSessionModel>(await response.Content.ReadAsStringAsync());
 
-                var groupId = group.simpleGroupId.OrTake(group.groupId);
+                var groupId = group.SimpleGroupId.OrTake(group.GroupId);
 
                 return new ApiEventResponse()
                 {
@@ -503,9 +506,10 @@ public class LiveShareMap : IApiClientToolLocalizable<LiveShareMap>,
 
         #region Generate QR Code
 
-        var qr = QrCode.EncodeText(url, QrCode.Ecc.High);
-        string svgText = qr.ToSvgString(4);
-        string qrCodeImageAsBase64 = "data:image/svg+xml;base64," + Convert.ToBase64String(Encoding.UTF8.GetBytes(svgText));
+        using var qrCodeData = QRCodeGenerator.GenerateQrCode(url, QRCodeGenerator.ECCLevel.Q);
+        using var svgRenderer = new SvgQRCode(qrCodeData);
+        string svgText = svgRenderer.GetGraphic();
+        string qrCodeImageAsBase64 = $"data:image/svg+xml;base64,{Convert.ToBase64String(Encoding.UTF8.GetBytes(svgText))}";
 
         #endregion
 
@@ -574,10 +578,21 @@ public class LiveShareMap : IApiClientToolLocalizable<LiveShareMap>,
 
     private class HubSessionModel
     {
-        public string groupId { get; set; }
-        public string groupOwnerPassword { get; set; }
-        public string groupClientPassword { get; set; }
-        public string simpleGroupId { get; set; }
+        [JsonProperty("groupId")]
+        [JsonPropertyName("groupId")]
+        public string GroupId { get; set; }
+
+        [JsonProperty("groupOwnerPassword")]
+        [JsonPropertyName("groupOwnerPassword")]
+        public string GroupOwnerPassword { get; set; }
+
+        [JsonProperty("groupClientPassword")]
+        [JsonPropertyName("groupClientPassword")]
+        public string GroupClientPassword { get; set; }
+
+        [JsonProperty("simpleGroupId")]
+        [JsonPropertyName("simpleGroupId")]
+        public string SimpleGroupId { get; set; }
     }
 
     #endregion
