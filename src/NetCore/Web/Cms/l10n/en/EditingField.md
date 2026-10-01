@@ -79,6 +79,21 @@ If an error occurs during field validation, this text is displayed to the user.
 
 #auto_value: Auto Value
 
+Automatically calculated values can capture user, time, and geometry information.
+Geometry values involving coordinates or units optionally support a target coordinate system:
+`shape_area:31256`, `shape_perimeter:31256`, or `shape_centroid_x:4326`.
+Without an EPSG code, the feature geometry's coordinate system is used. The calculation does not
+modify the geometry itself.
+
+Additional geometry values are `shape_centroid_x`, `shape_centroid_y`, `shape_perimeter`,
+`shape_vertex_count`, `shape_part_count`, `shape_type`, and `shape_srefid`.
+`create_datetime_utc` sets a culture-independent ISO-8601 UTC timestamp on creation, while
+`change_datetime_utc` sets it on every modification.
+
+Editing context values are `edit_operation` (`insert`, `update`, `delete`,
+`mass_attribution`, or `transfer`), `map_srefid`, `edit_service_id`, `edit_layer_id`,
+and `edit_theme_id`.
+
 #category_custom_auto_value: Autovalue
 
 #custom_auto_value: User-defined Auto Value (custom, db_select=ConnectionString)

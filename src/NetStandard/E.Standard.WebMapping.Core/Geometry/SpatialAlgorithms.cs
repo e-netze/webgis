@@ -12,6 +12,82 @@ namespace E.Standard.WebMapping.Core.Geometry;
 
 public sealed class SpatialAlgorithms
 {
+    #region Shape Metrics
+
+    public static Point Centroid(Shape shape)
+        => shape switch
+        {
+            Point point => point,
+            MultiPoint multiPoint => Centroid(multiPoint),
+            Polyline polyline when polyline.Length > 0 =>
+                PolylinePoint(polyline, polyline.Length / 2.0),
+            Polygon polygon => Centroid(polygon),
+            Envelope envelope => envelope.CenterPoint,
+            _ => null
+        };
+
+    public static int VertexCount(Shape shape)
+        => shape switch
+        {
+            Point => 1,
+            PointCollection points => points.PointCount,
+            Polyline polyline => Enumerable.Range(0, polyline.PathCount)
+                .Sum(index => polyline[index].PointCount),
+            Polygon polygon => polygon.PointCount,
+            _ => 0
+        };
+
+    public static int PartCount(Shape shape)
+        => shape switch
+        {
+            Point => 1,
+            MultiPoint multiPoint => multiPoint.PointCount,
+            Polyline polyline => polyline.PathCount,
+            Polygon polygon => polygon.Multiparts.Count(),
+            _ => 1
+        };
+
+    private static Point Centroid(PointCollection points)
+    {
+        if (points.PointCount == 0)
+        {
+            return null;
+        }
+
+        var pointArray = points.ToArray();
+
+        return new Point(
+            pointArray.Average(point => point.X),
+            pointArray.Average(point => point.Y));
+    }
+
+    private static Point Centroid(Polygon polygon)
+    {
+        polygon.VerifyHoles();
+
+        double weightedX = 0.0, weightedY = 0.0, totalArea = 0.0;
+
+        foreach (var ring in polygon.Rings)
+        {
+            var centroid = ring.Centroid;
+            if (centroid == null)
+            {
+                continue;
+            }
+
+            var area = ring is Hole ? -ring.Area : ring.Area;
+            weightedX += centroid.X * area;
+            weightedY += centroid.Y * area;
+            totalArea += area;
+        }
+
+        return totalArea != 0.0
+            ? new Point(weightedX / totalArea, weightedY / totalArea)
+            : polygon.ShapeEnvelope?.CenterPoint;
+    }
+
+    #endregion
+
     #region Jordan
     public static bool Jordan(Polygon polygon, double x, double y)
     {

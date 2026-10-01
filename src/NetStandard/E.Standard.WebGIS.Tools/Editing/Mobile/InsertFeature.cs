@@ -236,7 +236,8 @@ public class InsertFeature : IApiServerToolLocalizableAsync<InsertFeature>,
     {
         EditEnvironment editEnvironment = new EditEnvironment(bridge, e)
         {
-            CurrentMapScale = e.GetDouble(Edit.EditMapScaleId)
+            CurrentMapScale = e.GetDouble(Edit.EditMapScaleId),
+            CurrentMapSrsId = e.MapCrs.GetValueOrDefault(e.GetInt(Edit.EditMapCrsId))
         };
         var feature = editEnvironment.GetFeature(bridge, e);
         if (feature == null)
@@ -331,7 +332,8 @@ public class InsertFeature : IApiServerToolLocalizableAsync<InsertFeature>,
     {
         EditEnvironment editEnvironment = new EditEnvironment(bridge, e)
         {
-            CurrentMapScale = e.GetDouble(Edit.EditMapScaleId)
+            CurrentMapScale = e.GetDouble(Edit.EditMapScaleId),
+            CurrentMapSrsId = e.MapCrs.GetValueOrDefault(e.GetInt(Edit.EditMapCrsId))
         };
         var feature = editEnvironment.GetFeature(bridge, e);
         var editTheme = editEnvironment[e];

@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Editing AutoValues: calculation has been extracted from ``EditEnvironment`` into the dedicated
+  ``EditAutoValueService`` and extended with additional generated values:
+  - geometry information (centroid, perimeter, vertex/part count, geometry type and spatial
+    reference);
+  - UTC timestamps for creation and modification;
+  - editing context (operation, map spatial reference, service, layer and editing theme).
+  Coordinate, length, area, perimeter and centroid values can optionally specify a target
+  spatial reference (for example ``shape_area:31256``); calculations use a transformed copy and
+  leave the edited geometry unchanged. Reusable centroid, vertex-count and part-count algorithms
+  are now available through ``SpatialAlgorithms``. The new behavior is covered by dedicated
+  AutoValue and geometry-algorithm tests.
+
 - ArcGIS Server (AGS) spatial query workaround: ArcGIS Server internally queries its underlying
   database using only the bounding box of a spatial query geometry (not the actual shape) and
   applies the requested result limit already at that stage, so the final (correctly clipped)

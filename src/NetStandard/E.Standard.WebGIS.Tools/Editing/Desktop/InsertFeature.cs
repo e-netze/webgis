@@ -137,7 +137,8 @@ internal class InsertFeature : IApiServerToolAsync, IApiChildTool, IApiToolPersi
     {
         EditEnvironment editEnvironment = new EditEnvironment(bridge, e)
         {
-            CurrentMapScale = e.GetDouble(Edit.EditMapScaleId)
+            CurrentMapScale = e.GetDouble(Edit.EditMapScaleId),
+            CurrentMapSrsId = e.MapCrs.GetValueOrDefault(e.GetInt(Edit.EditMapCrsId))
         };
         var feature = editEnvironment.GetFeature(bridge, e);
         if (feature == null)

@@ -346,6 +346,7 @@ public enum EditingFieldAutoValue
     create_time = 205,
     create_datetime_sql = 206,
     create_datetime_sql2 = 207,
+    create_datetime_utc = 209,
 
     change_login = 301,
     change_login_full = 302,
@@ -355,17 +356,30 @@ public enum EditingFieldAutoValue
     change_time = 305,
     change_datetime_sql = 306,
     change_datetime_sql2 = 307,
+    change_datetime_utc = 309,
 
     scale = 401,
+    edit_operation = 402,
+    map_srefid = 403,
+    edit_service_id = 404,
+    edit_layer_id = 405,
+    edit_theme_id = 406,
 
     shape_len = 501,
     shape_len_int = 502,
     shape_area = 503,
+    shape_perimeter = 504,
     shape_area_int = 505,
     shape_minx = 506,
     shape_miny = 507,
     shape_maxx = 508,
     shape_maxy = 509,
+    shape_centroid_x = 510,
+    shape_centroid_y = 511,
+    shape_vertex_count = 512,
+    shape_part_count = 513,
+    shape_type = 514,
+    shape_srefid = 515,
 
     db_select = 601,
     db_select_on_insert = 602

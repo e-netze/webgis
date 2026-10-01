@@ -75,6 +75,21 @@ Hier können/sollten auch Beispiele für korrekte Eingaben angeführt werden.
 
 #auto_value: Auto Value
 
+Automatisch berechnete Werte können Benutzer-, Zeit- und Geometrieinformationen übernehmen.
+Geometriewerte mit Koordinaten oder Maßeinheiten unterstützen optional ein Ziel-Koordinatensystem:
+`shape_area:31256`, `shape_perimeter:31256` oder `shape_centroid_x:4326`.
+Ohne EPSG-Code wird das Koordinatensystem der Feature-Geometrie verwendet. Die Geometrie selbst
+wird bei der Berechnung nicht verändert.
+
+Zusätzliche Geometriewerte sind `shape_centroid_x`, `shape_centroid_y`, `shape_perimeter`,
+`shape_vertex_count`, `shape_part_count`, `shape_type` und `shape_srefid`.
+`create_datetime_utc` setzt beim Erstellen und `change_datetime_utc` bei jeder Änderung einen
+kulturunabhängigen UTC-Zeitstempel im ISO-8601-Format.
+
+Werte aus dem Bearbeitungskontext sind `edit_operation` (`insert`, `update`, `delete`,
+`mass_attribution` oder `transfer`), `map_srefid`, `edit_service_id`, `edit_layer_id`
+und `edit_theme_id`.
+
 #category_custom_auto_value: Autovalue
 
 #custom_auto_value: Benuterdefinierter Auto Value (custom, db_select=ConnectionString)
@@ -143,4 +158,3 @@ Die Abfrage, von der ein Attribute geholt werden soll. Format service-id@query-i
 #attribute_picker_field: Attribute Picker Feld
 
 Das Feld aus der Abfrage, das beim Attribute Picking übernommen werden soll.
-
