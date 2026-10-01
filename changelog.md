@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - API: localization texts can be overridden with Markdown files in ``etc/api/l10n/{language}``.
+  [docs](https://docs.webgiscloud.com/de/webgis/extended_config/tool_texts.html)
 
 - CMS DeployService: the ``services`` allow-list configured for a deployment is now also applied
   when scanning for warnings before a deploy. Only warnings belonging to services included in the
