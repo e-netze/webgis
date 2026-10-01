@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- API: localization texts can be overridden with Markdown files in ``etc/api/l10n/{language}``.
+
 - CMS DeployService: the ``services`` allow-list configured for a deployment is now also applied
   when scanning for warnings before a deploy. Only warnings belonging to services included in the
   list (or all services, if the list is empty/unset) are reported/block the deploy.
