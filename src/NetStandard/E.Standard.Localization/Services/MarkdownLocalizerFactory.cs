@@ -26,12 +26,12 @@ class MarkdownLocalizerFactory : IStringLocalizerFactory
     public IStringLocalizer Create(Type resourceSource)
     {
         //var culture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-        return new MarkdownLocalizer(_culture);
+        return new MarkdownLocalizer(_culture, overridePath: _options.OverridePath);
     }
 
     public IStringLocalizer Create(string baseName, string location)
     {
         //var culture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-        return new MarkdownLocalizer(_culture);
+        return new MarkdownLocalizer(_culture, overridePath: _options.OverridePath);
     }
 }

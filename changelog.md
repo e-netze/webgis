@@ -80,6 +80,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   ``l10n/de|en`` files; the navbar now has a language dropdown, persisted in ``localStorage``.
 
 
+- API: localization texts can be overridden with Markdown files in ``etc/api/l10n/{language}``.
+  [docs](https://docs.webgiscloud.com/de/webgis/extended_config/tool_texts.html)
+
 - CMS DeployService: the ``services`` allow-list configured for a deployment is now also applied
   when scanning for warnings before a deploy. Only warnings belonging to services included in the
   list (or all services, if the list is empty/unset) are reported/block the deploy.

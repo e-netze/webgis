@@ -30,37 +30,49 @@ using Microsoft.Extensions.Localization;
 
 public class MarkdownLocalizer : IStringLocalizer
 {
-    private static ConcurrentDictionary<string, Translations> LanguageDictionaries = new();
+    private static readonly ConcurrentDictionary<(string Language, string ResourcePath, string OverridePath), Translations> LanguageDictionaries = new();
 
-    private Translations? _translations;
+    private readonly Translations _translations;
 
-    public MarkdownLocalizer(string language, string resourcePath = "")
+    public MarkdownLocalizer(string language, string resourcePath = "", string overridePath = "")
     {
-        if (!String.IsNullOrEmpty(resourcePath))
-        {
-            ResourcePath = resourcePath;
-        }
+        ResourcePath = String.IsNullOrEmpty(resourcePath) ? "l10n" : resourcePath;
+        OverridePath = overridePath;
 
-        if (!LanguageDictionaries.TryGetValue(language, out _translations))
-        {
-            LanguageDictionaries[language] = LoadTranslations(language) ?? new();
-        }
+        var cacheKey = (
+            language,
+            Path.GetFullPath(ResourcePath),
+            String.IsNullOrEmpty(OverridePath) ? String.Empty : Path.GetFullPath(OverridePath));
 
-        _translations = LanguageDictionaries[language];
+        _translations = LanguageDictionaries.GetOrAdd(cacheKey, _ => LoadTranslations(language));
     }
 
-    public string ResourcePath { get; } = "l10n";
+    public string ResourcePath { get; }
 
-    private Translations? LoadTranslations(string language)
+    public string OverridePath { get; }
+
+    private Translations LoadTranslations(string language)
     {
-        var diInfo = new DirectoryInfo(Path.Combine(ResourcePath, language));
+        var result = new Translations();
+
+        LoadTranslationsFromDirectory(result, ResourcePath, language);
+
+        if (!String.IsNullOrWhiteSpace(OverridePath))
+        {
+            LoadTranslationsFromDirectory(result, OverridePath, language);
+        }
+
+        return result;
+    }
+
+    private static void LoadTranslationsFromDirectory(Translations result, string resourcePath, string language)
+    {
+        var diInfo = new DirectoryInfo(Path.Combine(resourcePath, language));
 
         if (!diInfo.Exists)
         {
-            return null;
+            return;
         }
-
-        var result = new Translations();
 
         foreach (var fi in diInfo.GetFiles($"*.md"))
         {
@@ -115,8 +127,6 @@ public class MarkdownLocalizer : IStringLocalizer
                 result[$"{fileNameSpace}{currentKey}"] = (currentHeader, currentBody.ToString().Trim());
             }
         }
-
-        return result;
     }
 
     public LocalizedString this[string name]
@@ -132,7 +142,7 @@ public class MarkdownLocalizer : IStringLocalizer
             bool isBodyRequest = lookupKey.EndsWith(":body");
             string actualKey = isBodyRequest ? lookupKey.Replace(":body", "") : lookupKey;
 
-            if (_translations?.TryGetValue(actualKey, out var value) == true)
+            if (_translations.TryGetValue(actualKey, out var value))
             {
                 return new LocalizedString(name, isBodyRequest ? value.Body : value.Header);
             }
@@ -145,6 +155,6 @@ public class MarkdownLocalizer : IStringLocalizer
 
     public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
     {
-        return _translations?.Select(t => new LocalizedString(t.Key, t.Value.Header)) ?? [];
+        return _translations.Select(t => new LocalizedString(t.Key, t.Value.Header));
     }
 }

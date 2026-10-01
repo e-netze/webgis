@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Authentication;
@@ -425,6 +426,7 @@ public class Startup
         {
             config.SupportedLanguages = Configuration.SupportedLanguages();
             config.DefaultLanguage = config.SupportedLanguages.First();
+            config.OverridePath = Path.Combine(ApiGlobals.AppEtcPath, "api", "l10n");
         });
 
         #endregion
