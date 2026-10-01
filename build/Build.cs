@@ -432,6 +432,10 @@ class Build : NukeBuild
                 .SetProcessWorkingDirectory(RootDirectory)
             );
             DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.GeoCoding.GeoCode.Tests" / "E.Standard.GeoCoding.GeoCode.Tests.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
+            DotNetTasks.DotNetTest(s => s
                 .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.Json.Test" / "E.Standard.Json.Test.csproj")
                 .SetProcessWorkingDirectory(RootDirectory)
             );
@@ -461,6 +465,10 @@ class Build : NukeBuild
             );
             DotNetTasks.DotNetTest(s => s
                 .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebMapping.Core.Tests" / "E.Standard.WebMapping.Core.Tests.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebMapping.GeoServices.Tests" / "E.Standard.WebMapping.GeoServices.Tests.csproj")
                 .SetProcessWorkingDirectory(RootDirectory)
             );
         });
