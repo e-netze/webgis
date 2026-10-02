@@ -8,6 +8,7 @@ using E.Standard.Platform;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
+using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 
 using gView.GraphicsEngine;
@@ -119,7 +120,7 @@ class AxlHelper
     #endregion
 
     #region Features
-    static public bool AppendFeatures(ILayer layer, FeatureCollection features, string axl, NumberFormatInfo nfi)
+    static public bool AppendFeatures(ILayer layer, FeatureCollection features, QueryFilter filter, string axl, NumberFormatInfo nfi)
     {
         try
         {
@@ -198,6 +199,8 @@ class AxlHelper
                     }
 
                     feature.Shape = shape;
+                    feature.Shape.SrsId = filter?.FeatureSpatialReference?.Id ?? feature.Shape.SrsId;
+
                     if (!(shape is Envelope))
                     {
                         break;

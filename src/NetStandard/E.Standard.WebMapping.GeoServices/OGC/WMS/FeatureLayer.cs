@@ -226,6 +226,10 @@ class OgcWmsLayer : Layer, ILayer2
                         {
                             var feature = new Feature();
                             feature.Shape = geoJsonFeature.ToShape();
+                            if(feature.Shape is not null)
+                            {
+                                feature.Shape.SrsId = geoJsonEpsg;
+                            }
 
                             #region Use Click Point ...
 

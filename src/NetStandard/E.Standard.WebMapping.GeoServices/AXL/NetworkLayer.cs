@@ -87,8 +87,8 @@ class NetworkLayer : Layer, ILayer2, ILayer_QueryNodesRequired, ILayer_DynamicFi
             xWriter.WriteEndElement(); // gv_NW_BARRIERS
         }
 
-        QueryFilter clone = filter.Clone();
-        xWriter.WriteRaw(clone.ArcXML(((AxlService)_service)._nfi));
+        QueryFilter clonedFilter = filter.Clone();
+        xWriter.WriteRaw(clonedFilter.ArcXML(((AxlService)_service)._nfi));
 
         xWriter.WriteEndElement(); // gv_CAN_TRACE_NETWORK
 
@@ -113,7 +113,7 @@ class NetworkLayer : Layer, ILayer2, ILayer_QueryNodesRequired, ILayer_DynamicFi
         string resp = await httpService.SendAxlRequestAsync(((AxlService)_service).ConnectionProperties, req, _service.Server, _service.Service, "Query");
 
         FeatureCollection features = new FeatureCollection();
-        AxlHelper.AppendFeatures(this, features, resp, ((AxlService)_service)._nfi);
+        AxlHelper.AppendFeatures(this, features, clonedFilter, resp, ((AxlService)_service)._nfi);
 
         this._service.Map.GraphicsContainer.Remove(typeof(EdgeGraphicElement));
 
@@ -197,8 +197,8 @@ class NetworkLayer : Layer, ILayer2, ILayer_QueryNodesRequired, ILayer_DynamicFi
             xWriter.WriteAttributeString("id", tracerGuid);
             xWriter.WriteEndElement();  // gv_TRACER
 
-            QueryFilter clone = filter.Clone();
-            xWriter.WriteRaw(clone.ArcXML(((AxlService)_service)._nfi));
+            QueryFilter clonedFilter = filter.Clone();
+            xWriter.WriteRaw(clonedFilter.ArcXML(((AxlService)_service)._nfi));
 
             xWriter.WriteEndElement(); // gv_CAN_TRACE_NETWORK
 
@@ -223,7 +223,7 @@ class NetworkLayer : Layer, ILayer2, ILayer_QueryNodesRequired, ILayer_DynamicFi
             string resp = await httpService.SendAxlRequestAsync(((AxlService)_service).ConnectionProperties, req, _service.Server, _service.Service, "Query");
 
             FeatureCollection features = new FeatureCollection();
-            AxlHelper.AppendFeatures(this, features, resp, ((AxlService)_service)._nfi);
+            AxlHelper.AppendFeatures(this, features, clonedFilter, resp, ((AxlService)_service)._nfi);
 
             if (features.Count >= 1)
             {

@@ -112,36 +112,36 @@ class FeatureLayer : Layer, ILabelableLayer, ILayer2, IQueryValueConverter
         xWriter.WriteAttributeString("id", this.ID);
         xWriter.WriteEndElement();  // LAYER
 
-        QueryFilter clone = filter.Clone();
+        QueryFilter clonedFilter = filter.Clone();
         if (_service is AxlService && ((AxlService)_service).Is_gView)
         {
-            if (clone is SpatialFilter && ((SpatialFilter)clone).QueryShape != null &&
-                ((SpatialFilter)clone).QueryShape.Buffer != null && ((SpatialFilter)clone).QueryShape.Buffer.BufferDistance != 0.0)
+            if (clonedFilter is SpatialFilter && ((SpatialFilter)clonedFilter).QueryShape != null &&
+                ((SpatialFilter)clonedFilter).QueryShape.Buffer != null && ((SpatialFilter)clonedFilter).QueryShape.Buffer.BufferDistance != 0.0)
             {
                 using (var cts = new CancellationTokenSource())
                 {
-                    ((SpatialFilter)clone).QueryShape = ((SpatialFilter)clone).QueryShape.CalcBuffer(
-                                                            ((SpatialFilter)clone).QueryShape.Buffer.BufferDistance,
+                    ((SpatialFilter)clonedFilter).QueryShape = ((SpatialFilter)clonedFilter).QueryShape.CalcBuffer(
+                                                            ((SpatialFilter)clonedFilter).QueryShape.Buffer.BufferDistance,
                                                             cts);
                 }
             }
         }
 
-        if (clone is SpatialFilter && ((SpatialFilter)clone).QueryShape is Point)
+        if (clonedFilter is SpatialFilter && ((SpatialFilter)clonedFilter).QueryShape is Point)
         {
-            var spatialClone = (SpatialFilter)clone;
+            var spatialClone = (SpatialFilter)clonedFilter;
             double delta = 1e-11;
             if (spatialClone.FilterSpatialReference != null && spatialClone.FilterSpatialReference.IsProjective)
             {
                 delta = 1e-7;
             }
-            var env = ((SpatialFilter)clone).QueryShape.ShapeEnvelope;
+            var env = ((SpatialFilter)clonedFilter).QueryShape.ShapeEnvelope;
             env.Resize(delta, delta);
-            ((SpatialFilter)clone).QueryShape = env;
+            ((SpatialFilter)clonedFilter).QueryShape = env;
         }
 
-        clone.Where = WebGIS.CMS.Globals.EncUmlaute(where, ((AxlService)_service).Umlaute2Wildcard);
-        xWriter.WriteRaw(clone.ArcXML(((AxlService)_service)._nfi));
+        clonedFilter.Where = WebGIS.CMS.Globals.EncUmlaute(where, ((AxlService)_service).Umlaute2Wildcard);
+        xWriter.WriteRaw(clonedFilter.ArcXML(((AxlService)_service)._nfi));
 
         xWriter.WriteEndElement(); // GET_FEATURES
 
@@ -171,7 +171,7 @@ class FeatureLayer : Layer, ILabelableLayer, ILayer2, IQueryValueConverter
         //string resp = await ((Service)_service).Connector.SendRequestAsync(req, _service.Server, _service.ServiceName, "Query");
         string resp = await httpService.SendAxlRequestAsync(((AxlService)_service).ConnectionProperties, req, _service.Server, _service.Service, "Query");
 
-        AxlHelper.AppendFeatures(this, features, resp, ((AxlService)_service)._nfi);
+        AxlHelper.AppendFeatures(this, features, clonedFilter, resp,  ((AxlService)_service)._nfi);
         features.Query = filter;
         features.Layer = this;
 
