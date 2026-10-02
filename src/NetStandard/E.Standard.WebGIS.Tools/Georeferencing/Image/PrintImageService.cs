@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -55,8 +55,8 @@ internal class PrintImageService : IStaticOverlayService, IPrintableMapService
 
     public string ID { get; set; }
 
-    public float InitialOpacity { get; set; }
-    public float OpacityFactor { get; set; }
+    public float InitialOpacity { get; set; } = 1.0f;
+    public float OpacityFactor { get; set; } = 1.0f;
 
     public bool CanBuffer => false;
 
@@ -87,7 +87,29 @@ internal class PrintImageService : IStaticOverlayService, IPrintableMapService
 
     public IMapService Clone(IMap parent)
     {
-        return this;
+        var clone = new PrintImageService(_bridge, _ower, _georefImageMetadata)
+        {
+            Name = this.Name,
+            Url = this.Url,
+            ID = this.ID,
+            InitialOpacity = this.InitialOpacity,
+            OpacityFactor = this.OpacityFactor,
+            UseToc = this.UseToc,
+            DiagnosticsWaringLevel = this.DiagnosticsWaringLevel,
+            IsDirty = this.IsDirty,
+            Timeout = this.Timeout,
+            MinScale = this.MinScale,
+            MaxScale = this.MaxScale,
+            ShowInToc = this.ShowInToc,
+            CollectionId = this.CollectionId,
+            CheckSpatialConstraints = this.CheckSpatialConstraints,
+            IsBaseMap = this.IsBaseMap,
+            BasemapType = this.BasemapType,
+            BasemapPreviewImage = this.BasemapPreviewImage,
+            Map = parent ?? this.Map
+        };
+
+        return clone;
     }
 
     public Task<ServiceResponse> GetMapAsync(IRequestContext requestContext)
@@ -125,7 +147,6 @@ internal class PrintImageService : IStaticOverlayService, IPrintableMapService
                 _georefImageMetadata?.TopRight == null ||
                 _georefImageMetadata?.BottomLeft == null)
             {
-                pLogger.Success = true;
                 return new EmptyImage(-1, this.ID); ;
             }
 
@@ -136,9 +157,10 @@ internal class PrintImageService : IStaticOverlayService, IPrintableMapService
             using (var ms = new MemoryStream(_bridge.GetGeorefImageData(_ower, _georefImageMetadata)))
             using (var sourceBitmap = Current.Engine.CreateBitmap(ms))
             {
-                using (var targetBitmap = Current.Engine.CreateBitmap(this.Map.ImageWidth, this.Map.ImageHeight))
+                using (var targetBitmap = Current.Engine.CreateBitmap(this.Map.ImageWidth, this.Map.ImageHeight, PixelFormat.Rgba32))
                 using (var targetGr = targetBitmap.CreateCanvas())
                 {
+
                     targetGr.InterpolationMode = InterpolationMode.Bicubic;
 
                     using (var transformer = new GeometricTransformerPro(CoreApiGlobals.SRefStore, 4326, this.Map.SpatialReference?.Id ?? 0))
@@ -175,9 +197,11 @@ internal class PrintImageService : IStaticOverlayService, IPrintableMapService
             }
 
             pLogger.Success = true;
-            return new ImageLocation(-1, this.ID, filename, fileurl);
+            return new ImageLocation(this.Map.Services.IndexOf(this), this.ID, filename, fileurl);
         }
     }
+        
+    
 
     #endregion
 
