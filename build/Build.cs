@@ -444,11 +444,19 @@ class Build : NukeBuild
                 .SetProcessWorkingDirectory(RootDirectory)
             );
             DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.Parsing.Tests" / "E.Standard.Parsing.Tests.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
+            DotNetTasks.DotNetTest(s => s
                 .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.Web.Test" / "E.Standard.Web.Test.csproj")
                 .SetProcessWorkingDirectory(RootDirectory)
             );
             DotNetTasks.DotNetTest(s => s
                 .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebApp.Test" / "E.Standard.WebApp.Test.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+            );
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.WebGIS.CMS.Tests" / "E.Standard.CMS.Tests.csproj")
                 .SetProcessWorkingDirectory(RootDirectory)
             );
             DotNetTasks.DotNetTest(s => s

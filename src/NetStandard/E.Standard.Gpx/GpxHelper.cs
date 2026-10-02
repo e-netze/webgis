@@ -16,7 +16,7 @@ public class GpxHelper
         gpx.metadata = new metadataType();
         #endregion
 
-        GeometricTransformer.Transform2D(shape, from.Proj4, !from.IsProjective, to.Proj4, !to.IsProjective);
+        GeometricTransformer.Transform2D(shape, from, to);
 
         if (shape is Polyline)
         {
@@ -168,7 +168,7 @@ public class GpxHelper
 
         if (from != null && to != null)
         {
-            GeometricTransformer.Transform2D(pColl, from.Proj4, !from.IsProjective, to.Proj4, !to.IsProjective);
+            GeometricTransformer.Transform2D(pColl, from, to);
         }
         return pColl;
     }

@@ -102,9 +102,18 @@ von dem webGIS aufgerufen wurde
 
 #expression: Ausdruck
 
+Tabellenspalten werden immer als Ausdrücke behandelt; ein führendes `=` ist daher nicht
+erforderlich und wird nicht als Präfix interpretiert. Bestehende Text-Templates wie
+`Objekt [NAME]` und Legacy-Funktionen wie `$round2([FLAECHE])` bleiben unterstützt.
+Eindeutig strukturierte Ausdrücke werden automatisch erkannt, zum Beispiel
+`concat([VORNAME], " ", [NACHNAME])`, `round([FLAECHE] / 10000, 2)`,
+`if([STATUS] == "A", "Aktiv", "Inaktiv")` oder `[ANZAHL] + 1`.
+Geometriewerte können mit `shape_len()`, `shape_area()`, `shape_perimeter()`,
+`shape_centroid_x()` und `shape_centroid_y()` berechnet werden. Optional kann eine
+Ziel-SRefId angegeben werden, zum Beispiel `round(shape_area(31256), 2)`.
+
 #column_data_type: Datentyp des Ergebnisses
 
 Wenn das Ergebnis immer eine Zahl ist, kann hier Number als Typ verwendet werden. Damit kann die 
 Splate auch wie ein Zahlenfeld sortiert werden. Achtung: Es muss wirklich jedes Ergebniss 
 eine Zahl sein (keine Leerwerte).
-

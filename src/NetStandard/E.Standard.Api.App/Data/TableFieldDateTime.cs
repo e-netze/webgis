@@ -13,15 +13,13 @@ public sealed class TableFieldDateTime : TableField
 {
     public string FieldName { get; set; }
 
-    public override Task InitRendering(IHttpService httpService) => Task.CompletedTask;
-
     public DateFieldDisplayType DisplayType { get; set; }
 
     public string FormatString { get; set; }
 
     public string SortingAlgorithm { get; set; }
 
-    public override string RenderField(WebMapping.Core.Feature feature, NameValueCollection requestHeaders)
+    public override string RenderField(WebMapping.Core.Feature feature, TableFieldRenderingContext context)
     {
         try
         {

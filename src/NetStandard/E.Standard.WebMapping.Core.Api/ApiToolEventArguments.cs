@@ -534,15 +534,15 @@ public class ApiToolEventArguments
         {
             using (GeometricTransformer transformer = new GeometricTransformer())
             {
-                transformer.FromSpatialReference(CoreApiGlobals.SRefStore.SpatialReferences.ById(sourceSrefId).Proj4, true);
-                transformer.ToSpatialReference(sRef.Proj4, !sRef.IsProjective);
+                transformer.FromSpatialReference(
+                    CoreApiGlobals.SRefStore.SpatialReferences.ById(sourceSrefId));
+                transformer.ToSpatialReference(sRef);
 
                 transformer.Transform2D(worldPoint);
 
                 if (sketch != null)
                 {
                     transformer.Transform(sketch);
-                    sketch.SrsId = sRef.Id;
                 }
             }
         }

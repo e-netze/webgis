@@ -16,6 +16,7 @@
     <ProjectReference Include="..\E.Standard.Combinatorial\E.Standard.Combinatorial.csproj" />
     <ProjectReference Include="..\E.Standard.DbConnector\E.Standard.DbConnector.csproj" />
     <ProjectReference Include="..\E.Standard.Extensions\E.Standard.Extensions.csproj" />
+    <ProjectReference Include="..\E.Standard.Parsing\E.Standard.Parsing.csproj" />
     <ProjectReference Include="..\E.Standard.Platform\E.Standard.Platform.csproj" />
     <ProjectReference Include="..\E.Standard.Security.Cryptography\E.Standard.Security.Cryptography.csproj" />
     <ProjectReference Include="..\E.Standard.ThreadsafeClasses\E.Standard.ThreadsafeClasses.csproj" />

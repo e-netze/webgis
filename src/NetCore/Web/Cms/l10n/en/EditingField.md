@@ -94,6 +94,27 @@ Editing context values are `edit_operation` (`insert`, `update`, `delete`,
 `mass_attribution`, or `transfer`), `map_srefid`, `edit_service_id`, `edit_layer_id`,
 and `edit_theme_id`.
 
+An AutoValue starting with `=` can be either an existing text template or a typed expression.
+Existing templates such as `=Object [NAME]` and `=[FIRSTNAME] [LASTNAME]` remain unchanged.
+Unambiguous expressions are evaluated using fields, literals, parentheses, and operators, for
+example:
+
+- `=concat([FIRSTNAME], " ", [LASTNAME])`
+- `=round([AREA] / 10000, 2)`
+- `=if([STATUS] == "A", "Active", "Inactive")`
+- `=coalesce([DISPLAY_NAME], [NAME], "Unknown")`
+- `=shape_area(31256)` or `=shape_centroid_x(4326)`
+
+Numbers, strings, Boolean values, and `null` are supported together with arithmetic operators
+`+ - * / %`, comparisons, `&&`, `||`, and `!`. `+` only adds numbers; use `concat` for text.
+Available functions are `concat`, `upper`, `lower`, `trim`, `substring`, `replace`, `length`,
+`coalesce`, `is_null`, `is_empty`, `null_if_empty`, `round`, `abs`, `min`, `max`, `if`,
+`format_date`, `year`, `month`, and `day`. Missing fields resolve to `null`; `coalesce` skips
+only `null`, while `null_if_empty` converts empty strings. GIS functions are `shape_len`,
+`shape_area`, `shape_perimeter`, `shape_centroid_x`, and `shape_centroid_y`; their optional
+argument is the target SRefId. Syntax, type, and arithmetic errors report their position and do
+not silently fall back to a text template.
+
 #category_custom_auto_value: Autovalue
 
 #custom_auto_value: User-defined Auto Value (custom, db_select=ConnectionString)

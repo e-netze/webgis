@@ -478,9 +478,17 @@ public class RestToolsHelperService
             if (featuresResponse.FeaturesForLinks != null)  // nur 1:n Links neu setzen (zB bei remove from selection)
             {
                 var linkFeatures = new E.Standard.WebMapping.Core.Collections.FeatureCollection();
+                var linkQuery = featuresResponse.Query as QueryDTO;
+                var requestHeaders = controller?.Request?.HeadersCollection();
+                var renderingContext = linkQuery is null
+                    ? null
+                    : await linkQuery.InitFieldRendering(
+                        httpService: null,
+                        requestHeaders);
                 linkFeatures.Append1toNLinks(featuresResponse.FeaturesForLinks,
-                                             featuresResponse.Query as QueryDTO,
-                                             requestHeaders: controller?.Request?.HeadersCollection(),
+                                             linkQuery,
+                                             renderingContext: renderingContext,
+                                             requestHeaders: requestHeaders,
                                              crypto: _crypto,
                                              usePayload: _config.DataLinqUseCacheTokenForOne2nLinks());
 

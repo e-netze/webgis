@@ -4,7 +4,6 @@ using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Filters;
-using E.Standard.WebMapping.GeoServices.ArcServer.Rest;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.QueryStrategies;

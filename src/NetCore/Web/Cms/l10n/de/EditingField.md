@@ -90,6 +90,27 @@ Werte aus dem Bearbeitungskontext sind `edit_operation` (`insert`, `update`, `de
 `mass_attribution` oder `transfer`), `map_srefid`, `edit_service_id`, `edit_layer_id`
 und `edit_theme_id`.
 
+Ein AutoValue mit führendem `=` kann entweder ein bestehendes Text-Template oder ein typisierter
+Ausdruck sein. Bestehende Templates wie `=Objekt [NAME]` und `=[VORNAME] [NACHNAME]` bleiben
+unverändert. Eindeutige Ausdrücke werden mit Feldern, Literalen, Klammern und Operatoren
+ausgewertet, zum Beispiel:
+
+- `=concat([VORNAME], " ", [NACHNAME])`
+- `=round([FLAECHE] / 10000, 2)`
+- `=if([STATUS] == "A", "Aktiv", "Inaktiv")`
+- `=coalesce([ANZEIGENAME], [NAME], "Unbekannt")`
+- `=shape_area(31256)` oder `=shape_centroid_x(4326)`
+
+Unterstützt werden Zahlen, Strings, Boolean und `null`, die Rechenoperatoren `+ - * / %`,
+Vergleiche, `&&`, `||` und `!`. `+` addiert ausschließlich Zahlen; Texte werden mit `concat`
+verbunden. Verfügbare Funktionen sind `concat`, `upper`, `lower`, `trim`, `substring`, `replace`,
+`length`, `coalesce`, `is_null`, `is_empty`, `null_if_empty`, `round`, `abs`, `min`, `max`,
+`if`, `format_date`, `year`, `month` und `day`. Fehlende Felder ergeben `null`; `coalesce`
+überspringt nur `null`, während `null_if_empty` leere Strings umwandelt. GIS-Funktionen sind
+`shape_len`, `shape_area`, `shape_perimeter`, `shape_centroid_x` und `shape_centroid_y`; der
+optionale Parameter ist die Ziel-SRefId. Syntax-, Typ- und Rechenfehler werden mit ihrer Position
+gemeldet und fallen nicht still auf ein Text-Template zurück.
+
 #category_custom_auto_value: Autovalue
 
 #custom_auto_value: Benuterdefinierter Auto Value (custom, db_select=ConnectionString)

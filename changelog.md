@@ -9,17 +9,32 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Editing AutoValues: calculation has been extracted from ``EditEnvironment`` into the dedicated
-  ``EditAutoValueService`` and extended with additional generated values:
-  - geometry information (centroid, perimeter, vertex/part count, geometry type and spatial
-    reference);
-  - UTC timestamps for creation and modification;
-  - editing context (operation, map spatial reference, service, layer and editing theme).
-  Coordinate, length, area, perimeter and centroid values can optionally specify a target
-  spatial reference (for example ``shape_area:31256``); calculations use a transformed copy and
-  leave the edited geometry unchanged. Reusable centroid, vertex-count and part-count algorithms
-  are now available through ``SpatialAlgorithms``. The new behavior is covered by dedicated
-  AutoValue and geometry-algorithm tests.
+- New Editing AutoValues: AutoValue calculation has been extracted from ``EditEnvironment`` into
+  the dedicated ``EditAutoValueService`` and extended with new values:
+  - geometry: ``shape_perimeter``, ``shape_centroid_x``, ``shape_centroid_y``,
+    ``shape_vertex_count``, ``shape_part_count``, ``shape_type``, ``shape_srefid``;
+  - UTC timestamps: ``create_datetime_utc``, ``change_datetime_utc``;
+  - editing context: ``edit_operation``, ``map_srefid``, ``edit_service_id``,
+    ``edit_layer_id``, ``edit_theme_id``.
+  * Coordinate, length, area, perimeter and centroid values (``shape_len``, ``shape_area``,
+    ``shape_minx``, ``shape_centroid_x``, ...) can optionally specify a target spatial reference,
+    e.g. ``shape_area:31256`` or ``shape_minx:4326``. Calculations use a transformed copy and
+    leave the edited geometry unchanged.
+  * Existing AutoValues keep their behavior.
+
+- Structured expressions for AutoValues (``=...``) and table columns (TableFieldExpression):
+  a typed expression language with field references (``[FIELD]``), arithmetic, comparison and
+  logical operators, ``if(...)``, string/number/date functions, null handling and geometry
+  functions with optional target spatial reference (``shape_area()``, ``shape_len()``,
+  ``shape_centroid_x(4326)``, ...), e.g. ``concat("Area: ", round([AREA], 2), " m2")``.
+  * The syntax is detected automatically; existing ``[FIELD]`` text templates and legacy
+    ``$eval``/``$round``/``$n`` expressions remain fully compatible.
+  * Field values are never interpreted as expression code (no expression injection).
+  * Performance: parser selection, syntax trees, feature placeholders and request-header
+    placeholders of table expressions, image and hotlink columns are prepared once per request
+    instead of for every result row; per-row HTML rendering allocates less.
+  * Shape transformations now consistently set the target spatial reference (``SrsId``) on the
+    resulting shape.
 
 - ArcGIS Server (AGS) spatial query workaround: ArcGIS Server internally queries its underlying
   database using only the bounding box of a spatial query geometry (not the actual shape) and

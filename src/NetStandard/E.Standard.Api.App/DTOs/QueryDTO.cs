@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -152,15 +153,23 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
         this.Service = service.Clone(map);
     }
 
-    async public Task InitFieldRendering(IHttpService httpService)
+    async public Task<QueryFieldRenderingContext> InitFieldRendering(
+        IHttpService httpService,
+        NameValueCollection requestHeaders = null)
     {
+        var contexts = new Dictionary<TableField, TableFieldRenderingContext>();
+
         if (this.Fields != null)
         {
             foreach (var field in this.Fields)
             {
-                await field.InitRendering(httpService);
+                contexts[field] = await field.CreateRenderingContextAsync(
+                    httpService,
+                    requestHeaders);
             }
         }
+
+        return new QueryFieldRenderingContext(contexts, requestHeaders);
     }
 
     [JsonIgnore]

@@ -4,6 +4,7 @@ public sealed class GeometricTransformerPro : IGeometricTransformer2
 {
     private int _from, _to;
     private string _fromProj4 = string.Empty, _toProj4 = string.Empty;
+    private bool _isConfigured;
 
     public GeometricTransformerPro(ISpatialReferenceStore store, int from, int to)
         : this(store.SpatialReferences, from, to) { }
@@ -13,7 +14,7 @@ public sealed class GeometricTransformerPro : IGeometricTransformer2
         _from = from;
         _to = to;
 
-        if (sRefCollection == null || from <= 0 || to <= 0 || from == to)
+        if (sRefCollection == null || from <= 0 || to <= 0)
         {
             return;
         }
@@ -23,8 +24,8 @@ public sealed class GeometricTransformerPro : IGeometricTransformer2
 
     public GeometricTransformerPro(SpatialReference from, SpatialReference to)
     {
-        _from = from.Id;
-        _to = from.Id;
+        _from = from?.Id ?? 0;
+        _to = to?.Id ?? 0;
 
         Init(from, to);
     }
@@ -33,12 +34,22 @@ public sealed class GeometricTransformerPro : IGeometricTransformer2
     {
         if (from == null || to == null || from.Id == to.Id)
         {
+            if (from != null && to != null)
+            {
+                _fromProj4 = from.Proj4;
+                _toProj4 = to.Proj4;
+                _isConfigured = true;
+            }
+
             return;
         }
 
         this.Transformer = new GeometricTransformer();
-        Transformer.FromSpatialReference(_fromProj4 = from.Proj4, !from.IsProjective);
-        Transformer.ToSpatialReference(_toProj4 = to.Proj4, !to.IsProjective);
+        Transformer.FromSpatialReference(from);
+        Transformer.ToSpatialReference(to);
+        _fromProj4 = from.Proj4;
+        _toProj4 = to.Proj4;
+        _isConfigured = true;
     }
 
     private GeometricTransformer Transformer { get; set; }
@@ -88,9 +99,9 @@ public sealed class GeometricTransformerPro : IGeometricTransformer2
 
     public void Transform(Shape shape, ShapeSrsProperties setSrsProperties = ShapeSrsProperties.SrsId)
     {
-        if (Transformer != null && shape != null)
+        if (_isConfigured && shape != null)
         {
-            Transformer.Transform(shape);
+            Transformer?.Transform2D(shape, ShapeSrsProperties.None);
 
             if (setSrsProperties.HasFlag(ShapeSrsProperties.SrsId))
             {
@@ -106,9 +117,9 @@ public sealed class GeometricTransformerPro : IGeometricTransformer2
 
     public void InvTransform(Shape shape, ShapeSrsProperties setSrsProperties = ShapeSrsProperties.SrsId)
     {
-        if (Transformer != null)
+        if (_isConfigured && shape != null)
         {
-            Transformer.InvTransform(shape);
+            Transformer?.InvTransform2D(shape, ShapeSrsProperties.None);
 
             if (setSrsProperties.HasFlag(ShapeSrsProperties.SrsId))
             {

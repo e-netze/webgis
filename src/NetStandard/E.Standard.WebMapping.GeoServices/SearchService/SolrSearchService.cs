@@ -100,8 +100,8 @@ public class SolrSearchService : ISearchService
             {
                 if (_sRef != null && targetSRef != null && _sRef.Id != targetSRef.Id)
                 {
-                    transformer.FromSpatialReference(_sRef.Proj4, !_sRef.IsProjective);
-                    transformer.ToSpatialReference(targetSRef.Proj4, !targetSRef.IsProjective);
+                    transformer.FromSpatialReference(_sRef);
+                    transformer.ToSpatialReference(targetSRef);
                 }
                 foreach (Newtonsoft.Json.Linq.JObject jObject in (Newtonsoft.Json.Linq.JArray)lucType.response.docs)
                 {

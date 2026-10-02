@@ -12,9 +12,7 @@ public sealed class TableFieldDataMulti : TableField
 {
     public string[] FieldNames { get; set; }
 
-    public override Task InitRendering(IHttpService httpService) => Task.CompletedTask;
-
-    public override string RenderField(WebMapping.Core.Feature feature, NameValueCollection requestHeaders)
+    public override string RenderField(WebMapping.Core.Feature feature, TableFieldRenderingContext context)
     {
         StringBuilder sb = new StringBuilder();
         if (FieldNames != null)

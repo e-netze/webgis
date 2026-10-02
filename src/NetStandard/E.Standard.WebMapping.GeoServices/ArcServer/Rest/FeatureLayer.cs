@@ -278,6 +278,11 @@ class FeatureLayer : RestLayer,
             }
             else { }
 
+            if(feature.Shape is not null && filter.FeatureSpatialReference is not null)
+            {
+                feature.Shape.SrsId = filter.FeatureSpatialReference.Id;
+            }
+
             var featureAttributes = (IDictionary<string, object>)jsonFeature.Attributes ?? new Dictionary<string, object>();
 
             foreach (var featureProperty in featureAttributes)

@@ -43,7 +43,8 @@ internal class ExportGeoFeaturesService
 
         var oids = featureIds.Split(',').Select(id => long.Parse(id)).ToArray();
         var filter = new E.Standard.WebMapping.Core.Api.Bridge.ApiOidsFilter(oids);
-        filter.QueryGeometry = false;
+        filter.QueryGeometry = true;
+        filter.FeatureSpatialReference = ApiGlobals.SRefStore.SpatialReferences.ById(4326);
 
         var engine = new QueryEngine();
         (await engine.PerformAsync(_requestContext, query, filter, advancedQueryMethod: QueryEngine.AdvancedQueryMethod.Normal))

@@ -8,6 +8,7 @@ using System.Xml;
 
 using E.Standard.CMS.Core.Extensions;
 using E.Standard.Extensions.Text;
+using E.Standard.Parsing.SimpleExpressions;
 
 namespace E.Standard.CMS.Core;
 
@@ -177,41 +178,7 @@ public class Helper
     }
 
     static public string[] GetKeyParameters(string commandLine)
-    {
-        if (String.IsNullOrEmpty(commandLine))
-        {
-            return null;
-        }
-
-        int pos1 = 0, pos2;
-        pos1 = commandLine.IndexOf("[");
-        string parameters = "";
-
-        while (pos1 != -1)
-        {
-            pos2 = commandLine.IndexOf("]", pos1);
-            if (pos2 == -1)
-            {
-                break;
-            }
-
-            if (parameters != "")
-            {
-                parameters += ";";
-            }
-
-            parameters += commandLine.Substring(pos1 + 1, pos2 - pos1 - 1);
-            pos1 = commandLine.IndexOf("[", pos2);
-        }
-        if (parameters != "")
-        {
-            return parameters.Split(';');
-        }
-        else
-        {
-            return null;
-        }
-    }
+        => KeyParameters.Parse(commandLine);
 
     static public string[] GetKeyParameterFields(string commandLine)
     {

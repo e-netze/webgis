@@ -233,8 +233,8 @@ public class ElasticSearch7Service : ISearchService3
             {
                 if (_sRef != null && targetSRef != null && _sRef.Id != targetSRef.Id)
                 {
-                    transformer.FromSpatialReference(_sRef.Proj4, !_sRef.IsProjective);
-                    transformer.ToSpatialReference(targetSRef.Proj4, !targetSRef.IsProjective);
+                    transformer.FromSpatialReference(_sRef);
+                    transformer.ToSpatialReference(targetSRef);
                 }
 
                 foreach (var item in response.Hits.Items)

@@ -5,6 +5,7 @@ using System.Text;
 
 using E.Standard.CMS.Core;
 using E.Standard.Extensions.Text;
+using E.Standard.Parsing.SimpleExpressions;
 using E.Standard.Platform;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
@@ -85,122 +86,82 @@ public class Globals
     }
 
     public static string SolveExpression(Feature feature, string expression)
+        => SolveExpression(feature, expression, Helper.GetKeyParameters(expression));
+
+    public static string SolveExpression(
+        Feature feature,
+        string expression,
+        IReadOnlyList<string> keys)
     {
-        string[] keys = Helper.GetKeyParameters(expression);
-        if (keys == null || feature == null)
+        if (feature == null)
         {
             return expression;
         }
 
-        foreach (string key in keys)
-        {
-            int srsId = key.ToLower().StartsWith("spatial::") ? GetSRefIdFromSpatialParameter(key) : 0;
-            if ((key.Equals("BBOX") || key.ToLower().StartsWith("spatial::bbox")) && feature.Shape != null)
-            {
-                expression = expression.Replace($"[{key}]", feature.Shape.ShapeEnvelope.ToBBox(Globals.SpatialReferences, srsId));
-            }
-            else if (key.ToLower().StartsWith("spatial::point"))
-            {
-                var point = feature.Shape?.DeterminePointsOnShape(Globals.SpatialReferences, srsId).FirstOrDefault();
-                if (point != null)
-                {
-                    expression = expression.Replace($"[{key}]", point.X.ToPlatformNumberString() + "," + point.Y.ToPlatformNumberString());
-                }
-            }
-            else if (key.ToLower().Equals("spatial::latlng"))
-            {
-                var point = feature.Shape?.DeterminePointsOnShape(Globals.SpatialReferences, 4326).FirstOrDefault();
-                if (point != null)
-                {
-                    expression = expression.Replace($"[{key}]", point.Y.ToPlatformNumberString() + "," + point.X.ToPlatformNumberString());
-                }
-            }
-            else if (key.ToLower().Equals("spatial::lnglat"))
-            {
-                var point = feature.Shape?.DeterminePointsOnShape(Globals.SpatialReferences, 4326).FirstOrDefault();
-                if (point != null)
-                {
-                    expression = expression.Replace($"[{key}]", point.X.ToPlatformNumberString() + "," + point.Y.ToPlatformNumberString());
-                }
-            }
-            else if (key.ToLower().Equals("spatial::lng"))
-            {
-                var point = feature.Shape?.DeterminePointsOnShape(Globals.SpatialReferences, 4326).FirstOrDefault();
-                if (point != null)
-                {
-                    expression = expression.Replace($"[{key}]", point.X.ToPlatformNumberString());
-                }
-            }
-            else if (key.ToLower().Equals("spatial::lat"))
-            {
-                var point = feature.Shape?.DeterminePointsOnShape(Globals.SpatialReferences, 4326).FirstOrDefault();
-                if (point != null)
-                {
-                    expression = expression.Replace($"[{key}]", point.Y.ToPlatformNumberString());
-                }
-            }
-            else
-            {
-                if (key.StartsWith("url-encode:"))
-                {
-                    expression = expression.Replace($"[{key}]", Uri.EscapeDataString(feature[key.RemovePrefixIfPresent("url-encode:")]));
-                }
-                else if (key.StartsWith("url-encode-latin1:"))
-                {
-                    expression = expression.Replace($"[{key}]", feature[key.RemovePrefixIfPresent("url-encode-latin1:")].ToLatin1UrlEncoded());
-                }
-                else if (key.Contains(":"))
-                {
-                    int pos = key.IndexOf(":");
-                    string format = key.Substring(pos + 1, key.Length - pos - 1);
-                    string key2 = key.Substring(0, pos);
-                    double res;
-                    if (feature[key2].TryToPlatformDouble(out res))
-                    {
-                        expression = expression.Replace($"[{key}]", String.Format("{0:" + format + "}", res));
-                    }
-                    else
-                    {
-                        expression = expression.Replace($"[{key}]", String.Format("{0:" + format + "}", feature[key2]));
-                    }
-                }
-                //else if (key.StartsWith("~") && hotlink != null && hotlink.One2N && !String.IsNullOrEmpty(hotlink.HotlinkId))
-                //{
-                //    string fKey = key.Substring(1, key.Length - 1);
-                //    string val = feature[fKey];
-                //    if (val.Length < 100)
-                //    {
-                //        expression = expression.Replace($"[{key}]", val);
-                //    }
-                //    else
-                //    {
-                //        string valId = hotlink.HotlinkId + "~" + fKey;
-                //        expression = expression.Replace($"[{key}]", "~" + valId);
-                //        hotlink[fKey] = val;
-                //    }
-                //}
-                else if (key.StartsWith("~")/* && hotlink == null*/)
-                {
-                    string fKey = key.Substring(1, key.Length - 1);
-                    expression = expression.Replace($"[{key}]", feature[fKey]);
-                }
-                else if (key.StartsWith("!")) // Required Parameter
-                {
-                    string fKey = key.Substring(1, key.Length - 1);
-                    if (String.IsNullOrEmpty(feature[fKey]))
-                    {
-                        return String.Empty;
-                    }
+        return SimpleExpression.Solve(expression, keys, new FeatureExpressionValueResolver(feature));
+    }
 
-                    expression = expression.Replace($"[{key}]", feature[fKey]);
-                }
-                else
-                {
-                    expression = expression.Replace($"[{key}]", feature[key]);
-                }
+    private readonly struct FeatureExpressionValueResolver : ISimpleExpressionValueResolver
+    {
+        private const string SpatialPrefix = "spatial::";
+
+        private readonly Feature _feature;
+
+        public FeatureExpressionValueResolver(Feature feature) => _feature = feature;
+
+        public string GetValue(string fieldName) => _feature[fieldName];
+
+        public bool TryParseNumber(string value, out double number) => value.TryToPlatformDouble(out number);
+
+        public string UrlEncodeLatin1(string value) => value.ToLatin1UrlEncoded();
+
+        public bool TryResolveSpecialKey(string key, out string replacement)
+        {
+            replacement = null;
+
+            bool isBBox = key.Equals("BBOX");
+            if (!isBBox && !key.StartsWith(SpatialPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;  // fast path for plain field keys (no allocation)
             }
+
+            string lowerKey = key.ToLowerInvariant();
+
+            if ((isBBox || lowerKey.StartsWith("spatial::bbox")) && _feature.Shape != null)
+            {
+                replacement = _feature.Shape.ShapeEnvelope.ToBBox(Globals.SpatialReferences, GetSRefIdFromSpatialParameter(key));
+                return true;
+            }
+
+            if (lowerKey.StartsWith("spatial::point"))
+            {
+                var point = FirstPointOnShape(GetSRefIdFromSpatialParameter(key));
+                replacement = point == null ? null : $"{point.X.ToPlatformNumberString()},{point.Y.ToPlatformNumberString()}";
+                return true;
+            }
+
+            if (lowerKey is "spatial::latlng" or "spatial::lnglat" or "spatial::lng" or "spatial::lat")
+            {
+                var point = FirstPointOnShape(4326);
+                if (point != null)
+                {
+                    string lng = point.X.ToPlatformNumberString(), lat = point.Y.ToPlatformNumberString();
+                    replacement = lowerKey switch
+                    {
+                        "spatial::latlng" => $"{lat},{lng}",
+                        "spatial::lnglat" => $"{lng},{lat}",
+                        "spatial::lng" => lng,
+                        _ => lat
+                    };
+                }
+                return true;
+            }
+
+            return false;
         }
-        return expression;
+
+        private WebMapping.Core.Geometry.Point FirstPointOnShape(int srsId)
+            => _feature.Shape?.DeterminePointsOnShape(Globals.SpatialReferences, srsId).FirstOrDefault();
     }
 
     static private int GetSRefIdFromSpatialParameter(string parameter)

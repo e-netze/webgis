@@ -974,8 +974,8 @@ public class LayoutBuilder
             if (_map != null && _map.SpatialReference != null && layoutSRef != null)
             {
                 _transformer = new GeometricTransformer();
-                _transformer.FromSpatialReference(_map.SpatialReference.Proj4, !_map.SpatialReference.IsProjective);
-                _transformer.ToSpatialReference(layoutSRef.Proj4, !layoutSRef.IsProjective);
+                _transformer.FromSpatialReference(_map.SpatialReference);
+                _transformer.ToSpatialReference(layoutSRef);
             }
             _coord_format = CoordFormat;
 

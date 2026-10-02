@@ -1155,7 +1155,9 @@ public class WmsHelper
 
                     if (format == "text/html")
                     {
-                        await query.InitFieldRendering(requestContext.Http);
+                        var fieldRenderingContext = await query.InitFieldRendering(
+                            requestContext.Http,
+                            httpContext?.Request?.HeadersCollection());
 
                         ret.Append("<h2>" + layerInfo.name + "</h2>");
 
@@ -1164,7 +1166,7 @@ public class WmsHelper
                             ret.Append("<table style='font-family:verdana;font-size:8.25pt;background-color:#808080;' cellpadding=1 cellspacing=1>");
                             foreach (var field in query.Fields)
                             {
-                                string val = field.RenderField(feature, httpContext?.Request?.HeadersCollection());
+                                string val = fieldRenderingContext.RenderField(field, feature);
                                 if (String.IsNullOrWhiteSpace(val))
                                 {
                                     continue;

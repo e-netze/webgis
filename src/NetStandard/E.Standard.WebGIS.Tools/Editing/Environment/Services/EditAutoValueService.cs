@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -10,6 +10,9 @@ using E.Standard.CMS.Core.Extensions;
 using E.Standard.DbConnector;
 using E.Standard.Extensions.IO;
 using E.Standard.Json;
+using E.Standard.Parsing;
+using E.Standard.Parsing.SimpleExpressions;
+using E.Standard.Parsing.StructuredExpressions;
 using E.Standard.Platform;
 using E.Standard.WebGIS.CMS;
 using E.Standard.WebGIS.Tools.Extensions;
@@ -208,6 +211,31 @@ internal class EditAutoValueService
     private string GetExpressionAutoValue(string autoValue)
     {
         string value = autoValue.Substring(1, autoValue.Length - 1);
+
+        if (ExpressionClassifier.Classify(value) == ExpressionSyntax.StructuredExpression)
+        {
+            try
+            {
+                return new ExpressionEvaluator()
+                    .Evaluate(
+                        value,
+                        ResolveExpressionField,
+                        ResolveExpressionFunction)
+                    .ToInvariantString();
+            }
+            catch (ExpressionException exception)
+            {
+                throw new ArgumentException(
+                    $"{_targetFieldName}: Autovalue expression error: {exception.Message}",
+                    exception);
+            }
+        }
+
+        return GetLegacyExpressionAutoValue(value);
+    }
+
+    private string GetLegacyExpressionAutoValue(string value)
+    {
         string[] keys = ExtractKeyParameters(value);
 
         if (keys != null)
@@ -215,21 +243,10 @@ internal class EditAutoValueService
             string keyValue = String.Empty;
             foreach (string key in keys)
             {
-                if (key == ":shape_len" && _feature?.Shape is Polyline polyline)
+                if (key is ":shape_len" or ":shape_len_int" or ":shape_area" or ":shape_area_int"
+                    && FormatNumericShapeMetric(key.Substring(1), _feature?.Shape) is string shapeValue)
                 {
-                    keyValue = Math.Round(polyline.Length, 2).ToPlatformNumberString();
-                }
-                else if (key == ":shape_len_int" && _feature?.Shape is Polyline integerPolyline)
-                {
-                    keyValue = Math.Round(integerPolyline.Length, 0).ToString();
-                }
-                else if (key == ":shape_area" && _feature?.Shape is Polygon polygon)
-                {
-                    keyValue = Math.Round(polygon.Area, 2).ToPlatformNumberString();
-                }
-                else if (key == ":shape_area_int" && _feature?.Shape is Polygon integerPolygon)
-                {
-                    keyValue = Math.Round(integerPolygon.Area, 0).ToString();
+                    keyValue = shapeValue;
                 }
                 else if (_feature != null && _feature[key] != null)
                 {
@@ -242,6 +259,32 @@ internal class EditAutoValueService
 
         return value.Trim();
     }
+
+    private ExpressionValue? ResolveExpressionField(string fieldName)
+    {
+        var attribute = _feature?.Attributes?[fieldName];
+        if (attribute is null)
+        {
+            return null;
+        }
+
+        var value = attribute.Value;
+        if (Boolean.TryParse(value, out var boolean))
+        {
+            return ExpressionValue.From(boolean);
+        }
+
+        return ExpressionValue.From(value);
+    }
+
+    private ExpressionValue? ResolveExpressionFunction(
+        string functionName,
+        IReadOnlyList<ExpressionValue> arguments)
+        => ShapeExpressionFunctions.Resolve(
+            _feature?.Shape,
+            functionName,
+            arguments,
+            targetSRefId => GetShapeForCalculation(targetSRefId, functionName));
 
     private string GetConditionalParameterName(string autoValue, string parameterPrefix)
     {
@@ -352,43 +395,39 @@ internal class EditAutoValueService
         }
 
         var shape = GetShapeForCalculation(targetSRefId, autoValue);
-        var envelope = shape.ShapeEnvelope;
-        var centroid = SpatialAlgorithms.Centroid(shape);
 
-        return (shapeValueName, shape) switch
+        var value = shapeValueName switch
         {
-            ("shape_len", Polyline polyline) =>
-                (Math.Round(polyline.Length, 2).ToPlatformNumberString(), true),
-            ("shape_len_int", Polyline polyline) =>
-                (Math.Round(polyline.Length, 0).ToString(), true),
-            ("shape_area", Polygon polygon) =>
-                (Math.Round(polygon.Area, 2).ToPlatformNumberString(), true),
-            ("shape_area_int", Polygon polygon) =>
-                (Math.Round(polygon.Area, 0).ToString(), true),
-            ("shape_perimeter", Polygon polygon) =>
-                (Math.Round(polygon.Circumference, 2).ToPlatformNumberString(), true),
-            ("shape_centroid_x", _) when centroid != null =>
-                (centroid.X.ToPlatformNumberString(), true),
-            ("shape_centroid_y", _) when centroid != null =>
-                (centroid.Y.ToPlatformNumberString(), true),
-            ("shape_minx", _) when envelope != null =>
-                (envelope.MinX.ToPlatformNumberString(), true),
-            ("shape_miny", _) when envelope != null =>
-                (envelope.MinY.ToPlatformNumberString(), true),
-            ("shape_maxx", _) when envelope != null =>
-                (envelope.MaxX.ToPlatformNumberString(), true),
-            ("shape_maxy", _) when envelope != null =>
-                (envelope.MaxY.ToPlatformNumberString(), true),
-            ("shape_vertex_count", _) =>
-                (SpatialAlgorithms.VertexCount(shape).ToString(), true),
-            ("shape_part_count", _) =>
-                (SpatialAlgorithms.PartCount(shape).ToString(), true),
-            ("shape_type", _) =>
-                (GetShapeType(shape), true),
-            ("shape_srefid", _) =>
-                (shape.SrsId.ToString(), true),
-            _ => null
+            "shape_vertex_count" => SpatialAlgorithms.VertexCount(shape).ToString(),
+            "shape_part_count" => SpatialAlgorithms.PartCount(shape).ToString(),
+            "shape_type" => ShapeMetrics.GetTypeName(shape),
+            "shape_srefid" => shape.SrsId.ToString(),
+            _ => FormatNumericShapeMetric(shapeValueName, shape)
         };
+
+        return value is null ? null : (value, true);
+    }
+
+    private static string FormatNumericShapeMetric(string shapeValueName, Shape shape)
+    {
+        var asInteger = shapeValueName is "shape_len_int" or "shape_area_int";
+        var metricName = asInteger
+            ? shapeValueName.Substring(0, shapeValueName.Length - "_int".Length)
+            : shapeValueName;
+
+        if (ShapeMetrics.GetNumericMetric(metricName, shape) is not double value)
+        {
+            return null;
+        }
+
+        if (asInteger)
+        {
+            return Math.Round(value, 0).ToString();
+        }
+
+        return metricName is "shape_len" or "shape_area" or "shape_perimeter"
+            ? Math.Round(value, 2).ToPlatformNumberString()
+            : value.ToPlatformNumberString();
     }
 
     private (string value, bool setIt)? GetGeneralAutoValue(string autoValue)
@@ -431,15 +470,9 @@ internal class EditAutoValueService
                 $"Autovalue {autoValue}: Source SRefId is not set");
         }
 
-        var shape = CloneShape(_feature.Shape);
-        using (var transformer = _editEnvironment.Bridge.GeometryTransformer(
-            _feature.Shape.SrsId,
-            targetSRefId.Value))
-        {
-            transformer.Transform(shape);
-        }
-
-        return shape;
+        return _feature.Shape.TransformedCopy(
+            targetSRefId.Value,
+            _editEnvironment.Bridge.GeometryTransformer);
     }
 
     private static bool TryParseShapeAutoValue(
@@ -451,29 +484,16 @@ internal class EditAutoValueService
         shapeValueName = parts[0];
         targetSRefId = null;
 
-        if (shapeValueName is not (
-            "shape_len"
-            or "shape_len_int"
-            or "shape_area"
-            or "shape_area_int"
-            or "shape_perimeter"
-            or "shape_centroid_x"
-            or "shape_centroid_y"
-            or "shape_minx"
-            or "shape_miny"
-            or "shape_maxx"
-            or "shape_maxy"
-            or "shape_vertex_count"
-            or "shape_part_count"
-            or "shape_type"
-            or "shape_srefid"))
+        if (!ShapeMetrics.IsNumericMetric(shapeValueName)
+            && shapeValueName is not ("shape_len_int" or "shape_area_int")
+            && !IsShapeValueWithoutSRefId(shapeValueName))
         {
             return false;
         }
 
         if (parts.Length == 2)
         {
-            if (shapeValueName is "shape_vertex_count" or "shape_part_count" or "shape_type" or "shape_srefid")
+            if (IsShapeValueWithoutSRefId(shapeValueName))
             {
                 throw new ArgumentException(
                     $"Autovalue {autoValue}: Target SRefId is not supported");
@@ -491,34 +511,8 @@ internal class EditAutoValueService
         return true;
     }
 
-    private static string GetShapeType(Shape shape)
-        => shape switch
-        {
-            Point => "point",
-            MultiPoint => "multipoint",
-            Polyline => "polyline",
-            Polygon => "polygon",
-            Envelope => "envelope",
-            _ => shape.GetType().Name.ToLowerInvariant()
-        };
-
-    private static Shape CloneShape(Shape shape)
-    {
-        using var stream = new MemoryStream();
-
-        using (var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true))
-        {
-            Shape.SerializeShape(shape, writer);
-        }
-
-        stream.Position = 0;
-        using var reader = new BinaryReader(stream);
-        var clonedShape = Shape.DeserializeShape(reader);
-        clonedShape.SrsId = shape.SrsId;
-        clonedShape.SrsP4Parameters = shape.SrsP4Parameters;
-
-        return clonedShape;
-    }
+    private static bool IsShapeValueWithoutSRefId(string shapeValueName)
+        => shapeValueName is "shape_vertex_count" or "shape_part_count" or "shape_type" or "shape_srefid";
 
     private static string GetShortLogin(string username)
         => username
@@ -638,30 +632,17 @@ internal class EditAutoValueService
         return (value: firstElementValue, setIt: true);
     }
 
+    // Legacy semantics: keys are joined with ';' and split again, so ';' inside brackets separates keys.
     private static string[] ExtractKeyParameters(string commandLine)
     {
-        int pos1 = commandLine.IndexOf("[");
-        int pos2;
-        string parameters = "";
+        var parameters = TemplateScanner.Scan(commandLine)
+            .Aggregate(
+                String.Empty,
+                (current, parameter) => current == String.Empty
+                    ? parameter.Key
+                    : current + ";" + parameter.Key);
 
-        while (pos1 != -1)
-        {
-            pos2 = commandLine.IndexOf("]", pos1);
-            if (pos2 == -1)
-            {
-                break;
-            }
-
-            if (parameters != "")
-            {
-                parameters += ";";
-            }
-
-            parameters += commandLine.Substring(pos1 + 1, pos2 - pos1 - 1);
-            pos1 = commandLine.IndexOf("[", pos2);
-        }
-
-        return parameters != ""
+        return parameters != String.Empty
             ? parameters.Split(';')
             : null;
     }

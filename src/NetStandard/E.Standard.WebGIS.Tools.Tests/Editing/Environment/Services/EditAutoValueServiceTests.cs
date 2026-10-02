@@ -1,7 +1,8 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Reflection;
 using System.Xml;
 
+using E.Standard.Platform;
 using E.Standard.WebGIS.Tools.Editing.Environment;
 using E.Standard.WebGIS.Tools.Editing.Environment.Services;
 using E.Standard.WebGIS.Tools.Editing.Models;
@@ -73,6 +74,173 @@ public class EditAutoValueServiceTests
 
         Assert.Equal("Road Main, length 5", result.value);
         Assert.True(result.setIt);
+    }
+
+    [Theory]
+    [InlineData("=concat([FIRSTNAME], \" \", [LASTNAME])", "Ada Lovelace")]
+    [InlineData("=round([AREA] / 10000, 2)", "1.23")]
+    [InlineData("=if([STATUS] == \"A\", \"Aktiv\", \"Inaktiv\")", "Aktiv")]
+    [InlineData("=coalesce([MISSING], [LASTNAME], \"Unknown\")", "Lovelace")]
+    [InlineData("=concat(\"Code \", [CODE])", "Code 001")]
+    public async Task StructuredExpression_EvaluatesTypedFeatureValues(
+        string expression,
+        string expected)
+    {
+        var feature = new Feature(
+        [
+            new WebMapping.Core.Attribute("FIRSTNAME", "Ada"),
+            new WebMapping.Core.Attribute("LASTNAME", "Lovelace"),
+            new WebMapping.Core.Attribute("AREA", "12345"),
+            new WebMapping.Core.Attribute("CODE", "001"),
+            new WebMapping.Core.Attribute("STATUS", "A")
+        ]);
+        var service = CreateService(expression, feature: feature);
+
+        var result = await service.GetAutoValueAsync();
+
+        Assert.Equal(expected, result.value);
+        Assert.True(result.setIt);
+    }
+
+    [Fact]
+    public async Task LegacyExpression_WithAdjacentFields_RemainsTemplate()
+    {
+        var feature = new Feature(
+        [
+            new WebMapping.Core.Attribute("FIRSTNAME", "Ada"),
+            new WebMapping.Core.Attribute("LASTNAME", "Lovelace")
+        ]);
+        var service = CreateService("=[FIRSTNAME] [LASTNAME]", feature: feature);
+
+        var result = await service.GetAutoValueAsync();
+
+        Assert.Equal("Ada Lovelace", result.value);
+    }
+
+    [Theory]
+    [InlineData("=L [:shape_len] A [:shape_area]", "L 5 A")]
+    [InlineData("=A [:shape_area_int]", "A")]
+    public async Task LegacyExpression_GeometryKeys_UseShapeTypeSpecificValues(
+        string expression,
+        string expected)
+    {
+        var feature = new Feature
+        {
+            Shape = new Polyline(
+            [
+                new Point(0, 0),
+                new Point(3, 4)
+            ])
+        };
+
+        var result = await CreateService(expression, feature: feature).GetAutoValueAsync();
+
+        Assert.Equal(expected, result.value);
+    }
+
+    [Fact]
+    public async Task LegacyExpression_PolygonAreaKeys_AreRounded()
+    {
+        var feature = new Feature
+        {
+            Shape = new Polygon(
+                new Ring(
+                [
+                    new Point(0, 0),
+                    new Point(2.5, 0),
+                    new Point(2.5, 2.5),
+                    new Point(0, 2.5),
+                    new Point(0, 0)
+                ]))
+        };
+
+        var result = await CreateService(
+            "=Area [:shape_area] / [:shape_area_int]",
+            feature: feature).GetAutoValueAsync();
+
+        Assert.Equal($"Area {6.25.ToPlatformNumberString()} / 6", result.value);
+    }
+
+    [Fact]
+    public async Task LegacyExpression_SemicolonInsideBrackets_SeparatesKeys()
+    {
+        var feature = new Feature(
+        [
+            new WebMapping.Core.Attribute("A", "1"),
+            new WebMapping.Core.Attribute("B", "2")
+        ]);
+
+        var result = await CreateService("=[A;B] [A]", feature: feature).GetAutoValueAsync();
+
+        Assert.Equal("[A;B] 1", result.value);
+    }
+
+    [Fact]
+    public async Task LegacyExpression_WithHyphen_RemainsTemplate()
+    {
+        var feature = new Feature(
+        [
+            new WebMapping.Core.Attribute("NAME", "Main")
+        ]);
+
+        var result = await CreateService(
+            "=Object-ID [NAME]",
+            feature: feature).GetAutoValueAsync();
+
+        Assert.Equal("Object-ID Main", result.value);
+    }
+
+    [Fact]
+    public async Task StructuredExpression_ReportsTargetFieldAndPosition()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentException>(
+            () => CreateService("=round(", feature: new Feature()).GetAutoValueAsync());
+
+        Assert.Contains("TARGET: Autovalue expression error", exception.Message);
+        Assert.Contains("position", exception.Message);
+    }
+
+    [Theory]
+    [InlineData("=shape_len()", "5")]
+    [InlineData("=shape_centroid_x()", "1.5")]
+    [InlineData("=shape_centroid_y()", "2")]
+    public async Task StructuredExpression_ProvidesShapeFunctions(
+        string expression,
+        string expected)
+    {
+        var feature = new Feature
+        {
+            Shape = new Polyline(
+            [
+                new Point(0, 0),
+                new Point(3, 4)
+            ])
+            {
+                SrsId = 3857
+            }
+        };
+
+        var result = await CreateService(expression, feature: feature).GetAutoValueAsync();
+
+        Assert.Equal(expected, result.value);
+    }
+
+    [Fact]
+    public async Task StructuredExpression_ShapeFunctionCanTransformCopy()
+    {
+        var feature = CreateSquarePolygonFeature();
+        var editEnvironment = CreateEditEnvironment(
+            bridgeProxy: CreateScalingBridgeProxy());
+        var service = CreateService(
+            "=shape_area(4326)",
+            feature: feature,
+            editEnvironment: editEnvironment);
+
+        var result = await service.GetAutoValueAsync();
+
+        Assert.Equal("600", result.value);
+        Assert.Equal(100, ((Polygon)feature.Shape).Area);
+        Assert.Equal(3857, feature.Shape.SrsId);
     }
 
     [Fact]

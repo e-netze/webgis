@@ -20,6 +20,7 @@ static public class FeatureCollectionExtensions
                 FeatureCollection queryFeatures,
                 QueryDTO query,
                 bool renderFields = true,
+                QueryFieldRenderingContext renderingContext = null,
                 NameValueCollection requestHeaders = null,
                 bool usePayload = false,
                 ICryptoService crypto = null)
@@ -31,12 +32,16 @@ static public class FeatureCollectionExtensions
                 try
                 {
                     CollectionFeature collFeature = new CollectionFeature(queryFeatures, hotlinkField.One2NSeperator);
+                    var hotlinkContext = renderingContext?.GetFieldContext(hotlinkField);
 
                     var hotLinkUrl = String.Empty;
 
-                    hotLinkUrl = SolveExpression(query,
-                                         collFeature,
-                                         hotlinkField.HotlinkUrl.ReplaceUrlHeaderPlaceholders(requestHeaders));
+                    hotLinkUrl = hotlinkContext is not null
+                        ? hotlinkField.SolveHotlinkUrl(collFeature, hotlinkContext)
+                        : Globals.SolveExpression(
+                            collFeature,
+                            hotlinkField.HotlinkUrl.ReplaceUrlHeaderPlaceholders(requestHeaders));
+                    hotLinkUrl = ReplaceObjectId(query, collFeature, hotLinkUrl);
 
                     if (usePayload && crypto is not null)
                     {
@@ -53,10 +58,17 @@ static public class FeatureCollectionExtensions
                         returnFeatures.Links[colName] = hotLinkUrl;
                         returnFeatures.LinkTargets[colName] = hotlinkField.Target.ToString().ToLowerInvariant();
 
-                        if (!String.IsNullOrEmpty(hotlinkField.ImageExpression) && !ExpressionHasParameters(hotlinkField.ImageExpression))
+                        var preparedImageExpression = hotlinkContext is not null
+                            ? hotlinkField.PreparedImageExpression(hotlinkContext)
+                            : hotlinkField.ImageExpression;
+                        var imageHasParameters = hotlinkContext is not null
+                            ? hotlinkField.PreparedImageExpressionHasParameters(hotlinkContext)
+                            : ExpressionHasParameters(hotlinkField.ImageExpression);
+
+                        if (!String.IsNullOrEmpty(preparedImageExpression) && !imageHasParameters)
                         {
                             returnFeatures.LinkImages ??= new();
-                            returnFeatures.LinkImages[colName] = hotlinkField.ImageExpression;
+                            returnFeatures.LinkImages[colName] = preparedImageExpression;
                         }
 
                     }
@@ -67,22 +79,23 @@ static public class FeatureCollectionExtensions
     }
 
 
-    static private string SolveExpression(
+    static private string ReplaceObjectId(
             QueryDTO query,
             E.Standard.WebMapping.Core.Feature feature,
             string expression
         )
     {
-        string expr = Globals.SolveExpression(feature, expression);
-
         if (query != null)
         {
-            if (expr.Contains("{OBJECTID}") && query.Service?.Layers?.FindById(query.LayerId) != null)
+            if (expression.Contains("{OBJECTID}") && query.Service?.Layers?.FindById(query.LayerId) != null)
             {
-                expr = expr.Replace("{OBJECTID}", feature[query.Service?.Layers?.FindById(query.LayerId).IdFieldName]);
+                expression = expression.Replace(
+                    "{OBJECTID}",
+                    feature[query.Service?.Layers?.FindById(query.LayerId).IdFieldName]);
             }
         }
-        return expr;
+
+        return expression;
     }
 
     static private bool ExpressionHasParameters(string expression)

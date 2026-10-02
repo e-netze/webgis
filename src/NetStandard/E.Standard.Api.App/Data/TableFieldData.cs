@@ -48,7 +48,15 @@ public sealed class TableFieldData : TableField
         }
     }
 
-    async public override Task InitRendering(IHttpService httpService)
+    public override async Task<TableFieldRenderingContext> CreateRenderingContextAsync(
+        IHttpService httpService,
+        NameValueCollection requestHeaders)
+    {
+        await RefreshSimpleDomainsAsync(httpService);
+        return CreateRenderingContext(requestHeaders);
+    }
+
+    private async Task RefreshSimpleDomainsAsync(IHttpService httpService)
     {
         if (httpService != null &&
             _simpleDomainValue.IsValidHttpUrl() &&
@@ -95,7 +103,7 @@ public sealed class TableFieldData : TableField
 
     public FieldAutoSortMethod AutoSort { get; set; }
 
-    public override string RenderField(WebMapping.Core.Feature feature, NameValueCollection requestHeaders)
+    public override string RenderField(WebMapping.Core.Feature feature, TableFieldRenderingContext context)
     {
         string val = feature[this.FieldName];
         if (String.IsNullOrEmpty(val))
@@ -112,9 +120,9 @@ public sealed class TableFieldData : TableField
             return "<a href='tel:" + val + "'>" + val + "</a>";
         }
 
-        if (_simpleDomains != null && _simpleDomains.ContainsKey(val))
+        if (_simpleDomains != null && _simpleDomains.TryGetValue(val, out var domainValue))
         {
-            val = _simpleDomains[val];
+            val = domainValue;
         }
 
         if (RawHtml)

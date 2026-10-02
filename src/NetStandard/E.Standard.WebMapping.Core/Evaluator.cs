@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 
+using E.Standard.Parsing.SimpleExpressions;
 using E.Standard.Platform;
 
 namespace E.Standard.WebMapping.Core;
@@ -250,124 +251,7 @@ public class Eval
     }
 
     public static string ParseEvalExpression(string e)
-    {
-        e = e.Replace("$pi()", Math.PI.ToString());
-
-        //while (e.IndexOf("$eval(") != -1)
-        //{
-        //    int pos = e.LastIndexOf("$eval("), pos2 = -1, level = 0;
-        //    for (int i = pos + 6; i < e.Length; i++)
-        //    {
-        //        if (e[i] == '(')
-        //            level++;
-        //        if (e[i] == ')')
-        //        {
-        //            if (level == 0)
-        //            {
-        //                pos2 = i;
-        //                break;
-        //            }
-        //            else
-        //            {
-        //                level--;
-        //            }
-        //        }
-        //    }
-        //    if (pos2 == -1)
-        //        return "Syntax error: " + e;
-
-        //    string eval = e.Substring(pos + 6, pos2 - pos - 6);
-        //    eval = Evaluate2(eval);
-
-        //    e = e.Substring(0, pos) + eval + e.Substring(pos2 + 1, e.Length - pos2 - 1);
-        //}
-
-        e = EvalFunctions(e);
-
-        // round
-        for (int i = 0; i < 6; i++)
-        {
-            string func = $"$round{i}(";
-
-            while (e.IndexOf(func) != -1)
-            {
-                int pos = e.LastIndexOf(func), pos2 = e.IndexOf(")", pos);
-                if (pos2 == -1)
-                {
-                    return $"Syntax error: {e}";
-                }
-
-                try
-                {
-                    double round = e.Substring(pos + 8, pos2 - pos - 8).ToPlatformDouble();
-
-                    round = Math.Round(round, i);
-                    e = e.Substring(0, pos) + String.Format(RoundFormat(i), round) + e.Substring(pos2 + 1, e.Length - pos2 - 1);
-                }
-                catch
-                {
-                    e = NaN;
-                    break;
-                }
-            }
-        }
-
-        // Standard Numeric Format 1000.123 => n0, n1, n2 ... => 1.000, 1.000,1, 1.000.12 ...
-        for (int i = 0; i < 6; i++)
-        {
-            string func = $"$n{i}(";
-
-            while (e.IndexOf(func) != -1)
-            {
-                int pos = e.LastIndexOf(func), pos2 = e.IndexOf(")", pos);
-                if (pos2 == -1)
-                {
-                    return $"Syntax error: {e}";
-                }
-
-                try
-                {
-                    double number = e.Substring(pos + 4, pos2 - pos - 4).ToPlatformDouble();
-
-                    e = e.Substring(0, pos) + number.ToString($"N{i}") + e.Substring(pos2 + 1, e.Length - pos2 - 1);
-                }
-                catch
-                {
-                    e = NaN;
-                    break;
-                }
-            }
-        }
-
-        // Standard Numeric Format 1000.123 (German Culture) => n0, n1, n2 ... => 1.000, 1.000,1, 1.000.12 ...
-        for (int i = 0; i < 6; i++)
-        {
-            string func = $"$n{i}_de(";
-
-            while (e.IndexOf(func) != -1)
-            {
-                int pos = e.LastIndexOf(func), pos2 = e.IndexOf(")", pos);
-                if (pos2 == -1)
-                {
-                    return $"Syntax error: {e}";
-                }
-
-                try
-                {
-                    double number = e.Substring(pos + 7, pos2 - pos - 7).ToPlatformDouble();
-
-                    e = e.Substring(0, pos) + number.ToString($"N{i}", NumberConverter.GermanCultureInfo) + e.Substring(pos2 + 1, e.Length - pos2 - 1);
-                }
-                catch
-                {
-                    e = NaN;
-                    break;
-                }
-            }
-        }
-
-        return e;
-    }
+        => LegacyEvalExpression.Parse(e);
 
     #region Parse Functions
 

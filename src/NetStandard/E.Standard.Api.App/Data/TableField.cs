@@ -20,9 +20,21 @@ public abstract class TableField
 
     public bool Visible { get; set; }
 
-    public abstract string RenderField(WebMapping.Core.Feature feature, NameValueCollection requestHeaders);
+    /// <summary>
+    /// Creates the request-local rendering state without I/O. Never store request state on the
+    /// field itself: TableField instances are shared through cached queries.
+    /// </summary>
+    public virtual TableFieldRenderingContext CreateRenderingContext(NameValueCollection requestHeaders)
+        => new TableFieldRenderingContext(requestHeaders);
 
-    public abstract Task InitRendering(IHttpService httpService);
+    public virtual Task<TableFieldRenderingContext> CreateRenderingContextAsync(
+        IHttpService httpService,
+        NameValueCollection requestHeaders)
+        => Task.FromResult(CreateRenderingContext(requestHeaders));
+
+    public abstract string RenderField(
+        WebMapping.Core.Feature feature,
+        TableFieldRenderingContext context);
 
     public abstract IEnumerable<string> FeatureFieldNames
     {

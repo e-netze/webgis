@@ -21,6 +21,7 @@
     <ProjectReference Include="..\E.Standard.GeoRSS\E.Standard.GeoRSS.csproj" />
     <ProjectReference Include="..\E.Standard.Localization.Extensions\E.Standard.Localization.Extensions.csproj" />
     <ProjectReference Include="..\E.Standard.OpenIdConnect.Extensions\E.Standard.OpenIdConnect.Extensions.csproj" />
+    <ProjectReference Include="..\E.Standard.Parsing\E.Standard.Parsing.csproj" />
     <ProjectReference Include="..\E.Standard.Platform\E.Standard.Platform.csproj" />
     <ProjectReference Include="..\E.Standard.Security.Captcha\E.Standard.Security.Captcha.csproj" />
     <ProjectReference Include="..\E.Standard.Security.Cryptography\E.Standard.Security.Cryptography.csproj" />

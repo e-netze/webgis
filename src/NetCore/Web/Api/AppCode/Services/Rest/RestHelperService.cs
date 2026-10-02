@@ -508,6 +508,8 @@ public class RestHelperService
 
         if (queryFeatures != null)
         {
+            var requestHeaders = _contextAccessor.HttpContext?.Request?.HeadersCollection();
+            QueryFieldRenderingContext fieldRenderingContext = null;
             int sRefId = sRef != null ? sRef.Id : 4326;
             var service = query?.Service;
             var layer = query != null ? service?.Layers?.FindById(query.LayerId) : null;
@@ -520,14 +522,16 @@ public class RestHelperService
 
             if (renderFields && query != null)
             {
-                await query.InitFieldRendering(_requestContext.Http);
+                fieldRenderingContext = await query.InitFieldRendering(
+                    _requestContext.Http,
+                    requestHeaders);
             }
 
             #region Query/Table Fields
 
             var tableFields = query?.Fields;
 
-            // "*" => alle möglichen Felder anzeigen. Macht sinn wenn Dienst keine Schema hat (WMS und GetFetureInfo mit application/json)
+            // "*" => alle möglichen Felder anzeigen. Macht sinn wenn Dienst kein Schema hat (WMS und GetFetureInfo mit application/json)
             if (tableFields != null
                 && tableFields.Length == 1
                 && tableFields[0] is TableFieldData tableFieldData
@@ -565,9 +569,9 @@ public class RestHelperService
             {
                 if (sRefId != targetSRefId)
                 {
-                    transformer.FromSpatialReference(sRef.Proj4, !sRef.IsProjective);
                     var targetSRef = E.Standard.Api.App.ApiGlobals.SRefStore.SpatialReferences.ById(targetSRefId);
-                    transformer.ToSpatialReference(targetSRef.Proj4, !targetSRef.IsProjective);
+                    transformer.FromSpatialReference(sRef);
+                    transformer.ToSpatialReference(targetSRef);
                 }
 
                 bool addHoverShapes = (geometryType, targetSRefId) switch
@@ -608,7 +612,14 @@ public class RestHelperService
                                 }
                                 else
                                 {
-                                    points = SpatialAlgorithms.DeterminePointsOnShape(null, shape, 10, !sRef.IsProjective, clickPoint);
+                                    points = SpatialAlgorithms.DeterminePointsOnShape(null, shape, 10, 
+                                        isGeographic:
+                                            sRef is not null 
+                                                ? !sRef.IsProjective
+                                                : sRefId == 4326 
+                                                    ? true 
+                                                    : false, 
+                                        referencePoint: clickPoint);
                                 }
                             }
                             catch { /* TODO: Warnung ausgeben?! */ }
@@ -653,7 +664,7 @@ public class RestHelperService
                         {
                             if (renderFields)
                             {
-                                string val = field.RenderField(queryFeature, _contextAccessor.HttpContext?.Request?.HeadersCollection());
+                                string val = fieldRenderingContext.RenderField(field, queryFeature);
 
                                 returnFeature.Attributes.Add(new E.Standard.WebMapping.Core.Attribute(
                                     field.ColumnName,
@@ -717,7 +728,7 @@ public class RestHelperService
                         if (fulltext.Length == 0 && renderFields && tableFields?.FirstOrDefault() != null)
                         {
                             var firstField = tableFields.First();
-                            fulltext.Append($"{firstField.ColumnName}: {firstField.RenderField(queryFeature, _contextAccessor.HttpContext?.Request?.HeadersCollection())}");
+                            fulltext.Append($"{firstField.ColumnName}: {fieldRenderingContext.RenderField(firstField, queryFeature)}");
                         }
 
                         if (fulltext.Length > 0)
@@ -759,7 +770,8 @@ public class RestHelperService
 
                 returnFeatures.Append1toNLinks(
                     queryFeatures, query, renderFields,
-                    requestHeaders: _contextAccessor.HttpContext?.Request?.HeadersCollection(),
+                    renderingContext: fieldRenderingContext,
+                    requestHeaders: requestHeaders,
                     crypto: _crypto,
                     usePayload: _config.DataLinqUseCacheTokenForOne2nLinks());
 

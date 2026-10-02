@@ -163,8 +163,10 @@ public class FeatureCursor2 : IDisposable
                     SpatialReference fromSref = GeometryTranslator.FromSrsName(srsName);
                     if (fromSref != null)
                     {
-                        GeometricTransformer.Transform2D(feature.Shape,
-                            fromSref.Proj4, !fromSref.IsProjective, _filter.FeatureSpatialReference.Proj4, !_filter.FeatureSpatialReference.IsProjective);
+                        GeometricTransformer.Transform2D(
+                            feature.Shape,
+                            fromSref,
+                            _filter.FeatureSpatialReference);
                     }
                 }
 

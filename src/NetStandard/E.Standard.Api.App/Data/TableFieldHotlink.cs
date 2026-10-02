@@ -23,52 +23,96 @@ public sealed class TableFieldHotlink : TableField
     public int ImageWidth { get; set; }
     public int ImageHeight { get; set; }
 
-    public override Task InitRendering(IHttpService httpService) => Task.CompletedTask;
-
-    public override string RenderField(WebMapping.Core.Feature feature, NameValueCollection requestHeaders)
+    public override string RenderField(
+        WebMapping.Core.Feature feature,
+        TableFieldRenderingContext context)
     {
-        string url = WebGIS.CMS.Globals.SolveExpression(feature, this.HotlinkUrl.ReplaceUrlHeaderPlaceholders(requestHeaders));
+        var hotlinkContext = GetContext(context);
+        string url = SolveHotlinkUrl(feature, hotlinkContext);
 
         if (String.IsNullOrWhiteSpace(url))  // Don't show empty links
         {
             return String.Empty;
         }
 
-        string imgExpression = WebGIS.CMS.Globals.SolveExpression(feature, this.ImageExpression.ReplaceUrlHeaderPlaceholders(requestHeaders));
-        string imageTag = String.Empty;
+        string imgExpression = WebGIS.CMS.Globals.SolveExpression(
+            feature,
+            hotlinkContext.ImageExpression,
+            hotlinkContext.ImageParameters);
+        string name = WebGIS.CMS.Globals.SolveExpression(
+            feature,
+            hotlinkContext.NameExpression,
+            hotlinkContext.NameParameters);
 
-        if (!string.IsNullOrEmpty(imgExpression))
+        if (String.IsNullOrEmpty(imgExpression))
         {
-            var style = new StringBuilder();
-
-            if (this.ImageWidth > 0)
-            {
-                style.Append($"width:{this.ImageWidth}px;");
-            }
-
-            if (this.ImageHeight > 0)
-            {
-                style.Append($";height:{this.ImageHeight}px;");
-            }
-
-            style.Append("margin-right:8px;vertical-align:sub");
-
-            imageTag = $"<img style='{style}' src='{imgExpression}' />";
+            return String.Concat(hotlinkContext.AnchorPrefix, url, "'>", name, "</a>");
         }
 
-        StringBuilder sb = new StringBuilder();
-
-        sb.Append("<a target='");
-        sb.Append(Target.ToString());
-        sb.Append("' href='");
-        sb.Append(url);
-        sb.Append("'>");
-        sb.Append(imageTag);
-        sb.Append(WebGIS.CMS.Globals.SolveExpression(feature, String.IsNullOrEmpty(this.HotlinkName) ? this.ColumnName : this.HotlinkName));
-        sb.Append("</a>");
-
-        return sb.ToString();
+        return String.Concat(
+            hotlinkContext.AnchorPrefix, url, "'>",
+            hotlinkContext.ImageTagPrefix, imgExpression, "' />",
+            name, "</a>");
     }
+
+    public string SolveHotlinkUrl(
+        WebMapping.Core.Feature feature,
+        TableFieldRenderingContext context)
+    {
+        var hotlinkContext = GetContext(context);
+        return WebGIS.CMS.Globals.SolveExpression(
+            feature,
+            hotlinkContext.UrlExpression,
+            hotlinkContext.UrlParameters);
+    }
+
+    public bool PreparedImageExpressionHasParameters(TableFieldRenderingContext context)
+        => GetContext(context).ImageExpressionHasParameters;
+
+    public string PreparedImageExpression(TableFieldRenderingContext context)
+        => GetContext(context).ImageExpression;
+
+    public override TableFieldRenderingContext CreateRenderingContext(NameValueCollection requestHeaders)
+    {
+        var urlExpression = HotlinkUrl.ReplaceUrlHeaderPlaceholders(requestHeaders);
+        var imageExpression = ImageExpression.ReplaceUrlHeaderPlaceholders(requestHeaders);
+        var nameExpression = String.IsNullOrEmpty(HotlinkName) ? ColumnName : HotlinkName;
+
+        return new HotlinkRenderingContext(
+            requestHeaders,
+            urlExpression,
+            Helper.GetKeyParameters(urlExpression),
+            imageExpression,
+            Helper.GetKeyParameters(imageExpression),
+            ImageExpression?.Contains("[") == true
+                && ImageExpression.Contains("]"),
+            nameExpression,
+            Helper.GetKeyParameters(nameExpression),
+            $"<a target='{Target}' href='",
+            CreateImageTagPrefix());
+    }
+
+    private string CreateImageTagPrefix()
+    {
+        var sb = new StringBuilder("<img style='");
+        if (this.ImageWidth > 0)
+        {
+            sb.Append("width:").Append(this.ImageWidth).Append("px;");
+        }
+
+        if (this.ImageHeight > 0)
+        {
+            sb.Append(";height:").Append(this.ImageHeight).Append("px;");
+        }
+
+        return sb.Append("margin-right:8px;vertical-align:sub' src='").ToString();
+    }
+
+    private static HotlinkRenderingContext GetContext(TableFieldRenderingContext context)
+        => context as HotlinkRenderingContext
+            ?? throw new ArgumentException(
+                $"Invalid rendering context for {nameof(TableFieldHotlink)}.",
+                nameof(context));
 
     public override IEnumerable<string> FeatureFieldNames
     {
@@ -91,5 +135,29 @@ public sealed class TableFieldHotlink : TableField
 
             return fields.Distinct();
         }
+    }
+
+    private sealed class HotlinkRenderingContext(
+        NameValueCollection requestHeaders,
+        string urlExpression,
+        IReadOnlyList<string> urlParameters,
+        string imageExpression,
+        IReadOnlyList<string> imageParameters,
+        bool imageExpressionHasParameters,
+        string nameExpression,
+        IReadOnlyList<string> nameParameters,
+        string anchorPrefix,
+        string imageTagPrefix)
+        : TableFieldRenderingContext(requestHeaders)
+    {
+        public string UrlExpression { get; } = urlExpression;
+        public IReadOnlyList<string> UrlParameters { get; } = urlParameters;
+        public string ImageExpression { get; } = imageExpression;
+        public IReadOnlyList<string> ImageParameters { get; } = imageParameters;
+        public bool ImageExpressionHasParameters { get; } = imageExpressionHasParameters;
+        public string NameExpression { get; } = nameExpression;
+        public IReadOnlyList<string> NameParameters { get; } = nameParameters;
+        public string AnchorPrefix { get; } = anchorPrefix;
+        public string ImageTagPrefix { get; } = imageTagPrefix;
     }
 }

@@ -107,6 +107,15 @@ _blank ... new browser window\n_self ... viewer window (current window)\nopener 
 
 #expression: Expression
 
+Table columns are always treated as expressions, so a leading `=` is neither required nor
+interpreted as a prefix. Existing text templates such as `Object [NAME]` and legacy functions
+such as `$round2([AREA])` remain supported. Unambiguous structured expressions are detected
+automatically, for example `concat([FIRSTNAME], " ", [LASTNAME])`,
+`round([AREA] / 10000, 2)`, `if([STATUS] == "A", "Active", "Inactive")`, or `[COUNT] + 1`.
+Geometry values can be calculated with `shape_len()`, `shape_area()`, `shape_perimeter()`,
+`shape_centroid_x()`, and `shape_centroid_y()`. An optional target SRefId can be supplied,
+for example `round(shape_area(31256), 2)`.
+
 #column_data_type: Data type of the result
 
 If the result is always a number, Number can be used as the type here. 

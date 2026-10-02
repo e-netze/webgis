@@ -14,6 +14,8 @@ public sealed class GeometricTransformer : IGeometricTransformer
 {
     private CoordinateReferenceSystem _fromSrs = null, _toSrs = null;
     private bool _toProjective = true, _fromProjective = true;
+    private int _fromSrsId, _toSrsId;
+    private string _fromProj4 = String.Empty, _toProj4 = String.Empty;
 
     private const double RAD2DEG = (180.0 / Math.PI);
     //static private object lockThis = new object();
@@ -22,23 +24,58 @@ public sealed class GeometricTransformer : IGeometricTransformer
 
     #region Members
 
-    public void FromSpatialReference(string parameters, bool isGeographic)
+    private void FromSpatialReference(string parameters, bool isGeographic)
     {
-        _fromSrs = _factory.CreateFromParameters("from", parameters);
+        _fromSrsId = 0;
+        _fromSrs = _factory.CreateFromParameters("from", _fromProj4 = parameters);
 
         _fromProjective = (isGeographic == false);
     }
 
-    public void ToSpatialReference(string parameters, bool isGeographic)
+    public void FromSpatialReference(SpatialReference spatialReference)
     {
-        _toSrs = _factory.CreateFromParameters("to", parameters);
+        if (spatialReference == null)
+        {
+            _fromSrs = null;
+            _fromSrsId = 0;
+            _fromProj4 = String.Empty;
+            return;
+        }
+
+        FromSpatialReference(spatialReference.Proj4, !spatialReference.IsProjective);
+        _fromSrsId = spatialReference.Id;
+    }
+
+    private void ToSpatialReference(string parameters, bool isGeographic)
+    {
+        _toSrsId = 0;
+        _toSrs = _factory.CreateFromParameters("to", _toProj4 = parameters);
 
         _toProjective = (isGeographic == false);
     }
 
-    public void Transform2D(Shape shape)
+    public void ToSpatialReference(SpatialReference spatialReference)
     {
-        if (shape == null)
+        if (spatialReference == null)
+        {
+            _toSrs = null;
+            _toSrsId = 0;
+            _toProj4 = String.Empty;
+            return;
+        }
+
+        ToSpatialReference(spatialReference.Proj4, !spatialReference.IsProjective);
+        _toSrsId = spatialReference.Id;
+    }
+
+    public void Transform2D(Shape shape)
+        => Transform2D(shape, ShapeSrsProperties.SrsId);
+
+    public void Transform2D(
+        Shape shape,
+        ShapeSrsProperties setSrsProperties)
+    {
+        if (shape == null || !CanTransform)
         {
             return;
         }
@@ -73,17 +110,24 @@ public sealed class GeometricTransformer : IGeometricTransformer
 
             //double ms = (DateTime.Now - now).TotalMilliseconds;
         }
-        //shape.SrsId=this. ToDo:
+        SetSrsProperties(shape, setSrsProperties, _toSrsId, _toProj4);
     }
     public void Transform2D(Point point)
+        => Transform2D(point, ShapeSrsProperties.SrsId);
+
+    public void Transform2D(
+        Point point,
+        ShapeSrsProperties setSrsProperties)
     {
-        if (point != null)
+        if (point != null && CanTransform)
         {
             double[] x = new double[] { point.X };
             double[] y = new double[] { point.Y };
             Transform2D(x, y);
             point.X = x[0];
             point.Y = y[0];
+
+            SetSrsProperties(point, setSrsProperties, _toSrsId, _toProj4);
         }
     }
 
@@ -93,8 +137,13 @@ public sealed class GeometricTransformer : IGeometricTransformer
     }
 
     public void InvTransform2D(Shape shape)
+        => InvTransform2D(shape, ShapeSrsProperties.SrsId);
+
+    public void InvTransform2D(
+        Shape shape,
+        ShapeSrsProperties setSrsProperties)
     {
-        if (shape == null)
+        if (shape == null || !CanTransform)
         {
             return;
         }
@@ -115,16 +164,42 @@ public sealed class GeometricTransformer : IGeometricTransformer
                 InvTransform2D(point);
             }
         }
+
+        SetSrsProperties(shape, setSrsProperties, _fromSrsId, _fromProj4);
     }
     public void InvTransform2D(Point point)
+        => InvTransform2D(point, ShapeSrsProperties.SrsId);
+
+    public void InvTransform2D(
+        Point point,
+        ShapeSrsProperties setSrsProperties)
     {
-        if (point != null)
+        if (point != null && CanTransform)
         {
             double[] x = new double[] { point.X };
             double[] y = new double[] { point.Y };
             Transform2D_(x, y, _toSrs, _fromSrs, _toProjective, _fromProjective);
             point.X = x[0];
             point.Y = y[0];
+
+            SetSrsProperties(point, setSrsProperties, _fromSrsId, _fromProj4);
+        }
+    }
+
+    private static void SetSrsProperties(
+        Shape shape,
+        ShapeSrsProperties setSrsProperties,
+        int srsId,
+        string proj4)
+    {
+        if (setSrsProperties.HasFlag(ShapeSrsProperties.SrsId) && srsId > 0)
+        {
+            shape.SrsId = srsId;
+        }
+
+        if (setSrsProperties.HasFlag(ShapeSrsProperties.SrsProj4Parameters))
+        {
+            shape.SrsP4Parameters = proj4;
         }
     }
 
@@ -276,6 +351,26 @@ public sealed class GeometricTransformer : IGeometricTransformer
             transformer.Transform2D(shape);
             transformer.Release();
         }
+    }
+
+    static public Shape Transform2D(
+        Shape shape,
+        SpatialReference from,
+        SpatialReference to)
+    {
+        if (shape == null || from == null || to == null)
+        {
+            return shape;
+        }
+
+        using (var transformer = new GeometricTransformer())
+        {
+            transformer.FromSpatialReference(from);
+            transformer.ToSpatialReference(to);
+            transformer.Transform2D(shape);
+        }
+
+        return shape;
     }
 
     static public void Transform2D(ref double x, ref double y, string from, bool isFromGeographic, string to, bool isToGeographic)
