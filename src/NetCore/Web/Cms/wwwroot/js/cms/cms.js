@@ -5,6 +5,13 @@ var CMS = new function () {
     this.language = '';
     this.defaultLanguage = 'en';
     this.supportedLanguages = ['de', 'en'];
+    // Mirrors the language into a cookie so server-rendered pages (e.g. the
+    // playgrounds) can localize themselves. Returns true if the cookie changed.
+    var _syncLanguageCookie = function (lang) {
+        var previous = (document.cookie.match(/(?:^|;\s*)cms-language=([^;]*)/) || [])[1];
+        document.cookie = 'cms-language=' + encodeURIComponent(lang) + '; path=/; max-age=31536000; SameSite=Lax';
+        return previous !== lang && document.cookie.indexOf('cms-language=') !== -1;
+    };
     // Reads the last used language from localStorage (falling back to the
     // server-side default) so the UI keeps showing the user's preferred
     // language on the next visit.
@@ -23,7 +30,11 @@ var CMS = new function () {
         this.language = (stored && this.supportedLanguages.indexOf(stored) !== -1)
             ? stored
             : this.defaultLanguage;
+        var cookieChanged = _syncLanguageCookie(this.language);
         this.updateLanguageSwitcherUI();
+        if (cookieChanged && document.querySelector('[data-cms-localized-page]')) {
+            document.location.reload();
+        }
     };
     // Switches the CMS UI language, persists the choice in localStorage and
     // reloads the page so all node/property/tree data is re-fetched translated.
@@ -41,6 +52,7 @@ var CMS = new function () {
             window.localStorage.setItem(_languageStorageKey, lang);
         }
         catch (e) { }
+        _syncLanguageCookie(lang);
         var url = new URL(document.location.href);
         if (typeof document.currentPath === 'string' && document.currentPath) {
             url.searchParams.set('_cp', document.currentPath);

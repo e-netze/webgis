@@ -273,7 +273,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   against GeoJSON Features and FeatureCollections without publishing, including projected
   geometry functions. It now identifies the selected expression syntax, links to the expression
   documentation, lists available fields/functions, formats GeoJSON, and limits input to 5 MB and
-  1,000 features.
+  1,000 features. Added a local edit-form and AutoValue simulator that reads CMS field
+  configuration and evaluates selected values against sample GeoJSON and a simulated edit context.
+  ``db_select`` AutoValues (SQL or DataLinq endpoint) are executed, with CMS secrets resolved for a
+  selectable deployment. Playground pages now follow the CMS UI language.
   [Expressions docs](https://docs.webgiscloud.com/de/webgis/annex/expressions.html)
 
 ### Fixed

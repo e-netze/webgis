@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebGIS.CMS.Expressions;
 
-public static class CmsExpressionEvaluator
+public static class ExpressionEvaluator
 {
     public static string EvaluateAutoValue(
         WebMapping.Core.Feature feature,
@@ -34,7 +34,7 @@ public static class CmsExpressionEvaluator
         if (ExpressionClassifier.Classify(expression) == ExpressionSyntax.StructuredExpression)
         {
             return EvaluateStructuredExpression(
-                new ExpressionEvaluator().Compile(expression),
+                new Parsing.StructuredExpressions.ExpressionEvaluator().Compile(expression),
                 feature,
                 transformShape);
         }
@@ -51,7 +51,7 @@ public static class CmsExpressionEvaluator
         if (ExpressionClassifier.Classify(expression) == ExpressionSyntax.StructuredExpression)
         {
             return EvaluateStructuredExpression(
-                new ExpressionEvaluator().Compile(expression),
+                new Parsing.StructuredExpressions.ExpressionEvaluator().Compile(expression),
                 feature,
                 transformShape);
         }

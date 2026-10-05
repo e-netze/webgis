@@ -1,0 +1,371 @@
+@using Cms.Controllers
+@using Cms.Models
+@using E.Standard.CMS.Core.Extensions
+@model EditFormPlaygroundViewModel
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+@{
+    var localizer = LocalizerFactory.CreateCmsLocalizer(typeof(PlaygroundController));
+    ViewData["Title"] = localizer.Localize("editform_title");
+}
+
+<div class="container" data-cms-localized-page style="max-width:1200px;padding-top:20px">
+    <p><a href="@Url.Action("Index", "Playground")">&larr; @localizer.Localize("back_to_playground")</a></p>
+    <h1>@localizer.Localize("editform_title")</h1>
+    <p>@localizer.Localize("editform_description")</p>
+    <div class="alert alert-warning" role="note">@localizer.Localize("editform_simulation_warning")</div>
+
+    <form id="editform-playground"
+          data-themes-url="@Url.Action("EditFormThemes", "Playground")"
+          data-evaluate-url="@Url.Action("EvaluateEditForm", "Playground")"
+          data-evaluation-failed="@localizer.Localize("editform_evaluation_failed")"
+          data-select-theme="@localizer.Localize("editform_select_theme")"
+          data-select-cms="@localizer.Localize("editform_select_cms")"
+          data-no-autovalue="@localizer.Localize("editform_no_autovalue")"
+          data-select-field="@localizer.Localize("editform_select_field")"
+          data-too-many-fields="@localizer.Localize("editform_too_many_fields")"
+          data-no-themes="@localizer.Localize("editform_no_themes")"
+          data-no-fields="@localizer.Localize("editform_no_fields")"
+          data-required="@localizer.Localize("editform_required")"
+          data-hidden="@localizer.Localize("editform_hidden")"
+          data-readonly="@localizer.Localize("editform_readonly")">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="editform-cms">@localizer.Localize("editform_cms")</label>
+                    <select id="editform-cms" class="form-control">
+                        <option value="">@localizer.Localize("editform_select_cms")</option>
+                        @foreach (var item in Model.CmsItems)
+                        {
+                            <option value="@item.Id" data-deployments="@System.Text.Json.JsonSerializer.Serialize(item.Deployments)">@item.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="editform-deployment">@localizer.Localize("editform_deployment")</label>
+                    <select id="editform-deployment" class="form-control">
+                        <option value="">@localizer.Localize("editform_deployment_default")</option>
+                    </select>
+                    <small class="help-block">@localizer.Localize("editform_deployment_help")</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="editform-theme">@localizer.Localize("editform_theme")</label>
+                    <select id="editform-theme" class="form-control" disabled>
+                        <option value="">@localizer.Localize("editform_select_theme")</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="editform-fields-container" class="form-group" style="display:none">
+            <label>@localizer.Localize("editform_fields")</label>
+            <div id="editform-fields" class="well well-sm" style="max-height:260px;overflow:auto"></div>
+            <small class="help-block">@localizer.Localize("editform_fields_help")</small>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="editform-operation">@localizer.Localize("editform_operation")</label>
+                    <select id="editform-operation" class="form-control">
+                        <option value="insert">@localizer.Localize("editform_insert")</option>
+                        <option value="update">@localizer.Localize("editform_update")</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="editform-username">@localizer.Localize("editform_username")</label>
+                    <input id="editform-username" class="form-control" type="text" value="demo@example.com" maxlength="256" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="editform-dbusername">@localizer.Localize("editform_database_username")</label>
+                    <input id="editform-dbusername" class="form-control" type="text" maxlength="256" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="editform-scale">@localizer.Localize("editform_map_scale")</label>
+                    <input id="editform-scale" class="form-control" type="number" min="0" step="any" value="1000" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="editform-sref">@localizer.Localize("editform_map_sref")</label>
+                    <input id="editform-sref" class="form-control" type="number" min="0" step="1" value="4326" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="editform-values">@localizer.Localize("editform_context_values")</label>
+                    <textarea id="editform-values" class="form-control" rows="3"
+                              spellcheck="false" style="font-family:Consolas,monospace">{}</textarea>
+                    <small class="help-block">@localizer.Localize("editform_context_values_help")</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="editform-geojson">@localizer.Localize("geojson_label")</label>
+            <textarea id="editform-geojson" class="form-control" rows="12" spellcheck="false"
+                      style="font-family:Consolas,monospace">{
+  "type": "Feature",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[[15.4, 47.1], [15.401, 47.1], [15.401, 47.101], [15.4, 47.101], [15.4, 47.1]]]
+  },
+  "properties": {
+    "ROAD_NAME": "Example Road",
+    "STATUS": "A",
+    "AREA": 12345.67
+  }
+}</textarea>
+            <small class="help-block">@localizer.Localize("editform_geojson_help")</small>
+        </div>
+
+        <button id="editform-apply" type="button" class="btn btn-primary">
+            @localizer.Localize("editform_apply")
+        </button>
+        <span id="editform-status" role="status" aria-live="polite"></span>
+
+        <div id="editform-results" class="panel panel-default" style="display:none;margin-top:20px">
+            <div class="panel-heading">@localizer.Localize("editform_results")</div>
+            <div class="table-responsive">
+                <table class="table table-striped" style="margin-bottom:0">
+                    <thead>
+                        <tr>
+                            <th>@localizer.Localize("editform_field")</th>
+                            <th>@localizer.Localize("feature_number")</th>
+                            <th>@localizer.Localize("editform_value")</th>
+                            <th>@localizer.Localize("editform_details")</th>
+                        </tr>
+                    </thead>
+                    <tbody id="editform-results-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            var form = $('#editform-playground');
+            var status = $('#editform-status');
+            var themes = $('#editform-theme');
+            var fields = $('#editform-fields');
+
+            function sampleValue(field) {
+                switch (field.fieldType) {
+                    case 'date':
+                        return new Date().toISOString().substring(0, 19);
+                    case 'date_dateonly':
+                        return new Date().toISOString().substring(0, 10);
+                    case 'angle360':
+                    case 'angle360_geographic':
+                        return 0;
+                    default:
+                        return '';
+                }
+            }
+
+            // Replaces the sample properties with the theme's plain (non-AutoValue) fields,
+            // keeping existing values (case-insensitive) and the geometry.
+            function updateGeoJsonProperties(theme) {
+                var textarea = $('#editform-geojson');
+                var geoJson;
+                try {
+                    geoJson = JSON.parse(textarea.val());
+                } catch (e) {
+                    geoJson = null;
+                }
+                if (!geoJson || (geoJson.type !== 'Feature' && geoJson.type !== 'FeatureCollection')) {
+                    geoJson = { type: 'Feature', geometry: null, properties: {} };
+                }
+
+                var plainFields = (theme.fields || []).filter(function (field) {
+                    return field.fieldName && !field.autoValue;
+                });
+
+                function buildProperties(oldProperties) {
+                    var lookup = {};
+                    $.each(oldProperties || {}, function (key, value) {
+                        lookup[key.toLowerCase()] = value;
+                    });
+                    var properties = {};
+                    $.each(plainFields, function (_, field) {
+                        if (Object.prototype.hasOwnProperty.call(properties, field.fieldName)) {
+                            return;
+                        }
+                        var key = field.fieldName.toLowerCase();
+                        properties[field.fieldName] = Object.prototype.hasOwnProperty.call(lookup, key)
+                            ? lookup[key]
+                            : sampleValue(field);
+                    });
+                    return properties;
+                }
+
+                if (geoJson.type === 'FeatureCollection') {
+                    $.each(geoJson.features || [], function (_, feature) {
+                        feature.properties = buildProperties(feature.properties);
+                    });
+                } else {
+                    geoJson.properties = buildProperties(geoJson.properties);
+                }
+
+                textarea.val(JSON.stringify(geoJson, null, 2));
+            }
+
+            function clearTheme() {
+                themes.empty().append($('<option>').val('').text(form.attr('data-select-theme')));
+                themes.prop('disabled', true);
+                themes.data('themes', []);
+                fields.empty();
+                $('#editform-fields-container').hide();
+                $('#editform-results').hide();
+            }
+
+            $('#editform-cms').on('change', function () {
+                clearTheme();
+                status.text('');
+                var deployment = $('#editform-deployment');
+                deployment.find('option:not(:first)').remove();
+                var deployments = $(this).find('option:selected').data('deployments') || [];
+                $.each(deployments, function (_, name) {
+                    deployment.append($('<option>').val(name).text(name));
+                });
+                var cmsId = $(this).val();
+                if (!cmsId) {
+                    return;
+                }
+
+                $.getJSON(form.data('themes-url'), { cmsId: cmsId })
+                    .done(function (response) {
+                        themes.data('themes', response.themes || []);
+                        $.each(response.themes || [], function (_, theme) {
+                            themes.append($('<option>').val(theme.path).text(theme.name));
+                        });
+                        themes.prop('disabled', false);
+                        if (!response.themes || response.themes.length === 0) {
+                            status.text(form.attr('data-no-themes'));
+                        }
+                    })
+                    .fail(function (xhr) {
+                        status.text(xhr.responseJSON && xhr.responseJSON.message
+                            ? xhr.responseJSON.message
+                            : form.attr('data-evaluation-failed'));
+                    });
+            });
+
+            themes.on('change', function () {
+                fields.empty();
+                $('#editform-results').hide();
+                var theme = ($(this).data('themes') || []).find(function (item) {
+                    return item.path === themes.val();
+                });
+                if (!theme) {
+                    $('#editform-fields-container').hide();
+                    return;
+                }
+
+                if (!theme.fields || theme.fields.length === 0) {
+                    fields.append($('<p class="text-muted">').text(form.attr('data-no-fields')));
+                    $('#editform-fields-container').show();
+                    return;
+                }
+
+                updateGeoJsonProperties(theme);
+
+                $.each(theme.fields, function (_, field) {
+                    var row = $('<div class="checkbox">');
+                    var label = $('<label>');
+                    var checkbox = $('<input type="checkbox" class="editform-field">')
+                        .val(field.id)
+                        .prop('checked', Boolean(field.autoValue));
+                    label.append(checkbox).append(document.createTextNode(' ' + field.name + ' (' + field.fieldName + ')'));
+
+                    var details = [];
+                    details.push(field.category || '');
+                    if (field.required) {
+                        details.push(form.attr('data-required'));
+                    }
+                    if (!field.visible) {
+                        details.push(form.attr('data-hidden'));
+                    }
+                    if (field.readOnly) {
+                        details.push(form.attr('data-readonly'));
+                    }
+                    details.push(field.autoValue || form.attr('data-no-autovalue'));
+                    label.append($('<small class="text-muted">').text(' — ' + details.filter(Boolean).join(' · ')));
+                    row.append(label);
+                    fields.append(row);
+                });
+                $('#editform-fields-container').show();
+            });
+
+            $('#editform-apply').on('click', function () {
+                status.text('');
+                $('#editform-results').hide();
+                var selectedFields = $('.editform-field:checked').map(function () {
+                    return $(this).val();
+                }).get();
+                if (selectedFields.length === 0) {
+                    status.text(form.attr('data-select-field'));
+                    return;
+                }
+                if (selectedFields.length > 20) {
+                    status.text(form.attr('data-too-many-fields'));
+                    return;
+                }
+
+                $.ajax({
+                    url: form.data('evaluate-url'),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        RequestVerificationToken: form.find('input[name="__RequestVerificationToken"]').val()
+                    },
+                    data: JSON.stringify({
+                        cmsId: $('#editform-cms').val(),
+                        deployment: $('#editform-deployment').val(),
+                        themePath: themes.val(),
+                        operation: $('#editform-operation').val(),
+                        username: $('#editform-username').val(),
+                        databaseUsername: $('#editform-dbusername').val(),
+                        mapScale: Number($('#editform-scale').val()),
+                        mapSrefId: Number($('#editform-sref').val()),
+                        geoJson: $('#editform-geojson').val(),
+                        valuesJson: $('#editform-values').val(),
+                        fields: selectedFields
+                    })
+                }).done(function (response) {
+                    var body = $('#editform-results-body').empty();
+                    $.each(response.results || [], function (_, result) {
+                        var row = $('<tr>');
+                        $('<td>').text(result.fieldName).appendTo(row);
+                        $('<td>').text(result.feature).appendTo(row);
+                        $('<td>').text(result.value || '').appendTo(row);
+                        $('<td>').text(result.error || '').appendTo(row);
+                        if (result.error) {
+                            row.addClass('warning');
+                        }
+                        body.append(row);
+                    });
+                    $('#editform-results').show();
+                }).fail(function (xhr) {
+                    status.text(xhr.responseJSON && xhr.responseJSON.message
+                        ? xhr.responseJSON.message
+                        : form.attr('data-evaluation-failed'));
+                });
+            });
+        });
+    </script>
+}

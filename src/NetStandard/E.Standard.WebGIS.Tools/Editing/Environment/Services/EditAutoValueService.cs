@@ -212,7 +212,7 @@ internal class EditAutoValueService
     {
         try
         {
-            return CmsExpressionEvaluator.EvaluateAutoValue(
+            return CMS.Expressions.ExpressionEvaluator.EvaluateAutoValue(
                 _feature,
                 autoValue,
                 (targetSRefId, functionName) => GetShapeForCalculation(targetSRefId, functionName));
@@ -341,7 +341,7 @@ internal class EditAutoValueService
             "shape_part_count" => SpatialAlgorithms.PartCount(shape).ToString(),
             "shape_type" => ShapeMetrics.GetTypeName(shape),
             "shape_srefid" => shape.SrsId.ToString(),
-            _ => CmsExpressionEvaluator.FormatNumericShapeMetric(shapeValueName, shape)
+            _ => CMS.Expressions.ExpressionEvaluator.FormatNumericShapeMetric(shapeValueName, shape)
         };
 
         return value is null ? null : (value, true);

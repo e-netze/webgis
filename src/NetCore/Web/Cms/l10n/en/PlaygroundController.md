@@ -4,6 +4,80 @@
 
 #expressions_tile: Expressions
 
+#editform_tile: Edit form & AutoValues
+
+#editform_title: Edit form and AutoValue tester
+
+#editform_description: Select a configured edit form, provide sample data and a simulated editing context, then inspect AutoValue results.
+
+#editform_simulation_warning: This simulation runs entirely in the CMS and does not call the WebGIS API or source services. Expressions, GeoJSON geometry, and simple context values are evaluated locally. Geometry functions use the GeoJSON CRS (EPSG:4326 when omitted), not the map or editing theme CRS automatically. Simple database AutoValues (db_select, db_select_on_insert; SELECT or DataLinq endpoint) are executed directly against the configured database or DataLinq endpoint. Spatial service AutoValues are not executed; they are reported as not simulated.
+
+#editform_cms: CMS configuration
+
+#editform_deployment: Deployment (secrets)
+
+#editform_deployment_default: Default secrets (no deployment)
+
+#editform_deployment_help: Secret placeholders ({{secret-...}}) and the replacement file are resolved like a deploy for this deployment's environment.
+
+#editform_select_cms: Select a CMS
+
+#editform_theme: Editing form
+
+#editform_select_theme: Select an editing form
+
+#editform_fields: Form fields
+
+#editform_fields_help: Select up to 20 fields. Required, visibility, and read-only flags come from CMS configuration; conditional rules and layout are not rendered as a complete WebGIS form.
+
+#editform_operation: Operation
+
+#editform_insert: Create new (Insert)
+
+#editform_update: Update
+
+#editform_username: Simulated username
+
+#editform_database_username: Simulated database username
+
+#editform_map_scale: Map scale denominator
+
+#editform_map_sref: Map SRefId
+
+#editform_context_values: Context values as JSON
+
+#editform_context_values_help: Provide values for role-parameter:name, url-parameter:name, and optionally edit_service_id or edit_theme_id as a JSON object, e.g. {"department":"West"}.
+
+#editform_geojson_help: A Feature or FeatureCollection with sample attributes and geometry. Selecting an edit theme fills in its fields without AutoValue as attributes; existing values and the geometry are kept. Maximum 5 MB and 1,000 features.
+
+#editform_apply: Simulate AutoValues
+
+#editform_results: Simulation results
+
+#editform_field: Field
+
+#editform_value: Simulated value
+
+#editform_details: Note / error
+
+#editform_required: required
+
+#editform_hidden: hidden
+
+#editform_readonly: read-only
+
+#editform_no_autovalue: no AutoValue
+
+#editform_select_field: Select at least one field.
+
+#editform_too_many_fields: No more than 20 fields can be simulated at once.
+
+#editform_no_themes: No editing forms were found in this CMS configuration.
+
+#editform_no_fields: No form fields were found for this editing form in the CMS configuration.
+
+#editform_evaluation_failed: The simulation could not be completed.
+
 #expressions_title: Expressions Playground
 
 #expressions_description: Paste GeoJSON and an expression, then apply it directly to each feature.

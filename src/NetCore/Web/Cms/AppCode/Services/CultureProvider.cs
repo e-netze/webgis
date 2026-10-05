@@ -1,6 +1,8 @@
 ﻿using E.Standard.Extensions.Compare;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Localization.Services;
+using System;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
@@ -15,9 +17,19 @@ public class CultureProvider : ICultureProvider
 
         if (httpContextAccessor?.HttpContext?.Request is not null)
         {
-            Culture = httpContextAccessor.HttpContext.Request.Query["_ul"]
+            var request = httpContextAccessor.HttpContext.Request;
+            var cookieLanguage = request.Cookies["cms-language"];
+            var supportedLanguages = localizerOptions?.Value?.SupportedLanguages;
+
+            if (!string.IsNullOrEmpty(cookieLanguage)
+                && supportedLanguages?.Contains(cookieLanguage, StringComparer.OrdinalIgnoreCase) != true)
+            {
+                cookieLanguage = null;
+            }
+
+            Culture = request.Query["_ul"]
                 .ToString()
-                .OrTake(DefaultCulture);
+                .OrTake(cookieLanguage ?? DefaultCulture);
         }
 
         if (string.IsNullOrEmpty(Culture))

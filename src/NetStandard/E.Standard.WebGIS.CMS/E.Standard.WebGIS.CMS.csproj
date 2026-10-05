@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 	  <TargetFramework>net10.0</TargetFramework>
@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
+    <ProjectReference Include="..\E.Standard.DbConnector\E.Standard.DbConnector.csproj" />
     <ProjectReference Include="..\E.Standard.GeoJson\E.Standard.GeoJson.csproj" />
     <ProjectReference Include="..\E.Standard.Parsing\E.Standard.Parsing.csproj" />
     <ProjectReference Include="..\E.Standard.WebMapping.Core\E.Standard.WebMapping.Core.csproj" />

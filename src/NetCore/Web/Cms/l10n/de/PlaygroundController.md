@@ -4,6 +4,80 @@
 
 #expressions_tile: Expressions
 
+#editform_tile: Editformular & AutoValues
+
+#editform_title: Editformular- und AutoValue-Tester
+
+#editform_description: Wähle eine konfigurierte Editiermaske, gib Beispieldaten und einen simulierten Bearbeitungskontext ein und prüfe die AutoValue-Ergebnisse.
+
+#editform_simulation_warning: Die Simulation läuft vollständig im CMS und ruft weder die WebGIS API noch Quelldienste auf. Expressions, GeoJSON-Geometrie und einfache Kontextwerte werden lokal ausgewertet. Geometriefunktionen verwenden das CRS im GeoJSON (ohne CRS EPSG:4326), nicht automatisch das Karten- oder Editierthema-CRS. Einfache Datenbank-AutoValues (db_select, db_select_on_insert; SELECT oder DataLinq-Endpunkt) werden direkt gegen die konfigurierte Datenbank bzw. den DataLinq-Endpunkt ausgeführt. Räumliche Service-AutoValues werden nicht ausgeführt; sie erscheinen als nicht simuliert.
+
+#editform_cms: CMS-Konfiguration
+
+#editform_deployment: Deployment (Secrets)
+
+#editform_deployment_default: Standard-Secrets (kein Deployment)
+
+#editform_deployment_help: Secret-Platzhalter ({{secret-...}}) und Ersetzungsdatei werden wie beim Deploy für die Umgebung dieses Deployments aufgelöst.
+
+#editform_select_cms: CMS auswählen
+
+#editform_theme: Editiermaske
+
+#editform_select_theme: Editiermaske auswählen
+
+#editform_fields: Formularfelder
+
+#editform_fields_help: Wähle bis zu 20 Felder aus. Pflicht-, Sichtbarkeits- und Readonly-Merkmale stammen aus der CMS-Konfiguration; Bedingungen und Layout werden nicht als vollständige WebGIS-Maske gerendert.
+
+#editform_operation: Vorgang
+
+#editform_insert: Neu anlegen (Insert)
+
+#editform_update: Ändern (Update)
+
+#editform_username: Simulierter Benutzername
+
+#editform_database_username: Simulierter Datenbankbenutzer
+
+#editform_map_scale: Kartenmaßstab (Nenner)
+
+#editform_map_sref: Karten-SRefId
+
+#editform_context_values: Kontextwerte als JSON
+
+#editform_context_values_help: Werte für role-parameter:name, url-parameter:name und bei Bedarf edit_service_id oder edit_theme_id als JSON-Objekt, z. B. {"department":"West"}.
+
+#editform_geojson_help: Ein Feature oder eine FeatureCollection mit den Beispielattributen und der Geometrie. Beim Auswählen eines Editthemas werden die Felder ohne AutoValue als Attribute übernommen; vorhandene Werte und die Geometrie bleiben erhalten. Maximal 5 MB und 1.000 Features.
+
+#editform_apply: AutoValues simulieren
+
+#editform_results: Simulationsergebnisse
+
+#editform_field: Feld
+
+#editform_value: Simulierter Wert
+
+#editform_details: Hinweis / Fehler
+
+#editform_required: Pflicht
+
+#editform_hidden: ausgeblendet
+
+#editform_readonly: schreibgeschützt
+
+#editform_no_autovalue: kein AutoValue
+
+#editform_select_field: Bitte mindestens ein Feld auswählen.
+
+#editform_too_many_fields: Es können höchstens 20 Felder gleichzeitig simuliert werden.
+
+#editform_no_themes: In dieser CMS-Konfiguration wurden keine Editiermasken gefunden.
+
+#editform_no_fields: Für diese Editiermaske wurden keine Formularfelder in der CMS-Konfiguration gefunden.
+
+#editform_evaluation_failed: Die Simulation konnte nicht ausgeführt werden.
+
 #expressions_title: Expressions Playground
 
 #expressions_description: Füge GeoJSON und einen Ausdruck ein und wende ihn direkt auf jedes Feature an.

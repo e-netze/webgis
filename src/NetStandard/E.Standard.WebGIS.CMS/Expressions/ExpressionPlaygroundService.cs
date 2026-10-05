@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System;
 using System.Collections.Generic;
@@ -158,7 +158,7 @@ public static class ExpressionPlaygroundService
         {
             try
             {
-                compiledExpression = new ExpressionEvaluator().Compile(expressionSource);
+                compiledExpression = new Parsing.StructuredExpressions.ExpressionEvaluator().Compile(expressionSource);
             }
             catch (ExpressionException exception)
             {
@@ -177,7 +177,7 @@ public static class ExpressionPlaygroundService
                     features[index] ?? throw new FormatException("A FeatureCollection contains a null feature."),
                     srefId);
                 var result = compiledExpression is not null
-                    ? CmsExpressionEvaluator.EvaluateStructuredExpression(
+                    ? ExpressionEvaluator.EvaluateStructuredExpression(
                         compiledExpression,
                         feature,
                         (targetSrefId, functionName) => TransformShape(
@@ -186,8 +186,8 @@ public static class ExpressionPlaygroundService
                             functionName))
                     : expressionType switch
                 {
-                    CmsExpressionType.AutoValue => CmsExpressionEvaluator.EvaluateAutoValue(feature, expression),
-                    CmsExpressionType.TableColumn => CmsExpressionEvaluator.EvaluateTableColumn(feature, expression),
+                    CmsExpressionType.AutoValue => ExpressionEvaluator.EvaluateAutoValue(feature, expression),
+                    CmsExpressionType.TableColumn => ExpressionEvaluator.EvaluateTableColumn(feature, expression),
                     _ => throw new ArgumentOutOfRangeException(nameof(expressionType))
                 };
                 results.Add(new ExpressionPlaygroundResult(index + 1, result, null));

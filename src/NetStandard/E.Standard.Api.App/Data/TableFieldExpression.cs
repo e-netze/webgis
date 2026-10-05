@@ -31,7 +31,7 @@ public sealed class TableFieldExpression : TableField
 
         if (expressionContext.CompiledExpression is not null)
         {
-            return CmsExpressionEvaluator.EvaluateStructuredExpression(
+            return WebGIS.CMS.Expressions.ExpressionEvaluator.EvaluateStructuredExpression(
                 expressionContext.CompiledExpression,
                 feature,
                 (targetSRefId, functionName) => TransformShape(
@@ -40,7 +40,7 @@ public sealed class TableFieldExpression : TableField
                     functionName));
         }
 
-        return CmsExpressionEvaluator.EvaluateLegacyTableColumn(
+        return WebGIS.CMS.Expressions.ExpressionEvaluator.EvaluateLegacyTableColumn(
             feature,
             expressionContext.Expression,
             expressionContext.LegacyParameters,
@@ -55,7 +55,7 @@ public sealed class TableFieldExpression : TableField
             return new ExpressionRenderingContext(
                 requestHeaders,
                 Expression,
-                new ExpressionEvaluator().Compile(Expression),
+                new Parsing.StructuredExpressions.ExpressionEvaluator().Compile(Expression),
                 legacyParameters: null,
                 containsLegacyEvalExpression: false);
         }
