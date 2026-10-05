@@ -11,10 +11,10 @@ using E.Standard.DbConnector;
 using E.Standard.Extensions.IO;
 using E.Standard.Json;
 using E.Standard.Parsing;
-using E.Standard.Parsing.SimpleExpressions;
 using E.Standard.Parsing.StructuredExpressions;
 using E.Standard.Platform;
 using E.Standard.WebGIS.CMS;
+using E.Standard.WebGIS.CMS.Expressions;
 using E.Standard.WebGIS.Tools.Extensions;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Extensions;
@@ -210,81 +210,20 @@ internal class EditAutoValueService
 
     private string GetExpressionAutoValue(string autoValue)
     {
-        string value = autoValue.Substring(1, autoValue.Length - 1);
-
-        if (ExpressionClassifier.Classify(value) == ExpressionSyntax.StructuredExpression)
+        try
         {
-            try
-            {
-                return new ExpressionEvaluator()
-                    .Evaluate(
-                        value,
-                        ResolveExpressionField,
-                        ResolveExpressionFunction)
-                    .ToInvariantString();
-            }
-            catch (ExpressionException exception)
-            {
-                throw new ArgumentException(
-                    $"{_targetFieldName}: Autovalue expression error: {exception.Message}",
-                    exception);
-            }
+            return CmsExpressionEvaluator.EvaluateAutoValue(
+                _feature,
+                autoValue,
+                (targetSRefId, functionName) => GetShapeForCalculation(targetSRefId, functionName));
         }
-
-        return GetLegacyExpressionAutoValue(value);
+        catch (ExpressionException exception)
+        {
+            throw new ArgumentException(
+                $"{_targetFieldName}: Autovalue expression error: {exception.Message}",
+                exception);
+        }
     }
-
-    private string GetLegacyExpressionAutoValue(string value)
-    {
-        string[] keys = ExtractKeyParameters(value);
-
-        if (keys != null)
-        {
-            string keyValue = String.Empty;
-            foreach (string key in keys)
-            {
-                if (key is ":shape_len" or ":shape_len_int" or ":shape_area" or ":shape_area_int"
-                    && FormatNumericShapeMetric(key.Substring(1), _feature?.Shape) is string shapeValue)
-                {
-                    keyValue = shapeValue;
-                }
-                else if (_feature != null && _feature[key] != null)
-                {
-                    keyValue = _feature[key].ToString();
-                }
-
-                value = value.Replace("[" + key + "]", keyValue);
-            }
-        }
-
-        return value.Trim();
-    }
-
-    private ExpressionValue? ResolveExpressionField(string fieldName)
-    {
-        var attribute = _feature?.Attributes?[fieldName];
-        if (attribute is null)
-        {
-            return null;
-        }
-
-        var value = attribute.Value;
-        if (Boolean.TryParse(value, out var boolean))
-        {
-            return ExpressionValue.From(boolean);
-        }
-
-        return ExpressionValue.From(value);
-    }
-
-    private ExpressionValue? ResolveExpressionFunction(
-        string functionName,
-        IReadOnlyList<ExpressionValue> arguments)
-        => ShapeExpressionFunctions.Resolve(
-            _feature?.Shape,
-            functionName,
-            arguments,
-            targetSRefId => GetShapeForCalculation(targetSRefId, functionName));
 
     private string GetConditionalParameterName(string autoValue, string parameterPrefix)
     {
@@ -402,32 +341,10 @@ internal class EditAutoValueService
             "shape_part_count" => SpatialAlgorithms.PartCount(shape).ToString(),
             "shape_type" => ShapeMetrics.GetTypeName(shape),
             "shape_srefid" => shape.SrsId.ToString(),
-            _ => FormatNumericShapeMetric(shapeValueName, shape)
+            _ => CmsExpressionEvaluator.FormatNumericShapeMetric(shapeValueName, shape)
         };
 
         return value is null ? null : (value, true);
-    }
-
-    private static string FormatNumericShapeMetric(string shapeValueName, Shape shape)
-    {
-        var asInteger = shapeValueName is "shape_len_int" or "shape_area_int";
-        var metricName = asInteger
-            ? shapeValueName.Substring(0, shapeValueName.Length - "_int".Length)
-            : shapeValueName;
-
-        if (ShapeMetrics.GetNumericMetric(metricName, shape) is not double value)
-        {
-            return null;
-        }
-
-        if (asInteger)
-        {
-            return Math.Round(value, 0).ToString();
-        }
-
-        return metricName is "shape_len" or "shape_area" or "shape_perimeter"
-            ? Math.Round(value, 2).ToPlatformNumberString()
-            : value.ToPlatformNumberString();
     }
 
     private (string value, bool setIt)? GetGeneralAutoValue(string autoValue)
@@ -632,18 +549,4 @@ internal class EditAutoValueService
         return (value: firstElementValue, setIt: true);
     }
 
-    // Legacy semantics: keys are joined with ';' and split again, so ';' inside brackets separates keys.
-    private static string[] ExtractKeyParameters(string commandLine)
-    {
-        var parameters = TemplateScanner.Scan(commandLine)
-            .Aggregate(
-                String.Empty,
-                (current, parameter) => current == String.Empty
-                    ? parameter.Key
-                    : current + ";" + parameter.Key);
-
-        return parameters != String.Empty
-            ? parameters.Split(';')
-            : null;
-    }
 }

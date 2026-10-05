@@ -1,0 +1,15 @@
+@using Cms.Controllers
+@using E.Standard.CMS.Core.Extensions
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+@{
+    var localizer = LocalizerFactory.CreateCmsLocalizer(typeof(PlaygroundController));
+    ViewData["Title"] = localizer.Localize("playground_title");
+}
+
+<div style="padding:0 7px;max-width:800px;margin:35px auto;">
+    <h1>@localizer.Localize("playground_title")</h1>
+    <p>@localizer.Localize("playground_description")</p>
+    <a class="tile edit cms" href="@Url.Action("Expressions", "Playground")" style="text-decoration:none">
+        <div class="text">@localizer.Localize("expressions_tile")</div>
+    </a>
+</div>

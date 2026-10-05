@@ -269,6 +269,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [Issue #505](https://github.com/e-netze/webgis-community/issues/505)
   [Docs](https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/appmenuitems.html)
 
+- CMS Playground: added an Expressions tool to test AutoValue and table-column expressions
+  against GeoJSON Features and FeatureCollections without publishing, including projected
+  geometry functions. It now identifies the selected expression syntax, links to the expression
+  documentation, lists available fields/functions, formats GeoJSON, and limits input to 5 MB and
+  1,000 features.
+  [Expressions docs](https://docs.webgiscloud.com/de/webgis/annex/expressions.html)
+
 ### Fixed
 
 - compamy default.css will be loaded in Apps

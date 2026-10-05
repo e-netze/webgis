@@ -14,6 +14,12 @@ public class SpatialReferenceCollection : IDbSchemaProvider
     static object lockThis = new object();
 
     private List<SpatialReference> _sRefs = new List<SpatialReference>();
+    private readonly bool _useEmbeddedCsv;
+
+    public SpatialReferenceCollection(bool useEmbeddedCsv = false)
+    {
+        _useEmbeddedCsv = useEmbeddedCsv;
+    }
 
     //public void LoadFromCSV(string filename)
     //{
@@ -79,14 +85,16 @@ public class SpatialReferenceCollection : IDbSchemaProvider
 
     private SpatialReference LoadId(int id)
     {
-        if (String.IsNullOrEmpty(_rootPath) && String.IsNullOrEmpty(SpatialReferenceCollection.p4DatabaseConnection))
+        if (String.IsNullOrEmpty(_rootPath)
+            && String.IsNullOrEmpty(SpatialReferenceCollection.p4DatabaseConnection)
+            && !_useEmbeddedCsv)
         {
             return null;
         }
 
         SpatialReference spatialReference = null;
 
-        if (SpatialReferenceCollection.p4DatabaseConnection == "#")
+        if (_useEmbeddedCsv || SpatialReferenceCollection.p4DatabaseConnection == "#")
         {
             var epsgId = id.ToString();
             var srRow = this
@@ -297,12 +305,14 @@ public class SpatialReferenceCollection : IDbSchemaProvider
     {
         get
         {
-            if (String.IsNullOrEmpty(_rootPath) && String.IsNullOrEmpty(SpatialReferenceCollection.p4DatabaseConnection))
+            if (String.IsNullOrEmpty(_rootPath)
+                && String.IsNullOrEmpty(SpatialReferenceCollection.p4DatabaseConnection)
+                && !_useEmbeddedCsv)
             {
                 return null;
             }
 
-            if (SpatialReferenceCollection.p4DatabaseConnection == "#")
+            if (_useEmbeddedCsv || SpatialReferenceCollection.p4DatabaseConnection == "#")
             {
                 return CsvRows
                     .Select(r => r.Split(';')[1])

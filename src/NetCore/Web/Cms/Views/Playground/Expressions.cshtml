@@ -1,0 +1,202 @@
+@using Cms.Controllers
+@using E.Standard.CMS.Core.Extensions
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+@{
+    var localizer = LocalizerFactory.CreateCmsLocalizer(typeof(PlaygroundController));
+    ViewData["Title"] = localizer.Localize("expressions_title");
+}
+
+<div class="container" style="max-width:1400px;padding-top:20px">
+    <p><a href="@Url.Action("Index", "Playground")">&larr; @localizer.Localize("back_to_playground")</a></p>
+    <h1>@localizer.Localize("expressions_title")</h1>
+    <p>@localizer.Localize("expressions_description")</p>
+
+    <form id="expression-playground"
+          data-evaluate-url="@Url.Action("Evaluate", "Playground")"
+          autocomplete="off">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label for="expression-type">@localizer.Localize("expression_type")</label>
+            <select id="expression-type" class="form-control">
+                <option value="AutoValue">@localizer.Localize("autovalue")</option>
+                <option value="TableColumn">@localizer.Localize("table_column")</option>
+            </select>
+            <small class="help-block">@localizer.Localize("expression_type_help")</small>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="geojson">@localizer.Localize("geojson_label")</label>
+                    <button id="format-geojson" type="button" class="btn btn-default btn-xs pull-right">
+                        @localizer.Localize("format_geojson")
+                    </button>
+                    <textarea id="geojson"
+                              class="form-control"
+                              rows="18"
+                              spellcheck="false"
+                              style="font-family:Consolas,monospace">{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0, 0], [10, 0], [10, 5], [0, 5], [0, 0]]]
+      },
+      "properties": {
+        "FIRSTNAME": "Ada",
+        "LASTNAME": "Lovelace",
+        "STATUS": "A",
+        "AREA": 12345.678
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "FIRSTNAME": "Grace",
+        "LASTNAME": "Hopper",
+        "STATUS": "I",
+        "AREA": 4321.5
+      }
+    }
+  ]
+}</textarea>
+                    <small class="help-block">@localizer.Localize("geojson_help")</small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="expression">@localizer.Localize("expression_label")</label>
+                    <textarea id="expression"
+                              class="form-control"
+                              rows="5"
+                              spellcheck="false"
+                              style="font-family:Consolas,monospace">=concat([FIRSTNAME], " ", [LASTNAME])</textarea>
+                    <small class="help-block">@localizer.Localize("expression_help")</small>
+                    <p class="help-block">
+                        <strong>@localizer.Localize("expression_docs"):</strong>
+                        <a href="@localizer.Localize("expression_docs_url")" target="_blank" rel="noopener noreferrer">
+                            @localizer.Localize("expression_docs_link")
+                        </a>
+                    </p>
+                    <details>
+                        <summary>@localizer.Localize("expression_reference")</summary>
+                        <p>@localizer.Localize("structured_functions")</p>
+                        <p>@localizer.Localize("geometry_functions")</p>
+                        <p id="expression-fields">@localizer.Localize("expression_fields_empty")</p>
+                    </details>
+                </div>
+                <button id="apply-expression" type="button" class="btn btn-primary">
+                    @localizer.Localize("apply")
+                </button>
+                <span id="expression-status" role="status" aria-live="polite"></span>
+                <p id="expression-syntax" class="help-block" style="margin-top:8px"></p>
+
+                <div id="expression-results" class="panel panel-default" style="display:none;margin-top:20px">
+                    <div class="panel-heading">@localizer.Localize("results")</div>
+                    <div class="table-responsive">
+                        <table class="table table-striped" style="margin-bottom:0">
+                            <thead>
+                                <tr>
+                                    <th>@localizer.Localize("feature_number")</th>
+                                    <th>@localizer.Localize("result")</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expression-results-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            var form = $('#expression-playground');
+            var results = $('#expression-results');
+            var resultBody = $('#expression-results-body');
+            var status = $('#expression-status');
+            var expressionFields = $('#expression-fields');
+
+            function updateFields() {
+                try {
+                    var geoJson = JSON.parse($('#geojson').val());
+                    var features = geoJson.type === 'FeatureCollection'
+                        ? geoJson.features
+                        : [geoJson];
+                    var fields = {};
+                    $.each(features || [], function (_, feature) {
+                        $.each(feature.properties || {}, function (name) {
+                            fields[name] = true;
+                        });
+                    });
+                    var names = Object.keys(fields);
+                    expressionFields.text(names.length
+                        ? '@localizer.Localize("expression_fields")' + ': ' + names.join(', ')
+                        : '@localizer.Localize("expression_fields_empty")');
+                } catch (_) {
+                    expressionFields.text('@localizer.Localize("expression_fields_invalid")');
+                }
+            }
+
+            $('#geojson').on('input', updateFields);
+            updateFields();
+
+            $('#format-geojson').on('click', function () {
+                try {
+                    $('#geojson').val(JSON.stringify(JSON.parse($('#geojson').val()), null, 2));
+                    updateFields();
+                    status.text('');
+                } catch (exception) {
+                    status.text(exception.message);
+                }
+            });
+
+            $('#apply-expression').on('click', function () {
+                resultBody.empty();
+                results.hide();
+                status.text('');
+                $('#expression-syntax').text('');
+
+                $.ajax({
+                    url: form.data('evaluate-url'),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        RequestVerificationToken: form.find('input[name="__RequestVerificationToken"]').val()
+                    },
+                    data: JSON.stringify({
+                        geoJson: $('#geojson').val(),
+                        expression: $('#expression').val(),
+                        expressionType: $('#expression-type').val()
+                    })
+                }).done(function (response) {
+                    $('#expression-syntax').text(
+                        '@localizer.Localize("expression_syntax")' + ': ' +
+                        (response.syntax === 'StructuredExpression'
+                            ? '@localizer.Localize("structured_expression")'
+                            : '@localizer.Localize("legacy_expression")'));
+                    $.each(response.results, function (_, item) {
+                        var row = $('<tr>');
+                        $('<td>').text(item.index).appendTo(row);
+                        $('<td>').text(item.error || item.result || '').appendTo(row);
+                        if (item.error) {
+                            row.addClass('danger');
+                        }
+                        resultBody.append(row);
+                    });
+                    results.show();
+                }).fail(function (xhr) {
+                    var message = xhr.responseJSON && xhr.responseJSON.message
+                        ? xhr.responseJSON.message
+                        : xhr.statusText;
+                    status.text(message);
+                });
+            });
+        });
+    </script>
+}

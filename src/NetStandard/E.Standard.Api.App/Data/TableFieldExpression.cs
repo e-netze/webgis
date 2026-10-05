@@ -8,6 +8,7 @@ using E.Standard.Parsing;
 using E.Standard.Parsing.StructuredExpressions;
 using E.Standard.Web.Abstractions;
 using E.Standard.WebGIS.CMS;
+using E.Standard.WebGIS.CMS.Expressions;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Geometry;
 
@@ -30,31 +31,20 @@ public sealed class TableFieldExpression : TableField
 
         if (expressionContext.CompiledExpression is not null)
         {
-            return expressionContext.CompiledExpression
-                .Evaluate(
-                    fieldName => ResolveField(feature, fieldName),
-                    (functionName, arguments) => ShapeExpressionFunctions.Resolve(
-                        feature?.Shape,
-                        functionName,
-                        arguments,
-                        targetSRefId => TransformShape(
-                            feature.Shape,
-                            targetSRefId,
-                            functionName)))
-                .ToInvariantString();
+            return CmsExpressionEvaluator.EvaluateStructuredExpression(
+                expressionContext.CompiledExpression,
+                feature,
+                (targetSRefId, functionName) => TransformShape(
+                    feature.Shape,
+                    targetSRefId,
+                    functionName));
         }
 
-        string val = WebGIS.CMS.Globals.SolveExpression(
+        return CmsExpressionEvaluator.EvaluateLegacyTableColumn(
             feature,
             expressionContext.Expression,
-            expressionContext.LegacyParameters);
-
-        if (expressionContext.ContainsLegacyEvalExpression)
-        {
-            val = Eval.ParseEvalExpression(val);
-        }
-
-        return val;
+            expressionContext.LegacyParameters,
+            expressionContext.ContainsLegacyEvalExpression);
     }
 
     public override TableFieldRenderingContext CreateRenderingContext(
@@ -76,25 +66,6 @@ public sealed class TableFieldExpression : TableField
             compiledExpression: null,
             legacyParameters: Helper.GetKeyParameters(Expression),
             containsLegacyEvalExpression: Expression?.Contains("$") == true);
-    }
-
-    private static ExpressionValue? ResolveField(
-        WebMapping.Core.Feature feature,
-        string fieldName)
-    {
-        var attribute = feature?.Attributes?[fieldName];
-        if (attribute is null)
-        {
-            return null;
-        }
-
-        var value = attribute.Value;
-        if (Boolean.TryParse(value, out var boolean))
-        {
-            return ExpressionValue.From(boolean);
-        }
-
-        return ExpressionValue.From(value);
     }
 
     private static Shape TransformShape(
