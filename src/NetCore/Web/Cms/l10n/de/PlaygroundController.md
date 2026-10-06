@@ -6,6 +6,88 @@
 
 #editform_tile: Editformular & AutoValues
 
+#regex_tile: RegEx
+
+#regex_title: RegEx Playground
+
+#regex_description: Teste die Validierung von Eingaben mit regulären Ausdrücken. Wähle eine Vorlage und prüfe gültige und ungültige Eingaben. Verwendet .NET wie der CMS-RegEx-Editor; clientseitige JavaScript-Prüfungen können bei spezieller Syntax abweichen.
+
+#regex_example: Beispiel auswählen
+
+#regex_custom: Eigener Ausdruck
+
+#regex_example_username: Benutzername (3–32 Zeichen, beginnt mit Buchstaben)
+
+#regex_example_email: E-Mail-Adresse (einfache Formatprüfung)
+
+#regex_example_number: Zahl (Vorzeichen, Dezimalpunkt oder -komma)
+
+#regex_example_kg: KG-Nummer Österreich (5 Ziffern)
+
+#regex_example_kg_styria: KG-Nummer Steiermark (beginnt mit 6)
+
+#regex_example_parcel: Grundstücksnummer (optional Bauflächenpunkt und Unterteilung)
+
+#regex_example_postcode: Postleitzahl Österreich (4 Ziffern)
+
+#regex_examples_help: Vorlagen sind anpassbare Formatprüfungen, keine Prüfung auf tatsächliche Existenz. KG/Grundstück prüfen keine Registerdaten; E-Mail prüft keine Zustellbarkeit. Weitere Bundesländer sind nicht vorbelegt. Die Auswahl ersetzt Ausdruck und Testeingaben.
+
+#regex_validation_mode: Eingaben validieren (eine Eingabe pro Zeile)
+
+#regex_validation_help: Wie im CMS-Editor reicht ein Regex-Treffer für „gültig“. Für vollständige Eingaben ^ und $ verwenden. Leerzeichen werden nicht entfernt; leere Zeilen testen leere Eingaben. Die Vorlagen sind vollständig verankert.
+
+#regex_inputs_help: Im Validierungsmodus: höchstens 100 Eingaben, eine pro Zeile (zusammen höchstens 10.000 Zeichen). Ohne Validierungsmodus: Treffer und Ersetzungen im gesamten Text testen.
+
+#regex_valid: Gültig
+
+#regex_invalid: Ungültig
+
+#regex_pattern: Regulärer Ausdruck
+
+#regex_test_text: Testtext
+
+#regex_ignore_case: Groß-/Kleinschreibung ignorieren
+
+#regex_multiline: Mehrzeilenmodus (^ und $ pro Zeile)
+
+#regex_singleline: Singleline-Modus (. findet auch Zeilenumbrüche)
+
+#regex_replacement: Ersetzung
+
+#regex_replacement_help: Unterstützt .NET-Ersetzungsausdrücke wie $1, ${name}, $&, $` und $'.
+
+#regex_show_replacement: Ersetzungsvorschau anzeigen
+
+#regex_matches: Treffer
+
+#regex_number: Nr.
+
+#regex_position: Position (Länge)
+
+#regex_match: Treffertext
+
+#regex_groups: Gruppen
+
+#regex_groups_truncated: (nur die ersten 100 Gruppen angezeigt)
+
+#regex_no_groups: Keine Gruppen im Ausdruck.
+
+#regex_unmatched: (keine Übereinstimmung)
+
+#regex_match_count: Treffer angezeigt
+
+#regex_truncated: Nur die ersten 100 Treffer werden angezeigt.
+
+#regex_no_matches: Keine Treffer.
+
+#regex_replacement_preview: Ersetzungsvorschau
+
+#regex_replacement_truncated: Vorschau gekürzt.
+
+#regex_failed: Der Ausdruck konnte nicht ausgewertet werden.
+
+#regex_timeout: Die Auswertung hat das Zeitlimit überschritten.
+
 #editform_title: Editformular- und AutoValue-Tester
 
 #editform_description: Wähle eine konfigurierte Editiermaske, gib Beispieldaten und einen simulierten Bearbeitungskontext ein und prüfe die AutoValue-Ergebnisse.

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Xml;
 
 using Cms.AppCode.Mvc;
@@ -50,22 +51,12 @@ public class PlaygroundController : ApplicationSecurityController
     public IActionResult Expressions()
         => View();
 
+    public IActionResult Regex()
+        => View();
+
     public IActionResult EditForm()
     {
-        var cmsItems = _cmsConfiguration.Instance.CmsItems?
-            .Where(item => !String.IsNullOrWhiteSpace(item.Id)
-                && _cmsConfiguration.CMS.ContainsKey(item.Id))
-            .Select(item => new EditFormPlaygroundCmsItem(
-                item.Id,
-                item.Name,
-                item.Deployments?
-                    .Select(deploy => deploy.Name)
-                    .Where(name => !String.IsNullOrWhiteSpace(name))
-                    .ToArray() ?? Array.Empty<string>()))
-            .ToArray()
-            ?? Array.Empty<EditFormPlaygroundCmsItem>();
-
-        return View(new EditFormPlaygroundViewModel { CmsItems = cmsItems });
+        return View(new EditFormPlaygroundViewModel { CmsItems = GetPlaygroundCmsItems() });
     }
 
     [HttpGet]
@@ -206,6 +197,30 @@ public class PlaygroundController : ApplicationSecurityController
         }
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [RequestSizeLimit(512 * 1024)]
+    public IActionResult EvaluateRegex([FromBody] RegexPlaygroundRequest request)
+    {
+        if (request is null)
+        {
+            return BadRequest(new { success = false, message = "A request body is required." });
+        }
+
+        try
+        {
+            return Json(new { success = true, result = RegexPlaygroundService.Evaluate(request) });
+        }
+        catch (ArgumentException exception)
+        {
+            return BadRequest(new { success = false, message = exception.Message });
+        }
+        catch (TimeoutException exception)
+        {
+            return BadRequest(new { success = false, code = "timeout", message = exception.Message });
+        }
+    }
+
     // Resolves CMS secrets and replacement files like a deploy would, so AutoValues
     // using "{{secret-...}}" placeholders can be simulated for a chosen deployment.
     // The resolved document is only used server-side and never returned to the client.
@@ -258,4 +273,19 @@ public class PlaygroundController : ApplicationSecurityController
         return !String.IsNullOrWhiteSpace(cmsId)
             && _cmsConfiguration.CMS.TryGetValue(cmsId, out cmsDocument);
     }
+
+    private EditFormPlaygroundCmsItem[] GetPlaygroundCmsItems()
+        => _cmsConfiguration.Instance.CmsItems?
+            .Where(item => !String.IsNullOrWhiteSpace(item.Id)
+                && _cmsConfiguration.CMS.ContainsKey(item.Id))
+            .Select(item => new EditFormPlaygroundCmsItem(
+                item.Id,
+                item.Name,
+                item.Deployments?
+                    .Select(deploy => deploy.Name)
+                    .Where(name => !String.IsNullOrWhiteSpace(name))
+                    .ToArray() ?? Array.Empty<string>()))
+            .ToArray()
+            ?? Array.Empty<EditFormPlaygroundCmsItem>();
+
 }

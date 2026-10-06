@@ -6,6 +6,88 @@
 
 #editform_tile: Edit form & AutoValues
 
+#regex_tile: RegEx
+
+#regex_title: RegEx Playground
+
+#regex_description: Test input validation using regular expressions. Select a template and check valid and invalid inputs. Uses .NET like the CMS regex editor; client-side JavaScript checks may differ for special syntax.
+
+#regex_example: Select example
+
+#regex_custom: Custom expression
+
+#regex_example_username: Username (3–32 characters, starts with a letter)
+
+#regex_example_email: Email address (basic format check)
+
+#regex_example_number: Number (sign, decimal point or comma)
+
+#regex_example_kg: Austrian cadastral municipality number (5 digits)
+
+#regex_example_kg_styria: Styrian cadastral municipality number (starts with 6)
+
+#regex_example_parcel: Parcel number (optional building-area dot and subdivision)
+
+#regex_example_postcode: Austrian postcode (4 digits)
+
+#regex_examples_help: Templates are editable format checks, not existence checks. Cadastral and parcel numbers are not checked against registers; email delivery is not verified. Other federal states have no presets. Selecting an example replaces the pattern and test inputs.
+
+#regex_validation_mode: Validate inputs (one input per line)
+
+#regex_validation_help: Like the CMS editor, any regex match means valid. Use ^ and $ to validate entire inputs. Whitespace is preserved; blank lines test empty inputs. All templates are anchored.
+
+#regex_inputs_help: Validation mode: up to 100 inputs, one per line (up to 10,000 characters in total). Without validation mode: test matches and replacements across the entire text.
+
+#regex_valid: Valid
+
+#regex_invalid: Invalid
+
+#regex_pattern: Regular expression
+
+#regex_test_text: Test text
+
+#regex_ignore_case: Ignore case
+
+#regex_multiline: Multiline mode (^ and $ match each line)
+
+#regex_singleline: Singleline mode (. also matches line breaks)
+
+#regex_replacement: Replacement
+
+#regex_replacement_help: Supports .NET replacement expressions such as $1, ${name}, $&, $` and $'.
+
+#regex_show_replacement: Show replacement preview
+
+#regex_matches: Matches
+
+#regex_number: #
+
+#regex_position: Position (length)
+
+#regex_match: Match text
+
+#regex_groups: Groups
+
+#regex_groups_truncated: (only the first 100 groups shown)
+
+#regex_no_groups: No groups in this expression.
+
+#regex_unmatched: (no match)
+
+#regex_match_count: matches shown
+
+#regex_truncated: Only the first 100 matches are shown.
+
+#regex_no_matches: No matches.
+
+#regex_replacement_preview: Replacement preview
+
+#regex_replacement_truncated: Preview truncated.
+
+#regex_failed: The expression could not be evaluated.
+
+#regex_timeout: Evaluation exceeded the time limit.
+
 #editform_title: Edit form and AutoValue tester
 
 #editform_description: Select a configured edit form, provide sample data and a simulated editing context, then inspect AutoValue results.

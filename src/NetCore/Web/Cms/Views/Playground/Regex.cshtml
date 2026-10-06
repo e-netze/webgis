@@ -1,0 +1,244 @@
+@using Cms.Controllers
+@using E.Standard.WebGIS.CMS.Expressions
+@using E.Standard.CMS.Core.Extensions
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+@{
+    var localizer = LocalizerFactory.CreateCmsLocalizer(typeof(PlaygroundController));
+    ViewData["Title"] = localizer.Localize("regex_title");
+}
+
+<div class="container" data-cms-localized-page style="max-width:1200px;padding-top:20px">
+    <p><a href="@Url.Action("Index", "Playground")">&larr; @localizer.Localize("back_to_playground")</a></p>
+    <h1>@localizer.Localize("regex_title")</h1>
+    <p>@localizer.Localize("regex_description")</p>
+
+    <form id="regex-playground"
+          data-evaluate-url="@Url.Action("EvaluateRegex", "Playground")"
+          data-failed="@localizer.Localize("regex_failed")"
+          data-timeout="@localizer.Localize("regex_timeout")"
+          data-no-matches="@localizer.Localize("regex_no_matches")"
+          data-match-count="@localizer.Localize("regex_match_count")"
+          data-truncated="@localizer.Localize("regex_truncated")"
+          data-groups="@localizer.Localize("regex_groups")"
+          data-groups-truncated="@localizer.Localize("regex_groups_truncated")"
+          data-no-groups="@localizer.Localize("regex_no_groups")"
+          data-unmatched="@localizer.Localize("regex_unmatched")"
+          data-replacement-preview="@localizer.Localize("regex_replacement_preview")"
+          data-valid="@localizer.Localize("regex_valid")"
+          data-invalid="@localizer.Localize("regex_invalid")"
+          data-replacement-truncated="@localizer.Localize("regex_replacement_truncated")">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label for="regex-example">@localizer.Localize("regex_example")</label>
+            <select id="regex-example" class="form-control">
+                <option value="">@localizer.Localize("regex_custom")</option>
+                @foreach (var example in RegexPlaygroundService.Examples)
+                {
+                    <option value="@example.Id" data-pattern="@example.Pattern" data-input="@example.Input">@localizer.Localize("regex_example_" + example.Id)</option>
+                }
+            </select>
+            <small class="help-block">@localizer.Localize("regex_examples_help")</small>
+        </div>
+        <div class="checkbox">
+            <label><input id="regex-validation-mode" type="checkbox" checked /> @localizer.Localize("regex_validation_mode")</label>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="regex-pattern">@localizer.Localize("regex_pattern")</label>
+                    <textarea id="regex-pattern" class="form-control" rows="3" maxlength="2048"
+                              spellcheck="false" style="font-family:Consolas,monospace">^[A-Za-z][A-Za-z0-9_.-]{2,31}$</textarea>
+                    <small class="help-block">@localizer.Localize("regex_validation_help")</small>
+                </div>
+                <div class="checkbox">
+                    <label><input id="regex-ignore-case" type="checkbox" /> @localizer.Localize("regex_ignore_case")</label>
+                </div>
+                <div class="checkbox">
+                    <label><input id="regex-multiline" type="checkbox" /> @localizer.Localize("regex_multiline")</label>
+                </div>
+                <div class="checkbox">
+                    <label><input id="regex-singleline" type="checkbox" /> @localizer.Localize("regex_singleline")</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="regex-input">@localizer.Localize("regex_test_text")</label>
+                    <textarea id="regex-input" class="form-control" rows="8" maxlength="10000"
+                              spellcheck="false" style="font-family:Consolas,monospace">ada.lovelace
+user_42
+ab
+42user
+user name</textarea>
+                    <small class="help-block">@localizer.Localize("regex_inputs_help")</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="regex-replacement-controls" style="display:none">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label for="regex-replacement">@localizer.Localize("regex_replacement")</label>
+                    <textarea id="regex-replacement" class="form-control" rows="2" maxlength="2048"
+                              spellcheck="false" style="font-family:Consolas,monospace">${local} at ${domain}</textarea>
+                    <small class="help-block">@localizer.Localize("regex_replacement_help")</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="checkbox" style="margin-top:28px">
+                    <label><input id="regex-preview-replacement" type="checkbox" checked /> @localizer.Localize("regex_show_replacement")</label>
+                </div>
+            </div>
+        </div>
+
+        <button id="regex-apply" type="button" class="btn btn-primary">@localizer.Localize("apply")</button>
+        <span id="regex-status" role="status" aria-live="polite"></span>
+
+        <div id="regex-results" style="display:none;margin-top:20px">
+            <table id="regex-validation-results" class="table table-striped" style="display:none">
+                <thead><tr><th>@localizer.Localize("regex_test_text")</th><th>@localizer.Localize("result")</th></tr></thead>
+                <tbody></tbody>
+            </table>
+            <p id="regex-summary" class="help-block"></p>
+            <div id="regex-replacement-result" class="panel panel-info" style="display:none">
+                <div class="panel-heading">@localizer.Localize("regex_replacement_preview")</div>
+                <pre id="regex-replacement-output" style="white-space:pre-wrap;margin:0;border:0;border-radius:0"></pre>
+            </div>
+            <div class="panel panel-default" id="regex-match-panel">
+                <div class="panel-heading">@localizer.Localize("regex_matches")</div>
+                <div class="table-responsive">
+                    <table class="table table-striped" style="margin-bottom:0">
+                        <thead>
+                            <tr>
+                                <th>@localizer.Localize("regex_number")</th>
+                                <th>@localizer.Localize("regex_position")</th>
+                                <th>@localizer.Localize("regex_match")</th>
+                                <th>@localizer.Localize("regex_groups")</th>
+                            </tr>
+                        </thead>
+                        <tbody id="regex-matches"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            var form = $('#regex-playground');
+            var status = $('#regex-status');
+            var results = $('#regex-results');
+
+            $('#regex-example').on('change', function () {
+                var option = $(this).find('option:selected');
+                if (!option.val()) { return; }
+                $('#regex-pattern').val(option.attr('data-pattern'));
+                $('#regex-input').val(option.attr('data-input'));
+                $('#regex-ignore-case, #regex-multiline, #regex-singleline').prop('checked', false);
+                $('#regex-validation-mode').prop('checked', true).trigger('change');
+                results.hide();
+            });
+            $('#regex-example').val('username');
+            $('#regex-validation-mode').on('change', function () {
+                $('#regex-replacement-controls').toggle(!this.checked);
+                results.hide();
+            });
+
+            $('#regex-apply').on('click', function () {
+                status.text('');
+                results.hide();
+                $.ajax({
+                    url: form.data('evaluate-url'),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        RequestVerificationToken: form.find('input[name="__RequestVerificationToken"]').val()
+                    },
+                    data: JSON.stringify({
+                        pattern: $('#regex-pattern').val(),
+                        validationMode: $('#regex-validation-mode').is(':checked'),
+                        input: $('#regex-input').val(),
+                        replacement: $('#regex-replacement').val(),
+                        ignoreCase: $('#regex-ignore-case').is(':checked'),
+                        multiline: $('#regex-multiline').is(':checked'),
+                        singleline: $('#regex-singleline').is(':checked'),
+                        previewReplacement: $('#regex-preview-replacement').is(':checked')
+                    })
+                })
+                    .done(function (response) {
+                        renderResults(response.result);
+                    })
+                    .fail(function (xhr) {
+                        status.text(xhr.responseJSON && xhr.responseJSON.code === 'timeout'
+                            ? form.attr('data-timeout')
+                            : xhr.responseJSON && xhr.responseJSON.message
+                                ? xhr.responseJSON.message
+                                : form.attr('data-failed'));
+                    });
+            });
+
+            function renderResults(result) {
+                var validations = result.validations || [];
+                $('#regex-validation-results').toggle(validations.length > 0);
+                $('#regex-match-panel').toggle(validations.length === 0);
+                $('#regex-summary').toggle(validations.length === 0);
+                var validationRows = $('#regex-validation-results tbody').empty();
+                $.each(validations, function (_, item) {
+                    validationRows.append($('<tr>')
+                        .append($('<td>').append($('<code>').text(JSON.stringify(item.input))))
+                        .append($('<td>').addClass(item.valid ? 'text-success' : 'text-danger')
+                            .text(form.attr(item.valid ? 'data-valid' : 'data-invalid'))));
+                });
+                var matches = $('#regex-matches').empty();
+                var summary = result.matchCount + ' ' + form.attr('data-match-count');
+                if (result.matchesTruncated) {
+                    summary += ' — ' + form.attr('data-truncated');
+                }
+                $('#regex-summary').text(summary);
+
+                if (result.replacementPreviewEnabled) {
+                    $('#regex-replacement-output').text(result.replacementPreview);
+                    $('#regex-replacement-result').show();
+                    if (result.replacementTruncated) {
+                        $('#regex-replacement-output').append(
+                            document.createTextNode('\n' + form.attr('data-replacement-truncated')));
+                    }
+                } else {
+                    $('#regex-replacement-result').hide();
+                }
+
+                if (result.matches.length === 0) {
+                    matches.append($('<tr>').append(
+                        $('<td colspan="4" class="text-muted">').text(form.attr('data-no-matches'))));
+                } else {
+                    $.each(result.matches, function (index, match) {
+                        var groupItems = match.groups.filter(function (group) {
+                            return group.name !== '0';
+                        });
+                        var groupText = groupItems.length
+                            ? groupItems.map(function (group) {
+                                return group.name + ': ' + (group.success ? group.value : form.attr('data-unmatched'));
+                            }).join('\n')
+                            : form.attr('data-no-groups');
+                        if (match.groupsTruncated) {
+                            groupText += '\n' + form.attr('data-groups-truncated');
+                        }
+                        matches.append($('<tr>')
+                            .append($('<td>').text(index + 1))
+                            .append($('<td>').text(match.index + ' (' + match.length + ')'))
+                            .append($('<td>').text(match.value))
+                            .append($('<td>').append($('<pre>').text(groupText).css({
+                                margin: 0,
+                                padding: 0,
+                                border: 0,
+                                background: 'transparent'
+                            }))));
+                    });
+                }
+                results.show();
+            }
+        });
+    </script>
+}

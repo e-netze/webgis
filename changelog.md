@@ -276,7 +276,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   1,000 features. Added a local edit-form and AutoValue simulator that reads CMS field
   configuration and evaluates selected values against sample GeoJSON and a simulated edit context.
   ``db_select`` AutoValues (SQL or DataLinq endpoint) are executed, with CMS secrets resolved for a
-  selectable deployment. Playground pages now follow the CMS UI language.
+  selectable deployment. Added a RegEx playground for testing patterns, options, capture groups, and
+  replacement previews using .NET regular expression syntax.
+  Input validation is the default mode, with per-line results and editable examples for usernames,
+  email, numbers, Austrian cadastral/parcel numbers, and postcodes.
+  Playground pages now follow the CMS UI language.
   [Expressions docs](https://docs.webgiscloud.com/de/webgis/annex/expressions.html)
 
 ### Fixed
