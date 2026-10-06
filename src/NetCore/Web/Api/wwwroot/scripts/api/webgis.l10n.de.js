@@ -47,7 +47,7 @@
 
     "select-filter": "Filter wählen",
     "all-filters": "Alle Filter",
-    "remove-filters": "Filter entferenen",
+    "remove-filters": "Filter entfernen",
     "remove-all-filters": "Alle Filter entfernen",
 
     // tool MapMarkup
