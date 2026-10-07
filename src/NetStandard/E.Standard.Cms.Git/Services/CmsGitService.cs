@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading;
 
 using E.Standard.Cms.Configuration.Models;
@@ -17,6 +19,7 @@ namespace E.Standard.Cms.Git.Services;
 public class CmsGitService
 {
     private static readonly TimeSpan LockTimeout = TimeSpan.FromSeconds(60);
+    private static readonly TimeSpan ShortLockTimeout = TimeSpan.FromSeconds(2);
     private static readonly ConcurrentDictionary<string, SemaphoreSlim> Locks = new(StringComparer.OrdinalIgnoreCase);
 
     private readonly CmsConfigurationService _ccs;
@@ -139,6 +142,33 @@ public class CmsGitService
 
     #region Deploy
 
+    private static readonly ConcurrentDictionary<string, string> RunningDeployments = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Only one deployment per cms-item at a time (all deployments read from the same deploy clone).
+    /// Has to be released with <see cref="EndDeploy"/>.
+    /// </summary>
+    /// <exception cref="CmsGitException">another deployment is running</exception>
+    public void BeginDeploy(string cmsId, string username)
+    {
+        if (!RunningDeployments.TryAdd(cmsId, username ?? String.Empty))
+        {
+            RunningDeployments.TryGetValue(cmsId, out var runningBy);
+            throw new CmsGitException(CmsGitErrors.DeployRunning, runningBy);
+        }
+    }
+
+    public void EndDeploy(string cmsId)
+        => RunningDeployments.TryRemove(cmsId, out _);
+
+    public bool IsDeployRunning(string cmsId)
+        => RunningDeployments.ContainsKey(cmsId);
+
+    /// <summary>
+    /// User who started the running deployment (null, if no deployment is running)
+    /// </summary>
+    public string RunningDeployUser(string cmsId)
+        => RunningDeployments.TryGetValue(cmsId, out var username) ? username : null;
     /// <summary>
     /// Brings the deploy clone to the latest commit of the remote default branch.
     /// </summary>
@@ -152,6 +182,179 @@ public class CmsGitService
         _resolver.Invalidate(workspace.WorkspacePath);
 
         return sha;
+    }
+
+    /// <summary>
+    /// Deletes the deploy clone. It will be cloned again with the next deployment.
+    /// The caller has to make sure, that no deployment is running.
+    /// </summary>
+    public void ResetDeployWorkspace(string cmsId)
+    {
+        var path = _resolver.DeployWorkspacePath(cmsId);
+
+        Locked(path, () =>
+        {
+            CmsGitWorkspace.DeleteDirectory(path);
+            return true;
+        });
+
+        _resolver.Invalidate(path);
+    }
+
+    /// <summary>
+    /// Which commit will be deployed + state of the user's working copy (unpublished changes)
+    /// </summary>
+    public CmsGitDeployInfo GetDeployInfo(string cmsId, string username)
+    {
+        var settings = Settings(cmsId);
+        var deployWorkspace = new CmsGitWorkspace(_resolver.DeployWorkspacePath(cmsId), settings);
+        var userWorkspace = UserWorkspace(cmsId, username);
+
+        var info = new CmsGitDeployInfo() { DefaultBranch = deployWorkspace.DefaultBranch };
+
+        try
+        {
+            info.LastDeployed = Locked(deployWorkspace.WorkspacePath, () => deployWorkspace.HeadCommit(), ShortLockTimeout);
+        }
+        catch { /* busy => unknown */ }
+
+        try
+        {
+            if (userWorkspace.Exists)
+            {
+                Locked(userWorkspace.WorkspacePath, () =>
+                {
+                    info.UserStatus = Decorate(userWorkspace.GetStatus(true), username);
+                    info.RemoteHead = userWorkspace.RemoteDefaultBranchCommit();
+                    return true;
+                });
+
+                if (info.UserStatus.Stale)
+                {
+                    info.Error = info.UserStatus.FetchError;
+                }
+            }
+            else
+            {
+                var sha = userWorkspace.RemoteDefaultBranchSha();
+                info.RemoteHead = String.IsNullOrEmpty(sha) ? null : new CmsGitCommitInfo() { Sha = sha };
+            }
+        }
+        catch (CmsGitException ex)
+        {
+            info.Error = String.IsNullOrEmpty(ex.Details) ? ex.Message : ex.Details;
+        }
+        catch (Exception ex)
+        {
+            info.Error = ex.Message;
+        }
+
+        return info;
+    }
+
+    #endregion
+
+    #region Admin
+
+    /// <summary>
+    /// All user working copies of a cms-item
+    /// </summary>
+    public IEnumerable<CmsGitWorkspaceInfo> GetWorkspaces(string cmsId, string currentUsername)
+    {
+        var root = _resolver.UsersRootPath(cmsId);
+        if (!Directory.Exists(root))
+        {
+            return Array.Empty<CmsGitWorkspaceInfo>();
+        }
+
+        var settings = Settings(cmsId);
+        var currentName = String.IsNullOrWhiteSpace(currentUsername) ? null : CmsManagerResolver.SafeName(currentUsername);
+        var result = new List<CmsGitWorkspaceInfo>();
+
+        foreach (var directory in Directory.GetDirectories(root).OrderBy(d => d, StringComparer.OrdinalIgnoreCase))
+        {
+            var name = Path.GetFileName(directory);
+            var workspace = new CmsGitWorkspace(directory, settings);
+            var info = new CmsGitWorkspaceInfo()
+            {
+                Name = name,
+                IsCurrentUser = name.Equals(currentName, StringComparison.OrdinalIgnoreCase),
+                LastModified = LastModified(directory)
+            };
+
+            try
+            {
+                if (!workspace.Exists)
+                {
+                    info.Error = "no repository";
+                }
+                else
+                {
+                    var status = Locked(directory, () => workspace.GetStatus(false), ShortLockTimeout);
+
+                    info.Branch = status.Branch;
+                    info.Changes = status.Changes?.Count() ?? 0;
+                    info.Ahead = status.Ahead;
+                    info.HasUpstream = status.HasUpstream;
+                    info.IsMerging = status.IsMerging;
+                }
+            }
+            catch (CmsGitException ex)
+            {
+                info.Error = ex.L10nKey;
+            }
+            catch (Exception ex)
+            {
+                info.Error = ex.Message;
+            }
+
+            result.Add(info);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Deletes a user's working copy (uncommitted/unpushed changes are lost)
+    /// </summary>
+    /// <param name="name">folder name of the working copy (<see cref="CmsGitWorkspaceInfo.Name"/>)</param>
+    public void DeleteWorkspace(string cmsId, string name)
+    {
+        var root = Path.GetFullPath(_resolver.UsersRootPath(cmsId)).TrimEnd('\\', '/');
+        var path = Path.GetFullPath(_resolver.UserWorkspacePath(cmsId, name));
+
+        if (!String.Equals(Path.GetDirectoryName(path)?.TrimEnd('\\', '/'), root, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new CmsGitException(CmsGitErrors.InvalidPath, name);
+        }
+
+        Locked(path, () =>
+        {
+            CmsGitWorkspace.DeleteDirectory(path);
+            return true;
+        });
+
+        _resolver.Invalidate(path);
+    }
+
+    private static DateTime? LastModified(string directory)
+    {
+        try
+        {
+            return new[]
+                {
+                    Path.Combine(directory, ".git", "index"),
+                    Path.Combine(directory, ".git", "HEAD")
+                }
+                .Where(File.Exists)
+                .Select(File.GetLastWriteTime)
+                .DefaultIfEmpty(Directory.GetLastWriteTime(directory))
+                .Max();
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     #endregion
@@ -238,11 +441,11 @@ public class CmsGitService
         }
     }
 
-    private static T Locked<T>(string key, Func<T> func)
+    private static T Locked<T>(string key, Func<T> func, TimeSpan? timeout = null)
     {
         var semaphore = Locks.GetOrAdd(key, _ => new SemaphoreSlim(1, 1));
 
-        if (!semaphore.Wait(LockTimeout))
+        if (!semaphore.Wait(timeout ?? LockTimeout))
         {
             throw new CmsGitException(CmsGitErrors.Busy);
         }

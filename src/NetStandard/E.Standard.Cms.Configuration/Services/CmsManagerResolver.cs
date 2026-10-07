@@ -70,6 +70,12 @@ public class CmsManagerResolver
         return Path.Combine(GitConfig(cmsId).WorkspaceRoot, SafeName(cmsId), UsersFolder, SafeName(username));
     }
 
+    /// <summary>
+    /// Folder containing the working copies of all users of a cms-item
+    /// </summary>
+    public string UsersRootPath(string cmsId)
+        => Path.Combine(GitConfig(cmsId).WorkspaceRoot, SafeName(cmsId), UsersFolder);
+
     public string DeployWorkspacePath(string cmsId)
         => Path.Combine(GitConfig(cmsId).WorkspaceRoot, SafeName(cmsId), DeployFolder);
 

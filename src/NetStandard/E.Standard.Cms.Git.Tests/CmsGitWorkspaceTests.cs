@@ -12,12 +12,14 @@ public sealed class CmsGitWorkspaceTests : IDisposable
     private readonly string _remote;
     private readonly string _tree;
     private readonly CmsGitSettings _settings;
+    private readonly Xunit.Abstractions.ITestOutputHelper _output;
 
     private static readonly CmsGitUser Alice = new("alice", "alice@test.local");
     private static readonly CmsGitUser Bob = new("bob", "bob@test.local");
 
-    public CmsGitWorkspaceTests()
+    public CmsGitWorkspaceTests(Xunit.Abstractions.ITestOutputHelper output)
     {
+        _output = output;
         _root = Path.Combine(Path.GetTempPath(), "cmsgit-tests", Guid.NewGuid().ToString("N"));
         _remote = Path.Combine(_root, "remote.git");
         _tree = Path.Combine(_root, "tree");
@@ -489,5 +491,66 @@ public sealed class CmsGitWorkspaceTests : IDisposable
         Assert.NotEqual(sha1, sha2);
         Assert.True(File.Exists(Path.Combine(deploy.WorkspacePath, "services", "b.xml")));
         Assert.False(File.Exists(Path.Combine(deploy.WorkspacePath, "services", "junk.xml")));
+    }
+
+    [Fact]
+    public void DeployInfo_HeadAndRemoteCommits()
+    {
+        var deploy = Workspace("deploy");
+        Assert.Null(deploy.HeadCommit());
+
+        var alice = CreateWorkspace("alice", Alice);
+        var initialSha = alice.HeadCommit().Sha;
+        Assert.Equal(initialSha, alice.RemoteDefaultBranchSha());
+
+        deploy.UpdateToRemoteDefaultBranch();
+        Assert.Equal(initialSha, deploy.HeadCommit().Sha);
+
+        File.WriteAllText(Path.Combine(alice.WorkspacePath, "services", "b.xml"), "<b/>");
+        alice.Commit(Alice, "add b");
+        alice.Push(Alice);
+
+        var remoteHead = alice.RemoteDefaultBranchCommit();
+        Assert.NotEqual(initialSha, remoteHead.Sha);
+        Assert.Equal(remoteHead.Sha, alice.RemoteDefaultBranchSha());
+        Assert.Equal("alice", remoteHead.Author);
+        Assert.Equal("add b", remoteHead.Message);
+        Assert.Equal(8, remoteHead.ShortSha.Length);
+
+        // deploy clone keeps the last deployed state until the next deployment
+        Assert.Equal(initialSha, deploy.HeadCommit().Sha);
+    }
+
+    [Fact]
+    public void Status_LargeTree_Performance()
+    {
+        var tree = Path.Combine(_root, "large-tree");
+        for (var folder = 0; folder < 100; folder++)
+        {
+            var dir = Path.Combine(tree, "services", $"service{folder}", "themes");
+            Directory.CreateDirectory(dir);
+            for (var file = 0; file < 50; file++)
+            {
+                File.WriteAllText(Path.Combine(dir, $"theme{file}.xml"), $"<theme id='{folder}-{file}' />");
+            }
+        }
+
+        var ws = Workspace("large");
+        ws.Create(tree, Alice, "initial");
+
+        File.WriteAllText(Path.Combine(ws.WorkspacePath, "services", "service5", "themes", "theme7.xml"), "<changed/>");
+
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        CmsGitStatus status = null;
+        for (var i = 0; i < 5; i++)
+        {
+            status = ws.GetStatus(false);
+        }
+        watch.Stop();
+
+        _output.WriteLine($"GetStatus on 5000 files: {watch.ElapsedMilliseconds / 5} ms (avg of 5)");
+
+        Assert.Single(status.Changes);
+        Assert.True(watch.ElapsedMilliseconds / 5 < 3000, $"GetStatus too slow: {watch.ElapsedMilliseconds / 5} ms");
     }
 }

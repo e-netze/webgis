@@ -364,6 +364,8 @@ public class Startup
         {
             Console.WriteLine("Startup.Configure...");
 
+            LogCmsGitConfiguration(app, logger);
+
             var securityConfig = applicationSecurity.CurrentValue;
 
             if (env.IsDevelopment())
@@ -463,6 +465,32 @@ public class Startup
             logger.LogError(ex, "Error on startup");
 
             System.Environment.Exit(-1);
+        }
+    }
+
+    private static void LogCmsGitConfiguration(WebApplication app, ILogger logger)
+    {
+        try
+        {
+            var config = app.Services.GetRequiredService<E.Standard.Cms.Configuration.Services.CmsConfigurationService>().Instance;
+
+            foreach (var warning in config.GitConfigWarnings())
+            {
+                logger.LogWarning("CMS git configuration: {warning}", warning);
+            }
+
+            var gitItems = (config.CmsItems ?? Enumerable.Empty<CmsConfig.CmsItem>()).Where(i => i.IsGitEnabled).Select(i => i.Id).ToArray();
+            if (gitItems.Length > 0)
+            {
+                // fail early, if the native libgit2 library is missing for this platform
+                logger.LogInformation("CMS git enabled for: {items} (libgit2 {version})",
+                    String.Join(", ", gitItems),
+                    E.Standard.Cms.Git.Services.CmsGitDiagnostics.LibGit2Version());
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "CMS git: libgit2 can't be loaded => git operations will fail");
         }
     }
 }

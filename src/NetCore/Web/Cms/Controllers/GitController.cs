@@ -56,7 +56,12 @@ public class GitController : ApplicationSecurityController
         "conflict-version", "conflicts-intro", "diff-unchanged-lines",
         "conflict-use-mine", "conflict-use-theirs", "conflict-all-mine", "conflict-all-theirs", "conflict-deleted",
         "conflict-kind-modified", "conflict-kind-added", "conflict-kind-deleted-by-me", "conflict-kind-deleted-by-them",
-        "discard", "discard-confirm", "discard-all", "discard-all-confirm", "node-changed"
+        "discard", "discard-confirm", "discard-all", "discard-all-confirm", "node-changed",
+        "workspaces", "workspaces-title", "workspaces-intro", "workspaces-none",
+        "workspace-user", "workspace-branch", "workspace-state", "workspace-last-modified", "workspace-current-user",
+        "workspace-clean", "workspace-merging", "workspace-delete", "workspace-delete-confirm", "workspace-delete-own-confirm",
+        "workspace-deleted", "deploy-workspace-reset", "deploy-workspace-reset-confirm", "deploy-workspace-reset-success",
+        "deploy-git-running"
     ];
 
     private readonly CmsConfigurationService _ccs;
@@ -140,6 +145,44 @@ public class GitController : ApplicationSecurityController
 
     public IActionResult Discard(string id, string node)
         => Execute(id, "Discard", () => StatusResult(_git.Discard(id, Username, node)), node);
+
+    #region Admin
+
+    // All CMS editors are admins (no separate admin role) => every authorized CMS user may manage the workspaces
+
+    public IActionResult Workspaces(string id)
+        => Execute(id, null, () => Json(new
+        {
+            success = true,
+            enabled = true,
+            deploy_running_by = _git.RunningDeployUser(id),
+            workspaces = _git.GetWorkspaces(id, Username).ToArray()
+        }));
+
+    public IActionResult DeleteWorkspace(string id, string name)
+        => Execute(id, "DeleteWorkspace", () =>
+        {
+            _git.DeleteWorkspace(id, name);
+            return Json(new { success = true, enabled = true });
+        }, name);
+
+    public IActionResult ResetDeployWorkspace(string id)
+        => Execute(id, "ResetDeployWorkspace", () =>
+        {
+            _git.BeginDeploy(id, Username);
+            try
+            {
+                _git.ResetDeployWorkspace(id);
+            }
+            finally
+            {
+                _git.EndDeploy(id);
+            }
+
+            return Json(new { success = true, enabled = true });
+        });
+
+    #endregion
 
     #region Helper
 

@@ -197,3 +197,65 @@
 #conflicts-intro: '{0}' is being merged into the current working branch '{1}'. The following entries have been changed differently on both sides. Please choose which version to keep for each entry. Changed lines are highlighted.
 
 #diff-unchanged-lines: ... show {0} unchanged line(s)
+
+#error-deploy-running: A deployment is already running for this CMS. Please wait until it has finished.
+
+#deploy-git-title: Versioning (Git)
+
+#deploy-git-source: The current state of '{0}' on the server will be deployed:
+
+#deploy-git-no-remote-head: The working branch '{0}' does not exist on the server yet. Deploying is possible as soon as a state has been published.
+
+#deploy-git-last-deployed: Last deployed: {0}
+
+#deploy-git-never-deployed: Nothing has been deployed yet.
+
+#deploy-git-already-deployed: This state has already been deployed.
+
+#deploy-git-unpublished: Attention: The following changes in your workspace are not part of the deployment:
+
+#deploy-git-unpublished-branch: You are working on branch '{0}'. Only changes merged into '{1}' and published will be deployed.
+
+#deploy-git-unpublished-merging: A merge has not been completed yet.
+
+#deploy-git-no-workspace: You do not have a workspace yet.
+
+#deploy-git-running: A deployment is currently running (started by {0}).
+
+#deploy-git-remote-error: The server is not reachable - the displayed state may be outdated:
+
+#workspaces: Manage workspaces...
+
+#workspaces-title: Manage workspaces
+
+#workspaces-intro: Server-side workspaces of all editors of this CMS. Deleting a workspace discards all unsaved and unpublished changes.
+
+#workspaces-none: There are no workspaces.
+
+#workspace-user: Editor
+
+#workspace-branch: Working branch
+
+#workspace-state: State
+
+#workspace-last-modified: Last modified
+
+#workspace-current-user: (you)
+
+#workspace-clean: no pending changes
+
+#workspace-merging: merge in progress
+
+#workspace-delete: Delete
+
+#workspace-delete-confirm: Really delete the workspace of '{0}'? Unsaved and unpublished changes will be lost.
+
+#workspace-delete-own-confirm: Really delete your own workspace? Unsaved and unpublished changes will be lost. You will have to fetch a new workspace afterwards.
+
+#workspace-deleted: The workspace has been deleted.
+
+#deploy-workspace-reset: Reset deploy clone
+
+#deploy-workspace-reset-confirm: Delete the deploy clone on the server? It will be fetched again automatically with the next deployment.
+
+#deploy-workspace-reset-success: The deploy clone has been deleted.

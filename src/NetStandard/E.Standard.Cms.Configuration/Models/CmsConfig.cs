@@ -46,6 +46,73 @@ public class CmsConfig : PropertiesParserBaseClass
     [System.Text.Json.Serialization.JsonPropertyName("cms-items")]
     public IEnumerable<CmsItem> CmsItems { get; set; }
 
+    /// <summary>
+    /// Default root folder for the git working copies of all cms-items (subfolder per cms-id).
+    /// Can be overridden per cms-item with git.workspace-root
+    /// </summary>
+    [JsonProperty(PropertyName = "git-workspace-root")]
+    [System.Text.Json.Serialization.JsonPropertyName("git-workspace-root")]
+    public string GitWorkspaceRoot { get; set; }
+
+    /// <summary>
+    /// Applies global defaults to the cms-items. Has to be called after parsing the config.
+    /// </summary>
+    public void ApplyDefaults()
+    {
+        if (CmsItems == null || string.IsNullOrWhiteSpace(GitWorkspaceRoot))
+        {
+            return;
+        }
+
+        foreach (var cmsItem in CmsItems)
+        {
+            if (cmsItem.Git != null && string.IsNullOrWhiteSpace(cmsItem.Git.WorkspaceRoot))
+            {
+                cmsItem.Git.WorkspaceRoot = GitWorkspaceRoot;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Problems in the git configuration of the cms-items (to be logged on startup).
+    /// An incomplete git section disables git for the cms-item.
+    /// </summary>
+    public IEnumerable<string> GitConfigWarnings()
+    {
+        var warnings = new List<string>();
+
+        foreach (var cmsItem in CmsItems ?? System.Array.Empty<CmsItem>())
+        {
+            var git = cmsItem.Git;
+            if (git == null)
+            {
+                continue;
+            }
+
+            if (string.IsNullOrWhiteSpace(git.RemoteUrl))
+            {
+                warnings.Add($"cms-item '{cmsItem.Id}': git.remote-url is missing => git is disabled for this cms-item");
+            }
+
+            if (string.IsNullOrWhiteSpace(git.WorkspaceRoot))
+            {
+                warnings.Add($"cms-item '{cmsItem.Id}': neither git-workspace-root nor git.workspace-root is set => git is disabled for this cms-item");
+            }
+
+            if (!string.IsNullOrEmpty(git.Token) && git.ResolvedToken.Contains('%'))
+            {
+                warnings.Add($"cms-item '{cmsItem.Id}': git.token contains an unresolved environment variable");
+            }
+
+            if (git.IsValid && string.IsNullOrWhiteSpace(cmsItem.Path))
+            {
+                warnings.Add($"cms-item '{cmsItem.Id}': path is empty => an empty remote repository can't be initialized from it");
+            }
+        }
+
+        return warnings;
+    }
+
 
 
     public override void Parse(IConfigValueParser parser)

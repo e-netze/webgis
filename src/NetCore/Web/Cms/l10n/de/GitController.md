@@ -197,3 +197,65 @@
 #conflicts-intro: '{0}' wird in den aktuellen Arbeitszweig '{1}' zusammengeführt. Die folgenden Einträge wurden auf beiden Seiten unterschiedlich geändert. Bitte je Eintrag wählen, welche Version übernommen werden soll. Geänderte Zeilen sind farbig markiert.
 
 #diff-unchanged-lines: ... {0} unveränderte Zeile(n) anzeigen
+
+#error-deploy-running: Für dieses CMS läuft bereits ein Deploy. Bitte warte, bis er abgeschlossen ist.
+
+#deploy-git-title: Versionierung (Git)
+
+#deploy-git-source: Deployt wird der aktuelle Stand von '{0}' am Server:
+
+#deploy-git-no-remote-head: Der Arbeitszweig '{0}' existiert am Server noch nicht. Ein Deploy ist erst möglich, wenn ein Stand veröffentlicht wurde.
+
+#deploy-git-last-deployed: Zuletzt deployt: {0}
+
+#deploy-git-never-deployed: Bisher wurde noch kein Stand deployt.
+
+#deploy-git-already-deployed: Dieser Stand wurde bereits deployt.
+
+#deploy-git-unpublished: Achtung: Folgende Änderungen aus deinem Arbeitsbereich sind nicht Teil des Deploys:
+
+#deploy-git-unpublished-branch: Du arbeitest im Arbeitszweig '{0}'. Deployt werden nur Änderungen, die in '{1}' übernommen und veröffentlicht wurden.
+
+#deploy-git-unpublished-merging: Eine Zusammenführung ist noch nicht abgeschlossen.
+
+#deploy-git-no-workspace: Du hast noch keinen eigenen Arbeitsbereich.
+
+#deploy-git-running: Gerade läuft ein Deploy (gestartet von {0}).
+
+#deploy-git-remote-error: Der Server ist nicht erreichbar - der angezeigte Stand kann veraltet sein:
+
+#workspaces: Arbeitsbereiche verwalten...
+
+#workspaces-title: Arbeitsbereiche verwalten
+
+#workspaces-intro: Server-seitige Arbeitsbereiche aller Bearbeiter für dieses CMS. Beim Löschen gehen nicht gespeicherte und nicht veröffentlichte Änderungen verloren.
+
+#workspaces-none: Es sind keine Arbeitsbereiche vorhanden.
+
+#workspace-user: Bearbeiter
+
+#workspace-branch: Arbeitszweig
+
+#workspace-state: Zustand
+
+#workspace-last-modified: Zuletzt geändert
+
+#workspace-current-user: (du)
+
+#workspace-clean: keine offenen Änderungen
+
+#workspace-merging: Zusammenführung läuft
+
+#workspace-delete: Löschen
+
+#workspace-delete-confirm: Arbeitsbereich von '{0}' wirklich löschen? Nicht gespeicherte und nicht veröffentlichte Änderungen gehen verloren.
+
+#workspace-delete-own-confirm: Deinen eigenen Arbeitsbereich wirklich löschen? Nicht gespeicherte und nicht veröffentlichte Änderungen gehen verloren. Danach musst du dir den Arbeitsbereich neu holen.
+
+#workspace-deleted: Der Arbeitsbereich wurde gelöscht.
+
+#deploy-workspace-reset: Deploy-Klon zurücksetzen
+
+#deploy-workspace-reset-confirm: Den Deploy-Klon am Server löschen? Er wird beim nächsten Deploy automatisch neu geholt.
+
+#deploy-workspace-reset-success: Der Deploy-Klon wurde gelöscht.

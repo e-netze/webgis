@@ -362,3 +362,30 @@
         .cms-git-diff tbody.more td:hover {
             text-decoration: underline;
         }
+
+.cms-git-intro {
+    margin-bottom: 8px;
+    color: #555;
+}
+
+table.cms-git-workspaces {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+    table.cms-git-workspaces th,
+    table.cms-git-workspaces td {
+        padding: 4px 6px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    table.cms-git-workspaces tr.current td {
+        font-weight: bold;
+    }
+
+    table.cms-git-workspaces td.warning {
+        color: #8a5a00;
+    }

@@ -10,16 +10,20 @@ using Cms.Models;
 using E.Standard.Cms.Abstraction;
 using E.Standard.Cms.Configuration.Models;
 using E.Standard.Cms.Configuration.Services;
+using E.Standard.Cms.Git.Exceptions;
 using E.Standard.Cms.Git.Services;
 using E.Standard.Cms.Services;
 using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Extensions;
 using E.Standard.Custom.Core.Abstractions;
+using E.Standard.Localization.Abstractions;
 using E.Standard.Security.App.Reflection;
 using E.Standard.Security.App.Services;
 using E.Standard.Security.Cryptography.Abstractions;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Cms.Controllers;
 
@@ -33,6 +37,7 @@ public class DeployController : ApplicationSecurityController
     private readonly SolveWaringsService _solveWarningsService;
     private readonly CmsManagerResolver _cmsResolver;
     private readonly CmsGitService _git;
+    private readonly ILocalizer _gitLocalizer;
 
     private readonly CmsItemTransistantInjectionServicePack _servicePack;
 
@@ -48,10 +53,12 @@ public class DeployController : ApplicationSecurityController
             SolveWaringsService solveWarningsService,
             CmsManagerResolver cmsResolver,
             CmsGitService git,
+            IStringLocalizerFactory stringLocalizerFactory,
             IEnumerable<ICustomCmsPageSecurityService> customSecurity = null)
         : base(ccs, urlHelperService, applicationSecurityUserManager, customSecurity, crypto, instanceService)
     {
         _git = git;
+        _gitLocalizer = stringLocalizerFactory.CreateCmsLocalizer(typeof(GitController));
         _ccs = ccs;
         _applicationContentRootPath = environment.ContentRootPath;
         _cmsLogger = cmsLogger;
@@ -82,10 +89,15 @@ public class DeployController : ApplicationSecurityController
                     throw new Exception("Unknown Cms-Item-Id: " + id);
                 }
 
+                var gitEnabled = _git.IsEnabled(id);
+
                 return View(new DeployModel()
                 {
                     CmsItem = cmsItem,
-                    IsIFramed = Request.Query["iframe"] == "true"
+                    IsIFramed = Request.Query["iframe"] == "true",
+                    GitDeployInfo = gitEnabled ? _git.GetDeployInfo(id, this.GetCurrentUsername()) : null,
+                    GitDeployRunningBy = gitEnabled ? _git.RunningDeployUser(id) : null,
+                    GitLocalizer = gitEnabled ? _gitLocalizer : null
                 });
             }
         }
@@ -97,6 +109,8 @@ public class DeployController : ApplicationSecurityController
 
     public IActionResult Deploy(string id, string name)
     {
+        var deployLocked = false;
+
         try
         {
             _cmsLogger.Log(this.GetCurrentUsername(),
@@ -104,6 +118,10 @@ public class DeployController : ApplicationSecurityController
 
             if (_git.IsEnabled(id))
             {
+                // only one deployment per cms-item: all deployments read from the same deploy clone
+                _git.BeginDeploy(id, this.GetCurrentUsername());
+                deployLocked = true;
+
                 // deploy always the latest state of the remote default branch
                 var sha = _git.UpdateDeployWorkspace(id);
                 _cmsLogger.Log(this.GetCurrentUsername(),
@@ -113,12 +131,30 @@ public class DeployController : ApplicationSecurityController
             _cmsResolver.EnsureDeployWorkspace(id);
 
             var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), DeployCms, name);
+            deployLocked = false;  // released by the background process
 
             return OpenConsole(backgroundProcess, $"Deploying: {name}", id);
+        }
+        catch (CmsGitException ex)
+        {
+            var message = _gitLocalizer.Localize(ex.L10nKey);
+
+            return Json(new
+            {
+                success = false,
+                exception = String.IsNullOrWhiteSpace(ex.Details) ? message : $"{message}\n{ex.Details}"
+            });
         }
         catch (Exception ex)
         {
             return base.ExceptionResult(ex);
+        }
+        finally
+        {
+            if (deployLocked)
+            {
+                _git.EndDeploy(id);
+            }
         }
     }
 
@@ -128,17 +164,27 @@ public class DeployController : ApplicationSecurityController
     {
         BackgroundProcess process = (BackgroundProcess)arg;
 
-        var context = new CmsToolContext()
+        try
         {
-            CmsId = process.CmsId,
-            Deployment = process.UserData,
-            ContentRootPath = _applicationContentRootPath,
-            Username = process.UserName,
-            CmsTreePath = _cmsResolver.DeployTreePath(process.CmsId)
-        };
+            var context = new CmsToolContext()
+            {
+                CmsId = process.CmsId,
+                Deployment = process.UserData,
+                ContentRootPath = _applicationContentRootPath,
+                Username = process.UserName,
+                CmsTreePath = _cmsResolver.DeployTreePath(process.CmsId)
+            };
 
-        _deployService.Init(context);
-        _deployService.Run(context, process);
+            _deployService.Init(context);
+            _deployService.Run(context, process);
+        }
+        finally
+        {
+            if (_git.IsEnabled(process.CmsId))
+            {
+                _git.EndDeploy(process.CmsId);
+            }
+        }
     }
 
     #endregion Background Process

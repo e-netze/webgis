@@ -187,6 +187,10 @@ var CMS = new function () {
             url: CMS.appRootUrl + '/' + cmd,
             type: 'get',
             success: function (result) {
+                if (result && result.success === false) {
+                    alert(result.exception);
+                    return;
+                }
                 CMS.showConsole(result, reloadOnClose);
             },
             error: function () {

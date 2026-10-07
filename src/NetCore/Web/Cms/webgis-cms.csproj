@@ -95,6 +95,18 @@
     <PackageReference Include="Serilog.Sinks.Seq" Version="9.1.0" />
     <!--<PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.6" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />-->
+    <!-- referenced directly (same version as LibGit2Sharp uses) only to get $(PkgLibGit2Sharp_NativeBinaries), see below -->
+    <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.324" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <!--
+    CMS git (LibGit2Sharp): a RID specific linux publish (-r linux-x64) only contains the glibc build of libgit2.
+    The docker image is Alpine (musl) => also ship the musl builds. LibGit2Sharp probes runtimes/*-{arch}/native,
+    if the default library can't be loaded.
+  -->
+  <ItemGroup Condition="$(RuntimeIdentifier.StartsWith('linux-'))">
+    <None Include="$(PkgLibGit2Sharp_NativeBinaries)\runtimes\linux-musl-x64\native\*.so" Link="runtimes\linux-musl-x64\native\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Visible="false" />
+    <None Include="$(PkgLibGit2Sharp_NativeBinaries)\runtimes\linux-musl-arm64\native\*.so" Link="runtimes\linux-musl-arm64\native\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Visible="false" />
   </ItemGroup>
 
   <ItemGroup>

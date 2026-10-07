@@ -680,6 +680,55 @@ public class CmsGitWorkspace
         return remoteBranch.Tip.Sha;
     }
 
+    /// <summary>
+    /// Current HEAD commit of the working copy (null, if the working copy does not exist)
+    /// </summary>
+    public CmsGitCommitInfo HeadCommit()
+    {
+        if (!Exists)
+        {
+            return null;
+        }
+
+        using var repo = Open();
+
+        return CommitInfo(repo.Head?.Tip);
+    }
+
+    /// <summary>
+    /// Latest known commit of the remote default branch (no fetch)
+    /// </summary>
+    public CmsGitCommitInfo RemoteDefaultBranchCommit()
+    {
+        if (!Exists)
+        {
+            return null;
+        }
+
+        using var repo = Open();
+
+        return CommitInfo(repo.Branches[$"{RemoteName}/{DefaultBranch}"]?.Tip);
+    }
+
+    /// <summary>
+    /// Commit hash of the remote default branch without a local working copy (ls-remote)
+    /// </summary>
+    public string RemoteDefaultBranchSha()
+        => ListRemoteReferences()
+            .FirstOrDefault(r => r.CanonicalName == $"refs/heads/{DefaultBranch}")?
+            .TargetIdentifier;
+
+    private static CmsGitCommitInfo CommitInfo(Commit commit)
+        => commit == null
+            ? null
+            : new CmsGitCommitInfo()
+            {
+                Sha = commit.Sha,
+                Author = commit.Author?.Name,
+                Date = commit.Author?.When,
+                Message = commit.MessageShort
+            };
+
     #endregion
 
     #region Helper

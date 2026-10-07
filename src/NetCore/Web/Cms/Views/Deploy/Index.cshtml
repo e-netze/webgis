@@ -9,6 +9,99 @@
 <div class="padding:4px">
     <h3>@(Model.CmsItem.Name) Veröffentlichen</h3>
 
+    @if (Model.GitDeployInfo != null && Model.GitLocalizer != null)
+    {
+        var git = Model.GitDeployInfo;
+        var L = Model.GitLocalizer;
+        Func<E.Standard.Cms.Git.Models.CmsGitCommitInfo, string> commitText = c =>
+            c == null ? "" :
+            c.ShortSha
+            + (c.Date.HasValue ? " - " + c.Date.Value.LocalDateTime.ToShortDateString() + " " + c.Date.Value.LocalDateTime.ToShortTimeString() : "")
+            + (String.IsNullOrEmpty(c.Author) ? "" : " - " + c.Author)
+            + (String.IsNullOrEmpty(c.Message) ? "" : ": " + c.Message);
+
+        <style>
+            .cms-git-deploy-info { max-width: 900px; margin: 8px 0 16px 0; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; background: #fafafa; }
+            .cms-git-deploy-title { font-weight: bold; margin-bottom: 4px; }
+            .cms-git-deploy-commit { font-family: monospace; margin: 2px 0 6px 0; word-break: break-word; }
+            .cms-git-deploy-muted { color: #666; }
+            .cms-git-deploy-warning { color: #8a5a00; background: #fff4d6; border-left: 3px solid #e0a000; padding: 4px 8px; margin: 6px 0; }
+            .cms-git-deploy-warning ul { margin: 4px 0 0 0; padding-left: 20px; }
+        </style>
+        <div class="cms-git-deploy-info">
+            <div class="cms-git-deploy-title">@L.Localize("deploy-git-title")</div>
+
+            @if (Model.GitDeployRunningBy != null)
+            {
+                <div class="cms-git-deploy-warning">@String.Format(L.Localize("deploy-git-running"), Model.GitDeployRunningBy)</div>
+            }
+
+            @if (!String.IsNullOrEmpty(git.Error))
+            {
+                <div class="cms-git-deploy-warning">@L.Localize("deploy-git-remote-error") @git.Error</div>
+            }
+
+            @if (git.RemoteHead != null)
+            {
+                <div>@String.Format(L.Localize("deploy-git-source"), git.DefaultBranch)</div>
+                <div class="cms-git-deploy-commit">@commitText(git.RemoteHead)</div>
+            }
+            else if (String.IsNullOrEmpty(git.Error))
+            {
+                <div class="cms-git-deploy-warning">@String.Format(L.Localize("deploy-git-no-remote-head"), git.DefaultBranch)</div>
+            }
+
+            @if (git.LastDeployed == null)
+            {
+                <div class="cms-git-deploy-muted">@L.Localize("deploy-git-never-deployed")</div>
+            }
+            else if (git.RemoteHead != null && git.LastDeployed.Sha == git.RemoteHead.Sha)
+            {
+                <div class="cms-git-deploy-muted">@L.Localize("deploy-git-already-deployed")</div>
+            }
+            else
+            {
+                <div class="cms-git-deploy-muted">@String.Format(L.Localize("deploy-git-last-deployed"), commitText(git.LastDeployed))</div>
+            }
+
+            @if (git.UserStatus == null || !git.UserStatus.HasWorkspace)
+            {
+                <div class="cms-git-deploy-muted">@L.Localize("deploy-git-no-workspace")</div>
+            }
+            else if (git.HasUnpublishedChanges)
+            {
+                var status = git.UserStatus;
+                var changeCount = status.Changes?.Count() ?? 0;
+
+                <div class="cms-git-deploy-warning">
+                    @L.Localize("deploy-git-unpublished")
+                    <ul>
+                        @if (changeCount > 0)
+                        {
+                            <li>@String.Format(L.Localize("changes"), changeCount)</li>
+                        }
+                        @if (status.Ahead > 0)
+                        {
+                            <li>@String.Format(L.Localize("ahead"), status.Ahead)</li>
+                        }
+                        @if (!status.IsDefaultBranch)
+                        {
+                            <li>@String.Format(L.Localize("deploy-git-unpublished-branch"), status.Branch, git.DefaultBranch)</li>
+                        }
+                        else if (!status.HasUpstream)
+                        {
+                            <li>@L.Localize("no-upstream")</li>
+                        }
+                        @if (status.IsMerging)
+                        {
+                            <li>@L.Localize("deploy-git-unpublished-merging")</li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    }
+
     @foreach (var deploy in Model.CmsItem.Deployments)
     {
         var fi = new System.IO.FileInfo(deploy.Target);

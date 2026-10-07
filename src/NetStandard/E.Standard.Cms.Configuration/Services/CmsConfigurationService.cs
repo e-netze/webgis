@@ -56,6 +56,8 @@ public class CmsConfigurationService
             Instance.Parse(configValueParser);
         }
 
+        Instance.ApplyDefaults();
+
         if (Instance.ServicesDefaultUrlScheme == "https://" || Instance.ServicesDefaultUrlScheme == "http://")
         {
             E.Standard.WebGIS.CmsSchema.CmsSchemaGlobals.ServicesDefaultUrlScheme = Instance.ServicesDefaultUrlScheme;

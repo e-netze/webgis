@@ -214,6 +214,7 @@ var CMSGit = new function () {
         if (changes > 0) {
             addButton(t('discard-all'), function () { _self.discard(''); }).addClass('danger');
         }
+        addButton(t('workspaces'), _self.showWorkspacesDialog);
         addButton(t('check-status'), function () { _self.refreshStatus(true); }).addClass('check-status');
     };
 
@@ -693,6 +694,92 @@ var CMSGit = new function () {
     // files of the working copy changed on the server => reload the whole tree
     var reloadTree = function () {
         document.location.reload();
+    };
+
+    this.showWorkspacesDialog = function () {
+        CMS.showModal(t('workspaces-title'), function ($content) {
+            var $dialog = $('<div class="cms-git-dialog">').appendTo($content);
+            renderWorkspaces($dialog, $content);
+        });
+    };
+
+    var renderWorkspaces = function ($dialog, $content) {
+        $dialog.empty().text(t('please-wait'));
+
+        api('workspaces', {}, function (result) {
+            $dialog.empty();
+
+            $('<div class="cms-git-intro">').text(t('workspaces-intro')).appendTo($dialog);
+
+            var deployRunning = result.deploy_running_by !== null && result.deploy_running_by !== undefined;
+            if (deployRunning) {
+                $('<div class="cms-git-info warning">').text(t('deploy-git-running', result.deploy_running_by)).appendTo($dialog);
+            }
+
+            var workspaces = result.workspaces || [];
+            if (workspaces.length === 0) {
+                $('<div class="cms-git-info">').text(t('workspaces-none')).appendTo($dialog);
+            } else {
+                var $table = $('<table class="cms-git-workspaces">').appendTo($dialog);
+                $('<tr>')
+                    .append($('<th>').text(t('workspace-user')))
+                    .append($('<th>').text(t('workspace-branch')))
+                    .append($('<th>').text(t('workspace-state')))
+                    .append($('<th>').text(t('workspace-last-modified')))
+                    .append($('<th>'))
+                    .appendTo($table);
+
+                $.each(workspaces, function (i, ws) {
+                    var state = [];
+                    if (ws.error) {
+                        state.push(ws.error);
+                    } else {
+                        if (ws.is_merging) state.push(t('workspace-merging'));
+                        if (ws.changes > 0) state.push(t('changes', ws.changes));
+                        if (ws.ahead > 0) state.push(t('ahead', ws.ahead));
+                        if (!ws.has_upstream) state.push(t('no-upstream'));
+                        if (state.length === 0) state.push(t('workspace-clean'));
+                    }
+                    var dirty = !!ws.error || ws.is_merging || ws.changes > 0 || ws.ahead > 0 || !ws.has_upstream;
+
+                    var $row = $('<tr>').toggleClass('current', ws.is_current_user === true).appendTo($table);
+                    $('<td>').text(ws.name + (ws.is_current_user ? ' ' + t('workspace-current-user') : '')).appendTo($row);
+                    $('<td>').text(ws.branch || '').appendTo($row);
+                    $('<td>').toggleClass('warning', dirty).text(state.join(', ')).appendTo($row);
+                    $('<td>').text(ws.last_modified ? new Date(ws.last_modified).toLocaleString() : '').appendTo($row);
+                    $('<button class="cms-git-button danger">')
+                        .text(t('workspace-delete'))
+                        .appendTo($('<td>').appendTo($row))
+                        .click(function () {
+                            var text = ws.is_current_user ? t('workspace-delete-own-confirm') : t('workspace-delete-confirm', ws.name);
+                            CMS.confirm(esc(text), function () {
+                                run('deleteworkspace', { name: ws.name }, function () {
+                                    if (ws.is_current_user) {
+                                        messageThen(t('workspace-deleted'), reloadTree);
+                                    } else {
+                                        renderWorkspaces($dialog, $content);
+                                    }
+                                });
+                            });
+                        });
+                });
+            }
+
+            var $buttons = $('<div class="cms-git-dialog-buttons">').appendTo($dialog);
+            $('<button class="cms-git-button danger">')
+                .text(t('deploy-workspace-reset'))
+                .prop('disabled', deployRunning)
+                .appendTo($buttons)
+                .click(function () {
+                    CMS.confirm(esc(t('deploy-workspace-reset-confirm')), function () {
+                        run('resetdeployworkspace', {}, function () {
+                            CMS.message(t('deploy-workspace-reset-success'));
+                        });
+                    });
+                });
+        }, function () {
+            $dialog.empty();
+        });
     };
 
     var reloadContent = function () {

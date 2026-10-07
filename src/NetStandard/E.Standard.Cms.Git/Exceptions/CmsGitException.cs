@@ -40,4 +40,5 @@ public static class CmsGitErrors
     public const string PushRejected = "error-push-rejected";
     public const string RemoteNotReachable = "error-remote-not-reachable";
     public const string NoInitialTree = "error-no-initial-tree";
+    public const string DeployRunning = "error-deploy-running";
 }
