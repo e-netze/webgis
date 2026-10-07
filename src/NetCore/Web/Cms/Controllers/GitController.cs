@@ -61,7 +61,11 @@ public class GitController : ApplicationSecurityController
         "workspace-user", "workspace-branch", "workspace-state", "workspace-last-modified", "workspace-current-user",
         "workspace-clean", "workspace-merging", "workspace-delete", "workspace-delete-confirm", "workspace-delete-own-confirm",
         "workspace-deleted", "deploy-workspace-reset", "deploy-workspace-reset-confirm", "deploy-workspace-reset-success",
-        "deploy-git-running"
+        "deploy-git-running",
+        "history", "history-title", "history-all-branches", "history-load-more", "history-none",
+        "history-head", "history-deployed", "history-unpushed", "history-select-commit",
+        "history-author", "history-date", "history-commit", "history-parents", "history-merge",
+        "history-changes", "history-no-changes", "history-before", "history-after"
     ];
 
     private readonly CmsConfigurationService _ccs;
@@ -145,6 +149,34 @@ public class GitController : ApplicationSecurityController
 
     public IActionResult Discard(string id, string node)
         => Execute(id, "Discard", () => StatusResult(_git.Discard(id, Username, node)), node);
+
+    #region History
+
+    public IActionResult History(string id, bool fetch = false, bool allBranches = true, int limit = 100)
+        => Execute(id, null, () => Json(new
+        {
+            success = true,
+            enabled = true,
+            history = _git.GetHistory(id, Username, fetch, allBranches, limit)
+        }));
+
+    public IActionResult CommitDetails(string id, string sha)
+        => Execute(id, null, () => Json(new
+        {
+            success = true,
+            enabled = true,
+            commit = _git.GetCommitDetails(id, Username, sha)
+        }));
+
+    public IActionResult CommitFileDiff(string id, string sha, string path)
+        => Execute(id, null, () => Json(new
+        {
+            success = true,
+            enabled = true,
+            diff = _git.GetCommitFileDiff(id, Username, sha, path)
+        }));
+
+    #endregion
 
     #region Admin
 

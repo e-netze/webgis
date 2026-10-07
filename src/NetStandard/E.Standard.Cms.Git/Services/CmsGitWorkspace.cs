@@ -638,6 +638,227 @@ public class CmsGitWorkspace
 
     #endregion
 
+    #region History
+
+    public const int MaxHistoryLimit = 5000;
+
+    /// <summary>
+    /// Commit graph (newest first, parents always after their children) of the local and remote branches
+    /// </summary>
+    /// <param name="allBranches">false => only the current branch and the default branch</param>
+    /// <param name="deployedSha">Commit of the last deployment (marker only)</param>
+    public CmsGitHistory GetHistory(bool fetch, bool allBranches, int limit, string deployedSha = null)
+    {
+        using var repo = Open();
+
+        string fetchError = null;
+        if (fetch)
+        {
+            try
+            {
+                Fetch(repo);
+            }
+            catch (Exception ex)
+            {
+                fetchError = ex.Message;
+            }
+        }
+
+        limit = Math.Clamp(limit, 1, MaxHistoryLimit);
+
+        var head = repo.Head;
+        var currentBranch = head.FriendlyName;
+
+        var branches = repo.Branches
+            .Where(b => b.Tip != null)
+            .Where(b => !b.IsRemote || (b.RemoteName == RemoteName && !b.CanonicalName.EndsWith("/HEAD")))
+            .ToList();
+
+        string ShortName(Branch b) => b.IsRemote ? b.FriendlyName.Substring(RemoteName.Length + 1) : b.FriendlyName;
+
+        var visibleBranches = branches
+            .Where(b => allBranches || ShortName(b) == DefaultBranch || ShortName(b) == currentBranch)
+            .OrderByDescending(b => b.IsCurrentRepositoryHead)
+            .ThenBy(b => b.IsRemote)
+            .ThenBy(b => b.FriendlyName, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        var tips = visibleBranches.Select(b => b.Tip).ToList();
+        if (head.Tip != null)
+        {
+            tips.Add(head.Tip);
+        }
+
+        var history = new CmsGitHistory()
+        {
+            Branch = currentBranch,
+            DefaultBranch = DefaultBranch,
+            Head = head.Tip?.Sha,
+            Deployed = deployedSha,
+            AllBranches = allBranches,
+            Stale = fetchError != null,
+            FetchError = fetchError
+        };
+
+        if (tips.Count == 0)
+        {
+            return history;
+        }
+
+        var refs = new Dictionary<string, List<CmsGitRef>>();
+        foreach (var branch in visibleBranches)
+        {
+            if (!refs.TryGetValue(branch.Tip.Sha, out var list))
+            {
+                refs[branch.Tip.Sha] = list = new List<CmsGitRef>();
+            }
+            list.Add(new CmsGitRef()
+            {
+                Name = branch.FriendlyName,
+                Type = branch.IsRemote ? CmsGitRefTypes.Remote : CmsGitRefTypes.Local
+            });
+        }
+
+        var unpushed = UnpushedCommits(repo, branches);
+
+        var commits = repo.Commits.QueryBy(new CommitFilter()
+        {
+            IncludeReachableFrom = tips.Distinct().ToList(),
+            SortBy = CommitSortStrategies.Topological | CommitSortStrategies.Time
+        }).Take(limit + 1).ToList();
+
+        history.HasMore = commits.Count > limit;
+
+        foreach (var commit in commits.Take(limit))
+        {
+            history.Commits.Add(new CmsGitHistoryCommit()
+            {
+                Sha = commit.Sha,
+                Parents = commit.Parents.Select(p => p.Sha).ToArray(),
+                Author = commit.Author?.Name,
+                Date = commit.Author?.When,
+                Message = commit.MessageShort,
+                Refs = refs.TryGetValue(commit.Sha, out var commitRefs) ? commitRefs : new List<CmsGitRef>(),
+                Unpushed = unpushed.Contains(commit.Sha)
+            });
+        }
+
+        return history;
+    }
+
+    /// <summary>
+    /// Commit details including the changed files compared to the first parent
+    /// </summary>
+    public CmsGitCommitDetails GetCommitDetails(string sha)
+    {
+        using var repo = Open();
+
+        var commit = LookupCommit(repo, sha);
+        var parent = commit.Parents.FirstOrDefault();
+
+        var changes = new List<CmsGitChange>();
+        using (var treeChanges = repo.Diff.Compare<TreeChanges>(parent?.Tree, commit.Tree))
+        {
+            foreach (var change in treeChanges)
+            {
+                switch (change.Status)
+                {
+                    case ChangeKind.Added:
+                    case ChangeKind.Copied:
+                        changes.Add(new CmsGitChange() { Path = change.Path, State = CmsGitChangeStates.Added });
+                        break;
+                    case ChangeKind.Deleted:
+                        changes.Add(new CmsGitChange() { Path = change.OldPath, State = CmsGitChangeStates.Deleted });
+                        break;
+                    case ChangeKind.Renamed:
+                        changes.Add(new CmsGitChange() { Path = change.OldPath, State = CmsGitChangeStates.Deleted });
+                        changes.Add(new CmsGitChange() { Path = change.Path, State = CmsGitChangeStates.Added });
+                        break;
+                    case ChangeKind.Modified:
+                    case ChangeKind.TypeChanged:
+                        changes.Add(new CmsGitChange() { Path = change.Path, State = CmsGitChangeStates.Modified });
+                        break;
+                }
+            }
+        }
+
+        return new CmsGitCommitDetails()
+        {
+            Sha = commit.Sha,
+            Parents = commit.Parents.Select(p => p.Sha).ToArray(),
+            Author = commit.Author?.Name,
+            AuthorEmail = commit.Author?.Email,
+            Date = commit.Author?.When,
+            Message = commit.Message?.TrimEnd(),
+            Changes = changes
+                .Select(c => { c.Path = c.Path.Replace('\\', '/'); return c; })
+                .OrderBy(c => c.Path, StringComparer.OrdinalIgnoreCase)
+                .ToArray()
+        };
+    }
+
+    /// <summary>
+    /// Content of a file before (first parent) and after the commit
+    /// </summary>
+    public CmsGitFileDiff GetCommitFileDiff(string sha, string path)
+    {
+        if (String.IsNullOrWhiteSpace(path) || path.Split('/', '\\').Any(p => p == ".." || p == "."))
+        {
+            throw new CmsGitException(CmsGitErrors.InvalidPath, path);
+        }
+
+        path = path.Replace('\\', '/').Trim('/');
+
+        using var repo = Open();
+
+        var commit = LookupCommit(repo, sha);
+        var parent = commit.Parents.FirstOrDefault();
+
+        return new CmsGitFileDiff()
+        {
+            Path = path,
+            Before = BlobText(parent?[path]?.Target as Blob),
+            After = BlobText(commit[path]?.Target as Blob)
+        };
+    }
+
+    private static string BlobText(Blob blob)
+        => blob == null ? null : blob.IsBinary ? "(binary)" : blob.GetContentText();
+
+    private static Commit LookupCommit(Repository repo, string sha)
+    {
+        if (String.IsNullOrWhiteSpace(sha) || sha.Length < 4 || sha.Length > 40 || !sha.All(Uri.IsHexDigit))
+        {
+            throw new CmsGitException(CmsGitErrors.CommitNotFound, sha);
+        }
+
+        return repo.Lookup<Commit>(sha) ?? throw new CmsGitException(CmsGitErrors.CommitNotFound, sha);
+    }
+
+    /// <summary>
+    /// Commits reachable from local branches, but not from any remote branch
+    /// </summary>
+    private static HashSet<string> UnpushedCommits(Repository repo, IEnumerable<Branch> branches)
+    {
+        var localTips = branches.Where(b => !b.IsRemote).Select(b => b.Tip).ToList();
+        var remoteTips = branches.Where(b => b.IsRemote).Select(b => b.Tip).ToList();
+
+        if (localTips.Count == 0)
+        {
+            return new HashSet<string>();
+        }
+
+        var filter = new CommitFilter() { IncludeReachableFrom = localTips };
+        if (remoteTips.Count > 0)
+        {
+            filter.ExcludeReachableFrom = remoteTips;
+        }
+
+        return new HashSet<string>(repo.Commits.QueryBy(filter).Take(MaxHistoryLimit * 2).Select(c => c.Sha));
+    }
+
+    #endregion
+
     #region Deploy Clone
 
     /// <summary>

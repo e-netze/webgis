@@ -259,3 +259,41 @@
 #deploy-workspace-reset-confirm: Delete the deploy clone on the server? It will be fetched again automatically with the next deployment.
 
 #deploy-workspace-reset-success: The deploy clone has been deleted.
+
+#history: History...
+
+#history-title: History (branches and changes)
+
+#history-all-branches: Show all branches
+
+#history-load-more: Load more
+
+#history-none: No saved changes yet
+
+#history-head: current state
+
+#history-deployed: deployed
+
+#history-unpushed: not published yet
+
+#history-select-commit: Click a change in the history to show its details.
+
+#history-author: Author
+
+#history-date: Date
+
+#history-commit: Commit
+
+#history-parents: Parents
+
+#history-merge: Merge - changes compared to the first parent ({0}) are shown
+
+#history-changes: Changed files
+
+#history-no-changes: No file changes
+
+#history-before: before ({0})
+
+#history-after: after ({0})
+
+#error-commit-not-found: The change (commit) was not found.

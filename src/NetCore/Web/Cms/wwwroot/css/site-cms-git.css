@@ -389,3 +389,169 @@ table.cms-git-workspaces {
     table.cms-git-workspaces td.warning {
         color: #8a5a00;
     }
+
+/* history (commit graph) */
+.cms-git-history-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+    .cms-git-history-toolbar label {
+        display: inline;
+        margin: 0;
+    }
+
+    .cms-git-history-toolbar .legend {
+        font-size: .85em;
+        opacity: .8;
+    }
+
+        .cms-git-history-toolbar .legend .node {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 2px solid #1f77b4;
+            background: #fff;
+            vertical-align: middle;
+        }
+
+.cms-git-history-warning {
+    margin-bottom: 6px;
+    color: #c62828;
+}
+
+.cms-git-history-scroll {
+    max-height: 45vh;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.cms-git-history {
+    position: relative;
+    min-width: 600px;
+}
+
+    .cms-git-history svg.cms-git-graph {
+        position: absolute;
+        left: 0;
+        top: 0;
+        pointer-events: none;
+    }
+
+    .cms-git-history .row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        box-sizing: border-box;
+        padding-right: 6px;
+        white-space: nowrap;
+        cursor: pointer;
+        font-size: .9em;
+    }
+
+        .cms-git-history .row:hover {
+            background: #f3f6fa;
+        }
+
+        .cms-git-history .row.selected {
+            background: #dceafa;
+        }
+
+        .cms-git-history .row.unpushed .message {
+            font-style: italic;
+        }
+
+        .cms-git-history .row .labels {
+            flex: 0 0 auto;
+        }
+
+        .cms-git-history .row .message {
+            flex: 1 1 auto;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .cms-git-history .row .meta {
+            flex: 0 0 auto;
+            opacity: .65;
+            font-size: .9em;
+        }
+
+    .cms-git-history .ref {
+        display: inline-block;
+        margin-right: 3px;
+        padding: 0 5px;
+        border-radius: 3px;
+        border: 1px solid;
+        font-size: .85em;
+        line-height: 16px;
+    }
+
+        .cms-git-history .ref.local {
+            border-color: #2e7d32;
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+
+            .cms-git-history .ref.local.current {
+                font-weight: bold;
+            }
+
+        .cms-git-history .ref.remote {
+            border-color: #1565c0;
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        .cms-git-history .ref.head {
+            border-color: #333;
+            background: #333;
+            color: #fff;
+        }
+
+        .cms-git-history .ref.deployed {
+            border-color: #6a1b9a;
+            background: #f3e5f5;
+            color: #4a148c;
+        }
+
+.cms-git-history-more {
+    padding: 6px;
+    text-align: center;
+}
+
+.cms-git-history-details {
+    margin-top: 10px;
+    max-height: 45vh;
+    overflow: auto;
+}
+
+    .cms-git-history-details .commit-message {
+        white-space: pre-wrap;
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+
+    .cms-git-history-details table.commit-meta th {
+        text-align: left;
+        padding-right: 10px;
+        font-weight: normal;
+        opacity: .7;
+    }
+
+    .cms-git-history-details .commit-changes-title {
+        margin-top: 8px;
+        font-weight: bold;
+    }
+
+    .cms-git-history-details .cms-git-history-changes {
+        max-height: none;
+    }
+
+        .cms-git-history-details .cms-git-history-changes li .diff {
+            margin: 4px 0 8px 0;
+            font-family: sans-serif;
+        }

@@ -259,3 +259,41 @@
 #deploy-workspace-reset-confirm: Den Deploy-Klon am Server löschen? Er wird beim nächsten Deploy automatisch neu geholt.
 
 #deploy-workspace-reset-success: Der Deploy-Klon wurde gelöscht.
+
+#history: Verlauf...
+
+#history-title: Verlauf (Arbeitszweige und Änderungen)
+
+#history-all-branches: Alle Arbeitszweige anzeigen
+
+#history-load-more: Mehr laden
+
+#history-none: Noch keine gespeicherten Änderungen vorhanden
+
+#history-head: aktueller Stand
+
+#history-deployed: deployt
+
+#history-unpushed: noch nicht veröffentlicht
+
+#history-select-commit: Eine Änderung im Verlauf anklicken, um die Details anzuzeigen.
+
+#history-author: Autor
+
+#history-date: Datum
+
+#history-commit: Commit
+
+#history-parents: Vorgänger
+
+#history-merge: Zusammenführung - angezeigt werden die Änderungen gegenüber dem ersten Vorgänger ({0})
+
+#history-changes: Geänderte Dateien
+
+#history-no-changes: Keine Dateiänderungen
+
+#history-before: vorher ({0})
+
+#history-after: nachher ({0})
+
+#error-commit-not-found: Die Änderung (Commit) wurde nicht gefunden.

@@ -553,4 +553,102 @@ public sealed class CmsGitWorkspaceTests : IDisposable
         Assert.Single(status.Changes);
         Assert.True(watch.ElapsedMilliseconds / 5 < 3000, $"GetStatus too slow: {watch.ElapsedMilliseconds / 5} ms");
     }
+
+    [Fact]
+    public void History_RefsUnpushedAndBranchFilter()
+    {
+        var alice = CreateWorkspace("alice", Alice);
+        var bob = CreateWorkspace("bob", Bob);
+
+        bob.CreateBranch("bob/other");
+        File.WriteAllText(Path.Combine(bob.WorkspacePath, "services", "o.xml"), "<o/>");
+        bob.Commit(Bob, "other");
+        bob.Push(Bob);
+
+        alice.CreateBranch("alice/feature");
+        File.WriteAllText(Path.Combine(alice.WorkspacePath, "services", "f.xml"), "<f/>");
+        var featureSha = alice.Commit(Alice, "feature");
+
+        var all = alice.GetHistory(true, true, 100);
+        Assert.False(all.Stale);
+        Assert.Equal("alice/feature", all.Branch);
+        Assert.Equal(featureSha, all.Head);
+        Assert.Equal(3, all.Commits.Count);
+        Assert.False(all.HasMore);
+
+        var top = all.Commits.Single(c => c.Sha == featureSha);
+        Assert.True(top.Unpushed);
+        Assert.Contains(top.Refs, r => r.Name == "alice/feature" && r.Type == CmsGitRefTypes.Local);
+
+        var initial = all.Commits.Last();
+        Assert.Empty(initial.Parents);
+        Assert.False(initial.Unpushed);
+        Assert.Contains(initial.Refs, r => r.Name == "origin/main" && r.Type == CmsGitRefTypes.Remote);
+        Assert.Contains(initial.Refs, r => r.Name == "origin/alice/feature");
+        Assert.Contains(all.Commits, c => c.Refs.Any(r => r.Name == "origin/bob/other"));
+
+        // children before parents
+        Assert.True(all.Commits.IndexOf(top) < all.Commits.IndexOf(initial));
+
+        var filtered = alice.GetHistory(false, false, 100);
+        Assert.Equal(2, filtered.Commits.Count);
+        Assert.DoesNotContain(filtered.Commits, c => c.Refs.Any(r => r.Name.Contains("bob/other")));
+
+        var limited = alice.GetHistory(false, true, 1);
+        Assert.Single(limited.Commits);
+        Assert.True(limited.HasMore);
+    }
+
+    [Fact]
+    public void CommitDetails_And_FileDiff()
+    {
+        var alice = CreateWorkspace("alice", Alice);
+
+        File.WriteAllText(Path.Combine(alice.WorkspacePath, "services", "a.xml"), "<a changed='1'/>");
+        File.WriteAllText(Path.Combine(alice.WorkspacePath, "services", "b.xml"), "<b/>");
+        var sha = alice.Commit(Alice, "change a, add b");
+
+        var details = alice.GetCommitDetails(sha);
+        Assert.Equal("alice", details.Author);
+        Assert.Equal("change a, add b", details.Message);
+        Assert.Single(details.Parents);
+        Assert.Contains(details.Changes, c => c.Path == "services/a.xml" && c.State == CmsGitChangeStates.Modified);
+        Assert.Contains(details.Changes, c => c.Path == "services/b.xml" && c.State == CmsGitChangeStates.Added);
+
+        var diff = alice.GetCommitFileDiff(sha, "services/a.xml");
+        Assert.Equal("<a/>", diff.Before);
+        Assert.Equal("<a changed='1'/>", diff.After);
+
+        var added = alice.GetCommitFileDiff(sha, "services/b.xml");
+        Assert.Null(added.Before);
+        Assert.Equal("<b/>", added.After);
+
+        Assert.Equal(CmsGitErrors.CommitNotFound, Assert.Throws<CmsGitException>(() => alice.GetCommitDetails("not-a-sha")).L10nKey);
+        Assert.Equal(CmsGitErrors.InvalidPath, Assert.Throws<CmsGitException>(() => alice.GetCommitFileDiff(sha, "../x")).L10nKey);
+    }
+
+    [Fact]
+    public void CommitDetails_MergeCommit_ComparesWithFirstParent()
+    {
+        var alice = CreateWorkspace("alice", Alice);
+        var bob = CreateWorkspace("bob", Bob);
+
+        alice.CreateBranch("alice/feature");
+        File.WriteAllText(Path.Combine(alice.WorkspacePath, "services", "f.xml"), "<f/>");
+        alice.Commit(Alice, "feature");
+
+        File.WriteAllText(Path.Combine(bob.WorkspacePath, "services", "m.xml"), "<m/>");
+        bob.Commit(Bob, "main change");
+        bob.Push(Bob);
+
+        alice.MergeFromDefault(Alice);
+
+        var history = alice.GetHistory(false, true, 100);
+        var merge = history.Commits.First();
+        Assert.Equal(2, merge.Parents.Length);
+
+        var details = alice.GetCommitDetails(merge.Sha);
+        var change = Assert.Single(details.Changes);
+        Assert.Equal("services/m.xml", change.Path);
+    }
 }

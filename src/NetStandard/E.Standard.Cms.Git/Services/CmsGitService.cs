@@ -140,6 +140,39 @@ public class CmsGitService
 
     #endregion
 
+    #region History
+
+    public CmsGitHistory GetHistory(string cmsId, string username, bool fetch, bool allBranches, int limit)
+    {
+        var workspace = ExistingUserWorkspace(cmsId, username);
+
+        string deployedSha = null;
+        try
+        {
+            var deployWorkspace = new CmsGitWorkspace(_resolver.DeployWorkspacePath(cmsId), Settings(cmsId));
+            deployedSha = Locked(deployWorkspace.WorkspacePath, () => deployWorkspace.HeadCommit()?.Sha, ShortLockTimeout);
+        }
+        catch { /* busy => unknown */ }
+
+        return Locked(workspace.WorkspacePath, () => workspace.GetHistory(fetch, allBranches, limit, deployedSha));
+    }
+
+    public CmsGitCommitDetails GetCommitDetails(string cmsId, string username, string sha)
+    {
+        var workspace = ExistingUserWorkspace(cmsId, username);
+
+        return Locked(workspace.WorkspacePath, () => workspace.GetCommitDetails(sha));
+    }
+
+    public CmsGitFileDiff GetCommitFileDiff(string cmsId, string username, string sha, string path)
+    {
+        var workspace = ExistingUserWorkspace(cmsId, username);
+
+        return Locked(workspace.WorkspacePath, () => workspace.GetCommitFileDiff(sha, path));
+    }
+
+    #endregion
+
     #region Deploy
 
     private static readonly ConcurrentDictionary<string, string> RunningDeployments = new(StringComparer.OrdinalIgnoreCase);

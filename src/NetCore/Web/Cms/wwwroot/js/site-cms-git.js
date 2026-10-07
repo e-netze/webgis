@@ -199,6 +199,7 @@ var CMSGit = new function () {
             addButton(t('resolve-conflicts'), _self.showConflictsDialog, true, status.conflict_count > 0);
             addButton(t('merge-complete'), _self.completeMerge, !status.conflict_count, !status.conflict_count);
             addButton(t('merge-abort'), _self.abortMerge).addClass('danger');
+            addButton(t('history'), _self.showHistoryDialog);
             addButton(t('check-status'), function () { _self.refreshStatus(true); }).addClass('check-status');
             return;
         }
@@ -214,6 +215,7 @@ var CMSGit = new function () {
         if (changes > 0) {
             addButton(t('discard-all'), function () { _self.discard(''); }).addClass('danger');
         }
+        addButton(t('history'), _self.showHistoryDialog);
         addButton(t('workspaces'), _self.showWorkspacesDialog);
         addButton(t('check-status'), function () { _self.refreshStatus(true); }).addClass('check-status');
     };
@@ -487,7 +489,7 @@ var CMSGit = new function () {
         return text === null || text === undefined ? [] : String(text).replace(/\r\n/g, '\n').replace(/\n$/, '').split('\n');
     };
 
-    var renderDiff = function (mine, theirs, mineName, theirsName) {
+    var renderDiff = function (mine, theirs, mineName, theirsName, plainNames) {
         var context = 3;
         var rows = diffLines(splitLines(mine), splitLines(theirs));
 
@@ -496,7 +498,7 @@ var CMSGit = new function () {
         var $head = $('<tr>').appendTo($('<thead>').appendTo($table));
         var addHead = function (cls, name, content) {
             $('<th colspan="2">').addClass(cls)
-                .text(t('conflict-version', name) + (content === null || content === undefined ? ' ' + t('conflict-deleted') : ''))
+                .text(plainNames === true ? name : t('conflict-version', name) + (content === null || content === undefined ? ' ' + t('conflict-deleted') : ''))
                 .appendTo($head);
         };
         addHead('mine', mineName, mine);
@@ -779,6 +781,291 @@ var CMSGit = new function () {
                 });
         }, function () {
             $dialog.empty();
+        });
+    };
+
+    // ---------- history (commit graph) ----------
+
+    var HistoryPageSize = 100, RowHeight = 24, LaneWidth = 14, LaneOffset = 10;
+    var LaneColors = ['#1f77b4', '#d62728', '#2ca02c', '#9467bd', '#ff7f0e', '#17becf', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22'];
+
+    this.showHistoryDialog = function () {
+        CMS.showModal(t('history-title'), function ($content) {
+            var $dialog = $('<div class="cms-git-dialog cms-git-history-dialog">').appendTo($content);
+            var state = { limit: HistoryPageSize, allBranches: true, selected: null };
+            renderHistory($dialog, state, true);
+        });
+    };
+
+    // lane layout: commits are ordered topologically (children before parents)
+    var computeGraph = function (commits) {
+        var lanes = [], rows = [], maxLanes = 1;
+
+        $.each(commits, function (i, commit) {
+            var col = lanes.indexOf(commit.sha);
+            if (col < 0) {
+                col = lanes.indexOf(null);
+                if (col < 0) col = lanes.length;
+            }
+
+            // all lanes waiting for this commit end here
+            for (var k = 0; k < lanes.length; k++) {
+                if (lanes[k] === commit.sha) lanes[k] = null;
+            }
+
+            var startsAtNode = {}, extraEdges = [];
+            var parents = commit.parents || [];
+            if (parents.length > 0) {
+                lanes[col] = parents[0];
+                startsAtNode[col] = true;
+            } else if (col < lanes.length) {
+                lanes[col] = null;
+            }
+
+            for (var p = 1; p < parents.length; p++) {
+                var existing = lanes.indexOf(parents[p]);
+                if (existing >= 0) {
+                    extraEdges.push(existing);
+                } else {
+                    var free = lanes.indexOf(null);
+                    if (free < 0) free = lanes.length;
+                    lanes[free] = parents[p];
+                    startsAtNode[free] = true;
+                }
+            }
+
+            while (lanes.length > 0 && lanes[lanes.length - 1] === null) lanes.pop();
+
+            rows.push({ col: col, lanesOut: lanes.slice(), startsAtNode: startsAtNode, extraEdges: extraEdges });
+            maxLanes = Math.max(maxLanes, lanes.length, col + 1);
+        });
+
+        return { rows: rows, maxLanes: maxLanes };
+    };
+
+    var laneX = function (lane) { return LaneOffset + lane * LaneWidth; };
+    var rowY = function (row) { return row * RowHeight + RowHeight / 2; };
+
+    var renderGraphSvg = function (commits, graph, history) {
+        var ns = 'http://www.w3.org/2000/svg';
+        var width = laneX(graph.maxLanes - 1) + LaneOffset;
+        var height = commits.length * RowHeight;
+
+        var svg = document.createElementNS(ns, 'svg');
+        svg.setAttribute('width', width);
+        svg.setAttribute('height', height);
+        svg.setAttribute('class', 'cms-git-graph');
+
+        var line = function (x1, y1, x2, y2, color) {
+            var path = document.createElementNS(ns, 'path');
+            var my = (y1 + y2) / 2;
+            path.setAttribute('d', x1 === x2
+                ? 'M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2
+                : 'M' + x1 + ' ' + y1 + ' C' + x1 + ' ' + my + ' ' + x2 + ' ' + my + ' ' + x2 + ' ' + y2);
+            path.setAttribute('stroke', color);
+            path.setAttribute('stroke-width', '2');
+            path.setAttribute('fill', 'none');
+            svg.appendChild(path);
+        };
+
+        $.each(graph.rows, function (i, row) {
+            var next = commits[i + 1];
+            var y1 = rowY(i), y2 = next ? rowY(i + 1) : height;
+            var targetX = function (lane) {
+                return next && next.sha === row.lanesOut[lane] ? laneX(graph.rows[i + 1].col) : laneX(lane);
+            };
+
+            $.each(row.lanesOut, function (lane, sha) {
+                if (sha === null) return;
+                var fromX = row.startsAtNode[lane] ? laneX(row.col) : laneX(lane);
+                line(fromX, y1, targetX(lane), y2, LaneColors[lane % LaneColors.length]);
+            });
+            $.each(row.extraEdges, function (j, lane) {
+                line(laneX(row.col), y1, targetX(lane), y2, LaneColors[lane % LaneColors.length]);
+            });
+        });
+
+        $.each(graph.rows, function (i, row) {
+            var commit = commits[i];
+            var color = LaneColors[row.col % LaneColors.length];
+            var isHead = commit.sha === history.head;
+
+            var circle = document.createElementNS(ns, 'circle');
+            circle.setAttribute('cx', laneX(row.col));
+            circle.setAttribute('cy', rowY(i));
+            circle.setAttribute('r', isHead ? 6 : 4);
+            circle.setAttribute('stroke', color);
+            circle.setAttribute('stroke-width', isHead ? 3 : 2);
+            circle.setAttribute('fill', commit.unpushed ? '#fff' : color);
+            if (commit.unpushed) {
+                var title = document.createElementNS(ns, 'title');
+                title.textContent = t('history-unpushed');
+                circle.appendChild(title);
+            }
+            svg.appendChild(circle);
+        });
+
+        return svg;
+    };
+
+    var renderHistory = function ($dialog, state, fetch) {
+        $dialog.empty().text(t('please-wait'));
+
+        api('history', { fetch: fetch === true, allBranches: state.allBranches, limit: state.limit }, function (result) {
+            var history = result.history || {};
+            var commits = history.commits || [];
+            $dialog.empty();
+
+            var $toolbar = $('<div class="cms-git-history-toolbar">').appendTo($dialog);
+            $('<label>')
+                .append($('<input type="checkbox">').prop('checked', state.allBranches).change(function () {
+                    state.allBranches = $(this).is(':checked');
+                    renderHistory($dialog, state, false);
+                }))
+                .append(document.createTextNode(' ' + t('history-all-branches')))
+                .appendTo($toolbar);
+            $('<span class="legend">')
+                .append($('<span class="node unpushed">'))
+                .append(document.createTextNode(' ' + t('history-unpushed')))
+                .appendTo($toolbar);
+
+            if (history.stale) {
+                $('<div class="cms-git-history-warning">').text(t('stale')).attr('title', history.fetch_error || '').appendTo($dialog);
+            }
+
+            if (commits.length === 0) {
+                $('<div class="cms-git-intro">').text(t('history-none')).appendTo($dialog);
+                return;
+            }
+
+            var graph = computeGraph(commits);
+            var graphWidth = laneX(graph.maxLanes - 1) + LaneOffset;
+
+            var $scroll = $('<div class="cms-git-history-scroll">').appendTo($dialog);
+            var $list = $('<div class="cms-git-history">').appendTo($scroll);
+            $list.append(renderGraphSvg(commits, graph, history));
+
+            var $details = $('<div class="cms-git-history-details">');
+
+            $.each(commits, function (i, commit) {
+                var $row = $('<div class="row">')
+                    .css({ height: RowHeight + 'px', paddingLeft: (graphWidth + 6) + 'px' })
+                    .attr('data-sha', commit.sha)
+                    .toggleClass('unpushed', commit.unpushed === true)
+                    .toggleClass('selected', commit.sha === state.selected)
+                    .appendTo($list)
+                    .click(function () {
+                        state.selected = commit.sha;
+                        $list.children('.row').removeClass('selected');
+                        $row.addClass('selected');
+                        renderCommitDetails($details, commit.sha);
+                    });
+
+                var $labels = $('<span class="labels">').appendTo($row);
+                if (commit.sha === history.head) {
+                    $('<span class="ref head">').text(t('history-head')).appendTo($labels);
+                }
+                $.each(commit.refs || [], function (j, ref) {
+                    $('<span class="ref">').addClass(ref.type)
+                        .toggleClass('current', ref.type === 'local' && ref.name === history.branch)
+                        .text(ref.name).appendTo($labels);
+                });
+                if (history.deployed && commit.sha === history.deployed) {
+                    $('<span class="ref deployed">').text(t('history-deployed')).appendTo($labels);
+                }
+
+                $('<span class="message">').text(commit.message || '').attr('title', commit.message || '').appendTo($row);
+                $('<span class="meta">')
+                    .text((commit.author || '') + ', ' + (commit.date ? new Date(commit.date).toLocaleString() : ''))
+                    .appendTo($row);
+            });
+
+            if (history.has_more) {
+                $('<button class="cms-git-button">')
+                    .text(t('history-load-more'))
+                    .appendTo($('<div class="cms-git-history-more">').appendTo($scroll))
+                    .click(function () {
+                        state.limit += HistoryPageSize;
+                        var scrollTop = $scroll.scrollTop();
+                        renderHistory($dialog, state, false);
+                        state.restoreScroll = scrollTop;
+                    });
+            }
+
+            $details.appendTo($dialog);
+            if (state.selected && $.grep(commits, function (c) { return c.sha === state.selected; }).length > 0) {
+                renderCommitDetails($details, state.selected);
+            } else {
+                $details.append($('<div class="cms-git-intro">').text(t('history-select-commit')));
+            }
+
+            if (state.restoreScroll) {
+                $scroll.scrollTop(state.restoreScroll);
+                state.restoreScroll = null;
+            }
+        }, function () {
+            $dialog.empty();
+        });
+    };
+
+    var renderCommitDetails = function ($details, sha) {
+        $details.empty().text(t('please-wait'));
+
+        api('commitdetails', { sha: sha }, function (result) {
+            var commit = result.commit;
+            $details.empty();
+
+            $('<div class="commit-message">').text(commit.message || '').appendTo($details);
+
+            var $meta = $('<table class="commit-meta">').appendTo($details);
+            var addMeta = function (label, value) {
+                $('<tr>').append($('<th>').text(label)).append($('<td>').text(value)).appendTo($meta);
+            };
+            addMeta(t('history-author'), (commit.author || '') + (commit.author_email ? ' <' + commit.author_email + '>' : ''));
+            addMeta(t('history-date'), commit.date ? new Date(commit.date).toLocaleString() : '');
+            addMeta(t('history-commit'), commit.sha);
+            var parents = $.map(commit.parents || [], function (p) { return p.substring(0, 8); });
+            if (parents.length > 0) {
+                addMeta(t('history-parents'), parents.join(', '));
+            }
+            if (parents.length > 1) {
+                $('<div class="cms-git-intro">').text(t('history-merge', parents[0])).appendTo($details);
+            }
+
+            $('<div class="commit-changes-title">').text(t('history-changes')).appendTo($details);
+            var changes = commit.changes || [];
+            if (changes.length === 0) {
+                $('<div class="cms-git-intro">').text(t('history-no-changes')).appendTo($details);
+                return;
+            }
+
+            var beforeName = t('history-before', parents.length > 0 ? parents[0] : '-');
+            var afterName = t('history-after', commit.short_sha);
+
+            var $changes = $('<ul class="cms-git-changes cms-git-history-changes">').appendTo($details);
+            $.each(changes, function (i, change) {
+                var $li = $('<li>').addClass(change.state).appendTo($changes);
+                var $diff = null;
+                $('<span class="state">').text(t('change-' + change.state)).appendTo($li);
+                $('<a href="#" class="path">').text(change.path).appendTo($li)
+                    .click(function (e) {
+                        e.preventDefault();
+                        if ($diff) {
+                            $diff.remove();
+                            $diff = null;
+                            return;
+                        }
+                        $diff = $('<div class="diff">').text(t('please-wait')).appendTo($li);
+                        api('commitfilediff', { sha: commit.sha, path: change.path }, function (r) {
+                            if (!$diff) return;
+                            $diff.empty().append(renderDiff(r.diff.before, r.diff.after, beforeName, afterName, true));
+                        }, function () {
+                            if ($diff) { $diff.remove(); $diff = null; }
+                        });
+                    });
+            });
+        }, function () {
+            $details.empty();
         });
     };
 
