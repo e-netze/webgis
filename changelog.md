@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 ### Added
+### Fixed
+
+## 8.26.4102
+
+### Added
 
 - New Editing AutoValues: AutoValue calculation has been extracted from ``EditEnvironment`` into
   the dedicated ``EditAutoValueService`` and extended with new values:
@@ -284,6 +289,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [Expressions docs](https://docs.webgiscloud.com/de/webgis/annex/expressions.html)
 
 ### Fixed
+
+- Editmask: press ``n`` on select2 combo opens snapping dialog
+  [Issue #515](https://github.com/e-netze/webgis-community/issues/515)
 
 - compamy default.css will be loaded in Apps
   [Issue #508](https://github.com/e-netze/webgis-community/issues/508)
