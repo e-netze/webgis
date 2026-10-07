@@ -6,4 +6,7 @@ public class CmsModel
     public string RootName { get; set; }
     public bool CanImport { get; set; }
     public bool CanClear { get; set; }
+
+    public bool IsGitEnabled { get; set; }
+    public bool IsWorkspaceAvailable { get; set; } = true;
 }

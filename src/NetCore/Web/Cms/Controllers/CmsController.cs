@@ -44,6 +44,7 @@ using E.Standard.Web.Abstractions;
 using E.Standard.WebGIS.CmsSchema.TypeEditor;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 
 using webgis_cms.AppCode.Extensions;
@@ -92,7 +93,23 @@ public class CmsController : ApplicationSecurityController
     {
         try
         {
-            XmlDocument doc = _ccs.CMS[id].ToXml(_servicePack, false, false);
+            var isGitEnabled = _ccs.IsGitEnabled(id);
+
+            if (isGitEnabled)
+            {
+                var resolver = HttpContext.RequestServices.GetRequiredService<CmsManagerResolver>();
+                if (!resolver.WorkspaceExists(resolver.UserWorkspacePath(id, GetCurrentUsername())))
+                {
+                    return View(new CmsModel()
+                    {
+                        CmsId = id,
+                        IsGitEnabled = true,
+                        IsWorkspaceAvailable = false
+                    });
+                }
+            }
+
+            XmlDocument doc = Cms(id).ToXml(_servicePack, false, false);
             XmlNode rootNode = doc.SelectSingleNode("CMS[@root]");
 
             return View(new CmsModel()
@@ -100,7 +117,8 @@ public class CmsController : ApplicationSecurityController
                 CmsId = id,
                 RootName = DocumentFactory.PathInfo(rootNode.Attributes["root"].Value).Name,
                 CanImport = DocumentFactory.CanImport(rootNode.Attributes["root"].Value),
-                CanClear = DocumentFactory.CanImport(rootNode.Attributes["root"].Value)
+                CanClear = DocumentFactory.CanImport(rootNode.Attributes["root"].Value),
+                IsGitEnabled = isGitEnabled
             });
         }
         catch (Exception ex)
@@ -127,11 +145,11 @@ public class CmsController : ApplicationSecurityController
 
             List<NavItem> navItems = new List<NavItem>();
 
-            string cmsDisplayName = _ccs.CMS[id].CmsDisplayName;
+            string cmsDisplayName = Cms(id).CmsDisplayName;
 
             if (!String.IsNullOrWhiteSpace(path))
             {
-                doc = _ccs.CMS[id].ToXml(_servicePack, _ccs.CMS[id].ConnectionString + "/" + subPath, true, false);
+                doc = Cms(id).ToXml(_servicePack, Cms(id).ConnectionString + "/" + subPath, true, false);
                 rootNode = doc.SelectSingleNode("CMS[@root]");
 
                 navItems.Add(new NavItem(/*DocumentFactory.PathInfo(rootNode.Attributes["root"].Value).Name*/cmsDisplayName, String.Empty));
@@ -145,7 +163,7 @@ public class CmsController : ApplicationSecurityController
 
                 subPath += pathPart;
 
-                doc = _ccs.CMS[id].ToXml(_servicePack, _ccs.CMS[id].ConnectionString + "/" + subPath, false, false);
+                doc = Cms(id).ToXml(_servicePack, Cms(id).ConnectionString + "/" + subPath, false, false);
                 rootNode = doc.SelectSingleNode("CMS[@root]");
 
                 if (String.IsNullOrWhiteSpace(subPath))
@@ -173,13 +191,13 @@ public class CmsController : ApplicationSecurityController
 
             //ItemOrder itemOrder = new ItemOrder(CmsGlobals.CMS[id].RootDirectory + @"/" + path);
             //bool itemOrderExists = itemOrder.Exists;
-            var schemaNode = _ccs.CMS[id].SchemaNode(path);
+            var schemaNode = Cms(id).SchemaNode(path);
             bool itemsOrderable = schemaNode.Attributes["itemorder"]?.Value == "true";
 
             List<Node> nodes = new List<Node>();
 
-            object parentSchemaNodeInstance = _ccs.CMS[id].GetSchemaNodeProperties(path).HasProperties ?
-                _ccs.CMS[id].SchemaNodeInstance(_servicePack, path, initialize: true) :
+            object parentSchemaNodeInstance = Cms(id).GetSchemaNodeProperties(path).HasProperties ?
+                Cms(id).SchemaNodeInstance(_servicePack, path, initialize: true) :
                 null;
 
             foreach (XmlNode xmlNode in rootNode.ChildNodes)
@@ -199,7 +217,7 @@ public class CmsController : ApplicationSecurityController
 
                 string aliasName = _ccs.Translate(id, xmlNode.Attributes["displayname"].Value.Replace("_", " "));
 
-                var schemaNodeProperties = _ccs.CMS[id].GetSchemaNodeProperties(path + "/" + name);
+                var schemaNodeProperties = Cms(id).GetSchemaNodeProperties(path + "/" + name);
 
                 if (schemaNodeProperties?.VisibleIf?.CheckCondition(parentSchemaNodeInstance) == false)
                 {
@@ -209,7 +227,7 @@ public class CmsController : ApplicationSecurityController
                 switch (xmlNode.Attributes["type"].Value)
                 {
                     case "directory":
-                        var instance = _ccs.CMS[id].SchemaNodeInstance(_servicePack, path + "/" + name);
+                        var instance = Cms(id).SchemaNodeInstance(_servicePack, path + "/" + name);
                         var node = new Node(name, aliasName, path + "/" + name)
                         {
                             HasChildren = true,
@@ -261,7 +279,7 @@ public class CmsController : ApplicationSecurityController
 
                         if (String.IsNullOrWhiteSpace(aliasName))
                         {
-                            var targetInstance = _ccs.CMS[id].SchemaNodeInstance(_servicePack, target, true, true);
+                            var targetInstance = Cms(id).SchemaNodeInstance(_servicePack, target, true, true);
                             if (targetInstance is IDisplayName && !String.IsNullOrWhiteSpace(((IDisplayName)targetInstance).DisplayName))
                             {
                                 aliasName = ((IDisplayName)targetInstance).DisplayName;
@@ -281,7 +299,7 @@ public class CmsController : ApplicationSecurityController
                         });
                         break;
                     case "file":
-                        var fileInstance = _ccs.CMS[id].SchemaNodeInstance(_servicePack, path + "/" + name);
+                        var fileInstance = Cms(id).SchemaNodeInstance(_servicePack, path + "/" + name);
                         nodes.Add(new Node(name, aliasName, path + "/" + name)
                         {
                             HasProperties = schemaNodeProperties.HasProperties,
@@ -296,7 +314,7 @@ public class CmsController : ApplicationSecurityController
                 }
             }
 
-            if (/*_ccs.CMS[id].GetSchemaNodeProperties(path).HasProperties*/parentSchemaNodeInstance != null)
+            if (/*Cms(id).GetSchemaNodeProperties(path).HasProperties*/parentSchemaNodeInstance != null)
             {
                 nodes.Insert(0, new Node(".", navItems.Last().Name + " (Eigenschaften)", path));
             }
@@ -345,7 +363,7 @@ public class CmsController : ApplicationSecurityController
                             action = "cut";
                         }
 
-                        var copySchemaNode = _ccs.CMS[id].SchemaNode(targetpath);
+                        var copySchemaNode = Cms(id).SchemaNode(targetpath);
                         if (copySchemaNode != null)
                         {
                             foreach (var childSchemaNode in schemaNode.ChildNodes)
@@ -355,7 +373,7 @@ public class CmsController : ApplicationSecurityController
                                     ((XmlElement)childSchemaNode).Attributes["filtertype"] != null &&
                                     ((XmlElement)childSchemaNode).Attributes["filtertype"].Value == copySchemaNode.Attributes["filtertype"]?.Value)
                                 {
-                                    var copySchemaInstance = _ccs.CMS[id].SchemaNodeInstance(_servicePack, targetpath, true, true, existingOnly: true) as NameUrl;
+                                    var copySchemaInstance = Cms(id).SchemaNodeInstance(_servicePack, targetpath, true, true, existingOnly: true) as NameUrl;
                                     if (copySchemaInstance != null)
                                     {
                                         nodeTools.Add(new NodeTool()
@@ -379,14 +397,14 @@ public class CmsController : ApplicationSecurityController
 
             #region Description
 
-            string descriptionPath = _ccs.CMS[id].GetSchemaNodeProperties(path)?.Description;
+            string descriptionPath = Cms(id).GetSchemaNodeProperties(path)?.Description;
             string description = String.Empty;
 
             if (!String.IsNullOrWhiteSpace(descriptionPath))
             {
                 try
                 {
-                    var fi = new System.IO.FileInfo("schemes/" + _ccs.CMS[id].CmsSchemaName + "/" + descriptionPath);
+                    var fi = new System.IO.FileInfo("schemes/" + Cms(id).CmsSchemaName + "/" + descriptionPath);
                     if (fi.Exists)
                     {
                         description = System.IO.File.ReadAllText(fi.FullName);
@@ -399,7 +417,7 @@ public class CmsController : ApplicationSecurityController
 
             foreach (var node in nodes)
             {
-                var auth = await _ccs.CMS[id].GetNodeAuthorization(node.Path, onLoaded: async (auth, authNodePath, inheritPath) =>
+                var auth = await Cms(id).GetNodeAuthorization(node.Path, onLoaded: async (auth, authNodePath, inheritPath) =>
                 {
                     foreach (var customSecurityService in _customSecurityServices)
                     {
@@ -437,7 +455,7 @@ public class CmsController : ApplicationSecurityController
     {
         try
         {
-            var instance = _ccs.CMS[id].SchemaNodeInstance(_servicePack, path, true, true);
+            var instance = Cms(id).SchemaNodeInstance(_servicePack, path, true, true);
             if (instance == null)
             {
                 throw new Exception("Can't initialize node instance");
@@ -559,6 +577,7 @@ public class CmsController : ApplicationSecurityController
         }
     }
 
+    [CmsGitEditLock]
     public IActionResult NodePropertiesCommit(string path, string data, string subProperty = "", string id = "")
     {
         try
@@ -568,7 +587,7 @@ public class CmsController : ApplicationSecurityController
                            id, path);
 
             string absolutePath = "";
-            var instance = _ccs.CMS[id].SchemaNodeInstance(_servicePack, path, true, true, out absolutePath);
+            var instance = Cms(id).SchemaNodeInstance(_servicePack, path, true, true, out absolutePath);
             if (instance == null)
             {
                 throw new Exception("Can't initialize node instance");
@@ -619,7 +638,7 @@ public class CmsController : ApplicationSecurityController
 
                     if (persitable is ISchemaNode)
                     {
-                        ((ISchemaNode)persitable).CmsManager = _ccs.CMS[id];
+                        ((ISchemaNode)persitable).CmsManager = Cms(id);
                         ((ISchemaNode)persitable).RelativePath = path;
                     }
 
@@ -647,6 +666,7 @@ public class CmsController : ApplicationSecurityController
         }
     }
 
+    [CmsGitEditLock]
     public IActionResult NodeDelete(string path, string id = "")
     {
         try
@@ -654,7 +674,7 @@ public class CmsController : ApplicationSecurityController
             _cmsLogger.Log(this.GetCurrentUsername(),
                            "Node", "Delete", id, path);
 
-            return Json(new { success = _ccs.CMS[id].DeleteNode(path) });
+            return Json(new { success = Cms(id).DeleteNode(path) });
         }
         catch (Exception ex)
         {
@@ -662,6 +682,7 @@ public class CmsController : ApplicationSecurityController
         }
     }
 
+    [CmsGitEditLock]
     public IActionResult NodeOrder(string path, string nodes, string id = "")
     {
         try
@@ -675,7 +696,7 @@ public class CmsController : ApplicationSecurityController
             foreach (string nodePath in nodePaths)
             {
                 string absolutePath;
-                var instance = _ccs.CMS[id].SchemaNodeInstance(_servicePack, nodePath, true, true, out absolutePath);
+                var instance = Cms(id).SchemaNodeInstance(_servicePack, nodePath, true, true, out absolutePath);
 
                 var fi = DocumentFactory.DocumentInfo(absolutePath);
                 if (fi.Exists)
@@ -703,7 +724,7 @@ public class CmsController : ApplicationSecurityController
                 }
             }
 
-            ItemOrder itemOrder = new ItemOrder(_ccs.CMS[id].ConnectionString + "/" + path, order.ToArray());
+            ItemOrder itemOrder = new ItemOrder(Cms(id).ConnectionString + "/" + path, order.ToArray());
             itemOrder.Save();
 
             return Json(new { success = true });
@@ -714,6 +735,7 @@ public class CmsController : ApplicationSecurityController
         }
     }
 
+    [CmsGitEditLock]
     async public Task<IActionResult> NodeRefresh(string path, int level, string id = "")
     {
         try
@@ -722,14 +744,14 @@ public class CmsController : ApplicationSecurityController
                            "Node", "Refresh", id, path);
 
             string configPath;
-            var obj = _ccs.CMS[id].Clone(_servicePack,
-                                         _ccs.GetCmsSecrets(_servicePack, id))
+            var obj = Cms(id).Clone(_servicePack,
+                                         _ccs.GetCmsSecrets(_servicePack, Cms(id)))
                                   .SchemaNodeInstance(_servicePack, path, true, true, out configPath) as IRefreshable;
             if (obj != null)
             {
                 if (obj is ISchemaNode)
                 {
-                    ((ISchemaNode)obj).CmsManager = _ccs.CMS[id];
+                    ((ISchemaNode)obj).CmsManager = Cms(id);
                     ((ISchemaNode)obj).RelativePath = path;
                 }
 
@@ -754,7 +776,7 @@ public class CmsController : ApplicationSecurityController
     {
         try
         {
-            var cms = _ccs.CMS[id];
+            var cms = Cms(id);
 
             var nodeAuth = await cms.GetNodeAuthorization(path, tagName, async (auth, authNodePath, inheritPath) =>
             {
@@ -826,6 +848,7 @@ public class CmsController : ApplicationSecurityController
         }
     }
 
+    [CmsGitEditLock]
     async public Task<IActionResult> NodeSecurityCommit(string path, string name, string btn, string data, string id = "")
     {
         try
@@ -833,7 +856,7 @@ public class CmsController : ApplicationSecurityController
             _cmsLogger.Log(this.GetCurrentUsername(),
                            "NodeSecurity", "Commit", id, path);
 
-            var cms = _ccs.CMS[id];
+            var cms = Cms(id);
 
             var nodeAuth = await cms.GetNodeAuthorization(path, onLoaded: async (auth, authNodePath, inheritPath) =>
             {
@@ -937,7 +960,7 @@ public class CmsController : ApplicationSecurityController
 
             foreach (var customSecurityService in _customSecurityServices)
             {
-                var closestInstanceResult = _ccs.CMS[id].ClosestInstance(_servicePack, path);
+                var closestInstanceResult = Cms(id).ClosestInstance(_servicePack, path);
                 await customSecurityService.BeforeSaveAclFile(id, path, nodeAuth, closestInstanceResult.instance, closestInstanceResult.instancePath);
             }
 
@@ -1042,7 +1065,7 @@ public class CmsController : ApplicationSecurityController
     {
         try
         {
-            var instance = _ccs.CMS[id].SchemaNodeInstance(_servicePack, path, false, true);
+            var instance = Cms(id).SchemaNodeInstance(_servicePack, path, false, true);
 
             var localizer = _localizerFactory.CreateCmsLocalizer(instance.GetType());
             string displayName = null;
@@ -1081,7 +1104,7 @@ public class CmsController : ApplicationSecurityController
                 var editor = Type.GetType(editorAttribute.EditorTypeName).CmsCreateInstance(_servicePack) as ITypeEditor;
                 if (editor is IUITypeEditor)
                 {
-                    var cmsManager = _ccs.CMS[id]?.Clone(_servicePack, _ccs.GetCmsSecrets(_servicePack, id));
+                    var cmsManager = Cms(id)?.Clone(_servicePack, _ccs.GetCmsSecrets(_servicePack, Cms(id)));
                     var uiControl = editor is IUITypeEditorAsync ?
                         await ((IUITypeEditorAsync)editor).GetUIControlAsync(new TypeEditorContext(cmsManager, path, instance, property.Split('.').Last())) :
                         ((IUITypeEditor)editor).GetUIControl(new TypeEditorContext(cmsManager, path, instance, property.Split('.').Last()));
@@ -1113,6 +1136,7 @@ public class CmsController : ApplicationSecurityController
         }
     }
 
+    [CmsGitEditLock]
     public IActionResult NodePropertyEditorCommit(string path, string property, string data, string id = "")
     {
         try
@@ -1120,7 +1144,7 @@ public class CmsController : ApplicationSecurityController
             _cmsLogger.Log(this.GetCurrentUsername(),
                            "NodePropertyEditor", "Commit", id, path);
 
-            var instance = _ccs.CMS[id].SchemaNodeInstance(_servicePack, path, false, true);
+            var instance = Cms(id).SchemaNodeInstance(_servicePack, path, false, true);
             if (instance == null)
             {
                 throw new Exception("Can't initialize node instance");
@@ -1204,7 +1228,7 @@ public class CmsController : ApplicationSecurityController
             _cmsLogger.Log(this.GetCurrentUsername(),
                            "NodePropertyEditor", "ButtonClick", id, path, btn);
 
-            var instance = _ccs.CMS[id].SchemaNodeInstance(_servicePack, path, false, true);
+            var instance = Cms(id).SchemaNodeInstance(_servicePack, path, false, true);
 
             var propertyInfo = instance.GetType().GetProperty(name);
             var editorAttribute = propertyInfo?.GetCustomAttribute<EditorAttribute>();
@@ -1214,7 +1238,7 @@ public class CmsController : ApplicationSecurityController
                 var editor = Type.GetType(editorAttribute.EditorTypeName).CmsCreateInstance(_servicePack) as ITypeEditor;
                 if (editor is IUITypeEditor)
                 {
-                    var cmsManager = _ccs.CMS[id]?.Clone(_servicePack, _ccs.GetCmsSecrets(_servicePack, id));
+                    var cmsManager = Cms(id)?.Clone(_servicePack, _ccs.GetCmsSecrets(_servicePack, Cms(id)));
                     var control = editor is IUITypeEditorAsync ?
                         await ((IUITypeEditorAsync)editor).GetUIControlAsync(new TypeEditorContext(cmsManager, path, instance, name)) :
                         ((IUITypeEditor)editor).GetUIControl(new TypeEditorContext(cmsManager, path, instance, name));
@@ -1366,7 +1390,7 @@ public class CmsController : ApplicationSecurityController
     {
         try
         {
-            var schemaNode = _ccs.CMS[id].SchemaNode(path);
+            var schemaNode = Cms(id).SchemaNode(path);
             XmlNode toolSchemaNode;
 
             if (action == "new")
@@ -1400,11 +1424,11 @@ public class CmsController : ApplicationSecurityController
                     }
                 }
 
-                ICreatable creatable = _ccs.CMS[id].SchemaNodeInstance(_servicePack, toolSchemaNode) as ICreatable;
+                ICreatable creatable = Cms(id).SchemaNodeInstance(_servicePack, toolSchemaNode) as ICreatable;
                 if (creatable is SchemaNode)
                 {
-                    ((SchemaNode)creatable).CmsManager = _ccs.CMS[id].Clone(_servicePack,
-                                                                            _ccs.GetCmsSecrets(_servicePack, id));
+                    ((SchemaNode)creatable).CmsManager = Cms(id).Clone(_servicePack,
+                                                                            _ccs.GetCmsSecrets(_servicePack, Cms(id)));
                     ((SchemaNode)creatable).RelativePath = path;
                 }
 
@@ -1446,11 +1470,11 @@ public class CmsController : ApplicationSecurityController
             }
             else if (action == "paste" || action == "cut")
             {
-                var copyNodeInstance = _ccs.CMS[id].SchemaNodeInstance(_servicePack, name, true, true);
+                var copyNodeInstance = Cms(id).SchemaNodeInstance(_servicePack, name, true, true);
                 if (copyNodeInstance is SchemaNode)
                 {
-                    ((SchemaNode)copyNodeInstance).CmsManager = _ccs.CMS[id].Clone(_servicePack,
-                                                                            _ccs.GetCmsSecrets(_servicePack, id));
+                    ((SchemaNode)copyNodeInstance).CmsManager = Cms(id).Clone(_servicePack,
+                                                                            _ccs.GetCmsSecrets(_servicePack, Cms(id)));
                     ((SchemaNode)copyNodeInstance).RelativePath = path;
                 }
 
@@ -1497,7 +1521,7 @@ public class CmsController : ApplicationSecurityController
             _cmsLogger.Log(this.GetCurrentUsername(),
                            "Tool", "ButtonCLick", id, path, btn, name);
 
-            var schemaNode = _ccs.CMS[id].SchemaNode(path);
+            var schemaNode = Cms(id).SchemaNode(path);
             var toolSchemaNode = schemaNode.SelectSingleNode("schema-node[@name='" + name + "']");
             if (toolSchemaNode == null)
             {
@@ -1505,9 +1529,9 @@ public class CmsController : ApplicationSecurityController
             }
 
             var formData = JSerializer.Deserialize<IEnumerable<NameValue>>(data);
-            var secrets = _ccs.GetCmsSecrets(_servicePack, id);
+            var secrets = _ccs.GetCmsSecrets(_servicePack, Cms(id));
 
-            ICreatable creatable = _ccs.CMS[id].SchemaNodeInstance(_servicePack, toolSchemaNode) as ICreatable;
+            ICreatable creatable = Cms(id).SchemaNodeInstance(_servicePack, toolSchemaNode) as ICreatable;
             if (creatable is IUI)
             {
                 var control = ((IUI)creatable).GetUIControl(false);
@@ -1535,6 +1559,7 @@ public class CmsController : ApplicationSecurityController
         }
     }
 
+    [CmsGitEditLock]
     async public Task<IActionResult> ToolCommit(string path, string action, string name, string data, string id = "")
     {
         try
@@ -1546,7 +1571,7 @@ public class CmsController : ApplicationSecurityController
             {
                 #region Create new item
 
-                var schemaNode = _ccs.CMS[id].SchemaNode(path);
+                var schemaNode = Cms(id).SchemaNode(path);
                 XmlNode toolSchemaNode = null;
 
                 if (name == null)
@@ -1566,12 +1591,12 @@ public class CmsController : ApplicationSecurityController
                     }
                 }
 
-                ICreatable creatable = _ccs.CMS[id].SchemaNodeInstance(_servicePack, toolSchemaNode) as ICreatable;
-                var secrets = _ccs.GetCmsSecrets(_servicePack, id);
+                ICreatable creatable = Cms(id).SchemaNodeInstance(_servicePack, toolSchemaNode) as ICreatable;
+                var secrets = _ccs.GetCmsSecrets(_servicePack, Cms(id));
 
                 if (creatable is SchemaNode)
                 {
-                    ((SchemaNode)creatable).CmsManager = _ccs.CMS[id].Clone(_servicePack, secrets);
+                    ((SchemaNode)creatable).CmsManager = Cms(id).Clone(_servicePack, secrets);
                     ((SchemaNode)creatable).RelativePath = path;
                 }
 
@@ -1585,7 +1610,7 @@ public class CmsController : ApplicationSecurityController
                 string createAs = creatable.CreateAs(true);
                 if (creatable is ISchemaNode)
                 {
-                    ((ISchemaNode)creatable).CmsManager = _ccs.CMS[id].Clone(_servicePack, secrets);
+                    ((ISchemaNode)creatable).CmsManager = Cms(id).Clone(_servicePack, secrets);
                     ((ISchemaNode)creatable).RelativePath = path + "/" + createAs;
                 }
 
@@ -1597,21 +1622,21 @@ public class CmsController : ApplicationSecurityController
                 {
 
                     createAs = createAs.Replace(@"\", "/");
-                    string fullName = _ccs.CMS[id].ConnectionString + "/" + path + @"/" + createAs + ".xml";
+                    string fullName = Cms(id).ConnectionString + "/" + path + @"/" + createAs + ".xml";
 
                     if (DocumentFactory.DocumentInfo(fullName).Exists)
                     {
                         throw new Exception("Object with this  name/url already exists");
                     }
 
-                    IStreamDocument xmlStream = DocumentFactory.New(_ccs.CMS[id].ConnectionString);
+                    IStreamDocument xmlStream = DocumentFactory.New(Cms(id).ConnectionString);
                     creatable.Save(xmlStream);
 
                     xmlStream.SaveDocument(fullName);
                     if (createAs.Contains(@"/"))
                     {
-                        var di = DocumentFactory.PathInfo(_ccs.CMS[id].ConnectionString + "/" + path + @"/" + createAs.Substring(0, createAs.IndexOf(@"/")));
-                        _ccs.CMS[id].ParseSchemaNode(_servicePack, di, toolSchemaNode);
+                        var di = DocumentFactory.PathInfo(Cms(id).ConnectionString + "/" + path + @"/" + createAs.Substring(0, createAs.IndexOf(@"/")));
+                        Cms(id).ParseSchemaNode(_servicePack, di, toolSchemaNode);
                     }
 
                     formData.ApplyAndSumit(creatable, secrets, path);
@@ -1626,10 +1651,10 @@ public class CmsController : ApplicationSecurityController
             {
                 #region Insert Links
 
-                var schemaNode = _ccs.CMS[id].SchemaNode(path);
+                var schemaNode = Cms(id).SchemaNode(path);
                 var toolSchemaNode = schemaNode.SelectSingleNode("schema-link[@name='" + name + "']");
 
-                var cms = _ccs.CMS[id];
+                var cms = Cms(id);
                 string[] targetPaths = JSerializer.Deserialize<string[]>(data);
                 foreach (var targetPath in targetPaths)
                 {
@@ -1637,7 +1662,7 @@ public class CmsController : ApplicationSecurityController
                     //  Link kann auch Eigenschaften haben (PresentationLink: Mode, Affectiong, usw.)
                     //  Darum versuche einen Instanz zu erstellen, damit diese Eigenschaften auch beim Anlegen erzeugt werden
                     //
-                    var link = _ccs.CMS[id].SchemaNodeInstance(_servicePack, path + "/" + (schemaNode.Attributes["name"]?.Value ?? ""), CmsNodeType.Link) as Link;
+                    var link = Cms(id).SchemaNodeInstance(_servicePack, path + "/" + (schemaNode.Attributes["name"]?.Value ?? ""), CmsNodeType.Link) as Link;
                     if (link != null)
                     {
                         link.LinkUri = targetPath;
@@ -1725,7 +1750,7 @@ public class CmsController : ApplicationSecurityController
                         //if (name.IndexOf("*") > 0)  // themes_*
                         //    newLinkName = name.Replace("*", CMSManager.WildcardAnyPlaceholder + newLinkName);
 
-                        IStreamDocument xmlStream = DocumentFactory.New(_ccs.CMS[id].ConnectionString);
+                        IStreamDocument xmlStream = DocumentFactory.New(Cms(id).ConnectionString);
                         link.Save(xmlStream);
                         xmlStream.SaveDocument(cms.ConnectionString + "/" + path + @"/" + newLinkName);
                     }
@@ -1736,14 +1761,14 @@ public class CmsController : ApplicationSecurityController
             }
             else if (action == "paste" || action == "cut")
             {
-                var copyable = _ccs.CMS[id].SchemaNodeInstance(_servicePack, name, true, true) as ICopyable;
+                var copyable = Cms(id).SchemaNodeInstance(_servicePack, name, true, true) as ICopyable;
                 if (copyable == null)
                 {
                     throw new Exception("Object is not copyable");
                 }
                 if (copyable is SchemaNode)
                 {
-                    ((SchemaNode)copyable).CmsManager = _ccs.CMS[id].Clone(_servicePack, _ccs.GetCmsSecrets(_servicePack, id));
+                    ((SchemaNode)copyable).CmsManager = Cms(id).Clone(_servicePack, _ccs.GetCmsSecrets(_servicePack, Cms(id)));
                     ((SchemaNode)copyable).RelativePath = path; // the path for creating the UI etc...
                 }
 
@@ -1779,12 +1804,12 @@ public class CmsController : ApplicationSecurityController
                     ((SchemaNode)copyable).RelativePath = name;  // not path!!! path is the parent
                 }
 
-                copyable.CopyCmsManager = _ccs.CMS[id];
+                copyable.CopyCmsManager = Cms(id);
                 copyable.CopyTo(path);
 
                 if (action == "cut")
                 {
-                    _ccs.CMS[id].DeleteNode(name);
+                    Cms(id).DeleteNode(name);
                 }
 
                 return Json(new JsonSuccess());
@@ -1833,17 +1858,18 @@ public class CmsController : ApplicationSecurityController
 
     #region Link Tree
 
+    [CmsGitEditLock]
     public IActionResult LinkNodes(string path, string name, string id = "")
     {
         try
         {
-            var schemaNode = _ccs.CMS[id].SchemaNode(path);
+            var schemaNode = Cms(id).SchemaNode(path);
             var toolSchemaNode = schemaNode.SelectSingleNode("schema-link[@name='" + name + "']");
 
             string[] filters = toolSchemaNode.Attributes["filter"].Value.Split(';').Select(f => f.Split('|')[1]).ToArray();
             string[] uriFilters = UriFilters(id, toolSchemaNode, path);
 
-            var doc = _ccs.CMS[id].ToXml(_servicePack, false, filters, uriFilters, true);
+            var doc = Cms(id).ToXml(_servicePack, false, filters, uriFilters, true);
 
             List<NavTreeNode> rootNodes = new List<NavTreeNode>();
 
@@ -2222,7 +2248,7 @@ public class CmsController : ApplicationSecurityController
 
     public IActionResult SecretPlaceholders(string id)
     {
-        return Json(_ccs.GetCmsSecrets(_servicePack, id).AllKeys.ToArray());
+        return Json(_ccs.GetCmsSecrets(_servicePack, Cms(id)).AllKeys.ToArray());
     }
 
     public IActionResult VerifySecretsPassword(string id, string pw)
@@ -2282,7 +2308,7 @@ public class CmsController : ApplicationSecurityController
         if (schemaNode.Attributes["urifilterlinks"] != null)
         {
             string urifilterslinks = schemaNode.Attributes["urifilterlinks"].Value;
-            var di = DocumentFactory.PathInfo(_ccs.CMS[id].ConnectionString + @"/" + parentUriPath);
+            var di = DocumentFactory.PathInfo(Cms(id).ConnectionString + @"/" + parentUriPath);
             while (urifilterslinks.StartsWith("../"))
             {
                 urifilterslinks = urifilterslinks.Substring(3, urifilterslinks.Length - 3);
@@ -2310,14 +2336,14 @@ public class CmsController : ApplicationSecurityController
         if (schemaNode.Attributes["urifilterpath"] != null)
         {
             string urifilterpath = schemaNode.Attributes["urifilterpath"].Value;
-            var di = DocumentFactory.PathInfo(_ccs.CMS[id].ConnectionString + @"/" + parentUriPath);
+            var di = DocumentFactory.PathInfo(Cms(id).ConnectionString + @"/" + parentUriPath);
             while (urifilterpath.StartsWith("../"))
             {
                 urifilterpath = urifilterpath.Substring(3, urifilterpath.Length - 3);
                 di = di.Parent;
             }
             di = DocumentFactory.PathInfo(di.FullName + @"/" + urifilterpath);
-            urifilterpath = di.FullName.Substring(_ccs.CMS[id].ConnectionString.Length + 1, di.FullName.Length - _ccs.CMS[id].ConnectionString.Length - 1);
+            urifilterpath = di.FullName.Substring(Cms(id).ConnectionString.Length + 1, di.FullName.Length - Cms(id).ConnectionString.Length - 1);
             if (uriFilters.Length > 0)
             {
                 uriFilters.Append("|");

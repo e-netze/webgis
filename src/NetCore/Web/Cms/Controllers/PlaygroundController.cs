@@ -245,7 +245,7 @@ public class PlaygroundController : ApplicationSecurityController
         }
 
         var replace = new CmsReplace();
-        var replaceActions = new List<Action> { () => replace.AddCmsSecrets(cmsItem, deploy) };
+        var replaceActions = new List<Action> { () => replace.AddCmsSecrets(cmsDocument.ConnectionString, deploy) };
         if (!String.IsNullOrEmpty(deploy.ReplacementFile))
         {
             replaceActions.Insert(
@@ -270,8 +270,20 @@ public class PlaygroundController : ApplicationSecurityController
         out CMSManager cmsDocument)
     {
         cmsDocument = null;
-        return !String.IsNullOrWhiteSpace(cmsId)
-            && _cmsConfiguration.CMS.TryGetValue(cmsId, out cmsDocument);
+        if (String.IsNullOrWhiteSpace(cmsId) || !_cmsConfiguration.CMS.ContainsKey(cmsId))
+        {
+            return false;
+        }
+
+        try
+        {
+            cmsDocument = Cms(cmsId);
+            return true;
+        }
+        catch (CmsGitWorkspaceNotFoundException)
+        {
+            return false;
+        }
     }
 
     private EditFormPlaygroundCmsItem[] GetPlaygroundCmsItems()

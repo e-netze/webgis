@@ -100,6 +100,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Azure\E.Standard.Azure.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Cms.Configuration\E.Standard.Cms.Configuration.csproj" />
+    <ProjectReference Include="..\..\..\NetStandard\E.Standard.Cms.Git\E.Standard.Cms.Git.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.CMS.MongoDB\E.Standard.CMS.MongoDB.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.CMS.UI\E.Standard.CMS.UI.csproj" />
     <ProjectReference Include="..\..\..\NetStandard\E.Standard.Cms\E.Standard.Cms.csproj" />

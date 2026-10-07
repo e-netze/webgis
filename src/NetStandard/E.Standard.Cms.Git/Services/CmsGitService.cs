@@ -1,0 +1,261 @@
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading;
+
+using E.Standard.Cms.Configuration.Models;
+using E.Standard.Cms.Configuration.Services;
+using E.Standard.Cms.Git.Exceptions;
+using E.Standard.Cms.Git.Models;
+
+namespace E.Standard.Cms.Git.Services;
+
+/// <summary>
+/// Git operations for cms-items with git configuration.
+/// Serializes all operations per working copy and invalidates cached CMS trees after file changes.
+/// </summary>
+public class CmsGitService
+{
+    private static readonly TimeSpan LockTimeout = TimeSpan.FromSeconds(60);
+    private static readonly ConcurrentDictionary<string, SemaphoreSlim> Locks = new(StringComparer.OrdinalIgnoreCase);
+
+    private readonly CmsConfigurationService _ccs;
+    private readonly CmsManagerResolver _resolver;
+
+    public CmsGitService(CmsConfigurationService ccs, CmsManagerResolver resolver)
+    {
+        _ccs = ccs;
+        _resolver = resolver;
+    }
+
+    public bool IsEnabled(string cmsId) => _ccs.IsGitEnabled(cmsId);
+
+    #region User Workspace
+
+    public CmsGitStatus GetStatus(string cmsId, string username, bool fetch)
+    {
+        var workspace = UserWorkspace(cmsId, username);
+
+        if (!workspace.Exists)
+        {
+            return new CmsGitStatus()
+            {
+                HasWorkspace = false,
+                DefaultBranch = workspace.DefaultBranch,
+                SuggestedBranchPrefix = SuggestedBranchPrefix(username)
+            };
+        }
+
+        return Locked(workspace.WorkspacePath, () => Decorate(workspace.GetStatus(fetch), username));
+    }
+
+    public CmsGitStatus CreateWorkspace(string cmsId, string username, CmsGitUser user, string initialCommitMessage)
+    {
+        var workspace = UserWorkspace(cmsId, username);
+
+        // serialize per cms-item too: only one user may initialize an empty remote
+        Locked($"init:{cmsId}", () =>
+            Locked(workspace.WorkspacePath, () =>
+            {
+                workspace.Create(CmsItem(cmsId).Path, user, initialCommitMessage);
+                return true;
+            }));
+
+        _resolver.Invalidate(workspace.WorkspacePath);
+
+        return GetStatus(cmsId, username, false);
+    }
+
+    public CmsGitStatus Fetch(string cmsId, string username)
+        => GetStatus(cmsId, username, true);
+
+    public CmsGitStatus Pull(string cmsId, string username, CmsGitUser user)
+        => Run(cmsId, username, ws => ws.Pull(user), invalidate: true);
+
+    public CmsGitStatus Commit(string cmsId, string username, CmsGitUser user, string message)
+        => Run(cmsId, username, ws => ws.Commit(user, message), invalidate: false);
+
+    public CmsGitStatus Push(string cmsId, string username, CmsGitUser user)
+        => Run(cmsId, username, ws => ws.Push(user), invalidate: true);
+
+    public IEnumerable<CmsGitBranch> GetBranches(string cmsId, string username)
+    {
+        var workspace = ExistingUserWorkspace(cmsId, username);
+
+        return Locked(workspace.WorkspacePath, () => workspace.GetBranches());
+    }
+
+    public CmsGitStatus CreateBranch(string cmsId, string username, string name)
+    {
+        var pushed = true;
+        var status = Run(cmsId, username, ws => pushed = ws.CreateBranch(name), invalidate: false);
+
+        if (!pushed)
+        {
+            status.Stale = true;
+        }
+
+        return status;
+    }
+
+    public CmsGitStatus Checkout(string cmsId, string username, string name)
+        => Run(cmsId, username, ws => { ws.Checkout(name); return true; }, invalidate: true);
+
+    public CmsGitStatus DeleteBranch(string cmsId, string username, string name, bool deleteRemote)
+        => Run(cmsId, username, ws => { ws.DeleteBranch(name, deleteRemote); return true; }, invalidate: false);
+
+    public CmsGitStatus MergeFromDefault(string cmsId, string username, CmsGitUser user)
+        => Run(cmsId, username, ws => ws.MergeFromDefault(user), invalidate: true);
+
+    public CmsGitStatus MergeIntoDefault(string cmsId, string username, CmsGitUser user, bool deleteBranch)
+        => Run(cmsId, username, ws => { ws.MergeIntoDefault(user, deleteBranch); return true; }, invalidate: true);
+
+    public IEnumerable<CmsGitConflict> GetConflicts(string cmsId, string username)
+    {
+        var workspace = ExistingUserWorkspace(cmsId, username);
+
+        return Locked(workspace.WorkspacePath, () => workspace.GetConflicts());
+    }
+
+    public CmsGitStatus ResolveConflict(string cmsId, string username, string nodePath, string choice)
+        => Run(cmsId, username, ws => { ws.ResolveConflict(nodePath, choice); return true; }, invalidate: true);
+
+    public CmsGitStatus CompleteMerge(string cmsId, string username, CmsGitUser user)
+        => Run(cmsId, username, ws => ws.CompleteMerge(user), invalidate: true);
+
+    public CmsGitStatus AbortMerge(string cmsId, string username)
+        => Run(cmsId, username, ws => { ws.AbortMerge(); return true; }, invalidate: true);
+
+    public CmsGitStatus Discard(string cmsId, string username, string nodePath)
+        => Run(cmsId, username, ws => ws.Discard(nodePath), invalidate: true);
+
+    /// <summary>
+    /// true, if the user's working copy has a running merge => editing the CMS tree is not allowed
+    /// </summary>
+    public bool IsMerging(string cmsId, string username)
+        => IsEnabled(cmsId) && UserWorkspace(cmsId, username).IsMerging;
+
+    #endregion
+
+    #region Deploy
+
+    /// <summary>
+    /// Brings the deploy clone to the latest commit of the remote default branch.
+    /// </summary>
+    /// <returns>the commit hash</returns>
+    public string UpdateDeployWorkspace(string cmsId)
+    {
+        var workspace = new CmsGitWorkspace(_resolver.DeployWorkspacePath(cmsId), Settings(cmsId));
+
+        var sha = Locked(workspace.WorkspacePath, () => workspace.UpdateToRemoteDefaultBranch());
+
+        _resolver.Invalidate(workspace.WorkspacePath);
+
+        return sha;
+    }
+
+    #endregion
+
+    #region Helper
+
+    private CmsGitStatus Run<T>(string cmsId, string username, Func<CmsGitWorkspace, T> action, bool invalidate)
+    {
+        var workspace = ExistingUserWorkspace(cmsId, username);
+
+        return Locked(workspace.WorkspacePath, () =>
+        {
+            try
+            {
+                action(workspace);
+            }
+            finally
+            {
+                if (invalidate)
+                {
+                    _resolver.Invalidate(workspace.WorkspacePath);
+                }
+            }
+
+            return Decorate(workspace.GetStatus(false), username);
+        });
+    }
+
+    private CmsGitWorkspace UserWorkspace(string cmsId, string username)
+        => new CmsGitWorkspace(_resolver.UserWorkspacePath(cmsId, username), Settings(cmsId));
+
+    private CmsGitWorkspace ExistingUserWorkspace(string cmsId, string username)
+    {
+        var workspace = UserWorkspace(cmsId, username);
+        if (!workspace.Exists)
+        {
+            throw new CmsGitWorkspaceNotFoundException(cmsId, workspace.WorkspacePath);
+        }
+
+        return workspace;
+    }
+
+    private CmsConfig.CmsItem CmsItem(string cmsId)
+    {
+        var cmsItem = _ccs.GetCmsItem(cmsId);
+        if (cmsItem?.IsGitEnabled != true)
+        {
+            throw new InvalidOperationException($"Git is not configured for cms-item {cmsId}");
+        }
+
+        return cmsItem;
+    }
+
+    private CmsGitSettings Settings(string cmsId)
+    {
+        var git = CmsItem(cmsId).Git;
+
+        return new CmsGitSettings(
+            git.RemoteUrl,
+            git.Username,
+            git.ResolvedToken,
+            git.DefaultBranch,
+            git.CommitterName,
+            git.CommitterEmail);
+    }
+
+    private static CmsGitStatus Decorate(CmsGitStatus status, string username)
+    {
+        status.SuggestedBranchPrefix = SuggestedBranchPrefix(username);
+        return status;
+    }
+
+    private static string SuggestedBranchPrefix(string username)
+    {
+        try
+        {
+            // DOMAIN\user => user
+            var name = username?.Split('\\', '/')[^1];
+            return $"{CmsManagerResolver.SafeName(name)}/";
+        }
+        catch
+        {
+            return String.Empty;
+        }
+    }
+
+    private static T Locked<T>(string key, Func<T> func)
+    {
+        var semaphore = Locks.GetOrAdd(key, _ => new SemaphoreSlim(1, 1));
+
+        if (!semaphore.Wait(LockTimeout))
+        {
+            throw new CmsGitException(CmsGitErrors.Busy);
+        }
+
+        try
+        {
+            return func();
+        }
+        finally
+        {
+            semaphore.Release();
+        }
+    }
+
+    #endregion
+}

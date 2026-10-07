@@ -208,7 +208,7 @@ public class DeployService : ICmsTool
 
             List<Action> replaceActions = new List<Action>()
                 {
-                    () => replace.AddCmsSecrets(cmsItem,deploy)
+                    () => replace.AddCmsSecrets(cmsTreePath, deploy)
                 };
 
             // add Relplacement File

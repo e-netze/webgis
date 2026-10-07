@@ -36,6 +36,7 @@ public class IOController : ApplicationSecurityController
     private readonly ClearCmsService _clearCmsService;
     private readonly ReloadSchemeService _reloadSchemeService;
     private readonly ExportCmsService _exportCmsService;
+    private readonly CmsManagerResolver _cmsResolver;
 
     private readonly CmsItemTransistantInjectionServicePack _servicePack;
 
@@ -49,6 +50,7 @@ public class IOController : ApplicationSecurityController
                 ClearCmsService clearCmsService,
                 ReloadSchemeService reloadSchemeService,
                 ExportCmsService exportCmsService,
+                CmsManagerResolver cmsResolver,
                 IEnumerable<ICustomCmsPageSecurityService> customSecurity = null)
         : base(ccs, urlHelperService, applicationSecurityUserManager, customSecurity, crypto, instanceService)
     {
@@ -57,6 +59,7 @@ public class IOController : ApplicationSecurityController
         _clearCmsService = clearCmsService;
         _reloadSchemeService = reloadSchemeService;
         _exportCmsService = exportCmsService;
+        _cmsResolver = cmsResolver;
 
         _servicePack = instanceService.ServicePack;
     }
@@ -86,6 +89,8 @@ public class IOController : ApplicationSecurityController
                 Request.Form["for-linux"] == "on" ||
                 Request.Form["for-linux"] == "true";
 
+            _cmsResolver.EnsureUserWorkspace(id, this.GetCurrentUsername());
+
             var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), ExportCms,
                 new CmsExportDefinition()
                 {
@@ -114,7 +119,8 @@ public class IOController : ApplicationSecurityController
             CmsId = process.CmsId,
             Deployment = process.UserData,
             ContentRootPath = _applicationContentRootPath,
-            Username = process.UserName
+            Username = process.UserName,
+            CmsTreePath = _cmsResolver.TreePath(process.CmsId, process.UserName)
         };
 
         _exportCmsService.Run(context, process);
@@ -226,6 +232,8 @@ public class IOController : ApplicationSecurityController
 
             byte[] fileBuffer = new byte[this.Request.Form.Files[0].Length];
             this.Request.Form.Files[0].OpenReadStream().ReadExactly(fileBuffer, 0, fileBuffer.Length);
+            _cmsResolver.EnsureEditableUserWorkspace(id, this.GetCurrentUsername());
+
             var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), ImportCms,
                 new ImportDefinition()
                 {
@@ -276,7 +284,9 @@ public class IOController : ApplicationSecurityController
             doc.Load(_applicationContentRootPath + "/schemes/" + cmsItem.Scheme + "/schema.xml");
 
             var cms = new CMSManager(doc);
-            cms.SetConnectionString(_servicePack, cmsItem.Path);
+            var cmsTreePath = _cmsResolver.TreePath(cmsId, process.UserName) ?? cmsItem.Path;
+
+            cms.SetConnectionString(_servicePack, cmsTreePath);
 
             var importDefinition = (ImportDefinition)process.UserData;
 
@@ -285,7 +295,7 @@ public class IOController : ApplicationSecurityController
             {
                 foreach (var entry in archive.Entries)
                 {
-                    var cmspath = CmsPath(cmsItem.Path, entry);
+                    var cmspath = CmsPath(cmsTreePath, entry);
                     var entryPath = entry.FullName.Substring(entry.FullName.IndexOf("/") + 1);
 
                     //var schemeNode=cms.SchemaNode(entryPath, CmsNodeType.Any);
@@ -425,6 +435,8 @@ public class IOController : ApplicationSecurityController
                 return View();
             }
 
+            _cmsResolver.EnsureEditableUserWorkspace(id, this.GetCurrentUsername());
+
             var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), ClearCms, id);
 
             return View(new ClearModel()
@@ -449,7 +461,8 @@ public class IOController : ApplicationSecurityController
             CmsId = process.CmsId,
             Deployment = process.UserData,
             ContentRootPath = _applicationContentRootPath,
-            Username = process.UserName
+            Username = process.UserName,
+            CmsTreePath = _cmsResolver.TreePath(process.CmsId, process.UserName)
         };
 
         _clearCmsService.Run(context, process);
@@ -479,6 +492,8 @@ public class IOController : ApplicationSecurityController
     {
         try
         {
+            _cmsResolver.EnsureEditableUserWorkspace(id, this.GetCurrentUsername());
+
             var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), ReloadCmsScheme, id);
 
             return View(new ReloadSchemeModel()
@@ -503,7 +518,8 @@ public class IOController : ApplicationSecurityController
             CmsId = process.CmsId,
             Deployment = process.UserData,
             ContentRootPath = _applicationContentRootPath,
-            Username = process.UserName
+            Username = process.UserName,
+            CmsTreePath = _cmsResolver.TreePath(process.CmsId, process.UserName)
         };
 
         _reloadSchemeService.Run(context, process);

@@ -8,6 +8,7 @@ using E.Standard.Cms.Abstraction;
 using E.Standard.Cms.Configuration.Models;
 using E.Standard.Cms.Configuration.Services;
 using E.Standard.Cms.Extensions;
+using E.Standard.Extensions.Compare;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Abstractions;
 using E.Standard.CMS.Core.IO;
@@ -65,10 +66,12 @@ public class ExportCmsService : ICmsTool
             XmlDocument doc = new XmlDocument();
             doc.Load(Path.Combine(context.ContentRootPath, "schemes", cmsItem.Scheme, "schema.xml"));
 
-            var cms = new CMSManager(doc);
-            cms.SetConnectionString(_servicePack, cmsItem.Path);
+            string cmsTreePath = context.CmsTreePath.OrTake(cmsItem.Path);
 
-            var rootPath = cmsItem.Path;
+            var cms = new CMSManager(doc);
+            cms.SetConnectionString(_servicePack, cmsTreePath);
+
+            var rootPath = cmsTreePath;
             var root = DocumentFactory.PathInfo(rootPath);
             using (MemoryStream zipFileStream = new MemoryStream())
             {

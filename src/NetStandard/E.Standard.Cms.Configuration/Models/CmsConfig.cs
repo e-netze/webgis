@@ -94,9 +94,19 @@ public class CmsConfig : PropertiesParserBaseClass
         [System.Text.Json.Serialization.JsonPropertyName("deployments")]
         public IEnumerable<DeployItem> Deployments { get; set; }
 
+        [JsonProperty(PropertyName = "git")]
+        [System.Text.Json.Serialization.JsonPropertyName("git")]
+        public GitConfig Git { get; set; }
+
+        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public bool IsGitEnabled => Git?.IsValid == true;
+
         public override void Parse(IConfigValueParser parser)
         {
             base.Parse(parser);
+
+            Git?.Parse(parser);
 
             if (Deployments != null)
             {
@@ -106,6 +116,52 @@ public class CmsConfig : PropertiesParserBaseClass
                 }
             }
         }
+    }
+
+    public class GitConfig : PropertiesParserBaseClass
+    {
+        [JsonProperty(PropertyName = "remote-url")]
+        [System.Text.Json.Serialization.JsonPropertyName("remote-url")]
+        public string RemoteUrl { get; set; }
+
+        [JsonProperty(PropertyName = "username")]
+        [System.Text.Json.Serialization.JsonPropertyName("username")]
+        public string Username { get; set; }
+
+        [JsonProperty(PropertyName = "token")]
+        [System.Text.Json.Serialization.JsonPropertyName("token")]
+        public string Token { get; set; }
+
+        [JsonProperty(PropertyName = "default-branch")]
+        [System.Text.Json.Serialization.JsonPropertyName("default-branch")]
+        public string DefaultBranch { get; set; } = "main";
+
+        [JsonProperty(PropertyName = "workspace-root")]
+        [System.Text.Json.Serialization.JsonPropertyName("workspace-root")]
+        public string WorkspaceRoot { get; set; }
+
+        [JsonProperty(PropertyName = "author-email-domain")]
+        [System.Text.Json.Serialization.JsonPropertyName("author-email-domain")]
+        public string AuthorEmailDomain { get; set; }
+
+        [JsonProperty(PropertyName = "committer-name")]
+        [System.Text.Json.Serialization.JsonPropertyName("committer-name")]
+        public string CommitterName { get; set; }
+
+        [JsonProperty(PropertyName = "committer-email")]
+        [System.Text.Json.Serialization.JsonPropertyName("committer-email")]
+        public string CommitterEmail { get; set; }
+
+        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public string ResolvedToken =>
+            string.IsNullOrEmpty(Token) ? Token : System.Environment.ExpandEnvironmentVariables(Token);
+
+        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public bool IsValid =>
+            !string.IsNullOrWhiteSpace(RemoteUrl) &&
+            !string.IsNullOrWhiteSpace(WorkspaceRoot);
     }
 
     public class DeployItem : PropertiesParserBaseClass

@@ -12,9 +12,9 @@ namespace E.Standard.Cms.Extensions;
 
 static public class CmsExtensions
 {
-    public static void AddCmsSecrets(this CmsReplace replace, CmsConfig.CmsItem cmsItem, CmsConfig.DeployItem deploy)
+    public static void AddCmsSecrets(this CmsReplace replace, string cmsTreePath, CmsConfig.DeployItem deploy)
     {
-        var secretsDi = DocumentFactory.PathInfo($"{cmsItem.Path}/__secrets".ToPlattformPath());
+        var secretsDi = DocumentFactory.PathInfo($"{cmsTreePath}/__secrets".ToPlattformPath());
 
         if (secretsDi.Exists)
         {

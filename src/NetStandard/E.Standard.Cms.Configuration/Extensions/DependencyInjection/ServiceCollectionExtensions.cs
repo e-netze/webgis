@@ -11,6 +11,7 @@ static public class ServiceCollectionExtensions
     static public IServiceCollection AddCmsConfigurationService(this IServiceCollection services, Action<CmsConfigurationServiceOptions> configAction)
     {
         services.Configure<CmsConfigurationServiceOptions>(configAction);
+        services.AddSingleton<CmsManagerResolver>();
         return services.AddSingleton<CmsConfigurationService>();
     }
 }

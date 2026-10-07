@@ -13,6 +13,7 @@ using E.Standard.Azure.Extensions.DependencyInjection;
 using E.Standard.Cms.Configuration.Extensions;
 using E.Standard.Cms.Configuration.Extensions.DependencyInjection;
 using E.Standard.Cms.Configuration.Models;
+using E.Standard.Cms.Git.Extensions.DependencyInjection;
 using E.Standard.Cms.Services;
 using E.Standard.CMS.Core.IO;
 using E.Standard.Configuration;
@@ -303,6 +304,7 @@ public class Startup
         {
             config.ContentPath = Environment.ContentRootPath;
         });
+        services.AddCmsGitService();
 
         #endregion
 
@@ -405,6 +407,12 @@ public class Startup
                     name: "cms-action",
                     template: "{id}/cms/{action}",
                     defaults: new { controller = "Cms" }
+                    );
+
+                routes.MapRoute(
+                    name: "git-action",
+                    template: "{id}/git/{action}",
+                    defaults: new { controller = "Git" }
                     );
 
                 routes.MapRoute(

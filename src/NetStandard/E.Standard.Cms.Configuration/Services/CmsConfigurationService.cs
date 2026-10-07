@@ -66,17 +66,11 @@ public class CmsConfigurationService
 
         foreach (var cmsItem in Instance.CmsItems)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(_options.ContentPath + "/schemes/" + cmsItem.Scheme + "/schema.xml");
-
-            CMS[cmsItem.Id] = new E.Standard.CMS.Core.CMSManager(doc);
-            CMS[cmsItem.Id].SetConnectionString(new CmsItemTransistantInjectionServicePack(null, stringLocalizer), cmsItem.Path);
-            CMS[cmsItem.Id].CmsDisplayName = cmsItem.Name;
-            CMS[cmsItem.Id].CmsSchemaName = cmsItem.Scheme;
+            CMS[cmsItem.Id] = CreateCmsManager(cmsItem, cmsItem.Path, new CmsItemTransistantInjectionServicePack(null, stringLocalizer));
 
             try
             {
-                doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.Load(_options.ContentPath + "/schemes/" + CmsGlobals.SchemaName + "/translate.xml");
                 TranslationDictionary[cmsItem.Id] = doc;
             }
@@ -88,6 +82,25 @@ public class CmsConfigurationService
 
     public IDictionary<string, CMSManager> CMS { get; set; }
     public IDictionary<string, XmlDocument> TranslationDictionary { get; set; }
+
+    public CmsConfig.CmsItem GetCmsItem(string cmsId)
+        => Instance.CmsItems?.FirstOrDefault(i => i.Id == cmsId);
+
+    public bool IsGitEnabled(string cmsId)
+        => !IsCustomCms(cmsId) && GetCmsItem(cmsId)?.IsGitEnabled == true;
+
+    public CMSManager CreateCmsManager(CmsConfig.CmsItem cmsItem, string path, CmsItemTransistantInjectionServicePack servicePack)
+    {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(_options.ContentPath + "/schemes/" + cmsItem.Scheme + "/schema.xml");
+
+        var cms = new CMSManager(doc);
+        cms.SetConnectionString(servicePack, path);
+        cms.CmsDisplayName = cmsItem.Name;
+        cms.CmsSchemaName = cmsItem.Scheme;
+
+        return cms;
+    }
 
     public string Translate(string id, string key)
     {
@@ -193,10 +206,15 @@ public class CmsConfigurationService
     public NameValueCollection GetCmsSecrets(CmsItemTransistantInjectionServicePack servicePack,
                                              string cmsId,
                                              DeployEnvironment environment = DeployEnvironment.Default)
+        => GetCmsSecrets(servicePack, this.CMS[cmsId], environment);
+
+    public NameValueCollection GetCmsSecrets(CmsItemTransistantInjectionServicePack servicePack,
+                                             CMSManager cms,
+                                             DeployEnvironment environment = DeployEnvironment.Default)
     {
         var result = new NameValueCollection();
 
-        XmlDocument doc = this.CMS[cmsId].ToXml(servicePack, false, false);
+        XmlDocument doc = cms.ToXml(servicePack, false, false);
         XmlNode rootNode = doc.SelectSingleNode("CMS[@root]");
 
         var secretsDi = DocumentFactory.PathInfo($"{rootNode.Attributes["root"].Value}/__secrets".ToPlattformPath());

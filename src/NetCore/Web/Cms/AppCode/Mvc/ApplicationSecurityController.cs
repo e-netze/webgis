@@ -19,6 +19,7 @@ using E.Standard.Security.Cryptography.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
 
 using Newtonsoft.Json;
 
@@ -103,6 +104,13 @@ public class ApplicationSecurityController : Controller
     {
         return Json(backgroundProcess.ProcDefinition(title));
     }
+
+    /// <summary>
+    /// The CMS tree the current user works on (shared tree or the user's git working copy)
+    /// </summary>
+    protected CMSManager Cms(string cmsId)
+        => HttpContext.RequestServices.GetRequiredService<CmsManagerResolver>()
+                      .Get(cmsId, GetCurrentUsername(), _servicePack);
 
     public IActionResult ExceptionResult(Exception ex)
     {

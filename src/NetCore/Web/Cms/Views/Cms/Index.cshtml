@@ -1,30 +1,68 @@
 ﻿@model Cms.Models.CmsModel
+@using E.Standard.Cms.Configuration
 @using E.Standard.Cms.Configuration.Services
+@using E.Standard.CMS.Core.Extensions
 @inject CmsConfigurationService CCS
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
 
 @{
     ViewData["Title"] = "Home Page";
+
+    var gitLocalizer = Model.IsGitEnabled ? LocalizerFactory.CreateCmsLocalizer(typeof(Cms.Controllers.GitController)) : null;
+    var gitL10n = Model.IsGitEnabled
+        ? Cms.Controllers.GitController.ClientL10nKeys.ToDictionary(k => k, k => gitLocalizer.Localize(k))
+        : null;
 }
 
-<div id="main-navbar">
-</div>
-<div id="main-navtree">
-</div>
-<div id="main-container" class="cms-main-container">
-    <div id="main-toolbar">
+@if (Model.IsGitEnabled && !Model.IsWorkspaceAvailable)
+{
+    <div class="cms-git-no-workspace">
+        <h2>@gitL10n["workspace-missing-title"]</h2>
+        <p>@gitL10n["workspace-missing-text"]</p>
+        <button class="cms-git-button primary" onclick="CMSGit.initWorkspace();return false;">@gitL10n["init-workspace"]</button>
     </div>
-    <div id="main-content">
+}
+else
+{
+    <div id="main-navbar">
     </div>
-</div>
-
-
+    <div id="main-navtree">
+    </div>
+    <div id="main-container" class="cms-main-container">
+        <div id="main-toolbar">
+        </div>
+        <div id="main-content">
+        </div>
+    </div>
+}
 
 @section Scripts  {
+    @if (Model.IsGitEnabled)
+    {
+        <link rel="stylesheet" href="~/css/site-cms-git.css?@(CmsGlobals.CssVersion)" />
+        <script src="~/js/site-cms-git.js?@(CmsGlobals.JsVersion)"></script>
+        <script type="text/javascript">
+            CMSGit.l10n = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(gitL10n));
+        </script>
+    }
+    @if (Model.IsGitEnabled && !Model.IsWorkspaceAvailable)
+    {
+        <script type="text/javascript">
+            CMS.id = '@Model.CmsId';
+            CMSGit.init(false);
+        </script>
+    }
+    else
+    {
     <script src="~/js/site-cms.js"></script>
     <script type="text/javascript">
 
         CMS.id = '@Model.CmsId';
         CMS.init();
+        @if (Model.IsGitEnabled)
+        {
+            @:CMSGit.init(true);
+        }
 
         var hasElastic = @(CCS.HasElastic.ToString().ToLower());
 
@@ -57,5 +95,6 @@
             });
 
     </script>
+    }
 }
 

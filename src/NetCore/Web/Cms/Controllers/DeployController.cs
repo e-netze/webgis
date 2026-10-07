@@ -10,6 +10,7 @@ using Cms.Models;
 using E.Standard.Cms.Abstraction;
 using E.Standard.Cms.Configuration.Models;
 using E.Standard.Cms.Configuration.Services;
+using E.Standard.Cms.Git.Services;
 using E.Standard.Cms.Services;
 using E.Standard.CMS.Core;
 using E.Standard.Custom.Core.Abstractions;
@@ -30,6 +31,8 @@ public class DeployController : ApplicationSecurityController
     private readonly ICmsLogger _cmsLogger;
     private readonly DeployService _deployService;
     private readonly SolveWaringsService _solveWarningsService;
+    private readonly CmsManagerResolver _cmsResolver;
+    private readonly CmsGitService _git;
 
     private readonly CmsItemTransistantInjectionServicePack _servicePack;
 
@@ -43,14 +46,18 @@ public class DeployController : ApplicationSecurityController
             ICmsLogger cmsLogger,
             DeployService deployService,
             SolveWaringsService solveWarningsService,
+            CmsManagerResolver cmsResolver,
+            CmsGitService git,
             IEnumerable<ICustomCmsPageSecurityService> customSecurity = null)
         : base(ccs, urlHelperService, applicationSecurityUserManager, customSecurity, crypto, instanceService)
     {
+        _git = git;
         _ccs = ccs;
         _applicationContentRootPath = environment.ContentRootPath;
         _cmsLogger = cmsLogger;
         _deployService = deployService;
         _solveWarningsService = solveWarningsService;
+        _cmsResolver = cmsResolver;
 
         _servicePack = instanceService.ServicePack;
     }
@@ -95,6 +102,16 @@ public class DeployController : ApplicationSecurityController
             _cmsLogger.Log(this.GetCurrentUsername(),
                            "Deploy", "Start", id, name);
 
+            if (_git.IsEnabled(id))
+            {
+                // deploy always the latest state of the remote default branch
+                var sha = _git.UpdateDeployWorkspace(id);
+                _cmsLogger.Log(this.GetCurrentUsername(),
+                               "Deploy", "GitCommit", id, sha);
+            }
+
+            _cmsResolver.EnsureDeployWorkspace(id);
+
             var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), DeployCms, name);
 
             return OpenConsole(backgroundProcess, $"Deploying: {name}", id);
@@ -116,7 +133,8 @@ public class DeployController : ApplicationSecurityController
             CmsId = process.CmsId,
             Deployment = process.UserData,
             ContentRootPath = _applicationContentRootPath,
-            Username = process.UserName
+            Username = process.UserName,
+            CmsTreePath = _cmsResolver.DeployTreePath(process.CmsId)
         };
 
         _deployService.Init(context);
@@ -131,6 +149,8 @@ public class DeployController : ApplicationSecurityController
         {
             _cmsLogger.Log(this.GetCurrentUsername(),
                            "Warnings", "Solve_Start", id, name);
+
+            _cmsResolver.EnsureEditableUserWorkspace(id, this.GetCurrentUsername());
 
             var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), SolveCmsWarnings, name);
 
@@ -153,7 +173,8 @@ public class DeployController : ApplicationSecurityController
             CmsId = process.CmsId,
             Deployment = process.UserData,
             ContentRootPath = _applicationContentRootPath,
-            Username = process.UserName
+            Username = process.UserName,
+            CmsTreePath = _cmsResolver.TreePath(process.CmsId, process.UserName)
         };
 
         _solveWarningsService.Run(context, process);

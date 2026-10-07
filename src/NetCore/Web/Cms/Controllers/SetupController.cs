@@ -45,7 +45,7 @@ public class SetupController : ApplicationSecurityController
     {
         try
         {
-            var cms = _ccs.CMS[id];
+            var cms = Cms(id);
 
             cms.OnParseSchemaNode += Cms_OnParseSchemaNode;
             cms.Reload(_servicePack, true);
