@@ -802,12 +802,7 @@ public class CmsGitWorkspace
     /// </summary>
     public CmsGitFileDiff GetCommitFileDiff(string sha, string path)
     {
-        if (String.IsNullOrWhiteSpace(path) || path.Split('/', '\\').Any(p => p == ".." || p == "."))
-        {
-            throw new CmsGitException(CmsGitErrors.InvalidPath, path);
-        }
-
-        path = path.Replace('\\', '/').Trim('/');
+        path = NormalizeFilePath(path);
 
         using var repo = Open();
 
@@ -820,6 +815,35 @@ public class CmsGitWorkspace
             Before = BlobText(parent?[path]?.Target as Blob),
             After = BlobText(commit[path]?.Target as Blob)
         };
+    }
+
+    /// <summary>
+    /// Uncommitted changes of a file: content of the last commit (HEAD) and of the working copy
+    /// </summary>
+    public CmsGitFileDiff GetWorkingFileDiff(string path)
+    {
+        path = NormalizeFilePath(path);
+
+        using var repo = Open();
+
+        var fullPath = FullPath(path);
+
+        return new CmsGitFileDiff()
+        {
+            Path = path,
+            Before = BlobText(repo.Head.Tip?[path]?.Target as Blob),
+            After = File.Exists(fullPath) ? File.ReadAllText(fullPath) : null
+        };
+    }
+
+    private static string NormalizeFilePath(string path)
+    {
+        if (String.IsNullOrWhiteSpace(path) || path.Split('/', '\\').Any(p => p == ".." || p == "."))
+        {
+            throw new CmsGitException(CmsGitErrors.InvalidPath, path);
+        }
+
+        return path.Replace('\\', '/').Trim('/');
     }
 
     private static string BlobText(Blob blob)
@@ -1518,6 +1542,40 @@ public class CmsGitWorkspace
     }
 
     private static bool IsDirty(Repository repo) => GetChanges(repo).Any();
+
+    /// <summary>
+    /// Uncommitted changes grouped by CMS node
+    /// </summary>
+    public IEnumerable<CmsGitChangedNode> GetChangedNodes()
+    {
+        using var repo = Open();
+
+        return GroupChangesByNode(GetChanges(repo)).ToArray();
+    }
+
+    /// <summary>
+    /// Groups changed files by their CMS node (see <see cref="NodeOf"/>)
+    /// </summary>
+    public static IEnumerable<CmsGitChangedNode> GroupChangesByNode(IEnumerable<CmsGitChange> changes)
+        => (changes ?? Enumerable.Empty<CmsGitChange>())
+            .GroupBy(c => NodeOf(c.Path), StringComparer.OrdinalIgnoreCase)
+            .Select(g =>
+            {
+                var files = g.OrderBy(c => c.Path, StringComparer.OrdinalIgnoreCase).ToArray();
+
+                return new CmsGitChangedNode()
+                {
+                    Node = g.Key,
+                    Name = FileName(g.Key),
+                    State = files.Any(f => f.State == CmsGitChangeStates.Conflicted) ? CmsGitChangeStates.Conflicted
+                          : files.All(f => f.State == CmsGitChangeStates.Added) ? CmsGitChangeStates.Added
+                          : files.All(f => f.State == CmsGitChangeStates.Deleted) ? CmsGitChangeStates.Deleted
+                          : CmsGitChangeStates.Modified,
+                    OrderChanged = files.Any(f => FileName(f.Path).Equals(".itemorder.xml", StringComparison.OrdinalIgnoreCase)),
+                    Files = files
+                };
+            })
+            .OrderBy(n => n.Node, StringComparer.OrdinalIgnoreCase);
 
     private static void EnsureClean(Repository repo)
     {

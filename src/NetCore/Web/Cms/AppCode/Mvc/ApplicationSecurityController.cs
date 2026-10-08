@@ -108,6 +108,8 @@ public class ApplicationSecurityController : Controller
     /// <summary>
     /// The CMS tree the current user works on (shared tree or the user's git working copy)
     /// </summary>
+    protected CmsItemTransistantInjectionServicePack ServicePack => _servicePack;
+
     protected CMSManager Cms(string cmsId)
         => HttpContext.RequestServices.GetRequiredService<CmsManagerResolver>()
                       .Get(cmsId, GetCurrentUsername(), _servicePack);

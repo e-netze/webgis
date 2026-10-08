@@ -132,6 +132,20 @@ public class CmsGitService
     public CmsGitStatus Discard(string cmsId, string username, string nodePath)
         => Run(cmsId, username, ws => ws.Discard(nodePath), invalidate: true);
 
+    public IEnumerable<CmsGitChangedNode> GetChangedNodes(string cmsId, string username)
+    {
+        var workspace = ExistingUserWorkspace(cmsId, username);
+
+        return Locked(workspace.WorkspacePath, () => workspace.GetChangedNodes());
+    }
+
+    public CmsGitFileDiff GetWorkingFileDiff(string cmsId, string username, string path)
+    {
+        var workspace = ExistingUserWorkspace(cmsId, username);
+
+        return Locked(workspace.WorkspacePath, () => workspace.GetWorkingFileDiff(path));
+    }
+
     /// <summary>
     /// true, if the user's working copy has a running merge => editing the CMS tree is not allowed
     /// </summary>

@@ -24,6 +24,41 @@ public class CmsGitChange
     public string State { get; set; }
 }
 
+/// <summary>
+/// Uncommitted changes grouped by CMS node: "a/b.xml", "a/b.acl", "a/b/.general.xml", "a/b/.itemorder.xml" => node "a/b"
+/// </summary>
+public class CmsGitChangedNode
+{
+    [JsonProperty("node")]
+    [System.Text.Json.Serialization.JsonPropertyName("node")]
+    public string Node { get; set; }
+
+    /// <summary>
+    /// Display name (as in the CMS tree), resolved by the web app. Fallback: last part of the node path
+    /// </summary>
+    [JsonProperty("name")]
+    [System.Text.Json.Serialization.JsonPropertyName("name")]
+    public string Name { get; set; }
+
+    /// <summary>
+    /// added (all files new), deleted (all files deleted), conflicted (any file) or modified
+    /// </summary>
+    [JsonProperty("state")]
+    [System.Text.Json.Serialization.JsonPropertyName("state")]
+    public string State { get; set; }
+
+    /// <summary>
+    /// The order of the child nodes (.itemorder.xml) has changed
+    /// </summary>
+    [JsonProperty("order_changed")]
+    [System.Text.Json.Serialization.JsonPropertyName("order_changed")]
+    public bool OrderChanged { get; set; }
+
+    [JsonProperty("files")]
+    [System.Text.Json.Serialization.JsonPropertyName("files")]
+    public CmsGitChange[] Files { get; set; }
+}
+
 public class CmsGitStatus
 {
     [JsonProperty("enabled")]

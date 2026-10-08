@@ -410,3 +410,47 @@
 #panel-collapse: Einklappen
 
 #panel-expand: Ausklappen
+
+#diff-view-table: Tabelle
+
+#diff-view-xml: XML
+
+#diff-view-tip: Darstellung der Unterschiede: als Tabelle der Eigenschaften oder als XML-Text
+
+#diff-show-all: Alle Eigenschaften anzeigen
+
+#diff-property: Eigenschaft
+
+#diff-before: Vorher
+
+#diff-after: Nachher
+
+#diff-no-property-changes: Keine geänderten Eigenschaften
+
+#diff-more: mehr…
+
+#diff-working: Aktuell (nicht gespeichert)
+
+#diff-show: Änderungen anzeigen
+
+#order-changed: Reihenfolge geändert
+
+#changes-title: Meine Änderungen
+
+#changes-tip: Alle nicht gespeicherten Änderungen anzeigen
+
+#changes-none: Keine nicht gespeicherten Änderungen
+
+#changes-goto: Zum Knoten
+
+#changes-files: {0} Datei(en)
+
+#commit-message-modified: Geändert
+
+#commit-message-added: Neu
+
+#commit-message-deleted: Gelöscht
+
+#commit-message-more: … und {0} weitere
+
+#commit-ctrl-enter: Strg+Enter zum Speichern

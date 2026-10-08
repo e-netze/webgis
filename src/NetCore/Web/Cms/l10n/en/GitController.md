@@ -410,3 +410,47 @@
 #panel-collapse: Collapse
 
 #panel-expand: Expand
+
+#diff-view-table: Table
+
+#diff-view-xml: XML
+
+#diff-view-tip: How to show the differences: as a table of properties or as XML text
+
+#diff-show-all: Show all properties
+
+#diff-property: Property
+
+#diff-before: Before
+
+#diff-after: After
+
+#diff-no-property-changes: No changed properties
+
+#diff-more: more…
+
+#diff-working: Current (not saved)
+
+#diff-show: Show changes
+
+#order-changed: Order changed
+
+#changes-title: My changes
+
+#changes-tip: Show all unsaved changes
+
+#changes-none: No unsaved changes
+
+#changes-goto: Go to node
+
+#changes-files: {0} file(s)
+
+#commit-message-modified: Changed
+
+#commit-message-added: New
+
+#commit-message-deleted: Deleted
+
+#commit-message-more: … and {0} more
+
+#commit-ctrl-enter: Ctrl+Enter to save

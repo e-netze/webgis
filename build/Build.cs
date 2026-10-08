@@ -428,6 +428,11 @@ class Build : NukeBuild
                 .SetVerbosity(DotNetVerbosity.minimal)
             );
             DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.Cms.Git.Tests" / "E.Standard.Cms.Git.Tests.csproj")
+                .SetProcessWorkingDirectory(RootDirectory)
+                .SetVerbosity(DotNetVerbosity.minimal)
+            );
+            DotNetTasks.DotNetTest(s => s
                 .SetProjectFile(RootDirectory / "src" / "NetStandard" / "E.Standard.Extensions.Test" / "E.Standard.Extensions.Test.csproj")
                 .SetProcessWorkingDirectory(RootDirectory)
             );

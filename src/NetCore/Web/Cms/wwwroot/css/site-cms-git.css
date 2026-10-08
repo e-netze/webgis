@@ -757,3 +757,220 @@ table.cms-git-workspaces {
             margin: 4px 0 8px 0;
             font-family: sans-serif;
         }
+
+/* diff icon on changed nodes */
+#main-content .node .node-tools .node-git-diff {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    color: #b36b00;
+    cursor: pointer;
+}
+
+    #main-content .node .node-tools .node-git-diff .cms-git-icon {
+        vertical-align: middle;
+    }
+
+#main-content .node.cms-git-highlight {
+    outline: 3px solid #f0a000;
+    transition: outline-color .5s;
+}
+
+/* list of changed nodes */
+.cms-git-node-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 8px 0;
+    max-height: 60vh;
+    overflow: auto;
+}
+
+    .cms-git-node-list > li {
+        border-bottom: 1px solid #eee;
+        padding: 4px 0;
+    }
+
+    .cms-git-node-list .row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+    }
+
+    .cms-git-node-list .state {
+        display: inline-block;
+        min-width: 80px;
+        font-size: .85em;
+    }
+
+    .cms-git-node-list li.added > .row .state,
+    .cms-git-node-list .file.added .state {
+        color: #2e7d32;
+    }
+
+    .cms-git-node-list li.deleted > .row .state,
+    .cms-git-node-list li.conflicted > .row .state,
+    .cms-git-node-list .file.deleted .state,
+    .cms-git-node-list .file.conflicted .state {
+        color: #c62828;
+    }
+
+    .cms-git-node-list .name {
+        flex: 1 1 auto;
+        min-width: 0;
+        color: inherit;
+        text-decoration: none;
+    }
+
+        .cms-git-node-list .name .text {
+            font-weight: bold;
+        }
+
+        .cms-git-node-list li.deleted .name .text {
+            text-decoration: line-through;
+        }
+
+        .cms-git-node-list .name .path {
+            display: block;
+            font-family: monospace;
+            font-size: .8em;
+            opacity: .65;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+    .cms-git-node-list .meta {
+        font-size: .8em;
+        opacity: .75;
+        white-space: nowrap;
+    }
+
+        .cms-git-node-list .meta .order {
+            margin-right: 6px;
+            color: #b36b00;
+        }
+
+    .cms-git-node-list .actions {
+        white-space: nowrap;
+    }
+
+    .cms-git-node-list .files {
+        margin: 4px 0 4px 16px;
+    }
+
+    .cms-git-node-list .file {
+        margin-bottom: 6px;
+    }
+
+    .cms-git-node-list .file-title {
+        font-family: monospace;
+        font-size: .85em;
+        color: inherit;
+    }
+
+.cms-git-commit-dialog .cms-git-node-list {
+    max-height: 35vh;
+}
+
+/* diff view: table / xml switch */
+.cms-git-diff-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0 2px 0;
+    font-size: .85em;
+}
+
+.cms-git-diff-switch button {
+    border: 1px solid #ccc;
+    background: #fff;
+    padding: 1px 8px;
+    cursor: pointer;
+}
+
+    .cms-git-diff-switch button + button {
+        border-left: none;
+    }
+
+    .cms-git-diff-switch button.selected {
+        background: #1565c0;
+        border-color: #1565c0;
+        color: #fff;
+    }
+
+.cms-git-prop-diff {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: .85em;
+}
+
+    .cms-git-prop-diff th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        padding: 3px 6px;
+        text-align: left;
+        background: #f0f0f0;
+        border-bottom: 1px solid #ddd;
+    }
+
+        .cms-git-prop-diff th.prop {
+            width: 30%;
+        }
+
+        .cms-git-prop-diff th.mine {
+            border-top: 3px solid #1565c0;
+        }
+
+        .cms-git-prop-diff th.theirs {
+            border-top: 3px solid #2e7d32;
+        }
+
+    .cms-git-prop-diff td {
+        padding: 2px 6px;
+        vertical-align: top;
+        border-bottom: 1px solid #f0f0f0;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+        .cms-git-prop-diff td.prop {
+            font-family: monospace;
+            color: #555;
+        }
+
+        .cms-git-prop-diff td.none {
+            text-align: center;
+            color: #888;
+        }
+
+        .cms-git-prop-diff td.empty {
+            background: repeating-linear-gradient(45deg, #f5f5f5, #f5f5f5 4px, #e8e8e8 4px, #e8e8e8 8px);
+        }
+
+    .cms-git-prop-diff tr.changed td.mine,
+    .cms-git-prop-diff tr.removed td.mine {
+        background: #dbeafe;
+    }
+
+    .cms-git-prop-diff tr.changed td.theirs,
+    .cms-git-prop-diff tr.added td.theirs {
+        background: #dcf5dc;
+    }
+
+    .cms-git-prop-diff tr.added td.prop,
+    .cms-git-prop-diff tr.removed td.prop,
+    .cms-git-prop-diff tr.changed td.prop {
+        font-weight: bold;
+    }
+
+    .cms-git-prop-diff tr.removed td.prop {
+        text-decoration: line-through;
+    }
+
+    .cms-git-prop-diff a.more {
+        white-space: nowrap;
+    }

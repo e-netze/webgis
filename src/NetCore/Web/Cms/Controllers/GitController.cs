@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 
 using Cms.AppCode.Mvc;
 using Cms.AppCode.Services;
@@ -12,6 +13,8 @@ using E.Standard.Cms.Git.Models;
 using E.Standard.Cms.Git.Services;
 using E.Standard.Cms.Services;
 using E.Standard.CMS.Core.Extensions;
+using E.Standard.CMS.Core.Schema;
+using E.Standard.CMS.Core.Schema.Abstraction;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Security.App.Reflection;
@@ -74,7 +77,11 @@ public class GitController : ApplicationSecurityController
         "merge-complete-tip", "merge-abort-tip",
         "disabled-no-changes", "disabled-commit-first", "disabled-nothing-to-push",
         "disabled-commit-or-discard-first", "disabled-conflicts-remaining",
-        "count-changes", "count-ahead", "count-behind", "stale-short", "panel-collapse", "panel-expand"
+        "count-changes", "count-ahead", "count-behind", "stale-short", "panel-collapse", "panel-expand",
+        "diff-view-table", "diff-view-xml", "diff-view-tip", "diff-show-all", "diff-property", "diff-before", "diff-after",
+        "diff-no-property-changes", "diff-more", "diff-working", "diff-show", "order-changed",
+        "changes-title", "changes-tip", "changes-none", "changes-goto", "changes-files",
+        "commit-message-modified", "commit-message-added", "commit-message-deleted", "commit-message-more", "commit-ctrl-enter"
     ];
 
     private readonly CmsConfigurationService _ccs;
@@ -179,6 +186,82 @@ public class GitController : ApplicationSecurityController
 
     public IActionResult Discard(string id, string node)
         => Execute(id, "Discard", () => StatusResult(_git.Discard(id, Username, node)), node);
+
+    public IActionResult ChangedNodes(string id)
+        => Execute(id, null, () =>
+        {
+            var nodes = _git.GetChangedNodes(id, Username).ToArray();
+            ResolveDisplayNames(id, nodes);
+
+            return Json(new { success = true, enabled = true, nodes });
+        });
+
+    public IActionResult WorkingFileDiff(string id, string path)
+        => Execute(id, null, () => Json(new
+        {
+            success = true,
+            enabled = true,
+            diff = _git.GetWorkingFileDiff(id, Username, path)
+        }));
+
+    /// <summary>
+    /// Display names like in the CMS tree (deleted nodes keep the last part of the path)
+    /// </summary>
+    private void ResolveDisplayNames(string id, IEnumerable<CmsGitChangedNode> nodes)
+    {
+        foreach (var parentGroup in nodes
+                    .Where(n => n.State != CmsGitChangeStates.Deleted && !String.IsNullOrEmpty(n.Node))
+                    .GroupBy(n => n.Node.Contains('/') ? n.Node.Substring(0, n.Node.LastIndexOf('/')) : String.Empty))
+        {
+            try
+            {
+                var cms = Cms(id);
+                var doc = String.IsNullOrEmpty(parentGroup.Key)
+                    ? cms.ToXml(ServicePack, false, false)
+                    : cms.ToXml(ServicePack, cms.ConnectionString + "/" + parentGroup.Key, false, false);
+
+                foreach (var node in parentGroup)
+                {
+                    try
+                    {
+                        var name = node.Node.Substring(node.Node.LastIndexOf('/') + 1);
+                        var itemNode = doc?.SelectSingleNode("CMS/item[@name=" + XPathLiteral(name) + "]");
+                        if (itemNode == null)
+                        {
+                            continue;
+                        }
+
+                        var displayName = _ccs.Translate(id, (itemNode.Attributes["displayname"]?.Value ?? String.Empty).Replace("_", " "));
+
+                        if (String.IsNullOrWhiteSpace(displayName) && itemNode.Attributes["type"]?.Value == "link")
+                        {
+                            var targetInstance = cms.SchemaNodeInstance(ServicePack, itemNode.Attributes["target"]?.Value ?? String.Empty, true, true);
+                            if (targetInstance is IDisplayName displayNameInstance && !String.IsNullOrWhiteSpace(displayNameInstance.DisplayName))
+                            {
+                                displayName = displayNameInstance.DisplayName;
+                            }
+                            else if (targetInstance is NameUrl nameUrl)
+                            {
+                                displayName = nameUrl.Name;
+                            }
+                        }
+
+                        if (!String.IsNullOrWhiteSpace(displayName))
+                        {
+                            node.Name = displayName;
+                        }
+                    }
+                    catch { /* keep the fallback name */ }
+                }
+            }
+            catch { /* keep the fallback names */ }
+        }
+    }
+
+    private static string XPathLiteral(string value)
+        => !value.Contains('\'') ? "'" + value + "'"
+         : !value.Contains('"') ? "\"" + value + "\""
+         : "concat('" + value.Replace("'", "', \"'\", '") + "')";
 
     #region History
 

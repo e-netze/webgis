@@ -119,6 +119,63 @@ public sealed class CmsGitWorkspaceTests : IDisposable
     }
 
     [Fact]
+    public void GroupChangesByNode_MapsFilesToNodes()
+    {
+        var nodes = CmsGitWorkspace.GroupChangesByNode(new[]
+        {
+            new CmsGitChange() { Path = "services/a.xml", State = CmsGitChangeStates.Modified },
+            new CmsGitChange() { Path = "services/a.acl", State = CmsGitChangeStates.Added },
+            new CmsGitChange() { Path = "services/f/.general.xml", State = CmsGitChangeStates.Added },
+            new CmsGitChange() { Path = "services/f/.itemorder.xml", State = CmsGitChangeStates.Added },
+            new CmsGitChange() { Path = "services/d.xml", State = CmsGitChangeStates.Deleted },
+            new CmsGitChange() { Path = ".itemorder.xml", State = CmsGitChangeStates.Modified }
+        }).ToArray();
+
+        Assert.Equal(new[] { "", "services/a", "services/d", "services/f" }, nodes.Select(n => n.Node));
+
+        var a = nodes.Single(n => n.Node == "services/a");
+        Assert.Equal(CmsGitChangeStates.Modified, a.State);
+        Assert.Equal(2, a.Files.Length);
+        Assert.False(a.OrderChanged);
+
+        var f = nodes.Single(n => n.Node == "services/f");
+        Assert.Equal(CmsGitChangeStates.Added, f.State);
+        Assert.True(f.OrderChanged);
+        Assert.Equal("f", f.Name);
+
+        Assert.Equal(CmsGitChangeStates.Deleted, nodes.Single(n => n.Node == "services/d").State);
+        Assert.True(nodes.Single(n => n.Node == "").OrderChanged);
+    }
+
+    [Fact]
+    public void WorkingFileDiff_ReturnsHeadAndWorkingCopy()
+    {
+        var ws = CreateWorkspace("alice", Alice);
+        File.WriteAllText(Path.Combine(ws.WorkspacePath, "services", "a.xml"), "<a x=\"1\"/>");
+        File.WriteAllText(Path.Combine(ws.WorkspacePath, "services", "b.xml"), "<b/>");
+
+        var modified = ws.GetWorkingFileDiff("services/a.xml");
+        Assert.Equal("<a/>", modified.Before);
+        Assert.Equal("<a x=\"1\"/>", modified.After);
+
+        var added = ws.GetWorkingFileDiff("services/b.xml");
+        Assert.Null(added.Before);
+        Assert.Equal("<b/>", added.After);
+
+        File.Delete(Path.Combine(ws.WorkspacePath, "services", "a.xml"));
+        var deleted = ws.GetWorkingFileDiff("services/a.xml");
+        Assert.Equal("<a/>", deleted.Before);
+        Assert.Null(deleted.After);
+
+        Assert.Equal(CmsGitErrors.InvalidPath, Assert.Throws<CmsGitException>(() => ws.GetWorkingFileDiff("../x.xml")).L10nKey);
+
+        var nodes = ws.GetChangedNodes().ToArray();
+        Assert.Equal(new[] { "services/a", "services/b" }, nodes.Select(n => n.Node));
+        Assert.Equal(CmsGitChangeStates.Deleted, nodes[0].State);
+        Assert.Equal(CmsGitChangeStates.Added, nodes[1].State);
+    }
+
+    [Fact]
     public void Pull_RequiresCleanWorkspace()
     {
         var ws = CreateWorkspace("alice", Alice);
