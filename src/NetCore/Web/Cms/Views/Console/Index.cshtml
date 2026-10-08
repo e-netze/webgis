@@ -36,9 +36,10 @@
                 else if (/^(canceled\b|try to cancel process$)/i.test(text)) cssClass = 'canceled';
                 else if (/^(critical\b|error\b|exception:|stacktrace:)/i.test(text)) cssClass = 'error';
                 else if (/^warning\b/i.test(text)) cssClass = 'warning';
-                else if (/^(scann for warnings|export|replace\.\.\.|release cache)$/i.test(text.trim())) cssClass = 'step';
+                else if (/^(scann for warnings|export( \(incl\. link check\))?|replace\.\.\.|release cache)$/i.test(text.trim())) cssClass = 'step';
                 else if (/^(environment|branch|commit):/i.test(text)) cssClass = 'meta';
                 else if (/^(scanned|processed|loaded) \d+/i.test(text) || /^\s+(\{\{|->)/.test(text)) cssClass = 'muted';
+                else if (/^(exported \d+ nodes|replaced in|written\/uploaded in) /i.test(text)) cssClass = 'meta';
             }
             return $line.addClass(cssClass || '');
         }

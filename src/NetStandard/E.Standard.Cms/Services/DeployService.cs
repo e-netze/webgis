@@ -147,21 +147,6 @@ public class DeployService : ICmsTool
                 }
             }
 
-            cms.OnParseWaring += (object? sender, EventArgs e) =>
-            {
-                ThrowIfCanceled();
-                counter++;
-                if (counter % stepWidth == 0)
-                {
-                    if (e is CMSManager.ParseEventArgs)
-                    {
-                        CMSManager.ParseEventArgs pe = (CMSManager.ParseEventArgs)e;
-
-                        console.WriteLine($"scanned {counter} nodes in {(int)(DateTime.Now - currentTime).TotalMilliseconds}ms");
-                        currentTime = DateTime.Now;
-                    }
-                }
-            };
             cms.OnExportNode += (object? sender, EventArgs e) =>
             {
                 ThrowIfCanceled();
@@ -190,16 +175,57 @@ public class DeployService : ICmsTool
             console.WriteLine($"Environment: {deploy.Environment}");
             console.WriteLine("============================================================");
 
-            console.WriteLine("Scann for warnings");
+            #region Init Replace Files and Secrets
+
+            var replace = new CmsReplace();
+
+            List<Action> replaceActions = new List<Action>()
+                {
+                    () => replace.AddCmsSecrets(cmsTreePath, deploy)
+                };
+
+            // add Relplacement File
+            if (!String.IsNullOrEmpty(deploy.ReplacementFile))
+            {
+                replaceActions.Insert(deploy.ReplceSecretsFirst == true ? 1 : 0,
+                    () => replace.AddReplacementFile(deploy.ReplacementFile));
+            }
+
+            foreach (var replaceAction in replaceActions)
+            {
+                replaceAction();
+            }
+
+            #endregion
+
+            counter = 0;
+            console.WriteLine("Export (incl. link check)");
 
             if (deploy.Services?.Any() == true)
             {
-                console.WriteLine($"Service filter active: only scanning services included in the deploy: {String.Join(", ", deploy.Services)}");
+                console.WriteLine($"Service filter active: only the following services will be included: {String.Join(", ", deploy.Services)}");
             }
 
             ThrowIfCanceled();
-            var warnings = cms.Warnings(deploy.Services);
+
+            // single pass: link warnings are collected while exporting (no separate warnings scan)
+            var warnings = new List<CMSManager.Warning>();
+            var exportStatistics = new CMSManager.ExportStatistics();
+
+            var document = cms.Export(_servicePack, deploy.IgnoreAuthentification, (ref string valueToEncrypt) =>
+            {
+                if (valueToEncrypt.ContainsSecretPlaceholders())
+                {
+                    //process.WriteLine("beforeEncryptValue " + valueToEncrypt);
+                    valueToEncrypt = replace.ReplaceSecrets(valueToEncrypt);
+                }
+            }, deploy.Services, warnings, exportStatistics).GetAwaiter().GetResult();
+
+            console.WriteLine($"Exported {exportStatistics}");
+
             ThrowIfCanceled();
+
+            #region Warnings
 
             // branch deploys don't touch the warnings file of the production target
             var fiWarnings = isBranchDeploy ? null : deploy.Target.WarningsFileInfo();
@@ -238,54 +264,17 @@ public class DeployService : ICmsTool
                     {
                         System.IO.File.WriteAllText(fiWarnings.FullName, sbWarnings.ToString());
                     }
-                    throw new Exception("Unsolved warnings found!");
+                    throw new Exception("Unsolved warnings found! Nothing was deployed.");
                 }
-            }
-
-            #region Init Replace Files and Secrets
-
-            var replace = new CmsReplace();
-
-            List<Action> replaceActions = new List<Action>()
-                {
-                    () => replace.AddCmsSecrets(cmsTreePath, deploy)
-                };
-
-            // add Relplacement File
-            if (!String.IsNullOrEmpty(deploy.ReplacementFile))
-            {
-                replaceActions.Insert(deploy.ReplceSecretsFirst == true ? 1 : 0,
-                    () => replace.AddReplacementFile(deploy.ReplacementFile));
-            }
-
-            foreach (var replaceAction in replaceActions)
-            {
-                replaceAction();
             }
 
             #endregion
-
-            counter = 0;
-            console.WriteLine("Export");
-
-            if (deploy.Services?.Any() == true)
-            {
-                console.WriteLine($"Service filter active: only the following services will be included: {String.Join(", ", deploy.Services)}");
-            }
-
-            var document = cms.Export(_servicePack, deploy.IgnoreAuthentification, (ref string valueToEncrypt) =>
-            {
-                if (valueToEncrypt.ContainsSecretPlaceholders())
-                {
-                    //process.WriteLine("beforeEncryptValue " + valueToEncrypt);
-                    valueToEncrypt = replace.ReplaceSecrets(valueToEncrypt);
-                }
-            }, deploy.Services).GetAwaiter().GetResult();
 
             #region Perform Replace
 
             if (replace.HasItems)
             {
+                var replaceWatch = Stopwatch.StartNew();
                 console.WriteLine("Replace...");
 
                 var replaceItems = replace.ToCollection();
@@ -295,12 +284,15 @@ public class DeployService : ICmsTool
                 }
 
                 replace.ReplaceInXmlDocument(document);
+                console.WriteLine($"Replaced in {replaceWatch.ElapsedMilliseconds}ms");
             }
 
             #endregion
 
             // last chance to cancel: once the target is written/uploaded, the deploy (incl. post events) is completed
             ThrowIfCanceled();
+
+            var writeWatch = Stopwatch.StartNew();
 
             if (deploy.Target.IsUrl())
             {
@@ -402,6 +394,8 @@ public class DeployService : ICmsTool
                 _cmsLogger.Log(context.Username,
                                "Deploy", "SaveXml", context.CmsId, deploy.Name, fi.FullName);
             }
+
+            console.WriteLine($"Written/uploaded in {writeWatch.ElapsedMilliseconds}ms");
 
             RunPostEvents(deploy, context.Branch ?? String.Empty, isDynamicCms, console);
 

@@ -12,6 +12,7 @@ public class ItemOrder
     private IDocumentInfo _fi;
     private OrderedItems _orderedItems = new OrderedItems();
     private bool _fast = false;
+    private FileSystemDirectoryListing _listing = null;
 
     public ItemOrder(string folder)
     {
@@ -24,6 +25,16 @@ public class ItemOrder
         _di = DocumentFactory.PathInfo(folder);
         _fi = DocumentFactory.DocumentInfo(folder + @"/.itemorder.xml");
         _fast = fast;
+        Load();
+    }
+
+    // fast mode based on an already enumerated directory (export)
+    internal ItemOrder(string folder, FileSystemDirectoryListing listing)
+    {
+        _di = DocumentFactory.PathInfo(folder);
+        _fi = DocumentFactory.DocumentInfo(folder + @"/.itemorder.xml");
+        _fast = true;
+        _listing = listing;
         Load();
     }
 
@@ -49,7 +60,7 @@ public class ItemOrder
     {
         try
         {
-            if (_fi.Exists)
+            if (_listing != null ? _listing.ContainsFile(".itemorder.xml") : _fi.Exists)
             {
                 var doc = new XmlDocumentWrapper();
                 doc.Load(_fi.FullName);
@@ -90,6 +101,19 @@ public class ItemOrder
     }
     private void Refresh()
     {
+        if (_listing != null)
+        {
+            foreach (var name in _listing.Directories)
+            {
+                _orderedItems.Add(name.ToLower());
+            }
+            foreach (var name in _listing.Files)
+            {
+                _orderedItems.Add(name.ToLower());
+            }
+            return;
+        }
+
         foreach (var di in _di.GetDirectories())
         {
             _orderedItems.Add(di.Name.ToLower());

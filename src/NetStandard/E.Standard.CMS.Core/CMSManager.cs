@@ -295,6 +295,7 @@ public partial class CMSManager
                 continue;
             }
 
+            string parentPath = path;
             path += @"/" + part;
             bool isDir = false;
 
@@ -303,10 +304,25 @@ public partial class CMSManager
                 // Damit Filesystemzugriffe beim Export minimiert werden minimiert werden
                 if (!_isDir.TryGetValue(path, out isDir))
                 {
-                    bool i_d = DocumentFactory.PathInfo(path).Exists, i_f = false;
-                    if (!i_d)
+                    bool i_d, i_f = false;
+                    if (_exportListings != null &&
+                        _exportListings.TryGetValue(parentPath, out var parentListing) &&
+                        FileSystemDirectoryListing.CanAnswer(part))
                     {
-                        i_f = DocumentFactory.DocumentInfo(path).Exists;
+                        // export: the parent folder is already enumerated => no file system access
+                        i_d = parentListing.ContainsDirectory(part);
+                        if (!i_d)
+                        {
+                            i_f = parentListing.ContainsFile(part);
+                        }
+                    }
+                    else
+                    {
+                        i_d = DocumentFactory.PathInfo(path).Exists;
+                        if (!i_d)
+                        {
+                            i_f = DocumentFactory.DocumentInfo(path).Exists;
+                        }
                     }
                     // Nur speichern wenns entweder oder ist!!!!
                     if (i_d || i_f)
@@ -999,49 +1015,58 @@ public partial class CMSManager
                 XmlNode linkUri = doc.SelectSingleNode("config/_linkuri");
                 if (linkUri != null)
                 {
-                    string link = (_root + "/" + linkUri.InnerText).ToPlattformPath();
-                    string linkFilename = String.Empty;
-
-                    bool exists = false;
-
-                    if ((DocumentFactory.PathInfo(link)).Exists)
-                    {
-                        exists = true;
-                    }
-                    else if ((DocumentFactory.DocumentInfo(linkFilename = (link + ".xml").ToPlattformPath())).Exists)
-                    {
-                        exists = true;
-                    }
-                    else if ((DocumentFactory.DocumentInfo(linkFilename = (link + ".link").ToPlattformPath())).Exists)
-                    {
-                        exists = true;
-                    }
-
-                    if (!exists)
-                    {
-                        warnings.Add(new Warning(fi.FullName.Substring(_root.Length + 1).ToLower(), "Link zeigt ins Leere"));
-                    }
-
-                    var path = di.FullName.Substring(_root.Length + 1).ToLower();
-                    schemaNode = schemaNode ?? this.SchemaNode(path);
-                    if (!schemaNode.IsLinkTargetValid(path, linkUri.InnerText))
-                    {
-                        string targetName = String.Empty;
-                        if (!String.IsNullOrEmpty(linkFilename))
-                        {
-                            try
-                            {
-                                var targetDoc = new XmlDocumentWrapper();
-                                targetDoc.Load(linkFilename);
-                                targetName = targetDoc.SelectSingleNode("config/name")?.InnerText;
-                            }
-                            catch { }
-                        }
-                        warnings.Add(new Warning($"{path} => {linkUri.InnerText} ({targetName})", "Link ist ungültig") { Level = Warning.WaringLevel.Warning });
-                    }
+                    CollectLinkWarnings(warnings, di.FullName, fi.FullName, linkUri.InnerText, ref schemaNode);
                 }
             }
             catch { }
+        }
+    }
+
+    /// <summary>
+    /// Link checks (dangling link, invalid link target) for a link file.
+    /// Used by the warnings scan and by the export (deploy) => same messages
+    /// </summary>
+    private void CollectLinkWarnings(List<Warning> warnings, string directoryFullName, string fileFullName, string linkUri, ref XmlNode directorySchemaNode)
+    {
+        string link = (_root + "/" + linkUri).ToPlattformPath();
+        string linkFilename = String.Empty;
+
+        bool exists = false;
+
+        if ((DocumentFactory.PathInfo(link)).Exists)
+        {
+            exists = true;
+        }
+        else if ((DocumentFactory.DocumentInfo(linkFilename = (link + ".xml").ToPlattformPath())).Exists)
+        {
+            exists = true;
+        }
+        else if ((DocumentFactory.DocumentInfo(linkFilename = (link + ".link").ToPlattformPath())).Exists)
+        {
+            exists = true;
+        }
+
+        if (!exists)
+        {
+            warnings.Add(new Warning(fileFullName.Substring(_root.Length + 1).ToLower(), "Link zeigt ins Leere"));
+        }
+
+        var path = directoryFullName.Substring(_root.Length + 1).ToLower();
+        directorySchemaNode = directorySchemaNode ?? this.SchemaNode(path);
+        if (!directorySchemaNode.IsLinkTargetValid(path, linkUri))
+        {
+            string targetName = String.Empty;
+            if (!String.IsNullOrEmpty(linkFilename))
+            {
+                try
+                {
+                    var targetDoc = new XmlDocumentWrapper();
+                    targetDoc.Load(linkFilename);
+                    targetName = targetDoc.SelectSingleNode("config/name")?.InnerText;
+                }
+                catch { }
+            }
+            warnings.Add(new Warning($"{path} => {linkUri} ({targetName})", "Link ist ungültig") { Level = Warning.WaringLevel.Warning });
         }
     }
 
@@ -1686,14 +1711,39 @@ public partial class CMSManager
     async public Task<XmlDocument> Export(CmsItemTransistantInjectionServicePack servicePack,
                                           bool ignoreAuthentification = false,
                                           ParseEncryptedValue onParseBeforeEncryptValue = null,
-                                          IEnumerable<string> serviceIdsFilter = null)
+                                          IEnumerable<string> serviceIdsFilter = null,
+                                          List<Warning> warnings = null,
+                                          ExportStatistics statistics = null)
     {
         _isDir = new Dictionary<string, bool>();
 
         HashSet<string> serviceIdsFilterSet = BuildServiceIdsFilterSet(serviceIdsFilter);
 
+        var context = new ExportContext(warnings, statistics ?? new ExportStatistics());
+        context.Statistics.Total.Start();
+        _exportListings = new Dictionary<string, FileSystemDirectoryListing>();
+        try
+        {
+            return await ExportInternal(servicePack, ignoreAuthentification, onParseBeforeEncryptValue, serviceIdsFilterSet, context);
+        }
+        finally
+        {
+            _exportListings = null;
+            context.Statistics.Total.Stop();
+        }
+    }
+
+    // listings of the folders already enumerated by the running export (key: see SchemaNode)
+    private Dictionary<string, FileSystemDirectoryListing> _exportListings = null;
+
+    async private Task<XmlDocument> ExportInternal(CmsItemTransistantInjectionServicePack servicePack,
+                                                   bool ignoreAuthentification,
+                                                   ParseEncryptedValue onParseBeforeEncryptValue,
+                                                   HashSet<string> serviceIdsFilterSet,
+                                                   ExportContext context)
+    {
         List<ExportAuthNode> authNodes = new List<ExportAuthNode>();
-        ExportAppendAcl(this.Root + @"\root.acl", authNodes);
+        ExportAppendAcl(_root + @"/root.acl", authNodes);
 
         var xmlStream = (XmlFileStreamDocument)DocumentFactory.New(String.Empty/*this.ConnectionString*/);  // DoTo: soll auch für andere Typen funktioneren -> Hardcoded Casting
 
@@ -1702,7 +1752,7 @@ public partial class CMSManager
             xmlStream.OnParseBeforeEncryptValue += onParseBeforeEncryptValue;
         }
 
-        ExportDirectory(servicePack, xmlStream, this.Root, authNodes, serviceIdsFilterSet);
+        ExportDirectory(servicePack, xmlStream, this.Root, authNodes, serviceIdsFilterSet, context, null);
 
         #region Authentification
 
@@ -1731,12 +1781,14 @@ public partial class CMSManager
 
         if (authNodes.Count > 0 && xmlStream.ParentXmlNode != null)
         {
+            context.Statistics.Acl.Start();
             XmlNode aclNode = xmlStream.ParentXmlNode.OwnerDocument.CreateElement("acl");
             xmlStream.ParentXmlNode.AppendChild(aclNode);
             foreach (ExportAuthNode exportAuthNode in authNodes)
             {
                 await exportAuthNode.Save(aclNode);
             }
+            context.Statistics.Acl.Stop();
         }
 
         #endregion
@@ -1745,7 +1797,19 @@ public partial class CMSManager
     }
 
     public void ExportDirectory(CmsItemTransistantInjectionServicePack servicePack, IStreamDocument xmlStream, IPathInfo parent, List<ExportAuthNode> authNodes, HashSet<string> serviceIdsFilter = null)
+        => ExportDirectory(servicePack, xmlStream, parent, authNodes, serviceIdsFilter, new ExportContext(null, new ExportStatistics()), null);
+
+    private void ExportDirectory(CmsItemTransistantInjectionServicePack servicePack,
+                                 IStreamDocument xmlStream,
+                                 IPathInfo parent,
+                                 List<ExportAuthNode> authNodes,
+                                 HashSet<string> serviceIdsFilter,
+                                 ExportContext context,
+                                 FileSystemDirectoryListing listing)
     {
+        var stats = context.Statistics;
+        stats.Directories++;
+
         string relPath;
 
         if (parent.FullName.ToLower().EqualPath(_root.ToLower()))
@@ -1757,22 +1821,44 @@ public partial class CMSManager
             relPath = parent.FullName.Substring(_root.Length + 1, parent.FullName.Length - _root.Length - 1).ToLower();
         }
 
-        ItemOrder itemOrder = new ItemOrder(parent.FullName, true);
+        stats.FileSystem.Start();
+        listing = listing ?? TryCreateListing(parent);
+        if (listing != null && _exportListings != null)
+        {
+            // same key as the path built in SchemaNode()
+            _exportListings[_root + String.Concat(relPath.Replace(@"\", "/").Split('/').Where(p => p.Length > 0).Select(p => "/" + p))] = listing;
+        }
+        ItemOrder itemOrder = listing != null
+            ? new ItemOrder(parent.FullName, listing)
+            : new ItemOrder(parent.FullName, true);
+        stats.FileSystem.Stop();
+
+        XmlNode directorySchemaNode = null;  // for link warnings
+
         foreach (string item in itemOrder.Items)
         {
+            bool canUseListing = listing != null && FileSystemDirectoryListing.CanAnswer(item);
+
+            stats.FileSystem.Start();
             var fi = DocumentFactory.DocumentInfo((parent.FullName + @"/" + item).ToPlattformPath());
-            if (fi.Exists)
+            bool fileExists = canUseListing ? listing.ContainsFile(item) : fi.Exists;
+            stats.FileSystem.Stop();
+
+            if (fileExists)
             {
                 string title = fi.Name.Substring(0, fi.Name.Length - fi.Extension.Length).ToLower();
                 string itemName = title;
 
+                stats.Acl.Start();
+                string aclName = fi.Name.Substring(0, fi.Name.Length - fi.Extension.Length) + ".acl";
                 string aclFilename = fi.FullName.Substring(0, fi.FullName.Length - fi.Extension.Length) + ".acl";
-                ExportAppendAcl(aclFilename, authNodes);
+                ExportAppendAcl(aclFilename, aclName, authNodes, canUseListing ? listing : null);
 
-                foreach (var aclPropFile in parent.GetFiles(title + "@*.acl"))
+                foreach (var aclPropFile in GetPropertyAclFiles(parent, title, listing))
                 {
-                    ExportAppendAcl(aclPropFile.FullName, authNodes, true);
+                    ExportAppendAcl(aclPropFile, authNodes, true);
                 }
+                stats.Acl.Stop();
 
                 if (itemName.StartsWith(".") &&
                     itemName.ToLower() != ".linktemplate")
@@ -1818,32 +1904,59 @@ public partial class CMSManager
                 }
                 if (obj != null)
                 {
+                    stats.Nodes++;
+
+                    stats.Read.Start();
                     obj.Load(DocumentFactory.Open(fi.FullName));
+                    stats.Read.Stop();
+
                     if (obj is Link)
                     {
                         Link lnk = (Link)obj;
                         title = lnk.LinkUri;
+
+                        if (context.Warnings != null && !String.IsNullOrEmpty(lnk.LinkUri))
+                        {
+                            stats.Links.Start();
+                            try
+                            {
+                                CollectLinkWarnings(context.Warnings, parent.FullName, fi.FullName, lnk.LinkUri, ref directorySchemaNode);
+                            }
+                            catch { }
+                            stats.Links.Stop();
+                        }
                     }
+
+                    stats.Build.Start();
                     if (!xmlStream.SetParent(relPath + "/" + itemName))
                     {
                         throw new Exception("Can't generate Xml-Node: " + relPath);
                     }
 
                     obj.Save(xmlStream);
+                    stats.Build.Stop();
                 }
             }
             else
             {
+                stats.FileSystem.Start();
                 var di = DocumentFactory.PathInfo((parent.FullName + @"/" + item).ToPlattformPath());
+                stats.FileSystem.Stop();
 
+                stats.Acl.Start();
                 string aclFilename = di.FullName + ".acl";
-                ExportAppendAcl(aclFilename, authNodes);
-                foreach (var aclPropFile in parent.GetFiles(item + "@*.acl"))
+                ExportAppendAcl(aclFilename, item + ".acl", authNodes, canUseListing ? listing : null);
+                foreach (var aclPropFile in GetPropertyAclFiles(parent, item, listing))
                 {
-                    ExportAppendAcl(aclPropFile.FullName, authNodes, true);
+                    ExportAppendAcl(aclPropFile, authNodes, true);
                 }
+                stats.Acl.Stop();
 
-                if (di.Exists)
+                stats.FileSystem.Start();
+                bool directoryExists = canUseListing ? listing.ContainsDirectory(item) : di.Exists;
+                stats.FileSystem.Stop();
+
+                if (directoryExists)
                 {
                     string title = di.Name.ToLower();
                     string itemName = title;
@@ -1868,8 +1981,13 @@ public partial class CMSManager
                     //if (schemaNode.Attributes["itemname"] != null)
                     //    itemName = schemaNode.Attributes["itemname"].Value;
 
+                    stats.FileSystem.Start();
+                    var childListing = TryCreateListing(di);
                     var general = DocumentFactory.DocumentInfo((di.FullName + @"/.general.xml").ToPlattformPath());
-                    if (general.Exists)
+                    bool generalExists = childListing != null ? childListing.ContainsFile(".general.xml") : general.Exists;
+                    stats.FileSystem.Stop();
+
+                    if (generalExists)
                     {
 
                         if (OnExportNode != null)
@@ -1882,19 +2000,73 @@ public partial class CMSManager
                         IPersistable obj = Helper.GetRelInstance(assembly, instance, servicePack) as IPersistable;
                         if (obj != null)
                         {
+                            stats.Nodes++;
+
                             if (!xmlStream.SetParent(relPath + "/" + itemName))
                             {
                                 throw new Exception("Can't generate Xml-Node: " + relPath);
                             }
 
+                            stats.Read.Start();
                             obj.Load(DocumentFactory.Open(general.FullName));
+                            stats.Read.Stop();
+
+                            stats.Build.Start();
                             obj.Save(xmlStream);
+                            stats.Build.Stop();
                         }
                     }
-                    ExportDirectory(servicePack, xmlStream, di, authNodes, serviceIdsFilter);
+                    ExportDirectory(servicePack, xmlStream, di, authNodes, serviceIdsFilter, context, childListing);
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Directory listings are only used for (plain) file system trees, other storages (MongoDB, ...)
+    /// keep using IPathInfo/IDocumentInfo
+    /// </summary>
+    private static FileSystemDirectoryListing TryCreateListing(IPathInfo pathInfo)
+    {
+        if (pathInfo?.GetType() != typeof(FileSystemPathInfo) ||
+            DocumentFactory.DocumentInfo(pathInfo.FullName)?.GetType() != typeof(FileSystemDocumentInfo))
+        {
+            return null;
+        }
+
+        try
+        {
+            return new FileSystemDirectoryListing(pathInfo.FullName);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    // {title}@*.acl files of a node (acls of single properties)
+    private static IEnumerable<string> GetPropertyAclFiles(IPathInfo parent, string title, FileSystemDirectoryListing listing)
+    {
+        if (listing != null && FileSystemDirectoryListing.CanAnswer(title))
+        {
+            return listing.FilesMatching(title + "@", ".acl")
+                          .Select(name => Path.Combine(listing.FullName, name))
+                          .ToArray();
+        }
+
+        return parent.GetFiles(title + "@*.acl").Select(f => f.FullName).ToArray();
+    }
+
+    private void ExportAppendAcl(string aclFilename, string aclName, List<ExportAuthNode> authNodes, FileSystemDirectoryListing listing)
+    {
+        if (listing != null &&
+            FileSystemDirectoryListing.CanAnswer(aclName) &&
+            !listing.ContainsFile(aclName))
+        {
+            return;
+        }
+
+        ExportAppendAcl(aclFilename, authNodes, false);
     }
 
     public void ExportAppendAcl(string aclFilename, List<ExportAuthNode> authNodes)
