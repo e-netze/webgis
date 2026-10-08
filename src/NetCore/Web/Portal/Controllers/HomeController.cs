@@ -15,7 +15,9 @@ using E.Standard.Security.App.Exceptions;
 using E.Standard.Security.App.Extensions;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
+using E.Standard.CMS.Core.Branches;
 using E.Standard.WebGIS.Core;
+using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
 
 using Microsoft.AspNetCore.Http;
@@ -151,7 +153,7 @@ public class HomeController : PortalBaseController
                 HtmlMetaTags = portal.HtmlMetaTags,
 
                 ConfigBranches = isMapAuthor || isPortalPageOwner
-                    ? await _api.GetBranches(HttpContext.Request)
+                    ? (await _api.GetBranches(HttpContext.Request)).WithBranchTokens(Crypto)
                     : Array.Empty<E.Standard.WebGIS.Core.Models.ApiBranchDTO>()
             });
         }
@@ -197,30 +199,68 @@ public class HomeController : PortalBaseController
             );
     }
 
-    // deployed cms branches (api rest/branches); only for map authors and the portal page owner
+    // deployed cms branches (api rest/branches) incl. branch tokens; only for map authors and the portal page owner
     async public Task<IActionResult> Branches(string id)
     {
         try
         {
-            var portalUser = CurrentPortalUser();
-            if (portalUser == null || portalUser.IsAnonymous)
-            {
-                throw new NotAuthorizedException();
-            }
+            await AuthorizeBranchUser(id);
 
-            var portal = await _api.GetApiPortalPageAsync(this.HttpContext, id);
-            if (portal == null ||
-                !(IsAuthorizedPortalMapAuthor(portal, portalUser) ||
-                  portalUser.Username.Equals(portal.Subscriber, StringComparison.OrdinalIgnoreCase)))
-            {
-                throw new NotAuthorizedException();
-            }
-
-            return JsonObject(await _api.GetBranches(HttpContext.Request));
+            return JsonObject((await _api.GetBranches(HttpContext.Request)).WithBranchTokens(Crypto));
         }
         catch (Exception ex)
         {
             return JsonObject(new { success = false, exception = ex is NotAuthorizedException ? "not authorized" : ex.Message });
+        }
+    }
+
+    // temporary branch link token for users, that are not allowed to select a branch (hours: 1 or 24)
+    async public Task<IActionResult> BranchLink(string id, string branch, int hours = 24)
+    {
+        try
+        {
+            await AuthorizeBranchUser(id);
+
+            if (hours != 1 && hours != 24)
+            {
+                throw new ArgumentException("hours: 1 or 24");
+            }
+
+            if (String.IsNullOrEmpty(branch) ||
+                !(await _api.GetBranches(HttpContext.Request)).Any(b => !b.IsMain && b.Encoded == branch))
+            {
+                throw new ArgumentException("Unknown branch");
+            }
+
+            var expires = DateTime.UtcNow.AddHours(hours);
+
+            return JsonObject(new
+            {
+                success = true,
+                token = CmsBranchTokens.Create(Crypto, branch, expires),
+                expires = expires
+            });
+        }
+        catch (Exception ex)
+        {
+            return JsonObject(new { success = false, exception = ex is NotAuthorizedException ? "not authorized" : ex.Message });
+        }
+    }
+
+    private async Task AuthorizeBranchUser(string id)
+    {
+        var portalUser = CurrentPortalUser();
+        if (portalUser == null || portalUser.IsAnonymous)
+        {
+            throw new NotAuthorizedException();
+        }
+
+        var portal = await _api.GetApiPortalPageAsync(this.HttpContext, id);
+        if (portal == null ||
+            !(IsAuthorizedPortalMapAuthor(portal, portalUser) ||
+              portalUser.Username.Equals(portal.Subscriber, StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new NotAuthorizedException();
         }
     }
 

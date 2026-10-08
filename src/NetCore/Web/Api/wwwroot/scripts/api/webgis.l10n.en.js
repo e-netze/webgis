@@ -388,5 +388,12 @@
     "branch-back-to-main": "Back to main",
     "branch-not-found": "The selected CMS branch no longer exists. Switched back to main.",
     "branch-active-badge-title": "Map is loaded with a CMS branch. Click to switch.",
-    "branch-cms-count": "CMS"
+    "branch-cms-count": "CMS",
+    "branch-active": "Map is loaded with a CMS branch (branch link).",
+    "branch-link-1h": "Link 1 h",
+    "branch-link-24h": "Link 1 day",
+    "branch-link-title": "Copy a temporary link to this branch for users without author rights",
+    "branch-link-copied": "The link has been copied to the clipboard:",
+    "branch-link-error": "The branch link could not be created",
+    "branch-link-expires": "valid until"
 };

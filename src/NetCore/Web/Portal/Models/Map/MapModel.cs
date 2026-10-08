@@ -23,6 +23,9 @@ public class MapModel
 
     public bool CanSelectBranch => Branches?.Length > 1;
 
+    // validated branch link (?branch=enc:...); also for users, that are not allowed to select a branch
+    public BranchLinkModel BranchLink { get; set; }
+
     public string ProjectName { get; set; }
 
     public MapParameters Parameters { get; set; }

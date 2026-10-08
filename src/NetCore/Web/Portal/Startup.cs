@@ -493,6 +493,12 @@ public class Startup
         );
 
         app.MapControllerRoute(
+            "page-branch-link",
+            "{id}/branches/link",
+            new { controller = "Home", action = "BranchLink" }
+        );
+
+        app.MapControllerRoute(
             "page-branches",
             "{id}/branches",
             new { controller = "Home", action = "Branches" }

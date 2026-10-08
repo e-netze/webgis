@@ -427,7 +427,7 @@
                     success: function (result) {
                         if (result.success) {
                             webgis.hmac = new webgis.hmacController(result);
-                            webgis.hmac.setCurrentBranch(webgis.localStorage.get('currentBranch'));
+                            webgis.hmac.setCurrentBranch(webgis.localStorage.get('currentBranch'), webgis.localStorage.get('currentBranchName'));
                         }
                         else {
                             webgis._initialError = result.exception;
@@ -442,7 +442,7 @@
                 webgis._initialError = 'Unknown client';
             }
         } else {
-            webgis.hmac.setCurrentBranch(webgis.localStorage.get('currentBranch'));
+            webgis.hmac.setCurrentBranch(webgis.localStorage.get('currentBranch'), webgis.localStorage.get('currentBranchName'));
         }
 
         if (!webgis._initialError) {

@@ -816,3 +816,27 @@ MapCollection new
         opacity: .7;
         margin-top: 2px;
     }
+
+    .webgis-branch-badge.readonly {
+        cursor: default;
+    }
+
+    .webgis-branch-select-item .links {
+        float: right;
+        margin-left: 8px;
+    }
+
+        .webgis-branch-select-item .links button {
+            margin-left: 4px;
+            padding: 2px 6px;
+            font-size: 11px;
+            border: 1px solid #aaa;
+            border-radius: 3px;
+            background: #fff;
+            cursor: pointer;
+        }
+
+            .webgis-branch-select-item .links button:hover {
+                background: #e8a317;
+                color: #fff;
+            }

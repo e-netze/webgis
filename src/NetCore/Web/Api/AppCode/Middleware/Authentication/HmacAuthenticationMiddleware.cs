@@ -47,7 +47,7 @@ public class HmacAuthenticationMiddleware
 
                 if (ui != null)
                 {
-                    if (ui.IsAnonymous == false || ui.HasCmsRoles())  // Anonymous user kann in Cloud CMS Rollen haben => übernehmen
+                    if (ui.IsAnonymous == false || ui.HasCmsRoles() || ui.RequestsBranch())  // Anonymous user kann in Cloud CMS Rollen haben oder einen Branch (Branch-Link) anfordern => übernehmen
                     {
                         if (httpContext.User.ApplyDataLinqHostAuthentication(endpointReflection, HostAuthenticationTypes.DataLinqEngine))
                         {

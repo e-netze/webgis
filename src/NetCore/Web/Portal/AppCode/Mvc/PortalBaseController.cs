@@ -48,6 +48,8 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
     private readonly IEnumerable<ICustomPortalSecurityService> _securityServices;
     private readonly ICryptoService _crypto;
 
+    protected ICryptoService Crypto => _crypto;
+
     protected PortalBaseController(ILogger logger,
                                    UrlHelperService urlHelper,
                                    IOptions<ApplicationSecurityConfig> appSecurityConfig,

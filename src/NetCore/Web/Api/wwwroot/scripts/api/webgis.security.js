@@ -1,7 +1,8 @@
 ﻿webgis.hmacController = function (keys) {
     var _keys = keys;
     var _favtaskname = null;
-    var _currentBranch = null;
+    var _currentBranch = null;       // encrypted branch token (enc:...), sent as hmac_br
+    var _currentBranchName = null;   // encoded branch name (CmsBranches.Encode), only for display
 
     if (_keys && _keys.ticks) {
         _keys.ticks_diff = _keys.ticks - new Date().getTime();
@@ -148,8 +149,9 @@
             callback();
         }
     };
-    this.setCurrentBranch = function (branch) { _currentBranch = branch || null; };
+    this.setCurrentBranch = function (branch, name) { _currentBranch = branch || null; _currentBranchName = _currentBranch ? (name || null) : null; };
     this.getCurrentBranch = function () { return _currentBranch || ''; };
+    this.getCurrentBranchName = function () { return _currentBranchName || ''; };
 };
 
 webgis.security = {

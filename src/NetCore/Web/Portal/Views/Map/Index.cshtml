@@ -191,9 +191,10 @@
             var calcCrs=@Model.CalcCrs;
             var portalUrl='@Model.PortalUrl';
 
-            // cms branch: only map authors/portal owner may use a branch; must be resolved before the first api request
+            // cms branch: map authors/portal owner may select a branch, other users only via a (validated) branch link; must be resolved before the first api request
             var mapBranches = @Html.Raw(JSerializer.Serialize(Model.Branches ?? new E.Standard.WebGIS.Core.Models.ApiBranchDTO[0]).Replace("</", "<\\/"));
-            var mapBranchWasReset = !webgisPortalBranches.prepare(@(Model.CanSelectBranch.ToString().ToLower()), mapBranches);
+            var mapBranchLink = @Html.Raw(Model.BranchLink != null ? JSerializer.Serialize(Model.BranchLink).Replace("</", "<\\/") : "null");
+            var mapBranchWasReset = !webgisPortalBranches.prepare(@(Model.CanSelectBranch.ToString().ToLower()), mapBranches, mapBranchLink);
 
             var hObj = @Html.Raw(Model.HMACObject);
             if(typeof hObj==='string') {
@@ -304,12 +305,14 @@
                 queryMaster: @(Model.QueryMaster.ToString().ToLower())
             });
 
-            @if (Model.CanSelectBranch)
+            @if (Model.CanSelectBranch || Model.BranchLink != null)
             {
                 <text>
             $(function () {
                 webgisPortalBranches.initViewer({
+                    canSelect: @(Model.CanSelectBranch.ToString().ToLower()),
                     branches: mapBranches,
+                    link: mapBranchLink,
                     wasReset: mapBranchWasReset,
                     url: portalUrl + '/' + mapPortalPage + '/branches'
                 });

@@ -9,6 +9,7 @@ using Api.Core.AppCode.Extensions;
 
 using E.Standard.Caching.Services;
 using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Branches;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Security.App.Exceptions;
 using E.Standard.Security.Cryptography.Abstractions;
@@ -55,8 +56,9 @@ public class HmacAuthenticationService
                 string hmacData = nvc["hmac_data"]!;
                 long ticks = long.Parse(nvc["hmac_ts"]!);
                 string task = nvc["hmac_ft"]!;
+                // only encrypted branch tokens (enc:...) are accepted, never clear branch names
                 string branch = _apiConfig.AllowBranches
-                    ? nvc["hmac_br"]!
+                    ? CmsBranchTokens.ResolveEncodedBranch(_crypto, nvc["hmac_br"]!)!
                     : null!;
 
                 DateTime requestTime = (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds(ticks);
@@ -92,6 +94,11 @@ public class HmacAuthenticationService
                                                            publicKey,
                                                            task: task,
                                                            branch: branch);
+                }
+                else if (!String.IsNullOrEmpty(branch))
+                {
+                    // anonymous user with a branch link
+                    ui = new CmsDocument.UserIdentification(String.Empty, null, null, null, publicKey, task: task, branch: branch);
                 }
             }
             else  // DoTo: sollte das auch in eine eigene Middleware??

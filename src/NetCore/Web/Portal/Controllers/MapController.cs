@@ -12,7 +12,9 @@ using E.Standard.Localization.Services;
 using E.Standard.Security.App.Exceptions;
 using E.Standard.Security.App.Json;
 using E.Standard.Security.Cryptography.Abstractions;
+using E.Standard.CMS.Core.Branches;
 using E.Standard.WebGIS.Core;
+using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebGIS.SubscriberDatabase.Services;
 
 using Microsoft.AspNetCore.Http;
@@ -172,8 +174,55 @@ public class MapController : PortalBaseController
             bool mayUseBranches = !portalUser.IsAnonymous &&
                                   (isPortalMapAuthor || portalUser.Username.Equals(portalPage.Subscriber, StringComparison.OrdinalIgnoreCase));
             var branches = mayUseBranches
-                ? await _api.GetBranches(HttpContext.Request)
-                : Array.Empty<E.Standard.WebGIS.Core.Models.ApiBranchDTO>();
+                ? (await _api.GetBranches(HttpContext.Request)).WithBranchTokens(Crypto)
+                : Array.Empty<ApiBranchDTO>();
+
+            #region Branch link (?branch=enc:...)
+
+            BranchLinkModel branchLink = null;
+            string branchParameter = Request.Query["branch"].ToString().Trim();
+            if (CmsBranchTokens.IsToken(branchParameter))
+            {
+                string errorMessage = null;
+                if (!CmsBranchTokens.TryRead(Crypto, branchParameter, out string linkBranch, out DateTime? linkExpires))
+                {
+                    errorMessage = "Der Branch-Link für diesen Kartenaufruf ist ungültig.";
+                }
+                else if (CmsBranchTokens.IsExpired(linkExpires))
+                {
+                    errorMessage = $"Der Branch-Link für diesen Kartenaufruf ist abgelaufen (gültig bis {linkExpires.Value.ToLocalTime():dd.MM.yyyy HH:mm}).";
+                }
+                else
+                {
+                    var deployedBranch = (mayUseBranches ? branches : await _api.GetBranches(HttpContext.Request))
+                                            .FirstOrDefault(b => !b.IsMain && b.Encoded == linkBranch);
+                    if (deployedBranch == null)
+                    {
+                        errorMessage = $"Der CMS-Branch '{CmsBranches.TryDecode(linkBranch)}' dieses Branch-Links ist nicht (mehr) verfügbar.";
+                    }
+                    else
+                    {
+                        branchLink = new BranchLinkModel()
+                        {
+                            Token = branchParameter,
+                            Encoded = deployedBranch.Encoded,
+                            Name = deployedBranch.Name,
+                            Expires = linkExpires
+                        };
+                    }
+                }
+
+                if (errorMessage != null)
+                {
+                    return View("_branchLinkError", new BranchLinkErrorModel()
+                    {
+                        Message = errorMessage,
+                        MapUrl = $"{Request.PathBase}{Request.Path}{QueryString.Create(Request.Query.Where(q => !q.Key.Equals("branch", StringComparison.OrdinalIgnoreCase)))}"
+                    });
+                }
+            }
+
+            #endregion
 
             return ViewResult(new MapModel()
             {
@@ -184,6 +233,7 @@ public class MapController : PortalBaseController
                 MapName = map,
                 IsPortalMapAuthor = isPortalMapAuthor,
                 Branches = branches,
+                BranchLink = branchLink,
                 Description = await GetMapDescription(id, category, map, portalUser.Username == portalPage.Subscriber),
                 ProjectName = Request.Query["project"],
                 CalcCrs = _config.ConfigCalcCrs(),

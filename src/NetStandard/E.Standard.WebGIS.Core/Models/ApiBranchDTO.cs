@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
 
+using E.Standard.CMS.Core.Branches;
+using E.Standard.Security.Cryptography.Abstractions;
+
 using Newtonsoft.Json;
 
 namespace E.Standard.WebGIS.Core.Models;
@@ -32,6 +35,11 @@ public class ApiBranchDTO
     [System.Text.Json.Serialization.JsonPropertyName("cms_count")]
     public int CmsCount { get; set; }
 
+    // encrypted branch token (CmsBranchTokens), filled by the portal for map authors; sent to the api as hmac_br
+    [JsonProperty(PropertyName = "token", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("token")]
+    public string Token { get; set; }
+
     [JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
     public bool IsMain => String.IsNullOrEmpty(Encoded);
@@ -46,5 +54,21 @@ public class ApiBranchDTO
             return String.Join(" · ", new[] { User, Date?.ToLocalTime().ToString("yyyy-MM-dd HH:mm"), commit }
                                           .Where(s => !String.IsNullOrEmpty(s)));
         }
+    }
+}
+
+static public class ApiBranchDTOExtensions
+{
+    // adds a branch token without expiration (map authors)
+    static public ApiBranchDTO[] WithBranchTokens(this ApiBranchDTO[] branches, ICryptoService crypto)
+    {
+        foreach (var branch in branches ?? Array.Empty<ApiBranchDTO>())
+        {
+            branch.Token = branch.IsMain || !CmsBranches.IsValidEncoded(branch.Encoded)
+                ? null
+                : CmsBranchTokens.Create(crypto, branch.Encoded);
+        }
+
+        return branches ?? Array.Empty<ApiBranchDTO>();
     }
 }

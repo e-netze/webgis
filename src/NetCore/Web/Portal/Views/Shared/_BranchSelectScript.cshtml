@@ -1,6 +1,6 @@
 ﻿@using E.Standard.Json
 @model Portal.Core.Models.Portal.PortalModel
-@* must run before the first api request: resets the branch for users, that are not allowed to select a branch *@
+@* must run before the first api request: resets the branch for users, that are not allowed to select a branch (branch links ?branch=enc:... are only supported by the map viewer) *@
 <script type="text/javascript">
     (function () {
         var branches = @Html.Raw(JSerializer.Serialize(Model.ConfigBranches ?? new E.Standard.WebGIS.Core.Models.ApiBranchDTO[0]).Replace("</", "<\\/"));
@@ -12,9 +12,9 @@
                 return;
             }
 
-            $branchSelect.val(webgisPortalBranches.current());
+            $branchSelect.val(webgisPortalBranches.currentEncoded());
             $branchSelect.on('change', function () {
-                webgisPortalBranches.select($branchSelect.val());
+                webgisPortalBranches.select(webgisPortalBranches.find(branches, $branchSelect.val()));
             });
 
             if (wasReset) {

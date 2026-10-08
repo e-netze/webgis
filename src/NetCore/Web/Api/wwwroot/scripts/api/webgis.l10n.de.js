@@ -388,5 +388,12 @@
     "branch-back-to-main": "Zurück zu main",
     "branch-not-found": "Der gewählte CMS-Branch existiert nicht mehr. Es wird wieder main verwendet.",
     "branch-active-badge-title": "Karte wird mit einem CMS-Branch geladen. Klicken zum Wechseln.",
-    "branch-cms-count": "CMS"
+    "branch-cms-count": "CMS",
+    "branch-active": "Karte wird mit einem CMS-Branch geladen (Branch-Link).",
+    "branch-link-1h": "Link 1 h",
+    "branch-link-24h": "Link 1 Tag",
+    "branch-link-title": "Temporären Link auf diesen Branch für Benutzer ohne Autorenrechte kopieren",
+    "branch-link-copied": "Der Link wurde in die Zwischenablage kopiert:",
+    "branch-link-error": "Der Branch-Link konnte nicht erstellt werden",
+    "branch-link-expires": "gültig bis"
 };

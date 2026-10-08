@@ -1,9 +1,11 @@
 ﻿// cms branch selection for portal pages and the map viewer
-// the selected (encoded) branch is stored in localStorage 'currentBranch' and sent with every api request (hmac_br)
+// localStorage 'currentBranch': encrypted branch token (enc:...), sent with every api request (hmac_br)
+// localStorage 'currentBranchName': encoded branch name (CmsBranches.Encode), only for display and to find the branch in the list
+// the api only accepts branch tokens: map authors get tokens without expiration (branch list), other users only via a temporary branch link (?branch=enc:...)
 (function () {
     "use strict";
 
-    var storageKey = 'currentBranch';
+    var storageKey = 'currentBranch', storageNameKey = 'currentBranchName';
 
     var l10n = function (key) {
         return window.webgis && webgis.l10n ? webgis.l10n.get(key) : key;
@@ -13,12 +15,27 @@
         return $('<div>').text(s == null ? '' : String(s)).html();
     };
 
+    var alertMessage = function (message, type) {
+        if (window.webgis && webgis.alert && $.fn.webgis_modal) {
+            webgis.alert(message, type || 'info');
+        } else {
+            window.alert(message);
+        }
+    };
+
     var self = window.webgisPortalBranches = {
         current: function () {
             return webgis.localStorage.get(storageKey) || '';
         },
-        set: function (encoded) {
-            webgis.localStorage.set(storageKey, encoded || '');
+        currentEncoded: function () {
+            return self.current() ? (webgis.localStorage.get(storageNameKey) || '') : '';
+        },
+        set: function (token, encoded) {
+            webgis.localStorage.set(storageKey, token || '');
+            webgis.localStorage.set(storageNameKey, token ? (encoded || '') : '');
+        },
+        isToken: function (value) {
+            return !!value && value.indexOf('enc:') === 0;
         },
 
         // same as CmsBranches.Encode (C#): a-z, 0-9, '-' are kept, everything else => _xx (utf-8 hex)
@@ -38,9 +55,6 @@
             } catch (e) {
                 return encoded;
             }
-        },
-        isValidEncoded: function (encoded) {
-            return !!encoded && /^([a-z0-9-]|_[0-9a-f]{2})+$/.test(encoded);
         },
 
         find: function (branches, encoded) {
@@ -65,30 +79,44 @@
         },
 
         // must run synchronously before the first api request (webgis.init)
+        // link: branch link (?branch=enc:...), validated by the server; null otherwise
         // returns false, if the stored branch was invalid and has been reset to main
-        prepare: function (canSelect, branches) {
+        prepare: function (canSelect, branches, link) {
+            if (link && link.token) {
+                self.set(link.token, link.encoded);
+                return true;
+            }
+
             if (!canSelect) {
+                // users without author rights may only use a branch with a branch link
                 self.set('');
                 return true;
             }
 
             var param = new URLSearchParams(window.location.search).get('branch');
-            if (param !== null) {
+            if (param !== null && !self.isToken(param)) {
                 param = param.trim();
                 if (!param || param === 'main') {
                     self.set('');
-                } else if (self.find(branches, param)) {
-                    self.set(param);
                 } else {
-                    // branch name in clear text
-                    self.set(self.encode(param));
+                    // encoded or clear branch name
+                    var branch = self.find(branches, param) || self.find(branches, self.encode(param));
+                    if (!branch || !branch.token) {
+                        self.set('');
+                        return false;
+                    }
+                    self.set(branch.token, branch.encoded);
                 }
             }
 
-            var current = self.current();
-            if (current && branches && !self.find(branches, current)) {
-                self.set('');
-                return false;
+            if (self.current()) {
+                // always use the current token from the branch list (no expiration); older versions stored the encoded name instead of a token
+                var current = self.find(branches, self.isToken(self.current()) ? self.currentEncoded() : self.current());
+                if (!current || !current.encoded || !current.token) {
+                    self.set('');
+                    return false;
+                }
+                self.set(current.token, current.encoded);
             }
 
             return true;
@@ -109,9 +137,12 @@
             });
         },
 
-        select: function (encoded) {
-            if ((encoded || '') === self.current()) return;
-            self.set(encoded);
+        // branch: item of the branch list (null or main => main)
+        select: function (branch) {
+            var encoded = branch ? branch.encoded || '' : '';
+            if (encoded && !branch.token) return;
+
+            self.set(encoded ? branch.token : '', encoded);
 
             // remove a ?branch= parameter, otherwise it would overrule the selection on reload
             var url = new URL(window.location.href);
@@ -123,13 +154,54 @@
             }
         },
 
+        // temporary link for users without author rights: map url + ?branch=enc:...
+        copyLink: function (linkUrl, branch, hours) {
+            $.ajax({
+                url: linkUrl,
+                type: 'get',
+                dataType: 'json',
+                cache: false,
+                data: { branch: branch.encoded, hours: hours },
+                success: function (result) {
+                    if (!result || !result.success || !result.token) {
+                        alertMessage(l10n('branch-link-error') + (result && result.exception ? ': ' + result.exception : ''), 'error');
+                        return;
+                    }
+
+                    var url = new URL(window.location.href);
+                    url.searchParams.delete('branch');
+                    url.searchParams.set('branch', result.token);
+                    var link = url.toString();
+
+                    var expires = new Date(result.expires);
+                    var message = l10n('branch-link-copied') + ' ' + self.displayName(branch) +
+                        (isNaN(expires.getTime()) ? '' : ' (' + l10n('branch-link-expires') + ' ' + expires.toLocaleString() + ')');
+
+                    var fallback = function () {
+                        window.prompt(message, link);
+                    };
+
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(link).then(function () {
+                            alertMessage(message + '\n\n' + link, 'info');
+                        }, fallback);
+                    } else {
+                        fallback();
+                    }
+                },
+                error: function () {
+                    alertMessage(l10n('branch-link-error'), 'error');
+                }
+            });
+        },
+
         showSelectDialog: function (branches, url) {
             var render = function ($content, list) {
                 $content.empty();
                 $('<p>').addClass('webgis-branch-select-info').text(l10n('branch-select-info')).appendTo($content);
 
                 var $list = $('<ul>').addClass('webgis-branch-select-list').appendTo($content);
-                var current = self.current();
+                var current = self.currentEncoded();
 
                 $.each(list || [], function (i, branch) {
                     var encoded = branch.encoded || '';
@@ -137,8 +209,25 @@
                         .addClass('webgis-branch-select-item' + (encoded === current ? ' selected' : '') + (encoded ? '' : ' main'))
                         .appendTo($list)
                         .click(function () {
-                            self.select(encoded);
+                            if (encoded !== current) {
+                                self.select(branch);
+                            }
                         });
+
+                    if (encoded && url) {
+                        var $links = $('<div>').addClass('links').attr('title', l10n('branch-link-title')).appendTo($li);
+                        $.each([{ hours: 1, key: 'branch-link-1h' }, { hours: 24, key: 'branch-link-24h' }], function (j, option) {
+                            $('<button>')
+                                .attr('type', 'button')
+                                .text(l10n(option.key))
+                                .appendTo($links)
+                                .click(function (e) {
+                                    e.stopPropagation();
+                                    self.copyLink(url + '/link', branch, option.hours);
+                                });
+                        });
+                    }
+
                     $('<div>').addClass('name').text(self.displayName(branch)).appendTo($li);
                     var details = self.details(branch);
                     if (details) {
@@ -165,27 +254,50 @@
             });
         },
 
-        // badge (top center of the map): active branch or a discreet entry point on main; shows a hint, if the stored branch has been reset
+        // badge (top center of the map)
+        // authors: active branch or a discreet entry point on main => selection dialog
+        // other users (branch link): active branch only, no selection dialog
         initViewer: function (options) {
             var branches = options.branches || [];
-            var current = self.current();
+            var canSelect = options.canSelect !== false;
+            var link = options.link;
+            var current = self.currentEncoded();
 
             if (options.wasReset === true) {
-                webgis.alert(l10n('branch-not-found'), 'info');
+                alertMessage(l10n('branch-not-found'), 'info');
             }
 
-            var branch = current ? (self.find(branches, current) || { encoded: current }) : null;
-            var details = self.details(branch);
+            if (!canSelect && !current) {
+                return;
+            }
 
-            // on main the badge is only a discreet entry point for the selection dialog
+            var branch = current
+                ? (self.find(branches, current) || (link && link.encoded === current ? { encoded: current, name: link.name } : { encoded: current }))
+                : null;
+
+            var title = l10n('branch-select');
+            if (current) {
+                var details = self.details(branch);
+                title = (canSelect ? l10n('branch-active-badge-title') : l10n('branch-active')) + (details ? '\n' + details : '');
+                if (link && link.expires) {
+                    var expires = new Date(link.expires);
+                    if (!isNaN(expires.getTime())) {
+                        title += '\n' + l10n('branch-link-expires') + ' ' + expires.toLocaleString();
+                    }
+                }
+            }
+
             var $badge = $('<div>')
-                .addClass('webgis-branch-badge' + (current ? '' : ' main'))
-                .attr('title', current ? l10n('branch-active-badge-title') + (details ? '\n' + details : '') : l10n('branch-select'))
+                .addClass('webgis-branch-badge' + (current ? '' : ' main') + (canSelect ? '' : ' readonly'))
+                .attr('title', title)
                 .html(esc(l10n('branch')) + ': <strong>' + esc(current ? self.displayName(branch) : 'main') + '</strong>')
-                .appendTo($(options.container || 'body'))
-                .click(function () {
+                .appendTo($(options.container || 'body'));
+
+            if (canSelect) {
+                $badge.click(function () {
                     self.showSelectDialog(branches, options.url);
                 });
+            }
 
             if (current) {
                 $('<span>')
@@ -195,7 +307,7 @@
                     .appendTo($badge)
                     .click(function (e) {
                         e.stopPropagation();
-                        self.select('');
+                        self.select(null);
                     });
             }
         }

@@ -121,7 +121,7 @@
             $("<div id='tab-presentations' class='webgis-tabs-tab'><img src='" + webgis.css.imgResource('presentations.png', 'toolbar') + "' /></div>").appendTo($div);
             //$("<div id='tab-presentations-header' class='webgis-tabs-tab-header' style='display:none'>Darstellung<div class='webgis-tabs-close'></div></div>").appendTo($tab_content);
             // encoded branch name (CmsBranches.Encode) => display the original name
-            var currentBranch = webgis.hmac && webgis.hmac.getCurrentBranch ? webgis.hmac.getCurrentBranch() : webgis.localStorage.get('currentBranch');
+            var currentBranch = webgis.hmac && webgis.hmac.getCurrentBranchName ? webgis.hmac.getCurrentBranchName() : '';
             if (currentBranch) {
                 try { currentBranch = decodeURIComponent(currentBranch.replace(/_([0-9a-f]{2})/g, '%$1')); } catch (e) { }
             }
