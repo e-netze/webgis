@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 using E.Standard.Cms.Git.Exceptions;
 using E.Standard.Cms.Git.Models;
@@ -643,13 +644,27 @@ public class CmsGitWorkspace
     public const int MaxHistoryLimit = 5000;
 
     /// <summary>
+    /// Node history: max. number of commits that are inspected
+    /// </summary>
+    public const int MaxNodeHistoryScan = 20000;
+
+    /// <summary>
     /// Commit graph (newest first, parents always after their children) of the local and remote branches
     /// </summary>
     /// <param name="allBranches">false => only the current branch and the default branch</param>
     /// <param name="deployedSha">Commit of the last deployment (marker only)</param>
-    public CmsGitHistory GetHistory(bool fetch, bool allBranches, int limit, string deployedSha = null)
+    /// <param name="node">only commits that changed this node (and its sub tree), null/empty => all commits</param>
+    /// <param name="nodeOnly">only the files of the node itself (without the sub tree)</param>
+    public CmsGitHistory GetHistory(bool fetch, bool allBranches, int limit, string deployedSha = null, string node = null, bool nodeOnly = false)
     {
+        node = NormalizeNodePath(node);
+
         using var repo = Open();
+
+        if (node.Length > 0)
+        {
+            node = ResolveNodeCase(repo, node);
+        }
 
         string fetchError = null;
         if (fetch)
@@ -697,7 +712,9 @@ public class CmsGitWorkspace
             Deployed = deployedSha,
             AllBranches = allBranches,
             Stale = fetchError != null,
-            FetchError = fetchError
+            FetchError = fetchError,
+            Node = node.Length > 0 ? node : null,
+            NodeOnly = node.Length > 0 && nodeOnly
         };
 
         if (tips.Count == 0)
@@ -721,11 +738,19 @@ public class CmsGitWorkspace
 
         var unpushed = UnpushedCommits(repo, branches);
 
-        var commits = repo.Commits.QueryBy(new CommitFilter()
+        var query = repo.Commits.QueryBy(new CommitFilter()
         {
             IncludeReachableFrom = tips.Distinct().ToList(),
             SortBy = CommitSortStrategies.Topological | CommitSortStrategies.Time
-        }).Take(limit + 1).ToList();
+        });
+
+        var commits = node.Length > 0
+            ? query
+                .Take(MaxNodeHistoryScan)
+                .Where(c => ScopeSignature(c, node, nodeOnly) != ScopeSignature(c.Parents.FirstOrDefault(), node, nodeOnly))
+                .Take(limit + 1)
+                .ToList()
+            : query.Take(limit + 1).ToList();
 
         history.HasMore = commits.Count > limit;
 
@@ -749,9 +774,18 @@ public class CmsGitWorkspace
     /// <summary>
     /// Commit details including the changed files compared to the first parent
     /// </summary>
-    public CmsGitCommitDetails GetCommitDetails(string sha)
+    /// <param name="node">only the changes of this node (and its sub tree), null/empty => all changes</param>
+    /// <param name="nodeOnly">only the files of the node itself (without the sub tree)</param>
+    public CmsGitCommitDetails GetCommitDetails(string sha, string node = null, bool nodeOnly = false)
     {
+        node = NormalizeNodePath(node);
+
         using var repo = Open();
+
+        if (node.Length > 0)
+        {
+            node = ResolveNodeCase(repo, node);
+        }
 
         var commit = LookupCommit(repo, sha);
         var parent = commit.Parents.FirstOrDefault();
@@ -792,6 +826,7 @@ public class CmsGitWorkspace
             Message = commit.Message?.TrimEnd(),
             Changes = changes
                 .Select(c => { c.Path = c.Path.Replace('\\', '/'); return c; })
+                .Where(c => node.Length == 0 || InScope(c.Path, node, nodeOnly))
                 .OrderBy(c => c.Path, StringComparer.OrdinalIgnoreCase)
                 .ToArray()
         };
@@ -834,6 +869,211 @@ public class CmsGitWorkspace
             Before = BlobText(repo.Head.Tip?[path]?.Target as Blob),
             After = File.Exists(fullPath) ? File.ReadAllText(fullPath) : null
         };
+    }
+
+    /// <summary>
+    /// Source keyword for <see cref="Restore"/>: the (remote) default branch instead of a commit sha
+    /// </summary>
+    public const string DefaultBranchSource = "default";
+
+    /// <summary>
+    /// Restores the exact state of a node (and its sub tree) from a commit or the remote default branch
+    /// into the working copy: files are written, created and deleted. The result is an uncommitted change.
+    /// </summary>
+    /// <param name="source">commit sha or <see cref="DefaultBranchSource"/></param>
+    /// <param name="nodeOnly">only the files of the node itself (without the sub tree)</param>
+    /// <param name="previewOnly">true => only count the changes, nothing is written</param>
+    public CmsGitRestoreResult Restore(string source, string nodePath, bool nodeOnly, bool previewOnly)
+    {
+        nodePath = NormalizeNodePath(nodePath);
+        if (nodePath.Length == 0)
+        {
+            throw new CmsGitException(CmsGitErrors.InvalidPath, nodePath);
+        }
+
+        using var repo = Open();
+        EnsureNotMerging(repo);
+
+        nodePath = ResolveNodeCase(repo, nodePath);
+
+        var target = DefaultBranchSource.Equals(source, StringComparison.OrdinalIgnoreCase)
+            ? RemoteDefaultBranch(repo).Tip
+            : LookupCommit(repo, source);
+
+        var targetFiles = new Dictionary<string, Blob>(StringComparer.OrdinalIgnoreCase);
+        foreach (var path in ScopeFiles(target, nodePath, nodeOnly))
+        {
+            if (target[path]?.Target is Blob blob)
+            {
+                targetFiles[path] = blob;
+            }
+        }
+
+        var currentFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var path in ScopeFiles(repo.Head.Tip, nodePath, nodeOnly)
+                                .Concat(GetChanges(repo).Select(c => c.Path).Where(p => InScope(p, nodePath, nodeOnly))))
+        {
+            if (File.Exists(FullPath(path)))
+            {
+                currentFiles.Add(path);
+            }
+        }
+
+        var result = new CmsGitRestoreResult();
+        var write = new List<string>();
+        var delete = new List<string>();
+
+        foreach (var file in targetFiles)
+        {
+            var fullPath = FullPath(file.Key);
+            if (!File.Exists(fullPath))
+            {
+                result.Added++;
+                write.Add(file.Key);
+            }
+            else if (!SameContent(file.Value, fullPath))
+            {
+                result.Modified++;
+                write.Add(file.Key);
+            }
+        }
+
+        foreach (var path in currentFiles.Where(p => !targetFiles.ContainsKey(p)))
+        {
+            result.Deleted++;
+            delete.Add(path);
+        }
+
+        if (previewOnly || result.Total == 0)
+        {
+            return result;
+        }
+
+        foreach (var path in write)
+        {
+            WriteBlob(path, targetFiles[path]);
+        }
+
+        if (delete.Count > 0)
+        {
+            var tip = repo.Head.Tip;
+            foreach (var path in delete)
+            {
+                DeleteWorkspaceFile(path);
+                if (tip?[path] == null && repo.Index[path] != null)
+                {
+                    repo.Index.Remove(path);
+                }
+            }
+            repo.Index.Write();
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Differences between the working copy and the remote default branch (last fetched state), grouped by node
+    /// </summary>
+    public CmsGitDefaultBranchDiff GetDefaultBranchDiff(bool fetch)
+    {
+        using var repo = Open();
+
+        if (fetch)
+        {
+            FetchOrThrow(repo);
+        }
+
+        var main = RemoteDefaultBranch(repo).Tip;
+        var head = repo.Head.Tip;
+
+        var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        using (var treeChanges = repo.Diff.Compare<TreeChanges>(main.Tree, head?.Tree))
+        {
+            foreach (var change in treeChanges)
+            {
+                paths.Add(change.Path.Replace('\\', '/'));
+                if (!String.IsNullOrEmpty(change.OldPath))
+                {
+                    paths.Add(change.OldPath.Replace('\\', '/'));
+                }
+            }
+        }
+        foreach (var change in GetChanges(repo))
+        {
+            paths.Add(change.Path);
+        }
+
+        var changes = new List<CmsGitChange>();
+        foreach (var path in paths)
+        {
+            var blob = main[path]?.Target as Blob;
+            var fullPath = FullPath(path);
+            var exists = File.Exists(fullPath);
+
+            if (blob == null && exists)
+            {
+                changes.Add(new CmsGitChange() { Path = path, State = CmsGitChangeStates.Added });
+            }
+            else if (blob != null && !exists)
+            {
+                changes.Add(new CmsGitChange() { Path = path, State = CmsGitChangeStates.Deleted });
+            }
+            else if (blob != null && !SameContent(blob, fullPath))
+            {
+                changes.Add(new CmsGitChange() { Path = path, State = CmsGitChangeStates.Modified });
+            }
+        }
+
+        var fetchHead = Path.Combine(WorkspacePath, ".git", "FETCH_HEAD");
+
+        return new CmsGitDefaultBranchDiff()
+        {
+            DefaultBranch = DefaultBranch,
+            Commit = new CmsGitCommitInfo()
+            {
+                Sha = main.Sha,
+                Author = main.Author?.Name,
+                Date = main.Author?.When,
+                Message = main.MessageShort
+            },
+            FetchedAt = File.Exists(fetchHead) ? new DateTimeOffset(File.GetLastWriteTime(fetchHead)) : null,
+            Nodes = GroupChangesByNode(changes).ToArray()
+        };
+    }
+
+    /// <summary>
+    /// Content of a file in the remote default branch (last fetched state) and in the working copy
+    /// </summary>
+    public CmsGitFileDiff GetDefaultBranchFileDiff(string path)
+    {
+        path = NormalizeFilePath(path);
+
+        using var repo = Open();
+
+        var main = RemoteDefaultBranch(repo).Tip;
+        var fullPath = FullPath(path);
+
+        return new CmsGitFileDiff()
+        {
+            Path = path,
+            Before = BlobText(main[path]?.Target as Blob),
+            After = File.Exists(fullPath) ? File.ReadAllText(fullPath) : null
+        };
+    }
+
+    private static bool SameContent(Blob blob, string fullPath)
+    {
+        var info = new FileInfo(fullPath);
+        if (!info.Exists || info.Length != blob.Size)
+        {
+            return false;
+        }
+
+        using var content = blob.GetContentStream();
+        using var memory = new MemoryStream();
+        content.CopyTo(memory);
+
+        return memory.ToArray().AsSpan().SequenceEqual(File.ReadAllBytes(fullPath));
     }
 
     private static string NormalizeFilePath(string path)
@@ -1354,6 +1594,93 @@ public class CmsGitWorkspace
 
         return ParentPath(path).Equals(ParentPath(node), StringComparison.OrdinalIgnoreCase)
             && Path.GetFileNameWithoutExtension(FileName(path)).Equals(FileName(node), StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// File is in the scope of a node: <paramref name="nodeOnly"/> => only the node's own files, otherwise the sub tree too
+    /// </summary>
+    internal static bool InScope(string path, string node, bool nodeOnly)
+        => nodeOnly
+            ? NodeOf(path).Equals(node, StringComparison.OrdinalIgnoreCase)
+            : BelongsToNode(path, node);
+
+    private static IEnumerable<string> ScopeFiles(Commit commit, string node, bool nodeOnly)
+        => NodeFiles(commit, node).Where(p => InScope(p, node, nodeOnly));
+
+    /// <summary>
+    /// Cheap fingerprint of the node's files in a commit (tree/blob ids) => changed, if the fingerprint differs from the parent
+    /// </summary>
+    private static string ScopeSignature(Commit commit, string node, bool nodeOnly)
+    {
+        if (commit == null)
+        {
+            return String.Empty;
+        }
+
+        var sb = new StringBuilder();
+
+        if (commit[node]?.Target is Tree nodeTree)
+        {
+            if (nodeOnly)
+            {
+                foreach (var entry in nodeTree.Where(e => e.TargetType == TreeEntryTargetType.Blob && e.Name.StartsWith(".")))
+                {
+                    sb.Append(entry.Name).Append(':').Append(entry.Target.Sha).Append(';');
+                }
+            }
+            else
+            {
+                sb.Append("/:").Append(nodeTree.Sha).Append(';');
+            }
+        }
+
+        var parent = ParentPath(node);
+        var parentTree = parent.Length == 0 ? commit.Tree : commit[parent]?.Target as Tree;
+        if (parentTree != null)
+        {
+            foreach (var entry in parentTree.Where(e => e.TargetType == TreeEntryTargetType.Blob))
+            {
+                if (BelongsToNode(CombinePath(parent, entry.Name), node))
+                {
+                    sb.Append(entry.Name).Append(':').Append(entry.Target.Sha).Append(';');
+                }
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// Git paths are case sensitive, the CMS (windows) is not => use the spelling of the current commit
+    /// </summary>
+    private static string ResolveNodeCase(Repository repo, string node)
+    {
+        var tree = repo.Head.Tip?.Tree;
+        if (tree == null)
+        {
+            return node;
+        }
+
+        var segments = node.Split('/');
+        for (int i = 0; i < segments.Length && tree != null; i++)
+        {
+            var segment = segments[i];
+            var entry = tree.FirstOrDefault(e => e.TargetType == TreeEntryTargetType.Tree && e.Name.Equals(segment, StringComparison.OrdinalIgnoreCase))
+                     ?? (i == segments.Length - 1
+                            ? tree.FirstOrDefault(e => e.TargetType == TreeEntryTargetType.Blob
+                                                    && Path.GetFileNameWithoutExtension(e.Name).Equals(segment, StringComparison.OrdinalIgnoreCase))
+                            : null);
+
+            if (entry == null)
+            {
+                break;
+            }
+
+            segments[i] = entry.TargetType == TreeEntryTargetType.Tree ? entry.Name : Path.GetFileNameWithoutExtension(entry.Name);
+            tree = entry.Target as Tree;
+        }
+
+        return String.Join("/", segments);
     }
 
     private static IEnumerable<string> NodeFiles(Commit commit, string node)

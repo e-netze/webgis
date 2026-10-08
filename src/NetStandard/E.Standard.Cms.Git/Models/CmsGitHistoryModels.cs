@@ -100,9 +100,70 @@ public class CmsGitHistory
     [System.Text.Json.Serialization.JsonPropertyName("fetch_error")]
     public string FetchError { get; set; }
 
+    /// <summary>
+    /// History of a single CMS node (null => whole repository)
+    /// </summary>
+    [JsonProperty("node")]
+    [System.Text.Json.Serialization.JsonPropertyName("node")]
+    public string Node { get; set; }
+
+    /// <summary>
+    /// Node history: only the files of the node itself (without the sub tree)
+    /// </summary>
+    [JsonProperty("node_only")]
+    [System.Text.Json.Serialization.JsonPropertyName("node_only")]
+    public bool NodeOnly { get; set; }
+
     [JsonProperty("commits")]
     [System.Text.Json.Serialization.JsonPropertyName("commits")]
     public List<CmsGitHistoryCommit> Commits { get; set; } = new();
+}
+
+/// <summary>
+/// Files that are changed in the working copy, when a node is restored from a commit (or the default branch)
+/// </summary>
+public class CmsGitRestoreResult
+{
+    [JsonProperty("modified")]
+    [System.Text.Json.Serialization.JsonPropertyName("modified")]
+    public int Modified { get; set; }
+
+    [JsonProperty("added")]
+    [System.Text.Json.Serialization.JsonPropertyName("added")]
+    public int Added { get; set; }
+
+    [JsonProperty("deleted")]
+    [System.Text.Json.Serialization.JsonPropertyName("deleted")]
+    public int Deleted { get; set; }
+
+    [JsonProperty("total")]
+    [System.Text.Json.Serialization.JsonPropertyName("total")]
+    public int Total => Modified + Added + Deleted;
+}
+
+/// <summary>
+/// Differences between the working copy and the (remote) default branch, grouped by node
+/// </summary>
+public class CmsGitDefaultBranchDiff
+{
+    [JsonProperty("default_branch")]
+    [System.Text.Json.Serialization.JsonPropertyName("default_branch")]
+    public string DefaultBranch { get; set; }
+
+    [JsonProperty("commit")]
+    [System.Text.Json.Serialization.JsonPropertyName("commit")]
+    public CmsGitCommitInfo Commit { get; set; }
+
+    /// <summary>
+    /// Last fetch from the remote repository (null => unknown)
+    /// </summary>
+    [JsonProperty("fetched_at")]
+    [System.Text.Json.Serialization.JsonPropertyName("fetched_at")]
+    public DateTimeOffset? FetchedAt { get; set; }
+
+    [JsonProperty("nodes")]
+    [System.Text.Json.Serialization.JsonPropertyName("nodes")]
+    public CmsGitChangedNode[] Nodes { get; set; }
 }
 
 public class CmsGitCommitDetails

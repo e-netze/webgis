@@ -176,6 +176,116 @@ public sealed class CmsGitWorkspaceTests : IDisposable
     }
 
     [Fact]
+    public void NodeHistory_FiltersCommitsByNodeScope()
+    {
+        var ws = CreateWorkspace("alice", Alice);
+        string Write(string path, string content)
+        {
+            var fullPath = Path.Combine(ws.WorkspacePath, path);
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+            File.WriteAllText(fullPath, content);
+            return path;
+        }
+
+        Write("services/f.xml", "<f/>");
+        Write("services/f/.general.xml", "<g/>");
+        Write("services/f/x.xml", "<x/>");
+        ws.Commit(Alice, "add f");
+        Write("services/f/x.xml", "<x2/>");
+        ws.Commit(Alice, "change x");
+        Write("services/b.xml", "<b/>");
+        ws.Commit(Alice, "add b");
+        Write("services/f/.general.xml", "<g2/>");
+        ws.Commit(Alice, "change general");
+
+        var history = ws.GetHistory(false, false, 100, null, "services/f");
+        Assert.Equal(new[] { "change general", "change x", "add f" }, history.Commits.Select(c => c.Message));
+        Assert.Equal("services/f", history.Node);
+
+        // node path from the CMS may differ in case
+        Assert.Equal(3, ws.GetHistory(false, false, 100, null, "/Services/F/").Commits.Count);
+
+        var nodeOnly = ws.GetHistory(false, false, 100, null, "services/f", nodeOnly: true);
+        Assert.Equal(new[] { "change general", "add f" }, nodeOnly.Commits.Select(c => c.Message));
+
+        var limited = ws.GetHistory(false, false, 2, null, "services/f");
+        Assert.Equal(2, limited.Commits.Count);
+        Assert.True(limited.HasMore);
+
+        var addF = history.Commits.Last().Sha;
+        Assert.Equal(new[] { "services/f.xml", "services/f/.general.xml", "services/f/x.xml" },
+            ws.GetCommitDetails(addF, "services/f").Changes.Select(c => c.Path));
+        Assert.Equal(new[] { "services/f.xml", "services/f/.general.xml" },
+            ws.GetCommitDetails(addF, "services/f", true).Changes.Select(c => c.Path));
+
+        // restore the state of "change x": exact state of the node
+        var changeX = history.Commits[1].Sha;
+        Write("services/f/x.xml", "<x3/>");
+        Write("services/f/y.xml", "<y/>");
+        File.Delete(Path.Combine(ws.WorkspacePath, "services", "f.xml"));
+
+        var preview = ws.Restore(changeX, "services/f", false, true);
+        Assert.Equal(2, preview.Modified); // x.xml, .general.xml
+        Assert.Equal(1, preview.Added);    // f.xml
+        Assert.Equal(1, preview.Deleted);  // y.xml
+        Assert.Equal("<x3/>", File.ReadAllText(Path.Combine(ws.WorkspacePath, "services", "f", "x.xml"))); // preview only
+
+        ws.Restore(changeX, "services/f", false, false);
+        Assert.Equal("<x2/>", File.ReadAllText(Path.Combine(ws.WorkspacePath, "services", "f", "x.xml")));
+        Assert.Equal("<g/>", File.ReadAllText(Path.Combine(ws.WorkspacePath, "services", "f", ".general.xml")));
+        Assert.Equal("<f/>", File.ReadAllText(Path.Combine(ws.WorkspacePath, "services", "f.xml")));
+        Assert.False(File.Exists(Path.Combine(ws.WorkspacePath, "services", "f", "y.xml")));
+        Assert.Equal("<b/>", File.ReadAllText(Path.Combine(ws.WorkspacePath, "services", "b.xml"))); // other nodes untouched
+
+        var changes = ws.GetStatus(false).Changes;
+        Assert.Equal(new[] { "services/f/.general.xml" }, changes.Select(c => c.Path));
+        Assert.Equal(0, ws.Restore(changeX, "services/f", false, true).Total);
+
+        // node only: the sub tree is not touched
+        Write("services/f/x.xml", "<x4/>");
+        var restoreNodeOnly = ws.Restore(history.Commits[0].Sha, "services/f", true, false);
+        Assert.Equal(1, restoreNodeOnly.Modified);
+        Assert.Equal("<g2/>", File.ReadAllText(Path.Combine(ws.WorkspacePath, "services", "f", ".general.xml")));
+        Assert.Equal("<x4/>", File.ReadAllText(Path.Combine(ws.WorkspacePath, "services", "f", "x.xml")));
+
+        Assert.Equal(CmsGitErrors.InvalidPath, Assert.Throws<CmsGitException>(() => ws.Restore(changeX, "", false, true)).L10nKey);
+        Assert.Equal(CmsGitErrors.CommitNotFound, Assert.Throws<CmsGitException>(() => ws.Restore("xyz", "services/f", false, true)).L10nKey);
+    }
+
+    [Fact]
+    public void DefaultBranchDiff_ComparesWorkingCopyWithRemoteDefaultBranch()
+    {
+        var ws = CreateWorkspace("alice", Alice);
+        ws.CreateBranch("feature");
+
+        File.WriteAllText(Path.Combine(ws.WorkspacePath, "services", "b.xml"), "<b/>");
+        ws.Commit(Alice, "add b");
+        File.WriteAllText(Path.Combine(ws.WorkspacePath, "services", "a.xml"), "<a x=\"1\"/>");
+
+        var diff = ws.GetDefaultBranchDiff(false);
+        Assert.Equal("main", diff.DefaultBranch);
+        Assert.NotNull(diff.Commit?.Sha);
+        Assert.Equal(new[] { "services/a", "services/b" }, diff.Nodes.Select(n => n.Node));
+        Assert.Equal(CmsGitChangeStates.Modified, diff.Nodes[0].State);
+        Assert.Equal(CmsGitChangeStates.Added, diff.Nodes[1].State);
+
+        var fileDiff = ws.GetDefaultBranchFileDiff("services/a.xml");
+        Assert.Equal("<a/>", fileDiff.Before);
+        Assert.Equal("<a x=\"1\"/>", fileDiff.After);
+
+        // take the version of main => uncommitted change
+        ws.Restore(CmsGitWorkspace.DefaultBranchSource, "services/a", false, false);
+        Assert.Equal("<a/>", File.ReadAllText(Path.Combine(ws.WorkspacePath, "services", "a.xml")));
+        Assert.Equal(new[] { "services/b" }, ws.GetDefaultBranchDiff(false).Nodes.Select(n => n.Node));
+
+        var restoreB = ws.Restore(CmsGitWorkspace.DefaultBranchSource, "services/b", false, false);
+        Assert.Equal(1, restoreB.Deleted);
+        Assert.False(File.Exists(Path.Combine(ws.WorkspacePath, "services", "b.xml")));
+        Assert.Empty(ws.GetDefaultBranchDiff(false).Nodes);
+        Assert.Contains(ws.GetStatus(false).Changes, c => c.Path == "services/b.xml" && c.State == CmsGitChangeStates.Deleted);
+    }
+
+    [Fact]
     public void Pull_RequiresCleanWorkspace()
     {
         var ws = CreateWorkspace("alice", Alice);

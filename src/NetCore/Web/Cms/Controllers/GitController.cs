@@ -81,7 +81,12 @@ public class GitController : ApplicationSecurityController
         "diff-view-table", "diff-view-xml", "diff-view-tip", "diff-show-all", "diff-property", "diff-before", "diff-after",
         "diff-no-property-changes", "diff-more", "diff-working", "diff-show", "order-changed",
         "changes-title", "changes-tip", "changes-none", "changes-goto", "changes-files",
-        "commit-message-modified", "commit-message-added", "commit-message-deleted", "commit-message-more", "commit-ctrl-enter"
+        "commit-message-modified", "commit-message-added", "commit-message-deleted", "commit-message-more", "commit-ctrl-enter",
+        "node-history", "node-history-title", "node-history-only-node", "node-history-uncommitted", "node-history-uncommitted-text",
+        "restore", "restore-tip", "restore-confirm", "restore-counts", "restore-overwrite-warning", "restore-nothing",
+        "main-diff-title", "main-diff-tip", "main-diff-none", "main-diff-state", "main-diff-fetched", "main-diff-unknown",
+        "main-diff-refresh", "main-diff-take", "main-diff-take-tip", "main-diff-current", "compare-with", "compare-head", "compare-main",
+        "diff-no-differences"
     ];
 
     private readonly CmsConfigurationService _ccs;
@@ -265,20 +270,65 @@ public class GitController : ApplicationSecurityController
 
     #region History
 
-    public IActionResult History(string id, bool fetch = false, bool allBranches = true, int limit = 100)
+    public IActionResult History(string id, bool fetch = false, bool allBranches = true, int limit = 100, string node = null, bool nodeOnly = false)
         => Execute(id, null, () => Json(new
         {
             success = true,
             enabled = true,
-            history = _git.GetHistory(id, Username, fetch, allBranches, limit)
+            history = _git.GetHistory(id, Username, fetch, allBranches, limit, node, nodeOnly)
         }));
 
-    public IActionResult CommitDetails(string id, string sha)
+    public IActionResult CommitDetails(string id, string sha, string node = null, bool nodeOnly = false)
         => Execute(id, null, () => Json(new
         {
             success = true,
             enabled = true,
-            commit = _git.GetCommitDetails(id, Username, sha)
+            commit = _git.GetCommitDetails(id, Username, sha, node, nodeOnly)
+        }));
+
+    /// <summary>
+    /// Restore a node from a commit (sha) or the default branch (source="default")
+    /// </summary>
+    public IActionResult RestorePreview(string id, string source, string node, bool nodeOnly = false)
+        => Execute(id, null, () => Json(new
+        {
+            success = true,
+            enabled = true,
+            restore = _git.Restore(id, Username, source, node, nodeOnly, true)
+        }));
+
+    public IActionResult Restore(string id, string source, string node, bool nodeOnly = false)
+        => Execute(id, "Restore", () =>
+        {
+            var restore = _git.Restore(id, Username, source, node, nodeOnly, false);
+
+            return Json(new
+            {
+                success = true,
+                enabled = true,
+                restore,
+                status = _git.GetStatus(id, Username, false)
+            });
+        }, $"{node} <= {source}{(nodeOnly ? " (node only)" : "")}");
+
+    /// <summary>
+    /// Differences between the working copy and the default branch (last fetched state)
+    /// </summary>
+    public IActionResult MainDiff(string id, bool fetch = false)
+        => Execute(id, null, () =>
+        {
+            var diff = _git.GetDefaultBranchDiff(id, Username, fetch);
+            ResolveDisplayNames(id, diff.Nodes);
+
+            return Json(new { success = true, enabled = true, diff });
+        });
+
+    public IActionResult MainFileDiff(string id, string path)
+        => Execute(id, null, () => Json(new
+        {
+            success = true,
+            enabled = true,
+            diff = _git.GetDefaultBranchFileDiff(id, Username, path)
         }));
 
     public IActionResult CommitFileDiff(string id, string sha, string path)

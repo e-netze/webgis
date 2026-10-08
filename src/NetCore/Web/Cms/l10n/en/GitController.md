@@ -454,3 +454,53 @@
 #commit-message-more: … and {0} more
 
 #commit-ctrl-enter: Ctrl+Enter to save
+
+#node-history: History
+
+#node-history-title: History: {0}
+
+#node-history-only-node: this node only (without sub nodes)
+
+#node-history-uncommitted: Not saved
+
+#node-history-uncommitted-text: Current changes (not saved yet)
+
+#restore: Restore this state
+
+#restore-tip: Restores the node exactly to the state of {0}. The result is an unsaved change that can be discarded with ↺.
+
+#restore-confirm: Reset node "{0}" to the state of {1}?
+
+#restore-counts: Files: {0} modified, {1} added, {2} deleted
+
+#restore-overwrite-warning: Warning: unsaved changes of this node will be overwritten!
+
+#restore-nothing: Node "{0}" already matches the state of {1}.
+
+#main-diff-title: Differences to {0}
+
+#main-diff-tip: Shows all differences between your current state (including unsaved changes) and {0}.
+
+#main-diff-none: No differences to {0}.
+
+#main-diff-state: State of {0}: {1}
+
+#main-diff-fetched: last fetched at {0}
+
+#main-diff-unknown: time of the last fetch unknown
+
+#main-diff-refresh: Refresh
+
+#main-diff-take: Take version from {0}
+
+#main-diff-take-tip: Takes the node exactly as in {0} (as an unsaved change).
+
+#main-diff-current: {0} (current)
+
+#compare-with: Compare with:
+
+#compare-head: Last commit
+
+#compare-main: {0}
+
+#diff-no-differences: No changes.

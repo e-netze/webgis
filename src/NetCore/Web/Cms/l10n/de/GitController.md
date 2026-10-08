@@ -454,3 +454,53 @@
 #commit-message-more: … und {0} weitere
 
 #commit-ctrl-enter: Strg+Enter zum Speichern
+
+#node-history: Verlauf
+
+#node-history-title: Verlauf: {0}
+
+#node-history-only-node: nur dieser Knoten (ohne Unterknoten)
+
+#node-history-uncommitted: Nicht gespeichert
+
+#node-history-uncommitted-text: Aktuelle Änderungen (noch nicht gespeichert)
+
+#restore: Diesen Stand wiederherstellen
+
+#restore-tip: Stellt den Knoten exakt auf den Stand von {0} her. Das Ergebnis ist eine ungespeicherte Änderung, die mit ↺ wieder verworfen werden kann.
+
+#restore-confirm: Knoten „{0}“ auf den Stand von {1} zurücksetzen?
+
+#restore-counts: Dateien: {0} geändert, {1} neu, {2} gelöscht
+
+#restore-overwrite-warning: Achtung: Ungespeicherte Änderungen an diesem Knoten werden überschrieben!
+
+#restore-nothing: Knoten „{0}“ entspricht bereits dem Stand von {1}.
+
+#main-diff-title: Unterschiede zu {0}
+
+#main-diff-tip: Zeigt alle Unterschiede zwischen deinem aktuellen Stand (inkl. ungespeicherter Änderungen) und {0}.
+
+#main-diff-none: Keine Unterschiede zu {0}.
+
+#main-diff-state: Stand von {0}: {1}
+
+#main-diff-fetched: zuletzt abgerufen um {0}
+
+#main-diff-unknown: Zeitpunkt des letzten Abrufs unbekannt
+
+#main-diff-refresh: Aktualisieren
+
+#main-diff-take: Version aus {0} übernehmen
+
+#main-diff-take-tip: Übernimmt den Knoten exakt in der Version aus {0} (als ungespeicherte Änderung).
+
+#main-diff-current: {0} (aktuell)
+
+#compare-with: Vergleich:
+
+#compare-head: Letzter Commit
+
+#compare-main: {0}
+
+#diff-no-differences: Keine Änderungen.

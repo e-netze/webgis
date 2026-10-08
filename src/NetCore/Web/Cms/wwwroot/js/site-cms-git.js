@@ -39,7 +39,9 @@ var CMSGit = new function () {
         'edit': '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/>',
         'more': '<path d="M6 9l6 6 6-6"/>',
         'diff': '<path d="M8 3v8M4 7h8M4 17h8"/><path d="M16 3v18M13 18l3 3 3-3"/>',
-        'goto': '<path d="M4 12h15M13 6l6 6-6 6"/>'
+        'goto': '<path d="M4 12h15M13 6l6 6-6 6"/>',
+        'take': '<path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/>',
+        'compare': '<rect x="3" y="4" width="7" height="16" rx="1"/><rect x="14" y="4" width="7" height="16" rx="1"/><path d="M5.5 9h2M16.5 9h2M16.5 13h2"/>'
     };
 
     var iconHtml = function (name) {
@@ -331,6 +333,14 @@ var CMSGit = new function () {
                 .prependTo($secondary);
         }
         addTool($secondary, 'history', 'history', _self.showHistoryDialog);
+        if (!merging && status.is_default_branch === false) {
+            $('<button class="cms-git-icon-button tool">')
+                .html(iconHtml('compare'))
+                .attr('title', t('main-diff-title', defaultBranch) + '\n' + t('main-diff-tip', defaultBranch))
+                .attr('aria-label', t('main-diff-title', defaultBranch))
+                .click(function (e) { e.preventDefault(); _self.showMainDiffDialog(); })
+                .appendTo($secondary);
+        }
         if (!merging) {
             addTool($secondary, 'workspaces', 'workspaces', _self.showWorkspacesDialog);
         }
@@ -385,38 +395,63 @@ var CMSGit = new function () {
         return filePath.indexOf(nodePath + '.') === 0 && filePath.indexOf('/', nodePath.length) < 0;
     };
 
-    var isNodeChanged = function (nodePath, changedFiles) {
+    // CMS node of a file (like CmsGitWorkspace.NodeOf): a/b.xml => a/b, a/b/.general.xml => a/b
+    var nodeOfFile = function (filePath) {
+        var index = filePath.lastIndexOf('/');
+        var dir = index < 0 ? '' : filePath.substring(0, index), name = filePath.substring(index + 1);
+        if (name.charAt(0) === '.') {
+            return dir;
+        }
+        var dot = name.lastIndexOf('.');
+        return (dir ? dir + '/' : '') + (dot > 0 ? name.substring(0, dot) : name);
+    };
+
+    var isNodeChanged = function (nodePath, changedFiles, nodeOnly) {
         var path = normalizePath(nodePath);
         for (var i = 0; i < changedFiles.length; i++) {
-            if (belongsToNode(changedFiles[i], path)) {
+            if (nodeOnly ? nodeOfFile(changedFiles[i]) === path : belongsToNode(changedFiles[i], path)) {
                 return true;
             }
         }
         return false;
     };
 
-    var markNodes = function () {
-        var changedFiles = $.map((_status && _status.changes) || [], function (change) {
+    var changedFiles = function () {
+        return $.map((_status && _status.changes) || [], function (change) {
             return normalizePath(change.path);
         });
+    };
+
+    var markNodes = function () {
+        var files = changedFiles();
         var canDiscard = !(_status && _status.is_merging);
 
         $('#main-navtree .cms-treenode[data-path]').each(function (i, e) {
             var $node = $(e);
-            $node.toggleClass('cms-git-changed', isNodeChanged($node.attr('data-path'), changedFiles));
+            $node.toggleClass('cms-git-changed', isNodeChanged($node.attr('data-path'), files));
         });
 
         $('#main-content .node[data-path]').each(function (i, e) {
             var $node = $(e);
-            $node.find('.node-git-discard, .node-git-diff').remove();
+            $node.find('.node-git-discard, .node-git-diff, .node-git-history').remove();
 
             if ($node.hasClass('up') || $node.hasClass('current')) {
                 $node.removeClass('cms-git-changed');
                 return;
             }
 
-            var path = $node.attr('data-path'), changed = isNodeChanged(path, changedFiles);
+            var path = $node.attr('data-path'), changed = isNodeChanged(path, files);
             $node.toggleClass('cms-git-changed', changed).attr('title', changed ? t('node-changed') : null);
+
+            $('<div class="node-git-history">')
+                .attr('title', t('node-history'))
+                .html(iconHtml('history'))
+                .appendTo($node.children('.node-tools'))
+                .click(function (evt) {
+                    evt.stopPropagation();
+                    $(this).parent().removeClass('expanded');
+                    _self.showNodeHistoryDialog(path, $node.attr('data-name') || path);
+                });
 
             if (changed) {
                 $('<div class="node-git-diff">')
@@ -923,7 +958,7 @@ var CMSGit = new function () {
                 .click(commit);
 
             var suggested = null;
-            loadNodeList($list, $content, null, function (nodes) {
+            loadNodeList($list, $content, { onLoaded: function (nodes) {
                 if (nodes.length === 0) {
                     CMS.closeModal($content);
                     return;
@@ -934,7 +969,7 @@ var CMSGit = new function () {
                     suggested = suggestCommitMessage(nodes);
                     $message.val(suggested).focus().select();
                 }
-            });
+            } });
 
             setTimeout(function () { $message.focus(); }, 100);
         });
@@ -972,37 +1007,48 @@ var CMSGit = new function () {
     };
 
     // list of all changed nodes (or of one node and its subtree) with diffs, discard and "go to node"
-    var loadNodeList = function ($target, $content, filterNode, onLoaded, expandAll) {
+    // options: node (filter), nodeOnly (filter without sub tree), onLoaded(nodes, result), expandAll, fetch,
+    //          mode: 'working' (uncommitted changes) | 'main' (differences to the default branch)
+    var loadNodeList = function ($target, $content, options) {
+        options = options || {};
+        var mainMode = options.mode === 'main';
         $target.empty().text(t('please-wait'));
 
-        api('changednodes', {}, function (result) {
-            var nodes = result.nodes || [];
-            if (filterNode !== null && filterNode !== undefined) {
-                var filter = normalizePath(filterNode);
+        api(mainMode ? 'maindiff' : 'changednodes', mainMode ? { fetch: options.fetch === true } : {}, function (result) {
+            options.fetch = false;
+            var nodes = (mainMode ? (result.diff || {}).nodes : result.nodes) || [];
+            if (options.node !== null && options.node !== undefined) {
+                var filter = normalizePath(options.node);
                 nodes = $.grep(nodes, function (node) {
                     var path = normalizePath(node.node);
-                    return path === filter || (filter && path.indexOf(filter + '/') === 0);
+                    return path === filter || (filter && !options.nodeOnly && path.indexOf(filter + '/') === 0);
                 });
             }
 
             $target.empty();
             if (nodes.length === 0) {
-                $('<div class="cms-git-intro">').text(t('changes-none')).appendTo($target);
+                $('<div class="cms-git-intro">').text(options.emptyText || t(mainMode ? 'main-diff-none' : 'changes-none', defaultBranchName())).appendTo($target);
             } else {
-                renderNodeList(nodes, $content, expandAll === true, function () {
-                    loadNodeList($target, $content, filterNode, onLoaded, expandAll);
+                renderNodeList(nodes, $content, options, function () {
+                    loadNodeList($target, $content, options);
                 }).appendTo($target);
             }
 
-            if (typeof onLoaded === 'function') {
-                onLoaded(nodes);
+            if (typeof options.onLoaded === 'function') {
+                options.onLoaded(nodes, result);
             }
         }, function () {
             $target.empty();
         });
     };
 
-    var renderNodeList = function (nodes, $content, expandAll, reload) {
+    var defaultBranchName = function () {
+        return (_status && _status.default_branch) || 'main';
+    };
+
+    var renderNodeList = function (nodes, $content, options, reload) {
+        var mainMode = options.mode === 'main';
+        var expandAll = options.expandAll === true;
         var canDiscard = !(_status && _status.is_merging);
         var $list = $('<ul class="cms-git-node-list">');
 
@@ -1023,7 +1069,7 @@ var CMSGit = new function () {
                 $li.addClass('expanded');
                 $files = $('<div class="files">').appendTo($li);
                 $.each(node.files || [], function (j, file) {
-                    renderWorkingFile(file).appendTo($files);
+                    renderWorkingFile(file, options.mode).appendTo($files);
                 });
             };
 
@@ -1042,11 +1088,26 @@ var CMSGit = new function () {
             var $actions = $('<span class="actions">').appendTo($row);
             $('<button class="cms-git-icon-button">').html(iconHtml('diff')).attr('title', t('diff-show')).appendTo($actions)
                 .click(function (e) { e.preventDefault(); toggle(); });
-            if (canDiscard && node.node) {
+            if (canDiscard && node.node && !mainMode) {
                 $('<button class="cms-git-icon-button danger">').html(iconHtml('discard')).attr('title', t('discard')).appendTo($actions)
                     .click(function (e) {
                         e.preventDefault();
                         _self.discard(node.node, nodeName(node), reload);
+                    });
+            }
+            if (canDiscard && node.node && mainMode) {
+                $('<button class="cms-git-icon-button">').html(iconHtml('take')).attr('title', t('main-diff-take', defaultBranchName()) + '\n' + t('main-diff-take-tip', defaultBranchName())).appendTo($actions)
+                    .click(function (e) {
+                        e.preventDefault();
+                        restoreNode(RestoreSourceDefault, node.node, false, nodeName(node), reload);
+                    });
+            }
+            if (node.node && (mainMode || node.state !== 'added')) {
+                $('<button class="cms-git-icon-button">').html(iconHtml('history')).attr('title', t('node-history')).appendTo($actions)
+                    .click(function (e) {
+                        e.preventDefault();
+                        CMS.closeModal($content);
+                        _self.showNodeHistoryDialog(node.node, nodeName(node));
                     });
             }
             if (node.state !== 'deleted' && node.node) {
@@ -1066,7 +1127,8 @@ var CMSGit = new function () {
         return $list;
     };
 
-    var renderWorkingFile = function (file) {
+    var renderWorkingFile = function (file, mode) {
+        var mainMode = mode === 'main';
         var $file = $('<div class="file">').addClass(file.state);
         var $diff = null;
         var $title = $('<a href="#" class="file-title">').appendTo($file);
@@ -1075,9 +1137,11 @@ var CMSGit = new function () {
 
         var load = function () {
             $diff = $('<div class="diff">').text(t('please-wait')).appendTo($file);
-            api('workingfilediff', { path: file.path }, function (r) {
+            api(mainMode ? 'mainfilediff' : 'workingfilediff', { path: file.path }, function (r) {
                 if (!$diff) return;
-                $diff.empty().append(renderDiffView(r.diff.before, r.diff.after, t('diff-before'), t('diff-working'), true, file.path));
+                $diff.empty().append(mainMode
+                    ? renderDiffView(r.diff.before, r.diff.after, defaultBranchName(), t('main-diff-current', (_status && _status.branch) || '?'), true, file.path)
+                    : renderDiffView(r.diff.before, r.diff.after, t('diff-before'), t('diff-working'), true, file.path));
             }, function () {
                 if ($diff) { $diff.remove(); $diff = null; }
             });
@@ -1155,7 +1219,7 @@ var CMSGit = new function () {
             var $buttons = $('<div class="cms-git-dialog-buttons">').appendTo($dialog);
             var merging = _status && _status.is_merging;
 
-            loadNodeList($list, $content, null, function (nodes) {
+            loadNodeList($list, $content, { onLoaded: function (nodes) {
                 $buttons.empty();
                 if (nodes.length > 0 && !merging) {
                     $('<button class="cms-git-button primary">')
@@ -1166,15 +1230,132 @@ var CMSGit = new function () {
                             _self.showCommitDialog();
                         });
                 }
-            });
+            } });
         });
     };
 
+    // changes of a node: uncommitted (HEAD) or compared with the default branch (only on other branches)
     this.showNodeDiffDialog = function (nodePath, displayName) {
         CMS.showModal(t('changes-title') + ': ' + (displayName || nodePath), function ($content) {
             var $dialog = $('<div class="cms-git-dialog cms-git-changes-dialog">').appendTo($content);
+            var canCompare = _status && _status.is_default_branch === false;
+            var mode = 'working';
+            var $switch = null;
+
+            if (canCompare) {
+                var $bar = $('<div class="cms-git-diff-bar cms-git-compare-bar">').appendTo($dialog);
+                $('<span>').text(t('compare-with')).appendTo($bar);
+                $switch = $('<span class="cms-git-diff-switch">').appendTo($bar);
+            }
+            var $info = $('<div class="cms-git-main-diff-info">').appendTo($dialog);
             var $list = $('<div class="cms-git-node-list-container">').appendTo($dialog);
-            loadNodeList($list, $content, nodePath, null, true);
+
+            var options = { node: nodePath, expandAll: true };
+            var load = function (fetch) {
+                options.mode = mode;
+                options.fetch = fetch === true;
+                options.emptyText = mode === 'main' ? t('diff-no-differences') : null;
+                options.onLoaded = function (nodes, result) {
+                    $info.empty();
+                    if (mode === 'main') {
+                        renderMainInfo($info, result && result.diff, function () { load(true); }, fetch === true);
+                    }
+                };
+                loadNodeList($list, $content, options);
+            };
+
+            if ($switch) {
+                $.each([['working', t('compare-head')], ['main', t('compare-main', defaultBranchName())]], function (i, m) {
+                    $('<button type="button">').text(m[1]).toggleClass('selected', m[0] === mode).appendTo($switch)
+                        .click(function (e) {
+                            e.preventDefault();
+                            mode = m[0];
+                            $switch.children().removeClass('selected');
+                            $(this).addClass('selected');
+                            load(false);
+                        });
+                });
+            }
+            load(false);
+        });
+    };
+
+    // all differences between the working copy and the default branch (last fetched state)
+    this.showMainDiffDialog = function () {
+        CMS.showModal(t('main-diff-title', defaultBranchName()), function ($content) {
+            var $dialog = $('<div class="cms-git-dialog cms-git-changes-dialog cms-git-main-diff-dialog">').appendTo($content);
+            var $info = $('<div class="cms-git-main-diff-info">').appendTo($dialog);
+            var $list = $('<div class="cms-git-node-list-container">').appendTo($dialog);
+
+            var options = { mode: 'main' };
+            var load = function (fetch) {
+                options.fetch = fetch === true;
+                options.onLoaded = function (nodes, result) {
+                    renderMainInfo($info, result && result.diff, function () { load(true); }, fetch === true);
+                };
+                loadNodeList($list, $content, options);
+            };
+            load(false);
+        });
+    };
+
+    var renderMainInfo = function ($info, diff, refresh, fetched) {
+        $info.empty();
+        if (!diff) {
+            return;
+        }
+        if (fetched) {
+            _self.refreshStatus(false);
+        }
+
+        var commit = diff.commit || {};
+        var $text = $('<span class="text">').appendTo($info);
+        $('<span class="state">')
+            .text(t('main-diff-state', diff.default_branch || defaultBranchName(), commit.short_sha || '?'))
+            .attr('title', (commit.message || '') + '\n' + (commit.author || '') + (commit.date ? ', ' + new Date(commit.date).toLocaleString() : ''))
+            .appendTo($text);
+        $('<span class="fetched">')
+            .text(diff.fetched_at ? t('main-diff-fetched', new Date(diff.fetched_at).toLocaleString()) : t('main-diff-unknown'))
+            .appendTo($text);
+        $('<button class="cms-git-button">')
+            .html(labelHtml('refresh', t('main-diff-refresh')))
+            .appendTo($info)
+            .click(function (e) { e.preventDefault(); refresh(); });
+    };
+
+    var RestoreSourceDefault = 'default';
+
+    // restores the exact state of a node from a commit (sha) or the default branch => uncommitted changes
+    var restoreNode = function (source, nodePath, nodeOnly, displayName, onDone) {
+        var sourceName = source === RestoreSourceDefault ? defaultBranchName() : String(source).substring(0, 8);
+        var name = displayName || nodePath;
+        var data = { source: source, node: nodePath, nodeOnly: nodeOnly === true };
+
+        CMS.showHourglass(t('please-wait'));
+        api('restorepreview', data, function (result) {
+            CMS.hideHourglass();
+            var counts = result.restore || {};
+            if (!counts.total) {
+                CMS.alert(esc(t('restore-nothing', name, sourceName)));
+                return;
+            }
+
+            var html = esc(t('restore-confirm', name, sourceName)) + '<br/><br/>' +
+                esc(t('restore-counts', counts.modified || 0, counts.added || 0, counts.deleted || 0));
+            if (isNodeChanged(nodePath, changedFiles(), nodeOnly)) {
+                html += '<br/><br/><strong>' + esc(t('restore-overwrite-warning')) + '</strong>';
+            }
+
+            CMS.confirm(html, function () {
+                run('restore', data, function () {
+                    reloadContent();
+                    if (typeof onDone === 'function') {
+                        onDone();
+                    }
+                });
+            });
+        }, function () {
+            CMS.hideHourglass();
         });
     };
 
@@ -1369,6 +1550,22 @@ var CMSGit = new function () {
         });
     };
 
+    // history of a node (and its sub tree): only commits that changed the node, restore an older state
+    this.showNodeHistoryDialog = function (nodePath, displayName) {
+        var name = displayName || nodePath;
+        CMS.showModal(t('node-history-title', name), function ($content) {
+            var $dialog = $('<div class="cms-git-dialog cms-git-history-dialog cms-git-node-history-dialog">').appendTo($content);
+            var state = {
+                limit: HistoryPageSize, allBranches: false, selected: null,
+                node: normalizePath(nodePath) === '' ? null : String(nodePath).replace(/\\/g, '/').replace(/^\/+|\/+$/g, ''),
+                nodeOnly: false, displayName: name, $content: $content
+            };
+            renderHistory($dialog, state, false);
+        });
+    };
+
+    var UncommittedSha = 'working';
+
     // lane layout: commits are ordered topologically (children before parents)
     var computeGraph = function (commits) {
         var lanes = [], rows = [], maxLanes = 1;
@@ -1483,19 +1680,32 @@ var CMSGit = new function () {
     var renderHistory = function ($dialog, state, fetch) {
         $dialog.empty().text(t('please-wait'));
 
-        api('history', { fetch: fetch === true, allBranches: state.allBranches, limit: state.limit }, function (result) {
+        api('history', { fetch: fetch === true, allBranches: state.allBranches, limit: state.limit, node: state.node || null, nodeOnly: state.node ? state.nodeOnly === true : null }, function (result) {
             var history = result.history || {};
             var commits = history.commits || [];
+            var nodeMode = !!state.node;
+            var uncommitted = nodeMode && isNodeChanged(state.node, changedFiles(), state.nodeOnly);
             $dialog.empty();
 
             var $toolbar = $('<div class="cms-git-history-toolbar">').appendTo($dialog);
+            var $filters = $('<span class="filters">').appendTo($toolbar);
             $('<label>')
                 .append($('<input type="checkbox">').prop('checked', state.allBranches).change(function () {
                     state.allBranches = $(this).is(':checked');
                     renderHistory($dialog, state, false);
                 }))
                 .append(document.createTextNode(' ' + t('history-all-branches')))
-                .appendTo($toolbar);
+                .appendTo($filters);
+            if (nodeMode) {
+                $('<label>')
+                    .append($('<input type="checkbox">').prop('checked', state.nodeOnly).change(function () {
+                        state.nodeOnly = $(this).is(':checked');
+                        state.selected = null;
+                        renderHistory($dialog, state, false);
+                    }))
+                    .append(document.createTextNode(' ' + t('node-history-only-node')))
+                    .appendTo($filters);
+            }
             $('<span class="legend">')
                 .append($('<span class="node unpushed">'))
                 .append(document.createTextNode(' ' + t('history-unpushed')))
@@ -1505,19 +1715,37 @@ var CMSGit = new function () {
                 $('<div class="cms-git-history-warning">').text(t('stale')).attr('title', history.fetch_error || '').appendTo($dialog);
             }
 
-            if (commits.length === 0) {
+            if (commits.length === 0 && !uncommitted) {
                 $('<div class="cms-git-intro">').text(t('history-none')).appendTo($dialog);
                 return;
             }
 
-            var graph = computeGraph(commits);
-            var graphWidth = laneX(graph.maxLanes - 1) + LaneOffset;
+            // node history: commits are filtered => no graph
+            var graph = nodeMode ? null : computeGraph(commits);
+            var graphWidth = nodeMode ? 0 : laneX(graph.maxLanes - 1) + LaneOffset;
 
             var $scroll = $('<div class="cms-git-history-scroll">').appendTo($dialog);
             var $list = $('<div class="cms-git-history">').appendTo($scroll);
-            $list.append(renderGraphSvg(commits, graph, history));
+            if (!nodeMode) {
+                $list.append(renderGraphSvg(commits, graph, history));
+            }
 
             var $details = $('<div class="cms-git-history-details">');
+
+            if (uncommitted) {
+                var $working = $('<div class="row uncommitted">')
+                    .css({ height: RowHeight + 'px', paddingLeft: (graphWidth + 6) + 'px' })
+                    .toggleClass('selected', state.selected === UncommittedSha)
+                    .appendTo($list)
+                    .click(function () {
+                        state.selected = UncommittedSha;
+                        $list.children('.row').removeClass('selected');
+                        $working.addClass('selected');
+                        renderUncommittedDetails($details, state);
+                    });
+                $('<span class="labels">').append($('<span class="ref uncommitted">').text(t('node-history-uncommitted'))).appendTo($working);
+                $('<span class="message">').text(t('node-history-uncommitted-text')).appendTo($working);
+            }
 
             $.each(commits, function (i, commit) {
                 var $row = $('<div class="row">')
@@ -1530,7 +1758,7 @@ var CMSGit = new function () {
                         state.selected = commit.sha;
                         $list.children('.row').removeClass('selected');
                         $row.addClass('selected');
-                        renderCommitDetails($details, commit.sha);
+                        renderCommitDetails($details, commit.sha, state);
                     });
 
                 var $labels = $('<span class="labels">').appendTo($row);
@@ -1565,8 +1793,11 @@ var CMSGit = new function () {
             }
 
             $details.appendTo($dialog);
-            if (state.selected && $.grep(commits, function (c) { return c.sha === state.selected; }).length > 0) {
-                renderCommitDetails($details, state.selected);
+            state.reload = function () { renderHistory($dialog, state, false); };
+            if (state.selected === UncommittedSha && uncommitted) {
+                renderUncommittedDetails($details, state);
+            } else if (state.selected && $.grep(commits, function (c) { return c.sha === state.selected; }).length > 0) {
+                renderCommitDetails($details, state.selected, state);
             } else {
                 $details.append($('<div class="cms-git-intro">').text(t('history-select-commit')));
             }
@@ -1580,12 +1811,40 @@ var CMSGit = new function () {
         });
     };
 
-    var renderCommitDetails = function ($details, sha) {
+    var renderUncommittedDetails = function ($details, state) {
+        $details.empty();
+        var $list = $('<div class="cms-git-node-list-container">').appendTo($details);
+        loadNodeList($list, state.$content, { node: state.node, nodeOnly: state.nodeOnly, expandAll: true, onLoaded: function () {
+            // discard in the list => the uncommitted entry may be gone
+            if (!isNodeChanged(state.node, changedFiles(), state.nodeOnly) && state.reload) {
+                state.selected = null;
+                state.reload();
+            }
+        } });
+    };
+
+    var renderCommitDetails = function ($details, sha, state) {
+        var nodeMode = !!(state && state.node);
         $details.empty().text(t('please-wait'));
 
-        api('commitdetails', { sha: sha }, function (result) {
+        api('commitdetails', { sha: sha, node: nodeMode ? state.node : null, nodeOnly: nodeMode ? state.nodeOnly === true : null }, function (result) {
             var commit = result.commit;
             $details.empty();
+
+            if (nodeMode && !(_status && _status.is_merging)) {
+                $('<div class="cms-git-dialog-buttons cms-git-restore-buttons">')
+                    .append($('<button class="cms-git-button">')
+                        .html(labelHtml('discard', t('restore')))
+                        .attr('title', t('restore-tip', commit.short_sha))
+                        .click(function (e) {
+                            e.preventDefault();
+                            restoreNode(commit.sha, state.node, state.nodeOnly, state.displayName, function () {
+                                state.selected = UncommittedSha;
+                                if (state.reload) state.reload();
+                            });
+                        }))
+                    .appendTo($details);
+            }
 
             $('<div class="commit-message">').text(commit.message || '').appendTo($details);
 

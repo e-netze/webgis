@@ -974,3 +974,59 @@ table.cms-git-workspaces {
     .cms-git-prop-diff a.more {
         white-space: nowrap;
     }
+
+/* history icon on every node tile */
+#main-content .node .node-tools .node-git-history {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    color: #555;
+    cursor: pointer;
+}
+
+    #main-content .node .node-tools .node-git-history .cms-git-icon {
+        vertical-align: middle;
+    }
+
+/* node history */
+.cms-git-history-toolbar .filters label + label {
+    margin-left: 12px;
+}
+
+.cms-git-history .row.uncommitted .ref.uncommitted {
+    background: #fff3e0;
+    border-color: #f0a000;
+    color: #8a5a00;
+}
+
+.cms-git-restore-buttons {
+    margin: 0 0 6px 0;
+}
+
+/* compare with the default branch */
+.cms-git-compare-bar {
+    margin-bottom: 6px;
+}
+
+.cms-git-main-diff-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+    font-size: .9em;
+}
+
+    .cms-git-main-diff-info:empty {
+        display: none;
+    }
+
+    .cms-git-main-diff-info .text {
+        flex: 1 1 auto;
+    }
+
+    .cms-git-main-diff-info .fetched {
+        display: block;
+        font-size: .85em;
+        opacity: .7;
+    }

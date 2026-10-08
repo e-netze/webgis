@@ -147,6 +147,37 @@ public class CmsGitService
     }
 
     /// <summary>
+    /// Restores a node from a commit or the default branch (see <see cref="CmsGitWorkspace.Restore"/>)
+    /// </summary>
+    public CmsGitRestoreResult Restore(string cmsId, string username, string source, string nodePath, bool nodeOnly, bool previewOnly)
+    {
+        var workspace = ExistingUserWorkspace(cmsId, username);
+
+        var result = Locked(workspace.WorkspacePath, () => workspace.Restore(source, nodePath, nodeOnly, previewOnly));
+
+        if (!previewOnly && result.Total > 0)
+        {
+            _resolver.Invalidate(workspace.WorkspacePath);
+        }
+
+        return result;
+    }
+
+    public CmsGitDefaultBranchDiff GetDefaultBranchDiff(string cmsId, string username, bool fetch)
+    {
+        var workspace = ExistingUserWorkspace(cmsId, username);
+
+        return Locked(workspace.WorkspacePath, () => workspace.GetDefaultBranchDiff(fetch));
+    }
+
+    public CmsGitFileDiff GetDefaultBranchFileDiff(string cmsId, string username, string path)
+    {
+        var workspace = ExistingUserWorkspace(cmsId, username);
+
+        return Locked(workspace.WorkspacePath, () => workspace.GetDefaultBranchFileDiff(path));
+    }
+
+    /// <summary>
     /// true, if the user's working copy has a running merge => editing the CMS tree is not allowed
     /// </summary>
     public bool IsMerging(string cmsId, string username)
@@ -156,7 +187,7 @@ public class CmsGitService
 
     #region History
 
-    public CmsGitHistory GetHistory(string cmsId, string username, bool fetch, bool allBranches, int limit)
+    public CmsGitHistory GetHistory(string cmsId, string username, bool fetch, bool allBranches, int limit, string node = null, bool nodeOnly = false)
     {
         var workspace = ExistingUserWorkspace(cmsId, username);
 
@@ -168,14 +199,14 @@ public class CmsGitService
         }
         catch { /* busy => unknown */ }
 
-        return Locked(workspace.WorkspacePath, () => workspace.GetHistory(fetch, allBranches, limit, deployedSha));
+        return Locked(workspace.WorkspacePath, () => workspace.GetHistory(fetch, allBranches, limit, deployedSha, node, nodeOnly));
     }
 
-    public CmsGitCommitDetails GetCommitDetails(string cmsId, string username, string sha)
+    public CmsGitCommitDetails GetCommitDetails(string cmsId, string username, string sha, string node = null, bool nodeOnly = false)
     {
         var workspace = ExistingUserWorkspace(cmsId, username);
 
-        return Locked(workspace.WorkspacePath, () => workspace.GetCommitDetails(sha));
+        return Locked(workspace.WorkspacePath, () => workspace.GetCommitDetails(sha, node, nodeOnly));
     }
 
     public CmsGitFileDiff GetCommitFileDiff(string cmsId, string username, string sha, string path)
