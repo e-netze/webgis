@@ -168,6 +168,13 @@ public class MapController : PortalBaseController
                 queryLayout = false;
             }
 
+            bool isPortalMapAuthor = IsAuthorizedPortalMapAuthor(portalPage, portalUser);
+            bool mayUseBranches = !portalUser.IsAnonymous &&
+                                  (isPortalMapAuthor || portalUser.Username.Equals(portalPage.Subscriber, StringComparison.OrdinalIgnoreCase));
+            var branches = mayUseBranches
+                ? await _api.GetBranches(HttpContext.Request)
+                : Array.Empty<E.Standard.WebGIS.Core.Models.ApiBranchDTO>();
+
             return ViewResult(new MapModel()
             {
                 HMACObject = hmacRequestObject,  //Webgis5Globals.UrlScheme(this.Request) + "localhost/webgis5/hmac",
@@ -175,7 +182,8 @@ public class MapController : PortalBaseController
                 PageName = portalPage.Name,
                 Category = category,
                 MapName = map,
-                IsPortalMapAuthor = IsAuthorizedPortalMapAuthor(portalPage, portalUser),
+                IsPortalMapAuthor = isPortalMapAuthor,
+                Branches = branches,
                 Description = await GetMapDescription(id, category, map, portalUser.Username == portalPage.Subscriber),
                 ProjectName = Request.Query["project"],
                 CalcCrs = _config.ConfigCalcCrs(),

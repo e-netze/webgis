@@ -39,3 +39,4 @@ as otherwise other users could see your projects.
 
 # confirm-not-saveable-tabs: Not all query result tabs can be stored or recovered: ({::not-saveable-tabs}). Would you like to save the map anyway?
 
+# cms-branch-warning: Attention: the map is currently loaded with a CMS branch. If the map is opened with main later, themes that only exist in the branch will be missing.

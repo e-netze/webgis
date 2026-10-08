@@ -148,7 +148,8 @@
             callback();
         }
     };
-    this.setCurrentBranch = function (brach) { _currentBranch = brach };
+    this.setCurrentBranch = function (branch) { _currentBranch = branch || null; };
+    this.getCurrentBranch = function () { return _currentBranch || ''; };
 };
 
 webgis.security = {

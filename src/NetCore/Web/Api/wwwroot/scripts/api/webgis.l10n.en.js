@@ -378,5 +378,15 @@
     "sketch-info-display-mode-info": "Controls how the sketch info (geometry, segment, snapping and construction information) is shown above the coordinate display while drawing/editing.",
     "sketch-info-display-mode-default": "Default",
     "sketch-info-display-mode-hidden": "Do not show",
-    "sketch-info-display-mode-minimal": "Snapping/construction only"
+    "sketch-info-display-mode-minimal": "Snapping/construction only",
+
+    // cms branches (portal/viewer)
+    "branch": "Branch",
+    "branch-main": "main (production)",
+    "branch-select": "Select CMS branch",
+    "branch-select-info": "Select the CMS branch used to load maps. The setting applies to all maps in this browser until you switch back to main.",
+    "branch-back-to-main": "Back to main",
+    "branch-not-found": "The selected CMS branch no longer exists. Switched back to main.",
+    "branch-active-badge-title": "Map is loaded with a CMS branch. Click to switch.",
+    "branch-cms-count": "CMS"
 };

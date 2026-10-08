@@ -101,7 +101,7 @@ public class WebgisApiService
         }
     }
 
-    async public Task<string[]> GetBranches(HttpRequest request)
+    async public Task<ApiBranchDTO[]> GetBranches(HttpRequest request)
     {
         try
         {
@@ -111,14 +111,14 @@ public class WebgisApiService
 
             if (String.IsNullOrEmpty(data))
             {
-                return Array.Empty<string>();
+                return Array.Empty<ApiBranchDTO>();
             }
 
-            return JSerializer.Deserialize<string[]>(data);
+            return JSerializer.Deserialize<ApiBranchDTO[]>(data) ?? Array.Empty<ApiBranchDTO>();
         }
         catch
         {
-            return Array.Empty<string>();
+            return Array.Empty<ApiBranchDTO>();
         }
     }
 

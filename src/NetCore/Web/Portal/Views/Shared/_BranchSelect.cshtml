@@ -1,0 +1,11 @@
+﻿@model Portal.Core.Models.Portal.PortalModel
+@* cms branch selection on portal pages (see webgis-portal-branches.js) *@
+@if (Model.CanSelectBranch)
+{
+    <select id="webgis-select-config-branch" class="webgis-input webgis-select-config-branch" style="float:right;width:auto;max-width:240px" title="CMS Branch">
+        @foreach (var branch in Model.ConfigBranches)
+        {
+            <option value="@(branch.Encoded ?? "")" title="@branch.Details">@(branch.IsMain ? "main" : $"Branch: {branch.Name}")</option>
+        }
+    </select>
+}

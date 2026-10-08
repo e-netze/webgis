@@ -22,5 +22,8 @@ public class PortalModel
 
     public bool ShowOptimizationFilter { get; set; }
 
-    public string[] ConfigBranches { get; set; }
+    // deployed cms branches (incl. main => Encoded == ""); empty, if branches are not allowed or the user may not select a branch
+    public E.Standard.WebGIS.Core.Models.ApiBranchDTO[] ConfigBranches { get; set; }
+
+    public bool CanSelectBranch => (IsMapAuthor || IsPortalPageOwner) && ConfigBranches?.Length > 1;
 }

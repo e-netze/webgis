@@ -493,6 +493,12 @@ public class Startup
         );
 
         app.MapControllerRoute(
+            "page-branches",
+            "{id}/branches",
+            new { controller = "Home", action = "Branches" }
+        );
+
+        app.MapControllerRoute(
             "page-mapimage",
             "{id}/MapImage",
             new { controller = "Map", action = "MapImage" }

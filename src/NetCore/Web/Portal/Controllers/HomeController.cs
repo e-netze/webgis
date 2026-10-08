@@ -120,16 +120,18 @@ public class HomeController : PortalBaseController
                     $"{_config.ManifestRootUrl().WithoutEndingSlashes()}/{id}/manifest.json";
             }
 
+            var isMapAuthor = IsAuthorizedPortalMapAuthor(portal, portalUser);
+            var isPortalPageOwner = portalUser.Username.Equals(portal.Subscriber, StringComparison.OrdinalIgnoreCase);
+
             return ViewResult(viewName, new PortalModel()
             {
                 PortalPageId = id,
                 PortalPageName = portal.Name,
                 PortalPageDescription = portal.Description,
-                IsMapAuthor = UserManagement.IsAllowed(portalUser.Username, portal.MapAuthors) ||
-                                    UserManagement.IsAllowed(portalUser.UserRoles, portal.MapAuthors),
+                IsMapAuthor = isMapAuthor,
                 IsContentAuthor = UserManagement.IsAllowed(portalUser.Username, portal.ContentAuthors) ||
                                     UserManagement.IsAllowed(portalUser.UserRoles, portal.ContentAuthors),
-                IsPortalPageOwner = portalUser.Username.Equals(portal.Subscriber, StringComparison.OrdinalIgnoreCase),
+                IsPortalPageOwner = isPortalPageOwner,
                 AllowUserAccessSettings = _config.Get<bool>(PortalConfigKeys.AllowSubscriberAccessPageSettings) &&
                                           portalUser.Username.Equals(portal.Subscriber, StringComparison.OrdinalIgnoreCase),
                 BannerId = portal.BannerId,
@@ -148,7 +150,9 @@ public class HomeController : PortalBaseController
 
                 HtmlMetaTags = portal.HtmlMetaTags,
 
-                ConfigBranches = await _api.GetBranches(HttpContext.Request)
+                ConfigBranches = isMapAuthor || isPortalPageOwner
+                    ? await _api.GetBranches(HttpContext.Request)
+                    : Array.Empty<E.Standard.WebGIS.Core.Models.ApiBranchDTO>()
             });
         }
         catch (RedirectException rde)
@@ -191,6 +195,33 @@ public class HomeController : PortalBaseController
         return JsonViewSuccess(
             await _api.SortPortalItems(this.HttpContext, id, sortingMethod, items, currentCategory)
             );
+    }
+
+    // deployed cms branches (api rest/branches); only for map authors and the portal page owner
+    async public Task<IActionResult> Branches(string id)
+    {
+        try
+        {
+            var portalUser = CurrentPortalUser();
+            if (portalUser == null || portalUser.IsAnonymous)
+            {
+                throw new NotAuthorizedException();
+            }
+
+            var portal = await _api.GetApiPortalPageAsync(this.HttpContext, id);
+            if (portal == null ||
+                !(IsAuthorizedPortalMapAuthor(portal, portalUser) ||
+                  portalUser.Username.Equals(portal.Subscriber, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new NotAuthorizedException();
+            }
+
+            return JsonObject(await _api.GetBranches(HttpContext.Request));
+        }
+        catch (Exception ex)
+        {
+            return JsonObject(new { success = false, exception = ex is NotAuthorizedException ? "not authorized" : ex.Message });
+        }
     }
 
     //[ValidateInput(false)]

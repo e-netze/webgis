@@ -276,3 +276,31 @@ public class CmsBranchDeployInfo
     [System.Text.Json.Serialization.JsonPropertyName("date")]
     public DateTime? Date { get; set; }
 }
+
+// item of the branch list (rest/branches): one entry per branch over all cms; "" => main
+public class CmsBranchListItem
+{
+    [JsonProperty("encoded")]
+    [System.Text.Json.Serialization.JsonPropertyName("encoded")]
+    public string EncodedBranch { get; set; }
+
+    [JsonProperty("name")]
+    [System.Text.Json.Serialization.JsonPropertyName("name")]
+    public string Branch { get; set; }
+
+    [JsonProperty("user")]
+    [System.Text.Json.Serialization.JsonPropertyName("user")]
+    public string User { get; set; }
+
+    [JsonProperty("commit")]
+    [System.Text.Json.Serialization.JsonPropertyName("commit")]
+    public string Commit { get; set; }
+
+    [JsonProperty("date")]
+    [System.Text.Json.Serialization.JsonPropertyName("date")]
+    public DateTime? Date { get; set; }
+
+    [JsonProperty("cms_count")]
+    [System.Text.Json.Serialization.JsonPropertyName("cms_count")]
+    public int CmsCount { get; set; }
+}

@@ -18,6 +18,11 @@ public class MapModel
     public string PageName { get; set; }
     public bool IsPortalMapAuthor { get; set; }
 
+    // deployed cms branches (incl. main => Encoded == ""); only filled for map authors/portal owner and if branches are allowed
+    public E.Standard.WebGIS.Core.Models.ApiBranchDTO[] Branches { get; set; }
+
+    public bool CanSelectBranch => Branches?.Length > 1;
+
     public string ProjectName { get; set; }
 
     public MapParameters Parameters { get; set; }

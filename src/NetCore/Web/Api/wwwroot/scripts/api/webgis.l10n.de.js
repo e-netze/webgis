@@ -378,5 +378,15 @@
     "sketch-info-display-mode-info": "Legt fest, wie die Sketch-Info (Geometrie-, Segment-, Snapping- und Konstruktionsinformationen) beim Zeichnen/Editieren über der Koordinatenanzeige eingeblendet wird.",
     "sketch-info-display-mode-default": "Standard",
     "sketch-info-display-mode-hidden": "Nicht anzeigen",
-    "sketch-info-display-mode-minimal": "Nur Snapping/Konstruktion"
+    "sketch-info-display-mode-minimal": "Nur Snapping/Konstruktion",
+
+    // cms branches (portal/viewer)
+    "branch": "Branch",
+    "branch-main": "main (Produktiv)",
+    "branch-select": "CMS-Branch wählen",
+    "branch-select-info": "Wähle den CMS-Branch, mit dem Karten geladen werden sollen. Die Einstellung gilt für alle Karten dieses Browsers, bis wieder auf main gewechselt wird.",
+    "branch-back-to-main": "Zurück zu main",
+    "branch-not-found": "Der gewählte CMS-Branch existiert nicht mehr. Es wird wieder main verwendet.",
+    "branch-active-badge-title": "Karte wird mit einem CMS-Branch geladen. Klicken zum Wechseln.",
+    "branch-cms-count": "CMS"
 };

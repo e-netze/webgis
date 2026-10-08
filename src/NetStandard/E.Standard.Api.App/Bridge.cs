@@ -1174,6 +1174,8 @@ public class Bridge : IBridge
         }
     }
 
+    public string CurrentCmsBranch => _userIdentification?.Branch ?? String.Empty;
+
     private Guid _anonymousUserGuid = new Guid();
     public void SetAnonymousUserGuid(Guid guid)
     {

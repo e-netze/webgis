@@ -16,6 +16,7 @@ using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
+using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Api.UI.Setters;
 
 namespace E.Standard.WebGIS.Tools.Serialization;
@@ -39,6 +40,9 @@ public class SaveMap : IApiServerButtonLocalizable<SaveMap>,
         var response = new ApiEventResponse()
             .AddUIElement(new UIDiv()
                 .WithDialogTitle(localizer.Localize("name"))
+                .AddChildren(String.IsNullOrEmpty(bridge.CurrentCmsBranch)
+                    ? Array.Empty<IUIElement>()
+                    : new IUIElement[] { new UIInfoBox(localizer.Localize("cms-branch-warning")) })
                 .AddChildren(
                     new UILabel()
                         .WithLabel($"{localizer.Localize("save-label")}:"),

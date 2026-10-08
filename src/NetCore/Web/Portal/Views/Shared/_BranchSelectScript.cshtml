@@ -1,0 +1,30 @@
+﻿@using E.Standard.Json
+@model Portal.Core.Models.Portal.PortalModel
+@* must run before the first api request: resets the branch for users, that are not allowed to select a branch *@
+<script type="text/javascript">
+    (function () {
+        var branches = @Html.Raw(JSerializer.Serialize(Model.ConfigBranches ?? new E.Standard.WebGIS.Core.Models.ApiBranchDTO[0]).Replace("</", "<\\/"));
+        var wasReset = !webgisPortalBranches.prepare(@(Model.CanSelectBranch.ToString().ToLower()), branches);
+
+        $(function () {
+            var $branchSelect = $('#webgis-select-config-branch');
+            if ($branchSelect.length === 0) {
+                return;
+            }
+
+            $branchSelect.val(webgisPortalBranches.current());
+            $branchSelect.on('change', function () {
+                webgisPortalBranches.select($branchSelect.val());
+            });
+
+            if (wasReset) {
+                var message = webgis.l10n.get('branch-not-found');
+                if ($.fn.webgis_modal) {
+                    webgis.alert(message, 'info');
+                } else {
+                    window.alert(message);
+                }
+            }
+        });
+    })();
+</script>

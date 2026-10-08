@@ -173,6 +173,8 @@
         <script src="@(apiUrl)/scripts/api/ui/webgis_contextMenu.js"></script>
     </environment>
 
+    <script src="@(portalContentUrl)/scripts/webgis-portal-branches.js?@(WebGISVersion.JsVersion)"></script>
+
 
 
     <script type="text/javascript">
@@ -188,6 +190,10 @@
 
             var calcCrs=@Model.CalcCrs;
             var portalUrl='@Model.PortalUrl';
+
+            // cms branch: only map authors/portal owner may use a branch; must be resolved before the first api request
+            var mapBranches = @Html.Raw(JSerializer.Serialize(Model.Branches ?? new E.Standard.WebGIS.Core.Models.ApiBranchDTO[0]).Replace("</", "<\\/"));
+            var mapBranchWasReset = !webgisPortalBranches.prepare(@(Model.CanSelectBranch.ToString().ToLower()), mapBranches);
 
             var hObj = @Html.Raw(Model.HMACObject);
             if(typeof hObj==='string') {
@@ -297,6 +303,19 @@
                 queryLayout: @(Model.QueryLayout.ToString().ToLower()),
                 queryMaster: @(Model.QueryMaster.ToString().ToLower())
             });
+
+            @if (Model.CanSelectBranch)
+            {
+                <text>
+            $(function () {
+                webgisPortalBranches.initViewer({
+                    branches: mapBranches,
+                    wasReset: mapBranchWasReset,
+                    url: portalUrl + '/' + mapPortalPage + '/branches'
+                });
+            });
+                </text>
+            }
 
     </script>
 </head>

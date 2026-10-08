@@ -58,6 +58,8 @@
     }
 }
 <script src="@(portalContentUrl)/scripts/webgis-portal.js?@(WebGISVersion.CssVersion)"></script>
+<script src="@(portalContentUrl)/scripts/webgis-portal-branches.js?@(WebGISVersion.CssVersion)"></script>
+@await Html.PartialAsync("_BranchSelectScript", Model)
 
 <script type="text/javascript">
     portal = '@(Model.PortalPageId)';
@@ -76,6 +78,8 @@
     </div>
     <div class="webgis-page-header2" style="">
         <div class="page-content-item page-editable-content" data-content-id="page-title" data-content-type="input" id="portal-title" style="display:inline-block">@Model.PortalPageName</div>
+
+        @await Html.PartialAsync("_BranchSelect", Model)
 
         @if (!String.IsNullOrWhiteSpace(Model.CurrentUsername))
         {

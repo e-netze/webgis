@@ -40,3 +40,5 @@ auf denen ausschließich sie Zugriff haben, da sonst auch andere Benutzer
 ihre Projekte sehen könnten.
 
 # confirm-not-saveable-tabs: Nicht alle Abfrage Ergebnisse können mit dem Speichern der Karte wieder hergestellt werden: ({::not-saveable-tabs}). Möchten Sie die Karte trotzdem speichern?
+
+# cms-branch-warning: Achtung: Die Karte ist aktuell mit einem CMS-Branch geladen. Wird die Karte später mit main geöffnet, fehlen Themen, die es nur im Branch gibt.

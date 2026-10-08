@@ -120,6 +120,9 @@ public interface IBridge : IAppCryptography
 
     IBridgeUser CurrentUser { get; }
 
+    // encoded cms branch of the current request (hmac_br); empty => main
+    string CurrentCmsBranch { get; }
+
     void SetAnonymousUserGuid(Guid guid);
 
     T ToolConfigValue<T>(string toolConfigKey);

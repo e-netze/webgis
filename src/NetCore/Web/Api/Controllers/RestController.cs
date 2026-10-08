@@ -1744,18 +1744,46 @@ public class RestController : ApiBaseController
     {
         if (!_apiConfig.AllowBranches)
         {
-            return base.JsonObject(Array.Empty<string>());
+            return base.JsonObject(Array.Empty<CmsBranchListItem>());
         }
 
-        var branches = new HashSet<string>() { "" };
+        var branches = new Dictionary<string, CmsBranchListItem>();
 
         // deployed branches are found on disk: {cms-dir}/branches/{encoded-branch}/{cms-file}
-        _cache.CmsDocuments.AllCmsDocumentNames()
-            .Where(n => CmsBranches.IsBranchCmsName(n))
-            .ToList()
-            .ForEach(n => branches.Add(CmsBranches.SplitCmsName(n).encodedBranch));
+        foreach (var cmsName in _cache.CmsDocuments.AllCmsDocumentNames().Where(n => CmsBranches.IsBranchCmsName(n)))
+        {
+            var (mainCmsName, encodedBranch) = CmsBranches.SplitCmsName(cmsName);
+            var mainPath = _cache.CmsDocuments.MainCmsDocumentPath(mainCmsName);
+            if (String.IsNullOrEmpty(mainPath))
+            {
+                continue;
+            }
 
-        return base.JsonObject(branches);
+            var info = CmsBranches.ReadDeployInfo(mainPath, encodedBranch);
+
+            if (!branches.TryGetValue(encodedBranch, out var item))
+            {
+                branches[encodedBranch] = item = new CmsBranchListItem() { EncodedBranch = encodedBranch };
+            }
+
+            item.CmsCount++;
+            // the newest deploy describes the branch
+            if (item.Date == null || (info.Date != null && info.Date > item.Date))
+            {
+                item.Branch = info.Branch;
+                item.User = info.User;
+                item.Commit = info.Commit;
+                item.Date = info.Date;
+            }
+        }
+
+        var result = new List<CmsBranchListItem>()
+        {
+            new CmsBranchListItem() { EncodedBranch = "", Branch = "", CmsCount = _cache.CmsDocuments.AllCmsDocumentNames().Count(n => !CmsBranches.IsBranchCmsName(n)) }
+        };
+        result.AddRange(branches.Values.OrderBy(b => b.Branch, StringComparer.OrdinalIgnoreCase));
+
+        return base.JsonObject(result);
     }
 
     #endregion

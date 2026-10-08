@@ -15,7 +15,9 @@ using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.IO;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI;
+using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
+using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 
 using Newtonsoft.Json;
 
@@ -44,6 +46,7 @@ public class Publish : IApiServerButton, IStorageInteractions
                     .AsDialog()
                     .WithDialogTitle("Karte öffentlichen")
                     .WithStyles(UICss.NarrowFormMarginAuto)
+                    .AddChildren(CmsBranchWarning(bridge))
                     .AddChildren(
                         new UILabel()
                             .WithLabel("Portal"),
@@ -103,6 +106,12 @@ public class Publish : IApiServerButton, IStorageInteractions
                 new UISetter("page-publish-visibility", metadata.Visibility == PortalPageVisibility.Hidden ? "Versteckt" : "Sichtbar"),
                 new UISetter("page-publish-optimized", metadata.OptimizedForValue.ToString()));
     }
+
+    // the map is loaded with a (deployed) cms branch: the published map will be opened with main by all other users
+    private static IUIElement[] CmsBranchWarning(IBridge bridge)
+        => String.IsNullOrEmpty(bridge.CurrentCmsBranch)
+            ? Array.Empty<IUIElement>()
+            : new IUIElement[] { new UIInfoBox("Achtung: Die Karte ist aktuell mit einem CMS-Branch geladen. Andere Benutzer öffnen die Karte mit main – Themen, die es nur im Branch gibt, fehlen dann.") };
 
     #endregion
 
