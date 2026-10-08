@@ -93,10 +93,30 @@ public class CmsBranchesTests : IDisposable
         Assert.Equal(encoded, info.EncodedBranch);
         Assert.Equal("author", info.User);
         Assert.Equal("abc123", info.Commit);
+        Assert.False(info.Uncommitted);
+        Assert.DoesNotContain("uncommitted", File.ReadAllText(CmsBranches.DeployInfoFilePath(_mainFile, encoded)));
 
         Assert.True(CmsBranches.DeleteBranch(_mainFile, encoded));
         Assert.Empty(CmsBranches.FindBranches(_mainFile));
         Assert.False(CmsBranches.DeleteBranch(_mainFile, encoded));
+    }
+
+    [Fact]
+    public void WriteRead_UncommittedFlag()
+    {
+        var encoded = CmsBranches.Encode("zweig2");
+        CmsBranches.WriteBranch(_mainFile, new CmsBranchDeployInfo()
+        {
+            Branch = "zweig2",
+            EncodedBranch = encoded,
+            User = "author",
+            Commit = "base123",
+            Uncommitted = true
+        }, path => File.WriteAllText(path, "<branch/>"));
+
+        var info = CmsBranches.ReadDeployInfo(_mainFile, encoded);
+        Assert.True(info.Uncommitted);
+        Assert.Equal("base123", info.Commit);
     }
 
     [Fact]

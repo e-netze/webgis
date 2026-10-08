@@ -272,6 +272,12 @@ public class CmsBranchDeployInfo
     [System.Text.Json.Serialization.JsonPropertyName("commit")]
     public string Commit { get; set; }
 
+    // true, if the deploy contains uncommitted changes of the working copy (Commit is the base commit)
+    [JsonProperty("uncommitted", DefaultValueHandling = DefaultValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("uncommitted")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public bool Uncommitted { get; set; }
+
     [JsonProperty("date")]
     [System.Text.Json.Serialization.JsonPropertyName("date")]
     public DateTime? Date { get; set; }

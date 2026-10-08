@@ -232,9 +232,11 @@
 
 #deploy-choice-branch: Test working branch
 
-#deploy-choice-branch-sub: Deploys the saved state of your workspace as branch '{0}'. In the WebGIS this branch can be selected and tested explicitly without changing production.
+#deploy-choice-branch-sub: Deploys the current state of your workspace as branch '{0}'. In the WebGIS this branch can be selected and tested explicitly without changing production.
 
-#deploy-choice-branch-commit-first: A branch deploy is only possible when all changes are saved (git commit) and merges are completed.
+#deploy-choice-branch-merging: A branch deploy is only possible once the running merge is completed.
+
+#deploy-choice-branch-uncommitted: Note: unsaved changes (without git commit) are deployed too.
 
 #deploy-choice-branch-not-possible: A branch deploy is only possible once you have your own workspace.
 
@@ -255,6 +257,8 @@
 #branch-deploys-commit: Commit
 
 #branch-deploys-date: Date
+
+#branch-deploys-uncommitted: (with unsaved changes)
 
 #branch-deploys-remove: Remove
 

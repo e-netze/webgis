@@ -172,7 +172,7 @@ public class DeployController : ApplicationSecurityController
     }
 
     /// <summary>
-    /// Deploys the committed state of the user's working copy (current branch) to
+    /// Deploys the current state (including uncommitted changes) of the user's working copy (current branch) to
     /// {target-dir}/branches/{encoded-branch}/... (file target) or uploads it with a branch parameter (url target)
     /// </summary>
     private IActionResult DeployBranch(string id, string name)
@@ -191,7 +191,7 @@ public class DeployController : ApplicationSecurityController
             branchDeploy = _git.BeginBranchDeploy(id, this.GetCurrentUsername());
 
             _cmsLogger.Log(this.GetCurrentUsername(),
-                           "Deploy", "StartBranch", id, name, branchDeploy.Branch, branchDeploy.Commit ?? String.Empty);
+                           "Deploy", "StartBranch", id, name, branchDeploy.Branch, branchDeploy.Commit ?? String.Empty, branchDeploy.Uncommitted ? "uncommitted" : String.Empty);
 
             var job = new BranchDeployJob(name, branchDeploy, _cmsResolver.TreePath(id, this.GetCurrentUsername()));
             var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), DeployCmsBranch, job);
@@ -282,7 +282,8 @@ public class DeployController : ApplicationSecurityController
                 CmsTreePath = job.TreePath,
                 Branch = CmsBranches.Encode(job.Handle.Branch),
                 BranchName = job.Handle.Branch,
-                Commit = job.Handle.Commit
+                Commit = job.Handle.Commit,
+                Uncommitted = job.Handle.Uncommitted
             };
 
             _deployService.Init(context);

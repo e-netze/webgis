@@ -102,13 +102,14 @@ public static class StringExtensions
         return new FileInfo($"{target}.warnings");
     }
 
-    // upload url of a branch deploy: {target}?branch=...&branch_name=...&user=...&commit=...
+    // upload url of a branch deploy: {target}?branch=...&branch_name=...&user=...&commit=...[&uncommitted=true]
     static public string AppendBranchUploadParameters(this string uploadUrl, CmsToolContext context)
         => uploadUrl.AppendUrlParameters(
                 ("branch", context.Branch),
                 ("branch_name", context.BranchName),
                 ("user", context.Username),
-                ("commit", context.Commit));
+                ("commit", context.Commit),
+                ("uncommitted", context.Uncommitted ? "true" : null));
 
     // derive other api cache endpoints from the upload target url: .../cache/upload/{id} => .../cache/{action}/{id}
     static public string ToCacheApiUrl(this string uploadUrl, string action, params (string name, string? value)[] parameters)

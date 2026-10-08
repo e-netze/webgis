@@ -232,9 +232,11 @@
 
 #deploy-choice-branch: Arbeitszweig testen
 
-#deploy-choice-branch-sub: Deployt den gespeicherten Stand deines Arbeitsbereichs als Branch '{0}'. Im WebGIS kann dieser Branch gezielt ausgewählt und getestet werden, ohne die Produktion zu verändern.
+#deploy-choice-branch-sub: Deployt den aktuellen Stand deines Arbeitsbereichs als Branch '{0}'. Im WebGIS kann dieser Branch gezielt ausgewählt und getestet werden, ohne die Produktion zu verändern.
 
-#deploy-choice-branch-commit-first: Ein Branch-Deploy ist erst möglich, wenn alle Änderungen gespeichert (git commit) und Zusammenführungen abgeschlossen sind.
+#deploy-choice-branch-merging: Ein Branch-Deploy ist erst möglich, wenn die laufende Zusammenführung abgeschlossen ist.
+
+#deploy-choice-branch-uncommitted: Hinweis: Nicht gespeicherte Änderungen (ohne git commit) werden mit deployt.
 
 #deploy-choice-branch-not-possible: Ein Branch-Deploy ist erst möglich, wenn du einen eigenen Arbeitsbereich hast.
 
@@ -255,6 +257,8 @@
 #branch-deploys-commit: Commit
 
 #branch-deploys-date: Datum
+
+#branch-deploys-uncommitted: (mit nicht gespeicherten Änderungen)
 
 #branch-deploys-remove: Entfernen
 

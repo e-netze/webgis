@@ -204,12 +204,12 @@ public class CmsGitService
         => RunningDeployments.TryGetValue(cmsId, out var username) ? username : null;
 
     /// <summary>
-    /// Branch deploy: the committed state (HEAD) of the user's working copy is exported.
-    /// The working copy must not have uncommitted changes or a running merge.
+    /// Branch deploy: the current state of the user's working copy (including uncommitted changes) is exported.
+    /// The working copy must not have a running merge.
     /// The working copy stays locked (no git operations) until the result is disposed.
     /// Only one deploy per cms-item and branch at a time.
     /// </summary>
-    /// <exception cref="CmsGitException">uncommitted changes, merge in progress, busy or deploy running</exception>
+    /// <exception cref="CmsGitException">merge in progress, busy or deploy running</exception>
     public CmsGitBranchDeploy BeginBranchDeploy(string cmsId, string username)
     {
         var workspace = ExistingUserWorkspace(cmsId, username);
@@ -229,11 +229,7 @@ public class CmsGitService
             {
                 throw new CmsGitException(CmsGitErrors.MergeInProgress);
             }
-            if (status.Changes?.Any() == true)
-            {
-                throw new CmsGitException(CmsGitErrors.CommitFirst);
-            }
-
+            var uncommitted = status.Changes?.Any() == true;
             var commit = workspace.HeadCommit()?.Sha;
             var branch = BranchDeployName(username, status);
 
@@ -246,7 +242,7 @@ public class CmsGitService
             }
 
             var key = runningKey;
-            return new CmsGitBranchDeploy(branch, status.Branch, commit, workspace.WorkspacePath, () =>
+            return new CmsGitBranchDeploy(branch, status.Branch, commit, uncommitted, workspace.WorkspacePath, () =>
             {
                 RunningDeployments.TryRemove(key, out _);
                 semaphore.Release();

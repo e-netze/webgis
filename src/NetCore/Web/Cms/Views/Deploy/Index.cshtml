@@ -175,7 +175,8 @@
                     ["production-sub"] = String.Format(GL.Localize("deploy-choice-production-sub"), Model.GitDeployInfo?.DefaultBranch),
                     ["branch"] = GL.Localize("deploy-choice-branch"),
                     ["branch-sub"] = String.Format(GL.Localize("deploy-choice-branch-sub"), Model.GitBranchDeployName),
-                    ["branch-commit-first"] = GL.Localize("deploy-choice-branch-commit-first"),
+                    ["branch-merging"] = GL.Localize("deploy-choice-branch-merging"),
+                    ["branch-uncommitted"] = GL.Localize("deploy-choice-branch-uncommitted"),
                     ["branch-not-possible"] = GL.Localize("deploy-choice-branch-not-possible"),
                     ["cancel"] = GL.Localize("deploy-choice-cancel"),
                     ["none"] = GL.Localize("branch-deploys-none"),
@@ -183,6 +184,7 @@
                     ["col-user"] = GL.Localize("branch-deploys-user"),
                     ["col-commit"] = GL.Localize("branch-deploys-commit"),
                     ["col-date"] = GL.Localize("branch-deploys-date"),
+                    ["uncommitted"] = GL.Localize("branch-deploys-uncommitted"),
                     ["remove"] = GL.Localize("branch-deploys-remove"),
                     ["remove-confirm"] = GL.Localize("branch-deploys-remove-confirm"),
                     ["load-error"] = GL.Localize("branch-deploys-load-error")
@@ -219,8 +221,9 @@
                 }
 
                 var branchHint = !branchState.name ? branchL10n['branch-not-possible']
-                    : (branchState.hasChanges || branchState.isMerging) ? branchL10n['branch-commit-first']
+                    : branchState.isMerging ? branchL10n['branch-merging']
                     : null;
+                var branchInfo = branchL10n['branch-sub'] + (branchState.hasChanges ? ' ' + branchL10n['branch-uncommitted'] : '');
 
                 var buttons = {
                     cancel: { label: esc(branchL10n['cancel']), className: 'btn-default' },
@@ -240,7 +243,7 @@
                     title: esc(fmt(branchL10n['title'], name)),
                     message:
                         '<p><strong>' + esc(branchL10n['production']) + '</strong><br/><span class="muted">' + esc(branchL10n['production-sub']) + '</span></p>' +
-                        '<p><strong>' + esc(branchL10n['branch']) + '</strong><br/><span class="muted">' + esc(branchHint || branchL10n['branch-sub']) + '</span></p>',
+                        '<p><strong>' + esc(branchL10n['branch']) + '</strong><br/><span class="muted">' + esc(branchHint || branchInfo) + '</span></p>',
                     buttons: buttons
                 });
             });
@@ -277,7 +280,7 @@
                             $('<tr>')
                                 .append($('<td>').text(d.branch || d.encoded_branch))
                                 .append($('<td>').text(d.user || ''))
-                                .append($('<td class="commit">').text((d.commit || '').substring(0, 7)).attr('title', d.commit || ''))
+                                .append($('<td class="commit">').text((d.commit || '').substring(0, 7) + (d.uncommitted ? ' ' + branchL10n['uncommitted'] : '')).attr('title', d.commit || ''))
                                 .append($('<td>').text(date ? date.toLocaleString() : ''))
                                 .append($('<td>').append(
                                     $('<button type="button" class="btn btn-default btn-xs">').text(branchL10n['remove']).click(function () {

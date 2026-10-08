@@ -127,11 +127,12 @@ public sealed class CmsGitBranchDeploy : IDisposable
 {
     private Action _release;
 
-    public CmsGitBranchDeploy(string branch, string gitBranch, string commit, string workspacePath, Action release)
+    public CmsGitBranchDeploy(string branch, string gitBranch, string commit, bool uncommitted, string workspacePath, Action release)
     {
         Branch = branch;
         GitBranch = gitBranch;
         Commit = commit;
+        Uncommitted = uncommitted;
         WorkspacePath = workspacePath;
         _release = release;
     }
@@ -146,7 +147,15 @@ public sealed class CmsGitBranchDeploy : IDisposable
     /// </summary>
     public string GitBranch { get; }
 
+    /// <summary>
+    /// HEAD commit of the working copy (base commit, if Uncommitted)
+    /// </summary>
     public string Commit { get; }
+
+    /// <summary>
+    /// true, if the working copy contains uncommitted changes, that are deployed too
+    /// </summary>
+    public bool Uncommitted { get; }
 
     public string WorkspacePath { get; }
 

@@ -12,4 +12,6 @@ public class CmsToolContext
     public string? Branch { get; set; }
     public string? BranchName { get; set; }
     public string? Commit { get; set; }
+    // branch deploy contains uncommitted changes of the working copy (Commit is the base commit)
+    public bool Uncommitted { get; set; }
 }

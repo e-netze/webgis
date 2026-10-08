@@ -117,6 +117,10 @@ public class DeployService : ICmsTool
                 {
                     console.WriteLine($"Commit: {context.Commit}");
                 }
+                if (context.Uncommitted)
+                {
+                    console.WriteLine($"Contains uncommitted changes (base commit: {context.Commit})");
+                }
             }
 
             XmlDocument doc = new XmlDocument();
@@ -338,6 +342,7 @@ public class DeployService : ICmsTool
                     EncodedBranch = context.Branch,
                     User = context.Username,
                     Commit = context.Commit,
+                    Uncommitted = context.Uncommitted,
                     Date = DateTime.UtcNow
                 }, path => document.Save(path));
 

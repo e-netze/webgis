@@ -97,7 +97,7 @@ public class CacheController : ApiBaseController
     }
 
     [HttpPost]
-    async public Task<IActionResult> Upload(string id = "", string branch = "", string branch_name = "", string user = "", string commit = "")
+    async public Task<IActionResult> Upload(string id = "", string branch = "", string branch_name = "", string user = "", string commit = "", bool uncommitted = false)
     {
         try
         {
@@ -152,6 +152,7 @@ public class CacheController : ApiBaseController
                     EncodedBranch = branch,
                     User = user,
                     Commit = commit,
+                    Uncommitted = uncommitted,
                     Date = DateTime.UtcNow
                 }, branchPath => System.IO.File.WriteAllText(branchPath, xml));
 
