@@ -126,11 +126,11 @@
 
 #error-invalid-path: Ungültiger Pfad.
 
-#merge-from-default: Hauptzweig übernehmen
+#merge-from-default: Änderungen aus {0} übernehmen
 
 #merge-from-default-success: Der aktuelle Stand des Hauptzweiges wurde übernommen.
 
-#merge-into-default: In Hauptzweig zusammenführen...
+#merge-into-default: In {0} übernehmen...
 
 #merge-into-default-title: In Hauptzweig zusammenführen
 
@@ -297,3 +297,77 @@
 #history-after: nachher ({0})
 
 #error-commit-not-found: Die Änderung (Commit) wurde nicht gefunden.
+
+#commit-sub: git commit
+
+#push-sub: git push
+
+#pull-sub: git pull
+
+#merge-from-default-sub: git merge {0}
+
+#merge-into-default-sub: git merge → {0}
+
+#discard-all-sub: git reset
+
+#branches-sub: git branch / checkout
+
+#history-sub: git log
+
+#workspaces-sub: Admin
+
+#check-status-sub: git fetch
+
+#merge-complete-sub: git commit
+
+#merge-abort-sub: git merge --abort
+
+#resolve-conflicts-sub: git merge (Konflikte)
+
+#commit-tip: Speichert deine Änderungen als Version in deinem Arbeitsbereich. Andere sehen sie erst nach dem Veröffentlichen.
+
+#push-tip: Überträgt deine gespeicherten Änderungen auf den Git-Server, damit andere sie sehen und sie deployt werden können.
+
+#pull-tip: Holt die neuesten Änderungen anderer Bearbeiter vom Git-Server in deinen Arbeitsbereich.
+
+#merge-from-default-tip: Übernimmt die aktuellen Änderungen aus {0} in deinen Arbeitszweig.
+
+#merge-into-default-tip: Führt deinen Arbeitszweig in {0} zusammen und veröffentlicht das Ergebnis.
+
+#discard-all-tip: Verwirft alle ungespeicherten Änderungen und stellt den zuletzt gespeicherten Stand wieder her.
+
+#branches-tip: Arbeitszweige anlegen, wechseln oder löschen.
+
+#history-tip: Zeigt den Verlauf aller Arbeitszweige und Änderungen.
+
+#workspaces-tip: Arbeitsbereiche aller Bearbeiter anzeigen und verwalten.
+
+#check-status-tip: Prüft am Git-Server, ob es neue Änderungen gibt.
+
+#resolve-conflicts-tip: Zeigt die Einträge, die auf beiden Seiten unterschiedlich geändert wurden.
+
+#merge-complete-tip: Speichert das Ergebnis der Zusammenführung.
+
+#merge-abort-tip: Bricht die Zusammenführung ab und stellt den Stand davor wieder her.
+
+#disabled-no-changes: Es gibt keine ungespeicherten Änderungen.
+
+#disabled-commit-first: Bitte zuerst die Änderungen speichern.
+
+#disabled-nothing-to-push: Es gibt nichts zu veröffentlichen.
+
+#disabled-commit-or-discard-first: Bitte zuerst die Änderungen speichern oder verwerfen.
+
+#disabled-conflicts-remaining: Bitte zuerst alle Konflikte lösen.
+
+#count-changes: {0} ungespeichert
+
+#count-ahead: {0} nicht veröffentlicht
+
+#count-behind: {0} neu am Server
+
+#stale-short: Server nicht erreichbar
+
+#panel-collapse: Einklappen
+
+#panel-expand: Ausklappen

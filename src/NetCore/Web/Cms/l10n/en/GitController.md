@@ -126,11 +126,11 @@
 
 #error-invalid-path: Invalid path.
 
-#merge-from-default: Take over main branch
+#merge-from-default: Take over changes from {0}
 
 #merge-from-default-success: The current state of the main branch has been taken over.
 
-#merge-into-default: Merge into main branch...
+#merge-into-default: Merge into {0}...
 
 #merge-into-default-title: Merge into main branch
 
@@ -297,3 +297,77 @@
 #history-after: after ({0})
 
 #error-commit-not-found: The change (commit) was not found.
+
+#commit-sub: git commit
+
+#push-sub: git push
+
+#pull-sub: git pull
+
+#merge-from-default-sub: git merge {0}
+
+#merge-into-default-sub: git merge → {0}
+
+#discard-all-sub: git reset
+
+#branches-sub: git branch / checkout
+
+#history-sub: git log
+
+#workspaces-sub: Admin
+
+#check-status-sub: git fetch
+
+#merge-complete-sub: git commit
+
+#merge-abort-sub: git merge --abort
+
+#resolve-conflicts-sub: git merge (conflicts)
+
+#commit-tip: Saves your changes as a version in your workspace. Others will only see them after publishing.
+
+#push-tip: Transfers your saved changes to the git server, so others can see them and they can be deployed.
+
+#pull-tip: Gets the latest changes of other editors from the git server into your workspace.
+
+#merge-from-default-tip: Takes over the current changes from {0} into your branch.
+
+#merge-into-default-tip: Merges your branch into {0} and publishes the result.
+
+#discard-all-tip: Discards all unsaved changes and restores the last saved state.
+
+#branches-tip: Create, switch or delete branches.
+
+#history-tip: Shows the history of all branches and changes.
+
+#workspaces-tip: Show and manage the workspaces of all editors.
+
+#check-status-tip: Checks the git server for new changes.
+
+#resolve-conflicts-tip: Shows the entries that were changed differently on both sides.
+
+#merge-complete-tip: Saves the result of the merge.
+
+#merge-abort-tip: Aborts the merge and restores the previous state.
+
+#disabled-no-changes: There are no unsaved changes.
+
+#disabled-commit-first: Please save your changes first.
+
+#disabled-nothing-to-push: There is nothing to publish.
+
+#disabled-commit-or-discard-first: Please save or discard your changes first.
+
+#disabled-conflicts-remaining: Please resolve all conflicts first.
+
+#count-changes: {0} unsaved
+
+#count-ahead: {0} not published
+
+#count-behind: {0} new on server
+
+#stale-short: Server not reachable
+
+#panel-collapse: Collapse
+
+#panel-expand: Expand

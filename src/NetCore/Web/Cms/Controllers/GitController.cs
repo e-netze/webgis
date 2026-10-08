@@ -65,7 +65,16 @@ public class GitController : ApplicationSecurityController
         "history", "history-title", "history-all-branches", "history-load-more", "history-none",
         "history-head", "history-deployed", "history-unpushed", "history-select-commit",
         "history-author", "history-date", "history-commit", "history-parents", "history-merge",
-        "history-changes", "history-no-changes", "history-before", "history-after"
+        "history-changes", "history-no-changes", "history-before", "history-after",
+        "commit-sub", "push-sub", "pull-sub", "merge-from-default-sub", "merge-into-default-sub", "discard-all-sub",
+        "branches-sub", "history-sub", "workspaces-sub", "check-status-sub", "merge-complete-sub", "merge-abort-sub",
+        "resolve-conflicts-sub",
+        "commit-tip", "push-tip", "pull-tip", "merge-from-default-tip", "merge-into-default-tip", "discard-all-tip",
+        "branches-tip", "history-tip", "workspaces-tip", "check-status-tip", "resolve-conflicts-tip",
+        "merge-complete-tip", "merge-abort-tip",
+        "disabled-no-changes", "disabled-commit-first", "disabled-nothing-to-push",
+        "disabled-commit-or-discard-first", "disabled-conflicts-remaining",
+        "count-changes", "count-ahead", "count-behind", "stale-short", "panel-collapse", "panel-expand"
     ];
 
     private readonly CmsConfigurationService _ccs;

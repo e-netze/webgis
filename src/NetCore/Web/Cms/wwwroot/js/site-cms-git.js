@@ -18,6 +18,37 @@ var CMSGit = new function () {
         return $('<div>').text(text === null || text === undefined ? '' : String(text)).html();
     };
 
+    // simple line icons (viewBox 24x24, stroke = currentColor)
+    var ICONS = {
+        'commit': '<circle cx="12" cy="12" r="4"/><path d="M2 12h6M16 12h6"/>',
+        'push': '<path d="M12 20V5M5 11l7-7 7 7"/>',
+        'pull': '<path d="M12 4v15M19 13l-7 7-7-7"/>',
+        'merge': '<circle cx="6" cy="5" r="2.5"/><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="9" r="2.5"/><path d="M6 7.5v9M18 11.5c0 4-5 5-11.5 5.5"/>',
+        'merge-into': '<path d="M3 12h12M10 6l6 6-6 6M21 4v16"/>',
+        'discard': '<path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-4"/>',
+        'branch': '<circle cx="6" cy="5" r="2.5"/><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M6 7.5v9M18 7.5c0 6-11 4-11.5 9"/>',
+        'history': '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
+        'workspaces': '<circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14c2.2.7 3.5 2.8 3.5 6"/>',
+        'refresh': '<path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/>',
+        'conflicts': '<path d="M12 3L2 21h20z"/><path d="M12 10v5M12 18v.5"/>',
+        'check': '<path d="M5 12.5l4.5 4.5L19 7"/>',
+        'close': '<path d="M6 6l12 12M18 6L6 18"/>',
+        'trash': '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+        'switch': '<path d="M4 8h15l-4-4M20 16H5l4 4"/>',
+        'plus': '<path d="M12 5v14M5 12h14"/>',
+        'edit': '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/>',
+        'more': '<path d="M6 9l6 6 6-6"/>'
+    };
+
+    var iconHtml = function (name) {
+        return '<svg class="cms-git-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || '') + '</svg>';
+    };
+
+    // icon + label, used for (dialog) buttons
+    var labelHtml = function (iconName, text) {
+        return iconHtml(iconName) + '<span class="cms-git-label">' + esc(text) + '</span>';
+    };
+
     var api = function (action, data, onsuccess, onerror) {
         var formData = new FormData();
         data = data || {};
@@ -107,11 +138,12 @@ var CMSGit = new function () {
     };
 
     var _lastChecked = null;
+    var CollapsedStorageKey = 'cms-git-panel-collapsed';
 
     this.refreshStatus = function (fetch, onComplete) {
-        var $button = $('#cms-git-panel .cms-git-button.check-status');
+        var $button = $('#cms-git-panel .check-status');
         if (fetch === true) {
-            $button.prop('disabled', true).text(t('please-wait'));
+            $button.prop('disabled', true).addClass('spinning');
         }
 
         api('status', { fetch: fetch === true }, function (result) {
@@ -125,7 +157,7 @@ var CMSGit = new function () {
                 onComplete();
             }
         }, function () {
-            $button.prop('disabled', false).text(t('check-status'));
+            $button.prop('disabled', false).removeClass('spinning');
         });
     };
 
@@ -140,86 +172,164 @@ var CMSGit = new function () {
             return;
         }
 
-        $('<div class="cms-git-title">').text(t('title')).appendTo($panel);
+        var collapsed = false;
+        try { collapsed = window.localStorage.getItem(CollapsedStorageKey) === '1'; } catch (e) { }
+        $panel.toggleClass('cms-git-collapsed', collapsed);
+
+        // title row: title, refresh (git fetch), collapse
+        var $title = $('<div class="cms-git-title">').appendTo($panel);
+        $('<span class="text">').text(t('title')).appendTo($title);
+        $('<button class="cms-git-icon-button check-status">')
+            .html(iconHtml('refresh'))
+            .attr('title', t('check-status') + ' (' + t('check-status-sub') + ')\n' + t('check-status-tip') +
+                (_lastChecked ? '\n\n' + t('last-checked', _lastChecked.toLocaleTimeString()) : ''))
+            .prop('disabled', !status)
+            .click(function (e) { e.preventDefault(); _self.refreshStatus(true); })
+            .appendTo($title);
+        $('<button class="cms-git-icon-button toggle-panel">')
+            .html(iconHtml('more'))
+            .attr('title', collapsed ? t('panel-expand') : t('panel-collapse'))
+            .click(function (e) {
+                e.preventDefault();
+                try { window.localStorage.setItem(CollapsedStorageKey, collapsed ? '0' : '1'); } catch (ex) { }
+                _self.renderStatus(_status);
+            })
+            .appendTo($title);
 
         if (!status) {
             $('<div class="cms-git-info">').text(t('please-wait')).appendTo($panel);
             return;
         }
 
-        $('<div class="cms-git-branch">')
-            .text(t('branch') + ': ' + (status.branch || '?'))
-            .toggleClass('default', status.is_default_branch === true)
-            .appendTo($panel);
-
+        var merging = status.is_merging === true;
+        var defaultBranch = status.default_branch || 'main';
         var changes = status.changes ? status.changes.length : 0;
-        $('<div class="cms-git-info">')
-            .toggleClass('warning', changes > 0)
-            .text(changes > 0 ? t('changes', changes) : t('no-changes'))
-            .appendTo($panel);
 
-        if (!status.has_upstream) {
-            $('<div class="cms-git-info warning">').text(t('no-upstream')).appendTo($panel);
-        } else {
-            if (status.ahead > 0) {
-                $('<div class="cms-git-info warning">').text('↑ ' + t('ahead', status.ahead)).appendTo($panel);
+        // branch badge + status chips (always visible, also when collapsed)
+        var $chips = $('<div class="cms-git-chips">').appendTo($panel);
+        $('<button class="cms-git-branch-badge">')
+            .html(labelHtml('branch', status.branch || '?'))
+            .toggleClass('default', status.is_default_branch === true)
+            .attr('title', t('branch') + ': ' + (status.branch || '?') + (merging ? '' : '\n' + t('branches-tip')))
+            .prop('disabled', merging)
+            .click(function (e) { e.preventDefault(); _self.showBranchesDialog(); })
+            .appendTo($chips);
+
+        var addChip = function (iconName, text, title, cls, onclick) {
+            var $chip = $(onclick ? '<button class="cms-git-chip clickable">' : '<span class="cms-git-chip">')
+                .html(labelHtml(iconName, text))
+                .attr('title', title || text)
+                .addClass(cls || '')
+                .appendTo($chips);
+            if (onclick) {
+                $chip.click(function (e) { e.preventDefault(); onclick(); });
             }
-            if (status.behind > 0) {
-                $('<div class="cms-git-info warning">').text('↓ ' + t('behind', status.behind)).appendTo($panel);
-            }
-            if (!status.ahead && !status.behind && !status.stale) {
-                $('<div class="cms-git-info ok">').text(t('up-to-date')).appendTo($panel);
-            }
-        }
-
-        if (status.stale) {
-            $('<div class="cms-git-info stale">')
-                .text(t('stale'))
-                .attr('title', status.fetch_error || '')
-                .appendTo($panel);
-        }
-
-        if (_lastChecked) {
-            $('<div class="cms-git-info last-checked">')
-                .text(t('last-checked', _lastChecked.toLocaleTimeString()))
-                .appendTo($panel);
-        }
-
-        var $buttons = $('<div class="cms-git-buttons">').appendTo($panel);
-        var addButton = function (text, onclick, enabled, primary) {
-            return $('<button class="cms-git-button">')
-                .text(text)
-                .toggleClass('primary', primary === true)
-                .prop('disabled', enabled === false)
-                .click(function (e) { e.preventDefault(); onclick(); })
-                .appendTo($buttons);
+            return $chip;
         };
 
-        if (status.is_merging) {
-            addButton(t('resolve-conflicts'), _self.showConflictsDialog, true, status.conflict_count > 0);
-            addButton(t('merge-complete'), _self.completeMerge, !status.conflict_count, !status.conflict_count);
-            addButton(t('merge-abort'), _self.abortMerge).addClass('danger');
-            addButton(t('history'), _self.showHistoryDialog);
-            addButton(t('check-status'), function () { _self.refreshStatus(true); }).addClass('check-status');
+        if (merging) {
+            addChip('conflicts', status.conflict_count > 0 ? t('resolve-conflicts') : t('merge-complete'),
+                status.conflict_count > 0 ? t('merging-banner', status.merge_source || '?', status.conflict_count) : t('merging-banner-resolved', status.merge_source || '?'),
+                'warning', status.conflict_count > 0 ? _self.showConflictsDialog : null);
+        }
+        if (changes > 0) {
+            addChip('edit', t('count-changes', changes), t('changes', changes) + (merging ? '' : '\n' + t('commit-tip')), 'warning', merging ? null : _self.showCommitDialog);
+        }
+        if (!status.has_upstream) {
+            addChip('push', t('no-upstream'), t('no-upstream'), 'warning');
+        } else {
+            if (status.ahead > 0) {
+                addChip('push', t('count-ahead', status.ahead), t('ahead', status.ahead), 'warning');
+            }
+            if (status.behind > 0) {
+                addChip('pull', t('count-behind', status.behind), t('behind', status.behind), 'warning');
+            }
+            if (!status.ahead && !status.behind && !status.stale && changes === 0 && !merging) {
+                addChip('check', t('up-to-date'), t('up-to-date'), 'ok');
+            }
+        }
+        if (status.stale) {
+            addChip('conflicts', t('stale-short'), t('stale') + (status.fetch_error ? '\n' + status.fetch_error : ''), 'stale');
+        }
+
+        if (collapsed) {
             return;
         }
 
-        addButton(t('commit'), _self.showCommitDialog, changes > 0, changes > 0);
-        addButton(t('push'), _self.push, changes === 0 && (status.ahead > 0 || !status.has_upstream), changes === 0 && status.ahead > 0);
-        addButton(t('pull'), _self.pull, changes === 0);
-        if (!status.is_default_branch) {
-            addButton(t('merge-from-default'), _self.mergeFromDefault, changes === 0);
-            addButton(t('merge-into-default'), _self.showMergeIntoDefaultDialog, changes === 0);
+        // the one recommended next step => large button, everything else => icon toolbar
+        var recommended = null;
+        if (merging) {
+            recommended = status.conflict_count > 0 ? 'resolve-conflicts' : 'merge-complete';
+        } else if (changes > 0) {
+            recommended = 'commit';
+        } else if (!status.has_upstream || status.ahead > 0) {
+            recommended = 'push';
+        } else if (status.behind > 0) {
+            recommended = 'pull';
+        } else if (!status.is_default_branch) {
+            recommended = 'merge-into-default';
         }
-        addButton(t('branches'), _self.showBranchesDialog);
-        if (changes > 0) {
-            addButton(t('discard-all'), function () { _self.discard(''); }).addClass('danger');
-        }
-        addButton(t('history'), _self.showHistoryDialog);
-        addButton(t('workspaces'), _self.showWorkspacesDialog);
-        addButton(t('check-status'), function () { _self.refreshStatus(true); }).addClass('check-status');
-    };
 
+        var $primary = $('<div class="cms-git-buttons">').appendTo($panel);
+        var $toolbar = $('<div class="cms-git-toolbar">').appendTo($panel);
+        var $secondary = $('<span class="group secondary">');
+
+        var tooltip = function (key, disabledReason) {
+            var tip = t(key, defaultBranch) + ' (' + t(key + '-sub', defaultBranch) + ')\n' + t(key + '-tip', defaultBranch);
+            return disabledReason ? tip + '\n\n' + disabledReason : tip;
+        };
+
+        var addAction = function (key, iconName, onclick, disabledReason, cls) {
+            if (recommended === key && !disabledReason) {
+                return $('<button class="cms-git-button action primary">')
+                    .html(iconHtml(iconName) + '<span class="text"><span class="cms-git-label">' + esc(t(key, defaultBranch)) + '</span><span class="sub">' + esc(t(key + '-sub', defaultBranch)) + '</span></span>')
+                    .attr('title', tooltip(key))
+                    .click(function (e) { e.preventDefault(); onclick(); })
+                    .appendTo($primary);
+            }
+            return addTool($toolbar, key, iconName, onclick, disabledReason, cls);
+        };
+
+        var addTool = function ($target, key, iconName, onclick, disabledReason, cls) {
+            return $('<button class="cms-git-icon-button tool">')
+                .html(iconHtml(iconName))
+                .attr('title', tooltip(key, disabledReason))
+                .attr('aria-label', t(key, defaultBranch))
+                .addClass(cls || '')
+                .prop('disabled', !!disabledReason)
+                .click(function (e) { e.preventDefault(); onclick(); })
+                .appendTo($target);
+        };
+
+        if (merging) {
+            addAction('resolve-conflicts', 'conflicts', _self.showConflictsDialog, null);
+            addAction('merge-complete', 'check', _self.completeMerge, status.conflict_count > 0 ? t('disabled-conflicts-remaining') : null);
+            addAction('merge-abort', 'close', _self.abortMerge, null, 'danger');
+        } else {
+            var commitFirst = changes > 0 ? t('disabled-commit-or-discard-first') : null;
+
+            addAction('commit', 'commit', _self.showCommitDialog, changes === 0 ? t('disabled-no-changes') : null);
+            addAction('push', 'push', _self.push,
+                changes > 0 ? t('disabled-commit-first') : (status.ahead > 0 || !status.has_upstream ? null : t('disabled-nothing-to-push')));
+            addAction('pull', 'pull', _self.pull, commitFirst);
+            if (!status.is_default_branch) {
+                addAction('merge-from-default', 'merge', _self.mergeFromDefault, commitFirst);
+                addAction('merge-into-default', 'merge-into', _self.showMergeIntoDefaultDialog, commitFirst);
+            }
+            addAction('discard-all', 'discard', function () { _self.discard(''); }, changes === 0 ? t('disabled-no-changes') : null, 'danger');
+
+            addTool($secondary, 'branches', 'branch', _self.showBranchesDialog);
+        }
+        addTool($secondary, 'history', 'history', _self.showHistoryDialog);
+        if (!merging) {
+            addTool($secondary, 'workspaces', 'workspaces', _self.showWorkspacesDialog);
+        }
+        $secondary.appendTo($toolbar);
+
+        if ($primary.children().length === 0) {
+            $primary.remove();
+        }
+    };
     var renderMergeBanner = function () {
         var $container = $('#main-container');
         var merging = _status && _status.is_merging === true;
@@ -239,13 +349,13 @@ var CMSGit = new function () {
 
         var $buttons = $('<span class="buttons">').appendTo($banner);
         if (_status.conflict_count > 0) {
-            $('<button class="cms-git-button primary">').text(t('resolve-conflicts')).appendTo($buttons)
+            $('<button class="cms-git-button primary">').html(labelHtml('conflicts', t('resolve-conflicts'))).appendTo($buttons)
                 .click(function (e) { e.preventDefault(); _self.showConflictsDialog(); });
         } else {
-            $('<button class="cms-git-button primary">').text(t('merge-complete')).appendTo($buttons)
+            $('<button class="cms-git-button primary">').html(labelHtml('check', t('merge-complete'))).appendTo($buttons)
                 .click(function (e) { e.preventDefault(); _self.completeMerge(); });
         }
-        $('<button class="cms-git-button danger">').text(t('merge-abort')).appendTo($buttons)
+        $('<button class="cms-git-button danger">').html(labelHtml('close', t('merge-abort'))).appendTo($buttons)
             .click(function (e) { e.preventDefault(); _self.abortMerge(); });
     };
 
@@ -338,7 +448,7 @@ var CMSGit = new function () {
             $('<span>').text(' ' + t('merge-delete-branch')).appendTo($label);
 
             $('<button class="cms-git-button primary">')
-                .text(t('merge-into-default-button'))
+                .html(labelHtml('merge-into', t('merge-into-default-button')))
                 .appendTo($('<div class="cms-git-dialog-buttons">').appendTo($dialog))
                 .click(function () {
                     var deleteBranch = $deleteBranch.prop('checked') === true;
@@ -394,7 +504,7 @@ var CMSGit = new function () {
             if (conflicts.length === 0) {
                 $('<p class="cms-git-conflicts-none">').text(t('conflicts-none')).appendTo($dialog);
                 $('<button class="cms-git-button primary">')
-                    .text(t('merge-complete'))
+                    .html(labelHtml('check', t('merge-complete')))
                     .appendTo($('<div class="cms-git-dialog-buttons">').appendTo($dialog))
                     .click(function () {
                         CMS.closeModal($content);
@@ -406,9 +516,9 @@ var CMSGit = new function () {
             $('<p class="cms-git-conflicts-intro">').text(t('conflicts-intro', theirsName, mineName)).appendTo($dialog);
 
             var $all = $('<div class="cms-git-dialog-buttons cms-git-conflicts-all">').appendTo($dialog);
-            $('<button class="cms-git-button mine">').text(t('conflict-all-mine', mineName)).appendTo($all)
+            $('<button class="cms-git-button mine">').html(labelHtml('check', t('conflict-all-mine', mineName))).appendTo($all)
                 .click(function () { resolve('*', 'mine'); });
-            $('<button class="cms-git-button theirs">').text(t('conflict-all-theirs', theirsName)).appendTo($all)
+            $('<button class="cms-git-button theirs">').html(labelHtml('check', t('conflict-all-theirs', theirsName))).appendTo($all)
                 .click(function () { resolve('*', 'theirs'); });
 
             var $list = $('<ul class="cms-git-conflicts">').appendTo($dialog);
@@ -420,9 +530,9 @@ var CMSGit = new function () {
                 $('<span class="kind">').text(' (' + t('conflict-kind-' + conflict.kind, mineName, theirsName) + ')').appendTo($header);
 
                 var $actions = $('<div class="actions">').appendTo($li);
-                $('<button class="cms-git-button mine">').text(t('conflict-use-mine', mineName)).appendTo($actions)
+                $('<button class="cms-git-button mine">').html(labelHtml('check', t('conflict-use-mine', mineName))).appendTo($actions)
                     .click(function () { resolve(conflict.node, 'mine'); });
-                $('<button class="cms-git-button theirs">').text(t('conflict-use-theirs', theirsName)).appendTo($actions)
+                $('<button class="cms-git-button theirs">').html(labelHtml('check', t('conflict-use-theirs', theirsName))).appendTo($actions)
                     .click(function () { resolve(conflict.node, 'theirs'); });
 
                 $.each(conflict.files || [], function (j, file) {
@@ -589,7 +699,7 @@ var CMSGit = new function () {
                 .appendTo($form);
 
             $('<button class="cms-git-button primary">')
-                .text(t('commit-button'))
+                .html(labelHtml('commit', t('commit-button')))
                 .appendTo($('<div class="cms-git-dialog-buttons">').appendTo($form))
                 .click(function () {
                     var message = $.trim($message.val());
@@ -629,7 +739,7 @@ var CMSGit = new function () {
                 .val((_status && _status.suggested_branch_prefix) || '')
                 .appendTo($new);
             $('<button class="cms-git-button primary">')
-                .text(t('branch-create'))
+                .html(labelHtml('plus', t('branch-create')))
                 .appendTo($new)
                 .click(function () {
                     var name = $.trim($name.val());
@@ -664,7 +774,7 @@ var CMSGit = new function () {
                 if (!branch.is_current) {
                     var $actions = $('<div class="actions">').appendTo($li);
                     $('<button class="cms-git-button">')
-                        .text(t('branch-switch'))
+                        .html(labelHtml('switch', t('branch-switch')))
                         .prop('disabled', dirty)
                         .attr('title', dirty ? (_self.l10n['error-commit-first'] || '') : '')
                         .appendTo($actions)
@@ -676,7 +786,7 @@ var CMSGit = new function () {
                         });
                     if (!branch.is_default) {
                         $('<button class="cms-git-button danger">')
-                            .text(t('branch-delete'))
+                            .html(labelHtml('trash', t('branch-delete')))
                             .appendTo($actions)
                             .click(function () {
                                 CMS.confirm(esc(t('branch-delete-confirm', branch.name)), function () {
@@ -750,7 +860,7 @@ var CMSGit = new function () {
                     $('<td>').toggleClass('warning', dirty).text(state.join(', ')).appendTo($row);
                     $('<td>').text(ws.last_modified ? new Date(ws.last_modified).toLocaleString() : '').appendTo($row);
                     $('<button class="cms-git-button danger">')
-                        .text(t('workspace-delete'))
+                        .html(labelHtml('trash', t('workspace-delete')))
                         .appendTo($('<td>').appendTo($row))
                         .click(function () {
                             var text = ws.is_current_user ? t('workspace-delete-own-confirm') : t('workspace-delete-confirm', ws.name);
@@ -769,7 +879,7 @@ var CMSGit = new function () {
 
             var $buttons = $('<div class="cms-git-dialog-buttons">').appendTo($dialog);
             $('<button class="cms-git-button danger">')
-                .text(t('deploy-workspace-reset'))
+                .html(labelHtml('refresh', t('deploy-workspace-reset')))
                 .prop('disabled', deployRunning)
                 .appendTo($buttons)
                 .click(function () {
@@ -982,7 +1092,7 @@ var CMSGit = new function () {
 
             if (history.has_more) {
                 $('<button class="cms-git-button">')
-                    .text(t('history-load-more'))
+                    .html(labelHtml('more', t('history-load-more')))
                     .appendTo($('<div class="cms-git-history-more">').appendTo($scroll))
                     .click(function () {
                         state.limit += HistoryPageSize;
