@@ -244,6 +244,14 @@
 
 #branch-deploys-title: Deployte Branches: {0}
 
+#deploy-tile-main-only: nur main
+
+#deploy-tile-main-only-tooltip: Dieses Deploy erlaubt nur das Veröffentlichen von 'main'.
+
+#deploy-tile-branches: main + Branches
+
+#deploy-tile-branches-tooltip: Dieses Deploy erlaubt neben 'main' auch Branch-Deploys.
+
 #branch-deploys-loading: Wird geladen...
 
 #branch-deploys-none: Es sind keine Branches deployt.

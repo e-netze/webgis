@@ -244,6 +244,14 @@
 
 #branch-deploys-title: Deployed branches: {0}
 
+#deploy-tile-main-only: main only
+
+#deploy-tile-main-only-tooltip: This deploy only allows publishing 'main'.
+
+#deploy-tile-branches: main + branches
+
+#deploy-tile-branches-tooltip: Besides 'main', this deploy also allows branch deploys.
+
 #branch-deploys-loading: Loading...
 
 #branch-deploys-none: No branches are deployed.

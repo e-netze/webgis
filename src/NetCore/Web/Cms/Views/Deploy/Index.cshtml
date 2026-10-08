@@ -116,6 +116,14 @@
 
     <div style="display:inline-block">
         <div class="tile wide deploy" data-cmsid="@Model.CmsItem.Id" data-name="@deploy.Name" data-branch-deploy="@((branchDeployEnabled && deploy.AllowBranchDeploy).ToString().ToLower())">
+            @if (branchDeployEnabled)
+            {
+                var allowsBranches = deploy.AllowBranchDeploy;
+                <div class="deploy-scope @(allowsBranches ? "branches" : "main-only")"
+                     title="@Model.GitLocalizer.Localize(allowsBranches ? "deploy-tile-branches-tooltip" : "deploy-tile-main-only-tooltip")">
+                    @Model.GitLocalizer.Localize(allowsBranches ? "deploy-tile-branches" : "deploy-tile-main-only")
+                </div>
+            }
             @if (fi.Exists)
             {
                 <div class="text">@deploy.Name<br />@(fi.LastWriteTime.ToShortDateString() + " " + fi.LastWriteTime.ToLongTimeString())</div>
