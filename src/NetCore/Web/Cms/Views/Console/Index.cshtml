@@ -6,9 +6,10 @@
 }
 
 
-<div class="console-pane">
+<div class="console-pane running">
+    <div class="console-status"></div>
     <div class="console-output">
-        Prompt:>
+        <div class="console-line muted"><span class="txt">Prompt:&gt;</span></div>
     </div>
     <button id="btnCancel">Cancel</button>
 </div>
@@ -19,15 +20,39 @@
 
         var procId = '@Model.ProcId';
 
-        function finished() {
+        function consoleLine(line, cssClass) {
+            var $line = $("<div>").addClass('console-line');
+            var m = /^(?:>|&gt;)(\d+):\s?/.exec(line);
+            if (m) {
+                $("<span>").addClass('ln').text(m[1]).appendTo($line);
+                line = line.substring(m[0].length);
+            }
+            var $text = $("<span>").addClass('txt').html(line).appendTo($line);
+
+            if (!cssClass) {
+                var text = $text.text();
+                if (/^[=\-]{10,}$/.test(text.trim())) cssClass = 'separator';
+                else if (/^(upload )?succeeded\b/i.test(text)) cssClass = 'success';
+                else if (/^(canceled\b|try to cancel process$)/i.test(text)) cssClass = 'canceled';
+                else if (/^(critical\b|error\b|exception:|stacktrace:)/i.test(text)) cssClass = 'error';
+                else if (/^warning\b/i.test(text)) cssClass = 'warning';
+                else if (/^(scann for warnings|export|replace\.\.\.|release cache)$/i.test(text.trim())) cssClass = 'step';
+                else if (/^(environment|branch|commit):/i.test(text)) cssClass = 'meta';
+                else if (/^(scanned|processed|loaded) \d+/i.test(text) || /^\s+(\{\{|->)/.test(text)) cssClass = 'muted';
+            }
+            return $line.addClass(cssClass || '');
+        }
+
+        function finished(state) {
             $('#btnCancel').css('display', 'none');
-            $('.console-output').css('bottom', '4px');
+            $('.console-pane').removeClass('running').addClass(state || 'done');
             window.parent.CMS.consoleFinished();
         };
 
         $(document).ready(function () {
 
             $('#btnCancel').click(function () {
+                $(this).prop('disabled', true);
                 $.ajax({
                     url: 'Console/Cancel?procId=' + procId,
                     type: 'get',
@@ -45,34 +70,35 @@
                         var d = $('.console-output');
                         if (result.success == true) {
                             if (result.lines == null) {
-                                d.append($("<div>END</div>"));
+                                d.append($("<div>END</div>").addClass('console-line end'));
                                 d.scrollTop(d.prop("scrollHeight"));
-                                finished();
+                                finished(d.find('.console-line.success').length > 0
+                                    ? 'done'
+                                    : d.find('.console-line.canceled').length > 0 ? 'canceled'
+                                    : d.find('.console-line.error').length > 0 ? 'failed' : 'done');
 
                                 if (result.hasfile === true) {
                                     CMS.downloadFile('Console/DownloadFile?procId=' + procId);
                                 }
                             } else {
                                 for (var i = 0; i < result.lines.length; i++) {
-                                    var line = result.lines[i];
-                                   
-                                    d.append($("<div>" + line + "</div>"))
-                                    //d.scrollTop(d.prop("scrollHeight"));
+                                    d.append(consoleLine(result.lines[i]));
                                 }
 
                                 d.animate({ scrollTop: d.prop("scrollHeight")-$(window).height() }, 1000);
                                 timer = setInterval(ping, 1000);
                             }
                         } else {
-                            d.append($("<div>ERROR: " + result.message + "</div>").addClass('error'));
+                            d.append(consoleLine("ERROR: " + result.message, 'error'));
                             d.scrollTop(d.prop("scrollHeight"));
-                            finished();
+                            finished('failed');
 
                         }
                     },
                     error: function() {
+                        var d = $('.console-output');
                         timer = setInterval(ping, 1000);
-                        d.append($("<div>Connection error...</div>").addClass('error'));
+                        d.append(consoleLine("Connection error...", 'error'));
                         d.scrollTop(d.prop("scrollHeight"));
                     }
                 });

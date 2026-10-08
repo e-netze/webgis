@@ -83,7 +83,7 @@ public class FileSystemPathInfo_no_FileInfo_Experiment : IPathInfo, IDatabasePat
 
     public IEnumerable<IPathInfo> GetDirectories()
     {
-        return Directory.GetDirectories(_path).Select(d => new FileSystemPathInfo(d)).ToArray();
+        return Directory.GetDirectories(_path).Where(d => !FileSystemPathInfo.IsGitFolder(Path.GetFileName(d))).Select(d => new FileSystemPathInfo(d)).ToArray();
     }
 
     public IEnumerable<IDocumentInfo> GetFiles(string filter)
@@ -117,6 +117,9 @@ public class FileSystemPathInfo_no_FileInfo_Experiment : IPathInfo, IDatabasePat
 
 public class FileSystemPathInfo : IPathInfo, IDatabasePath
 {
+    internal static bool IsGitFolder(string name)
+        => ".git".Equals(name, StringComparison.OrdinalIgnoreCase);
+
     private DirectoryInfo _di;
     public FileSystemPathInfo(string path)
     {
@@ -160,7 +163,8 @@ public class FileSystemPathInfo : IPathInfo, IDatabasePath
 
     public IEnumerable<IPathInfo> GetDirectories()
     {
-        return _di.GetDirectories().Select(d => new FileSystemPathInfo(d.FullName)).ToArray();
+        // the .git folder of a git workspace is not part of the CMS tree
+        return _di.GetDirectories().Where(d => !IsGitFolder(d.Name)).Select(d => new FileSystemPathInfo(d.FullName)).ToArray();
     }
 
     public IEnumerable<IDocumentInfo> GetFiles(string filter)

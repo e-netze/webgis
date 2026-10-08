@@ -1,0 +1,1060 @@
+/****************************************************************************************
+
+Modern look for the WebGIS CMS
+
+- Design tokens (--webgis-ui-*) derived from --webgis-brand-primary
+- Loaded after site.css and before site.overrides.css / company css,
+  so customer overrides still win.
+- Header colors are NOT touched here (see --webgis-ui-surface-navbar / --webgis-ui-text-navbar)
+
+*****************************************************************************************/
+
+:root {
+    --webgis-ui-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    --webgis-ui-primary: var(--webgis-brand-primary);
+    --webgis-ui-primary-strong: color-mix(in oklch, var(--webgis-brand-primary) 62%, black);
+    --webgis-ui-primary-soft: color-mix(in oklch, var(--webgis-brand-primary) 14%, white);
+    --webgis-ui-focus-ring: color-mix(in oklch, var(--webgis-brand-primary) 35%, transparent);
+
+    --webgis-ui-surface: #fff;
+    --webgis-ui-surface-subtle: #f7f8fa;
+    --webgis-ui-surface-hover: #f0f2f5;
+    --webgis-ui-border: #e3e6ea;
+    --webgis-ui-border-strong: #c9ced6;
+    --webgis-ui-text: #1f2937;
+    --webgis-ui-text-muted: #6b7280;
+
+    --webgis-ui-radius: 8px;
+    --webgis-ui-radius-sm: 6px;
+    --webgis-ui-shadow-sm: 0 1px 2px rgba(16, 24, 40, .06);
+    --webgis-ui-shadow-md: 0 4px 12px rgba(16, 24, 40, .10);
+    --webgis-ui-shadow-lg: 0 20px 50px rgba(16, 24, 40, .25);
+
+    --webgis-ui-state-modified: #b36b00;
+    --webgis-ui-state-added: #0f766e;
+    --webgis-ui-state-deleted: #c62828;
+
+    --webgis-ui-navtree-width: 500px;
+    --webgis-ui-navtree-width-current: min(var(--webgis-ui-navtree-width-user, var(--webgis-ui-navtree-width)), 60vw);
+}
+
+@media (max-width:1024px) {
+    :root {
+        --webgis-ui-navtree-width: 250px;
+    }
+}
+
+body {
+    font-family: var(--webgis-ui-font-family);
+    color: var(--webgis-ui-text);
+}
+
+/****************************************************************************************
+ Header controls (background/text colors stay as configured)
+*****************************************************************************************/
+
+.navbar-header input.cms-search {
+    height: 34px;
+    padding: 6px 12px;
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: var(--webgis-ui-radius);
+    background-color: rgba(255, 255, 255, .15);
+    color: var(--webgis-ui-text-navbar, #fff);
+    transition: background-color .15s ease, border-color .15s ease;
+}
+
+    .navbar-header input.cms-search:focus {
+        border: 1px solid rgba(255, 255, 255, .8);
+        background-color: rgba(255, 255, 255, .25);
+    }
+
+    .navbar-header input.cms-search::placeholder {
+        color: var(--webgis-ui-text-navbar, #fff);
+        opacity: .7;
+    }
+
+.navbar-search-button {
+    border-radius: var(--webgis-ui-radius-sm);
+    margin: 0 4px;
+}
+
+    .navbar-search-button:hover {
+        background-color: rgba(255, 255, 255, .18);
+    }
+
+.navbar-header .tool.order {
+    height: 32px;
+    width: auto;
+    padding: 0 10px 0 28px;
+    border: 1px solid rgba(255, 255, 255, .5);
+    border-radius: var(--webgis-ui-radius-sm);
+    background-color: rgba(255, 255, 255, .92);
+    background-size: 18px;
+    background-position: 6px center;
+    color: var(--webgis-ui-text);
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: none;
+}
+
+    .navbar-header .tool.order:hover {
+        background-color: #fff;
+        color: var(--webgis-ui-text);
+        box-shadow: none;
+    }
+
+.navbar-language-select {
+    height: 32px;
+    border-radius: var(--webgis-ui-radius-sm);
+}
+
+/****************************************************************************************
+ Breadcrumb (cms-navbar)
+*****************************************************************************************/
+
+.cms-navbar {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    background: var(--webgis-ui-surface);
+    border-bottom: 1px solid var(--webgis-ui-border);
+}
+
+    .cms-navbar .item {
+        display: inline-flex;
+        align-items: center;
+        flex: 0 0 auto;
+        height: 36px;
+        margin: 0;
+    }
+
+        .cms-navbar .item .text {
+            display: block;
+            padding: 4px 6px;
+            border-radius: var(--webgis-ui-radius-sm);
+            background-color: transparent;
+            color: var(--webgis-ui-text-muted);
+            font-size: 13px;
+            line-height: 20px;
+        }
+
+            .cms-navbar .item .text:hover {
+                background-color: var(--webgis-ui-surface-hover);
+                color: var(--webgis-ui-text);
+            }
+
+        .cms-navbar .item .right {
+            display: block;
+            width: auto;
+            height: auto;
+            border: none;
+        }
+
+            .cms-navbar .item .right::before {
+                content: '›';
+                display: inline-block;
+                padding: 0 4px;
+                color: var(--webgis-ui-border-strong);
+                font-size: 18px;
+                line-height: 20px;
+            }
+
+        .cms-navbar .item:last-child .text {
+            padding-left: 28px;
+            background-color: transparent;
+            background-size: 16px;
+            background-position: 6px center;
+            color: var(--webgis-ui-text);
+            font-weight: 600;
+        }
+
+            .cms-navbar .item:last-child .text:hover {
+                background-color: var(--webgis-ui-surface-hover);
+            }
+
+        .cms-navbar .item:last-child .pin {
+            display: block;
+            width: 26px;
+            height: 26px;
+            margin-left: 2px;
+            border-radius: var(--webgis-ui-radius-sm);
+            background-color: transparent;
+            opacity: .6;
+        }
+
+            .cms-navbar .item:last-child .pin:hover {
+                background-color: var(--webgis-ui-surface-hover);
+                opacity: 1;
+            }
+
+        .cms-navbar .item:last-child .right {
+            display: none;
+        }
+
+        .cms-navbar .item.ellipsis .text {
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+/****************************************************************************************
+ Navigation tree
+*****************************************************************************************/
+
+.cms-navtree {
+    top: 38px;
+    width: var(--webgis-ui-navtree-width-current);
+    padding: 8px 6px;
+    background-color: var(--webgis-ui-surface-subtle);
+    border-right: 1px solid var(--webgis-ui-border);
+}
+
+.cms-main-container {
+    top: 38px;
+    left: var(--webgis-ui-navtree-width-current);
+    padding: 4px 12px;
+    background-color: var(--webgis-ui-surface);
+}
+
+    .cms-navtree .cms-treenode .text {
+        padding: 4px 8px 4px 2px;
+        margin: 1px 0;
+        border-radius: var(--webgis-ui-radius-sm);
+        line-height: 20px;
+        color: var(--webgis-ui-text);
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+        .cms-navtree .cms-treenode .text:hover {
+            background-color: var(--webgis-ui-surface-hover);
+        }
+
+        .cms-navtree .cms-treenode .text .plus {
+            display: inline-block;
+            position: relative;
+            width: 18px;
+            height: 20px;
+            vertical-align: top;
+            font-size: 0;
+            background-image: none;
+        }
+
+            .cms-navtree .cms-treenode .text .plus::before {
+                content: '';
+                position: absolute;
+                left: 6px;
+                top: 6px;
+                width: 6px;
+                height: 6px;
+                border-right: 1.5px solid var(--webgis-ui-text-muted);
+                border-bottom: 1.5px solid var(--webgis-ui-text-muted);
+                transform: rotate(45deg);
+                transition: transform .15s ease;
+            }
+
+    .cms-navtree .cms-treenode.collapsed > .text .plus {
+        background-image: none;
+    }
+
+        .cms-navtree .cms-treenode.collapsed > .text .plus::before {
+            left: 5px;
+            top: 7px;
+            transform: rotate(-45deg);
+        }
+
+    .cms-navtree .cms-treenode.selected > .text {
+        background-color: var(--webgis-ui-primary-soft);
+        color: var(--webgis-ui-primary-strong);
+        font-weight: 600;
+    }
+
+    .cms-navtree .cms-treenode .cms-treenode-nodes {
+        margin-left: 10px;
+        padding-left: 6px;
+        border-left: 1px solid var(--webgis-ui-border);
+    }
+
+.pin-list-items .cms-pin-item {
+    padding: 5px 8px;
+    margin: 0 0 4px 0;
+    border: 1px solid var(--webgis-ui-border);
+    border-radius: var(--webgis-ui-radius-sm);
+    background-color: var(--webgis-ui-surface);
+    font-size: 13px;
+}
+
+    .pin-list-items .cms-pin-item:hover {
+        background: var(--webgis-ui-primary-soft);
+    }
+
+    .pin-list-items .cms-pin-item .text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .pin-list-items .cms-pin-item .pin {
+        display: inline-block;
+        width: 20px;
+        height: 18px;
+        vertical-align: -3px;
+    }
+
+/* splitter between tree and content */
+.cms-navtree-splitter {
+    position: absolute;
+    top: 38px;
+    bottom: 0;
+    left: calc(var(--webgis-ui-navtree-width-current) - 3px);
+    width: 6px;
+    z-index: 5;
+    cursor: col-resize;
+    background: transparent;
+    transition: background-color .15s ease;
+}
+
+    .cms-navtree-splitter:hover,
+    body.cms-navtree-resizing .cms-navtree-splitter {
+        background-color: var(--webgis-ui-primary);
+    }
+
+body.cms-navtree-resizing {
+    cursor: col-resize;
+    user-select: none;
+}
+
+@media (max-width:768px) {
+    .cms-navtree {
+        width: 0px;
+        display: none;
+    }
+
+    .cms-main-container {
+        left: 0px;
+    }
+
+    .cms-navtree-splitter {
+        display: none;
+    }
+}
+
+/****************************************************************************************
+ Toolbar
+*****************************************************************************************/
+
+.cms-toolbar {
+    margin: 8px 4px 4px 4px;
+}
+
+    .cms-toolbar .tool {
+        margin: 2px 4px 2px 0;
+        padding: 7px 14px 7px 36px;
+        border: 1px solid var(--webgis-ui-primary-strong);
+        border-radius: var(--webgis-ui-radius);
+        background-color: var(--webgis-ui-surface);
+        background-position: 9px center;
+        background-size: 20px;
+        color: var(--webgis-ui-primary-strong);
+        font-weight: 500;
+        transition: background-color .15s ease;
+    }
+
+        .cms-toolbar .tool:hover {
+            background-color: var(--webgis-ui-primary-soft);
+            color: var(--webgis-ui-primary-strong);
+            box-shadow: none;
+        }
+
+        .cms-toolbar .tool.empty-clipboard,
+        .cms-toolbar .tool.empty-clipboard:hover {
+            background-color: #fdecea;
+            border-color: var(--webgis-ui-state-deleted);
+            color: var(--webgis-ui-state-deleted);
+        }
+
+/****************************************************************************************
+ Content tiles
+*****************************************************************************************/
+
+.cms-content .node,
+.cms-content .node:nth-child(2n+1),
+.cms-content .node.parent,
+.cms-content .node.parent.up {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 52px;
+    margin: 6px 4px;
+    padding: 6px 0;
+    border: 1px solid var(--webgis-ui-border);
+    border-radius: var(--webgis-ui-radius);
+    background-color: var(--webgis-ui-surface);
+    background-position: 12px center;
+    color: var(--webgis-ui-text);
+    box-shadow: var(--webgis-ui-shadow-sm);
+    transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease, top .15s ease-in-out, left .15s ease-in-out, opacity .3s ease-in-out;
+}
+
+.cms-content .node.parent.up {
+    min-height: 38px;
+    padding: 2px 0;
+    box-shadow: none;
+}
+
+.cms-content .node:hover,
+.cms-content .node.parent:hover {
+    background-color: var(--webgis-ui-surface-subtle);
+    border-color: var(--webgis-ui-border-strong);
+    color: var(--webgis-ui-text);
+    box-shadow: var(--webgis-ui-shadow-md);
+}
+
+.cms-content .node.selected {
+    border: 1px solid var(--webgis-ui-primary);
+    box-shadow: 0 0 0 3px var(--webgis-ui-focus-ring);
+}
+
+.cms-content .node.current {
+    background-color: var(--webgis-ui-primary);
+    color: #fff;
+}
+
+.cms-content .node.sorting {
+    background-color: var(--webgis-ui-primary-soft);
+    color: var(--webgis-ui-text);
+}
+
+.cms-content .node .title {
+    padding-top: 0;
+    padding-left: 48px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.cms-content .node .primary-property-value {
+    padding-left: 48px;
+    color: var(--webgis-ui-text-muted);
+}
+
+.cms-content .node .target {
+    padding: 0 2px 0 48px;
+    color: var(--webgis-ui-text-muted);
+}
+
+.cms-content .node .node-tools {
+    top: 0;
+    bottom: 0;
+    right: 8px;
+    height: auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 1;
+}
+
+    .cms-content .node .node-tools > div:not(.cms-ui-none) {
+        width: 32px;
+        height: 32px;
+        margin: 0;
+        border: 1px solid transparent;
+        border-radius: var(--webgis-ui-radius-sm);
+        background-color: transparent;
+        background-size: 20px;
+        transition: background-color .15s ease, border-color .15s ease;
+    }
+
+    .cms-content .node .node-tools > div:not(.node-security):hover {
+        background-color: var(--webgis-ui-surface-hover);
+        border-color: var(--webgis-ui-border-strong);
+    }
+
+    .cms-content .node .node-tools > .node-security:hover {
+        border-color: var(--webgis-ui-border-strong);
+    }
+
+    /* tool groups: git | copy/cut/delete | refresh/properties/security (security always last -> does not move on hover) */
+    .cms-content .node .node-tools > .node-git-diff,
+    .cms-content .node .node-tools > .node-git-discard,
+    .cms-content .node .node-tools > .node-git-history {
+        order: 10;
+    }
+
+    .cms-content .node .node-tools > .node-copy,
+    .cms-content .node .node-tools > .node-cut,
+    .cms-content .node .node-tools > .node-delete {
+        order: 30;
+    }
+
+    .cms-content .node .node-tools > .node-refresh,
+    .cms-content .node .node-tools > .node-target-properties,
+    .cms-content .node .node-tools > .node-properties {
+        order: 50;
+    }
+
+    .cms-content .node .node-tools > .node-security {
+        order: 60;
+    }
+
+    .cms-content .node:hover .node-tools:has(> .node-git-diff, > .node-git-discard, > .node-git-history)::before,
+    .cms-content .node:hover .node-tools:has(> .node-copy, > .node-cut, > .node-delete)::after {
+        content: '';
+        display: block;
+        width: 1px;
+        height: 22px;
+        margin: 0 4px;
+        background-color: var(--webgis-ui-border-strong);
+    }
+
+    .cms-content .node:hover .node-tools::before {
+        order: 20;
+    }
+
+    .cms-content .node:hover .node-tools::after {
+        order: 40;
+    }
+
+/* sortable lists */
+.cms-content .sortable > .node {
+    border-radius: var(--webgis-ui-radius);
+    border-color: var(--webgis-ui-border);
+    font-style: normal;
+    cursor: grab;
+}
+
+    .cms-content .sortable > .node::before {
+        content: '';
+        position: absolute;
+        left: 3px;
+        top: 50%;
+        width: 4px;
+        height: 16px;
+        transform: translateY(-50%);
+        background-image: radial-gradient(currentColor 1px, transparent 1.3px);
+        background-size: 4px 4px;
+        opacity: .35;
+    }
+
+    .cms-content .sortable > .node:active {
+        cursor: grabbing;
+    }
+
+/****************************************************************************************
+ Buttons
+*****************************************************************************************/
+
+button {
+    padding: 7px 16px;
+    border: 1px solid var(--webgis-ui-border-strong);
+    border-radius: var(--webgis-ui-radius-sm);
+    background-color: var(--webgis-ui-surface);
+    color: var(--webgis-ui-text);
+    transition: background-color .15s ease, border-color .15s ease;
+}
+
+    button:hover {
+        background-color: var(--webgis-ui-surface-hover);
+        color: var(--webgis-ui-text);
+        box-shadow: none;
+    }
+
+    button:focus-visible {
+        box-shadow: 0 0 0 3px var(--webgis-ui-focus-ring);
+    }
+
+    button.loading {
+        padding-left: 32px;
+        background-position: 8px center;
+    }
+
+/****************************************************************************************
+ Sidebar / Footer
+*****************************************************************************************/
+
+.webportal-layout-sidebar {
+    background-color: var(--webgis-ui-surface-subtle);
+    border-right: 1px solid var(--webgis-ui-border);
+    box-shadow: none;
+}
+
+    .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item {
+        margin: 2px 6px;
+        padding: 7px 8px;
+        border-radius: var(--webgis-ui-radius-sm);
+    }
+
+        .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item:hover {
+            background-color: var(--webgis-ui-surface-hover);
+        }
+
+        .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item a {
+            color: var(--webgis-ui-text);
+        }
+
+        .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item.hr,
+        .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item.hr:hover,
+        .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item.cms-git-sidebar,
+        .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item.cms-git-sidebar:hover {
+            background-color: transparent;
+        }
+
+        .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item.cms-git-sidebar {
+            margin: 2px 0;
+            padding: 0;
+        }
+
+            .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item.hr .text {
+                background-color: var(--webgis-ui-surface-subtle);
+                color: var(--webgis-ui-text-muted);
+                text-transform: uppercase;
+                font-size: 11px;
+                letter-spacing: .5px;
+            }
+
+    .webportal-layout-sidebar .collapse-button {
+        color: var(--webgis-ui-text-muted);
+    }
+
+        .webportal-layout-sidebar .collapse-button:hover {
+            background-color: var(--webgis-ui-surface-hover);
+            color: var(--webgis-ui-text);
+        }
+
+body.sidebar-collapsed .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item {
+    margin: 0;
+    padding: 8px;
+    border-radius: 0;
+}
+
+.webportal-layout-footer {
+    padding: 9px 12px;
+    background-color: var(--webgis-ui-surface-subtle);
+    border-top: 1px solid var(--webgis-ui-border);
+    color: var(--webgis-ui-text-muted);
+    font-size: 12px;
+}
+
+/****************************************************************************************
+ Modal dialogs (CMS + bootbox/Bootstrap 3)
+*****************************************************************************************/
+
+.modaldialog-blocker {
+    background-color: rgba(15, 23, 42, .45);
+}
+
+.modaldialog-blocker .modaldialog-modal {
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: var(--webgis-ui-shadow-lg);
+}
+
+    .modaldialog-blocker .modaldialog-modal .modaldialog-title {
+        display: flex;
+        align-items: center;
+        height: 48px;
+        padding: 0 56px 0 16px;
+        border-bottom: 1px solid var(--webgis-ui-border);
+        font-size: 17px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+        .modaldialog-blocker .modaldialog-modal .modaldialog-title .modaldialog-close {
+            top: 8px;
+            right: 8px;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            border-radius: var(--webgis-ui-radius-sm);
+            color: var(--webgis-ui-text-muted);
+            font-size: 16px;
+            font-weight: normal;
+        }
+
+            .modaldialog-blocker .modaldialog-modal .modaldialog-title .modaldialog-close:hover {
+                background-color: #fdecea;
+                color: var(--webgis-ui-state-deleted);
+            }
+
+    .modaldialog-blocker .modaldialog-modal .modaldialog-body {
+        top: 48px;
+        padding: 12px 16px;
+    }
+
+    .modaldialog-blocker .modaldialog-modal.has-buttons .modaldialog-body {
+        bottom: 56px;
+    }
+
+    .modaldialog-blocker .modaldialog-modal .modaldialog-buttons {
+        height: 56px;
+        padding: 10px 16px;
+        border-top: 1px solid var(--webgis-ui-border);
+        background-color: var(--webgis-ui-surface-subtle);
+    }
+
+button.modaldialog-button-commit,
+.btn-primary {
+    background-color: var(--webgis-ui-primary-strong);
+    border-color: var(--webgis-ui-primary-strong);
+    color: #fff;
+}
+
+    button.modaldialog-button-commit:hover,
+    .btn-primary:hover,
+    .btn-primary:focus,
+    .btn-primary:active,
+    .btn-primary.active {
+        background-color: var(--webgis-ui-primary-strong);
+        border-color: var(--webgis-ui-primary-strong);
+        color: #fff;
+        filter: brightness(1.1);
+    }
+
+.modal-content {
+    border: none;
+    border-radius: 10px;
+    box-shadow: var(--webgis-ui-shadow-lg);
+}
+
+.modal-header,
+.modal-footer {
+    border-color: var(--webgis-ui-border);
+}
+
+.modal-footer {
+    background-color: var(--webgis-ui-surface-subtle);
+    border-radius: 0 0 10px 10px;
+}
+
+.modal-title {
+    font-weight: 600;
+}
+
+.modal-backdrop.in {
+    background-color: rgb(15, 23, 42);
+    opacity: .45;
+}
+
+.btn {
+    border-radius: var(--webgis-ui-radius-sm);
+    padding: 7px 16px;
+}
+
+/****************************************************************************************
+ Forms (propertygrid + cms-form)
+*****************************************************************************************/
+
+.propertygrid-property-wrapper {
+    background-color: transparent;
+}
+
+    .propertygrid-property-wrapper .propertygrid-label {
+        color: var(--webgis-ui-primary-strong);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+        .propertygrid-property-wrapper .propertygrid-value input:not([type=checkbox]):not([type=radio]),
+        .propertygrid-property-wrapper .propertygrid-value select,
+        .cms-form input:not([type=checkbox]):not([type=radio]),
+        .cms-form select,
+        .cms-form textarea {
+            padding: 6px 10px;
+            border: 1px solid var(--webgis-ui-border-strong);
+            border-radius: var(--webgis-ui-radius-sm);
+            background-color: var(--webgis-ui-surface);
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+
+            .propertygrid-property-wrapper .propertygrid-value input:not([type=checkbox]):not([type=radio]):focus,
+            .propertygrid-property-wrapper .propertygrid-value select:focus,
+            .cms-form input:not([type=checkbox]):not([type=radio]):focus,
+            .cms-form select:focus,
+            .cms-form textarea:focus {
+                border: 1px solid var(--webgis-ui-primary);
+                background-color: var(--webgis-ui-surface);
+                box-shadow: 0 0 0 3px var(--webgis-ui-focus-ring);
+                outline: none;
+            }
+
+    .propertygrid-property-wrapper .propertygrid-value input[readonly=readonly] {
+        color: var(--webgis-ui-text-muted);
+        background-color: var(--webgis-ui-surface-subtle);
+    }
+
+    .propertygrid-property-wrapper .propertygrid-editor-button {
+        top: 13px;
+        height: 24px;
+        border-color: var(--webgis-ui-border-strong);
+        border-radius: var(--webgis-ui-radius-sm);
+        background-color: var(--webgis-ui-primary-soft);
+        color: var(--webgis-ui-primary-strong);
+    }
+
+    .propertygrid-property-wrapper .propertygrid-auth-button {
+        top: 12px;
+        border-radius: var(--webgis-ui-radius-sm);
+        background-color: var(--webgis-ui-primary-strong);
+    }
+
+.propertygrid-category .propertygrid-category-title,
+.cms-form .cms-form-groupbox .text {
+    margin-top: 6px;
+    border-radius: var(--webgis-ui-radius-sm);
+    border-bottom: 1px solid var(--webgis-ui-border);
+    background-color: var(--webgis-ui-surface-subtle);
+    color: var(--webgis-ui-text);
+    font-weight: 500;
+}
+
+    .propertygrid-category .propertygrid-category-title:has(+ .propertygrid-category-body:not([style*="display: none"])),
+    .cms-form .cms-form-groupbox .text:has(+ .body:not([style*="display: none"])) {
+        background-color: var(--webgis-ui-primary-soft);
+        color: var(--webgis-ui-primary-strong);
+        border-bottom: 2px solid var(--webgis-ui-primary);
+        border-radius: var(--webgis-ui-radius-sm) var(--webgis-ui-radius-sm) 0 0;
+    }
+
+.propertygrid-property-description {
+    border: 1px solid var(--webgis-ui-border);
+    border-radius: var(--webgis-ui-radius);
+    background: var(--webgis-ui-surface-subtle);
+    color: var(--webgis-ui-text);
+}
+
+.cms-form .input-container .label {
+    color: var(--webgis-ui-primary-strong) !important;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.cms-form .input-container.required input,
+.cms-form .input-container.required select {
+    background-color: #fff9db;
+}
+
+.cms-form .input-container.required.error,
+.cms-form .input-container.required.error input,
+.cms-form .input-container.required.error select {
+    background-color: #fdecea;
+}
+
+.cms-form .info-text {
+    border: 1px solid var(--webgis-ui-border);
+    border-radius: var(--webgis-ui-radius);
+    background-color: var(--webgis-ui-surface-subtle);
+}
+
+.cms-form .cms-form-table th {
+    background-color: var(--webgis-ui-primary-soft);
+    color: var(--webgis-ui-text);
+    font-weight: 600;
+}
+
+.cms-form .cms-form-table td,
+.cms-form .cms-form-table th {
+    border-bottom: 1px solid var(--webgis-ui-border);
+}
+
+.cms-form .cms-form-table tr:hover {
+    background-color: var(--webgis-ui-surface-hover);
+}
+
+.tt-menu {
+    border: 1px solid var(--webgis-ui-border);
+    border-radius: var(--webgis-ui-radius);
+    box-shadow: var(--webgis-ui-shadow-md);
+}
+
+    .tt-menu .tt-dataset .tt-suggestion:hover,
+    .tt-menu .tt-dataset .tt-suggestion.tt-cursor {
+        background-color: var(--webgis-ui-primary-soft);
+    }
+
+/* ---------- console (deploy, import, ...) ---------- */
+
+.console-pane {
+    background: var(--webgis-ui-surface, #fff);
+}
+
+    .console-pane .console-status {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 3px;
+        background: #334155;
+        overflow: hidden;
+    }
+
+    .console-pane.running .console-status::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 30%;
+        background: var(--webgis-ui-primary, #3b82f6);
+        animation: cms-console-progress 1.4s ease-in-out infinite;
+    }
+
+    .console-pane.done .console-status {
+        background: #22c55e;
+    }
+
+    .console-pane.failed .console-status {
+        background: #ef4444;
+    }
+
+    .console-pane.canceled .console-status {
+        background: #f59e0b;
+    }
+
+@keyframes cms-console-progress {
+    0% { left: -30%; }
+    100% { left: 100%; }
+}
+
+    .console-pane .console-output {
+        left: 0;
+        right: 0;
+        top: 3px;
+        bottom: 48px;
+        padding: 8px 0;
+        background-color: #0f172a;
+        color: #cbd5e1;
+        font-family: ui-monospace, "Cascadia Mono", "Cascadia Code", Consolas, "Liberation Mono", monospace;
+        font-size: 13px;
+        line-height: 1.55;
+        scrollbar-color: #475569 #0f172a;
+    }
+
+    .console-pane.done .console-output,
+    .console-pane.failed .console-output,
+    .console-pane.canceled .console-output {
+        bottom: 0;
+    }
+
+        .console-pane .console-output .console-line {
+            display: flex;
+            padding: 0 12px 0 0;
+            white-space: pre;
+        }
+
+            .console-pane .console-output .console-line:hover {
+                background: rgba(148, 163, 184, .08);
+            }
+
+            .console-pane .console-output .console-line .ln {
+                flex: 0 0 auto;
+                width: 4.5em;
+                padding-right: 12px;
+                margin-right: 12px;
+                text-align: right;
+                color: #475569;
+                border-right: 1px solid #1e293b;
+                user-select: none;
+            }
+
+            .console-pane .console-output .console-line .txt {
+                padding-left: 0;
+            }
+
+            .console-pane .console-output .console-line:not(:has(.ln)) {
+                padding-left: 12px;
+            }
+
+            .console-pane .console-output .console-line.step .txt {
+                color: #7dd3fc;
+                font-weight: 600;
+            }
+
+            .console-pane .console-output .console-line.meta .txt {
+                color: #e2e8f0;
+            }
+
+            .console-pane .console-output .console-line.muted .txt {
+                color: #64748b;
+            }
+
+            .console-pane .console-output .console-line.separator .txt {
+                color: #334155;
+            }
+
+            .console-pane .console-output .console-line.success .txt {
+                color: #4ade80;
+                font-weight: 600;
+            }
+
+            .console-pane .console-output .console-line.canceled .txt {
+                color: #fbbf24;
+                font-weight: 600;
+            }
+
+            .console-pane .console-output .console-line.warning {
+                background: rgba(251, 191, 36, .07);
+            }
+
+                .console-pane .console-output .console-line.warning .txt {
+                    color: #fbbf24;
+                }
+
+            .console-pane .console-output .console-line.error {
+                background: rgba(239, 68, 68, .1);
+            }
+
+                .console-pane .console-output .console-line.error .txt {
+                    color: #f87171;
+                }
+
+            .console-pane .console-output .console-line.end {
+                color: #64748b;
+                padding-left: calc(4.5em + 37px);
+                letter-spacing: .1em;
+            }
+
+    .console-pane #btnCancel {
+        right: 12px;
+        bottom: 8px;
+        padding: 6px 16px;
+        border-radius: var(--webgis-ui-radius, 6px);
+        border: 1px solid #fca5a5;
+        background: #fff;
+        color: #b91c1c;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .console-pane #btnCancel:hover {
+            background: #fef2f2;
+        }
+
+        .console-pane #btnCancel:disabled {
+            opacity: .5;
+            cursor: default;
+            background: #fff;
+        }
+/* ---------- checkboxes (16px) ---------- */
+
+.cms-form .cms-form-checkbox {
+    min-width: 16px;
+    height: auto;
+    min-height: 16px;
+    background-size: 16px 16px;
+    padding-left: 24px;
+    padding-top: 0;
+    line-height: 16px;
+}
+
+.propertygrid-property-wrapper .propertygrid-value input[type=checkbox],
+.cms-form input[type=checkbox],
+.modaldialog-modal input[type=checkbox] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    vertical-align: middle;
+    accent-color: var(--webgis-ui-primary, #3b82f6);
+    cursor: pointer;
+}

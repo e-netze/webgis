@@ -139,8 +139,17 @@ public class DeployService : ICmsTool
             int stepWidth = SystemInfo.IsLinux ? 100 : 1000;
             DateTime currentTime = DateTime.Now;
 
+            void ThrowIfCanceled()
+            {
+                if (console.IsCanceled)
+                {
+                    throw new OperationCanceledException();
+                }
+            }
+
             cms.OnParseWaring += (object? sender, EventArgs e) =>
             {
+                ThrowIfCanceled();
                 counter++;
                 if (counter % stepWidth == 0)
                 {
@@ -155,6 +164,7 @@ public class DeployService : ICmsTool
             };
             cms.OnExportNode += (object? sender, EventArgs e) =>
             {
+                ThrowIfCanceled();
                 counter++;
                 if (counter % stepWidth == 0)
                 {
@@ -187,7 +197,9 @@ public class DeployService : ICmsTool
                 console.WriteLine($"Service filter active: only scanning services included in the deploy: {String.Join(", ", deploy.Services)}");
             }
 
+            ThrowIfCanceled();
             var warnings = cms.Warnings(deploy.Services);
+            ThrowIfCanceled();
 
             // branch deploys don't touch the warnings file of the production target
             var fiWarnings = isBranchDeploy ? null : deploy.Target.WarningsFileInfo();
@@ -268,7 +280,7 @@ public class DeployService : ICmsTool
                     //process.WriteLine("beforeEncryptValue " + valueToEncrypt);
                     valueToEncrypt = replace.ReplaceSecrets(valueToEncrypt);
                 }
-            }, deploy.Services).Result;
+            }, deploy.Services).GetAwaiter().GetResult();
 
             #region Perform Replace
 
@@ -286,6 +298,9 @@ public class DeployService : ICmsTool
             }
 
             #endregion
+
+            // last chance to cancel: once the target is written/uploaded, the deploy (incl. post events) is completed
+            ThrowIfCanceled();
 
             if (deploy.Target.IsUrl())
             {
@@ -396,6 +411,17 @@ public class DeployService : ICmsTool
             console.WriteLine("Succeeded");
 
             return true;
+        }
+        catch (OperationCanceledException) when (console.IsCanceled)
+        {
+            console.WriteLine("---------------------------------------------------------------------------");
+            console.WriteLine("Canceled: nothing was deployed");
+            console.WriteLine("---------------------------------------------------------------------------");
+
+            _cmsLogger.Log(context.Username,
+                           "Deploy", "Canceled", context.CmsId, context.Deployment.ToString() ?? String.Empty);
+
+            return false;
         }
         catch (Exception ex)
         {

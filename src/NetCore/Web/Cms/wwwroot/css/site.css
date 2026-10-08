@@ -716,12 +716,13 @@ tr.cms-form-table.exclusive {
         background-color: #fcfcfc;
         color: #000;
         border-radius: 4px;
-        padding: 7px 7px 7px 36px;
-        background-position: 6px 8px;
+        padding: 2px 7px 2px 28px;
+        background-position: 6px 6px;
         background-repeat: no-repeat;
         background-size: 22px 22px;
         font-size: 16px;
         background-image: url('../images/check0.png');
+        background-size: 16px;
     }
 
         .cms-listbox li.selected {

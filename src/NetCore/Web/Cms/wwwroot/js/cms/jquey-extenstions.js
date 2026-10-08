@@ -46,21 +46,46 @@ var UI;
                     });
                 }
                 $('<div></div>').addClass('right').appendTo($item);
-                this.CheckSize();
             }
+            this.CheckSize();
         };
         Navbar.prototype.CheckSize = function () {
-            var width = this.element.width();
-            var itemsWidth = 0;
-            this.element.children('.item').each(function (i, e) {
-                var $item = $(e);
-                if (!$item.hasClass('hidden')) {
-                    itemsWidth += $item.width();
+            var $element = this.element;
+            $element.children('.item.ellipsis').remove();
+            var $items = $element.children('.item').removeClass('hidden');
+            var width = $element.width();
+            var itemsWidth = function () {
+                var sum = 0;
+                $element.children('.item').each(function (i, e) {
+                    var $item = $(e);
+                    if (!$item.hasClass('hidden')) {
+                        sum += $item.outerWidth(true);
+                    }
+                });
+                return sum;
+            };
+            if (itemsWidth() <= width) {
+                return;
+            }
+            // collapse the middle items (keep first and last) into an ellipsis item
+            var hiddenNames = [], hiddenPath = null;
+            if ($items.length > 2) {
+                var $ellipsis = $("<div>")
+                    .addClass('item ellipsis')
+                    .append($("<div>").addClass('text').text('…'))
+                    .append($("<div>").addClass('right'))
+                    .insertAfter($items.first());
+                for (var i = 1; i < $items.length - 1 && itemsWidth() > width; i++) {
+                    var $hidden = $items.eq(i).addClass('hidden');
+                    hiddenNames.push($hidden.children('.text').text());
+                    hiddenPath = $hidden.attr('data-path');
                 }
-            });
-            if (itemsWidth > width) {
-                this.element.children(':not(".hidden")').first().addClass('hidden');
-                this.CheckSize();
+                $ellipsis
+                    .attr('data-path', hiddenPath)
+                    .attr('title', hiddenNames.join(' › '));
+            }
+            for (var j = 0; j < $items.length - 1 && itemsWidth() > width; j++) {
+                $items.eq(j).addClass('hidden');
             }
         };
         return Navbar;

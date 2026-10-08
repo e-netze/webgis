@@ -441,3 +441,63 @@ $(document).ready(function () {
 
     $('.navbar-search-button').trigger('click');
 });
+
+// resizable navtree (splitter between tree and content)
+(function () {
+    var storageKey = 'cms-navtree-width';
+    var minWidth = 180;
+
+    var setWidth = function (width) {
+        if (width) {
+            document.documentElement.style.setProperty('--webgis-ui-navtree-width-user', Math.round(width) + 'px');
+        } else {
+            document.documentElement.style.removeProperty('--webgis-ui-navtree-width-user');
+        }
+    };
+
+    try {
+        var stored = parseInt(localStorage.getItem(storageKey), 10);
+        if (stored >= minWidth) {
+            setWidth(stored);
+        }
+    } catch (e) { }
+
+    $(document).ready(function () {
+        var $tree = $('#main-navtree');
+        if ($tree.length === 0) {
+            return;
+        }
+
+        $('<div>')
+            .addClass('cms-navtree-splitter')
+            .insertAfter($tree)
+            .on('mousedown', function (e) {
+                if (e.which !== 1) {
+                    return;
+                }
+                e.preventDefault();
+
+                var treeLeft = $tree.offset().left;
+                $('body').addClass('cms-navtree-resizing');
+
+                $(document)
+                    .on('mousemove.cms-navtree-splitter', function (e) {
+                        var width = Math.max(minWidth, Math.min(e.pageX - treeLeft, window.innerWidth * 0.6));
+                        setWidth(width);
+                    })
+                    .on('mouseup.cms-navtree-splitter', function () {
+                        $(document).off('.cms-navtree-splitter');
+                        $('body').removeClass('cms-navtree-resizing');
+                        try {
+                            localStorage.setItem(storageKey, Math.round($tree.outerWidth()));
+                        } catch (e) { }
+                    });
+            })
+            .on('dblclick', function () {
+                setWidth(null);
+                try {
+                    localStorage.removeItem(storageKey);
+                } catch (e) { }
+            });
+    });
+})();

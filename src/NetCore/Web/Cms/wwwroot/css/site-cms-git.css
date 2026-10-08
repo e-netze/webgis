@@ -65,7 +65,7 @@
         }
 
         #cms-git-panel .cms-git-branch-badge:hover:not(:disabled) {
-            border-color: #1565c0;
+            border-color: var(--webgis-ui-primary-strong, #1565c0);
         }
 
         #cms-git-panel .cms-git-branch-badge:disabled {
@@ -155,7 +155,7 @@
             }
 
             #cms-git-panel .cms-git-button.action.primary .sub {
-                color: #cfe0f5;
+                color: rgba(255,255,255,.75);
             }
 
     #cms-git-panel .cms-git-toolbar {
@@ -167,24 +167,27 @@
     }
 
         #cms-git-panel .cms-git-toolbar .group.secondary {
-            display: inline-flex;
+            display: flex;
+            flex-basis: 100%;
             gap: 2px;
-            margin-left: auto;
-            padding-left: 4px;
-            border-left: 1px solid #ddd;
+            margin-top: 4px;
+            padding-top: 6px;
+            border-top: 1px solid var(--webgis-ui-border, #ddd);
         }
 
         #cms-git-panel .cms-git-toolbar .cms-git-icon-button.tool {
-            width: 28px;
-            height: 28px;
-            border-color: #ccc;
-            background: #f5f5f5;
+            width: 30px;
+            height: 30px;
+            border-color: var(--webgis-ui-border-strong, #ccc);
+            border-radius: 6px;
+            background: #fff;
             color: #333;
         }
 
             #cms-git-panel .cms-git-toolbar .cms-git-icon-button.tool:hover:not(:disabled) {
-                border-color: #1565c0;
-                color: #1565c0;
+                border-color: var(--webgis-ui-primary-strong, #1565c0);
+                background: var(--webgis-ui-primary-soft, #f5f5f5);
+                color: var(--webgis-ui-primary-strong, #1565c0);
             }
 
             #cms-git-panel .cms-git-toolbar .cms-git-icon-button.tool.danger {
@@ -215,7 +218,7 @@
     height: 22px;
     padding: 0;
     border: 1px solid transparent;
-    border-radius: 3px;
+    border-radius: 6px;
     background: none;
     color: #555;
     cursor: pointer;
@@ -257,17 +260,25 @@
         }
 
 .cms-git-button {
-    padding: 4px 10px;
-    border: 1px solid #aaa;
-    border-radius: 3px;
-    background: #f5f5f5;
+    padding: 5px 12px;
+    border: 1px solid var(--webgis-ui-border-strong, #aaa);
+    border-radius: 6px;
+    background: #fff;
     color: #333;
     cursor: pointer;
 }
 
+    .cms-git-button:not(.primary):hover:not(:disabled) {
+        background: var(--webgis-ui-surface-hover, #f5f5f5);
+    }
+
+    .cms-git-button.primary:hover:not(:disabled) {
+        filter: brightness(1.1);
+    }
+
     .cms-git-button.primary {
-        background: #1565c0;
-        border-color: #1565c0;
+        background: var(--webgis-ui-primary-strong, #1565c0);
+        border-color: var(--webgis-ui-primary-strong, #1565c0);
         color: #fff;
     }
 
@@ -313,7 +324,7 @@
     }
 
     .cms-git-changes li.added .state {
-        color: #2e7d32;
+        color: var(--webgis-ui-state-added, #0f766e);
     }
 
     .cms-git-changes li.deleted .state,
@@ -367,7 +378,7 @@
     margin: 0 0 8px 0;
     padding: 8px 12px;
     border: 1px solid #f0b400;
-    border-radius: 3px;
+    border-radius: 8px;
     background: #fff8e1;
     color: #6d4c00;
 }
@@ -394,9 +405,9 @@
     }
 
 #main-content .node .node-tools .node-git-discard {
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
     text-align: center;
     font-size: 16px;
     color: #b36b00;
@@ -760,9 +771,9 @@ table.cms-git-workspaces {
 
 /* diff icon on changed nodes */
 #main-content .node .node-tools .node-git-diff {
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
     text-align: center;
     color: #b36b00;
     cursor: pointer;
@@ -806,7 +817,7 @@ table.cms-git-workspaces {
 
     .cms-git-node-list li.added > .row .state,
     .cms-git-node-list .file.added .state {
-        color: #2e7d32;
+        color: var(--webgis-ui-state-added, #0f766e);
     }
 
     .cms-git-node-list li.deleted > .row .state,
@@ -895,8 +906,8 @@ table.cms-git-workspaces {
     }
 
     .cms-git-diff-switch button.selected {
-        background: #1565c0;
-        border-color: #1565c0;
+        background: var(--webgis-ui-primary-strong, #1565c0);
+        border-color: var(--webgis-ui-primary-strong, #1565c0);
         color: #fff;
     }
 
@@ -977,9 +988,9 @@ table.cms-git-workspaces {
 
 /* history icon on every node tile */
 #main-content .node .node-tools .node-git-history {
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
     text-align: center;
     color: #555;
     cursor: pointer;
