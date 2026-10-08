@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Cms.AppCode;
 using Cms.AppCode.Mvc;
@@ -11,9 +12,11 @@ using E.Standard.Cms.Abstraction;
 using E.Standard.Cms.Configuration.Models;
 using E.Standard.Cms.Configuration.Services;
 using E.Standard.Cms.Git.Exceptions;
+using E.Standard.Cms.Git.Models;
 using E.Standard.Cms.Git.Services;
 using E.Standard.Cms.Services;
 using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Branches;
 using E.Standard.CMS.Core.Extensions;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Localization.Abstractions;
@@ -38,6 +41,7 @@ public class DeployController : ApplicationSecurityController
     private readonly CmsManagerResolver _cmsResolver;
     private readonly CmsGitService _git;
     private readonly ILocalizer _gitLocalizer;
+    private readonly BranchDeployService _branchDeployService;
 
     private readonly CmsItemTransistantInjectionServicePack _servicePack;
 
@@ -53,11 +57,13 @@ public class DeployController : ApplicationSecurityController
             SolveWaringsService solveWarningsService,
             CmsManagerResolver cmsResolver,
             CmsGitService git,
+            BranchDeployService branchDeployService,
             IStringLocalizerFactory stringLocalizerFactory,
             IEnumerable<ICustomCmsPageSecurityService> customSecurity = null)
         : base(ccs, urlHelperService, applicationSecurityUserManager, customSecurity, crypto, instanceService)
     {
         _git = git;
+        _branchDeployService = branchDeployService;
         _gitLocalizer = stringLocalizerFactory.CreateCmsLocalizer(typeof(GitController));
         _ccs = ccs;
         _applicationContentRootPath = environment.ContentRootPath;
@@ -90,12 +96,14 @@ public class DeployController : ApplicationSecurityController
                 }
 
                 var gitEnabled = _git.IsEnabled(id);
+                var gitDeployInfo = gitEnabled ? _git.GetDeployInfo(id, this.GetCurrentUsername()) : null;
 
                 return View(new DeployModel()
                 {
                     CmsItem = cmsItem,
                     IsIFramed = Request.Query["iframe"] == "true",
-                    GitDeployInfo = gitEnabled ? _git.GetDeployInfo(id, this.GetCurrentUsername()) : null,
+                    GitDeployInfo = gitDeployInfo,
+                    GitBranchDeployName = gitEnabled ? _git.BranchDeployName(this.GetCurrentUsername(), gitDeployInfo?.UserStatus) : null,
                     GitDeployRunningBy = gitEnabled ? _git.RunningDeployUser(id) : null,
                     GitLocalizer = gitEnabled ? _gitLocalizer : null
                 });
@@ -107,8 +115,13 @@ public class DeployController : ApplicationSecurityController
         }
     }
 
-    public IActionResult Deploy(string id, string name)
+    public IActionResult Deploy(string id, string name, bool branch = false)
     {
+        if (branch)
+        {
+            return DeployBranch(id, name);
+        }
+
         var deployLocked = false;
 
         try
@@ -158,7 +171,128 @@ public class DeployController : ApplicationSecurityController
         }
     }
 
+    /// <summary>
+    /// Deploys the committed state of the user's working copy (current branch) to
+    /// {target-dir}/branches/{encoded-branch}/... (file target) or uploads it with a branch parameter (url target)
+    /// </summary>
+    private IActionResult DeployBranch(string id, string name)
+    {
+        CmsGitBranchDeploy branchDeploy = null;
+
+        try
+        {
+            if (!_git.IsEnabled(id))
+            {
+                throw new Exception("Branch deploy requires git");
+            }
+
+            _branchDeployService.BranchDeployment(id, name);  // throws, if not allowed
+
+            branchDeploy = _git.BeginBranchDeploy(id, this.GetCurrentUsername());
+
+            _cmsLogger.Log(this.GetCurrentUsername(),
+                           "Deploy", "StartBranch", id, name, branchDeploy.Branch, branchDeploy.Commit ?? String.Empty);
+
+            var job = new BranchDeployJob(name, branchDeploy, _cmsResolver.TreePath(id, this.GetCurrentUsername()));
+            var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), DeployCmsBranch, job);
+            branchDeploy = null;  // released by the background process
+
+            return OpenConsole(backgroundProcess, $"Deploying: {name} ({job.Handle.Branch})", id);
+        }
+        catch (CmsGitException ex)
+        {
+            var message = _gitLocalizer.Localize(ex.L10nKey);
+
+            return Json(new
+            {
+                success = false,
+                exception = String.IsNullOrWhiteSpace(ex.Details) ? message : $"{message}\n{ex.Details}"
+            });
+        }
+        catch (CmsGitWorkspaceNotFoundException)
+        {
+            return Json(new { success = false, exception = _gitLocalizer.Localize("error-no-workspace") });
+        }
+        catch (Exception ex)
+        {
+            return base.ExceptionResult(ex);
+        }
+        finally
+        {
+            branchDeploy?.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// Deployed branches of a deployment
+    /// </summary>
+    async public Task<IActionResult> BranchDeploys(string id, string name)
+    {
+        try
+        {
+            var deploys = await _branchDeployService.GetBranchDeploysAsync(id, name);
+
+            return Json(new
+            {
+                success = true,
+                deploys = deploys.OrderByDescending(d => d.Date).ToArray()
+            });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, exception = ex.Message });
+        }
+    }
+
+    [HttpPost]
+    async public Task<IActionResult> RemoveBranchDeploy(string id, string name, string branch)
+    {
+        try
+        {
+            await _branchDeployService.RemoveBranchDeployAsync(id, name, branch, this.GetCurrentUsername());
+
+            return Json(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, exception = ex.Message });
+        }
+    }
+
     #region Background Process
+
+    private record BranchDeployJob(string Name, CmsGitBranchDeploy Handle, string TreePath)
+    {
+        public override string ToString() => Name;
+    }
+
+    private void DeployCmsBranch(object arg)
+    {
+        BackgroundProcess process = (BackgroundProcess)arg;
+        var job = (BranchDeployJob)process.UserData;
+
+        try
+        {
+            var context = new CmsToolContext()
+            {
+                CmsId = process.CmsId,
+                Deployment = job.Name,
+                ContentRootPath = _applicationContentRootPath,
+                Username = process.UserName,
+                CmsTreePath = job.TreePath,
+                Branch = CmsBranches.Encode(job.Handle.Branch),
+                BranchName = job.Handle.Branch,
+                Commit = job.Handle.Commit
+            };
+
+            _deployService.Init(context);
+            _deployService.Run(context, process);
+        }
+        finally
+        {
+            job.Handle.Dispose();
+        }
+    }
 
     private void DeployCms(object arg)
     {

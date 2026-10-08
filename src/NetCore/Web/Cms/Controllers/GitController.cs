@@ -81,6 +81,7 @@ public class GitController : ApplicationSecurityController
     private readonly CmsGitService _git;
     private readonly ICmsLogger _cmsLogger;
     private readonly ILocalizer _localizer;
+    private readonly BranchDeployService _branchDeployService;
 
     public GitController(
             CmsConfigurationService ccs,
@@ -91,11 +92,13 @@ public class GitController : ApplicationSecurityController
             CmsGitService git,
             ICmsLogger cmsLogger,
             IStringLocalizerFactory stringLocalizerFactory,
+            BranchDeployService branchDeployService,
             IEnumerable<ICustomCmsPageSecurityService> customSecurity = null)
         : base(ccs, urlHelperService, applicationSecurityUserManager, customSecurity, crypto, instanceService)
     {
         _ccs = ccs;
         _git = git;
+        _branchDeployService = branchDeployService;
         _cmsLogger = cmsLogger;
         _localizer = stringLocalizerFactory.CreateCmsLocalizer(typeof(GitController));
     }
@@ -131,13 +134,31 @@ public class GitController : ApplicationSecurityController
         => Execute(id, "Checkout", () => StatusResult(_git.Checkout(id, Username, name)), name);
 
     public IActionResult DeleteBranch(string id, string name, bool deleteRemote = true)
-        => Execute(id, "DeleteBranch", () => StatusResult(_git.DeleteBranch(id, Username, name, deleteRemote)), name);
+        => Execute(id, "DeleteBranch", () =>
+        {
+            var status = _git.DeleteBranch(id, Username, name, deleteRemote);
+            RemoveBranchDeploys(id, name);
+
+            return StatusResult(status);
+        }, name);
 
     public IActionResult MergeFromDefault(string id)
         => Execute(id, "MergeFromDefault", () => StatusResult(_git.MergeFromDefault(id, Username, GitUser)));
 
     public IActionResult MergeIntoDefault(string id, bool deleteBranch = true)
-        => Execute(id, "MergeIntoDefault", () => StatusResult(_git.MergeIntoDefault(id, Username, GitUser, deleteBranch)), deleteBranch.ToString());
+        => Execute(id, "MergeIntoDefault", () =>
+        {
+            var mergedBranch = deleteBranch ? _git.GetStatus(id, Username, false).Branch : null;
+            var status = _git.MergeIntoDefault(id, Username, GitUser, deleteBranch);
+
+            if (!String.IsNullOrEmpty(mergedBranch) &&
+                !_git.GetBranches(id, Username).Any(b => b.IsLocal && b.Name == mergedBranch))
+            {
+                RemoveBranchDeploys(id, mergedBranch);
+            }
+
+            return StatusResult(status);
+        }, deleteBranch.ToString());
 
     public IActionResult Conflicts(string id)
         => Execute(id, null, () => Json(new
@@ -230,6 +251,12 @@ public class GitController : ApplicationSecurityController
     private string Username => GetCurrentUsername();
 
     private string CmsId => RouteData.Values["id"]?.ToString() ?? Request.Query["id"].ToString();
+
+    /// <summary>
+    /// A branch was deleted in the CMS => remove its branch deploys (errors are logged only)
+    /// </summary>
+    private void RemoveBranchDeploys(string id, string branchName)
+        => _branchDeployService.RemoveBranchFromAllDeploymentsAsync(id, branchName, Username).GetAwaiter().GetResult();
 
     private IActionResult Execute(string id, string logAction, Func<IActionResult> action, string logArg = "")
     {

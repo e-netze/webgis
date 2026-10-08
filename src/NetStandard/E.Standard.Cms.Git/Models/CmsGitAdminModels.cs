@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Newtonsoft.Json;
 
@@ -118,4 +118,38 @@ public class CmsGitWorkspaceInfo
     [JsonProperty("error")]
     [System.Text.Json.Serialization.JsonPropertyName("error")]
     public string Error { get; set; }
+}
+
+/// <summary>
+/// A running branch deploy: the user's working copy is locked until disposed
+/// </summary>
+public sealed class CmsGitBranchDeploy : IDisposable
+{
+    private Action _release;
+
+    public CmsGitBranchDeploy(string branch, string gitBranch, string commit, string workspacePath, Action release)
+    {
+        Branch = branch;
+        GitBranch = gitBranch;
+        Commit = commit;
+        WorkspacePath = workspacePath;
+        _release = release;
+    }
+
+    /// <summary>
+    /// Name of the deployed branch. On the default branch: {user}-{default-branch}
+    /// </summary>
+    public string Branch { get; }
+
+    /// <summary>
+    /// Current git branch of the working copy
+    /// </summary>
+    public string GitBranch { get; }
+
+    public string Commit { get; }
+
+    public string WorkspacePath { get; }
+
+    public void Dispose()
+        => System.Threading.Interlocked.Exchange(ref _release, null)?.Invoke();
 }

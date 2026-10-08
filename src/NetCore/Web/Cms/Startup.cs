@@ -329,6 +329,7 @@ public class Startup
         #region Cms Tools
 
         services.AddTransient<DeployService>();
+        services.AddTransient<BranchDeployService>();
         services.AddTransient<SolveWaringsService>();
         services.AddTransient<ClearCmsService>();
         services.AddTransient<ReloadSchemeService>();

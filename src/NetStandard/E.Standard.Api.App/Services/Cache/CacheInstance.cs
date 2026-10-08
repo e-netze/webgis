@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.Extensions;
 using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Branches;
 using E.Standard.Json;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Extensions;
@@ -369,6 +370,117 @@ public class CacheInstance
 
     public void Reload(string cmsName)
     {
+        cmsName = cmsName ?? String.Empty;
+
+        if (CmsBranches.IsBranchCmsName(cmsName))
+        {
+            ReloadBranch(cmsName);
+            return;
+        }
+
+        ReloadItem(cmsName);
+
+        if (_cmsCacheItems.TryGetValue(cmsName, out var mainItem) && mainItem.IsCustom == false)
+        {
+            SyncBranches(cmsName);
+        }
+    }
+
+    private void ReloadBranch(string cmsName)
+    {
+        if (String.IsNullOrEmpty(_cacheService.CmsDocuments.CmsDocumentPath(cmsName)))
+        {
+            RemoveItem(cmsName);
+        }
+        else if (_cmsCacheItems.ContainsKey(cmsName))
+        {
+            ReloadItem(cmsName);
+        }
+        else
+        {
+            AddItem(cmsName);
+        }
+    }
+
+    // add new deployed branches and remove deleted branches of a main cms
+    private void SyncBranches(string mainCmsName)
+    {
+        var prefix = $"{mainCmsName}{CmsBranches.CmsNameSeparator}";
+        var cached = _cmsCacheItems.Keys.Where(k => k.StartsWith(prefix)).ToArray();
+        var found = _cacheService.CmsDocuments.BranchCmsDocumentNames(mainCmsName).ToArray();
+
+        foreach (var cmsName in cached.Where(c => !found.Contains(c)))
+        {
+            RemoveItem(cmsName);
+        }
+
+        foreach (var cmsName in found.Where(f => !cached.Contains(f)))
+        {
+            try
+            {
+                AddItem(cmsName);
+            }
+            catch (Exception ex)
+            {
+                _cacheService.Log(LogLevel.Error, "Init branch cms {cmsName} failed: {message}", cmsName, ex.Message);
+            }
+        }
+    }
+
+    private void AddItem(string cmsName)
+    {
+        var cms = _cacheService.CmsDocuments.GetCmsDocument(cmsName);
+
+        try
+        {
+            cms.ReplaceInXmlDocument($"_config/cms_replace.config");
+        }
+        catch { }
+
+        var cmsCacheItem = new CmsCacheItem(this);
+
+        _cacheService.Log(LogLevel.Information, "Init Cms {cmsName}", cmsName);
+
+        cmsCacheItem.Init(_cacheService, cmsName, cms, false);
+        if (cmsCacheItem.IsCorrupt == true)
+        {
+            throw new Exception($"Can't init cache item {cmsName}: {cmsCacheItem.ErrorMessage}");
+        }
+
+        _cacheService._allUserRoles[cmsName] = cms.AllRoles?.Distinct().ToArray() ?? new string[0];
+        _cmsCacheItems[cmsName] = cmsCacheItem;
+
+        _cacheService.Log(LogLevel.Information, "...succeeded (init cms)");
+    }
+
+    private void RemoveItem(string cmsName)
+    {
+        if (!_cmsCacheItems.TryRemove(cmsName, out var removedItem))
+        {
+            return;
+        }
+
+        _cacheService.Log(LogLevel.Information, "Remove Cms {cmsName}", cmsName);
+
+        _cacheService._allUserRoles.TryRemove(cmsName, out _);
+        foreach (var key in _serviceInitializationTime.Keys.Where(k => k.EndsWith($"@{cmsName}")).ToArray())
+        {
+            _serviceInitializationTime.TryRemove(key, out _);
+        }
+
+        Task.Run(async () =>
+        {
+            await Task.Delay(3000);
+            try
+            {
+                removedItem.Clear();
+            }
+            catch { }
+        });
+    }
+
+    private void ReloadItem(string cmsName)
+    {
         if (_cmsCacheItems.ContainsKey(cmsName))
         {
             var disposeItem = _cmsCacheItems[cmsName];
@@ -493,6 +605,12 @@ public class CacheInstance
 
         var cmsName = GetCmsName(id, ui?.Branch);
         CheckForContentAndInitStatic(cmsName);
+
+        if (!String.IsNullOrEmpty(ui?.Branch) && !_cmsCacheItems.ContainsKey(cmsName))
+        {
+            // branch not deployed for this cms => use main
+            cmsName = GetCmsName(id, null);
+        }
 
         if (_cmsCacheItems.ContainsKey(cmsName))
         {

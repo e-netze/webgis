@@ -728,7 +728,7 @@ static public class ConfigurationServiceExtensions
             {
                 yield return String.Empty;
             }
-            else
+            else if (!configSection.Key.Contains('$'))  // branches (x$y) are found on disk
             {
                 yield return configSection.Key.Substring("cmspath_".Length);
             }

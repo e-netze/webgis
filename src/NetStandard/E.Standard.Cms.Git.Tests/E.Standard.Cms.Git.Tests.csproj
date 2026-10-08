@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\E.Standard.Cms.Git\E.Standard.Cms.Git.csproj" />
+    <ProjectReference Include="..\E.Standard.CMS.Core\E.Standard.CMS.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

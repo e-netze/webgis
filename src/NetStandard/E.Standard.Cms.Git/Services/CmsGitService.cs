@@ -202,6 +202,79 @@ public class CmsGitService
     /// </summary>
     public string RunningDeployUser(string cmsId)
         => RunningDeployments.TryGetValue(cmsId, out var username) ? username : null;
+
+    /// <summary>
+    /// Branch deploy: the committed state (HEAD) of the user's working copy is exported.
+    /// The working copy must not have uncommitted changes or a running merge.
+    /// The working copy stays locked (no git operations) until the result is disposed.
+    /// Only one deploy per cms-item and branch at a time.
+    /// </summary>
+    /// <exception cref="CmsGitException">uncommitted changes, merge in progress, busy or deploy running</exception>
+    public CmsGitBranchDeploy BeginBranchDeploy(string cmsId, string username)
+    {
+        var workspace = ExistingUserWorkspace(cmsId, username);
+        var semaphore = Locks.GetOrAdd(workspace.WorkspacePath, _ => new SemaphoreSlim(1, 1));
+
+        if (!semaphore.Wait(ShortLockTimeout))
+        {
+            throw new CmsGitException(CmsGitErrors.Busy);
+        }
+
+        string runningKey = null;
+        try
+        {
+            var status = workspace.GetStatus(false);
+
+            if (status.IsMerging)
+            {
+                throw new CmsGitException(CmsGitErrors.MergeInProgress);
+            }
+            if (status.Changes?.Any() == true)
+            {
+                throw new CmsGitException(CmsGitErrors.CommitFirst);
+            }
+
+            var commit = workspace.HeadCommit()?.Sha;
+            var branch = BranchDeployName(username, status);
+
+            runningKey = BranchDeployKey(cmsId, branch);
+            if (!RunningDeployments.TryAdd(runningKey, username ?? String.Empty))
+            {
+                RunningDeployments.TryGetValue(runningKey, out var runningBy);
+                runningKey = null;
+                throw new CmsGitException(CmsGitErrors.DeployRunning, runningBy);
+            }
+
+            var key = runningKey;
+            return new CmsGitBranchDeploy(branch, status.Branch, commit, workspace.WorkspacePath, () =>
+            {
+                RunningDeployments.TryRemove(key, out _);
+                semaphore.Release();
+            });
+        }
+        catch
+        {
+            if (runningKey != null)
+            {
+                RunningDeployments.TryRemove(runningKey, out _);
+            }
+            semaphore.Release();
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// The branch name used for a branch deploy: the current branch, or {user}-{default-branch} on the default branch
+    /// </summary>
+    public string BranchDeployName(string username, CmsGitStatus status)
+        => status == null || !status.HasWorkspace || String.IsNullOrEmpty(status.Branch)
+            ? null
+            : status.IsDefaultBranch
+                ? $"{SafeUserName(username)}-{status.Branch}"
+                : status.Branch;
+
+    private static string BranchDeployKey(string cmsId, string branch) => $"{cmsId}|branch:{branch}";
+
     /// <summary>
     /// Brings the deploy clone to the latest commit of the remote default branch.
     /// </summary>
@@ -464,15 +537,17 @@ public class CmsGitService
     {
         try
         {
-            // DOMAIN\user => user
-            var name = username?.Split('\\', '/')[^1];
-            return $"{CmsManagerResolver.SafeName(name)}/";
+            return $"{SafeUserName(username)}/";
         }
         catch
         {
             return String.Empty;
         }
     }
+
+    // DOMAIN\user => user
+    private static string SafeUserName(string username)
+        => CmsManagerResolver.SafeName(username?.Split('\\', '/')[^1]);
 
     private static T Locked<T>(string key, Func<T> func, TimeSpan? timeout = null)
     {

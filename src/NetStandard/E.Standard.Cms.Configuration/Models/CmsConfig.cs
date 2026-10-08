@@ -265,6 +265,16 @@ public class CmsConfig : PropertiesParserBaseClass
         [System.Text.Json.Serialization.JsonPropertyName("postEvents")]
         public Events PostEvents { get; set; }
 
+        /// <summary>
+        /// Git-CMS only: the current branch of a user workspace can be deployed to
+        /// {target-dir}/branches/{encoded-branch}/{target-filename} (file target) or
+        /// uploaded with a branch parameter (url target). The WebGIS API needs allow-branches=true.
+        /// In postEvents the placeholder {branch} is replaced with the encoded branch (empty for production).
+        /// </summary>
+        [JsonProperty(PropertyName = "allowBranchDeploy")]
+        [System.Text.Json.Serialization.JsonPropertyName("allowBranchDeploy")]
+        public bool AllowBranchDeploy { get; set; }
+
         [JsonProperty(PropertyName = "environment")]
         [System.Text.Json.Serialization.JsonPropertyName("environment")]
         public DeployEnvironment Environment { get; set; }

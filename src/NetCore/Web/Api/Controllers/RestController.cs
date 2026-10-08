@@ -30,6 +30,7 @@ using E.Standard.Api.App.Reflection;
 using E.Standard.Api.App.Services;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Branches;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core;
 using E.Standard.Custom.Core.Abstractions;
@@ -1748,10 +1749,11 @@ public class RestController : ApiBaseController
 
         var branches = new HashSet<string>() { "" };
 
-        _config.GetPathsStartWith(ApiConfigKeys.ToKey("cmspath"))
-            .Where(k => k.Contains("$"))
+        // deployed branches are found on disk: {cms-dir}/branches/{encoded-branch}/{cms-file}
+        _cache.CmsDocuments.AllCmsDocumentNames()
+            .Where(n => CmsBranches.IsBranchCmsName(n))
             .ToList()
-            .ForEach(k => branches.Add(k.Split('$').Last()));
+            .ForEach(n => branches.Add(CmsBranches.SplitCmsName(n).encodedBranch));
 
         return base.JsonObject(branches);
     }

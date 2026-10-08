@@ -15,4 +15,9 @@ public class DeployModel
     public CmsGitDeployInfo GitDeployInfo { get; set; }
     public string GitDeployRunningBy { get; set; }
     public ILocalizer GitLocalizer { get; set; }
+
+    /// <summary>
+    /// Branch name used for a branch deploy of the user's working copy (null, if not possible)
+    /// </summary>
+    public string GitBranchDeployName { get; set; }
 }

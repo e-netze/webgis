@@ -12,6 +12,7 @@ using E.Standard.Cms.Configuration.Services;
 using E.Standard.Cms.Extensions;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Abstractions;
+using E.Standard.CMS.Core.Branches;
 using E.Standard.CMS.Core.Extensions;
 using E.Standard.CMS.Core.IO;
 using E.Standard.CMS.Core.IO.Abstractions;
@@ -99,6 +100,25 @@ public class DeployService : ICmsTool
                 throw new Exception($"Unknown deploy: {context.CmsId}/{context.Deployment}");
             }
 
+            bool isBranchDeploy = !String.IsNullOrEmpty(context.Branch);
+            if (isBranchDeploy)
+            {
+                if (!deploy.AllowBranchDeploy || isDynamicCms)
+                {
+                    throw new Exception($"Branch deploy not allowed: {context.CmsId}/{context.Deployment}");
+                }
+                if (!CmsBranches.IsValidEncoded(context.Branch!))
+                {
+                    throw new Exception($"Invalid branch: {context.Branch}");
+                }
+
+                console.WriteLine($"Branch: {context.BranchName} ({context.Branch})");
+                if (!String.IsNullOrEmpty(context.Commit))
+                {
+                    console.WriteLine($"Commit: {context.Commit}");
+                }
+            }
+
             XmlDocument doc = new XmlDocument();
             doc.Load(Path.Combine(context.ContentRootPath, "schemes", cmsItem.Scheme, "schema.xml"));
 
@@ -165,8 +185,9 @@ public class DeployService : ICmsTool
 
             var warnings = cms.Warnings(deploy.Services);
 
-            var fiWarnings = deploy.Target.WarningsFileInfo();
-            if (fiWarnings.Exists)
+            // branch deploys don't touch the warnings file of the production target
+            var fiWarnings = isBranchDeploy ? null : deploy.Target.WarningsFileInfo();
+            if (fiWarnings?.Exists == true)
             {
                 fiWarnings.Delete();
             }
@@ -197,7 +218,10 @@ public class DeployService : ICmsTool
 
                 if (hasCriticalWarnings)
                 {
-                    System.IO.File.WriteAllText(fiWarnings.FullName, sbWarnings.ToString());
+                    if (fiWarnings != null)
+                    {
+                        System.IO.File.WriteAllText(fiWarnings.FullName, sbWarnings.ToString());
+                    }
                     throw new Exception("Unsolved warnings found!");
                 }
             }
@@ -264,8 +288,11 @@ public class DeployService : ICmsTool
                 #region Upload Xml
 
                 var token = _jwtTokenService?.GenerateToken(deploy.Client, 1);
+                var uploadUrl = isBranchDeploy
+                    ? deploy.Target.AppendBranchUploadParameters(context)
+                    : deploy.Target;
 
-                console.WriteLine($"Upload to {deploy.Target}");
+                console.WriteLine($"Upload to {uploadUrl}");
 
                 using (var memoryStream = new MemoryStream())
                 {
@@ -279,7 +306,7 @@ public class DeployService : ICmsTool
                                 Security.Cryptography.CryptoResultStringType.Hex));
 
                     if (!_http.UploadFileAsync(
-                            deploy.Target,
+                            uploadUrl,
                             encryptedBytes,
                         "cms.xml",
                         authorization: new RequestAuthorization()
@@ -296,6 +323,28 @@ public class DeployService : ICmsTool
                 console.WriteLine("Upload Succeeded (cache/clear included)");
 
                 #endregion
+            }
+            else if (isBranchDeploy)
+            {
+                #region Save Branch Xml
+
+                // {target-dir}/branches/{encoded-branch}/{target-filename} + deploy.json, no archive
+                var branchFilePath = CmsBranches.BranchFilePath(deploy.Target, context.Branch!);
+
+                console.WriteLine($"Write {branchFilePath}");
+                CmsBranches.WriteBranch(deploy.Target, new CmsBranchDeployInfo()
+                {
+                    Branch = context.BranchName.OrTake(CmsBranches.TryDecode(context.Branch!)),
+                    EncodedBranch = context.Branch,
+                    User = context.Username,
+                    Commit = context.Commit,
+                    Date = DateTime.UtcNow
+                }, path => document.Save(path));
+
+                #endregion
+
+                _cmsLogger.Log(context.Username,
+                               "Deploy", "SaveBranchXml", context.CmsId, deploy.Name, branchFilePath);
             }
             else
             {
@@ -333,73 +382,11 @@ public class DeployService : ICmsTool
                 _cmsLogger.Log(context.Username,
                                "Deploy", "SaveXml", context.CmsId, deploy.Name, fi.FullName);
             }
-            #region PostEvents
 
-            if (deploy.PostEvents != null)
-            {
-                if (deploy.PostEvents.Commands != null)
-                {
-                    #region Console Commands
-
-                    foreach (string command in deploy.PostEvents.Commands)
-                    {
-                        string fileName = command.CommandFileName();
-                        string? arguments = command.CommandLineArguments();
-
-                        Process cmdProcess = new Process();
-                        cmdProcess.StartInfo = new ProcessStartInfo(fileName);
-                        cmdProcess.StartInfo.UseShellExecute = false;
-                        cmdProcess.StartInfo.RedirectStandardInput = true;
-                        cmdProcess.StartInfo.RedirectStandardOutput = true;
-                        cmdProcess.StartInfo.RedirectStandardError = true;
-                        cmdProcess.StartInfo.Arguments = arguments;
-
-                        console.WriteLine($"Run: {command}");
-                        cmdProcess.Start();
-                        while (!cmdProcess.StandardOutput.EndOfStream)
-                        {
-                            console.WriteLine(cmdProcess.StandardOutput.ReadLine());
-                        }
-                        cmdProcess.WaitForExit();
-
-                        if (cmdProcess.ExitCode > 0)
-                        {
-                            throw new Exception(cmdProcess.StandardError.ReadToEnd());
-                        }
-                    }
-
-                    #endregion Console Commands
-                }
-                if (deploy.PostEvents.HttpGet != null)
-                {
-                    #region HttpGet
-
-                    foreach (string httpGetUrl in deploy.PostEvents.HttpGet)
-                    {
-                        console.WriteLine($"Http-Get: {httpGetUrl.ToPrintableUrl(isDynamicCms)}");
-
-                        var response = _http.GetStringAsync(httpGetUrl,
-                            new RequestAuthorization()
-                            {
-                                UseDefaultCredentials = true
-                            },
-                            timeOutSeconds: 300).Result;
-
-                        if (response.Contains("<") && response.Contains(">"))
-                        {
-                            response = "Html Response...";
-                        }
-                        console.WriteLine($"        -> {response}");
-                    }
-
-                    #endregion HttpGet
-                }
-            }
-
-            #endregion PostEvents
+            RunPostEvents(deploy, context.Branch ?? String.Empty, isDynamicCms, console);
 
             _cmsLogger.Log(context.Username,
-                           "Deploy", "Succeeded", context.CmsId, deploy.Name);
+                           "Deploy", "Succeeded", context.CmsId, deploy.Name, context.Branch ?? String.Empty);
 
             console.WriteLine("Succeeded");
 
@@ -435,5 +422,74 @@ public class DeployService : ICmsTool
                 rootPathInfo2.ReleaseCacheRecursive();
             }
         }
+    }
+
+    // {branch} placeholder in commands/urls => encoded branch name (empty for production)
+    public void RunPostEvents(CmsConfig.DeployItem deploy, string encodedBranch, bool isDynamicCms, IConsoleOutputStream? console)
+    {
+        #region PostEvents
+
+        if (deploy.PostEvents != null)
+        {
+            if (deploy.PostEvents.Commands != null)
+            {
+                #region Console Commands
+
+                foreach (string command in deploy.PostEvents.Commands.Select(c => c.Replace("{branch}", encodedBranch)))
+                {
+                    string fileName = command.CommandFileName();
+                    string? arguments = command.CommandLineArguments();
+
+                    Process cmdProcess = new Process();
+                    cmdProcess.StartInfo = new ProcessStartInfo(fileName);
+                    cmdProcess.StartInfo.UseShellExecute = false;
+                    cmdProcess.StartInfo.RedirectStandardInput = true;
+                    cmdProcess.StartInfo.RedirectStandardOutput = true;
+                    cmdProcess.StartInfo.RedirectStandardError = true;
+                    cmdProcess.StartInfo.Arguments = arguments;
+
+                    console?.WriteLine($"Run: {command}");
+                    cmdProcess.Start();
+                    while (!cmdProcess.StandardOutput.EndOfStream)
+                    {
+                        console?.WriteLine(cmdProcess.StandardOutput.ReadLine());
+                    }
+                    cmdProcess.WaitForExit();
+
+                    if (cmdProcess.ExitCode > 0)
+                    {
+                        throw new Exception(cmdProcess.StandardError.ReadToEnd());
+                    }
+                }
+
+                #endregion Console Commands
+            }
+            if (deploy.PostEvents.HttpGet != null)
+            {
+                #region HttpGet
+
+                foreach (string httpGetUrl in deploy.PostEvents.HttpGet.Select(u => u.Replace("{branch}", Uri.EscapeDataString(encodedBranch))))
+                {
+                    console?.WriteLine($"Http-Get: {httpGetUrl.ToPrintableUrl(isDynamicCms)}");
+
+                    var response = _http.GetStringAsync(httpGetUrl,
+                        new RequestAuthorization()
+                        {
+                            UseDefaultCredentials = true
+                        },
+                        timeOutSeconds: 300).Result;
+
+                    if (response.Contains("<") && response.Contains(">"))
+                    {
+                        response = "Html Response...";
+                    }
+                    console?.WriteLine($"        -> {response}");
+                }
+
+                #endregion HttpGet
+            }
+        }
+
+        #endregion PostEvents
     }
 }

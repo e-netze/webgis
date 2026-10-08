@@ -13,6 +13,7 @@ using E.Standard.Api.App;
 using E.Standard.Api.App.Configuration;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Caching.Abstraction;
+using E.Standard.CMS.Core.Branches;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.MessageQueues.Services.Abstraction;
@@ -26,6 +27,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
+using Newtonsoft.Json;
 
 namespace Api.Core.Controllers;
 
@@ -72,53 +75,42 @@ public class CacheController : ApiBaseController
         AuthorizationType = EndpointAuthorizationType.UrlPassword | EndpointAuthorizationType.Basic | EndpointAuthorizationType.BearerToken,
         AllowIfNotConfigured = true
         )]
-    async public Task<IActionResult> Clear(string id = "")
+    async public Task<IActionResult> Clear(string id = "", string branch = "")
     {
-        await _clearCache.ClearCache(id);
+        if (!String.IsNullOrEmpty(branch) && !CmsBranches.IsValidEncoded(branch))
+        {
+            return await JsonViewSuccess(false, "invalid branch");
+        }
+
+        // only reload the branch: {id}${branch}
+        var cmsName = String.IsNullOrEmpty(branch)
+            ? id
+            : CmsBranches.ToCmsName(id ?? String.Empty, branch);
+
+        await _clearCache.ClearCache(cmsName);
         await _messageQueue.EnqueueAsync(
             ApiGlobals.MessageQueuePrefix,
-            new string[] { $"cacheclear:{id}" },
+            new string[] { $"cacheclear:{cmsName}" },
             includeOwnQueue: false);
 
         return await JsonViewSuccess(String.IsNullOrWhiteSpace(_clearCache.LastInitErrorMessage), _clearCache.LastInitErrorMessage);
     }
 
     [HttpPost]
-    async public Task<IActionResult> Upload(string id = "")
+    async public Task<IActionResult> Upload(string id = "", string branch = "", string branch_name = "", string user = "", string commit = "")
     {
         try
         {
-            if (!_config.Configuration.IsCmsUploadAllowed(id))
+            var authError = AuthorizeCmsUpload(id, requireBranches: !String.IsNullOrEmpty(branch));
+            if (authError != null)
             {
-                _logger.LogWarning("CMS-Upload: not allowed/configured");
-                return BadRequest("not allowed");
+                return BadRequest(authError);
             }
 
-
-            string username = _config.Configuration.CmsUploadClient(id);
-
-            if (String.IsNullOrWhiteSpace(username))
+            if (!String.IsNullOrEmpty(branch) && !CmsBranches.IsValidEncoded(branch))
             {
-                _logger.LogWarning("CMS-Upload: not allowed for user {username}", username);
-                return BadRequest("not allowed");
-            }
-
-            var jwtTokenService = _serviceProvider.GetRequiredKeyedService<JwtAccessTokenService>($"cms-upload-{id}");
-
-            var authHeader = Request.Headers.Authorization.ToString();
-            if (!authHeader.StartsWith("bearer ", StringComparison.OrdinalIgnoreCase))
-            {
-                _logger.LogWarning("CMS-Upload: token required");
-                return BadRequest("token required");
-            }
-
-            var token = authHeader.Substring("bearer ".Length);
-            var principal = jwtTokenService.ValidateToken(token);
-
-            if (!username.Equals(principal.Identity.Name, StringComparison.OrdinalIgnoreCase))
-            {
-                _logger.LogWarning("CMS-Upload: invalid user/token");
-                return BadRequest("invalid user");
+                _logger.LogWarning("CMS-Upload: invalid branch {branch}", branch);
+                return BadRequest("invalid branch");
             }
 
             var file = Request.Form.Files.FirstOrDefault();
@@ -149,7 +141,25 @@ public class CacheController : ApiBaseController
             var doc = new XmlDocument();
             doc.LoadXml(xml);  // try if xml is correct
 
-            var path = _config[ApiConfigKeys.ToKey($"cmspath_{id}")];
+            var path = CmsUploadPath(id);
+
+            if (!String.IsNullOrEmpty(branch))
+            {
+                // branch deploy: {dir}/branches/{branch}/{filename}, no archive
+                CmsBranches.WriteBranch(path, new CmsBranchDeployInfo()
+                {
+                    Branch = String.IsNullOrEmpty(branch_name) ? CmsBranches.TryDecode(branch) : branch_name,
+                    EncodedBranch = branch,
+                    User = user,
+                    Commit = commit,
+                    Date = DateTime.UtcNow
+                }, branchPath => System.IO.File.WriteAllText(branchPath, xml));
+
+                await ClearCmsCache(CmsBranches.ToCmsName(id, branch));
+
+                return Ok();
+            }
+
             var fi = new FileInfo(path);
 
             if (fi.Exists)
@@ -172,11 +182,7 @@ public class CacheController : ApiBaseController
             }
             System.IO.File.WriteAllText(path, xml);
 
-            await _clearCache.ClearCache(id);
-            await _messageQueue.EnqueueAsync(
-                ApiGlobals.MessageQueuePrefix,
-                new string[] { $"cacheclear:{id}" },
-                includeOwnQueue: false);
+            await ClearCmsCache(id);
 
             return Ok();
         }
@@ -188,6 +194,121 @@ public class CacheController : ApiBaseController
         }
     }
 
+    // deployed branches of a cms (same authorization as upload)
+    [HttpGet]
+    public IActionResult UploadBranches(string id = "")
+    {
+        try
+        {
+            var authError = AuthorizeCmsUpload(id, requireBranches: true);
+            if (authError != null)
+            {
+                return BadRequest(authError);
+            }
+
+            var infos = CmsBranches.ReadDeployInfos(CmsUploadPath(id));
+
+            return Content(JsonConvert.SerializeObject(infos), "application/json");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+
+            return BadRequest(ex.Message);
+        }
+    }
+
+    // remove a deployed branch of a cms (same authorization as upload)
+    [HttpPost]
+    async public Task<IActionResult> DeleteBranch(string id = "", string branch = "")
+    {
+        try
+        {
+            var authError = AuthorizeCmsUpload(id, requireBranches: true);
+            if (authError != null)
+            {
+                return BadRequest(authError);
+            }
+
+            if (!CmsBranches.IsValidEncoded(branch))
+            {
+                return BadRequest("invalid branch");
+            }
+
+            CmsBranches.DeleteBranch(CmsUploadPath(id), branch);
+
+            await ClearCmsCache(CmsBranches.ToCmsName(id, branch));
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+
+            return BadRequest(ex.Message);
+        }
+    }
+
+    #region Helper
+
+    // returns an error message or null if authorized
+    private string AuthorizeCmsUpload(string id, bool requireBranches)
+    {
+        if (!_config.Configuration.IsCmsUploadAllowed(id))
+        {
+            _logger.LogWarning("CMS-Upload: not allowed/configured");
+            return "not allowed";
+        }
+
+        if (requireBranches && !(bool.TryParse(_config[ApiConfigKeys.AllowBranches], out bool allowBranches) && allowBranches))
+        {
+            _logger.LogWarning("CMS-Upload: branches not allowed");
+            return "branches not allowed";
+        }
+
+        string username = _config.Configuration.CmsUploadClient(id);
+
+        if (String.IsNullOrWhiteSpace(username))
+        {
+            _logger.LogWarning("CMS-Upload: not allowed for user {username}", username);
+            return "not allowed";
+        }
+
+        var jwtTokenService = _serviceProvider.GetRequiredKeyedService<JwtAccessTokenService>($"cms-upload-{id}");
+
+        var authHeader = Request.Headers.Authorization.ToString();
+        if (!authHeader.StartsWith("bearer ", StringComparison.OrdinalIgnoreCase))
+        {
+            _logger.LogWarning("CMS-Upload: token required");
+            return "token required";
+        }
+
+        var token = authHeader.Substring("bearer ".Length);
+        var principal = jwtTokenService.ValidateToken(token);
+
+        if (!username.Equals(principal.Identity.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            _logger.LogWarning("CMS-Upload: invalid user/token");
+            return "invalid user";
+        }
+
+        return null;
+    }
+
+    private string CmsUploadPath(string id)
+        => _config[ApiConfigKeys.ToKey($"cmspath_{id}")]?.Split('|')[0]
+           ?? throw new Exception($"cmspath_{id} not configured");
+
+    async private Task ClearCmsCache(string cmsName)
+    {
+        await _clearCache.ClearCache(cmsName);
+        await _messageQueue.EnqueueAsync(
+            ApiGlobals.MessageQueuePrefix,
+            new string[] { $"cacheclear:{cmsName}" },
+            includeOwnQueue: false);
+    }
+
+    #endregion
     [EndpointAuthorization(
         AuthorizationType = EndpointAuthorizationType.UrlPassword | EndpointAuthorizationType.Basic | EndpointAuthorizationType.BearerToken,
         AllowIfNotConfigured = true

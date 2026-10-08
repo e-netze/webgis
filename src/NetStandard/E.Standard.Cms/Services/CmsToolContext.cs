@@ -7,4 +7,9 @@ public class CmsToolContext
     public string Username { get; set; } = "";
     public string ContentRootPath { get; set; } = "";
     public string? CmsTreePath { get; set; }
+
+    // branch deploy: encoded branch name (CmsBranches.Encode), original branch name and commit sha
+    public string? Branch { get; set; }
+    public string? BranchName { get; set; }
+    public string? Commit { get; set; }
 }

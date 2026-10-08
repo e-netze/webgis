@@ -10,6 +10,7 @@ using E.Standard.Api.App.DTOs;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services.Cms;
 using E.Standard.CMS.Core;
+using E.Standard.CMS.Core.Branches;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
@@ -424,7 +425,8 @@ public class CacheService
             return null;
         }
 
-        string serviceKey = String.IsNullOrEmpty(ui?.Branch)
+        // branch cms items (cmsName$branch) contains other service instances than main => own initialization key
+        string serviceKey = String.IsNullOrEmpty(ui?.Branch) || !CmsBranches.IsBranchCmsName(cmsCacheItem.Name)
             ? url
             : $"{url}${ui.Branch}";
 
@@ -640,17 +642,22 @@ public class CacheService
 
         List<IMapService> services = new List<IMapService>();
 
-        foreach (var cmsCacheItem in CacheInstanceItems.AllVisibleItems(this, ui))
-        {
-            if (cmsCacheItem == null)
-            {
-                continue;
-            }
+        var visibleItems = CacheInstanceItems.AllVisibleItems(this, ui).Where(i => i != null).ToArray();
+        var branchItemNames = ui.RequestsBranch()
+            ? new HashSet<string>(visibleItems.Where(i => i.BelongsToBranch(ui.Branch)).Select(i => i.Name))
+            : new HashSet<string>();
 
-            if ((ui.RequestsBranch() && !cmsCacheItem.BelongsToBranch(ui.Branch)) ||
-                (!ui.RequestsBranch() && !cmsCacheItem.BelongsToBranch(null)))
+        foreach (var cmsCacheItem in visibleItems)
+        {
+            // only show requested branch or "main"
+            // if the branch is not deployed for a cms => fallback to "main" of this cms
+            bool include = ui.RequestsBranch()
+                ? cmsCacheItem.BelongsToBranch(ui.Branch) ||
+                  (cmsCacheItem.BelongsToBranch(null) && !branchItemNames.Contains(CmsBranches.ToCmsName(cmsCacheItem.Name, ui.Branch)))
+                : cmsCacheItem.BelongsToBranch(null);
+
+            if (!include)
             {
-                // only show requested branch or "main"
                 continue;
             }
 

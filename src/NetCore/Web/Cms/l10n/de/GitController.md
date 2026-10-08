@@ -224,6 +224,41 @@
 
 #deploy-git-remote-error: Der Server ist nicht erreichbar - der angezeigte Stand kann veraltet sein:
 
+#deploy-choice-title: '{0}' deployen
+
+#deploy-choice-production: Produktion
+
+#deploy-choice-production-sub: Deployt den veröffentlichten Stand von '{0}' am Server (für alle Benutzer).
+
+#deploy-choice-branch: Arbeitszweig testen
+
+#deploy-choice-branch-sub: Deployt den gespeicherten Stand deines Arbeitsbereichs als Branch '{0}'. Im WebGIS kann dieser Branch gezielt ausgewählt und getestet werden, ohne die Produktion zu verändern.
+
+#deploy-choice-branch-commit-first: Ein Branch-Deploy ist erst möglich, wenn alle Änderungen gespeichert (git commit) und Zusammenführungen abgeschlossen sind.
+
+#deploy-choice-branch-not-possible: Ein Branch-Deploy ist erst möglich, wenn du einen eigenen Arbeitsbereich hast.
+
+#deploy-choice-cancel: Abbrechen
+
+#branch-deploys-title: Deployte Branches: {0}
+
+#branch-deploys-loading: Wird geladen...
+
+#branch-deploys-none: Es sind keine Branches deployt.
+
+#branch-deploys-load-error: Die deployten Branches konnten nicht geladen werden:
+
+#branch-deploys-branch: Branch
+
+#branch-deploys-user: Bearbeiter
+
+#branch-deploys-commit: Commit
+
+#branch-deploys-date: Datum
+
+#branch-deploys-remove: Entfernen
+
+#branch-deploys-remove-confirm: Branch-Deploy '{0}' wirklich entfernen?
 #workspaces: Arbeitsbereiche verwalten...
 
 #workspaces-title: Arbeitsbereiche verwalten

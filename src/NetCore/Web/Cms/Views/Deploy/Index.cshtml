@@ -102,13 +102,20 @@
         </div>
     }
 
+    @{
+        var branchDeployEnabled = Model.GitLocalizer != null;
+        var branchDeployments = branchDeployEnabled
+            ? Model.CmsItem.Deployments.Where(d => d.AllowBranchDeploy).ToArray()
+            : new E.Standard.Cms.Configuration.Models.CmsConfig.DeployItem[0];
+    }
+
     @foreach (var deploy in Model.CmsItem.Deployments)
     {
         var fi = new System.IO.FileInfo(deploy.Target);
         var fiWargings = deploy.Target.WarningsFileInfo();
 
     <div style="display:inline-block">
-        <div class="tile wide deploy" data-cmsid="@Model.CmsItem.Id" data-name="@deploy.Name">
+        <div class="tile wide deploy" data-cmsid="@Model.CmsItem.Id" data-name="@deploy.Name" data-branch-deploy="@((branchDeployEnabled && deploy.AllowBranchDeploy).ToString().ToLower())">
             @if (fi.Exists)
             {
                 <div class="text">@deploy.Name<br />@(fi.LastWriteTime.ToShortDateString() + " " + fi.LastWriteTime.ToLongTimeString())</div>
@@ -127,6 +134,28 @@
         }
     </div>
     }
+
+    @if (branchDeployments.Length > 0)
+    {
+        var L = Model.GitLocalizer;
+
+        <style>
+            .cms-branch-deploys { max-width: 900px; margin: 16px 0; }
+            .cms-branch-deploys-title { font-weight: bold; margin-bottom: 4px; }
+            .cms-branch-deploys table { width: 100%; border-collapse: collapse; }
+            .cms-branch-deploys th, .cms-branch-deploys td { padding: 3px 6px; border-bottom: 1px solid #ddd; text-align: left; vertical-align: middle; }
+            .cms-branch-deploys td.commit { font-family: monospace; }
+            .cms-branch-deploys .muted { color: #666; }
+        </style>
+
+        @foreach (var deploy in branchDeployments)
+        {
+            <div class="cms-branch-deploys" data-cmsid="@Model.CmsItem.Id" data-name="@deploy.Name">
+                <div class="cms-branch-deploys-title">@String.Format(L.Localize("branch-deploys-title"), deploy.Name)</div>
+                <div class="cms-branch-deploys-content muted">@L.Localize("branch-deploys-loading")</div>
+            </div>
+        }
+    }
 </div>
 
 
@@ -135,9 +164,149 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-      
+
+            @{
+                var GL = Model.GitLocalizer;
+                var gitStatus = Model.GitDeployInfo?.UserStatus;
+                var branchL10n = GL == null ? null : new Dictionary<string, string>()
+                {
+                    ["title"] = GL.Localize("deploy-choice-title"),
+                    ["production"] = GL.Localize("deploy-choice-production"),
+                    ["production-sub"] = String.Format(GL.Localize("deploy-choice-production-sub"), Model.GitDeployInfo?.DefaultBranch),
+                    ["branch"] = GL.Localize("deploy-choice-branch"),
+                    ["branch-sub"] = String.Format(GL.Localize("deploy-choice-branch-sub"), Model.GitBranchDeployName),
+                    ["branch-commit-first"] = GL.Localize("deploy-choice-branch-commit-first"),
+                    ["branch-not-possible"] = GL.Localize("deploy-choice-branch-not-possible"),
+                    ["cancel"] = GL.Localize("deploy-choice-cancel"),
+                    ["none"] = GL.Localize("branch-deploys-none"),
+                    ["col-branch"] = GL.Localize("branch-deploys-branch"),
+                    ["col-user"] = GL.Localize("branch-deploys-user"),
+                    ["col-commit"] = GL.Localize("branch-deploys-commit"),
+                    ["col-date"] = GL.Localize("branch-deploys-date"),
+                    ["remove"] = GL.Localize("branch-deploys-remove"),
+                    ["remove-confirm"] = GL.Localize("branch-deploys-remove-confirm"),
+                    ["load-error"] = GL.Localize("branch-deploys-load-error")
+                };
+                var branchState = new
+                {
+                    name = Model.GitBranchDeployName,
+                    hasChanges = gitStatus?.Changes?.Any() == true,
+                    isMerging = gitStatus?.IsMerging == true
+                };
+            }
+            var branchL10n = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(branchL10n));
+            var branchState = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(branchState));
+
+            var esc = function (s) { return $('<div>').text(s === null || s === undefined ? '' : String(s)).html(); };
+            var fmt = function (s) {
+                var args = Array.prototype.slice.call(arguments, 1);
+                return String(s).replace(/\{(\d+)\}/g, function (m, i) { return args[i] !== undefined ? args[i] : m; });
+            };
+
+            var deployProduction = function (cmsId, name) {
+                CMS.openConsole(cmsId + '/deploy/' + encodeURIComponent(name), true);
+            };
+            var deployBranch = function (cmsId, name) {
+                CMS.openConsole(cmsId + '/deploy/' + encodeURIComponent(name) + '?branch=true', true);
+            };
+
             $('.tile.deploy').click(function () {
-                CMS.openConsole($(this).attr('data-cmsid') + '/deploy/' + encodeURI($(this).attr('data-name')), true);
+                var cmsId = $(this).attr('data-cmsid'), name = $(this).attr('data-name');
+
+                if ($(this).attr('data-branch-deploy') !== 'true' || !branchL10n) {
+                    deployProduction(cmsId, name);
+                    return;
+                }
+
+                var branchHint = !branchState.name ? branchL10n['branch-not-possible']
+                    : (branchState.hasChanges || branchState.isMerging) ? branchL10n['branch-commit-first']
+                    : null;
+
+                var buttons = {
+                    cancel: { label: esc(branchL10n['cancel']), className: 'btn-default' },
+                    production: {
+                        label: esc(branchL10n['production']), className: 'btn-primary',
+                        callback: function () { deployProduction(cmsId, name); }
+                    }
+                };
+                if (!branchHint) {
+                    buttons.branch = {
+                        label: esc(branchL10n['branch']), className: 'btn-success',
+                        callback: function () { deployBranch(cmsId, name); }
+                    };
+                }
+
+                bootbox.dialog({
+                    title: esc(fmt(branchL10n['title'], name)),
+                    message:
+                        '<p><strong>' + esc(branchL10n['production']) + '</strong><br/><span class="muted">' + esc(branchL10n['production-sub']) + '</span></p>' +
+                        '<p><strong>' + esc(branchL10n['branch']) + '</strong><br/><span class="muted">' + esc(branchHint || branchL10n['branch-sub']) + '</span></p>',
+                    buttons: buttons
+                });
+            });
+
+            var loadBranchDeploys = function ($container) {
+                var cmsId = $container.attr('data-cmsid'), name = $container.attr('data-name');
+                var $content = $container.find('.cms-branch-deploys-content');
+
+                $.ajax({
+                    url: CMS.appRootUrl + '/deploy/branchdeploys/' + encodeURIComponent(cmsId) + '?name=' + encodeURIComponent(name),
+                    type: 'get',
+                    success: function (result) {
+                        $content.empty().removeClass('muted');
+                        if (!result || result.success === false) {
+                            $content.addClass('muted').text(branchL10n['load-error'] + ' ' + ((result && result.exception) || ''));
+                            return;
+                        }
+                        if (!result.deploys || result.deploys.length === 0) {
+                            $content.addClass('muted').text(branchL10n['none']);
+                            return;
+                        }
+
+                        var $table = $('<table>').appendTo($content);
+                        $('<tr>')
+                            .append($('<th>').text(branchL10n['col-branch']))
+                            .append($('<th>').text(branchL10n['col-user']))
+                            .append($('<th>').text(branchL10n['col-commit']))
+                            .append($('<th>').text(branchL10n['col-date']))
+                            .append($('<th>'))
+                            .appendTo($table);
+
+                        $.each(result.deploys, function (i, d) {
+                            var date = d.date ? new Date(d.date) : null;
+                            $('<tr>')
+                                .append($('<td>').text(d.branch || d.encoded_branch))
+                                .append($('<td>').text(d.user || ''))
+                                .append($('<td class="commit">').text((d.commit || '').substring(0, 7)).attr('title', d.commit || ''))
+                                .append($('<td>').text(date ? date.toLocaleString() : ''))
+                                .append($('<td>').append(
+                                    $('<button type="button" class="btn btn-default btn-xs">').text(branchL10n['remove']).click(function () {
+                                        CMS.confirm(esc(fmt(branchL10n['remove-confirm'], d.branch || d.encoded_branch)), function () {
+                                            $.ajax({
+                                                url: CMS.appRootUrl + '/deploy/removebranchdeploy/' + encodeURIComponent(cmsId),
+                                                type: 'post',
+                                                data: { name: name, branch: d.encoded_branch },
+                                                success: function (r) {
+                                                    if (r && r.success === false) {
+                                                        CMS.alert(r.exception);
+                                                    }
+                                                    loadBranchDeploys($container);
+                                                },
+                                                error: function () { CMS.alert(); }
+                                            });
+                                        });
+                                    })))
+                                .appendTo($table);
+                        });
+                    },
+                    error: function () {
+                        $content.addClass('muted').text(branchL10n['load-error']);
+                    }
+                });
+            };
+
+            $('.cms-branch-deploys').each(function () {
+                loadBranchDeploys($(this));
             });
             $('.tile.warning').click(function () {
                 CMS.openConsole($(this).attr('data-cmsid') +'/solvewarnings/' + encodeURI($(this).attr('data-name')), true);

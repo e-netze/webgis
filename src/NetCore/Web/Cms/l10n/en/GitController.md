@@ -224,6 +224,41 @@
 
 #deploy-git-remote-error: The server is not reachable - the displayed state may be outdated:
 
+#deploy-choice-title: Deploy '{0}'
+
+#deploy-choice-production: Production
+
+#deploy-choice-production-sub: Deploys the published state of '{0}' on the server (for all users).
+
+#deploy-choice-branch: Test working branch
+
+#deploy-choice-branch-sub: Deploys the saved state of your workspace as branch '{0}'. In the WebGIS this branch can be selected and tested explicitly without changing production.
+
+#deploy-choice-branch-commit-first: A branch deploy is only possible when all changes are saved (git commit) and merges are completed.
+
+#deploy-choice-branch-not-possible: A branch deploy is only possible once you have your own workspace.
+
+#deploy-choice-cancel: Cancel
+
+#branch-deploys-title: Deployed branches: {0}
+
+#branch-deploys-loading: Loading...
+
+#branch-deploys-none: No branches are deployed.
+
+#branch-deploys-load-error: The deployed branches could not be loaded:
+
+#branch-deploys-branch: Branch
+
+#branch-deploys-user: User
+
+#branch-deploys-commit: Commit
+
+#branch-deploys-date: Date
+
+#branch-deploys-remove: Remove
+
+#branch-deploys-remove-confirm: Really remove branch deploy '{0}'?
 #workspaces: Manage workspaces...
 
 #workspaces-title: Manage workspaces
