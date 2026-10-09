@@ -43,6 +43,15 @@ addition to the task-specific skills in `.github/skills/*/SKILL.md`.
   (`https://docs.webgiscloud.com/...`) and GitHub issue/discussion links
   (`https://github.com/e-netze/webgis-community/...`) if provided.
 
+## User/admin docs (webgis-docs)
+
+- The public docs (`https://docs.webgiscloud.com/...`) live in the sibling repo `..\webgis-docs`
+  (Sphinx, DE + EN). When an admin- or user-relevant change (config keys, `custom.js` options,
+  CMS properties, visible behavior) is confirmed done, propose updating them via
+  `.github/skills/update-user-docs/SKILL.md` - before the changelog, so its entries can link the
+  docs. That skill works on the `webgis{major}` branch of `webgis-docs`, never on `master`, and
+  never builds, commits or pushes there.
+
 ## Architecture docs
 
 - Developer-oriented feature/subsystem docs live in `docs/architecture/` (index: `index.md`).
@@ -68,3 +77,5 @@ patterns, so no step gets silently skipped:
   `commit` skill.
 - **Documenting a feature's architecture** (projects, classes, flow diagrams, pitfalls) →
   `update-architecture-docs` skill.
+- **Documenting a config/user-visible change in the public docs** (`webgis-docs`) →
+  `update-user-docs` skill.

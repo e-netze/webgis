@@ -56,9 +56,9 @@ This is a recurring, simple plumbing pattern in this repo: **settings class (com
 - The public documentation for `api.config` sections lives at
   `https://docs.webgiscloud.com/de/webgis/config/api/index.html#<section-anchor>`
   (e.g. `#werkzeug-identify` for the `tool-identify` section).
-- If the user provides the docs link, use it in the changelog entry (see step 6). Do not attempt to
-  edit the external docs site itself unless the user explicitly asks and gives access/instructions
-  for the docs repo.
+- Propose documenting the new keys there via the `update-user-docs` skill
+  (`.github/skills/update-user-docs/SKILL.md`, edits the sibling `webgis-docs` repo, DE + EN) and
+  use the resulting `/en/` docs URL in the changelog entry (see step 6).
 
 ## 5. Verify
 

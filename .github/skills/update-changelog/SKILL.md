@@ -38,6 +38,9 @@ This skill always keeps **both** files in sync. Always follow this order:
     (`https://docs.webgiscloud.com/...`).
 - If the user provides issue or documentation links, match them to the corresponding changes and include them
   in the same format as existing entries (e.g. `[Issue #123](https://github.com/e-netze/webgis-community/issues/123)`).
+- If the change is docs-relevant (config keys, `custom.js` options, CMS properties, visible
+  behavior) and the public docs were not updated yet, run the `update-user-docs` skill first and use
+  the `/en/` docs URLs it reports as `[Docs](...)` links in both files.
 - If it is unclear what a change refers to, or whether it is a bugfix or a feature, ask the user instead of guessing.
 
 ## 2. Update the changelog (`changelog-v{major}.md`)

@@ -40,9 +40,10 @@ can override in their `custom.js`, instead of a hardcoded constant in the viewer
 - Add a short inline comment next to the default value in `webgis.options.js` explaining what it
   does and its default (this file effectively doubles as the source-of-truth reference).
 - The public docs for these options live at
-  `https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#<anchor>` — if the
-  user supplies this link, use it in the changelog entry; do not edit the external docs site itself
-  unless explicitly asked.
+  `https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#<anchor>`. Propose
+  documenting the option there via the `update-user-docs` skill
+  (`.github/skills/update-user-docs/SKILL.md`, edits the sibling `webgis-docs` repo, DE + EN) and
+  use the resulting `/en/` docs URL in the changelog entry.
 
 ## 3. Verify
 
