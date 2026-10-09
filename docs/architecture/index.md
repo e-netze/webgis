@@ -6,7 +6,7 @@ which projects and classes are involved, flow diagrams, design decisions and pit
 - For **what** changed per version see the changelogs ([V8](../../changelog-v8.md), [V7](../../changelog-v7.md)).
 - For admin-oriented summaries see the release notes ([V8](../../release-notes-v8.md), [V7](../../release-notes-v7.md)).
 - New docs are created from [_template.md](_template.md) via the
-  [update-architecture-docs](../../.github/prompts/update-architecture-docs.prompt.md) skill.
+  [update-architecture-docs](../../.github/skills/update-architecture-docs/SKILL.md) skill.
 
 ## Features
 

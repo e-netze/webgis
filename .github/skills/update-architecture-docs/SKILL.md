@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: Creates or updates developer-oriented architecture docs (docs/architecture/<feature>.md) for a feature or subsystem.
+name: update-architecture-docs
+description: Creates or updates developer-oriented architecture docs (docs/architecture/<feature>.md) for a feature or subsystem. Use after implementing or changing a feature/subsystem, or when asked to document architecture.
 ---
 
 # Skill: Update Architecture Docs
@@ -67,11 +67,11 @@ Always follow this order:
 
 - Add/update the row in `docs/architecture/index.md` (`Feature | Area | Description`, sorted
   alphabetically; `System Overview` always stays the first row).
-- If the change also gets a changelog entry (see `update-changelog.prompt.md`), add the line
+- If the change also gets a changelog entry (see `update-changelog` skill), add the line
   `[Architecture](docs/architecture/<feature-name>.md)` to that changelog entry.
   Release notes do **not** link architecture docs (admin audience).
 
 ## 5. Wrap-up
 
 - Show the user the new/changed doc sections for review before reporting the task as complete.
-- Do not commit (see `commit.prompt.md`), and do not change other files unless the user asks for it.
+- Do not commit (see `commit` skill), and do not change other files unless the user asks for it.

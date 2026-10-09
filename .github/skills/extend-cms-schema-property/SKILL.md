@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: Adds a new configurable property to a CMS Schema class and propagates it through the CacheItem/DTO/runtime pipeline so it reaches the WebGIS viewer.
+name: extend-cms-schema-property
+description: Adds a new configurable property to a CMS Schema class and propagates it through the CacheItem/DTO/runtime pipeline so it reaches the WebGIS viewer. Use when adding a new CMS-configurable property.
 ---
 
 # Skill: Extend CMS Schema Property

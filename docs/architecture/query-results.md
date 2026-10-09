@@ -168,7 +168,7 @@ For the ArcGIS Server specific limits (`ags-spatial-query-*`) see
   (e.g. `HasMore`) must be copied explicitly or it silently never reaches the client. The same
   applies to `FeaturesDTO`: the `metadata` object is only created if one of the guard conditions is
   true (`features.HasMore` is part of it). See
-  [expose-query-metadata-to-client](../../.github/prompts/expose-query-metadata-to-client.prompt.md).
+  [expose-query-metadata-to-client](../../.github/skills/expose-query-metadata-to-client/SKILL.md).
 - `QueryEngine.HasMore` must only be `true` if the limit was hit while more data was available.
   `Union` queries throw a `QueryEngineInformationException` instead of returning a partial result.
 - The `has_more` notice is rendered in `showTable` only; the list view (`webgis_queryResultsList`)
@@ -188,9 +188,9 @@ For the ArcGIS Server specific limits (`ags-spatial-query-*`) see
 ## Extension points
 
 - New result signal for the client: follow
-  [expose-query-metadata-to-client](../../.github/prompts/expose-query-metadata-to-client.prompt.md).
+  [expose-query-metadata-to-client](../../.github/skills/expose-query-metadata-to-client/SKILL.md).
 - New client option: follow
-  [add-client-usability-option](../../.github/prompts/add-client-usability-option.prompt.md).
+  [add-client-usability-option](../../.github/skills/add-client-usability-option/SKILL.md).
 - Custom list rendering: `webgis.hooks["query_result_feature"]` (default, per query id or
   `serviceId:queryId`) in `webgis_queryResultsList`.
 - New export format: CMS table export formats (`query.table_export_formats`) are added as toolbar

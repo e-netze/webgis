@@ -2,7 +2,7 @@
 
 > Template for architecture/feature docs - copy to `docs/architecture/<feature-name>.md`
 > (kebab-case) and replace all `<...>` placeholders. Remove optional sections that don't apply.
-> See [update-architecture-docs](../../.github/prompts/update-architecture-docs.prompt.md).
+> See [update-architecture-docs](../../.github/skills/update-architecture-docs/SKILL.md).
 
 ## Overview
 

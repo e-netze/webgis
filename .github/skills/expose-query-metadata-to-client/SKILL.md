@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: Exposes a new server-side query/feature-collection signal (flag, count, ...) to the client via FeaturesDTO.Meta, so client-side JS can react to it.
+name: expose-query-metadata-to-client
+description: Exposes a new server-side query/feature-collection signal (flag, count, ...) to the client via FeaturesDTO.Meta, so client-side JS can react to it. Use when the viewer UI must react to a new server-side query/FeatureCollection flag.
 ---
 
 # Skill: Expose Query/Feature-Collection Metadata to the Client

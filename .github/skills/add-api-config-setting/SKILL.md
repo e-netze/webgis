@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: Makes a hardcoded constant/setting configurable via api.config, following the existing tool-identify pattern.
+name: add-api-config-setting
+description: Makes a hardcoded constant/setting configurable via api.config, following the existing tool-identify pattern. Use when a hardcoded value should become an api.config setting.
 ---
 
 # Skill: Add an api.config Setting
@@ -79,6 +79,6 @@ This is a recurring, simple plumbing pattern in this repo: **settings class (com
 
 ## 6. Changelog
 
-- Follow the `update-changelog` skill (`.github/prompts/update-changelog.prompt.md`) to add an
+- Follow the `update-changelog` skill (`.github/skills/update-changelog/SKILL.md`) to add an
   `Added` entry to the changelog and a `New` entry to the release notes of the current major
   version, listing the new key names, their defaults, and the `api.config` docs link from step 4.

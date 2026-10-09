@@ -192,7 +192,7 @@ files to another directory.
 - New GeoService type: implement `IMapService` in `E.Standard.WebMapping.GeoServices` and add a CMS
   node in `E.Standard.WebGIS.CmsSchema`.
 - New viewer tool: implement `IApiButton` in `E.Standard.WebGIS.Tools`.
-- Client customization: `custom.js` (see `.github/prompts/add-client-usability-option.prompt.md`).
+- Client customization: `custom.js` (see `.github/skills/add-client-usability-option/SKILL.md`).
 - Feature docs: [AGS Query Strategy](ags-query-strategy.md), [Logging](../logging.md).
 
 ## History

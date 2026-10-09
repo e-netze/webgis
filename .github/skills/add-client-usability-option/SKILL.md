@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: Adds a new configurable client-side usability option (webgis.usability / webgis.queryResultOptions) that admins can override in custom.js.
+name: add-client-usability-option
+description: Adds a new configurable client-side usability option (webgis.usability / webgis.queryResultOptions) that admins can override in custom.js. Use when adding a viewer option that admins should be able to override in custom.js.
 ---
 
 # Skill: Add a Client-Side Usability Option
@@ -52,7 +52,7 @@ can override in their `custom.js`, instead of a hardcoded constant in the viewer
 
 ## 4. Changelog
 
-- Follow the `update-changelog` skill (`.github/prompts/update-changelog.prompt.md`) to add an
+- Follow the `update-changelog` skill (`.github/skills/update-changelog/SKILL.md`) to add an
   `Added` entry to the changelog and a `New` entry to the release notes of the current major
   version, naming the exact option path (e.g. `webgis.usability.queryResultsList.maxItems`), its
   default, and the docs link from step 2.

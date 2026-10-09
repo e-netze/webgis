@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: Updates the changelog and the release notes of the current major version with the current (unreleased) changes of the repo.
+name: update-changelog
+description: Updates the changelog and the release notes of the current major version with the current (unreleased) changes of the repo. Use when a task is done and needs a changelog/release-notes entry, or when preparing a release.
 ---
 
 # Skill: Update Changelog & Release Notes
@@ -62,7 +62,7 @@ This skill always keeps **both** files in sync. Always follow this order:
     when it is not clearly recognizable as a bugfix.
 - Add new entries at the end of the respective subsection, to preserve the chronological order.
 - If an architecture doc exists for the feature (`docs/architecture/<feature-name>.md`, see
-  `update-architecture-docs.prompt.md`), add the line
+  `update-architecture-docs` skill), add the line
   `[Architecture](docs/architecture/<feature-name>.md)` to the entry.
 - Never modify already published version sections (e.g. `## 8.26.3101`).
 

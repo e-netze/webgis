@@ -97,7 +97,7 @@ flowchart TD
 - `MapService.Clone` must copy `QueryStrategy`; new runtime properties need the same treatment.
 - Truncation must always set `FeatureCollection.HasMore`, otherwise users silently get incomplete
   results. `HasMore` must survive `QueryEngine` → `FeaturesDTO` (see
-  [expose-query-metadata-to-client](../../.github/prompts/expose-query-metadata-to-client.prompt.md)).
+  [expose-query-metadata-to-client](../../.github/skills/expose-query-metadata-to-client/SKILL.md)).
 - The guards in `QueryService.GetObjectIdsAsync` (non-progressing pages, timeout) must report
   `HasMore=true` instead of throwing or looping.
 - Test with a polygon query on an affected service where the bbox contains more features than
