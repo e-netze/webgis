@@ -30,6 +30,7 @@
   - [WebGIS API](#webgis-api)  
   - [WebGIS CMS](#webgis-cms)
 - [Release Notes & Changelog](#release-notes--changelog)
+- [Developer documentation](#developer-documentation)
 - [References](#references)
 
 ## Overview  
@@ -95,5 +96,10 @@ Changes are documented per major version:
 |-------|-------------------------------------|----------------------|
 | V8    | [release-notes-v8.md](release-notes-v8.md) | [changelog-v8.md](changelog-v8.md) |
 | V7    | [release-notes-v7.md](release-notes-v7.md) | [changelog-v7.md](changelog-v7.md) |
+
+## Developer documentation
+
+Architecture docs for features and subsystems (projects, classes, flow diagrams, design decisions,
+pitfalls): [docs/architecture](docs/architecture/index.md)
 
 ## References

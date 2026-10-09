@@ -61,6 +61,9 @@ This skill always keeps **both** files in sync. Always follow this order:
   - **Added**: in all other cases (new features, improvements, configuration options) and always
     when it is not clearly recognizable as a bugfix.
 - Add new entries at the end of the respective subsection, to preserve the chronological order.
+- If an architecture doc exists for the feature (`docs/architecture/<feature-name>.md`, see
+  `update-architecture-docs.prompt.md`), add the line
+  `[Architecture](docs/architecture/<feature-name>.md)` to the entry.
 - Never modify already published version sections (e.g. `## 8.26.3101`).
 
 ## 3. Update the release notes (`release-notes-v{major}.md`)

@@ -43,6 +43,13 @@ addition to the task-specific skills in `.github/prompts/*.prompt.md`.
   (`https://docs.webgiscloud.com/...`) and GitHub issue/discussion links
   (`https://github.com/e-netze/webgis-community/...`) if provided.
 
+## Architecture docs
+
+- Developer-oriented feature/subsystem docs live in `docs/architecture/` (index: `index.md`).
+  When a feature-level task (not a bugfix/small option) is confirmed done - especially when
+  implemented in an agent session - propose creating/updating its doc via
+  `.github/prompts/update-architecture-docs.prompt.md`, so the work stays traceable later.
+
 ## Recurring patterns with dedicated skills
 
 Check `.github/prompts/` before implementing a change that might match one of these recurring
@@ -59,3 +66,5 @@ patterns, so no step gets silently skipped:
   `add-client-usability-option.prompt.md`.
 - **Committing changes** (proposing a commit message vs. actually committing) →
   `commit.prompt.md`.
+- **Documenting a feature's architecture** (projects, classes, flow diagrams, pitfalls) →
+  `update-architecture-docs.prompt.md`.
