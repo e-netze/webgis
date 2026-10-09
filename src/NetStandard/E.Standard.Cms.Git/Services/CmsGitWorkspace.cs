@@ -1181,6 +1181,51 @@ public class CmsGitWorkspace
     }
 
     /// <summary>
+    /// Paths (old and new) of all files that differ between the trees of <paramref name="sinceSha"/> and HEAD.
+    /// Only the object database is used (no working tree access).
+    /// </summary>
+    /// <returns>null, if one of the commits is not available</returns>
+    public IReadOnlyCollection<string> ChangedPathsSince(string sinceSha)
+    {
+        if (!Exists || String.IsNullOrWhiteSpace(sinceSha))
+        {
+            return null;
+        }
+
+        using var repo = Open();
+
+        var head = repo.Head?.Tip;
+        var since = repo.Lookup<Commit>(sinceSha);
+        if (head == null || since == null)
+        {
+            return null;
+        }
+
+        var paths = new HashSet<string>(StringComparer.Ordinal);
+        if (head.Sha == since.Sha)
+        {
+            return paths;
+        }
+
+        using (var treeChanges = repo.Diff.Compare<TreeChanges>(since.Tree, head.Tree))
+        {
+            foreach (var change in treeChanges)
+            {
+                if (!String.IsNullOrEmpty(change.OldPath))
+                {
+                    paths.Add(change.OldPath.Replace('\\', '/'));
+                }
+                if (!String.IsNullOrEmpty(change.Path))
+                {
+                    paths.Add(change.Path.Replace('\\', '/'));
+                }
+            }
+        }
+
+        return paths;
+    }
+
+    /// <summary>
     /// Latest known commit of the remote default branch (no fetch)
     /// </summary>
     public CmsGitCommitInfo RemoteDefaultBranchCommit()
@@ -1847,7 +1892,10 @@ public class CmsGitWorkspace
         {
             IncludeUntracked = true,
             RecurseUntrackedDirs = true,
-            IncludeIgnored = false
+            IncludeIgnored = false,
+            // renames are reported as deleted + added, so both paths are listed (needed by the fast deploy invalidation)
+            DetectRenamesInIndex = false,
+            DetectRenamesInWorkDir = false
         });
 
         foreach (var entry in status)

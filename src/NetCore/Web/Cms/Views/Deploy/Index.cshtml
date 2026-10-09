@@ -206,13 +206,18 @@
                     ["uncommitted"] = GL.Localize("branch-deploys-uncommitted"),
                     ["remove"] = GL.Localize("branch-deploys-remove"),
                     ["remove-confirm"] = GL.Localize("branch-deploys-remove-confirm"),
-                    ["load-error"] = GL.Localize("branch-deploys-load-error")
+                    ["load-error"] = GL.Localize("branch-deploys-load-error"),
+                    ["fast-info"] = GL.Localize("deploy-choice-fast-info"),
+                    ["fast-full"] = GL.Localize("deploy-choice-fast-full")
                 };
+                var cacheInfo = Model.ExportCacheInfo;
                 var branchState = new
                 {
                     name = Model.GitBranchDeployName,
                     hasChanges = gitStatus?.Changes?.Any() == true,
-                    isMerging = gitStatus?.IsMerging == true
+                    isMerging = gitStatus?.IsMerging == true,
+                    cacheDate = cacheInfo?.CreatedUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm"),
+                    cacheCommit = cacheInfo?.Commit is string c && c.Length > 7 ? c.Substring(0, 7) : cacheInfo?.Commit
                 };
             }
             var branchL10n = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(branchL10n));
@@ -227,8 +232,8 @@
             var deployProduction = function (cmsId, name) {
                 CMS.openConsole(cmsId + '/deploy/' + encodeURIComponent(name), true);
             };
-            var deployBranch = function (cmsId, name) {
-                CMS.openConsole(cmsId + '/deploy/' + encodeURIComponent(name) + '?branch=true', true);
+            var deployBranch = function (cmsId, name, full) {
+                CMS.openConsole(cmsId + '/deploy/' + encodeURIComponent(name) + '?branch=true' + (full ? '&full=true' : ''), true);
             };
 
             $('.tile.deploy').click(function () {
@@ -244,6 +249,7 @@
                     : null;
                 var branchInfo = branchL10n['branch-sub'] + (branchState.hasChanges ? ' ' + branchL10n['branch-uncommitted'] : '');
 
+                var $dialog = null;
                 var buttons = {
                     cancel: { label: esc(branchL10n['cancel']), className: 'btn-default' },
                     production: {
@@ -254,15 +260,22 @@
                 if (!branchHint) {
                     buttons.branch = {
                         label: esc(branchL10n['branch']), className: 'btn-success',
-                        callback: function () { deployBranch(cmsId, name); }
+                        callback: function () { deployBranch(cmsId, name, $dialog && $dialog.find('.cms-deploy-full').is(':checked')); }
                     };
                 }
 
-                bootbox.dialog({
+                // fast deploy: only offered, if a snapshot of the working copy exists
+                var fastHtml = !branchHint && branchState.cacheDate
+                    ? '<p class="cms-deploy-fast"><span class="muted">' + esc(fmt(branchL10n['fast-info'], branchState.cacheDate, branchState.cacheCommit || '')) + '</span><br/>' +
+                      '<label><input type="checkbox" class="cms-deploy-full" /> ' + esc(branchL10n['fast-full']) + '</label></p>'
+                    : '';
+
+                $dialog = bootbox.dialog({
                     title: esc(fmt(branchL10n['title'], name)),
                     message:
                         '<p><strong>' + esc(branchL10n['production']) + '</strong><br/><span class="muted">' + esc(branchL10n['production-sub']) + '</span></p>' +
-                        '<p><strong>' + esc(branchL10n['branch']) + '</strong><br/><span class="muted">' + esc(branchHint || branchInfo) + '</span></p>',
+                        '<p><strong>' + esc(branchL10n['branch']) + '</strong><br/><span class="muted">' + esc(branchHint || branchInfo) + '</span></p>' +
+                        fastHtml,
                     buttons: buttons
                 });
             });

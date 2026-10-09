@@ -17,6 +17,7 @@ public class CmsManagerResolver
 {
     private const string UsersFolder = "users";
     private const string DeployFolder = "deploy";
+    private const string CacheFolder = "cache";
 
     private readonly CmsConfigurationService _ccs;
     private readonly ConcurrentDictionary<string, CMSManager> _cache = new(StringComparer.OrdinalIgnoreCase);
@@ -78,6 +79,35 @@ public class CmsManagerResolver
 
     public string DeployWorkspacePath(string cmsId)
         => Path.Combine(GitConfig(cmsId).WorkspaceRoot, SafeName(cmsId), DeployFolder);
+
+    /// <summary>
+    /// Fast deploy cache (file snapshot) of a user's working copy. Lives outside the working copy (not versioned).
+    /// </summary>
+    public string ExportCachePath(string cmsId, string username)
+    {
+        if (String.IsNullOrWhiteSpace(username))
+        {
+            throw new ArgumentException("A username is required to resolve the export cache");
+        }
+
+        return Path.Combine(GitConfig(cmsId).WorkspaceRoot, SafeName(cmsId), CacheFolder, SafeName(username) + ".snapshot");
+    }
+
+    /// <summary>
+    /// Deletes the fast deploy cache of a user (working copy re-created/removed)
+    /// </summary>
+    public void DeleteExportCache(string cmsId, string username)
+    {
+        try
+        {
+            var path = ExportCachePath(cmsId, username);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+        catch { }
+    }
 
     public bool WorkspaceExists(string workspacePath)
         => Directory.Exists(Path.Combine(workspacePath, ".git"));

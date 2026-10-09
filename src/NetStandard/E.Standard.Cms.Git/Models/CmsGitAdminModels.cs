@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
@@ -127,15 +128,43 @@ public sealed class CmsGitBranchDeploy : IDisposable
 {
     private Action _release;
 
+    private readonly Func<string, IReadOnlyCollection<string>> _changedPathsSince;
+
     public CmsGitBranchDeploy(string branch, string gitBranch, string commit, bool uncommitted, string workspacePath, Action release)
+        : this(branch, gitBranch, commit, Array.Empty<string>(), workspacePath, null, release)
+    {
+        Uncommitted = uncommitted;
+    }
+
+    public CmsGitBranchDeploy(string branch,
+                              string gitBranch,
+                              string commit,
+                              IReadOnlyCollection<string> uncommittedFiles,
+                              string workspacePath,
+                              Func<string, IReadOnlyCollection<string>> changedPathsSince,
+                              Action release)
     {
         Branch = branch;
         GitBranch = gitBranch;
         Commit = commit;
-        Uncommitted = uncommitted;
+        UncommittedFiles = uncommittedFiles ?? Array.Empty<string>();
+        Uncommitted = UncommittedFiles.Count > 0;
         WorkspacePath = workspacePath;
+        _changedPathsSince = changedPathsSince;
         _release = release;
     }
+
+    /// <summary>
+    /// Paths (relative to the tree, '/' separated) of the uncommitted files (incl. untracked) when the deploy started
+    /// </summary>
+    public IReadOnlyCollection<string> UncommittedFiles { get; }
+
+    /// <summary>
+    /// Paths of the files that differ between the given commit and <see cref="Commit"/>.
+    /// null, if the commit is not available. Only valid while the deploy is running (working copy locked).
+    /// </summary>
+    public IReadOnlyCollection<string> ChangedPathsSince(string commit)
+        => _changedPathsSince?.Invoke(commit);
 
     /// <summary>
     /// Name of the deployed branch. On the default branch: {user}-{default-branch}

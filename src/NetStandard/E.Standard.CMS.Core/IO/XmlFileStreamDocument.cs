@@ -77,6 +77,29 @@ public class XmlFileStreamDocument : IStreamDocument
         }
     }
 
+    /// <summary>
+    /// Same as <see cref="Init"/> with a file path, but the content is already read (export cache)
+    /// </summary>
+    internal void InitFromContent(string path, byte[] content)
+    {
+        _doc = new XmlDocument();
+        _stringReplace = null;
+
+        try
+        {
+            using (var stream = new MemoryStream(content, false))
+            {
+                _doc.Load(stream);
+            }
+            _filename = path;
+            _parent = _doc.SelectSingleNode("config");
+        }
+        catch (Exception ex)
+        {
+            throw new FileLoadException("Datei '" + path + "' kann nicht gelesen werden!", path, ex);
+        }
+    }
+
     public NameValueCollection StringReplace => _stringReplace;
 
     public void SaveDocument()

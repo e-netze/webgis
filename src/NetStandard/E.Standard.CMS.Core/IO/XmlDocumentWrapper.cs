@@ -61,6 +61,11 @@ public class XmlDocumentWrapper
         }
     }
 
+    internal void Load(System.IO.Stream stream)
+    {
+        _doc.Load(stream);
+    }
+
     public void Load(string filename)
     {
         Type documentInfoType = null;

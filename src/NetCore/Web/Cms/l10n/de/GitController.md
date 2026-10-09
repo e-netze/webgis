@@ -240,6 +240,10 @@
 
 #deploy-choice-branch-not-possible: Ein Branch-Deploy ist erst möglich, wenn du einen eigenen Arbeitsbereich hast.
 
+#deploy-choice-fast-info: Fast Deploy: nur geänderte Dateien werden neu eingelesen (Zwischenstand vom {0}, Commit {1}).
+
+#deploy-choice-fast-full: Vollständig neu einlesen
+
 #deploy-choice-cancel: Abbrechen
 
 #branch-deploys-title: Deployte Branches: {0}

@@ -240,6 +240,10 @@
 
 #deploy-choice-branch-not-possible: A branch deploy is only possible once you have your own workspace.
 
+#deploy-choice-fast-info: Fast deploy: only changed files are read again (snapshot from {0}, commit {1}).
+
+#deploy-choice-fast-full: Read everything again
+
 #deploy-choice-cancel: Cancel
 
 #branch-deploys-title: Deployed branches: {0}

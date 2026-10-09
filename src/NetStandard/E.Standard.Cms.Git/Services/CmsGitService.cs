@@ -60,6 +60,7 @@ public class CmsGitService
         Locked($"init:{cmsId}", () =>
             Locked(workspace.WorkspacePath, () =>
             {
+                _resolver.DeleteExportCache(cmsId, username);
                 workspace.Create(CmsItem(cmsId).Path, user, initialCommitMessage);
                 return true;
             }));
@@ -274,7 +275,11 @@ public class CmsGitService
             {
                 throw new CmsGitException(CmsGitErrors.MergeInProgress);
             }
-            var uncommitted = status.Changes?.Any() == true;
+            var uncommittedFiles = (status.Changes ?? Enumerable.Empty<CmsGitChange>())
+                .Select(c => c.Path)
+                .Where(p => !String.IsNullOrEmpty(p))
+                .Distinct(StringComparer.Ordinal)
+                .ToArray();
             var commit = workspace.HeadCommit()?.Sha;
             var branch = BranchDeployName(username, status);
 
@@ -287,7 +292,9 @@ public class CmsGitService
             }
 
             var key = runningKey;
-            return new CmsGitBranchDeploy(branch, status.Branch, commit, uncommitted, workspace.WorkspacePath, () =>
+            return new CmsGitBranchDeploy(branch, status.Branch, commit, uncommittedFiles, workspace.WorkspacePath,
+                since => workspace.ChangedPathsSince(since),
+                () =>
             {
                 RunningDeployments.TryRemove(key, out _);
                 semaphore.Release();
@@ -478,6 +485,7 @@ public class CmsGitService
         Locked(path, () =>
         {
             CmsGitWorkspace.DeleteDirectory(path);
+            _resolver.DeleteExportCache(cmsId, name);
             return true;
         });
 

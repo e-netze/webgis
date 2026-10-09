@@ -112,6 +112,15 @@ static public class DocumentFactory
         return pathInfo;
     }
 
+    /// <summary>
+    /// true, if the path is handled by the default (plain file system) document types
+    /// </summary>
+    static internal bool IsDefaultFileSystem(string path)
+        => !TypeNames.Any(typeName => path.Contains(typeName)) &&
+           DocumentTypes[""] == typeof(XmlFileStreamDocument) &&
+           DocumentInfoTypes[""] == typeof(FileSystemDocumentInfo) &&
+           PathInfoTypes[""] == typeof(FileSystemPathInfo);
+
     static public bool CanImport(string path)
     {
         foreach (var key in CanImportValues.Keys)

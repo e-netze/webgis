@@ -1,5 +1,6 @@
 using E.Standard.Cms.Configuration.Models;
 using E.Standard.Cms.Git.Models;
+using E.Standard.CMS.Core.IO;
 using E.Standard.Localization.Abstractions;
 
 namespace Cms.Models;
@@ -20,6 +21,11 @@ public class DeployModel
     /// Branch name used for a branch deploy of the user's working copy (null, if not possible)
     /// </summary>
     public string GitBranchDeployName { get; set; }
+
+    /// <summary>
+    /// Fast deploy snapshot of the user's working copy (null, if none exists => branch deploy reads everything)
+    /// </summary>
+    public ExportFileCacheInfo ExportCacheInfo { get; set; }
 
     public string Username { get; set; }
 }

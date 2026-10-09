@@ -689,6 +689,32 @@ public sealed class CmsGitWorkspaceTests : IDisposable
     }
 
     [Fact]
+    public void ChangedPathsSince_ReturnsOldAndNewPaths()
+    {
+        var alice = CreateWorkspace("alice", Alice);
+        var initialSha = alice.HeadCommit().Sha;
+
+        Assert.Empty(alice.ChangedPathsSince(initialSha));
+        Assert.Null(alice.ChangedPathsSince("0000000000000000000000000000000000000000"));
+
+        File.WriteAllText(Path.Combine(alice.WorkspacePath, "services", "b.xml"), "<b/>");
+        File.Move(Path.Combine(alice.WorkspacePath, "services", "a.xml"), Path.Combine(alice.WorkspacePath, "services", "c.xml"));
+
+        // uncommitted renames are reported as deleted + added (both paths)
+        var uncommitted = alice.GetStatus(false).Changes.Select(c => c.Path).ToArray();
+        Assert.Contains("services/a.xml", uncommitted);
+        Assert.Contains("services/c.xml", uncommitted);
+
+        alice.Commit(Alice, "rename a, add b");
+
+        var changed = alice.ChangedPathsSince(initialSha);
+        Assert.Contains("services/a.xml", changed);
+        Assert.Contains("services/b.xml", changed);
+        Assert.Contains("services/c.xml", changed);
+        Assert.Empty(alice.ChangedPathsSince(alice.HeadCommit().Sha));
+    }
+
+    [Fact]
     public void Status_LargeTree_Performance()
     {
         var tree = Path.Combine(_root, "large-tree");

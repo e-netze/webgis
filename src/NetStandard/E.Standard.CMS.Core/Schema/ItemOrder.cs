@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 
 using E.Standard.CMS.Core.IO;
@@ -13,6 +15,7 @@ public class ItemOrder
     private OrderedItems _orderedItems = new OrderedItems();
     private bool _fast = false;
     private FileSystemDirectoryListing _listing = null;
+    private Func<string, Stream> _openRead = null;
 
     public ItemOrder(string folder)
     {
@@ -29,12 +32,13 @@ public class ItemOrder
     }
 
     // fast mode based on an already enumerated directory (export)
-    internal ItemOrder(string folder, FileSystemDirectoryListing listing)
+    internal ItemOrder(string folder, FileSystemDirectoryListing listing, Func<string, Stream> openRead = null)
     {
         _di = DocumentFactory.PathInfo(folder);
         _fi = DocumentFactory.DocumentInfo(folder + @"/.itemorder.xml");
         _fast = true;
         _listing = listing;
+        _openRead = openRead;
         Load();
     }
 
@@ -63,7 +67,17 @@ public class ItemOrder
             if (_listing != null ? _listing.ContainsFile(".itemorder.xml") : _fi.Exists)
             {
                 var doc = new XmlDocumentWrapper();
-                doc.Load(_fi.FullName);
+                if (_openRead != null)
+                {
+                    using (var stream = _openRead(_fi.FullName))
+                    {
+                        doc.Load(stream);
+                    }
+                }
+                else
+                {
+                    doc.Load(_fi.FullName);
+                }
 
                 foreach (XmlNode itemNode in doc.SelectNodes("items/item[@name]"))
                 {

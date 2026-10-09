@@ -211,6 +211,7 @@ public class DeployService : ICmsTool
             // single pass: link warnings are collected while exporting (no separate warnings scan)
             var warnings = new List<CMSManager.Warning>();
             var exportStatistics = new CMSManager.ExportStatistics();
+            var exportCache = isBranchDeploy ? PrepareExportCache(context, cmsTreePath, console) : null;
 
             var document = cms.Export(_servicePack, deploy.IgnoreAuthentification, (ref string valueToEncrypt) =>
             {
@@ -219,9 +220,14 @@ public class DeployService : ICmsTool
                     //process.WriteLine("beforeEncryptValue " + valueToEncrypt);
                     valueToEncrypt = replace.ReplaceSecrets(valueToEncrypt);
                 }
-            }, deploy.Services, warnings, exportStatistics).GetAwaiter().GetResult();
+            }, deploy.Services, warnings, exportStatistics, fileCache: exportCache).GetAwaiter().GetResult();
 
             console.WriteLine($"Exported {exportStatistics}");
+
+            if (exportCache != null)
+            {
+                SaveExportCache(context, exportCache, console);
+            }
 
             ThrowIfCanceled();
 
@@ -451,6 +457,84 @@ public class DeployService : ICmsTool
             }
         }
     }
+
+    #region Fast Deploy (export file snapshot)
+
+    // returns the snapshot for the export: a valid (invalidated) snapshot for a fast deploy,
+    // an empty one to be filled for a full read, or null if fast deploy is not available
+    private static ExportFileCache? PrepareExportCache(CmsToolContext context, string cmsTreePath, IConsoleOutputStream console)
+    {
+        if (String.IsNullOrEmpty(context.ExportCacheFile) || context.ChangedPathsSince == null)
+        {
+            return null;
+        }
+
+        if (context.ExportFull)
+        {
+            console.WriteLine("Fast deploy: full read requested, snapshot will be rebuilt");
+            return new ExportFileCache();
+        }
+
+        if (!File.Exists(context.ExportCacheFile))
+        {
+            console.WriteLine("Fast deploy: no snapshot yet, full read (snapshot will be created)");
+            return new ExportFileCache();
+        }
+
+        try
+        {
+            var stopwatch = Stopwatch.StartNew();
+            var cache = ExportFileCache.Load(context.ExportCacheFile);
+
+            var changed = String.IsNullOrEmpty(cache.Commit) ? null : context.ChangedPathsSince(cache.Commit);
+            if (changed == null)
+            {
+                console.WriteLine($"Fast deploy: snapshot commit {cache.Commit} not found, full read");
+                return new ExportFileCache();
+            }
+
+            var changedPaths = new HashSet<string>(changed);
+            changedPaths.UnionWith(context.UncommittedFiles ?? Array.Empty<string>());
+            changedPaths.UnionWith(cache.UncommittedFiles);
+
+            int removed = cache.Invalidate(cmsTreePath, changedPaths);
+
+            console.WriteLine($"Fast deploy: snapshot from {cache.CreatedUtc.ToLocalTime():yyyy-MM-dd HH:mm:ss} (commit {ShortSha(cache.Commit)}), {cache.FileCount} files, {cache.FolderCount} folders");
+            console.WriteLine($"Fast deploy: {changedPaths.Count} changed paths, {removed} snapshot entries invalidated ({stopwatch.ElapsedMilliseconds}ms)");
+
+            return cache;
+        }
+        catch (Exception ex)
+        {
+            console.WriteLine($"Fast deploy: snapshot not usable ({ex.Message}), full read");
+            return new ExportFileCache();
+        }
+    }
+
+    // the snapshot is written right after the export (also if the deploy is canceled later because of warnings)
+    private static void SaveExportCache(CmsToolContext context, ExportFileCache cache, IConsoleOutputStream console)
+    {
+        try
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            cache.Commit = context.Commit;
+            cache.UncommittedFiles = context.UncommittedFiles ?? Array.Empty<string>();
+            cache.CreatedUtc = DateTime.UtcNow;
+            cache.Save(context.ExportCacheFile!);
+
+            console.WriteLine($"Fast deploy: snapshot saved, {cache.FileCount} files, {cache.FolderCount} folders ({stopwatch.ElapsedMilliseconds}ms)");
+        }
+        catch (Exception ex)
+        {
+            console.WriteLine($"Fast deploy: saving snapshot failed: {ex.Message}");
+        }
+    }
+
+    private static string ShortSha(string? sha)
+        => String.IsNullOrEmpty(sha) ? String.Empty : sha.Length > 8 ? sha.Substring(0, 8) : sha;
+
+    #endregion
 
     // {branch} placeholder in commands/urls => encoded branch name (empty for production)
     public void RunPostEvents(CmsConfig.DeployItem deploy, string encodedBranch, bool isDynamicCms, IConsoleOutputStream? console)

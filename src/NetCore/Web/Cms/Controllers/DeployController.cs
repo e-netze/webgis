@@ -18,6 +18,7 @@ using E.Standard.Cms.Services;
 using E.Standard.CMS.Core;
 using E.Standard.CMS.Core.Branches;
 using E.Standard.CMS.Core.Extensions;
+using E.Standard.CMS.Core.IO;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Localization.Abstractions;
 using E.Standard.Security.App.Reflection;
@@ -106,6 +107,7 @@ public class DeployController : ApplicationSecurityController
                     GitBranchDeployName = gitEnabled ? _git.BranchDeployName(this.GetCurrentUsername(), gitDeployInfo?.UserStatus) : null,
                     GitDeployRunningBy = gitEnabled ? _git.RunningDeployUser(id) : null,
                     GitLocalizer = gitEnabled ? _gitLocalizer : null,
+                    ExportCacheInfo = gitEnabled ? ExportFileCache.ReadInfo(_cmsResolver.ExportCachePath(id, this.GetCurrentUsername())) : null,
                     Username = this.GetCurrentUsername()
                 });
             }
@@ -116,11 +118,11 @@ public class DeployController : ApplicationSecurityController
         }
     }
 
-    public IActionResult Deploy(string id, string name, bool branch = false)
+    public IActionResult Deploy(string id, string name, bool branch = false, bool full = false)
     {
         if (branch)
         {
-            return DeployBranch(id, name);
+            return DeployBranch(id, name, full);
         }
 
         var deployLocked = false;
@@ -176,7 +178,7 @@ public class DeployController : ApplicationSecurityController
     /// Deploys the current state (including uncommitted changes) of the user's working copy (current branch) to
     /// {target-dir}/branches/{encoded-branch}/... (file target) or uploads it with a branch parameter (url target)
     /// </summary>
-    private IActionResult DeployBranch(string id, string name)
+    private IActionResult DeployBranch(string id, string name, bool full)
     {
         CmsGitBranchDeploy branchDeploy = null;
 
@@ -194,7 +196,10 @@ public class DeployController : ApplicationSecurityController
             _cmsLogger.Log(this.GetCurrentUsername(),
                            "Deploy", "StartBranch", id, name, branchDeploy.Branch, branchDeploy.Commit ?? String.Empty, branchDeploy.Uncommitted ? "uncommitted" : String.Empty);
 
-            var job = new BranchDeployJob(name, branchDeploy, _cmsResolver.TreePath(id, this.GetCurrentUsername()));
+            var job = new BranchDeployJob(name, branchDeploy,
+                _cmsResolver.TreePath(id, this.GetCurrentUsername()),
+                _cmsResolver.ExportCachePath(id, this.GetCurrentUsername()),
+                full);
             var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), DeployCmsBranch, job);
             branchDeploy = null;  // released by the background process
 
@@ -262,7 +267,7 @@ public class DeployController : ApplicationSecurityController
 
     #region Background Process
 
-    private record BranchDeployJob(string Name, CmsGitBranchDeploy Handle, string TreePath)
+    private record BranchDeployJob(string Name, CmsGitBranchDeploy Handle, string TreePath, string ExportCacheFile, bool Full)
     {
         public override string ToString() => Name;
     }
@@ -284,7 +289,11 @@ public class DeployController : ApplicationSecurityController
                 Branch = CmsBranches.Encode(job.Handle.Branch),
                 BranchName = job.Handle.Branch,
                 Commit = job.Handle.Commit,
-                Uncommitted = job.Handle.Uncommitted
+                Uncommitted = job.Handle.Uncommitted,
+                ExportCacheFile = job.ExportCacheFile,
+                ExportFull = job.Full,
+                UncommittedFiles = job.Handle.UncommittedFiles,
+                ChangedPathsSince = job.Handle.ChangedPathsSince
             };
 
             _deployService.Init(context);

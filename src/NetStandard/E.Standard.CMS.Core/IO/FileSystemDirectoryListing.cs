@@ -52,6 +52,27 @@ internal class FileSystemDirectoryListing
         }
     }
 
+    /// <summary>
+    /// Listing from a snapshot (<see cref="ExportFileCache"/>), no file system access
+    /// </summary>
+    public FileSystemDirectoryListing(string path, IEnumerable<string> directories, IEnumerable<string> files)
+    {
+        FullName = new DirectoryInfo(SystemInfo.IsLinux
+            ? path.ToPlatformPath().RemoveDoubleSlashes()
+            : path).FullName;
+
+        foreach (var name in directories)
+        {
+            Directories.Add(name);
+            _directorySet.Add(name);
+        }
+        foreach (var name in files)
+        {
+            Files.Add(name);
+            _fileSet.Add(name);
+        }
+    }
+
     public string FullName { get; }
 
     public List<string> Directories { get; } = new List<string>();

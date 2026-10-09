@@ -1033,15 +1033,15 @@ public partial class CMSManager
 
         bool exists = false;
 
-        if ((DocumentFactory.PathInfo(link)).Exists)
+        if (ExportDirectoryExists(DocumentFactory.PathInfo(link)))
         {
             exists = true;
         }
-        else if ((DocumentFactory.DocumentInfo(linkFilename = (link + ".xml").ToPlattformPath())).Exists)
+        else if (ExportFileExists(DocumentFactory.DocumentInfo(linkFilename = (link + ".xml").ToPlattformPath())))
         {
             exists = true;
         }
-        else if ((DocumentFactory.DocumentInfo(linkFilename = (link + ".link").ToPlattformPath())).Exists)
+        else if (ExportFileExists(DocumentFactory.DocumentInfo(linkFilename = (link + ".link").ToPlattformPath())))
         {
             exists = true;
         }
@@ -1713,7 +1713,8 @@ public partial class CMSManager
                                           ParseEncryptedValue onParseBeforeEncryptValue = null,
                                           IEnumerable<string> serviceIdsFilter = null,
                                           List<Warning> warnings = null,
-                                          ExportStatistics statistics = null)
+                                          ExportStatistics statistics = null,
+                                          ExportFileCache fileCache = null)
     {
         _isDir = new Dictionary<string, bool>();
 
@@ -1722,12 +1723,14 @@ public partial class CMSManager
         var context = new ExportContext(warnings, statistics ?? new ExportStatistics());
         context.Statistics.Total.Start();
         _exportListings = new Dictionary<string, FileSystemDirectoryListing>();
+        BeginExportCache(fileCache);
         try
         {
             return await ExportInternal(servicePack, ignoreAuthentification, onParseBeforeEncryptValue, serviceIdsFilterSet, context);
         }
         finally
         {
+            EndExportCache(context.Statistics);
             _exportListings = null;
             context.Statistics.Total.Stop();
         }
@@ -1822,14 +1825,14 @@ public partial class CMSManager
         }
 
         stats.FileSystem.Start();
-        listing = listing ?? TryCreateListing(parent);
+        listing = listing ?? ExportListing(parent);
         if (listing != null && _exportListings != null)
         {
             // same key as the path built in SchemaNode()
             _exportListings[_root + String.Concat(relPath.Replace(@"\", "/").Split('/').Where(p => p.Length > 0).Select(p => "/" + p))] = listing;
         }
         ItemOrder itemOrder = listing != null
-            ? new ItemOrder(parent.FullName, listing)
+            ? new ItemOrder(parent.FullName, listing, ExportOpenRead())
             : new ItemOrder(parent.FullName, true);
         stats.FileSystem.Stop();
 
@@ -1907,7 +1910,7 @@ public partial class CMSManager
                     stats.Nodes++;
 
                     stats.Read.Start();
-                    obj.Load(DocumentFactory.Open(fi.FullName));
+                    obj.Load(ExportOpenDocument(fi.FullName));
                     stats.Read.Stop();
 
                     if (obj is Link)
@@ -1982,7 +1985,7 @@ public partial class CMSManager
                     //    itemName = schemaNode.Attributes["itemname"].Value;
 
                     stats.FileSystem.Start();
-                    var childListing = TryCreateListing(di);
+                    var childListing = ExportListing(di);
                     var general = DocumentFactory.DocumentInfo((di.FullName + @"/.general.xml").ToPlattformPath());
                     bool generalExists = childListing != null ? childListing.ContainsFile(".general.xml") : general.Exists;
                     stats.FileSystem.Stop();
@@ -2008,7 +2011,7 @@ public partial class CMSManager
                             }
 
                             stats.Read.Start();
-                            obj.Load(DocumentFactory.Open(general.FullName));
+                            obj.Load(ExportOpenDocument(general.FullName));
                             stats.Read.Stop();
 
                             stats.Build.Start();
@@ -2081,7 +2084,7 @@ public partial class CMSManager
         }
 
         var fi = DocumentFactory.DocumentInfo(aclFilename.ToPlattformPath());
-        if (fi.Exists)
+        if (ExportFileExists(fi))
         {
             string authPath = fi.FullName.Substring(_root.Length + 1, fi.FullName.Length - _root.Length - fi.Extension.Length - 1).ToLower().Replace("\\", "/");
             if (authPath == "root")
@@ -2100,7 +2103,7 @@ public partial class CMSManager
             //    authPath = authPath.Substring(0, pos2) + "/" + authPath.Substring(pos2 + 1, authPath.Length - pos2 - 1);
             //}
 
-            string xml = fi.ReadAll();
+            string xml = ExportReadAllText(fi);
             if (!String.IsNullOrWhiteSpace(xml))
             {
                 authNodes.Add(new ExportAuthNode(this, authPath, xml));
