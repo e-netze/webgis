@@ -226,13 +226,13 @@
 
 #deploy-choice-title: '{0}' deployen
 
-#deploy-choice-production: Produktion
+#deploy-choice-production: Veröffentlichter Stand ({0})
 
 #deploy-choice-production-sub: Deployt den veröffentlichten Stand von '{0}' am Server (für alle Benutzer).
 
 #deploy-choice-branch: Arbeitszweig testen
 
-#deploy-choice-branch-sub: Deployt den aktuellen Stand deines Arbeitsbereichs als Branch '{0}'. Im WebGIS kann dieser Branch gezielt ausgewählt und getestet werden, ohne die Produktion zu verändern.
+#deploy-choice-branch-sub: Deployt den aktuellen Stand deines Arbeitsbereichs als Branch '{0}'. Im WebGIS kann dieser Branch gezielt ausgewählt und getestet werden, ohne den veröffentlichten Stand zu verändern.
 
 #deploy-choice-branch-merging: Ein Branch-Deploy ist erst möglich, wenn die laufende Zusammenführung abgeschlossen ist.
 

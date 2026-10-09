@@ -226,13 +226,13 @@
 
 #deploy-choice-title: Deploy '{0}'
 
-#deploy-choice-production: Production
+#deploy-choice-production: Published state ({0})
 
 #deploy-choice-production-sub: Deploys the published state of '{0}' on the server (for all users).
 
 #deploy-choice-branch: Test working branch
 
-#deploy-choice-branch-sub: Deploys the current state of your workspace as branch '{0}'. In the WebGIS this branch can be selected and tested explicitly without changing production.
+#deploy-choice-branch-sub: Deploys the current state of your workspace as branch '{0}'. In the WebGIS this branch can be selected and tested explicitly without changing the published state.
 
 #deploy-choice-branch-merging: A branch deploy is only possible once the running merge is completed.
 

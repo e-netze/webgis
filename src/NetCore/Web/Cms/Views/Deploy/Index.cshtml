@@ -190,7 +190,7 @@
                 var branchL10n = GL == null ? null : new Dictionary<string, string>()
                 {
                     ["title"] = GL.Localize("deploy-choice-title"),
-                    ["production"] = GL.Localize("deploy-choice-production"),
+                    ["production"] = String.Format(GL.Localize("deploy-choice-production"), Model.GitDeployInfo?.DefaultBranch),
                     ["production-sub"] = String.Format(GL.Localize("deploy-choice-production-sub"), Model.GitDeployInfo?.DefaultBranch),
                     ["branch"] = GL.Localize("deploy-choice-branch"),
                     ["branch-sub"] = String.Format(GL.Localize("deploy-choice-branch-sub"), Model.GitBranchDeployName),
