@@ -60,8 +60,8 @@ public class DeployService : ICmsTool
     private JwtAccessTokenService? _jwtTokenService = null;
     public void Init(CmsToolContext context)
     {
-        CmsConfig.CmsItem? cmsItem = _ccs.Instance.CmsItems.Where(i => i.Id == context.CmsId).FirstOrDefault(); ;
-        var deploy = cmsItem?.Deployments.Where(d => d.Name == context.Deployment.ToString()).FirstOrDefault();
+        CmsConfig.CmsItem? cmsItem = _ccs.Instance.CmsItems.FirstOrDefault(i => i.Id == context.CmsId); ;
+        var deploy = cmsItem?.Deployments.FirstOrDefault(d => d.Name == context.Deployment.ToString());
 
         if (deploy?.Target.IsUrl() == true)
         {
@@ -85,7 +85,7 @@ public class DeployService : ICmsTool
             }
             else
             {
-                cmsItem = _ccs.Instance.CmsItems.Where(i => i.Id == context.CmsId).FirstOrDefault();
+                cmsItem = _ccs.Instance.CmsItems.FirstOrDefault(i => i.Id == context.CmsId);
             }
             if (cmsItem == null)
             {
@@ -94,7 +94,7 @@ public class DeployService : ICmsTool
 
             string cmsTreePath = context.CmsTreePath.OrTake(cmsItem.Path);
 
-            var deploy = cmsItem.Deployments.Where(d => d.Name == context.Deployment.ToString()).FirstOrDefault();
+            var deploy = cmsItem.Deployments.FirstOrDefault(d => d.Name == context.Deployment.ToString());
             if (deploy == null)
             {
                 throw new Exception($"Unknown deploy: {context.CmsId}/{context.Deployment}");
@@ -227,9 +227,11 @@ public class DeployService : ICmsTool
 
             #region Warnings
 
-            // branch deploys don't touch the warnings file of the production target
-            var fiWarnings = isBranchDeploy ? null : deploy.Target.WarningsFileInfo();
-            if (fiWarnings?.Exists == true)
+            // branch deploys don't touch the warnings file of the production target (own file per user)
+            var fiWarnings = isBranchDeploy
+                ? deploy.Target.BranchWarningsFileInfo(context.Username)
+                : deploy.Target.WarningsFileInfo();
+            if (fiWarnings.Exists)
             {
                 fiWarnings.Delete();
             }
@@ -260,10 +262,11 @@ public class DeployService : ICmsTool
 
                 if (hasCriticalWarnings)
                 {
-                    if (fiWarnings != null)
+                    if (isBranchDeploy)
                     {
-                        System.IO.File.WriteAllText(fiWarnings.FullName, sbWarnings.ToString());
+                        sbWarnings.Insert(0, $"{E.Standard.Cms.Extensions.StringExtensions.BranchWarningsHeaderPrefix}{context.BranchName}{Environment.NewLine}");
                     }
+                    System.IO.File.WriteAllText(fiWarnings.FullName, sbWarnings.ToString());
                     throw new Exception("Unsolved warnings found! Nothing was deployed.");
                 }
             }

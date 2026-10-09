@@ -246,6 +246,10 @@
 
 #deploy-tile-main-only: nur main
 
+#deploy-tile-branch-warnings: Branch-Warnungen automatisch beheben/löschen
+
+#deploy-tile-branch-warnings-tooltip: Dein letztes Branch-Deploy wurde wegen Warnungen abgebrochen. Behebt die Warnungen in deinem Arbeitsbereich (Änderungen danach committen).
+
 #deploy-tile-main-only-tooltip: Dieses Deploy erlaubt nur das Veröffentlichen von 'main'.
 
 #deploy-tile-branches: main + Branches

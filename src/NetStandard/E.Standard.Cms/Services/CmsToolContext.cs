@@ -14,4 +14,7 @@ public class CmsToolContext
     public string? Commit { get; set; }
     // branch deploy contains uncommitted changes of the working copy (Commit is the base commit)
     public bool Uncommitted { get; set; }
+
+    // solve warnings: solve the warnings of the user's last branch deploy (instead of the production deploy)
+    public bool BranchWarnings { get; set; }
 }

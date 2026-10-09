@@ -246,6 +246,10 @@
 
 #deploy-tile-main-only: main only
 
+#deploy-tile-branch-warnings: Automatically solve/remove branch warnings
+
+#deploy-tile-branch-warnings-tooltip: Your last branch deploy was aborted due to warnings. Solves the warnings in your working copy (commit the changes afterwards).
+
 #deploy-tile-main-only-tooltip: This deploy only allows publishing 'main'.
 
 #deploy-tile-branches: main + branches

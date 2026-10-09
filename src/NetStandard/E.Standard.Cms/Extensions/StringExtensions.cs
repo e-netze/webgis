@@ -102,6 +102,36 @@ public static class StringExtensions
         return new FileInfo($"{target}.warnings");
     }
 
+    public const string BranchWarningsHeaderPrefix = "branch: ";
+
+    // a branch deploy reads the user's working copy => warnings are stored per user (first line: BranchWarningsHeaderPrefix + branch name)
+    static public FileInfo BranchWarningsFileInfo(this string target, string username)
+    {
+        var userHash = (username ?? String.Empty).ToLowerInvariant().UrlToHash().Substring(0, 16);
+
+        if (target.IsUrl())
+        {
+            return new FileInfo(Path.Combine(Environment.CurrentDirectory, $"{target.UrlToHash()}.{userHash}.branch.warnings"));
+        }
+
+        return new FileInfo($"{target}.{userHash}.branch.warnings");
+    }
+
+    static public string? BranchWarningsBranchName(this FileInfo fiBranchWarnings)
+    {
+        try
+        {
+            var firstLine = File.ReadLines(fiBranchWarnings.FullName).FirstOrDefault();
+            return firstLine != null && firstLine.StartsWith(BranchWarningsHeaderPrefix)
+                ? firstLine.Substring(BranchWarningsHeaderPrefix.Length).Trim()
+                : null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     // upload url of a branch deploy: {target}?branch=...&branch_name=...&user=...&commit=...[&uncommitted=true]
     static public string AppendBranchUploadParameters(this string uploadUrl, CmsToolContext context)
         => uploadUrl.AppendUrlParameters(

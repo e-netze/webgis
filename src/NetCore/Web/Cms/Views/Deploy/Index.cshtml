@@ -140,6 +140,17 @@
                 <div class="text">@deploy.Name<br/>Warnungen automatisch beheben/löschen</div>
             </div>
         }
+        @if (branchDeployEnabled && deploy.AllowBranchDeploy)
+        {
+            var fiBranchWarnings = deploy.Target.BranchWarningsFileInfo(Model.Username);
+            if (fiBranchWarnings.Exists)
+            {
+                <div class="tile wide warning" data-cmsid="@Model.CmsItem.Id" data-name="@deploy.Name" data-branch="true"
+                     title="@Model.GitLocalizer.Localize("deploy-tile-branch-warnings-tooltip")">
+                    <div class="text">@deploy.Name (@(fiBranchWarnings.BranchWarningsBranchName() ?? "branch"))<br />@Model.GitLocalizer.Localize("deploy-tile-branch-warnings")</div>
+                </div>
+            }
+        }
     </div>
     }
 
@@ -320,7 +331,7 @@
                 loadBranchDeploys($(this));
             });
             $('.tile.warning').click(function () {
-                CMS.openConsole($(this).attr('data-cmsid') +'/solvewarnings/' + encodeURI($(this).attr('data-name')), true);
+                CMS.openConsole($(this).attr('data-cmsid') + '/solvewarnings/' + encodeURI($(this).attr('data-name')) + ($(this).attr('data-branch') === 'true' ? '?branch=true' : ''), true);
             });
         });
 

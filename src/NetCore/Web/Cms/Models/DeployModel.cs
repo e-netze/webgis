@@ -20,4 +20,6 @@ public class DeployModel
     /// Branch name used for a branch deploy of the user's working copy (null, if not possible)
     /// </summary>
     public string GitBranchDeployName { get; set; }
+
+    public string Username { get; set; }
 }

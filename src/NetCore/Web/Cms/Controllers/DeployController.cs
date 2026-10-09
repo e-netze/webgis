@@ -105,7 +105,8 @@ public class DeployController : ApplicationSecurityController
                     GitDeployInfo = gitDeployInfo,
                     GitBranchDeployName = gitEnabled ? _git.BranchDeployName(this.GetCurrentUsername(), gitDeployInfo?.UserStatus) : null,
                     GitDeployRunningBy = gitEnabled ? _git.RunningDeployUser(id) : null,
-                    GitLocalizer = gitEnabled ? _gitLocalizer : null
+                    GitLocalizer = gitEnabled ? _gitLocalizer : null,
+                    Username = this.GetCurrentUsername()
                 });
             }
         }
@@ -324,16 +325,16 @@ public class DeployController : ApplicationSecurityController
 
     #endregion Background Process
 
-    public IActionResult SolveWarnings(string id, string name)
+    public IActionResult SolveWarnings(string id, string name, bool branch = false)
     {
         try
         {
             _cmsLogger.Log(this.GetCurrentUsername(),
-                           "Warnings", "Solve_Start", id, name);
+                           "Warnings", "Solve_Start", id, name, branch ? "branch" : String.Empty);
 
             _cmsResolver.EnsureEditableUserWorkspace(id, this.GetCurrentUsername());
 
-            var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), SolveCmsWarnings, name);
+            var backgroundProcess = new BackgroundProcess(id, this.GetCurrentUsername(), SolveCmsWarnings, new SolveWarningsJob(name, branch));
 
             return OpenConsole(backgroundProcess, "Solving: " + name, id);
         }
@@ -345,17 +346,24 @@ public class DeployController : ApplicationSecurityController
 
     #region Background Process
 
+    private record SolveWarningsJob(string Name, bool Branch)
+    {
+        public override string ToString() => Name;
+    }
+
     private void SolveCmsWarnings(object arg)
     {
         BackgroundProcess process = (BackgroundProcess)arg;
+        var job = (SolveWarningsJob)process.UserData;
 
         var context = new CmsToolContext()
         {
             CmsId = process.CmsId,
-            Deployment = process.UserData,
+            Deployment = job.Name,
             ContentRootPath = _applicationContentRootPath,
             Username = process.UserName,
-            CmsTreePath = _cmsResolver.TreePath(process.CmsId, process.UserName)
+            CmsTreePath = _cmsResolver.TreePath(process.CmsId, process.UserName),
+            BranchWarnings = job.Branch
         };
 
         _solveWarningsService.Run(context, process);
