@@ -27,6 +27,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * Workspace admin dialog; invalid git configurations are reported on startup and disable git
     for the cms-item. Docker (Alpine) images contain the musl build of libgit2.
 
+  [Architecture](docs/architecture/cms-git.md)
+
 - CMS branch deploys: with ``allowBranchDeploy`` on a deployment, a user can deploy the current
   state of the own workspace (including uncommitted changes, flagged in the deploy info) as a branch.
   * File targets: ``{target-dir}/branches/{encoded-branch}/...``; url targets: upload with a branch
@@ -37,6 +39,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     automatically. Deploy tiles show a "main only" / "main + branches" badge.
   * Link warnings of a branch deploy are written to a per-user warnings file, so an aborted branch
     deploy offers its own "solve warnings" tile without touching the main deploy.
+
+  [Architecture](docs/architecture/cms-deployment.md)
 
 - Branch selection in portal and viewer: CMS branches can be selected per map (select, badge,
   dialog, ``?branch=`` url parameter, secured branch links with tokens). Stale branches are reset,
@@ -49,8 +53,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   "Read everything again". Main deploys are unchanged.
   * Git status no longer detects renames: renamed files are listed as deleted + added.
 
+  [Architecture](docs/architecture/cms-deployment.md)
+
 - CMS deploy performance: single-pass export with link warnings collected during the export
   (no separate warnings scan), cached directory listings and per-phase timings in the deploy console.
+
+  [Architecture](docs/architecture/cms-deployment.md)
 
 - Modernized CMS look: design tokens (``--webgis-ui-*``), breadcrumb chevrons, resizable tree,
   refreshed tiles, dialogs and forms. In the deploy dialog the main deploy is now labeled
