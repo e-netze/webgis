@@ -4,7 +4,10 @@ namespace E.Standard.Platform;
 
 public class WebGISVersion
 {
-    private static Version _version = new Version(8, 26, 4102);
+    public const int Major = 8;
+    public const int Minor = 26;
+
+    private static Version _version = new Version(Major, Minor, 4102);
     private static string _versionString = _version.ToString();
 
     public static Version Version => _version;

@@ -79,6 +79,6 @@ This is a recurring, simple plumbing pattern in this repo: **settings class (com
 
 ## 6. Changelog
 
-- Add an entry under `## Unreleased` / `### Added` in `changelog.md` (see the
-  `update-changelog` skill), listing the new key names, their defaults, and the `api.config` docs
-  link from step 4.
+- Follow the `update-changelog` skill (`.github/prompts/update-changelog.prompt.md`) to add an
+  `Added` entry to the changelog and a `New` entry to the release notes of the current major
+  version, listing the new key names, their defaults, and the `api.config` docs link from step 4.

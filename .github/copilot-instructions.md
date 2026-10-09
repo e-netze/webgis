@@ -37,8 +37,9 @@ addition to the task-specific skills in `.github/prompts/*.prompt.md`.
 
 ## Changelog
 
-- When a task is confirmed done, consider whether it needs a `changelog.md` entry — follow
-  `.github/prompts/update-changelog.prompt.md`. Ask the user for/insert relevant docs links
+- Changes are documented per major version in `changelog-v{major}.md` (detailed) and
+  `release-notes-v{major}.md` (compact, admin-oriented). When a task is confirmed done, consider
+  whether it needs an entry in both — follow `.github/prompts/update-changelog.prompt.md`. Ask the user for/insert relevant docs links
   (`https://docs.webgiscloud.com/...`) and GitHub issue/discussion links
   (`https://github.com/e-netze/webgis-community/...`) if provided.
 

@@ -52,5 +52,7 @@ can override in their `custom.js`, instead of a hardcoded constant in the viewer
 
 ## 4. Changelog
 
-- Add an entry under `## Unreleased` / `### Added` in `changelog.md` naming the exact option path
-  (e.g. `webgis.usability.queryResultsList.maxItems`), its default, and the docs link from step 2.
+- Follow the `update-changelog` skill (`.github/prompts/update-changelog.prompt.md`) to add an
+  `Added` entry to the changelog and a `New` entry to the release notes of the current major
+  version, naming the exact option path (e.g. `webgis.usability.queryResultsList.maxItems`), its
+  default, and the docs link from step 2.
