@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: Adds a new configurable client-side usability option (webgis.usability / webgis.queryResultOptions) that admins can override in custom.js.
+name: add-client-usability-option
+description: Adds a new configurable client-side usability option (webgis.usability / webgis.queryResultOptions) that admins can override in custom.js. Use when adding a viewer option that admins should be able to override in custom.js.
 ---
 
 # Skill: Add a Client-Side Usability Option
@@ -40,9 +40,10 @@ can override in their `custom.js`, instead of a hardcoded constant in the viewer
 - Add a short inline comment next to the default value in `webgis.options.js` explaining what it
   does and its default (this file effectively doubles as the source-of-truth reference).
 - The public docs for these options live at
-  `https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#<anchor>` — if the
-  user supplies this link, use it in the changelog entry; do not edit the external docs site itself
-  unless explicitly asked.
+  `https://docs.webgiscloud.com/de/webgis/apps/viewer/customjs/usability.html#<anchor>`. Propose
+  documenting the option there via the `update-user-docs` skill
+  (`.github/skills/update-user-docs/SKILL.md`, edits the sibling `webgis-docs` repo, DE + EN) and
+  use the resulting `/en/` docs URL in the changelog entry.
 
 ## 3. Verify
 
@@ -52,5 +53,7 @@ can override in their `custom.js`, instead of a hardcoded constant in the viewer
 
 ## 4. Changelog
 
-- Add an entry under `## Unreleased` / `### Added` in `changelog.md` naming the exact option path
-  (e.g. `webgis.usability.queryResultsList.maxItems`), its default, and the docs link from step 2.
+- Follow the `update-changelog` skill (`.github/skills/update-changelog/SKILL.md`) to add an
+  `Added` entry to the changelog and a `New` entry to the release notes of the current major
+  version, naming the exact option path (e.g. `webgis.usability.queryResultsList.maxItems`), its
+  default, and the docs link from step 2.

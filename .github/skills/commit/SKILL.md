@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: How to handle commits - never commit automatically, propose a commit message, only commit yourself when explicitly asked.
+name: commit
+description: How to handle commits - never commit automatically, propose a commit message, only commit yourself when explicitly asked. Use whenever the user asks to commit or for a commit message.
 ---
 
 # Skill: Commit
@@ -41,7 +41,7 @@ You help the user commit their changes, but you must never do so on your own ini
 - Commit message style: short imperative or descriptive sentence, **always in English** (even when
   the conversation with the user is in German).
 - Do not add a trailing period-heavy multi-paragraph body; this is not a changelog entry (see
-  `update-changelog.prompt.md` for that separate concern - a commit and a changelog entry are two
+  `update-changelog` skill for that separate concern - a commit and a changelog entry are two
   different artifacts and are not always both needed).
 - Keep the Co-authored-by trailer convention (if configured for this environment) only when you
   are the one actually creating the commit (step 3), never when you're just proposing a message

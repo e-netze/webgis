@@ -1474,8 +1474,10 @@
         if ($focus.hasClass('webgis-input') ||
             $focus.hasClass('webgis-textarea') ||
             $focus.hasClass('webgis-search-input') ||
-            $focus.hasClass('webgis-autocomplete')) {
-            return false;
+            $focus.hasClass('webgis-autocomplete') ||
+            $focus.closest('.select2-container').length > 0) {
+                //console.log('focus is input field')
+                return false;
         }
 
         var removeMoverLine = false;

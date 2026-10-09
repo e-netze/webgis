@@ -29,6 +29,8 @@
   - [WebGIS Portal](#webgis-portal)  
   - [WebGIS API](#webgis-api)  
   - [WebGIS CMS](#webgis-cms)
+- [Release Notes & Changelog](#release-notes--changelog)
+- [Developer documentation](#developer-documentation)
 - [References](#references)
 
 ## Overview  
@@ -85,5 +87,19 @@ WebGIS CMS:
 <p align="center">
   <img src="docs/img/cms1.png" alt="WebGIS CMS">
 </p>
+
+## Release Notes & Changelog
+
+Changes are documented per major version:
+
+| Major | Release Notes (compact, for admins) | Changelog (detailed) |
+|-------|-------------------------------------|----------------------|
+| V8    | [release-notes-v8.md](release-notes-v8.md) | [changelog-v8.md](changelog-v8.md) |
+| V7    | [release-notes-v7.md](release-notes-v7.md) | [changelog-v7.md](changelog-v7.md) |
+
+## Developer documentation
+
+Architecture docs for features and subsystems (projects, classes, flow diagrams, design decisions,
+pitfalls): [docs/architecture](docs/architecture/index.md)
 
 ## References

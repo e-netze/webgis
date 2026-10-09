@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: Adds a new configurable property to a CMS Schema class and propagates it through the CacheItem/DTO/runtime pipeline so it reaches the WebGIS viewer.
+name: extend-cms-schema-property
+description: Adds a new configurable property to a CMS Schema class and propagates it through the CacheItem/DTO/runtime pipeline so it reaches the WebGIS viewer. Use when adding a new CMS-configurable property.
 ---
 
 # Skill: Extend CMS Schema Property
@@ -105,3 +105,10 @@ In the runtime model (e.g. `EditEnvironment.EditTheme.CommitAction` or similar n
   XML attribute, property) was left inconsistent across layers.
 - Do not add new schema.xml entries, new tests, or new tooling unless the user explicitly asks —
   this pattern is typically pure property plumbing across existing layers.
+
+## 7. Docs and changelog
+
+- Propose documenting the new CMS property for admins via the `update-user-docs` skill
+  (`.github/skills/update-user-docs/SKILL.md`, edits the sibling `webgis-docs` repo, DE + EN).
+- Then follow the `update-changelog` skill (`.github/skills/update-changelog/SKILL.md`) for the
+  changelog/release-notes entry, using the `/en/` docs URL from the previous step.
