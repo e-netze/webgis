@@ -12,6 +12,7 @@
                 return;
             }
 
+            $branchSelect.find('option[value=""]').text(webgis.l10n.get('branch-main'));
             $branchSelect.val(webgisPortalBranches.currentEncoded());
             $branchSelect.on('change', function () {
                 webgisPortalBranches.select(webgisPortalBranches.find(branches, $branchSelect.val()));

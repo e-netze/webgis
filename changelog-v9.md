@@ -27,6 +27,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * Workspace admin dialog; invalid git configurations are reported on startup and disable git
     for the cms-item. Docker (Alpine) images contain the musl build of libgit2.
 
+  [Docs](https://docs.webgiscloud.com/en/webgis/apps/cms/git.html),
+  [Docs config](https://docs.webgiscloud.com/en/webgis/config/cms/index.html#cms-config-git),
   [Architecture](docs/architecture/cms-git.md)
 
 - CMS branch deploys: with ``allowBranchDeploy`` on a deployment, a user can deploy the current
@@ -40,11 +42,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * Link warnings of a branch deploy are written to a per-user warnings file, so an aborted branch
     deploy offers its own "solve warnings" tile without touching the main deploy.
 
+  [Docs](https://docs.webgiscloud.com/en/webgis/apps/cms/deploy.html#cms-deploy-branch),
+  [Docs api.config](https://docs.webgiscloud.com/en/webgis/config/api/index.html),
   [Architecture](docs/architecture/cms-deployment.md)
 
 - Branch selection in portal and viewer: CMS branches can be selected per map (select, badge,
   dialog, ``?branch=`` url parameter, secured branch links with tokens). Stale branches are reset,
   and warnings are shown when publishing/saving maps with a selected branch.
+
+  [Docs](https://docs.webgiscloud.com/en/webgis/apps/portal/branches.html)
 
 - Fast branch deploy: branch deploys keep a per-user snapshot of the read CMS files
   (``{workspace-root}/{cms-id}/cache/{user}.snapshot``). Subsequent branch deploys only re-read
@@ -53,6 +59,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   "Read everything again". Main deploys are unchanged.
   * Git status no longer detects renames: renamed files are listed as deleted + added.
 
+  [Docs](https://docs.webgiscloud.com/en/webgis/apps/cms/deploy.html#cms-deploy-fast),
   [Architecture](docs/architecture/cms-deployment.md)
 
 - CMS deploy performance: single-pass export with link warnings collected during the export

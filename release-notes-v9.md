@@ -12,10 +12,10 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 ### Upgrade notes
 ### New
 
-- Optional git versioning for CMS trees: configure a `git` section per cms-item in `cms.config` (`remote-url`, `username`, `token`, `default-branch`, ...); each user then works in an own workspace with branches, commit, push, merge, history and diffs.
-- Branch deploys: with `allowBranchDeploy` on a deployment, users can deploy their workspace as a branch for testing. The WebGIS API needs `allow-branches` in `api.config`.
-- Portal and viewer can show maps with a selected CMS branch (also via the `?branch=` url parameter).
-- Fast branch deploy: repeated branch deploys only re-read changed CMS files; a full read can be forced in the deploy dialog.
+- Optional git versioning for CMS trees: configure a `git` section per cms-item in `cms.config` (`remote-url`, `username`, `token`, `default-branch`, ...); each user then works in an own workspace with branches, commit, push, merge, history and diffs. [Docs](https://docs.webgiscloud.com/en/webgis/apps/cms/git.html)
+- Branch deploys: with `allowBranchDeploy` on a deployment, users can deploy their workspace as a branch for testing. The WebGIS API needs `allow-branches` in `api.config`. [Docs](https://docs.webgiscloud.com/en/webgis/apps/cms/deploy.html#cms-deploy-branch)
+- Portal and viewer can show maps with a selected CMS branch (also via the `?branch=` url parameter). [Docs](https://docs.webgiscloud.com/en/webgis/apps/portal/branches.html)
+- Fast branch deploy: repeated branch deploys only re-read changed CMS files; a full read can be forced in the deploy dialog. [Docs](https://docs.webgiscloud.com/en/webgis/apps/cms/deploy.html#cms-deploy-fast)
 - Faster CMS deploys: link warnings are now collected during the export instead of a separate scan.
 - Modernized CMS look; the main deploy is now labeled "Published state (main)" instead of "Production".
 

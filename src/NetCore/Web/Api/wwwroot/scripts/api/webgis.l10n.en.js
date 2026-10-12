@@ -382,7 +382,7 @@
 
     // cms branches (portal/viewer)
     "branch": "Branch",
-    "branch-main": "main (production)",
+    "branch-main": "main (published state)",
     "branch-select": "Select CMS branch",
     "branch-select-info": "Select the CMS branch used to load maps. The setting applies to all maps in this browser until you switch back to main.",
     "branch-back-to-main": "Back to main",

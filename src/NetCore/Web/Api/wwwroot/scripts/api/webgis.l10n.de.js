@@ -382,7 +382,7 @@
 
     // cms branches (portal/viewer)
     "branch": "Branch",
-    "branch-main": "main (Produktiv)",
+    "branch-main": "main (veröffentlichter Stand)",
     "branch-select": "CMS-Branch wählen",
     "branch-select-info": "Wähle den CMS-Branch, mit dem Karten geladen werden sollen. Die Einstellung gilt für alle Karten dieses Browsers, bis wieder auf main gewechselt wird.",
     "branch-back-to-main": "Zurück zu main",
