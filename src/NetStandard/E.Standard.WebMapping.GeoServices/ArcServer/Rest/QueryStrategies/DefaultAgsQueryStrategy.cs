@@ -37,9 +37,25 @@ namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.QueryStrategies;
 /// then opt this service into <see cref="AgsQueryStrategy.BoundingBoxProblem"/> if the service
 /// is indeed affected.
 /// </para>
+/// <para>
+/// No-pagination mode (<see cref="WithoutPagination"/>): used for layers reporting
+/// <c>supportsPagination: false</c>, which reject <c>resultOffset</c>/<c>resultRecordCount</c>.
+/// Sends exactly one request without paging parameters (the server applies its own
+/// maxRecordCount), truncates client-side to the cap and reports <c>HasMore</c> if the server
+/// flagged <c>exceededTransferLimit</c> or the result was truncated.
+/// </para>
 /// </summary>
 internal sealed class DefaultAgsQueryStrategy : IAgsQueryStrategy
 {
+    public static readonly DefaultAgsQueryStrategy WithoutPagination = new DefaultAgsQueryStrategy(usePagination: false);
+
+    private readonly bool _usePagination;
+
+    public DefaultAgsQueryStrategy(bool usePagination = true)
+    {
+        _usePagination = usePagination;
+    }
+
     public async Task<int> GetFeaturesAsync(
         MapService service,
         FeatureLayer layer,
@@ -56,16 +72,17 @@ internal sealed class DefaultAgsQueryStrategy : IAgsQueryStrategy
         int pageSize = service.MaxRecordCount > 0
             ? service.MaxRecordCount
             : AgsQuerySettings.DefaultMaxRecordCountFallback;
-        int cap = AgsQuerySettings.MaxSpatialQueryResultCap;
+        int cap = Math.Max(pageSize, AgsQuerySettings.MaxSpatialQueryResultCap);
 
         string outFields = String.IsNullOrWhiteSpace(filter.SubFields)
             ? "*"
             : filter.SubFields.Replace(" ", ",");
 
         // resultOffset paging needs a stable order across requests - fall back to ordering by
-        // the id field if the caller did not ask for a specific order.
+        // the id field if the caller did not ask for a specific order. Without pagination only
+        // an explicitly requested order is sent.
         string orderByFields = String.IsNullOrWhiteSpace(filter.OrderBy)
-            ? (String.IsNullOrEmpty(layer.IdFieldName) ? null : $"{layer.IdFieldName} ASC")
+            ? (!_usePagination || String.IsNullOrEmpty(layer.IdFieldName) ? null : $"{layer.IdFieldName} ASC")
             : filter.OrderBy;
 
         int datumTransformationId = service.DatumTransformations?.FirstOrDefault() ?? 0;
@@ -110,8 +127,8 @@ internal sealed class DefaultAgsQueryStrategy : IAgsQueryStrategy
                 .WithWhereClause(where)
                 .WithTimeEpoch(filter.TimeEpoch)
                 .WithOrderByFields(orderByFields)
-                .WithResultRecordCount(pageSize)
-                .WithResultOffset(resultOffset)
+                .WithResultRecordCount(_usePagination ? pageSize : null)
+                .WithResultOffset(_usePagination ? resultOffset : null)
                 .WithInSpatialReferenceId(resolvedInSrefId)
                 .WithOutSpatialReferenceId(resolvedOutSrefId)
                 .WithDatumTransformation(datumTransformationId)
@@ -159,6 +176,13 @@ internal sealed class DefaultAgsQueryStrategy : IAgsQueryStrategy
 
             layer.AppendJsonFeaturesTo(jsonFeatureResponse, features, filter);
             totalCount += pageCount;
+
+            if (!_usePagination)
+            {
+                // Single request only: anything beyond the server's maxRecordCount can't be fetched.
+                hasMore = exceededTransferLimit;
+                break;
+            }
 
             if (pageCount < pageSize && !exceededTransferLimit)
             {

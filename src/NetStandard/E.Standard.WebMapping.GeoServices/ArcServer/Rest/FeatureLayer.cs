@@ -120,10 +120,15 @@ class FeatureLayer : RestLayer,
         // count reflects the real query geometry, not just its bbox - see AgsQuerySettings/
         // BoundingBoxProblemAgsQueryStrategy remarks), so it never needs a strategy and is
         // always answered by the plain request below, regardless of QueryStrategy.
+        // Layers reporting supportsPagination=false reject resultOffset/resultRecordCount
+        // ("Pagination is not supported"). They always use the Default strategy in
+        // single-request mode, regardless of the service's QueryStrategy.
         if (!countOnly)
         {
-            var queryStrategy = await AgsQueryStrategyFactory.GetStrategyAsync(
-                _service, spatialFilter, featuresReqUrl, where, resolvedInSrefId, authHandler, requestContext);
+            var queryStrategy = this.SupportsPagination
+                ? await AgsQueryStrategyFactory.GetStrategyAsync(
+                    _service, spatialFilter, featuresReqUrl, where, resolvedInSrefId, authHandler, requestContext)
+                : DefaultAgsQueryStrategy.WithoutPagination;
 
             return await queryStrategy.GetFeaturesAsync(
                 _service, this, spatialFilter, filter, features, featuresReqUrl, where, resolvedInSrefId, resolvedOutSrefId, authHandler, requestContext);
@@ -349,6 +354,7 @@ class FeatureLayer : RestLayer,
         clone.HasM = this.HasM;
         clone.HasZ = this.HasZ;
         clone.HasAttachments = this.HasAttachments;
+        clone.SupportsPagination = this.SupportsPagination;
         clone.DateFieldsTimeZone = this.DateFieldsTimeZone;
 
         base.CloneParentLayerIdsTo(clone);
@@ -739,6 +745,12 @@ class FeatureLayer : RestLayer,
     }
 
     public bool SupportsDynamicLegends { get; set; }
+
+    /// <summary>
+    /// False if the layer reports <c>supportsPagination: false</c> (read from
+    /// <c>.../MapServer/layers</c> in <see cref="MapService.InitAsync"/>).
+    /// </summary>
+    public bool SupportsPagination { get; set; } = true;
 
     #endregion
 

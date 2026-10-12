@@ -11,6 +11,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Fixed
 
+## 8.26.4103
+
+### Fixed
+
+- ArcGIS Server: queries against layers reporting `supportsPagination: false` failed with
+  `ERROR 400: Pagination is not supported`. The flag is now read from `.../MapServer/layers`
+  (`advancedQueryCapabilities.supportsPagination`, falling back to the top-level
+  `supportsPagination`) during service initialization. Such layers always use the `Default` query
+  strategy in single-request mode (no `resultOffset`/`resultRecordCount`, regardless of the
+  service's `QueryStrategy`); results beyond the server's `maxRecordCount` are flagged as
+  truncated (`exceededTransferLimit`).
+  [Issue #517](https://github.com/e-netze/webgis-community/issues/517)
+
 ## 8.26.4102
 
 ### Added

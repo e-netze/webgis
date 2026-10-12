@@ -116,3 +116,4 @@ flowchart TD
 |---------|--------|-----------|
 | `8.26.4102` | Per-service opt-in strategy with count-based fallback to `Default` | `e40f3f2a` |
 | `8.26.4102` | Bound `DefaultAgsQueryStrategy` pagination by max request count | `665cd54b` |
+| `8.26.4103` | Layers with `supportsPagination: false` always use `Default` in single-request mode | [webgis-community#517](https://github.com/e-netze/webgis-community/issues/517) |

@@ -99,6 +99,24 @@ public class JsonLayer
     [System.Text.Json.Serialization.JsonPropertyName("dateFieldsTimeReference")]
     public JsonDateFieldsTimeReference? DateFieldsTimeReference { get; set; }
 
+    [JsonProperty("supportsPagination")]
+    [System.Text.Json.Serialization.JsonPropertyName("supportsPagination")]
+    public bool? SupportsPagination { get; set; }
+
+    [JsonProperty("advancedQueryCapabilities")]
+    [System.Text.Json.Serialization.JsonPropertyName("advancedQueryCapabilities")]
+    public JsonAdvancedQueryCapabilities? AdvancedQueryCapabilities { get; set; }
+
+    /// <summary>
+    /// Pagination (resultOffset/resultRecordCount) is only treated as unsupported if the
+    /// server explicitly reports <c>supportsPagination: false</c>
+    /// (<c>advancedQueryCapabilities</c> takes precedence over the top-level flag).
+    /// </summary>
+    [Newtonsoft.Json.JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
+    public bool SupportsPaginationResolved
+        => AdvancedQueryCapabilities?.SupportsPagination ?? SupportsPagination ?? true;
+
     public string FullName
     {
         get
