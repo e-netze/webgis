@@ -1,0 +1,55 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "input",
+        "attrs": {
+          "class": " webgis-input",
+          "element-target": "default",
+          "id": "elem",
+          "type": "text"
+        },
+        "props": {
+          "value": "Neu"
+        },
+        "events": {
+          "change": 1
+        },
+        "expandos": {
+          "map": "[fake:map]",
+          "onchange_command": "refresh"
+        }
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getTool",
+      "args": [
+        "[undefined]"
+      ]
+    },
+    {
+      "call": "map.getPersistentToolParameter",
+      "args": [
+        {
+          "id": "server-tool",
+          "type": "serverbutton"
+        },
+        "elem"
+      ]
+    }
+  ]
+}

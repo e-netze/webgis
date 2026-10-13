@@ -1,0 +1,170 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    }
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-modal",
+          "id": "webgis-modal-server-button-modal-dialog",
+          "style": "z-index:9999;position:fixed;left:0px;right:0px;top:0px;bottom:0px;background:rgba(0,0,0,0.5);"
+        },
+        "events": {
+          "click": 1,
+          "mousedown": 1
+        },
+        "children": [
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-modal-body center animate",
+              "id": "",
+              "style": "z-index: 1000; position: absolute; width: 330px; height: 640px; min-width: 330px; max-width: 100%; background: var(--webgis-ui-surface); opacity: 1; display: block; left: 475px; top: 40px; max-height: calc(100% - 80px); min-height: 0px;"
+            },
+            "events": {
+              "click": 1
+            },
+            "children": [
+              {
+                "tag": "div",
+                "attrs": {
+                  "class": "webgis-modal-content",
+                  "id": "webgis-modal-content",
+                  "style": "z-index:1;position:absolute;overflow:auto;left:0px;top:calc(43px + var(--webgis-ui-border-width-item-selected));right:0px;bottom:0px"
+                },
+                "children": [
+                  {
+                    "tag": "input",
+                    "attrs": {
+                      "class": " webgis-input",
+                      "element-target": "default",
+                      "max": "100",
+                      "min": "0",
+                      "step": "1",
+                      "type": "number"
+                    },
+                    "props": {
+                      "value": ""
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "div",
+                "attrs": {
+                  "style": "position: absolute; left: 0px; right: 0px; top: 0px; height: 35px; cursor: pointer;"
+                },
+                "events": {
+                  "click": 1
+                },
+                "children": [
+                  {
+                    "tag": "div",
+                    "attrs": {
+                      "class": "webgis-modal-title has-closebutton"
+                    }
+                  },
+                  {
+                    "tag": "div",
+                    "attrs": {
+                      "class": "webgis-modal-resize"
+                    }
+                  },
+                  {
+                    "tag": "div",
+                    "attrs": {
+                      "class": "webgis-modal-close"
+                    },
+                    "events": {
+                      "click": 1
+                    },
+                    "expandos": {
+                      "options": {
+                        "animate": true,
+                        "blocker_alpha": 0.5,
+                        "blockerclickclose": true,
+                        "closebutton": true,
+                        "dock": "center",
+                        "hasBlocker": true,
+                        "height": "80%",
+                        "id": "server-button-modal-dialog",
+                        "meta_left_frame": false,
+                        "minWidth": "330px",
+                        "mobile_fullscreen": true,
+                        "slide": true,
+                        "title": "",
+                        "titleButtons": null,
+                        "width": "330px"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildtoolui",
+        "test-tool"
+      ]
+    },
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.advancedToolBehaviour",
+      "args": []
+    },
+    {
+      "call": "map.ui.webgisContainer",
+      "args": []
+    },
+    {
+      "call": "map.ui.webgisContainer",
+      "args": []
+    },
+    {
+      "call": "map.ui.webgisContainer",
+      "args": []
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#webgis-modal-content.webgis-modal-content]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

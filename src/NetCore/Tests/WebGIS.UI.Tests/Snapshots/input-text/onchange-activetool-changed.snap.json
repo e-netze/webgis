@@ -1,0 +1,83 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "input",
+        "attrs": {
+          "class": " webgis-input",
+          "element-target": "default",
+          "id": "elem",
+          "type": "text"
+        },
+        "props": {
+          "value": "Neu"
+        },
+        "events": {
+          "change": 1
+        },
+        "expandos": {
+          "map": "[fake:map]",
+          "onchange_command": "refresh"
+        }
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getTool",
+      "args": [
+        "[undefined]"
+      ]
+    },
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.getPersistentToolParameter",
+      "args": [
+        {
+          "id": "active-tool",
+          "type": "clientbutton"
+        },
+        "elem"
+      ]
+    },
+    {
+      "call": "map.setPersistentToolParameter",
+      "args": [
+        {
+          "id": "active-tool",
+          "type": "clientbutton"
+        },
+        "elem",
+        "Neu"
+      ]
+    },
+    {
+      "call": "webgis.tools.onButtonClick",
+      "args": [
+        "[fake:map]",
+        {
+          "command": "refresh",
+          "id": "elem",
+          "map": "[fake:map]",
+          "type": "servertoolcommand"
+        },
+        "[element:input#elem.webgis-input]"
+      ]
+    }
+  ]
+}

@@ -20,3 +20,4 @@ which projects and classes are involved, flow diagrams, design decisions and pit
 | [Expressions & AutoValues](expressions-autovalues.md) | API / Editing / CMS | Expression language (parser, syntax detection), Editing AutoValues, table column expressions. |
 | [Logging & Observability](logging-observability.md) | API / CMS / Portal | Logging backends and fan-out, DB batch logging, OpenTelemetry, Serilog. |
 | [Query Results](query-results.md) | API / Viewer | Query results end-to-end: QueryEngine, DTO metadata, result table/list paging, export. |
+| [UI Builder](ui-builder.md) | API / Viewer | Server UI elements to viewer DOM: webgis_uibuilder, builder plugin registry, characterization tests. |

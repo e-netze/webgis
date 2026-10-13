@@ -1,0 +1,73 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "input",
+        "attrs": {
+          "class": "webgis-input webgis-validation validated-parameter",
+          "element-target": "default",
+          "id": "elem",
+          "type": "text",
+          "webgis-validation-minlen": "3",
+          "webgis-validation-regex": "^[a-z]+$",
+          "webgis-validation-required": "true"
+        },
+        "props": {
+          "value": "abcd"
+        },
+        "data": {
+          "errorMessageElement": "[jQuery(1):div.webgis-validation-error]"
+        },
+        "events": {
+          "change": 1,
+          "input": 1
+        }
+      },
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-validation-error"
+        }
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

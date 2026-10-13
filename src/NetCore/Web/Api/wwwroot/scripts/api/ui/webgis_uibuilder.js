@@ -742,63 +742,23 @@
         var $newElement = null;
 
         if (typeof webgis.ui.builder[element.type] === 'function') {
+            // builder hooks (all optional), see docs/architecture/ui-builder.md:
+            //   type.tagname      tag name (default: div)
+            //   type.attributes   additional attributes: string or function(element, options) => string
+            //   type.toolid       false => no data-tool-id attribute, even if options.tool is set
+            //   type.formelement  true  => mark a surrounding .webgis-form-container dirty on change/keyup
             const tagName = webgis.ui.builder[element.type + ".tagname"] || "div";
-            $newElement = $("<" + tagName + " " + elementProperties(element, options) + "></" + tagName + ">").appendTo($parent);
-            webgis.ui.builder[element.type](map, $newElement, element, options);
-        }
-        else if (element.type === 'input-text') {
-            $newElement = $("<input type='text' " + elementProperties(element) + "/>").appendTo($parent).add_webgis_form_element_events();
-            if (element.label)
-                $newElement.val(element.label);
-            if ($newElement.hasClass('webgis-print-textelement') && !$newElement.val()) {
-                $newElement.val(map.getPersistentToolParameter('webgis.tools.print', "LAYOUT_TEXT_" + $newElement.attr('id')));
+            let attributes = webgis.ui.builder[element.type + ".attributes"];
+            if (typeof attributes === 'function') {
+                attributes = attributes(element, options);
             }
-        }
-        else if (element.type === 'input-textarea') {
-            $newElement = $("<textarea rows='5' " + elementProperties(element) + "></textarea>").appendTo($parent).add_webgis_form_element_events();
-            if (element.value)
-                $newElement.text(element.value);
-        }
-        else if (element.type === 'input-date') {
-            $newElement = $("<input type='text' " + elementProperties(element) + "/>").appendTo($parent).add_webgis_form_element_events();
-            if (element.label)
-                $newElement.val(element.label);
+            const propertyOptions = webgis.ui.builder[element.type + ".toolid"] === false ? undefined : options;
 
-            webgis.require('flatpickr', function ($newElement) {
-                $newElement.flatpickr({
-                    weekNumbers: true,
-                    locale: 'de',
-                    dateFormat: element.date_only === true ? "d.m.Y" : "d.m.Y H:i",
-                    enableTime: element.date_only !== true,
-                    time_24hr: true
-                });
-            }, $newElement);
-        }
-        else if (element.type === 'input-number') {
-            $newElement = $("<input type='number' " + elementProperties(element) + " min='" + element.minValue + "' max='" + element.maxValue + "' step='" + element.stepWidth + "' />")
-                .appendTo($parent)
-                .add_webgis_form_element_events();
-            if (element.value)
-                $newElement.val(element.value);
-        }
-        else if (element.type === 'hidden') {
-            $newElement = $("<input type='hidden' " + elementProperties(element) + "/>").appendTo($parent).val(element.value);
-            if ($newElement.hasClass("webgis-map-anonymous-user-id")) {
-                var currentId = webgis.localStorage.getAnonymousUserId();
-                if (!currentId) {
-                    //console.log('set current anoymous id: ' + currentId);
-                    webgis.localStorage.setAnonyousUserId($newElement.val());
-                } else {
-                    //console.log('existing anoymous id: ' + currentId);
-                    $newElement.val(currentId);
-                }
+            $newElement = $("<" + tagName + (attributes ? " " + attributes : "") + " " + elementProperties(element, propertyOptions) + "></" + tagName + ">").appendTo($parent);
+            if (webgis.ui.builder[element.type + ".formelement"] === true) {
+                $newElement.add_webgis_form_element_events();
             }
-        }
-        else if (element.type === 'input-autocomplete') {
-            $newElement = $("<input type='text' " + elementProperties(element) + "/>").appendTo($parent);
-            $newElement.addClass('webgis-autocomplete').attr('data-source', element.source);
-            if (element.label)
-                $newElement.val(element.label);
+            webgis.ui.builder[element.type](map, $newElement, element, options);
         }
         else if (element.type === 'button') {
             $newElement = $("<button " + elementProperties(element) + ">" + element.text + "</button>").appendTo($parent);

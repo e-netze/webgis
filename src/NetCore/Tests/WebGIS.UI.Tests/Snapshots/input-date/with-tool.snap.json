@@ -1,0 +1,1513 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    }
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-modal",
+          "id": "webgis-modal-server-button-modal-dialog",
+          "style": "z-index:9999;position:fixed;left:0px;right:0px;top:0px;bottom:0px;background:rgba(0,0,0,0.5);"
+        },
+        "events": {
+          "click": 1,
+          "mousedown": 1
+        },
+        "children": [
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-modal-body center animate",
+              "id": "",
+              "style": "z-index: 1000; position: absolute; width: 330px; height: 640px; min-width: 330px; max-width: 100%; background: var(--webgis-ui-surface); opacity: 1; display: block; left: 475px; top: 40px; max-height: calc(100% - 80px); min-height: 0px;"
+            },
+            "events": {
+              "click": 1
+            },
+            "children": [
+              {
+                "tag": "div",
+                "attrs": {
+                  "class": "webgis-modal-content",
+                  "id": "webgis-modal-content",
+                  "style": "z-index:1;position:absolute;overflow:auto;left:0px;top:calc(43px + var(--webgis-ui-border-width-item-selected));right:0px;bottom:0px"
+                },
+                "children": [
+                  {
+                    "tag": "input",
+                    "attrs": {
+                      "class": "webgis-input flatpickr-input",
+                      "element-target": "default",
+                      "readonly": "readonly",
+                      "type": "text"
+                    },
+                    "props": {
+                      "value": ""
+                    },
+                    "listeners": {
+                      "blur": 1,
+                      "focus": 1,
+                      "keydown": 1,
+                      "mousedown": 1
+                    },
+                    "expandos": {
+                      "_flatpickr": {
+                        "__hideNextMonthArrow": false,
+                        "__hidePrevMonthArrow": false,
+                        "_animationLoop": [],
+                        "_bind": "[function]",
+                        "_createElement": "[function]",
+                        "_debouncedChange": "[function]",
+                        "_handlers": [
+                          {
+                            "element": "[element:body]",
+                            "event": "keydown",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:input.flatpickr-input.webgis-input]",
+                            "event": "keydown",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[window]",
+                            "event": "resize",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:body]",
+                            "event": "mousedown",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:input.flatpickr-input.webgis-input]",
+                            "event": "blur",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:input.flatpickr-input.webgis-input]",
+                            "event": "focus",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:input.flatpickr-input.webgis-input]",
+                            "event": "mousedown",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-month]",
+                            "event": "wheel",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-month]",
+                            "event": "mousedown",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-month]",
+                            "event": "keyup",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-month]",
+                            "event": "increment",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-days]",
+                            "event": "mousedown",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-days]",
+                            "event": "webkitAnimationEnd",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-days]",
+                            "event": "animationend",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-month]",
+                            "event": "webkitAnimationEnd",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-month]",
+                            "event": "animationend",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-time.time24hr]",
+                            "event": "wheel",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-time.time24hr]",
+                            "event": "input",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-time.time24hr]",
+                            "event": "increment",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-time.time24hr]",
+                            "event": "mousedown",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-time.time24hr]",
+                            "event": "wheel",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-time.time24hr]",
+                            "event": "increment",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:div.flatpickr-time.time24hr]",
+                            "event": "input",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:input.flatpickr-hour.numInput]",
+                            "event": "focus",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:input.flatpickr-minute.numInput]",
+                            "event": "focus",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:input.flatpickr-hour.numInput]",
+                            "event": "click",
+                            "handler": "[function]"
+                          },
+                          {
+                            "element": "[element:input.flatpickr-minute.numInput]",
+                            "event": "click",
+                            "handler": "[function]"
+                          }
+                        ],
+                        "_input": "[element:input.flatpickr-input.webgis-input]",
+                        "_positionElement": "[element:input.flatpickr-input.webgis-input]",
+                        "_setHoursFromDate": "[function]",
+                        "_showTimeInput": false,
+                        "calendarContainer": "[element:div.animate.arrowTop.flatpickr-calendar.hasTime.hasWeeks]",
+                        "changeMonth": "[function]",
+                        "changeYear": "[function]",
+                        "clear": "[function]",
+                        "close": "[function]",
+                        "config": {
+                          "_disable": [],
+                          "_enable": [],
+                          "allowInput": false,
+                          "altFormat": "F j, Y",
+                          "altInput": false,
+                          "altInputClass": "form-control input",
+                          "animate": true,
+                          "ariaDateFormat": "F j, Y",
+                          "clickOpens": true,
+                          "closeOnSelect": true,
+                          "conjunction": ", ",
+                          "dateFormat": "d.m.Y H:i",
+                          "defaultHour": 12,
+                          "defaultMinute": 0,
+                          "defaultSeconds": 0,
+                          "disable": [],
+                          "disableMobile": false,
+                          "enable": [],
+                          "enableSeconds": false,
+                          "enableTime": true,
+                          "getWeek": "[function]",
+                          "hourIncrement": 1,
+                          "ignoredFocusElements": [],
+                          "inline": false,
+                          "locale": "de",
+                          "minuteIncrement": 5,
+                          "mode": "single",
+                          "nextArrow": "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 17 17'><g></g><path d='M13.207 8.472l-7.854 7.854-0.707-0.707 7.146-7.146-7.146-7.148 0.707-0.707 7.854 7.854z' /></svg>",
+                          "noCalendar": false,
+                          "onChange": [],
+                          "onClose": [],
+                          "onDayCreate": [],
+                          "onDestroy": [],
+                          "onKeyDown": [],
+                          "onMonthChange": [],
+                          "onOpen": [],
+                          "onParseConfig": [],
+                          "onReady": [],
+                          "onValueUpdate": [],
+                          "onYearChange": [],
+                          "plugins": [],
+                          "position": "auto",
+                          "positionElement": "[undefined]",
+                          "prevArrow": "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 17 17'><g></g><path d='M5.207 8.471l7.146 7.147-0.707 0.707-7.853-7.854 7.854-7.853 0.707 0.707-7.147 7.146z' /></svg>",
+                          "shorthandCurrentMonth": false,
+                          "static": false,
+                          "time_24hr": true,
+                          "weekNumbers": true,
+                          "wrap": false
+                        },
+                        "currentMonth": 0,
+                        "currentMonthElement": "[element:span.cur-month]",
+                        "currentYear": 2024,
+                        "currentYearElement": "[element:input.cur-year.numInput]",
+                        "days": "[element:div.dayContainer]",
+                        "daysContainer": "[element:div.flatpickr-days]",
+                        "destroy": "[function]",
+                        "element": "[element:input.flatpickr-input.webgis-input]",
+                        "formatDate": "[function]",
+                        "hourElement": "[element:input.flatpickr-hour.numInput]",
+                        "innerContainer": "[element:div.flatpickr-innerContainer]",
+                        "input": "[element:input.flatpickr-input.webgis-input]",
+                        "isEnabled": "[function]",
+                        "isMobile": false,
+                        "isOpen": false,
+                        "jumpToDate": "[function]",
+                        "l10n": {
+                          "amPM": [
+                            "AM",
+                            "PM"
+                          ],
+                          "daysInMonth": [
+                            31,
+                            28,
+                            31,
+                            30,
+                            31,
+                            30,
+                            31,
+                            31,
+                            30,
+                            31,
+                            30,
+                            31
+                          ],
+                          "firstDayOfWeek": 1,
+                          "months": {
+                            "longhand": "[max-depth]",
+                            "shorthand": "[max-depth]"
+                          },
+                          "ordinal": "[function]",
+                          "rangeSeparator": " bis ",
+                          "scrollTitle": "Zum Ändern scrollen",
+                          "toggleTitle": "Zum Umschalten klicken",
+                          "weekAbbreviation": "KW",
+                          "weekdays": {
+                            "longhand": "[max-depth]",
+                            "shorthand": "[max-depth]"
+                          }
+                        },
+                        "maxDateHasTime": false,
+                        "minDateHasTime": false,
+                        "minuteElement": "[element:input.flatpickr-minute.numInput]",
+                        "monthNav": "[element:div.flatpickr-month]",
+                        "navigationCurrentMonth": "[element:span.flatpickr-current-month]",
+                        "nextMonthNav": "[element:span.flatpickr-next-month]",
+                        "now": "[object Date]",
+                        "open": "[function]",
+                        "parseDate": "[function]",
+                        "prevMonthNav": "[element:span.flatpickr-prev-month]",
+                        "rContainer": "[element:div.flatpickr-rContainer]",
+                        "redraw": "[function]",
+                        "selectedDates": [],
+                        "set": "[function]",
+                        "setDate": "[function]",
+                        "timeContainer": "[element:div.flatpickr-time.time24hr]",
+                        "todayDateElem": "[element:span.flatpickr-day.today]",
+                        "toggle": "[function]",
+                        "utils": {
+                          "getDaysInMonth": "[function]"
+                        },
+                        "weekNumbers": "[element:div.flatpickr-weeks]",
+                        "weekWrapper": "[element:div.flatpickr-weekwrapper]",
+                        "weekdayContainer": "[element:div.flatpickr-weekdays]"
+                      },
+                      "_type": "text"
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "div",
+                "attrs": {
+                  "style": "position: absolute; left: 0px; right: 0px; top: 0px; height: 35px; cursor: pointer;"
+                },
+                "events": {
+                  "click": 1
+                },
+                "children": [
+                  {
+                    "tag": "div",
+                    "attrs": {
+                      "class": "webgis-modal-title has-closebutton"
+                    }
+                  },
+                  {
+                    "tag": "div",
+                    "attrs": {
+                      "class": "webgis-modal-resize"
+                    }
+                  },
+                  {
+                    "tag": "div",
+                    "attrs": {
+                      "class": "webgis-modal-close"
+                    },
+                    "events": {
+                      "click": 1
+                    },
+                    "expandos": {
+                      "options": {
+                        "animate": true,
+                        "blocker_alpha": 0.5,
+                        "blockerclickclose": true,
+                        "closebutton": true,
+                        "dock": "center",
+                        "hasBlocker": true,
+                        "height": "80%",
+                        "id": "server-button-modal-dialog",
+                        "meta_left_frame": false,
+                        "minWidth": "330px",
+                        "mobile_fullscreen": true,
+                        "slide": true,
+                        "title": "",
+                        "titleButtons": null,
+                        "width": "330px"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "body": [
+    {
+      "tag": "div",
+      "attrs": {
+        "class": "flatpickr-calendar hasWeeks hasTime animate arrowTop",
+        "style": "top: 682px; left: 475px; right: auto; width: 341px;",
+        "tabindex": "-1"
+      },
+      "children": [
+        {
+          "tag": "div",
+          "attrs": {
+            "class": "flatpickr-month"
+          },
+          "listeners": {
+            "animationend": 1,
+            "increment": 1,
+            "keyup": 1,
+            "mousedown": 1,
+            "webkitAnimationEnd": 1,
+            "wheel": 2
+          },
+          "children": [
+            {
+              "tag": "span",
+              "attrs": {
+                "class": "flatpickr-prev-month",
+                "style": "display: block;"
+              },
+              "children": [
+                {
+                  "tag": "svg",
+                  "attrs": {
+                    "version": "1.1",
+                    "viewBox": "0 0 17 17",
+                    "xmlns": "http://www.w3.org/2000/svg",
+                    "xmlns:xlink": "http://www.w3.org/1999/xlink"
+                  },
+                  "children": [
+                    {
+                      "tag": "g"
+                    },
+                    {
+                      "tag": "path",
+                      "attrs": {
+                        "d": "M5.207 8.471l7.146 7.147-0.707 0.707-7.853-7.854 7.854-7.853 0.707 0.707-7.147 7.146z"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "span",
+              "attrs": {
+                "class": "flatpickr-current-month"
+              },
+              "children": [
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "class": "cur-month",
+                    "title": "Zum Ändern scrollen"
+                  },
+                  "children": [
+                    "Januar "
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "class": "numInputWrapper"
+                  },
+                  "children": [
+                    {
+                      "tag": "input",
+                      "attrs": {
+                        "class": "numInput cur-year",
+                        "pattern": "\\d*",
+                        "title": "Zum Ändern scrollen",
+                        "type": "text"
+                      },
+                      "props": {
+                        "value": "2024"
+                      }
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "arrowUp"
+                      }
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "arrowDown"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "span",
+              "attrs": {
+                "class": "flatpickr-next-month",
+                "style": "display: block;"
+              },
+              "children": [
+                {
+                  "tag": "svg",
+                  "attrs": {
+                    "version": "1.1",
+                    "viewBox": "0 0 17 17",
+                    "xmlns": "http://www.w3.org/2000/svg",
+                    "xmlns:xlink": "http://www.w3.org/1999/xlink"
+                  },
+                  "children": [
+                    {
+                      "tag": "g"
+                    },
+                    {
+                      "tag": "path",
+                      "attrs": {
+                        "d": "M13.207 8.472l-7.854 7.854-0.707-0.707 7.146-7.146-7.146-7.148 0.707-0.707 7.854 7.854z"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "div",
+          "attrs": {
+            "class": "flatpickr-innerContainer"
+          },
+          "children": [
+            {
+              "tag": "div",
+              "attrs": {
+                "class": "flatpickr-weekwrapper"
+              },
+              "children": [
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "class": "flatpickr-weekday"
+                  },
+                  "children": [
+                    "KW"
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "class": "flatpickr-weeks"
+                  },
+                  "children": [
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "disabled flatpickr-day"
+                      },
+                      "children": [
+                        "1"
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "disabled flatpickr-day"
+                      },
+                      "children": [
+                        "2"
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "disabled flatpickr-day"
+                      },
+                      "children": [
+                        "3"
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "disabled flatpickr-day"
+                      },
+                      "children": [
+                        "4"
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "disabled flatpickr-day"
+                      },
+                      "children": [
+                        "5"
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "disabled flatpickr-day"
+                      },
+                      "children": [
+                        "6"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "attrs": {
+                "class": "flatpickr-rContainer"
+              },
+              "children": [
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "class": "flatpickr-weekdays"
+                  },
+                  "children": [
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "flatpickr-weekday"
+                      },
+                      "children": [
+                        " Mo"
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "flatpickr-weekday"
+                      },
+                      "children": [
+                        "Di"
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "flatpickr-weekday"
+                      },
+                      "children": [
+                        "Mi"
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "flatpickr-weekday"
+                      },
+                      "children": [
+                        "Do"
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "flatpickr-weekday"
+                      },
+                      "children": [
+                        "Fr"
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "flatpickr-weekday"
+                      },
+                      "children": [
+                        "Sa"
+                      ]
+                    },
+                    {
+                      "tag": "span",
+                      "attrs": {
+                        "class": "flatpickr-weekday"
+                      },
+                      "children": [
+                        "So "
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "attrs": {
+                    "class": "flatpickr-days",
+                    "tabindex": "-1"
+                  },
+                  "listeners": {
+                    "animationend": 1,
+                    "mousedown": 1,
+                    "webkitAnimationEnd": 1
+                  },
+                  "children": [
+                    {
+                      "tag": "div",
+                      "attrs": {
+                        "class": "dayContainer"
+                      },
+                      "children": [
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 1, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 0,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "1"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 2, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 1,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "2"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 3, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 2,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "3"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 4, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 3,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "4"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 5, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 4,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "5"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 6, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 5,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "6"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 7, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 6,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "7"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 8, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 7,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "8"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 9, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 8,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "9"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 10, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 9,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "10"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 11, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 10,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "11"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 12, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 11,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "12"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 13, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 12,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "13"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 14, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 13,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "14"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 15, 2024",
+                            "class": "flatpickr-day today",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 14,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "15"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 16, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 15,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "16"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 17, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 16,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "17"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 18, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 17,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "18"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 19, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 18,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "19"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 20, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 19,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "20"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 21, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 20,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "21"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 22, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 21,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "22"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 23, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 22,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "23"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 24, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 23,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "24"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 25, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 24,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "25"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 26, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 25,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "26"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 27, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 26,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "27"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 28, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 27,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "28"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 29, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 28,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "29"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 30, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 29,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "30"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Januar 31, 2024",
+                            "class": "flatpickr-day ",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 30,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "31"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Februar 1, 2024",
+                            "class": "flatpickr-day nextMonthDay",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 31,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "1"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Februar 2, 2024",
+                            "class": "flatpickr-day nextMonthDay",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 32,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "2"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Februar 3, 2024",
+                            "class": "flatpickr-day nextMonthDay",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 33,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "3"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Februar 4, 2024",
+                            "class": "flatpickr-day nextMonthDay",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 34,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "4"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Februar 5, 2024",
+                            "class": "flatpickr-day nextMonthDay",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 35,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "5"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Februar 6, 2024",
+                            "class": "flatpickr-day nextMonthDay",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 36,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "6"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Februar 7, 2024",
+                            "class": "flatpickr-day nextMonthDay",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 37,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "7"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Februar 8, 2024",
+                            "class": "flatpickr-day nextMonthDay",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 38,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "8"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Februar 9, 2024",
+                            "class": "flatpickr-day nextMonthDay",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 39,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "9"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Februar 10, 2024",
+                            "class": "flatpickr-day nextMonthDay",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 40,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "10"
+                          ]
+                        },
+                        {
+                          "tag": "span",
+                          "attrs": {
+                            "aria-label": "Februar 11, 2024",
+                            "class": "flatpickr-day nextMonthDay",
+                            "tabindex": "-1"
+                          },
+                          "expandos": {
+                            "$i": 41,
+                            "dateObj": "[object Date]"
+                          },
+                          "children": [
+                            "11"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "div",
+          "attrs": {
+            "class": "flatpickr-time time24hr",
+            "tabindex": "-1"
+          },
+          "listeners": {
+            "increment": 2,
+            "input": 2,
+            "mousedown": 1,
+            "wheel": 2
+          },
+          "children": [
+            {
+              "tag": "div",
+              "attrs": {
+                "class": "numInputWrapper"
+              },
+              "children": [
+                {
+                  "tag": "input",
+                  "attrs": {
+                    "class": "numInput flatpickr-hour",
+                    "max": "23",
+                    "min": "0",
+                    "pattern": "\\d*",
+                    "step": "1",
+                    "tabindex": "-1",
+                    "title": "Zum Ändern scrollen",
+                    "type": "text"
+                  },
+                  "props": {
+                    "value": "12"
+                  },
+                  "listeners": {
+                    "click": 1,
+                    "focus": 1
+                  }
+                },
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "class": "arrowUp"
+                  }
+                },
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "class": "arrowDown"
+                  }
+                }
+              ]
+            },
+            {
+              "tag": "span",
+              "attrs": {
+                "class": "flatpickr-time-separator"
+              },
+              "children": [
+                ":"
+              ]
+            },
+            {
+              "tag": "div",
+              "attrs": {
+                "class": "numInputWrapper"
+              },
+              "children": [
+                {
+                  "tag": "input",
+                  "attrs": {
+                    "class": "numInput flatpickr-minute",
+                    "max": "59",
+                    "min": "0",
+                    "pattern": "\\d*",
+                    "step": "5",
+                    "tabindex": "-1",
+                    "title": "Zum Ändern scrollen",
+                    "type": "text"
+                  },
+                  "props": {
+                    "value": "00"
+                  },
+                  "listeners": {
+                    "click": 1,
+                    "focus": 1
+                  }
+                },
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "class": "arrowUp"
+                  }
+                },
+                {
+                  "tag": "span",
+                  "attrs": {
+                    "class": "arrowDown"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "calls": [
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildtoolui",
+        "test-tool"
+      ]
+    },
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.advancedToolBehaviour",
+      "args": []
+    },
+    {
+      "call": "map.ui.webgisContainer",
+      "args": []
+    },
+    {
+      "call": "map.ui.webgisContainer",
+      "args": []
+    },
+    {
+      "call": "map.ui.webgisContainer",
+      "args": []
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#webgis-modal-content.webgis-modal-content]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}
