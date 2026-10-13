@@ -521,7 +521,7 @@
                     webgis.loadedScripts.mapFramework = true;
                     // webgis service layer
                     if (!L.imageOverlay.webgis_service) {
-                        webgis.loadScript(webgis.baseUrl + '/scripts/leaflet/plugins/webgisservicelayer.js', null, function () {
+                        webgis.loadScript(webgis.baseUrl + '/scripts/leaflet/plugins/leaflet-plugins.min.js', null, function () {
                             webgis.loadedScripts.mapFramework_dependencies = true;
                         });
                     }
