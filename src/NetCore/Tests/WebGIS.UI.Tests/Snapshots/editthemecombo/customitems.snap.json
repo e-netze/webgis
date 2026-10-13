@@ -1,0 +1,516 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-cat-combo-holder"
+        },
+        "children": [
+          {
+            "tag": "select",
+            "attrs": {
+              "class": "webgis-input webgis-cat-combo"
+            },
+            "props": {
+              "value": "",
+              "selectedIndex": 0
+            },
+            "data": {
+              "combo": "[jQuery(1):select#combo.allow-filter.webgis-cat-combo-target.webgis-select]"
+            },
+            "events": {
+              "change": 1
+            },
+            "expandos": {
+              "0": "[element:option]",
+              "1": "[element:option]",
+              "2": "[element:option]",
+              "3": "[element:option]",
+              "4": "[element:option]",
+              "5": "[element:option]",
+              "6": "[element:option]"
+            },
+            "children": [
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": ""
+                },
+                "props": {
+                  "selected": true
+                },
+                "children": [
+                  "Kategorie wählen (optional)"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": ""
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "--- Alle ---"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "class-filter:filter-point"
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "☆ Punkte/Symbole"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "class-filter:filter-line"
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "— Linien"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "class-filter:filter-polygon"
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "▭ Flächen/Polygone"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "Dienst 1"
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "Dienst 1"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "Kategorie"
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "Kategorie"
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "span",
+            "attrs": {
+              "class": "twitter-typeahead",
+              "style": "position: relative; display: inline-block;"
+            },
+            "children": [
+              {
+                "tag": "input",
+                "attrs": {
+                  "autocomplete": "off",
+                  "class": "webgis-input webgis-cat-combo-filter tt-input",
+                  "dir": "auto",
+                  "placeholder": "Themen suchen...",
+                  "spellcheck": "false",
+                  "style": "position: relative; vertical-align: top;",
+                  "type": "text"
+                },
+                "props": {
+                  "value": ""
+                },
+                "data": {
+                  "ttAttrs": {
+                    "autocomplete": "[undefined]",
+                    "dir": "[undefined]",
+                    "spellcheck": "[undefined]",
+                    "style": "[undefined]"
+                  },
+                  "ttTypeahead": "[object c]",
+                  "ttWww": {
+                    "classes": {
+                      "cursor": "tt-cursor",
+                      "dataset": "tt-dataset",
+                      "empty": "tt-empty",
+                      "highlight": "tt-highlight",
+                      "hint": "tt-hint",
+                      "input": "tt-input",
+                      "menu": "tt-menu",
+                      "open": "tt-open",
+                      "selectable": "tt-selectable",
+                      "suggestion": "tt-suggestion",
+                      "wrapper": "twitter-typeahead"
+                    },
+                    "css": {
+                      "hint": {
+                        "borderColor": "transparent",
+                        "boxShadow": "none",
+                        "left": "0",
+                        "opacity": "1",
+                        "position": "absolute",
+                        "top": "0"
+                      },
+                      "input": {
+                        "backgroundColor": "transparent",
+                        "position": "relative",
+                        "verticalAlign": "top"
+                      },
+                      "inputWithNoHint": {
+                        "position": "relative",
+                        "verticalAlign": "top"
+                      },
+                      "ltr": {
+                        "left": "0",
+                        "right": "auto"
+                      },
+                      "menu": {
+                        "display": "none",
+                        "left": "0",
+                        "position": "absolute",
+                        "top": "100%",
+                        "zIndex": "100"
+                      },
+                      "rtl": {
+                        "left": "auto",
+                        "right": " 0"
+                      },
+                      "wrapper": {
+                        "display": "inline-block",
+                        "position": "relative"
+                      }
+                    },
+                    "html": {
+                      "menu": "<div class=\"tt-menu\"></div>",
+                      "wrapper": "<span class=\"twitter-typeahead\"></span>"
+                    },
+                    "mixin": "[function]",
+                    "selectors": {
+                      "cursor": ".tt-cursor",
+                      "dataset": ".tt-dataset",
+                      "empty": ".tt-empty",
+                      "highlight": ".tt-highlight",
+                      "hint": ".tt-hint",
+                      "input": ".tt-input",
+                      "menu": ".tt-menu",
+                      "open": ".tt-open",
+                      "selectable": ".tt-selectable",
+                      "suggestion": ".tt-suggestion",
+                      "wrapper": ".twitter-typeahead"
+                    }
+                  }
+                },
+                "events": {
+                  "blur": 1,
+                  "blur.tt": 2,
+                  "click": 1,
+                  "focus": 1,
+                  "focus.tt": 1,
+                  "input.tt": 1,
+                  "keydown.tt": 1,
+                  "mousemove": 1,
+                  "touchstart": 1,
+                  "typeahead:select": 1
+                }
+              },
+              {
+                "tag": "pre",
+                "attrs": {
+                  "aria-hidden": "true",
+                  "style": "position: absolute; visibility: hidden; white-space: pre; font-family: Arial; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"
+                }
+              },
+              {
+                "tag": "div",
+                "attrs": {
+                  "class": "tt-menu",
+                  "style": "position: absolute; top: 100%; left: 0px; z-index: 100; display: none;"
+                },
+                "events": {
+                  "click.tt .tt-selectable": 1,
+                  "mousedown.tt": 1
+                },
+                "children": [
+                  {
+                    "tag": "div",
+                    "attrs": {
+                      "class": "tt-dataset tt-dataset-0"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "select",
+            "attrs": {
+              "class": "webgis-select allow-filter webgis-cat-combo-target",
+              "element-target": "default",
+              "id": "combo"
+            },
+            "props": {
+              "value": "#",
+              "selectedIndex": 0
+            },
+            "events": {
+              "change": 1,
+              "click": 1,
+              "mousemove": 1,
+              "touchstart": 1
+            },
+            "expandos": {
+              "0": "[element:option.webgis-custom-option]",
+              "1": "[element:option.webgis-custom-option]",
+              "2": "[element:option.filter-point]",
+              "3": "[element:option.filter-unknown]",
+              "_map": "[fake:map]",
+              "_opt": {
+                "customitems": [
+                  {
+                    "category": null,
+                    "name": "Eigenes 1",
+                    "value": "#"
+                  },
+                  {
+                    "category": "Kategorie",
+                    "name": "Eigenes 2",
+                    "value": "c2"
+                  }
+                ],
+                "dbrights": null,
+                "map": "[fake:map]",
+                "onchange": null
+              }
+            },
+            "children": [
+              {
+                "tag": "option",
+                "attrs": {
+                  "class": "webgis-custom-option",
+                  "value": "#"
+                },
+                "props": {
+                  "selected": true
+                },
+                "children": [
+                  "Eigenes 1"
+                ]
+              },
+              {
+                "tag": "optgroup",
+                "attrs": {
+                  "class": "webgis-custom-option",
+                  "label": "Kategorie"
+                },
+                "children": [
+                  {
+                    "tag": "option",
+                    "attrs": {
+                      "class": "webgis-custom-option",
+                      "value": "c2"
+                    },
+                    "props": {
+                      "selected": false
+                    },
+                    "children": [
+                      "Eigenes 2"
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "optgroup",
+                "attrs": {
+                  "label": "Dienst 1"
+                },
+                "expandos": {
+                  "service": {
+                    "chainagethemes": [
+                      {
+                        "id": "c1",
+                        "name": "Station 1"
+                      }
+                    ],
+                    "checkLayerVisibility": "[fake:service.checkLayerVisibility]",
+                    "editthemes": [
+                      {
+                        "dbrights": "iud",
+                        "layerid": "l1",
+                        "name": "Thema 1",
+                        "tags": "[max-depth]",
+                        "themeid": "t1"
+                      },
+                      {
+                        "dbrights": "i",
+                        "layerid": "l2",
+                        "name": "Thema 2",
+                        "themeid": "t2"
+                      }
+                    ],
+                    "getLayer": "[function]",
+                    "id": "s1",
+                    "labeling": [
+                      {
+                        "id": "lab1",
+                        "name": "Beschriftung 1"
+                      }
+                    ],
+                    "layerVisibleAndInScale": "[function]",
+                    "map": "[fake:map]",
+                    "name": "Dienst 1",
+                    "queries": [
+                      {
+                        "id": "q1",
+                        "items": "[max-depth]",
+                        "layerid": "l1",
+                        "name": "Abfrage 1"
+                      },
+                      {
+                        "id": "q2",
+                        "items": "[max-depth]",
+                        "name": "Unsichtbar",
+                        "visible": false
+                      },
+                      {
+                        "id": "q3",
+                        "items": "[max-depth]",
+                        "name": "Ohne Items"
+                      }
+                    ],
+                    "serviceInfo": {
+                      "id": "s1",
+                      "name": "Dienst 1"
+                    },
+                    "setLayerVisibility": "[fake:service.setLayerVisibility]"
+                  }
+                },
+                "children": [
+                  {
+                    "tag": "option",
+                    "attrs": {
+                      "class": "filter-point",
+                      "value": "s1,l1,t1"
+                    },
+                    "props": {
+                      "selected": false
+                    },
+                    "expandos": {
+                      "edittheme": {
+                        "dbrights": "iud",
+                        "layerid": "l1",
+                        "name": "Thema 1",
+                        "tags": [
+                          "a",
+                          "b"
+                        ],
+                        "themeid": "t1"
+                      }
+                    },
+                    "children": [
+                      "☆ Thema 1"
+                    ]
+                  },
+                  {
+                    "tag": "option",
+                    "attrs": {
+                      "class": "filter-unknown",
+                      "value": "s1,l2,t2"
+                    },
+                    "props": {
+                      "selected": false
+                    },
+                    "expandos": {
+                      "edittheme": {
+                        "dbrights": "i",
+                        "layerid": "l2",
+                        "name": "Thema 2",
+                        "themeid": "t2"
+                      }
+                    },
+                    "children": [
+                      "Thema 2"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.on",
+      "args": [
+        "onaddservice",
+        "[function]",
+        "[element:select#combo.allow-filter.webgis-cat-combo-target.webgis-select]"
+      ]
+    },
+    {
+      "call": "map.events.on",
+      "args": [
+        "onremoveservice",
+        "[function]",
+        "[element:select#combo.allow-filter.webgis-cat-combo-target.webgis-select]"
+      ]
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

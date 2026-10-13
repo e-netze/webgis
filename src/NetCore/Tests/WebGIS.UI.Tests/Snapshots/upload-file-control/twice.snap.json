@@ -1,0 +1,258 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-control-upload",
+          "element-target": "default"
+        },
+        "children": [
+          {
+            "tag": "input",
+            "attrs": {
+              "id": "editfield_FOTO",
+              "name": "editfield_FOTO",
+              "type": "hidden"
+            },
+            "props": {
+              "value": ""
+            }
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-input",
+              "data-fileinput-id": "FOTO-target-{guid}-{guid}",
+              "data-name": "FOTO",
+              "id": "FOTO-target-{guid}-preview",
+              "style": "cursor:pointer;width:288px;position:relative;height:22px;display:block"
+            },
+            "data": {
+              "onUpload": null
+            },
+            "events": {
+              "click": 1
+            },
+            "children": [
+              {
+                "tag": "div",
+                "attrs": {
+                  "style": "position:absolute;right:2px;bottom:2px;width:26px;height:26px;background:url(https://webgis.test/content/api/img/upload-26.png) no-repeat center right;"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-control-upload",
+          "element-target": "default"
+        },
+        "children": [
+          {
+            "tag": "input",
+            "attrs": {
+              "id": "editfield_FOTO",
+              "name": "editfield_FOTO",
+              "type": "hidden"
+            },
+            "props": {
+              "value": ""
+            }
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-input",
+              "data-fileinput-id": "FOTO-target-{guid}-{guid}",
+              "data-name": "FOTO",
+              "id": "FOTO-target-{guid}-preview",
+              "style": "cursor:pointer;width:288px;position:relative;height:22px;display:block"
+            },
+            "data": {
+              "onUpload": null
+            },
+            "events": {
+              "click": 1
+            },
+            "children": [
+              {
+                "tag": "div",
+                "attrs": {
+                  "style": "position:absolute;right:2px;bottom:2px;width:26px;height:26px;background:url(https://webgis.test/content/api/img/upload-26.png) no-repeat center right;"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [
+    {
+      "tag": "div",
+      "attrs": {
+        "id": "__webgis-upload-div-container",
+        "style": "display:none"
+      },
+      "children": [
+        {
+          "tag": "div",
+          "attrs": {
+            "id": "FOTO-target-{guid}-upload-div"
+          },
+          "children": [
+            {
+              "tag": "iframe",
+              "attrs": {
+                "id": "FOTO-target-{guid}-frame",
+                "name": "FOTO-target-{guid}-frame",
+                "style": "display:none"
+              }
+            },
+            {
+              "tag": "form",
+              "attrs": {
+                "action": "",
+                "enctype": "multipart/form-data",
+                "method": "post",
+                "target": "FOTO-target-{guid}-frame"
+              },
+              "expandos": {
+                "0": "[element:input#FOTO-target-{guid}-{guid}]"
+              },
+              "children": [
+                {
+                  "tag": "input",
+                  "attrs": {
+                    "data-name": "FOTO",
+                    "data-service": "edit-service",
+                    "data-theme": "edit-theme",
+                    "id": "FOTO-target-{guid}-{guid}",
+                    "name": "file",
+                    "type": "file"
+                  },
+                  "props": {
+                    "value": ""
+                  },
+                  "events": {
+                    "change": 1
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "div",
+          "attrs": {
+            "id": "FOTO-target-{guid}-upload-div"
+          },
+          "children": [
+            {
+              "tag": "iframe",
+              "attrs": {
+                "id": "FOTO-target-{guid}-frame",
+                "name": "FOTO-target-{guid}-frame",
+                "style": "display:none"
+              }
+            },
+            {
+              "tag": "form",
+              "attrs": {
+                "action": "",
+                "enctype": "multipart/form-data",
+                "method": "post",
+                "target": "FOTO-target-{guid}-frame"
+              },
+              "expandos": {
+                "0": "[element:input#FOTO-target-{guid}-{guid}]"
+              },
+              "children": [
+                {
+                  "tag": "input",
+                  "attrs": {
+                    "data-name": "FOTO",
+                    "data-service": "edit-service",
+                    "data-theme": "edit-theme",
+                    "id": "FOTO-target-{guid}-{guid}",
+                    "name": "file",
+                    "type": "file"
+                  },
+                  "props": {
+                    "value": ""
+                  },
+                  "events": {
+                    "change": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

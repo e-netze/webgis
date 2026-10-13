@@ -1,0 +1,89 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "select",
+        "attrs": {
+          "class": " webgis-select",
+          "element-target": "default",
+          "id": "combo"
+        },
+        "props": {
+          "value": "1500",
+          "selectedIndex": 2
+        },
+        "data": {
+          "map": "[fake:map]"
+        },
+        "events": {
+          "change": 1
+        },
+        "expandos": {
+          "0": "[element:option]",
+          "1": "[element:option]",
+          "2": "[element:option]"
+        },
+        "children": [
+          {
+            "tag": "option",
+            "attrs": {
+              "value": "10"
+            },
+            "props": {
+              "selected": false
+            },
+            "children": [
+              "10 m"
+            ]
+          },
+          {
+            "tag": "option",
+            "attrs": {
+              "selected": "selected",
+              "value": "20"
+            },
+            "props": {
+              "selected": false
+            },
+            "children": [
+              "20 m"
+            ]
+          },
+          {
+            "tag": "option",
+            "attrs": {
+              "value": "1500"
+            },
+            "props": {
+              "selected": true
+            },
+            "children": [
+              "1.500 m"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.showCircleMarker",
+      "args": [
+        null,
+        1500
+      ]
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "custom-css webgis-dependencies webgis-dependency-hasselection webgis-edittheme-tree",
+          "element-target": "default",
+          "id": "combo",
+          "style": "width:100px"
+        },
+        "data": {
+          "options": {
+            "customitems": null,
+            "dbrights": null,
+            "id": "combo",
+            "map": "[fake:map]",
+            "onchange": null
+          },
+          "webgisValueElement": "[jQuery(1):input]"
+        },
+        "children": [
+          {
+            "tag": "input",
+            "attrs": {
+              "type": "hidden",
+              "value": ""
+            },
+            "props": {
+              "value": ""
+            }
+          },
+          {
+            "tag": "select",
+            "attrs": {
+              "class": "webgis-edittheme-tree-service-combo webgis-input",
+              "id": "webgis-edittheme-tree-service-combo"
+            },
+            "props": {
+              "value": "",
+              "selectedIndex": -1
+            },
+            "data": {
+              "itemContainer": "[jQuery(1):div#combo.custom-css.webgis-dependencies.webgis-dependency-hasselection.webgis-edittheme-tree]",
+              "itemSelector": ".webgis-tag-item",
+              "itemTagsAttr": "tags",
+              "tags": []
+            },
+            "events": {
+              "change": 1,
+              "click": 1,
+              "mousemove": 1
+            }
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-tags-combo-popup",
+              "style": "display: none; position: absolute;"
+            },
+            "events": {
+              "mouseout": 1,
+              "mouseover": 1
+            }
+          },
+          {
+            "tag": "input",
+            "attrs": {
+              "class": "webgis-tags-combo-value webgis-tool-parameter",
+              "id": "combo-tags",
+              "type": "hidden",
+              "value": ""
+            },
+            "props": {
+              "value": ""
+            }
+          },
+          {
+            "tag": "ul",
+            "attrs": {
+              "class": "webgis-edittheme-tree-theme-list"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.on",
+      "args": [
+        "onaddservice",
+        "[function]",
+        "[element:div#combo.custom-css.webgis-dependencies.webgis-dependency-hasselection.webgis-edittheme-tree]"
+      ]
+    },
+    {
+      "call": "map.events.on",
+      "args": [
+        "onremoveservice",
+        "[function]",
+        "[element:div#combo.custom-css.webgis-dependencies.webgis-dependency-hasselection.webgis-edittheme-tree]"
+      ]
+    },
+    {
+      "call": "map.ui.refreshUIElements",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

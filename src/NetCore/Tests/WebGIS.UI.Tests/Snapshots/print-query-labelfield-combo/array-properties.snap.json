@@ -1,0 +1,127 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "children": [
+          {
+            "tag": "input",
+            "attrs": {
+              "id": "combo",
+              "type": "hidden"
+            },
+            "props": {
+              "value": ""
+            }
+          },
+          {
+            "tag": "select",
+            "attrs": {
+              "class": " webgis-select",
+              "element-target": "default"
+            },
+            "props": {
+              "value": "",
+              "selectedIndex": 0
+            },
+            "events": {
+              "change": 1
+            },
+            "expandos": {
+              "0": "[element:option]",
+              "1": "[element:option]",
+              "2": "[element:option]"
+            },
+            "children": [
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": ""
+                },
+                "props": {
+                  "selected": true
+                },
+                "children": [
+                  "--- Beschriften (optional) ---"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "A"
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "A"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "B"
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "B"
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-multiselect-container"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.queryResultFeatures.first",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "select",
+        "attrs": {
+          "class": "webgis-print-show-chainage-markers-select webgis-select",
+          "element-target": "default",
+          "id": "combo"
+        },
+        "props": {
+          "value": "show",
+          "selectedIndex": 0
+        },
+        "events": {
+          "change": 1
+        },
+        "expandos": {
+          "0": "[element:option]",
+          "1": "[element:option]"
+        },
+        "children": [
+          {
+            "tag": "option",
+            "attrs": {
+              "value": "show"
+            },
+            "props": {
+              "selected": true
+            },
+            "children": [
+              "anzeigen"
+            ]
+          },
+          {
+            "tag": "option",
+            "attrs": {
+              "value": "hide"
+            },
+            "props": {
+              "selected": false
+            },
+            "children": [
+              "ausblenden"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.queryResultFeatures.setToolMarkerVisibility",
+      "args": [
+        "webgis.tools.chainage",
+        false
+      ]
+    },
+    {
+      "call": "map.queryResultFeatures.setToolMarkerVisibility",
+      "args": [
+        "webgis.tools.chainage",
+        true
+      ]
+    }
+  ]
+}

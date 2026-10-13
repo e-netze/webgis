@@ -1,0 +1,85 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "button",
+        "attrs": {
+          "class": "webgis-button",
+          "element-target": "default"
+        },
+        "events": {
+          "click": 1
+        },
+        "children": [
+          "Datei hochladen"
+        ]
+      },
+      {
+        "tag": "div",
+        "attrs": {
+          "style": "display: none;"
+        },
+        "children": [
+          {
+            "tag": "input",
+            "attrs": {
+              "id": "undefined_file_input",
+              "name": "undefined",
+              "type": "file"
+            },
+            "props": {
+              "value": ""
+            },
+            "data": {
+              "map": "[fake:map]",
+              "servercommand": "upload-cmd",
+              "toolid": "webgis.ui.tests.uibuilder.uploadelementstests"
+            },
+            "events": {
+              "change": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

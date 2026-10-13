@@ -1,0 +1,114 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "select",
+        "attrs": {
+          "class": " webgis-select",
+          "element-target": "default",
+          "id": "combo"
+        },
+        "props": {
+          "value": "s2",
+          "selectedIndex": 2
+        },
+        "data": {
+          "currentToolSketches": [
+            {
+              "id": "s1",
+              "name": "Skizze 1",
+              "storedSketch": {
+                "id": "stored1"
+              }
+            },
+            {
+              "id": "s2",
+              "name": "Skizze 2",
+              "storedSketch": {
+                "id": "stored2"
+              }
+            }
+          ],
+          "map": "[fake:map]"
+        },
+        "events": {
+          "change": 1
+        },
+        "expandos": {
+          "0": "[element:option]",
+          "1": "[element:option]",
+          "2": "[element:option]"
+        },
+        "children": [
+          {
+            "tag": "option",
+            "attrs": {
+              "value": ""
+            },
+            "props": {
+              "selected": false
+            },
+            "children": [
+              "--- nicht anzeigen ---"
+            ]
+          },
+          {
+            "tag": "option",
+            "attrs": {
+              "value": "s1"
+            },
+            "props": {
+              "selected": false
+            },
+            "children": [
+              "Skizze 1"
+            ]
+          },
+          {
+            "tag": "option",
+            "attrs": {
+              "value": "s2"
+            },
+            "props": {
+              "selected": true
+            },
+            "children": [
+              "Skizze 2"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.sketch.load",
+      "args": [
+        {
+          "id": "stored2"
+        },
+        "active-tool"
+      ]
+    }
+  ]
+}

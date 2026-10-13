@@ -1,0 +1,216 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "children": [
+          {
+            "tag": "input",
+            "attrs": {
+              "class": "webgis-tool-parameter webgis-tool-parameter-persistent",
+              "id": "combo",
+              "type": "hidden",
+              "value": "NAME;NUM"
+            },
+            "props": {
+              "value": "NAME;NUM"
+            }
+          },
+          {
+            "tag": "select",
+            "attrs": {
+              "class": "webgis-select",
+              "element-target": "default"
+            },
+            "props": {
+              "value": "",
+              "selectedIndex": 0
+            },
+            "events": {
+              "change": 1
+            },
+            "expandos": {
+              "0": "[element:option]",
+              "1": "[element:option]",
+              "2": "[element:option]",
+              "3": "[element:option]",
+              "4": "[element:option]"
+            },
+            "children": [
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": ""
+                },
+                "props": {
+                  "selected": true
+                },
+                "children": [
+                  "--- Beschriften (optional) ---"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "NAME"
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "NAME"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "_fulltext"
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "(Kurz) Zusammenfassung"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "_label"
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "Beschriftung"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "NUM"
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "NUM"
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-multiselect-container"
+            },
+            "children": [
+              {
+                "tag": "div",
+                "attrs": {
+                  "class": "webgis-multiselect-continer-item"
+                },
+                "data": {
+                  "value": "NAME"
+                },
+                "children": [
+                  "NAME",
+                  {
+                    "tag": "div",
+                    "attrs": {
+                      "class": "remove"
+                    },
+                    "events": {
+                      "click": 1
+                    },
+                    "children": [
+                      "X"
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "div",
+                "attrs": {
+                  "class": "webgis-multiselect-continer-item"
+                },
+                "data": {
+                  "value": "NUM"
+                },
+                "children": [
+                  "NUM",
+                  {
+                    "tag": "div",
+                    "attrs": {
+                      "class": "remove"
+                    },
+                    "events": {
+                      "click": 1
+                    },
+                    "children": [
+                      "X"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.queryResultFeatures.first",
+      "args": []
+    },
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.getPersistentToolParameter",
+      "args": [
+        null,
+        "combo"
+      ]
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}
