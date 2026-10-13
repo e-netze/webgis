@@ -73,6 +73,11 @@ patterns, so no step gets silently skipped:
   `RestHelperService.PrepareFeatureCollection` silently dropping un-copied fields).
 - **New client-side usability option** overridable via `custom.js` →
   `add-client-usability-option` skill.
+- **Adding, splitting, moving or renaming a viewer/API JS file** (naming `webgis.ui.builder.*`,
+  `webgis.ui.plugins.*`, `webgis_*`, leaflet `webgis-<topic>.*`, bundle/view registration) →
+  `organize-api-javascript-files` skill.
+- **Writing or converting a UI plugin** (`webgis.ui.definePlugin`: methods, static methods,
+  events and releasing them in `destroy`) → `create-webgis-ui-plugin` skill.
 - **Committing changes** (proposing a commit message vs. actually committing) →
   `commit` skill.
 - **Documenting a feature's architecture** (projects, classes, flow diagrams, pitfalls) →
