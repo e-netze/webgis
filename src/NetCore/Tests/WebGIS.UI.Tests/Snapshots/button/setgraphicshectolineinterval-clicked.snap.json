@@ -1,0 +1,81 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-ui-optionscontainer",
+          "element-target": "default"
+        },
+        "children": [
+          {
+            "tag": "input",
+            "attrs": {
+              "class": "webgis-graphics-hectoline-interval webgis-input",
+              "data-value": "12.5",
+              "element-target": "default",
+              "type": "text",
+              "value": "12.5"
+            },
+            "props": {
+              "value": "12.5"
+            }
+          },
+          {
+            "tag": "button",
+            "attrs": {
+              "class": "webgis-button uibutton",
+              "data-value": "initial",
+              "element-target": "default",
+              "id": "btn"
+            },
+            "data": {
+              "_value": 12.5
+            },
+            "events": {
+              "click": 1
+            },
+            "expandos": {
+              "buttoncommand": "setgraphicshectolineinterval",
+              "buttoncommand_argument": "[undefined]",
+              "buttontype": "clientbutton",
+              "map": "[fake:map]"
+            },
+            "children": [
+              "Setzen"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "webgis.tools.onButtonClick",
+      "args": [
+        "[fake:map]",
+        {
+          "argument": "[undefined]",
+          "command": "setgraphicshectolineinterval",
+          "id": "btn",
+          "map": "[fake:map]",
+          "type": "clientbutton",
+          "value": 12.5
+        },
+        "[element:button#btn.uibutton.webgis-button]"
+      ]
+    }
+  ]
+}

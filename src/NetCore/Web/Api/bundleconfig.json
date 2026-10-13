@@ -62,6 +62,7 @@
         "wwwroot/scripts/api/ui/webgis.ui.plugins.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.general.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.inputs.js",
+        "wwwroot/scripts/api/ui/webgis.ui.plugins.buttons.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.timefilter.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.visfilter.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.querybuilder.js",

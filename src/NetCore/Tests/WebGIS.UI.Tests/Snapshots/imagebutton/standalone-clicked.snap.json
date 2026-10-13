@@ -1,0 +1,69 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-ui-imagebutton",
+          "data-value": "v1",
+          "element-target": "default",
+          "id": "img",
+          "style": "background-image: url(\"https://webgis.test/ui/edit-26.png\");",
+          "title": "Bearbeiten"
+        },
+        "data": {
+          "_value": "v1"
+        },
+        "events": {
+          "click": 1
+        },
+        "expandos": {
+          "buttoncommand": "edit",
+          "buttoncommand_argument": "[undefined]",
+          "buttontype": "servertoolcommand",
+          "map": "[fake:map]"
+        },
+        "children": [
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-ui-imagebutton-text"
+            },
+            "children": [
+              "Bearbeiten"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "webgis.tools.onButtonClick",
+      "args": [
+        "[fake:map]",
+        {
+          "argument": "[undefined]",
+          "command": "edit",
+          "id": "img",
+          "map": "[fake:map]",
+          "type": "servertoolcommand",
+          "value": "v1"
+        },
+        "[element:div#img.webgis-ui-imagebutton]"
+      ]
+    }
+  ]
+}

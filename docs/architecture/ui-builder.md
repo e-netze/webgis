@@ -30,6 +30,7 @@ builder plugins (`webgis.ui.builder[type]`), secured by browser-based characteri
 | `webgis.ui.plugins.js` (`.../scripts/api/ui/webgis.ui.plugins.js`) | Defines the `webgis.ui.builder` registry and `webgis.ui.definePlugin` |
 | `webgis.ui.plugins.general.js` (`.../scripts/api/ui/`) | Builders `label`, `paragraph`, `title` |
 | `webgis.ui.plugins.inputs.js` (`.../scripts/api/ui/`) | Builders `input-text`, `input-textarea`, `input-date`, `input-number`, `hidden`, `input-autocomplete` |
+| `webgis.ui.plugins.buttons.js` (`.../scripts/api/ui/`) | Builders `button`, `imagebutton`, `buttongroup`, `undobutton` |
 | `webgis.ui.plugins.visfilter.js` (`.../scripts/api/ui/`) | Builders `visfiltercombo`, `visfilterlist` |
 | `bundleconfig.json` (`src/NetCore/Web/Api/bundleconfig.json`) | Script order of `api.min.js` and `api-ui.min.js` |
 | `Views/Map/Index.cshtml`, `Views/MapBuilder/Index.cshtml` (`src/NetCore/Web/Portal/`) | Development script lists (must list new plugin files too) |
@@ -94,7 +95,9 @@ No runtime configuration; the builder API is internal to the viewer.
   - `type.attributes` - extra attributes (string or `fn(element, options)`), placed before `elementProperties`
   - `type.toolid` - `false` suppresses `data-tool-id` (inputs historically never got it)
   - `type.formelement` - `true` adds `add_webgis_form_element_events()` (form-container dirty tracking)
-  Further hooks (`type.create`, `type.afterinsert`) are only added when a package really needs them.
+  - `type.properties` - `false` skips `elementProperties` completely (`buttongroup` ignores id/css/style)
+  - `type.afterinsert` - `fn(map, $el, element, options)` called after the child elements are inserted
+  A `type.create` hook (builder creates the element itself) is only added when a package really needs it.
 - **Characterization tests first:** the existing behaviour is not specified anywhere, so the current
   output (DOM + events + map calls) is recorded as golden master before code is moved.
 - **Real browser, no server:** Playwright with request routing to `wwwroot` tests the real scripts
@@ -128,8 +131,8 @@ No runtime configuration; the builder API is internal to the viewer.
 ## Extension points
 
 - New builder: register `webgis.ui.builder["<type>"] = (map, $newElement, element, options) => {...}`
-  (optional hooks `"<type>.tagname"`, `.attributes`, `.toolid`, `.formelement`) in a themed
-  `webgis.ui.plugins.<topic>.js` file.
+  (optional hooks `"<type>.tagname"`, `.attributes`, `.toolid`, `.formelement`, `.properties`, `.afterinsert`)
+  in a themed `webgis.ui.plugins.<topic>.js` file.
 - New test: derive from `UIBuilderPageTest`, `BuildAsync(...)` then `AssertSnapshotAsync("<type>", "<variant>")`;
   configure the fake map via the `setup` argument (`h => h.returns('map.<path>', value)`).
 
@@ -139,3 +142,4 @@ No runtime configuration; the builder API is internal to the viewer.
 |---------|--------|-----------|
 | `9.26.4104` | Characterization test infrastructure (WebGIS.UI.Tests) for the UI builder | uncommitted |
 | `9.26.4104` | Input elements moved to `webgis.ui.plugins.inputs.js`; builder hooks `attributes`, `toolid`, `formelement` | uncommitted |
+| `9.26.4104` | Button elements moved to `webgis.ui.plugins.buttons.js`; builder hooks `properties`, `afterinsert` | uncommitted |

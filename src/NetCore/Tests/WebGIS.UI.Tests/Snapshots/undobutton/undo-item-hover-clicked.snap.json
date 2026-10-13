@@ -1,0 +1,302 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-undobutton webgis-ui-undobutton",
+          "data-undotool": "webgis.ui.tests.uibuilder.buttonelementstests",
+          "element-target": "default",
+          "id": "undo"
+        },
+        "data": {
+          "map": "[fake:map]"
+        },
+        "events": {
+          "click": 1
+        },
+        "children": [
+          "Rückgängig"
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-modal",
+          "id": "webgis-modal-webgis-undo-modal",
+          "style": "z-index:9999;position:fixed;left:0px;right:0px;top:0px;bottom:0px;background:rgba(0,0,0,0.5);"
+        },
+        "events": {
+          "click": 1,
+          "mousedown": 1
+        },
+        "children": [
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-modal-body left enlargeable",
+              "id": "",
+              "style": "z-index: 1000; position: absolute; width: 330px; min-width: 330px; max-width: 100%; background: var(--webgis-ui-surface); opacity: 1; display: block; left: 0px; bottom: 0px; top: 0px;"
+            },
+            "events": {
+              "click": 1
+            },
+            "children": [
+              {
+                "tag": "div",
+                "attrs": {
+                  "class": "webgis-modal-content",
+                  "id": "webgis-modal-content",
+                  "style": "z-index:1;position:absolute;overflow:auto;left:0px;top:calc(43px + var(--webgis-ui-border-width-item-selected));right:0px;bottom:0px"
+                },
+                "children": [
+                  {
+                    "tag": "ul",
+                    "attrs": {
+                      "class": "webgis-ui-undo-list"
+                    },
+                    "children": [
+                      {
+                        "tag": "li",
+                        "attrs": {
+                          "class": "webgis-ui-undo-item"
+                        },
+                        "data": {
+                          "undo": {
+                            "_ticks": 1705305660000,
+                            "preview": {
+                              "type": "p4"
+                            },
+                            "title": "Vor Stunden"
+                          }
+                        },
+                        "events": {
+                          "click": 1,
+                          "mouseout": 1,
+                          "mouseover": 1
+                        },
+                        "children": [
+                          {
+                            "tag": "h2",
+                            "children": [
+                              "Vor Stunden"
+                            ]
+                          },
+                          {
+                            "tag": "div",
+                            "attrs": {
+                              "class": "webgis-ui-undo-span"
+                            },
+                            "children": [
+                              "vor 2 Stunde(n)..."
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "li",
+                        "attrs": {
+                          "class": "webgis-ui-undo-item"
+                        },
+                        "data": {
+                          "undo": {
+                            "_ticks": 1705312560000,
+                            "preview": {
+                              "type": "p3"
+                            },
+                            "title": "Vor Minuten"
+                          }
+                        },
+                        "events": {
+                          "click": 1,
+                          "mouseout": 1,
+                          "mouseover": 1
+                        },
+                        "children": [
+                          {
+                            "tag": "h2",
+                            "children": [
+                              "Vor Minuten"
+                            ]
+                          },
+                          {
+                            "tag": "div",
+                            "attrs": {
+                              "class": "webgis-ui-undo-span"
+                            },
+                            "children": [
+                              "vor 5 Minute(n)..."
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "li",
+                        "attrs": {
+                          "class": "webgis-ui-undo-item"
+                        },
+                        "data": {
+                          "undo": {
+                            "_ticks": 1705312840000,
+                            "preview": {
+                              "type": "p2"
+                            },
+                            "title": "Vor Sekunden"
+                          }
+                        },
+                        "events": {
+                          "click": 1,
+                          "mouseout": 1,
+                          "mouseover": 1
+                        },
+                        "children": [
+                          {
+                            "tag": "h2",
+                            "children": [
+                              "Vor Sekunden"
+                            ]
+                          },
+                          {
+                            "tag": "div",
+                            "attrs": {
+                              "class": "webgis-ui-undo-span"
+                            },
+                            "children": [
+                              "vor 22 Sekunden..."
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "li",
+                        "attrs": {
+                          "class": "webgis-ui-undo-item"
+                        },
+                        "data": {
+                          "undo": {
+                            "preview": {
+                              "type": "p1"
+                            },
+                            "title": "Erste Änderung"
+                          }
+                        },
+                        "events": {
+                          "click": 1,
+                          "mouseout": 1,
+                          "mouseover": 1
+                        },
+                        "children": [
+                          {
+                            "tag": "h2",
+                            "children": [
+                              "Erste Änderung"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "div",
+                "attrs": {
+                  "style": "position:absolute;left:0px;right:0px;top:0px;height:35px"
+                },
+                "events": {
+                  "click": 1
+                },
+                "children": [
+                  {
+                    "tag": "div",
+                    "attrs": {
+                      "class": "webgis-modal-title has-closebutton"
+                    },
+                    "children": [
+                      "Rückgängig"
+                    ]
+                  },
+                  {
+                    "tag": "div",
+                    "attrs": {
+                      "class": "webgis-modal-close"
+                    },
+                    "events": {
+                      "click": 1
+                    },
+                    "expandos": {
+                      "options": {
+                        "animate": false,
+                        "blocker_alpha": 0.5,
+                        "blockerclickclose": true,
+                        "closebutton": true,
+                        "dock": "left",
+                        "hasBlocker": true,
+                        "height": "80%",
+                        "id": "webgis-undo-modal",
+                        "meta_left_frame": false,
+                        "minWidth": "330px",
+                        "mobile_fullscreen": true,
+                        "onclose": "[function]",
+                        "onload": "[function]",
+                        "slide": false,
+                        "title": "Rückgängig",
+                        "titleButtons": null,
+                        "width": "330px"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.graphics.addPreviewFromJson",
+      "args": [
+        {
+          "type": "p1"
+        }
+      ]
+    },
+    {
+      "call": "map.graphics.removePreview",
+      "args": []
+    },
+    {
+      "call": "map.graphics.removePreview",
+      "args": []
+    },
+    {
+      "call": "webgis.tools.onToolUndoClick",
+      "args": [
+        "[fake:map]",
+        "undo-tool",
+        {
+          "preview": {
+            "type": "p1"
+          },
+          "title": "Erste Änderung"
+        }
+      ]
+    }
+  ]
+}

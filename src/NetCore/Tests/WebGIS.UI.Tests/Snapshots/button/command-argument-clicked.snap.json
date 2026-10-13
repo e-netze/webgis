@@ -1,0 +1,59 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "button",
+        "attrs": {
+          "class": "webgis-button uibutton",
+          "data-value": "v1",
+          "element-target": "default",
+          "id": "btn"
+        },
+        "data": {
+          "_value": "v1"
+        },
+        "events": {
+          "click": 1
+        },
+        "expandos": {
+          "buttoncommand": "export",
+          "buttoncommand_argument": "csv",
+          "buttontype": "servertoolcommand_ext",
+          "map": "[fake:map]"
+        },
+        "children": [
+          "Export"
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "webgis.tools.onButtonClick",
+      "args": [
+        "[fake:map]",
+        {
+          "argument": "csv",
+          "command": "export",
+          "id": "btn",
+          "map": "[fake:map]",
+          "type": "servertoolcommand_ext",
+          "value": "v1"
+        },
+        "[element:button#btn.uibutton.webgis-button]"
+      ]
+    }
+  ]
+}

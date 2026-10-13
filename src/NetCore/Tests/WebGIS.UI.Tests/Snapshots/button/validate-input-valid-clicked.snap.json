@@ -1,0 +1,93 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-validation-container",
+          "element-target": "default"
+        },
+        "children": [
+          {
+            "tag": "input",
+            "attrs": {
+              "class": "webgis-input webgis-validation validated-parameter",
+              "data-value": "abcd",
+              "element-target": "default",
+              "id": "required-input",
+              "type": "text",
+              "value": "abcd",
+              "webgis-validation-minlen": "3",
+              "webgis-validation-required": "true"
+            },
+            "props": {
+              "value": "abcd"
+            },
+            "data": {
+              "errorMessageElement": "[jQuery(1):div.webgis-validation-error]"
+            },
+            "events": {
+              "change": 1,
+              "input": 1
+            }
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-validation-error"
+            }
+          },
+          {
+            "tag": "button",
+            "attrs": {
+              "class": "uibutton-validate-input webgis-button uibutton",
+              "element-target": "default",
+              "id": "btn"
+            },
+            "events": {
+              "click": 1
+            },
+            "expandos": {
+              "buttoncommand": "save",
+              "buttoncommand_argument": "[undefined]",
+              "buttontype": "servertoolcommand",
+              "map": "[fake:map]"
+            },
+            "children": [
+              "Speichern"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "webgis.tools.onButtonClick",
+      "args": [
+        "[fake:map]",
+        {
+          "argument": "[undefined]",
+          "command": "save",
+          "id": "btn",
+          "map": "[fake:map]",
+          "type": "servertoolcommand",
+          "value": "[undefined]"
+        },
+        "[element:button#btn.uibutton.uibutton-validate-input.webgis-button]"
+      ]
+    }
+  ]
+}

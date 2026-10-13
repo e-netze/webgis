@@ -1,0 +1,66 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "button",
+        "attrs": {
+          "class": "custom-css another webgis-button uibutton",
+          "element-target": "default",
+          "id": "my-button",
+          "style": "width:100px"
+        },
+        "events": {
+          "click": 1
+        },
+        "expandos": {
+          "buttoncommand": "save",
+          "buttoncommand_argument": "[undefined]",
+          "buttontype": "servertoolcommand",
+          "map": "[fake:map]"
+        },
+        "children": [
+          "Speichern"
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

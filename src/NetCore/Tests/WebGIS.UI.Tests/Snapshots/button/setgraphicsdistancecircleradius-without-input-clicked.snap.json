@@ -1,0 +1,59 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "button",
+        "attrs": {
+          "class": "webgis-button uibutton",
+          "data-value": "initial",
+          "element-target": "default",
+          "id": "btn"
+        },
+        "data": {
+          "_value": null
+        },
+        "events": {
+          "click": 1
+        },
+        "expandos": {
+          "buttoncommand": "setgraphicsdistancecircleradius",
+          "buttoncommand_argument": "[undefined]",
+          "buttontype": "clientbutton",
+          "map": "[fake:map]"
+        },
+        "children": [
+          "Setzen"
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "webgis.tools.onButtonClick",
+      "args": [
+        "[fake:map]",
+        {
+          "argument": "[undefined]",
+          "command": "setgraphicsdistancecircleradius",
+          "id": "btn",
+          "map": "[fake:map]",
+          "type": "clientbutton",
+          "value": null
+        },
+        "[element:button#btn.uibutton.webgis-button]"
+      ]
+    }
+  ]
+}
