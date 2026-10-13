@@ -1,4 +1,4 @@
-# Change Log - WebGIS V8
+﻿# Change Log - WebGIS V8
 
 All notable changes to WebGIS V8 are documented in this file.
 A compact, admin-oriented summary is available in [release-notes-v8.md](release-notes-v8.md).
@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 ### Fixed
+
+## 8.26.4104
+
+- DataLinq Update: 8.26.4104
+
+### Fixed
+
+- Detailsearch: 0 Length Autocomplete not opens
+  [Issure #518](https://github.com/e-netze/webgis-community/issues/518)
 
 ## 8.26.4103
 

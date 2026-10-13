@@ -2559,9 +2559,11 @@
                                 });
                             };
 
-                            var debounceDelay = $e.attr("data-debounce-delay") ? parseInt($e.attr("data-debounce-delay")) : 0
+                            var debounceDelay = !$e.hasClass("webgis-autocomplete-suppress-debounce") && $e.attr("data-debounce-delay")
+                                ? parseInt($e.attr("data-debounce-delay"))
+                                : 0
 
-                            if (queryFunc, webgis.usability.quickSearch.debounceDelay) {
+                            if (queryFunc, debounceDelay) {
                                 clearTimeout(webgis._autoCompleteDebounceTimer);
 
                                 if (webgis._autoCompleteCurrentRequest && webgis._autoCompleteCurrentRequest.readyState !== 4) {
@@ -2687,7 +2689,10 @@
     };
     this._triggerAutocomplete = function (target) {
         if ($.fn.typeahead) {
-            $(target).trigger('input');
+            $(target)
+                .addClass("webgis-autocomplete-suppress-debounce")
+                .trigger('input')
+                .removeClass("webgis-autocomplete-suppress-debounce");
         }
         else if ($.fn.autocomplete) {
             $(target).autocomplete('search');

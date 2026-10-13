@@ -284,6 +284,7 @@
                     .data('depends_on', item.autocomplete_depends_on)
                     .attr('data-source', webgis.baseUrl + "/rest/services/" + path + "?c=autocomplete&_item=" + item.id)
                     .attr('data-minlength', item.autocomplete_minlength)
+                    .attr('data-debounce-delay', webgis.usability.quickSearch.debounceDelay || 0);
             }
 
             if (item.required === true) {
@@ -294,17 +295,24 @@
                 $input.attr('placeholder', item.examples);
             }
 
+            $input.on("input", function () {
+                // clear dependent field on input
+                _getDependentAutocompletes($(this)).each(function () {
+                    const $e = $(this);
+                    $e.val("");
+                });
+            });
             $input
-                .on('change input autocomplete-selected', function () {
+                .on("change autocomplete-selected", function () {
                     // beim Verlassen/Bestätigen: Autocomplete der abhängigen Felder neu anstoßen
                     _getDependentAutocompletes($(this)).each(function () {
                         const $e = $(this);
 
-                        if ($e.val() == '') {  // if empty, change value to force a refresh of the list items...
-                            $e.val('~');       // dummy request => will not be triggered to server (see webgis.js line ~2500)
+                        if ($e.val() == "") {  // if empty, change value to force a refresh of the list items...
+                            $e.val("~");       // dummy request => will not be triggered to server (see webgis.js line ~2500)
                             webgis._triggerAutocomplete($e);
                         }
-                        $e.val('');
+                        $e.val("");
                         webgis._triggerAutocomplete($e);
                     });
                 });
