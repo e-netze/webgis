@@ -105,17 +105,19 @@ webgis.ui.definePlugin('webgis_timeFilterControl', {
                 }
             });
 
-        o.map.events.on('onaddservice', this.addService, this);
-        o.map.events.on('onremoveservice', this.removeService, this);
+        this._onAddService = this.addService.bind(this);
+        this._onRemoveService = this.removeService.bind(this);
+        o.map.events.on('onaddservice', this._onAddService);
+        o.map.events.on('onremoveservice', this._onRemoveService);
     },
     destroy: function () {
-        //console.log('Destroy time filter'); 
         this.$el.off('.webgis_time_filter_control');
 
-        const o = this.options;
-        o.map.events.off('onaddservice', this.addService);
-        o.map.events.off('onremoveservice', this.removeService);
-
+        const map = this.options.map;
+        if (map && this._onAddService) {
+            map.events.off('onaddservice', this._onAddService);
+            map.events.off('onremoveservice', this._onRemoveService);
+        }
     },
     methods: {
         createEpochControl: function ($parent, options, serviceId) {
@@ -197,21 +199,22 @@ webgis.ui.definePlugin('webgis_timeFilterList', {
             return;
         };
 
-        map.events.on('service-timeepoch-changed',
-            this.refresh,
-            this
-        );
+        this._onTimeEpochChanged = this.refresh.bind(this);
+        map.events.on('service-timeepoch-changed', this._onTimeEpochChanged);
 
         this.refresh();
 
-        map.events.on('onremoveservice', this.removeService, this);
+        this._onRemoveService = this.removeService.bind(this);
+        map.events.on('onremoveservice', this._onRemoveService);
     },
     destroy: function () {
-        //console.log('Destroy time filter list'); 
         this.$el.off('.webgis_time_filter_list');
 
         const map = this.options.map;
-        map.events.off('onremoveservice', this.removeService);
+        if (map && this._onTimeEpochChanged) {
+            map.events.off('service-timeepoch-changed', this._onTimeEpochChanged);
+            map.events.off('onremoveservice', this._onRemoveService);
+        }
     },
     methods: {
         refresh: function () {

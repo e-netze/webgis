@@ -12,24 +12,27 @@ webgis.ui.definePlugin("webgis_visfilterCombo", {
 
         this.$el.addClass('webgis-visfilter-combo');
         $("<option value='#'></option>").text("--- " + webgis.l10n.get("select-filter") + " ---").appendTo(this.$el);
-        if (o.map !== null) {
+        if (o.map) {
             for (var serviceId in o.map.services) {
                 var service = o.map.services[serviceId];
                 this.addService({}, service);
             }
+
+            this._onAddService = this.addService.bind(this);
+            this._onRemoveService = this.removeService.bind(this);
+            o.map.events.on('onaddservice', this._onAddService);
+            o.map.events.on('onremoveservice', this._onRemoveService);
         }
-        o.map.events.on('onaddservice', this.addService);
-        o.map.events.on('onremoveservice', this.removeService);
         if (o.val) {
             this.$el.val(o.val);
         }
     },
     destroy: function () {
-        console.log("Destroy visfilter combo");
-
-        const o = this.options;
-        o.map.events.off('onaddservice', this.addService);
-        o.map.events.off('onremoveservice', this.removeService);
+        const map = this.options.map;
+        if (map && this._onAddService) {
+            map.events.off('onaddservice', this._onAddService);
+            map.events.off('onremoveservice', this._onRemoveService);
+        }
     },
     methods: {
         addService: function (e, service) {
@@ -62,12 +65,12 @@ webgis.ui.definePlugin("webgis_visfilterCombo", {
         },
         removeService: function (e, service) {
             const $ = this.$;
-            //if (!$) return;
+            if (!service)
+                return;
 
-            this.$el.find('optgroup').each(function (i, e) {
-                var groupService = $(e).data('service');
-                if (groupService?.id === service.id)
-                    $(e).remove();
+            this.$el.find('optgroup').each(function (i, group) {
+                if (group.service?.id === service.id)
+                    $(group).remove();
             });
         }
     }
@@ -85,15 +88,18 @@ webgis.ui.definePlugin("webgis_visfilterList", {
             return;
         };
 
-        map.events.on('visfilters-changed',
-            this.refresh,
-            this
-        );
+        this._onVisFiltersChanged = this.refresh.bind(this);
+        map.events.on('visfilters-changed', this._onVisFiltersChanged);
 
         this.refresh();
     },
     destroy: function () {
         this.$el.off('.webgis_visfilter_list');
+
+        const map = this.options.map;
+        if (map && this._onVisFiltersChanged) {
+            map.events.off('visfilters-changed', this._onVisFiltersChanged);
+        }
     },
     methods: {
         refresh: function () {
