@@ -1,4 +1,4 @@
-# Release Notes - WebGIS V8
+﻿# Release Notes - WebGIS V8
 
 Compact, admin-oriented summary of the changes in WebGIS V8: upgrade notes, new features and
 configuration options, and fixed issues. For the full technical details see
@@ -12,6 +12,18 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 ### Upgrade notes
 ### New
 ### Fixed
+
+## 8.26.4104
+
+- Detailsearch: 0 Length Autocomplete not opens
+  [Issure #518](https://github.com/e-netze/webgis-community/issues/518)
+
+## 8.26.4103
+
+### Fixed
+
+- ArcGIS Server: layers without pagination support (`supportsPagination: false`) no longer fail with "Pagination is not supported"; they are queried with a single request (max. `maxRecordCount` results).
+  [Issue #517](https://github.com/e-netze/webgis-community/issues/517)
 
 ## 8.26.4102
 

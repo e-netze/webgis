@@ -250,8 +250,8 @@ public class MapService : IMapService2,
 
                     #region Layers
 
-                    // Temporäre Liste => Falls Init mehrfach/gleichzeitg aufgerufen wird
-                    // Am schluss dann an LayerCollection übergeben
+                    // Temporï¿½re Liste => Falls Init mehrfach/gleichzeitg aufgerufen wird
+                    // Am schluss dann an LayerCollection ï¿½bergeben
                     List<Layer> layers = new List<Layer>();
 
                     foreach (var jsonLayer in jsonLayers.Layers)
@@ -302,6 +302,7 @@ public class MapService : IMapService2,
                                 HasZ = jsonLayer.HasZ,
                                 Visible = jsonLayer.DefaultVisbilityIncludesGroups(), // .DefaultVisibility
                                 HasAttachments = jsonLayer.HasAttachments,
+                                SupportsPagination = jsonLayer.SupportsPaginationResolved,
                                 TimeInfo = jsonLayer?.TimeInfo is not null
                                     ? new LayerTimeInfo(
                                         jsonLayer.TimeInfo.TimeExtent,
@@ -613,7 +614,7 @@ public class MapService : IMapService2,
                             {
                                 mapLayerId = int.Parse(layer.ID)
                             };
-                            dynamicLayer.definitionExpression = FeatureLayer.UrlEncodeWhere(where);  // Schreibweise nicht mehr gültig ab AGS 10.5
+                            dynamicLayer.definitionExpression = FeatureLayer.UrlEncodeWhere(where);  // Schreibweise nicht mehr gï¿½ltig ab AGS 10.5
                             dynamicLayers.Add(dynamicLayer);
                         }
                     }
