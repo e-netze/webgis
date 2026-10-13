@@ -749,6 +749,7 @@
             //   type.formelement  true  => mark a surrounding .webgis-form-container dirty on change/keyup
             //   type.properties   false => no elementProperties at all (id, css, style, ... are ignored)
             //   type.afterinsert  function(map, $newElement, element, options), called after the child elements are inserted
+            //   type              function(map, $newElement, element, options) => optional jQuery element replacing $newElement
             const tagName = webgis.ui.builder[element.type + ".tagname"] || "div";
             let attributes = webgis.ui.builder[element.type + ".attributes"];
             if (typeof attributes === 'function') {
@@ -761,207 +762,11 @@
             if (webgis.ui.builder[element.type + ".formelement"] === true) {
                 $newElement.add_webgis_form_element_events();
             }
-            webgis.ui.builder[element.type](map, $newElement, element, options);
-        }
-        else if (element.type === 'menu') {
-            $newElement = $("<ul style='list-style:none;padding:0px;' class='webgis-toolbox-tool-item-group-details'></ul>")
-                .appendTo($parent);
-            if (element.header) {
-                $("<li><h2>" + element.header + "</h2></li>").appendTo($newElement);
+            // a builder may return a different element (e.g. an inner list), which then gets the events and child elements
+            const $builderElement = webgis.ui.builder[element.type](map, $newElement, element, options);
+            if ($builderElement instanceof $ && $builderElement.length > 0) {
+                $newElement = $builderElement;
             }
-            if (element.collapsable) {
-                $newElement.addClass('collapsable');
-            }
-        }
-        else if (element.type === 'menuitem') {
-            var imgSrc = element.icon_large || element.icon ? webgis.css.imgResource(element.icon_large || element.icon) : webgis.css.imgResource('enter-26.png', 'ui');
-
-            var top = -1;
-            
-            $newElement = $("<li " + elementProperties(element) + "><div>" + element.text + "</div></li>")
-                .addClass('webgis-toolbox-tool-item')
-                .css({
-                    padding: element.icon_large ? '36px 4px 4px 105px' : '12px 4px 12px 32px'
-                })
-                .appendTo($parent);
-
-            if (element.text2) {
-                $("<div>")
-                    .addClass('text2')
-                    .text(element.text2)
-                    .appendTo($newElement);
-            }
-
-            if (element.subtext) {
-                $("<div>")
-                    .addClass('subtext')
-                    .text(element.subtext)
-                    .appendTo($newElement);
-            }
-
-            if (imgSrc.indexOf('data:') == 0) {
-                $newElement.css({
-                    position: 'relative'
-                });
-                $("<img src='" + imgSrc + "'>")
-                    .css({
-                        position: 'absolute',
-                        left: 3, top: 8, maxHeight: 22
-                    })
-                    .appendTo($newElement)
-            } else {
-                $newElement.css({
-                    backgroundImage: 'url(' + imgSrc + ')',
-                    backgroundPosition: '2px 10px',
-                    backgroundSize: 'auto 26px',
-                    backgroundRepeat: 'no-repeat',
-                });
-            }
-
-            if (element.icon_large) {
-                $newElement.css({
-                    backgroundSize: '90px',
-                    height: '110px',
-                    whiteSpace: 'normal'
-                });
-            }
-
-            if (element.removable === true) {
-                $("<div>")
-                    .addClass('remove remove-element')
-                    .text('✖')
-                    .appendTo($newElement);
-            }
-
-            if (element.show_checkbox) {
-                var p = element.value.split(':');
-                if (p.length === 2) {  // query
-                    var service = map.getService(p[0]);
-                    if (service) {
-                        var query = service.getQuery(p[1]);
-                        if (query && query.associatedlayers && query.associatedlayers.length > 0) {
-                            var layers = $.map(query.associatedlayers, function (l) { return l.id });
-                            var hasVisibleLayers = service.checkLayerVisibility(layers) !== 0;
-
-                            $("<div>")
-                                .data('service', service)
-                                .data('layers', layers)
-                                .addClass('webgis-checkbox')
-                                .css('backgroundImage', 'url(' + webgis.css.imgResource(hasVisibleLayers ? 'check1.png' : 'check0.png', 'toc') + ')')
-                                .appendTo($newElement
-                                    .addClass('checkable')
-                                    .css({
-                                        paddingLeft: '70px',
-                                        backgroundPosition: '36px center'
-                                    })
-                                )
-                                .click(function (e) {
-                                    e.stopPropagation();
-
-                                    var service = $(this).data('service');
-                                    var layers = $(this).data('layers');
-                                    var hasVisibleLayers = service.checkLayerVisibility(layers) !== 0;
-
-                                    service.setLayerVisibilityDelayed(layers, hasVisibleLayers ? false : true);
-                                    $(this).css('backgroundImage', 'url(' + webgis.css.imgResource(hasVisibleLayers ? 'check0.png' : 'check1.png', 'toc') + ')');
-                                });
-                        }
-                    }
-                }
-            }
-
-            appendCallback($newElement, element, options);
-
-            if (element.highlight_feature) {
-                if (typeof element.highlight_feature === 'string') {
-                    element.highlight_feature = webgis.$.parseJSON(element.highlight_feature);
-                }
-
-                $newElement
-                    .data('highlight-feature', element.highlight_feature)
-                    .mouseenter(function (e) {
-                        //console.log('highlight', $(this).data('highlight-feature')) 
-                        map.graphics.addPreviewFromJson($(this).data('highlight-feature').features[0].geometry);
-                    })
-                    .mouseleave(function (e) {
-                        //console.log('removehight');
-                        map.graphics.removePreview();
-                    }).
-                    click(function (e) {
-                        map.graphics.removePreview();
-                    });
-            }
-
-            if ($parent.hasClass('collapsable')) {
-                
-            }
-        }
-        else if (element.type === 'checkable-div') {
-            $newElement = $("<div " + elementProperties(element, options) + "></div>")
-                .addClass('webgis-checkable-div')
-                .appendTo($parent)
-                .click(function (e) {
-                    e.stopPropagation();
-
-                    var $this = $(this);
-                    $this.addClass('checked');
-                    $this
-                        .children('.webgis-checkable-div-status')
-                        .val('checked');
-                });
-
-            $("<div>")
-                .addClass('checkbox')
-                .appendTo($newElement)
-                .click(function (e) {
-                    e.stopPropagation();
-
-                    var $parent = $(this).parent();
-                    $parent.toggleClass('checked');
-                    $parent
-                        .children('.webgis-checkable-div-status')
-                        .val($parent.hasClass('checked') ? 'checked' : '');
-                });
-            var $valueElement = $("<input class='webgis-checkable-div-status' type='hidden' " + elementProperties(element, options) + "/>")
-                .val($newElement.hasClass('checked') ? 'checked' :  '')
-                .appendTo($newElement);
-
-            $newElement.data('webgis-value-element', $valueElement);
-        }
-        else if (element.type === 'option-list') {
-            var $container = $("<div>")
-                .addClass('webgis-ui-option-list-holder')
-                .appendTo($parent);
-
-            $("<input type='hidden'" + elementProperties(element, options) + " />")
-                .addClass('webgis-ui-option-list-value')
-                .appendTo($container);
-
-            $newElement = $("<ul>")
-                .addClass('webgis-ui-option-list')
-                .appendTo($container);
-                
-        }
-        else if (element.type === 'option-list-item') {
-            $newElement = $("<li>")
-                .addClass('webgis-ui-option-list-item')
-                .data('value', element.value)
-                .appendTo($parent);
-
-            $newElement.click(function (e) {
-                e.stopPropagation();
-
-                $(this)
-                    .closest('.webgis-ui-option-list-holder')
-                    .find('.webgis-ui-option-list-value')
-                    .val($(this).data('value'));
-
-                $(this).parent().children('.selected').removeClass('selected');
-                $(this).addClass('selected');
-            });
-
-            if ($parent.children('.webgis-ui-option-list-item').length === 1)
-                $newElement.trigger('click');
         }
         else if (element.type === 'querycombo') {
             $newElement = $("<select " + elementProperties(element, options) + "></select>").appendTo($parent);
@@ -1136,58 +941,6 @@
                     $select.select2({ width: '100%' });
                 }, $newElement);
             }
-        }
-        else if (element.type === 'optionscontainer') {
-            $newElement = $("<div " + elementProperties(element, options) + ">").appendTo($parent).addClass('webgis-ui-optionscontainer');
-            if (element.allow_null_values === true) {
-                $newElement.addClass('allow-null-values');
-            }
-            $newElement.get(0).value = element.value;
-        }
-        else if (element.type === 'click-toggle')
-        {
-            $newElement = $newElement = $("<div " + elementProperties(element, options) + ">")
-                .appendTo($parent)
-                .webgis_clickToggle({ toggleStyle: element.togglestyle.split(','), toggleStyleValue: element.togglestylevalue.split(','), resetSiblings: element.resetsiblings });
-        }
-        else if (element.type === 'drop-list') {
-            $newElement = $("<div " + elementProperties(element, options) + ">").attr('id', element.id + "_droplist").attr('data-id', element.id).appendTo($parent).data('map', options.map).addClass('webgis-ui-droplist');
-            $("<input type='hidden' " + elementProperties(element, options) + "/>").appendTo($parent).val(element.value);
-            $newElement
-                .on('dragover', function (e) {
-                e.preventDefault();
-            })
-                .on('drop', function (e) {
-                    e.preventDefault();
-                    var map = $(this).data('map');
-                    var values = e.originalEvent.dataTransfer.getData('text').split(';');
-                    for (var v in values) {
-                        var value = values[v];
-                        if ($(this).children("div[data-dropvalue='" + value + "']").length > 0)
-                            continue;
-                        var $item = $("<div><span>" + value + "</span></div>").addClass('webgis-ui-droplist-item').attr('data-dropvalue', value).appendTo($(this));
-                        map.events.fire('ondrop-add', map, { id: $(this).attr('data-id'), value: value });
-                        $("<div>X</div>").addClass('webgis-ui-droplist-item-x').appendTo($item)
-                            .click(function () {
-                            var $list = $(this).closest('.webgis-ui-droplist');
-                            var map = $list.data('map');
-                            map.events.fire('ondrop-remove', map, { id: $(this).closest('.webgis-ui-droplist').attr('data-id'), value: $(this).closest('.webgis-ui-droplist-item').attr('data-dropvalue') });
-                            $(this).closest('.webgis-ui-droplist-item').remove();
-                            $list.data('calcVal')($list);
-                        });
-                    }
-                    $(this).data('calcVal')($(this));
-                })
-                .data('calcVal', function ($elem) {
-                var $target = $elem.parent().children("input[id='" + $elem.attr('data-id') + "']");
-                var val = '';
-                $elem.children('.webgis-ui-droplist-item').each(function () {
-                    if (val !== '')
-                        val += ',';
-                    val += $(this).attr('data-dropvalue');
-                });
-                $target.val(val);
-            });
         }
         else if (element.type === 'upload-file') {
             $newElement = $("<button>" + (element.text ? element.text : webgis.l10n.get("file-upload")) + "</button>").addClass('webgis-button').appendTo($parent)
@@ -1393,27 +1146,6 @@
             if (typeof webgis.ui.builder[element.type + ".afterinsert"] === 'function') {
                 webgis.ui.builder[element.type + ".afterinsert"](map, $newElement, element, options);
             }
-            if (element.type === 'optionscontainer') {
-                var newElement = $newElement.get(0);
-                if (!newElement.value && !$newElement.hasClass('allow-null-values')) {
-                    var defaultValue = null;
-                    for (var d in webgis.usability.optionContainerDefault) {
-                        var ocd = webgis.usability.optionContainerDefault[d];
-
-                        if (ocd.id === element.id) {
-                            defaultValue = ocd.value;
-                        }
-                    }
-                    if (defaultValue && $newElement.children("[data-value='" + defaultValue + "']").length === 1) {
-                        $newElement.children("[data-value='" + defaultValue + "']").trigger('click');
-                    } else {
-                        $newElement.children(':first-child').trigger('click');
-                    }
-                }
-                else {
-                    newElement.setValue(newElement.value);
-                }
-            }
             if (element.type === 'table') {
                 if ($newElement.hasClass('webgis-tool-parameter-persistent')) {
                     var elementValue = webgis.tools.getElementValue($newElement.get(0));
@@ -1434,75 +1166,6 @@
                 });
             }
         }
-    };
-    var appendCallback = function ($newElem, element, options) {
-        if (!element || !element.callback)
-            return;
-        if (options.map && element.callback.tool) {
-            element.callback.tool = options.map.getTool(element.callback.tool.id) || element.callback.tool; // assign original tool, if possible
-        }
-       
-        $newElem
-            .data('_callback', element.callback)
-            .data('_type', element.type)
-            .data('_value', element.value)
-            .data('_map', options.map)
-            .data('_event', options.event)
-            .click(function (e) {
-                //console.log('newElement.click', this);
-                var $this = $(this);
-
-                if ($this.data('_type') === 'menuitem') {
-                    e.stopPropagation();
-
-                    var $menu = $(this).closest('ul');
-                    if ($menu.hasClass('collapsable')) {
-                        var collapsed = $menu.hasClass('collapsed');
-                        $menu.toggleClass('collapsed');
-
-                        if (collapsed === true) {
-                            options.map.events.fire('ui-builder-collapsable-expanded', options.map, { $element: $menu });
-                            return;
-                        } else {
-                            $menu.children().removeClass('selected-collapsed');
-                            $(this).addClass('selected-collapsed');
-                        }
-                    }
-                }
-                var cb = $this.data('_callback');
-                var val = $this.data('_value');
-                var custom = {};
-
-                custom[$this.data('_type') + "-value"] = val;
-                if ($(this).attr('data-item-command'))
-                    custom[$this.data('_type') + "-item-command"] = $(this).attr('data-item-command');
-
-                if (cb.type === 'toolevent' && cb.tool) {
-                    webgis.tools.sendToolRequest($this.data('_map'), cb.tool, cb.type, $this.data('_event'), custom);
-                }
-                else if (cb.type === 'servertoolcommand') {
-                    webgis.tools.onButtonClick($this.data('_map'), { command: cb.command, type: 'servertoolcommand', id: cb.tool.id, map: $this.data('_map') }, this, null, custom);
-                }
-                else if (cb.type === 'servertoolcommand_ext') {
-                    webgis.tools.onButtonClick($this.data('_map'), { command: cb.command, type: 'servertoolcommand_ext', id: cb.tool.id, map: $this.data('_map') }, this, null, custom);
-                }
-
-                if ($this.data('_type') === 'menuitem') {
-                    var $menu = $(this).closest('ul');
-
-                    if ($menu.attr('element-target') === 'modaldialog') {
-                        options.map.ui.webgisContainer().webgis_modal('close');
-                    }
-                }
-            });
-        $newElem.children('.remove-element')
-            .click(function (e) {
-                e.stopPropagation();
-
-                var $parent = $(this).parent();
-                $parent.attr('data-item-command', 'remove-element').trigger('click');
-                $parent.remove();
-            });
     };
     var elementProperties = function (element, options) {
         var css = element.css || '';
@@ -1564,6 +1227,10 @@
 
         return ret;
     };
+    // used by builder plugins, which add the element properties to additional elements (e.g. hidden value inputs)
+    webgis.ui = webgis.ui || {};
+    webgis.ui.elementProperties = elementProperties;
+
     var appendElementEvents = function (map, tool, element, $newElement) {
         if (!$newElement || $newElement.length === 0)
             return;
@@ -1586,12 +1253,6 @@
         }
         else if ($newElement.hasClass('webgis-tool-parameter-persistent')) {
             newElement.map = map;
-            if (element.type === 'optionscontainer') {
-                newElement.onChange = function () {
-                    this.map.setPersistentToolParameter(this.map.getActiveTool(), this.id, this.value);
-                };
-                newElement.value = (map.getPersistentToolParameter(map.getActiveTool(), newElement.id)) || newElement.value;
-            }
             if (element.type === 'table') {
                 // do nothing
             }
@@ -1601,21 +1262,6 @@
                 });
             }
         }
-        if (element.type === 'optionscontainer') {
-            newElement.setValue = function (val) {
-                $(this).children().each(function (i, e) {
-                    var $e = $(e);
-
-                    if ($e.data('_value') == newElement.value ||
-                        ( // if(value is an Object compare the id of this object... (ie. Redining Symbol Selector...)
-                        $e.data('_value') && $e.data('_value').id && newElement.value && newElement.value.id && $e.data('_value').id === newElement.value.id)) {
-                        $e.trigger('click');
-                        return false;
-                    }
-                });
-            };
-        }
-
         if (element.has_validation && $.fn.webgis_validation) {
             $newElement.webgis_validation({
                 minlen: element.validation_minlen,

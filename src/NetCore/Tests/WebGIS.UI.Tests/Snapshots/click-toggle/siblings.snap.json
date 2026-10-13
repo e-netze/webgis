@@ -1,0 +1,148 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-click-toggle toggled",
+          "element-target": "default",
+          "id": "t1",
+          "style": "background-color: red; color: white;"
+        },
+        "data": {
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "options": {
+            "resetSiblings": false,
+            "toggleStyle": [
+              "background-color",
+              "color"
+            ],
+            "toggleStyleValue": [
+              "red",
+              "white"
+            ]
+          },
+          "webgis_clickToggle": "[object Ctor]"
+        },
+        "events": {
+          "click.webgis_click_toggle": 1
+        },
+        "children": [
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-label",
+              "element-target": "default"
+            },
+            "children": [
+              "t1"
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-click-toggle toggled",
+          "element-target": "default",
+          "id": "t2",
+          "style": "background-color: red; color: white;"
+        },
+        "data": {
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "options": {
+            "resetSiblings": false,
+            "toggleStyle": [
+              "background-color",
+              "color"
+            ],
+            "toggleStyleValue": [
+              "red",
+              "white"
+            ]
+          },
+          "webgis_clickToggle": "[object Ctor]"
+        },
+        "events": {
+          "click.webgis_click_toggle": 1
+        },
+        "children": [
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-label",
+              "element-target": "default"
+            },
+            "children": [
+              "t2"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

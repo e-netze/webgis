@@ -1,0 +1,39 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    }
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "webgis.tools.onButtonClick",
+      "args": [
+        "[fake:map]",
+        {
+          "command": "cmd",
+          "id": "callback-tool",
+          "map": "[fake:map]",
+          "type": "servertoolcommand"
+        },
+        "[element:li#i1.webgis-toolbox-tool-item]",
+        null,
+        {
+          "menuitem-value": "[undefined]"
+        }
+      ]
+    },
+    {
+      "call": "map.ui.webgisContainer",
+      "args": []
+    }
+  ]
+}

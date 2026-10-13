@@ -26,11 +26,13 @@ builder plugins (`webgis.ui.builder[type]`), secured by browser-based characteri
 | `ToolUiDTO` (`src/NetStandard/E.Standard.Api.App/DTOs/Events/ToolUiDTO.cs`) | Response payload with `elements`, `setters`, `append` |
 | `GenericPolymorphicConverter<T>` (`src/NetCore/Web/Api/AppCode/Json/Converters/GenericPolymorphicConverter.cs`) | Serializes `IUIElement`/`IUISetter` with their runtime type (`UIElementConverter`, `UISetterConverter`) |
 | `JsonSerializerOptionsExtensions.AddServerDefaults` (`src/NetCore/Web/Api/AppCode/Extensions/JsonSerializerOptionsExtensions.cs`) | Registers these converters at API startup (`Startup.cs`) |
-| `webgis_uibuilder.js` (`src/NetCore/Web/Api/wwwroot/scripts/api/ui/webgis_uibuilder.js`) | `$.fn.webgis_uibuilder`: `initUI` (target routing, setters, cascading selects, dependencies), private `insertElement` (per-element DOM), helpers `elementProperties`, `appendCallback`, `appendElementEvents` |
+| `webgis_uibuilder.js` (`src/NetCore/Web/Api/wwwroot/scripts/api/ui/webgis_uibuilder.js`) | `$.fn.webgis_uibuilder`: `initUI` (target routing, setters, cascading selects, dependencies), private `insertElement` (per-element DOM), helpers `elementProperties` (also exposed as `webgis.ui.elementProperties` for builders), `appendElementEvents` |
 | `webgis.ui.plugins.js` (`.../scripts/api/ui/webgis.ui.plugins.js`) | Defines the `webgis.ui.builder` registry and `webgis.ui.definePlugin` |
-| `webgis.ui.plugins.general.js` (`.../scripts/api/ui/`) | Builders `label`, `paragraph`, `title` |
+| `webgis.ui.plugins.general.js` (`.../scripts/api/ui/`) | Builders `label`, `paragraph`, `title`; shared helper `webgis.ui.appendCallback` (binds `element.callback` - tool event / server command - to the element click) |
 | `webgis.ui.plugins.inputs.js` (`.../scripts/api/ui/`) | Builders `input-text`, `input-textarea`, `input-date`, `input-number`, `hidden`, `input-autocomplete` |
 | `webgis.ui.plugins.buttons.js` (`.../scripts/api/ui/`) | Builders `button`, `imagebutton`, `buttongroup`, `undobutton` |
+| `webgis.ui.plugins.menus.js` (`.../scripts/api/ui/`) | Builders `menu`, `menuitem` (uses the shared `webgis.ui.appendCallback` from `webgis.ui.plugins.general.js`) |
+| `webgis.ui.plugins.lists.js` (`.../scripts/api/ui/`) | Builders `checkable-div`, `option-list`, `option-list-item`, `optionscontainer`, `click-toggle`, `drop-list`; jQuery plugin `webgis_clickToggle` |
 | `webgis.ui.plugins.visfilter.js` (`.../scripts/api/ui/`) | Builders `visfiltercombo`, `visfilterlist` |
 | `bundleconfig.json` (`src/NetCore/Web/Api/bundleconfig.json`) | Script order of `api.min.js` and `api-ui.min.js` |
 | `Views/Map/Index.cshtml`, `Views/MapBuilder/Index.cshtml` (`src/NetCore/Web/Portal/`) | Development script lists (must list new plugin files too) |
@@ -97,6 +99,8 @@ No runtime configuration; the builder API is internal to the viewer.
   - `type.formelement` - `true` adds `add_webgis_form_element_events()` (form-container dirty tracking)
   - `type.properties` - `false` skips `elementProperties` completely (`buttongroup` ignores id/css/style)
   - `type.afterinsert` - `fn(map, $el, element, options)` called after the child elements are inserted
+  - return value of the builder - an optional jQuery element that replaces `$newElement` (events, `element-target`,
+    child elements, `afterinsert` then apply to it; `option-list` returns its inner `ul`)
   A `type.create` hook (builder creates the element itself) is only added when a package really needs it.
 - **Characterization tests first:** the existing behaviour is not specified anywhere, so the current
   output (DOM + events + map calls) is recorded as golden master before code is moved.
@@ -115,7 +119,9 @@ No runtime configuration; the builder API is internal to the viewer.
 - A builder registered in `webgis.ui.builder` wins over the legacy if-branch for the same type -
   remove the old branch in the same change.
 - `elementProperties(element, options)` produces id/class/style/data attributes; builders get an
-  already created element and must not duplicate those attributes.
+  already created element and must not duplicate those attributes. Builders that need the same
+  attributes on an additional element (hidden value inputs of `checkable-div`, `option-list`, `drop-list`) use
+  `webgis.ui.elementProperties(element, options)`.
 - Serializing `IUIElement[]` with plain System.Text.Json drops derived properties (e.g. `label`);
   the API relies on `AddServerDefaults()` - tests use `UIJson` for the same reason.
 - Tests: `Microsoft.Playwright.MSTest.v4` is required for MSTest 4; after package updates run
@@ -131,7 +137,7 @@ No runtime configuration; the builder API is internal to the viewer.
 ## Extension points
 
 - New builder: register `webgis.ui.builder["<type>"] = (map, $newElement, element, options) => {...}`
-  (optional hooks `"<type>.tagname"`, `.attributes`, `.toolid`, `.formelement`, `.properties`, `.afterinsert`)
+  (optional hooks `"<type>.tagname"`, `.attributes`, `.toolid`, `.formelement`, `.properties`, `.afterinsert`, optional return value)
   in a themed `webgis.ui.plugins.<topic>.js` file.
 - New test: derive from `UIBuilderPageTest`, `BuildAsync(...)` then `AssertSnapshotAsync("<type>", "<variant>")`;
   configure the fake map via the `setup` argument (`h => h.returns('map.<path>', value)`).
@@ -143,3 +149,5 @@ No runtime configuration; the builder API is internal to the viewer.
 | `9.26.4104` | Characterization test infrastructure (WebGIS.UI.Tests) for the UI builder | uncommitted |
 | `9.26.4104` | Input elements moved to `webgis.ui.plugins.inputs.js`; builder hooks `attributes`, `toolid`, `formelement` | uncommitted |
 | `9.26.4104` | Button elements moved to `webgis.ui.plugins.buttons.js`; builder hooks `properties`, `afterinsert` | uncommitted |
+| `9.26.4104` | Menu elements moved to `webgis.ui.plugins.menus.js`; `appendCallback` became the shared helper `webgis.ui.appendCallback` (`general.js`) | uncommitted |
+| `9.26.4104` | List elements (and `webgis_clickToggle`) moved to `webgis.ui.plugins.lists.js`; builder return value hook, `webgis.ui.elementProperties` | uncommitted |

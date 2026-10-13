@@ -1,0 +1,74 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "li",
+        "attrs": {
+          "class": "webgis-toolbox-tool-item checkable",
+          "data-value": "service1:query1",
+          "element-target": "default",
+          "id": "i1",
+          "style": "padding: 12px 4px 12px 70px; background-image: url(\"https://webgis.test/rest/imageresource/enter-26~png?sub=ui&company=undefined&colorscheme=default&v={{currentJavascriptVersion}}\"); background-position: 36px center; background-size: auto 26px; background-repeat: no-repeat;"
+        },
+        "children": [
+          {
+            "tag": "div",
+            "children": [
+              "Abfrage"
+            ]
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-checkbox",
+              "style": "background-image: url(\"https://webgis.test/rest/imageresource/check1~png?sub=toc&company=undefined&colorscheme=default&v={{currentJavascriptVersion}}\");"
+            },
+            "data": {
+              "layers": [
+                "l1",
+                "l2"
+              ],
+              "service": "[fake:service]"
+            },
+            "events": {
+              "click": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "service.checkLayerVisibility",
+      "args": [
+        [
+          "l1",
+          "l2"
+        ]
+      ]
+    },
+    {
+      "call": "service.setLayerVisibilityDelayed",
+      "args": [
+        [
+          "l1",
+          "l2"
+        ],
+        true
+      ]
+    }
+  ]
+}

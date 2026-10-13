@@ -1,0 +1,78 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "custom-css webgis-ui-droplist",
+          "data-id": "drop",
+          "data-value": "x,y",
+          "element-target": "default",
+          "id": "drop_droplist",
+          "style": "width:100px"
+        },
+        "data": {
+          "calcVal": "[function]",
+          "map": "[fake:map]"
+        },
+        "events": {
+          "dragover": 1,
+          "drop": 1
+        }
+      },
+      {
+        "tag": "input",
+        "attrs": {
+          "class": "custom-css",
+          "data-value": "x,y",
+          "id": "drop",
+          "style": "width:100px",
+          "type": "hidden",
+          "value": "x,y"
+        },
+        "props": {
+          "value": "x,y"
+        }
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

@@ -109,53 +109,6 @@ webgis.ui.showLayerNotVisibleNotification = function (service, query, $target) {
     }
 };
 
-// WebGIS Click Toggle Plugin
-// A UI plugin that toggles CSS styles and classes on an element when clicked.
-// Supports resetting sibling toggles and custom style changes for interactive controls.
-webgis.ui.definePlugin('webgis_clickToggle', {
-    defaults: {
-        toggleStyle: [],
-        toggleStyleValue: [],
-        resetSiblings: false
-    },
-
-    init: function () {
-        const $ = this.$;
-
-        this.$el
-            .addClass('webgis-click-toggle')
-            .data('options', this.options)
-            .on('click.webgis_click_toggle', (e) => {
-                e.stopPropagation();
-                const options = this.$el.data('options');
-                if (options.toggleStyle && options.toggleStyleValue !== null) {
-                    if (this.$el.hasClass('toggled')) {
-                        this.$el.removeClass('toggled');
-                        for (let i = 0; i < options.toggleStyle.length; i++) {
-                            this.$el.css(options.toggleStyle[i], '');
-                        }
-                    } else {
-                        if (options.resetSiblings === true) {
-                            let $toggledSiblings = this.$el.siblings('.webgis-click-toggle.toggled').removeClass('toggled');
-                            for (let i = 0; i < options.toggleStyle.length; i++) {
-                                $toggledSiblings.css(options.toggleStyle[i], '');
-                            }
-                        }
-                        for (let i = 0; i < Math.min(options.toggleStyle.length, options.toggleStyleValue.length); i++) {
-                            this.$el.css(options.toggleStyle[i], options.toggleStyleValue[i]);
-                        }
-                        this.$el.addClass('toggled');
-                    }
-                }
-            });
-    },
-    destroy: function () {
-        //console.log('Destroy click toggle'); 
-        this.$el.off('.webgis_click_toggle');
-    }
-});
-
-
 // WebGIS Card Plugin
 // A simple card container with optional title
 webgis.ui.definePlugin('webgis_card', {
@@ -499,3 +452,75 @@ webgis.ui.definePlugin("webgis_ui_element", {
         this.$el.attr({ title: tooltip, alt: tooltip });
     }
 });
+
+// Binds element.callback (toolevent | servertoolcommand | servertoolcommand_ext) to the click event of a UI builder element.
+// Used by menuitem; generic enough for other element types (type-specific behaviour is keyed on element.type).
+webgis.ui.appendCallback = function ($newElem, element, options) {
+    const $ = webgis.$ || jQuery;
+    if (!element || !element.callback)
+        return;
+    if (options.map && element.callback.tool) {
+        element.callback.tool = options.map.getTool(element.callback.tool.id) || element.callback.tool; // assign original tool, if possible
+    }
+
+    $newElem
+        .data('_callback', element.callback)
+        .data('_type', element.type)
+        .data('_value', element.value)
+        .data('_map', options.map)
+        .data('_event', options.event)
+        .click(function (e) {
+            var $this = $(this);
+
+            if ($this.data('_type') === 'menuitem') {
+                e.stopPropagation();
+
+                var $menu = $(this).closest('ul');
+                if ($menu.hasClass('collapsable')) {
+                    var collapsed = $menu.hasClass('collapsed');
+                    $menu.toggleClass('collapsed');
+
+                    if (collapsed === true) {
+                        options.map.events.fire('ui-builder-collapsable-expanded', options.map, { $element: $menu });
+                        return;
+                    } else {
+                        $menu.children().removeClass('selected-collapsed');
+                        $(this).addClass('selected-collapsed');
+                    }
+                }
+            }
+            var cb = $this.data('_callback');
+            var val = $this.data('_value');
+            var custom = {};
+
+            custom[$this.data('_type') + "-value"] = val;
+            if ($(this).attr('data-item-command'))
+                custom[$this.data('_type') + "-item-command"] = $(this).attr('data-item-command');
+
+            if (cb.type === 'toolevent' && cb.tool) {
+                webgis.tools.sendToolRequest($this.data('_map'), cb.tool, cb.type, $this.data('_event'), custom);
+            }
+            else if (cb.type === 'servertoolcommand') {
+                webgis.tools.onButtonClick($this.data('_map'), { command: cb.command, type: 'servertoolcommand', id: cb.tool.id, map: $this.data('_map') }, this, null, custom);
+            }
+            else if (cb.type === 'servertoolcommand_ext') {
+                webgis.tools.onButtonClick($this.data('_map'), { command: cb.command, type: 'servertoolcommand_ext', id: cb.tool.id, map: $this.data('_map') }, this, null, custom);
+            }
+
+            if ($this.data('_type') === 'menuitem') {
+                var $menu = $(this).closest('ul');
+
+                if ($menu.attr('element-target') === 'modaldialog') {
+                    options.map.ui.webgisContainer().webgis_modal('close');
+                }
+            }
+        });
+    $newElem.children('.remove-element')
+        .click(function (e) {
+            e.stopPropagation();
+
+            var $parent = $(this).parent();
+            $parent.attr('data-item-command', 'remove-element').trigger('click');
+            $parent.remove();
+        });
+};

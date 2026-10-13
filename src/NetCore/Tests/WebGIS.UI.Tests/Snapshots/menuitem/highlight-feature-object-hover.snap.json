@@ -1,0 +1,62 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "li",
+        "attrs": {
+          "class": "webgis-toolbox-tool-item",
+          "id": "i1",
+          "style": "padding: 12px 4px 12px 32px; background-image: url(\"https://webgis.test/rest/imageresource/enter-26~png?sub=ui&company=undefined&colorscheme=default&v={{currentJavascriptVersion}}\"); background-position: 2px 10px; background-size: auto 26px; background-repeat: no-repeat;"
+        },
+        "data": {
+          "highlightFeature": {
+            "features": [
+              {
+                "geometry": "[max-depth]"
+              }
+            ]
+          }
+        },
+        "events": {
+          "click": 1,
+          "mouseout": 1,
+          "mouseover": 1
+        },
+        "children": [
+          {
+            "tag": "div",
+            "children": [
+              "Eintrag"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.graphics.addPreviewFromJson",
+      "args": [
+        {
+          "coordinates": [
+            15.4,
+            47.1
+          ],
+          "type": "Point"
+        }
+      ]
+    }
+  ]
+}

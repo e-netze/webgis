@@ -1,0 +1,69 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "li",
+        "attrs": {
+          "class": "webgis-toolbox-tool-item",
+          "element-target": "default",
+          "id": "i1",
+          "style": "padding: 12px 4px 12px 32px; position: relative;"
+        },
+        "children": [
+          {
+            "tag": "div",
+            "children": [
+              "Eintrag"
+            ]
+          },
+          {
+            "tag": "img",
+            "attrs": {
+              "src": "data:image/png;base64,iVBORw0KGgo=",
+              "style": "position: absolute; left: 3px; top: 8px; max-height: 22px;"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

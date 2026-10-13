@@ -1,0 +1,84 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-checkable-div",
+          "element-target": "default",
+          "id": "chk",
+          "style": "display:none"
+        },
+        "data": {
+          "webgisValueElement": "[jQuery(1):input#chk.webgis-checkable-div-status]"
+        },
+        "events": {
+          "click": 1
+        },
+        "children": [
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "checkbox"
+            },
+            "events": {
+              "click": 1
+            }
+          },
+          {
+            "tag": "input",
+            "attrs": {
+              "class": "webgis-checkable-div-status",
+              "id": "chk",
+              "style": "display:none;display:none",
+              "type": "hidden",
+              "value": ""
+            },
+            "props": {
+              "value": ""
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

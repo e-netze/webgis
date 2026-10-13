@@ -1,0 +1,86 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "li",
+        "attrs": {
+          "class": "webgis-toolbox-tool-item",
+          "data-value": "v1",
+          "element-target": "default",
+          "id": "i1",
+          "style": "padding: 12px 4px 12px 32px; background-image: url(\"https://webgis.test/rest/imageresource/enter-26~png?sub=ui&company=undefined&colorscheme=default&v={{currentJavascriptVersion}}\"); background-position: 2px 10px; background-size: auto 26px; background-repeat: no-repeat;"
+        },
+        "data": {
+          "_callback": {
+            "command": "select",
+            "tool": {
+              "id": "callback-tool",
+              "tooltype": "servertool"
+            },
+            "type": "servertoolcommand"
+          },
+          "_event": null,
+          "_map": "[fake:map]",
+          "_type": "menuitem",
+          "_value": "v1"
+        },
+        "events": {
+          "click": 1
+        },
+        "children": [
+          {
+            "tag": "div",
+            "children": [
+              "Eintrag"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.getTool",
+      "args": [
+        "callback-tool"
+      ]
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

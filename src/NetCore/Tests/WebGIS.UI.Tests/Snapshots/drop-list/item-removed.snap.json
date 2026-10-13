@@ -1,0 +1,115 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-ui-droplist",
+          "data-id": "drop",
+          "element-target": "default",
+          "id": "drop_droplist"
+        },
+        "data": {
+          "calcVal": "[function]",
+          "map": "[fake:map]"
+        },
+        "events": {
+          "dragover": 1,
+          "drop": 1
+        },
+        "children": [
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-ui-droplist-item",
+              "data-dropvalue": "a"
+            },
+            "children": [
+              {
+                "tag": "span",
+                "children": [
+                  "a"
+                ]
+              },
+              {
+                "tag": "div",
+                "attrs": {
+                  "class": "webgis-ui-droplist-item-x"
+                },
+                "events": {
+                  "click": 1
+                },
+                "children": [
+                  "X"
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-ui-droplist-item",
+              "data-dropvalue": "c"
+            },
+            "children": [
+              {
+                "tag": "span",
+                "children": [
+                  "c"
+                ]
+              },
+              {
+                "tag": "div",
+                "attrs": {
+                  "class": "webgis-ui-droplist-item-x"
+                },
+                "events": {
+                  "click": 1
+                },
+                "children": [
+                  "X"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "input",
+        "attrs": {
+          "id": "drop",
+          "type": "hidden",
+          "value": "a,c"
+        },
+        "props": {
+          "value": "a,c"
+        }
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ondrop-remove",
+        "[fake:map]",
+        {
+          "id": "drop",
+          "value": "b"
+        }
+      ]
+    }
+  ]
+}
