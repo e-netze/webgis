@@ -263,6 +263,12 @@
               "value": "s1,l1,t1",
               "selectedIndex": 0
             },
+            "data": {
+              "__plugins__": [
+                "[object Ctor]"
+              ],
+              "webgis_editthemeCombo": "[object Ctor]"
+            },
             "events": {
               "change": 1,
               "click": 1,

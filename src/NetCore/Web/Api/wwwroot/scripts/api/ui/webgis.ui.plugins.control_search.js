@@ -1,17 +1,8 @@
-﻿(function ($) {
-    "use strict";
-    $.fn.webgis_control_search = function (method) {
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        }
-        else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        }
-        else {
-            $.error('Method ' + method + ' does not exist on webgis.$.webgis_control_search');
-        }
-    };
-    var defaults = {
+﻿// WebGIS UI Plugins (control_search)
+// webgis_control_search: quick search (autocomplete) on a text input, incl. search metadata and content search info
+
+webgis.ui.definePlugin('webgis_control_search', {
+    defaults: {
         search_service: null,
         search_categories: '',
         on_select: null,
@@ -20,31 +11,10 @@
         on_select_get_original_fullgeometry: false,
         css_display: null,
         meta: 'meta'
-    };
-    var methods = {
-        init: function (options) {
-            var $this = $(this);
-            options = $.extend({}, defaults, options);
-            return this.each(function () {
-                new initUI(this, options);
-            });
-        },
-        meta: function (options) {
-            if (!options.search_service || !options.success)
-                return;
-            webgis.ajax({
-                url: webgis.baseUrl + "/rest/search/" + options.search_service,
-                data: webgis.hmac.appendHMACData({ c: options.meta, categories: options.search_categories }),
-                type: 'get',
-                success: function (result) {
-                    options.success(result);
-                }
-            });
-            return this;
-        }
-    };
-    var initUI = function (elem, options) {
-        var $elem = $(elem);
+    },
+    init: function () {
+        const $ = this.$, options = this.options;
+        var $elem = this.$el;
 
         if (!$elem.is('input[type="text"]') || !options.search_service)
             return;
@@ -54,9 +24,9 @@
         $elem.addClass('clearable x');
         function tog(v) { return v ? 'addClass' : 'removeClass'; }
 
-        $elem.on('mousemove', function (e) {
+        $elem.on('mousemove.webgis_control_search', function (e) {
             $(this)[tog(this.offsetWidth - 18 < e.clientX - this.getBoundingClientRect().left)]('onX');
-        }).on('touchstart click', function (ev) {
+        }).on('touchstart.webgis_control_search click.webgis_control_search', function (ev) {
             if ($(this).hasClass('onX')) {
                 ev.preventDefault();
                 $(this).removeClass('onX').val('');
@@ -241,5 +211,22 @@
             });
         }
         webgis._appendAutocomplete($elem);
-    };
-})(webgis.$ || jQuery);
+    },
+    destroy: function () {
+        this.$el.off('.webgis_control_search');
+    },
+    methods: {
+        meta: function (options) {
+            if (!options.search_service || !options.success)
+                return;
+            webgis.ajax({
+                url: webgis.baseUrl + "/rest/search/" + options.search_service,
+                data: webgis.hmac.appendHMACData({ c: options.meta, categories: options.search_categories }),
+                type: 'get',
+                success: function (result) {
+                    options.success(result);
+                }
+            });
+        }
+    }
+});

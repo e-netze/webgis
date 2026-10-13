@@ -13,6 +13,12 @@
           "element-target": "default",
           "id": "elem"
         },
+        "data": {
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "webgis_size_input": "[object Ctor]"
+        },
         "children": [
           {
             "tag": "input",
@@ -24,7 +30,7 @@
               "value": "800"
             },
             "events": {
-              "change": 1
+              "change.webgis_size_input": 1
             }
           },
           {
@@ -43,7 +49,7 @@
               "value": "600"
             },
             "events": {
-              "change": 1
+              "change.webgis_size_input": 1
             }
           },
           {

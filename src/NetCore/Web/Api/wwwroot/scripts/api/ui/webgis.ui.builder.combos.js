@@ -1,7 +1,7 @@
 ﻿// WebGIS UI Builder Combo Elements
 // select, querycombo, editthemecombo, editthemetree, chainagethemecombo, labelingcombo,
 // circleradiuscombo, print-query-labelfield-combo, print-coordinates-labelfield-combo, sketchselect
-// (jQuery plugins: webgis_multi_select.js)
+// (plugins: webgis.ui.plugins.multi_select.js, webgis.ui.plugins.editthemeCombo.js)
 //
 // The combo plugins (webgis_queryCombo, webgis_editthemeCombo, ...) live in their own files,
 // because they are also used outside of the UI builder.

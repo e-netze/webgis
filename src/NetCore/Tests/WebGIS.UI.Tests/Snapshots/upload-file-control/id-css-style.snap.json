@@ -12,6 +12,12 @@
           "class": "webgis-control-upload",
           "element-target": "default"
         },
+        "data": {
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "webgis_control_upload": "[object Ctor]"
+        },
         "children": [
           {
             "tag": "input",
@@ -38,7 +44,7 @@
               "onUpload": null
             },
             "events": {
-              "click": 1
+              "click.webgis_control_upload": 1
             },
             "children": [
               {
@@ -107,7 +113,7 @@
                     "value": ""
                   },
                   "events": {
-                    "change": 1
+                    "change.webgis_control_upload": 1
                   }
                 }
               ]

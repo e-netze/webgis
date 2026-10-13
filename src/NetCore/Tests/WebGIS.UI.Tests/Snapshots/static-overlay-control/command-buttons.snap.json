@@ -14,7 +14,11 @@
           "id": "elem"
         },
         "data": {
-          "webgisValueElement": "[jQuery(1):input.webgis-selected-id]"
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "webgisValueElement": "[jQuery(1):input.webgis-selected-id]",
+          "webgis_staticOverlayControl": "[object Ctor]"
         },
         "children": [
           {

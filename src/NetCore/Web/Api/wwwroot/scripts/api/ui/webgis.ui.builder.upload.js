@@ -1,7 +1,7 @@
 ﻿// WebGIS UI Builder Upload Elements
 // upload-file, upload-file-control
 //
-// The upload control plugin (webgis_control_upload) lives in its own file,
+// The upload control plugin (webgis_control_upload) lives in its own file (webgis.ui.plugins.control_upload.js),
 // because it is also used outside of the UI builder (collector plugins).
 
 (function ($) {

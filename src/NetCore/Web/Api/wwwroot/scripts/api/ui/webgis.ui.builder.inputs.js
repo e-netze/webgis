@@ -1,6 +1,6 @@
 ﻿// WebGIS UI Builder Input Elements
 // input-text, input-textarea, input-date, input-number, hidden, input-autocomplete, input-bbox, input-size
-// (jQuery plugins: webgis_bbox_input.js, webgis_size_input.js)
+// (plugins: webgis.ui.plugins.bbox_input.js, webgis.ui.plugins.size_input.js)
 //
 // Inputs historically get no data-tool-id attribute (".toolid" = false), even if the UI is built for a tool
 // (except input-bbox and input-size).

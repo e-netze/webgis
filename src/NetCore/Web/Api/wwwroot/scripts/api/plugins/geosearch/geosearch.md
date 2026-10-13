@@ -36,7 +36,6 @@ Um GeoSearch einzubinden, sind folgende Ressouren nötig:
 											
 <script type="text/javascript" src=".../Scripts/Api/api.min.js" id="webgis-api-script"></script>
 <script type="text/javascript" src=".../Scripts/Api/api-ui.min.js"></script>
-<script type="text/javascript" src=".../Scripts/Api/ui/webgis_control_upload.js"></script>
     									 
 <script type="text/javascript" src=".../Scripts/Api/plugins/geosearch.js"></script>
 ````

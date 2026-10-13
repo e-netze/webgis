@@ -1,7 +1,7 @@
 ﻿// WebGIS UI Builder Misc Elements
 // literal, literal-bold, image, condition_div, opacity-control, ui-liveshare, static-overlay-control,
 // image-selector, graphics-info-container, graphics-info-stage, sketch-info-container, sharelink-buttons
-// (jQuery plugins: webgis_image_selector.js)
+// (plugins: webgis.ui.plugins.image_selector.js, webgis.ui.plugins.liveshare.js, webgis.ui.plugins.staticOverlayControl.js)
 //
 // Some of these elements don't create a (single) element in the parent. They use the ".create" hook,
 // which replaces the whole element creation (see docs/architecture/ui-builder.md).

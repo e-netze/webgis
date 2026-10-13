@@ -46,7 +46,6 @@ Um Collector-Pro einzubinden, sind folgende Ressouren nötig:
 <script type="text/javascript" src=".../Scripts/Api/api-ui.min.js"></script>
 <script type="text/javascript" src=".../Scripts/flatpickr/flatpickr.js"></script>
 <script type="text/javascript" src=".../Scripts/flatpickr/de.js"></script>
-<script type="text/javascript" src=".../Scripts/Api/ui/webgis_control_upload.js"></script>
 <script type="text/javascript" src=".../Scripts/select2/js/select2.min.js"></script>
     									 
 <script type="text/javascript" src=".../Scripts/Api/plugins/collector-pro.js"></script>

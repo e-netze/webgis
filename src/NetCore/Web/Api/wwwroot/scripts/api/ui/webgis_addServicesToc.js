@@ -442,14 +442,14 @@
                 }
             });
 
-            $div.webgis_general_input({
+            $div.webgis_general_input('add', {
                 name: 'webgis-customservice-displayname',
                 label: 'Anzeigename (optional)',
                 placeholder: 'Anzeigename des Dienstes...',
                 description: webgis.l10n.get('description-customservice-displayname'),
             });
 
-            $div.webgis_general_input({
+            $div.webgis_general_input('add', {
                 name: 'webgis-customservice-user',
                 label: 'Security (optional)',
                 placeholder: 'Username...',

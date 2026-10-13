@@ -15,7 +15,11 @@
           "style": "display:none"
         },
         "data": {
-          "webgisValueElement": "[jQuery(1):input]"
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "webgisValueElement": "[jQuery(1):input]",
+          "webgis_image_selector": "[object Ctor]"
         },
         "children": [
           {
@@ -37,7 +41,7 @@
               "imageUrl": "a.png"
             },
             "events": {
-              "click": 1
+              "click.webgis_image_selector": 1
             },
             "children": [
               {
@@ -67,7 +71,7 @@
               "imageUrl": "b.png"
             },
             "events": {
-              "click": 1
+              "click.webgis_image_selector": 1
             },
             "children": [
               {

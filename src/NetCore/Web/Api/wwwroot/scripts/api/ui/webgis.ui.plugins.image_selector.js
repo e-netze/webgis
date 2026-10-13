@@ -1,42 +1,25 @@
-﻿// WebGIS jQuery plugin webgis_image_selector (used by the image-selector builder)
+﻿// WebGIS UI Plugin webgis_image_selector
+// Selectable image tiles (single or multi select), used by the image-selector builder (webgis.ui.builder.misc.js)
 
-(function ($) {
-    $.fn.webgis_image_selector = function (method) {
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        }
-        else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        }
-        else {
-            $.error('Method ' + method + ' does not exist on webgis.$.webgis_image_selector');
-        }
-    };
-
-    var defaults = {
+webgis.ui.definePlugin('webgis_image_selector', {
+    defaults: {
         image_urls: [],
         image_labels: null,
         image_width: null,
         image_height: null,
         selected: null
-    };
-
-    var methods = {
-        init: function (options) {
-            return this.each(function () {
-                new initUI(this, $.extend({}, defaults, options));
-            });
-        }
-    };
-
-    var initUI = function (parent, options) {
-        var $parent = $(parent)
+    },
+    init: function () {
+        const $ = this.$;
+        const self = this;
+        const options = this.options;
+        const $parent = this.$el
             .addClass('webgis-image-selector');
 
         console.log(options);
 
-        var $valueElement = $("<input type='hidden'>").appendTo($parent);
-        $parent.data('webgis-value-element', $valueElement);
+        this._$valueElement = $("<input type='hidden'>").appendTo($parent);
+        $parent.data('webgis-value-element', this._$valueElement);
 
         for (var i in options.image_urls) {
             var imageUrl = options.image_urls[i];
@@ -44,7 +27,7 @@
             var $imgContainer = $("<div>")
                 .data('imageUrl', imageUrl)
                 .addClass('webgis-image-selector-image-container')
-                .click(function (e) {
+                .on('click.webgis_image_selector', function (e) {
                     e.stopPropagation();
 
                     var $this = $(this);
@@ -58,7 +41,7 @@
                         }
                     }
 
-                    _resetValue($parent, $valueElement);
+                    self.resetValue();
                 });
 
             var $img = $("<div>")
@@ -92,20 +75,27 @@
             $imgContainer.appendTo($parent);
         }
 
-        _resetValue($parent, $valueElement);
-    };
+        this.resetValue();
+    },
+    destroy: function () {
+        this.$el.children('.webgis-image-selector-image-container').off('.webgis_image_selector');
+    },
+    methods: {
+        resetValue: function () {
+            const $ = this.$;
+            const $valueElement = this._$valueElement;
 
-    var _resetValue = function ($parent, $valueElement) {
-        $valueElement.val('');
-        var val = '';
-        $parent.children('.webgis-image-selector-image-container.selected').each(function (i, e) {
-            if (val) {
-                val += ',';
-            }
+            $valueElement.val('');
+            let val = '';
+            this.$el.children('.webgis-image-selector-image-container.selected').each(function (i, e) {
+                if (val) {
+                    val += ',';
+                }
 
-            val += $(e).data('imageUrl');
-        });
+                val += $(e).data('imageUrl');
+            });
 
-        $valueElement.val(val);
+            $valueElement.val(val);
+        }
     }
-})(webgis.$ || jQuery);
+});

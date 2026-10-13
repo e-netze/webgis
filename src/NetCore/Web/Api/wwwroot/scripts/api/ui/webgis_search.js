@@ -1,4 +1,8 @@
-﻿// Old -> use webgis_topbar instead!!
+﻿// LEGACY / OBSOLETE - do not use, do not extend!
+// Old standalone version of the topbar (defines $.fn.webgis_topbar and the alias $.fn.webgis_search).
+// Not part of any bundle (bundleconfig.json) or Portal view. Only kept, because old applications may
+// still include this file directly. Use webgis_topbar.js (part of api-ui.min.js) instead, which also
+// provides the $.fn.webgis_search alias.
 (function ($) {
     "use strict";
     $.fn.webgis_topbar = function (method) {

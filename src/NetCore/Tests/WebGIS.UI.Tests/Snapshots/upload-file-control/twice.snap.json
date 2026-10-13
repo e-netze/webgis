@@ -12,49 +12,11 @@
           "class": "webgis-control-upload",
           "element-target": "default"
         },
-        "children": [
-          {
-            "tag": "input",
-            "attrs": {
-              "id": "editfield_FOTO",
-              "name": "editfield_FOTO",
-              "type": "hidden"
-            },
-            "props": {
-              "value": ""
-            }
-          },
-          {
-            "tag": "div",
-            "attrs": {
-              "class": "webgis-input",
-              "data-fileinput-id": "FOTO-target-{guid}-{guid}",
-              "data-name": "FOTO",
-              "id": "FOTO-target-{guid}-preview",
-              "style": "cursor:pointer;width:288px;position:relative;height:22px;display:block"
-            },
-            "data": {
-              "onUpload": null
-            },
-            "events": {
-              "click": 1
-            },
-            "children": [
-              {
-                "tag": "div",
-                "attrs": {
-                  "style": "position:absolute;right:2px;bottom:2px;width:26px;height:26px;background:url(https://webgis.test/content/api/img/upload-26.png) no-repeat center right;"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "tag": "div",
-        "attrs": {
-          "class": "webgis-control-upload",
-          "element-target": "default"
+        "data": {
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "webgis_control_upload": "[object Ctor]"
         },
         "children": [
           {
@@ -81,7 +43,57 @@
               "onUpload": null
             },
             "events": {
-              "click": 1
+              "click.webgis_control_upload": 1
+            },
+            "children": [
+              {
+                "tag": "div",
+                "attrs": {
+                  "style": "position:absolute;right:2px;bottom:2px;width:26px;height:26px;background:url(https://webgis.test/content/api/img/upload-26.png) no-repeat center right;"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-control-upload",
+          "element-target": "default"
+        },
+        "data": {
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "webgis_control_upload": "[object Ctor]"
+        },
+        "children": [
+          {
+            "tag": "input",
+            "attrs": {
+              "id": "editfield_FOTO",
+              "name": "editfield_FOTO",
+              "type": "hidden"
+            },
+            "props": {
+              "value": ""
+            }
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-input",
+              "data-fileinput-id": "FOTO-target-{guid}-{guid}",
+              "data-name": "FOTO",
+              "id": "FOTO-target-{guid}-preview",
+              "style": "cursor:pointer;width:288px;position:relative;height:22px;display:block"
+            },
+            "data": {
+              "onUpload": null
+            },
+            "events": {
+              "click.webgis_control_upload": 1
             },
             "children": [
               {
@@ -150,7 +162,7 @@
                     "value": ""
                   },
                   "events": {
-                    "change": 1
+                    "change.webgis_control_upload": 1
                   }
                 }
               ]
@@ -197,7 +209,7 @@
                     "value": ""
                   },
                   "events": {
-                    "change": 1
+                    "change.webgis_control_upload": 1
                   }
                 }
               ]

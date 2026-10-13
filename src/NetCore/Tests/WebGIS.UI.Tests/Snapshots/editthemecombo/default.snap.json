@@ -17,6 +17,12 @@
           "value": "",
           "selectedIndex": -1
         },
+        "data": {
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "webgis_editthemeCombo": "[object Ctor]"
+        },
         "expandos": {
           "_map": "[fake:map]",
           "_opt": {

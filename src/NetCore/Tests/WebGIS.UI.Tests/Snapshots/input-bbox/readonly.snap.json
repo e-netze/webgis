@@ -15,7 +15,11 @@
           "readonly": "readonly"
         },
         "data": {
-          "webgisValueElement": "[jQuery(1):input.webgis-bbox-value]"
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "webgisValueElement": "[jQuery(1):input.webgis-bbox-value]",
+          "webgis_bbox_input": "[object Ctor]"
         },
         "children": [
           {
@@ -35,7 +39,7 @@
                   "value": ""
                 },
                 "events": {
-                  "change": 1
+                  "change.webgis_bbox_input": 1
                 }
               }
             ]
@@ -57,7 +61,7 @@
                   "value": ""
                 },
                 "events": {
-                  "change": 1
+                  "change.webgis_bbox_input": 1
                 }
               },
               {
@@ -71,7 +75,7 @@
                   "value": ""
                 },
                 "events": {
-                  "change": 1
+                  "change.webgis_bbox_input": 1
                 }
               }
             ]
@@ -93,7 +97,7 @@
                   "value": ""
                 },
                 "events": {
-                  "change": 1
+                  "change.webgis_bbox_input": 1
                 }
               }
             ]

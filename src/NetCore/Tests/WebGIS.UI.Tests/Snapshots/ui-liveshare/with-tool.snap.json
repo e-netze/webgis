@@ -51,6 +51,12 @@
                       "element-target": "default",
                       "id": "elem"
                     },
+                    "data": {
+                      "__plugins__": [
+                        "[object Ctor]"
+                      ],
+                      "webgis_liveshare": "[object Ctor]"
+                    },
                     "children": [
                       {
                         "tag": "ul",
@@ -75,7 +81,8 @@
                               "checked": true
                             },
                             "events": {
-                              "click": 2
+                              "click": 1,
+                              "click.webgis_liveshare": 1
                             }
                           },
                           {
@@ -110,7 +117,8 @@
                               "checked": true
                             },
                             "events": {
-                              "click": 2
+                              "click": 1,
+                              "click.webgis_liveshare": 1
                             }
                           },
                           {
@@ -135,7 +143,7 @@
                           "value": ""
                         },
                         "events": {
-                          "keypress": 1
+                          "keypress.webgis_liveshare": 1
                         }
                       },
                       {

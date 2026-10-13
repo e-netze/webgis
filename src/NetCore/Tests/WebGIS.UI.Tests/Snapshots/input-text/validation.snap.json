@@ -21,11 +21,15 @@
           "value": ""
         },
         "data": {
-          "errorMessageElement": "[jQuery(1):div.haserror.webgis-validation-error]"
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "errorMessageElement": "[jQuery(1):div.haserror.webgis-validation-error]",
+          "webgis_validation": "[object Ctor]"
         },
         "events": {
           "change": 1,
-          "input": 1
+          "input.webgis_validation": 1
         }
       },
       {

@@ -1,20 +1,9 @@
-﻿// WebGIS form (jQuery plugin webgis_form)
-// Simple input form (labels, inputs, submit button), used by the sketch modules (e.g. construction tools)
+﻿// WebGIS UI Plugin webgis_form
+// Simple input form (labels, inputs, submit button), used by the sketch modules (e.g. construction tools).
+// Values of named forms are remembered (webgis.$._webgis_form_persistent) and prefilled next time.
 
-(function ($) {
-    $.fn.webgis_form = function (method) {
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        }
-        else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        }
-        else {
-            $.error('Method ' + method + ' does not exist on webgis.$.webgis_focusservice_control');
-        }
-    };
-
-    var defaults = {
+webgis.ui.definePlugin('webgis_form', {
+    defaults: {
         name: null,
         input: [
             //{
@@ -27,27 +16,21 @@
         ],
         onSubmit: null,
         submitText: 'Sumit'
-    };
+    },
+    init: function () {
+        const $ = this.$;
+        const options = this.options;
+        const parent = this.$el[0];
+        const persistent = this.constructor.persistentValues();
 
-    var methods = {
-        init: function (options) {
-            return this.each(function () {
-                new initUI(this, $.extend({}, defaults, options));
-            });
-        }
-    };
-
-    $._webgis_form_persistent = [];
-
-    var initUI = function (parent, options) {
-        var $parent = $(parent)
+        const $parent = this.$el
             .addClass('webgis-form')
-            .click(function (e) {
+            .on('click.webgis_form', function (e) {
                 e.stopPropagation();  // e.g. if the form is included in an context menu => do not close the menu on click
             });
 
         for (var i in options.input) {
-            var input = options.input[i];
+            var input = options.input[i], $input;
 
             var $inputGroup = $("<div>")
                 .addClass('webgis-input-group')
@@ -84,7 +67,7 @@
                     .attr('name', input.name)
                     .attr('placeholder', input.placeholder || '')
                     .appendTo($inputGroup)
-                    .keypress(function (e) {
+                    .on('keypress.webgis_form', function (e) {
                         var key = e.which;
                         if (key === 13)  // the enter key code
                         {
@@ -99,9 +82,9 @@
             if (input.value != null) {
                 $input.val(input.value);
             } else if (options.name &&
-                      $._webgis_form_persistent[options.name] &&
-                      $._webgis_form_persistent[options.name][input.name] != null) {
-                $input.val($._webgis_form_persistent[options.name][input.name]);
+                      persistent[options.name] &&
+                      persistent[options.name][input.name] != null) {
+                $input.val(persistent[options.name][input.name]);
             }
 
             if (input.required) {
@@ -118,7 +101,7 @@
             .addClass('webgis-button webgis-form-submit')
             .text(options.submitText)
             .appendTo($parent)
-            .click(function (e) {
+            .on('click.webgis_form', function (e) {
                 var result = {}, errors = '';
 
                 $(this).parent().find('.webgis-input').each(function (i, e) {
@@ -135,8 +118,8 @@
                     result[$e.attr('name')] = val;
 
                     if (options.name) {
-                        $._webgis_form_persistent[options.name] = $._webgis_form_persistent[options.name] || [];
-                        $._webgis_form_persistent[options.name][$e.attr('name')] = val;
+                        persistent[options.name] = persistent[options.name] || [];
+                        persistent[options.name][$e.attr('name')] = val;
                     }
                 });
 
@@ -148,5 +131,16 @@
                     }
                 }
             });
+    },
+    destroy: function () {
+        this.$el.off('.webgis_form');
+    },
+    staticMethods: {
+        // remembered input values of all named forms: { formName: { inputName: value } }
+        persistentValues: function () {
+            const $ = webgis.$ || jQuery;
+            $._webgis_form_persistent = $._webgis_form_persistent || [];
+            return $._webgis_form_persistent;
+        }
     }
-})(webgis.$ || jQuery);
+});

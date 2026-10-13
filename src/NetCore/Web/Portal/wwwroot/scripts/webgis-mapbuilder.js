@@ -962,7 +962,7 @@ function publishMap(portalId, mapCategory, mapName) {
         return AlertCreateMap();
     }
 
-    if ($.fn.webgis_errors && $(null).webgis_errors('hasErrors') === true) {
+    if ($.fn.webgis_errors && $('.webgis-errors-holder').webgis_errors('hasErrors') === true) {
         webgis.alert("Die aktuelle Karte enthält Fehler (siehe UI Tab Errors) und kann nicht veröffentlicht werden", "error");
         return;
     }

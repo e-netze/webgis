@@ -67,8 +67,14 @@
                           "value": "",
                           "selectedIndex": 0
                         },
+                        "data": {
+                          "__plugins__": [
+                            "[object Ctor]"
+                          ],
+                          "webgis_multi_select": "[object Ctor]"
+                        },
                         "events": {
-                          "change": 1
+                          "change.webgis_multi_select": 1
                         },
                         "expandos": {
                           "0": "[element:option]"
