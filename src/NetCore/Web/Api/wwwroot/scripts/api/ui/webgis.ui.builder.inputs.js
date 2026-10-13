@@ -1,7 +1,9 @@
-// WebGIS UI Builder Input Elements
-// input-text, input-textarea, input-date, input-number, hidden, input-autocomplete
+﻿// WebGIS UI Builder Input Elements
+// input-text, input-textarea, input-date, input-number, hidden, input-autocomplete, input-bbox, input-size
+// (jQuery plugins: webgis_bbox_input.js, webgis_size_input.js)
 //
-// Inputs historically get no data-tool-id attribute (".toolid" = false), even if the UI is built for a tool.
+// Inputs historically get no data-tool-id attribute (".toolid" = false), even if the UI is built for a tool
+// (except input-bbox and input-size).
 
 webgis.ui.builder["input-text.tagname"] = "input";
 webgis.ui.builder["input-text.attributes"] = "type='text'";
@@ -75,4 +77,13 @@ webgis.ui.builder["input-autocomplete"] = (map, $newElement, element) => {
     $newElement.addClass('webgis-autocomplete').attr('data-source', element.source);
     if (element.label)
         $newElement.val(element.label);
+};
+
+// bounding box (4 coordinates) and size (width/height) inputs, used by print and 3D tools
+webgis.ui.builder["input-bbox"] = (map, $newElement, element) => {
+    $newElement.webgis_bbox_input({ readonly: element.readonly });
+};
+
+webgis.ui.builder["input-size"] = (map, $newElement, element) => {
+    $newElement.webgis_size_input({ readonly: element.readonly });
 };

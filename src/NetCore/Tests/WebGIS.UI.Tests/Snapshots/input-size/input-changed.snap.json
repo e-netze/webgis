@@ -1,0 +1,98 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-size-input-holder",
+          "element-target": "default",
+          "id": "elem"
+        },
+        "children": [
+          {
+            "tag": "input",
+            "attrs": {
+              "class": "webgis-size-input webgis-size-x",
+              "type": "number"
+            },
+            "props": {
+              "value": "800"
+            },
+            "events": {
+              "change": 1
+            }
+          },
+          {
+            "tag": "div",
+            "children": [
+              "x"
+            ]
+          },
+          {
+            "tag": "input",
+            "attrs": {
+              "class": "webgis-size-input webgis-size-y",
+              "type": "number"
+            },
+            "props": {
+              "value": "600"
+            },
+            "events": {
+              "change": 1
+            }
+          },
+          {
+            "tag": "input",
+            "attrs": {
+              "class": "webgis-size-value",
+              "type": "hidden",
+              "value": "800,600"
+            },
+            "props": {
+              "value": "800,600"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

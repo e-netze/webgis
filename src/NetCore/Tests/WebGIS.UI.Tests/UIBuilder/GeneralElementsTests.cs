@@ -5,7 +5,7 @@ using WebGIS.UI.Tests.Infrastructure;
 namespace WebGIS.UI.Tests.UIBuilder;
 
 /// <summary>
-/// Characterization tests for the builders already moved to webgis.ui.plugins.general.js
+/// Characterization tests for the builders already moved to webgis.ui.builder.general.js
 /// (label, paragraph, title). They prove the harness and serve as template for further packages.
 /// </summary>
 [TestClass]

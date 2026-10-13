@@ -1,0 +1,132 @@
+{
+  "host": {
+    "tag": "div",
+    "attrs": {
+      "class": "webgis-ui-holder",
+      "id": "host"
+    },
+    "children": [
+      {
+        "tag": "div",
+        "attrs": {
+          "class": "webgis-image-selector",
+          "data-value": "a.png",
+          "element-target": "default",
+          "id": "elem"
+        },
+        "data": {
+          "webgisValueElement": "[jQuery(1):input]"
+        },
+        "children": [
+          {
+            "tag": "input",
+            "attrs": {
+              "type": "hidden",
+              "value": "c.png"
+            },
+            "props": {
+              "value": "c.png"
+            }
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-image-selector-image-container"
+            },
+            "data": {
+              "imageUrl": "a.png"
+            },
+            "events": {
+              "click": 1
+            },
+            "children": [
+              {
+                "tag": "div",
+                "attrs": {
+                  "class": "webgis-image-selector-image",
+                  "style": "background-image: url(\"https://webgis.test/rest/imageresource/a~png?sub=&company=undefined&colorscheme=default&v={{currentJavascriptVersion}}\");"
+                }
+              }
+            ]
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-image-selector-image-container"
+            },
+            "data": {
+              "imageUrl": "b.png"
+            },
+            "events": {
+              "click": 1
+            },
+            "children": [
+              {
+                "tag": "div",
+                "attrs": {
+                  "class": "webgis-image-selector-image",
+                  "style": "background-image: url(\"https://webgis.test/rest/imageresource/b~png?sub=&company=undefined&colorscheme=default&v={{currentJavascriptVersion}}\");"
+                }
+              }
+            ]
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-image-selector-image-container selected"
+            },
+            "data": {
+              "imageUrl": "c.png"
+            },
+            "events": {
+              "click": 1
+            },
+            "children": [
+              {
+                "tag": "div",
+                "attrs": {
+                  "class": "webgis-image-selector-image",
+                  "style": "background-image: url(\"https://webgis.test/rest/imageresource/c~png?sub=&company=undefined&colorscheme=default&v={{currentJavascriptVersion}}\");"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "container": {
+    "tag": "div",
+    "attrs": {
+      "id": "webgis-container"
+    }
+  },
+  "body": [],
+  "calls": [
+    {
+      "call": "map.getActiveTool",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "onbuildui-default"
+      ]
+    },
+    {
+      "call": "map.ui.uncollapseSidebar",
+      "args": []
+    },
+    {
+      "call": "map.events.fire",
+      "args": [
+        "ui-builder-targetelement-changed",
+        "[fake:map]",
+        {
+          "element": "[jQuery(1):div#host.webgis-ui-holder]",
+          "target": "default"
+        }
+      ]
+    }
+  ]
+}

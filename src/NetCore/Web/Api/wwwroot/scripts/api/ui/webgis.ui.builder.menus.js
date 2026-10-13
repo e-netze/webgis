@@ -1,5 +1,5 @@
 ﻿// WebGIS UI Builder Menu Elements
-// menu, menuitem (callbacks: webgis.ui.appendCallback in webgis.ui.plugins.general.js)
+// menu, menuitem (callbacks: webgis.ui.appendCallback in webgis.ui.builder.general.js)
 
 (function ($) {
     "use strict";

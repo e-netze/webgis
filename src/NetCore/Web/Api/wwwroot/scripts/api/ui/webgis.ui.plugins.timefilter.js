@@ -1,4 +1,8 @@
-﻿webgis.ui.definePlugin('webgis_timeFilterControl', {
+﻿// WebGIS UI Plugins (time filter)
+// webgis_timeFilterControl, webgis_timeFilterList
+// Element builders: webgis.ui.builder.timefilter.js
+
+webgis.ui.definePlugin('webgis_timeFilterControl', {
     defaults: {
         map: null
     },
@@ -181,10 +185,6 @@
     }
 });
 
-webgis.ui.builder['timefiltercontrol'] = (map, $newElement, element) => {
-    $newElement.webgis_timeFilterControl({ map: map });
-};
-
 webgis.ui.definePlugin('webgis_timeFilterList', {
     defaults: {
         map: null,
@@ -288,21 +288,3 @@ webgis.ui.definePlugin('webgis_timeFilterList', {
         }
     }
 });
-
-webgis.ui.builder['timefilterlist'] = (map, $newElement, element) => {
-    $newElement.webgis_timeFilterList({ map: map });
-};
-
-webgis.ui.showRemoveTimeFiltersDialog = function (map) {
-    webgis.$("body").webgis_modal({
-        title: webgis.l10n.get("remove-filters"),
-        width: "600px",
-        onload: function ($content) {
-            $("<div>").webgis_timeFilterList({
-                map: map,
-                onRemoveAllFilters: function () { webgis.$("body").webgis_modal("close"); }
-            })
-            .appendTo($content);
-        }
-    });
-};

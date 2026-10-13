@@ -1,5 +1,4 @@
 ﻿webgis.ui = webgis.ui || {};
-webgis.ui.builder = webgis.ui.builder || [];
 
 webgis.ui.__getPluginRegistry = function ($el) {
     var list = $el.data('__plugins__');

@@ -2520,7 +2520,7 @@
         // => eg. ChildTools a not registered in webgis_toolbox process with map.addTool(), because they are not visible in the toolbox
         //    with this, also childtools will registered. Is is nessessary. Otherwise childtools like webgis.editing.advanced.clipfeatures
         //    will not get back their requireded dependencies like current selection.
-        //    => callbacks (webgis.ui.appendCallback in webgis.ui.plugins.general.js will try to add the original tool instead of the "tool.id" only; see "// assign original tool, if possible" there)
+        //    => callbacks (webgis.ui.appendCallback in webgis.ui.builder.general.js will try to add the original tool instead of the "tool.id" only; see "// assign original tool, if possible" there)
         if (!this.getTool(tool.id)) {
             this.addTool(tool);
         }

@@ -12,6 +12,8 @@ window.uiHarness = (function ($) {
 
     var GUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
     var JQUERY_EXPANDO = /^jQuery\d+/;
+    // Sortable.js stores its instance in an expando named after the load timestamp
+    var SORTABLE_EXPANDO = /^Sortable\d+$/;
     // keys a fake must not answer (promise detection, JSON, DOM/jQuery duck typing, ...)
     var IGNORED_KEYS = {
         then: true, toJSON: true, nodeType: true, nodeName: true, jquery: true, length: true,
@@ -224,7 +226,7 @@ window.uiHarness = (function ($) {
         var result = {}, any = false;
         Object.keys(el).sort().forEach(function (k) {
             if (JQUERY_EXPANDO.test(k)) return;
-            result[normalizeString(k)] = describe(el[k], 1);
+            result[SORTABLE_EXPANDO.test(k) ? 'Sortable{timestamp}' : normalizeString(k)] = describe(el[k], 1);
             any = true;
         });
         return any ? result : null;
