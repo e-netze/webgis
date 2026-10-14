@@ -70,6 +70,75 @@ public class HarnessTests : UIBuilderPageTest
 }
 
 /// <summary>
+/// Smoke test against the single bundle webgis-api.min.js (api.min.js + api-ui.min.js).
+/// Loaded without script id, so webgis.baseUrl must be derived via document.currentScript.
+/// </summary>
+[TestClass]
+public class SingleBundleSmokeTests : UIBuilderPageTest
+{
+    protected override HarnessScripts Scripts => HarnessScripts.SingleBundle;
+
+    [TestMethod]
+    public async Task SingleBundle_LoadsAndBuildsLabel()
+    {
+        var baseUrl = await Page.EvaluateAsync<string>("() => webgis.baseUrl");
+        Assert.AreEqual(Origin, baseUrl);
+
+        await BuildAsync(new UILabel { label = "Hallo" });
+
+        var text = await Page.Locator("#host .webgis-label").InnerTextAsync();
+        Assert.AreEqual("Hallo", text);
+    }
+}
+
+/// <summary>
+/// Ensures webgis-api.min.js is (and stays) exactly api.min.js + api-ui.min.js.
+/// </summary>
+[TestClass]
+public class SingleBundleConfigTests
+{
+    [TestMethod]
+    public void SingleBundle_IsApiPlusApiUi_NotReminified_AndDefinedAfterBoth()
+    {
+        var bundle = BundleConfig.GetBundle(BundleConfig.WebGISApiBundle);
+
+        CollectionAssert.AreEqual(
+            new[] { BundleConfig.ToWebPath(BundleConfig.ApiBundle), BundleConfig.ToWebPath(BundleConfig.ApiUiBundle) },
+            BundleConfig.GetInputFiles(BundleConfig.WebGISApiBundle).ToArray());
+
+        Assert.IsFalse(bundle.GetProperty("minify").GetProperty("enabled").GetBoolean());
+
+        var outputs = BundleConfig.GetOutputFileNames().ToList();
+        var index = outputs.IndexOf(BundleConfig.WebGISApiBundle);
+        Assert.IsTrue(index > outputs.IndexOf(BundleConfig.ApiBundle));
+        Assert.IsTrue(index > outputs.IndexOf(BundleConfig.ApiUiBundle));
+    }
+
+    [TestMethod]
+    public void SingleBundle_ContainsApiAndApiUiInOrder()
+    {
+        string Read(string bundle) =>
+            File.ReadAllText(Path.Combine(RepoPaths.WwwRoot, BundleConfig.ToWebPath(bundle).TrimStart('/').Replace('/', Path.DirectorySeparatorChar)))
+                .Trim('\uFEFF', '\r', '\n', ' ');
+
+        var single = Path.Combine(RepoPaths.WwwRoot, "scripts", "api", "webgis-api.min.js");
+        if (!File.Exists(single))
+        {
+            Assert.Inconclusive("webgis-api.min.js not built yet (build the Api project).");
+        }
+
+        var content = Read(BundleConfig.WebGISApiBundle);
+        var api = Read(BundleConfig.ApiBundle);
+        var apiUi = Read(BundleConfig.ApiUiBundle);
+
+        var apiPos = content.IndexOf(api, StringComparison.Ordinal);
+        var apiUiPos = content.IndexOf(apiUi, StringComparison.Ordinal);
+        Assert.AreEqual(0, apiPos, "webgis-api.min.js must start with api.min.js");
+        Assert.IsTrue(apiUiPos >= api.Length, "webgis-api.min.js must contain api-ui.min.js after api.min.js");
+    }
+}
+
+/// <summary>
 /// Smoke test against the minified bundles (api.min.js, api-ui.min.js).
 /// The bundles are produced by the bundler and may be stale, so only basic behaviour is checked.
 /// </summary>

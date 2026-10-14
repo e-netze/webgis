@@ -10,11 +10,10 @@
     <script type="text/javascript" src="@(Model.ApiUrl)/scripts/jquery-3.2.0.min.js"></script>
     <script type="text/javascript" src="@(Model.ApiUrl)/scripts/typeahead/typeahead.jquery.min.js"></script>
 
-    <link href="@(Model.ApiUrl)/content/styles/default.css" rel="stylesheet" />
-    <link href="@(Model.ApiUrl)/content/api/ui.css" rel="stylesheet" />
+    <link href="@(Model.ApiUrl)/content/styles/webgis-api.min.css" rel="stylesheet" />
+    <link href="@(Model.ApiUrl)/content/api/ui.app.css" rel="stylesheet" />
 
-    <script src="@(Model.ApiUrl)/scripts/api/api.min.js" id="webgis-api-script"></script>
-    <script src="@(Model.ApiUrl)/scripts/api/api-ui.min.js"></script>
+    <script src="@(Model.ApiUrl)/scripts/api/webgis-api.min.js" id="webgis-api-script"></script>
 
 
     <script type="text/javascript">

@@ -29,8 +29,9 @@
     this.api_version = '{{currentJavascriptVersion}}';
     this.mapFramework = 'leaflet'; 
     this.mapFramework_version = '1.9.4';
-    var src = document.getElementById('webgis-api-script') ? document.getElementById('webgis-api-script').src.toLowerCase() : null;
-    src = src ? src.substring(0, src.lastIndexOf('/scripts/api/')) : '';
+    var apiScript = document.getElementById('webgis-api-script') || document.currentScript;
+    var src = apiScript && apiScript.src ? apiScript.src.toLowerCase() : null;
+    src = src && src.lastIndexOf('/scripts/api/') >= 0 ? src.substring(0, src.lastIndexOf('/scripts/api/')) : '';
     this.baseUrl = src;
     this.gdiScheme = '';
     this.sketchSnappingSchemeId = '9bc1f309-7f7b-4051-b89e-28ce7096d6cf';

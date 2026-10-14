@@ -18,7 +18,7 @@
     string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
 }
 
-<link href="@(apiUrl)/content/styles/default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+<link href="@(apiUrl)/content/styles/webgis-api.min.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 @if (!String.IsNullOrWhiteSpace(customContent.PortalCustomContentRootPath) && customContent.ApiPageDefaultCssExists(Model.PortalId))
 {
     <link href="@(customContent.CustomScriptContent(Model.PortalId, Model.CurrentUsername, "default.css", WebGISVersion.CssVersion))" rel="stylesheet" />
@@ -27,7 +27,7 @@
 {
     <link href="@(portalContentUrl)/content/portals/@(Model.PortalId)/map-default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 }
-<link href="@(apiUrl)/content/api/ui.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+<link href="@(apiUrl)/content/api/ui.app.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 
 <link href="~/lib/webportal-layout/webportal-layout.css" rel="stylesheet" />
 <link href="~/content/mapbuilder.css" rel="stylesheet" />
@@ -56,8 +56,7 @@
 }
 
 
-<script src="@(apiUrl)/scripts/api/api.min.js?@(WebGISVersion.CssVersion)" id="webgis-api-script"></script>
-<script src="@(apiUrl)/scripts/api/api-ui.min.js?@(WebGISVersion.CssVersion)"></script>
+<script src="@(apiUrl)/scripts/api/webgis-api.min.js?@(WebGISVersion.CssVersion)" id="webgis-api-script"></script>
 <script src="~/lib/webportal-layout/webportal-layout.js"></script>
 
 <script type="text/javascript">

@@ -323,6 +323,8 @@ keys.config
 /src/NetCore/Web/Api/wwwroot/scripts/leaflet/plugins/leaflet-plugins-gesture-handling.min.js
 /src/NetCore/Web/Api/wwwroot/scripts/api/api-ui.min.js
 /src/NetCore/Web/Api/wwwroot/scripts/flatpickr/flatpickr.de.min.js
+/src/NetCore/Web/Api/wwwroot/scripts/api/webgis-api.min.js
+/src/NetCore/Web/Api/wwwroot/content/styles/webgis-api*.min.css
 /src/NetCore/Web/Api/wwwroot/lib/select2
 
 favorites.json

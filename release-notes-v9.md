@@ -21,6 +21,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Fast branch deploy: repeated branch deploys only re-read changed CMS files; a full read can be forced in the deploy dialog. [Docs](https://docs.webgiscloud.com/en/webgis/apps/cms/deploy.html#cms-deploy-fast)
 - Faster CMS deploys: link warnings are now collected during the export instead of a separate scan.
 - Modernized CMS look; the main deploy is now labeled "Published state (main)" instead of "Production".
+- Custom pages can include the whole WebGIS API with one script and one stylesheet: `scripts/api/webgis-api.min.js` and `content/styles/webgis-api.min.css` (the previous files `api.min.js`, `api-ui.min.js`, `default.css` and `ui.css` are still supported, but deprecated). Full-page map apps can additionally include `content/api/ui.app.css` (no text selection, no pull-to-refresh). All WebGIS pages and templates now use the new files. [Docs](https://docs.webgiscloud.com/en/webgis-dev/API/API_JavaScript/index.html#api-javascript-single-bundle)
 
 ### Fixed
 

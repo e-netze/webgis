@@ -112,6 +112,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
   [Architecture](docs/architecture/ui-builder.md)
 
+- Single API bundle (recommended for clients): ``scripts/api/webgis-api.min.js`` (``api.min.js`` +
+  ``api-ui.min.js``) and ``content/styles/webgis-api.min.css`` (minified ``default.css`` +
+  ``content/api/ui.icons.css``), built additionally by the bundler. The previous files remain and are
+  still supported.
+  * ``content/api/ui.css`` split into ``ui.icons.css`` (icons, part of the bundle) and ``ui.app.css``
+    (full-page app behavior: no text selection, no pull-to-refresh); ``ui.css`` imports both.
+  * All internal pages (viewer, MapBuilder, AppBuilder, portal pages, DataLinq reports, API pages),
+    the portal/MapBuilder HTML templates and the plugin docs now use the single bundle; viewer,
+    builders and templates additionally load ``ui.app.css``. The portal page loads
+    ``webgis-api.min.js`` for all users.
+  * ``webgis.baseUrl`` falls back to ``document.currentScript`` if no ``id="webgis-api-script"`` is set.
+  * Viewer style overlays renamed to ``webgis-api.bg-dark.css``, ``webgis-api.bg-light.css`` and
+    ``webgis-api.space-saving.css`` and loaded minified (``*.min.css``) in the viewer.
+
+  [Docs](https://docs.webgiscloud.com/en/webgis-dev/API/API_JavaScript/index.html#api-javascript-single-bundle),
+  [Architecture](docs/architecture/api-javascript-bundles.md)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

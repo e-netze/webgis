@@ -57,6 +57,16 @@ Rules:
    `src/NetCore/Web/Portal/Views/MapBuilder/Index.cshtml` - same order as in `bundleconfig.json`.
 3. The UI tests (`src/NetCore/Tests/WebGIS.UI.Tests`) load the single source files in
    `bundleconfig.json` order, so a file that is not registered there is missing in the tests too.
+4. **Never** add source files to `webgis-api.min.js`: this single bundle (recommended for clients)
+   is only `api.min.js` + `api-ui.min.js` concatenated (minify disabled) and must stay defined
+   after both in `bundleconfig.json`. `SingleBundleConfigTests` guards this. Its CSS counterpart
+   `content/styles/webgis-api.min.css` is the minified `default.css` + `content/api/ui.icons.css` (keep
+   editing those). Page-global app rules go to `content/api/ui.app.css` (loaded separately by
+   full-page apps); `content/api/ui.css` only `@import`s both for legacy clients.
+5. Internal pages/templates include only `webgis-api.min.js` (`id="webgis-api-script"`) and
+   `webgis-api.min.css` (+ `ui.app.css` for full-page apps), never the deprecated `api.min.js`,
+   `api-ui.min.js`, `default.css` or `ui.css`. `Development` `<environment>` blocks keep loading
+   the single source files.
 
 ### `scripts/leaflet/plugins/**`
 

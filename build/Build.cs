@@ -222,7 +222,8 @@ class Build : NukeBuild
             var jsGlobs = new[]
             {
                 "api/artifacts/wwwroot/scripts/api/webgis.js",
-                "api/artifacts/wwwroot/scripts/api/api.min.js"
+                "api/artifacts/wwwroot/scripts/api/api.min.js",
+                "api/artifacts/wwwroot/scripts/api/webgis-api.min.js"
             };
 
             foreach (var pattern in jsGlobs)

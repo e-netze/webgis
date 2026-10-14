@@ -1,0 +1,49 @@
+﻿/* Icons of the WebGIS API UI (part of webgis-api.min.css). */
+/*.webgis-api-icon { display: block; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; width:16px;height:16px; background-image:url(img/ui-icons_000000_256x240.png) }
+.webgis-api-icon-triangle-1-s { background-position: -64px -16px; }
+.webgis-api-icon-triangle-1-e { background-position: -32px -16px; }
+
+.webgis-api-icon-info { background-position: -16px -144px; }*/
+
+.webgis-api-icon { 
+	display: block;
+	text-indent: -99999px; 
+	overflow: hidden; 
+	background-repeat: no-repeat;
+	background-position:center;
+	width:16px;height:16px;
+}
+.webgis-api-icon-triangle-1-s { 
+	background-image: url(img/ui/collapsed-16.png);
+}
+.webgis-api-icon-triangle-1-e {
+	background-image: url(img/ui/expanded-16.png);
+}
+
+.webgis-toc-invisible-container .webgis-api-icon-triangle-1-s {
+	background-image: url(img/ui/collapsed-empty-16.png);
+}
+
+.webgis-toc-invisible-container .webgis-api-icon-triangle-1-e {
+	background-image: url(img/ui/expanded-empty-16.png);
+}
+
+.webgis-presentation_toc-title.loading > .webgis-api-icon-triangle-1-s,
+.webgis-presentation_toc-title.loading > .webgis-api-icon-triangle-1-e {
+	background-image: url(img/hourglass/loader1.gif);
+}
+
+.webgis-presentation_toc-item-group.loading > div > .webgis-api-icon-triangle-1-s,
+.webgis-presentation_toc-item-group.loading > div > .webgis-api-icon-triangle-1-e {
+	background-image: url(img/hourglass/loader1.gif);
+}
+
+.webgis-api-icon-info {
+    background-image: url(img/ui/info-26.png);
+    background-size: 16px 16px;
+}
+
+.webgis-api-icon-help {
+    background-image: url(img/ui/help-26.png);
+    background-size: 16px 16px;
+}

@@ -28,8 +28,8 @@ Um Collector-Pro einzubinden, sind folgende Ressouren nötig:
 ##### Stylesheets
 
 ````html
-<link rel="stylesheet" href=".../Content/styles/default.css" />
-<link rel="stylesheet" href=".../Content/api/ui.css" />
+<link rel="stylesheet" href=".../Content/styles/webgis-api.min.css" />
+<link rel="stylesheet" href=".../Content/api/ui.app.css" />
 <link rel="stylesheet" href=".../Scripts/flatpickr/flatpickr.css" />
 
 <link rel="stylesheet" href=".../_templates/WebGIS-Collector-pro/collector_pro.css" />
@@ -42,8 +42,7 @@ Um Collector-Pro einzubinden, sind folgende Ressouren nötig:
 ````html
 <script type="text/javascript" src=".../scripts/jquery-3.4.1.min.js"></script>
 											
-<script type="text/javascript" src=".../Scripts/Api/api.min.js" id="webgis-api-script"></script>
-<script type="text/javascript" src=".../Scripts/Api/api-ui.min.js"></script>
+<script type="text/javascript" src=".../Scripts/Api/webgis-api.min.js" id="webgis-api-script"></script>
 <script type="text/javascript" src=".../Scripts/flatpickr/flatpickr.js"></script>
 <script type="text/javascript" src=".../Scripts/flatpickr/de.js"></script>
 <script type="text/javascript" src=".../Scripts/select2/js/select2.min.js"></script>

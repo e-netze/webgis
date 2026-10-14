@@ -49,10 +49,16 @@
         }
     }
 
-    <link href="@(apiUrl)/content/styles/default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
-    <link href="@(apiUrl)/content/styles/default.bg-dark.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
-    <link href="@(apiUrl)/content/styles/default.bg-light.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
-    <link href="@(apiUrl)/content/styles/default.space-saving.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+    <environment include="Staging,Production">
+        <link href="@(apiUrl)/content/styles/webgis-api.min.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+    </environment>
+    <environment include="Development">
+        <link href="@(apiUrl)/content/styles/default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+        <link href="@(apiUrl)/content/api/ui.icons.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+    </environment>
+    <link href="@(apiUrl)/content/styles/webgis-api.bg-dark.min.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+    <link href="@(apiUrl)/content/styles/webgis-api.bg-light.min.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+    <link href="@(apiUrl)/content/styles/webgis-api.space-saving.min.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 
     @if(!String.IsNullOrEmpty(config.Company()))
     {
@@ -68,7 +74,7 @@
     {
         <link href="@(portalContentUrl)/content/portals/@(Model.PageId)/map-default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
     }
-    <link href="@(apiUrl)/content/api/ui.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
+    <link href="@(apiUrl)/content/api/ui.app.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
     @if(this.Context.Request.IsIOSDevice())
     {
         <link href="@(apiUrl)/content/api/ui-ios.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
@@ -86,8 +92,7 @@
     <script src="@(apiUrl)/lib/dompurify/purify.min.js"></script>
 
     <environment include="Staging,Production">
-        <script src="@(apiUrl)/scripts/api/api.min.js?@(WebGISVersion.JsVersion)" id="webgis-api-script"></script>
-        <script src="@(apiUrl)/scripts/api/api-ui.min.js?@(WebGISVersion.JsVersion)"></script>
+        <script src="@(apiUrl)/scripts/api/webgis-api.min.js?@(WebGISVersion.JsVersion)" id="webgis-api-script"></script>
     </environment>
     <environment include="Development">
         <script src="@(apiUrl)/scripts/api/webgis.js" id="webgis-api-script"></script>

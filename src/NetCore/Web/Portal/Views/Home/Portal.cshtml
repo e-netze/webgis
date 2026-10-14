@@ -19,7 +19,7 @@
     string portalContentUrl = ViewData["portalContentUrl"]?.ToString();
 }
 
-<script src="@(apiUrl)/scripts/api/api.min.js?@(WebGISVersion.CssVersion)"></script>
+<script src="@(apiUrl)/scripts/api/webgis-api.min.js?@(WebGISVersion.JsVersion)" id="webgis-api-script"></script>
 
 @if (Model.IsContentAuthor)
 {
@@ -34,8 +34,7 @@
 @if (Model.IsContentAuthor || Model.IsPortalPageOwner)
 {
     @* webgis.ui.showModal: used by webgis-portal-content.js and webgis-portal-ua.js *@
-    <link href="@(apiUrl)/content/styles/default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
-    <script src="@(apiUrl)/scripts/api/api-ui.min.js?@(WebGISVersion.CssVersion)"></script>
+    <link href="@(apiUrl)/content/styles/webgis-api.min.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
 }
 
 @if (Model.IsPortalPageOwner)

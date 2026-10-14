@@ -22,8 +22,8 @@ Um GeoSearch einzubinden, sind folgende Ressouren nötig:
 ##### Stylesheets
 
 ````html
-<link rel="stylesheet" href=".../Content/styles/default.css" />
-<link rel="stylesheet" href=".../Content/api/ui.css" />
+<link rel="stylesheet" href=".../Content/styles/webgis-api.min.css" />
+<link rel="stylesheet" href=".../Content/api/ui.app.css" />
 
 <link rel="stylesheet" href=".../_templates/WebGIS-GeoSearch/geosearch.css" />
 ````
@@ -34,8 +34,7 @@ Um GeoSearch einzubinden, sind folgende Ressouren nötig:
 ````html
 <script type="text/javascript" src=".../scripts/jquery-3.4.1.min.js"></script>
 											
-<script type="text/javascript" src=".../Scripts/Api/api.min.js" id="webgis-api-script"></script>
-<script type="text/javascript" src=".../Scripts/Api/api-ui.min.js"></script>
+<script type="text/javascript" src=".../Scripts/Api/webgis-api.min.js" id="webgis-api-script"></script>
     									 
 <script type="text/javascript" src=".../Scripts/Api/plugins/geosearch.js"></script>
 ````

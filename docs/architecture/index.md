@@ -14,6 +14,7 @@ which projects and classes are involved, flow diagrams, design decisions and pit
 |---------|------|-------------|
 | [System Overview](system-overview.md) | All | Start here: applications, how they interact, project layout, configuration, deployment. |
 | [AGS Query Strategy](ags-query-strategy.md) | API / GeoServices | Workaround for incomplete ArcGIS Server spatial query results (bounding-box pre-filter bug). |
+| [API JavaScript & CSS Bundles](api-javascript-bundles.md) | API / Viewer | Viewer script/style bundles: core/UI bundles and the single bundle `webgis-api.min.js`/`.min.css`. |
 | [Authentication & Roles](authentication-roles.md) | Portal / API / CMS | Login methods, roles and role parameters, Portal-API HMAC, CMS item authorization. |
 | [CMS Deployment](cms-deployment.md) | CMS / API / Portal | Main deploy, branch deploys (API discovery, branch selection), fast deploy file snapshot, single-pass export. |
 | [CMS Git Support](cms-git.md) | CMS | Optional git versioning per cms-item: user working copies, branches, push/pull, merge and conflict resolution. |

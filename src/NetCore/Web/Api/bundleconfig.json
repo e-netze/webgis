@@ -125,6 +125,58 @@
     },
     "sourceMap": false
   },
+  /*
+   * Single bundle (recommended): api.min.js + api-ui.min.js.
+   * Must stay after both bundles above; inputs are already minified.
+   */
+  {
+    "outputFileName": "wwwroot/scripts/api/webgis-api.min.js",
+    "inputFiles": [
+      "wwwroot/scripts/api/api.min.js",
+      "wwwroot/scripts/api/api-ui.min.js"
+    ],
+    "minify": {
+      "enabled": false
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/content/styles/webgis-api.min.css",
+    "inputFiles": [
+      "wwwroot/content/styles/default.css",
+      "wwwroot/content/api/ui.icons.css"
+    ],
+    "minify": {
+      "enabled": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/content/styles/webgis-api.bg-dark.min.css",
+    "inputFiles": [
+      "wwwroot/content/styles/webgis-api.bg-dark.css"
+    ],
+    "minify": {
+      "enabled": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/content/styles/webgis-api.bg-light.min.css",
+    "inputFiles": [
+      "wwwroot/content/styles/webgis-api.bg-light.css"
+    ],
+    "minify": {
+      "enabled": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/content/styles/webgis-api.space-saving.min.css",
+    "inputFiles": [
+      "wwwroot/content/styles/webgis-api.space-saving.css"
+    ],
+    "minify": {
+      "enabled": true
+    }
+  },
 
   /***************/
   /* Versoin 3.0 */

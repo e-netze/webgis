@@ -13,7 +13,9 @@ public enum HarnessScripts
     /// <summary>Single source files in bundleconfig.json order (default, what gets refactored).</summary>
     Sources,
     /// <summary>The minified bundles api.min.js + api-ui.min.js (smoke test only).</summary>
-    Bundles
+    Bundles,
+    /// <summary>The single bundle webgis-api.min.js, loaded without script id (smoke test only).</summary>
+    SingleBundle
 }
 
 /// <summary>
@@ -237,11 +239,14 @@ public abstract class UIBuilderPageTest : PageTest
 
     private string BuildHarnessHtml()
     {
-        var webgisScripts = Scripts == HarnessScripts.Bundles
-            ? new List<string> { BundleConfig.ToWebPath(BundleConfig.ApiBundle), BundleConfig.ToWebPath(BundleConfig.ApiUiBundle) }
-            : BundleConfig.GetInputFiles(BundleConfig.ApiBundle)
+        var webgisScripts = Scripts switch
+        {
+            HarnessScripts.Bundles => new List<string> { BundleConfig.ToWebPath(BundleConfig.ApiBundle), BundleConfig.ToWebPath(BundleConfig.ApiUiBundle) },
+            HarnessScripts.SingleBundle => new List<string> { BundleConfig.ToWebPath(BundleConfig.WebGISApiBundle) },
+            _ => BundleConfig.GetInputFiles(BundleConfig.ApiBundle)
                 .Concat(BundleConfig.GetInputFiles(BundleConfig.ApiUiBundle))
-                .ToList();
+                .ToList()
+        };
 
         foreach (var script in VendorScripts.Concat(webgisScripts))
         {
@@ -268,7 +273,8 @@ public abstract class UIBuilderPageTest : PageTest
         for (int i = 0; i < webgisScripts.Count; i++)
         {
             // webgis.js derives webgis.baseUrl from the script with this id
-            var id = i == 0 ? " id=\"webgis-api-script\"" : "";
+            // (the single bundle is loaded without id to cover the document.currentScript fallback)
+            var id = i == 0 && Scripts != HarnessScripts.SingleBundle ? " id=\"webgis-api-script\"" : "";
             sb.AppendLine($"<script src=\"{webgisScripts[i]}\"{id}></script>");
         }
 
