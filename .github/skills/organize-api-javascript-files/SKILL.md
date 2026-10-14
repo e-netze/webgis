@@ -17,7 +17,7 @@ reader (and Visual Studio file nesting) the kind of code inside.
 | Core API / viewer modules (`webgis.<area>` objects) | `scripts/api/` | `webgis.<area>[.<sub>].js` | `webgis.map.js`, `webgis.sketch.construct.js`, `webgis.position.debug_geolocation.js` |
 | UI element builders (`webgis.ui.builder['<type>'] = {...}`) and builder-only helpers | `scripts/api/ui/` | `webgis.ui.builder.<topic>.js` | `webgis.ui.builder.inputs.js` |
 | UI plugins in the **current** format (`webgis.ui.definePlugin('webgis_x', {...})`) | `scripts/api/ui/` | `webgis.ui.plugins.<topic>.js` | `webgis.ui.plugins.timefilter.js` |
-| **Legacy** jQuery plugins (`$.fn.webgis_x = function (method) {...}`) | `scripts/api/ui/` | `webgis_<pluginName>.js` (one plugin, or a few closely related ones) | `webgis_tabs.js`, `webgis_mapContextMenu.js` |
+| **Legacy** jQuery plugins (`$.fn.webgis_x = function (method) {...}`) | `scripts/api/ui/` | `webgis_<pluginName>.js` (one plugin, or a few closely related ones) | `webgis_modal.js`, `webgis_contextMenu.js` |
 | Leaflet classes (`L.Xxx` + `L.xxx` factory) | `scripts/leaflet/plugins/` | `webgis-<topic>.<class_snake_case>.js` | `webgis-graphics.dim_line.js`, `webgis-servicelayer.webgis_service.js` |
 
 Rules:

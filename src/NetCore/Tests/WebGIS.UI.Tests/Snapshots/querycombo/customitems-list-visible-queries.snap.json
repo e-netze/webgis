@@ -17,6 +17,12 @@
           "value": "#",
           "selectedIndex": 0
         },
+        "data": {
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "webgis_queryCombo": "[object Ctor]"
+        },
         "expandos": {
           "0": "[element:option.webgis-custom-option]",
           "1": "[element:option.webgis-custom-option]",

@@ -44,7 +44,7 @@ all loaded results.
 | `webgis.map.ui.js` (`.../scripts/api/`) | `showQueryResults`: clears selections, shows markers, creates/selects the result tab (desktop) or renders the list |
 | `webgis.map.queryresults.js` (`.../scripts/api/`) | `webgis.map._queryResultFeatures`: `showClustered` (markers), `showTable` (table panel, toolbar, export, 1:n link buttons, `has_more` notice) |
 | `webgis_queryResults.js` (`.../scripts/api/ui/`) | jQuery plugins `webgis_queryResultsTable` (paging, `selectRow`, "..." row menu) and `webgis_queryResultsList` (`maxItems`) |
-| `webgis_tab_control.js` (`.../scripts/api/ui/`) | Result tab with exact result counter |
+| `webgis.ui.plugins.tab_control.js` (`.../scripts/api/ui/`) | Result tab with exact result counter |
 | `webgis.options.js` (`.../scripts/api/`) | Defaults of `webgis.usability.queryResultsTable` / `queryResultsList` |
 | `webgis.l10n.de.js` / `webgis.l10n.en.js` (`.../scripts/api/`) | `query-max-results-reached`, `query-result-list-truncated`, `export-in-progress`, `row-tools-menu` |
 | `default.css` (`src/NetCore/Web/Api/wwwroot/content/styles/`) | `.webgis-table-pager`, `.webgis-result-maxreached-notification`, `.webgis-result-list-truncated-notice`, `.webgis-row-btn-more` |

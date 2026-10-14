@@ -148,7 +148,7 @@ webgis.ui.definePlugin('webgis_errors', {
                 $counter.css('display', count > 0 ? '' : 'none').text(count);
 
                 if ($tab.hasClass('webgis-tabs-tab') && $tab.parent().hasClass('webgis-tabs-holder') && $.fn.webgis_tabs) {
-                    $tab.parent().webgis_tabs('resize');
+                    $.fn.webgis_tabs.plugin.resize($tab.parent());
 
                     if (count === 0 && $tab.hasClass('webgis-tabs-tab-selected')) {
                         $tab.parent().find('.webgis-tabs-tab').first().trigger('click');

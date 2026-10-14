@@ -17,6 +17,12 @@
           "value": "c1",
           "selectedIndex": 0
         },
+        "data": {
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "webgis_chainageCombo": "[object Ctor]"
+        },
         "expandos": {
           "0": "[element:option]",
           "_map": "[fake:map]",

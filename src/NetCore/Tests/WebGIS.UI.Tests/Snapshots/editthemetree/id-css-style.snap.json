@@ -50,15 +50,19 @@
               "selectedIndex": -1
             },
             "data": {
+              "__plugins__": [
+                "[object Ctor]"
+              ],
               "itemContainer": "[jQuery(1):div#combo.custom-css.webgis-dependencies.webgis-dependency-hasselection.webgis-edittheme-tree]",
               "itemSelector": ".webgis-tag-item",
               "itemTagsAttr": "tags",
-              "tags": []
+              "tags": [],
+              "webgis_tagsCombo": "[object Ctor]"
             },
             "events": {
               "change.webgis_editthemeTree": 1,
-              "click": 1,
-              "mousemove": 1
+              "click.webgis_tagscombo": 1,
+              "mousemove.webgis_tagscombo": 1
             }
           },
           {
@@ -68,8 +72,8 @@
               "style": "display: none; position: absolute;"
             },
             "events": {
-              "mouseout": 1,
-              "mouseover": 1
+              "mouseout.webgis_tagscombo": 1,
+              "mouseover.webgis_tagscombo": 1
             }
           },
           {

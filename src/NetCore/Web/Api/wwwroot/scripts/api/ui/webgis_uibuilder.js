@@ -46,7 +46,9 @@
                     options.map.ui.webgisContainer().find('.webgis-tabs-tab-content').find('.webgis-tooldialog-header.secondary span.close').trigger('click');
                 } else {
                     options.map.ui.webgisContainer().webgis_modal('close', { id: constants.serverButtonModalDialogId });
-                    options.map.ui.webgisContainer().find('.webgis-tabs-holder').webgis_tabs('hide', { tab: 'tools' });
+                    if ($.fn.webgis_tabs) {
+                        $.fn.webgis_tabs.plugin.hide(options.map.ui.webgisContainer().find('.webgis-tabs-holder'), { tab: 'tools' });
+                    }
                 }
             }
         },
@@ -344,7 +346,7 @@
             }
             if (hasSidebarBottomElements === true) {
                 if (closeSidebarBottom) {
-                    options.map.ui.webgisContainer().webgis_dockPanel('close', { dock: 'bottom', id: options.toolDialogId });
+                    $.fn.webgis_dockPanel.plugin.close({ dock: 'bottom', id: options.toolDialogId });
                 }
                 else {
                     options.map.ui.webgisContainer().webgis_dockPanel({
@@ -361,7 +363,7 @@
             }
             if (hasSidebarTopElements === true) {
                 if (closeSidebarTop) {
-                    options.map.ui.webgisContainer().webgis_dockPanel('close', { dock: 'top', id: options.toolDialogId });
+                    $.fn.webgis_dockPanel.plugin.close({ dock: 'top', id: options.toolDialogId });
                 }
                 else {
                     //options.map.ui.webgisContainer().webgis_dockPanel('close', { dock: 'top', id: options.toolDialogId });
@@ -379,7 +381,7 @@
             }
             if (hasSidebarLeftElements === true) {
                 if (closeSidebarLeft) {
-                    options.map.ui.webgisContainer().webgis_dockPanel('close', { dock: 'left', id: options.toolDialogId });
+                    $.fn.webgis_dockPanel.plugin.close({ dock: 'left', id: options.toolDialogId });
                 }
                 else {
                     options.map.ui.webgisContainer().webgis_dockPanel({
@@ -394,7 +396,7 @@
             }
             if (hasAsideToolElements === true) {
                 if (closeAsideToolElement) {
-                    options.map.ui.webgisContainer().webgis_dockPanel('close', { dock: 'right', id: options.toolDialogId + "_aside" });
+                    $.fn.webgis_dockPanel.plugin.close({ dock: 'right', id: options.toolDialogId + "_aside" });
                 } else {
                     options.map.ui.webgisContainer().webgis_dockPanel({
                         title: sidebarLeftTitle,

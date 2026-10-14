@@ -13,7 +13,11 @@
           "element-target": "default"
         },
         "data": {
-          "map": "[fake:map]"
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "map": "[fake:map]",
+          "webgis_graphicsInfoContainer": "[object Ctor]"
         },
         "children": [
           {
@@ -110,10 +114,6 @@
     },
     {
       "call": "map.graphics.hasUpdatingElement",
-      "args": []
-    },
-    {
-      "call": "map.graphics.getStagedElement",
       "args": []
     },
     {

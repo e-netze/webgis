@@ -17,9 +17,15 @@
           "value": "a",
           "selectedIndex": 0
         },
+        "data": {
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "webgis_extCombo": "[object Ctor]"
+        },
         "events": {
-          "click": 1,
-          "mousemove": 1
+          "click.webgis_extcombo": 1,
+          "mousemove.webgis_extcombo": 1
         },
         "expandos": {
           "0": "[element:option]",

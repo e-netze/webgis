@@ -1654,7 +1654,7 @@
             eventStr += (eventStr ? '|' : '') + '_printlayout_rotation=' + map.viewLense.currentRotation();
         }
         if (tool.aside_dialog_exists_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_asidedialog_exists=' + ($('#' + $(null).webgis_dockPanel('panelId', { id: tool.id + "_aside" })).length > 0 ? "true" : "false");
+            eventStr += (eventStr ? '|' : '') + '_asidedialog_exists=' + ($('#' + $.fn.webgis_dockPanel.plugin.panelId({ id: tool.id + "_aside" })).length > 0 ? "true" : "false");
         }
         if (tool.liveshare_clientname_dependent) {
             eventStr += (eventStr ? '|' : '') + '_liveshare_clientname=' + (webgis.liveshare ? webgis.liveshare.getClientname() : '');

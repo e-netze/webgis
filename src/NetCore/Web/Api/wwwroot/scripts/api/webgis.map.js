@@ -441,7 +441,7 @@
                 if (this.ui.useClickBubble()) {
                     this.ui.animClickBubble();
                     if ($.fn.webgis_tabs && webgis.useMobileCurrent())
-                        $(this._webgisContainer).find('.webgis-tabs-holder').webgis_tabs('hideAll');
+                        $.fn.webgis_tabs.plugin.hideAll($(this._webgisContainer).find('.webgis-tabs-holder'));
                 }
                 else {
                     this.eventHandlers.click.apply(this, [e]);
@@ -520,7 +520,7 @@
                         this._lastRightClickTime = new Date().getTime();
 
                         if ($.fn.webgis_map_contextmenu) {
-                            $(null).webgis_map_contextmenu('hide');
+                            $.fn.webgis_map_contextmenu.plugin.hide();
                         }
 
                         this.events.fire('rightclick', this, e);
@@ -820,7 +820,7 @@
 
         this.events.on(['onnewfeatureresponse', 'querymarkersremoved', 'onnewdynamiccontentloaded'], function () {
             // Dialoge mit Ergebnissen schließen
-            this.ui.webgisContainer().find('.webgis-dockpanel.webgis-result').webgis_dockPanel('remove');
+            $.fn.webgis_dockPanel.plugin.remove(this.ui.webgisContainer().find('.webgis-dockpanel.webgis-result'));
         }, this);
         this.events.on(['onnewfeatureresponse'], function () {
             this.unloadDynamicContent();
@@ -1185,7 +1185,7 @@
 
         // remove/clean UI Elements
         if ($.fn.webgis_dockPanel) {
-            $(this._webgisContainer).webgis_dockPanel('removeAll');
+            $.fn.webgis_dockPanel.plugin.removeAll($(this._webgisContainer));
         }
 
         var $tabControl = this.ui.getQueryResultTabControl();
@@ -2449,7 +2449,7 @@
                         id: this._activeTool.id
                     });
                 if ($.fn.webgis_dockPanel)
-                    $(null).webgis_dockPanel('close', {
+                    $.fn.webgis_dockPanel.plugin.close({
                         id: this._activeTool.id
                     });
                 $('.tool-' + webgis.validClassName(this._activeTool.id)).removeClass('active');

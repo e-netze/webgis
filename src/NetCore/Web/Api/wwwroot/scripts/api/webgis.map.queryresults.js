@@ -1479,7 +1479,7 @@
                 .css('background-image', 'url(' + webgis.css.imgResource('enter.png', '') + ')')
                 .appendTo($tools)
                 .click(function () {
-                    map.ui.webgisContainer().find('.webgis-dockpanel.webgis-result').webgis_dockPanel('remove');
+                    $.fn.webgis_dockPanel.plugin.remove(map.ui.webgisContainer().find('.webgis-dockpanel.webgis-result'));
                     let tab = map.ui.webgisContainer().find('#tab-queryresults');  // todo: may a better way to do this ;) ... open tab 
                     if (tab.length > 0 & !tab.hasClass('webgis-tabs-tab-selected')) {
                         tab.trigger('click');

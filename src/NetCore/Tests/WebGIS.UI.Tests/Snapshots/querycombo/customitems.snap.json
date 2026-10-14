@@ -25,7 +25,7 @@
               "combo": "[jQuery(1):select#combo.allow-filter.webgis-cat-combo-target.webgis-query-combo.webgis-select]"
             },
             "events": {
-              "change": 1
+              "change.webgis_catcombo": 1
             },
             "expandos": {
               "0": "[element:option]",
@@ -188,13 +188,13 @@
                 "events": {
                   "blur": 1,
                   "blur.tt": 2,
-                  "click": 1,
+                  "click.webgis_catcombo_filter": 1,
                   "focus": 1,
                   "focus.tt": 1,
                   "input.tt": 1,
                   "keydown.tt": 1,
-                  "mousemove": 1,
-                  "touchstart": 1,
+                  "mousemove.webgis_catcombo_filter": 1,
+                  "touchstart.webgis_catcombo_filter": 1,
                   "typeahead:select": 1
                 }
               },
@@ -237,11 +237,19 @@
               "value": "#",
               "selectedIndex": 0
             },
+            "data": {
+              "__plugins__": [
+                "[object Ctor]",
+                "[object Ctor]"
+              ],
+              "webgis_catCombo": "[object Ctor]",
+              "webgis_queryCombo": "[object Ctor]"
+            },
             "events": {
-              "change": 1,
-              "click": 1,
-              "mousemove": 1,
-              "touchstart": 1
+              "change.webgis_catcombo": 1,
+              "click.webgis_catcombo_filter": 1,
+              "mousemove.webgis_catcombo_filter": 1,
+              "touchstart.webgis_catcombo_filter": 1
             },
             "expandos": {
               "0": "[element:option.webgis-custom-option]",
