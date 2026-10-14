@@ -56,7 +56,8 @@
     // debug UI tools (E.Standard.WebGIS.Tools.Debug.UI, only exported by the server in DEBUG builds)
     this.debug = {
         uiTextLayout: 'webgis.tools.debug.ui.debuguitextlayout',
-        uiInputs: 'webgis.tools.debug.ui.debuguiinputs'
+        uiInputs: 'webgis.tools.debug.ui.debuguiinputs',
+        uiButtons: 'webgis.tools.debug.ui.debuguibuttons'
     };
     this._toolData = [];
     this.getToolData = function (toolId) {
@@ -644,7 +645,7 @@
                     //$(tool.uiElement).empty();
 
                     // ToDo: Hat das jetzt irgendwelche Auswirkungen auf Persistent Element: Hier werden nicht alle Element entfernt, sondern persistent_topic Element in einen neuen bereich kopiert...
-                    // Im $.fn.webgis_tool_persist_topic_handler wird erst einmal überprüft, ob sich darin persistent Element befinden, wenn ja => persistent_topic wird vorerst ignoriert
+                    // Im webgis.ui.persistentTopic wird erst einmal überprüft, ob sich darin persistent Element befinden, wenn ja => persistent_topic wird vorerst ignoriert
                     $(tool.uiElement).webgis_uibuilder('empty', { map: map });
                 }
             }
@@ -1388,8 +1389,8 @@
                 webgis.tools.onButtonClick(map, { type: 'clientbutton', command: response.clientcommands[i] }, null, response.clientcommanddata);
             }
         }
-        if (response.remove_secondary_tool_ui && $.fn.webgis_uibuilder) {
-            $(null).webgis_uibuilder('removeSecondoaryToolUI', { map: map });
+        if (response.remove_secondary_tool_ui && webgis.ui.removeSecondaryToolUI) {
+            webgis.ui.removeSecondaryToolUI(map);
         }
 
         if (responseActiveTool) {

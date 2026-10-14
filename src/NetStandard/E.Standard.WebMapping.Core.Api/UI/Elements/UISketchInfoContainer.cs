@@ -8,7 +8,7 @@ public class UISketchInfoContainer : UIElement
     /// If the map does not provide a sketch-info overlay container (docked above the coordinate
     /// display), the client used to fall back to rendering this element inline in the tool dialog.
     /// Set to false to disable that fallback: the element is then simply ignored by
-    /// webgis_uibuilder.js when no overlay container is available, instead of taking up space in
+    /// webgis.ui.builder.core.js when no overlay container is available, instead of taking up space in
     /// the dialog again.
     /// </param>
     public UISketchInfoContainer(bool allowFallback = true)

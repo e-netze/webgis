@@ -1,6 +1,6 @@
 ﻿// WebGIS UI Plugin webgis_bbox_input
 // Bounding box input (minx, miny, maxx, maxy), used by the input-bbox builder (webgis.ui.builder.inputs.js),
-// its setters (webgis_uibuilder.js) and webgis.tools.js (downloadmapimage)
+// its setters (webgis.ui.builder.core.js) and webgis.tools.js (downloadmapimage)
 
 webgis.ui.definePlugin('webgis_bbox_input', {
     defaults: {

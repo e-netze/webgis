@@ -1,16 +1,19 @@
-﻿(function ($) {
+﻿// WebGIS UI Builder (core)
+// Builds the tool/server UI from a ui definition ({ elements: [...] }); the element types are
+// created by the builders in webgis.ui.builder.<topic>.js (registry: webgis.ui.builder.js).
+// No plugin: a stateless build function, called repeatedly on the same target or without a
+// target element (targets resolved by element.target).
+//   webgis.ui.build(target, options)                 build/append elements
+//   webgis.ui.emptyToolUI($target, options)          persist topic + empty
+//   webgis.ui.appendCtrlBBoxInfo(target)             'Ctrl + bbox' tip
+//   webgis.ui.removeSecondaryToolUI(map)             close secondary tool dialog
+//   webgis.ui.persistentTopic.serialize/deserialize  keep tool topics while switching tools
+//   webgis.ui.addFormElementEvents($element)         mark .webgis-form-container dirty
+//   webgis.ui.elementProperties(element, options)    attribute string for builders
+// $.fn.webgis_uibuilder is kept as a thin jQuery facade (compatibility, UI tests).
+
+(function ($) {
     "use strict";
-    $.fn.webgis_uibuilder = function (method) {
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        }
-        else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        }
-        else {
-            $.error('Method ' + method + ' does not exist on webgis.$.webgis_uibuilder');
-        }
-    };
     var defaults = {
         map: null,
         tool: null,
@@ -23,38 +26,16 @@
         event: null,
         toolDialogId: null
     };
-    var methods = {
-        init: function (options) {
-            var $this = $(this), options = $.extend({}, defaults, options);
-            if ($this.length == 0)
-                return initUI(this, options);
-            return this.each(function () {
-                new initUI(this, options);
-            });
-        },
-        append_ctrl_bbox_info: function (options) {
-            var $this = $(this), options = $.extend({}, defaults, options);
-            if ($this.length == 0)
-                return appendCtrlBBoxInfo(this, options);
-            return this.each(function () {
-                new appendCtrlBBoxInfo(this, options);
-            });
-        },
-        removeSecondoaryToolUI: function (options) {
-            if (options.map) {
-                if (options.map.ui.advancedToolBehaviour() === true) {
-                    options.map.ui.webgisContainer().find('.webgis-tabs-tab-content').find('.webgis-tooldialog-header.secondary span.close').trigger('click');
-                } else {
-                    options.map.ui.webgisContainer().webgis_modal('close', { id: constants.serverButtonModalDialogId });
-                    if ($.fn.webgis_tabs) {
-                        $.fn.webgis_tabs.plugin.hide(options.map.ui.webgisContainer().find('.webgis-tabs-holder'), { tab: 'tools' });
-                    }
+    var removeSecondaryToolUI = function (map) {
+        if (map) {
+            if (map.ui.advancedToolBehaviour() === true) {
+                map.ui.webgisContainer().find('.webgis-tabs-tab-content').find('.webgis-tooldialog-header.secondary span.close').trigger('click');
+            } else {
+                map.ui.webgisContainer().webgis_modal('close', { id: constants.serverButtonModalDialogId });
+                if ($.fn.webgis_tabs) {
+                    $.fn.webgis_tabs.plugin.hide(map.ui.webgisContainer().find('.webgis-tabs-holder'), { tab: 'tools' });
                 }
             }
-        },
-        empty: function (options) {
-            emptyParent($(this), options);
-            return $(this);
         }
     };
 
@@ -772,7 +753,7 @@
 
             $newElement = $("<" + tagName + (attributes ? " " + attributes : "") + " " + properties + "></" + tagName + ">").appendTo($parent);
             if (webgis.ui.builder[element.type + ".formelement"] === true) {
-                $newElement.add_webgis_form_element_events();
+                addFormElementEvents($newElement);
             }
             // a builder may return a different element (e.g. an inner list), which then gets the events and child elements
             const $builderElement = webgis.ui.builder[element.type](map, $newElement, element, options);
@@ -818,7 +799,7 @@
             }
 
             if ($newElement.hasClass('webgis-tool-persistent-topic') && $newElement.attr('data-tool-id')) {
-                $(null).webgis_tool_persist_topic_handler('deserialize', { map: options.map, element: $newElement, id: $newElement.attr('data-tool-id') });
+                webgis.ui.persistentTopic.deserialize({ map: options.map, element: $newElement, id: $newElement.attr('data-tool-id') });
             }
 
             if ($newElement.hasClass('webgis-validation')) {
@@ -961,16 +942,61 @@
 
         var $persistentTopic = $parent.find('.webgis-tool-persistent-topic');
         if ($persistentTopic.length === 1 && $persistentTopic.attr('data-tool-id')) {
-            $(null).webgis_tool_persist_topic_handler('serialize', { map: options.map, element: $persistentTopic, id: $persistentTopic.attr('data-tool-id') });
+            webgis.ui.persistentTopic.serialize({ map: options.map, element: $persistentTopic, id: $persistentTopic.attr('data-tool-id') });
         }
 
         $parent.empty();
     };
 
-})(webgis.$ || jQuery);
+    var addFormElementEvents = function ($element) {
+        if ($element.closest('.webgis-form-container').length === 1) {
+            $element.bind('change keyup', function () {
+                $(this).closest('.webgis-form-container').addClass('webgis-is-dirty');
+            })
+        }
+        return $element;
+    };
 
-(function ($) {
-    $.fn.webgis_tool_persist_topic_handler = function (method) {
+    webgis.ui.build = function (target, options) {
+        return initUI(target, $.extend({}, defaults, options));
+    };
+    webgis.ui.emptyToolUI = function ($target, options) {
+        emptyParent($($target), options);
+        return $($target);
+    };
+    webgis.ui.appendCtrlBBoxInfo = function (target, options) {
+        appendCtrlBBoxInfo(target, $.extend({}, defaults, options));
+    };
+    webgis.ui.removeSecondaryToolUI = removeSecondaryToolUI;
+    webgis.ui.addFormElementEvents = addFormElementEvents;
+
+    // jQuery facade (compatibility): $el.webgis_uibuilder(options), ('empty', { map }),
+    // ('append_ctrl_bbox_info', options), ('removeSecondoaryToolUI', { map })
+    var methods = {
+        init: function (options) {
+            var $this = $(this);
+            if ($this.length == 0)
+                return webgis.ui.build(this, options);
+            return this.each(function () {
+                webgis.ui.build(this, options);
+            });
+        },
+        append_ctrl_bbox_info: function (options) {
+            var $this = $(this);
+            if ($this.length == 0)
+                return webgis.ui.appendCtrlBBoxInfo(this, options);
+            return this.each(function () {
+                webgis.ui.appendCtrlBBoxInfo(this, options);
+            });
+        },
+        removeSecondoaryToolUI: function (options) {
+            removeSecondaryToolUI(options.map);
+        },
+        empty: function (options) {
+            return webgis.ui.emptyToolUI(this, options);
+        }
+    };
+    $.fn.webgis_uibuilder = function (method) {
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
         }
@@ -978,29 +1004,19 @@
             return methods.init.apply(this, arguments);
         }
         else {
-            $.error('Method ' + method + ' does not exist on webgis.$.webgis_persist_topic_handler');
+            $.error('Method ' + method + ' does not exist on webgis.$.webgis_uibuilder');
         }
     };
 
+})(webgis.$ || jQuery);
+
+(function ($) {
+    "use strict";
     var defaults = {
         map: null,
         id: null,
         element: null,
         clearDeserialzed: true
-    };
-
-    var methods = {
-        init: function (options) {
-            return this.each(function () {
-                new createHandlerPanel($.extend({}, defaults, options));
-            });
-        },
-        serialize: function (options) {
-            serialize($.extend({}, defaults, options));
-        },
-        deserialize: function (options) {
-            deserialize($.extend({}, defaults, options));
-        }
     };
 
     var createHandlerPanel = function (options) {
@@ -1067,16 +1083,13 @@
             }
         }
     };
-})(webgis.$ || jQuery);
 
-(function ($) {
-    $.fn.add_webgis_form_element_events = function () {
-        var $this = $(this);
-        if ($this.closest('.webgis-form-container').length === 1) {
-            $this.bind('change keyup', function () {
-                $(this).closest('.webgis-form-container').addClass('webgis-is-dirty');
-            })
+    webgis.ui.persistentTopic = {
+        serialize: function (options) {
+            serialize($.extend({}, defaults, options));
+        },
+        deserialize: function (options) {
+            deserialize($.extend({}, defaults, options));
         }
-        return this;
-    }
+    };
 })(webgis.$ || jQuery);

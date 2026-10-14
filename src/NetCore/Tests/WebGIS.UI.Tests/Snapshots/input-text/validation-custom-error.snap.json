@@ -7,37 +7,45 @@
     },
     "children": [
       {
-        "tag": "input",
-        "attrs": {
-          "class": "webgis-input webgis-validation webgis-not-valid",
-          "element-target": "default",
-          "id": "elem",
-          "type": "text",
-          "webgis-validation-error": "Pflichtfeld!",
-          "webgis-validation-required": "true"
-        },
-        "props": {
-          "value": ""
-        },
-        "data": {
-          "__plugins__": [
-            "[object Ctor]"
-          ],
-          "errorMessageElement": "[jQuery(1):div.haserror.webgis-validation-error]",
-          "webgis_validation": "[object Ctor]"
-        },
-        "events": {
-          "change": 1,
-          "input.webgis_validation": 1
-        }
-      },
-      {
         "tag": "div",
         "attrs": {
-          "class": "webgis-validation-error haserror"
+          "class": "webgis-validation-holder"
         },
         "children": [
-          "Pflichtfeld!"
+          {
+            "tag": "input",
+            "attrs": {
+              "class": "webgis-input webgis-validation webgis-not-valid",
+              "element-target": "default",
+              "id": "elem",
+              "type": "text",
+              "webgis-validation-error": "Pflichtfeld!",
+              "webgis-validation-required": "true"
+            },
+            "props": {
+              "value": ""
+            },
+            "data": {
+              "__plugins__": [
+                "[object Ctor]"
+              ],
+              "errorMessageElement": "[jQuery(1):div.haserror.webgis-validation-error]",
+              "webgis_validation": "[object Ctor]"
+            },
+            "events": {
+              "change": 1,
+              "input.webgis_validation": 1
+            }
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-validation-error haserror"
+            },
+            "children": [
+              "Pflichtfeld!"
+            ]
+          }
         ]
       }
     ]

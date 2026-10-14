@@ -7,7 +7,7 @@ namespace WebGIS.UI.Tests.UIBuilder;
 
 /// <summary>
 /// Characterization tests for the input elements (package 1: input-text, input-textarea, input-date,
-/// input-number, hidden, input-autocomplete), still built by if-branches in webgis_uibuilder.js insertElement.
+/// input-number, hidden, input-autocomplete), still built by if-branches in webgis.ui.builder.core.js insertElement.
 /// </summary>
 [TestClass]
 public class InputElementsTests : UIBuilderPageTest

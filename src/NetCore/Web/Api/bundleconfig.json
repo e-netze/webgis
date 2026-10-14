@@ -105,7 +105,7 @@
         "wwwroot/scripts/api/ui/webgis_modalprogress.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.toolbox.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.toolbar.js",
-        "wwwroot/scripts/api/ui/webgis_uibuilder.js",
+        "wwwroot/scripts/api/ui/webgis.ui.builder.core.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.mapContextMenu.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.serviceControls.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.tabs.js",

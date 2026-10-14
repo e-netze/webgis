@@ -7,77 +7,85 @@
     },
     "children": [
       {
-        "tag": "select",
+        "tag": "div",
         "attrs": {
-          "class": "webgis-select webgis-validation validated-parameter",
-          "element-target": "default",
-          "id": "combo",
-          "webgis-validation-required": "true"
-        },
-        "props": {
-          "value": "a",
-          "selectedIndex": 0
-        },
-        "data": {
-          "__plugins__": [
-            "[object Ctor]"
-          ],
-          "errorMessageElement": "[jQuery(1):div.webgis-validation-error]",
-          "webgis_validation": "[object Ctor]"
-        },
-        "events": {
-          "change": 1,
-          "input.webgis_validation": 1
-        },
-        "expandos": {
-          "0": "[element:option]",
-          "1": "[element:option]",
-          "2": "[element:option]"
+          "class": "webgis-validation-holder"
         },
         "children": [
           {
-            "tag": "option",
+            "tag": "select",
             "attrs": {
-              "value": "a"
+              "class": "webgis-select webgis-validation validated-parameter",
+              "element-target": "default",
+              "id": "combo",
+              "webgis-validation-required": "true"
             },
             "props": {
-              "selected": true
+              "value": "a",
+              "selectedIndex": 0
+            },
+            "data": {
+              "__plugins__": [
+                "[object Ctor]"
+              ],
+              "errorMessageElement": "[jQuery(1):div.webgis-validation-error]",
+              "webgis_validation": "[object Ctor]"
+            },
+            "events": {
+              "change": 1,
+              "input.webgis_validation": 1
+            },
+            "expandos": {
+              "0": "[element:option]",
+              "1": "[element:option]",
+              "2": "[element:option]"
             },
             "children": [
-              "Option A"
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "a"
+                },
+                "props": {
+                  "selected": true
+                },
+                "children": [
+                  "Option A"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "b"
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "Option B"
+                ]
+              },
+              {
+                "tag": "option",
+                "attrs": {
+                  "value": "c"
+                },
+                "props": {
+                  "selected": false
+                },
+                "children": [
+                  "Option C"
+                ]
+              }
             ]
           },
           {
-            "tag": "option",
+            "tag": "div",
             "attrs": {
-              "value": "b"
-            },
-            "props": {
-              "selected": false
-            },
-            "children": [
-              "Option B"
-            ]
-          },
-          {
-            "tag": "option",
-            "attrs": {
-              "value": "c"
-            },
-            "props": {
-              "selected": false
-            },
-            "children": [
-              "Option C"
-            ]
+              "class": "webgis-validation-error"
+            }
           }
         ]
-      },
-      {
-        "tag": "div",
-        "attrs": {
-          "class": "webgis-validation-error"
-        }
       }
     ]
   },

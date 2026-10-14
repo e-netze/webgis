@@ -1,6 +1,6 @@
 ﻿// WebGIS UI Plugins (validation)
 // webgis_validation: input validation (required, minlen, regex) with an error message element
-// Created by webgis_uibuilder.js for elements with has_validation
+// Created by webgis.ui.builder.core.js for elements with has_validation
 
 webgis.ui.definePlugin('webgis_validation', {
     defaults: {

@@ -1,6 +1,6 @@
 ﻿// WebGIS UI Plugin webgis_size_input
 // Width/height input, used by the input-size builder (webgis.ui.builder.inputs.js),
-// its setters (webgis_uibuilder.js) and webgis.tools.js (downloadmapimage)
+// its setters (webgis.ui.builder.core.js) and webgis.tools.js (downloadmapimage)
 
 webgis.ui.definePlugin('webgis_size_input', {
     defaults: {

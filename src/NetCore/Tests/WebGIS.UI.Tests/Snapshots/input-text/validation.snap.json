@@ -7,38 +7,46 @@
     },
     "children": [
       {
-        "tag": "input",
-        "attrs": {
-          "class": "webgis-input webgis-validation webgis-not-valid",
-          "element-target": "default",
-          "id": "elem",
-          "type": "text",
-          "webgis-validation-minlen": "3",
-          "webgis-validation-regex": "^[a-z]+$",
-          "webgis-validation-required": "true"
-        },
-        "props": {
-          "value": ""
-        },
-        "data": {
-          "__plugins__": [
-            "[object Ctor]"
-          ],
-          "errorMessageElement": "[jQuery(1):div.haserror.webgis-validation-error]",
-          "webgis_validation": "[object Ctor]"
-        },
-        "events": {
-          "change": 1,
-          "input.webgis_validation": 1
-        }
-      },
-      {
         "tag": "div",
         "attrs": {
-          "class": "webgis-validation-error haserror"
+          "class": "webgis-validation-holder"
         },
         "children": [
-          "Eingabe ist erforderlich"
+          {
+            "tag": "input",
+            "attrs": {
+              "class": "webgis-input webgis-validation webgis-not-valid",
+              "element-target": "default",
+              "id": "elem",
+              "type": "text",
+              "webgis-validation-minlen": "3",
+              "webgis-validation-regex": "^[a-z]+$",
+              "webgis-validation-required": "true"
+            },
+            "props": {
+              "value": ""
+            },
+            "data": {
+              "__plugins__": [
+                "[object Ctor]"
+              ],
+              "errorMessageElement": "[jQuery(1):div.haserror.webgis-validation-error]",
+              "webgis_validation": "[object Ctor]"
+            },
+            "events": {
+              "change": 1,
+              "input.webgis_validation": 1
+            }
+          },
+          {
+            "tag": "div",
+            "attrs": {
+              "class": "webgis-validation-error haserror"
+            },
+            "children": [
+              "Eingabe ist erforderlich"
+            ]
+          }
         ]
       }
     ]

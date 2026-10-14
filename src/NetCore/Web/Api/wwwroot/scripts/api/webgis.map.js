@@ -167,7 +167,7 @@
     // (docked above the current-coordinates display, inside the overlay - next to its
     // persistent "x" close button). Returns null if the current layout does not provide
     // a coordinate display (fallback: element is inserted into the tool dialog instead,
-    // see webgis_uibuilder.js).
+    // see webgis.ui.builder.core.js).
     this.sketchInfoOverlayContainer = function () {
         return this._sketchInfoOverlayContent && this._sketchInfoOverlayContent.length > 0 ?
             this._sketchInfoOverlayContent :
@@ -326,7 +326,7 @@
                         _map.updateSketchInfoOverlayVisibility();
                     });
 
-                // Content wrapper: this is where webgis_uibuilder.js appends the actual
+                // Content wrapper: this is where webgis.ui.builder.core.js appends the actual
                 // sketch-info-container element/plugin. Kept separate from the close button
                 // above, so emptying/rebuilding the content on tool-switch doesn't remove it.
                 this._sketchInfoOverlayContent = $("<div>")

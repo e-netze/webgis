@@ -14,37 +14,45 @@
         },
         "children": [
           {
-            "tag": "input",
-            "attrs": {
-              "class": "webgis-input webgis-validation validated-parameter",
-              "data-value": "abcd",
-              "element-target": "default",
-              "id": "required-input",
-              "type": "text",
-              "value": "abcd",
-              "webgis-validation-minlen": "3",
-              "webgis-validation-required": "true"
-            },
-            "props": {
-              "value": "abcd"
-            },
-            "data": {
-              "__plugins__": [
-                "[object Ctor]"
-              ],
-              "errorMessageElement": "[jQuery(1):div.webgis-validation-error]",
-              "webgis_validation": "[object Ctor]"
-            },
-            "events": {
-              "change": 1,
-              "input.webgis_validation": 1
-            }
-          },
-          {
             "tag": "div",
             "attrs": {
-              "class": "webgis-validation-error"
-            }
+              "class": "webgis-validation-holder"
+            },
+            "children": [
+              {
+                "tag": "input",
+                "attrs": {
+                  "class": "webgis-input webgis-validation validated-parameter",
+                  "data-value": "abcd",
+                  "element-target": "default",
+                  "id": "required-input",
+                  "type": "text",
+                  "value": "abcd",
+                  "webgis-validation-minlen": "3",
+                  "webgis-validation-required": "true"
+                },
+                "props": {
+                  "value": "abcd"
+                },
+                "data": {
+                  "__plugins__": [
+                    "[object Ctor]"
+                  ],
+                  "errorMessageElement": "[jQuery(1):div.webgis-validation-error]",
+                  "webgis_validation": "[object Ctor]"
+                },
+                "events": {
+                  "change": 1,
+                  "input.webgis_validation": 1
+                }
+              },
+              {
+                "tag": "div",
+                "attrs": {
+                  "class": "webgis-validation-error"
+                }
+              }
+            ]
           },
           {
             "tag": "button",

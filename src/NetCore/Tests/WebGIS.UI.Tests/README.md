@@ -1,7 +1,7 @@
 # WebGIS.UI.Tests
 
 Browser-based characterization tests (golden master) for the WebGIS viewer JavaScript,
-currently for the UI builder (`wwwroot/scripts/api/ui/webgis_uibuilder.js` and
+currently for the UI builder (`wwwroot/scripts/api/ui/webgis.ui.builder.core.js` and
 `webgis.ui.builder[...]` plugins).
 
 Purpose: lock the current behaviour **before** refactoring, so a refactoring can prove

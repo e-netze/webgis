@@ -1,5 +1,5 @@
 ﻿// WebGIS UI Builder
-// Registry of the element builders used by webgis_uibuilder.js (insertElement):
+// Registry of the element builders used by webgis.ui.builder.core.js (insertElement):
 //   webgis.ui.builder["<type>"] = (map, $newElement, element, options) => { ... }
 // plus optional hooks ("<type>.tagname", ".attributes", ".toolid", ".formelement", ".properties",
 // ".afterinsert", ".create"), see docs/architecture/ui-builder.md.
