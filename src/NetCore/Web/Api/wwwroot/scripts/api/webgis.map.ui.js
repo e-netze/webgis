@@ -1520,9 +1520,7 @@
             if ($resultHolder.length > 0) {
                 $resultHolder.get(0).search_term = '';
             }
-            $resultHolder
-                .find('.webgis-search-result-list')
-                .webgis_queryResultsList('empty', { map: map });
+            $.fn.webgis_queryResultsList.plugin.empty($resultHolder.find('.webgis-search-result-list'), { map: map });
         }
 
         if (result && result.features && result.features.length === 0) {

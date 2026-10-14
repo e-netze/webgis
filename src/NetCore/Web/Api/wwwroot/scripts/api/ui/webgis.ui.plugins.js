@@ -52,7 +52,8 @@ webgis.ui.definePlugin = function (name, spec) {
         webgis.ui.__registerPlugin(this.$el, this);      // << register plugin for deep destroy
         this.$el.data(name, this);                       // methods are already callable during init
 
-        spec.init && spec.init.call(this);
+        // the original (not merged) options are passed, eg. to keep large data (features) by reference
+        spec.init && spec.init.call(this, options);
     }
 
     Ctor.prototype.option = function (key, value) {

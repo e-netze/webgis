@@ -73,7 +73,7 @@ middle step is a common, silent bug — see the gotcha in step 2.
 - The value shows up as `features.metadata.<snake_case_name>` (or `result.metadata...`,
   `response.features.metadata...` depending on the call site) in JS.
 - Add the rendering logic where it's needed, e.g. `webgis.map.queryresults.js` (table view) and/or
-  `webgis_queryResults.js` (list view, e.g. mobile). Look at the existing `metadata.warnings`
+  `webgis.ui.plugins.queryResults.js` (list view, e.g. mobile). Look at the existing `metadata.warnings`
   handling (`webgis.map.queryresults.js`) as the closest reference, but note it uses a dismissible,
   modal-style panel (`.webgis-result-warning-panel`) — do **not** reuse that mechanism for routine,
   non-critical notices; prefer a plain, non-interactive `<div>` with its own CSS class unless the

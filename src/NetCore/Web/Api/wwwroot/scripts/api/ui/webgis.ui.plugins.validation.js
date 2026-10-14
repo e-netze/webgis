@@ -14,6 +14,15 @@ webgis.ui.definePlugin('webgis_validation', {
 
         $elem.addClass('webgis-validation');
 
+        // the error message is positioned absolute (default.css) => it needs a relative positioned parent.
+        // The edit mask field container (.webgis-editfield-container) already is one; its flex layout must not be changed by a wrapper.
+        const $parent = $elem.parent();
+        if ($parent.length > 0
+            && !$parent.hasClass('webgis-editfield-container')
+            && !$parent.hasClass('webgis-validation-holder')) {
+            $elem.wrap("<div class='webgis-validation-holder'></div>");
+        }
+
         if (o.minlen) {
             $elem.attr('webgis-validation-minlen', o.minlen);
         }

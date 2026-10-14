@@ -1,99 +1,93 @@
-﻿(function ($) {
-    "use strict";
-    $.fn.webgis_queryResultsHolder = function (method) {
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        }
-        else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        }
-        else {
-            $.error('Method ' + method + ' does not exist on webgis.$webgis_queryResultsHolder');
-        }
-    };
-    var defaults = {
-        map: null,
-    };
-    var methods = {
-        init: function (options) {
-            var $this = $(this), options = $.extend({}, defaults, options);
-            return this.each(function () {
-                new initUI(this, options);
-            });
-        },
-        showbuttons: function (options) {
-            return this.each(function () {
-                $(this).find('.webgis-search-result-clearresults').css('display', (options && options.clearresults) ? '' : 'none');
-                $(this).find('.webgis-search-result-showtable').css('display', (options && options.showtable) ? '' : 'none');
-            });
-        }
-    };
+﻿// WebGIS UI Plugins (query results)
+// webgis_queryResultsHolder, webgis_queryResultsList, webgis_queryResultListWithFeatureDetails, webgis_queryResultsTable
+// Query result UI of the viewer: the result holder (tab content with the result list), the result list
+// (toolbar + feature items), the list with a feature details column (quick search tab) and the result table.
+// Methods that legacy code calls on elements without an instance are static methods:
+// $.fn.webgis_queryResultsList.plugin.empty($list, { map }), $.fn.webgis_queryResultListWithFeatureDetails.plugin.empty($el, { map }),
+// $.fn.webgis_queryResultsTable.plugin.selectRow($el, { dataId, scrollTo }), $.fn.webgis_queryResultsTable.plugin.unselectRows({ map }).
+// Kept globals: $.fn.webgis_queryResultsList.selectedItemClass, $.fn.webgis_queryResultsTable.selectedRowClass,
+// $.fn.webgis_queryResultListWithFeatureDetails.onMarkerClick and $.webgis_search_result_histories (filled in webgis.map.ui.js).
 
-    var initUI = function (elem, options) {
+webgis.ui.definePlugin('webgis_queryResultsHolder', {
+    defaults: {
+        map: null
+    },
+    init: function () {
+        const $ = this.$;
+        const options = this.options;
+
         if (!options.map)
             return;
 
-        var $elem = $(elem);
+        var $elem = this.$el;
         $elem.data('map', options.map);
 
         $elem.addClass('webgis-search-result-holder');
         $("<div class='webgis-search-result-list'></div>").appendTo($elem);
         options.map._queryResultsHolder = $elem.get(0);
 
-        options.map.events.on('feature-highlighted', function (channel, map, feature) {
-            var $holder = $(this);
+        this._onFeatureHighlighted = this._featureHighlighted.bind(this);
+        this._onFeatureHighlightRemoved = this._featureHighlightRemoved.bind(this);
+        options.map.events.on('feature-highlighted', this._onFeatureHighlighted, $elem.get(0));
+        options.map.events.on('feature-highlight-removed', this._onFeatureHighlightRemoved, $elem.get(0));
+    },
+    destroy: function () {
+        if (this.options.map && this._onFeatureHighlighted) {
+            this.options.map.events.off('feature-highlighted', this._onFeatureHighlighted);
+            this.options.map.events.off('feature-highlight-removed', this._onFeatureHighlightRemoved);
+        }
+    },
+    methods: {
+        showbuttons: function (options) {
+            this.constructor.showbuttons(this.$el, options);
+        },
+        _featureHighlighted: function (channel, map, feature) {
+            const $ = this.$;
+            var $holder = this.$el;
             $holder
-                .find('.'+$.fn.webgis_queryResultsList.selectedItemClass)
+                .find('.' + $.fn.webgis_queryResultsList.selectedItemClass)
                 .removeClass($.fn.webgis_queryResultsList.selectedItemClass);
             $holder
                 .find(".webgis-result[data-id='" + feature.oid + "']")
                 .addClass($.fn.webgis_queryResultsList.selectedItemClass);
-        }, elem);
-        options.map.events.on('feature-highlight-removed', function (channel, map, feature) {
-            var $holder = $(this);
+        },
+        _featureHighlightRemoved: function (channel, map, feature) {
+            const $ = this.$;
+            var $holder = this.$el;
             $holder
                 .find('.' + $.fn.webgis_queryResultsList.selectedItemClass)
                 .removeClass($.fn.webgis_queryResultsList.selectedItemClass);
-        }, elem);
-    };
-})(webgis.$ || jQuery);
+        }
+    },
+    staticMethods: {
+        // works on any element (like the legacy method), no instance needed
+        showbuttons: function ($el, options) {
+            const $ = webgis.$ || jQuery;
+            $($el).each(function () {
+                $(this).find('.webgis-search-result-clearresults').css('display', (options && options.clearresults) ? '' : 'none');
+                $(this).find('.webgis-search-result-showtable').css('display', (options && options.showtable) ? '' : 'none');
+            });
+        }
+    }
+});
 
-(function ($) {
-    "use strict";
-    $.fn.webgis_queryResultsList = function (method) {
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        }
-        else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        }
-        else {
-            $.error('Method ' + method + ' does not exist on webgis.$webgis_queryResultsList');
-        }
-    };
-    var defaults = {
+webgis.ui.definePlugin('webgis_queryResultsList', {
+    // each call with options renders (appends) the features again (callers empty the element before)
+    reinit: true,
+    defaults: {
         map: null,
         features: null,
         beforeAdd: null,
         showToolbar: true,
         dynamicContentQuery: null /* optionaler Parameter wird bei Dynamischen Inhalten mitübergeben */
-    };
-    var methods = {
-        init: function (options) {
-            var $this = $(this), options = $.extend({}, defaults, options);
-            return this.each(function () {
-                new initUI(this, options);
-            });
-        },
-        empty: function (options) {
-            webgis_search_empty_result_list($(this), options.map);
-        }
-    };
+    },
+    init: function (rawOptions) {
+        const $ = this.$;
+        this.constructor._keepReferences(this.options, rawOptions, ['features', 'dynamicContentQuery']);
+        var options = this.options;
+        var renderFeature = this.constructor.renderFeature;
 
-    $.fn.webgis_queryResultsList.selectedItemClass = 'webgis-geojuhu-result-selected';
-
-    var initUI = function (parent, options) {
-        var $parent = $(parent);
+        var $parent = this.$el;
 
         var map = options.map;
         var features = options.features;
@@ -183,7 +177,7 @@
 
                         map.queryResultFeatures.clear(hasHistory);
                         map.getSelection('selection').remove();
-                        $holder.find('.webgis-search-result-list').webgis_queryResultsList('empty', { map: map });
+                        $.fn.webgis_queryResultsList.plugin.empty($holder.find('.webgis-search-result-list'), { map: map });
                         $holder.get(0).search_term = '';
                         if (hasHistory) {
                             $.webgis_search_result_histories[map].render($holder.find('.webgis-search-result-list'));
@@ -367,12 +361,12 @@
                 .addClass('webgis-result-fulltext')
                 .appendTo($li);
 
-            var hookFunc = webgis.hooks["query_result_feature"]["default"] || webgis_search_result_list_renderFeature;
+            var hookFunc = webgis.hooks["query_result_feature"]["default"] || renderFeature;
             if (feature.__queryId && feature.__serviceId) {
                 hookFunc = webgis.hooks["query_result_feature"][feature.__queryId] || hookFunc;
                 hookFunc = webgis.hooks["query_result_feature"][feature.__serviceId + ":" + feature.__queryId] || hookFunc;
             }
-            hookFunc(map, $featureDiv, feature, webgis_search_result_list_renderFeature);
+            hookFunc(map, $featureDiv, feature, renderFeature);
             var resultImg = map.queryResultFeatures.markerImg(feature._fIndex || f);
             if (resultImg && resultImg.url) {
                 $li.css({
@@ -437,99 +431,107 @@
             .attr('id') + '-counter')
             .css('display', '')
             .text(features.length);
-    };
-
-    var webgis_search_empty_result_list = function ($parent, map) {
-
-        $parent.empty();
-        $('#' + $parent.closest('.webgis-search-result-holder').attr('id') + '-counter').css('display', 'none').html('');
-        if (map) {
-            map.getSelection('query').remove();
+    },
+    destroy: function () {
+        // nothing to release: the rendered items stay in the element (legacy behaviour),
+        // their DOM handlers are removed by jQuery when the items are removed
+    },
+    methods: {
+        empty: function (options) {
+            this.constructor.empty(this.$el, options);
         }
+    },
+    staticMethods: {
+        // keep these option values by reference (definePlugin merges options deep => would clone the features)
+        _keepReferences: function (options, rawOptions, keys) {
+            if (!rawOptions)
+                return;
 
-        // Uncheck dynamic content toc items
-        $(map.ui.webgisContainer())
-            .find('.webgis-presentation_toc-dyncontent-item.webgis-presentation_toc-dyncontent-item-selected')
-            .removeClass('webgis-presentation_toc-dyncontent-item-selected');
-    };
-
-    var webgis_search_result_list_renderFeature = function (map, $parent, feature) {
-        var html = '';
-
-        var featureProperties = Array.isArray(feature.properties) ? (feature.properties.length > 0 ? feature.properties[0] : {}) : feature.properties;
-
-        if (featureProperties._fulltext) {
-            html = featureProperties._fulltext.replaceAll('\\n', '<br/>');
-        }
-        else {
-            for (var property in featureProperties) {
-                if (property.substring(0, 1) == "_")
-                    continue;
-                if (featureProperties.hasOwnProperty(property)) {
-                    // html = map.ui.featureResultTable(feature, 2);
-                    if (featureProperties[property]) {
-                        html = property + ': ' + featureProperties[property];
-                        break;
-                    }
+            keys.forEach(function (key) {
+                if (rawOptions[key] !== undefined) {
+                    options[key] = rawOptions[key];
                 }
-            }
-            if (html === '' && featureProperties._title) {
-                html = featureProperties._title;
-            }
-        }
-
-        if (featureProperties._distanceString) {
-            html += "<br/>📐" + featureProperties._distanceString;
-        }
-
-        $parent.html($parent.html() + webgis.sanitizeHtml(html));
-
-        $parent.find("a[target='dialog']").each(function (i, link) {
-            var $link = $(link);
-            var href = $link.attr('href');
-            $link
-                .attr('href', '')
-                .attr('onclick', "webgis.iFrameDialog('" + href + "','" + $link.html() + "');return false;");
-        });
-    };
-
-    $.webgis_search_result_histories = [];
-})(webgis.$ || jQuery);
-
-(function ($) {
-    "use strict";
-    $.fn.webgis_queryResultListWithFeatureDetails = function (method) {
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        }
-        else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        }
-        else {
-            $.error('Method ' + method + ' does not exist on webgis.$webgis_queryResultListWithFeatureDetails');
-        }
-    };
-
-    var defaults = {
-        map: null,
-        features: null
-    };
-
-    var methods = {
-        init: function (options) {
-            var $this = $(this), options = $.extend({}, defaults, options);
-            return this.each(function () {
-                new initUI(this, options);
             });
         },
-        empty: function (options) {
-            $(this).find('td.details').empty();
-            $(this).find('td.list').webgis_queryResultsList('empty', options);
-        }
-    };
+        // works on any element (also on an empty selection, like the legacy method), no instance needed
+        empty: function ($parent, options) {
+            const $ = webgis.$ || jQuery;
+            $parent = $($parent);
+            var map = options.map;
 
-    var initUI = function (parent, options) {
-        var $parent = $(parent).addClass('webgis-result-');
+
+            $parent.empty();
+            $('#' + $parent.closest('.webgis-search-result-holder').attr('id') + '-counter').css('display', 'none').html('');
+            if (map) {
+                map.getSelection('query').remove();
+            }
+
+            // Uncheck dynamic content toc items
+            $(map.ui.webgisContainer())
+                .find('.webgis-presentation_toc-dyncontent-item.webgis-presentation_toc-dyncontent-item-selected')
+                .removeClass('webgis-presentation_toc-dyncontent-item-selected');
+        },
+        renderFeature: function (map, $parent, feature) {
+            const $ = webgis.$ || jQuery;
+
+            var html = '';
+
+            var featureProperties = Array.isArray(feature.properties) ? (feature.properties.length > 0 ? feature.properties[0] : {}) : feature.properties;
+
+            if (featureProperties._fulltext) {
+                html = featureProperties._fulltext.replaceAll('\\n', '<br/>');
+            }
+            else {
+                for (var property in featureProperties) {
+                    if (property.substring(0, 1) == "_")
+                        continue;
+                    if (featureProperties.hasOwnProperty(property)) {
+                        // html = map.ui.featureResultTable(feature, 2);
+                        if (featureProperties[property]) {
+                            html = property + ': ' + featureProperties[property];
+                            break;
+                        }
+                    }
+                }
+                if (html === '' && featureProperties._title) {
+                    html = featureProperties._title;
+                }
+            }
+
+            if (featureProperties._distanceString) {
+                html += "<br/>📐" + featureProperties._distanceString;
+            }
+
+            $parent.html($parent.html() + webgis.sanitizeHtml(html));
+
+            $parent.find("a[target='dialog']").each(function (i, link) {
+                var $link = $(link);
+                var href = $link.attr('href');
+                $link
+                    .attr('href', '')
+                    .attr('onclick', "webgis.iFrameDialog('" + href + "','" + $link.html() + "');return false;");
+            });
+        }
+    }
+});
+
+(webgis.$ || jQuery).fn.webgis_queryResultsList.selectedItemClass = 'webgis-geojuhu-result-selected';
+(webgis.$ || jQuery).webgis_search_result_histories = [];
+
+webgis.ui.definePlugin('webgis_queryResultListWithFeatureDetails', {
+    // each call with options renders (appends) the list again (callers empty the element before)
+    reinit: true,
+    defaults: {
+        map: null,
+        features: null
+    },
+    init: function (rawOptions) {
+        const $ = this.$;
+        const Plugin = this.constructor;
+        $.fn.webgis_queryResultsList.plugin._keepReferences(this.options, rawOptions, ['features']);
+        var options = this.options;
+
+        var $parent = this.$el.addClass('webgis-result-');
 
         var $table = $("<div>")
             .css({ position: 'absolute', inset: '0px 0px 0px 0px', overflow: 'hidden' })
@@ -546,7 +548,7 @@
             .appendTo($table);
 
         options.onItemClick = function (sender, feature) {
-            onItemClick($parent, options.map, feature);
+            Plugin.onItemClick($parent, options.map, feature);
         };
 
         $("<div>")
@@ -554,124 +556,89 @@
             .webgis_queryResultsList(options);
 
         if (options.map) {
-            options.map.events.off('onmarkerclick', $.fn.webgis_queryResultListWithFeatureDetails.onMarkerClick);
-            options.map.events.on('onmarkerclick', $.fn.webgis_queryResultListWithFeatureDetails.onMarkerClick, $parent);
+            this._onMarkerClick = function (channel, sender, feature) {
+                Plugin.onItemClick($parent, sender, feature);
+            };
+            options.map.events.on('onmarkerclick', this._onMarkerClick, $parent.get(0));
+        }
+    },
+    destroy: function () {
+        if (this.options.map && this._onMarkerClick) {
+            this.options.map.events.off('onmarkerclick', this._onMarkerClick);
+        }
+    },
+    methods: {
+        empty: function (options) {
+            this.constructor.empty(this.$el, options);
+        }
+    },
+    staticMethods: {
+        // works on any element (like the legacy method), no instance needed
+        empty: function ($el, options) {
+            const $ = webgis.$ || jQuery;
+            $el = $($el);
+            $el.find('td.details').empty();
+            $.fn.webgis_queryResultsList.plugin.empty($el.find('td.list'), options);
+        },
+        onItemClick: function ($parent, map, feature) {
+            const $ = webgis.$ || jQuery;
+            const Plugin = $.fn.webgis_queryResultListWithFeatureDetails.plugin;
+
+            var $detailsColumn = $parent.find('div.details');
+
+            if (feature.oid.indexOf('#service:#default:') == 0 && feature.properties && feature.properties._details) {
+                // Quicksearch result with details
+                webgis.showFeatureResultDetails(map.guid, feature.properties._details, function (success, detailedFeature, title, metadata) {
+                    if (success == false) {
+                        delete feature.properties._details;
+                    }
+
+                    Plugin.showFeatureTable(map, $detailsColumn, detailedFeature || feature, title, metadata);
+                });
+            } else {
+                Plugin.showFeatureTable(map, $detailsColumn, feature);
+            }
+        },
+        showFeatureTable: function (map, $target, feature, title, featureMetadata) {
+            const $ = webgis.$ || jQuery;
+
+            $target.empty();
+
+            if (title) {
+                $("<h2>").text(title).appendTo($target);
+            }
+
+            map.queryResultFeatures.showFeatureTable(feature, '', $target, featureMetadata);
         }
     }
+});
 
-    $.fn.webgis_queryResultListWithFeatureDetails.onMarkerClick = function (channel, sender, feature) {
-        onItemClick($(this), sender, feature);
-    };
+// legacy: shared marker click handler (this = $parent); the plugin instances subscribe their own handlers
+(webgis.$ || jQuery).fn.webgis_queryResultListWithFeatureDetails.onMarkerClick = function (channel, sender, feature) {
+    (webgis.$ || jQuery).fn.webgis_queryResultListWithFeatureDetails.plugin.onItemClick((webgis.$ || jQuery)(this), sender, feature);
+};
 
-    var onItemClick = function ($parent, map, feature) {
-        var $detailsColumn = $parent.find('div.details');
-
-        if (feature.oid.indexOf('#service:#default:') == 0 && feature.properties && feature.properties._details) {
-            // Quicksearch result with details
-            webgis.showFeatureResultDetails(map.guid, feature.properties._details, function (success, detailedFeature, title, metadata) {
-                if (success == false) {
-                    delete feature.properties._details;
-                }
-
-                showFeatureTable(map, $detailsColumn, detailedFeature || feature, title, metadata);
-            });
-        } else {
-            showFeatureTable(map, $detailsColumn, feature);
-        }
-    };
-
-    var showFeatureTable = function (map, $target, feature, title, featureMetadata) {
-        $target.empty();
-
-        if (title) {
-            $("<h2>").text(title).appendTo($target);
-        }
-
-        map.queryResultFeatures.showFeatureTable(feature, '', $target, featureMetadata);
-    };
-})(webgis.$ || jQuery);
-
-(function ($) {
-    "use strict";
-    $.fn.webgis_queryResultsTable = function (method) {
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        }
-        else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        }
-        else {
-            $.error('Method ' + method + ' does not exist on webgis.$webgis_queryResultsList');
-        }
-    };
-
-    $.fn.webgis_queryResultsTable.selectedRowClass = 'webgis-table-result-selected';
-
-    var defaults = {
+webgis.ui.definePlugin('webgis_queryResultsTable', {
+    defaults: {
         map: null,
         features: null,
         reorderable: false,
         addCheckboxes: false,
         addZoomTo: false,
         appendAdvancedFeatureButtons: false
-    };
-    var methods = {
-        init: function (options) {
-            var $this = $(this), options = $.extend({}, defaults, options);
-            return this.each(function () {
-                new initUI(this, options);
-            });
-        },
-        selectRow: function (options) {
-            var $this = $(this);
-            var state = $this.data('webgis-queryResultsTable-state');
+    },
+    init: function (rawOptions) {
+        const $ = this.$;
+        const Plugin = this.constructor;
+        $.fn.webgis_queryResultsList.plugin._keepReferences(this.options, rawOptions, ['features']);
+        var options = this.options;
 
-            // Bei aktivem Paging kann sich die gesuchte Zeile auf einer anderen als der
-            // aktuell angezeigten Seite befinden (z.B. Karten-Highlight-Sync nach Klick auf ein
-            // Feature in der Karte) - in dem Fall erst zur passenden Seite wechseln.
-            if (state && state.usePaging && state.renderPage) {
-                var idx = -1;
-                for (var i = 0; i < state.allFeatures.length; i++) {
-                    if (state.allFeatures[i].oid === options.dataId) {
-                        idx = i;
-                        break;
-                    }
-                }
-
-                if (idx >= 0) {
-                    var targetPage = Math.floor(idx / state.pageSize);
-                    if (targetPage !== state.getCurrentPage()) {
-                        state.renderPage(targetPage);
-                    }
-                }
-            }
-
-            $this.find('.' + $.fn.webgis_queryResultsTable.selectedRowClass).removeClass($.fn.webgis_queryResultsTable.selectedRowClass);
-            var $row = $this.find(".webgis-result[data-id='" + options.dataId + "']")
-                .addClass($.fn.webgis_queryResultsTable.selectedRowClass);
-
-            if (options.scrollTo === true) {
-                var $scrollElement = $row.closest('.webgis-scroll-offset-element');
-                webgis.scrollTo($scrollElement.length === 1 ? $scrollElement : $this, $row);
-            }
-        },
-        unselectRows: function (options) {
-            //console.log('unselect', options);
-            if (options.map) {
-                $(options.map._webgisContainer)
-                    .find('.webgis-result[data-id].' + $.fn.webgis_queryResultsTable.selectedRowClass)
-                    .removeClass($.fn.webgis_queryResultsTable.selectedRowClass);            
-            }
-        }
-    };
-
-    var initUI = function (target, options) {
-        var $target = $(target);
+        var $target = this.$el;
         var map = options.map;
         var features = options.features;
 
         if (!features) {
-            return "Keine Abfrageergebnisse vorhanden.";
+            return;
         }
 
         var tableFields = features.metadata && features.metadata.table_fields ? features.metadata.table_fields : null;
@@ -722,13 +689,13 @@
         $tab
             .on('contextmenu', 'tr.webgis-result', function (e) {
                 e.stopPropagation();
-                _showRowContextMenu($(this), e);
+                Plugin.showRowContextMenu($(this), e);
                 return false;
             })
-            .on('click', 'td.webgis-result-table-cell', _event_cellClick)
+            .on('click', 'td.webgis-result-table-cell', Plugin.cellClick)
             .on('click', '.webgis-row-btn-more', function (e) {
                 e.stopPropagation();
-                _showRowContextMenu($(this).closest('tr.webgis-result'), e);
+                Plugin.showRowContextMenu($(this).closest('tr.webgis-result'), e);
             })
             .on('click', '.webgis-row-btn-edit-attrs', function (e) {
                 e.stopPropagation();
@@ -1308,72 +1275,136 @@
                 $triggerClickItems.trigger('click');
             }, 500, $triggerClickItems)
         }
-    };
-
-    var _event_cellClick = function (e) {
-        if (!e || !e.originalEvent)
-            return;
-
-        var $this = $(this), offset = $this.offset();
-
-        var pos = {
-            right: $this.outerWidth() - (e.originalEvent.pageX - offset.left),
-            top: e.originalEvent.pageY - offset.top
+    },
+    destroy: function () {
+        // nothing to release: the table handlers are delegated on child elements (removed with them)
+    },
+    methods: {
+        selectRow: function (options) {
+            this.constructor.selectRow(this.$el, options);
+        },
+        unselectRows: function (options) {
+            this.constructor.unselectRows(options);
         }
-        //console.log(pos);
-        if (pos.right >= 4 && pos.right <= 28) {
-            e.stopPropagation();
-            webgis.copy($this);
-        }
-    };
+    },
+    staticMethods: {
+        // works on any (parent) element of the table, eg. the current tab content, no instance needed
+        selectRow: function ($el, options) {
+            const $ = webgis.$ || jQuery;
 
-    var _showRowContextMenu = function ($tr, e) {
-        if (!$.fn.webgis_contextMenu)
-            return false;
+            var $this = $($el);
+            var state = $this.data('webgis-queryResultsTable-state');
 
-        var items = [];
-        $tr.find('.menubutton')
-            .not('.webgis-row-btn-more')
-            .each(function (i, menubutton) {
-                var $menubutton = $(menubutton);
-                var cssInlineStyle = $menubutton.attr('style');
-                //console.log(cssInlineStyle);
+            // Bei aktivem Paging kann sich die gesuchte Zeile auf einer anderen als der
+            // aktuell angezeigten Seite befinden (z.B. Karten-Highlight-Sync nach Klick auf ein
+            // Feature in der Karte) - in dem Fall erst zur passenden Seite wechseln.
+            if (state && state.usePaging && state.renderPage) {
+                var idx = -1;
+                for (var i = 0; i < state.allFeatures.length; i++) {
+                    if (state.allFeatures[i].oid === options.dataId) {
+                        idx = i;
+                        break;
+                    }
+                }
 
-                if (!cssInlineStyle || cssInlineStyle.replaceAll(' ', '').indexOf('display:none;') < 0) {
-                    if ($menubutton.attr('title')) {
+                if (idx >= 0) {
+                    var targetPage = Math.floor(idx / state.pageSize);
+                    if (targetPage !== state.getCurrentPage()) {
+                        state.renderPage(targetPage);
+                    }
+                }
+            }
+
+            $this.find('.' + $.fn.webgis_queryResultsTable.selectedRowClass).removeClass($.fn.webgis_queryResultsTable.selectedRowClass);
+            var $row = $this.find(".webgis-result[data-id='" + options.dataId + "']")
+                .addClass($.fn.webgis_queryResultsTable.selectedRowClass);
+
+            if (options.scrollTo === true) {
+                var $scrollElement = $row.closest('.webgis-scroll-offset-element');
+                webgis.scrollTo($scrollElement.length === 1 ? $scrollElement : $this, $row);
+            }
+        },
+        // works without element/instance: unselects the rows in the map container
+        unselectRows: function (options) {
+            const $ = webgis.$ || jQuery;
+
+            //console.log('unselect', options);
+            if (options.map) {
+                $(options.map._webgisContainer)
+                    .find('.webgis-result[data-id].' + $.fn.webgis_queryResultsTable.selectedRowClass)
+                    .removeClass($.fn.webgis_queryResultsTable.selectedRowClass);            
+            }
+        },
+        cellClick: function (e) {
+            const $ = webgis.$ || jQuery;
+
+            if (!e || !e.originalEvent)
+                return;
+
+            var $this = $(this), offset = $this.offset();
+
+            var pos = {
+                right: $this.outerWidth() - (e.originalEvent.pageX - offset.left),
+                top: e.originalEvent.pageY - offset.top
+            }
+            //console.log(pos);
+            if (pos.right >= 4 && pos.right <= 28) {
+                e.stopPropagation();
+                webgis.copy($this);
+            }
+        },
+        showRowContextMenu: function ($tr, e) {
+            const $ = webgis.$ || jQuery;
+
+            if (!$.fn.webgis_contextMenu)
+                return false;
+
+            var items = [];
+            $tr.find('.menubutton')
+                .not('.webgis-row-btn-more')
+                .each(function (i, menubutton) {
+                    var $menubutton = $(menubutton);
+                    var cssInlineStyle = $menubutton.attr('style');
+                    //console.log(cssInlineStyle);
+
+                    if (!cssInlineStyle || cssInlineStyle.replaceAll(' ', '').indexOf('display:none;') < 0) {
+                        if ($menubutton.attr('title')) {
+                            items.push({
+                                icon: $menubutton.css('backgroundImage'),
+                                text: $menubutton.attr('title'),
+                                data: $menubutton,
+                                shortcut: $menubutton.attr('shortcut')
+                            });
+                        }
+                    }
+                });
+
+            $tr.find('td > a')
+                .each(function (i, a) {
+                    var $a = $(a);
+
+                    if (!$a.hasClass('menubutton')) {
                         items.push({
-                            icon: $menubutton.css('backgroundImage'),
-                            text: $menubutton.attr('title'),
-                            data: $menubutton,
-                            shortcut: $menubutton.attr('shortcut')
+                            text: $a.text(),
+                            data: $a
                         });
+                    }
+                });
+
+            $("body").webgis_contextMenu({
+                sender: $tr,
+                clickEvent: e,
+                items: items,
+                callback: function ($menubutton) {
+                    if ($menubutton.attr('href')) {  // works for links
+                        $menubutton[0].click();
+                    } else {
+                       $menubutton.trigger('click');
                     }
                 }
             });
+        }
+    }
+});
 
-        $tr.find('td > a')
-            .each(function (i, a) {
-                var $a = $(a);
-
-                if (!$a.hasClass('menubutton')) {
-                    items.push({
-                        text: $a.text(),
-                        data: $a
-                    });
-                }
-            });
-
-        $("body").webgis_contextMenu({
-            sender: $tr,
-            clickEvent: e,
-            items: items,
-            callback: function ($menubutton) {
-                if ($menubutton.attr('href')) {  // works for links
-                    $menubutton[0].click();
-                } else {
-                   $menubutton.trigger('click');
-                }
-            }
-        });
-    };
-})(webgis.$ || jQuery);
+(webgis.$ || jQuery).fn.webgis_queryResultsTable.selectedRowClass = 'webgis-table-result-selected';

@@ -661,8 +661,9 @@
 
                             //console.log('contdition', contition_arguments, contition_result);
 
-                            if ((val && ($.inArray("*", contition_arguments) >= 0).toString() == contition_result.toString()) ||
-                                ($.inArray(val, contition_arguments) >= 0).toString() == contition_result.toString()) {
+                            var matches = (val && $.inArray("*", contition_arguments) >= 0) || $.inArray(val, contition_arguments) >= 0;
+
+                            if (matches.toString() === contition_result.toString()) {
                                 $(div).css('display', 'block');
                             } else {
                                 $(div).css('display', 'none');

@@ -28,7 +28,8 @@ webgis.ui.definePlugin('webgis_myThing', {
         readonly: false,
         onChange: null         // outgoing "events" are callback options
     },
-    init: function () {        // called once, when the plugin is created on an element
+    init: function (rawOptions) { // called once, when the plugin is created on an element
+                               // rawOptions: the original (not merged) options, e.g. to keep large data (features) by reference
         const $ = this.$;      // always use this.$ (webgis.$ || jQuery), not a global $
         const o = this.options;
         this.$el.addClass('webgis-my-thing');

@@ -2818,7 +2818,7 @@
                     webgis.showFeatureResultModal(map.guid, feature.oid, queryToolId);
                 } else {
                     var $currentTabContent = $tabControl.webgis_tab_control('currentContent');
-                    $currentTabContent.webgis_queryResultsTable('selectRow', { map: map, dataId: feature.oid, scrollTo: e.suppressScrollResultRowTo !== true });
+                    $.fn.webgis_queryResultsTable.plugin.selectRow($currentTabContent, { map: map, dataId: feature.oid, scrollTo: e.suppressScrollResultRowTo !== true });
                 }
                 map.queryResultFeatures.tryHighlightMarker(feature.oid, true); 
 

@@ -53,6 +53,11 @@
         timeFilter: 'webgis.tools.presentation.timefilter',
         timeFilterRemove: 'webgis.tools.presentation.timefilterremoveall'
     };
+    // debug UI tools (E.Standard.WebGIS.Tools.Debug.UI, only exported by the server in DEBUG builds)
+    this.debug = {
+        uiTextLayout: 'webgis.tools.debug.ui.debuguitextlayout',
+        uiInputs: 'webgis.tools.debug.ui.debuguiinputs'
+    };
     this._toolData = [];
     this.getToolData = function (toolId) {
         if (!this._toolData[toolId])
@@ -1478,7 +1483,7 @@
 
         if (response.named_sketches && response.named_sketches.length > 0 &&
             (map.isSketchTool(map.getActiveTool()) || map.isGraphicsTool(map.getActiveTool()))) {
-            $(null).select_sketch({
+            $.fn.select_sketch.plugin.open({
                 map: map,
                 named_sketches: response.named_sketches,
                 close_sketch: response.close_sketch

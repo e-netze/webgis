@@ -5132,6 +5132,10 @@ div.webgis-copy {
     }
 
 /******* Validation ********/
+.webgis-validation-holder {
+    position: relative;
+}
+
 .webgis-validation-error {
     font-size: 11px;
     padding: 5px;
@@ -5142,7 +5146,7 @@ div.webgis-copy {
     .webgis-validation-error.haserror {
         display: inline-block;
         position: absolute;
-        bottom: -6px;
+        bottom: -17px;
         right: 0px;
         background: var(--webgis-ui-surface);
         border: 1px solid #faa;

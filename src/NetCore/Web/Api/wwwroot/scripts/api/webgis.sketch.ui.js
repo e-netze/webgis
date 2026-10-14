@@ -543,7 +543,7 @@
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
 
-                            $(null).webgis_sketchFromGeometry({ map: map, sketch: sketch });
+                            $.fn.webgis_sketchFromGeometry.plugin.open({ map: map, sketch: sketch });
                         });
                 }
                 if (/*vertices.length === 0 && */_isLineOrPolygon()) {

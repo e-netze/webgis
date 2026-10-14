@@ -1840,7 +1840,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
 
                         c.map.queryResultFeatures.clear(hasHistory);
                         c.map.getSelection('selection').remove();
-                        $holder.find('.webgis-search-result-list').webgis_queryResultsList('empty', { map: c.map });
+                        $.fn.webgis_queryResultsList.plugin.empty($holder.find('.webgis-search-result-list'), { map: c.map });
                         $holder.get(0).search_term = '';
                         if (hasHistory) {
                             $.webgis_search_result_histories[c.map].render($holder.find('.webgis-search-result-list'));

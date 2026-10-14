@@ -43,7 +43,7 @@ all loaded results.
 | `webgis.tools.js` (`src/NetCore/Web/Api/wwwroot/scripts/api/`) | Posts tool events to `rest/toolevent`, passes `response.features` to `map.ui.showQueryResults` |
 | `webgis.map.ui.js` (`.../scripts/api/`) | `showQueryResults`: clears selections, shows markers, creates/selects the result tab (desktop) or renders the list |
 | `webgis.map.queryresults.js` (`.../scripts/api/`) | `webgis.map._queryResultFeatures`: `showClustered` (markers), `showTable` (table panel, toolbar, export, 1:n link buttons, `has_more` notice) |
-| `webgis_queryResults.js` (`.../scripts/api/ui/`) | jQuery plugins `webgis_queryResultsTable` (paging, `selectRow`, "..." row menu) and `webgis_queryResultsList` (`maxItems`) |
+| `webgis.ui.plugins.queryResults.js` (`.../scripts/api/ui/`) | jQuery plugins `webgis_queryResultsTable` (paging, `selectRow`, "..." row menu) and `webgis_queryResultsList` (`maxItems`) |
 | `webgis.ui.plugins.tab_control.js` (`.../scripts/api/ui/`) | Result tab with exact result counter |
 | `webgis.options.js` (`.../scripts/api/`) | Defaults of `webgis.usability.queryResultsTable` / `queryResultsList` |
 | `webgis.l10n.de.js` / `webgis.l10n.en.js` (`.../scripts/api/`) | `query-max-results-reached`, `query-result-list-truncated`, `export-in-progress`, `row-tools-menu` |
@@ -180,7 +180,7 @@ For the ArcGIS Server specific limits (`ags-spatial-query-*`) see
 - Delegated handlers in `showTable` use the `.webgisQueryResultsTable` namespace and are unbound
   before re-binding - keep it that way to avoid stacked handlers.
 - The pager texts (prev/next titles, "Ergebnisse x-y von n") are currently hardcoded German strings
-  in `webgis_queryResults.js`, not l10n keys.
+  in `webgis.ui.plugins.queryResults.js`, not l10n keys.
 - Test with a result set above `pagingThreshold` (page switch, jump-to-page, marker click selecting
   a row on another page, reorder, export) and with a query that hits its `MaxFeatures` limit
   (check `metadata.has_more` in the network response).

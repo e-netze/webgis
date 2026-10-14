@@ -2264,7 +2264,7 @@
 
                 _map.queryResultFeatures.tryUnhighlightMarkers();
                 if ($.fn.webgis_queryResultsTable)
-                    $(null).webgis_queryResultsTable('unselectRows', { map: _map });
+                    $.fn.webgis_queryResultsTable.plugin.unselectRows({ map: _map });
 
                 _map.events.fire('feature-highlight-removed', _map, feature);
             }
@@ -2300,7 +2300,7 @@
                         var $tabControl = _map.ui.getQueryResultTabControl();
                         if ($tabControl) {
                             var $currentTabContent = $tabControl.webgis_tab_control('currentContent');
-                            $currentTabContent.webgis_queryResultsTable('selectRow', { dataId: feature.oid, scrollTo: false });
+                            $.fn.webgis_queryResultsTable.plugin.selectRow($currentTabContent, { dataId: feature.oid, scrollTo: false });
                         }
                     }
                 }
