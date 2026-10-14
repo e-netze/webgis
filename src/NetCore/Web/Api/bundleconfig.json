@@ -97,7 +97,7 @@
         "wwwroot/scripts/api/ui/webgis.ui.builder.querybuilder.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.taskprogress.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.clipbardDataDialog.js",
-        "wwwroot/scripts/api/ui/webgis_presentationToc.js",
+        "wwwroot/scripts/api/ui/webgis.ui.plugins.presentationToc.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.addServicesToc.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.topbar.js",
         "wwwroot/scripts/api/ui/webgis_queryResults.js",

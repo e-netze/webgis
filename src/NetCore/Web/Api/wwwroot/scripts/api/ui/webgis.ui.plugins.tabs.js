@@ -120,7 +120,7 @@ webgis.ui.definePlugin('webgis_tabs', {
                     .on('click.webgis_tabs', function (e) {
                         e.stopPropagation();
                         var map = $(this).data('map');
-                        $(null).webgis_presentationToc('show_services_legend', { map: map, sender: this });
+                        $.fn.webgis_presentationToc.plugin.showServicesLegend({ map: map, sender: this });
                     });
             }
             $("<div id='tab-presentations-content' class='webgis-tabs-tab-content' style='display:none'></div>").appendTo($tab_content).webgis_presentationToc(options.options_presentations);

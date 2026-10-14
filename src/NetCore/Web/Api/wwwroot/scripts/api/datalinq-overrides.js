@@ -100,7 +100,7 @@ if (window.dataLinq) {
                             var presentation = service.presentations[sp];
                             if (presentation.id === presentationName) {
                                 layerIds = service.getLayerIdsFromNames(presentation.layers);
-                                // Wenn DV (Button), dann Service zuerst unsichtbar schalten (Siehe Api: webgis_presentationToc.js)
+                                // Wenn DV (Button), dann Service zuerst unsichtbar schalten (Siehe Api: webgis.ui.plugins.presentationToc.js)
                                 if (isButton) {
                                     service.setServiceVisibility(null); // alle unsichtbar schalten!!! und unten die einzelnen Layer einschalten. In Gruppen können mehrer Darstellungsvarianten aus dem gleichen Dienst vorkommen. Darum zuerst Sichtbarkeit aus und dann die einzellnen wieder einschalten.
                                     service.setLayerVisibility(layerIds, true);
