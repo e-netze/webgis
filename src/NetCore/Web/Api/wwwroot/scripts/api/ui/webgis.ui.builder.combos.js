@@ -106,7 +106,7 @@
             .data('current-tool-sketches', currentToolSketches)
             .data('map', map);
 
-        $("<option value=''>--- nicht anzeigen ---</option>").appendTo($newElement);
+        $("<option value=''>").text('--- ' + webgis.l10n.get('do-not-show') + ' ---').appendTo($newElement);
 
         for (var c in currentToolSketches) {
             var currentToolSketch = currentToolSketches[c];

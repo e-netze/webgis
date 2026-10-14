@@ -47,7 +47,7 @@ webgis.ui.definePlugin('webgis_map_contextmenu', {
 
         //  Remove All Visfilters
         $("<li>")
-            .text('Alle Darstellungsfilter entfernen')
+            .text(webgis.l10n.get('remove-all-visfilters'))
             .css('background-image', 'url(' + webgis.css.imgResource('filter-remove-26.png', 'tools') + ')')
             .addClass('webgis-tool-button webgis-dependencies webgis-dependency-hasfilters')
             .appendTo($menu)
@@ -59,7 +59,7 @@ webgis.ui.definePlugin('webgis_map_contextmenu', {
 
         //  Remove all queryresults
         $("<li>")
-            .text('Alle (Such)ergebnisse aus der Karte entfernen')
+            .text(webgis.l10n.get('remove-all-search-results-from-map'))
             .css('background-image', 'url(' + webgis.css.imgResource('marker-remove-26.png', 'tools') + ')')
             .addClass('webgis-tool-button webgis-dependencies webgis-dependency-queryresultsexists')
             .appendTo($menu)
@@ -76,7 +76,7 @@ webgis.ui.definePlugin('webgis_map_contextmenu', {
 
         // reset (service) focus
         $("<li>")
-            .text('Focus auf Dienst entfernen')
+            .text(webgis.l10n.get('remove-service-focus'))
             .css('background-image', 'url(' + webgis.css.imgResource('focus_remove-26.png', 'tools') + ')')
             .addClass('webgis-tool-button webgis-dependencies webgis-dependency-focused-service-exists')
             .appendTo($menu)

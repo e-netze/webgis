@@ -81,7 +81,7 @@
             .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
             .addClass('webgis-tool-button webgis-dependencies webgis-dependency-hasfilters')
             .data('map', this)
-            .attr('alt', 'Alle Darstellungsfilter entfernen')
+            .attr('alt', webgis.l10n.get('remove-all-visfilters'))
             .appendTo(toolButtonBars)
             .click(function () {
                 var map = $(this).data('map');
@@ -96,7 +96,7 @@
             .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
             .addClass('webgis-tool-button webgis-dependencies webgis-dependency-hastimefilters')
             .data('map', this)
-            .attr('alt', 'Alle Zeitfilter entfernen')
+            .attr('alt', webgis.l10n.get('remove-all-timefilters'))
             .appendTo(toolButtonBars)
             .click(function () {
                 var map = $(this).data('map');
@@ -117,7 +117,7 @@
             .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
             .addClass('webgis-tool-button webgis-dependencies webgis-dependency-queryresultsexists remove-queryresults')
             .data('map', this)
-            .attr('alt', 'Alle Ergebnisse aus der Karte entfernen')
+            .attr('alt', webgis.l10n.get('remove-all-results-from-map'))
             .appendTo(toolButtonBars)
             .click(function () {
                 var map = $(this).data('map');
@@ -132,7 +132,7 @@
             .css({ width: Math.min(width || 32, 32), backgroundColor: '#ffdddd' })
             .addClass('webgis-tool-button webgis-dependencies webgis-dependency-focused-service-exists')
             .data('map', this)
-            .attr('alt', 'Focus auf Dienst entfernen')
+            .attr('alt', webgis.l10n.get('remove-service-focus'))
             .appendTo(toolButtonBars)
             .click(function () {
                 var map = $(this).data('map');
@@ -3416,7 +3416,7 @@
                 };
 
                 webgis.ajax({
-                    progress: 'Lade: ' + contentDef.name,
+                    progress: webgis.l10n.get('progress-loading-name', { name: contentDef.name }),
                     url: webgis.baseUrl + '/rest/DynamicContentProxy' + params,
                     data: webgis.hmac.appendHMACData(this.appendRequestParameters(data)),
                     type: 'post',
@@ -3452,7 +3452,7 @@
                                 map.ui.selectDynamicContentItem( contentDef);
                             } else {
                                 map.refresh();
-                                webgis.alert("Es wurden keine Ergebnisse zum dynamischen Inhalt \"" + contentDef.name + "\" gefunden", "info");
+                                webgis.alert(webgis.l10n.get('no-dynamic-content-results', { name: contentDef.name }), "info");
                             }
                         } else {
                             var contentLoadedHook = webgis.hooks["dynamic_content_loaded"][contentDef.name] || webgis.hooks["dynamic_content_loaded"]["default"];
@@ -3495,14 +3495,14 @@
                             for (var i in responseInfos)
                                 infoText += (infoText ? ', ' : '') + responseInfos[i];
 
-                            webgis.toastMessage("Info", infoText);
+                            webgis.toastMessage(webgis.l10n.get('info'), infoText);
                         }
                         if (responseWarnings.length > 0) {
                             var infoText = '';
                             for (var i in responseWarnings)
                                 infoText += (infoText ? ', ' : '') + responseWarnings[i];
 
-                            webgis.toastMessage("Warning", infoText, null, 'warning');
+                            webgis.toastMessage(webgis.l10n.get('warning'), infoText, null, 'warning');
                         }
                     },
                     error: function () {
@@ -3833,7 +3833,7 @@
         if (!data.prints)
             data.prints = [];
         webgis.ui.showModal({
-            title: 'Druckaufträge',
+            title: webgis.l10n.get('print-jobs'),
             onload: function ($content) {
                 for (var i = data.prints.length - 1; i >= 0; i--) {
                     //$("<a href=\"mailto:?subject=WebGIS Karte&attachments=['" + result.url + "']\">E-Mail versenden...</a>").appendTo($content);
@@ -4037,7 +4037,7 @@
                     .click(function () {
                         $(this).data('map').enable(false);
                     });
-                $("<div>Zum Aktivieren der Karte hier klicken...</div>")
+                $("<div>").text(webgis.l10n.get('click-to-activate-map'))
                     .addClass('button')
                     .appendTo($blocker)
                     .click(function (e) {

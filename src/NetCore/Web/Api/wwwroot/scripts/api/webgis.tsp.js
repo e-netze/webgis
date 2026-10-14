@@ -196,23 +196,23 @@
             var features = map.queryResultFeatures.features();
 
             var cancelTracker = new webgis.cancelTracker();
-            webgis.showProgress('Aktuelle Position wird abgefragt...', null, cancelTracker);
+            webgis.showProgress(webgis.l10n.get('progress-querying-current-position'), null, cancelTracker);
 
             webgis.currentPosition.get({
                 highAccuracy: true,
                 maxWatch: webgis.currentPosition.maxWatch,
                 onSuccess: function (pos) {
-                    webgis.hideProgress('Aktuelle Position wird abgefragt...');
+                    webgis.hideProgress(webgis.l10n.get('progress-querying-current-position'));
 
                     var lng = pos.coords.longitude,
                         lat = pos.coords.latitude,
                         acc = pos.coords.accuracy / (webgis.calc.R) * 180.0 / Math.PI;
 
                     webgis.confirm({
-                        title: "Rundreise",
+                        title: webgis.l10n.get('round-trip'),
                         iconUrl: webgis.css.imgResource('roundtrip-128.png', 'tools'),
-                        message: 'Mit dieser Funktion werden die Marker in der Reihenfolge einer optimalen Rundreise sortiert',
-                        okText: 'Marker sortieren',
+                        message: webgis.l10n.get('round-trip-message'),
+                        okText: webgis.l10n.get('round-trip-sort-markers'),
                         okNoneBlocking: true,
                         onOk: function (sender) {
                             var orderedFeatures = webgis.tsp.orderFeatures(map.calcCrs(), features, { lng: lng, lat: lat });
@@ -229,8 +229,8 @@
 
                 },
                 onError: function (err) {
-                    webgis.hideProgress('Aktuelle Position wird abgefragt...');
-                    webgis.alert('Ortung nicht möglich: ' + (err ? err.message + " (Error Code " + err.code + ")" : ""), "error");
+                    webgis.hideProgress(webgis.l10n.get('progress-querying-current-position'));
+                    webgis.alert(webgis.l10n.get('geolocation-not-possible') + ': ' + (err ? err.message + " (Error Code " + err.code + ")" : ""), "error");
                 }
             });
         }

@@ -11,11 +11,11 @@ webgis.currentPosition_classic = new function () {
             webgis.geolocationApi.getCurrentPosition(options.onSuccess, options.onError || this.onError, { timeout: 30000 });
         }
         else {
-            webgis.alert('Ortung wird nicht unterstützt', 'info');
+            webgis.alert(webgis.l10n.get('geolocation-not-supported'), 'info');
         }
     };
     this.onError = function (err) {
-        webgis.alert('Fehler beim Ortungsversuch: ' + err.message, 'error');
+        webgis.alert(webgis.l10n.get('geolocation-error') + ': ' + err.message, 'error');
     };
 };
 
@@ -82,7 +82,7 @@ webgis.currentPosition_watch = new function () {
                         webgis.currentPosition_watch.stopWatch(options, bestPosition);
                     if (index >= maxWatch)
                         webgis.currentPosition_watch.stopWatch(options, null, {
-                            message: "Ortung mit gewünschter Genauigkeit von " + webgis.currentPosition_watch.minAcc + "m nicht möglich",
+                            message: webgis.l10n.get('geolocation-accuracy-not-reached', { accuracy: webgis.currentPosition_watch.minAcc }),
                             code: bestPosition == null ? 0 : 1
                         });
                 }
@@ -110,7 +110,7 @@ webgis.currentPosition_watch = new function () {
             //this.watchIds.push(options.watchId);
         }
         else {
-            webgis.alert('Ortung wird nicht unterstützt', 'info');
+            webgis.alert(webgis.l10n.get('geolocation-not-supported'), 'info');
         }
     };
     this.stopWatch = function (options, bestPosition, lastErr) {
@@ -119,7 +119,7 @@ webgis.currentPosition_watch = new function () {
             if (options.onError)
                 options.onError(lastErr);
             else
-                webgis.alert('Ortung nicht möglich: ' + (lastErr ? lastErr.message + " (Error Code " + lastErr.code + ")" : ""), 'error');
+                webgis.alert(webgis.l10n.get('geolocation-not-possible') + ': ' + (lastErr ? lastErr.message + " (Error Code " + lastErr.code + ")" : ""), 'error');
         }
         else
             options.onSuccess(bestPosition);
@@ -145,7 +145,7 @@ webgis.continuousPosition = new function () {
         if (webgis.continuousPosition._map == map)
             return;
         if (webgis.continuousPosition._map != null) {
-            webgis.alert('Verfolgung läuft bereits!', 'info');
+            webgis.alert(webgis.l10n.get('geolocation-tracking-already-running'), 'info');
             return;
         }
         webgis.continuousPosition._map = map;
@@ -207,7 +207,7 @@ webgis.continuousPosition = new function () {
                         $.get(webgis.baseUrl + '/rest/Helmert2dTransformation?lng=' + pos.coords.longitude + '&lat=' + pos.coords.latitude, function (result) {
                             if (result) {
                                 //webgis.alert("Lokale Transformation wurde bestimmt: " + result.name, "info");
-                                webgis.toastMessage("GPS:", "Lokale Transformation: " + result.name, webgis.continuousPosition.showInfo);
+                                webgis.toastMessage("GPS:", webgis.l10n.get('gps-local-transformation') + ": " + result.name, webgis.continuousPosition.showInfo);
 
                                 result._request_pos = pos;
                                 result._request_pos._trans_spatial_validity =
@@ -290,7 +290,7 @@ webgis.continuousPosition = new function () {
             webgis.continuousPosition._watchId = webgis.geolocationApi.watchPosition(this._watcher.newPosition, function () { }, { timeout: 5000, enableHighAccuracy: webgis.isTouchDevice() });
         }
         else {
-            webgis.alert('Ortung wird nicht unterstützt', 'info');
+            webgis.alert(webgis.l10n.get('geolocation-not-supported'), 'info');
         }
     };
     this.stop = function () {
@@ -322,7 +322,7 @@ webgis.continuousPosition = new function () {
     this.isWatching = function () { return _isWatching; };
     this.showInfo = function () {
         webgis.ui.showModal({
-            title: 'GPS Messinfo',
+            title: webgis.l10n.get('gps-measurement-info'),
             onload: function ($content) {
                 $("<h3>").text(webgis.l10n.get('select-geolocation-api')).appendTo($content);
 
@@ -342,7 +342,7 @@ webgis.continuousPosition = new function () {
                 $geolocationApiSelect.val(webgis.geolocationApis.currentName());
 
                 if (webgis.currentPosition.useWithSketchTool) {
-                    $("<h3>Accuracy</h3>").appendTo($content);
+                    $("<h3>").text(webgis.l10n.get('gps-accuracy')).appendTo($content);
                     $("<table class='webgis-result-table'>" +
                         "<tr><td class='webgis-result-table-header'>Min Acc</td><td>" + webgis.currentPosition.minAcc + "m</td></tr>" +
                         "<tr><td class='webgis-result-table-header'>Max Age</td><td>" + webgis.currentPosition.maxAgeSeconds + "s</td></tr></table>")
@@ -365,7 +365,7 @@ webgis.continuousPosition = new function () {
                         "</table>")
                         .appendTo($content);
                     if (webgis.continuousPosition._watcher.helmert2d._request_pos) {
-                        $("<h3>Trafo: Bestimmungsort/Qualität</h3>").appendTo($content);
+                        $("<h3>").text(webgis.l10n.get('gps-trafo-location-quality')).appendTo($content);
                         $("<table class='webgis-result-table'>" +
                             "<tr><td class='webgis-result-table-header'>Latitude</td><td>" + webgis.continuousPosition._watcher.helmert2d._request_pos.coords.latitude + "</td></tr>" +
                             "<tr><td class='webgis-result-table-header'>Longitude</td><td>" + webgis.continuousPosition._watcher.helmert2d._request_pos.coords.longitude + "</td></tr>" +
@@ -384,7 +384,7 @@ webgis.continuousPosition = new function () {
 
                         });
                 } else {
-                    $("<p>Für die aktuelle Messung wird keine lokale Transformation verwendet!</p>").appendTo($content);
+                    $("<p>").text(webgis.l10n.get('gps-no-local-transformation')).appendTo($content);
                 }
             },
             width: '640px', height: '690px'

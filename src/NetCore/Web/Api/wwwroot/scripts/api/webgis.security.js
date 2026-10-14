@@ -112,12 +112,12 @@
         if (_keys.favstatus === 0 || forceDialog) {
             var showConfirm = function () {
                 webgis.confirm({
-                    title: 'Favoriten-Programm',
+                    title: webgis.l10n.get('favorites-program'),
                     height: '470px',
                     message: msg,
                     iconUrl: webgis.css.imgResource('fav-100.png'),
-                    okText: _keys.favstatus === 1 ? 'Weiterhin teilnehmen' : 'Ja, Teilnehmen!',
-                    cancelText: _keys.favstatus === 1 ? 'Verlassen' : 'Nein, Danke!',
+                    okText: _keys.favstatus === 1 ? webgis.l10n.get('favorites-program-continue') : webgis.l10n.get('favorites-program-join'),
+                    cancelText: _keys.favstatus === 1 ? webgis.l10n.get('favorites-program-leave') : webgis.l10n.get('no-thanks'),
                     onOk: function () {
                         _favtaskname = taskname.toLowerCase();
                         _keys.favstatus = 1;

@@ -29,7 +29,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                 .addClass('webgis-presentation_toc-search')
                 .appendTo($elem)
                 .webgis_contentsearch({
-                    placeholder: 'Inhalte filtern...',
+                    placeholder: webgis.l10n.get('filter-contents'),
                     container_selectors: ["li", "ul", ".webgis-presentation_toc-content", ".webgis-search-content-container"]
                 });
         }
@@ -1146,7 +1146,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                     }
 
                     if (descriptionCount === 0) {
-                        $("<div>Für die gewählten Dienste sind keine Copyright Information oder Beschreibungen vorhanden.</div>")
+                        $("<div>").text(webgis.l10n.get('no-copyright-info-available'))
                             .addClass('webgis-info')
                             .appendTo($descriptionTabContent);
                     }

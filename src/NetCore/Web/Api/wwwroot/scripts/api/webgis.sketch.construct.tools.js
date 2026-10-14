@@ -1494,13 +1494,13 @@ webgis.sketch.construct.register(new function () {
                 name: 'construct_circle',
                 input: [
                     {
-                        label: 'Radius [m]',
+                        label: webgis.l10n.get('construction-label-radius'),
                         name: 'radius',
                         type: 'number',
                         required: true
                     }
                 ],
-                submitText: 'Kreis konstruieren',
+                submitText: webgis.l10n.get('construction-mode-circle'),
                 onSubmit: function (result) {
                     var sketch = webgis.sketch.construct._sketchFromContextMenuItem(this);
                     var radius = result.radius;
@@ -1619,19 +1619,19 @@ webgis.sketch.construct.register(new function () {
                 name: 'construct_rectangle',
                 input: [
                     {
-                        label: 'Breite [m]',
+                        label: webgis.l10n.get('construction-label-width'),
                         name: 'width',
                         type: 'number',
                         required: true
                     },
                     {
-                        label: 'Höhe [m]',
+                        label: webgis.l10n.get('construction-label-height'),
                         name: 'height',
                         type: 'number',
                         required: true
                     }
                 ],
-                submitText: 'Rechteck konstruieren',
+                submitText: webgis.l10n.get('construction-mode-rectangle'),
                 onSubmit: function (result) {
                     var sketch = webgis.sketch.construct._sketchFromContextMenuItem(this);
 

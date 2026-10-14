@@ -3,7 +3,7 @@
 
 webgis.ui.definePlugin('webgis_contentsearch', {
     defaults: {
-        placeholder: 'Inhalte filtern...',
+        placeholder: null,  // default: webgis.l10n.get('filter-contents')
         container_selectors: ["li", "ul"],
         onChanged: null,
         onMatch: null,
@@ -21,7 +21,7 @@ webgis.ui.definePlugin('webgis_contentsearch', {
         $elem.parent().addClass('webgis-content-search-area');
 
         function tog(v) { return v ? 'addClass' : 'removeClass'; }
-        const $input = $("<input type='text' placeholder='" + options.placeholder + "'>")
+        const $input = $("<input type='text' placeholder='" + (options.placeholder || webgis.l10n.get('filter-contents')) + "'>")
             .addClass('clearable x')
             .addClass(options.addInputElementClass)
             .appendTo($elem)
@@ -91,7 +91,7 @@ webgis.ui.definePlugin('webgis_contentsearch', {
 
         $("<button>")
             .addClass('webgis-button uibutton uibutton-cancel reset-button')
-            .text('Filter entfernen')
+            .text(webgis.l10n.get('remove-filters'))
             .appendTo($elem)
             .on('click.webgis_contentsearch', function () {
                 self.reset();

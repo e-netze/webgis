@@ -234,7 +234,7 @@
                     .prependTo($divConstruction);
 
                 $("<strong>")
-                    .text("Konstruktionsmodus:")
+                    .text(webgis.l10n.get('construction-mode') + ":")
                     .appendTo($header);
                 $("<br>").appendTo($header);
                 $("<strong>")

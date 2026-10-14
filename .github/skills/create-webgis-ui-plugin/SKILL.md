@@ -49,7 +49,11 @@ webgis.ui.definePlugin('webgis_myThing', {
 - Instance fields available everywhere: `this.$`, `this.$el`, `this.options`, `this._pluginName`,
   `this._destroyed`. Keep per-instance state on `this` (e.g. `this._value`), not in closures or
   module variables shared by all instances.
-- User-facing text only via `webgis.l10n.get('key')` (keys in `webgis.l10n.de.js` and `.en.js`).
+- User-facing text only via `webgis.l10n.get('key')` (keys in `webgis.l10n.de.js` and `.en.js`,
+  same order in both). Dynamic values via named placeholders: `webgis.l10n.get('key', { count: n })`
+  with `"key": "... {count} ..."`. Keep markup in code, only text in keys. Never call
+  `webgis.l10n.get` in `defaults` or other load-time code - the language is set after the bundle
+  loads; resolve texts in `init`/at use time (e.g. `o.placeholder || webgis.l10n.get('...')`).
 
 ## 2. Creating and calling methods
 

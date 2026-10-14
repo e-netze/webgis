@@ -27,7 +27,7 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
 
         $elem.empty();
 
-        const searchPlaceholder = 'In Diensten suchen...';
+        const searchPlaceholder = webgis.l10n.get('search-in-services') + '...';
 
         const $searchHolder = this._$searchHolder = $("<div></div>")
             .addClass('webgis-addservices_toc-search-holder')
@@ -222,7 +222,7 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
                     .appendTo($item_li);
 
                 $("<div class='more'>")
-                    .text('mehr...')
+                    .text(webgis.l10n.get('more'))
                     .appendTo($text)
                     .on('click.webgis_add_services_toc', function (e) {
                         e.stopPropagation();
@@ -296,7 +296,7 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
                 .appendTo(this._$ul)
                 .on('click.webgis_add_services_toc', Ctor.containerClickEvent);
             $("<span style='position:absolute' class='webgis-addservices_toc-plus webgis-api-icon webgis-api-icon-triangle-1-s'></span>").appendTo($li);
-            $("<div class='webgis-addservices_toc-title-text'>Benutzerdefinierte Dienste</div>").appendTo($li);
+            $("<div class='webgis-addservices_toc-title-text'>").text(webgis.l10n.get('custom-services')).appendTo($li);
             const $div = $("<div class='webgis-addservices_toc-content' style='display:none' id='div_'></div>")
                 .css('padding', '10px')
                 .appendTo($li)
@@ -309,8 +309,8 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
 
             $div.webgis_general_input({
                 name: 'webgis-customservice-url',
-                label: 'Dienst Url',
-                placeholder: 'Url zum WMS/AGS Dienst...',
+                label: webgis.l10n.get('customservice-url'),
+                placeholder: webgis.l10n.get('customservice-url-placeholder'),
                 description: webgis.l10n.get('description-customservice-url'),
                 onInit: function ($parent, $input) {
                     $input.css({ width: '100%', boxSizing: 'border-box' });
@@ -319,19 +319,19 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
 
             $div.webgis_general_input('add', {
                 name: 'webgis-customservice-displayname',
-                label: 'Anzeigename (optional)',
-                placeholder: 'Anzeigename des Dienstes...',
+                label: webgis.l10n.get('customservice-displayname'),
+                placeholder: webgis.l10n.get('customservice-displayname-placeholder'),
                 description: webgis.l10n.get('description-customservice-displayname'),
             });
 
             $div.webgis_general_input('add', {
                 name: 'webgis-customservice-user',
-                label: 'Security (optional)',
-                placeholder: 'Username...',
+                label: webgis.l10n.get('customservice-security'),
+                placeholder: webgis.l10n.get('username-placeholder'),
                 description: webgis.l10n.get('description-customservice-security'),
                 onInit: function ($parent, $input) {
                     $("<input name='webgis-customservice-pwd' type='password'>")
-                        .attr('placeholder', 'Passwort')
+                        .attr('placeholder', webgis.l10n.get('password'))
                         .addClass('webgis-input')
                         .appendTo($parent);
                 }
@@ -340,7 +340,7 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
             let $successMessage, $errorMessage;
 
             $("<br/><br/>").appendTo($div);
-            $("<button>Dienst hinzuf&uuml;gen</button>")
+            $("<button>").text(webgis.l10n.get('add-service'))
                 .addClass('webgis-button uibutton')
                 .appendTo($div)
                 .on('click.webgis_add_services_toc', function () {
@@ -371,20 +371,20 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
 
                                 webgis.log('service added to map:', result.name);
                                 $successMessage
-                                    .html('Dienst ' + result.name + ' wurde erfolgreich der Karte hinzugefügt')
+                                    .text(webgis.l10n.get('customservice-added', { name: result.name }))
                                     .css('display', 'block');
                             } else {
                                 if (result.exception || result.error) {
-                                    $errorMessage.text("Error: " + (result.exception || result.error));
+                                    $errorMessage.text(webgis.l10n.get('error') + ": " + (result.exception || result.error));
                                 } else {
-                                    $errorMessage.text("Ein unbekannter Fehler ist aufgetreten");
+                                    $errorMessage.text(webgis.l10n.get('unknown-error-occurred'));
                                 }
                                 $errorMessage.css('display', 'block');
                             }
                         },
                         function (err) {
                             $button.prop('disabled', false);
-                            webgis.alert('Unknown Error. Statuscode:' + err.status, "error");
+                            webgis.alert(webgis.l10n.get('unknown-error') + ' Statuscode: ' + err.status, "error");
                         }
                     );
                 });
@@ -566,7 +566,7 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
 
             if (service.presentations) {
                 const $p = $("<div>").appendTo($serviceElements)
-                $("<h3>Darstellungsvarianten</h3>").appendTo($p);
+                $("<h3>").text(webgis.l10n.get('presentation-variants')).appendTo($p);
                 const $ul = $("<ul>").appendTo($p);
                 for (const p in service.presentations) {
                     const presentation = service.presentations[p];
@@ -580,7 +580,7 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
 
             if (service.queries) {
                 const $p = $("<div>").appendTo($serviceElements)
-                $("<h3>Abfragen</h3>").appendTo($p);
+                $("<h3>").text(webgis.l10n.get('queries')).appendTo($p);
                 const $ul = $("<ul>").appendTo($p);
                 for (const q in service.queries) {
                     const query = service.queries[q];
@@ -596,7 +596,7 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
 
             if (service.layers) {
                 const $p = $("<div>").appendTo($serviceElements)
-                $("<h3>Layer</h3>").appendTo($p);
+                $("<h3>").text(webgis.l10n.get('layers-heading')).appendTo($p);
                 const $ul = $("<ul>").appendTo($p);
                 for (const l in service.layers) {
                     const layer = service.layers[l];

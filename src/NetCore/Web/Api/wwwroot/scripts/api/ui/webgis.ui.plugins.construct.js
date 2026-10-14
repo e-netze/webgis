@@ -160,7 +160,7 @@ webgis.ui.definePlugin('webgis_dirDistControl', {
         var distance = Math.round(options.distance * 1e+2) / 1e+2;
 
         var $holder = $("<div>").css('margin', '10px').addClass('webgis-dir-dist-holder').data('options', options).appendTo($parent);
-        $("<div>Richtung (Azimut)</div>").addClass('webgis-input-label')
+        $("<div>").text(webgis.l10n.get('direction-azimuth')).addClass('webgis-input-label')
             .appendTo($holder);
 
         var $inputAzimut = $("<input name='azimut'>")
@@ -174,7 +174,7 @@ webgis.ui.definePlugin('webgis_dirDistControl', {
             .appendTo($holder)
             .val(options.azimut_unit);
 
-        $("<div>Distanz</div>")
+        $("<div>").text(webgis.l10n.get('distance'))
             .addClass('webgis-input-label')
             .appendTo($holder);
 
@@ -224,7 +224,7 @@ webgis.ui.definePlugin('webgis_dirDistControl', {
         $("<br/><br/>")
             .appendTo($holder);
 
-        $("<button>Übernehmen</button>")
+        $("<button>").text(webgis.l10n.get('take-over'))
             .addClass('webgis-button')
             .appendTo($holder)
             .on('click.webgis_dirDistControl', function () {
@@ -317,7 +317,7 @@ webgis.ui.definePlugin('webgis_offsetControl', {
             .appendTo($parent);
 
         $("<div>")
-            .text("Offset")
+            .text(webgis.l10n.get('offset'))
             .addClass('webgis-input-label')
             .appendTo($holder);
 
@@ -339,7 +339,7 @@ webgis.ui.definePlugin('webgis_offsetControl', {
 
         $("<br/><br/>").appendTo($holder);
 
-        $("<button>Übernehmen</button>")
+        $("<button>").text(webgis.l10n.get('take-over'))
             .addClass('webgis-button')
             .appendTo($holder)
             .on('click.webgis_offsetControl', function () {
@@ -395,7 +395,7 @@ webgis.ui.definePlugin('webgis_extendLineSketchControl', {
             .data('options', options)
             .appendTo($parent);
 
-        $("<select name='extend_ends'><option value='-1'>am Anfang</option><option value='1'>am Ende</option><option value='0'>am Anfang und Ende</option></select>")
+        $("<select name='extend_ends'><option value='-1'>" + webgis.l10n.get('extend-at-start') + "</option><option value='1'>" + webgis.l10n.get('extend-at-end') + "</option><option value='0'>" + webgis.l10n.get('extend-at-start-and-end') + "</option></select>")
             .css('width', '55%')
             .addClass('webgis-input')
             .appendTo($holder).val(0);
@@ -413,7 +413,7 @@ webgis.ui.definePlugin('webgis_extendLineSketchControl', {
 
         $("<br/><br/>").appendTo($holder);
 
-        $("<button>Verlängern</button>")
+        $("<button>").text(webgis.l10n.get('extend'))
             .addClass('webgis-button')
             .appendTo($holder)
             .on('click.webgis_extendLineSketchControl', function () {
@@ -784,7 +784,7 @@ webgis.ui.definePlugin('select_sketch', {
                 });
 
             $("<strong>")
-                .text(set_sketch_any ? "Sketch übernehmen aus" : "Wert(e) übernehmen aus")
+                .text(set_sketch_any ? webgis.l10n.get('take-sketch-from') : webgis.l10n.get('take-values-from'))
                 .appendTo($title);
 
             function applySketch(sender, isPreview) {
@@ -851,7 +851,7 @@ webgis.ui.definePlugin('select_sketch', {
                     });
             }
 
-            $("<li>Abbrechen</li>")
+            $("<li>").text(webgis.l10n.get('cancel'))
                 .addClass('webgis-toolbox-tool-item')
                 .appendTo($menu)
                 .on('click', function () {

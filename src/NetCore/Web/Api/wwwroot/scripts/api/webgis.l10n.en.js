@@ -3,6 +3,8 @@
 
     "error": "Error",
     "info": "Information",
+    "close": "Close",
+    "processing": "Processing...",
     "shortcuts": "Shortcuts",
 
     // sidebar
@@ -395,5 +397,215 @@
     "branch-link-title": "Copy a temporary link to this branch for users without author rights",
     "branch-link-copied": "The link has been copied to the clipboard:",
     "branch-link-error": "The branch link could not be created",
-    "branch-link-expires": "valid until"
+    "branch-link-expires": "valid until",
+
+    // general
+    "help": "Help",
+    "warning": "Warning",
+    "no-thanks": "No, thanks",
+    "details-link": "Details...",
+    "did-you-mean": "Did you mean?",
+    "webgis-message": "WebGIS message",
+    "no-results-found": "No results found",
+    "remove-selected": "Remove selected",
+    "remove-unselected": "Remove unselected",
+    "cannot-open-link": "Can't open link",
+    "copy-value-to-clipboard": "Copy value to clipboard",
+    "copy-row-to-clipboard": "Copy row to clipboard",
+    "remove": "Remove",
+    "refresh": "Refresh",
+    "unknown-error": "Unknown error!",
+    "general-error-occurred": "A general error has occurred",
+    "remove-all": "Remove all",
+    "more": "more...",
+    "back": "Back",
+    "next": "Next",
+    "go-to-page": "Go to page",
+    "expand-list": "Expand list",
+    "an-error-occurred": "An error has occurred...",
+    "unknown-error-occurred": "An unknown error has occurred",
+    "errors-occurred": "Errors have occurred",
+    "errors-warnings": "Errors/Warnings",
+    "show-errors-automatically": "Show warnings/errors automatically",
+    "upload-cancelled": "Upload cancelled",
+    "attachments": "Attachments",
+    "shortcut-key": "Shortcut key",
+    "password": "Password",
+    "username-placeholder": "Username...",
+    "map-markers": "Map markers",
+    "result-from": "Result from {name}",
+    "remove-count": "Remove [{count}]",
+    "do-not-show": "do not show",
+    "fullscreen": "Fullscreen",
+    "search-in-progress": "Searching...",
+    "show-tool": "Show {name}",
+
+    // progress
+    "progress-initializing": "Initializing...",
+    "progress-loading-map": "Loading map...",
+    "progress-creating-pdf": "Creating PDF...",
+    "progress-calculating-round-trip": "Calculating round trip...",
+    "progress-querying-current-position": "Querying current position...",
+    "progress-downloading-map-image": "Downloading map image...",
+    "progress-loading-service-infos": "Loading service information...",
+    "progress-loading-tool-infos": "Loading tool information...",
+    "progress-calculating-neighborhood": "Calculating neighborhood...",
+    "progress-loading-name": "Loading: {name}",
+    "progress-undo-request": "Undo request: {name}",
+    "progress-tool-request": "Tool request: {name}",
+
+    // map initialization
+    "init-error": "webGIS could not be initialized!",
+    "unknown-services": "Unknown services",
+    "unknown-services-message": "Not all services could be loaded. This means that content may be missing from the map or cannot be displayed. The system may not be configured correctly. If this message appears frequently, please contact your administrator. The following services are not available in the map:",
+    "unauthorized-services": "Unauthorized services",
+    "unauthorized-services-hidden": "Unauthorized services are hidden in the map...",
+    "unauthorized-services-message": "The map author has added services to this map for which you are not authorized. These services are not displayed in the map. This should not affect how the map works. The following services are not available to you in this map (if you need one of these services, please contact your administrator):",
+    "authentication-error-message": "An authentication error has occurred. The map must be reopened to fix this error.",
+    "reopen-map": "Reopen map",
+
+    // share
+    "share-copy-to-clipboard": "Copy (clipboard)",
+
+    // feature details
+    "details-query-not-possible": "Unfortunately, details cannot be queried!",
+    "no-more-details-available": "No further details available for this feature",
+
+    // geolocation
+    "geolocation-not-supported": "Geolocation is not supported",
+    "geolocation-error": "Error while determining location",
+    "geolocation-not-possible": "Location not possible",
+    "geolocation-accuracy-not-reached": "Location with the required accuracy of {accuracy}m not possible",
+    "geolocation-tracking-already-running": "Tracking is already running!",
+    "gps-local-transformation": "Local transformation",
+    "gps-measurement-info": "GPS measurement info",
+    "gps-accuracy": "Accuracy",
+    "gps-trafo-location-quality": "Trafo: location/quality",
+    "gps-no-local-transformation": "No local transformation is used for the current measurement!",
+    "current-position": "Current position",
+    "my-location": "My location",
+
+    // favorites program
+    "favorites-program": "Favorites program",
+    "favorites-program-continue": "Continue participating",
+    "favorites-program-join": "Yes, participate!",
+    "favorites-program-leave": "Leave",
+
+    // map
+    "remove-all-visfilters": "Remove all display filters",
+    "remove-all-timefilters": "Remove all time filters",
+    "remove-all-results-from-map": "Remove all results from the map",
+    "remove-service-focus": "Remove service focus",
+    "no-dynamic-content-results": "No results found for dynamic content \"{name}\"",
+    "print-jobs": "Print jobs",
+    "click-to-activate-map": "Click here to activate the map...",
+    "context-menu-button": "Context<br/>menu",
+    "results-history": "Results history",
+    "remove-all-search-results-from-map": "Remove all (search) results from the map",
+
+    // buffer
+    "calculate-buffer": "Calculate buffer",
+    "select-layer": "Select layer",
+    "buffer-distance-m": "Buffer distance [m]",
+
+    // print
+    "print-errors-occurred": "Errors occurred during printing. The printout may not be complete. Please check if all relevant topics are included in the printout",
+
+    // sketch
+    "sketch-delete-vertex": "Delete vertex",
+    "sketch-insert-vertex-before": "Insert vertex before",
+    "sketch-insert-vertex-after": "Insert vertex after",
+    "sketch-delete-sketch": "Delete sketch",
+    "sketch-reverse-vertex-order": "Reverse vertex order",
+    "sketch-start-new-section": "Start new section",
+    "sketch-max-size-exceeded": "The current change could not be applied. The maximum size of the sketch has been exceeded.",
+    "sketch-not-valid": "Sketch is not valid",
+    "sketch-apply-direction-parallel": "Apply direction: parallel",
+    "sketch-apply-direction-orthogonal": "Apply direction: orthogonal",
+    "construction-label-width": "Width [m]",
+    "construction-label-height": "Height [m]",
+
+    // round trip
+    "round-trip": "Round trip",
+    "round-trip-message": "This function sorts the markers in the order of an optimal round trip",
+    "round-trip-sort-markers": "Sort markers",
+
+    // liveshare
+    "liveshare-waiting-for-confirmation": "Waiting for confirmation...",
+    "liveshare-access-denied": "Access to the Liveshare session was denied!",
+    "liveshare-restore-mapmarkup-message": "Before the LiveShare session, the current map contained drawing elements from Map-Markup. Do you want to keep the drawing (Map-Markup) objects from the LiveShare session or restore the original elements?",
+    "liveshare-keep-objects": "Keep LiveShare objects",
+    "liveshare-restore-original-elements": "Restore original elements",
+    "liveshare-session-closed": "Liveshare session was closed",
+    "liveshare-grant-access": "Grant user {user} access to the current session?",
+    "liveshare-group-error": "Error creating/adding the group...",
+
+    // input validation
+    "input-validation": "Input validation",
+    "enter-all-required-values": "Please enter all required values!",
+    "input-required": "Input is required",
+    "input-regex-mismatch": "The input does not match the regular expression",
+    "input-min-length": "Input must be at least {count} characters long",
+
+    // content search
+    "filter-contents": "Filter contents...",
+    "no-copyright-info-available": "No copyright information or descriptions are available for the selected services.",
+    "quick-search-layers": "Quick search layers",
+    "input-example": "Input example:",
+    "search-contents-services": "Search for contents/services...",
+    "search-in-map-services": "Search in (map) services",
+    "find-layers-in-category": "Find layers in {category}...",
+    "original-feature-not-found": "Data for the original GIS feature was not found. The data may be inconsistent...",
+
+    // add services
+    "add-services-button": "Add services",
+    "add-service": "Add service",
+    "custom-services": "Custom services",
+    "customservice-url": "Service URL",
+    "customservice-url-placeholder": "URL of the WMS/AGS service...",
+    "customservice-displayname": "Display name (optional)",
+    "customservice-displayname-placeholder": "Display name of the service...",
+    "customservice-security": "Security (optional)",
+    "customservice-added": "Service {name} was successfully added to the map",
+    "presentation-variants": "Presentation variants",
+    "queries": "Queries",
+    "layers-heading": "Layers",
+
+    // edit
+    "points-symbols": "Points/symbols",
+    "lines": "Lines",
+    "areas-polygons": "Areas/polygons",
+
+    // querybuilder
+    "querybuilder-invalid-query": "Not a valid query",
+
+    // construct
+    "direction-azimuth": "Direction (azimuth)",
+    "distance": "Distance",
+    "take-over": "Apply",
+    "offset": "Offset",
+    "extend": "Extend",
+    "take-sketch-from": "Take sketch from",
+    "take-values-from": "Take value(s) from",
+    "extend-at-start": "at the start",
+    "extend-at-end": "at the end",
+    "extend-at-start-and-end": "at the start and end",
+
+    // graphics
+    "bubble-drag-to-activate": "Drag the bubble to activate the tool...",
+    "label-optional-placeholder": "Label (optional)...",
+    "remove-element": "Remove element",
+    "adjust-symbology": "Adjust symbology",
+    "symbology": "Symbology",
+    "remove-selection": "Remove selection",
+    "remove-selected-elements": "Remove selected elements",
+    "reverse-order": "Reverse order",
+
+    // query results
+    "next-feature": "Next feature",
+    "zoom-to-feature": "Zoom to feature",
+    "remove-result": "Remove result",
+    "restrict-selection": "Restrict selection",
+    "results-range-of-total": "Results {start}–{end} of {total}",
+    "all-results": "All results"
 };

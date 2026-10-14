@@ -264,7 +264,7 @@
                         tabContent += "<td class='webgis-result-table-cell " + v + "' style='" + (linebreak === false ? "white-space:nowrap;" : "") + (valCount > 1 ? "width:auto;" : "") + "'>" + val + "</td>";
 
                         if (val && valType === 'string' && (val.indexOf('<') < 0 || val.indexOf("<a") === 0)) {
-                            tabContent += "<td class='webgis-result-table-copybutton'><div class='webgis-copy' onclick=\"webgis.copy(this.parentNode.parentNode,'.webgis-result-table-cell." + v + "')\" title='Wert in die Zwischenablage kopiern' style='opacity:" + (valCount > 1 ? ".3" : "1") + "'></div></td>";
+                            tabContent += "<td class='webgis-result-table-copybutton'><div class='webgis-copy' onclick=\"webgis.copy(this.parentNode.parentNode,'.webgis-result-table-cell." + v + "')\" title='" + webgis.l10n.get('copy-value-to-clipboard') + "' style='opacity:" + (valCount > 1 ? ".3" : "1") + "'></div></td>";
                             copyButtonCount++;
                         } else {
                             tabContent += "<td></td>";
@@ -272,7 +272,7 @@
                     }
 
                     if (copyButtonCount > 1) {
-                        tabContent += "<td class='webgis-result-table-copybutton'><div class='webgis-copy' onclick=\"webgis.copyAll(this.parentNode.parentNode, '.webgis-result-table-cell')\" title='Zeile in die Zwischenablage kopiern'></div></td>";
+                        tabContent += "<td class='webgis-result-table-copybutton'><div class='webgis-copy' onclick=\"webgis.copyAll(this.parentNode.parentNode, '.webgis-result-table-cell')\" title='" + webgis.l10n.get('copy-row-to-clipboard') + "'></div></td>";
                     } else if (valCount > 1) {
                         tabContent += "<td></td>";
                     }
@@ -1127,7 +1127,7 @@
                     map: this._map,
                     bgImage: webgis.css.img('menu-26-w.png'),
                     trashPosition: 'none',
-                    text: 'Kontext<br/>menü',
+                    text: webgis.l10n.get('context-menu-button'),
                     top: 200 + (webgis.useMobileCurrent() ? -80 : 0),
                     parkable: true,
                     onDragEnd: function (pointer) {
@@ -1526,7 +1526,7 @@
         if (result && result.features && result.features.length === 0) {
             if (!dynamicContentQuery) {
                 if (!addSilent) {
-                    var msg = 'Es wurden keine Ergebnisse gefunden'
+                    var msg = webgis.l10n.get('no-results-found');
                     if (result.metadata) {
                         if (result.metadata.infos)
                             msg += '\n\n' + result.metadata.infos.toString();
@@ -1927,7 +1927,7 @@
                     first = false;
                     $("<div>")
                         .addClass('webgis-result-history-dropdown')
-                        .text("Ergebnisse Verlauf")
+                        .text(webgis.l10n.get('results-history'))
                         .appendTo($holder)
                         .click(function (e) {
                             e.stopPropagation();
@@ -2023,21 +2023,21 @@
         var service = map.queryResultFeatures.firstService();
         var query = map.queryResultFeatures.firstQuery();
         webgis.ui.showModal({
-            title: 'Nachbarschaft berechnen',
+            title: webgis.l10n.get('calculate-buffer'),
             id: 'buffer-modal',
             onload: function ($content) {
                 $content.css('padding', '10px').addClass('webgis-buffer-holder');
-                $("<div style='webgis-input-label'>Thema auswählen</div>").appendTo($content);
+                $("<div style='webgis-input-label'>").text(webgis.l10n.get('select-layer')).appendTo($content);
                 var $select = $("<select class='webgis-select' name='query' />").appendTo($content)
                     .webgis_queryCombo({
                         map: map, type: 'identify' /*'query'*/
                     });
                 if (service && query)
                     $select.val(service.id + ':' + query.id);
-                $("<div style='webgis-input-label'>Puffer Distanz [m]</div>").css('margin-top', '14px').appendTo($content);
+                $("<div style='webgis-input-label'>").text(webgis.l10n.get('buffer-distance-m')).css('margin-top', '14px').appendTo($content);
                 $("<input class='webgis-input' name='distance' />").val(webgis.usability.defaultBufferDistance || 30).css('width', '287px').appendTo($content);
                 $("<br/>").appendTo($content);
-                $("<button class='webgis-button'>Nachbarschaft berechnen</button>").css('margin-top', '14px').data('map', map).appendTo($content)
+                $("<button class='webgis-button'>").text(webgis.l10n.get('calculate-buffer')).css('margin-top', '14px').data('map', map).appendTo($content)
                     .click(function () {
                         var map = $(this).data('map');
                         var $holder = $(this).closest('.webgis-buffer-holder');
@@ -2048,7 +2048,7 @@
                         var sourceQueryId = map.queryResultFeatures.firstQuery().id;
                         var sourceOids = map.queryResultFeatures.featureIds(true).toString();
                         webgis.ajax({
-                            progress: 'Nachbarschaftsberechnung...',
+                            progress: webgis.l10n.get('progress-calculating-neighborhood'),
                             url: webgis.baseUrl + '/rest/services/' + serviceId + '/queries/' + queryId + "?f=json",
                             data: webgis.hmac.appendHMACData(map.addServicesCustomRequestParameters(
                                 map.appendRequestParameters({  // resquestParameters inkl filters

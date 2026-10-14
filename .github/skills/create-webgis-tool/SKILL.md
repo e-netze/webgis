@@ -103,7 +103,9 @@ Elements: `E.Standard.WebMapping.Core.Api.UI.Elements` (+ `.Advanced`), fluent e
   Close a target with `new UIEmpty().WithTarget(<same target>)`.
 - **Texts**: don't hardcode user-facing texts. Use `ILocalizer<T>` with the l10n files
   `src/NetCore/Web/Api/l10n/{de,en}/Tools.<ToolName>.md` (`# key: text`). Viewer JS texts go to
-  `webgis.l10n.{de,en}.js`.
+  `webgis.l10n.{de,en}.js` and are read via `webgis.l10n.get('key')` - also for alerts, titles,
+  tooltips and progress messages; dynamic values via named placeholders
+  (`webgis.l10n.get('key', { name: tool.name })`). Only call it at runtime, not at script load time.
 
 ## 5. New UI elements / JS plugins
 

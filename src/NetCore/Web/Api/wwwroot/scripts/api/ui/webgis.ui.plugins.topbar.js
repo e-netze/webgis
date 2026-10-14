@@ -132,7 +132,7 @@ webgis.ui.definePlugin('webgis_topbar', {
                                     map.getQuery(result.metadata.service_id, result.metadata.query_id)) {
 
                                     if (!result.features || result.features.length == 0) {
-                                        webgis.alert("Daten für das Original GIS Element wurden nicht gefunden. Es besteht eventuell ein Schiefstand in den Daten...", "info");
+                                        webgis.alert(webgis.l10n.get('original-feature-not-found'), "info");
                                     } else {
                                         map.ui.showQueryResults(result, true, false);
                                     }
@@ -194,7 +194,7 @@ webgis.ui.definePlugin('webgis_topbar', {
                         id: '#content-search',
                         value: '{0}',
                         label: '{0}',
-                        subtext: 'Nach Inhalten/Diensten suchen...',
+                        subtext: webgis.l10n.get('search-contents-services'),
                         thumbnail: webgis.css.imgResource('presentations~png', 'toolbar')
                     }]);
                 }
@@ -349,7 +349,7 @@ webgis.ui.definePlugin('webgis_topbar', {
                     $form.find('.webgis-detail-search-hourglass').html('');
                 },
                 error: function () {
-                    webgis.alert('unknown error', 'error');
+                    webgis.alert(webgis.l10n.get('unknown-error'), 'error');
                     $form.find('.webgis-detail-search-hourglass').html('');
                 }
             });
@@ -447,7 +447,7 @@ webgis.ui.definePlugin('webgis_topbar', {
             } else {
                 webgis.ui.emptyQueryResultsList($resultTarget, { map: map });
             }
-            $resultTarget.html("<img src='" + webgis.css.imgResource('loader1.gif', 'hourglass') + "' /><span>Suche läuft...</span>");
+            $resultTarget.html("<img src='" + webgis.css.imgResource('loader1.gif', 'hourglass') + "' /><span>" + webgis.l10n.get('search-in-progress') + "</span>");
 
             webgis.ajax({
                 url: webgis.baseUrl + '/rest/search/' + $input.attr('data-service'),
@@ -476,7 +476,7 @@ webgis.ui.definePlugin('webgis_topbar', {
                         counter = result.features.length;
                     }
                     else {
-                        $resultTarget.html('Keine Ergebnisse gefunden...');
+                        $resultTarget.text(webgis.l10n.get('no-results-found') + '...');
                         $content.webgis_queryResultsHolder('showbuttons', { clearresults: false, showtable: false });
                     }
 
@@ -490,7 +490,7 @@ webgis.ui.definePlugin('webgis_topbar', {
                     }
                 },
                 error: function () {
-                    $resultTarget.html('Es ist ein Fehler aufgetreten...');
+                    $resultTarget.text(webgis.l10n.get('an-error-occurred'));
                 }
             });
         },
@@ -513,7 +513,7 @@ webgis.ui.definePlugin('webgis_topbar', {
             map.events.fire('showqueryresults', { map: map, buttons: { clearresults: false, showtable: false } });
             var $list = $content.find('.webgis-search-result-list');
             webgis.ui.emptyQueryResultsList($list, { map: map });
-            $list.html("<img src='" + webgis.css.imgResource('loader1.gif', 'hourglass') + "' /><span>Suche läuft...</span>");
+            $list.html("<img src='" + webgis.css.imgResource('loader1.gif', 'hourglass') + "' /><span>" + webgis.l10n.get('search-in-progress') + "</span>");
             webgis.ajax({
                 url: webgis.baseUrl + '/rest/search/geojuhu',
                 data: webgis.hmac.appendHMACData({ term: term, services: map.serviceIds().join(','), f: 'json' }),
@@ -564,12 +564,12 @@ webgis.ui.definePlugin('webgis_topbar', {
                         $content.webgis_queryResultsHolder('showbuttons', { clearresults: true, showtable: false });
                     }
                     else {
-                        $list.html('Keine Ergebnisse gefunden...');
+                        $list.text(webgis.l10n.get('no-results-found') + '...');
                         $content.webgis_queryResultsHolder('showbuttons', { clearresults: false, showtable: false });
                     }
                 },
                 error: function () {
-                    $list.html('Es ist ein Fehler aufgetreten...');
+                    $list.text(webgis.l10n.get('an-error-occurred'));
                 }
             });
         }

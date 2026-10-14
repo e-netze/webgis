@@ -224,7 +224,7 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
                     if (queryDefs.length == 0) {
                         return;
                     } else {
-                        alert('Not a valid query');
+                        alert(webgis.l10n.get('querybuilder-invalid-query'));
                         return false;
                     }
                 }

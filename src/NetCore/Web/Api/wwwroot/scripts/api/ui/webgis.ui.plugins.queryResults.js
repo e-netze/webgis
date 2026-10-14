@@ -222,7 +222,7 @@ webgis.ui.definePlugin('webgis_queryResultsList', {
                     });
             }
             if (map.getTool('webgis.tools.removefromselection')) {
-                $removeButton = $("<li><span><img src='" + webgis.css.imgResource('cursor-minus-26-b.png', 'tools') + "'><div class='webgis-toolbox-tool-item-label'>Selektion einschränken</div></span></li>")
+                $removeButton = $("<li><span><img src='" + webgis.css.imgResource('cursor-minus-26-b.png', 'tools') + "'><div class='webgis-toolbox-tool-item-label'>" + webgis.l10n.get('restrict-selection') + "</div></span></li>")
                     .addClass('webgis-toolbox-tool-item')
                     .attr('data-toolid', 'webgis.tools.removefromselection')
                     .appendTo($toolbar)
@@ -289,9 +289,7 @@ webgis.ui.definePlugin('webgis_queryResultsList', {
         if (isTruncated) {
             $("<div>")
                 .addClass('webgis-result-list-truncated-notice')
-                .text(webgis.l10n.get('query-result-list-truncated')
-                    .replace('{count}', renderFeatures.length)
-                    .replace('{total}', features.length))
+                .text(webgis.l10n.get('query-result-list-truncated', { count: renderFeatures.length, total: features.length }))
                 .appendTo($parent);
         }
 
@@ -342,7 +340,7 @@ webgis.ui.definePlugin('webgis_queryResultsList', {
                     .appendTo($li.addClass('reorderable'));
             }
             if (includedQueries.length > 1 && query) {
-                $("<div class='webgis-geojuhu-reslut-category'>Ergebnis aus " + query.name + "</div>")
+                $("<div class='webgis-geojuhu-reslut-category'>").text(webgis.l10n.get('result-from', { name: query.name }))
                     .appendTo($li);
             }
             if (map.queryResultFeatures.supportsRemoveFeature() && features.length > 1) {
@@ -817,7 +815,7 @@ webgis.ui.definePlugin('webgis_queryResultsTable', {
                     //$("<div>")
                     //    .addClass('menubutton')
                     //    .addClass('webgis-dependencies webgis-dependency-hasfilters')
-                    //    .attr('title', 'Alle entfernen')
+                    //    .attr('title', webgis.l10n.get('remove-all'))
                     //    .attr('data-applicable-filters', features.metadata.applicable_filters)
                     //    .data('map', map)
                     //    .data('oid', feature.oid)
@@ -1005,7 +1003,7 @@ webgis.ui.definePlugin('webgis_queryResultsTable', {
                                 $("<div>")
                                     .addClass('menubutton')
                                     .addClass('webgis-dependencies webgis-dependency-hasfilters webgis-row-btn-filter-unset')
-                                    .attr('title', 'Alle entfernen')
+                                    .attr('title', webgis.l10n.get('remove-all'))
                                     .attr('data-applicable-filters', features.metadata.applicable_filters)
                                     .data('map', map)
                                     .data('oid', feature.oid)
@@ -1017,7 +1015,7 @@ webgis.ui.definePlugin('webgis_queryResultsTable', {
                                 $("<div>")
                                     .addClass('menubutton inline attachments webgis-row-btn-attachments')
                                     .attr("id", 'attachments-' + feature.oid.replaceAll('@','-').replaceAll(':', '-'))
-                                    .attr('title', 'Attachements')
+                                    .attr('title', webgis.l10n.get('attachments'))
                                     .data('map', map)
                                     .data('oid', feature.oid)
                                     //.css('background-image', 'url(' + webgis.css.imgResource('attachments-26-b.png', 'tools') + ')')
@@ -1145,7 +1143,7 @@ webgis.ui.definePlugin('webgis_queryResultsTable', {
 
                 var rangeStart = currentPage * pageSize + 1;
                 var rangeEnd = Math.min(rangeStart + pageSize - 1, totalFeatures);
-                var infoText = 'Ergebnisse ' + rangeStart + '\u2013' + rangeEnd + ' von ' + totalFeatures;
+                var infoText = webgis.l10n.get('results-range-of-total', { start: rangeStart, end: rangeEnd, total: totalFeatures });
 
                 $.each([$pagerTop, $pagerBottom], function (i, $bar) {
                     if (!$bar) return;
@@ -1189,7 +1187,7 @@ webgis.ui.definePlugin('webgis_queryResultsTable', {
 
                     $("<button type='button'>")
                         .addClass('webgis-table-pager-prev')
-                        .attr('title', 'Zurück')
+                        .attr('title', webgis.l10n.get('back'))
                         .text('◀')
                         .appendTo($bar)
                         .on('click', function (e) {
@@ -1199,7 +1197,7 @@ webgis.ui.definePlugin('webgis_queryResultsTable', {
 
                     var $pageInput = $("<input type='number' min='1'>")
                         .addClass('webgis-table-pager-page-input')
-                        .attr('title', 'Zu Seite springen')
+                        .attr('title', webgis.l10n.get('go-to-page'))
                         .attr('max', totalPages)
                         .val(currentPage + 1)
                         .appendTo($bar)
@@ -1222,7 +1220,7 @@ webgis.ui.definePlugin('webgis_queryResultsTable', {
 
                     $("<button type='button'>")
                         .addClass('webgis-table-pager-next')
-                        .attr('title', 'Weiter')
+                        .attr('title', webgis.l10n.get('next'))
                         .text('▶')
                         .appendTo($bar)
                         .on('click', function (e) {

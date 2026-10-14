@@ -57,7 +57,7 @@ webgis.chart = function (map) {
         this.sketch.events.on('onchanged', function () {
             this.destroy();
             $(this._target).empty();
-            $("<button>Aktualisieren</button>").appendTo($(this._target))
+            $("<button>").text(webgis.l10n.get('refresh')).appendTo($(this._target))
                 .click(function () {
                 webgis.tools.onButtonClick(map, { type: 'servertoolcommand', command: 'refreshchart' });
             });

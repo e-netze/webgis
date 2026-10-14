@@ -10,7 +10,7 @@
     var _sessionId = null;
     var _isSessionOwner = false;
     var _map = null;
-    var _progressMessage = "Warte auf Bestätigung...";
+    var _progressMessage = function () { return webgis.l10n.get('liveshare-waiting-for-confirmation'); };
     var _simpleGroupDict = [];
 
     var _suspendNextMapRefresh = false;
@@ -66,13 +66,13 @@
                         text: (text || '<strong>' + clientId + '</strong>') +'<br/><br/>',
                         buttons: [
                             {
-                                label: 'Aktuelle Position',
+                                label: webgis.l10n.get('current-position'),
                                 onclick: function (map) {
                                     webgis.tools.onButtonClick(_map, { type: 'clientbutton', command: 'currentpos' });
                                 }
                             },
                             {
-                                label: 'Entfernen',
+                                label: webgis.l10n.get('remove'),
                                 onclick: function (_map, marker) {
                                     if (_connection && _connection.connectionId) {
                                         _removeUserMarker(_connection.connectionId);
@@ -89,13 +89,13 @@
                         text: (text || '<strong>' + clientId + '</strong>') + '<br/><br/>',
                         buttons: [
                             //{
-                            //    label: 'Aktuelle Position',
+                            //    label: webgis.l10n.get('current-position'),
                             //    onclick: function (map) {
                             //        webgis.tools.onButtonClick(_map, { type: 'clientbutton', command: 'currentpos' });
                             //    }
                             //},
                             {
-                                label: 'Entfernen',
+                                label: webgis.l10n.get('remove'),
                                 onclick: function (_map, marker) {
                                     if (_connection && _connection.connectionId) {
                                         _removeUserMarker(marker._markerId);
@@ -382,14 +382,14 @@
                                     webgis.liveshare.events.fire('onclientjoined', result);
                                 },
                                 onJoinedGroup: function (result) {
-                                    webgis.hideProgress(_progressMessage);
+                                    webgis.hideProgress(_progressMessage());
                                     _sessionId = result.groupId;
                                     _setDialogTitle('LiveID: ' + (_simpleGroupDict[result.groupId] || result.groupId));
                                     webgis.liveshare.events.fire('onclientjoined', result);
                                 },
                                 onDeniedGroup: function (result) {
-                                    webgis.hideProgress(_progressMessage);
-                                    webgis.alert("Zugriff auf Liveshare Session wurde verweigert!", "info");
+                                    webgis.hideProgress(_progressMessage());
+                                    webgis.alert(webgis.l10n.get('liveshare-access-denied'), "info");
                                     _sessionId = null;
                                     _setDialogTitle('');
                                 },
@@ -399,10 +399,10 @@
                                         if (currentGraphics && currentGraphics.features && currentGraphics.features.length > 0) {
                                             webgis.confirm({
                                                 title: 'Liveshare',
-                                                message: "Vor der LiveShare Session befanden sich in der aktuellen Karte Zeichnungselement aus Map-Markup. Möchten Sie die Zeichnungs- (Map-Markup) Objekte aus der Live Share Session behalten, oder die ursprüglichen Element wieder herstellen?",
-                                                cancelText: 'LiveShare Objekte behalten',
+                                                message: webgis.l10n.get('liveshare-restore-mapmarkup-message'),
+                                                cancelText: webgis.l10n.get('liveshare-keep-objects'),
                                                 onCancel: function () { _clientGraphics = null; },
-                                                okText: 'Ursprügliche Element wiederherstellen',
+                                                okText: webgis.l10n.get('liveshare-restore-original-elements'),
                                                 onOk: function () {
                                                     _map.graphics.fromGeoJson({
                                                         geojson: _clientGraphics, replaceelements: true
@@ -426,7 +426,7 @@
                                     //onLeftGroup();
 
                                     if (isOwner === false) {
-                                        webgis.alert("Liveshare Session wurde geschlossen", "info");
+                                        webgis.alert(webgis.l10n.get('liveshare-session-closed'), "info");
                                     }
                                 },
                                 onConfirmJoinGroup: function (result, onAllow, onDeny) {
@@ -434,10 +434,10 @@
                                     webgis.confirm({
                                         title: 'Liveshare',
                                         iconUrl: webgis.css.imgResource('fav-100.png'),
-                                        message: "Benutzer " + result.clientId + " Zutritt zur aktuellen Sesseion erteilen?",
-                                        cancelText: 'Nein',
+                                        message: webgis.l10n.get('liveshare-grant-access', { user: result.clientId }),
+                                        cancelText: webgis.l10n.get('no'),
                                         onCancel: onDeny,
-                                        okText: 'Ja',
+                                        okText: webgis.l10n.get('yes'),
                                         onOk: onAllow
                                     });
                                 },
@@ -484,7 +484,7 @@
                     _simpleGroupDict[sessionId] = session.simpleGroupId;
                 }
             } else {
-                wegbis.alert("Fehler beim Erstellen/Hinzufügen der Gruppe...", "Error");
+                webgis.alert(webgis.l10n.get('liveshare-group-error'), "error");
             }
         }
         if (_sessionId) {
@@ -495,7 +495,7 @@
             _isSessionOwner = livesharehub.isOwner(sessionId);
 
             webgis.delayed(function () {
-                webgis.showProgress(_progressMessage, null, {
+                webgis.showProgress(_progressMessage(), null, {
                     cancel: function () {
                         // ToDo: Cancel 
                     }
@@ -551,13 +551,13 @@
         _removeUserMarker(_connection.connectionId);
 
         var cancelTracker = new webgis.cancelTracker();
-        webgis.showProgress('Aktuelle Position wird abgefragt...', null, cancelTracker);
+        webgis.showProgress(webgis.l10n.get('progress-querying-current-position'), null, cancelTracker);
 
         webgis.currentPosition.get({
             highAccuracy: false,
             maxWatch: webgis.currentPosition.maxWatch,
             onSuccess: function (pos) {
-                webgis.hideProgress('Aktuelle Position wird abgefragt...');
+                webgis.hideProgress(webgis.l10n.get('progress-querying-current-position'));
                 if (!cancelTracker.isCanceled()) {
                     var lng = pos.coords.longitude, lat = pos.coords.latitude, acc = pos.coords.accuracy / (webgis.calc.R) * 180.0 / Math.PI;
 
@@ -573,8 +573,8 @@
                 }
             },
             onError: function (err) {
-                webgis.hideProgress('Aktuelle Position wird abgefragt...');
-                webgis.alert('Ortung nicht möglich: ' + (err ? err.message + " (Error Code " + err.code + ")" : ""), "error");
+                webgis.hideProgress(webgis.l10n.get('progress-querying-current-position'));
+                webgis.alert(webgis.l10n.get('geolocation-not-possible') + ': ' + (err ? err.message + " (Error Code " + err.code + ")" : ""), "error");
             }
         });
     };

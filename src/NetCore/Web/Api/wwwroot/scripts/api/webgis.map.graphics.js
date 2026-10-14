@@ -940,7 +940,7 @@
                 var $div = $("<div style='margin-top:30px'>").addClass('webgis-graphics-tool show').appendTo($popup);
                 $div.get(0)._symbol = symbolElement;
 
-                $("<button class='webgis-button'>Marker Entfernen</button>").appendTo($div)
+                $("<button class='webgis-button'>").text(webgis.l10n.get('button-remove-markers')).appendTo($div)
                     .click(function () {
                         this.parentNode._symbol.map.graphics._removeElementByFrameworkElement(this.parentNode._symbol.frameworkElement);
                         this.parentNode._symbol.map.removeMarker(this.parentNode._symbol.frameworkElement);

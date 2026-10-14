@@ -51,7 +51,7 @@ webgis.ui.definePlugin('webgis_bubble', {
                             if (options.helpName)
                                 map.ui.showHelp(options.helpName);
                             else
-                                webgis.alert('Zum Aktivieren des Werkzeugs, die Kugel ziehen...', 'info');
+                                webgis.alert(webgis.l10n.get('bubble-drag-to-activate'), 'info');
                         }
                         else if ($(this).data('onclick')) {
                             $(this).data('onclick').apply(this, [e]);

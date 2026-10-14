@@ -56,7 +56,7 @@ webgis.ui.definePlugin('webgis_control_search', {
                         meta: meta,
                         success: function (metadata) {
                             webgis.ui.showModal({
-                                title: 'Schnellsuche Themen',
+                                title: webgis.l10n.get('quick-search-layers'),
                                 onload: function ($content) {
                                     $content.addClass('meta-content').css('padding', '10px');
                                     var copyrightMetadata = [];
@@ -95,7 +95,7 @@ webgis.ui.definePlugin('webgis_control_search', {
                                             webgis.log('samples', meta.sample, meta.sample_separator);
                                             var samples = meta.sample.split(meta.sample_separator ? meta.sample_separator : ',');
                                             for (var s in samples) {
-                                                $("<div style='margin-top:5px'>Beispiel für die Eingabe:</div>").appendTo($block);
+                                                $("<div style='margin-top:5px'>").text(webgis.l10n.get('input-example')).appendTo($block);
                                                 $("<input class='webgis-input' style='background:white' readonly='readonly' value='" + samples[s] + "' />").appendTo($block);
                                             }
                                         }
@@ -152,19 +152,19 @@ webgis.ui.definePlugin('webgis_control_search', {
                     var map = $(sender).data('map');
 
                     webgis.confirm({
-                        title: 'Nach Inhalten/Dienste suchen...',
+                        title: webgis.l10n.get('search-contents-services'),
                         iconUrl: webgis.baseUrl + '/content/api/img/content-search.png',
                         message: webgis.l10n.get('content-search-info'),
                         suppressCancel: searchTag === '',
-                        cancelText: 'Nein, danke',
-                        okText: searchTag && map ? 'In (Karten)diensten suchen' : 'Ok',
+                        cancelText: webgis.l10n.get('no-thanks'),
+                        okText: searchTag && map ? webgis.l10n.get('search-in-map-services') : webgis.l10n.get('ok'),
                         onOk: function () {
                             //$('#tab-presentations').trigger('click');
                             //$('.webgis-presentation_toc-search.webgis-content-search-holder')
                             //    .webgis_contentsearch('set', { value: searchTag });
                             if (searchTag) {
                                 webgis.ui.showModal({
-                                    title: 'In Diensten suchen',
+                                    title: webgis.l10n.get('search-in-services'),
                                     onload: function ($content) {
                                         $content.css('padding', '0px');
                                         $content.webgis_addServicesToc({ map: map, searchTag: searchTag });

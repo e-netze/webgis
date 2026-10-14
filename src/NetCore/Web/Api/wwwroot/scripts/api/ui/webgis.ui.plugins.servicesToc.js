@@ -37,13 +37,13 @@ webgis.ui.definePlugin('webgis_servicesToc', {
             }
         }
         if (o.gdi_button == true) {
-            $("<button>Dienste hinzufügen</button>")
+            $("<button>").text(webgis.l10n.get('add-services-button'))
                 .addClass('webgis-button light')
                 .appendTo(this.$el)
                 .on('click.webgis_services_toc', function () {
                     const map = o.map;
                     webgis.ui.showModal({
-                        title: 'Dienst hinzufügen',
+                        title: webgis.l10n.get('add-service'),
                         onload: function ($content) {
                             $content.webgis_addServicesToc({ map: map });
                         }

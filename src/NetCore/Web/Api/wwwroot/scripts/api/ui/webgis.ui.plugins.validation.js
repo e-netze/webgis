@@ -54,13 +54,13 @@ webgis.ui.definePlugin('webgis_validation', {
             let error;
 
             if ($this.attr('webgis-validation-required') && !val) {
-                error = "Eingabe ist erforderlich";
+                error = webgis.l10n.get('input-required');
             }
             else if ($this.attr('webgis-validation-minlen') && parseInt($this.attr('webgis-validation-minlen')) > val.length) {
-                error = "Eingabe muss mindestens " + $this.attr('webgis-validation-minlen') + " Zeichen lang sein";
+                error = webgis.l10n.get('input-min-length', { count: $this.attr('webgis-validation-minlen') });
             }
             else if ($this.attr('webgis-validation-regex') && !val.match($this.attr('webgis-validation-regex'))) {
-                error = "Die Eingabe erfüllt nicht den regulären Ausdruck: " + $this.attr('webgis-validation-regex');
+                error = webgis.l10n.get('input-regex-mismatch') + ": " + $this.attr('webgis-validation-regex');
             }
 
             if (error) {

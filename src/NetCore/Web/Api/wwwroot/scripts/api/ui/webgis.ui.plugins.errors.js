@@ -23,12 +23,12 @@ webgis.ui.definePlugin('webgis_errors', {
             $("<input type='checkbox' checked=checked id='webgis-error-control-auto-show-errors' />")
                 .appendTo($button);
             $("<label for='webgis-error-control-auto-show-errors'>")
-                .text('Warnungen/Fehler automatisch anzeigen')
+                .text(webgis.l10n.get('show-errors-automatically'))
                 .appendTo($button);
 
             $("<button>")
                 .addClass('webgis-button uibutton')
-                .text('Alle entfernen')
+                .text(webgis.l10n.get('remove-all'))
                 .appendTo($elem)
                 .on('click.webgis_errors', function () {
                     $(this).parent().find('.webgis-error-list').empty();
@@ -124,7 +124,7 @@ webgis.ui.definePlugin('webgis_errors', {
 
             if (args.map) {
                 // ToastMenu
-                webgis.toastMessage("Warnung:", "Es sind Fehler aufgetreten: " + message.substr(0, Math.min(50, message.length)),
+                webgis.toastMessage(webgis.l10n.get('warning') + ":", webgis.l10n.get('errors-occurred') + ": " + message.substr(0, Math.min(50, message.length)),
                     function () {
                         $(options.tab_element_selector).trigger('click');
                     }, 'warning');

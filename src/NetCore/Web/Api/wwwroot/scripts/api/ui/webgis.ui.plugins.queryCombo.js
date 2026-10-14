@@ -348,7 +348,7 @@ webgis.ui.definePlugin('webgis_catCombo', {
                             $input.typeahead('val', '');
 
                             const category = $(this).closest('.webgis-cat-combo-holder').children('.webgis-cat-combo').val();
-                            $input.attr('placeholder', 'Themen ' + (category ? 'in ' + category + ' ' : '') + 'suchen...');
+                            $input.attr('placeholder', category ? webgis.l10n.get('find-layers-in-category', { category: category }) : webgis.l10n.get('find-layers'));
                         }
                     });
 
@@ -423,7 +423,7 @@ webgis.ui.definePlugin('webgis_catCombo', {
                         templates: {
                             empty: [
                                 '<div class="tt-suggestion">',
-                                '<div class="tt-content">Keine Ergebnisse gefunden</div>',
+                                '<div class="tt-content">' + webgis.l10n.get('no-results-found') + '</div>',
                                 '</div>'
                             ].join('\n'),
                             suggestion: function (item) {
@@ -621,7 +621,7 @@ webgis.ui.definePlugin('webgis_extCombo', {
 
                     webgis.ui.showModal({
                         id: 'webgis-extendable-combo-modal',
-                        title: 'Liste erweitern',
+                        title: webgis.l10n.get('expand-list'),
                         width: '340px',
                         height: '150px',
                         onload: function ($content) {

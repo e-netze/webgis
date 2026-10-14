@@ -101,9 +101,9 @@ webgis.ui.definePlugin('webgis_editthemeCombo', {
             if ($.fn.webgis_catCombo)
                 $elem.webgis_catCombo({
                     classFilters: {
-                        "filter-point": { label: typePrefix['point'] + 'Punkte/Symbole' },
-                        "filter-line": { label: typePrefix['line'] + 'Linien' },
-                        "filter-polygon": { label: typePrefix['polygon'] + 'Flächen/Polygone' }
+                        "filter-point": { label: typePrefix['point'] + webgis.l10n.get('points-symbols') },
+                        "filter-line": { label: typePrefix['line'] + webgis.l10n.get('lines') },
+                        "filter-polygon": { label: typePrefix['polygon'] + webgis.l10n.get('areas-polygons') }
                     }
                 });
         },

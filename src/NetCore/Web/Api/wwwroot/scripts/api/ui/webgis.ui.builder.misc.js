@@ -167,7 +167,7 @@
                     });
                 $("<div>")
                     .addClass('webgis-ui-imagebutton-text')
-                    .text(shareOption.name)
+                    .text(webgis.l10n.get(shareOption.name))
                     .appendTo($imageButton);
             }
         }

@@ -3,6 +3,8 @@
 
     "error": "Fehler",
     "info": "Hinweis",
+    "close": "Schließen",
+    "processing": "Verarbeitung läuft...",
     "shortcuts": "Tastaturkürzel",
 
     // sidebar
@@ -395,5 +397,215 @@
     "branch-link-title": "Temporären Link auf diesen Branch für Benutzer ohne Autorenrechte kopieren",
     "branch-link-copied": "Der Link wurde in die Zwischenablage kopiert:",
     "branch-link-error": "Der Branch-Link konnte nicht erstellt werden",
-    "branch-link-expires": "gültig bis"
+    "branch-link-expires": "gültig bis",
+
+    // general
+    "help": "Hilfe",
+    "warning": "Warnung",
+    "no-thanks": "Nein, danke",
+    "details-link": "Details...",
+    "did-you-mean": "Meinten Sie?",
+    "webgis-message": "WebGIS Meldung",
+    "no-results-found": "Es wurden keine Ergebnisse gefunden",
+    "remove-selected": "Ausgewählte entfernen",
+    "remove-unselected": "Nicht ausgewählte entfernen",
+    "cannot-open-link": "Link kann nicht geöffnet werden",
+    "copy-value-to-clipboard": "Wert in die Zwischenablage kopieren",
+    "copy-row-to-clipboard": "Zeile in die Zwischenablage kopieren",
+    "remove": "Entfernen",
+    "refresh": "Aktualisieren",
+    "unknown-error": "Unbekannter Fehler!",
+    "general-error-occurred": "Ein allgemeiner Fehler ist aufgetreten",
+    "remove-all": "Alle entfernen",
+    "more": "mehr...",
+    "back": "Zurück",
+    "next": "Weiter",
+    "go-to-page": "Zu Seite springen",
+    "expand-list": "Liste erweitern",
+    "an-error-occurred": "Es ist ein Fehler aufgetreten...",
+    "unknown-error-occurred": "Ein unbekannter Fehler ist aufgetreten",
+    "errors-occurred": "Es sind Fehler aufgetreten",
+    "errors-warnings": "Fehler/Warnungen",
+    "show-errors-automatically": "Warnungen/Fehler automatisch anzeigen",
+    "upload-cancelled": "Upload abgebrochen",
+    "attachments": "Anhänge",
+    "shortcut-key": "Tastenkürzel",
+    "password": "Passwort",
+    "username-placeholder": "Benutzername...",
+    "map-markers": "Karten Marker",
+    "result-from": "Ergebnis aus {name}",
+    "remove-count": "[{count}] entfernen",
+    "do-not-show": "nicht anzeigen",
+    "fullscreen": "Vollbild",
+    "search-in-progress": "Suche läuft...",
+    "show-tool": "{name} anzeigen",
+
+    // progress
+    "progress-initializing": "Initialisierung...",
+    "progress-loading-map": "Karte wird geladen...",
+    "progress-creating-pdf": "PDF wird erstellt...",
+    "progress-calculating-round-trip": "Berechne Rundreise...",
+    "progress-querying-current-position": "Aktuelle Position wird abgefragt...",
+    "progress-downloading-map-image": "Kartenbild herunterladen...",
+    "progress-loading-service-infos": "Lade Service-Informationen...",
+    "progress-loading-tool-infos": "Lade Werkzeug-Informationen...",
+    "progress-calculating-neighborhood": "Nachbarschaftsberechnung...",
+    "progress-loading-name": "Lade: {name}",
+    "progress-undo-request": "Undo-Request: {name}",
+    "progress-tool-request": "Werkzeug-Request: {name}",
+
+    // map initialization
+    "init-error": "webGIS kann nicht initialisiert werden!",
+    "unknown-services": "Unbekannte Dienste",
+    "unknown-services-message": "Es konnten nicht alle Dienste geladen werden. Das bedeutet, dass Inhalte in der Karte fehlen oder nicht angezeigt werden können. Eventuell ist das System nicht richtig konfiguriert. Sollte die Meldung öfter auftreten, melden Sie sich beim Administrator. Folgende Dienste sind nicht in der Karte vorhanden:",
+    "unauthorized-services": "Nicht berechtigte Dienste",
+    "unauthorized-services-hidden": "Nicht berechtigte Dienste in der Karte werden ausgeblendet...",
+    "unauthorized-services-message": "In diese Karte wurden vom Kartenautor Dienste eingefügt, für die Sie keine Berechtigung besitzen. Diese Dienste werden in der Karte nicht angezeigt. Auf die Funktionsweise der Karte sollte das keinen Einfluss haben. Folgende Dienste sind für Sie nicht in der Karte vorhanden (falls Sie einen dieser Dienste benötigen, wenden Sie sich an den Administrator):",
+    "authentication-error-message": "Ein Fehler bei der Authentifizierung ist aufgetreten. Die Karte muss neu geöffnet werden, um diesen Fehler zu beheben.",
+    "reopen-map": "Karte neu öffnen",
+
+    // share
+    "share-copy-to-clipboard": "Kopieren (Zwischenablage)",
+
+    // feature details
+    "details-query-not-possible": "Details können leider nicht abgefragt werden!",
+    "no-more-details-available": "Keine weiteren Details für dieses Objekt verfügbar",
+
+    // geolocation
+    "geolocation-not-supported": "Ortung wird nicht unterstützt",
+    "geolocation-error": "Fehler beim Ortungsversuch",
+    "geolocation-not-possible": "Ortung nicht möglich",
+    "geolocation-accuracy-not-reached": "Ortung mit gewünschter Genauigkeit von {accuracy}m nicht möglich",
+    "geolocation-tracking-already-running": "Verfolgung läuft bereits!",
+    "gps-local-transformation": "Lokale Transformation",
+    "gps-measurement-info": "GPS Messinfo",
+    "gps-accuracy": "Genauigkeit",
+    "gps-trafo-location-quality": "Trafo: Bestimmungsort/Qualität",
+    "gps-no-local-transformation": "Für die aktuelle Messung wird keine lokale Transformation verwendet!",
+    "current-position": "Aktuelle Position",
+    "my-location": "Mein Standort",
+
+    // favorites program
+    "favorites-program": "Favoriten-Programm",
+    "favorites-program-continue": "Weiterhin teilnehmen",
+    "favorites-program-join": "Ja, teilnehmen!",
+    "favorites-program-leave": "Verlassen",
+
+    // map
+    "remove-all-visfilters": "Alle Darstellungsfilter entfernen",
+    "remove-all-timefilters": "Alle Zeitfilter entfernen",
+    "remove-all-results-from-map": "Alle Ergebnisse aus der Karte entfernen",
+    "remove-service-focus": "Focus auf Dienst entfernen",
+    "no-dynamic-content-results": "Es wurden keine Ergebnisse zum dynamischen Inhalt \"{name}\" gefunden",
+    "print-jobs": "Druckaufträge",
+    "click-to-activate-map": "Zum Aktivieren der Karte hier klicken...",
+    "context-menu-button": "Kontext<br/>menü",
+    "results-history": "Ergebnisse Verlauf",
+    "remove-all-search-results-from-map": "Alle (Such)ergebnisse aus der Karte entfernen",
+
+    // buffer
+    "calculate-buffer": "Nachbarschaft berechnen",
+    "select-layer": "Thema auswählen",
+    "buffer-distance-m": "Puffer Distanz [m]",
+
+    // print
+    "print-errors-occurred": "Beim Drucken sind Fehler aufgetreten. Der Ausdruck ist eventuell nicht vollständig. Bitte prüfen Sie, ob alle relevanten Themen im Ausdruck enthalten sind",
+
+    // sketch
+    "sketch-delete-vertex": "Vertex löschen",
+    "sketch-insert-vertex-before": "Vorgänger einfügen",
+    "sketch-insert-vertex-after": "Nachfolger einfügen",
+    "sketch-delete-sketch": "Sketch löschen",
+    "sketch-reverse-vertex-order": "Vertex Reihenfolge umkehren",
+    "sketch-start-new-section": "Neuen Abschnitt beginnen",
+    "sketch-max-size-exceeded": "Die aktuelle Änderung konnte nicht übernommen werden. Die maximale Größe für den Sketch wurde überschritten.",
+    "sketch-not-valid": "Sketch nicht gültig",
+    "sketch-apply-direction-parallel": "Richtung übernehmen: Parallel",
+    "sketch-apply-direction-orthogonal": "Richtung übernehmen: Rechtwinklig",
+    "construction-label-width": "Breite [m]",
+    "construction-label-height": "Höhe [m]",
+
+    // round trip
+    "round-trip": "Rundreise",
+    "round-trip-message": "Mit dieser Funktion werden die Marker in der Reihenfolge einer optimalen Rundreise sortiert",
+    "round-trip-sort-markers": "Marker sortieren",
+
+    // liveshare
+    "liveshare-waiting-for-confirmation": "Warte auf Bestätigung...",
+    "liveshare-access-denied": "Zugriff auf Liveshare Session wurde verweigert!",
+    "liveshare-restore-mapmarkup-message": "Vor der LiveShare Session befanden sich in der aktuellen Karte Zeichnungselemente aus Map-Markup. Möchten Sie die Zeichnungs- (Map-Markup) Objekte aus der LiveShare Session behalten oder die ursprünglichen Elemente wiederherstellen?",
+    "liveshare-keep-objects": "LiveShare Objekte behalten",
+    "liveshare-restore-original-elements": "Ursprüngliche Elemente wiederherstellen",
+    "liveshare-session-closed": "Liveshare Session wurde geschlossen",
+    "liveshare-grant-access": "Benutzer {user} Zutritt zur aktuellen Session erteilen?",
+    "liveshare-group-error": "Fehler beim Erstellen/Hinzufügen der Gruppe...",
+
+    // input validation
+    "input-validation": "Eingabevalidierung",
+    "enter-all-required-values": "Bitte geben Sie alle erforderlichen Werte ein!",
+    "input-required": "Eingabe ist erforderlich",
+    "input-regex-mismatch": "Die Eingabe erfüllt nicht den regulären Ausdruck",
+    "input-min-length": "Eingabe muss mindestens {count} Zeichen lang sein",
+
+    // content search
+    "filter-contents": "Inhalte filtern...",
+    "no-copyright-info-available": "Für die gewählten Dienste sind keine Copyright Informationen oder Beschreibungen vorhanden.",
+    "quick-search-layers": "Schnellsuche Themen",
+    "input-example": "Beispiel für die Eingabe:",
+    "search-contents-services": "Nach Inhalten/Diensten suchen...",
+    "search-in-map-services": "In (Karten)diensten suchen",
+    "find-layers-in-category": "Themen in {category} suchen...",
+    "original-feature-not-found": "Daten für das Original GIS Element wurden nicht gefunden. Es besteht eventuell ein Schiefstand in den Daten...",
+
+    // add services
+    "add-services-button": "Dienste hinzufügen",
+    "add-service": "Dienst hinzufügen",
+    "custom-services": "Benutzerdefinierte Dienste",
+    "customservice-url": "Dienst Url",
+    "customservice-url-placeholder": "Url zum WMS/AGS Dienst...",
+    "customservice-displayname": "Anzeigename (optional)",
+    "customservice-displayname-placeholder": "Anzeigename des Dienstes...",
+    "customservice-security": "Security (optional)",
+    "customservice-added": "Dienst {name} wurde erfolgreich der Karte hinzugefügt",
+    "presentation-variants": "Darstellungsvarianten",
+    "queries": "Abfragen",
+    "layers-heading": "Layer",
+
+    // edit
+    "points-symbols": "Punkte/Symbole",
+    "lines": "Linien",
+    "areas-polygons": "Flächen/Polygone",
+
+    // querybuilder
+    "querybuilder-invalid-query": "Keine gültige Abfrage",
+
+    // construct
+    "direction-azimuth": "Richtung (Azimut)",
+    "distance": "Distanz",
+    "take-over": "Übernehmen",
+    "offset": "Offset",
+    "extend": "Verlängern",
+    "take-sketch-from": "Sketch übernehmen aus",
+    "take-values-from": "Wert(e) übernehmen aus",
+    "extend-at-start": "am Anfang",
+    "extend-at-end": "am Ende",
+    "extend-at-start-and-end": "am Anfang und Ende",
+
+    // graphics
+    "bubble-drag-to-activate": "Zum Aktivieren des Werkzeugs, die Kugel ziehen...",
+    "label-optional-placeholder": "Label (optional)...",
+    "remove-element": "Element entfernen",
+    "adjust-symbology": "Symbolik anpassen",
+    "symbology": "Symbolik",
+    "remove-selection": "Auswahl entfernen",
+    "remove-selected-elements": "Ausgewählte Elemente entfernen",
+    "reverse-order": "Reihenfolge umkehren",
+
+    // query results
+    "next-feature": "Nächstes Objekt",
+    "zoom-to-feature": "Zoom auf Objekt",
+    "remove-result": "Ergebnis entfernen",
+    "restrict-selection": "Selektion einschränken",
+    "results-range-of-total": "Ergebnisse {start}–{end} von {total}",
+    "all-results": "Alle Ergebnisse"
 };

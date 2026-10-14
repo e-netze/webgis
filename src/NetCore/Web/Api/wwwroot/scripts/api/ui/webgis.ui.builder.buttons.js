@@ -38,7 +38,7 @@ webgis.ui.builder["button"] = (map, $newElement, element, options) => {
             });
 
             if ($validationContainer.find('.webgis-validation.webgis-not-valid').length > 0) {
-                webgis.alert("Bitte geben Sie alle erfordlichen Werte ein!", "Eingabevalidierung");
+                webgis.alert(webgis.l10n.get('enter-all-required-values'), 'input-validation');
                 return;
             }
         }

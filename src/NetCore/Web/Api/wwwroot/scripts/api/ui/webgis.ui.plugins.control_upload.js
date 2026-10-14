@@ -42,7 +42,7 @@ webgis.ui.definePlugin('webgis_control_upload', {
                     const progress = $progress.get(0);
                     formData.append(this.name, file);
                     client.onerror = function (e) {
-                        webgis.alert("Error", 'error');
+                        webgis.alert(webgis.l10n.get('error'), 'error');
                     };
                     client.onload = function (e) {
                         progress.value = progress.max;
@@ -55,7 +55,7 @@ webgis.ui.definePlugin('webgis_control_upload', {
                         progress.value = p;
                     };
                     client.onabort = function (e) {
-                        webgis.alert('Upload abgebrochen', 'info');
+                        webgis.alert(webgis.l10n.get('upload-cancelled'), 'info');
                     };
                     client.open("POST", action);
                     client.send(formData);

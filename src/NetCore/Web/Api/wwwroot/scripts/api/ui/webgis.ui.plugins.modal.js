@@ -227,7 +227,7 @@ webgis.ui.definePlugin('webgis_modalDialog', {
                 });
         }
         if (useMobile === false && (options.onmaximize || options.allowfullscreen === true)) {
-            var $max = $("<table style='cursor:pointer;color:black;font-size:14px;font-weight:bold;position:absolute;top:2px;right:72px;margin:4px'><tr><td>Fullscreen</td><td><div class='i8-button-26 i8-maximize-26-w'></div></td></tr></table>");
+            var $max = $("<table style='cursor:pointer;color:black;font-size:14px;font-weight:bold;position:absolute;top:2px;right:72px;margin:4px'><tr><td>" + webgis.l10n.get('fullscreen') + "</td><td><div class='i8-button-26 i8-maximize-26-w'></div></td></tr></table>");
             $max.appendTo($title);
             $max.on('click.webgis_modalDialog', function () {
                 if (options.onmaximize)

@@ -404,7 +404,7 @@
                 }
 
                 if (hasSelectedVertices) {
-                    $("<li>Selektierte Vertices</li>")
+                    $("<li>").text(webgis.l10n.get('sketch-selected-vertices'))
                         .text(webgis.l10n.get("sketch-selected-vertices"))
                         .addClass('header').appendTo($menu);
                     $container = $_menuContainer($menu);
@@ -1073,7 +1073,7 @@
     };
 
     this._addFixDirectionItems = function ($container, sketch, onclick) {
-        $_menuItem($container, "Richtung übernehmen: Parallel", webgis.css.imgResource('sketch_parallel_lines-26.png', 'tools'))
+        $_menuItem($container, webgis.l10n.get('sketch-apply-direction-parallel'), webgis.css.imgResource('sketch_parallel_lines-26.png', 'tools'))
             .data('vertices', sketch._moverMarker.snapResult.vertices)
             .click(function () {
                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch(), vertices = $(this).data('vertices');
@@ -1087,7 +1087,7 @@
                 }
             });
 
-        $_menuItem($container, "Richtung übernehmen: Rechtwicklig", webgis.css.imgResource('sketch_orthogonal_lines-26.png', 'tools'))
+        $_menuItem($container, webgis.l10n.get('sketch-apply-direction-orthogonal'), webgis.css.imgResource('sketch_orthogonal_lines-26.png', 'tools'))
             .data('vertices', sketch._moverMarker.snapResult.vertices)
             .click(function () {
                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch(), vertices = $(this).data('vertices');

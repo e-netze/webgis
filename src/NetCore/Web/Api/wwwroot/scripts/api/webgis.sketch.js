@@ -659,37 +659,37 @@
                 ul.sketch = sketch;
                 ul.vertex_index = index;
                 $ul.empty();
-                $("<li class='webgis-toolbox-tool-item'>Vertex löschen</li>").appendTo($ul)
+                $("<li class='webgis-toolbox-tool-item'>").text(webgis.l10n.get('sketch-delete-vertex')).appendTo($ul)
                     .click(function () {
                         var sketch = this.parentNode.sketch;
                         sketch.removeVertex(this.parentNode.vertex_index);
                     });
                 if (_geometryType == 'polyline' || _geometryType == 'polygon' || _geometryType === 'dimline' || _geometryType === 'dimpolygon' || _geometryType === 'hectoline') {
                     if (sketch.hasPrevVertex(index)) {
-                        $("<li class='webgis-toolbox-tool-item'>Vorgänger einfügen</li>").appendTo($ul)
+                        $("<li class='webgis-toolbox-tool-item'>").text(webgis.l10n.get('sketch-insert-vertex-before')).appendTo($ul)
                             .click(function () {
                                 var sketch = this.parentNode.sketch;
                                 sketch.addPrevVertex(this.parentNode.vertex_index);
                             });
                     }
                     if (sketch.hasPostVertex(index)) {
-                        $("<li class='webgis-toolbox-tool-item'>Nachfolger einfügen</li>").appendTo($ul)
+                        $("<li class='webgis-toolbox-tool-item'>").text(webgis.l10n.get('sketch-insert-vertex-after')).appendTo($ul)
                             .click(function () {
                                 var sketch = this.parentNode.sketch;
                                 sketch.addPostVertex(this.parentNode.vertex_index);
                             });
                     }
-                    $("<li class='webgis-toolbox-tool-item'>Sketch löschen</li>").appendTo($ul)
+                    $("<li class='webgis-toolbox-tool-item'>").text(webgis.l10n.get('sketch-delete-sketch')).appendTo($ul)
                         .click(function () {
                             var sketch = this.parentNode.sketch;
                             sketch.remove();
                         });
-                    $("<li class='webgis-toolbox-tool-item'>Vertex Reihenfolge umkehren</li>").appendTo($ul)
+                    $("<li class='webgis-toolbox-tool-item'>").text(webgis.l10n.get('sketch-reverse-vertex-order')).appendTo($ul)
                         .click(function () {
                             var sketch = this.parentNode.sketch;
                             sketch.swapDirection();
                         });
-                    $("<li class='webgis-toolbox-tool-item'>Neuen Abschnitt beginnen</li>").appendTo($ul)
+                    $("<li class='webgis-toolbox-tool-item'>").text(webgis.l10n.get('sketch-start-new-section')).appendTo($ul)
                         .click(function () {
                             var sketch = this.parentNode.sketch;
                             sketch.appendPart();
@@ -2265,7 +2265,7 @@
             var bbox = this.getBounds(true, { lng: newVertex.x, lat: newVertex.y });
             if (bbox.width > _sketchProperties.maxBBox.width ||
                 bbox.height > _sketchProperties.maxBBox.height) {
-                webgis.alert('Die aktuelle Änderung konnte nicht übernommen werden. Die maximale Größe für den Sketch wurde überschritten.', 'info');
+                webgis.alert(webgis.l10n.get('sketch-max-size-exceeded'), 'info');
                 return false;
             }
         }

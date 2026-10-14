@@ -111,7 +111,7 @@ webgis.tools = new function () {
                 this.ui = {
                     elements: [
                         {
-                            text: 'Sketch entfernen',
+                            text: webgis.l10n.get('sketch-remove-sketch'),
                             buttontype: 'clientbutton',
                             buttoncommand: 'removesketch',
                             type: 'button'
@@ -327,7 +327,7 @@ webgis.tools = new function () {
                     else if (map) {
                         map.removeMarkerGroup('currentPos');
                         var cancelTracker = new webgis.cancelTracker();
-                        webgis.showProgress('Aktuelle Position wird abgefragt...', null, cancelTracker);
+                        webgis.showProgress(webgis.l10n.get('progress-querying-current-position'), null, cancelTracker);
                         //var asSketchVertex = webgis.currentPosition.useWithSketchTool === true &&
                         //                     map.getActiveTool() !== null &&
                         //                     map.getActiveTool().tooltype.indexOf('sketch') === 0;
@@ -336,7 +336,7 @@ webgis.tools = new function () {
                             highAccuracy: asSketchVertex,
                             maxWatch: webgis.currentPosition.maxWatch,
                             onSuccess: function (pos) {
-                                webgis.hideProgress('Aktuelle Position wird abgefragt...');
+                                webgis.hideProgress(webgis.l10n.get('progress-querying-current-position'));
                                 if (!cancelTracker.isCanceled()) {
                                     var lng = pos.coords.longitude, lat = pos.coords.latitude, acc = pos.coords.accuracy / (webgis.calc.R) * 180.0 / Math.PI;
                                     var displayAccuracy = pos.coords.accuracy > 1 ? Math.round(pos.coords.accuracy) : Math.round(pos.coords.accuracy * 100) / 100.0;
@@ -347,18 +347,18 @@ webgis.tools = new function () {
                                         map.zoomTo([lng - acc, lat - acc, lng + acc, lat + acc]);
                                         map.toMarkerGroup('currentPos', map.addMarker({
                                             lat: lat, lng: lng,
-                                            text: "<h3>Mein Standort</h3>Genauigkeit: " + displayAccuracy + "m<br/>",
+                                            text: "<h3>" + webgis.l10n.get('my-location') + "</h3>" + webgis.l10n.get('gps-accuracy') + ": " + displayAccuracy + "m<br/>",
                                             openPopup: true,
                                             icon: "currentpos_red",
                                             buttons: [
                                                 {
-                                                    label: 'Aktualisieren',
+                                                    label: webgis.l10n.get('refresh'),
                                                     onclick: function (map) {
                                                         webgis.tools.onButtonClick(map, { type: 'clientbutton', command: 'currentpos' });
                                                     }
                                                 },
                                                 {
-                                                    label: 'Entfernen',
+                                                    label: webgis.l10n.get('remove'),
                                                     onclick: function (map, marker) {
                                                         //map.removeMarkerGroup('currentPos');
                                                         map.removeMarker(marker);
@@ -376,8 +376,8 @@ webgis.tools = new function () {
                                 }
                             },
                             onError: function (err) {
-                                webgis.hideProgress('Aktuelle Position wird abgefragt...');
-                                webgis.alert('Ortung nicht m�glich: ' + (err ? err.message + " (Error Code " + err.code + ")" : ""), "Fehler");
+                                webgis.hideProgress(webgis.l10n.get('progress-querying-current-position'));
+                                webgis.alert(webgis.l10n.get('geolocation-not-possible') + ': ' + (err ? err.message + " (Error Code " + err.code + ")" : ""), "error");
                             }
                         });
                     }
@@ -474,7 +474,7 @@ webgis.tools = new function () {
                                             data.prints.push(result);
 
                                             if (result.success == false && result.exception) {
-                                                webgis.alert("Errors occurred during printing. The printout may not be complete. Please check if all relevant topics are included in the printout.:\n\n\n\n\n" + result.exception, "info", function () {
+                                                webgis.alert(webgis.l10n.get('print-errors-occurred') + ":\n\n\n\n\n" + result.exception, "info", function () {
                                                     webgis.delayed(function () {
                                                         map.showPrintTasks();
                                                     }, 500);
@@ -486,7 +486,7 @@ webgis.tools = new function () {
                                             webgis.alert(result.exception, 'error');
                                         }
                                     } else {
-                                        webgis.alert('Unkonwn error!', 'error');
+                                        webgis.alert(webgis.l10n.get('unknown-error'), 'error');
                                     }
                                 }, result,
                                 map.getActiveTool().id === result.toolId); // force automatic callback if tool is the same!
@@ -507,13 +507,13 @@ webgis.tools = new function () {
                             downloadOptions.worldfile = $holder.find('.webgis-download-mapimage-worldfile').val();
                             downloadOptions.displaysize = screen.width + "," + screen.height;
                         }
-                        webgis.showProgress('Kartenbild herunterladen...', null);
+                        webgis.showProgress(webgis.l10n.get('progress-downloading-map-image'), null);
                         map.downloadImage(downloadOptions, function (result) {
-                            webgis.hideProgress('Kartenbild herunterladen...');
+                            webgis.hideProgress(webgis.l10n.get('progress-downloading-map-image'));
                             if (result && result.downloadid) {
                                 window.open(webgis.baseUrl + '/rest/download/' + result.downloadid + "?n=" + result.name);
                             } else if (result.success === false) {
-                                webgis.alert(result.exception || 'Fehler', 'error');
+                                webgis.alert(result.exception || webgis.l10n.get('error'), 'error');
                             }
                         });
                     }
@@ -726,7 +726,7 @@ webgis.tools = new function () {
                 case "sketch1d":
                 case "sketch2d":
                     uiElements.push({
-                        text: 'Sketch entfernen',
+                        text: webgis.l10n.get('sketch-remove-sketch'),
                         buttontype: 'clientbutton',
                         buttoncommand: 'removesketch',
                         css: 'uibutton uibutton-cancel',
@@ -734,7 +734,7 @@ webgis.tools = new function () {
                     });
                     uiElements.push({
                         type: 'button',
-                        text: tool.name + ' anzeigen',
+                        text: webgis.l10n.get('show-tool', { name: tool.name }),
                         buttontype: 'clientbutton',
                         buttoncommand: 'execute-customtool'
                     });
@@ -802,7 +802,7 @@ webgis.tools = new function () {
     this.onToolUndoClick = function (map, toolId, undo) {
         var tool = map.getTool(toolId);
         webgis.ajax({
-            progress: 'Undo Reqeust ' + undo.title,
+            progress: webgis.l10n.get('progress-undo-request', { name: undo.title }),
             cancelable: false,
             url: webgis.baseUrl + '/rest/toolundo',
             type: 'post',
@@ -816,7 +816,7 @@ webgis.tools = new function () {
                 webgis.tools.handleToolResponse(map, map.getActiveTool(), null, null, result);
             },
             error: function () {
-                webgis.alert('Ein allgemeiner Fehler ist aufgetreten', 'error');
+                webgis.alert(webgis.l10n.get('general-error-occurred'), 'error');
             }
         });
     };
@@ -961,7 +961,7 @@ webgis.tools = new function () {
             }
 
             webgis.ajax({
-                progress: 'Tool Request: ' + tool.name || '',
+                progress: webgis.l10n.get('progress-tool-request', { name: tool.name }),
                 cancelable: true,
                 url: webgis.baseUrl + '/rest/toolevent',
                 type: 'post',
@@ -974,7 +974,7 @@ webgis.tools = new function () {
                     }
                 },
                 error: function () {
-                    webgis.alert('Ein allgemeiner Fehler ist aufgetreten', 'error');
+                    webgis.alert(webgis.l10n.get('general-error-occurred'), 'error');
                 }
             });
         } catch (ex) {
@@ -1907,7 +1907,7 @@ webgis.tools = new function () {
                 case 'sketch2d':
                     var sketch = map.sketch;
                     if (!sketch || sketch.isValid() === false) {
-                        webgis.alert('Sketch nicht g�ltig', 'error');
+                        webgis.alert(webgis.l10n.get('sketch-not-valid'), 'error');
                         return;
                     }
 
@@ -1935,7 +1935,7 @@ webgis.tools = new function () {
                             text: '<div>' + tool.name + '</div>',
                             openPopup: true,
                             buttons: [{
-                                label: 'Marker entfernen',
+                                label: webgis.l10n.get('button-remove-markers'),
                                 onclick: function (map, marker) { map.removeMarker(marker); }
                             }]
                         }));

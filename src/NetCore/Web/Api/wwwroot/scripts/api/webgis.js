@@ -189,7 +189,7 @@
     };
 
     this.alert = function (message, title, onClose) {
-        title = title || 'WebGIS Meldung';
+        title = title || 'webgis-message';
 
         var height = Math.max(200, message.countChar('\n') * 28);
 
@@ -400,7 +400,7 @@
 
         if ($.fn.webgis_dockPanel) {
             $('.webgis-container').webgis_dockPanel({
-                title: 'Hilfe',
+                title: webgis.l10n.get('help'),
                 dock: 'right',
                 size: 640,
                 maxSize: '40%',
@@ -432,7 +432,7 @@
             $('body').addClass('webgis-device-desktop');
         }
 
-        webgis.showProgress('Initialisierung...');
+        webgis.showProgress(webgis.l10n.get('progress-initializing'));
         if (!webgis.hmac) {
             if (this.clientid) {
                 var url = this.baseUrl + "/rest/requesthmac?clientid=" + this.clientid;
@@ -623,9 +623,9 @@
         }
         this.initTimer = new webgis.timer(function () {
             if (webgis.isReady() === true) {
-                webgis.hideProgress('Initialisierung...');
+                webgis.hideProgress(webgis.l10n.get('progress-initializing'));
                 if (webgis._initialError) {
-                    webgis.alert('webGIS kann nicht Initialisiert werden!\n\n' + webgis._initialError, 'error');
+                    webgis.alert(webgis.l10n.get('init-error') + '\n\n' + webgis._initialError, 'error');
                 }
                 else {
                     webgis._executeOnInit();
@@ -1004,7 +1004,7 @@
             }
             elemId = id;
         }
-        webgis.showProgress('Karte wird geladen...', elemId);
+        webgis.showProgress(webgis.l10n.get('progress-loading-map'), elemId);
         options = this.loadOptions(options);
         var map = mapObject;
 
@@ -1112,12 +1112,13 @@
                 map._visfilters = options.visfilters;
             }
         }
-        webgis.hideProgress('Karte wird geladen...');
+        webgis.hideProgress(webgis.l10n.get('progress-loading-map'));
         if (options.unknownservices && options.unknownservices.length > 0) {
             webgis.ui.showModal({
-                title: 'Unbekannte Dienste',
+                title: webgis.l10n.get('unknown-services'),
                 onload: function ($content) {
-                    $content.html('<h2>Warnung!</h2><p>Es konnten nicht alle Dienste geladen werden. Das bedeutet, dass Inhalte in der Karte Fehlen oder nicht angezeigt werden können. Eventuell ist das System nicht richtig Konfiguriert. Sollte der Meldung öfter auftreten, melden sie sicht beim Administrator. Folgende Dienste sind nicht in der Karte vorhanden:');
+                    $('<h2>').text(webgis.l10n.get('warning')).appendTo($content);
+                    $('<p>').text(webgis.l10n.get('unknown-services-message')).appendTo($content);
                     var $ul = $("<ul>").appendTo($content);
                     for (var i in options.unknownservices) {
                         $("<li>" + options.unknownservices[i] + "</li>").appendTo($ul);
@@ -1127,12 +1128,13 @@
             });
         }
         if (options.unauthorizedservices && options.unauthorizedservices.length > 0) {
-            webgis.toastMessage("Hinweis", "Nicht berechtigte Dienste in der Karte werden ausgeblendet...",
+            webgis.toastMessage(webgis.l10n.get('info'), webgis.l10n.get('unauthorized-services-hidden'),
                 function () {
                     webgis.ui.showModal({
-                        title: 'Nicht berechtigte Dienste',
+                        title: webgis.l10n.get('unauthorized-services'),
                         onload: function ($content) {
-                            $content.html('<h2>Hinweis</h2><p>In diese Karte wurde vom Kartenautor Dienste eingefügt, für die Sie keine Berechtigung besitzen. Diese Dienste werden in der Karte nicht angezeigt. Auf die Funktionsweise der Karte sollte das keinen Einfluss nehmen. Folgende Dienste sind für Sie nicht in der Karte vorhanden (falls sie einen dieser Dienste benötigen, wenden sie sich and den Administrator):');
+                            $('<h2>').text(webgis.l10n.get('info')).appendTo($content);
+                            $('<p>').text(webgis.l10n.get('unauthorized-services-message')).appendTo($content);
                             var $ul = $("<ul>").appendTo($content);
                             for (var i in options.unauthorizedservices) {
                                 $("<li>" + options.unauthorizedservices[i] + "</li>").appendTo($ul);
@@ -1728,7 +1730,7 @@
             available: function () { return true; }
         },
         {
-            name: "Kopieren (Zwischenablage)",
+            name: "share-copy-to-clipboard",
             img: function () { return webgis.css.imgResource('copy-26.png', 'sharebuttons'); },
             share: function (url, subject) {
                 webgis.copyString(url);
@@ -2148,7 +2150,7 @@
         if (onlyContainerServices)
             data.containerservices = 'true';
         webgis.ajax({
-            progress: 'Lade Service Infomationen',
+            progress: webgis.l10n.get('progress-loading-service-infos'),
             type: 'post',
             url: this.baseUrl + '/rest/services',
             data: webgis.hmac.appendHMACData(data),
@@ -2167,7 +2169,7 @@
         }
         else {
             webgis.ajax({
-                progress: 'Lade Werkzeug Informationen',
+                progress: webgis.l10n.get('progress-loading-tool-infos'),
                 type: 'post',
                 url: this.baseUrl + '/rest/tools',
                 data: webgis.hmac.appendHMACData({ f: 'json', client: client }),
@@ -2292,12 +2294,12 @@
 
         this._handleNotAuthorizedException = false;
         webgis.confirm({
-            title: 'Error',
+            title: webgis.l10n.get('error'),
             height: '270px',
             iconUrl: webgis.css.imgResource('error-100.png'),
-            message: 'Ein Fehler bei der Authentifizierung ist aufgetreten. Die Karte muss neu geöffnet werden, um diesen Fehler zu beheben.',
-            okText: 'Karte neu öffnen',
-            cancelText: 'Nein danke',
+            message: webgis.l10n.get('authentication-error-message'),
+            okText: webgis.l10n.get('reopen-map'),
+            cancelText: webgis.l10n.get('no-thanks'),
             onOk: function () {
                 window.location.reload();
             },
@@ -2419,7 +2421,7 @@
                 text: webgis.autocompleteItem2Html(item),
                 openPopup: true,
                 buttons: [{
-                    label: 'Marker entfernen',
+                    label: webgis.l10n.get('button-remove-markers'),
                     onclick: function (map, marker) { map.removeMarker(marker); }
                 }]
             }));
@@ -2653,7 +2655,7 @@
                                 //    (item.thumbnail ? "<img style='max-height:40px' src='" + item.thumbnail + "' /></td><td class='text-cell'>" : "") +
                                 //    (item.label ? "<div><strong>" + item.label + "</strong></div>" : "") +
                                 //    (item.subtext && item.label ? "<span class='subtext'>" + item.subtext + "</span>" : (item.subtext ? "<span>" + item.subtext + "</span>" : "")) +
-                                //    (item.link ? "<div class='webgis-autocomplete-item-details'><a href='" + item.link + "' target='_blank'>Details...</a></div>" : "") +
+                                //    (item.link ? "<div class='webgis-autocomplete-item-details'><a href='" + item.link + "' target='_blank'>" + webgis.l10n.get('details-link') + "</a></div>" : "") +
                                 //    "</td></tr></table>").appendTo($a);
                                 //item._html = $a.html();
                                 $(webgis.autocompleteItem2Html(item)).appendTo($a);
@@ -2758,10 +2760,10 @@
         if (item.thumbnail || item.subtext) {
             html = "<table class='tt-suggestion'><tr><td class='tt-img'>" +
                 (item.thumbnail ? "<img style='max-height:40px' src='" + item.thumbnail + "' /></td><td class='tt-content'>" : "") +
-                (item.do_you_mean ? "<div>Meinten Sie?</div>" : "") +
+                (item.do_you_mean ? "<div>" + webgis.l10n.get('did-you-mean') + "</div>" : "") +
                 (item.label ? "<div><strong>" + webgis.encodeUntrustedHtml(item.label) + "</strong></div>" : "") +
                 (item.subtext && item.label ? "<span class='subtext'>" + webgis.encodeUntrustedHtml(item.subtext).replaceAll('\n', '<br/>') + "</span>" : (item.subtext ? "<span>" + webgis.encodeUntrustedHtml(item.subtext).replaceAll('\n', '<br/>') + "</span>" : "")) +
-                (item.link ? "<div class='webgis-autocomplete-item-details'><a href='" + item.link + "' target='_blank'>Details...</a></div>" : "") +
+                (item.link ? "<div class='webgis-autocomplete-item-details'><a href='" + item.link + "' target='_blank'>" + webgis.l10n.get('details-link') + "</a></div>" : "") +
                 "</td></tr></table>";
         }
         else {
@@ -2855,7 +2857,7 @@
     this.showFeatureResultDetails = function (mapGuid, url, callback) {
         var map = this.getMapByGuid(mapGuid);
         if (!map || !map.queryResultFeatures) {
-            webgis.alert('Details können leider nicht abgefragt werden!', "error");
+            webgis.alert(webgis.l10n.get('details-query-not-possible'), "error");
         }
         webgis.ajax({
             url: webgis.baseUrl + url,
@@ -2886,7 +2888,7 @@
                     if (callback) {
                         callback(false, null);
                     } else {
-                        webgis.alert('Keine weiteren Details für dieses Objekt verfügbar', 'info');
+                        webgis.alert(webgis.l10n.get('no-more-details-available'), 'info');
                     }
                 }
             }
@@ -3103,7 +3105,7 @@
     };
     this.downloadDataLinqPdf = function (href) {
 
-        webgis.showProgress('PDF wird erstellt...');
+        webgis.showProgress(webgis.l10n.get('progress-creating-pdf'));
 
         try {
             const url = new URL(href, window.location.origin);
@@ -3128,7 +3130,7 @@
                 if (event.data && event.data.type === 'pdfDownloadComplete') {
                     window.removeEventListener('message', onMessage);
 
-                    webgis.hideProgress('PDF wird erstellt...');
+                    webgis.hideProgress(webgis.l10n.get('progress-creating-pdf'));
 
                     if (document.body.contains(iframe)) {
                         iframe.remove();
@@ -3140,7 +3142,7 @@
             document.body.appendChild(iframe);
         } catch (e) {
             console.error('PDF download failed: ' + e.message);
-            webgis.hideProgress('PDF wird erstellt...');
+            webgis.hideProgress(webgis.l10n.get('progress-creating-pdf'));
             iframe.remove(); 
         }
     };

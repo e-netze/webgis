@@ -81,7 +81,7 @@ webgis.ui.definePlugin('webgis_contextMenu', {
             if (item.shortcut) {
                 $("<div>")
                     .addClass('shortcut-text')
-                    .text('Shortcut-Key: ' + item.shortcut.toString().toUpperCase())
+                    .text(webgis.l10n.get('shortcut-key') + ': ' + item.shortcut.toString().toUpperCase())
                     .appendTo($item);
             }
 

@@ -206,7 +206,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                 if (element.updating) {
                     const $labelInput = $("<textarea rows='1'>")
                         .addClass('webgis-textarea')
-                        .attr('placeholder', 'Label (optional)...')
+                        .attr('placeholder', webgis.l10n.get('label-optional-placeholder'))
                         .appendTo($li)
                         .val(hasLabel ? txt : '');
                     if (element.type === 'text') {
@@ -307,7 +307,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
             if (map.graphics.hasStagedElement() === true) { // show tools for selected
                 $('<div>')
                     .addClass('button delete')
-                    .attr('title', 'Element entfernen')
+                    .attr('title', webgis.l10n.get('remove-element'))
                     .appendTo($menu)
                     .on('click.webgis_graphics_info_container', function (e) {
                         e.stopPropagation();
@@ -355,19 +355,19 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
 
                     $('<div>')
                         .addClass('button')
-                        .attr('title', 'Symbolik anpassen')
+                        .attr('title', webgis.l10n.get('adjust-symbology'))
                         .css({
                             backgroundImage: 'url(' + webgis.css.imgResource('content/api/img/graphics/ui/polygon-styles.png') + ')',
                         })
                         .appendTo($textButton)
 
-                    $("<div>").addClass('text').text('Symbolik').appendTo($textButton);
+                    $("<div>").addClass('text').text(webgis.l10n.get('symbology')).appendTo($textButton);
                 }
 
                 if (map.graphics.hasUpdatingElement() !== true) {
                     $('<div>')
                         .addClass('button remove-selection')
-                        .attr('title', 'Auswahl entfernen')
+                        .attr('title', webgis.l10n.get('remove-selection'))
                         .appendTo($menu)
                         .on('click.webgis_graphics_info_container', function (e) {
                             e.stopPropagation();
@@ -379,7 +379,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
 
                     $('<div>')
                         .addClass('button delete')
-                        .attr('title', 'Ausgewählte Elemente entfernen')
+                        .attr('title', webgis.l10n.get('remove-selected-elements'))
                         .appendTo($menu)
                         .on('click.webgis_graphics_info_container', function (e) {
                             e.stopPropagation();
@@ -390,7 +390,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
             } else if (map.graphics.countElements() > 0) {  // show swap ordering
                 $('<div>')
                     .addClass('button order')
-                    .attr('title', 'Reihenfolge umkehren')
+                    .attr('title', webgis.l10n.get('reverse-order'))
                     .appendTo($menu)
                     .on('click.webgis_graphics_info_container', function (e) {
                         e.stopPropagation();

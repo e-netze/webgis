@@ -251,12 +251,12 @@
                 this._toolMarker.on('dragend', function (marker) {
                     var latlng = this.getLatLng();
 
-                    webgis.showProgress('Berechne Rundreise...');
+                    webgis.showProgress(webgis.l10n.get('progress-calculating-round-trip'));
 
                     webgis.delayed(function () {
                         var orderedFeatures = webgis.tsp.orderFeatures(me._map.calcCrs(), me._queryResultFeatures, latlng);;
 
-                        webgis.hideProgress('Berechne Rundreise...');
+                        webgis.hideProgress(webgis.l10n.get('progress-calculating-round-trip'));
 
                         // remove current dynamic content
                         if (me._map.hasCurrentDynamicContent()) {
@@ -669,7 +669,7 @@
 
         if (!useTabControl) {
             this._map.ui.webgisContainer().webgis_dockPanel({
-                title: 'Abfrageergebnisse',
+                title: webgis.l10n.get('query-results'),
                 id: 'queryresults_dockpanel_single',
                 dock: 'bottom',
                 onload: function ($content, $dockpanel) {
@@ -706,7 +706,7 @@
         if (features.metadata && features.metadata.has_more === true) {
             $("<div>")
                 .addClass('webgis-result-maxreached-notification')
-                .text(webgis.l10n.get('query-max-results-reached').replace('{count}', features.features.length))
+                .text(webgis.l10n.get('query-max-results-reached', { count: features.features.length }))
                 .appendTo($content);
         }
 
@@ -1047,7 +1047,7 @@
                         });
                 }
 
-                $removeUnchecked = createToolbarButton($selectionBlock, "Nicht ausgewählte entfernen", webgis.css.imgResource('remove-unselected-26.png', 'tools'))
+                $removeUnchecked = createToolbarButton($selectionBlock, webgis.l10n.get('remove-unselected'), webgis.css.imgResource('remove-unselected-26.png', 'tools'))
                     .click(function () {
                         var uncheckedFeatures = map.queryResultFeatures.uncheckedFeatures();
                         for (var f in uncheckedFeatures) {
@@ -1056,7 +1056,7 @@
                         map.queryResultFeatures.fireFeaturesRemovedOrReplaced();
                         refreshHeaderMenuButtons();
                     });
-                $removeChecked = createToolbarButton($selectionBlock, "Ausgewählte entfernen", webgis.css.imgResource('remove-selected-26.png', 'tools'))
+                $removeChecked = createToolbarButton($selectionBlock, webgis.l10n.get('remove-selected'), webgis.css.imgResource('remove-selected-26.png', 'tools'))
                     .click(function () {
                         var uncheckedFeatures = map.queryResultFeatures.checkedFeatures();
                         for (var f in uncheckedFeatures) {
@@ -1144,7 +1144,7 @@
                                         if (result.success && result.url) {
                                             func(linktarget, linkname, result.url);
                                         } else {
-                                            webgis.alert("Can't open link: " + result.message, "Error");
+                                            webgis.alert(webgis.l10n.get('cannot-open-link') + ": " + result.message, "error");
                                         }
                                     }
                                 });
@@ -1248,8 +1248,8 @@
                 $tabToolsContainer.children('.toggle-button').trigger('click');
             }
 
-            $removeUnchecked.css('display', checkedCount === 0 || uncheckedCount === 0 ? 'none' : '').find('.webgis-toolbox-tool-item-label').text("[" + uncheckedCount + "] entfernen");
-            $removeChecked.css('display', checkedCount === 0 || uncheckedCount === 0 ? 'none' : '').find('.webgis-toolbox-tool-item-label').text("[" + checkedCount + "] entfernen");
+            $removeUnchecked.css('display', checkedCount === 0 || uncheckedCount === 0 ? 'none' : '').find('.webgis-toolbox-tool-item-label').text(webgis.l10n.get('remove-count', { count: uncheckedCount }));
+            $removeChecked.css('display', checkedCount === 0 || uncheckedCount === 0 ? 'none' : '').find('.webgis-toolbox-tool-item-label').text(webgis.l10n.get('remove-count', { count: checkedCount }));
         }
 
         if ($removeChecked && $removeUnchecked) {
@@ -1474,7 +1474,7 @@
         var featureCount = isCurrentQueryFeature ? this._queryResultFeatures.features.length : 0;
 
         if (webgis.useMobileCurrent() && isCurrentQueryFeature) {  // show button "back to list view"
-            $("<div><div class='webgis-ui-imagebutton-text'>Alle Ergebnisse</div></div>")
+            $("<div><div class='webgis-ui-imagebutton-text'>" + webgis.l10n.get('all-results') + "</div></div>")
                 .addClass('webgis-ui-imagebutton')
                 .css('background-image', 'url(' + webgis.css.imgResource('enter.png', '') + ')')
                 .appendTo($tools)
@@ -1504,7 +1504,7 @@
                                 .children(".webgis-result[data-id='" + $(this).attr('data-id') + "']").prev().trigger('click');
                         }
                     });
-                $("<div><div class='webgis-ui-imagebutton-text'>Nächstes Objekt</div></div>")
+                $("<div><div class='webgis-ui-imagebutton-text'>" + webgis.l10n.get('next-feature') + "</div></div>")
                     .addClass('webgis-ui-imagebutton')
                     .addClass(featureIndex < this._queryResultFeatures.features.length - 1 > 0 ? '' : 'inactive')
                     .attr('data-id', feature.oid)
@@ -1520,7 +1520,7 @@
 
 
             if (feature.bounds) {
-                $("<div><div class='webgis-ui-imagebutton-text'>Zoom auf Objekt</div></div>")
+                $("<div><div class='webgis-ui-imagebutton-text'>" + webgis.l10n.get('zoom-to-feature') + "</div></div>")
                     .addClass('webgis-ui-imagebutton')
                     .css('background-image', 'url(' + webgis.css.imgResource('zoomin.png', 'tools') + ')')
                     .appendTo($tools)
@@ -1530,7 +1530,7 @@
             }
             //console.log('isCurrentQueryFeature', isCurrentQueryFeature, queryToolId, feature);
             if ((isCurrentQueryFeature || queryToolId) && feature.oid) {
-                $("<div><div class='webgis-ui-imagebutton-text'>Ergebnis entfernen</div></div>")
+                $("<div><div class='webgis-ui-imagebutton-text'>" + webgis.l10n.get('remove-result') + "</div></div>")
                     .addClass('webgis-ui-imagebutton')
                     .data('feature-oid', feature.oid)
                     .css('background-image', 'url(' + webgis.css.imgResource('remove.png', 'tools') + ')')
@@ -1688,7 +1688,7 @@
 
                     });
 
-                $("<div><div class='webgis-ui-imagebutton-text'>Alle entfernen</div></div>")
+                $("<div><div class='webgis-ui-imagebutton-text'>" + webgis.l10n.get('remove-all') + "</div></div>")
                     .addClass('webgis-ui-imagebutton')
                     .addClass('webgis-dependencies webgis-dependency-hasfilters')
                     .attr('data-applicable-filters', this._queryResultFeatures.metadata.applicable_filters)

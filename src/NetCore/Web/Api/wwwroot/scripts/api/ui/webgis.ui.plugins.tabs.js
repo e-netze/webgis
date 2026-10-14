@@ -129,7 +129,7 @@ webgis.ui.definePlugin('webgis_tabs', {
             $("<div id='tab-queryresults' class='webgis-tabs-tab' style='position:relative;display:none'><img src='" + webgis.css.imgResource('markers.png', 'toolbar') + "' /><div style='display:none' class='webgis-tabs-tab-text' id='tab-queryresults-content-counter'></div></div>")
                 .appendTo($div);
 
-            var $header = $("<div id='tab-queryresults-header' class='webgis-tabs-tab-header' style='display:none'>Suchergebnisse<div class='webgis-tabs-close'></div></div>")
+            var $header = $("<div id='tab-queryresults-header' class='webgis-tabs-tab-header' style='display:none'>" + webgis.l10n.get('search-results') + "<div class='webgis-tabs-close'></div></div>")
                 .appendTo($tab_content);
 
             addHeaderButtons($header, options, "queryresults");
@@ -144,7 +144,7 @@ webgis.ui.definePlugin('webgis_tabs', {
             if (options.map) {
                 this._onMapEvent('showqueryresults', function (e, args) {
                     if (!args.map.ui.getQueryResultTabControl()) {
-                        $("#tab-queryresults-header").text("Karten Marker");
+                        $("#tab-queryresults-header").text(webgis.l10n.get('map-markers'));
 
                         if (args && args.map && args.map.queryResultFeatures) {
                             switch (args.map.queryResultFeatures.queryTool()) {
@@ -298,7 +298,7 @@ webgis.ui.definePlugin('webgis_tabs', {
         }
         if (options.add_settings) {
             $("<div id='tab-settings' class='webgis-tabs-tab'><img src='" + webgis.css.imgResource('settings.png', 'toolbar') + "' /></div>").appendTo($div);
-            var $header = $("<div id='tab-settings-header' class='webgis-tabs-tab-header' style='display:none'>Dienste<div class='webgis-tabs-close'></div></div>")
+            var $header = $("<div id='tab-settings-header' class='webgis-tabs-tab-header' style='display:none'>" + webgis.l10n.get('services') + "<div class='webgis-tabs-close'></div></div>")
                 .appendTo($tab_content);
 
             addHeaderButtons($header, options, "settings");
@@ -308,7 +308,7 @@ webgis.ui.definePlugin('webgis_tabs', {
 
         if (webgis.usability.showErrorsInTabs == true && options.map && $.fn.webgis_errors) {
             var $errorTab = $("<div id='tab-errors' class='webgis-tabs-tab' style='position:relative;display:none'><img src='" + webgis.css.imgResource('error-32.png', 'toolbar') + "' /><div style='display:none' class='webgis-tabs-tab-text webgis-error-counter'></div></div>").appendTo($div);
-            var $header = $("<div id='tab-errors-header' class='webgis-tabs-tab-header' style='display:none'>Errors/Warnings<div class='webgis-tabs-close'></div></div>")
+            var $header = $("<div id='tab-errors-header' class='webgis-tabs-tab-header' style='display:none'>" + webgis.l10n.get('errors-warnings') + "<div class='webgis-tabs-close'></div></div>")
                 .appendTo($tab_content);
 
             addHeaderButtons($header, options, "erros")
