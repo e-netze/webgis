@@ -58,7 +58,7 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
             .on("click.webgis_querybuilder", function () {
                 const map = options.map;
 
-                console.log('options.event', options.event);
+                webgis.log('options.event', options.event);
                 const customEventParameters = [];
                 customEventParameters[options.id + '-result'] = JSON.stringify(me.queryDefinitions());
                 const wrappedEvent = new webgis.tools.wrapperEvent(options.event, customEventParameters);

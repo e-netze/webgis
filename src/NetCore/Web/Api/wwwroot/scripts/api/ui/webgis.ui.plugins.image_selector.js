@@ -16,7 +16,7 @@ webgis.ui.definePlugin('webgis_image_selector', {
         const $parent = this.$el
             .addClass('webgis-image-selector');
 
-        console.log(options);
+        webgis.log(options);
 
         this._$valueElement = $("<input type='hidden'>").appendTo($parent);
         $parent.data('webgis-value-element', this._$valueElement);

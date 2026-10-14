@@ -780,7 +780,7 @@
                                     onload: function ($content) {
                                         $content.webgis_extendLineSketchControl({
                                             on_apply: function (result) {
-                                                console.log('on_apply', result);
+                                                webgis.log('on_apply', result);
 
                                                 if (result.extend_m) {
                                                     var vertices = sketch._getRawVertices();
@@ -792,7 +792,7 @@
                                                             dY = vertices[0].Y - vertices[1].Y;
 
                                                         var a = Math.atan2(dY, dX), len = Math.sqrt(dX * dX + dY * dY) + result.extend_m;
-                                                        console.log(a, len);
+                                                        webgis.log(a, len);
                                                         vertices[0].X = vertices[1].X + Math.cos(a) * len; delete vertices[0].x;
                                                         vertices[0].Y = vertices[1].Y + Math.sin(a) * len; delete vertices[0].y;
 

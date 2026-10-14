@@ -532,11 +532,11 @@ TODO:
                     var query = $("webgis-list").data("query");
                     var oid = $("webgis-list").data("oid");
                     resolveWebgisRedirection($(this).attr("href"), function(resolvedUrl) {
-                        console.log("final url:   " + resolvedUrl);
+                        webgis.log("final url:", resolvedUrl);
                         $url.attr("href", resolvedUrl);
                         $url.click();
                     });
-                    console.log("fertisch");
+                    webgis.log("fertisch");
                     return false;       // kein Event-Bubbling zu Klick auf darunterliegendes DIV, sondern manuell auslösen (Zeile oberhalb)
                 });
                 */
@@ -560,7 +560,7 @@ TODO:
                 }
             },
             error:function(result) {
-                console.log("errrorrrr");
+                webgis.log("errrorrrr");
                 alert(result);
             }
         });          

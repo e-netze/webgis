@@ -349,7 +349,7 @@ webgis.ui.definePlugin('webgis_offsetControl', {
                     toFloat($holder.find("input[name='offset']").val()) *
                     parseInt($holder.find("select[name='offset_direction']").val());
 
-                console.log('offset', offset, toFloat($holder.find("input[name='offset']").val()), parseInt($holder.find("select[name='offset_direction']").val()));
+                webgis.log('offset', offset, toFloat($holder.find("input[name='offset']").val()), parseInt($holder.find("select[name='offset_direction']").val()));
                 switch ($holder.find("select[name='offset_unit']").val()) {
                     case 'm':
                         break;
@@ -502,7 +502,7 @@ webgis.ui.definePlugin('webgis_xyAbsoluteControl', {
                     var latLngs = sketch._moverLine.getLatLngs();
                     if (latLngs.length >= 2) {
                         wgs84Coords = [{ x: latLngs[1].lng, y: latLngs[1].lat }];
-                        console.log('moverline', wgs84Coords);
+                        webgis.log('moverline', wgs84Coords);
 
                         projectedCoords = webgis.fromWGS84(
                             options.map.calcCrs(wgs84Coords),
@@ -510,13 +510,13 @@ webgis.ui.definePlugin('webgis_xyAbsoluteControl', {
                     }
                 } else if (map._currentCursorPosition && map._currentCursorPosition.lat && map._currentCursorPosition.lng) {
                     wgs84Coords = [{ x: map._currentCursorPosition.lng, y: map._currentCursorPosition.lat }]
-                    console.log('curentCursor');
+                    webgis.log('curentCursor');
                     projectedCoords = webgis.fromWGS84(
                         options.map.calcCrs(wgs84Coords),
                         map._currentCursorPosition.lat, map._currentCursorPosition.lng);
                 } else {
                     var center = options.map.getCenter();
-                    console.log('center', center);
+                    webgis.log('center', center);
                     wgs84Coords = [{ x: center[0], y: center[1] }];
                     projectedCoords = webgis.fromWGS84(
                         options.map.calcCrs(wgs84Coords),

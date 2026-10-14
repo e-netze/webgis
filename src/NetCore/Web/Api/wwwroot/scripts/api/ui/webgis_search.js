@@ -109,7 +109,7 @@
 
             $("<div class='webgis-input-label'>" + item.name + "</div>").appendTo($form);
 
-            console.log(item);
+            webgis.log(item);
 
             const $input = $("<input type='text' class='webgis-input' name='" + item.id + "' />").appendTo($form);
             if (item.autocomplete === true) {

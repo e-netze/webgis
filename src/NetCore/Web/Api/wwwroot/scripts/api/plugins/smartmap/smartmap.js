@@ -111,7 +111,7 @@
                 createEditmask(result.classes[0], $elem, options);
             });
         } else {
-            console.log("Info: Kein Edithema gewählt");
+            webgis.log("Info: Kein Edithema gewählt");
         }
 
         // Wenn alles fertig ist:
@@ -400,7 +400,7 @@
         };
         data = map.appendRequestParameters(data, options.edit_service);
 
-        console.log(coords);
+        webgis.log(coords);
 
         webgis.ajax({
             url: webgis.baseUrl + '/rest/services/' + options.edit_service + '/queries/' + options.query_themeid,
@@ -434,7 +434,7 @@
                     });
 
                 } else {
-                    console.log("Kein Feature gefunden.");
+                    webgis.log("Kein Feature gefunden.");
                 }
 
             }

@@ -305,7 +305,7 @@ webgis.ui.definePlugin('webgis_dateCombo', {
         updateValue();
     },
     destroy: function () {
-        console.log('Destroy time filter');
+        webgis.log('Destroy time filter');
         this.$el.off('.webgis_date_combo');
     },
     methods: {

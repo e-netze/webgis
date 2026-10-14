@@ -771,7 +771,7 @@ var webgis_construct = function (map) {
                 v2.normalize();
                 var a_ = v1.vectorAngle(v2);
                 if (Math.abs(a_) < 1e-10 || Math.abs(2.0 * Math.PI - a_) < 1e-10) {
-                    console.log('ignore point on straight line', vertices[i]);
+                    webgis.log('ignore point on straight line', vertices[i]);
                     continue;
                 }
             }

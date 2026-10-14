@@ -240,7 +240,7 @@
                     .build();
 
                 _connection.start().then(function () {
-                    console.log('liveshare hub connection started...');
+                    webgis.log('liveshare hub connection started...');
                     _setDialogTitle('');
 
                     if (_firstConnection == true) {
@@ -350,7 +350,7 @@
                                                 _setUserMarkerPosition(result.message.args.markerId, clientId, pos);
                                                 break;
                                         }
-                                    } catch (e) { console.log('exeception', e) }
+                                    } catch (e) { webgis.log('exeception', e) }
                                 },
                                 onClientJoinedGroup: function (result) {
                                     //console.log('onClientJoinedGroup', result);
@@ -523,7 +523,7 @@
         if (_connection != null) {
             _setDialogTitle('Disconnect from hub...');
             _connection.stop().then(function () {
-                console.log('liveshare hub connection stopped...');
+                webgis.log('liveshare hub connection stopped...');
                 _connection = null;
                 _setDialogTitle('');
             }).catch(function (err) {

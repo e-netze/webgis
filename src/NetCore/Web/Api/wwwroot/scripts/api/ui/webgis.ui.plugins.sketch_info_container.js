@@ -300,7 +300,7 @@
         onGpsCurrentPosition: function (channel, sender, pos) {
             const $ = webgis.$;
 
-            console.log(pos);
+            webgis.log(pos);
             $(".webgis-container")
                 .find('.sketch-info-item.gps-pos-result')
                 .text(pos.lng.toDMS(4) + " / " + pos.lat.toDMS(4));

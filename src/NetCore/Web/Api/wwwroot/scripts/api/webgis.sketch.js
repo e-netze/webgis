@@ -1024,7 +1024,7 @@
             if (currentVertex && prevVertex) {
 
                 if (webgis.calc.isParallel(prevVertex, currentVertex, currentVertex, vertex) == -1) {
-                    console.log('overlays with prev segment');
+                    webgis.log('overlays with prev segment');
 
                     var me = this;
                     webgis.confirm({
@@ -3329,7 +3329,7 @@
         for (var frameworkElement of _frameworkElements) {
             if (frameworkElement?.getBounds) {
                 var bounds = frameworkElement.getBounds();
-                console.log('frameworkElement bounds', bounds);
+                webgis.log('frameworkElement bounds', bounds);
                 if (bounds?.isValid && bounds.isValid()) {
                     minX = Math.min(minX, bounds.getWest());
                     minY = Math.min(minY, bounds.getSouth());
@@ -3738,7 +3738,7 @@
             return '';
 
         let isMultipart = _partIndex.length > 2 || (_partIndex.length == 2 && _vertices.length > _partIndex[1]);  // its no an multipart if only the first is "closed";
-        console.log('isMultipart', isMultipart, _partIndex);
+        webgis.log('isMultipart', isMultipart, _partIndex);
 
         let wkt = '', closeVertex = null;
         if (_geometryType === 'point' || _geometryType === 'elementseries') {

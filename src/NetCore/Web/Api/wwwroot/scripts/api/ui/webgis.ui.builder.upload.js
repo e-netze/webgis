@@ -43,7 +43,7 @@
             field_name: element.field_name,
             hidden_class: element.css,
             onload: function (sender, result) {
-                console.log(result);
+                webgis.log(result);
             }
         });
     };

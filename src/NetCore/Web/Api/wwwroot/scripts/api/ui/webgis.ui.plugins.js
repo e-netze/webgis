@@ -25,19 +25,25 @@ webgis.ui.destroyPluginsDeep = function ($root) {
     // Post-order: child first, then parent/root
     var nodes = $root.find('*').addBack().get().reverse();
 
+    // Copy the lists, in case destroy() unregisters itself or modifies the list
+    var toDestroy = [];
     nodes.forEach(function (node) {
-        var $node = (webgis.$ || jQuery)(node);
-        var list = $node.data('__plugins__');
-        if (!list || !list.length) return;
+        var list = (webgis.$ || jQuery)(node).data('__plugins__');
+        if (list && list.length) toDestroy.push.apply(toDestroy, list.slice());
+    });
+    if (toDestroy.length === 0) return;
 
-        // Copy list, in case destroy() unregisters itself or modifies the list
-        var toDestroy = list.slice();
+    // destroy() may remove further elements: their output is nested in this group
+    webgis.logGroup('[plugins] remove:', toDestroy.length, 'instance(s)', $root.get(0));
+    try {
         toDestroy.forEach(function (inst) {
             if (inst && typeof inst.destroy === 'function' && !inst._destroyed) {
-                try { inst.destroy(); } catch (e) { /* optional: logging */ }
+                try { inst.destroy(); } catch (e) { console.error('[plugins] destroy ' + inst._pluginName + ' failed:', e); }
             }
         });
-    });
+    } finally {
+        webgis.logGroupEnd();
+    }
 };
 webgis.ui.definePlugin = function (name, spec) {
     let defaults = spec.defaults || {};
@@ -52,6 +58,7 @@ webgis.ui.definePlugin = function (name, spec) {
         webgis.ui.__registerPlugin(this.$el, this);      // << register plugin for deep destroy
         this.$el.data(name, this);                       // methods are already callable during init
 
+        webgis.log('[plugins] init', name, this.$el.get(0));
         // the original (not merged) options are passed, eg. to keep large data (features) by reference
         spec.init && spec.init.call(this, options);
     }
@@ -66,6 +73,7 @@ webgis.ui.definePlugin = function (name, spec) {
     Ctor.prototype.destroy = function () {
         if (this._destroyed) return;
         this._destroyed = true;
+        webgis.log('[plugins] destroy', this._pluginName, this.$el.get(0));
         // cleanup specific plugin
         spec.destroy && spec.destroy.call(this);
         // unregister (for cleanup) and free jQuery data

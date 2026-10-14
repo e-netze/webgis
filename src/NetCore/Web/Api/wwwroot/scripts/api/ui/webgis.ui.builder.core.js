@@ -1051,7 +1051,7 @@
 
             if ($(options.element).find('.webgis-tool-parameter-persistent').length > 0) {
                 // ignore persisting topics containing webgis-tool-parameter-persistent => see webgis.tools.js line 533
-                console.log('persistent topic contains webgis-tool-parameter-persistent => ignored')
+                webgis.log('persistent topic contains webgis-tool-parameter-persistent => ignored')
                 return;
             }
 

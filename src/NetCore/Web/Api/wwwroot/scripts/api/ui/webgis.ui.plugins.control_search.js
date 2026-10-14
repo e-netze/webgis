@@ -92,7 +92,7 @@ webgis.ui.definePlugin('webgis_control_search', {
                                         }
                                         if (meta.sample) {
                                             $block = $("<div style='background:#aaa;padding:5px;border-radius:4px'></div>").appendTo($block);
-                                            console.log('samples', meta.sample, meta.sample_separator);
+                                            webgis.log('samples', meta.sample, meta.sample_separator);
                                             var samples = meta.sample.split(meta.sample_separator ? meta.sample_separator : ',');
                                             for (var s in samples) {
                                                 $("<div style='margin-top:5px'>Beispiel für die Eingabe:</div>").appendTo($block);
@@ -195,7 +195,7 @@ webgis.ui.definePlugin('webgis_control_search', {
                                 options.on_select(sender, result, true);
 
                                 suppressSendQuickSearchResult = result.suppressSendQuickSearchResult === true;
-                                console.log('suppressSendQuickSearchResult', suppressSendQuickSearchResult);
+                                webgis.log('suppressSendQuickSearchResult', suppressSendQuickSearchResult);
                             }
 
                             if (!suppressSendQuickSearchResult) {

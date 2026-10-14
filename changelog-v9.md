@@ -103,6 +103,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
   [Architecture](docs/architecture/ui-builder.md)
 
+- Viewer debug output: ``webgis.log(...)`` (and ``webgis.logGroup``/``logGroupEnd``) only writes to the
+  console when ``webgis.logLevel`` is set to ``'debug'`` (``console.log``) or ``'trace'``
+  (``console.trace``) in the browser console; off by default. All debug ``console.log`` calls of the
+  API scripts use it now.
+  * UI plugins log ``init``/``destroy``; cascading removals are shown as nested console groups.
+  * Errors in a plugin ``destroy`` are reported with ``console.error`` instead of being swallowed.
+
+  [Architecture](docs/architecture/ui-builder.md)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

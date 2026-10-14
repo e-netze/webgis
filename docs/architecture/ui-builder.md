@@ -164,6 +164,16 @@ No runtime configuration; the builder API is internal to the viewer.
   `BuildAsync`; wait for the library (`WaitForAsync`) before the snapshot. The harness normalizes Sortable's
   `Sortable<timestamp>` expando key.
 
+## Debugging
+
+- `webgis.logLevel = 'debug'` (or `'trace'` for a stack per line) in the browser console enables the
+  `webgis.log(...)` output of the viewer scripts (`webgis.js`; off by default, not persisted across reloads).
+- Plugin life cycle: `[plugins] init <name>` / `[plugins] destroy <name>` with the element. Every
+  `destroyPluginsDeep` (`$.fn.remove`/`empty`) with instances opens a console group
+  `[plugins] remove: N instance(s)`; removals triggered inside a `destroy` are nested in it, so the
+  cascade can be followed. Errors thrown by a `destroy` are reported with `console.error` and do not stop
+  the remaining instances.
+
 ## Extension points
 
 - New builder: register `webgis.ui.builder["<type>"] = (map, $newElement, element, options) => {...}`
@@ -199,3 +209,4 @@ No runtime configuration; the builder API is internal to the viewer.
 | `9.26.4104` | Legacy `webgis_modal.js` and `webgis_modalprogress.js` replaced by `webgis.ui.plugins.modal.js`: plugin `webgis_modalDialog` on the `.webgis-modal` element (one dialog = one instance, closing removes the element), addressed by id through `webgis.ui.showModal(options)` (returns the content; `options.container`, default `body`; an open dialog with the same id is replaced page-wide), `closeModal`, `getModalContent`, `getModalTitle`, `hideModal`, `unhideModal`, `fitModal`, `toggleModalFullscreen`, `toggleModalMaximize`; progress via `webgis.ui.showProgressModal/hideProgressModal` (used by `webgis.showProgress/hideProgress`). `$.fn.webgis_modal`/`$.fn.webgis_modalprogress` kept as legacy facades for custom code. Portal `Portal.cshtml` loads `api-ui.min.js` instead of the single file, duplicate include removed from `Cloud.cshtml` | uncommitted |
 | `9.26.4104` | Portal scripts (`webgis-mapbuilder`, `webgis-mapbuilder-ui`, `webgis-appbuilder`, `webgis-map`, `webgis-map.properties`, `webgis-portal-content`, `webgis-portal-cloud`, `webgis-portal-ua`, `webgis-portal-branches`, `_BranchSelectScript.cshtml`, Collector app template) use `webgis.ui.showModal/closeModal` instead of `$.fn.webgis_modal`; availability checks test `webgis.ui.showModal` | uncommitted |
 | `9.26.4104` | Legacy `webgis_contextMenu.js` replaced by `webgis.ui.plugins.contextMenu.js`: plugin `webgis_contextMenu` on the `.webgis-contextmenu-blocker` element (closing removes it, the window `keyup` handler is released on destroy), created only through `webgis.ui.showContextMenu(options)`; no legacy facade (internal use only) | uncommitted |
+| `9.26.4104` | `webgis.log`/`logGroup`/`logGroupEnd` controlled by `webgis.logLevel` (`debug`/`trace`, off by default); plugin `init`/`destroy` and deep destroys (nested console groups) are logged, `destroy` errors reported via `console.error` instead of being swallowed; all active `console.log` in `scripts/api` replaced by `webgis.log` (except the api version output) | uncommitted |

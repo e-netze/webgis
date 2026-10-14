@@ -176,7 +176,7 @@ webgis.ui.definePlugin('webgis_map_contextmenu', {
             top = Math.max(0, Math.min($(window).height() - $contextMenu.height() - 10, o.clickY)),
             maxHeight = $(window).height() - top - 10;
 
-        console.log('maxHeight', $(window).height() - top - 20);
+        webgis.log('maxHeight', $(window).height() - top - 20);
 
         $contextMenu.css({
             left: left,

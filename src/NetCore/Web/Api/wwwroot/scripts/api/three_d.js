@@ -70,8 +70,8 @@ webgis.threeD = function (map, targetId, terrainData) {
             downloadOptions.useCustomServices = customServices;
         }
 
-        console.log('texture', terrainData.three_d_texture);
-        console.log('customServices', customServices);
+        webgis.log('texture', terrainData.three_d_texture);
+        webgis.log('customServices', customServices);
 
         map.downloadImage(downloadOptions, function (result) {
             if (result.downloadid) {
@@ -89,7 +89,7 @@ webgis.threeD = function (map, targetId, terrainData) {
             .appendTo($(container));
 
         webgis.delayed(function () {
-            console.log(this);
+            webgis.log(this);
             init();
             animate();
             webgis.delayed(function () {
@@ -226,7 +226,7 @@ webgis.threeD = function (map, targetId, terrainData) {
     }
 
     this.dispose = function() {
-        console.log('disposse scene');
+        webgis.log('disposse scene');
 
         terrainData = null;
 
@@ -292,7 +292,7 @@ webgis.threeD = function (map, targetId, terrainData) {
             meanData += (data[i]) / n;
         }
 
-        console.log('meandata', meanData);
+        webgis.log('meandata', meanData);
         var fac = 1.0 / (maxData - minData);
 
         for (var i = 0, j = 0, l = imageData.length; i < l; i += 4, j++) {

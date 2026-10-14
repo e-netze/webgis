@@ -1221,7 +1221,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
         },
         addService: function (e, service, parent) {
             const $ = webgis.$ || jQuery, Ctor = $.fn.webgis_presentationToc.plugin;
-            console.log('addService', service.name);
+            webgis.log('addService', service.name);
             parent = parent || this;
             if (service == null || service.map == null)
                 return;
@@ -1265,7 +1265,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                             .attr('id', id);
 
                         if (webgis.usability.orderPresentationTocContainsByServiceOrder === true) {
-                            console.log('data-order', service.name, service.getOrder())
+                            webgis.log('data-order', service.name, service.getOrder())
                             $li.attr('data-order', Ctor._calcDataOrderByServiceOrder(service));
                         }
                         else if (prop.container_order) {
@@ -2280,7 +2280,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
 
             let map = $parent.length === 1 ? $parent.get(0)._map : null;
 
-            console.log(state);
+            webgis.log(state);
 
             $collapsable.find('.webgis-presentation_toc-item').each(function (j, e) {
                 let $e = $(e);
@@ -2457,7 +2457,7 @@ webgis.ui.definePlugin('webgis_serviceOrder', {
                                     $toc.find('.webgis-presentation_toc-title').each(function (i, container) {
                                         let $container = $(container);
 
-                                        console.log($container.attr("data-container"), $container.data("serviceGuids"));
+                                        webgis.log($container.attr("data-container"), $container.data("serviceGuids"));
                                         const containerServiceGuids = $container.data("serviceGuids")
                                         if (containerServiceGuids && containerServiceGuids.includes(service.guid)) {
 

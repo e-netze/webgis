@@ -31,7 +31,7 @@
     this._sketch.events.on(['onsketchclosed'], function (e, sender) {
         //console.log('onsketchclosed')
         if (this._defaultBehaviour(this._tool)) {
-            console.log('assumeCurrentElement');
+            webgis.log('assumeCurrentElement');
             this.assumeCurrentElement();
         }
     }, this);
@@ -1089,7 +1089,7 @@
             }
 
         } catch (ex) {
-            console.log('map.graphics.fromJson', ex);
+            webgis.log('map.graphics.fromJson', ex);
         }
 
         this._serializing = false;

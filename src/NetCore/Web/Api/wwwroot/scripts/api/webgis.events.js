@@ -93,7 +93,7 @@
                 }
             }
             this._events[channel] = channelSubscriptions;
-            console.log('new valid channel (' + channel + ') subscription: ', this._events[channel]);
+            webgis.log('new valid channel subscription:', channel, this._events[channel]);
         }
 
         return this;

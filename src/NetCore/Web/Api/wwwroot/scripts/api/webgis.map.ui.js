@@ -245,9 +245,9 @@
                         let val = vals[v], valType = typeof (val);
 
                         if (webgis.isSuspiciousHtml(val)) {
-                            console.log("sanitize suspicious val:", val);
+                            webgis.log("sanitize suspicious val:", val);
                             val = webgis.sanitizeHtml(val);
-                            console.log("to", val);
+                            webgis.log("to", val);
                         }
 
                         if (valType === 'string' && val.indexOf("<a") === 0) {
@@ -539,7 +539,7 @@
             
             var original = $(this).data('original-value');
             var current = $(this).val();
-            console.log('changed', original, current);
+            webgis.log('changed', original, current);
 
             $(this).toggleClass('changed', current !== original);
         });
@@ -1683,7 +1683,7 @@
                     if (result.metadata && result.metadata.custom_selection) {
                         var service = map.queryResultFeatures.firstService(result.features);
                         //console.log(result);
-                        console.log('customSelection', result.metadata.custom_selection);
+                        webgis.log('customSelection', result.metadata.custom_selection);
                         if (customSelection.setTargetCustomId) {
                             customSelection.setTargetCustomId(service, result.metadata.custom_selection);
                         }
@@ -1904,7 +1904,7 @@
                 if (result === exclude)
                     continue;
                 var resultName, fulltext, tool = result.metadata ? result.metadata.tool : '', imgUrl, selected = result.metadata && result.metadata.selected;
-                console.log('queryresult tool:', tool);
+                webgis.log('queryresult tool:', tool);
                 for (var f in result.features) {
                     var feature = result.features[f];
                     var query = null;
@@ -2006,7 +2006,7 @@
 
             // Refresh Table
             var $panel = $(".webgis-dockpanel.webgis-result.webgis-result-table");
-            console.log('table-panel', $panel, $panel.length);
+            webgis.log('table-panel', $panel, $panel.length);
             if ($panel.length > 0) {
                 map.queryResultFeatures.showTable();
             }

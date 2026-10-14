@@ -35,6 +35,15 @@ addition to the task-specific skills in `.github/skills/*/SKILL.md`.
   `src/NetCore/Web/Api/wwwroot/scripts/api/webgis.l10n.de.js` and `webgis.l10n.en.js`, and read it
   via `webgis.l10n.get('key')`.
 
+## Console output (viewer JS)
+
+- No `console.log` in `src/NetCore/Web/Api/wwwroot/scripts/api`: use `webgis.log(...)` (only
+  written when `webgis.logLevel` is `'debug'` or `'trace'`, set in the browser console;
+  `webgis.logGroup/logGroupEnd` for nested output). Real errors stay `console.error`.
+- Pass the parts as separate arguments (`webgis.log('init tool:', tool.id)`), never build strings
+  with `+` - the arguments are evaluated even when logging is off. Guard expensive arguments
+  (calculations, `JSON.stringify`) with `if (webgis.logLevel)`.
+
 ## Changelog
 
 - Changes are documented per major version in `changelog-v{major}.md` (detailed) and

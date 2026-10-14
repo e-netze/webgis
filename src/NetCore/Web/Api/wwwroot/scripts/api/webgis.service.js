@@ -630,7 +630,7 @@
                 service.resetOrder();
         });
 
-        console.log('setTopMost');
+        webgis.log('setTopMost');
         if (this.frameworkElement) {
             if (this.frameworkElement.setOrder) {
                 this.frameworkElement.setOrder(this.map.maxServiceOrder() + 1);

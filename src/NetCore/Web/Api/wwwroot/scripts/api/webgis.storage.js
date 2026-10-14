@@ -1,9 +1,9 @@
 ﻿webgis.localStorage = new function () {
     this.get = function (key) {
-        console.log('storage default', key, webgis.defaults[key]);
+        webgis.log('storage default', key, webgis.defaults[key]);
         let defaulValue = webgis.defaults[key];
         if (defaulValue && defaulValue.indexOf("!") === 0) { // force this value!!!
-            console.log('storage forced', key, defaulValue.substring(1));
+            webgis.log('storage forced', key, defaulValue.substring(1));
             return defaulValue.substring(1);
         }
 

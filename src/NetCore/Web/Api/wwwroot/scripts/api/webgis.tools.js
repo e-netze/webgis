@@ -1824,7 +1824,7 @@ webgis.tools = new function () {
                     }
 
                     confirmations[message] = true;
-                    console.log(confirmations);
+                    webgis.log(confirmations);
                 }
             }
         }
@@ -1967,7 +1967,7 @@ webgis.tools = new function () {
                     }
 
                     const contentType = response.headers.get('content-type');
-                    console.log('content-type', contentType);
+                    webgis.log('content-type', contentType);
 
                     if (contentType && contentType.includes('application/json')) {
                         return response.json();

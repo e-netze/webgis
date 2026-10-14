@@ -26,7 +26,7 @@ webgis.selection = function (map, name) {
         }
     };
     this.destroy = function () {
-        console.log('destroy selection: ' + this.name);
+        webgis.log('destroy selection:', this.name);
     };
     this.setTargetLayer = function (selectionService, selectionLayerid, selectionFids) {
         this.service = selectionService;

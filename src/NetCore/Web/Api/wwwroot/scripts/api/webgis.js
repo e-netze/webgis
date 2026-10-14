@@ -3,7 +3,28 @@
     var $ = window.jExt || window.jQuery;
     this.jQuery = $;
     this.$ = $;
-    
+
+    // debug output, off by default: set webgis.logLevel = 'debug' (console.log) or 'trace' (console.trace) in the browser console
+    this.logLevel = null;
+    this.log = function () {
+        if (!webgis.logLevel) return;
+
+        if (webgis.logLevel === 'debug') console.log.apply(console, arguments);
+        else if (webgis.logLevel === 'trace') console.trace.apply(console, arguments);
+    };
+    // groups nested output (e.g. cascading plugin destroy); every logGroup needs a logGroupEnd
+    this.logGroup = function () {
+        if (!webgis.logLevel) return;
+
+        if (webgis.logLevel === 'debug') console.group.apply(console, arguments);
+        else if (webgis.logLevel === 'trace') { console.group.apply(console, arguments); console.trace(); }
+    };
+    this.logGroupEnd = function () {
+        if (!webgis.logLevel) return;
+
+        if (webgis.logLevel === 'debug' || webgis.logLevel === 'trace') console.groupEnd();
+    };
+
     this.net = 'standard';
     this.api_version = '{{currentJavascriptVersion}}';
     this.mapFramework = 'leaflet'; 
@@ -504,9 +525,9 @@
                         if (webgis.options.load_vtc) {
                             if (!L.maplibreGL) {
                                 webgis.loadScript(webgis.baseUrl + '/lib/maplibre-gl/dist/maplibre-gl.js', webgis.baseUrl + '/lib/maplibre-gl/dist/maplibre-gl.css', function () {
-                                    console.log('maplibre-gl.js loaded...')
+                                    webgis.log('maplibre-gl.js loaded...')
                                     webgis.loadScript(webgis.baseUrl + '/lib/maplibre-gl-leaflet/leaflet-maplibre-gl.js', null, function () {
-                                        console.log('leaflet-maplibre-gl.js loaded...')
+                                        webgis.log('leaflet-maplibre-gl.js loaded...')
                                         webgis.loadedScripts.vtc = true;
                                     });
                                 });
@@ -584,7 +605,7 @@
 
                     function loadNextCustomScript() {
                         webgis.loadScript(webgis.loadCustomScripts[customJsScriptIndex], null, function () {
-                            console.log('custom script loaded: ' + webgis.loadCustomScripts[customJsScriptIndex]);
+                            webgis.log('custom script loaded:', webgis.loadCustomScripts[customJsScriptIndex]);
                             customJsScriptIndex++;
                             if (customJsScriptIndex == webgis.loadCustomScripts.length) {
                                 webgis.loadedScripts.customJs = true;
@@ -636,7 +657,7 @@
     };
     this.initTimer = null;
     this.isReady = function () {
-        console.log(webgis.loadedScripts.vtc);
+        webgis.log(webgis.loadedScripts.vtc);
         if (webgis._initialError)
             return true;
         if (!webgis.hmac)
@@ -759,13 +780,13 @@
                 //window.require.paths.vs = webgis.baseUrl + '/lib/monaco-editor/min/vs';
                 var orginal_require = window.require;
                 window.require = { paths: { vs: webgis.baseUrl + '/lib/monaco-editor/min/vs' } };
-                console.log('window.require', window.require);
+                webgis.log('window.require', window.require);
 
                 webgis.loadScript(webgis.baseUrl + '/lib/monaco-editor/min/vs/loader.js', '', function (arg) {
-                    console.log('loaded', webgis.baseUrl + '/lib/monaco-editor/min/vs/loader.js');
+                    webgis.log('loaded', webgis.baseUrl, '/lib/monaco-editor/min/vs/loader.js');
 
                     webgis.loadScript(webgis.baseUrl + '/lib/monaco-editor/min/vs/editor/editor.main.js', '', function (arg) {
-                        console.log('loaded', webgis.baseUrl + '/lib/monaco-editor/min/vs/editor/editor.main.js');
+                        webgis.log('loaded', webgis.baseUrl, '/lib/monaco-editor/min/vs/editor/editor.main.js');
 
                         var counter = 0;
                         var timer = new webgis.timer(function () {
@@ -1195,7 +1216,7 @@
                                             if (feature.oid == oid) {
                                                 const featureHashCode = webgis.hmac._featureGeoHashCode(feature);
                                                 if (hashCode != featureHashCode) {
-                                                    console.log('hashCode not ident', hashCode, featureHashCode);
+                                                    webgis.log('hashCode not ident', hashCode, featureHashCode);
                                                 }
                                                 hasChanged |= (hashCode != featureHashCode) ? true : false;
                                                 found = true;
@@ -1447,7 +1468,7 @@
                     }
                 }
                 catch (e) {
-                    console.log(e);
+                    webgis.log(e);
                     icon = L.icon({
                         iconUrl: webgis.css.imgResource('marker_blue.png', 'markers'),
                         iconSize: [25, 41],
@@ -1617,7 +1638,7 @@
             if (!isNaN(a) && isNaN(b)) return -1;
             if (isNaN(a) && !isNaN(b)) return 1;
         } catch (e) {
-            console.log(e);
+            webgis.log(e);
         }
         return webgis.sortingAlg["default"](a, b);
     };
@@ -1629,7 +1650,7 @@
             if (!isNaN(a) && isNaN(b)) return -1;
             if (isNaN(a) && !isNaN(b)) return 1;
         } catch (e) {
-            console.log(e);
+            webgis.log(e);
         }
         return webgis.sortingAlg["default"](a, b);
     };
@@ -1663,7 +1684,7 @@
 
             a = a1; b = b1;
         } catch (e) {
-            console.log(e);
+            webgis.log(e);
         }
 
         return webgis.sortingAlg["default"](a, b);
@@ -1687,7 +1708,7 @@
                 b = bParts[2] + '.' + bParts[1] + '.' + bParts[0] + bPostfix;
             }
         } catch (e) {
-            console.log(e);
+            webgis.log(e);
         }
 
         //console.log('dates', a, b);
@@ -2081,7 +2102,7 @@
                 }
             })
             .catch(error => {
-                console.log('error', error);
+                webgis.log('error', error);
                 if (progress_message) {
                     webgis.hideProgress(progress_message);
                     webgis._ajaxDiagnostic[progress_message] = error.message;
@@ -2289,7 +2310,7 @@
     this._srefs = [];
     this.registerCRS = function (id) {
         if (!this._srefs[id]) {
-            console.log('register srs: ' + id);
+            webgis.log('register srs:', id);
             var srefInfo = this.ajaxSync(this.baseUrl + '/rest/srefs/' + id, 'Lade CRS Information');
             if (webgis.mapFramework == 'leaflet') {
                 var sref = new L.Proj.CRS('EPSG:' + id, srefInfo.p4);
@@ -3172,7 +3193,7 @@
 
         var suppressGoBack = false;
         if (content && $(content).find('iframe').length > 0) {
-            console.log('dialog content contains iframe => suppresss window.history.back()');
+            webgis.log('dialog content contains iframe => suppresss window.history.back()');
             suppressGoBack = true;
         }
 

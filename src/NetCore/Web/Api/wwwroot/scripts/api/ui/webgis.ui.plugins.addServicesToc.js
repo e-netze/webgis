@@ -369,7 +369,7 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
                                 $div.webgis_general_input('clear', { name: 'webgis-customservice-user' });
                                 $div.webgis_general_input('clear', { name: 'webgis-customservice-pwd' });
 
-                                console.log('Dienst ' + result.name + ' wurde erfolgreich der Karte hinzugefügt');
+                                webgis.log('service added to map:', result.name);
                                 $successMessage
                                     .html('Dienst ' + result.name + ' wurde erfolgreich der Karte hinzugefügt')
                                     .css('display', 'block');
@@ -419,7 +419,7 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
                     const allContained = dataServiceIds.length > 0 && dataServiceIds.every(id => serviceIds.includes(id));
                     const someContained = dataServiceIds.some(id => serviceIds.includes(id));
 
-                    console.log('dataServiceIds', dataServiceIds, allContained, someContained);
+                    webgis.log('dataServiceIds', dataServiceIds, allContained, someContained);
 
                     if (allContained) {
                         $e.addClass('selected').removeClass('partly-selected')
@@ -471,7 +471,7 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
                     for (const s in serviceInfo.services) {
                         const service = serviceInfo.services[s];
                         service.order = service.order || map.maxServiceInsertOrder(service);
-                        console.log('service.order', service.order);
+                        webgis.log('service.order', service.order);
                     }
 
                     const addedServices = map.addServices(serviceInfo.services);

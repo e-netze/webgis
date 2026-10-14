@@ -24,7 +24,7 @@ webgis.ui.definePlugin('webgis_liveshare', {
             $clients.find("li[data-connection-id='" + client.connectionId + "']").remove();
         };
         this._onLeftSession = function () {
-            console.log('onleftsession');
+            webgis.log('onleftsession');
             $clients.empty();
         };
         webgis.liveshare.events.on('onclientjoined', this._onClientJoined);

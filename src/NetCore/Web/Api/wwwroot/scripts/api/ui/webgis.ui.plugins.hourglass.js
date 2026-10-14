@@ -101,7 +101,7 @@ webgis.ui.definePlugin('webgis_hourglass', {
                     .html(this.scaleText(scale))
                     .appendTo($tr);
 
-            } catch (e) { $target.empty(); console.log('scalebar', e) }
+            } catch (e) { $target.empty(); webgis.log('scalebar', e) }
         }
     }
 });

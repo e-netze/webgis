@@ -5,7 +5,7 @@
         return;
 
     if (webgis.security.allowEmbeddingMessages !== true) {
-        console.log('Security Warning: webgis.security.allowEmbeddingMessages === false => embedding messages are forbidden. Change this value to \'true\' to allow embedding messages!');
+        webgis.log('Security Warning: webgis.security.allowEmbeddingMessages === false => embedding messages are forbidden. Change this value to \'true\' to allow embedding messages!');
     }
 
     // ToDo: Check origin
@@ -49,7 +49,7 @@
     }
     if (event.data.event === 'get-current-map-image') {
         var map = webgis.maps[event.data.mapId];
-        console.log('map', map);
+        webgis.log('map', map);
         if (map) {
             map.downloadCurrentImage({
                 format: event.data.format,

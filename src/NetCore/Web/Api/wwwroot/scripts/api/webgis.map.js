@@ -29,7 +29,7 @@
                 toolButtonBars.each(function (i, b) {
                     var $b = $(b);
                     var toolIds = $(b).attr('data-tools').split(',').filter(t => t);
-                    console.log('toolIds', toolIds);
+                    webgis.log('toolIds', toolIds);
                     if ($b.hasClass('horizontal')) {
                         $b.css({ height: height || 40, width: toolIds.length * 40 });
                     }
@@ -416,7 +416,7 @@
             felem.on("click", function (e) {
                 //console.log('click', e);
                 if (!e || !e.originalEvent) {
-                    console.log('cancel click: unknown source...');
+                    webgis.log('cancel click: unknown source...');
                     //
                     //  Es kann vorkommen, dass man beim Klicken auch einen "PAN" oder änliches macht.
                     //  Dabei wird die Karte neue aufgebaut. Durch einen (Leaflet?) Bug können dann die Koordinaten nicht mehr stimmen,
@@ -434,7 +434,7 @@
 
                 if ($(e.originalEvent.target).closest('.leaflet-control-container').length > 0) {
                     // Click auf zB Übersichtskarte nicht weiterleiten!
-                    console.log('cancel click: ignore control container');
+                    webgis.log('cancel click: ignore control container');
                     return;
                 }
 
@@ -725,7 +725,7 @@
                     webgis.tools.fireActiveToolEvents(this, e, coord);
                 }, this);
                 this.sketch.events.on(['onchanged', 'onremoved', 'onchangegeometrytype'], function (e) {
-                    console.log('sketch changed...');
+                    webgis.log('sketch changed...');
 
                     this.ui.recalcSketchPropertyElements();
 
@@ -802,7 +802,7 @@
             });
         }
         webgis.continuousPosition.events.on('startwatching', function (e, sender) {
-            console.log('start watching...');
+            webgis.log('start watching...');
             webgis.variableContent.set('gps-accuracy', '---');
             $('.webgis-gps-acc-dependent').addClass('gps-inaccurate');
         }, this);
@@ -1408,7 +1408,7 @@
                     serviceInfo.fallback = serviceInfo.properties.fallback;
                     
                     service.onAdd = function (map, frameworkElement) {
-                        console.log('VTC - onAdd -update service');
+                        webgis.log('VTC - onAdd -update service');
                         frameworkElement._update();
                     }
 
@@ -1440,7 +1440,7 @@
                         var geoRefDef = e.target.getGeoRefDefintion ? e.target.getGeoRefDefintion() : null;
                         //console.log(e.target.getGeoRefDefintion, geoRefDef);
                         if (geoRefDef) {
-                            console.log('geoRefDef', geoRefDef);
+                            webgis.log('geoRefDef', geoRefDef);
                             webgis.tools.onOverlayGeoRefDefinition(this, geoRefDef);
                         }
                     }, this);
@@ -1539,7 +1539,7 @@
             if ($.inArray(s, serviceIds) >= 0) {
                 this.services[s] = null;
                 service.remove();
-                console.log('remove: ' + s);
+                webgis.log('remove:', s);
                 this.events.fire('onremoveservice', service);
             } else {
                 newServices[service.id] = service;
@@ -2054,12 +2054,12 @@
         let focusVertex = webgis.calc.nearestVertex({ x: mapCenter[0], y: mapCenter[1] }, vertices);
         let verticesBbox = webgis.calc.verticesBbox(vertices);
 
-        console.log('focusVertex', focusVertex);
-        console.log('verticesBbox', verticesBbox);
-        console.log('center', mapCenter);
+        webgis.log('focusVertex', focusVertex);
+        webgis.log('verticesBbox', verticesBbox);
+        webgis.log('center', mapCenter);
 
         const ratio = webgis.calc.bboxSizeRatio(mapBbox, verticesBbox);
-        console.log('ratio', ratio);
+        webgis.log('ratio', ratio);
 
         const innerMapBbox = webgis.calc.bboxResizePerRatio(mapBbox, 0.6),
             fVertex = [focusVertex.x, focusVertex.y];
@@ -2312,7 +2312,7 @@
             webgis.delayed(function (args) {
                 if (args.counter < 10) {
                     var newCalcScale = args.map.calcCrsScale();
-                    console.log(args.counter + ' new-scale', args.map.scale(), 'new-calcCrsScale', newCalcScale);
+                    webgis.log(args.counter, 'new-scale', args.map.scale(), 'new-calcCrsScale', newCalcScale);
                     if (Math.abs(newCalcScale - s) > 5)
                         args.map.setCalcCrsScale(s, center, args.counter);
                 }
@@ -2813,7 +2813,7 @@
             var $e = $('#' + id + '.webgis-tool-parameter-persistent');
             if ($e.length > 0) {
                 params[id] = $e.val();
-                console.log(' updated parameter', context, id, params[id]);
+                webgis.log(' updated parameter', context, id, params[id]);
             }
         }
     };
@@ -2838,7 +2838,7 @@
             tool._isInitialized = true;
             var type = this.isServerButton(tool.id) ? 'servertoolcommand_ext' : 'servertoolcommand';
             webgis.delayed(function (arg) {
-                console.log('init tool:' + tool.id);
+                webgis.log('init tool:', tool.id);
                 webgis.tools.onButtonClick(arg.map, {
                     command: 'init', type: arg.type, id: arg.tool.id, map: arg.map
                 });
@@ -3069,7 +3069,7 @@
                 },
                 onEnable: function (e) {
                     var map = $(this).data('map');
-                    console.log('start watching');
+                    webgis.log('start watching');
                     webgis.continuousPosition.start(map, {
                         marker: 'currentpos_red',
                         marker_ok: 'currentpos_green',
@@ -3577,7 +3577,7 @@
 
         const me = this;
         affectedServices.forEach(serviceId => {
-            console.log('refresh', serviceId);
+            webgis.log('refresh', serviceId);
             const affectedService = me.getService(serviceId);
             if (affectedService) affectedService.refresh();
         });
@@ -3768,7 +3768,7 @@
         var graphicsJson = JSON.stringify(this.graphics.toGeoJson(), null, 2);
         var mapJson = JSON.stringify(this.serialize({ ui: false, applyFallback: true, visibleBasemapsOnly: true }), null, 2);
 
-        console.log('printoptions', options);
+        webgis.log('printoptions', options);
 
         if (!this.queryResultFeatures.hasTableProperties()) {
             options.attachQueryResults = '';

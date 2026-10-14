@@ -1140,7 +1140,7 @@
                                     url: `${webgis.baseUrl}/rest/resolve-url-payload`,
                                     data: webgis.hmac.appendHMACData({ payload: link.substr('payload:'.length) }),
                                     success: function (result) {
-                                        console.log('result', result);
+                                        webgis.log('result', result);
                                         if (result.success && result.url) {
                                             func(linktarget, linkname, result.url);
                                         } else {
@@ -2242,7 +2242,7 @@
         if (layer == null) return;
 
         layer.eachLayer(function (marker) {
-            console.log('marker',marker);
+            webgis.log('marker',marker);
             if (marker.showLabel) marker.showLabel(show);
         });
     };

@@ -1394,7 +1394,7 @@
             }
 
         } catch (ex) {
-            console.log('map.graphics.fromJson', ex);
+            webgis.log('map.graphics.fromJson', ex);
         }
 
         this._serializing = false;

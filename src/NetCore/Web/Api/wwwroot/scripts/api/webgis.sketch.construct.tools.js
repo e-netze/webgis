@@ -953,7 +953,7 @@ webgis.sketch.construct.register(new function () {
     };
 
     var _removeConstructionPoints = function (sketch) {
-        console.log('cancel');
+        webgis.log('cancel');
         if (_resultMarkers1) {
             sketch.map.frameworkElement.removeLayer(_resultMarkers1);
             _resultMarkers1 = null;
@@ -966,7 +966,7 @@ webgis.sketch.construct.register(new function () {
         _latLngs = [];
         _closed = false;
 
-        console.log('closed', _closed);
+        webgis.log('closed', _closed);
     };
 
     this.onMapMouseMove = function (sketch, latlng) {
@@ -1082,14 +1082,14 @@ webgis.sketch.construct.register(new function () {
             1, -vertices[2].X, -vertices[2].Y);
 
         if (!eq33.solve()) {
-            console.log('detA==0.0');
+            webgis.log('detA==0.0');
             return;
         }
 
         var A = eq33.var1(), B = eq33.var2(), C = eq33.var3();
         var Mx = B / 2.0, My = C / 2.0, r2 = Math.pow(Mx, 2.0) + Math.pow(My, 2.0) - A;
         if (r2 <= 0) {
-            console.log("r2<=0", r2);
+            webgis.log("r2<=0", r2);
             return;
         }
         var r = Math.sqrt(r2);

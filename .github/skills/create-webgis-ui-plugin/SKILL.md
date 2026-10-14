@@ -149,7 +149,12 @@ inputs (`.trigger('change')`) is fine where other code listens to them.
   `.replaceWith(...)`, `.detach()`, native DOM removal - call
   `webgis.ui.destroyPluginsDeep($container)` before replacing content that way.
 - `destroy` runs at most once per instance (`_destroyed`), then the instance is unregistered and
-  `$el.data(name)` removed. Don't throw from `destroy` (errors are swallowed by the deep destroy).
+  `$el.data(name)` removed. Don't throw from `destroy` (the deep destroy catches the error and only reports
+  it with `console.error`).
+- Debugging: `webgis.logLevel = 'debug'` (or `'trace'`) in the browser console logs every
+  `[plugins] init <name>` / `[plugins] destroy <name>`; each deep destroy is a console group
+  (`[plugins] remove: N instance(s)`), so cascading removals appear nested. Use `webgis.log(...)` for
+  own debug output, never `console.log`.
 
 ## 6. Converting a legacy `$.fn` plugin
 
@@ -172,5 +177,5 @@ inputs (`.trigger('change')`) is fine where other code listens to them.
   (`dotnet test` in `src/NetCore/Tests/WebGIS.UI.Tests`) - snapshots must stay unchanged for
   pure refactorings/conversions; add tests for new elements.
 - In the viewer: create the plugin, call its methods, remove the element (e.g. close the tool) and
-  check (breakpoint/`console.log` in `destroy`) that it is destroyed and that map/sketch events no
+  check (`webgis.logLevel = 'debug'` in the browser console, see section 5) that it is destroyed and that map/sketch events no
   longer reach it - and that a second instance still works after the first one was destroyed.

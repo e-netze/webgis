@@ -13,7 +13,7 @@ webgis.ui.definePlugin('webgis_collapsable_paragraph', {
             var height = $item.height();
             $item.addClass('webgis-collapsable-paragraph collapsed');
             if ($item.height() < height) {
-                console.log(height, $item.height())
+                webgis.log(height, $item.height())
                 $("<div></div>")
                     .addClass('switcher')
                     .appendTo($item)

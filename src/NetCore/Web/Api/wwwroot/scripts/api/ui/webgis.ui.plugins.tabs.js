@@ -40,7 +40,7 @@ webgis.ui.definePlugin('webgis_tabs', {
 
         this._mapEvents = [];
 
-        console.log('webgis_tabs.options', options)
+        webgis.log('webgis_tabs.options', options)
         parent._map = options.map;
         var $div = this._$div = $("<div class='webgis-tabs-holder webgis-ui-trans'></div>")
             .appendTo($parent)
@@ -190,7 +190,7 @@ webgis.ui.definePlugin('webgis_tabs', {
                     var $button = $(this).find('.webgis-selection-button.selected');
                     $button.removeClass('selected');
                     if ($button.length > 0) {
-                        console.log('trigger first selection button');
+                        webgis.log('trigger first selection button');
                         $button.first().trigger('click');
                     }
                 });
@@ -199,7 +199,7 @@ webgis.ui.definePlugin('webgis_tabs', {
                 this._onMapEvent('queryresult_removefeature', function (e, map, oid) {
                     var $li = $(".webgis-result[data-id='" + oid + "']");
                     if ($li.hasClass($.fn.webgis_queryResultsList.selectedItemClass)) {
-                        console.log('remove', map.getSelection('query'))
+                        webgis.log('remove', map.getSelection('query'))
                         map.getSelection('query').remove();
                     }
                     var $holder = $li.closest('.webgis-search-result-list');

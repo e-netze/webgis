@@ -64,7 +64,7 @@ webgis.currentPosition_watch = new function () {
 
             this.getPosition = function (pos) {
                 index++;
-                console.log('getPosition', index, maxWatch);
+                webgis.log('getPosition', index, maxWatch);
                 //console.log(pos);
                 //console.log(pos.coords.accuracy);
                 var ageSeconds = (new Date().getTime() - pos.timestamp) / 1000;
@@ -98,7 +98,7 @@ webgis.currentPosition_watch = new function () {
             this.onError = function (err) {
                 lastErr = err;
                 index++;
-                console.log(err.message, err.code);
+                webgis.log(err.message, err.code);
                 //if (index >= maxWatch)
                 webgis.currentPosition_watch.stopWatch(options, bestPosition, lastErr);
             };
@@ -307,13 +307,13 @@ webgis.continuousPosition = new function () {
         webgis.continuousPosition._watcher = null;
     };
     this.pause = function (callback) {
-        console.log("webgis.continuousPosition: pause watching...");
+        webgis.log("webgis.continuousPosition: pause watching...");
         webgis.geolocationApi.clearWatch(webgis.continuousPosition._watchId);
         if (callback) callback();
     };
     this.resume = function (callback) {
         if (this._watcher && webgis.geolocationApi.isAvailable()) {
-            console.log("webgis.continuousPosition: resume watching...");
+            webgis.log("webgis.continuousPosition: resume watching...");
             webgis.continuousPosition._watchId = webgis.geolocationApi.watchPosition(this._watcher.newPosition, function () { }, { timeout: 5000, enableHighAccuracy: webgis.isTouchDevice() });
         };
         if (callback) callback();
@@ -412,14 +412,14 @@ webgis.geolocationApis = new function () {
     };
 
     this.setByName = function (name) {
-        console.log("try set geolocation api by name:" + name);
+        webgis.log("try set geolocation api by name:", name);
         for (let api of _apis) {
-            console.log(api);
+            webgis.log(api);
             if (api.name === name) {
                 if (webgis.continuousPosition.isWatching()) {
                     webgis.continuousPosition.pause(function () {
                         webgis.geolocationApi = api;
-                        console.log("current geolocation api:" + name, api);
+                        webgis.log("current geolocation api:", name, api);
 
                         webgis.continuousPosition.resume();
                     });
@@ -428,7 +428,7 @@ webgis.geolocationApis = new function () {
                 }
 
                 webgis.geolocationApi = api;
-                console.log("current geolocation api:" + name, api);
+                webgis.log("current geolocation api:", name, api);
 
                 return true;
             }
