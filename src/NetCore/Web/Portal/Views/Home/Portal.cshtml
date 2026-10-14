@@ -29,7 +29,11 @@
     <script src="@(portalUrl)/scripts/tinymce/4/tinymce.js"></script>
 
     <script src="@(apiUrl)/scripts/typeahead/typeahead.jquery.min.js"></script>
+}
 
+@if (Model.IsContentAuthor || Model.IsPortalPageOwner)
+{
+    @* webgis.ui.showModal: used by webgis-portal-content.js and webgis-portal-ua.js *@
     <link href="@(apiUrl)/content/styles/default.css?@(WebGISVersion.CssVersion)" rel="stylesheet" />
     <script src="@(apiUrl)/scripts/api/api-ui.min.js?@(WebGISVersion.CssVersion)"></script>
 }

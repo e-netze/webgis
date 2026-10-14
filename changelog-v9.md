@@ -76,6 +76,33 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   setters and UI plugins reachable via UI elements, to check their rendering and callbacks manually
   (echo of all received tool parameters). New skill ``.github/skills/create-webgis-tool``.
 
+- Viewer UI JavaScript restructured (WebGIS API ``wwwroot/scripts``):
+  * Leaflet plugins ``webgisservicelayer.js`` and ``webgisgraphics.js`` split into one file per class
+    (``leaflet/plugins/webgis-servicelayer.*.js``, ``webgis-graphics.*.js``).
+  * ``webgis_uibuilder.js`` split into ``webgis.ui.builder.*.js`` (stateless build functions,
+    core in ``webgis.ui.builder.core.js``) and ``webgis.ui.plugins.*.js``.
+  * Legacy ``$.fn.webgis_*`` jQuery plugins converted to ``webgis.ui.definePlugin`` (one
+    ``webgis.ui.plugins.<name>.js`` file each, instances released on ``remove``/``empty``);
+    unused scripts (``webgis_queryBuilder.js``, ``webgis_graphics_info_container_old.js``) removed.
+  * Static plugin methods used from other files are called through flat ``webgis.ui.<verbNoun>``
+    functions (e.g. ``webgis.ui.hideMapContextMenu()``, ``webgis.ui.closeDockPanel(...)``).
+  * Modal dialogs: ``webgis_modal.js``/``webgis_modalprogress.js`` replaced by
+    ``webgis.ui.plugins.modal.js`` with ``webgis.ui.showModal(options)``, ``closeModal``,
+    ``getModalContent``, ``hideModal``, ``fitModal``, ... and ``webgis.ui.showProgressModal``/
+    ``hideProgressModal``. ``$.fn.webgis_modal`` and ``$.fn.webgis_modalprogress`` remain as
+    legacy facades for custom code (e.g. ``custom.js``). Portal scripts use the new functions.
+  * Context menu: ``webgis_contextMenu.js`` replaced by ``webgis.ui.plugins.contextMenu.js``
+    (``webgis.ui.showContextMenu(options)``, no ``$.fn.webgis_contextMenu`` anymore).
+  * The portal page loads ``api-ui.min.js`` (modal dialogs) for content authors and page owners.
+
+  **!! Breaking Change !!** Single script files were renamed or removed (see above). Custom pages
+  that include them directly (e.g. ``webgis_modal.js``, ``webgis_uibuilder.js``,
+  ``webgisgraphics.js``) must include the bundles (``api.min.js``, ``api-ui.min.js``, Leaflet
+  bundle) instead. Custom code calling ``$.fn.webgis_contextMenu`` or static plugin methods via
+  ``$.fn.<plugin>.<method>`` must use the ``webgis.ui.*`` functions.
+
+  [Architecture](docs/architecture/ui-builder.md)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.
@@ -93,3 +120,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   ``tool_modaldialog_noblocking_closable``; only their content was removed.
 - Tool parameters with non-string values (e.g. ``UILineWieghtSelector``, ``UISymbolSelector`` used
   as tool parameters) caused ``val.replace is not a function``; they are now sent as string/JSON.
+- Time filter and visibility filter UI plugins: removing one instance unsubscribed the map events
+  of all other instances, refresh subscriptions of the filter lists were never released and
+  optgroups of removed services stayed in the visibility filter combo.

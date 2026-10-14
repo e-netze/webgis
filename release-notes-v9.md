@@ -10,6 +10,9 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 ## Unreleased
 
 ### Upgrade notes
+
+- **Breaking change:** Viewer script files were renamed or removed (e.g. `webgis_modal.js`, `webgis_contextMenu.js`, `webgis_uibuilder.js`, Leaflet `webgisgraphics.js`/`webgisservicelayer.js`). Custom pages that include single script files must include the bundles (`api.min.js`, `api-ui.min.js`) instead; custom code should open dialogs with `webgis.ui.showModal(...)` (`$.fn.webgis_modal` still works).
+
 ### New
 
 - Optional git versioning for CMS trees: configure a `git` section per cms-item in `cms.config` (`remote-url`, `username`, `token`, `default-branch`, ...); each user then works in an own workspace with branches, commit, push, merge, history and diffs. [Docs](https://docs.webgiscloud.com/en/webgis/apps/cms/git.html)
@@ -24,3 +27,4 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Validation messages are now shown directly below the affected input field (e.g. in edit masks) instead of at the bottom of the dialog.
 - Edit themes are now filtered by their database rights in the edit theme lists (e.g. mobile insert/select tools); themes without the required right are no longer listed.
 - Conditional info texts/blocks that should be hidden for a selected value are now hidden correctly.
+- Removing a time filter or visibility filter control no longer breaks the other filter controls in the viewer.
