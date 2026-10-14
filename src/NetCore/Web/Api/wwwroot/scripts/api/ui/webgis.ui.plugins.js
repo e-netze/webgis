@@ -50,6 +50,7 @@ webgis.ui.definePlugin = function (name, spec) {
         this._pluginName = name;
         this._destroyed = false;
         webgis.ui.__registerPlugin(this.$el, this);      // << register plugin for deep destroy
+        this.$el.data(name, this);                       // methods are already callable during init
 
         spec.init && spec.init.call(this);
     }
@@ -103,7 +104,14 @@ webgis.ui.definePlugin = function (name, spec) {
                 }
                 inst = new Ctor(this, arg);
                 $el.data(name, inst);
-            } else if (typeof arg === 'string') {
+            } else if (typeof arg !== 'string') {
+                // spec.reinit: calling the plugin again with options replaces the instance
+                if (spec.reinit === true) {
+                    inst.destroy();
+                    inst = new Ctor(this, arg);
+                    $el.data(name, inst);
+                }
+            } else {
                 var fn = inst[arg];
                 if (typeof fn === 'function') {
                     var r = fn.apply(inst, args);
@@ -116,22 +124,33 @@ webgis.ui.definePlugin = function (name, spec) {
 
         return chainable ? this : result;
     };
+    // static methods from outside, without an instance: $.fn.webgis_x.plugin.staticMethod(...)
+    (webgis.$ || jQuery).fn[name].plugin = Ctor;
 
-    var _oldEmpty = (webgis.$ || jQuery).fn.empty;
-    var _oldRemove = (webgis.$ || jQuery).fn.remove;
+    webgis.ui.__wrapDomRemoval();
 
-    (webgis.$ || jQuery).fn.empty = function () {
-        //console.log("run custom $.empty");
+    return Ctor;
+};
+
+// $.fn.empty / $.fn.remove destroy the plugins of the removed elements (wrapped only once per jQuery)
+webgis.ui.__wrapDomRemoval = function () {
+    var $fn = (webgis.$ || jQuery).fn;
+    if ($fn.empty.__webgisPluginWrapper === true)
+        return;
+
+    var _oldEmpty = $fn.empty;
+    var _oldRemove = $fn.remove;
+
+    $fn.empty = function () {
         (webgis.$ || jQuery)(this).children().each(function (i, child) {
-            //console.log(child);
             webgis.ui.destroyPluginsDeep((webgis.$ || jQuery)(child));
         });
 
         return _oldEmpty.call(this);
     };
+    $fn.empty.__webgisPluginWrapper = true;
 
-    (webgis.$ || jQuery).fn.remove = function () {
-        //console.log("run custom $.remove");
+    $fn.remove = function () {
         webgis.ui.destroyPluginsDeep(this);
 
         return _oldRemove.call(this);

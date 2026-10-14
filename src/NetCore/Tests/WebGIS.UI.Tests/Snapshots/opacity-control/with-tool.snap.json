@@ -49,6 +49,12 @@
                       "data-tool-id": "test-tool",
                       "element-target": "default",
                       "id": "elem"
+                    },
+                    "data": {
+                      "__plugins__": [
+                        "[object Ctor]"
+                      ],
+                      "webgis_opacity_control": "[object Ctor]"
                     }
                   }
                 ]

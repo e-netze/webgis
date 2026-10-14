@@ -68,14 +68,20 @@ var inst = $div.data('webgis_myThing');         // instance (if needed)
 - Calling a method on an element without instance -> `$.error('Method ... does not exist')`.
 - Calling the plugin **again with options** on an element that already has an instance does
   **nothing** (no re-init, options are ignored). To re-initialize: `'destroy'` first, or use
-  `'option'` + `update`.
+  `'option'` + `update`. Plugins that are re-initialized by design (e.g. the toolbox, rebuilt after a
+  tool is released) set `reinit: true` in the spec: a second call with options destroys the old
+  instance and creates a new one (`destroy` must then remove what `init` added to `$el`).
+- The instance is stored in `$el.data(name)` **before** `init` runs, so code triggered during `init`
+  (e.g. `map.ui.refreshUIElements()`) can already call its methods.
 - Don't name methods `option` or `destroy` (built-in).
 
 ## 3. Static methods
 
 - `staticMethods` are attached to the plugin constructor, i.e. shared by all instances and not
   bound to one. Inside instance code reach them via `this.constructor.<name>`; from outside via
-  `$el.data('webgis_myThing').constructor.<name>`.
+  `$.fn.webgis_myThing.plugin.<name>(...)` (no instance needed, e.g.
+  `$.fn.webgis_toolbar.plugin.applyToolDependencies(...)`). Inside a static method `this` is the
+  constructor when called this way.
 - Use them for things that must be **one function reference** for every instance, typically event
   handlers that are subscribed with an explicit context object (see `onSketchCurrentStateChanged`
   in `webgis.ui.plugins.sketch_info_container.js`). Inside such a handler `this` is the context

@@ -272,7 +272,7 @@
                     includedQueries[0] + ":</h3>").appendTo($parent);
             }
 
-            $toolbar.webgis_toolbar('intialize', { map: map });
+            $.fn.webgis_toolbar.plugin.applyToolDependencies($toolbar, map);
 
             if ($toolbar.closest('.webgis-container').find(".webgis-toolbox-tool-item[data-toolid='webgis.tools.editing.edit']").length >= 1) {
                 $("<li><span><img src='" + webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-edit', 'tools') + "'><div class='webgis-toolbox-tool-item-label'>Bearbeiten (Edit)</div></span></li>")

@@ -12,6 +12,12 @@
           "element-target": "default",
           "id": "elem",
           "style": "display:none"
+        },
+        "data": {
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "webgis_opacity_control": "[object Ctor]"
         }
       }
     ]

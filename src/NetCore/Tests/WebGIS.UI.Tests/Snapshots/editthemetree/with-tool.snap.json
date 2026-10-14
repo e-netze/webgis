@@ -52,6 +52,9 @@
                       "id": "combo"
                     },
                     "data": {
+                      "__plugins__": [
+                        "[object Ctor]"
+                      ],
                       "options": {
                         "customitems": null,
                         "dbrights": null,
@@ -59,7 +62,8 @@
                         "map": "[fake:map]",
                         "onchange": null
                       },
-                      "webgisValueElement": "[jQuery(1):input]"
+                      "webgisValueElement": "[jQuery(1):input]",
+                      "webgis_editthemeTree": "[object Ctor]"
                     },
                     "children": [
                       {
@@ -89,7 +93,7 @@
                           "tags": []
                         },
                         "events": {
-                          "change": 1,
+                          "change.webgis_editthemeTree": 1,
                           "click": 1,
                           "mousemove": 1
                         }
@@ -227,16 +231,14 @@
       "call": "map.events.on",
       "args": [
         "onaddservice",
-        "[function]",
-        "[element:div#combo.webgis-edittheme-tree]"
+        "[function]"
       ]
     },
     {
       "call": "map.events.on",
       "args": [
         "onremoveservice",
-        "[function]",
-        "[element:div#combo.webgis-edittheme-tree]"
+        "[function]"
       ]
     },
     {

@@ -14,6 +14,9 @@
           "id": "combo"
         },
         "data": {
+          "__plugins__": [
+            "[object Ctor]"
+          ],
           "options": {
             "customitems": null,
             "dbrights": null,
@@ -21,7 +24,8 @@
             "map": "[fake:map]",
             "onchange": null
           },
-          "webgisValueElement": "[jQuery(1):input]"
+          "webgisValueElement": "[jQuery(1):input]",
+          "webgis_editthemeTree": "[object Ctor]"
         },
         "children": [
           {
@@ -54,7 +58,7 @@
               ]
             },
             "events": {
-              "change": 1,
+              "change.webgis_editthemeTree": 1,
               "click": 1,
               "mousemove": 1
             },
@@ -156,7 +160,7 @@
                   "title": "Tags: #a, #b"
                 },
                 "events": {
-                  "click": 1
+                  "click.webgis_editthemeTree": 1
                 },
                 "children": [
                   "Thema 1",
@@ -171,7 +175,7 @@
                       ]
                     },
                     "events": {
-                      "click": 1
+                      "click.webgis_editthemeTree": 1
                     }
                   }
                 ]
@@ -185,7 +189,7 @@
                   "style": "display: block; background-image: url(\"https://webgis.test/rest/services/s1/getlegendlayeritem?f=bin&layer=l2&value=undefined\");"
                 },
                 "events": {
-                  "click": 1
+                  "click.webgis_editthemeTree": 1
                 },
                 "children": [
                   "Thema 2",
@@ -200,7 +204,7 @@
                       ]
                     },
                     "events": {
-                      "click": 1
+                      "click.webgis_editthemeTree": 1
                     }
                   }
                 ]
@@ -253,16 +257,14 @@
       "call": "map.events.on",
       "args": [
         "onaddservice",
-        "[function]",
-        "[element:div#combo.webgis-edittheme-tree]"
+        "[function]"
       ]
     },
     {
       "call": "map.events.on",
       "args": [
         "onremoveservice",
-        "[function]",
-        "[element:div#combo.webgis-edittheme-tree]"
+        "[function]"
       ]
     },
     {

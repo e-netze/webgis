@@ -1949,7 +1949,7 @@
                 });
 
             service.map.events.on('basemap_changed', function (e, sender, basemapService) {
-                $(this).webgis_opacity_control('refresh');
+                $.fn.webgis_opacity_control.plugin.refreshHolders(this);
                 sender.ui.refreshUIElements();
             }, $opacity_container);
             service.map.events.on('basemap_changed', function (e, sender, basemapService) {
