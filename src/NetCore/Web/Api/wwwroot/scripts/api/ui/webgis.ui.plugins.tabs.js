@@ -5,7 +5,7 @@
 // The plugin element is reused when a map is re-created in the same container (map builder),
 // so calling webgis_tabs({ ... }) again re-initializes it (reinit).
 // show/hide/hideAll/resize are also static methods for callers that only have the
-// .webgis-tabs-holder element: $.fn.webgis_tabs.plugin.hide($holder, 'tools').
+// .webgis-tabs-holder element: webgis.ui.hideTab($holder, 'tools'), webgis.ui.hideAllTabs, webgis.ui.resizeTabs.
 
 webgis.ui.definePlugin('webgis_tabs', {
     reinit: true,
@@ -120,7 +120,7 @@ webgis.ui.definePlugin('webgis_tabs', {
                     .on('click.webgis_tabs', function (e) {
                         e.stopPropagation();
                         var map = $(this).data('map');
-                        $.fn.webgis_presentationToc.plugin.showServicesLegend({ map: map, sender: this });
+                        webgis.ui.showServicesLegend({ map: map, sender: this });
                     });
             }
             $("<div id='tab-presentations-content' class='webgis-tabs-tab-content' style='display:none'></div>").appendTo($tab_content).webgis_presentationToc(options.options_presentations);
@@ -483,3 +483,15 @@ webgis.ui.definePlugin('webgis_tabs', {
         }
     }
 });
+
+// static helpers for callers outside this file (no plugin instance needed)
+// $target: plugin element or any element containing the .webgis-tabs-holder (or the holder itself)
+webgis.ui.hideTab = function ($target, options) {
+    (webgis.$ || jQuery).fn.webgis_tabs.plugin.hide($target, options);
+};
+webgis.ui.hideAllTabs = function ($target) {
+    (webgis.$ || jQuery).fn.webgis_tabs.plugin.hideAll($target);
+};
+webgis.ui.resizeTabs = function ($target) {
+    (webgis.$ || jQuery).fn.webgis_tabs.plugin.resize($target);
+};

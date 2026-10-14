@@ -321,7 +321,7 @@ webgis.continuousPosition = new function () {
     this.current = null;
     this.isWatching = function () { return _isWatching; };
     this.showInfo = function () {
-        $('body').webgis_modal({
+        webgis.ui.showModal({
             title: 'GPS Messinfo',
             onload: function ($content) {
                 $("<h3>").text(webgis.l10n.get('select-geolocation-api')).appendTo($content);

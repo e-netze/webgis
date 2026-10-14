@@ -133,7 +133,7 @@ webgis.ui.appendCallback = function ($newElem, element, options) {
                 var $menu = $(this).closest('ul');
 
                 if ($menu.attr('element-target') === 'modaldialog') {
-                    options.map.ui.webgisContainer().webgis_modal('close');
+                    webgis.ui.closeModal();
                 }
             }
         });

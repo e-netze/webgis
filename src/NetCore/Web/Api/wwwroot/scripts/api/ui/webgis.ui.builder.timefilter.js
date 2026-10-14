@@ -10,13 +10,13 @@ webgis.ui.builder['timefilterlist'] = (map, $newElement, element) => {
 };
 
 webgis.ui.showRemoveTimeFiltersDialog = function (map) {
-    webgis.$("body").webgis_modal({
+    webgis.ui.showModal({
         title: webgis.l10n.get("remove-filters"),
         width: "600px",
         onload: function ($content) {
             $("<div>").webgis_timeFilterList({
                 map: map,
-                onRemoveAllFilters: function () { webgis.$("body").webgis_modal("close"); }
+                onRemoveAllFilters: function () { webgis.ui.closeModal(); }
             })
             .appendTo($content);
         }

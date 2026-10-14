@@ -11,7 +11,7 @@ webgis.ui.builder["visfilterlist"] = (map, $newElement, element) => {
 };
 
 webgis.ui.showRemoveVisFiltersDialog = function (map) {
-    webgis.$("body").webgis_modal({
+    webgis.ui.showModal({
         title: webgis.l10n.get("remove-filters"),
         width: "600px",
         onload: function ($content) {
@@ -24,12 +24,12 @@ webgis.ui.showRemoveVisFiltersDialog = function (map) {
             //        map.unsetAllFilters();
             //        map.refresh();
             //        map.ui.refreshUIElements();
-            //        $("body").webgis_modal("close");
+            //        webgis.ui.closeModal();
             //    });
 
             $("<div>").webgis_visfilterList({
                     map: map,
-                    onRemoveAllFilters: function () { webgis.$("body").webgis_modal("close"); }
+                    onRemoveAllFilters: function () { webgis.ui.closeModal(); }
                 })
                 .appendTo($content);
         }

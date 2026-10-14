@@ -440,8 +440,8 @@
             var isGraphicsTool = this._isGraphicsToolActive();
 
             var containerOptions = { type: isGraphicsTool ? 'editable' : 'readonly' };
-            if ($.fn.webgis_graphicsInfoContainer.plugin.hasContainers(containerOptions)) {
-                $.fn.webgis_graphicsInfoContainer.plugin.refreshAllContainers(containerOptions);
+            if (webgis.ui.hasGraphicsInfoContainers(containerOptions)) {
+                webgis.ui.refreshGraphicsInfoContainers(containerOptions);
             } else if (this._elements.length > 0 && isGraphicsTool === false && webgis.usability.useGraphicsMarkerPopups === false && webgis.usability.showMarkerInfoPanel !== false) {
                 // create simple readonly container
                 var map = this._map;
@@ -471,7 +471,7 @@
 
     this._hasInfoContainers = function () {
         return $.fn.webgis_graphicsInfoContainer &&
-            $.fn.webgis_graphicsInfoContainer.plugin.hasContainers();
+            webgis.ui.hasGraphicsInfoContainers();
     };
 
     this._isGraphicsToolActive = function () {

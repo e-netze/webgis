@@ -125,7 +125,8 @@ webgis.ui.definePlugin = function (name, spec) {
 
         return chainable ? this : result;
     };
-    // static methods from outside, without an instance: $.fn.webgis_x.plugin.staticMethod(...)
+    // static methods, without an instance: $.fn.webgis_x.plugin.staticMethod(...) - inside the plugin file only;
+    // methods needed elsewhere get a flat wrapper after definePlugin: webgis.ui.<verbNoun> = function (...) { ... }
     (webgis.$ || jQuery).fn[name].plugin = Ctor;
 
     webgis.ui.__wrapDomRemoval();

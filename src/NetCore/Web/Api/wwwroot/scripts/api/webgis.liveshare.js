@@ -595,7 +595,7 @@
 
     var _setDialogTitle = function (title) {
         if (_map) {
-            (webgis.$ || jQuery).fn.webgis_dockPanel.plugin.set_title({ title: title || 'Live Share Connect', id: __liveshareToolId + "_aside" });
+            webgis.ui.setDockPanelTitle({ title: title || 'Live Share Connect', id: __liveshareToolId + "_aside" });
             _map.ui.refreshUIElements();
         }
     }

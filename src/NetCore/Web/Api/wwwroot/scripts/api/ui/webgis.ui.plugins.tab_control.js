@@ -27,7 +27,7 @@ webgis.ui.definePlugin('webgis_tab_control', {
             .on('click.webgis_tab_control', function () {
                 var tabs = $control.webgis_tab_control('getTabsOptions');
 
-                $('body').webgis_modal({
+                webgis.ui.showModal({
                     id: 'webgis-tab-control-all-tabs-modal',
                     title: webgis.l10n.get('active-queryresults'),
                     width: '330px',
@@ -547,7 +547,7 @@ webgis.ui.definePlugin('webgis_tab_control', {
             const $ = webgis.$ || jQuery, Ctor = $.fn.webgis_tab_control.plugin;
 
             var closeDialog = function () {
-                $(null).webgis_modal('close', { id: 'webgis-tab-control-all-tabs-modal' });
+                webgis.ui.closeModal('webgis-tab-control-all-tabs-modal');
             }
 
             var options = $control.data('options');

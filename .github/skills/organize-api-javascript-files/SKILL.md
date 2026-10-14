@@ -17,7 +17,7 @@ reader (and Visual Studio file nesting) the kind of code inside.
 | Core API / viewer modules (`webgis.<area>` objects) | `scripts/api/` | `webgis.<area>[.<sub>].js` | `webgis.map.js`, `webgis.sketch.construct.js`, `webgis.position.debug_geolocation.js` |
 | UI element builders (`webgis.ui.builder['<type>'] = {...}`) and builder-only helpers | `scripts/api/ui/` | `webgis.ui.builder.<topic>.js` | `webgis.ui.builder.inputs.js` |
 | UI plugins in the **current** format (`webgis.ui.definePlugin('webgis_x', {...})`) | `scripts/api/ui/` | `webgis.ui.plugins.<topic>.js` | `webgis.ui.plugins.timefilter.js` |
-| **Legacy** jQuery plugins (`$.fn.webgis_x = function (method) {...}`) | `scripts/api/ui/` | `webgis_<pluginName>.js` (one plugin, or a few closely related ones) | `webgis_modal.js`, `webgis_contextMenu.js` |
+| **Legacy** jQuery plugins (`$.fn.webgis_x = function (method) {...}`) | `scripts/api/ui/` | `webgis_<pluginName>.js` (one plugin, or a few closely related ones) | `webgis_contextMenu.js`, `webgis_search.js` |
 | Leaflet classes (`L.Xxx` + `L.xxx` factory) | `scripts/leaflet/plugins/` | `webgis-<topic>.<class_snake_case>.js` | `webgis-graphics.dim_line.js`, `webgis-servicelayer.webgis_service.js` |
 
 Rules:
@@ -27,7 +27,9 @@ Rules:
   share a file.
 - **Never mix kinds in one file.** A file named `webgis.ui.plugins.*` contains only
   `webgis.ui.definePlugin(...)` calls (plus tiny `webgis.ui.*` helpers that use them, e.g.
-  `webgis.ui.addTaskProgress`). Builders go to `webgis.ui.builder.*`, legacy `$.fn` plugins to
+  `webgis.ui.addTaskProgress`, and the flat `webgis.ui.<verbNoun>` wrappers of static methods that
+  other files call, defined right after their `definePlugin` - never `$.fn.x.plugin.y()` from another
+  file). Builders go to `webgis.ui.builder.*`, legacy `$.fn` plugins to
   `webgis_*.js`. When a legacy plugin is converted to `definePlugin` (see the
   `create-webgis-ui-plugin` skill), move it from `webgis_<name>.js` into the matching
   `webgis.ui.plugins.<topic>.js` and delete the old file.

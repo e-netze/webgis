@@ -55,7 +55,7 @@ webgis.ui.definePlugin('webgis_control_search', {
                         search_categories: $(sender).data('data-options').search_categories,
                         meta: meta,
                         success: function (metadata) {
-                            $('body').webgis_modal({
+                            webgis.ui.showModal({
                                 title: 'Schnellsuche Themen',
                                 onload: function ($content) {
                                     $content.addClass('meta-content').css('padding', '10px');
@@ -163,7 +163,7 @@ webgis.ui.definePlugin('webgis_control_search', {
                             //$('.webgis-presentation_toc-search.webgis-content-search-holder')
                             //    .webgis_contentsearch('set', { value: searchTag });
                             if (searchTag) {
-                                $('body').webgis_modal({
+                                webgis.ui.showModal({
                                     title: 'In Diensten suchen',
                                     onload: function ($content) {
                                         $content.css('padding', '0px');

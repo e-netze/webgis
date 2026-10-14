@@ -16,11 +16,11 @@
 
     webgis.ui.builder["editthemecombo.tagname"] = "select";
     webgis.ui.builder["editthemecombo"] = (map, $newElement, element, options) => {
-        $newElement.webgis_editthemeCombo({ map: options.map, customitems: element.customitems, dbrights: element.dbrights });
+        $newElement.webgis_editthemeCombo({ map: options.map, customitems: element.customitems, dbrights: element.db_rights });
     };
 
     webgis.ui.builder["editthemetree"] = (map, $newElement, element, options) => {
-        $newElement.webgis_editthemeTree({ id: element.id, map: options.map, customitems: element.customitems, dbrights: element.dbrights });
+        $newElement.webgis_editthemeTree({ id: element.id, map: options.map, customitems: element.customitems, dbrights: element.db_rights });
     };
 
     webgis.ui.builder["chainagethemecombo.tagname"] = "select";

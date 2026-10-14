@@ -207,7 +207,7 @@ webgis.ui.definePlugin('webgis_toolbar', {
     },
     staticMethods: {
         // adds the webgis-dependency-* classes of the tools to all tool buttons in $elem;
-        // also used for other tool button lists (query results): $.fn.webgis_toolbar.plugin.applyToolDependencies(...)
+        // also used for other tool button lists (query results): webgis.ui.applyToolDependencies($elem, map)
         applyToolDependencies: function ($elem, map) {
             if (!map)
                 return;
@@ -229,3 +229,8 @@ webgis.ui.definePlugin('webgis_toolbar', {
         }
     }
 });
+
+// static helper for callers outside this file (no plugin instance needed)
+webgis.ui.applyToolDependencies = function ($elem, map) {
+    (webgis.$ || jQuery).fn.webgis_toolbar.plugin.applyToolDependencies($elem, map);
+};

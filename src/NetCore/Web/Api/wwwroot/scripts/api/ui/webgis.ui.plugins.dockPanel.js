@@ -1,7 +1,8 @@
 ﻿// WebGIS UI Plugins (dock panel)
 // webgis_dockPanel
 // Creates (or reuses) a docked panel (left/right/top/bottom) inside the element the plugin is called on (e.g. the webgis container).
-// Panel helpers (content, close, remove, ...) are static methods: $.fn.webgis_dockPanel.plugin.<name>(...)
+// Panel helpers (content, close, remove, ...) are static methods; callers outside this file use
+// webgis.ui.closeDockPanel/removeDockPanel/removeAllDockPanels/setDockPanelTitle/getDockPanelId (end of file).
 
 webgis.ui.definePlugin('webgis_dockPanel', {
     // called repeatedly on the same container (one call per panel to show) => rebuild each time
@@ -392,3 +393,20 @@ webgis.ui.definePlugin('webgis_dockPanel', {
         }
     }
 });
+
+// static helpers for callers outside this file (no plugin instance needed)
+webgis.ui.closeDockPanel = function (options) {
+    return (webgis.$ || jQuery).fn.webgis_dockPanel.plugin.close(options);
+};
+webgis.ui.removeDockPanel = function ($panel) {
+    (webgis.$ || jQuery).fn.webgis_dockPanel.plugin.remove($panel);
+};
+webgis.ui.removeAllDockPanels = function ($container) {
+    (webgis.$ || jQuery).fn.webgis_dockPanel.plugin.removeAll($container);
+};
+webgis.ui.setDockPanelTitle = function (options) {
+    (webgis.$ || jQuery).fn.webgis_dockPanel.plugin.set_title(options);
+};
+webgis.ui.getDockPanelId = function (options) {
+    return (webgis.$ || jQuery).fn.webgis_dockPanel.plugin.panelId(options);
+};

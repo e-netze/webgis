@@ -4,8 +4,8 @@
 // select_sketch
 // Snapping settings and sketch construction tools (direction/distance, offset, extend line,
 // absolute coordinates, sketch from geometry, upload/download sketch, select named sketch).
-// webgis_sketchFromGeometry and select_sketch need no element: use the static
-// $.fn.webgis_sketchFromGeometry.plugin.open(options) / $.fn.select_sketch.plugin.open(options).
+// webgis_sketchFromGeometry and select_sketch need no element: use
+// webgis.ui.showSketchFromGeometryDialog(options) / webgis.ui.showSelectSketchDialog(options).
 
 webgis.ui.definePlugin('webgis_snapping', {
     defaults: {
@@ -545,7 +545,7 @@ webgis.ui.definePlugin('webgis_sketchFromGeometry', {
         this.constructor.open(rawOptions, this.$el);
     },
     staticMethods: {
-        // no element needed: $.fn.webgis_sketchFromGeometry.plugin.open({ map: map, sketch: sketch })
+        // no element needed, from outside: webgis.ui.showSketchFromGeometryDialog(options, $parent)
         // $parent (optional): element the server UI is built into, default: $(null)
         open: function (options, $parent) {
             const $ = webgis.$ || jQuery;
@@ -608,6 +608,12 @@ webgis.ui.definePlugin('webgis_sketchFromGeometry', {
         }
     }
 });
+
+// no element needed: webgis.ui.showSketchFromGeometryDialog({ map: map, sketch: sketch })
+// $parent (optional): element the server UI is built into, default: $(null)
+webgis.ui.showSketchFromGeometryDialog = function (options, $parent) {
+    (webgis.$ || jQuery).fn.webgis_sketchFromGeometry.plugin.open(options, $parent);
+};
 
 webgis.ui.definePlugin('webgis_uploadSketch', {
     defaults: {
@@ -715,7 +721,7 @@ webgis.ui.definePlugin('select_sketch', {
         this.constructor.open(rawOptions);
     },
     staticMethods: {
-        // no element needed: $.fn.select_sketch.plugin.open({ map: map, named_sketches: [...], close_sketch: false })
+        // no element needed, from outside: webgis.ui.showSelectSketchDialog(options)
         open: function (options) {
             "use strict"; // as in the legacy plugin: 'this' in applyCancel stays undefined (not window)
             const $ = webgis.$ || jQuery;
@@ -871,3 +877,8 @@ webgis.ui.definePlugin('select_sketch', {
         }
     }
 });
+
+// no element needed: webgis.ui.showSelectSketchDialog({ map: map, named_sketches: [...], close_sketch: false })
+webgis.ui.showSelectSketchDialog = function (options) {
+    (webgis.$ || jQuery).fn.select_sketch.plugin.open(options);
+};

@@ -441,7 +441,7 @@
                 if (this.ui.useClickBubble()) {
                     this.ui.animClickBubble();
                     if ($.fn.webgis_tabs && webgis.useMobileCurrent())
-                        $.fn.webgis_tabs.plugin.hideAll($(this._webgisContainer).find('.webgis-tabs-holder'));
+                        webgis.ui.hideAllTabs($(this._webgisContainer).find('.webgis-tabs-holder'));
                 }
                 else {
                     this.eventHandlers.click.apply(this, [e]);
@@ -520,7 +520,7 @@
                         this._lastRightClickTime = new Date().getTime();
 
                         if ($.fn.webgis_map_contextmenu) {
-                            $.fn.webgis_map_contextmenu.plugin.hide();
+                            webgis.ui.hideMapContextMenu();
                         }
 
                         this.events.fire('rightclick', this, e);
@@ -820,7 +820,7 @@
 
         this.events.on(['onnewfeatureresponse', 'querymarkersremoved', 'onnewdynamiccontentloaded'], function () {
             // Dialoge mit Ergebnissen schließen
-            $.fn.webgis_dockPanel.plugin.remove(this.ui.webgisContainer().find('.webgis-dockpanel.webgis-result'));
+            webgis.ui.removeDockPanel(this.ui.webgisContainer().find('.webgis-dockpanel.webgis-result'));
         }, this);
         this.events.on(['onnewfeatureresponse'], function () {
             this.unloadDynamicContent();
@@ -1185,7 +1185,7 @@
 
         // remove/clean UI Elements
         if ($.fn.webgis_dockPanel) {
-            $.fn.webgis_dockPanel.plugin.removeAll($(this._webgisContainer));
+            webgis.ui.removeAllDockPanels($(this._webgisContainer));
         }
 
         var $tabControl = this.ui.getQueryResultTabControl();
@@ -2444,12 +2444,10 @@
             if (this.sketch)
                 this.sketch.hide();
             if (this._activeTool) {
-                if ($.fn.webgis_modal)
-                    $(null).webgis_modal('close', {
-                        id: this._activeTool.id
-                    });
+                if (webgis.ui && webgis.ui.closeModal)
+                    webgis.ui.closeModal(this._activeTool.id);
                 if ($.fn.webgis_dockPanel)
-                    $.fn.webgis_dockPanel.plugin.close({
+                    webgis.ui.closeDockPanel({
                         id: this._activeTool.id
                     });
                 $('.tool-' + webgis.validClassName(this._activeTool.id)).removeClass('active');
@@ -3834,7 +3832,7 @@
         var data = webgis.tools.getToolData("webgis.tools.io.print");
         if (!data.prints)
             data.prints = [];
-        $('body').webgis_modal({
+        webgis.ui.showModal({
             title: 'Druckaufträge',
             onload: function ($content) {
                 for (var i = data.prints.length - 1; i >= 0; i--) {

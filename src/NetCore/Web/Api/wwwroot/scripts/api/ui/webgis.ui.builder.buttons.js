@@ -143,7 +143,8 @@ webgis.ui.builder["undobutton"] = (map, $newElement, element) => {
         if (!undoTool || !undoTool.undos || !undoTool.undos.length)
             return;
 
-        map.ui.webgisContainer().webgis_modal({
+        webgis.ui.showModal({
+            container: map.ui.webgisContainer(),
             width: '330px',
             title: $this.html(),
             slide: false,

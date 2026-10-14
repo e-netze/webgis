@@ -3,7 +3,8 @@
 // Presentation TOC of the viewer (containers, groups and presentation items of the map services,
 // basemaps, dynamic content, custom containers, legend/copyright dialog) and the service order list
 // (sort services and set their opacity, used in a modal dialog).
-// The TOC helpers are static methods ($.fn.webgis_presentationToc.plugin.<name>); the legacy global
+// The TOC helpers are static methods ($.fn.webgis_presentationToc.plugin.<name>, inside this file only;
+// from outside: webgis.ui.showServicesLegend); the legacy global
 // $.presentationToc (process, findItem, checkItemVisibility, showLegend, ..., sequence) is kept for
 // existing callers and custom code. $.presentationToc.sequence is the global item/container id counter.
 
@@ -57,7 +58,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                 .appendTo($elem)
                 .on('click.webgis_presentation_toc', function () {
                     let map = this.parentNode._map, $button = $(this);
-                    $('body').webgis_modal({
+                    webgis.ui.showModal({
                         title: webgis.l10n.get("add-services"),
                         onload: function ($content) {
                             $content.css('padding', '0px');
@@ -246,8 +247,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
         }
     },
     staticMethods: {
-        // called without a TOC instance, e.g. from the legend button of the tabs header:
-        // $.fn.webgis_presentationToc.plugin.showServicesLegend({ map: map, sender: this })
+        // called without a TOC instance (from outside: webgis.ui.showServicesLegend, end of the plugin)
         showServicesLegend: function (options) {
             const Ctor = (webgis.$ || jQuery).fn.webgis_presentationToc.plugin;
             if (options && options.map) {
@@ -1178,7 +1178,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                         $(sender).removeClass('webgis-loading');
                     }
                 };
-                $('body').webgis_modal({
+                webgis.ui.showModal({
                     id: 'webgis-legend',
                     title: title + ":",
                     onload: function ($content) {
@@ -1196,7 +1196,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
         },
         hideLegend: function () {
             const $ = webgis.$ || jQuery;
-            $(null).webgis_modal('close', { id: 'webgis-legend' });
+            webgis.ui.closeModal('webgis-legend');
         },
         refreshLegend: function (event, map, parent) {
             const $ = webgis.$ || jQuery;
@@ -1840,7 +1840,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
 
                         c.map.queryResultFeatures.clear(hasHistory);
                         c.map.getSelection('selection').remove();
-                        $.fn.webgis_queryResultsList.plugin.empty($holder.find('.webgis-search-result-list'), { map: c.map });
+                        webgis.ui.emptyQueryResultsList($holder.find('.webgis-search-result-list'), { map: c.map });
                         $holder.get(0).search_term = '';
                         if (hasHistory) {
                             $.webgis_search_result_histories[c.map].render($holder.find('.webgis-search-result-list'));
@@ -1998,7 +1998,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                     });
 
                 const onBasemapChangedOpacity = function (e, sender, basemapService) {
-                    $.fn.webgis_opacity_control.plugin.refreshHolders(this);
+                    webgis.ui.refreshOpacityControls(this);
                     sender.ui.refreshUIElements();
                 };
                 service.map.events.on('basemap_changed', onBasemapChangedOpacity, $opacity_container);
@@ -2331,6 +2331,12 @@ webgis.ui.definePlugin('webgis_presentationToc', {
         },
     }
 });
+
+// static helper for callers outside this file (no TOC instance needed),
+// e.g. the legend button of the tabs header: webgis.ui.showServicesLegend({ map: map, sender: this })
+webgis.ui.showServicesLegend = function (options) {
+    (webgis.$ || jQuery).fn.webgis_presentationToc.plugin.showServicesLegend(options);
+};
 
 // legacy global: used from webgis.tools.js, the map context menu, the Portal (webgis-map.js)
 // and possibly from custom code

@@ -443,9 +443,9 @@ webgis.ui.definePlugin('webgis_topbar', {
             }
 
             if ($tabControl) {
-                $.fn.webgis_queryResultListWithFeatureDetails.plugin.empty($resultTarget, { map: map });
+                webgis.ui.emptyQueryResultsListWithFeatureDetails($resultTarget, { map: map });
             } else {
-                $.fn.webgis_queryResultsList.plugin.empty($resultTarget, { map: map });
+                webgis.ui.emptyQueryResultsList($resultTarget, { map: map });
             }
             $resultTarget.html("<img src='" + webgis.css.imgResource('loader1.gif', 'hourglass') + "' /><span>Suche läuft...</span>");
 
@@ -512,7 +512,7 @@ webgis.ui.definePlugin('webgis_topbar', {
             }
             map.events.fire('showqueryresults', { map: map, buttons: { clearresults: false, showtable: false } });
             var $list = $content.find('.webgis-search-result-list');
-            $.fn.webgis_queryResultsList.plugin.empty($list, { map: map });
+            webgis.ui.emptyQueryResultsList($list, { map: map });
             $list.html("<img src='" + webgis.css.imgResource('loader1.gif', 'hourglass') + "' /><span>Suche läuft...</span>");
             webgis.ajax({
                 url: webgis.baseUrl + '/rest/search/geojuhu',

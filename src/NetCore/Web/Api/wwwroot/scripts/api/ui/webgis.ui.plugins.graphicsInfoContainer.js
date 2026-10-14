@@ -32,7 +32,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
         }
     },
     staticMethods: {
-        // usage from outside (no instance needed): $.fn.webgis_graphicsInfoContainer.plugin.refreshAllContainers({ type: 'editable' })
+        // usage from outside (no instance needed): webgis.ui.refreshGraphicsInfoContainers({ type: 'editable' })
         refreshAllContainers: function (options) {
             const $ = webgis.$ || jQuery;
             const self = $.fn.webgis_graphicsInfoContainer.plugin;
@@ -63,7 +63,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                 if ($.fn.webgis_dockPanel) {
                     var $dockPanel = $(container).closest('.webgis-dockpanel');
                     if ($dockPanel.length > 0) {
-                        $.fn.webgis_dockPanel.plugin.remove($dockPanel);
+                        webgis.ui.removeDockPanel($dockPanel);
                     } else {
                         $container.remove();
                     }
@@ -467,3 +467,11 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
         }
     }
 });
+
+// static helpers for callers outside this file (no plugin instance needed)
+webgis.ui.hasGraphicsInfoContainers = function (options) {
+    return (webgis.$ || jQuery).fn.webgis_graphicsInfoContainer.plugin.hasContainers(options);
+};
+webgis.ui.refreshGraphicsInfoContainers = function (options) {
+    (webgis.$ || jQuery).fn.webgis_graphicsInfoContainer.plugin.refreshAllContainers(options);
+};

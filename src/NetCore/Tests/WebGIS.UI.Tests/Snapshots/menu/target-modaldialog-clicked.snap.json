@@ -30,10 +30,6 @@
           "menuitem-value": "[undefined]"
         }
       ]
-    },
-    {
-      "call": "map.ui.webgisContainer",
-      "args": []
     }
   ]
 }

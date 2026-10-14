@@ -149,6 +149,12 @@ webgis.ui.definePlugin('webgis_opacity_control', {
     }
 });
 
+// static helper for callers outside this file
+// elem: holder, element containing holders or null (= all holders in the document)
+webgis.ui.refreshOpacityControls = function (elem) {
+    (webgis.$ || jQuery).fn.webgis_opacity_control.plugin.refreshHolders(elem);
+};
+
 webgis.ui.definePlugin('webgis_focusservice_control', {
     reinit: true,   // calling it again on the same parent replaces the buttons
     defaults: {

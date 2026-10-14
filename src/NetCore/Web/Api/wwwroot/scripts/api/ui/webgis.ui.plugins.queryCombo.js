@@ -595,7 +595,7 @@ webgis.ui.definePlugin('webgis_extCombo', {
     },
     init: function () {
         const $ = this.$;
-        if (!$.fn.webgis_modal)
+        if (!webgis.ui.showModal)
             return;
 
         const options = this.options;
@@ -619,7 +619,7 @@ webgis.ui.definePlugin('webgis_extCombo', {
                     $this.removeClass('focus-extend');
                     e.stopPropagation();
 
-                    $('body').webgis_modal({
+                    webgis.ui.showModal({
                         id: 'webgis-extendable-combo-modal',
                         title: 'Liste erweitern',
                         width: '340px',
@@ -648,7 +648,7 @@ webgis.ui.definePlugin('webgis_extCombo', {
                                     $combo.val(newValue);
                                     $combo.trigger('change');
 
-                                    $(null).webgis_modal('close', { id: 'webgis-extendable-combo-modal' });
+                                    webgis.ui.closeModal('webgis-extendable-combo-modal');
                                 });
 
                             $input.keypress(function (e) {

@@ -31,9 +31,9 @@
             if (map.ui.advancedToolBehaviour() === true) {
                 map.ui.webgisContainer().find('.webgis-tabs-tab-content').find('.webgis-tooldialog-header.secondary span.close').trigger('click');
             } else {
-                map.ui.webgisContainer().webgis_modal('close', { id: constants.serverButtonModalDialogId });
+                webgis.ui.closeModal(constants.serverButtonModalDialogId);
                 if ($.fn.webgis_tabs) {
-                    $.fn.webgis_tabs.plugin.hide(map.ui.webgisContainer().find('.webgis-tabs-holder'), { tab: 'tools' });
+                    webgis.ui.hideTab(map.ui.webgisContainer().find('.webgis-tabs-holder'), { tab: 'tools' });
                 }
             }
         }
@@ -190,11 +190,11 @@
                             title: options.title,
                             id: constants.serverButtonModalDialogId
                         };
-                        $parent = options.map.ui.webgisContainer().webgis_modal('content', dialogOptions);
+                        $parent = webgis.ui.getModalContent(dialogOptions.id);
 
                         if ($parent.length === 0) {
-                            options.map.ui.webgisContainer().webgis_modal(dialogOptions);
-                            $parent = options.map.ui.webgisContainer().webgis_modal('content', dialogOptions);
+                            webgis.ui.showModal($.extend({ container: options.map.ui.webgisContainer() }, dialogOptions));
+                            $parent = webgis.ui.getModalContent(dialogOptions.id);
                         }
 
                         if (options.append !== true) {
@@ -291,10 +291,11 @@
             }
             if (hasModalDialogElements === true) {
                 if (closeModalDialog) {
-                    options.map.ui.webgisContainer().webgis_modal('close');
+                    webgis.ui.closeModal();
                 }
                 else {
-                    options.map.ui.webgisContainer().webgis_modal({
+                    webgis.ui.showModal({
+                        container: options.map.ui.webgisContainer(),
                         width: modalDialogWidth,
                         height: modalDialogHeight,
                         show: modalDialogVisible,
@@ -302,15 +303,16 @@
                         slide: false,
                         onclose: () => onCloseTarget(options.map, modalDialogElement),
                     });
-                    $targetRoot = $modalContent = options.map.ui.webgisContainer().webgis_modal('content');
+                    $targetRoot = $modalContent = webgis.ui.getModalContent();
                 }
             }
             if (hasToolModalDialogElements === true) {
                 if (closeToolModalDialog) {
-                    options.map.ui.webgisContainer().webgis_modal('close', { id: options.toolDialogId });
+                    webgis.ui.closeModal(options.toolDialogId);
                 }
                 else {
-                    options.map.ui.webgisContainer().webgis_modal({
+                    webgis.ui.showModal({
+                        container: options.map.ui.webgisContainer(),
                         width: '330px',
                         show: toolModalDialogVisible,
                         title: toolModalDialogTitle,
@@ -322,12 +324,12 @@
                         dock: 'left',
                         animate: true
                     });
-                    $targetRoot = $toolModalContent = options.map.ui.webgisContainer().webgis_modal('content', { id: options.toolDialogId });
+                    $targetRoot = $toolModalContent = webgis.ui.getModalContent(options.toolDialogId);
                 }
             }
             if (hasSidebarBottomElements === true) {
                 if (closeSidebarBottom) {
-                    $.fn.webgis_dockPanel.plugin.close({ dock: 'bottom', id: options.toolDialogId });
+                    webgis.ui.closeDockPanel({ dock: 'bottom', id: options.toolDialogId });
                 }
                 else {
                     options.map.ui.webgisContainer().webgis_dockPanel({
@@ -344,7 +346,7 @@
             }
             if (hasSidebarTopElements === true) {
                 if (closeSidebarTop) {
-                    $.fn.webgis_dockPanel.plugin.close({ dock: 'top', id: options.toolDialogId });
+                    webgis.ui.closeDockPanel({ dock: 'top', id: options.toolDialogId });
                 }
                 else {
                     //options.map.ui.webgisContainer().webgis_dockPanel('close', { dock: 'top', id: options.toolDialogId });
@@ -362,7 +364,7 @@
             }
             if (hasSidebarLeftElements === true) {
                 if (closeSidebarLeft) {
-                    $.fn.webgis_dockPanel.plugin.close({ dock: 'left', id: options.toolDialogId });
+                    webgis.ui.closeDockPanel({ dock: 'left', id: options.toolDialogId });
                 }
                 else {
                     options.map.ui.webgisContainer().webgis_dockPanel({
@@ -377,7 +379,7 @@
             }
             if (hasAsideToolElements === true) {
                 if (closeAsideToolElement) {
-                    $.fn.webgis_dockPanel.plugin.close({ dock: 'right', id: options.toolDialogId + "_aside" });
+                    webgis.ui.closeDockPanel({ dock: 'right', id: options.toolDialogId + "_aside" });
                 } else {
                     options.map.ui.webgisContainer().webgis_dockPanel({
                         title: sidebarLeftTitle,
@@ -461,15 +463,15 @@
 
             if (hasModalDialogElements === true) {
                 if (!modalDialogHeight) {
-                    options.map.ui.webgisContainer().webgis_modal('fit');
+                    webgis.ui.fitModal();
                 }
                 if (modalDialogVisible === false)
-                    options.map.ui.webgisContainer().webgis_modal('hide');
+                    webgis.ui.hideModal();
             }
             if (hasToolModalDialogElements === true) {
-                options.map.ui.webgisContainer().webgis_modal('fit', { id: options.toolDialogId, dock: 'left' });
+                webgis.ui.fitModal(options.toolDialogId, { dock: 'left' });
                 if (toolModalDialogVisible === false)
-                    options.map.ui.webgisContainer().webgis_modal('hide', { id: options.toolDialogId });
+                    webgis.ui.hideModal(options.toolDialogId);
             }
         }
         if (options.setters) {
@@ -485,6 +487,9 @@
                     var $optionContainer = $('#' + setter.id);
                     $optionContainer.find('.webgis-ui-option-selected').removeClass('webgis-ui-option-selected');
                     $optionContainer.find("[data-value='" + setter.val + "']").addClass('webgis-ui-option-selected');
+                    if ($optionContainer.hasClass('webgis-ui-optionscontainer')) {
+                        $optionContainer.get(0).value = setter.val;  // like the default setter: also set the value (sent as tool parameter)
+                    }
                 }
                 else if (setter.name === "_anonymous-user-id") {
                     //console.log(setter.val);
@@ -526,6 +531,7 @@
                         else {
                             switch (e.nodeName.toLowerCase()) {
                                 case "input":
+                                case "textarea":  // .html() would only change the default value (not shown after the user edited the textarea)
                                     //console.log('set-input', $(e), $(e).length, setter.val);
                                     $e.val(setter.val);
                                     break;
@@ -551,8 +557,10 @@
                                             $("<option value='" + option.value + "'>" + option.label + "</option>").appendTo($(e));
                                         }
 
-                                        var tool = this.map.getTool($(e).attr('data-tool-id')) || this.map.getActiveTool();
-                                        $(e).val(setter.val || $(e).data('initial-value') || this.map.getPersistentToolParameter(tool, this.id));
+                                        // e.map is only set for selects with onchange/persistent parameter => fallback to the builder map
+                                        var map = this.map || options.map;
+                                        var tool = map ? map.getTool($(e).attr('data-tool-id')) || map.getActiveTool() : null;
+                                        $(e).val(setter.val || $(e).data('initial-value') || (map && tool ? map.getPersistentToolParameter(tool, this.id) : null));
                                         if ($(e).hasClass('webgis-validation')) {
                                             $(e).webgis_validation('validate');
                                         }

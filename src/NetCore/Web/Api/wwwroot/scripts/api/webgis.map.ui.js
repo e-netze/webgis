@@ -1246,7 +1246,7 @@
     this.showHelp = function (name, index) {
         if (!index)
             index = 'index';
-        $('body').webgis_modal({
+        webgis.ui.showModal({
             title: 'Click Bubble',
             onload: function ($content) {
                 $content.css('padding', '10px');
@@ -1318,8 +1318,8 @@
 
     this.scaleDialog = function () {
         var map = this._map;
-        if (map && $.fn.webgis_modal) {
-            $('body').webgis_modal({
+        if (map && webgis.ui && webgis.ui.showModal) {
+            webgis.ui.showModal({
                 id: 'setscale-modal',
                 title: webgis.l10n.get("mapscale"),
                 width: '340px',
@@ -1344,7 +1344,7 @@
                             $scaleInput.keypress(function (e) {
                                 if (e.keyCode === 13) {
                                     map.setCalcCrsScale(parseInt($(this).val()), map.getCenter());
-                                    $(null).webgis_modal('close', { id: 'setscale-modal' });
+                                    webgis.ui.closeModal('setscale-modal');
                                 }
                             });
                         }
@@ -1376,7 +1376,7 @@
 
                         $scaleInput.change(function (e) {
                             map.setScale(parseInt($(this).val()), map.getCenter());
-                            //$(null).webgis_modal('close', { id: 'setscale-modal' });
+                            //webgis.ui.closeModal('setscale-modal');
                         });
                     }
 
@@ -1399,7 +1399,7 @@
                             .appendTo($bottonConatainer)
                             .click(function (e) {
                                 webgis.resetUserPreferenceMinScale();
-                                $(null).webgis_modal('close', { id: 'setscale-modal' });
+                                webgis.ui.closeModal('setscale-modal');
                             });
                     }
 
@@ -1414,7 +1414,7 @@
                                 webgis.setUserPreferenceMinScale(parseFloat($scaleInput.val()));
                             }
 
-                            $(null).webgis_modal('close', { id: 'setscale-modal' });
+                            webgis.ui.closeModal('setscale-modal');
                         });
 
                 }
@@ -1520,7 +1520,7 @@
             if ($resultHolder.length > 0) {
                 $resultHolder.get(0).search_term = '';
             }
-            $.fn.webgis_queryResultsList.plugin.empty($resultHolder.find('.webgis-search-result-list'), { map: map });
+            webgis.ui.emptyQueryResultsList($resultHolder.find('.webgis-search-result-list'), { map: map });
         }
 
         if (result && result.features && result.features.length === 0) {
@@ -2014,7 +2014,7 @@
     };
 
     this.showBufferDialog = function () {
-        if (!$.fn.webgis_modal) {
+        if (!webgis.ui || !webgis.ui.showModal) {
             webgis.alert('WebGIS UI library (webis_modal) is available', 'error');
             return;
         }
@@ -2022,7 +2022,7 @@
 
         var service = map.queryResultFeatures.firstService();
         var query = map.queryResultFeatures.firstQuery();
-        $('body').webgis_modal({
+        webgis.ui.showModal({
             title: 'Nachbarschaft berechnen',
             id: 'buffer-modal',
             onload: function ($content) {
@@ -2072,7 +2072,7 @@
                             error: function () {
                             }
                         });
-                        $('body').webgis_modal('close', { id: 'buffer-modal' });
+                        webgis.ui.closeModal('buffer-modal');
                     });
             },
             width: '330px', height: '280px'

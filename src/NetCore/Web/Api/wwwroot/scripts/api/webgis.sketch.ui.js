@@ -543,14 +543,14 @@
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
 
-                            $.fn.webgis_sketchFromGeometry.plugin.open({ map: map, sketch: sketch });
+                            webgis.ui.showSketchFromGeometryDialog({ map: map, sketch: sketch });
                         });
                 }
                 if (/*vertices.length === 0 && */_isLineOrPolygon()) {
                     $_menuItem($container, webgis.l10n.get("sketch-upload"), webgis.css.imgResource('sketch_upload-26.png', 'tools'))
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
-                            $('body').webgis_modal({
+                            webgis.ui.showModal({
                                 title: webgis.l10n.get("sketch-upload"),
                                 width: '340px',
                                 height: '400px',
@@ -564,7 +564,7 @@
                     $_menuItem($container, webgis.l10n.get("sketch-download"), webgis.css.imgResource('sketch_download-26.png', 'tools'))
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
-                            $('body').webgis_modal({
+                            webgis.ui.showModal({
                                 title: webgis.l10n.get("sketch-download"),
                                 width: '340px',
                                 height: '400px',
@@ -703,7 +703,7 @@
                                         offset = offset / Math.abs(offset) * webgis.usability.sketchTools.offset.defaultOffset;
                                     }
 
-                                    $('body').webgis_modal({
+                                    webgis.ui.showModal({
                                         title: webgis.l10n.get("sketch-tool-offset"),
                                         id: 'webgis-sketch-offset-modal',
                                         width: '320',
@@ -759,7 +759,7 @@
                                                     sketch.addUndo(webgis.l10n.get("sketch-tool-offset"));
                                                     sketch.remove(true);
                                                     sketch.addVertices(offsetVertices);
-                                                    $('body').webgis_modal('close', { id: 'webgis-sketch-offset-modal' });
+                                                    webgis.ui.closeModal('webgis-sketch-offset-modal');
                                                 }
                                             });
                                         }
@@ -772,7 +772,7 @@
                         $_menuItem($container, webgis.l10n.get("sketch-tool-extend"), webgis.css.imgResource('sketch_extend_line-26.png', 'tools'))
                             .click(function () {
                                 var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();
-                                $('body').webgis_modal({
+                                webgis.ui.showModal({
                                     title: webgis.l10n.get("sketch-tool-extend"),
                                     width: "340px",
                                     height: "220px",
@@ -814,7 +814,7 @@
                                                     sketch.redrawMarkers();
                                                 }
 
-                                                $('body').webgis_modal('close', { id: 'webgis-sketch-extend-line-modal' });
+                                                webgis.ui.closeModal('webgis-sketch-extend-line-modal');
                                             }
                                         });
                                     }
@@ -984,7 +984,7 @@
     this.openXYAbsoluteModal = function () {
         var map = sketch.map;
 
-        $('body').webgis_modal({
+        webgis.ui.showModal({
             title: webgis.l10n.get("sketch-construct-coordiantes"),
             //id: 'webgis-sketch-xy-aboslute',
             width: '340px',
@@ -1022,7 +1022,7 @@
             }
         }
 
-        $('body').webgis_modal({
+        webgis.ui.showModal({
             title: webgis.l10n.get("sketch-construct-direction-distance"),
             id: "webgis-sketch-dir-dist-modal",
             onload: function ($content) {
@@ -1042,7 +1042,7 @@
                         if (p) {
                             sketch._snappedVertex = p;
                             sketch.addVertexCoords(p.x, p.y, true); // x,y sind dummy -> es wird sowie der Snapped Vertex genommen...
-                            $('body').webgis_modal('close', { id: 'webgis-sketch-dir-dist-modal' });
+                            webgis.ui.closeModal('webgis-sketch-dir-dist-modal');
                             // 'close' (unlike the "x" button/blocker click) doesn't fire onclose - restore
                             // the overlay's map-hover state here too so it reappears after Apply.
                             if (map && map.notifySketchConstructionModalClosed) {

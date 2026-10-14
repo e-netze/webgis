@@ -19,9 +19,15 @@
           "id": "webgis-modal-server-button-modal-dialog",
           "style": "z-index:9999;position:fixed;left:0px;right:0px;top:0px;bottom:0px;background:rgba(0,0,0,0.5);"
         },
+        "data": {
+          "__plugins__": [
+            "[object Ctor]"
+          ],
+          "webgis_modalDialog": "[object Ctor]"
+        },
         "events": {
-          "click": 1,
-          "mousedown": 1
+          "click.webgis_modalDialog": 1,
+          "mousedown.webgis_modalDialog": 1
         },
         "children": [
           {
@@ -32,7 +38,7 @@
               "style": "z-index: 1000; position: absolute; width: 330px; height: 640px; min-width: 330px; max-width: 100%; background: var(--webgis-ui-surface); opacity: 1; display: block; left: 475px; top: 40px; max-height: calc(100% - 80px); min-height: 0px;"
             },
             "events": {
-              "click": 1
+              "click.webgis_modalDialog": 1
             },
             "children": [
               {
@@ -114,7 +120,7 @@
                   "style": "position: absolute; left: 0px; right: 0px; top: 0px; height: 35px; cursor: pointer;"
                 },
                 "events": {
-                  "click": 1
+                  "click.webgis_modalDialog": 1
                 },
                 "children": [
                   {
@@ -135,26 +141,7 @@
                       "class": "webgis-modal-close"
                     },
                     "events": {
-                      "click": 1
-                    },
-                    "expandos": {
-                      "options": {
-                        "animate": true,
-                        "blocker_alpha": 0.5,
-                        "blockerclickclose": true,
-                        "closebutton": true,
-                        "dock": "center",
-                        "hasBlocker": true,
-                        "height": "80%",
-                        "id": "server-button-modal-dialog",
-                        "meta_left_frame": false,
-                        "minWidth": "330px",
-                        "mobile_fullscreen": true,
-                        "slide": true,
-                        "title": "",
-                        "titleButtons": null,
-                        "width": "330px"
-                      }
+                      "click.webgis_modalDialog": 1
                     }
                   }
                 ]

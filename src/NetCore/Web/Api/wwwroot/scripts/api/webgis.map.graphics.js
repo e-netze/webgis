@@ -353,7 +353,7 @@
         }
     };
 
-    this.refreshUI = function() { $.fn.webgis_graphicsInfoContainer.plugin.refreshAllContainers(); };
+    this.refreshUI = function() { webgis.ui.refreshGraphicsInfoContainers(); };
 
     this.getColor = function (geomType) {
         return this._sketch.getColor(geomType);
@@ -617,9 +617,9 @@
 
             var containerOptions = { type: isGraphicsTool ? 'editable' : 'readonly' };
             if (/*$().webgis_graphicsInfoStage('hasContainers') ||*/
-                $.fn.webgis_graphicsInfoContainer.plugin.hasContainers(containerOptions)) {
+                webgis.ui.hasGraphicsInfoContainers(containerOptions)) {
                 //$(null).webgis_graphicsInfoStage('refreshAllContainers');
-                $.fn.webgis_graphicsInfoContainer.plugin.refreshAllContainers(containerOptions);
+                webgis.ui.refreshGraphicsInfoContainers(containerOptions);
             } else if (this._elements.length > 0 && isGraphicsTool === false && webgis.usability.useGraphicsMarkerPopups === false && webgis.usability.showMarkerInfoPanel !== false) {
                 // create simple readonly containerwebgis_graphicsInfoStage
                 var map = this._map;
@@ -649,7 +649,7 @@
 
     this._hasInfoContainers = function () {
         return $.fn.webgis_graphicsInfoContainer &&
-            $.fn.webgis_graphicsInfoContainer.plugin.hasContainers();
+            webgis.ui.hasGraphicsInfoContainers();
     };
 
     this._isGraphicsToolActive = function () {

@@ -198,7 +198,7 @@ webgis.ui.definePlugin('webgis_map_contextmenu', {
         }
     },
     staticMethods: {
-        // $.fn.webgis_map_contextmenu.plugin.hide() - no instance needed
+        // no instance needed, from outside: webgis.ui.hideMapContextMenu()
         hide: function () {
             const $ = webgis.$ || jQuery;
             if ($._webgisMapContextMenu) {
@@ -438,5 +438,10 @@ webgis.ui.definePlugin('webgis_map_contextmenu', {
         }
     }
 });
+
+// static helper for callers outside this file (no plugin instance needed)
+webgis.ui.hideMapContextMenu = function () {
+    (webgis.$ || jQuery).fn.webgis_map_contextmenu.plugin.hide();
+};
 
 (webgis.$ || jQuery)._webgisMapContextMenu = null;

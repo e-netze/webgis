@@ -713,7 +713,7 @@ webgis.ui.definePlugin('webgis_addServicesToc', {
             const $modal = $this.closest('.webgis-modal');
 
             if ($modal.length === 1) {
-                $modal.webgis_modal('close');
+                $modal.webgis_modalDialog('close');
             }
         }
     }

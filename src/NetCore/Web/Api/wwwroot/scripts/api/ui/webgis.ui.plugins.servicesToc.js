@@ -42,7 +42,7 @@ webgis.ui.definePlugin('webgis_servicesToc', {
                 .appendTo(this.$el)
                 .on('click.webgis_services_toc', function () {
                     const map = o.map;
-                    $('body').webgis_modal({
+                    webgis.ui.showModal({
                         title: 'Dienst hinzufügen',
                         onload: function ($content) {
                             $content.webgis_addServicesToc({ map: map });

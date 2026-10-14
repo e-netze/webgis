@@ -79,10 +79,23 @@ var inst = $div.data('webgis_myThing');         // instance (if needed)
 ## 3. Static methods
 
 - `staticMethods` are attached to the plugin constructor, i.e. shared by all instances and not
-  bound to one. Inside instance code reach them via `this.constructor.<name>`; from outside via
-  `$.fn.webgis_myThing.plugin.<name>(...)` (no instance needed, e.g.
-  `$.fn.webgis_toolbar.plugin.applyToolDependencies(...)`). Inside a static method `this` is the
-  constructor when called this way.
+  bound to one. Inside instance code reach them via `this.constructor.<name>`; elsewhere in the
+  **same plugin file** via `$.fn.webgis_myThing.plugin.<name>(...)` (no instance needed). Inside a
+  static method `this` is the constructor when called this way.
+- `$.fn.<name>.plugin` is the internal mechanism: **never call `.plugin.<name>(...)` from another
+  file**. A static method that is needed outside its plugin file gets a flat, hand-written
+  `webgis.ui.<verbNoun>` wrapper right after the `definePlugin(...)` call, e.g.
+
+  ```js
+  // static helper for callers outside this file (no plugin instance needed)
+  webgis.ui.applyToolDependencies = function ($elem, map) {
+      (webgis.$ || jQuery).fn.webgis_toolbar.plugin.applyToolDependencies($elem, map);
+  };
+  ```
+
+  Names are verb + noun and unique across all plugins (`closeDockPanel`, `hideMapContextMenu`,
+  `emptyQueryResultsList`, `showSelectSketchDialog`, ...); keep the plugin's parameters, return the
+  static method's result if it has one. Purely internal statics (e.g. `_keepReferences`) get no wrapper.
 - Use them for things that must be **one function reference** for every instance, typically event
   handlers that are subscribed with an explicit context object (see `onSketchCurrentStateChanged`
   in `webgis.ui.plugins.sketch_info_container.js`). Inside such a handler `this` is the context
@@ -146,7 +159,9 @@ inputs (`.trigger('change')`) is fine where other code listens to them.
 3. Private helper functions inside the IIFE -> instance methods or `staticMethods` (if no state).
 4. Add `destroy` releasing all subscriptions (section 5).
 5. Callers stay the same (`$el.webgis_x(...)`, `$el.webgis_x('method', ...)`), but check for
-   re-init calls on existing elements (section 2) and for methods returning values.
+   re-init calls on existing elements (section 2) and for methods returning values. Calls without
+   an instance (e.g. on `$(null)` or on an element the plugin never ran on) become static methods;
+   callers in other files use a `webgis.ui.<verbNoun>` wrapper (section 3).
 6. Move the code from `webgis_<name>.js` into `webgis.ui.plugins.<topic>.js`, delete the old file and
    update `bundleconfig.json` + Portal views (`organize-api-javascript-files` skill).
 

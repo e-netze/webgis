@@ -172,7 +172,7 @@
 
         var height = Math.max(200, message.countChar('\n') * 28);
 
-        $('body').webgis_modal({
+        webgis.ui.showModal({
             title: webgis.l10n.get(title),
             onload: function ($content) {
                 var imgUrl = '';
@@ -238,7 +238,7 @@
     this.confirm = function (options) {
         var title = options.title || 'WebGIS Meldung';
         var id = webgis.guid();
-        $('body').webgis_modal({
+        webgis.ui.showModal({
             title: title,
             id: id,
             closebutton: false,
@@ -278,7 +278,7 @@
                         .click(function () {
                             var func = function () {
                                 if (options.onCancel) options.onCancel(this);
-                                $(null).webgis_modal('close', { id: id });
+                                webgis.ui.closeModal(id);
                             };
                             if (options.cancelNoneBlocking) {
                                 $(this).addClass('loading');
@@ -297,7 +297,7 @@
                             var func = function () {
                                 if (options.onMaybe)
                                     options.onMaybe(this);
-                                $(null).webgis_modal('close', { id: id });
+                                webgis.ui.closeModal(id);
                             };
                             if (options.maybeNoneBlocking) {
                                 $(this).addClass('loading');
@@ -315,7 +315,7 @@
                         .click(function () {
                             var func = function () {
                                 if (options.onOk) options.onOk(this);
-                                $(null).webgis_modal('close', { id: id });
+                                webgis.ui.closeModal(id);
                             };
                             if (options.okNoneBlocking) {
                                 $(this).addClass('loading');
@@ -1093,7 +1093,7 @@
         }
         webgis.hideProgress('Karte wird geladen...');
         if (options.unknownservices && options.unknownservices.length > 0) {
-            $('body').webgis_modal({
+            webgis.ui.showModal({
                 title: 'Unbekannte Dienste',
                 onload: function ($content) {
                     $content.html('<h2>Warnung!</h2><p>Es konnten nicht alle Dienste geladen werden. Das bedeutet, dass Inhalte in der Karte Fehlen oder nicht angezeigt werden können. Eventuell ist das System nicht richtig Konfiguriert. Sollte der Meldung öfter auftreten, melden sie sicht beim Administrator. Folgende Dienste sind nicht in der Karte vorhanden:');
@@ -1108,7 +1108,7 @@
         if (options.unauthorizedservices && options.unauthorizedservices.length > 0) {
             webgis.toastMessage("Hinweis", "Nicht berechtigte Dienste in der Karte werden ausgeblendet...",
                 function () {
-                    $('body').webgis_modal({
+                    webgis.ui.showModal({
                         title: 'Nicht berechtigte Dienste',
                         onload: function ($content) {
                             $content.html('<h2>Hinweis</h2><p>In diese Karte wurde vom Kartenautor Dienste eingefügt, für die Sie keine Berechtigung besitzen. Diese Dienste werden in der Karte nicht angezeigt. Auf die Funktionsweise der Karte sollte das keinen Einfluss nehmen. Folgende Dienste sind für Sie nicht in der Karte vorhanden (falls sie einen dieser Dienste benötigen, wenden sie sich and den Administrator):');
@@ -1718,7 +1718,7 @@
             name: "QR-Code",
             img: function () { return webgis.css.imgResource('qrcode-26.png', 'sharebuttons'); },
             share: function (url, subject, qr_base64) {
-                $('body').webgis_modal({
+                webgis.ui.showModal({
                     id: 'qr-code-dialog',
                     width: '330px',
                     height: '400px',
@@ -2773,7 +2773,7 @@
     this.bindMarkerPopup = function (marker, content, onPopupOpen) {
         if (webgis.useMobileCurrent()) {
             marker.on('click', function () {
-                $('body').webgis_modal({
+                webgis.ui.showModal({
                     title: '',
                     onload: function ($content) {
                         $content.css('padding', '10px');
@@ -2818,7 +2818,7 @@
                     webgis.showFeatureResultModal(map.guid, feature.oid, queryToolId);
                 } else {
                     var $currentTabContent = $tabControl.webgis_tab_control('currentContent');
-                    $.fn.webgis_queryResultsTable.plugin.selectRow($currentTabContent, { map: map, dataId: feature.oid, scrollTo: e.suppressScrollResultRowTo !== true });
+                    webgis.ui.selectQueryResultsTableRow($currentTabContent, { map: map, dataId: feature.oid, scrollTo: e.suppressScrollResultRowTo !== true });
                 }
                 map.queryResultFeatures.tryHighlightMarker(feature.oid, true); 
 
@@ -2882,27 +2882,26 @@
         }
     };
     this.showProgress = function (message, elem, cancelTracker) {
-        if (!$.fn.webgis_modalprogress)
+        if (!webgis.ui || !webgis.ui.showProgressModal)
             return;
         if (typeof elem === "string")
             elem += "#" + elem;
         if (!elem)
             elem = 'body';
-        var options = { message: message, animate: false };
+        var $container = $(elem).first();
+        if ($container.length === 0)
+            return;
+        var options = { message: message, animate: false, container: $container };
         if (cancelTracker) {
             options.cancelable = true;
             options.oncancel = cancelTracker.cancel;
         }
-        $(elem).webgis_modalprogress(options);
+        webgis.ui.showProgressModal(options);
     };
     this.hideProgress = function (message, elem) {
-        if (!$.fn.webgis_modalprogress)
+        if (!webgis.ui || !webgis.ui.hideProgressModal)
             return;
-        if (typeof elem === "string")
-            elem += "#" + elem;
-        if (!elem)
-            elem = 'body';
-        $(elem).webgis_modalprogress('close', { message: message });
+        webgis.ui.hideProgressModal({ message: message });
     };
     this.addTaskProgress = function (taskId, message) {
         if (webgis.ui.addTaskProgress) {
@@ -3045,7 +3044,7 @@
     };
     this.iFrameDialog = function (url, title, width, height) {
         
-        $('body').webgis_modal({
+        webgis.ui.showModal({
             id: 'webgis-iframe-dialog',
             title: title,
             width: width,
@@ -3055,7 +3054,7 @@
                 url: url,
                 onClick: function (button) {
                     window.open(button.url, '_blank');
-                    $('body').webgis_modal('close', { id: 'webgis-iframe-dialog' });
+                    webgis.ui.closeModal('webgis-iframe-dialog');
                 }
             }],
             onload: function ($content) {
@@ -3067,7 +3066,7 @@
         })
     };
     this.modalDialog = function (title, onload, onclose) {
-        $('body').webgis_modal({
+        webgis.ui.showModal({
             id: webgis.guid(),
             title: title,
             onload: function ($content) {

@@ -518,7 +518,7 @@ TODO:
             $("<span>Keine Links verfügbar</span").appendTo($webgisList);
         }
 
-        $('body').webgis_modal({
+        webgis.ui.showModal({
             title: 'WebGIS 4 Aufrufe',
             width: '80%', height: '80%',
             onload: function ($content) {

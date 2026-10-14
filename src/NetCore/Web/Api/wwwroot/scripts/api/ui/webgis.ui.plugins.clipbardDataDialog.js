@@ -2,7 +2,7 @@
     const o = options;
     var id = webgis.guid();
 
-    $("body").webgis_modal({
+    webgis.ui.showModal({
         title: o.name,
         id: id,
         onload: function ($content) {

@@ -1,4 +1,4 @@
-﻿webgis.tools = new function () {
+webgis.tools = new function () {
 
     var $ = webgis.$;
 
@@ -57,7 +57,12 @@
     this.debug = {
         uiTextLayout: 'webgis.tools.debug.ui.debuguitextlayout',
         uiInputs: 'webgis.tools.debug.ui.debuguiinputs',
-        uiButtons: 'webgis.tools.debug.ui.debuguibuttons'
+        uiButtons: 'webgis.tools.debug.ui.debuguibuttons',
+        uiTables: 'webgis.tools.debug.ui.debuguitables',
+        uiSpecialElements: 'webgis.tools.debug.ui.debuguispecialelements',
+        uiMapElements: 'webgis.tools.debug.ui.debuguimapelements',
+        uiSetters: 'webgis.tools.debug.ui.debuguisetters',
+        uiTargets: 'webgis.tools.debug.ui.debuguitargets'
     };
     this._toolData = [];
     this.getToolData = function (toolId) {
@@ -185,12 +190,12 @@
                     break;
                 case 'showtoolmodaldialog':
                     if (map && activeTool) {
-                        map.ui.webgisContainer().webgis_modal('show', { id: activeTool.id });
+                        webgis.ui.unhideModal(activeTool.id);
                     }
                     break;
                 case 'hidetoolmodaldialog':
                     if (map && activeTool) {
-                        map.ui.webgisContainer().webgis_modal('hide', { id: activeTool.id });
+                        webgis.ui.hideModal(activeTool.id);
                     }
                     break;
                 case 'showmarkerinfo':
@@ -371,7 +376,7 @@
                             },
                             onError: function (err) {
                                 webgis.hideProgress('Aktuelle Position wird abgefragt...');
-                                webgis.alert('Ortung nicht möglich: ' + (err ? err.message + " (Error Code " + err.code + ")" : ""), "Fehler");
+                                webgis.alert('Ortung nicht m�glich: ' + (err ? err.message + " (Error Code " + err.code + ")" : ""), "Fehler");
                             }
                         });
                     }
@@ -453,7 +458,7 @@
                             });
                         }
 
-                        $('body').webgis_modal('close');
+                        webgis.ui.closeModal();
 
                         webgis.addTaskProgress(printOptions.taskId, map.getActiveTool().name + ": " + progressMessage); 
 
@@ -529,7 +534,7 @@
                     break;
                 case 'snapping':
                     if (map) {
-                        $('body').webgis_modal({
+                        webgis.ui.showModal({
                             title: webgis.l10n.get("snapping"),
                             onload: function ($content) {
                                 $content.css('padding', '10px');
@@ -580,7 +585,7 @@
                     break;
                 case 'showlegend':
                     if ($.presentationToc)
-                        $.presentationToc.showLegend(null, map, map.services, " Darstellung, ©,...");
+                        $.presentationToc.showLegend(null, map, map.services, " Darstellung, �,...");
                     break;
                 case 'serviceorder':
                     webgis.modalDialog(webgis.l10n.get("service-order") + ": " + webgis.l10n.get("service-order"),
@@ -639,13 +644,13 @@
         else if (tool.type === 'servertool') {
             if (map.getActiveTool() && map.getActiveTool().id === tool.id) {
                 if (tool.uiElement) {
-                    // Persistent Elemente werden sonst nicht übergeben, weil in "getPersitentToolParameters" (unten) überprüft wird, ob das Element bereits vorhanden ist...
+                    // Persistent Elemente werden sonst nicht �bergeben, weil in "getPersitentToolParameters" (unten) �berpr�ft wird, ob das Element bereits vorhanden ist...
                     // zB Coordinatentabelle
-                    // ??? Hat das auswirkungen auf irgendein anderes Tool? Wenn ja, sollte man für die Werkzeuge, die das brauchen (Coordinates) einen Flag setzen setzen zB tool.requiresFullUiRefresh = true
+                    // ??? Hat das auswirkungen auf irgendein anderes Tool? Wenn ja, sollte man f�r die Werkzeuge, die das brauchen (Coordinates) einen Flag setzen setzen zB tool.requiresFullUiRefresh = true
                     //$(tool.uiElement).empty();
 
                     // ToDo: Hat das jetzt irgendwelche Auswirkungen auf Persistent Element: Hier werden nicht alle Element entfernt, sondern persistent_topic Element in einen neuen bereich kopiert...
-                    // Im webgis.ui.persistentTopic wird erst einmal überprüft, ob sich darin persistent Element befinden, wenn ja => persistent_topic wird vorerst ignoriert
+                    // Im webgis.ui.persistentTopic wird erst einmal �berpr�ft, ob sich darin persistent Element befinden, wenn ja => persistent_topic wird vorerst ignoriert
                     $(tool.uiElement).webgis_uibuilder('empty', { map: map });
                 }
             }
@@ -802,7 +807,7 @@
             type: 'post',
             data: webgis.hmac.appendHMACData({ toolId: toolId, undo: JSON.stringify(undo) }),
             success: function (result) {
-                map.ui.webgisContainer().webgis_modal('close', { id: 'webgis-undo-modal' });
+                webgis.ui.closeModal('webgis-undo-modal');
                 if (tool && tool.undos) {
                     tool.undos.splice(tool.undos.indexOf(undo), 1);
                     map.ui.refreshUIElements();
@@ -1010,7 +1015,7 @@
         }
 
         var setActiveTool = false;
-        if (response.ui && tool.uiElement && isEventHandlerResponse === false) { // nach einem Server Tool Eventhandler aufruf sollte setActiveTool nicht aufgerufen werden, weil sonst Änderungen im Sketch wieder überschrieben werden...
+        if (response.ui && tool.uiElement && isEventHandlerResponse === false) { // nach einem Server Tool Eventhandler aufruf sollte setActiveTool nicht aufgerufen werden, weil sonst �nderungen im Sketch wieder �berschrieben werden...
             map.setActiveTool(tool);
         }
         if (response.toolevents) {
@@ -1087,7 +1092,7 @@
             map.sketch.remove(true);
         }
 
-        // War für 3D Messen (dynamisch) angedacht => erst einmal auf Eis gelegt
+        // War f�r 3D Messen (dynamisch) angedacht => erst einmal auf Eis gelegt
         //if (response.sketch_hasZ && map.sketch) {
         //    map.sketch.setHasZ(response.sketch_hasZ, response.sketch_getZ_command);
         //}
@@ -1308,7 +1313,7 @@
 
             if (responseActiveTool.is_childtool === true) {
                 // Tool darf nicht auf sich selbst als Parent verweisen!!!
-                // Edit: einface Selektion durch klick springt nach Selektion damit zurück zum Werkzeugdialog (inkl aktualisierung)
+                // Edit: einface Selektion durch klick springt nach Selektion damit zur�ck zum Werkzeugdialog (inkl aktualisierung)
                 // Wenn das ParentTool danach auf sich selbst verweist, kann man es nicht mehr verlassen
                 if (parentTool == null) {
                     responseActiveTool.parentTool = null;
@@ -1318,7 +1323,7 @@
             }
 
             // Beim Editieren wird vom Selektor Tool der Sketch mitgeliefert (response.sketch) und 
-            // danach die UI des neuen aktiven Tools (UpdateFeature) über response.activetool abgeholt.
+            // danach die UI des neuen aktiven Tools (UpdateFeature) �ber response.activetool abgeholt.
             // Der Sketch wird beim Werkzeug immer in currentSketch gespeichert, damit jedes Werkzeug seinen eigenen Sketch hat.
             // Wichtig: CurrentSketch hier auf das neue Tool setzen. Sonst wird beim map.setActiveTool() wieder der "letzte,alte" sketch dargestellt
             // -> komischen Verhalten Editieren: wenn man ein bestehendes Objekt anklickt, kommt immer der Sketch vom als ersten Editierten Objekt!!!
@@ -1484,7 +1489,7 @@
 
         if (response.named_sketches && response.named_sketches.length > 0 &&
             (map.isSketchTool(map.getActiveTool()) || map.isGraphicsTool(map.getActiveTool()))) {
-            $.fn.select_sketch.plugin.open({
+            webgis.ui.showSelectSketchDialog({
                 map: map,
                 named_sketches: response.named_sketches,
                 close_sketch: response.close_sketch
@@ -1495,7 +1500,7 @@
         if (response.three_d_values && response.three_d_values.length > 0) {
             var threeDSchene;
             webgis.require('webgis-three-d', function () {
-                $('body').webgis_modal({
+                webgis.ui.showModal({
                     title: '3D Modell',
                     animate: false,
                     onload: function ($content) {
@@ -1607,8 +1612,8 @@
                 let defaultValue;
                 if (servercommand === "_event_handler_onupdatecombo") {
                     // Beim Updaten von (kaskadierenden) Combos den persistent Wert setzen
-                    // Falls der Wert null ist. Damit werden auch Combos in der 2.ten kaskading Stufe befüllt
-                    // auch wenn das darüber liegenden erst durch den Request befüllt wird.
+                    // Falls der Wert null ist. Damit werden auch Combos in der 2.ten kaskading Stufe bef�llt
+                    // auch wenn das dar�ber liegenden erst durch den Request bef�llt wird.
                     defaultValue=map.getPersistentToolParameter(tool, e.id)
                 };
 
@@ -1660,7 +1665,7 @@
             eventStr += (eventStr ? '|' : '') + '_printlayout_rotation=' + map.viewLense.currentRotation();
         }
         if (tool.aside_dialog_exists_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_asidedialog_exists=' + ($('#' + $.fn.webgis_dockPanel.plugin.panelId({ id: tool.id + "_aside" })).length > 0 ? "true" : "false");
+            eventStr += (eventStr ? '|' : '') + '_asidedialog_exists=' + ($('#' + webgis.ui.getDockPanelId({ id: tool.id + "_aside" })).length > 0 ? "true" : "false");
         }
         if (tool.liveshare_clientname_dependent) {
             eventStr += (eventStr ? '|' : '') + '_liveshare_clientname=' + (webgis.liveshare ? webgis.liveshare.getClientname() : '');
@@ -1729,7 +1734,7 @@
                     val = $e.val();
                     if (!val) {
                         switch (nodeName) {
-                            case 'SELECT':  // braucht man mehrstufige kaskadierende Auswahllisten bei Editmasken. Sonst werden mehrfach abhängige Auswahllisten in der UPDATE Maske nicht befüllt!!!
+                            case 'SELECT':  // braucht man mehrstufige kaskadierende Auswahllisten bei Editmasken. Sonst werden mehrfach abh�ngige Auswahllisten in der UPDATE Maske nicht bef�llt!!!
                                 if ($e.children('option').length === 0 && $e.data('initial-value'))
                                     val = $e.data('initial-value');
                                 break;
@@ -1897,7 +1902,7 @@
                 case 'sketch2d':
                     var sketch = map.sketch;
                     if (!sketch || sketch.isValid() === false) {
-                        webgis.alert('Sketch nicht gültig', 'error');
+                        webgis.alert('Sketch nicht g�ltig', 'error');
                         return;
                     }
 

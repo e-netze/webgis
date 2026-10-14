@@ -2,9 +2,9 @@
 // webgis_queryResultsHolder, webgis_queryResultsList, webgis_queryResultListWithFeatureDetails, webgis_queryResultsTable
 // Query result UI of the viewer: the result holder (tab content with the result list), the result list
 // (toolbar + feature items), the list with a feature details column (quick search tab) and the result table.
-// Methods that legacy code calls on elements without an instance are static methods:
-// $.fn.webgis_queryResultsList.plugin.empty($list, { map }), $.fn.webgis_queryResultListWithFeatureDetails.plugin.empty($el, { map }),
-// $.fn.webgis_queryResultsTable.plugin.selectRow($el, { dataId, scrollTo }), $.fn.webgis_queryResultsTable.plugin.unselectRows({ map }).
+// Methods that legacy code calls on elements without an instance are static methods; callers outside
+// this file use webgis.ui.emptyQueryResultsList($list, { map }), webgis.ui.emptyQueryResultsListWithFeatureDetails($el, { map }),
+// webgis.ui.selectQueryResultsTableRow($el, { dataId, scrollTo }), webgis.ui.unselectQueryResultsTableRows({ map }).
 // Kept globals: $.fn.webgis_queryResultsList.selectedItemClass, $.fn.webgis_queryResultsTable.selectedRowClass,
 // $.fn.webgis_queryResultListWithFeatureDetails.onMarkerClick and $.webgis_search_result_histories (filled in webgis.map.ui.js).
 
@@ -266,7 +266,7 @@ webgis.ui.definePlugin('webgis_queryResultsList', {
                     includedQueries[0] + ":</h3>").appendTo($parent);
             }
 
-            $.fn.webgis_toolbar.plugin.applyToolDependencies($toolbar, map);
+            webgis.ui.applyToolDependencies($toolbar, map);
 
             if ($toolbar.closest('.webgis-container').find(".webgis-toolbox-tool-item[data-toolid='webgis.tools.editing.edit']").length >= 1) {
                 $("<li><span><img src='" + webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-editing-edit-edit', 'tools') + "'><div class='webgis-toolbox-tool-item-label'>Bearbeiten (Edit)</div></span></li>")
@@ -518,6 +518,11 @@ webgis.ui.definePlugin('webgis_queryResultsList', {
 (webgis.$ || jQuery).fn.webgis_queryResultsList.selectedItemClass = 'webgis-geojuhu-result-selected';
 (webgis.$ || jQuery).webgis_search_result_histories = [];
 
+// static helper for callers outside this file (works on any element, no plugin instance needed)
+webgis.ui.emptyQueryResultsList = function ($parent, options) {
+    (webgis.$ || jQuery).fn.webgis_queryResultsList.plugin.empty($parent, options);
+};
+
 webgis.ui.definePlugin('webgis_queryResultListWithFeatureDetails', {
     // each call with options renders (appends) the list again (callers empty the element before)
     reinit: true,
@@ -612,6 +617,11 @@ webgis.ui.definePlugin('webgis_queryResultListWithFeatureDetails', {
         }
     }
 });
+
+// static helper for callers outside this file (works on any element, no plugin instance needed)
+webgis.ui.emptyQueryResultsListWithFeatureDetails = function ($el, options) {
+    (webgis.$ || jQuery).fn.webgis_queryResultListWithFeatureDetails.plugin.empty($el, options);
+};
 
 // legacy: shared marker click handler (this = $parent); the plugin instances subscribe their own handlers
 (webgis.$ || jQuery).fn.webgis_queryResultListWithFeatureDetails.onMarkerClick = function (channel, sender, feature) {
@@ -1406,5 +1416,14 @@ webgis.ui.definePlugin('webgis_queryResultsTable', {
         }
     }
 });
+
+// static helpers for callers outside this file (no plugin instance needed)
+// $el: any (parent) element of the table, eg. the current tab content
+webgis.ui.selectQueryResultsTableRow = function ($el, options) {
+    (webgis.$ || jQuery).fn.webgis_queryResultsTable.plugin.selectRow($el, options);
+};
+webgis.ui.unselectQueryResultsTableRows = function (options) {
+    (webgis.$ || jQuery).fn.webgis_queryResultsTable.plugin.unselectRows(options);
+};
 
 (webgis.$ || jQuery).fn.webgis_queryResultsTable.selectedRowClass = 'webgis-table-result-selected';

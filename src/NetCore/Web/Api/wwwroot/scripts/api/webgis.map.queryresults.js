@@ -1479,7 +1479,7 @@
                 .css('background-image', 'url(' + webgis.css.imgResource('enter.png', '') + ')')
                 .appendTo($tools)
                 .click(function () {
-                    $.fn.webgis_dockPanel.plugin.remove(map.ui.webgisContainer().find('.webgis-dockpanel.webgis-result'));
+                    webgis.ui.removeDockPanel(map.ui.webgisContainer().find('.webgis-dockpanel.webgis-result'));
                     let tab = map.ui.webgisContainer().find('#tab-queryresults');  // todo: may a better way to do this ;) ... open tab 
                     if (tab.length > 0 & !tab.hasClass('webgis-tabs-tab-selected')) {
                         tab.trigger('click');
@@ -1768,7 +1768,7 @@
         }
 
         if (webgis.usability.useMarkerPopup === true) {
-            $('body').webgis_modal({
+            webgis.ui.showModal({
                 title: (feature.properties && feature.properties._title ? feature.properties._title : ''),
                 onload: function ($content) {
                     $content.css('padding', '10px');
@@ -2264,7 +2264,7 @@
 
                 _map.queryResultFeatures.tryUnhighlightMarkers();
                 if ($.fn.webgis_queryResultsTable)
-                    $.fn.webgis_queryResultsTable.plugin.unselectRows({ map: _map });
+                    webgis.ui.unselectQueryResultsTableRows({ map: _map });
 
                 _map.events.fire('feature-highlight-removed', _map, feature);
             }
@@ -2300,7 +2300,7 @@
                         var $tabControl = _map.ui.getQueryResultTabControl();
                         if ($tabControl) {
                             var $currentTabContent = $tabControl.webgis_tab_control('currentContent');
-                            $.fn.webgis_queryResultsTable.plugin.selectRow($currentTabContent, { dataId: feature.oid, scrollTo: false });
+                            webgis.ui.selectQueryResultsTableRow($currentTabContent, { dataId: feature.oid, scrollTo: false });
                         }
                     }
                 }
