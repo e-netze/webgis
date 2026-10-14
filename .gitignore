@@ -12,6 +12,8 @@
 
 # Build results
 [Dd]ebug/
+# source folder (DEBUG-only viewer tools), not a build output
+!src/NetStandard/E.Standard.WebGIS.Tools/Debug/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
