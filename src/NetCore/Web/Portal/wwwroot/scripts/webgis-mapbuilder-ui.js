@@ -462,7 +462,8 @@
     var initUI = function (parent, options) {
         var $parent = $(parent);
 
-        $parent.webgis_modal({
+        webgis.ui.showModal({
+            container: $parent,
             title: options.title || 'Select Snapshot...',
             id:'snapshot_selector',
             width: '640px',
@@ -508,7 +509,7 @@
                             options.onselect($selector.val());
                         }
 
-                        $parent.webgis_modal('close', { id: 'snapshot_selector' });
+                        webgis.ui.closeModal('snapshot_selector');
                     });
 
                 $selector.val(options.active);

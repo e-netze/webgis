@@ -16,7 +16,7 @@
     };
 
     var alertMessage = function (message, type) {
-        if (window.webgis && webgis.alert && $.fn.webgis_modal) {
+        if (window.webgis && webgis.alert && webgis.ui && webgis.ui.showModal) {
             webgis.alert(message, type || 'info');
         } else {
             window.alert(message);
@@ -236,7 +236,7 @@
                 });
             };
 
-            $('body').webgis_modal({
+            webgis.ui.showModal({
                 id: 'webgis-branch-select-dialog',
                 title: l10n('branch-select'),
                 width: '480px',

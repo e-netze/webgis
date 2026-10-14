@@ -30,7 +30,8 @@
     };
 
     let initUI = function ($parent, options) {
-        $parent.webgis_modal({
+        webgis.ui.showModal({
+            container: $parent,
             title: webgis.l10n.get('viewer-settings'),
             width: '800px',
             height: '600px',

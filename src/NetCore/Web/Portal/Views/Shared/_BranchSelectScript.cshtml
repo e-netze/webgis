@@ -20,7 +20,7 @@
 
             if (wasReset) {
                 var message = webgis.l10n.get('branch-not-found');
-                if ($.fn.webgis_modal) {
+                if (window.webgis && webgis.ui && webgis.ui.showModal) {
                     webgis.alert(message, 'info');
                 } else {
                     window.alert(message);

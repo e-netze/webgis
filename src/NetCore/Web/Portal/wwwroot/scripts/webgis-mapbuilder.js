@@ -934,7 +934,7 @@ function createTemplate(template) {
         type: 'post',
         success: function (result) {
             var editor = null;
-            $('body').webgis_modal({
+            webgis.ui.showModal({
                 title: 'HTML',
                 onload: function ($content) {
                     //$("<textarea style='width:98%;height:95%'>" + result.html + "</textarea>").appendTo($content);
@@ -1041,7 +1041,7 @@ function manageUIMaster(portalId, mapCategory) {
         type: 'post',
         success: function (result) {
             var editor = null;
-            $("body").webgis_modal({
+            webgis.ui.showModal({
                 title: "Master (" + mapCategory + ")",
                 onload: function ($content) {
 
@@ -1174,7 +1174,7 @@ function emptyUIMaster() {
 function editMapDescription() {
     let editor = null, dialogId = 'edit-map-desciption-dialog';
 
-    $("body").webgis_modal({
+    webgis.ui.showModal({
         title: "Map Description",
         id: dialogId,
         onload: function ($content) {
@@ -1238,7 +1238,7 @@ function editMapDescription() {
                     .appendTo($top)
                     .click(function () {
                         webgis.mapBuilder.mapDescription = editor.getValue();
-                        $("body").webgis_modal('close', { id: dialogId });
+                        webgis.ui.closeModal(dialogId);
                     });
             }
 
@@ -1267,7 +1267,7 @@ function editMapDescription() {
 function editHtmlMetaTags() {
     var editor = null;
 
-    $("body").webgis_modal({
+    webgis.ui.showModal({
         id: 'edit-html-meta-tags-dialog',
         title: "HTML Meta-Tags",
         onload: function ($content) {
@@ -1280,7 +1280,7 @@ function editHtmlMetaTags() {
                 .appendTo($top)
                 .click(function () {
                     webgis.mapBuilder.html_meta_tags = editor.getValue();
-                    $('body').webgis_modal('close', { id: 'edit-html-meta-tags-dialog' });
+                    webgis.ui.closeModal('edit-html-meta-tags-dialog');
                 });
 
             // Editor
@@ -1320,7 +1320,7 @@ function showHelp(element) {
 
     var titleSpan = $(element).find('span').clone();
     titleSpan.find('img').css({ maxWidth: 16, maxHeight: 16 });
-    $('body').webgis_modal({
+    webgis.ui.showModal({
         title: container.find('.webgis-presentation_toc-title').html() + ": " + titleSpan.html(),
         onload: function ($content) {
             loadHelpContent($(element), $content);
@@ -1485,7 +1485,7 @@ function openAddServiceSelector() {
         return;
     }
 
-    $('body').webgis_modal({
+    webgis.ui.showModal({
         title: 'Dienst hinzufügen',
         width: '640px',
         onload: function ($content) {
@@ -1512,7 +1512,7 @@ function openAddServiceSelector() {
 }
 
 function openDynamicContentSelector(editContent) {
-    $('body').webgis_modal({
+    webgis.ui.showModal({
         title: 'Dynamischer Inhalt',
         width:'640px',
         onload: function ($content) {
@@ -1524,7 +1524,7 @@ function openDynamicContentSelector(editContent) {
                     } else {
                         appendDynamicContent(content);
                     }
-                    $('body').webgis_modal('close');
+                    webgis.ui.closeModal();
                 }
             });
         }

@@ -151,7 +151,7 @@ function createTemplateUI(template) {
                         .click(function () {
                             var $hidden = $(this).next('input.webgis-toolbox-parameter');
                             var jsonExample = $(this).data('jsonExample');
-                            $('body').webgis_modal({
+                            webgis.ui.showModal({
                                 title: 'JSON',
                                 onload: function ($content) {
                                     var editor = null;
@@ -261,7 +261,7 @@ function publishApp(portalId, appCategory, appName) {
 
 function editAppDescription() {
     var editor = null, dialogId = 'edit-app-desciption-dialog';
-    $("body").webgis_modal({
+    webgis.ui.showModal({
         title: "App Description",
         id: dialogId,
         onload: function ($content) {
@@ -274,7 +274,7 @@ function editAppDescription() {
                 .appendTo($top)
                 .click(function () {
                     webgis.appBuilder.description = editor.getValue();
-                    $("body").webgis_modal('close', { id: dialogId });
+                    webgis.ui.closeModal(dialogId);
                 });
 
             // Editor

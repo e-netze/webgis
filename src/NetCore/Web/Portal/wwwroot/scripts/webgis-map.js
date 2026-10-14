@@ -90,7 +90,7 @@ webgis.mapInitializer = (function (m) {
                     var title = webgis.globals && webgis.globals.portal ? webgis.globals.portal.mapName : null;
                     $.presentationToc.showLegend(null, map, map.services, title || "Darstellung, ©,...", 2);
                 } else {
-                    webgis.$('body').webgis_modal({
+                    webgis.ui.showModal({
                         title: 'Info',
                         onload: function ($content) {
                             var $pane = $('#webgis-info-pane').clone();
@@ -954,7 +954,7 @@ webgis.mapInitializer = (function (m) {
                         result.categories = resultCategories;
 
 
-                        $('body').webgis_modal({
+                        webgis.ui.showModal({
                             title: webgis.l10n.get("more-maps"),
                             onload: function ($target) {
                                 var $ul = $("<ul class='webgis-page-category-list'>")

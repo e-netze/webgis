@@ -782,7 +782,7 @@ function showCustomContentEditor(c) {
             if (result.success === false) {
                 alert(result.exception);
             } else {
-                $('body').webgis_modal({
+                webgis.ui.showModal({
                     id: 'custom-editor-dialog',
                     title: c,
                     onload: function ($content) {
@@ -801,7 +801,7 @@ function showCustomContentEditor(c) {
                                         if (saveResult.success === false) {
                                             alert(saveResult.exception);
                                         } else {
-                                            $(null).webgis_modal('close', { id: 'custom-editor-dialog' });
+                                            webgis.ui.closeModal('custom-editor-dialog');
                                         }
                                     }
                                 });

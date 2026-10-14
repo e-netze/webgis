@@ -67,7 +67,7 @@ function initEditables() {
 
                 var type=$(contentElement).closest('.editable-content').attr('data-content-type');
 
-                $('body').webgis_modal({
+                webgis.ui.showModal({
                     title: type=='input' ? 'Titel bearbeiten' : type=='text' ? 'Beschreibung bearbeiten' : 'Inhalt bearbeiten',
                     height: type=='input' ? '130px' : type=='text' ? '230px' : '90%',
                     onload: function ($content) {
@@ -125,7 +125,7 @@ function initEditables() {
                                         if (mce)
                                             mce.remove();
                                         $('.content-editor').remove();
-                                        $('body').webgis_modal('close');
+                                        webgis.ui.closeModal();
                                     }
                                 });
 
@@ -147,7 +147,7 @@ function initEditables() {
                                             if (mce)
                                                 mce.remove();
                                             $('.content-editor').remove();
-                                            $('body').webgis_modal('close');
+                                            webgis.ui.closeModal();
                                             $(".page-content-item[data-content-id='"+contentId+"']").remove();
                                         }
                                     });

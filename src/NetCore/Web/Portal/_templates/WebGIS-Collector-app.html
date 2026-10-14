@@ -66,7 +66,7 @@
                 name: 'Objekt erfassen',
                 image:'add-data-26.png',
                 command: function () {
-                    $('body').webgis_modal({
+                    webgis.ui.showModal({
                         title: 'Objekt erfassen',
                         width: '660px',
                         onload: function ($content) {
@@ -82,7 +82,7 @@
                                 edit_themeids: '{{selector-edit-themes}}',
 
                                 onsave: function (options) {
-                                    $(null).webgis_modal('close');
+                                    webgis.ui.closeModal();
                                     if (options.extent) {
 
                                         //map.loadDynamicContent(dynamicContent);

@@ -1,5 +1,5 @@
 ﻿function changeUserAccess(name) {
-    $('body').webgis_modal({
+    webgis.ui.showModal({
         title: 'User Access: ' + name,
         onload: function ($content) {
             $content.css('padding', '10px');
@@ -14,7 +14,7 @@
                     $.getJSON(webgis.url.relative('proxy/toolmethod/webgis-tools-portal-portal/setuseraccess'),
                         { 'page-id': portal, 'access-name': name, ua: authValues },
                             function (data) {
-                                $(null).webgis_modal('close');
+                                webgis.ui.closeModal();
                             });
                 });
 
