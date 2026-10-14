@@ -117,7 +117,7 @@
         "wwwroot/scripts/api/ui/webgis.ui.plugins.graphicsInfoContainer.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.sketch_info_container.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.splitter.js",
-        "wwwroot/scripts/api/ui/webgis_contextMenu.js"
+        "wwwroot/scripts/api/ui/webgis.ui.plugins.contextMenu.js"
     ],
     "minify": {
       "enabled": true,

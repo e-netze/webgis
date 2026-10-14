@@ -78,6 +78,9 @@ patterns, so no step gets silently skipped:
   `organize-api-javascript-files` skill.
 - **Writing or converting a UI plugin** (`webgis.ui.definePlugin`: methods, static methods,
   events and releasing them in `destroy`) → `create-webgis-ui-plugin` skill.
+- **Creating/extending a viewer tool or adding a server-side UIElement** (interfaces, tool id in
+  `webgis.tools.js`, targets, setters, server commands, DEBUG UI test tools) →
+  `create-webgis-tool` skill.
 - **Committing changes** (proposing a commit message vs. actually committing) →
   `commit` skill.
 - **Documenting a feature's architecture** (projects, classes, flow diagrams, pitfalls) →

@@ -20,3 +20,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Modernized CMS look; the main deploy is now labeled "Published state (main)" instead of "Production".
 
 ### Fixed
+
+- Validation messages are now shown directly below the affected input field (e.g. in edit masks) instead of at the bottom of the dialog.
+- Edit themes are now filtered by their database rights in the edit theme lists (e.g. mobile insert/select tools); themes without the required right are no longer listed.
+- Conditional info texts/blocks that should be hidden for a selected value are now hidden correctly.

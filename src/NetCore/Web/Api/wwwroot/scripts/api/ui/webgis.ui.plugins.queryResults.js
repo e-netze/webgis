@@ -1366,7 +1366,7 @@ webgis.ui.definePlugin('webgis_queryResultsTable', {
         showRowContextMenu: function ($tr, e) {
             const $ = webgis.$ || jQuery;
 
-            if (!$.fn.webgis_contextMenu)
+            if (!webgis.ui.showContextMenu)
                 return false;
 
             var items = [];
@@ -1401,7 +1401,7 @@ webgis.ui.definePlugin('webgis_queryResultsTable', {
                     }
                 });
 
-            $("body").webgis_contextMenu({
+            webgis.ui.showContextMenu({
                 sender: $tr,
                 clickEvent: e,
                 items: items,

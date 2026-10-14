@@ -62,7 +62,8 @@ webgis.tools = new function () {
         uiSpecialElements: 'webgis.tools.debug.ui.debuguispecialelements',
         uiMapElements: 'webgis.tools.debug.ui.debuguimapelements',
         uiSetters: 'webgis.tools.debug.ui.debuguisetters',
-        uiTargets: 'webgis.tools.debug.ui.debuguitargets'
+        uiTargets: 'webgis.tools.debug.ui.debuguitargets',
+        uiAdvancedSelectors: 'webgis.tools.debug.ui.debuguiadvancedselectors'
     };
     this._toolData = [];
     this.getToolData = function (toolId) {
@@ -1751,6 +1752,10 @@ webgis.tools = new function () {
         return val;
     };
     this.toParameterValue = function (val, defaultValue) {
+        if (val !== null && val !== undefined && typeof val !== 'string') {
+            // e.g. optionscontainer values from the server: numbers (line weight) or objects (symbol selector)
+            val = typeof val === 'object' ? JSON.stringify(val) : String(val);
+        }
         if (!val) {
             val = defaultValue || '';
         }

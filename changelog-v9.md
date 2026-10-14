@@ -71,6 +71,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   refreshed tiles, dialogs and forms. In the deploy dialog the main deploy is now labeled
   "Published state (main)" instead of "Production".
 
+- Debug UI tools (only in ``DEBUG`` builds, toolbox container "Debug"): a set of viewer tools in
+  ``E.Standard.WebGIS.Tools/Debug/UI`` that render all server-side UI elements, targets/dialogs,
+  setters and UI plugins reachable via UI elements, to check their rendering and callbacks manually
+  (echo of all received tool parameters). New skill ``.github/skills/create-webgis-tool``.
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.
+- UI builder: ``UIConditionDiv`` (element value) with ``ConditionResult = false`` was not hidden
+  when the value matched one of the condition arguments.
+- Validation messages of tool parameters (incl. edit masks) were shown at the bottom of the dialog
+  instead of directly below the input field (new ``.webgis-validation-holder`` wrapper).
+- Edit theme combo/tree: the ``db_rights`` property was read as ``dbrights`` and therefore ignored,
+  so e.g. the mobile insert/select tools listed edit themes without the required rights.
+- UI setters: ``UISelectOptionsSetter`` crashed without a map in the options, the option container
+  ``UICssSetter`` did not set the container value, and value setters on ``textarea`` only changed
+  the default value.
+- ``UIEmpty`` (close target) did not close dialogs opened with the targets ``modaldialog_hidden``,
+  ``tool_modaldialog_hidden``, ``tool_modaldialog_noblocking`` and
+  ``tool_modaldialog_noblocking_closable``; only their content was removed.
+- Tool parameters with non-string values (e.g. ``UILineWieghtSelector``, ``UISymbolSelector`` used
+  as tool parameters) caused ``val.replace is not a function``; they are now sent as string/JSON.

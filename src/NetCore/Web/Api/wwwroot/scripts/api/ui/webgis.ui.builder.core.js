@@ -125,6 +125,7 @@
                             hasModalDialogElements = true;
                             modalDialogVisible = false;
                             modalDialogTitle = options.elements[i].targettitle || modalDialogTitle;
+                            closeModalDialog = closeTarget(options.elements[i]);
                             break;
                         case "tool_modaldialog":
                             modalDialogElement = options.elements[i];
@@ -137,12 +138,14 @@
                             hasToolModalDialogElements = true;
                             toolModalDialogVisible = false;
                             toolModalDialogTitle = options.elements[i].targettitle || toolModalDialogTitle;
+                            closeToolModalDialog = closeTarget(options.elements[i]);
                             break;
                         case "tool_modaldialog_noblocking":
                             modalDialogElement = options.elements[i];
                             hasToolModalDialogElements = true;
                             toolModalHasBlocker = false;
                             toolModalDialogTitle = options.elements[i].targettitle || toolModalDialogTitle;
+                            closeToolModalDialog = closeTarget(options.elements[i]);
                             break;
                         case "tool_modaldialog_noblocking_closable":
                             modalDialogElement = options.elements[i];
@@ -150,6 +153,7 @@
                             toolModalHasBlocker = false;
                             toolModalClosable = true;
                             toolModalDialogTitle = options.elements[i].targettitle || toolModalDialogTitle;
+                            closeToolModalDialog = closeTarget(options.elements[i]);
                             break;
                         case "tool_sidebar_bottom":
                             hasSidebarBottomElements = true;

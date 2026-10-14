@@ -1,69 +1,37 @@
-﻿(function ($) {
-    "use strict";
-    $.fn.webgis_contextMenu = function (method) {
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        }
-        else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        }
-        else {
-            $.error('Method ' + method + ' does not exist on webgis.$.webgis_contextMenu');
-        }
-    };
-    var defaults = {
+﻿// WebGIS UI Plugins (contextMenu)
+// webgis_contextMenu
+// Popup menu at the mouse position (e.g. right click on a query results table row): blocker element
+// (.webgis-contextmenu-blocker, optionally shading everything except options.sender) with the menu (ul.webgis-contextmenu).
+// The plugin lives on the blocker: one element = one menu, closing (click/right click on the blocker, item click,
+// Escape) removes the element. Items can be triggered by their shortcut key.
+// Created only through: webgis.ui.showContextMenu({ clickEvent, items: [{ text, icon, shortcut, data }], callback(data), sender, container })
+
+webgis.ui.definePlugin('webgis_contextMenu', {
+    defaults: {
         clickEvent: null,
         callback: null,
+        sender: null,
         items: []
-    };
-    var methods = {
-        init: function (options) {
-            var $this = $(this);
-            options = $.extend({}, defaults, options);
-            return this.each(function () {
-                new initUI(this, options);
-            });
-        },
-    };
+    },
+    init: function (rawOptions) {
+        const $ = this.$, self = this;
+        // shallow: item data (jQuery elements) and callback keep their references
+        const options = this.options = $.extend({}, this.options, rawOptions);
 
-    var initUI = function (parent, options) {
-        if (!options.clickEvent || !options.items.length)
-            return;
-
-        let $parent = $(parent);
-
-        let close = function (sender, e) {
-            e.stopPropagation();
-            
-            var $sender = $(sender);
-            if (!$sender.hasClass('.webgis-contextmenu-blocker')) {
-                $sender = $sender.closest('.webgis-contextmenu-blocker');
-            }
-
-            if(new Date().getTime() - $sender.data('time-stamp') < 500) {
-                //console.log('prevent closing context menu soonly');
-                return;
-            }
-            
-            $sender.remove();
-            $(window).off('keyup', keypress);
-        }
-
-        let $blocker = $("<div>")
+        const $blocker = this.$el
             .addClass('webgis-contextmenu-blocker')
-            .appendTo($parent)
             .data('time-stamp', new Date().getTime())
-            .contextmenu(function (e) {
-                close(this, e);
+            .on('contextmenu.webgis_contextMenu', function (e) {
+                self._close(e);
                 return false;
             })
-            .click(function (e) {
-                close(this, e);
+            .on('click.webgis_contextMenu', function (e) {
+                self._close(e);
             });
 
         if (options.sender) {
-            let $sender = $(options.sender);
-            let offset = $sender.offset();
+            const $sender = $(options.sender);
+            const offset = $sender.offset();
 
             $("<div>")
                 .addClass('shader')
@@ -84,10 +52,9 @@
                 .addClass('shader')
                 .css({ top: offset.top, right: 0, width: $(window).width() - offset.left - $sender.width(), height: $sender.height() })
                 .appendTo($blocker);
-
-            //console.log(offset);
         }
-        let $menu = $("<ul>")
+
+        const $menu = this._$menu = $("<ul>")
             .addClass('webgis-contextmenu')
             .appendTo($blocker);
 
@@ -97,14 +64,14 @@
                 .attr('shortcut', item.shortcut)
                 .data('item-data', item.data)
                 .appendTo($menu)
-                .click(function (e) {
+                .on('click.webgis_contextMenu', function (e) {
                     e.stopPropagation();
 
                     if (options.callback) {
                         options.callback($(this).data('item-data'));
                     }
 
-                    close(this, e);
+                    self._close(e);
                 });
 
             $("<div>")
@@ -112,7 +79,6 @@
                 .appendTo($item);
 
             if (item.shortcut) {
-                $item.attr('shortcut', item.shortcut);
                 $("<div>")
                     .addClass('shortcut-text')
                     .text('Shortcut-Key: ' + item.shortcut.toString().toUpperCase())
@@ -129,13 +95,9 @@
             top: Math.max(0, Math.min($(window).height() - $menu.height() - 10, options.clickEvent.originalEvent.clientY))
         });
 
-        let keypress = function (e) {
-            //console.log(e);
-            //console.log('key', e.key);
-            //console.log('wich', e.wich);
-
+        this._onKeyUp = function (e) {
             if (e.key === "Escape") {
-                close($blocker, e);
+                self._close(e);
                 return false;
             }
 
@@ -146,7 +108,42 @@
 
             return false;
         };
+        $(window).on('keyup', this._onKeyUp);
+    },
+    destroy: function () {
+        if (this._onKeyUp) {
+            this.$(window).off('keyup', this._onKeyUp);
+            this._onKeyUp = null;
+        }
+        this._$menu = null;
+    },
+    methods: {
+        close: function () {
+            this.$el.remove();
+        },
+        _close: function (e) {
+            e.stopPropagation();
 
-        $(window).on('keyup', keypress);
+            // the click/contextmenu event that opened the menu may also reach the new blocker
+            if (new Date().getTime() - this.$el.data('time-stamp') < 500)
+                return;
+
+            this.close();
+        }
     }
-})(webgis.$ || jQuery);
+});
+
+// nothing happens without clickEvent or items; returns the menu element (blocker)
+webgis.ui.showContextMenu = function (options) {
+    const $ = webgis.$ || jQuery;
+    if (!options || !options.clickEvent || !options.items || !options.items.length)
+        return $();
+
+    const $container = $(options.container || 'body').first();
+    if ($container.length === 0)
+        return $();
+
+    return $("<div>")
+        .appendTo($container)
+        .webgis_contextMenu(options);
+};
