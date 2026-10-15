@@ -175,7 +175,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     ``webgis.globals.portal.isMapAuthor``, set by the portal for the map author).
   * Groups: name, contained presentations with status and a combined legend.
 
-  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-context-menu)
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-context-menu),
+  [Architecture](docs/architecture/toc-context-menu.md)
 
 ### Fixed
 
