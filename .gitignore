@@ -284,6 +284,10 @@ keys.config
 **/api-ui.min.js
 **/api.min.js.map
 **/leaflet-plugin.min.js
+**/webgis-api.min.js
+**/webgis-api.min.css
+**/webgis-api.*.min.css
+
 
 **/cms.min.js
 **/cms.min.js.map
