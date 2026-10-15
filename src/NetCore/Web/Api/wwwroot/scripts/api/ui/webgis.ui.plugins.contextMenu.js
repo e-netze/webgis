@@ -17,6 +17,8 @@ webgis.ui.definePlugin('webgis_contextMenu', {
         const $ = this.$, self = this;
         // shallow: item data (jQuery elements) and callback keep their references
         const options = this.options = $.extend({}, this.options, rawOptions);
+        // the menu may live in another window (webgis.windowManager)
+        const $win = this._$win = $(this.$el[0].ownerDocument.defaultView || window);
 
         const $blocker = this.$el
             .addClass('webgis-contextmenu-blocker')
@@ -50,7 +52,7 @@ webgis.ui.definePlugin('webgis_contextMenu', {
 
             $("<div>")
                 .addClass('shader')
-                .css({ top: offset.top, right: 0, width: $(window).width() - offset.left - $sender.width(), height: $sender.height() })
+                .css({ top: offset.top, right: 0, width: $win.width() - offset.left - $sender.width(), height: $sender.height() })
                 .appendTo($blocker);
         }
 
@@ -91,8 +93,8 @@ webgis.ui.definePlugin('webgis_contextMenu', {
         }
 
         $menu.css({
-            left: Math.max(0, Math.min($(window).width() - $menu.width() - 10, options.clickEvent.originalEvent.clientX)),
-            top: Math.max(0, Math.min($(window).height() - $menu.height() - 10, options.clickEvent.originalEvent.clientY))
+            left: Math.max(0, Math.min($win.width() - $menu.width() - 10, options.clickEvent.originalEvent.clientX)),
+            top: Math.max(0, Math.min($win.height() - $menu.height() - 10, options.clickEvent.originalEvent.clientY))
         });
 
         this._onKeyUp = function (e) {
@@ -108,14 +110,14 @@ webgis.ui.definePlugin('webgis_contextMenu', {
 
             return false;
         };
-        $(window).on('keyup', this._onKeyUp);
+        $win.on('keyup', this._onKeyUp);
     },
     destroy: function () {
         if (this._onKeyUp) {
-            this.$(window).off('keyup', this._onKeyUp);
+            this._$win.off('keyup', this._onKeyUp);
             this._onKeyUp = null;
         }
-        this._$menu = null;
+        this._$menu = this._$win = null;
     },
     methods: {
         close: function () {
@@ -139,9 +141,15 @@ webgis.ui.showContextMenu = function (options) {
     if (!options || !options.clickEvent || !options.items || !options.items.length)
         return $();
 
-    const $container = $(options.container || 'body').first();
+    let $container = $(options.container || 'body').first();
     if ($container.length === 0)
         return $();
+
+    if (webgis.windowManager) {   // menu in the detached window, if it was opened there
+        $container = webgis.windowManager.overlayContainer($container, {
+            element: (options.clickEvent && options.clickEvent.target) || options.sender
+        });
+    }
 
     return $("<div>")
         .appendTo($container)

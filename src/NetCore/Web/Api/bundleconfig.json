@@ -43,6 +43,7 @@
       "wwwroot/scripts/api/webgis.liveshare.js",
       "wwwroot/scripts/api/webgis.embedding.js",
       "wwwroot/scripts/api/webgis.tools.js",
+      "wwwroot/scripts/api/webgis.window-manager.js",
       "wwwroot/scripts/cryptojs/hmac-sha256.js",
       "wwwroot/scripts/cryptojs/hmac-sha1.js",
       "wwwroot/scripts/cryptojs/aes.js",

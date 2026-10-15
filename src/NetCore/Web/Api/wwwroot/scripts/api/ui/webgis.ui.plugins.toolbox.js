@@ -14,6 +14,29 @@ webgis.ui.definePlugin('webgis_toolbox', {
     },
     init: function () {
         const $ = this.$, me = this, o = this.options, $elem = this.$el, elem = $elem.get(0);
+
+        // marks the active tool in all tool lists (toolbox and toolbar) => also needed for 'no-toolbox'
+        // (the toolbar of the advanced layout), otherwise a reinit (eg. closing the tool dialog) would lose it
+        if (o.map) {
+            this._onChangeActiveTool = function (e, m) {
+                const tool = m.getActiveTool();
+                $('.webgis-toolbox-tool-item.selected').each(function () {
+                    if (!$(this).hasClass('webgis-toggle-button'))
+                        $(this).removeClass('selected');
+                });
+                if (tool) {
+                    $(".webgis-toolbox-tool-item[data-toolid='" + tool.id + "']").addClass('selected');
+
+                    // Wenn toolclick getriggert wurde, hier den richtigen Tab sichtbar schalten.
+                    const $holder = $('.webgis-toolbar-holder');
+                    if ($holder.length === 1 && $.fn.webgis_toolbar) {
+                        $holder.webgis_toolbar('selectCurrentToolTab');
+                    }
+                }
+            };
+            o.map.events.on('onchangeactivetool', this._onChangeActiveTool);
+        }
+
         if ($elem.hasClass('no-toolbox'))
             return;
 
@@ -72,24 +95,6 @@ webgis.ui.definePlugin('webgis_toolbox', {
             webgis.delayed(function () {
                 o.map.ui.refreshUIElements();
             }, 100);
-
-            this._onChangeActiveTool = function (e, m) {
-                const tool = m.getActiveTool();
-                $('.webgis-toolbox-tool-item.selected').each(function () {
-                    if (!$(this).hasClass('webgis-toggle-button'))
-                        $(this).removeClass('selected');
-                });
-                if (tool) {
-                    $(".webgis-toolbox-tool-item[data-toolid='" + tool.id + "']").addClass('selected');
-
-                    // Wenn toolclick getriggert wurde, hier den richtigen Tab sichtbar schalten.
-                    const $holder = $('.webgis-toolbar-holder');
-                    if ($holder.length === 1 && $.fn.webgis_toolbar) {
-                        $holder.webgis_toolbar('selectCurrentToolTab');
-                    }
-                }
-            };
-            o.map.events.on('onchangeactivetool', this._onChangeActiveTool);
         }
     },
     destroy: function () {

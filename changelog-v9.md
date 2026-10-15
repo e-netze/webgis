@@ -143,6 +143,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
   [Architecture](docs/architecture/tool-events.md)
 
+- Detachable windows (viewer): the toolbar and the query results table of the desktop layout can be
+  detached into a separate window (Document Picture-in-Picture, Chromium browsers only). Enabled with
+  ``webgis.usability.detachableWindows = true`` in ``custom.js`` (default: ``false``).
+  * New ``webgis.windowManager`` (``webgis.window-manager.js``): layout elements with the class
+    ``webgis-detachable`` (``data-detachable-id/-title/-order/-size/-icon-target``) get a detach
+    button; all detached areas share one window, a placeholder stays in the main window.
+  * The real DOM nodes are moved; jQuery hooks (``$()``, ``.find()``, ``.closest()``) also resolve
+    the detached elements, so other viewer scripts are unchanged. Modal dialogs and context menus
+    open in the detached window if they belong to it.
+  * Detached toolbar: all tools on one page, tab names as block titles (compact, wrapping blocks).
+  * If the active tool hides a detached area (e.g. print), the window shows a hint with a
+    "Close active tool" button.
+  * Detached areas and window size are stored in ``localStorage``; on the next start a toast asks
+    to restore them.
+
+  [Docs](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-detachable-windows),
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/general/ui.html#ui-detachable-windows),
+  [Architecture](docs/architecture/detachable-windows.md)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.
@@ -163,3 +182,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Time filter and visibility filter UI plugins: removing one instance unsubscribed the map events
   of all other instances, refresh subscriptions of the filter lists were never released and
   optgroups of removed services stayed in the visibility filter combo.
+- Toolbox (advanced tool behaviour, ``no-toolbox``): after closing a tool dialog with "x", the
+  active tool was no longer highlighted (``selected``) in the toolbar, because the re-initialized
+  toolbox did not register its ``onchangeactivetool`` handler again.

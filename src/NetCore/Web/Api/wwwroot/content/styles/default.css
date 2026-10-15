@@ -2691,6 +2691,253 @@ td.webgis-tab-header {
         background-color: var(--webgis-brand-primary-light)
     }
 
+/* Detachable windows (webgis.windowManager) *********************************/
+.webgis-detachable-button {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 30px;
+    height: 30px;
+    z-index: 2;
+    cursor: pointer;
+    list-style: none;
+    background-image: url('../api/img/open-in-window_26.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 18px;
+    background-color: var(--webgis-ui-surface-sunken);
+    opacity: .7;
+}
+    .webgis-detachable-button:hover {
+        opacity: 1;
+        background-color: var(--webgis-ui-surface-hover);
+    }
+    .webgis-tab-control-tabbar > .webgis-detachable-button {
+        right: 30px;
+    }
+    .webgis-toolbar-tabs > .webgis-detachable-button {
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        height: 28px;
+    }
+
+.webgis-detachable-placeholder {
+    box-sizing: border-box;
+    height: 30px;
+    padding: 0px 36px 0px 8px;
+    line-height: 30px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--webgis-ui-text-disabled);
+    background-color: var(--webgis-ui-surface-sunken);
+    border: 1px dashed var(--webgis-ui-surface-disabled);
+}
+    .webgis-detachable-placeholder:hover {
+        color: var(--webgis-ui-text);
+        background-color: var(--webgis-ui-surface-hover);
+    }
+    .webgis-detachable-placeholder.in-splitter {
+        position: absolute !important;
+        top: auto !important;
+        bottom: 0px;
+        right: 0px;
+        z-index: 1001;
+    }
+    .webgis-detachable-placeholder.positioned {
+        z-index: 1001;
+    }
+
+.webgis-detachable-placeholder-attach,
+.webgis-detached-slot-attach {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 30px;
+    height: 100%;
+    cursor: pointer;
+    background-image: url('../api/img/minimize-dialog-26.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 18px;
+    opacity: .7;
+}
+    .webgis-detachable-placeholder-attach:hover,
+    .webgis-detached-slot-attach:hover {
+        opacity: 1;
+    }
+
+.webgis-windowmanager-toast {
+    position: fixed;
+    right: 16px;
+    bottom: 48px;
+    max-width: 420px;
+    z-index: 9998;
+    padding: 12px;
+    font-family: Verdana,Tahoma,Arial,sans-serif;
+    font-size: .73em;
+    line-height: 1.4;
+    background-color: var(--webgis-ui-surface);
+    color: var(--webgis-ui-text);
+    border-left: var(--webgis-ui-border-width-item-selected) solid var(--webgis-brand-primary);
+    box-shadow: 0px 2px 12px rgba(0,0,0,.35);
+}
+    .webgis-windowmanager-toast-buttons {
+        margin-top: 10px;
+        text-align: right;
+    }
+        .webgis-windowmanager-toast-buttons .webgis-button {
+            margin-left: 6px;
+        }
+
+/* the detached window */
+body.webgis-detached {
+    margin: 0px;
+    overflow: hidden;
+}
+.webgis-detached .webgis-detachable-button {
+    display: none !important;
+}
+.webgis-detached-container {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    display: flex;
+    flex-direction: column;
+    font-family: Verdana,Tahoma,Arial,sans-serif;
+    background-color: var(--webgis-ui-surface);
+}
+.webgis-detached-slot {
+    display: flex;
+    flex-direction: column;
+    min-height: 0px;
+}
+.webgis-detached-slot-header {
+    position: relative;
+    flex: 0 0 26px;
+    line-height: 26px;
+    padding: 0px 36px 0px 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: .85em;
+    font-weight: bold;
+    color: var(--webgis-ui-text-header);
+    background-color: var(--webgis-ui-surface-header);
+}
+.webgis-detached-slot-content {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0px;
+    overflow: auto;
+}
+.webgis-detached-slot.size-fill > .webgis-detached-slot-content {
+    overflow: hidden;
+}
+.webgis-detached-slot-hint {
+    padding: 10px 12px;
+    font-size: .73em;
+    line-height: 1.4;
+    color: var(--webgis-ui-text);
+    background-color: var(--webgis-ui-surface-sunken);
+}
+    .webgis-detached-slot-hint .webgis-detached-slot-hint-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+    }
+        .webgis-detached-slot-hint .webgis-detached-slot-hint-button img {
+            width: 20px;
+            height: 20px;
+        }
+.webgis-detached-slot-splitter {
+    flex: 0 0 6px;
+    cursor: row-resize;
+    background-color: var(--webgis-ui-surface-splitter);
+}
+    .webgis-detached-slot-splitter:hover {
+        background-color: var(--webgis-brand-primary);
+    }
+.webgis-detached-slot.size-auto .webgis-detachable {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: auto !important;
+    height: auto !important;
+    box-shadow: none !important;
+}
+.webgis-detached-slot.size-fill .webgis-detachable {
+    position: absolute !important;
+    left: 0px !important;
+    top: 0px !important;
+    right: 0px !important;
+    bottom: 0px !important;
+    width: auto !important;
+    height: auto !important;
+    box-shadow: none !important;
+}
+
+/* toolbar in the detached window: all tools on one page, the tabs are headings */
+.webgis-detached .webgis-toolbar-tabs > .webgis-toolbar-tab:not(.help),
+.webgis-detached .webgis-toolbar-tabcontent.favorites {
+    display: none !important;
+}
+.webgis-detached .webgis-toolbar-tabs {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: transparent;
+}
+/* ribbon: every tab is a block (title + tools side by side), the blocks wrap */
+.webgis-detached .webgis-toolbar-holder {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 4px;
+    padding: 4px 40px 4px 4px;
+    box-sizing: border-box;
+}
+/* block (not flex) layout inside: a flex title row would be added to the intrinsic width of the block */
+.webgis-detached .webgis-toolbar-tabcontent {
+    display: block !important;
+    max-width: 100%;
+    box-sizing: border-box;
+    list-style: none;
+    border: 1px solid var(--webgis-ui-border-subtle);
+}
+    .webgis-detached .webgis-toolbar-tabcontent::before {
+        content: attr(data-title);
+        display: block;
+        padding: 3px 3px 3px 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-sizing: border-box;
+        background: var(--webgis-ui-surface-sunken);
+    }
+    .webgis-detached .webgis-toolbar-tabcontent .webgis-toolbox-tool-item {
+        display: inline-block;
+        vertical-align: top;
+        margin: 1px;
+        padding: 6px 4px 2px 4px;
+    }
+        .webgis-detached .webgis-toolbar-tabcontent .webgis-toolbox-tool-item .webgis-toolbox-tool-item-label {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            overflow: hidden;
+            height: calc(var(--webgis-ui-font-size-tool-label) * 2.4);
+            margin: 4px -4px 0px -4px;
+        }
+
 
 /**** Edit Theme Tree *******/
 

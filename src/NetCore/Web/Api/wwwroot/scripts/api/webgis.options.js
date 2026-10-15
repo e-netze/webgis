@@ -138,7 +138,11 @@ webgis.usability = {
         maxItems: 1000 // Ergebnisliste (zB mobile Ansicht, kein Paging) rendert maximal so viele Eintraege.
                         // Bei mehr Ergebnissen wird ein Hinweis angezeigt, dass alle Ergebnisse in der
                         // Tabellenansicht (webgis_queryResultsTable) verfuegbar sind.
-    }
+    },
+
+    detachableWindows: false // Bereiche des Layouts mit der Klasse 'webgis-detachable' (Werkzeugleiste, Ergebnistabelle)
+                             // koennen in ein eigenes Fenster abgekoppelt werden (webgis.windowManager,
+                             // Document Picture-in-Picture: nur Chromium-Browser)
 };
 
 webgis.colorScheme = 'default';

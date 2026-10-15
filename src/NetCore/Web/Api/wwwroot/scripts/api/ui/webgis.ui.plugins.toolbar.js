@@ -58,6 +58,7 @@ webgis.ui.definePlugin('webgis_toolbar', {
             const $tabContent = $("<ul>")
                 .addClass('webgis-toolbar-tabcontent')
                 .attr('data-index', index)
+                .attr('data-title', container.name)
                 .css('display', 'none')
                 .appendTo($elem);
 

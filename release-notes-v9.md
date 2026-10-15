@@ -23,6 +23,9 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Faster CMS deploys: link warnings are now collected during the export instead of a separate scan.
 - Modernized CMS look; the main deploy is now labeled "Published state (main)" instead of "Production".
 - Custom pages can include the whole WebGIS API with one script and one stylesheet: `scripts/api/webgis-api.min.js` and `content/styles/webgis-api.min.css` (the previous files `api.min.js`, `api-ui.min.js`, `default.css` and `ui.css` are still supported, but deprecated). Full-page map apps can additionally include `content/api/ui.app.css` (no text selection, no pull-to-refresh). All WebGIS pages and templates now use the new files. [Docs](https://docs.webgiscloud.com/en/webgis-dev/API/API_JavaScript/index.html#api-javascript-single-bundle)
+- Viewer: the toolbar and the query results table (desktop layout) can be detached into a separate window, e.g. for a second screen (Chromium browsers only); enable with `webgis.usability.detachableWindows = true` in `custom.js`.
+  [Docs](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-detachable-windows)
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/general/ui.html#ui-detachable-windows)
 
 ### Fixed
 
@@ -30,3 +33,4 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Edit themes are now filtered by their database rights in the edit theme lists (e.g. mobile insert/select tools); themes without the required right are no longer listed.
 - Conditional info texts/blocks that should be hidden for a selected value are now hidden correctly.
 - Removing a time filter or visibility filter control no longer breaks the other filter controls in the viewer.
+- With the advanced tool behaviour, the active tool is highlighted in the toolbar again after a tool dialog was closed with "x".

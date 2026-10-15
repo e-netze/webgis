@@ -607,5 +607,17 @@
     "remove-result": "Remove result",
     "restrict-selection": "Restrict selection",
     "results-range-of-total": "Results {start}–{end} of {total}",
-    "all-results": "All results"
+    "all-results": "All results",
+
+    // window manager (detachable windows)
+    "windowmanager-detach": "Show in a separate window",
+    "windowmanager-attach": "Back to the main window",
+    "windowmanager-restore-question": "Last time these areas were shown in a separate window: {areas}. Restore?",
+    "windowmanager-restore": "Restore",
+    "windowmanager-restore-no": "No",
+    "windowmanager-restore-dont-ask": "Don't ask again",
+    "windowmanager-area-toolbar": "Toolbar",
+    "windowmanager-area-queryresults": "Query results",
+    "windowmanager-area-hidden": "{area}: hidden while the current tool is active. Close the tool to show it.",
+    "windowmanager-close-tool": "Close active tool"
 };

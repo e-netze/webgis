@@ -25,6 +25,8 @@ calcCrs = 31256; // webgis.calc.crs_BestAustria_GK;
 webgis.usability.tsp.allowOrderFeatures = true;
 webgis.usability.tsp.maxFeatures = 50;
 
+webgis.usability.detachableWindows = true;
+
 webgis.usability.singleResultButtons = webgis.usability.singleResultButtons || [];
 webgis.usability.singleResultButtons.push(
     {

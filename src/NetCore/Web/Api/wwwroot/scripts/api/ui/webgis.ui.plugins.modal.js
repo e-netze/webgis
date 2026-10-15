@@ -35,8 +35,10 @@ webgis.ui.definePlugin('webgis_modalDialog', {
         // shallow (like the legacy plugin): callbacks, content, ... keep their references
         const options = this.options = $.extend({}, this.options, rawOptions);
         const dialogId = Ctor.dialogId(options.id);
+        // the dialog may live in another window (webgis.windowManager)
+        const ownerDocument = this.$el[0].ownerDocument, $win = $(ownerDocument.defaultView || window);
 
-        var useMobile = $(window).width() < 1024 && options.mobile_fullscreen === true;
+        var useMobile = $win.width() < 1024 && options.mobile_fullscreen === true;
         var useMobileFullscreenDockPanels = useMobile && screen.width < 800;
         let isEnlargeable = useMobileFullscreenDockPanels === false && (options.dock === 'left' || options.dock === 'right');
 
@@ -263,7 +265,7 @@ webgis.ui.definePlugin('webgis_modalDialog', {
                         }
                         : {
                             width: '0px', height: '0px', minWidth: '0px', minHeight: '0px',
-                            left: $(document).width() / 5, top: $(document).height() / 2
+                            left: $(ownerDocument).width() / 5, top: $(ownerDocument).height() / 2
                         }
                 );
                 webgis.delayed(function ($frame) {
@@ -309,7 +311,7 @@ webgis.ui.definePlugin('webgis_modalDialog', {
             const $ = this.$;
             options = $.extend({ dock: 'center' }, options);
 
-            if ($(window).width() < 1024)
+            if ($(this.$el[0].ownerDocument.defaultView || window).width() < 1024)
                 return;
 
             var $modalBody = this._$frame, $content = this._$content;
@@ -390,9 +392,13 @@ webgis.ui.showModal = function (options) {
 
     Ctor.find(options.id).remove();
 
-    const $container = $(options.container || 'body').first();
+    let $container = $(options.container || 'body').first();
     if ($container.length === 0)
         return $();
+
+    if (webgis.windowManager) {   // dialog in the detached window, if the user is working there
+        $container = webgis.windowManager.overlayContainer($container, {});
+    }
 
     return $("<div>")
         .appendTo($container)

@@ -56,6 +56,10 @@
     font-size: 1.25em;
 }
 
+    .webgis-container.webgis-space-saving .webgis-toolbar-tabs > .webgis-detachable-button {
+        height: 28px;
+    }
+
 .webgis-container.webgis-space-saving #edit-editmask-container .webgis-editfield-container {
     padding: 3px 0px;
 }

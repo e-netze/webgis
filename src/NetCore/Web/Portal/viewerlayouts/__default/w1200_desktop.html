@@ -216,14 +216,18 @@
     <div id="map-container" class="webgis-splitter" data-direction="horizontal" data-sizes="100%,0">
         <div id='map' style=''>
         </div>
-        <div class='query-results-tab-control-container webgis-ui-element-dependency' data-minsize="30">
+        <div class='query-results-tab-control-container webgis-ui-element-dependency webgis-detachable' data-minsize="30"
+             data-detachable-id="queryresults" data-detachable-title="windowmanager-area-queryresults" data-detachable-order="2"
+             data-detachable-size="fill" data-detachable-icon-target=".webgis-tab-control-tabbar">
         </div>
     </div>
 </div>
 
 
 
-<div id="toolbar" class="webgis-position-relative-to" data-position-element="#map-container" data-position-left="10" data-position-top="10">
+<div id="toolbar" class="webgis-position-relative-to webgis-detachable" data-position-element="#map-container" data-position-left="10" data-position-top="10"
+     data-detachable-id="toolbar" data-detachable-title="windowmanager-area-toolbar" data-detachable-order="1"
+     data-detachable-size="auto" data-detachable-icon-target=".webgis-toolbar-tabs">
 </div>
 
 <div id='topbar'>

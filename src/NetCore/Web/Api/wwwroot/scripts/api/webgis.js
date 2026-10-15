@@ -3021,11 +3021,13 @@
             height: $content.outerHeight()
         };
 
+        // the element may live in another window (webgis.windowManager)
+        var ownerDocument = ($content[0] && $content[0].ownerDocument) || document;
         var $msg = $("<div>")
             .addClass('webgis-copy-message')
             .css(css)
             .text(webgis.l10n.get('copied'))
-            .appendTo($('body'));
+            .appendTo($(ownerDocument.body));
 
         webgis.delayed(function(args){
             args.elem.remove();

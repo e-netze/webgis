@@ -18,6 +18,7 @@ which projects and classes are involved, flow diagrams, design decisions and pit
 | [Authentication & Roles](authentication-roles.md) | Portal / API / CMS | Login methods, roles and role parameters, Portal-API HMAC, CMS item authorization. |
 | [CMS Deployment](cms-deployment.md) | CMS / API / Portal | Main deploy, branch deploys (API discovery, branch selection), fast deploy file snapshot, single-pass export. |
 | [CMS Git Support](cms-git.md) | CMS | Optional git versioning per cms-item: user working copies, branches, push/pull, merge and conflict resolution. |
+| [Detachable Windows](detachable-windows.md) | Viewer | `webgis.windowManager`: detach toolbar/query results into a Document Picture-in-Picture window, jQuery hooks, restore state. |
 | [Expressions & AutoValues](expressions-autovalues.md) | API / Editing / CMS | Expression language (parser, syntax detection), Editing AutoValues, table column expressions. |
 | [Logging & Observability](logging-observability.md) | API / CMS / Portal | Logging backends and fan-out, DB batch logging, OpenTelemetry, Serilog. |
 | [Query Results](query-results.md) | API / Viewer | Query results end-to-end: QueryEngine, DTO metadata, result table/list paging, export. |

@@ -607,5 +607,17 @@
     "remove-result": "Ergebnis entfernen",
     "restrict-selection": "Selektion einschränken",
     "results-range-of-total": "Ergebnisse {start}–{end} von {total}",
-    "all-results": "Alle Ergebnisse"
+    "all-results": "Alle Ergebnisse",
+
+    // window manager (detachable windows)
+    "windowmanager-detach": "In eigenem Fenster anzeigen",
+    "windowmanager-attach": "Zurück ins Hauptfenster",
+    "windowmanager-restore-question": "Beim letzten Mal waren diese Bereiche in einem eigenen Fenster: {areas}. Wiederherstellen?",
+    "windowmanager-restore": "Wiederherstellen",
+    "windowmanager-restore-no": "Nein",
+    "windowmanager-restore-dont-ask": "Nicht mehr fragen",
+    "windowmanager-area-toolbar": "Werkzeugleiste",
+    "windowmanager-area-queryresults": "Abfrageergebnisse",
+    "windowmanager-area-hidden": "{area}: ausgeblendet, solange das aktuelle Werkzeug aktiv ist. Zur Anzeige das Werkzeug schließen.",
+    "windowmanager-close-tool": "Aktives Werkzeug schließen"
 };
