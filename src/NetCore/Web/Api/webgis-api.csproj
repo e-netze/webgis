@@ -65,7 +65,7 @@
     <PackageReference Include="E.DataLinq.Engine.SQLite" Version="8.26.4104" />
     <PackageReference Include="E.DataLinq.Engine.SqlServer-legacy" Version="8.26.4104" />
     <PackageReference Include="E.DataLinq.Web" Version="8.26.4104" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.AzureStorage" Version="3.1.24" />
     <!-- Optional, config-driven Microsoft.Extensions.Logging sinks (SQL Server/PostgreSQL/Seq) -
          see docs/logging.md. Serilog.AspNetCore/Serilog.Settings.Configuration are already
@@ -81,7 +81,7 @@
 
   <ItemGroup><!--<DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />-->
   
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.13" />
   
 <!--
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">

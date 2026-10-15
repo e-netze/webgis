@@ -78,11 +78,13 @@ internal sealed class DefaultAgsQueryStrategy : IAgsQueryStrategy
             ? "*"
             : filter.SubFields.Replace(" ", ",");
 
+        bool applyPagination = _usePagination && !String.IsNullOrEmpty(layer.IdFieldName);
+
         // resultOffset paging needs a stable order across requests - fall back to ordering by
         // the id field if the caller did not ask for a specific order. Without pagination only
         // an explicitly requested order is sent.
         string orderByFields = String.IsNullOrWhiteSpace(filter.OrderBy)
-            ? (!_usePagination || String.IsNullOrEmpty(layer.IdFieldName) ? null : $"{layer.IdFieldName} ASC")
+            ? (applyPagination ? $"{layer.IdFieldName} ASC" : null)
             : filter.OrderBy;
 
         int datumTransformationId = service.DatumTransformations?.FirstOrDefault() ?? 0;
@@ -127,8 +129,8 @@ internal sealed class DefaultAgsQueryStrategy : IAgsQueryStrategy
                 .WithWhereClause(where)
                 .WithTimeEpoch(filter.TimeEpoch)
                 .WithOrderByFields(orderByFields)
-                .WithResultRecordCount(_usePagination ? pageSize : null)
-                .WithResultOffset(_usePagination ? resultOffset : null)
+                .WithResultRecordCount(applyPagination ? pageSize : null)
+                .WithResultOffset(applyPagination ? resultOffset : null)
                 .WithInSpatialReferenceId(resolvedInSrefId)
                 .WithOutSpatialReferenceId(resolvedOutSrefId)
                 .WithDatumTransformation(datumTransformationId)
@@ -177,7 +179,7 @@ internal sealed class DefaultAgsQueryStrategy : IAgsQueryStrategy
             layer.AppendJsonFeaturesTo(jsonFeatureResponse, features, filter);
             totalCount += pageCount;
 
-            if (!_usePagination)
+            if (!applyPagination)
             {
                 // Single request only: anything beyond the server's maxRecordCount can't be fetched.
                 hasMore = exceededTransferLimit;

@@ -125,7 +125,7 @@ class FeatureLayer : RestLayer,
         // single-request mode, regardless of the service's QueryStrategy.
         if (!countOnly)
         {
-            var queryStrategy = this.SupportsPagination
+            var queryStrategy = this.SupportsPagination && !String.IsNullOrEmpty(this.IdFieldName)
                 ? await AgsQueryStrategyFactory.GetStrategyAsync(
                     _service, spatialFilter, featuresReqUrl, where, resolvedInSrefId, authHandler, requestContext)
                 : DefaultAgsQueryStrategy.WithoutPagination;
