@@ -262,6 +262,58 @@ body.webgis-viewer {
             padding: 3px 0px 1px 0px;
         }
 
+        .webgis-contextmenu-blocker ul.webgis-contextmenu li.webgis-contextmenu-item.has-submenu,
+        .webgis-contextmenu-blocker ul.webgis-contextmenu li.webgis-contextmenu-item.item-checked {
+            position: relative;
+        }
+
+            .webgis-contextmenu-blocker ul.webgis-contextmenu li.webgis-contextmenu-item.has-submenu::after,
+            .webgis-contextmenu-blocker ul.webgis-contextmenu li.webgis-contextmenu-item.item-checked::after {
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--webgis-ui-text-label);
+            }
+
+            .webgis-contextmenu-blocker ul.webgis-contextmenu li.webgis-contextmenu-item.has-submenu::after {
+                content: '\25B8';
+            }
+
+            .webgis-contextmenu-blocker ul.webgis-contextmenu li.webgis-contextmenu-item.item-checked::after {
+                content: '\2713';
+                font-weight: bold;
+            }
+
+            .webgis-contextmenu-blocker ul.webgis-contextmenu li.webgis-contextmenu-item.open {
+                background-color: var(--webgis-ui-surface-hover);
+            }
+
+        .webgis-contextmenu-blocker ul.webgis-contextmenu li.webgis-contextmenu-separator {
+            height: 1px;
+            margin: 3px 6px;
+            background-color: var(--webgis-ui-border, #ccc);
+        }
+
+        .webgis-contextmenu-blocker ul.webgis-contextmenu.webgis-contextmenu-submenu {
+            display: none;
+            left: 100%;
+            top: 0px;
+            min-width: 160px;
+            white-space: nowrap;
+            font-size: 1em;
+            cursor: default;
+        }
+
+            .webgis-contextmenu-blocker ul.webgis-contextmenu.webgis-contextmenu-submenu.flip-left {
+                left: auto;
+                right: 100%;
+            }
+
+        .webgis-contextmenu-blocker ul.webgis-contextmenu li.webgis-contextmenu-item.open > ul.webgis-contextmenu-submenu {
+            display: block;
+        }
+
 .webgis-paragraph {
     font-size: 12.5px;
     margin: 10px 0px 2px 0px;
@@ -1761,7 +1813,8 @@ tr.webgis-border-bottom td{
         pointer-events: auto; /* clickable */
     }
 
-.webgis-presentation_toc-item .webgis-presentation_toc-item-overlay-button {
+.webgis-presentation_toc-item .webgis-presentation_toc-item-overlay-button,
+.webgis-presentation_toc-item-group .webgis-presentation_toc-item-overlay-button {
     width: 18px;
     height: 18px;
     cursor: pointer;
@@ -1772,9 +1825,114 @@ tr.webgis-border-bottom td{
     /*border: 1px solid #333;*/
     padding:0px;
 }
-.webgis-presentation_toc-item .webgis-presentation_toc-item-overlay-button.visfilter {
-    background-image: url('../api/img/tools/filter-26.png');
+.webgis-presentation_toc-item .webgis-presentation_toc-item-overlay-button.menu,
+.webgis-presentation_toc-item-group .webgis-presentation_toc-item-overlay-button.menu {
+    position: relative;
+    opacity: 0.75;
 }
+
+    .webgis-presentation_toc-item .webgis-presentation_toc-item-overlay-button.menu:hover,
+    .webgis-presentation_toc-item-group .webgis-presentation_toc-item-overlay-button.menu:hover {
+        opacity: 1;
+    }
+
+    .webgis-presentation_toc-item .webgis-presentation_toc-item-overlay-button.menu::before,
+    .webgis-presentation_toc-item-group .webgis-presentation_toc-item-overlay-button.menu::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 13px;
+        height: 2px;
+        background-color: var(--webgis-ui-text-label);
+        box-shadow: 0 -4px 0 var(--webgis-ui-text-label), 0 4px 0 var(--webgis-ui-text-label);
+        transform: translate(-50%, -50%);
+    }
+
+/* group title: burger button floats right, only on hover */
+.webgis-presentation_toc-item-group > div > .webgis-presentation_toc-item-overlay-buttons {
+    float: right;
+    margin-right: 4px;
+    padding: 0px;
+    background: none;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .15s;
+}
+
+    .webgis-presentation_toc-item-group > div:hover > .webgis-presentation_toc-item-overlay-buttons {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+/* properties dialog of toc items/groups */
+.webgis-toc-properties h3 {
+    margin: 14px 0 6px 0;
+}
+
+.webgis-toc-properties-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .webgis-toc-properties-table th,
+    .webgis-toc-properties-table td {
+        text-align: left;
+        vertical-align: top;
+        padding: 4px 6px;
+        border-bottom: 1px solid var(--webgis-ui-border-subtle);
+    }
+
+    .webgis-toc-properties-table th {
+        font-weight: 600;
+    }
+
+    .webgis-toc-properties-table.key-value th {
+        width: 35%;
+    }
+
+    .webgis-toc-properties-table tr.out-of-scale td {
+        color: var(--webgis-ui-text-label);
+    }
+
+.webgis-toc-properties-action {
+    color: var(--webgis-brand-primary);
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-top: 2px;
+}
+
+    .webgis-toc-properties-action:hover {
+        text-decoration: underline;
+    }
+
+.webgis-toc-properties-copy {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-left: 6px;
+    vertical-align: middle;
+    cursor: pointer;
+    background-size: 14px;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity .15s;
+}
+
+    .webgis-toc-properties-table tr:hover .webgis-toc-properties-copy {
+        opacity: 0.4;
+    }
+
+    .webgis-toc-properties-table tr .webgis-toc-properties-copy:hover {
+        opacity: 0.9;
+    }
+
+    .webgis-toc-properties-table tr .webgis-toc-properties-copy.copied {
+        opacity: 1;
+        outline: 1px solid var(--webgis-brand-primary);
+        border-radius: 2px;
+    }
 
 .webgis-presentation_toc-basemap-item {
     display: inline-block;

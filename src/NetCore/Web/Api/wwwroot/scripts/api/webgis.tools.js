@@ -680,7 +680,8 @@
                         tool[p] = originalTool[p];
                     } 
                 }
-                if (originalTool.type === 'serverbutton') {
+                // suppressToolDialog: only the response UI (eg. modal dialog), never the tool dialog of the button (eg. toc context menu)
+                if (originalTool.type === 'serverbutton' && tool.suppressToolDialog !== true) {
                     tool.uiElement = originalTool.uiElement;
                     tool.name = originalTool.name;
                     tool.type = originalTool.type;
@@ -1367,6 +1368,9 @@
 
             if (!tool.originalUiElement) {
                 response.ui.toolDialogId = tool.id;
+            }
+            if (tool.suppressToolDialog === true) {
+                response.ui.suppressOnBuildToolUi = true;
             }
 
             $(tool.originalUiElement || null)

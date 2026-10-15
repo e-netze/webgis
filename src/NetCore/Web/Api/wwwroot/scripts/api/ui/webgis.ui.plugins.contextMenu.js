@@ -4,7 +4,9 @@
 // (.webgis-contextmenu-blocker, optionally shading everything except options.sender) with the menu (ul.webgis-contextmenu).
 // The plugin lives on the blocker: one element = one menu, closing (click/right click on the blocker, item click,
 // Escape) removes the element. Items can be triggered by their shortcut key.
-// Created only through: webgis.ui.showContextMenu({ clickEvent, items: [{ text, icon, shortcut, data }], callback(data), sender, container })
+// Items: { text, icon, shortcut, data, checked, items } - 'items' renders a submenu (opens on hover or click, the
+// parent item itself never triggers the callback), 'checked' shows a check mark; { separator: true } renders a line.
+// Created only through: webgis.ui.showContextMenu({ clickEvent, items, callback(data), sender, container })
 
 webgis.ui.definePlugin('webgis_contextMenu', {
     defaults: {
@@ -60,37 +62,7 @@ webgis.ui.definePlugin('webgis_contextMenu', {
             .addClass('webgis-contextmenu')
             .appendTo($blocker);
 
-        for (let item of options.items) {
-            let $item = $("<li>")
-                .addClass('webgis-contextmenu-item')
-                .attr('shortcut', item.shortcut)
-                .data('item-data', item.data)
-                .appendTo($menu)
-                .on('click.webgis_contextMenu', function (e) {
-                    e.stopPropagation();
-
-                    if (options.callback) {
-                        options.callback($(this).data('item-data'));
-                    }
-
-                    self._close(e);
-                });
-
-            $("<div>")
-                .text(item.text)
-                .appendTo($item);
-
-            if (item.shortcut) {
-                $("<div>")
-                    .addClass('shortcut-text')
-                    .text(webgis.l10n.get('shortcut-key') + ': ' + item.shortcut.toString().toUpperCase())
-                    .appendTo($item);
-            }
-
-            if (item.icon) {
-                $item.css('backgroundImage', item.icon.indexOf('url(') === 0 ? item.icon : 'url(' + item.icon + ')');
-            }
-        }
+        this._renderItems($menu, options.items);
 
         $menu.css({
             left: Math.max(0, Math.min($win.width() - $menu.width() - 10, options.clickEvent.originalEvent.clientX)),
@@ -120,6 +92,100 @@ webgis.ui.definePlugin('webgis_contextMenu', {
         this._$menu = this._$win = null;
     },
     methods: {
+        _renderItems: function ($ul, items) {
+            const $ = this.$, self = this, options = this.options;
+
+            for (let item of items || []) {
+                if (!item) continue;
+
+                if (item.separator === true) {
+                    $("<li>")
+                        .addClass('webgis-contextmenu-separator')
+                        .appendTo($ul);
+                    continue;
+                }
+
+                const hasSubItems = Array.isArray(item.items) && item.items.length > 0;
+
+                let $item = $("<li>")
+                    .addClass('webgis-contextmenu-item')
+                    .toggleClass('has-submenu', hasSubItems)
+                    .toggleClass('item-checked', item.checked === true)
+                    .attr('shortcut', item.shortcut)
+                    .data('item-data', item.data)
+                    .appendTo($ul);
+
+                $("<div>")
+                    .text(item.text)
+                    .appendTo($item);
+
+                if (item.shortcut) {
+                    $("<div>")
+                        .addClass('shortcut-text')
+                        .text(webgis.l10n.get('shortcut-key') + ': ' + item.shortcut.toString().toUpperCase())
+                        .appendTo($item);
+                }
+
+                if (item.icon) {
+                    $item.css('backgroundImage', item.icon.indexOf('url(') === 0 ? item.icon : 'url(' + item.icon + ')');
+                }
+
+                if (hasSubItems) {
+                    const $submenu = $("<ul>")
+                        .addClass('webgis-contextmenu webgis-contextmenu-submenu')
+                        .appendTo($item);
+                    this._renderItems($submenu, item.items);
+
+                    // parent items only open the submenu (hover or click), they never trigger the callback
+                    $item
+                        .on('mouseenter.webgis_contextMenu', function () {
+                            self._openSubmenu($(this));
+                        })
+                        .on('mouseleave.webgis_contextMenu', function () {
+                            $(this).removeClass('open');
+                        })
+                        .on('click.webgis_contextMenu', function (e) {
+                            e.stopPropagation();
+                            if ($(e.target).closest('ul.webgis-contextmenu-submenu', this).length > 0)
+                                return;   // click inside the submenu (separator, padding)
+                            if ($(this).hasClass('open')) {
+                                $(this).removeClass('open');
+                            } else {
+                                self._openSubmenu($(this));
+                            }
+                        });
+                } else {
+                    $item.on('click.webgis_contextMenu', function (e) {
+                        e.stopPropagation();
+
+                        if (options.callback) {
+                            options.callback($(this).data('item-data'));
+                        }
+
+                        self._close(e);
+                    });
+                }
+            }
+        },
+        _openSubmenu: function ($item) {
+            const $win = this._$win;
+
+            $item.siblings('.open').removeClass('open');
+            const $submenu = $item.children('ul.webgis-contextmenu-submenu')
+                .removeClass('flip-left')
+                .css('top', '');
+            $item.addClass('open');
+
+            // keep the submenu inside the window: open to the left / move up if necessary
+            const rect = $submenu.get(0).getBoundingClientRect();
+            if (rect.right > $win.width() - 4) {
+                $submenu.addClass('flip-left');
+            }
+            const overflowBottom = rect.bottom - ($win.height() - 4);
+            if (overflowBottom > 0) {
+                $submenu.css('top', -Math.min(overflowBottom, Math.max(0, rect.top)) + 'px');
+            }
+        },
         close: function () {
             this.$el.remove();
         },

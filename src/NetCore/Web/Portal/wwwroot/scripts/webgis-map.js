@@ -1286,6 +1286,7 @@ webgis.mapInitializer = (function (m) {
                 mapJson.userdata.meta.author.toLowerCase() === webgis.hmac.userName().toLowerCase()) {
 
                 globals.isMapAuthor = true;
+                webgis.globals.portal.isMapAuthor = true;  // API viewer: e.g. technical properties of toc items
 
                 if ($('.mapimage-preview').length > 0) {
                     $('.mapimage-preview')

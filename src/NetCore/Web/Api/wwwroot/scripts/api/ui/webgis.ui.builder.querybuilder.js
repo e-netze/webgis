@@ -10,6 +10,8 @@ webgis.ui.builder['query-builder'] = (map, $newElement, element, options) => {
         callback_tool_id: element.callback_tool_id,
         callback_argument: element.callback_argument,
         whereclause_parts: element.whereclause_parts,
-        event: options.event
+        event: options.event,
+        // opened without tool dialog (eg. from the toc context menu) => apply without tool dialog, too
+        suppress_tool_dialog: !!(options.tool && options.tool.suppressToolDialog === true)
     });
 };

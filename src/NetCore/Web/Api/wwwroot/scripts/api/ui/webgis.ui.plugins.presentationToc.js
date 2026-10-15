@@ -24,6 +24,12 @@ webgis.ui.definePlugin('webgis_presentationToc', {
 
         elem._map = options.map;
         $elem.addClass('webgis-presentation_toc-holder');
+        // no browser context menu in the whole toc (items and groups show their own menu)
+        $elem.on('contextmenu.webgis_presentation_toc', function (e) {
+            if ($(e.target).closest('input, textarea').length === 0) {
+                e.preventDefault();
+            }
+        });
         if (webgis.usability.presentationTocSearch === true && $.fn.webgis_contentsearch) {
             $("<div></div>")
                 .addClass('webgis-presentation_toc-search')
@@ -1088,60 +1094,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                                 $metadata.appendTo($descriptionTabContent)
                             }
 
-                            if (service.servicedescription) {
-                                let $descr = $("<div></div>")
-                                    .addClass('webgis-service-description')
-                                    .appendTo($descriptionTabContent);
-
-                                if (service.servicedescription.indexOf('md:') === 0) {
-                                    $("<p>")
-                                        .html(webgis.asMarkdownOrText(service.servicedescription))
-                                        .appendTo($descr);
-                                } else {
-                                    $.each(service.servicedescription.split('\n'), function (i, paragraph) {
-                                        $("<p>").text(paragraph).appendTo($descr);
-                                    });
-                                    if ($.fn.webgis_collapsable_paragraph) {
-                                        $descr.webgis_collapsable_paragraph();
-                                    }
-                                }
-                            }
-
-                            if (service.copyrighttext) {
-                                let $cp = $("<div></div>")
-                                    .addClass('webgis-service-copyrighttext')
-                                    .appendTo($descriptionTabContent);
-
-                                $.each(service.copyrighttext.split('\n'), function (i, paragraph) {
-                                    $("<p>").text(paragraph).appendTo($cp);
-                                });
-                                if ($.fn.webgis_collapsable_paragraph) {
-                                    $cp.webgis_collapsable_paragraph();
-                                }
-                            }
-                            else if (service.copyrightId) { // CMS copyright
-                                let copyright = map.getCopyright(service.copyrightId);
-                                if (copyright) {
-                                    let $cp = $("<div></div>")
-                                        .text(service.copyrighttext)
-                                        .addClass('webgis-service-copyrighttext')
-                                        .appendTo($descriptionTabContent);
-
-                                    if (copyright.logo) {
-                                        $("<img src='" + copyright.logo + "' />")
-                                            .css('width', copyright.logo_size && copyright.logo_size.length === 2 ? copyright.logo_size[0] : 'auto')
-                                            .css('height', copyright.logo_size && copyright.logo_size.length === 2 ? copyright.logo_size[1] : 'auto');
-                                    }
-                                    $("<strong></strong>").text(copyright.copyright).appendTo($cp);
-                                    $("<p></p>").text(copyright.advice).appendTo($cp);
-                                    if (copyright.link) {
-                                        $("<a href='" + copyright.link + "' target='_blank'>").text(copyright.link_text || copyright.text).appendTo($cp);
-                                    }
-                                    if ($.fn.webgis_collapsable_paragraph) {
-                                        $cp.webgis_collapsable_paragraph();
-                                    }
-                                }
-                            }
+                            Ctor.appendServiceDescription($descriptionTabContent, map, service);
                         }
                     }
 
@@ -1445,6 +1398,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                             $("<span style='position:absolute' class='webgis-api-icon webgis-api-icon-triangle-1-s'></span>").appendTo($title);
                             $("<span class='webgis-presentation_toc-item-group-checkbox'><span>").appendTo($title).on('click.webgis_presentation_toc', function (e) { Ctor.groupCheckBoxClicked(this, e); });
                             $("<span style='margin-left:14px' class='webgis-search-content'>&nbsp;" + webgis.encodeHtmlString(prop.name) + "</span>").appendTo($title);
+                            Ctor.addItemMenu($group_li, $title);
 
                             $parentUl = $("<ul style='display:none'></ul>").appendTo($group_li);
                         }
@@ -1473,6 +1427,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                                     $("<span style='position:absolute' class='webgis-api-icon webgis-api-icon-triangle-1-s'></span>").appendTo($ui_title);
                                     $("<span class='webgis-presentation_toc-item-group-checkbox'><span>").appendTo($ui_title).on('click.webgis_presentation_toc', function (e) { Ctor.groupCheckBoxClicked(this, e); });
                                     $("<span style='margin-left:14px' class='webgis-search-content'>&nbsp;" + webgis.encodeHtmlString(ui_groupname) + "</span>").appendTo($ui_title);
+                                    Ctor.addItemMenu($ui_group, $ui_title);
 
                                     $parentUl = $("<ul style='display:none'></ul>").appendTo($ui_group);
                                 } else {
@@ -1498,6 +1453,15 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                         webgis.usability.show_metadata_i_button_toc &&
                         prop.metadata_button_style == 'i_button';
 
+                    if (prop.group_metadata && $group_li != null && !$group_li.data('toc-item-metadata')) {
+                        $group_li.data('toc-item-metadata', {
+                            metadata: prop.group_metadata,
+                            metadata_target: prop.group_metadata_target,
+                            metadata_title: prop.group_metadata_title,
+                            metadata_dialog_width: prop.group_metadata_dialog_width,
+                            metadata_dialog_height: prop.group_metadata_dialog_height
+                        });
+                    }
                     if (prop.group_metadata && $group_li != null && webgis.usability.show_metadata_i_button_toc
                         && $group_li.find('.webgis-api-icon.webgis-api-icon-info').length === 0) {
                         $("<span style='position:absolute;left:5px;' class='webgis-api-icon webgis-api-icon-info'></span>")
@@ -1611,41 +1575,8 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                             });
                         }
 
-                        const $overlayButtons = $("<div>")
-                            .addClass('webgis-presentation_toc-item-overlay-buttons')
-                            .appendTo($item_li);
-                        if (webgis.usability.allowTocVisFilters === true &&
-                            presentation &&
-                            presentation.layers &&
-                            presentation.layers.length > 0) {
-                            $("<div>")
-                                .addClass('webgis-presentation_toc-item-overlay-button visfilter')
-                                .css('background-image', 'url(' + webgis.css.imgResource('filter-26.png', 'tools') + ')')
-                                .data('presentation', presentation)
-                                .appendTo($overlayButtons)
-                                .on('click.webgis_presentation_toc', function (e) {
-                                    e.stopPropagation();
-
-                                    //console.log('presentation', $(this).data('presentation'));
-                                    //console.log('presIds', $(this).closest('li').get(0).presIds);
-                                    //console.log('layers', Ctor.collectLayers(this, $(this).closest('li').get(0).presIds));
-
-                                    const layers = Ctor.collectLayers(this, $(this).closest('li').get(0).presIds);
-
-                                    webgis.tools.onButtonClick(service.map,
-                                        {
-                                            command: 'set_toc_layer_filter',
-                                            type: 'servertoolcommand_ext',
-                                            id: 'webgis.tools.presentation.visfilter',
-                                            map: service.map,
-                                            argument: JSON.stringify({
-                                                id: presentation.id,
-                                                name: presentation.name,
-                                                serviceLayers: layers
-                                            })
-                                        }, this, null, null);
-                                });
-                        }
+                        $item_li.data('toc-item-map', service.map);
+                        Ctor.addItemMenu($item_li, $item_li);
                     }
 
                     item_li.presIds = item_li.presIds || [];
@@ -1704,6 +1635,24 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                         $metadataButton.on('click.webgis_presentation_toc', function (event) {
                             event.stopPropagation();
                             Ctor.showMetadataLink($(this));
+                        });
+                    }
+
+                    if (!$item_li.data('toc-item-presentation')) {
+                        $item_li.data('toc-item-presentation', presentation);
+                    }
+                    if (presentation && presentation.layers && presentation.layers.length > 0) {
+                        item_li.hasTocLayers = true;
+                    }
+                    if (prop.style !== 'info'
+                        && prop[metadata_prefix + 'metadata']
+                        && !$item_li.data('toc-item-metadata')) {
+                        $item_li.data('toc-item-metadata', {
+                            metadata: prop[metadata_prefix + 'metadata'],
+                            metadata_target: prop[metadata_prefix + 'metadata_target'],
+                            metadata_title: prop[metadata_prefix + 'metadata_title'],
+                            metadata_dialog_width: prop[metadata_prefix + 'metadata_dialog_width'],
+                            metadata_dialog_height: prop[metadata_prefix + 'metadata_dialog_height']
                         });
                     }
 
@@ -2250,24 +2199,688 @@ webgis.ui.definePlugin('webgis_presentationToc', {
 
             return $item_ul;
         },
-        showMetadataLink: function ($sender) {
+        showMetadataLink: function ($sender, metadata) {
             const $ = webgis.$ || jQuery;
+            // metadata: optional { metadata, metadata_target, metadata_title, metadata_dialog_width, metadata_dialog_height },
+            // otherwise read from the data of $sender (metadata button)
+            const meta = metadata || {
+                metadata: $sender.data('metadata'),
+                metadata_target: $sender.data('metadata_target'),
+                metadata_title: $sender.data('metadata_title'),
+                metadata_dialog_width: $sender.data('metadata_dialog_width'),
+                metadata_dialog_height: $sender.data('metadata_dialog_height')
+            };
             let map = $sender.closest('.webgis-tab-content').data("map")
                 || $sender.closest('.webgis-presentation_toc-holder').get(0)._map,
-                url = webgis.tools.replaceCustomToolUrl(map, $sender.data('metadata')),
-                target = $sender.data('metadata_target');
+                url = webgis.tools.replaceCustomToolUrl(map, meta.metadata),
+                target = meta.metadata_target;
 
             switch (target) {
                 case 'dialog':
                     webgis.iFrameDialog(
                         url,
-                        $sender.data('metadata_title') || "Metadaten",
-                        $sender.data('metadata_dialog_width'),
-                        $sender.data('metadata_dialog_height'));
+                        meta.metadata_title || "Metadaten",
+                        meta.metadata_dialog_width,
+                        meta.metadata_dialog_height);
                     break;
                 default:
                     window.open(url);
                     break;
+            }
+        },
+        // context menu of a toc item (burger button / right click): every provider adds its entries for the item
+        // provider: { hasItems($li) => bool (cheap, while building the toc), getItems($li, map) => [contextMenu items] }
+        // item.data.action is called, when the entry is clicked
+        tocItemMenuProviders: [
+            {   // metadata: always for the whole presentation (no sub entries)
+                hasItems: function ($li) {
+                    return !!$li.data('toc-item-metadata');
+                },
+                getItems: function ($li, map) {
+                    const Ctor = (webgis.$ || jQuery).fn.webgis_presentationToc.plugin;
+                    const metadata = $li.data('toc-item-metadata');
+                    if (!metadata) return [];
+
+                    return [{
+                        text: webgis.l10n.get('metadata'),
+                        icon: webgis.css.imgResource('info-26.png', 'toc'),
+                        data: { action: function () { Ctor.showMetadataLink($li, metadata); } }
+                    }];
+                }
+            },
+            {   // query builder (toc vis filter): all layers (common fields) or a single layer
+                hasItems: function ($li) {
+                    return webgis.usability.allowTocVisFilters === true && $li.get(0).hasTocLayers === true;
+                },
+                getItems: function ($li, map) {
+                    const Ctor = (webgis.$ || jQuery).fn.webgis_presentationToc.plugin;
+                    if (webgis.usability.allowTocVisFilters !== true || !map)
+                        return [];
+
+                    const layers = Ctor.collectItemLayers($li, map);
+                    if (layers.length === 0)
+                        return [];
+
+                    const presentation = $li.data('toc-item-presentation') || {};
+                    const openQueryBuilder = function (serviceLayers) {
+                        webgis.tools.onButtonClick(map,
+                            {
+                                command: 'set_toc_layer_filter',
+                                type: 'servertoolcommand_ext',
+                                id: 'webgis.tools.presentation.visfilter',
+                                map: map,
+                                suppressToolDialog: true,
+                                argument: JSON.stringify({
+                                    id: presentation.id,
+                                    name: presentation.name,
+                                    serviceLayers: serviceLayers
+                                })
+                            }, $li.get(0), null, null);
+                    };
+                    const toServiceLayers = function (layers) {
+                        const serviceLayers = {};
+                        for (const layer of layers) {
+                            serviceLayers[layer.service.id] = serviceLayers[layer.service.id] || [];
+                            serviceLayers[layer.service.id].push(layer.layerId);
+                        }
+                        return serviceLayers;
+                    };
+
+                    const text = webgis.l10n.get('toc-item-menu-querybuilder'),
+                        icon = webgis.css.imgResource('filter-26.png', 'tools');
+
+                    if (layers.length === 1) {
+                        return [{
+                            text: text,
+                            icon: icon,
+                            checked: layers[0].hasFilter,
+                            data: { action: function () { openQueryBuilder(toServiceLayers(layers)); } }
+                        }];
+                    }
+
+                    const subItems = [{
+                        text: webgis.l10n.get('toc-item-menu-all-layers'),
+                        checked: layers.every(function (l) { return l.hasFilter; }),
+                        data: { action: function () { openQueryBuilder(toServiceLayers(layers)); } }
+                    }, { separator: true }];
+
+                    for (const layer of layers) {
+                        subItems.push({
+                            text: layer.title,
+                            checked: layer.hasFilter,
+                            data: { action: function () { openQueryBuilder(toServiceLayers([layer])); } }
+                        });
+                    }
+
+                    return [{ text: text, icon: icon, items: subItems }];
+                }
+            },
+            {   // properties: always the last entry (separator before)
+                hasItems: function ($li) {
+                    return true;
+                },
+                getItems: function ($li, map) {
+                    const Ctor = (webgis.$ || jQuery).fn.webgis_presentationToc.plugin;
+                    return [{ separator: true }, {
+                        text: webgis.l10n.get('toc-item-menu-properties'),
+                        icon: webgis.css.imgResource('admin-26.png', 'ui'),
+                        data: { action: function () { Ctor.showItemProperties($li, map); } }
+                    }];
+                }
+            }
+        ],
+        // distinct layers of all presentations of a toc item or a group (all items of the group):
+        // [{ service, layerId, layer, query, title, hasFilter }]
+        collectItemLayers: function ($li, map) {
+            const $ = webgis.$ || jQuery, Ctor = $.fn.webgis_presentationToc.plugin;
+            const result = [], keys = {};
+            if (!map || !$li || $li.length === 0)
+                return result;
+
+            let presIds = [];
+            if ($li.hasClass('webgis-presentation_toc-item-group')) {
+                $li.find('li.webgis-presentation_toc-item').each(function (i, e) {
+                    presIds = presIds.concat(e.presIds || []);
+                });
+            } else {
+                presIds = $li.get(0).presIds || [];
+            }
+
+            for (const id of presIds) {
+                const p = Ctor.findItem(map, id);
+                if (!p || !p.presentation || !p.item || !p.presentation.service)
+                    continue;
+
+                const service = p.presentation.service;
+                for (const layerId of service.getLayerIdsFromNames(p.presentation.layers)) {
+                    const key = service.id + '~' + layerId;
+                    if (keys[key]) continue;
+                    keys[key] = true;
+
+                    const query = service.getQueryByLayerId(layerId),
+                        layer = service.getLayer(layerId);
+                    const title = (query && query.name)
+                        || (layer && layer.name ? layer.name.split('\\').pop() : layerId);
+
+                    result.push({
+                        service: service,
+                        layerId: layerId,
+                        layer: layer,
+                        query: query || null,
+                        title: title,
+                        hasFilter: Ctor.hasTocLayerFilter(map, service.id, layerId)
+                    });
+                }
+            }
+
+            // same title in different services => append the service name
+            for (const layer of result) {
+                if (result.some(function (l) { return l !== layer && l.title === layer.title && l.service !== layer.service; })) {
+                    layer.title += ' (' + (layer.service.name || layer.service.id) + ')';
+                }
+            }
+
+            return result;
+        },
+        // see VisFilterDefinitionDTO.CreateTocFilterId (server)
+        hasTocLayerFilter: function (map, serviceId, layerId) {
+            const filterId = '#TOC#~' + serviceId + '~' + layerId;
+            return (map._visfilters || []).some(function (f) { return f.id === filterId; });
+        },
+        // burger button (on hover) + right click => context menu of a toc item or group
+        // $li: li of the item/group, $host: element for the button and the right click (item: $li, group: title div)
+        addItemMenu: function ($li, $host) {
+            const $ = webgis.$ || jQuery, Ctor = $.fn.webgis_presentationToc.plugin;
+            const $overlayButtons = $("<div>")
+                .addClass('webgis-presentation_toc-item-overlay-buttons');
+            if ($li.hasClass('webgis-presentation_toc-item-group')) {
+                $overlayButtons.prependTo($host);  // float right in the group title
+            } else {
+                $overlayButtons.appendTo($host);
+            }
+            $("<div>")
+                .addClass('webgis-presentation_toc-item-overlay-button menu')
+                .attr('title', webgis.l10n.get('toc-item-menu'))
+                .appendTo($overlayButtons)
+                .on('click.webgis_presentation_toc', function (e) {
+                    e.stopPropagation();
+                    Ctor.showItemContextMenu($li, e);
+                });
+            $host.on('contextmenu.webgis_presentation_toc', function (e) {
+                e.stopPropagation();
+                Ctor.showItemContextMenu($li, e);
+                return false;
+            });
+        },
+        getItemMap: function ($li) {
+            const $holder = $li.closest('.webgis-presentation_toc-holder');
+            return $li.data('toc-item-map') || ($holder.length > 0 ? $holder.get(0)._map : null);
+        },
+        showItemContextMenu: function ($li, e) {
+            const Ctor = (webgis.$ || jQuery).fn.webgis_presentationToc.plugin;
+            if (!$li || $li.length === 0 || !webgis.ui.showContextMenu)
+                return false;
+
+            const map = Ctor.getItemMap($li);
+            let items = [];
+            for (const provider of Ctor.tocItemMenuProviders) {
+                if (!provider.hasItems($li)) continue;
+                items = items.concat(provider.getItems($li, map) || []);
+            }
+            // no leading, trailing or double separators
+            items = items.filter(function (item, i, arr) {
+                return !item.separator || (i > 0 && i < arr.length - 1 && !arr[i - 1].separator);
+            });
+            if (items.length === 0)
+                return false;
+
+            webgis.ui.showContextMenu({
+                clickEvent: e,
+                items: items,
+                callback: function (data) {
+                    if (data && typeof data.action === 'function') {
+                        data.action();
+                    }
+                }
+            });
+
+            return true;
+        },
+        // service description and copyright (legend dialog, properties dialog)
+        appendServiceDescription: function ($target, map, service) {
+            const $ = webgis.$ || jQuery;
+            if (service.servicedescription) {
+                let $descr = $("<div></div>")
+                    .addClass('webgis-service-description')
+                    .appendTo($target);
+
+                if (service.servicedescription.indexOf('md:') === 0) {
+                    $("<p>")
+                        .html(webgis.asMarkdownOrText(service.servicedescription))
+                        .appendTo($descr);
+                } else {
+                    $.each(service.servicedescription.split('\n'), function (i, paragraph) {
+                        $("<p>").text(paragraph).appendTo($descr);
+                    });
+                    if ($.fn.webgis_collapsable_paragraph) {
+                        $descr.webgis_collapsable_paragraph();
+                    }
+                }
+            }
+
+            if (service.copyrighttext) {
+                let $cp = $("<div></div>")
+                    .addClass('webgis-service-copyrighttext')
+                    .appendTo($target);
+
+                $.each(service.copyrighttext.split('\n'), function (i, paragraph) {
+                    $("<p>").text(paragraph).appendTo($cp);
+                });
+                if ($.fn.webgis_collapsable_paragraph) {
+                    $cp.webgis_collapsable_paragraph();
+                }
+            }
+            else if (service.copyrightId) { // CMS copyright
+                let copyright = map.getCopyright(service.copyrightId);
+                if (copyright) {
+                    let $cp = $("<div></div>")
+                        .text(service.copyrighttext)
+                        .addClass('webgis-service-copyrighttext')
+                        .appendTo($target);
+
+                    if (copyright.logo) {
+                        $("<img src='" + copyright.logo + "' />")
+                            .css('width', copyright.logo_size && copyright.logo_size.length === 2 ? copyright.logo_size[0] : 'auto')
+                            .css('height', copyright.logo_size && copyright.logo_size.length === 2 ? copyright.logo_size[1] : 'auto');
+                    }
+                    $("<strong></strong>").text(copyright.copyright).appendTo($cp);
+                    $("<p></p>").text(copyright.advice).appendTo($cp);
+                    if (copyright.link) {
+                        $("<a href='" + copyright.link + "' target='_blank'>").text(copyright.link_text || copyright.text).appendTo($cp);
+                    }
+                    if ($.fn.webgis_collapsable_paragraph) {
+                        $cp.webgis_collapsable_paragraph();
+                    }
+                }
+            }
+        },
+        formatScale: function (scale) {
+            return Math.round(scale).toLocaleString(webgis.l10n.language || undefined);
+        },
+        // "from 1:max to 1:min" (visible, if min <= scale <= max)
+        formatScaleRange: function (layer) {
+            const Ctor = (webgis.$ || jQuery).fn.webgis_presentationToc.plugin;
+            const min = layer && layer.minscale > 1 ? layer.minscale : 0,
+                max = layer && layer.maxscale > 1 ? layer.maxscale : 0;
+            if (min && max)
+                return webgis.l10n.get('toc-props-scale-range', { min: Ctor.formatScale(min), max: Ctor.formatScale(max) });
+            if (max)
+                return webgis.l10n.get('toc-props-scale-from', { max: Ctor.formatScale(max) });
+            if (min)
+                return webgis.l10n.get('toc-props-scale-to', { min: Ctor.formatScale(min) });
+            return webgis.l10n.get('toc-props-scale-always');
+        },
+        // zoom (around the current center) to the nearest scale, where the layer is visible
+        zoomToLayerScale: function (map, layer) {
+            const min = layer && layer.minscale > 1 ? layer.minscale : 0,
+                max = layer && layer.maxscale > 1 ? layer.maxscale : 0;
+            const crsScale = map.crsScale(), scale = map.scale();
+            if (!crsScale || !scale || (!min && !max))
+                return;
+
+            // layer scales are compared with the crs scale (see checkItemScaleVisibility), setScale uses the map scale
+            const factor = scale / crsScale;
+            const inRange = function (s) { return (!min || s >= min) && (!max || s <= max); };
+            if (inRange(crsScale))
+                return;
+
+            let target = (min && crsScale < min) ? min * 1.02 : max * 0.98;
+            if (!inRange(target))
+                target = (min + max) / 2;
+
+            // prefer a zoom level of the map inside the range (setScale snaps to the levels)
+            let best = null;
+            if (map.crs && map.crs.resolutions) {
+                const dpm = 96.0 / 0.0254;
+                for (const res of map.crs.resolutions) {
+                    const s = Math.round(res * dpm);
+                    if (!inRange(s / factor))
+                        continue;
+                    if (best === null || Math.abs(Math.log(s / factor / target)) < Math.abs(Math.log(best / factor / target)))
+                        best = s;
+                }
+            }
+
+            map.setScale(best !== null ? best : target * factor, map.getCenter());
+        },
+        removeTocLayerFilters: function (map, layers) {
+            const Ctor = (webgis.$ || jQuery).fn.webgis_presentationToc.plugin;
+            const services = {};
+            for (const layer of layers) {
+                if (!Ctor.hasTocLayerFilter(map, layer.service.id, layer.layerId)) continue;
+                map.unsetFilter('#TOC#~' + layer.service.id + '~' + layer.layerId);
+                services[layer.service.id] = layer.service;
+            }
+            for (const id in services) {
+                services[id].refresh();
+            }
+            if (map.ui && map.ui.refreshUIElements) {
+                map.ui.refreshUIElements();
+            }
+        },
+        // properties dialog of a toc item (presentation) or a group: tabs general, legend, info & copyright, technical
+        showItemProperties: function ($li, map) {
+            const $ = webgis.$ || jQuery, Ctor = $.fn.webgis_presentationToc.plugin;
+            map = map || Ctor.getItemMap($li);
+            if (!map || !$li || $li.length === 0)
+                return;
+
+            const isGroup = $li.hasClass('webgis-presentation_toc-item-group');
+            const name = isGroup ? ($li.attr('data-ui-groupname') || $li.get(0).groupname) : $li.get(0).groupname;
+            const isMapAuthor = !!(webgis.globals && webgis.globals.portal && webgis.globals.portal.isMapAuthor === true);
+
+            const tabs = [
+                { title: webgis.l10n.get('toc-props-general'), render: isGroup ? Ctor._renderGroupProperties : Ctor._renderItemProperties },
+                { title: webgis.l10n.get('legend'), render: Ctor._renderItemLegend }
+            ];
+            if (!isGroup) {
+                tabs.push({ title: webgis.l10n.get('info-and-copyright'), render: Ctor._renderItemInfo });
+                if (isMapAuthor) {
+                    tabs.push({ title: webgis.l10n.get('toc-props-technical'), render: Ctor._renderItemTechnical });
+                }
+            }
+
+            webgis.ui.showModal({
+                id: 'webgis-toc-item-properties',
+                title: name,
+                width: '640px',
+                height: '70%',
+                onload: function ($content) {
+                    $content.addClass('webgis-toc-properties');
+                    const $tr = $("<tr>").css('white-space', 'nowrap')
+                        .appendTo($("<table>").css('width', '100%').addClass('webgis-modal-content-fill').appendTo($content));
+
+                    tabs.forEach(function (tab, i) {
+                        $("<td>")
+                            .text(tab.title)
+                            .addClass('webgis-tab-header')
+                            .attr('data-tab', i)
+                            .appendTo($tr);
+
+                        const $tab = $("<div>")
+                            .addClass('webgis-tab-content')
+                            .attr('data-tab', i)
+                            .css('display', 'none')
+                            .appendTo($content);
+                        // render lazy, when the tab is shown first (legend requests)
+                        $tab.data('render', function () {
+                            $tab.empty().data('rendered', true);
+                            tab.render($tab, $li, map);
+                        });
+                    });
+
+                    $content.find('.webgis-tab-header[data-tab]').on('click', function (e) {
+                        e.stopPropagation();
+                        const $header = $(this);
+                        $header.parent().children('.webgis-tab-header').removeClass('selected');
+                        $header.addClass('selected');
+                        $content.children('.webgis-tab-content').css('display', 'none');
+                        const $tab = $content.children('.webgis-tab-content[data-tab=' + $header.attr('data-tab') + ']').css('display', 'block');
+                        if ($tab.data('rendered') !== true) {
+                            $tab.data('render')();
+                        }
+                    });
+                    $content.find('.webgis-tab-header:first').trigger('click');
+                }
+            });
+        },
+        _appendPropertyRow: function ($table, label, value, copyable) {
+            const $ = webgis.$ || jQuery, Ctor = $.fn.webgis_presentationToc.plugin;
+            if (value === undefined || value === null || value === '')
+                return;
+            const $tr = $("<tr>").appendTo($table);
+            $("<th>").text(label).appendTo($tr);
+            const $td = $("<td>").text(value).appendTo($tr);
+            if (copyable) Ctor._appendCopyButton($td, value);
+        },
+        // subtle copy button (visible on row hover)
+        _appendCopyButton: function ($td, value) {
+            const $ = webgis.$ || jQuery;
+            if (value === undefined || value === null || value === '')
+                return $td;
+            $("<span>")
+                .addClass('webgis-toc-properties-copy')
+                .attr('title', webgis.l10n.get('copy-to-clipboard'))
+                .css('background-image', 'url(' + webgis.css.imgResource('copy-26.png', 'sharebuttons') + ')')
+                .appendTo($td.addClass('copyable'))
+                .on('click', function (e) {
+                    e.stopPropagation();
+                    webgis.copyString(String(value));
+                    const $btn = $(this).addClass('copied');
+                    setTimeout(function () { $btn.removeClass('copied'); }, 1000);
+                });
+            return $td;
+        },
+        _flag: function (value) {
+            if (value === true) return '\u2713';
+            if (value === false) return '\u2013';
+            return value;
+        },
+        _renderItemProperties: function ($tab, $li, map) {
+            const $ = webgis.$ || jQuery, Ctor = $.fn.webgis_presentationToc.plugin;
+            const presentation = $li.data('toc-item-presentation') || {};
+            const layers = Ctor.collectItemLayers($li, map);
+            const services = [];
+            for (const layer of layers) {
+                if (services.indexOf(layer.service) < 0) services.push(layer.service);
+            }
+
+            const $props = $("<table>").addClass('webgis-toc-properties-table key-value').appendTo($tab);
+            Ctor._appendPropertyRow($props, webgis.l10n.get('toc-props-name'), $li.get(0).groupname);
+            Ctor._appendPropertyRow($props, webgis.l10n.get('toc-props-description'), presentation.description);
+            Ctor._appendPropertyRow($props, webgis.l10n.get('services'), services.map(function (s) { return s.name || s.id; }).join(', '));
+
+            if (layers.length === 0)
+                return;
+
+            $("<h3>").text(webgis.l10n.get('toc-props-layers')).appendTo($tab);
+            const $table = $("<table>").addClass('webgis-toc-properties-table').appendTo($tab);
+            const $head = $("<tr>").appendTo($table);
+            [webgis.l10n.get('toc-props-name'), webgis.l10n.get('toc-props-visible'), webgis.l10n.get('toc-props-scale'),
+            webgis.l10n.get('toc-props-queryable'), webgis.l10n.get('toc-props-filter')].forEach(function (text) {
+                $("<th>").text(text).appendTo($head);
+            });
+
+            const scale = map.crsScale(), rerender = function () { $tab.data('render')(); };
+            for (const layer of layers) {
+                const inScale = layer.service.layerInScale(layer.layerId, scale);
+                const $tr = $("<tr>").toggleClass('out-of-scale', !inScale).appendTo($table);
+                Ctor._appendCopyButton($("<td>").text(layer.title).appendTo($tr), layer.title);
+                $("<td>").text(Ctor._flag(!!(layer.layer && layer.layer.visible))).appendTo($tr);
+
+                const $scale = $("<td>").text(Ctor.formatScaleRange(layer.layer)).appendTo($tr);
+                if (!inScale) {
+                    $scale.attr('title', webgis.l10n.get('toc-props-out-of-scale'));
+                    $("<div>")
+                        .addClass('webgis-toc-properties-action')
+                        .text(webgis.l10n.get('toc-props-zoom-to-scale'))
+                        .appendTo($scale)
+                        .on('click', function () {
+                            const onRefresh = function () {
+                                map.events.off('refresh', onRefresh);
+                                if ($.contains(document, $tab.get(0))) rerender();
+                            };
+                            map.events.on('refresh', onRefresh);
+                            Ctor.zoomToLayerScale(map, layer.layer);
+                        });
+                }
+
+                $("<td>").text(Ctor._flag(!!layer.query)).appendTo($tr);
+
+                const $filter = $("<td>").text(Ctor._flag(layer.hasFilter)).appendTo($tr);
+                if (layer.hasFilter) {
+                    $("<div>")
+                        .addClass('webgis-toc-properties-action')
+                        .text(webgis.l10n.get('toc-props-remove-filter'))
+                        .appendTo($filter)
+                        .on('click', function () {
+                            Ctor.removeTocLayerFilters(map, [layer]);
+                            rerender();
+                        });
+                }
+            }
+
+            if (layers.filter(function (l) { return l.hasFilter; }).length > 1) {
+                $("<button>")
+                    .addClass('webgis-button')
+                    .text(webgis.l10n.get('toc-props-remove-all-filters'))
+                    .appendTo($("<div>").css('margin-top', '10px').appendTo($tab))
+                    .on('click', function () {
+                        Ctor.removeTocLayerFilters(map, layers);
+                        rerender();
+                    });
+            }
+        },
+        _renderGroupProperties: function ($tab, $li, map) {
+            const $ = webgis.$ || jQuery, Ctor = $.fn.webgis_presentationToc.plugin;
+
+            const $props = $("<table>").addClass('webgis-toc-properties-table key-value').appendTo($tab);
+            Ctor._appendPropertyRow($props, webgis.l10n.get('toc-props-name'), $li.attr('data-ui-groupname') || $li.get(0).groupname);
+
+            const $items = $li.find('li.webgis-presentation_toc-item')
+                .not('.link-button')
+                .not('.webgis-display-none');
+            if ($items.length === 0)
+                return;
+
+            $("<h3>").text(webgis.l10n.get('toc-props-presentations')).appendTo($tab);
+            const $table = $("<table>").addClass('webgis-toc-properties-table').appendTo($tab);
+            const $head = $("<tr>").appendTo($table);
+            [webgis.l10n.get('toc-props-name'), webgis.l10n.get('toc-props-visible'), webgis.l10n.get('toc-props-scale'),
+            webgis.l10n.get('toc-props-filter')].forEach(function (text) {
+                $("<th>").text(text).appendTo($head);
+            });
+
+            $items.each(function (i, e) {
+                const $e = $(e), layers = Ctor.collectItemLayers($e, map);
+                const visibleCount = layers.filter(function (l) { return l.layer && l.layer.visible; }).length;
+                const inScale = !$e.hasClass('webgis-outofscale');
+
+                const $tr = $("<tr>").toggleClass('out-of-scale', !inScale).appendTo($table);
+                $("<td>").text(e.groupname || '').appendTo($tr);
+                $("<td>").text(layers.length === 0 ? '' :
+                    (visibleCount === layers.length ? Ctor._flag(true) : (visibleCount === 0 ? Ctor._flag(false) : webgis.l10n.get('toc-props-partly'))))
+                    .appendTo($tr);
+                $("<td>").text(Ctor._flag(inScale)).appendTo($tr);
+                $("<td>").text(Ctor._flag(layers.some(function (l) { return l.hasFilter; }))).appendTo($tr);
+            });
+        },
+        // legend of all layers of the item/group (also the invisible layers)
+        _renderItemLegend: function ($tab, $li, map) {
+            const $ = webgis.$ || jQuery, Ctor = $.fn.webgis_presentationToc.plugin;
+            const serviceLayers = [];
+            for (const layer of Ctor.collectItemLayers($li, map)) {
+                if (!layer.layer || layer.layer.legend !== true || !layer.service.canLegend() || layer.service.serviceInfo.has_legend === false)
+                    continue;
+                let entry = serviceLayers.find(function (s) { return s.service === layer.service; });
+                if (!entry) serviceLayers.push(entry = { service: layer.service, layerIds: [] });
+                entry.layerIds.push(layer.layerId);
+            }
+
+            const noLegend = function ($target) {
+                $("<div>").text(webgis.l10n.get('toc-props-no-legend')).addClass('webgis-info').appendTo($target);
+            };
+            if (serviceLayers.length === 0) {
+                noLegend($tab);
+                return;
+            }
+
+            for (const entry of serviceLayers) {
+                if (serviceLayers.length > 1) {
+                    $("<h3>").text(entry.service.name || entry.service.id).appendTo($tab);
+                }
+                const $holder = $("<div>").addClass('webgis-loading').appendTo($tab);
+                webgis.ajax({
+                    url: entry.service.getLegendUrl(true),
+                    type: 'post',
+                    data: $.extend(entry.service.getLegendPostData(), { layers: entry.layerIds.join(',') }),
+                    success: function (result) {
+                        $holder.removeClass('webgis-loading');
+                        if (result && result.url) {
+                            $("<img>").attr('src', result.url).appendTo($holder);
+                        } else {
+                            noLegend($holder);
+                        }
+                    },
+                    error: function () {
+                        $holder.removeClass('webgis-loading');
+                        noLegend($holder);
+                    }
+                });
+            }
+        },
+        _renderItemInfo: function ($tab, $li, map) {
+            const $ = webgis.$ || jQuery, Ctor = $.fn.webgis_presentationToc.plugin;
+            const services = [];
+            for (const layer of Ctor.collectItemLayers($li, map)) {
+                if (services.indexOf(layer.service) < 0) services.push(layer.service);
+            }
+
+            for (const service of services) {
+                const $section = $("<div>");
+                if (service.metadata_link) {
+                    $("<a>")
+                        .attr('href', service.metadata_link)
+                        .attr('target', '_blank')
+                        .text(webgis.l10n.get('metadata-link'))
+                        .appendTo($("<div>").addClass('webgis-service-metadata-link').appendTo($section));
+                }
+                Ctor.appendServiceDescription($section, map, service);
+
+                if ($section.children().length > 0) {
+                    $("<h2>").text(service.name || service.id).appendTo($tab);
+                    $section.appendTo($tab);
+                }
+            }
+
+            if ($tab.children().length === 0) {
+                $("<div>").text(webgis.l10n.get('no-copyright-info-available')).addClass('webgis-info').appendTo($tab);
+            }
+        },
+        // only for map authors (Portal: webgis.globals.portal.isMapAuthor)
+        _renderItemTechnical: function ($tab, $li, map) {
+            const $ = webgis.$ || jQuery, Ctor = $.fn.webgis_presentationToc.plugin;
+            const layers = Ctor.collectItemLayers($li, map);
+
+            const $props = $("<table>").addClass('webgis-toc-properties-table key-value').appendTo($tab);
+            Ctor._appendPropertyRow($props, webgis.l10n.get('toc-props-dvid'), $li.attr('data-dvid'), true);
+
+            const services = [];
+            for (const layer of layers) {
+                if (services.indexOf(layer.service) < 0) services.push(layer.service);
+            }
+
+            for (const service of services) {
+                $("<h3>").text(service.name || service.id).appendTo($tab);
+                const $serviceProps = $("<table>").addClass('webgis-toc-properties-table key-value').appendTo($tab);
+                Ctor._appendPropertyRow($serviceProps, webgis.l10n.get('toc-props-id'), service.id, true);
+                Ctor._appendPropertyRow($serviceProps, webgis.l10n.get('toc-props-type'), service.type);
+
+                const $table = $("<table>").addClass('webgis-toc-properties-table').appendTo($tab);
+                const $head = $("<tr>").appendTo($table);
+                [webgis.l10n.get('toc-props-id'), webgis.l10n.get('toc-props-fullname'), webgis.l10n.get('toc-props-minscale'),
+                webgis.l10n.get('toc-props-maxscale'), webgis.l10n.get('toc-props-query')].forEach(function (text) {
+                    $("<th>").text(text).appendTo($head);
+                });
+
+                for (const layer of layers.filter(function (l) { return l.service === service; })) {
+                    const $tr = $("<tr>").appendTo($table);
+                    Ctor._appendCopyButton($("<td>").text(layer.layerId).appendTo($tr), layer.layerId);
+                    Ctor._appendCopyButton($("<td>").text(layer.layer ? layer.layer.name : '').appendTo($tr), layer.layer ? layer.layer.name : '');
+                    $("<td>").text(layer.layer && layer.layer.minscale > 1 ? '1:' + Ctor.formatScale(layer.layer.minscale) : '').appendTo($tr);
+                    $("<td>").text(layer.layer && layer.layer.maxscale > 1 ? '1:' + Ctor.formatScale(layer.layer.maxscale) : '').appendTo($tr);
+                    Ctor._appendCopyButton($("<td>").text(layer.query ? layer.query.id : '').appendTo($tr), layer.query ? layer.query.id : '');
+                }
             }
         },
         groupCheckBoxClicked: function (sender, e) {

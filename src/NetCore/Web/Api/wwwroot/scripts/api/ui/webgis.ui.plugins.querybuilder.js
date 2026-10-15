@@ -11,7 +11,8 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
         callback_tool_id: null,
         callback_argument: null,
         whereclause_parts: null,
-        event: null
+        event: null,
+        suppress_tool_dialog: false
     },
     init: function () {
         const $ = this.$;
@@ -68,6 +69,7 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
                     command: 'querybuilder',
                     type: 'servertoolcommand_ext',
                     map: map,
+                    suppressToolDialog: options.suppress_tool_dialog === true,
                     argument: options.callback_argument,
                     event: wrappedEvent
                 });

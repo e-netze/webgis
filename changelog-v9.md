@@ -162,6 +162,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/general/ui.html#ui-detachable-windows),
   [Architecture](docs/architecture/detachable-windows.md)
 
+- Viewer table of contents: context menu for presentations and groups (right mouse button or the
+  burger icon that is shown on hover). The browser context menu is suppressed in the whole TOC.
+  * Presentation menu: Metadata (if available), Query Builder (submenu "All" + one entry per
+    queryable layer), Properties. Group menu: Metadata (if available), Properties.
+  * The Query Builder no longer opens an empty tool dialog (``suppressToolDialog``).
+  * Context menu plugin supports submenus (hover), separators and checked items.
+  * Properties dialog with tabs: General (name, description, services, layers with visibility,
+    scale range, queryable, filter; actions "Zoom to visible scale" and "Remove filter"), Legend
+    (all layers, also invisible ones), Info & Copyright and Technical (dvid, service ids/types,
+    layer ids/full names/scales/query ids with copy buttons; only if
+    ``webgis.globals.portal.isMapAuthor``, set by the portal for the map author).
+  * Groups: name, contained presentations with status and a combined legend.
+
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-context-menu)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

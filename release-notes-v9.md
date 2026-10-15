@@ -26,6 +26,8 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Viewer: the toolbar and the query results table (desktop layout) can be detached into a separate window, e.g. for a second screen (Chromium browsers only); enable with `webgis.usability.detachableWindows = true` in `custom.js`.
   [Docs](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-detachable-windows)
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/general/ui.html#ui-detachable-windows)
+- Viewer: presentations and groups in the table of contents have a context menu (right mouse button or burger icon on hover) with Metadata, Query Builder per layer and a new properties dialog (layers, scale ranges, filters, legend; technical details for map authors).
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-context-menu)
 
 ### Fixed
 
