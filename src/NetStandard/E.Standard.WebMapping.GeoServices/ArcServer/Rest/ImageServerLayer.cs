@@ -57,8 +57,11 @@ class ImageServerLayer : RestLayer, ILayer2
             transormer.Transform(clickPoint);
         }
 
+        // returnGeometry=false
+        // here only the location is need an will returned anyway.
+        // geometry response can be very large > 100.000 lines!!!
         string requestParameters =
-            $"geometry={clickPoint.X.ToPlatformNumberString()},{clickPoint.Y.ToPlatformNumberString()}&geometryType=esriGeometryPoint&f=pjson&returnGeometry=true&renderingRule={HttpUtility.UrlEncode(_service.RenderingRuleIdentify)}";
+            $"geometry={clickPoint.X.ToPlatformNumberString()},{clickPoint.Y.ToPlatformNumberString()}&geometryType=esriGeometryPoint&f=json&returnGeometry=false&renderingRule={HttpUtility.UrlEncode(_service.RenderingRuleIdentify)}";
         string featuresReqUrl = $"{_service.ServiceUrl}/identify?{requestParameters}";
 
         var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
