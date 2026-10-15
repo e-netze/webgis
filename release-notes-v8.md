@@ -13,6 +13,9 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 ### New
 ### Fixed
 
+- AGS Query: Suppress pagination for layer without oid-field
+  [Issue #520](https://github.com/e-netze/webgis-community/issues/520)
+
 ## 8.26.4104
 
 - Detailsearch: 0 Length Autocomplete not opens

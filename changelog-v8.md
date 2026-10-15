@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Fixed
 
+- AGS Query: Suppress pagination for layer without oid-field
+  [Issue #520](https://github.com/e-netze/webgis-community/issues/520)
+
 ## 8.26.4104
 
 - DataLinq Update: 8.26.4104
