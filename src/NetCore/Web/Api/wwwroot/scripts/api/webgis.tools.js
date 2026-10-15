@@ -1,4 +1,4 @@
-webgis.tools = new function () {
+﻿webgis.tools = new function () {
 
     var $ = webgis.$;
 
@@ -858,16 +858,8 @@ webgis.tools = new function () {
         var client = new XMLHttpRequest();
         formData.append('toolId', toolid);
         formData.append('eventType', 'servertoolcommand');
-        var eventStr = '_method=' + command + '|' + this.toolDependencyString(map, tool, this.toolParameterString(map, tool, command));
-        if (tool.device_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_deviceinfo=' + JSON.stringify({
-                is_mobile_device: webgis.isMobileDevice(),
-                screen_width: screen.width,
-                screen_height: screen.height,
-                advanced_tool_behaviour: map.ui.advancedToolBehaviour()
-            });
-        }
-        formData.append('eventString', eventStr);
+        var eventParameters = this.toolDependencies(map, tool, Object.assign({ _method: command }, this.toolParameters(map, tool, command)));
+        formData.append('eventBody', this.toEventBody(tool, eventParameters));
         formData.append(name, file);
         var hmac = webgis.hmac.appendHMACData({});
         for (var p in hmac) {
@@ -900,7 +892,7 @@ webgis.tools = new function () {
         if (activeTool.event_handlers) {
             for (var i in activeTool.event_handlers) {
                 if (activeTool.event_handlers[i] === event.channel) {
-                    webgis.tools.sendToolRequest(map, activeTool, 'servertoolcommand', null, { _method: '_event_handler_' + event.channel, event_arg: arg ? JSON.stringify(arg) : null });
+                    webgis.tools.sendToolRequest(map, activeTool, 'servertoolcommand', null, { _method: '_event_handler_' + event.channel, event_arg: arg || null });
                 }
             }
         }
@@ -912,33 +904,23 @@ webgis.tools = new function () {
                 toolId = toolId.substring(webgis._defaultToolPrefix.length, toolId.length);
             }
             var servercommand = customEventStringObject && customEventStringObject['_method'] ? customEventStringObject['_method'] : null;
-            var eventStr = (event && event.toEventString ? event.toEventString(map, tool) : (event || this.toolParameterString(map, tool, servercommand)));
+            var eventParameters = this.eventParameters(map, tool, event, servercommand);
             if (customEventStringObject) {
-                for (var p in customEventStringObject) {
-                    if (eventStr !== '')
-                        eventStr += '|';
-                    eventStr += p + "=" + customEventStringObject[p];
-                }
+                Object.assign(eventParameters, customEventStringObject);
             }
-            //if (tool.initial_arg) {
-            //    if (eventStr != '') eventStr += '|';
-            //    eventStr += '_inital_arg=' + tool.initial_arg;
-            //}
 
             if (map
                 && map.isSketchTool(tool)
                 //&& (map.isActiveTool(tool.id) || type !== 'buttonclick')
             ) {
-                //console.log('send sketch...' + type);
-                if (eventStr !== '')
-                    eventStr += '|';
-                eventStr += '_sketch=' + map.sketch.toWKT() + "|_sketchWgs84=" + map.sketch.toWKT(true);
-                eventStr += '|_sketchSrs=' + (map.sketch.originalSrs() && map.sketch.originalSrs() !== 0 ? map.sketch.originalSrs() : map.crsId());
-                eventStr += '|_sketchInfo=' + JSON.stringify(map.sketch.metaInfo());
-                if (eventStr.indexOf('mapcrs=') < 0)
-                    eventStr += "|mapcrs=" + map.crsId();
+                eventParameters._sketch = map.sketch.toWKT();
+                eventParameters._sketchWgs84 = map.sketch.toWKT(true);
+                eventParameters._sketchSrs = map.sketch.originalSrs() && map.sketch.originalSrs() !== 0 ? map.sketch.originalSrs() : map.crsId();
+                eventParameters._sketchInfo = map.sketch.metaInfo();
+                if (eventParameters.mapcrs === undefined)
+                    eventParameters.mapcrs = map.crsId();
             }
-            eventStr = this.toolDependencyString(map, tool, eventStr);
+            eventParameters = this.toolDependencies(map, tool, eventParameters);
 
             eventMeta = null;
 
@@ -949,7 +931,7 @@ webgis.tools = new function () {
             var data = {
                 toolId: toolId,
                 eventType: type,
-                eventString: eventStr,
+                eventBody: this.toEventBody(tool, eventParameters, type),
                 toolOptions: tool.options ? JSON.stringify(tool.options) : null,
                 eventMeta: eventMeta ? JSON.stringify(eventMeta) : null
             };
@@ -1570,8 +1552,26 @@ webgis.tools = new function () {
             }
         }
     };
-    this.toolParameterString = function (map, tool, servercommand) {
-        var ret = '';
+    // compact JSON in production; with webgis.logLevel = 'debug'/'trace' indented and logged as object
+    this.toEventBody = function (tool, eventParameters, eventType) {
+        if (!webgis.logLevel) {
+            return JSON.stringify(eventParameters);
+        }
+
+        webgis.log('toolevent', tool ? tool.id : null, eventType || 'servertoolcommand', eventParameters);
+        return JSON.stringify(eventParameters, null, 2);
+    };
+    this.eventParameters = function (map, tool, event, servercommand) {
+        if (event && event.toEventParameters) {
+            return event.toEventParameters(map, tool);
+        }
+        if (event && typeof event === 'object') {
+            return Object.assign({}, event);
+        }
+        return this.toolParameters(map, tool, servercommand);
+    };
+    this.toolParameters = function (map, tool, servercommand) {
+        var parameters = {};
         tool = tool || (map ? map.getActiveTool() : null);
         if (map && map.ui)
             map.ui.refreshUIElements(servercommand);
@@ -1593,12 +1593,11 @@ webgis.tools = new function () {
         $('.' + parameterClass).each(function (i, e) {
             //console.log($(e).attr("id"));
             if (writeParameter(e)) {
-                ret += (ret !== '' ? '|' : '');
-                ret += e.id + '=' + webgis.tools.toParameterValue(me.getElementValue(e));
+                parameters[e.id] = webgis.tools.toParameterValue(me.getElementValue(e));
 
                 // Extended Values... (eg. print scales)
                 if ($.fn.webgis_extCombo && $(e).hasClass('webgis-extendable-combo')) {
-                    ret += '|' + e.id + '.values=' + webgis.tools.toParameterValue($(e).webgis_extCombo('values').toString());
+                    parameters[e.id + '.values'] = webgis.tools.toParameterValue($(e).webgis_extCombo('values').toString());
                 }
             }
         });
@@ -1618,81 +1617,77 @@ webgis.tools = new function () {
                     defaultValue=map.getPersistentToolParameter(tool, e.id)
                 };
 
-                ret += (ret !== '' ? '|' : '');
-                ret += e.id + '=' + webgis.tools.toParameterValue(val, defaultValue);
+                parameters[e.id] = webgis.tools.toParameterValue(val, defaultValue);
             }
         });
 
         var ptp = map != null ? map.getPersistentToolParameters(tool) : [];
         //console.log('ptp', ptp);
         for (var id in ptp) {
-            //console.log(id, $('#' + id).length, webgis.tools.toParameterValue(ptp[id]));
             if ($('#' + id).length === 0) {
-                ret += (ret !== '' ? '|' : '');
-                ret += id + '=' + webgis.tools.toParameterValue(ptp[id]);
+                parameters[id] = webgis.tools.toParameterValue(ptp[id]);
             }
         }
         if (tool._isDefaultTool) {
-            ret += (ret !== '' ? '|' : '');
-            ret += '_as-default-tool=true';
+            parameters['_as-default-tool'] = true;
         }
         if (webgis.currentKey) {
-            ret += (ret !== '' ? '|' : '');
-            ret += '_current_key_pressed=' + webgis.currentKey;
+            parameters._current_key_pressed = webgis.currentKey;
         }
-        return ret;
+        return parameters;
     };
-    this.toolDependencyString = function (map, tool, eventStr) {
-        eventStr = eventStr || '';
+    this.toolDependencies = function (map, tool, parameters) {
+        parameters = parameters || {};
 
         if (tool.selectioninfo_dependent) {
             var selectionInfo = map.getSelectionInfo('selection');
             if (selectionInfo)
-                eventStr += (eventStr ? '|' : '') + '_selectioninfo=' + JSON.stringify(selectionInfo);
+                parameters._selectioninfo = selectionInfo;
         }
         if (tool.scale_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_mapscale=' + map.scale();
+            parameters._mapscale = map.scale();
         }
         if (tool.mapcrs_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_mapcrs=' + map.crsId() + '|_calccrs=' + map.calcCrsId();
+            parameters._mapcrs = map.crsId();
+            parameters._calccrs = map.calcCrsId();
             if (map.hasDynamicCalcCrs()) {
-                eventStr += '|_calccrs_is_dynamic=true';
+                parameters._calccrs_is_dynamic = true;
             }
         }
         if (tool.mapbbox_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_mapbbox=' + map.getExtent();
+            parameters._mapbbox = map.getExtent();
         }
         if (tool.printlayout_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_printlayout_rotation=' + map.viewLense.currentRotation();
+            parameters._printlayout_rotation = map.viewLense.currentRotation();
         }
         if (tool.aside_dialog_exists_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_asidedialog_exists=' + ($('#' + webgis.ui.getDockPanelId({ id: tool.id + "_aside" })).length > 0 ? "true" : "false");
+            parameters._asidedialog_exists = $('#' + webgis.ui.getDockPanelId({ id: tool.id + "_aside" })).length > 0;
         }
         if (tool.liveshare_clientname_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_liveshare_clientname=' + (webgis.liveshare ? webgis.liveshare.getClientname() : '');
+            parameters._liveshare_clientname = webgis.liveshare ? webgis.liveshare.getClientname() : '';
         }
         if (tool.mapimagesize_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_mapsize=' + map.getSize();
+            parameters._mapsize = map.getSize();
         }
         if (tool.query_markers_visiblity_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_query_markers_visible=' + map.queryResultFeatures.markersVisible();
+            parameters._query_markers_visible = map.queryResultFeatures.markersVisible();
         }
         if (tool.coordinate_markers_visiblity_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_coordinate_markers_visible=' + map.queryResultFeatures.toolMarkersVisible('webgis.tools.coordinates'); 
+            parameters._coordinate_markers_visible = map.queryResultFeatures.toolMarkersVisible('webgis.tools.coordinates');
         }
         if (tool.chainage_markers_visiblity_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_chainage_markers_visible=' + map.queryResultFeatures.toolMarkersVisible('webgis.tools.chainage'); 
+            parameters._chainage_markers_visible = map.queryResultFeatures.toolMarkersVisible('webgis.tools.chainage');
         }
         if (tool.anonymous_userid_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_anonymous_userid=' + webgis.localStorage.getAnonymousUserId();
+            parameters._anonymous_userid = webgis.localStorage.getAnonymousUserId();
         }
         if (tool.device_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_deviceinfo=' + JSON.stringify({
+            parameters._deviceinfo = {
                 is_mobile_device: webgis.isMobileDevice(),
                 screen_width: screen.width,
                 screen_height: screen.height,
                 advanced_tool_behaviour: map.ui.advancedToolBehaviour()
-            });
+            };
         }
         if (tool.static_overlay_services_dependent) {
             var serviceIds = map.serviceIds(), overlayServiceIds = [];
@@ -1702,16 +1697,17 @@ webgis.tools = new function () {
                     overlayServiceIds.push(service.id);
                 }
             }
-            eventStr += (eventStr ? '|' : '') + '_overlay_services=' + overlayServiceIds.toString();
+            parameters._overlay_services = overlayServiceIds;
         }
         if (tool.ui_element_dependent) {
-            eventStr += (eventStr ? '|' : '') + '_ui_elements=';
+            var uiElements = [];
             map.ui.webgisContainer().find('.webgis-ui-element-dependency').each(function (i, element) {
-                eventStr += (i > 0 ? ',' : '') + element.nodeName.toLowerCase() + '.' + element.className.replaceAll(' ', '.');
+                uiElements.push(element.nodeName.toLowerCase() + '.' + element.className.replaceAll(' ', '.'));
             });
+            parameters._ui_elements = uiElements.join(',');
         }
 
-        return eventStr;
+        return parameters;
     };
     this.getElementValue = function (e) {
         var val = '';
@@ -1759,7 +1755,6 @@ webgis.tools = new function () {
         if (!val) {
             val = defaultValue || '';
         }
-        val = val.replace(/\|/g, '~~~&PIPE;~~~');
 
         return val;
     };
@@ -2033,35 +2028,33 @@ webgis.tools.mouseEvent = function (map, e) {
     this.eventObject = function () {
         return _m;
     };
-    this.toClickString = function (map, tool) {
-        var ret = '';
+    this.toClickParameters = function (map, tool) {
+        var parameters = {};
         if (_m && _m.world) {
-            ret = 'lng=' + _m.world.lng + '|lat=' + _m.world.lat + '|crs=4326';
+            parameters.lng = _m.world.lng;
+            parameters.lat = _m.world.lat;
+            parameters.crs = 4326;
         }
         if (_m && _m.click) {
-            ret += (ret !== '' ? '|' : '') + 'x=' + _m.click.x + '|y=' + _m.click.y;
+            parameters.x = _m.click.x;
+            parameters.y = _m.click.y;
         }
         if (_m.meta) {
-            ret += (ret !== '' ? '|' : '') + 'event_scale=' + _m.meta.scale + '|event_service_scale=' + map.crsScale();
+            parameters.event_scale = _m.meta.scale;
+            parameters.event_service_scale = map.crsScale();
         }
         if (map) {
-            ret += (ret !== '' ? '|' : '') + 'mapcrs=' + map.crsId();
+            parameters.mapcrs = map.crsId();
         }
-     
-        var toolParameters = webgis.tools.toolParameterString(map, tool);
-        if (toolParameters && toolParameters !== '') {
-            ret += (ret !== '' ? '|' : '');
-            ret += toolParameters;
-        }
-        return ret;
+
+        return Object.assign(parameters, webgis.tools.toolParameters(map, tool));
     };
-    this.toEventString = function (map, tool) {
-        //console.log('event', webgis.currentKey);
+    this.toEventParameters = function (map, tool) {
         if (tool.tooltype === 'click') {
-            return this.toClickString(map, tool);
+            return this.toClickParameters(map, tool);
         }
         else {
-            return webgis.tools.toolParameterString(map, tool);
+            return webgis.tools.toolParameters(map, tool);
         }
     };
 };
@@ -2086,49 +2079,42 @@ webgis.tools.boxEvent = function (map, e, box, crs) {
     var p2 = map.frameworkElement.latLngToLayerPoint([box[3], box[2]]);
     //console.log(p1, p2);
 
-    this.toEventString = function (map, tool) {
-        var ret = '';
-        ret += "box=" + box[0] + "," + box[1] + "," + box[2] + "," + box[3] + "|crs=" + (crs ? crs : "4326") + "|";
-        ret += "boxsize=" + Math.abs((p2.x - p1.x)) + "," + Math.abs((p2.y - p1.y)) + "|";
-        ret += 'mapcrs=' + map.crsId();
-   
-        var toolParameters = webgis.tools.toolParameterString(map, tool);
-        if (toolParameters && toolParameters !== '') {
-            ret += (ret !== '' ? '|' : '');
-            ret += toolParameters;
-        }
-        return ret;
+    this.toEventParameters = function (map, tool) {
+        var parameters = {
+            box: [box[0], box[1], box[2], box[3]],
+            crs: crs ? crs : 4326,
+            boxsize: [Math.abs((p2.x - p1.x)), Math.abs((p2.y - p1.y))],
+            mapcrs: map.crsId()
+        };
+
+        return Object.assign(parameters, webgis.tools.toolParameters(map, tool));
     };
 };
 webgis.tools.geoRefDefEvent = function (map, geoRefDef) {
     var _geoRefDef = geoRefDef;
 
-    this.toEventString = function (map, tool) {
-        var ret = '';
-        ret += "overlay_georef_def=" + JSON.stringify(_geoRefDef);
-        var toolParameters = webgis.tools.toolParameterString(map, tool);
-        if (toolParameters && toolParameters !== '') {
-            ret += (ret !== '' ? '|' : '');
-            ret += toolParameters;
-        }
-        return ret;
-    }
+    this.toEventParameters = function (map, tool) {
+        var parameters = {
+            overlay_georef_def: _geoRefDef
+        };
+
+        return Object.assign(parameters, webgis.tools.toolParameters(map, tool));
+    };
 };
 webgis.tools.wrapperEvent = function (event, customParameters) {
     let _event = event;
     let _customParameters = customParameters;
 
-    this.toEventString = function (map, tool) {
-        var ret = _event && _event.toEventString ? _event.toEventString(map, tool) : '';
+    this.toEventParameters = function (map, tool) {
+        var parameters = _event && _event.toEventParameters ? _event.toEventParameters(map, tool) : {};
 
         if (_customParameters) {
             for (var name in _customParameters) {
-                if (ret) ret += '|';
-                ret += name + '=' + webgis.tools.toParameterValue(_customParameters[name]);
+                parameters[name] = webgis.tools.toParameterValue(_customParameters[name]);
             }
         }
 
-        return ret;
+        return parameters;
     };
 };
 

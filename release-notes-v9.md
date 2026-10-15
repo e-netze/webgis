@@ -12,6 +12,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 ### Upgrade notes
 
 - **Breaking change:** Viewer script files were renamed or removed (e.g. `webgis_modal.js`, `webgis_contextMenu.js`, `webgis_uibuilder.js`, Leaflet `webgisgraphics.js`/`webgisservicelayer.js`). Custom pages that include single script files must include the bundles (`api.min.js`, `api-ui.min.js`) instead; custom code should open dialogs with `webgis.ui.showModal(...)` (`$.fn.webgis_modal` still works).
+- **Breaking change:** Tool requests (`/rest/toolevent`) now send their parameters as JSON (`eventBody`) instead of a pipe-separated `eventString`; custom code using `webgis.tools.toolParameterString` or posting `eventString` directly must be adapted.
 
 ### New
 

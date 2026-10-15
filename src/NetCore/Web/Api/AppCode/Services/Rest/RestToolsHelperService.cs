@@ -293,9 +293,9 @@ public class RestToolsHelperService
         }
     }
 
-    public ApiToolEventArguments CreateApiToolEventArguments(IApiButton tool, string eventString, string toolOptions)
+    public ApiToolEventArguments CreateApiToolEventArguments(IApiButton tool, string eventBody, string toolOptions)
     {
-        return new ApiToolEventArguments(eventString, toolOptions, configuration: tool.ToolConfiguration(_config));
+        return new ApiToolEventArguments(eventBody, toolOptions, configuration: tool.ToolConfiguration(_config));
     }
 
     async public Task<IActionResult> ToolResponseResult(ApiBaseController controller, ApiEventResponse apiResponse, CmsDocument.UserIdentification ui)

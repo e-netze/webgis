@@ -264,7 +264,7 @@ public class WebStorage : IStorage
 
         nvc.Add("__un", EncryptParameterValue(Bridge.CurrentUser.Username));
         nvc.Add("__tid", Bridge.CurrentTool != null ? EncryptParameterValue(Bridge.CurrentTool.GetType().ToString().ToLower()) : "");
-        nvc.Add("__res", Bridge.CurrentEventArguments != null ? EncryptParameterValue(Bridge.CurrentEventArguments.RawEventString) : "");
+        nvc.Add("__res", Bridge.CurrentEventArguments != null ? EncryptParameterValue(Bridge.CurrentEventArguments.RawEventBody) : "");
         if (methodParameters != null)
         {
             foreach (string key in methodParameters.Keys)

@@ -352,10 +352,10 @@ public class StorageController : ApiBaseController
                                             currentTool,
                                             _apiConfig.StorageRootPath2);
 
-        string rawEventString = GetDecryptedRequestParameter("__res");
-        if (rawEventString != null)
+        string rawEventBody = GetDecryptedRequestParameter("__res");
+        if (rawEventBody != null)
         {
-            bridge.CurrentEventArguments = new ApiToolEventArguments(rawEventString);
+            bridge.CurrentEventArguments = new ApiToolEventArguments(rawEventBody);
         }
 
         return bridge;

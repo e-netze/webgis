@@ -129,6 +129,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [Docs](https://docs.webgiscloud.com/en/webgis-dev/API/API_JavaScript/index.html#api-javascript-single-bundle),
   [Architecture](docs/architecture/api-javascript-bundles.md)
 
+- Tool events (``/rest/toolevent``) send their parameters as a JSON object in the form field
+  ``eventBody`` instead of the pipe-separated ``eventString``.
+  * Server (``ApiToolEventArguments.ParseEventBody``) normalizes JSON values to strings
+    (numbers/objects as raw JSON, bools ``true``/``false``, arrays comma-joined), so tools are unchanged.
+  * Removed without fallback: pipe format and ``~~~&PIPE;~~~`` escaping, ``RawEventString``,
+    ``webgis.tools.toolParameterString``/``toolDependencyString``, event ``toEventString``/``toClickString``
+    (now ``toEventParameters``/``toClickParameters``).
+  * Values containing ``|`` are no longer split (also for the ``NameValueCollection`` based tool methods).
+
+  **!! Breaking Change !!** Custom code calling the removed ``webgis.tools`` string functions or
+  posting ``eventString`` to ``/rest/toolevent`` must be adapted.
+
+  [Architecture](docs/architecture/tool-events.md)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

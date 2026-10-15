@@ -880,7 +880,7 @@ public class RestController : ApiBaseController
     }
 
     [HttpPost]
-    async public Task<IActionResult> ToolEvent(string toolId, string eventType, string eventString, string toolOptions)
+    async public Task<IActionResult> ToolEvent(string toolId, string eventType, string eventBody, string toolOptions)
     {
         return await SecureMethodHandlerAsync(async ui =>
         {
@@ -892,7 +892,7 @@ public class RestController : ApiBaseController
 
             ApiEventResponse apiResponse = null;
 
-            ApiToolEventArguments e = _restService.Tools.CreateApiToolEventArguments(button, eventString, toolOptions)
+            ApiToolEventArguments e = _restService.Tools.CreateApiToolEventArguments(button, eventBody, toolOptions)
                                                   .EnsureAll(ui, _stringLocalizer);
 
 
@@ -1100,7 +1100,7 @@ public class RestController : ApiBaseController
 
             if (_logger.IsEnabled(LogLevel.Debug))
             {
-                _logger.LogDebug("ToolMethod Arguments: {arguments}", e.RawEventString);
+                _logger.LogDebug("ToolMethod Arguments: {arguments}", e.RawEventBody);
             }
 
             var restToolHelper = _restService.Tools;

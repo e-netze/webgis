@@ -5,6 +5,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 
 using E.Standard.Json;
 using E.Standard.Platform;
@@ -20,27 +21,21 @@ namespace E.Standard.WebMapping.Core.Api;
 public class ApiToolEventArguments
 {
     private readonly Dictionary<string, string> _configuration;
-    private string _rawEventString;
+    private string _rawEventBody;
 
-    public ApiToolEventArguments(string eventString, string toolOptions = "", Dictionary<string, string> configuration = null)
+    /// <param name="eventBody">The event parameters as a flat JSON object (e.g. the "eventBody" form field of a toolevent request)</param>
+    public ApiToolEventArguments(string eventBody, string toolOptions = "", Dictionary<string, string> configuration = null)
     {
-        this.RawEventString = eventString;
+        this.RawEventBody = eventBody;
 
         this.ToolOptions = toolOptions;
 
         _configuration = configuration;
     }
 
-    public string ToArgumentValue(string val)
-    {
-        return val.Replace("~~~&PIPE;~~~", "|");
-    }
-
     public ApiToolEventArguments(IBridge bridge, NameValueCollection nvc, string[] ignoreParametersInLowerCase = null, Dictionary<string, string> configuration = null)
     {
-        StringBuilder rawEventStringBuilder = new StringBuilder();
-        this.RawEvent = new ExpandoObject();
-        var objDict = (IDictionary<string, object>)this.RawEvent;
+        var parameters = new Dictionary<string, string>();
 
         bool decode = (nvc["_encparameters"] == "true");
 
@@ -73,42 +68,181 @@ public class ApiToolEventArguments
                 catch { }
             }
 
-            if (key == "_sketchWgs84")
+            parameters[key] = val;
+        }
+
+        this.RawEventBody = System.Text.Json.JsonSerializer.Serialize(parameters);
+
+        _configuration = configuration;
+    }
+
+    /// <summary>
+    /// The event parameters as a flat JSON object, as they were passed to this instance.
+    /// Values can be any JSON value; they are normalized to strings (see <see cref="ParseEventBody"/>).
+    /// </summary>
+    public string RawEventBody
+    {
+        get
+        {
+            return _rawEventBody;
+        }
+        set
+        {
+            _rawEventBody = value;
+
+            SetRawEvent(ParseEventBody(value));
+        }
+    }
+
+    /// <summary>
+    /// Parses a flat JSON object into key/value pairs. Values are normalized to strings:
+    /// strings as they are, numbers as raw text, booleans as "true"/"false", null as null,
+    /// objects as their raw JSON text and arrays as comma separated list of the normalized items.
+    /// </summary>
+    static public IEnumerable<KeyValuePair<string, string>> ParseEventBody(string eventBody)
+    {
+        var result = new List<KeyValuePair<string, string>>();
+
+        if (String.IsNullOrWhiteSpace(eventBody))
+        {
+            return result;
+        }
+
+        using (var document = JsonDocument.Parse(eventBody))
+        {
+            if (document.RootElement.ValueKind != JsonValueKind.Object)
             {
-                this.SketchWgs84 = val.ShapeFromWKT();
+                throw new ArgumentException("Tool event body must be a JSON object");
             }
-            if (key == "_sketch")
+
+            foreach (var property in document.RootElement.EnumerateObject())
             {
-                this.Sketch = val.ShapeFromWKT();
+                result.Add(new KeyValuePair<string, string>(property.Name, ToArgumentValue(property.Value)));
             }
-            if (key == "_as-default-tool" && val == "true")
+        }
+
+        return result;
+    }
+
+    static private string ToArgumentValue(JsonElement element)
+    {
+        switch (element.ValueKind)
+        {
+            case JsonValueKind.String:
+                return element.GetString();
+            case JsonValueKind.Number:
+                return element.GetRawText();
+            case JsonValueKind.True:
+                return "true";
+            case JsonValueKind.False:
+                return "false";
+            case JsonValueKind.Null:
+            case JsonValueKind.Undefined:
+                return null;
+            case JsonValueKind.Array:
+                return String.Join(",", element.EnumerateArray().Select(item => ToArgumentValue(item) ?? String.Empty));
+            default:
+                return element.GetRawText();
+        }
+    }
+
+    private void SetRawEvent(IEnumerable<KeyValuePair<string, string>> parameters)
+    {
+        this.RawEvent = new ExpandoObject();
+        var objDict = (IDictionary<string, object>)this.RawEvent;
+
+        foreach (var parameter in parameters)
+        {
+            string key = parameter.Key;
+            string val = parameter.Value;
+
+            if (String.IsNullOrWhiteSpace(key))
             {
-                this.AsDefaultTool = true;
+                continue;
             }
-            if (key == "_selectioninfo")
+
+            if (val != null)
             {
-                try
+                if (key == "_sketchWgs84")
                 {
-                    this.SelectionInfo = JSerializer.Deserialize<SelectionInfoClass>(val);
+                    this.SketchWgs84 = val.ShapeFromWKT();
                 }
-                catch { }
-            }
-            if (key == "_mapscale")
-            {
-                this.MapScale = val.ToPlatformDouble();
+                if (key == "_sketch")
+                {
+                    this.Sketch = val.ShapeFromWKT();
+                }
+                if (key == "_sketchInfo")
+                {
+                    this.SketchInfo = JSerializer.Deserialize<SketchInfoClass>(val);
+                }
+                if (key == "_as-default-tool" && val == "true")
+                {
+                    this.AsDefaultTool = true;
+                }
+                if (key == "_selectioninfo")
+                {
+                    try
+                    {
+                        this.SelectionInfo = JSerializer.Deserialize<SelectionInfoClass>(val);
+                    }
+                    catch { }
+                }
+                if (key == "_mapscale")
+                {
+                    this.MapScale = val.ToPlatformDouble();
+                }
+                if (key == "_mapcrs")
+                {
+                    try
+                    {
+                        this.MapCrs = int.Parse(val);
+                    }
+                    catch { }
+                }
+                if (key == "_calccrs")
+                {
+                    try
+                    {
+                        this.CalcCrs = int.Parse(val);
+                    }
+                    catch { }
+                }
+                if (key == "_calccrs_is_dynamic")
+                {
+                    try
+                    {
+                        this.CalcCrsIsDynamic = bool.Parse(val);
+                    }
+                    catch { }
+                }
+                if (key == "_deviceinfo")
+                {
+                    try
+                    {
+                        this.DeviceInfo = JSerializer.Deserialize<DeviceInfoClass>(val);
+                    }
+                    catch { }
+                }
+                if (key == "_ui_elements")
+                {
+                    try
+                    {
+                        this.UIElements = new List<UIElementsClass>();
+                        foreach (var nodeInfo in val.Split(','))
+                        {
+                            var parts = val.Split('.');
+                            this.UIElements.Add(new UIElementsClass()
+                            {
+                                NodeName = parts.First(),
+                                Classes = parts.Skip(1).ToArray()
+                            });
+                        }
+                    }
+                    catch { }
+                }
             }
 
             objDict[key] = val;
-
-
-            if (rawEventStringBuilder.Length > 0)
-            {
-                rawEventStringBuilder.Append("|");
-            }
-
-            rawEventStringBuilder.Append(key);
-            rawEventStringBuilder.Append("=");
-            rawEventStringBuilder.Append(val);
         }
 
         if (this.SketchWgs84 != null)
@@ -118,140 +252,10 @@ public class ApiToolEventArguments
 
         if (this.Sketch != null)
         {
-            this.Sketch.SrsId = this.GetInt("_sketchSrs");
+            SpatialAlgorithms.SetSpatialReferenceAndProjectPoints(this.Sketch, this.GetInt("_sketchSrs"), CoreApiGlobals.SRefStore.SpatialReferences);
         }
 
-        this.RawEventString = rawEventStringBuilder.ToString();
-
-        _configuration = configuration;
-    }
-
-    public string RawEventString
-    {
-        get
-        {
-            return _rawEventString;
-        }
-        set
-        {
-            _rawEventString = value;
-
-            this.RawEvent = new ExpandoObject();
-            var objDict = (IDictionary<string, object>)this.RawEvent;
-
-            if (!String.IsNullOrWhiteSpace(_rawEventString))
-            {
-                foreach (string p in _rawEventString.Split('|'))
-                {
-                    if (String.IsNullOrWhiteSpace(p))
-                    {
-                        continue;
-                    }
-
-                    int pos = p.IndexOf("=");
-                    if (pos > 0)
-                    {
-                        string key = p.Substring(0, pos);
-                        string val = ToArgumentValue(p.Substring(pos + 1, p.Length - pos - 1));
-
-                        if (key == "_sketchWgs84")
-                        {
-                            this.SketchWgs84 = val.ShapeFromWKT();
-                        }
-                        if (key == "_sketch")
-                        {
-                            this.Sketch = val.ShapeFromWKT();
-                        }
-                        if (key == "_sketchInfo")
-                        {
-                            this.SketchInfo = JSerializer.Deserialize<SketchInfoClass>(val);
-                        }
-                        if (key == "_as-default-tool" && val == "true")
-                        {
-                            this.AsDefaultTool = true;
-                        }
-                        if (key == "_selectioninfo")
-                        {
-                            try
-                            {
-                                this.SelectionInfo = JSerializer.Deserialize<SelectionInfoClass>(val);
-                            }
-                            catch { }
-                        }
-                        if (key == "_mapscale")
-                        {
-                            this.MapScale = val.ToPlatformDouble();
-                        }
-                        if (key == "_mapcrs")
-                        {
-                            try
-                            {
-                                this.MapCrs = int.Parse(val);
-                            }
-                            catch { }
-                        }
-                        if (key == "_calccrs")
-                        {
-                            try
-                            {
-                                this.CalcCrs = int.Parse(val);
-                            }
-                            catch { }
-                        }
-                        if (key == "_calccrs_is_dynamic")
-                        {
-                            try
-                            {
-                                this.CalcCrsIsDynamic = bool.Parse(val);
-                            }
-                            catch { }
-                        }
-                        if (key == "_deviceinfo")
-                        {
-                            try
-                            {
-                                this.DeviceInfo = JSerializer.Deserialize<DeviceInfoClass>(val);
-                            }
-                            catch { }
-                        }
-                        if (key == "_ui_elements")
-                        {
-                            try
-                            {
-                                this.UIElements = new List<UIElementsClass>();
-                                foreach (var nodeInfo in val.Split(','))
-                                {
-                                    var parts = val.Split('.');
-                                    this.UIElements.Add(new UIElementsClass()
-                                    {
-                                        NodeName = parts.First(),
-                                        Classes = parts.Skip(1).ToArray()
-                                    });
-                                }
-                            }
-                            catch { }
-                        }
-                        objDict[key] = val;
-                    }
-                    else
-                    {
-                        objDict[p] = null;
-                    }
-                }
-            }
-
-            if (this.SketchWgs84 != null)
-            {
-                this.SketchWgs84.SrsId = 4326;
-            }
-
-            if (this.Sketch != null)
-            {
-                SpatialAlgorithms.SetSpatialReferenceAndProjectPoints(this.Sketch, this.GetInt("_sketchSrs"), CoreApiGlobals.SRefStore.SpatialReferences);
-            }
-
-            ReprojectModifiedVertices(this.GetInt("_sketchSrs"));
-        }
+        ReprojectModifiedVertices(this.GetInt("_sketchSrs"));
     }
 
     public dynamic RawEvent
