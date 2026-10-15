@@ -246,7 +246,8 @@ internal class IdentifyServiceDesktop
         var queryFilters = new Dictionary<IQueryBridge, ApiSpatialFilter>();
         WebMapping.Core.Collections.FeatureCollection features = null;
 
-        var tasks = new Dictionary<IQueryBridge, Task<int>>();
+        var tasks = new Dictionary<IQueryBridge, Task<(int Result, Exception Error)>>();
+        int failedQueriesCount = 0;
 
         StringBuilder errors = new StringBuilder();
 
@@ -282,7 +283,8 @@ internal class IdentifyServiceDesktop
                     {
                         tasks.Add(serviceQuery, serviceQuery.HasFeaturesAsync(bridge.RequestContext, queryFilters[serviceQuery],
                                                                               appendFilterClause: filterWhereClause,
-                                                                              mapScale: eventScale));
+                                                                              mapScale: eventScale)
+                                                            .CatchExceptionAsync());
                     }
                     else
                     {
@@ -302,14 +304,26 @@ internal class IdentifyServiceDesktop
 
             if (tasks.Count > 0)
             {
-                Task.WaitAll(tasks.Values.ToArray());
+                await Task.WhenAll(tasks.Values);
 
                 foreach (var query in tasks.Keys)
                 {
-                    if (tasks[query].Result > 0)
+                    var (count, error) = tasks[query].Result;
+
+                    if (error != null)
                     {
-                        found.Add(query, tasks[query].Result);
+                        errors.AppendErrorMessage(query.Name, error);
+                        failedQueriesCount++;
                     }
+                    else if (count > 0)
+                    {
+                        found.Add(query, count);
+                    }
+                }
+
+                if (failedQueriesCount > 0 && !String.IsNullOrEmpty(filterWhereClause))
+                {
+                    errors.Append($"Filter: {filterWhereClause}\n");
                 }
             }
         }
@@ -348,7 +362,17 @@ internal class IdentifyServiceDesktop
                 if (button is IIdentifyTool
                     && button.GetType().IsApiServerTool())
                 {
-                    var canIdentifyResults = await ((IIdentifyTool)button).CanIdentifyAsync(bridge, new Point(click.Longitude, click.Latitude), eventScale, availableServiceIds, availableQueryIds);
+                    IEnumerable<CanIdentifyResult> canIdentifyResults;
+                    try
+                    {
+                        canIdentifyResults = await ((IIdentifyTool)button).CanIdentifyAsync(bridge, new Point(click.Longitude, click.Latitude), eventScale, availableServiceIds, availableQueryIds);
+                    }
+                    catch (Exception ex)
+                    {
+                        errors.AppendErrorMessage(button.Name ?? toolId, ex);
+                        continue;
+                    }
+
                     if (canIdentifyResults != null)
                     {
                         foreach (var canIdentifyResult in canIdentifyResults)
@@ -365,6 +389,14 @@ internal class IdentifyServiceDesktop
             }
 
             #endregion
+        }
+
+        if (failedQueriesCount > 0
+            && failedQueriesCount == tasks.Count
+            && found.Count == 0)
+        {
+            // all queries failed and no identify tool delivered results => report as error
+            throw new Exception(errors.ToString());
         }
 
         if (e.AsDefaultTool == true &&

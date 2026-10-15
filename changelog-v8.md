@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - AGS Query: Suppress pagination for layer without oid-field
   [Issue #520](https://github.com/e-netze/webgis-community/issues/520)
+- Identify (Desktop): A failing layer query no longer discards the results of all other queries.
+  Results of successful queries are shown; errors of individual queries (and identify tools) are
+  returned as a warning (`response.ErrorMessage`). An error is only thrown if all queries fail and
+  no results are found. `Task.WaitAll` replaced by `await Task.WhenAll`.
+- Identify (Mobile): Layer queries (`HasFeaturesAsync`) are performed in parallel again (previously
+  sequential); errors of individual queries are still collected and returned as a warning.
 
 ## 8.26.4104
 
