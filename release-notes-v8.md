@@ -15,6 +15,9 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 
 - AGS Query: Suppress pagination for layer without oid-field
   [Issue #520](https://github.com/e-netze/webgis-community/issues/520)
+- Identify: If a single service/layer fails, the results of the other layers are still shown;
+  the failed queries are reported as a warning.
+- Identify (Mobile): faster, layers are queried in parallel.
 
 ## 8.26.4104
 

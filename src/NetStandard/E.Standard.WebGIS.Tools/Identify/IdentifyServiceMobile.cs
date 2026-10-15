@@ -201,7 +201,8 @@ internal class IdentifyServiceMobile
 
         if (queries != null)
         {
-            List<Task<int>> tasks = new List<Task<int>>();
+            var tasks = new Dictionary<IQueryBridge, Task<(int Result, Exception Error)>>();
+
             foreach (var query in queries)
             {
                 try
@@ -243,11 +244,8 @@ internal class IdentifyServiceMobile
 
                     if (isMultiQuery)
                     {
-                        int count = await query.HasFeaturesAsync(bridge.RequestContext, queryFilters[query], mapScale: mapScale);
-                        if (count > 0)
-                        {
-                            found.Add(query, count);
-                        }
+                        tasks.Add(query, query.HasFeaturesAsync(bridge.RequestContext, queryFilters[query], mapScale: mapScale)
+                                              .CatchExceptionAsync());
                     }
                     else
                     {
@@ -261,6 +259,25 @@ internal class IdentifyServiceMobile
                 catch (Exception ex)
                 {
                     errors.AppendErrorMessage(query.Name, ex);
+                }
+            }
+
+            if (tasks.Count > 0)
+            {
+                await Task.WhenAll(tasks.Values);
+
+                foreach (var query in tasks.Keys)
+                {
+                    var (count, error) = tasks[query].Result;
+
+                    if (error != null)
+                    {
+                        errors.AppendErrorMessage(query.Name, error);
+                    }
+                    else if (count > 0)
+                    {
+                        found.Add(query, count);
+                    }
                 }
             }
 

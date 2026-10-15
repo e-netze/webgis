@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -155,6 +156,18 @@ static class GeneralExtensions
     public static void AppendErrorMessage(this StringBuilder sb, string title, Exception ex)
     {
         sb.Append($"{title}: {ex.Message}\n");
+    }
+
+    public static async Task<(T Result, Exception Error)> CatchExceptionAsync<T>(this Task<T> task)
+    {
+        try
+        {
+            return (await task, null);
+        }
+        catch (Exception ex)
+        {
+            return (default, ex);
+        }
     }
 
     #endregion

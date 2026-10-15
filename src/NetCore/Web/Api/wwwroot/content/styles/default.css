@@ -2631,6 +2631,7 @@ td.webgis-tab-header {
 
 .webgis-loading {
     background-image: url('../api/img/hourglass/loader1.gif') !important;
+    background-size: 16px !important;
 }
 
 /* Toolbar *********************************/
