@@ -26,6 +26,7 @@ using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.QueryStrategies;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Renderers;
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Renderers.UserRenderers;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.RequestBuilders;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
 using E.Standard.WebMapping.GeoServices.Extensions;
@@ -570,11 +571,16 @@ public class MapService : IMapService2,
                             layerDefs.Add(layerDefLayerId, FeatureLayer.UrlEncodeWhere(where));
                         }
 
-                        if (layer is FeatureLayer && ((FeatureLayer)layer).UseLabelRenderer && ((FeatureLayer)layer).LabelRenderer != null)
+                        var featureLayer = layer as FeatureLayer;
+                        bool hasLabelRenderer = featureLayer is { UseLabelRenderer: true, LabelRenderer: not null };
+                        var agsUserRenderer = visible && featureLayer?.UserRenderer is not null
+                            ? AgsUserRendererTranslator.ToAgsRenderer(featureLayer.UserRenderer, layer.Type, FeatureLayer.UrlEncodeWhere)
+                            : null;
+
+                        if (hasLabelRenderer || agsUserRenderer is not null)
                         {
                             useDynamicLayers = true;
 
-                            var labelRenderer = ((FeatureLayer)layer).LabelRenderer;
                             DynamicLayer dynamicLayer = new DynamicLayer();
 
                             dynamicLayer.id = 1001 + dynamicLayers.Count;
@@ -584,26 +590,31 @@ public class MapService : IMapService2,
                             };
                             dynamicLayer.drawingInfo = new DynamicLayerDrawingInfo()
                             {
-                                showLabels = true
+                                renderer = agsUserRenderer,
+                                showLabels = hasLabelRenderer ? true : null
                             };
                             dynamicLayer.definitionExpression = FeatureLayer.UrlEncodeWhere(where);
 
-                            var labelingInfo = new LabelingInfo()
+                            if (hasLabelRenderer)
                             {
-                                LabelPlacement = LabelingInfo.DefaultLabelPlacement(layer.Type),
-                                LabelExpression = $"[{labelRenderer.LabelField}]",
-                                UseCodedValues = false,
-                                MinScale = (int)layer.MaxScale,
-                                MaxScale = (int)layer.MinScale,
-                                Where = FeatureLayer.UrlEncodeWhere(where), //String.IsNullOrEmpty(layer.Filter) ? null : layer.Filter,
-                                Symbol = new TextSymbol(labelRenderer)
+                                var labelRenderer = featureLayer.LabelRenderer;
+                                var labelingInfo = new LabelingInfo()
                                 {
-                                    VerticalAlignment = "bottom",
-                                    HorizontalAlignment = "left"
-                                }
-                            };
+                                    LabelPlacement = LabelingInfo.DefaultLabelPlacement(layer.Type),
+                                    LabelExpression = $"[{labelRenderer.LabelField}]",
+                                    UseCodedValues = false,
+                                    MinScale = (int)layer.MaxScale,
+                                    MaxScale = (int)layer.MinScale,
+                                    Where = FeatureLayer.UrlEncodeWhere(where), //String.IsNullOrEmpty(layer.Filter) ? null : layer.Filter,
+                                    Symbol = new TextSymbol(labelRenderer)
+                                    {
+                                        VerticalAlignment = "bottom",
+                                        HorizontalAlignment = "left"
+                                    }
+                                };
 
-                            dynamicLayer.drawingInfo.labelingInfo = new LabelingInfo[] { labelingInfo };
+                                dynamicLayer.drawingInfo.labelingInfo = new LabelingInfo[] { labelingInfo };
+                            }
 
                             dynamicLayers.Add(dynamicLayer);
                         }
@@ -1435,8 +1446,11 @@ public class MapService : IMapService2,
 
             #endregion
 
+            var userRendererDynamicLayers = UserRendererLegendDynamicLayers();
+
             var useDynamcLegendQuery =
                 this.LegendOptMethod == LegendOptimization.Symbols &&
+                userRendererDynamicLayers.Count == 0 &&
                 this.Layers
                     .Where(l => visibleIds.Contains(l.ID))
                     .All(l => l is ILegendRendererHelper legendHelper && legendHelper.SupportsDynamicLegends);
@@ -1458,7 +1472,30 @@ public class MapService : IMapService2,
                                 dynamicLayerRequestUrl,
                                 requestBody));
 
-                    return await this.RenderRestLegendResponse(requestContext, jsonLegendAnswer, optimize: true);
+                    var legendResponse = JSerializer.Deserialize<Legend.LegendResponse>(jsonLegendAnswer);
+
+                    if (userRendererDynamicLayers.Count > 0)
+                    {
+                        #region Replace legend of layers with user renderers
+
+                        string jsonUserRendererLegendAnswer = await requestContext.LogRequest(
+                            this.Service,
+                            this.ServiceShortname,
+                            $"{LegendRequestBuilder.DefaultRequest}&dynamicLayers={JSerializer.Serialize(userRendererDynamicLayers.ToArray())}",
+                            "legend_userrenderers",
+                            (requestBody) => authHandler.TryPostAsync(
+                                this,
+                                dynamicLayerRequestUrl,
+                                requestBody));
+
+                        var userRendererLegendResponse = JSerializer.Deserialize<Legend.LegendResponse>(jsonUserRendererLegendAnswer);
+
+                        legendResponse.ReplaceLayerLegends(userRendererLegendResponse);
+
+                        #endregion
+                    }
+
+                    return await this.RenderRestLegendResponse(requestContext, legendResponse, optimize: true);
                 }
             }
 
@@ -1516,6 +1553,34 @@ public class MapService : IMapService2,
     }
 
     private bool _showServiceLegendInMap = true;
+
+    /// <summary>
+    /// Dynamic layers (id == mapLayerId) for all visible layers with a user renderer.
+    /// Used to query the legend of these layers.
+    /// </summary>
+    private List<DynamicLayer> UserRendererLegendDynamicLayers()
+    {
+        var dynamicLayers = new List<DynamicLayer>();
+
+        foreach (var featureLayer in this.Layers.OfType<FeatureLayer>().Where(l => l.Visible && l.UserRenderer is not null))
+        {
+            var agsRenderer = AgsUserRendererTranslator.ToAgsRenderer(featureLayer.UserRenderer, featureLayer.Type, FeatureLayer.UrlEncodeWhere);
+            if (agsRenderer is null || !int.TryParse(featureLayer.ID, out int layerId))
+            {
+                continue;
+            }
+
+            dynamicLayers.Add(new DynamicLayer()
+            {
+                id = layerId,
+                source = new DynamicLayerSouce() { mapLayerId = layerId },
+                drawingInfo = new DynamicLayerDrawingInfo() { renderer = agsRenderer }
+            });
+        }
+
+        return dynamicLayers;
+    }
+
     public bool ShowServiceLegendInMap
     {
         get

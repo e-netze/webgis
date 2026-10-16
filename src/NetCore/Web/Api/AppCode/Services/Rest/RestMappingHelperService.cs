@@ -162,6 +162,12 @@ public class RestMappingHelperService /*: IDisposable*/
 
         #endregion
 
+        #region User Renderers
+
+        service.ApplyUserRenderers(httpContext.Request.UserRendererDefinitionsFromParameters(), _cache, ui);
+
+        #endregion
+
         #region dpi
 
         if (!String.IsNullOrEmpty(request.FormOrQuery("dpi")))
@@ -487,6 +493,8 @@ public class RestMappingHelperService /*: IDisposable*/
             }
 
             #endregion
+
+            service.ApplyUserRenderers(request.UserRendererDefinitionsFromParameters(), _cache, ui);
 
             map.ZoomTo(new Envelope(
                 bbox[0].ToPlatformDouble(),

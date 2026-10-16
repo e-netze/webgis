@@ -529,7 +529,7 @@ public class RestPrintHelperService
                         fixScaleMap.ImageHeight = (int)fsm.Size.Height;
                         fixScaleMap.Dpi = layoutBuilder.DotsPerInch;
 
-                        // 2x Zommen, fallse Zoommaßstab gleich dem Kartenmaßstab -> Bild wird verzerrt!!
+                        // 2x Zommen, fallse Zoommaï¿½stab gleich dem Kartenmaï¿½stab -> Bild wird verzerrt!!
                         fixScaleMap.SetScale(fsm.Scale / 2.0, fixScaleMap.ImageWidth, fixScaleMap.ImageHeight, layoutBuilder.Map.Extent.CenterPoint.X, layoutBuilder.Map.Extent.CenterPoint.Y);
                         fixScaleMap.SetScale(fsm.Scale, fixScaleMap.ImageWidth, fixScaleMap.ImageHeight, layoutBuilder.Map.Extent.CenterPoint.X, layoutBuilder.Map.Extent.CenterPoint.Y);
 
@@ -725,7 +725,7 @@ public class RestPrintHelperService
                 fileName += ".zip";
             }
 
-            // Damit kann man die Funktion auf für den PrintServer verwenden...
+            // Damit kann man die Funktion auf fï¿½r den PrintServer verwenden...
             if ("base64".Equals(form["result_format"], StringComparison.InvariantCultureIgnoreCase))
             {
                 pLogger.Success = errorRespones.HasErrors == false;
@@ -802,7 +802,7 @@ public class RestPrintHelperService
 
         if (size[0] > displaySize[0] || size[1] > displaySize[1])
         {
-            throw new Exception($"Maximale Bildgröße von {displaySize[0]}x{displaySize[1]} wurde überschritten. Überprüfen Sie die Anzeige-Eigenschaften des Browsers und stellen Sie gegebenfalls ein Zoomverhältnis größer oder gleich 100% ein.");
+            throw new Exception($"Maximale Bildgrï¿½ï¿½e von {displaySize[0]}x{displaySize[1]} wurde ï¿½berschritten. ï¿½berprï¿½fen Sie die Anzeige-Eigenschaften des Browsers und stellen Sie gegebenfalls ein Zoomverhï¿½ltnis grï¿½ï¿½er oder gleich 100% ein.");
         }
 
         string mapJson = httpRequest.Form["map"], graphicsJson = httpRequest.Form["graphics"];
@@ -1177,7 +1177,7 @@ public class RestPrintHelperService
 
                 if (presentationDefintion.Check.HasValue == false)
                 {
-                    // Button => alle Layer für diesen Dienst ausschalten
+                    // Button => alle Layer fï¿½r diesen Dienst ausschalten
                     foreach (var layer in service.Layers)
                     {
                         layer.Visible = false;
@@ -1327,6 +1327,7 @@ public class RestPrintHelperService
         }
 
         var labelingDefinitions = httpRequest.LabelDefinitionsFromParameters();
+        var userRendererDefinitions = httpRequest.UserRendererDefinitionsFromParameters();
 
         using (var transformer = new GeometricTransformerPro(ApiGlobals.SRefStore.SpatialReferences, 4326, mapDefinition.Crs != null && mapDefinition.Crs.Epsg != 4326 ? mapDefinition.Crs.Epsg : 4326))
         {
@@ -1384,7 +1385,7 @@ public class RestPrintHelperService
 
             #region Service Order
 
-            // Alle Dienste müssen ein Order Flag haben
+            // Alle Dienste mï¿½ssen ein Order Flag haben
             if (serviceDefinitions.Where(s => !s.Order.HasValue).Count() == 0)
             {
                 serviceDefinitions = serviceDefinitions
@@ -1450,7 +1451,7 @@ public class RestPrintHelperService
                 foreach (var layerDefinition in serviceDefintion.Layers)
                 {
                     var layer = service.Layers.Where(l => l.ID == layerDefinition.Id).FirstOrDefault();
-                    if (layer == null || layer.Name != layerDefinition.Name)  // Ids können sich ändern, wenn name nicht passt sollte besse name genommen werden
+                    if (layer == null || layer.Name != layerDefinition.Name)  // Ids kï¿½nnen sich ï¿½ndern, wenn name nicht passt sollte besse name genommen werden
                     {
                         layer = layer ?? service.Layers.Where(l => l.Name == layerDefinition.Name).FirstOrDefault();   // Wenn Name gar nicht existiert -> bleibt Ids
                     }
@@ -1505,6 +1506,12 @@ public class RestPrintHelperService
                 #region Labeling
 
                 service.AddLabeling(labelingDefinitions, _cache, ui);
+
+                #endregion
+
+                #region User Renderers
+
+                service.ApplyUserRenderers(userRendererDefinitions, _cache, ui);
 
                 #endregion
 
@@ -1791,7 +1798,7 @@ public class RestPrintHelperService
     {
         try
         {
-            // es kann zu fehlern kommen, wenn ungültige geometrien daherkommen, zB Punkte mit coordinates [null, null], ...
+            // es kann zu fehlern kommen, wenn ungï¿½ltige geometrien daherkommen, zB Punkte mit coordinates [null, null], ...
             return !String.IsNullOrWhiteSpace(graphicsJson) ? JSerializer.Deserialize<FeaturesDTO>(graphicsJson) : null;
         }
         catch

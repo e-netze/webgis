@@ -58,6 +58,24 @@ static public class RestApiExtensions
         return labels;
     }
 
+    static public UserRendererDefinitionDTO[] UserRendererDefinitionsFromParameters(this HttpRequest httpRequest)
+    {
+        var renderersJson = httpRequest.FormOrQuery("renderers");
+
+        if (String.IsNullOrWhiteSpace(renderersJson))
+        {
+            return null;
+        }
+
+        var renderers = JSerializer.Deserialize<UserRendererDefinitionDTO[]>(renderersJson);
+        foreach (var renderer in renderers ?? [])
+        {
+            renderer.CalcServiceId();
+        }
+
+        return renderers;
+    }
+
     #region Print / PrintLayout
 
     // printFormatString: zB A4.Portrait

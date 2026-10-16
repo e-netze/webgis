@@ -22,7 +22,31 @@ namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 
 static class ServiceExtensions
 {
-    async public static Task<ServiceResponse> RenderRestLegendResponse(this IMapService2 service, IRequestContext requestContext, string jsonResponse, bool optimize)
+    public static Task<ServiceResponse> RenderRestLegendResponse(this IMapService2 service, IRequestContext requestContext, string jsonResponse, bool optimize)
+        => service.RenderRestLegendResponse(requestContext, JSerializer.Deserialize<Legend.LegendResponse>(jsonResponse), optimize);
+
+    /// <summary>
+    /// Replaces the legend items of all layers, that are included in the <paramref name="replaceWith"/> response
+    /// (eg. legend of layers with user renderers queried via dynamicLayers)
+    /// </summary>
+    public static void ReplaceLayerLegends(this Legend.LegendResponse legendResponse, Legend.LegendResponse replaceWith)
+    {
+        if (legendResponse?.Layers is null || replaceWith?.Layers is null)
+        {
+            return;
+        }
+
+        foreach (var replaceLayer in replaceWith.Layers)
+        {
+            var legendLayer = legendResponse.Layers.FirstOrDefault(l => l.LayerId == replaceLayer.LayerId);
+            if (legendLayer is not null)
+            {
+                legendLayer.Legend = replaceLayer.Legend;
+            }
+        }
+    }
+
+    async public static Task<ServiceResponse> RenderRestLegendResponse(this IMapService2 service, IRequestContext requestContext, Legend.LegendResponse legendResponse, bool optimize)
     {
         var serviceLegend = service as IMapServiceLegend;
         if (serviceLegend == null)
@@ -38,8 +62,6 @@ static class ServiceExtensions
         int imageHeight = 0;
 
         #endregion
-
-        var legendResponse = JSerializer.Deserialize<Legend.LegendResponse>(jsonResponse);
 
         Dictionary<string, string> elementsToDisplayInLegendDict = new Dictionary<string, string>();
         List<Legend.Layer> legendLayers = new List<Legend.Layer>();
@@ -106,7 +128,7 @@ static class ServiceExtensions
                                 }
                                 legendLayers.Add(legendLayer);
 
-                                if (optimize && serviceLegend.LegendOptMethod == LegendOptimization.Symbols && service.Map.MapScale <= serviceLegend.LegendOptSymbolScale && serviceLayer is ILegendRendererHelper)
+                                if (optimize && serviceLegend.LegendOptMethod == LegendOptimization.Symbols && service.Map.MapScale <= serviceLegend.LegendOptSymbolScale && serviceLayer is ILegendRendererHelper && !(serviceLayer is IUserRenderableLayer { UserRenderer: not null }))
                                 {
                                     #region Legende Optimieren
 
