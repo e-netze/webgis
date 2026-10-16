@@ -69,6 +69,9 @@ public class UserRendererValidator
             case UserRenderer.TypeUniqueValue:
                 ValidateUniqueValueRenderer(renderer, geometryType, allowedFields, errors);
                 break;
+            case UserRenderer.TypeClassBreaks:
+                ValidateClassBreaksRenderer(renderer, geometryType, allowedFields, errors);
+                break;
             default:
                 errors.Add($"unsupported renderer type '{renderer.Type}'");
                 break;
@@ -80,9 +83,16 @@ public class UserRendererValidator
     public bool IsValid(UserRenderer? renderer, LayerType geometryType, IEnumerable<string>? allowedFields)
         => Validate(renderer, geometryType, allowedFields).Count == 0;
 
+    /// <summary>
+    /// Field types, that can be used for the class breaks renderer
+    /// </summary>
+    public static bool IsNumericFieldType(FieldType fieldType)
+        => fieldType is FieldType.Interger or FieldType.BigInteger or FieldType.SmallInteger
+                     or FieldType.Float or FieldType.Double;
+
     #region Helper
 
-    private void ValidateUniqueValueRenderer(UserRenderer renderer, LayerType geometryType, IEnumerable<string>? allowedFields, List<string> errors)
+    private static void ValidateField(UserRenderer renderer, IEnumerable<string>? allowedFields, List<string> errors)
     {
         if (String.IsNullOrWhiteSpace(renderer.Field))
         {
@@ -92,6 +102,68 @@ public class UserRendererValidator
         {
             errors.Add($"field '{renderer.Field}' is not allowed");
         }
+    }
+
+    /// <param name="allowedFields">For class breaks only numeric fields should be passed</param>
+    private void ValidateClassBreaksRenderer(UserRenderer renderer, LayerType geometryType, IEnumerable<string>? allowedFields, List<string> errors)
+    {
+        ValidateField(renderer, allowedFields, errors);
+
+        var classBreaks = renderer.ClassBreaks ?? [];
+        if (classBreaks.Count == 0)
+        {
+            errors.Add("class breaks renderer needs at least one class");
+        }
+
+        if (classBreaks.Count > _maxUniqueValueClasses)
+        {
+            errors.Add($"too many classes ({classBreaks.Count}), max: {_maxUniqueValueClasses}");
+        }
+
+        if (renderer.MinValue.HasValue && !IsFinite(renderer.MinValue.Value))
+        {
+            errors.Add("minValue is invalid");
+        }
+
+        double? previous = renderer.MinValue;
+        for (int i = 0; i < classBreaks.Count; i++)
+        {
+            var classBreak = classBreaks[i];
+            if (classBreak is null)
+            {
+                errors.Add($"classBreaks[{i}] is null");
+                continue;
+            }
+
+            if (!IsFinite(classBreak.MaxValue))
+            {
+                errors.Add($"classBreaks[{i}].maxValue is invalid");
+            }
+            else
+            {
+                if (previous.HasValue && classBreak.MaxValue < previous.Value)
+                {
+                    errors.Add($"classBreaks[{i}].maxValue must not be less than the previous break");
+                }
+                previous = classBreak.MaxValue;
+            }
+
+            ValidateText(classBreak.Label, $"classBreaks[{i}].label", errors);
+            ValidateSymbol(classBreak.Symbol, geometryType, $"classBreaks[{i}].symbol", errors);
+        }
+
+        if (renderer.DefaultSymbol is not null)
+        {
+            ValidateSymbol(renderer.DefaultSymbol, geometryType, "defaultSymbol", errors);
+        }
+        ValidateText(renderer.DefaultLabel, "defaultLabel", errors);
+    }
+
+    private static bool IsFinite(double value) => !double.IsNaN(value) && !double.IsInfinity(value);
+
+    private void ValidateUniqueValueRenderer(UserRenderer renderer, LayerType geometryType, IEnumerable<string>? allowedFields, List<string> errors)
+    {
+        ValidateField(renderer, allowedFields, errors);
 
         var items = renderer.Items ?? [];
         if (items.Count == 0 && renderer.DefaultSymbol is null)

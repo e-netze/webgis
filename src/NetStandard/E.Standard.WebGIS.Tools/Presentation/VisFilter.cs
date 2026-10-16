@@ -32,7 +32,7 @@ namespace E.Standard.WebGIS.Tools.Presentation;
 
 [Export(typeof(IApiButton))]
 [ToolHelp("tools/presentation/visfilter.html")]
-[ToolConfigurationSection("visfilter")]
+[ToolConfigurationSection(ToolConfigurationSectionAttribute.TocContextMenu, isToolSection: false)]
 [AdvancedToolProperties(VisFilterDependent = true, ClientDeviceDependent = true)]
 public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
                          IApiButtonResources

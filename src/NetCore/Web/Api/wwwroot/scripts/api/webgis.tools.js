@@ -51,7 +51,8 @@
         filter: 'webgis.tools.presentation.visfilter',
         filterRemove: 'webgis.tools.presentation.visfilterremoveall',
         timeFilter: 'webgis.tools.presentation.timefilter',
-        timeFilterRemove: 'webgis.tools.presentation.timefilterremoveall'
+        timeFilterRemove: 'webgis.tools.presentation.timefilterremoveall',
+        userRenderer: 'webgis.tools.presentation.userrenderer'
     };
     // debug UI tools (E.Standard.WebGIS.Tools.Debug.UI, only exported by the server in DEBUG builds)
     this.debug = {

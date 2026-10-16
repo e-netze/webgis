@@ -3728,6 +3728,18 @@
             data.timeEpoch = JSON.stringify(timeEpoch);
         }
 
+        // User renderers ("Darstellung"): [{ id: 'serviceId~layerId', renderer }]
+        let renderers = [];
+        for (let sid in this.services) {
+            let service = this.services[sid];
+            if ((serviceId && service.id !== serviceId) || !service.getLayerRendererDefinitions)
+                continue;
+            renderers.push(...service.getLayerRendererDefinitions());
+        }
+        if (renderers.length > 0) {
+            data.renderers = JSON.stringify(renderers);
+        }
+
         return data;
     };
     /***** Chart *****/

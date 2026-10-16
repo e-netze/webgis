@@ -157,6 +157,10 @@
         webgis.hmac.appendHMACData(urlParams);
 
         this._postParameters = L.Util.extend({}, {}, this.params);
+        if (urlParams.renderers) {  // user renderers can get long => POST
+            this._postParameters.renderers = urlParams.renderers;
+            delete urlParams.renderers;
+        }
         url = this._baseUrl + L.Util.getParamString(L.Util.extend({}, /*this.params*/{}, urlParams));
         url += '&requestid=' + this._service.currentRequestId();
 

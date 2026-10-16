@@ -122,6 +122,10 @@
             o.custom_request_parameters = serviceInfo.custom_request_parameters;
         }
 
+        if (this.hasLayerRenderers()) {
+            o.layer_renderers = JSON.parse(JSON.stringify(this._layerRenderers));
+        }
+
         if (this._timeEpoch) {
             o.time_epoch = { "relation": "default" };
             o.time_epoch.start = this._timeEpoch[0];
@@ -748,6 +752,56 @@
         if (jsonService.time_epoch) {
             this.setTimeEpoch(jsonService.time_epoch.start, jsonService.time_epoch.end);
         }
+
+        if (jsonService.layer_renderers) {
+            for (let layerId in jsonService.layer_renderers) {
+                this.setLayerRenderer(layerId, jsonService.layer_renderers[layerId], true);
+            }
+        }
+    };
+
+    // User renderers ("Darstellung"): layerId => renderer (only for layers with allow_user_renderer)
+    this._layerRenderers = {};
+    this.canSetLayerRenderer = function (layerId) {
+        let layer = this.getLayer(layerId);
+        return layer != null && layer.allow_user_renderer === true;
+    };
+    this.setLayerRenderer = function (layerId, renderer, suppressRefresh) {
+        if (renderer && !this.canSetLayerRenderer(layerId)) {
+            webgis.log('setLayerRenderer: user renderers not allowed for layer', this.id, layerId);
+            return false;
+        }
+
+        if (renderer) {
+            this._layerRenderers[layerId] = JSON.parse(JSON.stringify(renderer));
+        } else if (this._layerRenderers[layerId]) {
+            delete this._layerRenderers[layerId];
+        } else {
+            return false;
+        }
+
+        this.map.events.fire('service-layerrenderer-changed', this, { layerId: layerId });
+        if (suppressRefresh !== true) {
+            this.refresh();
+        }
+        return true;
+    };
+    this.getLayerRenderer = function (layerId) {
+        let renderer = this._layerRenderers[layerId];
+        return renderer ? JSON.parse(JSON.stringify(renderer)) : null;
+    };
+    this.hasLayerRenderer = function (layerId) {
+        return !!this._layerRenderers[layerId];
+    };
+    this.hasLayerRenderers = function () {
+        return Object.keys(this._layerRenderers).length > 0;
+    };
+    this.getLayerRendererDefinitions = function () {
+        let definitions = [];
+        for (let layerId in this._layerRenderers) {
+            definitions.push({ id: this.id + '~' + layerId, renderer: this._layerRenderers[layerId] });
+        }
+        return definitions;
     };
 
     // Request Id
@@ -859,7 +913,11 @@
         let url = webgis.baseUrl + "/rest/services/" + this.id + "/getlegend?";
         
         let urlParams = withoutPostData === true ? {} : this.getLegendPostData();
-        webgis.hmac.appendHMACData(this.map.appendRequestParameters(urlParams));
+        this.map.appendRequestParameters(urlParams, this.id);
+        if (withoutPostData === true) {
+            delete urlParams.renderers;  // sent with getLegendPostData() (POST body), may be too long for the url
+        }
+        webgis.hmac.appendHMACData(urlParams);
         url += $.param(urlParams);
         return url;
     };
@@ -876,7 +934,11 @@
                 vislayers.push(layer.id);
             }
         }
-        return { width: mapSize[0], height: mapSize[1], bbox: bbox, crs: crsId, layers: vislayers.join(','), f: 'json' };
+        let postData = { width: mapSize[0], height: mapSize[1], bbox: bbox, crs: crsId, layers: vislayers.join(','), f: 'json' };
+        if (this.hasLayerRenderers()) {
+            postData.renderers = JSON.stringify(this.getLayerRendererDefinitions());
+        }
+        return postData;
     };
 
     this.copy = function () {

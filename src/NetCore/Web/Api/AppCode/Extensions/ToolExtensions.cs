@@ -20,7 +20,7 @@ static internal class ToolExtensions
         if (toolConfigAttribute != null && !String.IsNullOrWhiteSpace(toolConfigAttribute.SectionName))
         {
             toolConfig = new Dictionary<string, string>();
-            foreach (var key in configService.GetPathsStartWith(ApiConfigKeys.ToKey($"tool-{toolConfigAttribute.SectionName}:")))
+            foreach (var key in configService.GetPathsStartWith(ApiConfigKeys.ToKey($"{toolConfigAttribute.FullSectionName}:")))
             {
                 toolConfig.Add(key.Substring(key.LastIndexOf(":") + 1), configService[key]);
             }

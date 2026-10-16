@@ -258,4 +258,86 @@ public class UserRendererValidatorTests
         Assert.DoesNotContain("null", json);
         Assert.Equal(json, System.Text.Json.JsonSerializer.Serialize(roundTripped));
     }
+
+    private static UserRenderer ClassBreaks(string field, params double[] breaks) => new()
+    {
+        Type = UserRenderer.TypeClassBreaks,
+        Field = field,
+        MinValue = 0,
+        ClassBreaks = breaks.Select(b => new UserRendererClassBreak() { MaxValue = b, Label = $"<= {b}", Symbol = PolygonSymbol() }).ToList()
+    };
+
+    [Fact]
+    public void Validate_ClassBreaks_IsValid()
+    {
+        Assert.Empty(new UserRendererValidator().Validate(ClassBreaks("TYPE", 10, 20, 30), LayerType.polygon, AllowedFields));
+    }
+
+    [Fact]
+    public void Validate_ClassBreaks_NotAscending_IsInvalid()
+    {
+        Assert.False(new UserRendererValidator().IsValid(ClassBreaks("TYPE", 10, 5), LayerType.polygon, AllowedFields));
+    }
+
+    [Fact]
+    public void Validate_ClassBreaks_MinValueGreaterThanFirstBreak_IsInvalid()
+    {
+        var renderer = ClassBreaks("TYPE", 10);
+        renderer.MinValue = 20;
+
+        Assert.False(new UserRendererValidator().IsValid(renderer, LayerType.polygon, AllowedFields));
+    }
+
+    [Fact]
+    public void Validate_ClassBreaks_NoClasses_IsInvalid()
+    {
+        Assert.False(new UserRendererValidator().IsValid(ClassBreaks("TYPE"), LayerType.polygon, AllowedFields));
+    }
+
+    [Fact]
+    public void Validate_ClassBreaks_NotAllowedField_IsInvalid()
+    {
+        Assert.False(new UserRendererValidator().IsValid(ClassBreaks("SECRET", 10), LayerType.polygon, AllowedFields));
+    }
+
+    [Fact]
+    public void Validate_ClassBreaks_NaN_IsInvalid()
+    {
+        Assert.False(new UserRendererValidator().IsValid(ClassBreaks("TYPE", double.NaN), LayerType.polygon, AllowedFields));
+    }
+
+    [Fact]
+    public void Validate_ClassBreaks_TooManyClasses_IsInvalid()
+    {
+        var validator = new UserRendererValidator(maxUniqueValueClasses: 2);
+
+        Assert.False(validator.IsValid(ClassBreaks("TYPE", 1, 2, 3), LayerType.polygon, AllowedFields));
+    }
+
+    [Fact]
+    public void Deserialize_ClassBreaks_ReadsClientJson()
+    {
+        var json = """
+            { "version": 1, "type": "classBreaks", "field": "TYPE", "minValue": 0,
+              "classBreaks": [ { "maxValue": 10, "label": "low", "symbol": { "color": "#ff0000" } },
+                               { "maxValue": 20.5, "symbol": { "color": "#00ff00" } } ] }
+            """;
+
+        var renderer = System.Text.Json.JsonSerializer.Deserialize<UserRenderer>(json);
+
+        Assert.NotNull(renderer);
+        Assert.Equal(2, renderer.ClassBreaks!.Count);
+        Assert.Equal(20.5, renderer.ClassBreaks[1].MaxValue);
+        Assert.True(new UserRendererValidator().IsValid(renderer, LayerType.polygon, AllowedFields));
+    }
+
+    [Theory]
+    [InlineData(FieldType.Interger, true)]
+    [InlineData(FieldType.Double, true)]
+    [InlineData(FieldType.String, false)]
+    [InlineData(FieldType.Date, false)]
+    public void IsNumericFieldType(FieldType fieldType, bool expected)
+    {
+        Assert.Equal(expected, UserRendererValidator.IsNumericFieldType(fieldType));
+    }
 }

@@ -29,6 +29,11 @@ public interface IBridge : IAppCryptography
     bool IsServiceQueryBuilderAllowed(string serviceId);
     IEnumerable<IQueryBuilderFieldBridge> GetAllowedQueryBuilderFields(string serviceId);
 
+    /// <summary>
+    /// User defined renderers ("Darstellung") allowed for this layer: api.config, service capabilities, CMS and layer type
+    /// </summary>
+    Task<bool> IsLayerUserRendererAllowed(string serviceId, string layerId);
+
     Task<IQueryBridge> GetQuery(string setviceId, string queryId);
 
     // Faster, no initialisation of service etc, no dynamic services

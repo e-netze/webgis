@@ -104,11 +104,9 @@ public class ApiGlobalsService
             AgsQuerySettings.IdsPagingCandidateCountThreshold = agsQueryIdsPagingThreshold;
         }
 
-        if (bool.TryParse(config[ApiConfigKeys.ToKey("tool-userrenderer:allow-toc-userrenderer")], out bool allowTocUserRenderer))
-        {
-            UserRendererSettings.Allowed = allowTocUserRenderer;
-        }
-        if (int.TryParse(config[ApiConfigKeys.ToKey("tool-userrenderer:max-unique-value-classes")], out int userRendererMaxUniqueValueClasses) && userRendererMaxUniqueValueClasses > 0)
+        UserRendererSettings.Allowed =
+            bool.TryParse(config[ApiConfigKeys.ToKey("toc-contextmenu:allow-toc-userrenderer")], out bool allowTocUserRenderer) && allowTocUserRenderer;
+        if (int.TryParse(config[ApiConfigKeys.ToKey("toc-contextmenu:userrenderer-max-unique-value-classes")], out int userRendererMaxUniqueValueClasses) && userRendererMaxUniqueValueClasses > 0)
         {
             UserRendererSettings.MaxUniqueValueClasses = userRendererMaxUniqueValueClasses;
         }

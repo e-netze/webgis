@@ -16,6 +16,7 @@ public class UserRenderer
 
     public const string TypeSimple = "simple";
     public const string TypeUniqueValue = "uniqueValue";
+    public const string TypeClassBreaks = "classBreaks";
 
     [JsonProperty("version")]
     [System.Text.Json.Serialization.JsonPropertyName("version")]
@@ -34,7 +35,7 @@ public class UserRenderer
     public UserSymbol? Symbol { get; set; }
 
     /// <summary>
-    /// Field for the unique value renderer
+    /// Field for the unique value and the class breaks renderer (class breaks: numeric fields only)
     /// </summary>
     [JsonProperty("field", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("field")]
@@ -47,7 +48,25 @@ public class UserRenderer
     public List<UserRendererItem>? Items { get; set; }
 
     /// <summary>
-    /// Symbol for all other values (unique value renderer). Null => other values are not drawn
+    /// Lower bound of the first class (class breaks renderer)
+    /// </summary>
+    [JsonProperty("minValue", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("minValue")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public double? MinValue { get; set; }
+
+    /// <summary>
+    /// Classes of the class breaks renderer, ascending by <see cref="UserRendererClassBreak.MaxValue"/>.
+    /// A class contains the values ]previous maxValue (or minValue), maxValue]
+    /// </summary>
+    [JsonProperty("classBreaks", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("classBreaks")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public List<UserRendererClassBreak>? ClassBreaks { get; set; }
+
+    /// <summary>
+    /// Symbol for all other values (unique value renderer) or values outside the classes (class breaks renderer).
+    /// Null => these values are not drawn
     /// </summary>
     [JsonProperty("defaultSymbol", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("defaultSymbol")]
@@ -65,6 +84,22 @@ public class UserRendererItem
     [JsonProperty("value")]
     [System.Text.Json.Serialization.JsonPropertyName("value")]
     public string Value { get; set; } = "";
+
+    [JsonProperty("label", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("label")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? Label { get; set; }
+
+    [JsonProperty("symbol")]
+    [System.Text.Json.Serialization.JsonPropertyName("symbol")]
+    public UserSymbol? Symbol { get; set; }
+}
+
+public class UserRendererClassBreak
+{
+    [JsonProperty("maxValue")]
+    [System.Text.Json.Serialization.JsonPropertyName("maxValue")]
+    public double MaxValue { get; set; }
 
     [JsonProperty("label", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("label")]

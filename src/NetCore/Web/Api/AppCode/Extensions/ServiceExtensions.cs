@@ -126,7 +126,9 @@ static public class ServiceExtensions
             return serviceDefinitions.Select(d => d.LayerId).ToArray();
         }
 
-        var allowedQueryBuilderFieldNames = cache.GetAllowedQueryBuilderFields(service.Url, ui)
+        var allowedQueryBuilderFieldNames = (cache.IsServiceQueryBuilderAllowed(service.Url, ui)
+                ? cache.GetAllowedQueryBuilderFields(service.Url, ui)
+                : [])
             .Select(f => f.Name)
             .Where(n => !String.IsNullOrEmpty(n))
             .ToArray();
@@ -142,7 +144,12 @@ static public class ServiceExtensions
                 continue;
             }
 
-            var layerFieldNames = layer.Fields?.Select(f => f.Name).ToArray() ?? [];
+            var layerFields = layer.Fields?.ToArray() ?? [];
+            if (definition.Renderer!.Type == UserRenderer.TypeClassBreaks)
+            {
+                layerFields = layerFields.Where(f => UserRendererValidator.IsNumericFieldType(f.Type)).ToArray();
+            }
+            var layerFieldNames = layerFields.Select(f => f.Name).ToArray();
             var allowedFields = allowedQueryBuilderFieldNames.Any(n => n == "*")
                 ? layerFieldNames
                 : allowedQueryBuilderFieldNames.Where(n => layerFieldNames.Any(l => l.Equals(n, StringComparison.OrdinalIgnoreCase)));

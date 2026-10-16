@@ -166,6 +166,55 @@ public class AgsUserRendererTranslatorTests
         Assert.Equal("A%2BB", infos[0]["label"]);
     }
 
+    [Fact]
+    public void ToAgsRenderer_ClassBreaks_TranslatesClasses()
+    {
+        var renderer = new UserRenderer()
+        {
+            Type = UserRenderer.TypeClassBreaks,
+            Field = "AREA",
+            MinValue = 0,
+            ClassBreaks =
+            [
+                new UserRendererClassBreak() { MaxValue = 10.5, Symbol = new UserSymbol() { Color = "#ff0000" } },
+                new UserRendererClassBreak() { MaxValue = 100, Label = "big", Symbol = new UserSymbol() { Color = "#00ff00" } }
+            ],
+            DefaultSymbol = new UserSymbol(),
+            DefaultLabel = "Other"
+        };
+
+        var ags = AgsUserRendererTranslator.ToAgsRenderer(renderer, LayerType.polygon)!;
+        var infos = (Dictionary<string, object>[])ags["classBreakInfos"];
+
+        Assert.Equal("classBreaks", ags["type"]);
+        Assert.Equal("AREA", ags["field"]);
+        Assert.Equal(0d, ags["minValue"]);
+        Assert.Equal(2, infos.Length);
+        Assert.Equal(0d, infos[0]["classMinValue"]);
+        Assert.Equal(10.5, infos[0]["classMaxValue"]);
+        Assert.Equal("0 - 10.5", infos[0]["label"]);
+        Assert.Equal(10.5, infos[1]["classMinValue"]);
+        Assert.Equal(100d, infos[1]["classMaxValue"]);
+        Assert.Equal("big", infos[1]["label"]);
+        Assert.Equal("Other", ags["defaultLabel"]);
+    }
+
+    [Fact]
+    public void ToAgsRenderer_ClassBreaks_WithoutMinValue_UsesFirstBreak()
+    {
+        var renderer = new UserRenderer()
+        {
+            Type = UserRenderer.TypeClassBreaks,
+            Field = "AREA",
+            ClassBreaks = [new UserRendererClassBreak() { MaxValue = 5, Symbol = new UserSymbol() }]
+        };
+
+        var ags = AgsUserRendererTranslator.ToAgsRenderer(renderer, LayerType.point)!;
+
+        Assert.Equal(5d, ags["minValue"]);
+        Assert.False(ags.ContainsKey("defaultSymbol"));
+    }
+
     [Theory]
     [InlineData("#000000", 1f, new[] { 0, 0, 0, 255 })]
     [InlineData("#FFFFFF", 0f, new[] { 255, 255, 255, 0 })]

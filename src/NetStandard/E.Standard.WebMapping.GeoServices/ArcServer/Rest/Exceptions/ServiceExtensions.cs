@@ -126,6 +126,12 @@ static class ServiceExtensions
                                 {
                                     legendLayer.LayerName = legendAliasname;
                                 }
+                                if (serviceLayer is IUserRenderableLayer { UserRenderer.Field: { Length: > 0 } userRendererField })
+                                {
+                                    // show the field of a user-defined renderer (uniqueValue, classBreaks) in the layer headline
+                                    var fieldAlias = serviceLayer.Fields?.FirstOrDefault(f => f.Name == userRendererField)?.Alias;
+                                    legendLayer.LayerName = $"{legendLayer.LayerName} ({(String.IsNullOrEmpty(fieldAlias) ? userRendererField : fieldAlias)})";
+                                }
                                 legendLayers.Add(legendLayer);
 
                                 if (optimize && serviceLegend.LegendOptMethod == LegendOptimization.Symbols && service.Map.MapScale <= serviceLegend.LegendOptSymbolScale && serviceLayer is ILegendRendererHelper && !(serviceLayer is IUserRenderableLayer { UserRenderer: not null }))

@@ -1463,6 +1463,23 @@ public class Bridge : IBridge
         return layer?.Fields;
     }
 
+    async public Task<bool> IsLayerUserRendererAllowed(string serviceId, string layerId)
+    {
+        if (!WebMapping.Core.Renderer.UserRenderers.UserRendererSettings.Allowed
+            || !_cacheService.IsServiceUserRenderersAllowed(serviceId, _userIdentification))
+        {
+            return false;
+        }
+
+        IMapService service = await TryGetOriginalService(serviceId);
+        if (service is not IMapServiceUserRenderers { SupportsUserRenderers: true })
+        {
+            return false;
+        }
+
+        return service.Layers?.FindByLayerId(layerId) is IUserRenderableLayer { SupportsUserRenderer: true };
+    }
+
     public bool IsInDeveloperMode
     {
         get

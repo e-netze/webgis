@@ -1111,6 +1111,7 @@
             }
             if (Array.isArray(options.visfilters)) {
                 map._visfilters = options.visfilters;
+                map.events.fire('visfilters-changed', map);
             }
         }
         webgis.hideProgress(webgis.l10n.get('progress-loading-map'));

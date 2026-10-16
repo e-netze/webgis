@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,8 +18,8 @@ using E.Standard.WebMapping.Core.Editing;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
-using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.Core.Logging;
+using E.Standard.WebMapping.Core.Logging.Abstraction;
 using E.Standard.WebMapping.Core.ServiceResponses;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.DynamicLayers;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
@@ -524,7 +524,6 @@ public class MapService : IMapService2,
                 }
 
                 bool hasVisibleLayers = false;
-
                 List<DynamicLayer> dynamicLayers = new List<DynamicLayer>();
                 bool useDynamicLayers = false;
 
@@ -533,104 +532,102 @@ public class MapService : IMapService2,
                 List<string> visibleIds = new();
                 Dictionary<string, string> layerDefs = new Dictionary<string, string>();
 
-                foreach (var layer in this.Layers)
+                foreach (var layer in this.Layers.Where(l => l is not null))
                 {
+                    bool visible = layer.Visible;
 
-                    if (layer != null)
+                    if (visible)
                     {
-                        bool visible = layer.Visible;
-
-                        if (visible)
-                        {
-                            visibleIds.Add(layer.ID);
-                        }
-
-                        if (visible && layer is RestLayer)
-                        {
-                            hasVisibleLayers = true;
-                        }
-
-                        string where = String.Empty;
-                        if (layer is FeatureLayer)
-                        {
-                            where = ((FeatureLayer)layer).DefinitionExpression;
-                        }
-
-                        if (!String.IsNullOrEmpty(layer.Filter))
-                        {
-                            where = where.AppendWhereClause(layer.Filter);
-                        }
-
-                        if (!String.IsNullOrWhiteSpace(where))
-                        {
-                            var layerDefLayerId = layer.ID;
-                            if (layer.Type == LayerType.annotation && layer is RestLayer && ((RestLayer)layer).ParentLayerIds != null && ((RestLayer)layer).ParentLayerIds.Length > 0)
-                            {
-                                layerDefLayerId = ((RestLayer)layer).ParentLayerIds[0].ToString();
-                            }
-                            layerDefs.Add(layerDefLayerId, FeatureLayer.UrlEncodeWhere(where));
-                        }
-
-                        var featureLayer = layer as FeatureLayer;
-                        bool hasLabelRenderer = featureLayer is { UseLabelRenderer: true, LabelRenderer: not null };
-                        var agsUserRenderer = visible && featureLayer?.UserRenderer is not null
-                            ? AgsUserRendererTranslator.ToAgsRenderer(featureLayer.UserRenderer, layer.Type, FeatureLayer.UrlEncodeWhere)
-                            : null;
-
-                        if (hasLabelRenderer || agsUserRenderer is not null)
-                        {
-                            useDynamicLayers = true;
-
-                            DynamicLayer dynamicLayer = new DynamicLayer();
-
-                            dynamicLayer.id = 1001 + dynamicLayers.Count;
-                            dynamicLayer.source = new DynamicLayerSouce()
-                            {
-                                mapLayerId = int.Parse(layer.ID)
-                            };
-                            dynamicLayer.drawingInfo = new DynamicLayerDrawingInfo()
-                            {
-                                renderer = agsUserRenderer,
-                                showLabels = hasLabelRenderer ? true : null
-                            };
-                            dynamicLayer.definitionExpression = FeatureLayer.UrlEncodeWhere(where);
-
-                            if (hasLabelRenderer)
-                            {
-                                var labelRenderer = featureLayer.LabelRenderer;
-                                var labelingInfo = new LabelingInfo()
-                                {
-                                    LabelPlacement = LabelingInfo.DefaultLabelPlacement(layer.Type),
-                                    LabelExpression = $"[{labelRenderer.LabelField}]",
-                                    UseCodedValues = false,
-                                    MinScale = (int)layer.MaxScale,
-                                    MaxScale = (int)layer.MinScale,
-                                    Where = FeatureLayer.UrlEncodeWhere(where), //String.IsNullOrEmpty(layer.Filter) ? null : layer.Filter,
-                                    Symbol = new TextSymbol(labelRenderer)
-                                    {
-                                        VerticalAlignment = "bottom",
-                                        HorizontalAlignment = "left"
-                                    }
-                                };
-
-                                dynamicLayer.drawingInfo.labelingInfo = new LabelingInfo[] { labelingInfo };
-                            }
-
-                            dynamicLayers.Add(dynamicLayer);
-                        }
-                        else if (visible)
-                        {
-                            DynamicLayer dynamicLayer = new DynamicLayer();
-
-                            dynamicLayer.id = 1001 + dynamicLayers.Count;
-                            dynamicLayer.source = new DynamicLayerSouce()
-                            {
-                                mapLayerId = int.Parse(layer.ID)
-                            };
-                            dynamicLayer.definitionExpression = FeatureLayer.UrlEncodeWhere(where);  // Schreibweise nicht mehr g�ltig ab AGS 10.5
-                            dynamicLayers.Add(dynamicLayer);
-                        }
+                        visibleIds.Add(layer.ID);
                     }
+
+                    if (visible && layer is RestLayer)
+                    {
+                        hasVisibleLayers = true;
+                    }
+
+                    string where = String.Empty;
+                    if (layer is FeatureLayer)
+                    {
+                        where = ((FeatureLayer)layer).DefinitionExpression;
+                    }
+
+                    if (!String.IsNullOrEmpty(layer.Filter))
+                    {
+                        where = where.AppendWhereClause(layer.Filter);
+                    }
+
+                    if (!String.IsNullOrWhiteSpace(where))
+                    {
+                        var layerDefLayerId = layer.ID;
+                        if (layer.Type == LayerType.annotation && layer is RestLayer && ((RestLayer)layer).ParentLayerIds != null && ((RestLayer)layer).ParentLayerIds.Length > 0)
+                        {
+                            layerDefLayerId = ((RestLayer)layer).ParentLayerIds[0].ToString();
+                        }
+                        layerDefs.Add(layerDefLayerId, FeatureLayer.UrlEncodeWhere(where));
+                    }
+
+                    var featureLayer = layer as FeatureLayer;
+                    bool hasLabelRenderer = featureLayer is { UseLabelRenderer: true, LabelRenderer: not null };
+                    var agsUserRenderer = visible && featureLayer?.UserRenderer is not null
+                        ? AgsUserRendererTranslator.ToAgsRenderer(featureLayer.UserRenderer, layer.Type, FeatureLayer.UrlEncodeWhere)
+                        : null;
+
+                    #region Write DynamicLayers: if one has realy an render in use {useDynamicLayers = true}, all layers must have an dynamic representation
+                    if (hasLabelRenderer || agsUserRenderer is not null)
+                    {
+                        useDynamicLayers = true;
+
+                        DynamicLayer dynamicLayer = new DynamicLayer();
+
+                        dynamicLayer.id = 1001 + dynamicLayers.Count;
+                        dynamicLayer.source = new DynamicLayerSouce()
+                        {
+                            mapLayerId = int.Parse(layer.ID)
+                        };
+                        dynamicLayer.drawingInfo = new DynamicLayerDrawingInfo()
+                        {
+                            renderer = agsUserRenderer,
+                            showLabels = hasLabelRenderer ? true : null
+                        };
+                        dynamicLayer.definitionExpression = FeatureLayer.UrlEncodeWhere(where);
+
+                        if (hasLabelRenderer)
+                        {
+                            var labelRenderer = featureLayer.LabelRenderer;
+                            var labelingInfo = new LabelingInfo()
+                            {
+                                LabelPlacement = LabelingInfo.DefaultLabelPlacement(layer.Type),
+                                LabelExpression = $"[{labelRenderer.LabelField}]",
+                                UseCodedValues = false,
+                                MinScale = (int)layer.MaxScale,
+                                MaxScale = (int)layer.MinScale,
+                                Where = FeatureLayer.UrlEncodeWhere(where), //String.IsNullOrEmpty(layer.Filter) ? null : layer.Filter,
+                                Symbol = new TextSymbol(labelRenderer)
+                                {
+                                    VerticalAlignment = "bottom",
+                                    HorizontalAlignment = "left"
+                                }
+                            };
+
+                            dynamicLayer.drawingInfo.labelingInfo = new LabelingInfo[] { labelingInfo };
+                        }
+
+                        dynamicLayers.Add(dynamicLayer);
+                    }
+                    else if (visible)
+                    {
+                        DynamicLayer dynamicLayer = new DynamicLayer();
+
+                        dynamicLayer.id = 1001 + dynamicLayers.Count;
+                        dynamicLayer.source = new DynamicLayerSouce()
+                        {
+                            mapLayerId = int.Parse(layer.ID)
+                        };
+                        dynamicLayer.definitionExpression = FeatureLayer.UrlEncodeWhere(where);  // Schreibweise nicht mehr g�ltig ab AGS 10.5
+                        dynamicLayers.Add(dynamicLayer);
+                    }
+                    #endregion
                 }
 
                 if (!hasVisibleLayers)
@@ -1854,7 +1851,7 @@ public class MapService : IMapService2,
         return p[p.Length - 1];
     }
 
-    #nullable enable
+#nullable enable
     private static TimeZoneInfo? TryFindTimeZone(string? timeZoneId)
     {
         if (string.IsNullOrWhiteSpace(timeZoneId) || timeZoneId.Equals("UTC", StringComparison.OrdinalIgnoreCase))

@@ -76,6 +76,45 @@ public static class AgsUserRendererTranslator
             return agsRenderer;
         }
 
+        if (renderer.Type == UserRenderer.TypeClassBreaks && !String.IsNullOrEmpty(renderer.Field))
+        {
+            var classBreaks = renderer.ClassBreaks ?? [];
+            double minValue = renderer.MinValue ?? (classBreaks.Count > 0 ? classBreaks[0].MaxValue : 0d);
+
+            var agsRenderer = new Dictionary<string, object>()
+            {
+                ["type"] = "classBreaks",
+                ["field"] = encodeString(renderer.Field!),
+                ["minValue"] = minValue,
+                ["classBreakInfos"] = classBreaks
+                    .Select((classBreak, index) =>
+                    {
+                        double classMinValue = index == 0 ? minValue : classBreaks[index - 1].MaxValue;
+                        string label = String.IsNullOrEmpty(classBreak.Label)
+                            ? $"{FormatNumber(classMinValue)} - {FormatNumber(classBreak.MaxValue)}"
+                            : classBreak.Label!;
+
+                        return new Dictionary<string, object>()
+                        {
+                            ["classMinValue"] = classMinValue,
+                            ["classMaxValue"] = classBreak.MaxValue,
+                            ["label"] = encodeString(label),
+                            ["symbol"] = ToAgsSymbol(classBreak.Symbol, geometryType)
+                        };
+                    })
+                    .ToArray()
+            };
+
+            // no default symbol => values outside the classes are not drawn
+            if (renderer.DefaultSymbol is not null)
+            {
+                agsRenderer["defaultSymbol"] = ToAgsSymbol(renderer.DefaultSymbol, geometryType);
+                agsRenderer["defaultLabel"] = encodeString(renderer.DefaultLabel ?? "");
+            }
+
+            return agsRenderer;
+        }
+
         return null;
     }
 
@@ -127,6 +166,9 @@ public static class AgsUserRendererTranslator
     }
 
     #region Helper
+
+    private static string FormatNumber(double value)
+        => value.ToString("0.######", CultureInfo.InvariantCulture);
 
     private static bool IsSupportedGeometryType(LayerType geometryType)
         => geometryType == LayerType.point ||
