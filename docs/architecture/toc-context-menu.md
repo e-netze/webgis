@@ -4,8 +4,8 @@
 
 Every presentation (Darstellungsvariante) and every group in the viewer's table of contents (TOC)
 has a context menu, opened by right click or by a burger icon shown on hover. The menu entries come
-from a small provider list (Metadata, Query Builder per layer, Properties), so new TOC tools can be
-added without touching the TOC build code. "Properties" opens a tabbed dialog with layer details,
+from a small provider list (Metadata, Query Builder per layer, Darstellung, Beschriftung, filter
+reset, Properties), so new TOC tools can be added without touching the TOC build code. "Properties" opens a tabbed dialog with layer details,
 legend, info/copyright and (for map authors) technical ids.
 
 ## Affected projects
@@ -68,6 +68,7 @@ flowchart TD
 |---------|-------|---------|-------------|
 | `webgis.usability.allowTocVisFilters` | `custom.js` | `false` | Shows the Query Builder entry (only for items with TOC layers) |
 | `webgis.globals.portal.isMapAuthor` | set by Portal (`webgis-map.js`) | `undefined` | Shows the "Technical" tab; not configurable via `custom.js` |
+| `toc-contextmenu:*` | `api.config` | `false` | `allow-toc-visfilter` (Query Builder, section formerly `tool-visfilter`), `allow-toc-userrenderer`, `allow-toc-userlabeling` |
 
 User docs: https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-context-menu
 
@@ -113,10 +114,14 @@ User docs: https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/
   `$.fn.webgis_presentationToc.plugin.tocItemMenuProviders` (before the properties provider).
   `getItems` returns context menu items (`text`, `icon`, `checked`, `items` for a submenu,
   `separator`, `data.action`). `collectItemLayers($li, map)` returns the layers of an item or group.
+- "Darstellung" / "Beschriftung", their reset entries and the item badges (renderer, labeling,
+  filter, metadata; click opens the context menu) are described in
+  [User Renderer & User Labeling](user-renderer-labeling.md).
 - Add a properties tab: extend the `tabs` list in `showItemProperties` with a `render($tab, $li, map)`.
 
 ## History
 
 | Version | Change | Reference |
 |---------|--------|-----------|
-| `9.26.4104` | TOC context menu (items and groups), Query Builder per layer, properties dialog | uncommitted |
+| `9.26.4104` | TOC context menu (items and groups), Query Builder per layer, properties dialog | `8a1abb54` |
+| `9.26.4104` | Providers Darstellung/Beschriftung/Filter reset, item badges, api.config section `toc-contextmenu` | [user-renderer-labeling.md](user-renderer-labeling.md) |

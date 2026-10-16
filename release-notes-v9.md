@@ -13,6 +13,10 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 
 - **Breaking change:** Viewer script files were renamed or removed (e.g. `webgis_modal.js`, `webgis_contextMenu.js`, `webgis_uibuilder.js`, Leaflet `webgisgraphics.js`/`webgisservicelayer.js`). Custom pages that include single script files must include the bundles (`api.min.js`, `api-ui.min.js`) instead; custom code should open dialogs with `webgis.ui.showModal(...)` (`$.fn.webgis_modal` still works).
 - **Breaking change:** Tool requests (`/rest/toolevent`) now send their parameters as JSON (`eventBody`) instead of a pipe-separated `eventString`; custom code using `webgis.tools.toolParameterString` or posting `eventString` directly must be adapted.
+- **Breaking change:** The `api.config` section `tool-visfilter` was renamed to `toc-contextmenu`; move existing settings (e.g. `allow-toc-visfilter`) to the new section.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-toc-contextmenu)
+- **Breaking change:** The legacy tool "Labeling" (`webgis.tools.presentation.labeling`) and the CMS labeling nodes were removed; use the new user labeling from the table of contents instead (labels stored in old maps are ignored).
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-user-labeling)
 
 ### New
 
@@ -28,6 +32,12 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/general/ui.html#ui-detachable-windows)
 - Viewer: presentations and groups in the table of contents have a context menu (right mouse button or burger icon on hover) with Metadata, Query Builder per layer and a new properties dialog (layers, scale ranges, filters, legend; technical details for map authors).
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-context-menu)
+- Viewer: users can define their own presentation (single symbol, unique values, classes) and labeling of layers of ArcGIS Server services with DynamicLayers from the table of contents ("Presentation" / "Labeling"). Enable per service with the CMS properties `allow_user_renderers` / `allow_user_labeling` and globally with `allow-toc-userrenderer` / `allow-toc-userlabeling` in the `api.config` section `toc-contextmenu`.
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-user-renderer)
+  [Docs api.config](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-toc-contextmenu)
+  [Docs CMS](https://docs.webgiscloud.com/en/webgis/apps/cms/add_ags_service.html#cms-ags-user-renderer-labeling)
+- Viewer: presentations in the table of contents show badges for user presentation, labeling, filters and metadata; the context menu offers "Reset filter", "Reset presentation" and "Reset labeling".
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-badges)
 
 ### Fixed
 

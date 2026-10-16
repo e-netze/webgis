@@ -102,6 +102,17 @@ public class AgsUserLabelingTranslatorTests
     }
 
     [Fact]
+    public void ToAgsLabelingInfo_NegativeScales_NoLimit()
+    {
+        var labeling = new UserLabeling() { Mode = UserLabeling.ModeCustom, Expression = "[NAME]" };
+
+        var info = AgsUserLabelingTranslator.ToAgsLabelingInfo(labeling, LayerType.point, -1, -1, "")!;
+
+        Assert.Equal(0, info.MinScale);
+        Assert.Equal(0, info.MaxScale);
+    }
+
+    [Fact]
     public void ToAgsLabelingInfo_Defaults_NoHalo()
     {
         var labeling = new UserLabeling() { Mode = UserLabeling.ModeCustom, Expression = "[NAME]" };

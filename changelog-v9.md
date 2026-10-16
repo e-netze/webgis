@@ -178,6 +178,53 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-context-menu),
   [Architecture](docs/architecture/toc-context-menu.md)
 
+- User-defined layer presentation ("Darstellung") in the viewer TOC for ArcGIS Server map services
+  with ``supportsDynamicLayers`` (feature layers only):
+  * Context menu entry "Darstellung" (submenu per layer) opens an editor: "Default" (service
+    presentation) or "Custom" with single symbol, unique values ("Load values", max classes
+    configurable) or class breaks ("Calculate classes" from the field's min/max). Symbols for
+    point, line and polygon; only QueryBuilder fields are offered and accepted.
+  * Neutral, versioned renderer model (``UserRenderer``) with server validation; sent as
+    ``renderers`` (POST) with map, legend and print requests and translated to AGS
+    ``dynamicLayers`` (``drawingInfo.renderer``). Invalid renderers are ignored (default drawing).
+  * Renderers are stored per service layer and serialized with the map. The legend uses
+    ``dynamicLayers``; for unique values/class breaks the field alias is appended to the layer name.
+  * Enable with the CMS service property ``allow_user_renderers`` (authorizable) and
+    ``allow-toc-userrenderer`` / ``userrenderer-max-unique-value-classes`` in the ``api.config``
+    section ``toc-contextmenu``.
+
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-user-renderer),
+  [Docs api.config](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-toc-contextmenu),
+  [Docs CMS](https://docs.webgiscloud.com/en/webgis/apps/cms/add_ags_service.html#cms-ags-user-renderer-labeling),
+  [Architecture](docs/architecture/user-renderer-labeling.md)
+
+- User-defined labeling ("Beschriftung") in the viewer TOC (same prerequisites as the user
+  presentation): modes "Default", "No labeling" and "Custom" with a label text template
+  (``"Area: [FIELD] m²"``, field insert, max 200 characters/3 lines), font size, font style, font
+  color and halo. Sent as ``userlabels`` and translated to AGS ``labelingInfo`` (combined with a user
+  renderer in the same dynamic layer). Enable with the CMS service property ``allow_user_labeling``
+  and ``allow-toc-userlabeling`` in the ``api.config`` section ``toc-contextmenu``.
+  **!! Breaking Change !!** The legacy tool "Labeling" (``webgis.tools.presentation.labeling``),
+  the CMS labeling nodes and the ``labels`` request parameter were removed; labels stored in old
+  maps are ignored.
+
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-user-labeling),
+  [Docs CMS](https://docs.webgiscloud.com/en/webgis/apps/cms/add_ags_service.html#cms-ags-user-renderer-labeling),
+  [Architecture](docs/architecture/user-renderer-labeling.md)
+
+- Viewer TOC: badges at presentations with a user presentation, user labeling, filter or metadata
+  (clicking a badge opens the context menu), and context menu entries "Reset filter",
+  "Reset presentation" and "Reset labeling".
+
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-badges)
+
+- ``api.config``: the section ``tool-visfilter`` was renamed to ``toc-contextmenu``
+  (``allow-toc-visfilter``, ``allow-toc-userrenderer``, ``userrenderer-max-unique-value-classes``,
+  ``allow-toc-userlabeling``). **!! Breaking Change !!** Existing ``tool-visfilter`` settings must be
+  moved to the new section.
+
+  [Docs api.config](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-toc-contextmenu)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

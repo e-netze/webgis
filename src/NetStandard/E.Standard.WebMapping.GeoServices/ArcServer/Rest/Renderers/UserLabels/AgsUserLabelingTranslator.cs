@@ -77,8 +77,10 @@ public static class AgsUserLabelingTranslator
             LabelPlacement = placement,
             LabelExpression = expression,
             UseCodedValues = true,
-            MinScale = (int)maxScale,  // AGS minScale: the smallest scale (largest denominator)
-            MaxScale = (int)minScale,
+            // AGS minScale: the smallest scale (largest denominator)
+            // webgis uses negative values for "no limit" => AGS draws no labels with negative values
+            MinScale = (int)Math.Max(0, maxScale),
+            MaxScale = (int)Math.Max(0, minScale),
             Where = String.IsNullOrWhiteSpace(where) ? null : where,
             Symbol = ToAgsTextSymbol(labeling)
         };
