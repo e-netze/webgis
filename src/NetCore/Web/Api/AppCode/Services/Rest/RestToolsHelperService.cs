@@ -211,7 +211,6 @@ public class RestToolsHelperService
         if (advancedProperties != null)
         {
             tool.VisFilterDependent = advancedProperties.VisFilterDependent ? true : null;
-            tool.LabelingDependent = advancedProperties.LabelingDependent ? true : null;
             tool.AllowCtrlBBox = advancedProperties.AllowCtrlBBox ? true : null;
             tool.SelectionInfoDependent = advancedProperties.SelectionInfoDependent ? true : null;
             tool.ScaleDependent = advancedProperties.ScaleDependent ? true : null;
@@ -628,14 +627,6 @@ public class RestToolsHelperService
         if (apiResponse.UnsetFilters != null && apiResponse.UnsetFilters.Length > 0)
         {
             response.UnsetFilters = apiResponse.UnsetFilters;
-        }
-        if (apiResponse.SetLabeling != null && apiResponse.SetLabeling.Length > 0)
-        {
-            response.SetLabeling = apiResponse.SetLabeling;
-        }
-        if (apiResponse.UnsetLabeling != null && apiResponse.UnsetLabeling.Length > 0)
-        {
-            response.UnsetLabeling = apiResponse.UnsetLabeling;
         }
         if (apiResponse.AddStaticOverlayServices != null && apiResponse.AddStaticOverlayServices.Length > 0)
         {

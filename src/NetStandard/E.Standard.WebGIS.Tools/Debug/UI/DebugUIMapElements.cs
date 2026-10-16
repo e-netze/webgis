@@ -18,7 +18,7 @@ namespace E.Standard.WebGIS.Tools.Debug.UI;
 
 /// <summary>
 /// Debug tool: elements, that are filled from the services/themes of the current map
-/// (querycombo, editthemecombo/-tree, chainagethemecombo, labelingcombo, visfiltercombo/-list,
+/// (querycombo, editthemecombo/-tree, chainagethemecombo, visfiltercombo/-list,
 /// timefiltercontrol/-list, opacity-control, checkable menu items, menu items with highlight_feature).
 /// </summary>
 #if DEBUG
@@ -31,12 +31,12 @@ public class DebugUIMapElements : DebugUIToolBase
 
     public override string Name => "UI: Map Elements";
 
-    public override string ToolTip => "Debug: combos/lists filled from the map services (queries, edit themes, filters, labeling, opacity)";
+    public override string ToolTip => "Debug: combos/lists filled from the map services (queries, edit themes, filters, opacity)";
 
     public override IEnumerable<Type> DemonstratedTypes =>
     [
         typeof(UIQueryCombo), typeof(UIEditThemeCombo), typeof(UIEditThemeTree), typeof(UIChainageThemeCombo),
-        typeof(UILabelingCombo), typeof(UIVisFilterCombo), typeof(UIVisFilterListElement),
+        typeof(UIVisFilterCombo), typeof(UIVisFilterListElement),
         typeof(UITimeFilterControlElement), typeof(UITimeFilterListElement),
         typeof(UIOpacityControl), typeof(UIMenuItemCheckable)
     ];
@@ -83,10 +83,6 @@ public class DebugUIMapElements : DebugUIToolBase
                     new UILabel() { label = "with customitems (are they shown?)" },
                     new UIChainageThemeCombo() { id = Id("chainagethemecombo"), css = UICss.ToolParameter, customitems = CustomItems() },
                     EchoButton()),
-
-                Section("labelingcombo",
-                    Hint("onchange = 'echo' => every change sends a servertoolcommand."),
-                    new UILabelingCombo() { id = Id("labelingcombo"), css = UICss.ToolParameter, onchange = EchoCommand }),
 
                 Section("visfiltercombo / visfilterlist",
                     Hint("onchange = 'echo'. The list shows the currently active filters of the map (set some with the 'Filter' tool)."),

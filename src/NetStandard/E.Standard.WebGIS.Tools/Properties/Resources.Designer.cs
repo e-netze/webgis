@@ -453,16 +453,6 @@ namespace E.Standard.WebGIS.Tools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] label_theme {
-            get {
-                object obj = ResourceManager.GetObject("label_theme", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] layers {
             get {
                 object obj = ResourceManager.GetObject("layers", resourceCulture);

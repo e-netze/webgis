@@ -611,26 +611,6 @@ public class Bridge : IBridge
 
     #endregion
 
-    #region Labeling
-
-    public IEnumerable<ILabelingBridge> ServiceLabeling(string serviceId)
-    {
-        var labelings = _cacheService.GetLabeling(serviceId, _userIdentification);
-        if (labelings == null || labelings.labelings == null)
-        {
-            return new ILabelingBridge[0];
-        }
-
-        return labelings.labelings;
-    }
-
-    public ILabelingBridge ServiceLabeling(string serviceId, string labelingId)
-    {
-        return ServiceLabeling(serviceId).Where(l => l.Id == labelingId).FirstOrDefault();
-    }
-
-    #endregion
-
     public IEditThemeBridge GetEditTheme(string serviceId, string editThemeId)
     {
         return _cacheService.GetEditTheme(serviceId, editThemeId, _userIdentification);
@@ -1478,6 +1458,23 @@ public class Bridge : IBridge
         }
 
         return service.Layers?.FindByLayerId(layerId) is IUserRenderableLayer { SupportsUserRenderer: true };
+    }
+
+    async public Task<bool> IsLayerUserLabelingAllowed(string serviceId, string layerId)
+    {
+        if (!WebMapping.Core.Renderer.UserLabels.UserLabelingSettings.Allowed
+            || !_cacheService.IsServiceUserLabelingAllowed(serviceId, _userIdentification))
+        {
+            return false;
+        }
+
+        IMapService service = await TryGetOriginalService(serviceId);
+        if (service is not IMapServiceUserLabeling { SupportsUserLabeling: true })
+        {
+            return false;
+        }
+
+        return service.Layers?.FindByLayerId(layerId) is IUserLabelableLayer { SupportsUserLabeling: true };
     }
 
     public bool IsInDeveloperMode

@@ -342,12 +342,6 @@
                     ],
                     "getLayer": "[function]",
                     "id": "s1",
-                    "labeling": [
-                      {
-                        "id": "lab1",
-                        "name": "Beschriftung 1"
-                      }
-                    ],
                     "layerVisibleAndInScale": "[function]",
                     "map": "[fake:map]",
                     "name": "Dienst 1",

@@ -839,7 +839,6 @@
             case 'querycombo':
             case 'editthemecombo':
             case 'chainagethemecombo':
-            case 'labelingcombo':
             case 'sketchselect':
             case 'circleradiuscombo':
             case 'print-query-labelfield-combo':

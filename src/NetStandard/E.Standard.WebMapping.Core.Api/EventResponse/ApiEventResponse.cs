@@ -76,9 +76,6 @@ public class ApiEventResponse
     public FilterDefinitionDTO[] SetFilters { get; set; }
     public FilterDefinitionDTO[] UnsetFilters { get; set; }
 
-    public LabelingDefinitionDTO[] SetLabeling { get; set; }
-    public LabelingDefinitionDTO[] UnsetLabeling { get; set; }
-
     public StaticOverlayServiceDefinitionDTO[] AddStaticOverlayServices { get; set; }
     public StaticOverlayServiceDefinitionDTO[] RemoveStaticOverlayServices { get; set; }
 
@@ -157,8 +154,6 @@ public class ApiEventResponse
         to.ClientCommands = this.ClientCommands;
         to.SetFilters = this.SetFilters;
         to.UnsetFilters = this.UnsetFilters;
-        to.SetLabeling = this.SetLabeling;
-        to.UnsetLabeling = this.UnsetLabeling;
         to.AddStaticOverlayServices = this.AddStaticOverlayServices;
         to.ToolUndos = this.ToolUndos;
         to.UndoTool = this.UndoTool;

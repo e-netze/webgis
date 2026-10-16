@@ -895,11 +895,6 @@ public class CmsHlp
         return _cms.SelectNodes(_ui, serviceUrl + "/chainage/*");
     }
 
-    public CmsNodeCollection ServiceLabeling(string serviceUrl)
-    {
-        return _cms.SelectNodes(_ui, serviceUrl + "/labelling/*");
-    }
-
     public CmsNodeCollection ServiceSnapSchemes(string serviceUrl)
     {
         return _cms.SelectNodes(_ui, serviceUrl + "/snapschemas/*");

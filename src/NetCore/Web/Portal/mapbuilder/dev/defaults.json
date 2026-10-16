@@ -48,7 +48,6 @@
   "webgis.tools.advanced.edit": true,
   "webgis.tools.advanced.snapping": true,
   "webgis.tools.advanced.geocode": true,
-  "webgis.tools.presenation.labeling": true,
   "webgis.tools.presenation.filter": true
  },
  "defaulttool": [

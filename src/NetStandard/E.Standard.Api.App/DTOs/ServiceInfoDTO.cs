@@ -50,10 +50,6 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
     //[System.Text.Json.Serialization.JsonIgnore]
     //public VisFilter[] InvisibleFilters { get; set; }
 
-    [JsonProperty(PropertyName = "labeling")]
-    [System.Text.Json.Serialization.JsonPropertyName("labeling")]
-    public LabelingDTO[] Labeling { get; set; }
-
     [JsonProperty(PropertyName = "snapping", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("snapping")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
@@ -234,6 +230,13 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public bool? allow_user_renderer { get; set; }
+
+        /// <summary>
+        /// true, if the user can define an individual labeling (UserLabeling) for this layer
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public bool? allow_user_labeling { get; set; }
 
         private string _ogcId = null;
 

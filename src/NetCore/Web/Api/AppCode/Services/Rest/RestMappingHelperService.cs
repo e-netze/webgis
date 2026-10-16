@@ -154,17 +154,15 @@ public class RestMappingHelperService /*: IDisposable*/
 
         #endregion
 
-        #region Labeling
-
-        var labelingDefinitions = httpContext.Request.LabelDefinitionsFromParameters();
-
-        service.AddLabeling(labelingDefinitions, _cache, ui);
-
-        #endregion
-
         #region User Renderers
 
         service.ApplyUserRenderers(httpContext.Request.UserRendererDefinitionsFromParameters(), _cache, ui);
+
+        #endregion
+
+        #region User Labeling
+
+        service.ApplyUserLabeling(httpContext.Request.UserLabelingDefinitionsFromParameters(), _cache, ui);
 
         #endregion
 

@@ -110,6 +110,8 @@ public class ApiGlobalsService
         {
             UserRendererSettings.MaxUniqueValueClasses = userRendererMaxUniqueValueClasses;
         }
+        E.Standard.WebMapping.Core.Renderer.UserLabels.UserLabelingSettings.Allowed =
+            bool.TryParse(config[ApiConfigKeys.ToKey("toc-contextmenu:allow-toc-userlabeling")], out bool allowTocUserLabeling) && allowTocUserLabeling;
 
         EsriDateExtensions.DateFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-date-format")].OrTake(EsriDateExtensions.DateFormatString);
         EsriDateExtensions.TimeFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-time-format")].OrTake(EsriDateExtensions.TimeFormatString);

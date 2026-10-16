@@ -425,16 +425,6 @@
         //    }
         //    $(e).val(vfString);
         //});
-        //$('.webgis-active-labelings').each(function (i, e) {
-        //    if (lString == '') {
-        //        for (var f in me._map._labels) {
-        //            if (lString != '')
-        //                lString += ',';
-        //            lString += me._map._labels[f].id;
-        //        }
-        //    }
-        //    $(e).val(lString);
-        //});
         $('.webgis-map-tools').each(function (i, e) {
             if (tString == '') {
                 for (var t in me._map._tools) {

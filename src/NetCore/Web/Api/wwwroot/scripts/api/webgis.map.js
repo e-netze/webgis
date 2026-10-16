@@ -3660,32 +3660,6 @@
         }
         return timeInfoServices;
     };
-    /***** Labeling ****/
-    this._labels = [];
-    this.setLabeling = function (labeling) {
-        this.unsetLabeling(labeling);
-        this._labels.push(labeling);
-    };
-    this.unsetLabeling = function (labelingId) {
-        if (!labelingId)
-            labelingId = '';
-        labelingId = (typeof labelingId === "string") ? labelingId : labelingId.id;
-        var labels = [];
-        for (var l in this._labels) {
-            var label = this._labels[l];
-            if (label.id == labelingId || label.id.indexOf('~' + labelingId) > 0 || labelingId == '')
-                continue;
-            labels.push(label);
-        }
-        this._labels = labels;
-    };
-    this.hasLabeling = function (labelingId) {
-        for (var l in this._labels) {
-            if (this._labels[l].id == labelingId)
-                return true;
-        }
-        return false;
-    };
     /***** Request Parameters ****/
     this.appendRequestParameters = function (data, serviceId) {
         //console.log("appendRequestParameters: " + serviceId);
@@ -3701,17 +3675,6 @@
         }
         if (serviceFilters.length > 0)
             data.filters = JSON.stringify(serviceFilters);
-        // Labeling
-        let labels = [];
-        for (let l in this._labels) {
-            let label = this._labels[l];
-            if (serviceId && label.id.indexOf('~') > 0 && label.id.indexOf(serviceId + '~') < 0)
-                continue;
-            labels.push(label);
-        }
-        if (labels.length > 0)
-            data.labels = JSON.stringify(labels);
-
         if (!data.dpi && _dpi > 0) {
             data.dpi = _dpi;
         }

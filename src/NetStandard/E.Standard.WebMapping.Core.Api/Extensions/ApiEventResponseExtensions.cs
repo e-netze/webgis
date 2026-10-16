@@ -529,35 +529,5 @@ static public class ApiEventResponseExtensions
         return eventResponse;
     }
 
-    static public T AddLabeling<T>(this T eventResponse, params LabelingDefinitionDTO[] labeling)
-        where T : ApiEventResponse
-        => eventResponse.AddLabeling((IEnumerable<LabelingDefinitionDTO>)labeling);
-
-    static public T AddLabeling<T>(this T eventResponse, IEnumerable<LabelingDefinitionDTO> labeling)
-        where T : ApiEventResponse
-    {
-        if (eventResponse != null)
-        {
-            eventResponse.SetLabeling = labeling.ToArray();
-        }
-
-        return eventResponse;
-    }
-
-    static public T RemoveLabeling<T>(this T eventResponse, params LabelingDefinitionDTO[] labeling)
-        where T : ApiEventResponse
-        => eventResponse.RemoveLabeling((IEnumerable<LabelingDefinitionDTO>)labeling);
-
-    static public T RemoveLabeling<T>(this T eventResponse, IEnumerable<LabelingDefinitionDTO> labeling)
-        where T : ApiEventResponse
-    {
-        if (eventResponse != null)
-        {
-            eventResponse.UnsetLabeling = labeling.ToArray();
-        }
-
-        return eventResponse;
-    }
-
     #endregion
 }

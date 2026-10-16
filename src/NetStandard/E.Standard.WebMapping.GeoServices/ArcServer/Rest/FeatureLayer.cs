@@ -27,12 +27,12 @@ class FeatureLayer : RestLayer,
                      ILayer2,
                      ILayer3,
                      ILayerDistinctQuery,
-                     ILabelableLayer,
                      ILegendRendererHelper,
                      ILayerFieldDomains,
                      ILayerGeometryDefintion,
                      IFeatureAttachmentProvider,
-                     IUserRenderableLayer
+                     IUserRenderableLayer,
+                     IUserLabelableLayer
 {
     private string _definitionExpression = String.Empty;
     private new readonly MapService _service;
@@ -344,9 +344,8 @@ class FeatureLayer : RestLayer,
 
         clone._definitionExpression = _definitionExpression;
         clone._domains = _domains;
-        clone.UseLabelRenderer = this.UseLabelRenderer;
-        clone.LabelRenderer = this.LabelRenderer;
         clone.UserRenderer = this.UserRenderer;
+        clone.UserLabeling = this.UserLabeling;
 
         clone.LengendRendererType = this.LengendRendererType;
         clone.UniqueValue_Field1 = this.UniqueValue_Field1;
@@ -627,22 +626,6 @@ class FeatureLayer : RestLayer,
 
     #endregion
 
-    #region ILabelableLayer Member
-
-    public LabelRenderer LabelRenderer
-    {
-        set;
-        get;
-    }
-
-    public bool UseLabelRenderer
-    {
-        get;
-        set;
-    }
-
-    #endregion
-
     #region IUserRenderableLayer
 
     public bool SupportsUserRenderer =>
@@ -652,6 +635,16 @@ class FeatureLayer : RestLayer,
 
 #nullable enable
     public UserRenderer? UserRenderer { get; set; }
+#nullable restore
+
+    #endregion
+
+    #region IUserLabelableLayer
+
+    public bool SupportsUserLabeling => this.SupportsUserRenderer;
+
+#nullable enable
+    public E.Standard.WebMapping.Core.Renderer.UserLabels.UserLabeling? UserLabeling { get; set; }
 #nullable restore
 
     #endregion

@@ -1,7 +1,4 @@
-﻿using E.Standard.Platform;
-using E.Standard.WebMapping.Core.Renderer;
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace E.Standard.WebMapping.GeoServices.ArcServer.Rest.Renderers;
 
@@ -10,25 +7,6 @@ class TextSymbol
     public TextSymbol()
     {
         this.Type = "esriTS";
-    }
-    public TextSymbol(LabelRenderer labelRenderer)
-        : this()
-    {
-        if (labelRenderer == null)
-        {
-            return;
-        }
-
-        SetHalo(labelRenderer);
-        this.Color = new int[] { labelRenderer.FontColor.R, labelRenderer.FontColor.G, labelRenderer.FontColor.B, 255 };
-        this.Font = new Renderers.Font()
-        {
-            Family = SystemInfo.DefaultFontName,
-            Size = (int)labelRenderer.FontSize,
-            Style = Renderers.Font.FontStyle(labelRenderer.LabelStyle),
-            Weight = Renderers.Font.FontWeight(labelRenderer.LabelStyle),
-            Decoration = Renderers.Font.FontDecoration(labelRenderer.LabelStyle)
-        };
     }
     [JsonProperty("type")]
     [System.Text.Json.Serialization.JsonPropertyName("type")]
@@ -96,36 +74,6 @@ class TextSymbol
     [System.Text.Json.Serialization.JsonPropertyName("font")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public Font Font { get; set; }
-
-    public void SetHalo(LabelRenderer renderer)
-    {
-        if (renderer == null || renderer.LabelBorderStyle == LabelRenderer.LabelBorderStyleEnum.none)
-        {
-            return;
-        }
-
-        switch (renderer.LabelBorderStyle)
-        {
-            case LabelRenderer.LabelBorderStyleEnum.blockout:
-                this.BackgroundColor = new int[] { renderer.BorderColor.R, renderer.BorderColor.G, renderer.BorderColor.B, 255 };
-                break;
-            case LabelRenderer.LabelBorderStyleEnum.glowing:
-                this.HaloColor = new int[] { renderer.BorderColor.R, renderer.BorderColor.G, renderer.BorderColor.B, 255 };
-                this.HaloSize = 3;
-                break;
-            case LabelRenderer.LabelBorderStyleEnum.shadow:
-                // ???
-                break;
-        }
-
-        /*
-        if (renderer.LabelStyle == Renderer.LabelRenderer.LabelStyleEnum.outline)
-        {
-            this.BorderLineColor = new int[] { renderer.BorderColor.R, renderer.BorderColor.G, renderer.BorderColor.B, 255 };
-            this.BorderLineSize = 10;
-        }
-         * */
-    }
 }
 
 /*

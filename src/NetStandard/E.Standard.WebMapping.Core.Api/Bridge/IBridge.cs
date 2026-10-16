@@ -34,6 +34,11 @@ public interface IBridge : IAppCryptography
     /// </summary>
     Task<bool> IsLayerUserRendererAllowed(string serviceId, string layerId);
 
+    /// <summary>
+    /// User defined labeling ("Beschriftung") allowed for this layer: api.config, service capabilities, CMS and layer type
+    /// </summary>
+    Task<bool> IsLayerUserLabelingAllowed(string serviceId, string layerId);
+
     Task<IQueryBridge> GetQuery(string setviceId, string queryId);
 
     // Faster, no initialisation of service etc, no dynamic services
@@ -98,9 +103,6 @@ public interface IBridge : IAppCryptography
     IUnloadedRequestVisFiltersContext UnloadRequestVisFiltersContext();
 
     IEnumerable<VisFilterDefinitionDTO> RequestVisFilterDefintions();
-
-    IEnumerable<ILabelingBridge> ServiceLabeling(string serviceId);
-    ILabelingBridge ServiceLabeling(string serviceId, string labelingId);
 
     SpatialReference CreateSpatialReference(int sRefId);
 

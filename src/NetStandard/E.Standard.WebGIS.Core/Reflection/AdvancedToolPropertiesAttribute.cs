@@ -16,7 +16,6 @@ public class AdvancedToolPropertiesAttribute : Attribute
     public bool AsideDialogExistsDependent { get; set; }
     public bool LiveShareClientnameDependent { get; set; }
     public bool PrintLayoutRotationDependent { get; set; }
-    public bool LabelingDependent { get; set; }
     public bool CustomServiceRequestParametersDependent { get; set; }
     public bool StaticOverlayServicesDependent { get; set; }
     public bool UIElementDependency { get; set; }

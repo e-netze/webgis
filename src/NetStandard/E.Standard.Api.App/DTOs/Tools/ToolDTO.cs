@@ -69,11 +69,6 @@ public class ToolDTO : IHtml
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public bool? VisFilterDependent { get; set; }
 
-    [JsonProperty(PropertyName = "labeling_dependent", NullValueHandling = NullValueHandling.Ignore)]
-    [System.Text.Json.Serialization.JsonPropertyName("labeling_dependent")]
-    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-    public bool? LabelingDependent { get; set; }
-
     [JsonProperty(PropertyName = "allow_ctrlbbox", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("allow_ctrlbbox")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]

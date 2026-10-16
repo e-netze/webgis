@@ -762,6 +762,17 @@ public class CacheService
         return auth.AuthorizedPropertyValue(ui);
     }
 
+    public bool IsServiceUserLabelingAllowed(string serviceUrl, CmsDocument.UserIdentification ui)
+    {
+        var auth = GetBoolPropertyAuthorization($"{serviceUrl}::allow_user_labeling", ui);
+        if (auth == null)
+        {
+            return false;
+        }
+
+        return auth.AuthorizedPropertyValue(ui);
+    }
+
     #endregion
 
     #region Copyright
@@ -1188,25 +1199,6 @@ public class CacheService
         {
             filters = new VisFilterDTO[0]
         };
-    }
-
-    #endregion
-
-    #region Labeling
-
-    public LabelingsDTO GetLabeling(string serviceUrl, CmsDocument.UserIdentification ui)
-    {
-        var cmsCacheItem = GetCmsCacheItem(serviceUrl, ui);
-
-        if (cmsCacheItem != null && cmsCacheItem._labeling.ContainsKey(serviceUrl))
-        {
-            return new LabelingsDTO()
-            {
-                labelings = AuthObject<LabelingDTO>.QueryObjectArray(cmsCacheItem._labeling[serviceUrl], ui).ToArray()
-            };
-        }
-
-        return new LabelingsDTO();
     }
 
     #endregion

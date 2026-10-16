@@ -1326,8 +1326,8 @@ public class RestPrintHelperService
             graphicFeatuers.AddRange(graphics.features);
         }
 
-        var labelingDefinitions = httpRequest.LabelDefinitionsFromParameters();
         var userRendererDefinitions = httpRequest.UserRendererDefinitionsFromParameters();
+        var userLabelingDefinitions = httpRequest.UserLabelingDefinitionsFromParameters();
 
         using (var transformer = new GeometricTransformerPro(ApiGlobals.SRefStore.SpatialReferences, 4326, mapDefinition.Crs != null && mapDefinition.Crs.Epsg != 4326 ? mapDefinition.Crs.Epsg : 4326))
         {
@@ -1503,15 +1503,15 @@ public class RestPrintHelperService
 
                 #endregion
 
-                #region Labeling
-
-                service.AddLabeling(labelingDefinitions, _cache, ui);
-
-                #endregion
-
                 #region User Renderers
 
                 service.ApplyUserRenderers(userRendererDefinitions, _cache, ui);
+
+                #endregion
+
+                #region User Labeling
+
+                service.ApplyUserLabeling(userLabelingDefinitions, _cache, ui);
 
                 #endregion
 

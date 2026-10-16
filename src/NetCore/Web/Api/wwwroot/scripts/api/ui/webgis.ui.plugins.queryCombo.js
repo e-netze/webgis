@@ -1,8 +1,8 @@
 ﻿// WebGIS UI Plugins (queryCombo)
-// webgis_queryCombo, webgis_chainageCombo, webgis_labelingCombo, webgis_catCombo, webgis_extCombo, webgis_tagsCombo
-// Selects filled from the map services (queries, chainage themes, labeling; updated on add/remove service),
+// webgis_queryCombo, webgis_chainageCombo, webgis_catCombo, webgis_extCombo, webgis_tagsCombo
+// Selects filled from the map services (queries, chainage themes; updated on add/remove service),
 // category/filter combo for grouped selects, extendable select and tag filter combo
-// Element builder: webgis.ui.builder.combos.js (querycombo, chainagethemecombo, labelingcombo, select)
+// Element builder: webgis.ui.builder.combos.js (querycombo, chainagethemecombo, select)
 
 webgis.ui.definePlugin('webgis_queryCombo', {
     defaults: {
@@ -222,67 +222,6 @@ webgis.ui.definePlugin('webgis_chainageCombo', {
             const $ = this.$;
             this.$el.find('optgroup').each(function (i, e) {
                 if (e.service && e.service.id === service.id)
-                    $(e).remove();
-            });
-        }
-    }
-});
-
-webgis.ui.definePlugin('webgis_labelingCombo', {
-    defaults: {
-        map: null
-    },
-    init: function () {
-        const o = this.options, $elem = this.$el, elem = $elem[0];
-        elem._map = o.map;
-        elem._opt = o;
-        if (o.map) {
-            for (let serviceId in o.map.services) {
-                this.addService(o.map.services[serviceId]);
-            }
-
-            this._onAddService = (e, service) => this.addService(service);
-            this._onRemoveService = (e, service) => this.removeService(service);
-            o.map.events.on('onaddservice', this._onAddService, elem);
-            o.map.events.on('onremoveservice', this._onRemoveService, elem);
-        }
-        if (o.val)
-            $elem.val(o.val);
-    },
-    destroy: function () {
-        const map = this.options.map;
-        if (map && map.events) {
-            map.events.off('onaddservice', this._onAddService);
-            map.events.off('onremoveservice', this._onRemoveService);
-        }
-    },
-    methods: {
-        addService: function (service) {
-            const $ = this.$;
-            if (service == null || service.labeling == null || service.labeling.length == 0)
-                return;
-            const $elem = this.$el;
-            const $group = $("<optgroup label='" + service.name + "' />").appendTo($elem);
-            $group.get(0).service = service;
-            for (let i = 0, to = service.labeling.length; i < to; i++) {
-                const labeling = service.labeling[i];
-                const val = service.id + "~" + labeling.id;
-                const $opt = $("<option value='" + val + "'>&nbsp;" + labeling.name + "</option>").appendTo($group);
-                if (service.map.hasLabeling(val))
-                    $opt.css({
-                        backgroundImage: "url('" + webgis.css.img('check2-24.png') + "')",
-                        backgroundPosition: "0px -2px",
-                        backgroundRepeat: "no-repeat",
-                        height: 24
-                    });
-            }
-            if ($group.find('option').length == 0)
-                $group.remove();
-        },
-        removeService: function (service) {
-            const $ = this.$;
-            this.$el.find('optgroup').each(function (i, e) {
-                if (e.service && e.service.id == service.id)
                     $(e).remove();
             });
         }

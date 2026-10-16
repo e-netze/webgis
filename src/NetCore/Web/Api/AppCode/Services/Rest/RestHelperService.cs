@@ -243,6 +243,11 @@ public class RestHelperService
             service is IMapServiceUserRenderers { SupportsUserRenderers: true } &&
             _cache.IsServiceUserRenderersAllowed(id, ui);
 
+        bool serviceAllowsUserLabeling =
+            E.Standard.WebMapping.Core.Renderer.UserLabels.UserLabelingSettings.Allowed &&
+            service is IMapServiceUserLabeling { SupportsUserLabeling: true } &&
+            _cache.IsServiceUserLabelingAllowed(id, ui);
+
         foreach (var layer in service.Layers)
         {
             string name = layer.Name, tocName = layer.Name;
@@ -320,6 +325,9 @@ public class RestHelperService
                     }
                     : null,
                 allow_user_renderer = serviceAllowsUserRenderers && layer is IUserRenderableLayer { SupportsUserRenderer: true }
+                    ? true
+                    : null,
+                allow_user_labeling = serviceAllowsUserLabeling && layer is IUserLabelableLayer { SupportsUserLabeling: true }
                     ? true
                     : null
             };
@@ -428,12 +436,6 @@ public class RestHelperService
 
         info.LockedFilters = _cache.GetVisFilters(id, ui, E.Standard.WebGIS.CMS.VisFilterType.locked).filters;
         //info.InvisibleFilters = Cache.GetVisFilters(id, ui, WebGIS.CMS.VisFilterType.invisible).filters;
-
-        info.Labeling = _cache.GetLabeling(id, ui).labelings;
-        if (info.Labeling != null && info.Labeling.Length == 0)
-        {
-            info.Labeling = null;
-        }
 
         info.Snapping = _cache.GetSnapSchemes(id, ui);
         if (info.Snapping != null && info.Snapping.Count() == 0)

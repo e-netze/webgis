@@ -7,7 +7,7 @@ namespace WebGIS.UI.Tests.UIBuilder;
 
 /// <summary>
 /// Characterization tests for the combo elements
-/// (package 5: select, querycombo, editthemecombo, editthemetree, chainagethemecombo, labelingcombo,
+/// (package 5: select, querycombo, editthemecombo, editthemetree, chainagethemecombo,
 /// circleradiuscombo, print-query-labelfield-combo, print-coordinates-labelfield-combo, sketchselect).
 /// </summary>
 [TestClass]
@@ -15,7 +15,7 @@ public class ComboElementsTests : UIBuilderPageTest
 {
     private static readonly object TestTool = new { id = "test-tool", type = "clientbutton" };
 
-    // one service with queries, editthemes, chainage themes and labelings (plain objects, used by the combo plugins)
+    // one service with queries, editthemes and chainage themes (plain objects, used by the combo plugins)
     private const string ServicesSetup = @"h => h.setProperty('map.services', {
         s1: {
             id: 's1', name: 'Dienst 1', map: h.map, serviceInfo: { id: 's1', name: 'Dienst 1' },
@@ -32,8 +32,7 @@ public class ComboElementsTests : UIBuilderPageTest
                 { layerid: 'l1', themeid: 't1', name: 'Thema 1', dbrights: 'iud', tags: ['a', 'b'] },
                 { layerid: 'l2', themeid: 't2', name: 'Thema 2', dbrights: 'i' }
             ],
-            chainagethemes: [{ id: 'c1', name: 'Station 1' }],
-            labeling: [{ id: 'lab1', name: 'Beschriftung 1' }]
+            chainagethemes: [{ id: 'c1', name: 'Station 1' }]
         }
     })";
 
@@ -50,7 +49,6 @@ public class ComboElementsTests : UIBuilderPageTest
         "editthemecombo" => new UIEditThemeCombo { id = "combo" },
         "editthemetree" => new UIEditThemeTree { id = "combo" },
         "chainagethemecombo" => new UIChainageThemeCombo { id = "combo" },
-        "labelingcombo" => new UILabelingCombo { id = "combo" },
         "circleradiuscombo" => new UIMarkerCircleRadiusCombo { id = "combo" },
         "print-query-labelfield-combo" => new UIElement("print-query-labelfield-combo") { id = "combo" },
         "print-coordinates-labelfield-combo" => new UIElement("print-coordinates-labelfield-combo") { id = "combo" },
@@ -66,7 +64,6 @@ public class ComboElementsTests : UIBuilderPageTest
     [DataRow("editthemecombo")]
     [DataRow("editthemetree")]
     [DataRow("chainagethemecombo")]
-    [DataRow("labelingcombo")]
     [DataRow("circleradiuscombo")]
     [DataRow("print-query-labelfield-combo")]
     [DataRow("print-coordinates-labelfield-combo")]
@@ -83,7 +80,6 @@ public class ComboElementsTests : UIBuilderPageTest
     [DataRow("editthemecombo")]
     [DataRow("editthemetree")]
     [DataRow("chainagethemecombo")]
-    [DataRow("labelingcombo")]
     [DataRow("circleradiuscombo")]
     [DataRow("print-query-labelfield-combo")]
     [DataRow("print-coordinates-labelfield-combo")]
@@ -100,7 +96,6 @@ public class ComboElementsTests : UIBuilderPageTest
     [DataRow("editthemecombo")]
     [DataRow("editthemetree")]
     [DataRow("chainagethemecombo")]
-    [DataRow("labelingcombo")]
     [DataRow("circleradiuscombo")]
     [DataRow("print-query-labelfield-combo")]
     [DataRow("print-coordinates-labelfield-combo")]
@@ -117,7 +112,6 @@ public class ComboElementsTests : UIBuilderPageTest
     [DataRow("editthemecombo")]
     [DataRow("editthemetree")]
     [DataRow("chainagethemecombo")]
-    [DataRow("labelingcombo")]
     [DataRow("circleradiuscombo")]
     [DataRow("print-query-labelfield-combo")]
     [DataRow("print-coordinates-labelfield-combo")]
@@ -133,7 +127,6 @@ public class ComboElementsTests : UIBuilderPageTest
     [DataRow("querycombo")]
     [DataRow("editthemecombo")]
     [DataRow("chainagethemecombo")]
-    [DataRow("labelingcombo")]
     [DataRow("sketchselect")]
     public async Task Combo_StringValue(string type)
     {
@@ -147,7 +140,6 @@ public class ComboElementsTests : UIBuilderPageTest
     [DataRow("editthemecombo")]
     [DataRow("editthemetree")]
     [DataRow("chainagethemecombo")]
-    [DataRow("labelingcombo")]
     public async Task Combo_WithServices(string type)
     {
         await BuildJsonAsync(UIJson.Serialize(Create(type)), setup: ServicesSetup);
@@ -246,18 +238,6 @@ public class ComboElementsTests : UIBuilderPageTest
         await ClearCallsAsync();
         await TriggerAsync("li[data-edittheme='s1,l1,t1']", "click");
         await AssertSnapshotAsync("editthemetree", "item-clicked");
-    }
-
-    #endregion
-
-    #region labelingcombo
-
-    [TestMethod]
-    public async Task LabelingCombo_ValueAndHasLabeling()
-    {
-        await BuildJsonAsync(UIJson.SerializeWith(Create("labelingcombo"), new { value = "s1~lab1" }),
-            setup: "h => { (" + ServicesSetup + ")(h); h.returns('map.hasLabeling', true); }");
-        await AssertSnapshotAsync("labelingcombo", "value-has-labeling");
     }
 
     #endregion

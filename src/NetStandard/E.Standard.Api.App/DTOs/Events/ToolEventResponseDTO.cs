@@ -168,15 +168,6 @@ public class ToolEventResponseDTO
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public FilterDefinitionDTO[] UnsetFilters { get; set; }
 
-    [JsonProperty(PropertyName = "setlabeling", NullValueHandling = NullValueHandling.Ignore)]
-    [System.Text.Json.Serialization.JsonPropertyName("setlabeling")]
-    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-    public LabelingDefinitionDTO[] SetLabeling { get; set; }
-    [JsonProperty(PropertyName = "unsetlabeling", NullValueHandling = NullValueHandling.Ignore)]
-    [System.Text.Json.Serialization.JsonPropertyName("unsetlabeling")]
-    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-    public LabelingDefinitionDTO[] UnsetLabeling { get; set; }
-
     [JsonProperty(PropertyName = "addstaticoverlay", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("addstaticoverlay")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]

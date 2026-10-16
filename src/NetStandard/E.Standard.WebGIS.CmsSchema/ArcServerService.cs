@@ -83,6 +83,10 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
     [AuthorizableProperty("allow_user_renderers", false)]
     public bool AllowUserRenderers { get; set; }
 
+    [DisplayName("#allow_user_labeling")]
+    [AuthorizableProperty("allow_user_labeling", false)]
+    public bool AllowUserLabeling { get; set; }
+
     [DisplayName("#server")]
     [Category("#category_server")]
     public string Server
@@ -186,6 +190,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         this.DynamicDehavior = (WebMapping.Core.DynamicDehavior)stream.Load("dynamic_behavior", (int)WebMapping.Core.DynamicDehavior.AutoAppendNewLayers);
         this.AllowQueryBuilder = (bool)stream.Load("allow_querybuilder", false);
         this.AllowUserRenderers = (bool)stream.Load("allow_user_renderers", false);
+        this.AllowUserLabeling = (bool)stream.Load("allow_user_labeling", false);
     }
 
     override public void Save(IStreamDocument stream)
@@ -211,6 +216,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         stream.Save("dynamic_behavior", (int)this.DynamicDehavior);
         stream.Save("allow_querybuilder", this.AllowQueryBuilder);
         stream.Save("allow_user_renderers", this.AllowUserRenderers);
+        stream.Save("allow_user_labeling", this.AllowUserLabeling);
     }
 
     #endregion

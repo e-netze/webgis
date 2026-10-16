@@ -59,7 +59,7 @@ webgis.usability = {
         toggleDisplay: true,
         minimized: true
     },
-    appendMapTools: [], //[ "webgis.tools.serialization.sharemap", "webgis.tools.presentation.labeling" ],
+    appendMapTools: [], //[ "webgis.tools.serialization.sharemap" ],
     useCompassTool: false,
     appendContentSearchToSearchResults: false,
     showErrorsInTabs: true,

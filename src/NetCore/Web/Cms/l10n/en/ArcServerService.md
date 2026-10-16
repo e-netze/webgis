@@ -42,6 +42,13 @@ The user can define a custom rendering (simple symbol, unique values) for indivi
 (supportsDynamicLayers) and only for feature layers (point, line, polygon). 
 For unique values, the fields that can be used in the QueryBuilder are available.
 
+#allow_user_labeling: Allow user-defined labeling (Labeling from TOC)
+
+The user can define custom labels for individual layers or switch labels off via the 
+"Labeling" TOC menu. Only works if the ArcGIS Server service supports DynamicLayers 
+(supportsDynamicLayers) and only for feature layers (point, line, polygon). 
+The fields that can be used in the QueryBuilder are available for labeling.
+
 #server: Map Server
 
 #category_server: Service

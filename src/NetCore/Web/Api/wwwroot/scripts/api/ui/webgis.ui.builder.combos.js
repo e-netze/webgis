@@ -1,5 +1,5 @@
 ﻿// WebGIS UI Builder Combo Elements
-// select, querycombo, editthemecombo, editthemetree, chainagethemecombo, labelingcombo,
+// select, querycombo, editthemecombo, editthemetree, chainagethemecombo,
 // circleradiuscombo, print-query-labelfield-combo, print-coordinates-labelfield-combo, sketchselect
 // (plugins: webgis.ui.plugins.multi_select.js, webgis.ui.plugins.editthemeCombo.js)
 //
@@ -26,11 +26,6 @@
     webgis.ui.builder["chainagethemecombo.tagname"] = "select";
     webgis.ui.builder["chainagethemecombo"] = (map, $newElement, element, options) => {
         $newElement.webgis_chainageCombo({ map: options.map });
-    };
-
-    webgis.ui.builder["labelingcombo.tagname"] = "select";
-    webgis.ui.builder["labelingcombo"] = (map, $newElement, element, options) => {
-        $newElement.webgis_labelingCombo({ map: options.map, val: element.value });
     };
 
     webgis.ui.builder["circleradiuscombo.tagname"] = "select";

@@ -15,7 +15,6 @@
     this.queries = serviceInfo.queries || [];
     this.chainagethemes = serviceInfo.chainagethemes || [];
     this.filters = serviceInfo.filters || [];
-    this.labeling = serviceInfo.labeling || [];
     this.editthemes = serviceInfo.editthemes || [];
     this.snapping = serviceInfo.snapping || [];
     this.opacity = serviceInfo.opacity || 1.0;

@@ -40,24 +40,6 @@ static public class RestApiExtensions
         return JSerializer.Deserialize<TimeEpochDefinitionDTO[]>(timeEpochJson);
     }
 
-    static public LabelingDefinitionDTO[] LabelDefinitionsFromParameters(this HttpRequest httpRequest)
-    {
-        var labelingJson = httpRequest.FormOrQuery("labels");
-
-        if (String.IsNullOrWhiteSpace(labelingJson))
-        {
-            return null;
-        }
-
-        var labels = JSerializer.Deserialize<LabelingDefinitionDTO[]>(labelingJson);
-        foreach (var label in labels)
-        {
-            label.CalcServiceId();
-        }
-
-        return labels;
-    }
-
     static public UserRendererDefinitionDTO[] UserRendererDefinitionsFromParameters(this HttpRequest httpRequest)
     {
         var renderersJson = httpRequest.FormOrQuery("renderers");
@@ -74,6 +56,24 @@ static public class RestApiExtensions
         }
 
         return renderers;
+    }
+
+    static public UserLabelingDefinitionDTO[] UserLabelingDefinitionsFromParameters(this HttpRequest httpRequest)
+    {
+        var labelsJson = httpRequest.FormOrQuery("userlabels");
+
+        if (String.IsNullOrWhiteSpace(labelsJson))
+        {
+            return null;
+        }
+
+        var labels = JSerializer.Deserialize<UserLabelingDefinitionDTO[]>(labelsJson);
+        foreach (var label in labels ?? [])
+        {
+            label.CalcServiceId();
+        }
+
+        return labels;
     }
 
     #region Print / PrintLayout

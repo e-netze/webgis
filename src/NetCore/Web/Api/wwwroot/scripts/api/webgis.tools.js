@@ -47,7 +47,6 @@
         downloadmapimage: 'webgis.tools.downloadmapimage'
     };
     this.presenation = {
-        labeling: 'webgis.tools.presentation.labeling',
         filter: 'webgis.tools.presentation.visfilter',
         filterRemove: 'webgis.tools.presentation.visfilterremoveall',
         timeFilter: 'webgis.tools.presentation.timefilter',
@@ -937,7 +936,7 @@
                 toolOptions: tool.options ? JSON.stringify(tool.options) : null,
                 eventMeta: eventMeta ? JSON.stringify(eventMeta) : null
             };
-            if (tool.visfilter_dependent || tool.labeling_dependent) {
+            if (tool.visfilter_dependent) {
                 map.appendRequestParameters(data);
             }
             if (tool.custom_service_reqeuest_parameters_dependent) {
@@ -1186,18 +1185,6 @@
                 var filter = response.unsetfilters[i];
                 map.unsetFilter(filter.id);
                 map.ui.refreshUIElements();
-            }
-        }
-        if (response.setlabeling) {
-            for (var i in response.setlabeling) {
-                var labeling = response.setlabeling[i];
-                map.setLabeling(labeling);
-            }
-        }
-        if (response.unsetlabeling) {
-            for (var i in response.unsetlabeling) {
-                var labeling = response.unsetlabeling[i];
-                map.unsetLabeling(labeling);
             }
         }
 

@@ -30,7 +30,6 @@ public class CmsCacheItem
     public Dictionary<string, AuthObject<QueryDTO>[]> _queries = new Dictionary<string, AuthObject<QueryDTO>[]>();
     public Dictionary<string, AuthObject<EditThemeDTO>[]> _editThemes = new Dictionary<string, AuthObject<EditThemeDTO>[]>();
     public Dictionary<string, AuthObject<VisFilterDTO>[]> _visFilters = new Dictionary<string, AuthObject<VisFilterDTO>[]>();
-    public Dictionary<string, AuthObject<LabelingDTO>[]> _labeling = new Dictionary<string, AuthObject<LabelingDTO>[]>();
     public Dictionary<string, AuthObject<QueryBuilderField>[]> _queryBuilderFields = new Dictionary<string, AuthObject<QueryBuilderField>[]>();
     public Dictionary<string, AuthObject<SnapSchemaDTO>[]> _snapSchemes = new Dictionary<string, AuthObject<SnapSchemaDTO>[]>();
     public Dictionary<string, string> _tocName = new Dictionary<string, string>();
@@ -1200,46 +1199,6 @@ public class CmsCacheItem
 
                             #endregion
 
-                            #region Labeling
-
-                            List<AuthObject<LabelingDTO>> labelingThemes = new List<AuthObject<LabelingDTO>>();
-                            foreach (var labelingNode in cmsHlp.ServiceLabeling(serviceNode.NodeXPath))
-                            {
-                                var themeLink = cms.SelectSingleNode(null, labelingNode.NodeXPath + "/labellingtheme/*") as CmsLink;
-                                var fieldNodes = cms.SelectNodes(null, labelingNode.NodeXPath + "/labellingfields/*");
-
-                                if (themeLink == null || themeLink.Target == null || fieldNodes == null || fieldNodes.Count == 0)
-                                {
-                                    continue;
-                                }
-
-                                var labeling = new LabelingDTO()
-                                {
-                                    Id = labelingNode.Url,
-                                    Name = labelingNode.Name,
-                                    LayerId = themeLink.Target.Id,
-                                    Fields = fieldNodes.Select(f => new LabelingDTO.Field()
-                                    {
-                                        Name = f.LoadString("fieldname"),
-                                        Alias = f.Name
-                                    }).ToArray()
-                                };
-
-                                labelingThemes.Add(new AuthObject<LabelingDTO>(labeling, CmsDocument.GetAuthNodeFast(cms, labelingNode.NodeXPath)));
-                            }
-
-                            if (labelingThemes.Count > 0)
-                            {
-                                if (_labeling.ContainsKey(serviceUrlKey))
-                                {
-                                    throw new Exception("Key for labeling already exists: " + serviceUrlKey);
-                                }
-
-                                _labeling.Add(serviceUrlKey, labelingThemes.ToArray());
-                            }
-
-                            #endregion
-
                             #region SnapSchemes
 
                             List<AuthObject<SnapSchemaDTO>> snapSchemes = new List<AuthObject<SnapSchemaDTO>>();
@@ -1336,6 +1295,13 @@ public class CmsCacheItem
                                 CmsDocument.AuthNode allowUserRenderers = CmsDocument.GetPropertyAuthNodeFast(cms, serviceNode.NodeXPath, "allow_user_renderers");
 
                                 _authBoolProperties.Add(new AuthProperty<bool>($"{serviceUrlKey}::allow_user_renderers", true, false, allowUserRenderers));
+                            }
+
+                            if ((bool)serviceNode.Load("allow_user_labeling", false) == true)
+                            {
+                                CmsDocument.AuthNode allowUserLabeling = CmsDocument.GetPropertyAuthNodeFast(cms, serviceNode.NodeXPath, "allow_user_labeling");
+
+                                _authBoolProperties.Add(new AuthProperty<bool>($"{serviceUrlKey}::allow_user_labeling", true, false, allowUserLabeling));
                             }
 
                             #endregion
@@ -1610,7 +1576,6 @@ public class CmsCacheItem
         _searchServices.ClearAndDispose();
         _editThemes.Clear();
         _visFilters.Clear();
-        _labeling.Clear();
         _queryBuilderFields.Clear();
         _snapSchemes.Clear();
         _toolConfig.Clear();

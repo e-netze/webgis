@@ -14,7 +14,7 @@ using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebMapping.GeoServices.AXL;
 
-class FeatureLayer : Layer, ILabelableLayer, ILayer2, IQueryValueConverter
+class FeatureLayer : Layer, ILayer2, IQueryValueConverter
 {
     private string _renderer = String.Empty, _originalRenderer = String.Empty;
     private XmlNode _labelrenderer = null;
@@ -202,24 +202,6 @@ class FeatureLayer : Layer, ILabelableLayer, ILayer2, IQueryValueConverter
 
         return clone;
     }
-
-    #region ILabelableLayer Member
-
-    E.Standard.WebMapping.Core.Renderer.LabelRenderer ILabelableLayer.LabelRenderer
-    {
-        set
-        {
-            if (value != null)
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(value.ToArcXML());
-
-                this.LabelRenderer = doc.ChildNodes[0];
-            }
-        }
-    }
-
-    #endregion
 
     #region ILayer2 Member
 

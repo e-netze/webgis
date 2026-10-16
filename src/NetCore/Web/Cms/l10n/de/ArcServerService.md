@@ -43,6 +43,13 @@ Der Anwender kann im TOC über den Menüpunkt "Darstellung" für einzelne Layer 
 unterstützt (supportsDynamicLayers) und nur für Feature Layer (Punkt, Linie, Fläche). 
 Für Einzelwerte stehen die Felder zur Verfügung, die auch im QueryBuilder verwendet werden können.
 
+#allow_user_labeling: Benutzerdefinierte Beschriftung erlauben (Beschriftung aus TOC)
+
+Der Anwender kann im TOC über den Menüpunkt "Beschriftung" für einzelne Layer eine eigene Beschriftung 
+festlegen oder die Beschriftung ausschalten. Funktioniert nur, wenn der ArcGIS Server Dienst DynamicLayers 
+unterstützt (supportsDynamicLayers) und nur für Feature Layer (Punkt, Linie, Fläche). 
+Für die Beschriftung stehen die Felder zur Verfügung, die auch im QueryBuilder verwendet werden können.
+
 #server: Karten Server
 
 #category_server: Service (Dienst)

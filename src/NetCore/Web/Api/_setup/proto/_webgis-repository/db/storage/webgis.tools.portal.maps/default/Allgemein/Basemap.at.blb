@@ -155,7 +155,6 @@
         "webgis.tools.advanced.snapping": true,
         "webgis.tools.advanced.geocode": true,
         "webgis.tools.advanced.treed": true,
-        "webgis.tools.presenation.labeling": true,
         "webgis.tools.presenation.filter": true,
         "webgis.tools.presenation.filterRemove": true
       },
@@ -296,7 +295,6 @@
               {
                 "name": "Darstellung",
                 "tools": [
-                  "webgis.tools.presentation.labeling",
                   "webgis.tools.presentation.visfilter",
                   "webgis.tools.presentation.visfilterremoveall"
                 ]

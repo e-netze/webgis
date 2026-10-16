@@ -27,6 +27,7 @@ using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.QueryStrategies;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Renderers;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Renderers.UserRenderers;
+using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Renderers.UserLabels;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.RequestBuilders;
 using E.Standard.WebMapping.GeoServices.ArcServer.Services;
 using E.Standard.WebMapping.GeoServices.Extensions;
@@ -52,6 +53,7 @@ public class MapService : IMapService2,
                           IMapServiceAuthentication,
                           IMapServiceCapabilities,
                           IMapServiceUserRenderers,
+                          IMapServiceUserLabeling,
                           IServiceAttachmentProvider
 {
     private readonly LayerCollection _layers;
@@ -568,13 +570,17 @@ public class MapService : IMapService2,
                     }
 
                     var featureLayer = layer as FeatureLayer;
-                    bool hasLabelRenderer = featureLayer is { UseLabelRenderer: true, LabelRenderer: not null };
                     var agsUserRenderer = visible && featureLayer?.UserRenderer is not null
                         ? AgsUserRendererTranslator.ToAgsRenderer(featureLayer.UserRenderer, layer.Type, FeatureLayer.UrlEncodeWhere)
                         : null;
+                    var userLabeling = visible ? featureLayer?.UserLabeling : null;
+                    var userLabelingShowLabels = AgsUserLabelingTranslator.ShowLabels(userLabeling);
+                    var userLabelingInfo = AgsUserLabelingTranslator.ToAgsLabelingInfo(
+                        userLabeling, layer.Type, layer.MinScale, layer.MaxScale,
+                        FeatureLayer.UrlEncodeWhere(where), FeatureLayer.UrlEncodeWhere);
 
                     #region Write DynamicLayers: if one has realy an render in use {useDynamicLayers = true}, all layers must have an dynamic representation
-                    if (hasLabelRenderer || agsUserRenderer is not null)
+                    if (agsUserRenderer is not null || userLabelingShowLabels.HasValue)
                     {
                         useDynamicLayers = true;
 
@@ -588,29 +594,13 @@ public class MapService : IMapService2,
                         dynamicLayer.drawingInfo = new DynamicLayerDrawingInfo()
                         {
                             renderer = agsUserRenderer,
-                            showLabels = hasLabelRenderer ? true : null
+                            showLabels = userLabelingShowLabels
                         };
                         dynamicLayer.definitionExpression = FeatureLayer.UrlEncodeWhere(where);
 
-                        if (hasLabelRenderer)
+                        if (userLabelingInfo is not null)
                         {
-                            var labelRenderer = featureLayer.LabelRenderer;
-                            var labelingInfo = new LabelingInfo()
-                            {
-                                LabelPlacement = LabelingInfo.DefaultLabelPlacement(layer.Type),
-                                LabelExpression = $"[{labelRenderer.LabelField}]",
-                                UseCodedValues = false,
-                                MinScale = (int)layer.MaxScale,
-                                MaxScale = (int)layer.MinScale,
-                                Where = FeatureLayer.UrlEncodeWhere(where), //String.IsNullOrEmpty(layer.Filter) ? null : layer.Filter,
-                                Symbol = new TextSymbol(labelRenderer)
-                                {
-                                    VerticalAlignment = "bottom",
-                                    HorizontalAlignment = "left"
-                                }
-                            };
-
-                            dynamicLayer.drawingInfo.labelingInfo = new LabelingInfo[] { labelingInfo };
+                            dynamicLayer.drawingInfo.labelingInfo = new LabelingInfo[] { userLabelingInfo };
                         }
 
                         dynamicLayers.Add(dynamicLayer);
@@ -1822,6 +1812,12 @@ public class MapService : IMapService2,
     public bool SupportsDynamicLayers { get; private set; }
 
     public bool SupportsUserRenderers => this.SupportsDynamicLayers && !this.SealedLayers;
+
+    #endregion
+
+    #region IMapServiceUserLabeling
+
+    public bool SupportsUserLabeling => this.SupportsDynamicLayers && !this.SealedLayers;
 
     #endregion
 
