@@ -36,6 +36,13 @@ Karten, die diesen Dienst verwenden.
 
 Der Anwender kann aus dem TOC Filter als mit deinen SQL Edititor setzen.
 
+#allow_user_renderers: Benutzerdefinierte Darstellung erlauben (Darstellung aus TOC)
+
+Der Anwender kann im TOC über den Menüpunkt "Darstellung" für einzelne Layer eine eigene Darstellung 
+(Einfaches Symbol, Einzelwerte) festlegen. Funktioniert nur, wenn der ArcGIS Server Dienst DynamicLayers 
+unterstützt (supportsDynamicLayers) und nur für Feature Layer (Punkt, Linie, Fläche). 
+Für Einzelwerte stehen die Felder zur Verfügung, die auch im QueryBuilder verwendet werden können.
+
 #server: Karten Server
 
 #category_server: Service (Dienst)

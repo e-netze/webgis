@@ -79,6 +79,10 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
     [AuthorizableProperty("allow_querybuilder", false)]
     public bool AllowQueryBuilder { get; set; }
 
+    [DisplayName("#allow_user_renderers")]
+    [AuthorizableProperty("allow_user_renderers", false)]
+    public bool AllowUserRenderers { get; set; }
+
     [DisplayName("#server")]
     [Category("#category_server")]
     public string Server
@@ -181,6 +185,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         this.QueryStrategy = (WebMapping.Core.AgsQueryStrategy)stream.Load("agsquerystrategy", (int)WebMapping.Core.AgsQueryStrategy.Default);
         this.DynamicDehavior = (WebMapping.Core.DynamicDehavior)stream.Load("dynamic_behavior", (int)WebMapping.Core.DynamicDehavior.AutoAppendNewLayers);
         this.AllowQueryBuilder = (bool)stream.Load("allow_querybuilder", false);
+        this.AllowUserRenderers = (bool)stream.Load("allow_user_renderers", false);
     }
 
     override public void Save(IStreamDocument stream)
@@ -205,6 +210,7 @@ public class ArcServerService : CopyableNode, IAuthentification, ICreatable, IEd
         stream.Save("agsquerystrategy", (int)this.QueryStrategy);
         stream.Save("dynamic_behavior", (int)this.DynamicDehavior);
         stream.Save("allow_querybuilder", this.AllowQueryBuilder);
+        stream.Save("allow_user_renderers", this.AllowUserRenderers);
     }
 
     #endregion

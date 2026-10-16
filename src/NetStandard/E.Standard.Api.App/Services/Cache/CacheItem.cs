@@ -1331,6 +1331,13 @@ public class CmsCacheItem
                                 _authBoolProperties.Add(new AuthProperty<bool>($"{serviceUrlKey}::allow_querybuilder", true, false, allowQueryBuilder));
                             }
 
+                            if ((bool)serviceNode.Load("allow_user_renderers", false) == true)
+                            {
+                                CmsDocument.AuthNode allowUserRenderers = CmsDocument.GetPropertyAuthNodeFast(cms, serviceNode.NodeXPath, "allow_user_renderers");
+
+                                _authBoolProperties.Add(new AuthProperty<bool>($"{serviceUrlKey}::allow_user_renderers", true, false, allowUserRenderers));
+                            }
+
                             #endregion
 
                             service.Url = serviceUrlKey;

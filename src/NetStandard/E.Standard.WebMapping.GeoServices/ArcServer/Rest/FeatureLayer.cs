@@ -13,6 +13,7 @@ using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Renderer;
+using E.Standard.WebMapping.Core.Renderer.UserRenderers;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Json;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.QueryStrategies;
@@ -30,7 +31,8 @@ class FeatureLayer : RestLayer,
                      ILegendRendererHelper,
                      ILayerFieldDomains,
                      ILayerGeometryDefintion,
-                     IFeatureAttachmentProvider
+                     IFeatureAttachmentProvider,
+                     IUserRenderableLayer
 {
     private string _definitionExpression = String.Empty;
     private new readonly MapService _service;
@@ -344,6 +346,7 @@ class FeatureLayer : RestLayer,
         clone._domains = _domains;
         clone.UseLabelRenderer = this.UseLabelRenderer;
         clone.LabelRenderer = this.LabelRenderer;
+        clone.UserRenderer = this.UserRenderer;
 
         clone.LengendRendererType = this.LengendRendererType;
         clone.UniqueValue_Field1 = this.UniqueValue_Field1;
@@ -637,6 +640,19 @@ class FeatureLayer : RestLayer,
         get;
         set;
     }
+
+    #endregion
+
+    #region IUserRenderableLayer
+
+    public bool SupportsUserRenderer =>
+        this.Type == LayerType.point ||
+        this.Type == LayerType.line ||
+        this.Type == LayerType.polygon;
+
+#nullable enable
+    public UserRenderer? UserRenderer { get; set; }
+#nullable restore
 
     #endregion
 

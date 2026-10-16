@@ -35,6 +35,13 @@ service.
 
 The user can set filters from the TOC using your SQL editor.
 
+#allow_user_renderers: Allow user-defined rendering (Rendering from TOC)
+
+The user can define a custom rendering (simple symbol, unique values) for individual layers via the 
+"Rendering" TOC menu. Only works if the ArcGIS Server service supports DynamicLayers 
+(supportsDynamicLayers) and only for feature layers (point, line, polygon). 
+For unique values, the fields that can be used in the QueryBuilder are available.
+
 #server: Map Server
 
 #category_server: Service

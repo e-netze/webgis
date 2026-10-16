@@ -228,6 +228,13 @@ public class ServiceInfoDTO : VersionDTO, IHtml2
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public TimeInfoDTO time_info { get; set; }
 
+        /// <summary>
+        /// true, if the user can define an individual rendering (UserRenderer) for this layer
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public bool? allow_user_renderer { get; set; }
+
         private string _ogcId = null;
 
         [JsonIgnore]

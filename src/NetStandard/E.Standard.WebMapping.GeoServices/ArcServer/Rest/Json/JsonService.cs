@@ -41,4 +41,8 @@ public class JsonService
     [JsonProperty("maxRecordCount")]
     [System.Text.Json.Serialization.JsonPropertyName("maxRecordCount")]
     public int MaxRecordCount { get; set; }
+
+    [JsonProperty("supportsDynamicLayers")]
+    [System.Text.Json.Serialization.JsonPropertyName("supportsDynamicLayers")]
+    public bool SupportsDynamicLayers { get; set; }
 }

@@ -17,6 +17,7 @@ using E.Standard.Extensions.Compare;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Renderer.UserRenderers;
 using E.Standard.WebMapping.GeoServices.ArcServer;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
 
@@ -101,6 +102,15 @@ public class ApiGlobalsService
         if (int.TryParse(config[ApiConfigKeys.ToKey("tool-identify:ags-spatial-query-ids-paging-threshold")], out int agsQueryIdsPagingThreshold))
         {
             AgsQuerySettings.IdsPagingCandidateCountThreshold = agsQueryIdsPagingThreshold;
+        }
+
+        if (bool.TryParse(config[ApiConfigKeys.ToKey("tool-userrenderer:allow-toc-userrenderer")], out bool allowTocUserRenderer))
+        {
+            UserRendererSettings.Allowed = allowTocUserRenderer;
+        }
+        if (int.TryParse(config[ApiConfigKeys.ToKey("tool-userrenderer:max-unique-value-classes")], out int userRendererMaxUniqueValueClasses) && userRendererMaxUniqueValueClasses > 0)
+        {
+            UserRendererSettings.MaxUniqueValueClasses = userRendererMaxUniqueValueClasses;
         }
 
         EsriDateExtensions.DateFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-date-format")].OrTake(EsriDateExtensions.DateFormatString);

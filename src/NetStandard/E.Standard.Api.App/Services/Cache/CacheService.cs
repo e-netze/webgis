@@ -751,6 +751,17 @@ public class CacheService
         return auth.AuthorizedPropertyValue(ui);
     }
 
+    public bool IsServiceUserRenderersAllowed(string serviceUrl, CmsDocument.UserIdentification ui)
+    {
+        var auth = GetBoolPropertyAuthorization($"{serviceUrl}::allow_user_renderers", ui);
+        if (auth == null)
+        {
+            return false;
+        }
+
+        return auth.AuthorizedPropertyValue(ui);
+    }
+
     #endregion
 
     #region Copyright

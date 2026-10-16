@@ -50,6 +50,7 @@ public class MapService : IMapService2,
                           IImageServiceType,
                           IMapServiceAuthentication,
                           IMapServiceCapabilities,
+                          IMapServiceUserRenderers,
                           IServiceAttachmentProvider
 {
     private readonly LayerCollection _layers;
@@ -462,6 +463,7 @@ public class MapService : IMapService2,
                 _maxImageHeight = jsonService.MaxImageHeight;
                 this.MaxRecordCount = jsonService.MaxRecordCount;
                 this.AgsVersion = jsonService.CurrentVersion;
+                this.SupportsDynamicLayers = jsonService.SupportsDynamicLayers;
 
                 pLogger.Success = true;
 
@@ -1257,6 +1259,7 @@ public class MapService : IMapService2,
         clone._maxImageHeight = this._maxImageHeight;
         clone.MaxRecordCount = this.MaxRecordCount;
         clone.AgsVersion = this.AgsVersion;
+        clone.SupportsDynamicLayers = this.SupportsDynamicLayers;
         clone.QueryStrategy = this.QueryStrategy;
 
         clone.SupportedCrs = this.SupportedCrs;
@@ -1745,6 +1748,18 @@ public class MapService : IMapService2,
        [MapServiceCapability.Map, MapServiceCapability.Query, MapServiceCapability.Identify, MapServiceCapability.Legend];
 
     public MapServiceCapability[] Capabilities => _capabilities;
+
+    #endregion
+
+    #region IMapServiceUserRenderers
+
+    /// <summary>
+    /// supportsDynamicLayers reported by the service. Required to draw layers with
+    /// user-defined renderers (dynamicLayers parameter of the export request)
+    /// </summary>
+    public bool SupportsDynamicLayers { get; private set; }
+
+    public bool SupportsUserRenderers => this.SupportsDynamicLayers && !this.SealedLayers;
 
     #endregion
 

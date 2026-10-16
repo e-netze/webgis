@@ -26,6 +26,7 @@ using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Geometry.Extensions;
+using E.Standard.WebMapping.Core.Renderer.UserRenderers;
 using E.Standard.WebMapping.GeoServices.Tiling;
 
 using Microsoft.AspNetCore.Http;
@@ -237,6 +238,11 @@ public class RestHelperService
         info.ImageServiceType = service.CustomImageServiceType()?.ToString().ToLower();
         var service2 = service as IMapService2;
 
+        bool serviceAllowsUserRenderers =
+            UserRendererSettings.Allowed &&
+            service is IMapServiceUserRenderers { SupportsUserRenderers: true } &&
+            _cache.IsServiceUserRenderersAllowed(id, ui);
+
         foreach (var layer in service.Layers)
         {
             string name = layer.Name, tocName = layer.Name;
@@ -312,6 +318,9 @@ public class RestHelperService
                         interval = layer.TimeInfo.Interval,
                         interval_unit = layer.TimeInfo.IntervalUnit.ToString().ToLowerInvariant(),
                     }
+                    : null,
+                allow_user_renderer = serviceAllowsUserRenderers && layer is IUserRenderableLayer { SupportsUserRenderer: true }
+                    ? true
                     : null
             };
 
