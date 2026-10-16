@@ -1977,6 +1977,25 @@ tr.webgis-border-bottom td{
     color: var(--webgis-brand-primary);
 }
 
+/* label editor (webgis.ui.plugins.labeleditor.js) */
+.webgis-label-editor-expression {
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.webgis-label-editor-field {
+    margin-top: 4px;
+    max-width: 100%;
+}
+
+.webgis-label-editor-hint {
+    font-size: 12px;
+    color: #777;
+    margin-top: 4px;
+}
+
 .webgis-presentation_toc-item.has-badges > .webgis-search-content {
     display: flex;
     align-items: center;

@@ -124,6 +124,9 @@
         if (this.hasLayerRenderers()) {
             o.layer_renderers = JSON.parse(JSON.stringify(this._layerRenderers));
         }
+        if (this.hasLayerLabelings()) {
+            o.layer_labelings = JSON.parse(JSON.stringify(this._layerLabelings));
+        }
 
         if (this._timeEpoch) {
             o.time_epoch = { "relation": "default" };
@@ -757,6 +760,12 @@
                 this.setLayerRenderer(layerId, jsonService.layer_renderers[layerId], true);
             }
         }
+
+        if (jsonService.layer_labelings) {
+            for (let layerId in jsonService.layer_labelings) {
+                this.setLayerLabeling(layerId, jsonService.layer_labelings[layerId], true);
+            }
+        }
     };
 
     // User renderers ("Darstellung"): layerId => renderer (only for layers with allow_user_renderer)
@@ -799,6 +808,51 @@
         let definitions = [];
         for (let layerId in this._layerRenderers) {
             definitions.push({ id: this.id + '~' + layerId, renderer: this._layerRenderers[layerId] });
+        }
+        return definitions;
+    };
+
+    // User labeling ("Beschriftung"): layerId => labeling (only for layers with allow_user_labeling)
+    // labeling: { version: 1, mode: 'none' } or { version: 1, mode: 'custom', expression, fontSize, fontStyle, fontColor, haloColor }
+    this._layerLabelings = {};
+    this.canSetLayerLabeling = function (layerId) {
+        let layer = this.getLayer(layerId);
+        return layer != null && layer.allow_user_labeling === true;
+    };
+    this.setLayerLabeling = function (layerId, labeling, suppressRefresh) {
+        if (labeling && !this.canSetLayerLabeling(layerId)) {
+            webgis.log('setLayerLabeling: user labeling not allowed for layer', this.id, layerId);
+            return false;
+        }
+
+        if (labeling) {
+            this._layerLabelings[layerId] = JSON.parse(JSON.stringify(labeling));
+        } else if (this._layerLabelings[layerId]) {
+            delete this._layerLabelings[layerId];
+        } else {
+            return false;
+        }
+
+        this.map.events.fire('service-layerlabeling-changed', this, { layerId: layerId });
+        if (suppressRefresh !== true) {
+            this.refresh();
+        }
+        return true;
+    };
+    this.getLayerLabeling = function (layerId) {
+        let labeling = this._layerLabelings[layerId];
+        return labeling ? JSON.parse(JSON.stringify(labeling)) : null;
+    };
+    this.hasLayerLabeling = function (layerId) {
+        return !!this._layerLabelings[layerId];
+    };
+    this.hasLayerLabelings = function () {
+        return Object.keys(this._layerLabelings).length > 0;
+    };
+    this.getLayerLabelingDefinitions = function () {
+        let definitions = [];
+        for (let layerId in this._layerLabelings) {
+            definitions.push({ id: this.id + '~' + layerId, labeling: this._layerLabelings[layerId] });
         }
         return definitions;
     };
@@ -916,6 +970,7 @@
         if (withoutPostData === true) {
             delete urlParams.renderers;  // sent with getLegendPostData() (POST body), may be too long for the url
         }
+        delete urlParams.userlabels;     // labeling doesn't change the legend
         webgis.hmac.appendHMACData(urlParams);
         url += $.param(urlParams);
         return url;

@@ -131,6 +131,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
             Ctor.updateItemBadges(elem, elem._map);
         };
         this._subscribe(mapEvents, 'service-layerrenderer-changed', onBadgesChanged, elem);
+        this._subscribe(mapEvents, 'service-layerlabeling-changed', onBadgesChanged, elem);
         this._subscribe(mapEvents, 'visfilters-changed', onBadgesChanged, elem);
     },
     destroy: function () {
@@ -1673,7 +1674,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
             Ctor.trackSubscription(parent, service.events, ['onchangevisibility', 'onchangevisibility-delayed'], onServiceVisibilityChanged);
             Ctor.sortToc(parent);
 
-            // badges: user-defined renderers, toc layer filters (e.g. map loaded from a saved state) and metadata
+            // badges: user-defined renderers/labeling, toc layer filters (e.g. map loaded from a saved state) and metadata
             Ctor.updateItemBadges(parent, service.map);
 
             webgis.addTitleToEllipsis();
@@ -2393,6 +2394,78 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                     return items;
                 }
             },
+            {   // user labeling ("Beschriftung"): only single layers with allow_user_labeling (AGS DynamicLayers)
+                hasItems: function ($li) {
+                    return $li.get(0).hasTocLayers === true;
+                },
+                getItems: function ($li, map) {
+                    const Ctor = (webgis.$ || jQuery).fn.webgis_presentationToc.plugin;
+                    if (!map)
+                        return [];
+
+                    const layers = Ctor.collectItemLayers($li, map).filter(function (l) {
+                        return l.layer && l.layer.allow_user_labeling === true;
+                    });
+                    if (layers.length === 0)
+                        return [];
+
+                    const openLabelEditor = function (layer) {
+                        webgis.tools.onButtonClick(map,
+                            {
+                                command: 'set_toc_layer_labeling',
+                                type: 'servertoolcommand_ext',
+                                id: webgis.tools.presenation.userLabeling,
+                                map: map,
+                                suppressToolDialog: true,
+                                argument: JSON.stringify({
+                                    serviceId: layer.service.id,
+                                    layerId: layer.layerId
+                                })
+                            }, $li.get(0), null, null);
+                    };
+
+                    const text = webgis.l10n.get('toc-item-menu-userlabeling'),
+                        icon = webgis.css.imgResource('label-26.png', 'tools'),
+                        withLabeling = layers.filter(function (l) { return l.service.hasLayerLabeling(l.layerId); });
+
+                    let items;
+                    if (layers.length === 1) {
+                        items = [{
+                            text: text,
+                            icon: icon,
+                            checked: withLabeling.length > 0,
+                            data: { action: function () { openLabelEditor(layers[0]); } }
+                        }];
+                    } else {
+                        items = [{
+                            text: text,
+                            icon: icon,
+                            items: layers.map(function (layer) {
+                                return {
+                                    text: layer.title,
+                                    checked: layer.service.hasLayerLabeling(layer.layerId),
+                                    data: { action: function () { openLabelEditor(layer); } }
+                                };
+                            })
+                        }];
+                    }
+
+                    if (withLabeling.length > 0) {
+                        items.push({
+                            text: webgis.l10n.get('toc-item-menu-userlabeling-reset'),
+                            data: {
+                                action: function () {
+                                    for (const layer of withLabeling) {
+                                        layer.service.setLayerLabeling(layer.layerId, null);
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    return items;
+                }
+            },
             {   // properties: always the last entry (separator before)
                 hasItems: function ($li) {
                     return true;
@@ -2460,7 +2533,7 @@ webgis.ui.definePlugin('webgis_presentationToc', {
 
             return result;
         },
-        // marks toc items with a user-defined renderer ("Darstellung"), a toc layer filter on one of their layers
+        // marks toc items with a user-defined renderer ("Darstellung") or labeling ("Beschriftung"), a toc layer filter on one of their layers
         // or metadata (instead of an i-button). Badges are placed behind the item name, a click opens the item menu
         updateItemBadges: function (parent, map) {
             const $ = webgis.$ || jQuery, Ctor = $.fn.webgis_presentationToc.plugin;
@@ -2471,19 +2544,26 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                 const service = map.services[id];
                 return service && typeof service.hasLayerRenderers === 'function' && service.hasLayerRenderers();
             });
+            const anyLabeling = !!map && !!map.services && Object.keys(map.services).some(function (id) {
+                const service = map.services[id];
+                return service && typeof service.hasLayerLabelings === 'function' && service.hasLayerLabelings();
+            });
             const anyFilter = !!map && (map._visfilters || []).some(function (f) { return f.id && f.id.indexOf('#TOC#~') === 0; });
 
             $parent.find('li.webgis-presentation_toc-item').each(function (i, li) {
                 const $li = $(li);
-                const layers = anyRenderer || anyFilter ? Ctor.collectItemLayers($li, map) : [];
+                const layers = anyRenderer || anyLabeling || anyFilter ? Ctor.collectItemLayers($li, map) : [];
                 const hasRenderer = anyRenderer && layers.some(function (l) {
                     return typeof l.service.hasLayerRenderer === 'function' && l.service.hasLayerRenderer(l.layerId);
+                });
+                const hasLabeling = anyLabeling && layers.some(function (l) {
+                    return typeof l.service.hasLayerLabeling === 'function' && l.service.hasLayerLabeling(l.layerId);
                 });
                 const hasFilter = anyFilter && layers.some(function (l) { return l.hasFilter; });
                 const metadata = li.hasMetadataBadge === true ? $li.data('toc-item-metadata') : null;
 
                 $li.find('.webgis-presentation_toc-item-badges').remove();
-                if (!hasRenderer && !hasFilter && !metadata) {
+                if (!hasRenderer && !hasLabeling && !hasFilter && !metadata) {
                     $li.removeClass('has-badges');
                     return;
                 }
@@ -2505,6 +2585,9 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                 };
                 if (hasRenderer) {
                     addBadge('colorschema-26.png', 'tools', webgis.l10n.get('toc-item-userrenderer-active'));
+                }
+                if (hasLabeling) {
+                    addBadge('label-26.png', 'tools', webgis.l10n.get('toc-item-userlabeling-active'));
                 }
                 if (hasFilter) {
                     addBadge('filter-26.png', 'tools', webgis.l10n.get('toc-item-filter-active'));

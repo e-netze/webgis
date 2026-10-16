@@ -3703,6 +3703,18 @@
             data.renderers = JSON.stringify(renderers);
         }
 
+        // User labeling ("Beschriftung"): [{ id: 'serviceId~layerId', labeling }]
+        let labelings = [];
+        for (let sid in this.services) {
+            let service = this.services[sid];
+            if ((serviceId && service.id !== serviceId) || !service.getLayerLabelingDefinitions)
+                continue;
+            labelings.push(...service.getLayerLabelingDefinitions());
+        }
+        if (labelings.length > 0) {
+            data.userlabels = JSON.stringify(labelings);
+        }
+
         return data;
     };
     /***** Chart *****/
