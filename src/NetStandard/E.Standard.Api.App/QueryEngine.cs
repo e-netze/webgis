@@ -41,6 +41,11 @@ public class QueryEngine
 
     public bool HasMore { get; private set; }
 
+    /// <summary>
+    /// Total number of matching features if <see cref="HasMore"/> is true and the count is known, otherwise null.
+    /// </summary>
+    public int? TotalCount { get; private set; }
+
     public FeatureCollection Features
     {
         get;
@@ -495,6 +500,9 @@ public class QueryEngine
 
             #endregion
 
+            int? totalCount = null;
+            string originalWhereClause = filter.Where;
+
             if (advancedQueryMethod == AdvancedQueryMethod.HasFeatures && layer is ILayer2)
             {
                 int featureCount = await ((ILayer2)layer).HasFeaturesAsync(filter, requestContext);
@@ -556,6 +564,8 @@ public class QueryEngine
 
                     filter.OrderBy = layer.IdFieldName;
 
+                    bool isFirstBatch = true;
+
                     while (features.Count < limit)
                     {
                         var queryFeatures = new FeatureCollection();
@@ -564,6 +574,14 @@ public class QueryEngine
                         features.AddRange(queryFeatures.Take(limit - features.Count));
 
                         this.HasMore = queryFeatures.HasMore;
+
+                        // only the first batch is queried with the original where clause -
+                        // later batches add a keyset condition, so their count is not the total
+                        if (isFirstBatch)
+                        {
+                            totalCount = queryFeatures.TotalCount;
+                            isFirstBatch = false;
+                        }
 
                         if (queryFeatures.HasMore == false || queryFeatures.Count == 0)
                         {
@@ -581,6 +599,8 @@ public class QueryEngine
                     {
                         this.HasMore = true;
                     }
+
+                    totalCount = features.TotalCount;
                 }
 
                 if (features.Count == 0 && !String.IsNullOrWhiteSpace(features.ResultText))
@@ -601,6 +621,27 @@ public class QueryEngine
             if (features.HasMore && query.Union == true)
             {
                 throw new QueryEngineInformationException($"Can't union feature from layer {layer.Name}: to many features (>{features.Count})");
+            }
+
+            if (this.HasMore)
+            {
+                if (totalCount == null && layer is ILayer3 countLayer)
+                {
+                    try
+                    {
+                        // count against the original where clause (without keyset paging condition)
+                        filter.Where = originalWhereClause;
+                        totalCount = await countLayer.FeaturesCountOnly(filter, requestContext);
+                    }
+                    catch
+                    {
+                        // the total count is optional information - never fail the query because of it
+                        totalCount = null;
+                    }
+                }
+
+                // discard implausible counts (eg. HasMore set by a guard, or data changed meanwhile)
+                this.TotalCount = totalCount > features.Count ? totalCount : null;
             }
 
             //QueryEnvironment queryEnvironment = new QueryEnvironment(layer, filter);
@@ -630,6 +671,7 @@ public class QueryEngine
         // FeaturesDTO.Meta.HasMore, which renders a small, persistent (non-dismissible)
         // notification bar above the results table (see webgis.map.queryresults.js).
         features.HasMore = this.HasMore;
+        features.TotalCount = this.HasMore ? this.TotalCount : null;
 
         if (this.Features != null)
         {

@@ -71,7 +71,7 @@ internal sealed class BoundingBoxProblemAgsQueryStrategy : IAgsQueryStrategy
             ReturnGeometry = filter.QueryGeometry
         };
 
-        var (ids, hasMore) = await queryService.GetObjectIdsAsync(
+        var (ids, hasMore, totalCount) = await queryService.GetObjectIdsAsync(
             service, featuresReqUrl, authHandler, requestContext, queryParams, layer.IdFieldName, AgsQuerySettings.MaxSpatialQueryResultCap);
 
         var jsonFeatureResponses = await queryService.GetFeaturesByObjectIdsAsync(
@@ -86,6 +86,7 @@ internal sealed class BoundingBoxProblemAgsQueryStrategy : IAgsQueryStrategy
         features.Layer = layer;
 
         features.HasMore = hasMore || jsonFeatureResponses.Any(r => r.ExceededTransferLimit);
+        features.TotalCount = totalCount;
 
         return -1;
     }

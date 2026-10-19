@@ -75,6 +75,9 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
                 HasMore = features.HasMore == true
                     ? true
                     : null,
+                TotalCount = features.HasMore == true
+                    ? features.TotalCount
+                    : null,
                 Warnings = features.Warnings?.ToArray(),
                 Informations = features.Informations?.ToArray(),
             };
@@ -395,6 +398,11 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
         [System.Text.Json.Serialization.JsonPropertyName("has_more")]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public bool? HasMore { get; set; }
+
+        [JsonProperty("total_count", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonPropertyName("total_count")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public int? TotalCount { get; set; }
 
         [JsonProperty("warnings", NullValueHandling = NullValueHandling.Ignore)]
         [System.Text.Json.Serialization.JsonPropertyName("warnings")]

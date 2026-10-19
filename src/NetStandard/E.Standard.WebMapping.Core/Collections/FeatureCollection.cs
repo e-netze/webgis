@@ -44,6 +44,13 @@ public class FeatureCollection : ThreadSafeList<Feature>, IClone<FeatureCollecti
         set { _hasMore = value; }
     }
 
+    /// <summary>
+    /// Total number of matching features, if known (e.g. from a count request). Typically only
+    /// set when <see cref="HasMore"/> is true, so the client can show how many features were
+    /// actually hit. null = unknown.
+    /// </summary>
+    public int? TotalCount { get; set; }
+
     public bool MaximumReached
     {
         get { return _maxReached; }
@@ -392,6 +399,7 @@ public class FeatureCollection : ThreadSafeList<Feature>, IClone<FeatureCollecti
         this.CopyElementsThreadSafeTo(clone);
 
         clone._hasMore = _hasMore;
+        clone.TotalCount = TotalCount;
         clone._resultText = _resultText;
 
         if (_query != null)

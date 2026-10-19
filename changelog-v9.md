@@ -225,6 +225,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
   [Docs api.config](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-toc-contextmenu)
 
+- Query results: if the result limit is reached, the notification above the table also shows the
+  total number of hit features (e.g. "limit of 6,000 results reached - a total of 12,345 features
+  were hit").
+  * New ``FeatureCollection.TotalCount`` / ``FeaturesDTO.Meta.TotalCount`` (``total_count``).
+  * ArcGIS Server: the count already determined by the ``BoundingBoxProblem`` query strategy is
+    reused; otherwise ``QueryEngine`` sends one additional ``returnCountOnly`` request
+    (``ILayer3.FeaturesCountOnly``) only when the limit was reached. Errors are ignored.
+  * Other service types (without count support) keep the previous notification.
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

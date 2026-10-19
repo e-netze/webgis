@@ -829,6 +829,7 @@ public class RestHelperService
                 #region HasMore
 
                 returnFeatures.HasMore = queryFeatures.HasMore;
+                returnFeatures.TotalCount = queryFeatures.TotalCount;
 
                 #endregion
 

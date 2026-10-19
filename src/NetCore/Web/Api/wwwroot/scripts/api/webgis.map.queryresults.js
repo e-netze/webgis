@@ -704,9 +704,15 @@
         webgis.ui.showLayerNotVisibleNotification(service, query, $content);
 
         if (features.metadata && features.metadata.has_more === true) {
+            var totalCount = features.metadata.total_count;
             $("<div>")
                 .addClass('webgis-result-maxreached-notification')
-                .text(webgis.l10n.get('query-max-results-reached', { count: features.features.length }))
+                .text(totalCount > features.features.length
+                    ? webgis.l10n.get('query-max-results-reached-total', {
+                        count: features.features.length.toLocaleString(),
+                        total: totalCount.toLocaleString()
+                    })
+                    : webgis.l10n.get('query-max-results-reached', { count: features.features.length.toLocaleString() }))
                 .appendTo($content);
         }
 

@@ -38,6 +38,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs CMS](https://docs.webgiscloud.com/en/webgis/apps/cms/add_ags_service.html#cms-ags-user-renderer-labeling)
 - Viewer: presentations in the table of contents show badges for user presentation, labeling, filters and metadata; the context menu offers "Reset filter", "Reset presentation" and "Reset labeling".
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-badges)
+- Viewer: when a query hits the result limit, the notification above the results table also shows the total number of hit features (ArcGIS Server services).
 
 ### Fixed
 

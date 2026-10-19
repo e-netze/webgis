@@ -74,6 +74,11 @@ internal sealed class QueryService
     /// happen for AGS feature layers), falls back to a single unbounded request.
     /// </para>
     /// <para>
+    /// <c>TotalCount</c> in the result is the true total number of matches if it is known as a
+    /// by-product (the upfront "returnCountOnly" request, or the length of the uncapped id list
+    /// of an unbounded request), otherwise null.
+    /// </para>
+    /// <para>
     /// Before paging is even considered, an upfront "returnCountOnly" request against the real
     /// query geometry/where-clause (not its bounding box - a plain count is not affected by the
     /// bbox/TOP bug, see <see cref="GetBoundingBoxCandidateCountAsync"/> remarks) determines the
@@ -156,7 +161,7 @@ internal sealed class QueryService
         SkipForward
     }
 
-    public async Task<(long[] Ids, bool HasMore)> GetObjectIdsAsync(
+    public async Task<(long[] Ids, bool HasMore, int? TotalCount)> GetObjectIdsAsync(
         MapService service,
         string featuresReqUrl,
         AgsAuthenticationHandler authHandler,
@@ -174,6 +179,9 @@ internal sealed class QueryService
             service, featuresReqUrl, authHandler, requestContext,
             queryParams.Geometry, queryParams.GeometrySrefId, queryParams.Where, queryParams.InSrefId,
             "getfeaturecount");
+
+        // GetCandidateCountAsync reports int.MaxValue if the count could not be determined
+        int? totalCount = candidateCount == int.MaxValue ? null : candidateCount;
 
         if (candidateCount < AgsQuerySettings.IdsPagingCandidateCountThreshold)
         {
@@ -202,7 +210,7 @@ internal sealed class QueryService
                 // an excessive total duration (the consecutiveEmptySkips/no-progress guards above
                 // bound the number of such pages, not the wall-clock time they can consume).
                 // Report the result as truncated rather than blocking the caller indefinitely.
-                return (allIds.ToArray(), true);
+                return (allIds.ToArray(), true, totalCount);
             }
 
             string pageWhere = lastId.HasValue
@@ -271,7 +279,7 @@ internal sealed class QueryService
                     // usable id to continue from - report the result as truncated (HasMore=true)
                     // rather than falsely claiming completeness. Otherwise this is a genuinely
                     // empty page: no more matches remain.
-                    return (allIds.ToArray(), exceededTransferLimit);
+                    return (allIds.ToArray(), exceededTransferLimit, totalCount);
             }
 
             consecutiveEmptySkips = 0;
@@ -286,14 +294,14 @@ internal sealed class QueryService
                 // (a variant of) the same page forever and, since the ids can't be told apart
                 // from ones already collected, would inject duplicates into the result. Stop here
                 // instead and report the result as truncated.
-                return (allIds.ToArray(), true);
+                return (allIds.ToArray(), true, totalCount);
             }
 
             allIds.AddRange(pageIds);
 
             if (allIds.Count >= cap)
             {
-                return (allIds.Take(cap).ToArray(), true);
+                return (allIds.Take(cap).ToArray(), true, totalCount);
             }
 
             lastId = newLastId;
@@ -311,7 +319,7 @@ internal sealed class QueryService
     /// in one go - only safe to reach when the caller has reason to believe the result is
     /// actually small (either no id field, or the candidate count says so).
     /// </summary>
-    private async Task<(long[] Ids, bool HasMore)> GetAllObjectIdsUnboundedAsync(
+    private async Task<(long[] Ids, bool HasMore, int? TotalCount)> GetAllObjectIdsUnboundedAsync(
         MapService service,
         string featuresReqUrl,
         AgsAuthenticationHandler authHandler,
@@ -355,10 +363,10 @@ internal sealed class QueryService
 
         if (ids.Length > cap)
         {
-            return (ids.Take(cap).ToArray(), true);
+            return (ids.Take(cap).ToArray(), true, ids.Length);
         }
 
-        return (ids, false);
+        return (ids, false, ids.Length);
     }
 
     /// <summary>
