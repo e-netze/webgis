@@ -144,6 +144,21 @@ public class WhereParserTests
     }
 
     [Fact]
+    public void Parses_NotLike_NotIn_IsNull_IsNotNull()
+    {
+        AssertTokens(
+            "GNR not like '3%' AND KG NOT  IN ('1','2') or A is null and B IS NOT NULL",
+            new[]
+            {
+                "GNR", " not like ", "3%", "and",
+                "KG", " not in ", "1,2", "or",
+                "A", " is null", "", "and",
+                "B", " is not null", ""
+            }
+        );
+    }
+
+    [Fact]
     public void CaseInsensitive_Keywords_AreRecognized()
     {
         AssertTokens(

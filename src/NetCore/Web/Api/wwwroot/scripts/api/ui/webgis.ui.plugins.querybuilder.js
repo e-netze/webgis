@@ -82,7 +82,10 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
             .text(webgis.l10n.get('apply'))
             .appendTo($buttonBar)
             .on("click.webgis_querybuilder", function () {
-                me.submit(me.queryDefinitions());
+                const queryDefinitions = me.queryDefinitions();
+                if (queryDefinitions) {
+                    me.submit(queryDefinitions);
+                }
             });
 
         this.addTableRow();
@@ -272,6 +275,10 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
             if (!fieldDef) {
                 return;
             }
+            if (operator === ' is null' || operator === ' is not null') {
+                $input.val('');  // operator without value => input stays hidden
+                return;
+            }
             $input.css('display', 'block');
 
             const fieldType = fieldDef.field_type,
@@ -281,7 +288,7 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
                         '&mode=' + mode;
                 };
 
-            if (operator === ' in ') {
+            if (operator === ' in ' || operator === ' not in ') {
                 $input.attr('placeholder', webgis.l10n.get('querybuilder-enter-values-comma'));
             } else if (fieldType === 'number') {
                 $input.attr({ type: 'number', step: 'any', placeholder: webgis.l10n.get('querybuilder-enter-number') });
@@ -401,24 +408,39 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
             const $parent = this.$el;
 
             const $table = $parent.find('.webgis-query-builder-table');
+            const fieldDefName = function (field) {
+                const fieldDef = $.grep(options.field_defs, function (f) { return f.name === field; })[0];
+                return fieldDef ? fieldDef.alias || fieldDef.name : field;
+            };
 
             const queryDefs = [];
+            let valid = true;
 
             $table.children('tr').each(function (i, tr) {
                 const $tr = $(tr);
 
                 let field = $tr.find('.webgis-input.webgis-query-builder-fields').val(),
                     operator = $tr.find('.webgis-input.webgis-query-builder-operators').val(),
-                    value = $tr.find('.webgis-input.webgis-query-builder-value').val(),
+                    $value = $tr.find('.webgis-input.webgis-query-builder-value'),
+                    value = $value.val(),
                     logicalOperator = $tr.find('.webgis-input.webgis-query-builder-logical-operators').val();
 
                 if (!field) {
                     if (queryDefs.length == 0) {
                         return;
                     } else {
-                        alert(webgis.l10n.get('querybuilder-invalid-query'));
+                        webgis.alert(webgis.l10n.get('querybuilder-invalid-query'), 'info');
+                        valid = false;
                         return false;
                     }
+                }
+
+                const noValue = operator === ' is null' || operator === ' is not null';
+                if (!noValue && ((value || '').trim() === '' || ($value.length > 0 && $value[0].validity && $value[0].validity.badInput))) {
+                    // eg. "1%" in a number input => browser returns an empty value
+                    webgis.alert(webgis.l10n.get('querybuilder-invalid-value') + ': ' + (fieldDefName(field)), 'info');
+                    valid = false;
+                    return false;
                 }
 
                 var fieldDef = $.grep(options.field_defs, function (e) {
@@ -435,6 +457,10 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
             });
 
             const $geometryOption = $parent.find('.webgis-query-builder-geometry-option');
+
+            if (!valid) {
+                return null;
+            }
 
             return {
                 geometry_option: $geometryOption.length > 0 ? $geometryOption.val() : null,

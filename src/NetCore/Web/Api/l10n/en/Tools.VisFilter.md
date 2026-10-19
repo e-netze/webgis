@@ -10,4 +10,4 @@ Set display filters to restrict the visibility of geo-objects.
 # remove-filter: Remove Filter
 # filter-remove: Remove {0}
 # remove-all-filter: Remove All Filters
-# querybuilder: Query Builder
+# querybuilder: Display filter (DefinitionQuery)

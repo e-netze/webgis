@@ -119,6 +119,7 @@ webgis.usability = {
     },
 
     allowTocVisFilters: false,
+    allowTocTable: true, // TOC context menu "Table": shows the whole data set of a layer query (max. features: CMS query maxfeatures or api.config toc-contextmenu:table-feature-limit)
     defaultBufferDistance: 30,
 
     show_presentation_metadata_in_copyright: true,

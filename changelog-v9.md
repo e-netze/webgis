@@ -267,6 +267,40 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/search_identify/operations/results_desktop/results_desktop.html#results-query-restriction),
   [Architecture](docs/architecture/querybuilder.md)
 
+- TOC context menu "Table": shows the features of a layer (identify-enabled query that allows an
+  empty search) in the results table without a search term or query geometry; the result can be
+  narrowed down with the table tool "Restrict".
+  * Client request ``_source=toc-table`` with the new ``QueryDTO`` flag ``allow_empty_search``;
+    active display filters are applied. Submenu per query if a layer has several queries.
+  * Feature limit: the maximum of the service/query, otherwise the new ``api.config`` key
+    ``table-feature-limit`` in the section ``toc-contextmenu`` (default ``1000``).
+  * New ``QueryRestrictionDescriptor`` source ``Table`` (descriptor without geometry), shown as
+    origin in the restriction dialog.
+  * The menu item can be hidden with ``webgis.usability.allowTocTable = false`` in ``custom.js``.
+
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-table),
+  [Docs api.config](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-toc-contextmenu),
+  [Docs custom.js](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-toc-table),
+  [Architecture](docs/architecture/querybuilder.md)
+
+- QueryBuilder: new operators ``not like``, ``not in`` (strings, numbers), ``is null`` and
+  ``is not null`` (all field types; the value input is hidden). Supported by ``UIQueryBuilder``
+  (operator lists, where parser, sanitizing) and the server-side where validation.
+  * The TOC context menu entry and the dialog title are renamed to
+    "Display filter (DefinitionQuery)" (DE: "Darstellungsfilter (DefinitionQuery)") to distinguish
+    it from the result restriction in the table.
+  * Wider operator column in the QueryBuilder (``td.operators``), narrower field column.
+
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-querybuilder),
+  [Architecture](docs/architecture/querybuilder.md)
+
+- QueryBuilder validation: empty or invalid values (e.g. text in a number field) are reported with
+  a hint and nothing is sent. A result restriction without hits raises an ``InfoException``
+  (with the service warnings); the dialog stays open with the entered conditions and the previous
+  result is kept.
+
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/search_identify/operations/results_desktop/results_desktop.html#results-query-restriction)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

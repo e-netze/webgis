@@ -128,7 +128,10 @@ public class RestQueryHelperService
         Point orderByDistancePoint = null;
 
         string orderBy = String.IsNullOrEmpty(form?["_orderby"]) ? "" : form["_orderby"];
-        int limit = String.IsNullOrEmpty(form?["_limit"]) ? query.MaxFeatures : Convert.ToInt32(form["_limit"]);
+        bool isTocTable = form?["_source"] == "toc-table";
+        int limit = String.IsNullOrEmpty(form?["_limit"])
+            ? (isTocTable ? query.MaxFeatures.OrTake(ApiGlobals.TocTableFeatureLimit) : query.MaxFeatures)
+            : Convert.ToInt32(form["_limit"]);
         int targetSRefId = String.IsNullOrEmpty(form?["_outsrs"]) ? 4326 : Convert.ToInt32(form["_outsrs"]);
         if (targetSRefId == 0)
         {
@@ -213,7 +216,9 @@ public class RestQueryHelperService
                         Limit = limit,
                         Source = queryShape != null
                             ? QueryRestrictionDescriptor.Sources.MapExtent
-                            : QueryRestrictionDescriptor.Sources.Query
+                            : isTocTable
+                                ? QueryRestrictionDescriptor.Sources.Table
+                                : QueryRestrictionDescriptor.Sources.Query
                     };
                     restriction.SetItems(form, query.items?.Select(i => i.id) ?? [],
                         key => query.items?.FirstOrDefault(i => i.id == key)?.name);
@@ -486,7 +491,7 @@ public class RestQueryHelperService
 
                         //
                         // Bei negativen bufferDistance zuerst mergen und dann erst buffern
-                        // => sonst gibt es lauter keine einzelflächen pro zb Grundstück
+                        // => sonst gibt es lauter keine einzelflï¿½chen pro zb Grundstï¿½ck
                         //
                         var bufferPolygon = feature.Shape?.CalcBuffer(Math.Max(0, bufferDistance), cts);
                         if (bufferPolygon != null)
@@ -510,7 +515,7 @@ public class RestQueryHelperService
             }
             catch (CancellationException)
             {
-                throw new Exception("Die Pufferoperation ist zu komplex und kann in der vorgegeben Zeit nicht durchführt werden...");
+                throw new Exception("Die Pufferoperation ist zu komplex und kann in der vorgegeben Zeit nicht durchfï¿½hrt werden...");
             }
         }
 
@@ -702,7 +707,7 @@ public class RestQueryHelperService
                 }
                 catch (InputValidationException)
                 {
-                    throw new InputValidationException("Die Eingabe für " + searchItem.name + " enthält ungültige Zeichen:" + val);
+                    throw new InputValidationException("Die Eingabe fï¿½r " + searchItem.name + " enthï¿½lt ungï¿½ltige Zeichen:" + val);
                 }
 
                 sql = sql

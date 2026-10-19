@@ -18,6 +18,25 @@ public class UIQueryBuilder : UICollapsableElement
     public const int MaxDistinctComboValues = 25;
     public const string DateValueTemplate = "DATE '{0}'";
 
+    public const string OperatorIn = " in ";
+    public const string OperatorNotIn = " not in ";
+    public const string OperatorIsNull = " is null";
+    public const string OperatorIsNotNull = " is not null";
+
+    /// <summary>
+    /// Operators with a (comma separated) value list
+    /// </summary>
+    static public bool IsListOperator(string? @operator)
+        => OperatorIn.Equals(@operator, StringComparison.OrdinalIgnoreCase)
+        || OperatorNotIn.Equals(@operator, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Operators without a value
+    /// </summary>
+    static public bool IsNoValueOperator(string? @operator)
+        => OperatorIsNull.Equals(@operator, StringComparison.OrdinalIgnoreCase)
+        || OperatorIsNotNull.Equals(@operator, StringComparison.OrdinalIgnoreCase);
+
     private List<FieldDef> _fieldDefs = new List<FieldDef>();
 
     public UIQueryBuilder()
@@ -95,7 +114,7 @@ public class UIQueryBuilder : UICollapsableElement
 
     // Optional: only for reference – not strictly needed below
     //private static readonly string[] possibleOperators =
-    //    { "=", " like ", " in ", "<>", ">", ">=", "<", "<=" };
+    //    { "=", " like ", " in ", "<>", " not like ", " not in ", ">", ">=", "<", "<=", " is null", " is not null" };
 
     public void TrySetWhereClause(string whereClause)
     {
@@ -110,8 +129,8 @@ public class UIQueryBuilder : UICollapsableElement
             @"\bAND\b|\bOR\b" +
             // comparison operators
             @"|<>|>=|<=|=|>|<" +
-            // LIKE / IN
-            @"|\bLIKE\b|\bIN\b" +
+            // IS [NOT] NULL / NOT LIKE / NOT IN / LIKE / IN
+            @"|\bIS\s+NOT\s+NULL\b|\bIS\s+NULL\b|\bNOT\s+LIKE\b|\bNOT\s+IN\b|\bLIKE\b|\bIN\b" +
             // IN-lists in parentheses
             @"|\([^\)]*\)" +
             // date/timestamp literals: DATE '2024-01-31'
@@ -134,10 +153,18 @@ public class UIQueryBuilder : UICollapsableElement
                 continue;
             }
 
-            if (Regex.IsMatch(t, @"^(?:LIKE|IN)$", RegexOptions.IgnoreCase))
+            if (Regex.IsMatch(t, @"^IS\s+(?:NOT\s+)?NULL$", RegexOptions.IgnoreCase))
             {
-                // add with surrounding spaces: " like " / " in "
-                tokens.Add($" {t.ToLowerInvariant()} ");
+                // " is null" / " is not null" + empty value token (field, operator, value, logical operator)
+                tokens.Add($" {Regex.Replace(t, @"\s+", " ").ToLowerInvariant()}");
+                tokens.Add("");
+                continue;
+            }
+
+            if (Regex.IsMatch(t, @"^(?:NOT\s+)?(?:LIKE|IN)$", RegexOptions.IgnoreCase))
+            {
+                // add with surrounding spaces: " like " / " in " / " not like " / " not in "
+                tokens.Add($" {Regex.Replace(t, @"\s+", " ").ToLowerInvariant()} ");
                 continue;
             }
 
@@ -200,7 +227,20 @@ public class UIQueryBuilder : UICollapsableElement
                 throw new ArgumentException($"Invalid logical operator: {queryDef.LogicalOperator}");
             }
 
-            var values = @operator == " in "
+            if (IsNoValueOperator(@operator))
+            {
+                queryDefs.Add(new Result.QueryDef()
+                {
+                    Field = field.Name,
+                    Operator = @operator,
+                    Value = "",
+                    ValueTemplate = fieldDef.ValueTemplate,
+                    LogicalOperator = logicalOperator
+                });
+                continue;
+            }
+
+            var values = IsListOperator(@operator)
                 ? (queryDef.Value ?? "").Split(',').Select(v => v.Trim().Trim('\''))
                 : new[] { queryDef.Value ?? "" };
 
@@ -250,7 +290,7 @@ public class UIQueryBuilder : UICollapsableElement
             switch (fieldType)
             {
                 case FieldType.String:
-                    Operators = new[] { "=", " like ", " in ", "<>", ">", ">=", "<", "<=" };
+                    Operators = new[] { "=", " like ", " in ", "<>", " not like ", " not in ", ">", ">=", "<", "<=", OperatorIsNull, OperatorIsNotNull };
                     ValueTemplate = "'{0}'";
                     ValueType = "string";
                     break;
@@ -259,17 +299,17 @@ public class UIQueryBuilder : UICollapsableElement
                 case FieldType.SmallInteger:
                 case FieldType.Float:
                 case FieldType.Double:
-                    Operators = new[] { "=", " in ", "<>", ">", ">=", "<", "<=" };
+                    Operators = new[] { "=", " in ", "<>", " not in ", ">", ">=", "<", "<=", OperatorIsNull, OperatorIsNotNull };
                     ValueTemplate = "{0}";
                     ValueType = "number";
                     break;
                 case FieldType.Date:
-                    Operators = new[] { "=", "<>", ">", ">=", "<", "<=" };
+                    Operators = new[] { "=", "<>", ">", ">=", "<", "<=", OperatorIsNull, OperatorIsNotNull };
                     ValueTemplate = DateValueTemplate;
                     ValueType = "date";
                     break;
                 case FieldType.Boolean:
-                    Operators = new[] { "=", "<>" };
+                    Operators = new[] { "=", "<>", OperatorIsNull, OperatorIsNotNull };
                     ValueTemplate = "{0}"; // ???
                     ValueType = "boolean";
                     break;

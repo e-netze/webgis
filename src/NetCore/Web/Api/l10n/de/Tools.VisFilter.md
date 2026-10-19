@@ -10,4 +10,4 @@ Darstellungsfilter setzen, um die Sichtbarkeit von Geo-Objekten einzuschränken
 # remove-filter: Filter entfernen
 # filter-remove: {0} entfernen
 # remove-all-filter: Alle Filter entfernen
-# querybuilder: Abfrage-Generator
+# querybuilder: Darstellungsfilter (DefinitionQuery)

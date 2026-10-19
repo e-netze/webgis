@@ -87,6 +87,7 @@ public class QueryRestrictionDescriptor
         public const string Buffer = "buffer";
         public const string Query = "query";
         public const string MapExtent = "bbox";
+        public const string Table = "table";
     }
 
     /// <summary>

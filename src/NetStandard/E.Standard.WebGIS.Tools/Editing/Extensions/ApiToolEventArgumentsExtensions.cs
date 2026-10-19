@@ -352,6 +352,7 @@ static internal class ApiToolEventArgumentsExtensions
         foreach (var queryDef in queryBuilderResult.QueryDefs)
         {
             if (UIQueryBuilder.DateValueTemplate.Equals(queryDef.ValueTemplate)
+                && !UIQueryBuilder.IsNoValueOperator(queryDef.Operator)
                 && !DateTime.TryParseExact(queryDef.Value?.Trim(), "yyyy-MM-dd",
                         System.Globalization.CultureInfo.InvariantCulture,
                         System.Globalization.DateTimeStyles.None, out _))
@@ -361,7 +362,8 @@ static internal class ApiToolEventArgumentsExtensions
 
             string value = queryDef.Operator switch
             {
-                " in " => String.Format("({0})",
+                _ when UIQueryBuilder.IsNoValueOperator(queryDef.Operator) => "",
+                _ when UIQueryBuilder.IsListOperator(queryDef.Operator) => String.Format("({0})",
                                 String.Join(",",
                                             queryDef.Value
                                                     .Split(',')

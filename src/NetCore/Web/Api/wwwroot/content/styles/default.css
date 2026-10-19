@@ -6236,11 +6236,11 @@ select.webgis-not-valid {
     }
 
     .webgis-query-builder .webgis-query-builder-table td.fields {
-        width: 250px;
+        width: 200px;
     }
 
     .webgis-query-builder .webgis-query-builder-table td.operators {
-        width: 60px;
+        width: 115px;
     }
 
     .webgis-query-builder .webgis-query-builder-table td.value {

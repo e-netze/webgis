@@ -24,6 +24,7 @@ using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
+using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Extensions;
 
 namespace E.Standard.WebGIS.Tools;
@@ -124,7 +125,7 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
     }
 
     [ServerToolCommand("querybuilder")]
-    async public Task<ApiEventResponse> OnQueryBuilder(IBridge bridge, ApiToolEventArguments e)
+    async public Task<ApiEventResponse> OnQueryBuilder(IBridge bridge, ApiToolEventArguments e, ILocalizer<QueryResultRestriction> localizer)
     {
         var descriptor = QueryRestrictionDescriptor.FromToken(bridge.CryptoService, e.ServerCommandArgument);
         var (query, fields) = await QueryAndAllowedFields(bridge, descriptor);
@@ -135,7 +136,8 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
         e.AppendIdentifyWhereClauseFromQueryBuilder(queryBuilderResult);
         var restriction = e[IdentifyDefault.IdentifyWhereClause];
 
-        return await PerformAsync(bridge, e, descriptor, query, restriction);
+        return await PerformAsync(bridge, e, descriptor, query, restriction,
+                                  noResultsMessage: localizer.Localize("no-results"));
     }
 
     [ServerToolCommand(RemoveRestrictionCommand)]
@@ -189,9 +191,11 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
     #region Helper
 
     /// <summary>
-    /// Re-executes the original query (geometry, items, where, limit) with the restriction (null => unrestricted)
+    /// Re-executes the original query (geometry, items, where, limit) with the restriction (null => unrestricted).
+    /// noResultsMessage: an empty restricted result (no hits or an invalid condition) throws an InfoException,
+    /// so the dialog stays open with the conditions and the current result is kept.
     /// </summary>
-    async static private Task<ApiEventResponse> PerformAsync(IBridge bridge, ApiToolEventArguments e, QueryRestrictionDescriptor descriptor, IQueryBridge query, string restriction)
+    async static private Task<ApiEventResponse> PerformAsync(IBridge bridge, ApiToolEventArguments e, QueryRestrictionDescriptor descriptor, IQueryBridge query, string restriction, string noResultsMessage = null)
     {
         descriptor.Restriction = String.IsNullOrWhiteSpace(restriction) ? null : restriction;
 
@@ -211,6 +215,14 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
         var features = await query.PerformAsync(bridge.RequestContext, filter,
                                                 appendFilterClause: descriptor.EffectiveWhereClause(descriptor.Restriction),
                                                 limit: descriptor.Limit);
+
+        if (noResultsMessage != null && descriptor.Restriction != null && (features == null || features.Count == 0))
+        {
+            var details = (features?.Warnings ?? []).Concat(features?.Informations ?? [])
+                                                     .Where(m => !String.IsNullOrWhiteSpace(m));
+
+            throw new InfoException(String.Join("\n\n", new[] { noResultsMessage }.Concat(details)));
+        }
 
         var response = new ApiFeaturesEventResponse()
             .AddFeatures(features, FeatureResponseType.New, appendHoverShapes: Identify.Extensions.ApiToolEventArgumentsExtensions.UseDesktopBehavior(e))
@@ -264,6 +276,11 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
                     }
                 }
             });
+        }
+
+        if (descriptor.Source == QueryRestrictionDescriptor.Sources.Table)
+        {
+            elements.Add(InfoLine(localizer.Localize("info-table")));
         }
 
         if (descriptor.Items?.Any() == true)

@@ -2322,6 +2322,76 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                     return items;
                 }
             },
+            {   // table: whole data set of the layer queries (first N features, active display filters apply), restrictable with the QueryBuilder
+                hasItems: function ($li) {
+                    return webgis.usability.allowTocTable !== false && $li.get(0).hasTocLayers === true;
+                },
+                getItems: function ($li, map) {
+                    const Ctor = (webgis.$ || jQuery).fn.webgis_presentationToc.plugin;
+                    if (webgis.usability.allowTocTable === false || !map)
+                        return [];
+
+                    const tables = [];
+                    for (const layer of Ctor.collectItemLayers($li, map)) {
+                        for (const query of layer.service.queries || []) {
+                            if (query.layerid !== layer.layerId || query.visible === false || query.allow_empty_search === false)
+                                continue;
+                            tables.push({
+                                service: layer.service,
+                                query: query,
+                                layerTitle: layer.layer && layer.layer.name ? layer.layer.name.split('\\').pop() : layer.layerId
+                            });
+                        }
+                    }
+                    if (tables.length === 0)
+                        return [];
+
+                    const showTable = function (table) {
+                        webgis.ajax({
+                            progress: webgis.l10n.get('progress-toc-table'),
+                            url: webgis.baseUrl + '/rest/services/' + table.service.id + '/queries/' + table.query.id,
+                            data: webgis.hmac.appendHMACData(map.addServicesCustomRequestParameters(
+                                map.appendRequestParameters({  // incl. display filters
+                                    f: 'json',
+                                    c: 'query',
+                                    _source: 'toc-table'
+                                }, table.service.id)), true),
+                            type: 'post',
+                            success: function (result) {
+                                if (webgis.checkResult(result)) {
+                                    map.events.fire('onnewfeatureresponse', result);
+                                    map.ui.showQueryResults(result, false);
+                                }
+                            }
+                        });
+                    };
+
+                    const text = webgis.l10n.get('toc-item-menu-table'),
+                        icon = webgis.baseUrl + '/content/api/img/tab-control/edit-table_26@1.png';
+
+                    if (tables.length === 1) {
+                        return [{
+                            text: text,
+                            icon: icon,
+                            data: { action: function () { showTable(tables[0]); } }
+                        }];
+                    }
+
+                    return [{
+                        text: text,
+                        icon: icon,
+                        items: tables.map(function (table) {
+                            const ambiguous = tables.some(function (t) { return t !== table && t.query.name === table.query.name; });
+                            return {
+                                text: ambiguous && table.layerTitle !== table.query.name
+                                    ? table.layerTitle + ': ' + table.query.name
+                                    : table.query.name,
+                                data: { action: function () { showTable(table); } }
+                            };
+                        })
+                    }];
+                }
+            },
             {   // user renderer ("Darstellung"): only single layers with allow_user_renderer (AGS DynamicLayers)
                 hasItems: function ($li) {
                     return $li.get(0).hasTocLayers === true;

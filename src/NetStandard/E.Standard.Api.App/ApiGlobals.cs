@@ -35,6 +35,12 @@ static public class ApiGlobals
 
     public static int MaxFeatureHoverHighlightVerticesCount = 1000;
 
+    /// <summary>
+    /// Feature limit of the TOC context menu "table" (whole data set query), if the CMS query has no maxfeatures.
+    /// api.config: <c>toc-contextmenu:table-feature-limit</c>
+    /// </summary>
+    public static int TocTableFeatureLimit = 1000;
+
     public const string DownloadFileExtension = ".download";
     public const string PrintOutputPrefix = "_print_";
     public const string ProfileOutputPrefix = "_profile_";

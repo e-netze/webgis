@@ -44,6 +44,14 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
     [System.Text.Json.Serialization.JsonIgnore]
     public bool AllowEmptyQueries { get; set; }
 
+    /// <summary>
+    /// Only serialized, if empty queries are not allowed (CMS allowemptysearch=false), eg. hides the TOC "table" menu item
+    /// </summary>
+    [JsonProperty(PropertyName = "allow_empty_search", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("allow_empty_search")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public bool? allow_empty_search => AllowEmptyQueries ? null : false;
+
     [JsonProperty("layerid")]
     [System.Text.Json.Serialization.JsonPropertyName("layerid")]
     public string LayerId { get; set; }

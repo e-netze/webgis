@@ -43,6 +43,12 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-querybuilder)
 - Viewer: query and identify results can be narrowed down in the results table with the Query Builder (table tool "Restrict"); the original query including its query geometry is re-run with the additional conditions, and the restriction can be removed again. Available for services where the Query Builder is allowed.
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/search_identify/operations/results_desktop/results_desktop.html#results-query-restriction)
+- Viewer: the table of contents context menu has a new item "Table" that lists the features of a queryable layer in the results table, where they can be narrowed down with "Restrict"; the maximum number of features is set with `table-feature-limit` in the `api.config` section `toc-contextmenu` (default `1000`), the item can be hidden with `webgis.usability.allowTocTable = false`.
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-table)
+  [Docs api.config](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-toc-contextmenu)
+  [Docs custom.js](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-toc-table)
+- Viewer: the Query Builder offers the operators `not like`, `not in`, `is null` and `is not null`, checks values before applying them, and the context menu entry is now called "Display filter (DefinitionQuery)".
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-querybuilder)
 
 ### Fixed
 
