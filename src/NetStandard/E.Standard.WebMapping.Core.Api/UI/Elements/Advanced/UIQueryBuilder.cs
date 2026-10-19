@@ -10,6 +10,10 @@ namespace E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 
 public class UIQueryBuilder : UICollapsableElement
 {
+    public const int AutocompleteMaxValues = 20;
+    public const int MaxDistinctComboValues = 25;
+    public const string DateValueTemplate = "DATE '{0}'";
+
     private List<FieldDef> _fieldDefs = new List<FieldDef>();
 
     public UIQueryBuilder()
@@ -40,6 +44,15 @@ public class UIQueryBuilder : UICollapsableElement
     [System.Text.Json.Serialization.JsonPropertyName("whereclause_parts")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string[]? WhereClauseParts { get; private set; }
+
+    /// <summary>
+    /// Url (tool method source) for value suggestions. The client appends field, mode (autocomplete|distinct) and term.
+    /// Null => no live values, only type dependent inputs.
+    /// </summary>
+    [JsonProperty("values_source", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("values_source")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? ValuesSource { get; set; }
 
     public void TryAddField(string fieldName, FieldType fieldType = FieldType.Unknown, string? alias = null)
     {
@@ -80,6 +93,8 @@ public class UIQueryBuilder : UICollapsableElement
             @"|\bLIKE\b|\bIN\b" +
             // IN-lists in parentheses
             @"|\([^\)]*\)" +
+            // date/timestamp literals: DATE '2024-01-31'
+            @"|\b(?:DATE|TIMESTAMP)\s*'(?:[^']|'')*'" +
             // string literals with escaped ''
             @"|'(?:[^']|'')*'" +
             // identifiers
@@ -117,6 +132,13 @@ public class UIQueryBuilder : UICollapsableElement
                 continue;
             }
 
+            var dateLiteral = Regex.Match(t, @"^(?:DATE|TIMESTAMP)\s*'(.*)'$", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            if (dateLiteral.Success)
+            {
+                tokens.Add(dateLiteral.Groups[1].Value.Replace("''", "'"));
+                continue;
+            }
+
             if (t.Length >= 2 && t[0] == '\'' && t[^1] == '\'')
             {
                 // string literal without outer quotes, '' -> '
@@ -145,6 +167,7 @@ public class UIQueryBuilder : UICollapsableElement
                 case FieldType.String:
                     Operators = new[] { "=", " like ", " in ", "<>", ">", ">=", "<", "<=" };
                     ValueTemplate = "'{0}'";
+                    ValueType = "string";
                     break;
                 case FieldType.Interger:
                 case FieldType.BigInteger:
@@ -153,17 +176,29 @@ public class UIQueryBuilder : UICollapsableElement
                 case FieldType.Double:
                     Operators = new[] { "=", " in ", "<>", ">", ">=", "<", "<=" };
                     ValueTemplate = "{0}";
+                    ValueType = "number";
+                    break;
+                case FieldType.Date:
+                    Operators = new[] { "=", "<>", ">", ">=", "<", "<=" };
+                    ValueTemplate = DateValueTemplate;
+                    ValueType = "date";
                     break;
                 case FieldType.Boolean:
                     Operators = new[] { "=", "<>" };
                     ValueTemplate = "{0}"; // ???
+                    ValueType = "boolean";
                     break;
                 default:
                     Operators = new[] { "=" };
                     ValueTemplate = "'{0}'";
+                    ValueType = "unknown";
                     break;
             }
         }
+
+        [JsonProperty("field_type")]
+        [System.Text.Json.Serialization.JsonPropertyName("field_type")]
+        public string ValueType { get; set; }
 
         [JsonProperty("name")]
         [System.Text.Json.Serialization.JsonPropertyName("name")]

@@ -618,6 +618,10 @@
 
     // querybuilder
     "querybuilder-invalid-query": "Keine gültige Abfrage",
+    "querybuilder-enter-text": "Text eingeben",
+    "querybuilder-enter-number": "Zahl eingeben",
+    "querybuilder-enter-date": "Datum wählen",
+    "querybuilder-enter-values-comma": "Werte durch Komma getrennt",
 
     // construct
     "direction-azimuth": "Richtung (Azimut)",

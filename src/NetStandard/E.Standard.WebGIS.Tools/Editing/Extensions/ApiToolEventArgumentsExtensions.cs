@@ -351,6 +351,14 @@ static internal class ApiToolEventArgumentsExtensions
 
         foreach (var queryDef in queryBuilderResult.QueryDefs)
         {
+            if (UIQueryBuilder.DateValueTemplate.Equals(queryDef.ValueTemplate)
+                && !DateTime.TryParseExact(queryDef.Value?.Trim(), "yyyy-MM-dd",
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        System.Globalization.DateTimeStyles.None, out _))
+            {
+                throw new ArgumentException($"Invalid date value for field {queryDef.Field}: {queryDef.Value} (expected yyyy-MM-dd)");
+            }
+
             string value = queryDef.Operator switch
             {
                 " in " => String.Format("({0})",

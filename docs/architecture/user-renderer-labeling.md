@@ -123,6 +123,9 @@ User/admin docs:
   for layers with a user renderer.
 - Definitions loaded from a saved map are dropped when the layer no longer has the capability flag.
 - `RestHelperService` only sets the flags when both CMS authorization and layer capability are true.
+- "Load values" / "Calculate classes" respect the display filters of the layer: `UserRenderer` is
+  `VisFilterDependent`, the renderer editor sends `visfilter_dependent: true` for its ad-hoc tool
+  calls, and the distinct query uses `applyRequestVisFilters: true` (see [Query Builder](querybuilder.md)).
 - Tests: `UserRendererValidatorTests`, `UserLabelingValidatorTests` (Core.Tests),
   `AgsUserRendererTranslatorTests`, `AgsUserLabelingTranslatorTests` (GeoServices.Tests). Manually
   check map, legend, print and map save/load.
@@ -140,3 +143,4 @@ User/admin docs:
 | Version | Change | Reference |
 |---------|--------|-----------|
 | `9.26.4104` | User renderer (simple, unique values, class breaks), user labeling, TOC badges, filter reset; legacy labeling removed; `tool-visfilter` renamed to `toc-contextmenu` | `6d55579b`, `c64b70c1`, `4e827a25`, `43b75d77`, `6f9d024b` |
+| `9.26.4104` | Distinct values / field range respect display filters and locked filters | branch `v9-querybuilder` |

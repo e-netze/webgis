@@ -618,6 +618,10 @@
 
     // querybuilder
     "querybuilder-invalid-query": "Not a valid query",
+    "querybuilder-enter-text": "Enter text",
+    "querybuilder-enter-number": "Enter number",
+    "querybuilder-enter-date": "Select date",
+    "querybuilder-enter-values-comma": "Comma separated values",
 
     // construct
     "direction-azimuth": "Direction (azimuth)",

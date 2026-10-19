@@ -126,6 +126,24 @@ public class WhereParserTests
     }
 
     [Fact]
+    public void Parses_DateLiterals_AsSingleValueToken()
+    {
+        AssertTokens(
+            "CREATED>=DATE '2024-01-31' and CREATED < date '2024-12-31' or UPDATED=TIMESTAMP '2024-02-01'",
+            new[] { "CREATED", ">=", "2024-01-31", "and", "CREATED", "<", "2024-12-31", "or", "UPDATED", "=", "2024-02-01" }
+        );
+    }
+
+    [Fact]
+    public void DoesNotTreat_FieldNamedDate_AsDateLiteral()
+    {
+        AssertTokens(
+            "DATE='x' and DATE_FROM>=DATE '2024-01-01'",
+            new[] { "DATE", "=", "x", "and", "DATE_FROM", ">=", "2024-01-01" }
+        );
+    }
+
+    [Fact]
     public void CaseInsensitive_Keywords_AreRecognized()
     {
         AssertTokens(

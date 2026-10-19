@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using E.Standard.WebGIS.Core.Reflection;
@@ -29,7 +30,10 @@ public class DebugUIAdvancedSelectors : DebugUIToolBase, IApiButtonResources
     private const string IdPrefix = "debug-ui-advsel-";
 
     private const string QueryBuilderCommand = "querybuilder";  // fixed command name, sent by the webgis_queryBuilder plugin
+    private const string QueryBuilderValuesCommand = "querybuilder-values";
     private const string OverlayInfoCommand = "overlay-info";
+
+    private static readonly string[] QueryBuilderNames = ["Anna", "Andreas", "Bernhard", "Berta", "Christian", "Doris", "Gernot", "Hannelore", "Maria", "Markus", "O'Reilly"];
     private const string OverlayZoomCommand = "overlay-zoom";
 
     private static readonly string[] Images = ["pointer", "rectangle", "polygon", "circle"];
@@ -112,7 +116,14 @@ public class DebugUIAdvancedSelectors : DebugUIToolBase, IApiButtonResources
                     QueryBuilder("querybuilder", showGeometryOption: true, argument: "empty"),
                     new UILabel() { label = "initial where clause: NAME like 'A%' and AREA >= 100 or IS_ACTIVE = 1" },
                     QueryBuilder("querybuilder-where", showGeometryOption: false, argument: "where",
-                        whereClause: "NAME like 'A%' and AREA >= 100 or IS_ACTIVE = 1")),
+                        whereClause: "NAME like 'A%' and AREA >= 100 or IS_ACTIVE = 1"),
+                    Hint($"With values source (server command '{QueryBuilderValuesCommand}'): NAME => autocomplete (contains, from 1 char, max {UIQueryBuilder.AutocompleteMaxValues}), " +
+                         $"COUNT => number with suggestion list (<= {UIQueryBuilder.MaxDistinctComboValues} values), AREA => number input only (> {UIQueryBuilder.MaxDistinctComboValues} values), " +
+                         "CREATED => date picker (shown d.m.Y, value yyyy-mm-dd), operator ' in ' => text input (comma separated)."),
+                    new UILabel() { label = "with values source, initial: COUNT >= 3 and CREATED < DATE '2024-06-30'" },
+                    QueryBuilder("querybuilder-values", showGeometryOption: false, argument: "values",
+                        whereClause: "COUNT >= 3 and CREATED < DATE '2024-06-30'",
+                        valuesSource: UIInputAutocomplete.MethodSource(bridge, GetType(), QueryBuilderValuesCommand))),
 
                 Section("static overlay control",
                     Hint("Lists the static overlay services of the map (e.g. added by the georeferencing tool) => without overlays the list is empty. " +
@@ -151,6 +162,35 @@ public class DebugUIAdvancedSelectors : DebugUIToolBase, IApiButtonResources
     public ApiEventResponse OnQueryBuilder(IBridge bridge, ApiToolEventArguments e)
         => EchoResponse(e, "Echo: querybuilder (see <id>-result)");
 
+    [ServerToolCommand(QueryBuilderValuesCommand)]
+    public ApiEventResponse OnQueryBuilderValues(IBridge bridge, ApiToolEventArguments e)
+    {
+        string term = e["term"] ?? String.Empty;
+
+        if (e["mode"] == "autocomplete")
+        {
+            return new ApiRawJsonEventResponse(QueryBuilderNames
+                .Where(n => n.Contains(term, StringComparison.OrdinalIgnoreCase))
+                .Take(UIQueryBuilder.AutocompleteMaxValues)
+                .ToAutocompleteItems()
+                .ToArray());
+        }
+
+        var values = e["field"] switch
+        {
+            "COUNT" => Enumerable.Range(1, 10).Select(i => i.ToString()).ToArray(),
+            _ => Enumerable.Range(1, UIQueryBuilder.MaxDistinctComboValues + 1)
+                           .Select(i => (i * 10.5).ToString(System.Globalization.CultureInfo.InvariantCulture))
+                           .ToArray()
+        };
+
+        return new ApiRawJsonEventResponse(new
+        {
+            values = values.Take(UIQueryBuilder.MaxDistinctComboValues).ToArray(),
+            truncated = values.Length > UIQueryBuilder.MaxDistinctComboValues
+        });
+    }
+
     [ServerToolCommand(OverlayInfoCommand)]
     public ApiEventResponse OnOverlayInfo(IBridge bridge, ApiToolEventArguments e)
         => EchoResponse(e, "Echo: static overlay command button 1");
@@ -168,14 +208,15 @@ public class DebugUIAdvancedSelectors : DebugUIToolBase, IApiButtonResources
     private string[] ImageUrls()
         => Array.ConvertAll(Images, i => UIImageButton.ToolResourceImage(this, i));
 
-    private UIQueryBuilder QueryBuilder(string id, bool showGeometryOption, string argument, string whereClause = null)
+    private UIQueryBuilder QueryBuilder(string id, bool showGeometryOption, string argument, string whereClause = null, string valuesSource = null)
     {
         var queryBuilder = new UIQueryBuilder()
         {
             id = Id(id),
             ShowGeometryOption = showGeometryOption,
             CallbackToolId = GetType().ToToolId(),
-            CallbackArgument = argument
+            CallbackArgument = argument,
+            ValuesSource = valuesSource
         };
 
         queryBuilder.TryAddField("NAME", FieldType.String, "Name (string)");

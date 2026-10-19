@@ -145,8 +145,14 @@ public class Bridge : IBridge
     #region Methods
 
     internal string GetFilterDefinitionQuery(QueryDTO query)
+        => GetFilterDefinitionQuery(query?.Service, query?.LayerId);
+
+    /// <summary>
+    /// Where clause of the vis filters for a layer: TOC and CMS filters of the request (optional) and locked filters (always)
+    /// </summary>
+    private string GetFilterDefinitionQuery(IMapService service, string layerId, bool includeRequestFilters = true)
     {
-        if (query == null || query.Service == null)
+        if (service == null || String.IsNullOrEmpty(layerId))
         {
             return String.Empty;
         }
@@ -155,15 +161,16 @@ public class Bridge : IBridge
 
         try
         {
-            var cmsRequestFilters = this.RequestFilters?.Where(f => f.IsTocVisFilter() == false).ToArray();
-            var tocRequestFilters = this.RequestFilters?.Where(f => f.IsTocVisFilter(query.Service.Url)).ToArray();
-            var serviceVisFilters = _cacheService.GetAllVisFilters(query.Service.Url, _userIdentification);
+            var requestFilters = includeRequestFilters ? this.RequestFilters : null;
+            var cmsRequestFilters = requestFilters?.Where(f => f.IsTocVisFilter() == false).ToArray();
+            var tocRequestFilters = requestFilters?.Where(f => f.IsTocVisFilter(service.Url)).ToArray();
+            var serviceVisFilters = _cacheService.GetAllVisFilters(service.Url, _userIdentification);
 
             #region TOC Filters
 
             if (tocRequestFilters != null && tocRequestFilters.Length > 0)
             {
-                foreach (var tocVisFilter in tocRequestFilters.Where(f => f.TocVisFilterLayerId() == query.LayerId))
+                foreach (var tocVisFilter in tocRequestFilters.Where(f => f.TocVisFilterLayerId() == layerId))
                 {
                     tocVisFilter.CheckSignature(_crypto);
 
@@ -185,13 +192,13 @@ public class Bridge : IBridge
                     {
                         if (visFilter.LayerNamesString.Split(';').Where(layerName =>
                         {
-                            var layer = query.Service.Layers.FindByName(layerName);
+                            var layer = service.Layers.FindByName(layerName);
                             if (layer == null)
                             {
                                 return false;
                             }
 
-                            return layer.ID == query.LayerId;
+                            return layer.ID == layerId;
                         }).Count() == 0)
                         {
                             continue;
@@ -205,7 +212,7 @@ public class Bridge : IBridge
                                     return false;
                                 }
 
-                                string filterId = f.Id.Contains("~") ? $"{query.Service.Url}~{visFilter.Id}" : visFilter.Id;
+                                string filterId = f.Id.Contains("~") ? $"{service.Url}~{visFilter.Id}" : visFilter.Id;
 
                                 return f.Id == filterId;
                             })
@@ -242,7 +249,7 @@ public class Bridge : IBridge
 
             if (serviceVisFilters.HasLockedFilters)
             {
-                var layer = query.Service.Layers.Where(l => l.ID == query.LayerId).FirstOrDefault();
+                var layer = service.Layers.Where(l => l.ID == layerId).FirstOrDefault();
                 if (layer != null)
                 {
                     string lockedVisFilterClause = String.Empty;
@@ -1020,7 +1027,8 @@ public class Bridge : IBridge
     }
 
     async public Task<IEnumerable<T>> QueryLayerDistinctAsync<T>(string serviceId, string layerId, string distinctField,
-                                                                 string whereClause = "", string orderBy = "", int limit = 0)
+                                                                 string whereClause = "", string orderBy = "", int limit = 0,
+                                                                 bool applyRequestVisFilters = false)
     {
         var service = (await TryGetService(serviceId)).ThrowIfNull(() => $"Unknown Service: {serviceId}");
         var layer = service.Layers?.FindByLayerId(layerId).ThrowIfNull(() => $"Unknown Layer: {layerId}");
@@ -1029,6 +1037,9 @@ public class Bridge : IBridge
         {
             return Array.Empty<T>();
         }
+
+        whereClause = (whereClause ?? String.Empty)
+            .AppendWhereClause(GetFilterDefinitionQuery(service, layer.ID, applyRequestVisFilters));
 
         return (await ((ILayerDistinctQuery)layer).QueryDistinctValues(_requestContext, distinctField, whereClause, orderBy, limit))
             .Select(v => (T)Convert.ChangeType(v, typeof(T)));

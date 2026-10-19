@@ -29,8 +29,10 @@ namespace E.Standard.WebGIS.Tools.Presentation;
 /// Not a toolbar tool: it is only called via server commands from the TOC.
 /// The renderer itself is kept and serialized by the client (service.setLayerRenderer)
 /// and sent with every map/legend/print request (parameter "renderers").
+/// VisFilterDependent: "load values"/"field range" only use the values of the currently filtered features.
 /// </summary>
 [Export(typeof(IApiButton))]
+[AdvancedToolProperties(VisFilterDependent = true)]
 public class UserRenderer : IApiServerButtonLocalizableAsync<UserRenderer>
 {
     #region IApiButton
@@ -111,7 +113,8 @@ public class UserRenderer : IApiServerButtonLocalizableAsync<UserRenderer>
         int maxClasses = UserRendererSettings.MaxUniqueValueClasses;
         var values = (await bridge.QueryLayerDistinctAsync<object>(
                             request.ServiceId, request.LayerId, field.Name,
-                            orderBy: field.Name, limit: maxClasses + 1))
+                            orderBy: field.Name, limit: maxClasses + 1,
+                            applyRequestVisFilters: true))
                      .Where(v => v != null && v is not DBNull)
                      .Select(v => Convert.ToString(v, System.Globalization.CultureInfo.InvariantCulture))
                      .Where(v => !String.IsNullOrEmpty(v))
@@ -140,7 +143,8 @@ public class UserRenderer : IApiServerButtonLocalizableAsync<UserRenderer>
             var values = await bridge.QueryLayerDistinctAsync<object>(
                                 request.ServiceId, request.LayerId, field.Name,
                                 whereClause: $"{field.Name} IS NOT NULL",
-                                orderBy: $"{field.Name} {direction}", limit: 1);
+                                orderBy: $"{field.Name} {direction}", limit: 1,
+                                applyRequestVisFilters: true);
 
             return values
                 .Select(v => ParseNumber(v))

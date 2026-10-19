@@ -88,7 +88,8 @@ public interface IBridge : IAppCryptography
     Task<int> QueryCountLayerAsync(string serviceId, string layerId, string whereClause);
 
     Task<IEnumerable<T>> QueryLayerDistinctAsync<T>(string serviceId, string layerId, string distinctField,
-                                                    string whereClause = "", string orderBy = "", int limit = 0);
+                                                    string whereClause = "", string orderBy = "", int limit = 0,
+                                                    bool applyRequestVisFilters = false);
 
     Task<IEnumerable<string>> GetHasFeatureAttachments(string serviceId, string layerId, IEnumerable<string> objectIds);
     Task<IFeatureAttachments> GetFeatureAttachments(string serviceId, string layerId, string objectId);

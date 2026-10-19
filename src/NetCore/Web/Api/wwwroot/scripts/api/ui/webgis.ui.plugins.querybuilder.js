@@ -11,6 +11,7 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
         callback_tool_id: null,
         callback_argument: null,
         whereclause_parts: null,
+        values_source: null,
         event: null,
         suppress_tool_dialog: false
     },
@@ -20,6 +21,8 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
         const $parent = this.$el
             .addClass('webgis-query-builder');
         const me = this;
+
+        this._distinctValues = {};
 
         if (options.show_geometry_option === true) {
             let $geometryOption = $("<select>")
@@ -78,7 +81,10 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
         this.addTableRow();
     },
     destroy: function () {
-        //console.log('Destroy time filter list'); 
+        const me = this;
+        this.$el.find('.webgis-query-builder-value-container').each(function (i, container) {
+            me.releaseValueInput(me.$(container));
+        });
         this.$el.off('.webgis_querybuilder');
     },
     methods: {
@@ -110,9 +116,8 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
             const $selectOperators = $("<select>")
                 .addClass('webgis-input webgis-query-builder-operators depends-on-fields')
                 .appendTo($tdOperator);
-            const $inputValue = $("<input>")
-                .addClass('webgis-input webgis-query-builder-value depends-on-fields')
-                .attr('type', 'text')
+            const $valueContainer = $("<div>")
+                .addClass('webgis-query-builder-value-container')
                 .appendTo($tdValue);
             const $hiddenValueTemplate = $("<input>")
                 .addClass('webgis-input webgis-query-builder-value-template')
@@ -157,6 +162,12 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
                 } else {
                     $row.find('.webgis-input.depends-on-fields').css('display', '');
                 }
+
+                me.buildValueInput($row);
+            });
+
+            $selectOperators.on("change.webgis_querybuilder", function () {
+                me.buildValueInput($(this).closest('.webgis-query-builder-table-row'));
             });
 
             $selectLogicalOperator.on("change.webgis_querybuilder", function (e) {
@@ -185,12 +196,148 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
                     $selectOperators.val(options.whereclause_parts.shift()).trigger('change');
                 }
                 if (options.whereclause_parts.length > 0) {
-                    $inputValue.val(options.whereclause_parts.shift());
+                    this.buildValueInput($tr, options.whereclause_parts.shift());
                 }
                 if (options.whereclause_parts.length > 0) {
                     $selectLogicalOperator.val(options.whereclause_parts.shift()).trigger('change');
                 }
             }
+        },
+        buildValueInput: function ($row, value) {
+            const $ = this.$;
+            const options = this.options;
+            const me = this;
+
+            const field = $row.find('.webgis-input.webgis-query-builder-fields').val(),
+                operator = $row.find('.webgis-input.webgis-query-builder-operators').val(),
+                fieldDef = field ? $.grep(options.field_defs, function (f) { return f.name === field; })[0] : null,
+                $container = $row.find('.webgis-query-builder-value-container');
+
+            if (value === undefined && $row.data('qb-value-field') === field) {
+                value = $container.find('.webgis-query-builder-value').val();  // operator changed => keep value
+            }
+            $row.data('qb-value-field', field);
+
+            this.releaseValueInput($container);
+
+            const $input = $("<input>")
+                .addClass('webgis-input webgis-query-builder-value depends-on-fields')
+                .attr({ type: 'text', name: 'querybuilder_value', autocomplete: 'off' })
+                .val(value || '')
+                .appendTo($container);
+
+            if (!fieldDef) {
+                return;
+            }
+            $input.css('display', 'block');
+
+            const fieldType = fieldDef.field_type,
+                valuesUrl = function (mode) {
+                    return options.values_source +
+                        '&field=' + encodeURIComponent(fieldDef.name) +
+                        '&mode=' + mode;
+                };
+
+            if (operator === ' in ') {
+                $input.attr('placeholder', webgis.l10n.get('querybuilder-enter-values-comma'));
+            } else if (fieldType === 'number') {
+                $input.attr({ type: 'number', step: 'any', placeholder: webgis.l10n.get('querybuilder-enter-number') });
+
+                if (options.values_source) {
+                    this.distinctValues(fieldDef.name, valuesUrl('distinct'), function (values) {
+                        if (!values || values.length === 0 || !$.contains(document, $input[0])) {
+                            return;
+                        }
+
+                        const listId = options.id + '-values-' + $row.attr('row-id');
+                        const $datalist = $("<datalist>").attr('id', listId).appendTo($container);
+                        for (const v of values) {
+                            $("<option>").attr('value', v).appendTo($datalist);
+                        }
+                        $input.attr('list', listId);
+                    });
+                }
+            } else if (fieldType === 'date') {
+                $input.attr('placeholder', webgis.l10n.get('querybuilder-enter-date'));
+
+                webgis.require('flatpickr', function ($input) {
+                    if (!$.contains(document, $input[0])) {
+                        return;
+                    }
+                    $input.flatpickr({
+                        weekNumbers: true,
+                        locale: 'de',
+                        dateFormat: 'Y-m-d',  // value sent to the server: DATE 'yyyy-mm-dd'
+                        altInput: true,
+                        altFormat: 'd.m.Y',
+                        altInputClass: 'webgis-input webgis-query-builder-value-display',
+                        allowInput: false
+                    });
+                    $container.find('.webgis-query-builder-value-display')
+                        .attr('placeholder', webgis.l10n.get('querybuilder-enter-date'))
+                        .css('display', 'block');
+                }, $input);
+            } else if (fieldType === 'string') {
+                $input.attr('placeholder', webgis.l10n.get('querybuilder-enter-text'));
+
+                if (options.values_source) {
+                    $input
+                        .addClass('webgis-autocomplete')
+                        .attr('data-source', valuesUrl('autocomplete'))
+                        .attr('data-minlength', 1);
+                    webgis._appendAutocomplete($container);
+                }
+            }
+        },
+        releaseValueInput: function ($container) {
+            const $ = this.$;
+
+            $container.find('.webgis-query-builder-value').each(function (i, input) {
+                if (input._flatpickr) {
+                    input._flatpickr.destroy();
+                }
+                if ($(input).hasClass('tt-input') && $.fn.typeahead) {
+                    $(input).typeahead('destroy');
+                }
+            });
+            $container.empty();
+        },
+        distinctValues: function (fieldName, url, callback) {
+            const cache = this._distinctValues;
+            let entry = cache[fieldName];
+
+            if (entry) {
+                if (entry.values) {
+                    callback(entry.values);
+                } else {
+                    entry.callbacks.push(callback);
+                }
+                return;
+            }
+
+            entry = cache[fieldName] = { values: null, callbacks: [callback] };
+            const resolve = function (values) {
+                entry.values = values;
+                const callbacks = entry.callbacks;
+                entry.callbacks = [];
+                for (const cb of callbacks) {
+                    cb(values);
+                }
+            };
+
+            webgis.ajax({
+                url: url + webgis.hmac.urlParameters(),
+                type: 'get',
+                success: function (result) {
+                    // truncated => too many values for a list => only number input
+                    resolve(result && result.truncated !== true && Array.isArray(result.values)
+                        ? result.values
+                        : []);
+                },
+                error: function () {
+                    resolve([]);
+                }
+            });
         },
         nextRowId: function () {
             const $ = this.$;

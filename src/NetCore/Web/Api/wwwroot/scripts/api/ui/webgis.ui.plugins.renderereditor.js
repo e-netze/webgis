@@ -365,6 +365,7 @@ webgis.ui.definePlugin('webgis_rendererEditor', {
                 type: 'servertoolcommand_ext',
                 command: 'field_range',
                 map: o.map,
+                visfilter_dependent: true,  // only values of the currently filtered features
                 suppressToolDialog: true,
                 argument: JSON.stringify({ serviceId: o.service_id, layerId: o.layer_id, field: r.field })
             };
@@ -630,6 +631,7 @@ webgis.ui.definePlugin('webgis_rendererEditor', {
                 type: 'servertoolcommand_ext',
                 command: 'distinct_values',
                 map: o.map,
+                visfilter_dependent: true,  // only values of the currently filtered features
                 suppressToolDialog: true,
                 argument: JSON.stringify({ serviceId: o.service_id, layerId: o.layer_id, field: r.field })
             };

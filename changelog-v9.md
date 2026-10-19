@@ -234,6 +234,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     (``ILayer3.FeaturesCountOnly``) only when the limit was reached. Errors are ignored.
   * Other service types (without count support) keep the previous notification.
 
+- QueryBuilder (TOC display filter): value suggestions after selecting a field, depending on the
+  field type (new ``UIQueryBuilder.ValuesSource`` / ``values_source`` and ``field_type``).
+  * Strings: autocomplete from the first character (``LIKE '%...%'``, max. 20 values).
+  * Numbers: ``input type=number`` with a datalist if the layer has ≤ 25 distinct values,
+    otherwise a placeholder; operators ``<``, ``>``, ``<=``, ``>=``.
+  * Dates: Flatpickr date picker, ``DATE 'yyyy-mm-dd'`` literals (also parsed by the where
+    parser), operators ``<``, ``>``, ``<=``, ``>=``.
+  * Values are queried live via the new ``VisFilter`` server command ``querybuilder-values``
+    (``IBridge.QueryLayerDistinctAsync``, currently ArcGIS Server only). Active display filters are
+    not applied, locked filters always are. Thresholds are constants in ``UIQueryBuilder``.
+  * Demo in the debug UI tool "Advanced Selectors".
+
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-querybuilder),
+  [Architecture](docs/architecture/querybuilder.md)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.
@@ -257,3 +272,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Toolbox (advanced tool behaviour, ``no-toolbox``): after closing a tool dialog with "x", the
   active tool was no longer highlighted (``selected``) in the toolbar, because the re-initialized
   toolbox did not register its ``onchangeactivetool`` handler again.
+- User presentation: "Load values" (unique values) and "Calculate classes" ignored the display
+  filter set for the layer (e.g. via the QueryBuilder) and returned the values of all features.
+  * ``IBridge.QueryLayerDistinctAsync`` now always applies the locked (CMS) filters of the layer and,
+    with ``applyRequestVisFilters: true``, also the display filters of the request.
+  * ``UserRenderer`` is ``VisFilterDependent``; the renderer editor sends ``visfilter_dependent``
+    for its ad-hoc tool calls, so the ``filters`` parameter is transmitted.
+
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-user-renderer),
+  [Architecture](docs/architecture/querybuilder.md)

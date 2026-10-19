@@ -21,6 +21,7 @@ which projects and classes are involved, flow diagrams, design decisions and pit
 | [Detachable Windows](detachable-windows.md) | Viewer | `webgis.windowManager`: detach toolbar/query results into a Document Picture-in-Picture window, jQuery hooks, restore state. |
 | [Expressions & AutoValues](expressions-autovalues.md) | API / Editing / CMS | Expression language (parser, syntax detection), Editing AutoValues, table column expressions. |
 | [Logging & Observability](logging-observability.md) | API / CMS / Portal | Logging backends and fan-out, DB batch logging, OpenTelemetry, Serilog. |
+| [Query Builder & Value Suggestions](querybuilder.md) | API / Viewer | Query Builder field types/operators, live value suggestions (autocomplete, number list, date picker), filters on distinct queries. |
 | [Query Results](query-results.md) | API / Viewer | Query results end-to-end: QueryEngine, DTO metadata, result table/list paging, export. |
 | [TOC Context Menu & Properties](toc-context-menu.md) | Viewer / Portal | TOC item/group context menu (provider list, hover submenus), Query Builder per layer, properties dialog. |
 | [Tool Events](tool-events.md) | API / Viewer | `/rest/toolevent` request: client parameter collection, JSON `eventBody`, server-side parsing into `ApiToolEventArguments`. |
