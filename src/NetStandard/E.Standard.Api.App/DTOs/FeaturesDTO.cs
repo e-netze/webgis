@@ -417,6 +417,32 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
         [System.Text.Json.Serialization.JsonPropertyName("hash")]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public string HashCode { get; set; }
+
+        /// <summary>
+        /// Set, if the result can be restricted with the QueryBuilder (table tools)
+        /// </summary>
+        [JsonProperty("query_restriction", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonPropertyName("query_restriction")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public QueryRestrictionMeta QueryRestriction { get; set; }
+    }
+
+    public class QueryRestrictionMeta
+    {
+        /// <summary>
+        /// Encrypted <see cref="E.Standard.WebMapping.Core.Api.Models.QueryRestrictionDescriptor"/>
+        /// </summary>
+        [JsonProperty("token")]
+        [System.Text.Json.Serialization.JsonPropertyName("token")]
+        public string Token { get; set; }
+
+        /// <summary>
+        /// Current restriction (where clause) => shown in the table, null => not restricted
+        /// </summary>
+        [JsonProperty("where", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonPropertyName("where")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public string Where { get; set; }
     }
 
     public class TableFieldDefintion

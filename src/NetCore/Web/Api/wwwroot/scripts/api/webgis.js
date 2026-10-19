@@ -2015,6 +2015,8 @@
             url: options.url,
             data: options.data,
             xhrFields: options.xhrFields,
+            // optional: called after success/error, also if the request was canceled by the user
+            complete: typeof options.complete === 'function' ? function () { options.complete(); } : undefined,
             success: function (result) {
                 if (progress_message) {
                     webgis.hideProgress(progress_message);

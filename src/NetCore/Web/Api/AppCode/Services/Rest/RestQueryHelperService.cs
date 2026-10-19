@@ -23,6 +23,7 @@ using E.Standard.WebGIS.Core;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Extensions;
+using E.Standard.WebMapping.Core.Api.Models;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Extensions;
@@ -202,6 +203,25 @@ public class RestQueryHelperService
                 resultFeatures.metadata.ServiceId = serviceId;
                 resultFeatures.metadata.QueryId = queryId;
                 resultFeatures.metadata.HashCode = resultFeatures.CalcHashCode();
+
+                if (form == null || !form.AllKeys.Any(k => k != null && (k.StartsWith("#") || k.StartsWith("~"))))
+                {
+                    var restriction = new QueryRestrictionDescriptor()
+                    {
+                        ServiceId = serviceId,
+                        QueryId = queryId,
+                        Limit = limit,
+                        Source = queryShape != null
+                            ? QueryRestrictionDescriptor.Sources.MapExtent
+                            : QueryRestrictionDescriptor.Sources.Query
+                    };
+                    restriction.SetItems(form, query.items?.Select(i => i.id) ?? [],
+                        key => query.items?.FirstOrDefault(i => i.id == key)?.name);
+                    if (restriction.TrySetGeometry(queryShape, filterSref?.Id ?? 0))
+                    {
+                        resultFeatures.TrySetQueryRestriction(restriction, query, _cache, _crypto, ui);
+                    }
+                }
             }
 
             if (resultFeatures.metadata != null && query?.Service?.Layers != null)
@@ -509,6 +529,9 @@ public class RestQueryHelperService
         var engine = new QueryEngine();
         FeatureCollection queryFeatures = await engine.PerformAsync(_requestContext, query, bufferFilter, appendFilterClause: visFilterClause, timeEpoch: timeEpoch) ? engine.Features : new FeatureCollection();
 
+        // before mergedBufferPolygon is transformed (json output)
+        var queryRestriction = QueryRestrictionDescriptor.Create(serviceId, queryId, bufferFilter, source: QueryRestrictionDescriptor.Sources.Buffer);
+
         #region Try Order Features (Original first)
 
         try
@@ -583,7 +606,8 @@ public class RestQueryHelperService
                 await System.IO.File.WriteAllTextAsync($"{_urlHelper.OutputPath()}/{bufferId}.json", bufferJsonString);
             }
 
-            return await controller.JsonObject(watch.Apply<FeaturesDTO>(new FeaturesDTO(returnFeatures, FeaturesDTO.Meta.Tool.Buffer, select: true, customSelection: bufferId, sortColumns: query.AutoSortFields)));
+            return await controller.JsonObject(watch.Apply<FeaturesDTO>(new FeaturesDTO(returnFeatures, FeaturesDTO.Meta.Tool.Buffer, select: true, customSelection: bufferId, sortColumns: query.AutoSortFields)
+                .TrySetQueryRestriction(queryRestriction, query, _cache, _crypto, ui)));
         }
 
         return await controller.ApiObject(new FeaturesDTO(returnFeatures, FeaturesDTO.Meta.Tool.Buffer, sortColumns: query.AutoSortFields));

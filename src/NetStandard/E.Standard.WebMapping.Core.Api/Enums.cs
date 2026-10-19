@@ -167,6 +167,7 @@ public enum ApiClientButtonCommand
     setgraphicsdimlinelengthunit = 90,
     setgraphicsdimlinelabeltotallength = 91,
     timefilterremoveall = 92,
+    showpreviewgeometry = 93,
 }
 
 public enum ApiToolEvents

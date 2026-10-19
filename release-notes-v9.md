@@ -41,6 +41,8 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Viewer: when a query hits the result limit, the notification above the results table also shows the total number of hit features (ArcGIS Server services).
 - Viewer: the Query Builder suggests values after a field is selected (autocomplete for texts, a list for numbers with few distinct values, a date picker for dates) and offers `<`, `>`, `<=`, `>=` for numbers and dates; suggestions are available for ArcGIS Server services.
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-querybuilder)
+- Viewer: query and identify results can be narrowed down in the results table with the Query Builder (table tool "Restrict"); the original query including its query geometry is re-run with the additional conditions, and the restriction can be removed again. Available for services where the Query Builder is allowed.
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/search_identify/operations/results_desktop/results_desktop.html#results-query-restriction)
 
 ### Fixed
 

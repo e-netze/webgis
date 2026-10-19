@@ -15,6 +15,7 @@ using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse;
 using E.Standard.WebMapping.Core.Api.Extensions;
+using E.Standard.WebMapping.Core.Api.Models;
 using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
@@ -245,6 +246,8 @@ internal class IdentifyServiceDesktop
         var found = new Dictionary<IQueryBridge, int>();
         var queryFilters = new Dictionary<IQueryBridge, ApiSpatialFilter>();
         WebMapping.Core.Collections.FeatureCollection features = null;
+        string performedWhereClause = null;
+        int performedLimit = 0;
 
         var tasks = new Dictionary<IQueryBridge, Task<(int Result, Exception Error)>>();
         int failedQueriesCount = 0;
@@ -288,9 +291,11 @@ internal class IdentifyServiceDesktop
                     }
                     else
                     {
+                        performedLimit = Math.Max(serviceQuery.MaxFeatures, e.GetInt(IdentifyDefault.IdentifyFeatureLimiit));
+                        performedWhereClause = filterWhereClause;
                         features = await serviceQuery.PerformAsync(bridge.RequestContext, queryFilters[serviceQuery],
                                                                    appendFilterClause: filterWhereClause,
-                                                                   limit: Math.Max(serviceQuery.MaxFeatures, e.GetInt(IdentifyDefault.IdentifyFeatureLimiit)),
+                                                                   limit: performedLimit,
                                                                    mapScale: eventScale);
                         if (features != null)
                         {
@@ -410,6 +415,8 @@ internal class IdentifyServiceDesktop
             {
                 found.Clear();
                 isMultiQuery = false;
+                performedWhereClause = null;
+                performedLimit = 0;
 
                 features = await query.PerformAsync(bridge.RequestContext, queryFilters[query]);
                 if (features != null)
@@ -582,6 +589,16 @@ internal class IdentifyServiceDesktop
                 .AddClickEvent(click)
                 .SelectFeaturesResult(!e.AsDefaultTool && performedQuery.IsSelectable)
                 .ZoomToFeaturesResult(zoom2results);
+
+            if (performedQuery is not IdentifyToolQuery && queryFilters.ContainsKey(performedQuery))
+            {
+                ((ApiFeaturesEventResponse)response).QueryRestriction = QueryRestrictionDescriptor.Create(
+                        performedQuery.GetServiceId(), null,
+                        queryFilters[performedQuery],
+                        where: performedWhereClause,
+                        limit: performedLimit,
+                        source: QueryRestrictionDescriptor.Sources.Identify);
+            }
 
             SetPointerTool(response);
         }

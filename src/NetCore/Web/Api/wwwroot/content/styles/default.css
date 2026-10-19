@@ -1264,6 +1264,30 @@ img.tile {
     line-height: 16px;
 }
 
+.webgis-result-restricted-notification {
+    background-color: #ffc;
+    color: #000;
+    padding: 4px 8px;
+    font-size: 12px;
+    line-height: 16px;
+    overflow-wrap: anywhere;
+}
+
+.webgis-query-restriction-show-geometry {
+    margin: 2px 0px 2px 8px;
+    padding: 2px 8px;
+    min-width: 0px;
+}
+
+.webgis-result-restricted-notification .webgis-result-restricted-remove {
+    float: right;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 0px 4px;
+    margin-left: 8px;
+}
+
 .webgis-result-list-truncated-notice {
     color: var(--webgis-ui-text-label);
     background-color: var(--webgis-ui-surface-subtle, #f5f5f5);
@@ -6191,6 +6215,18 @@ select.webgis-not-valid {
 }
 
 /****** Query Builder ******/
+.webgis-query-builder .webgis-query-builder-busy img {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+
+.webgis-query-builder.webgis-query-builder-busy-state .webgis-query-builder-table,
+.webgis-query-builder.webgis-query-builder-busy-state .webgis-query-builder-geometry-option {
+    pointer-events: none;
+    opacity: .6;
+}
+
 .webgis-query-builder .webgis-query-builder-table {
     width: 100%;
 }

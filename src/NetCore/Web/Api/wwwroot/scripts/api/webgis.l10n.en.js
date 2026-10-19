@@ -622,6 +622,11 @@
     "querybuilder-enter-number": "Enter number",
     "querybuilder-enter-date": "Select date",
     "querybuilder-enter-values-comma": "Comma separated values",
+    "querybuilder-restrict-result": "Restrict",
+    "querybuilder-restrict-result-tooltip": "Restrict the query result with the query builder (not a display filter)",
+    "querybuilder-restricted": "Restricted: {where}",
+    "querybuilder-remove-restriction": "Remove restriction",
+    "querybuilder-in-progress": "Executing query...",
 
     // construct
     "direction-azimuth": "Direction (azimuth)",

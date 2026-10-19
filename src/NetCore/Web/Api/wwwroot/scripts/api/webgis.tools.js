@@ -24,6 +24,7 @@
         rasteridentify: 'webgis.tools.rasteridentify',
         chainage: 'webgis.tools.chainage',
         queryResults: 'webgis.tools.queryresulttable',
+        queryRestriction: 'webgis.tools.queryresultrestriction',
         markerInfo: 'webgis.tools.markerinfo',
         addtoselection: 'webgis.tools.addtoselection',
         removefromselection:"webgis.tools.removefromselection"
@@ -627,6 +628,27 @@
                 case 'execute-customtool':
                     this.executeCustomTool(map, activeTool, null);
                     break;
+                case 'showpreviewgeometry':
+                    // data: { geometry: GeoJSON geometry or feature collection (WGS84), bbox: [minx, miny, maxx, maxy] (WGS84) }
+                    if (map && map.graphics && data && data.geometry) {
+                        let geometry = typeof data.geometry === 'string' ? JSON.parse(data.geometry) : data.geometry;
+                        if (geometry.features) {
+                            geometry = geometry.features.length > 0 ? geometry.features[0].geometry : null;
+                        }
+                        if (!geometry) {
+                            break;
+                        }
+                        if (data.bbox && data.bbox.length === 4 && !map.inExtent(data.bbox)) {
+                            // never zoom in further than the current scale (eg. identify points)
+                            map.zoomToBoundsOrScale(data.bbox, map.scale());
+                        }
+                        map.graphics.addPreviewFromJson(geometry, false, true);
+                        clearTimeout(map._previewGeometryTimer);
+                        map._previewGeometryTimer = setTimeout(function () {
+                            map.graphics.removePreview();
+                        }, 3000);
+                    }
+                    break;
             }
 
             //console.log(tool.command);
@@ -950,6 +972,7 @@
                 url: webgis.baseUrl + '/rest/toolevent',
                 type: 'post',
                 data: webgis.hmac.appendHMACData(data),
+                complete: typeof tool.onRequestComplete === 'function' ? tool.onRequestComplete : undefined,
                 success: function (result) {
                     if (tool.handleToolResponseCustomHandler) {
                         tool.handleToolResponseCustomHandler(result);

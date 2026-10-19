@@ -1,5 +1,6 @@
 ﻿using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
+using E.Standard.WebMapping.Core.Api.Models;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
@@ -42,4 +43,10 @@ public class ApiFeaturesEventResponse : ApiEventResponse
     public string QueryToolId { get; }
 
     public string CustomSelectionId { get; set; }
+
+    /// <summary>
+    /// Describes how the result can be re-executed with a QueryBuilder restriction.
+    /// Only sent to the client (encrypted), if the QueryBuilder is allowed for the service
+    /// </summary>
+    public QueryRestrictionDescriptor QueryRestriction { get; set; }
 }

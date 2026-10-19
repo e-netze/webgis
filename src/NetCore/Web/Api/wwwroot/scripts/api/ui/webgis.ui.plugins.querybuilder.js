@@ -10,6 +10,8 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
         show_geometry_option: false,
         callback_tool_id: null,
         callback_argument: null,
+        callback_visfilter_dependent: false,
+        remove_button_label: null,
         whereclause_parts: null,
         values_source: null,
         event: null,
@@ -52,30 +54,35 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
             .appendTo($parent);
 
         const $buttonBar = $("<div>")
+            .addClass('webgis-query-builder-buttonbar')
             .css({ textAlign: 'right', padding: '10px 0px 10px 0px' })
             .appendTo($parent);
+
+        $("<div>")
+            .addClass('webgis-query-builder-busy')
+            .css('display', 'none')
+            .append($("<img>").attr('src', webgis.css.imgResource('loader1.gif', 'hourglass')))
+            .append($("<span>").css('margin-left', '6px').text(webgis.l10n.get('querybuilder-in-progress')))
+            .appendTo($buttonBar);
+
+        if (options.remove_button_label) {
+            // submits an empty definition => the callback tool removes all conditions (eg. a result restriction)
+            $("<button>")
+                .addClass('webgis-button uibutton-cancel webgis-query-builder-remove-button')
+                .css('margin-right', '8px')
+                .text(options.remove_button_label)
+                .appendTo($buttonBar)
+                .on("click.webgis_querybuilder", function () {
+                    me.submit({ geometry_option: null, query_defs: [] });
+                });
+        }
 
         $("<button>")
             .addClass('webgis-button')
             .text(webgis.l10n.get('apply'))
             .appendTo($buttonBar)
             .on("click.webgis_querybuilder", function () {
-                const map = options.map;
-
-                webgis.log('options.event', options.event);
-                const customEventParameters = [];
-                customEventParameters[options.id + '-result'] = JSON.stringify(me.queryDefinitions());
-                const wrappedEvent = new webgis.tools.wrapperEvent(options.event, customEventParameters);
-
-                webgis.tools.onButtonClick(map, {
-                    id: options.callback_tool_id || map.getActiveTool().id,
-                    command: 'querybuilder',
-                    type: 'servertoolcommand_ext',
-                    map: map,
-                    suppressToolDialog: options.suppress_tool_dialog === true,
-                    argument: options.callback_argument,
-                    event: wrappedEvent
-                });
+                me.submit(me.queryDefinitions());
             });
 
         this.addTableRow();
@@ -88,6 +95,42 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
         this.$el.off('.webgis_querybuilder');
     },
     methods: {
+        submit: function (queryDefinitions) {
+            const options = this.options;
+            const map = options.map;
+            const me = this;
+
+            if (this._busy === true) {  // slow services: don't send the same request multiple times
+                return;
+            }
+            this.setBusy(true);
+
+            webgis.log('options.event', options.event);
+            const customEventParameters = [];
+            customEventParameters[options.id + '-result'] = JSON.stringify(queryDefinitions);
+            const wrappedEvent = new webgis.tools.wrapperEvent(options.event, customEventParameters);
+
+            webgis.tools.onButtonClick(map, {
+                id: options.callback_tool_id || map.getActiveTool().id,
+                command: 'querybuilder',
+                type: 'servertoolcommand_ext',
+                map: map,
+                suppressToolDialog: options.suppress_tool_dialog === true,
+                argument: options.callback_argument,
+                // callback tool is not necessarily a map tool => send the current display filters explicitly
+                visfilter_dependent: options.callback_visfilter_dependent === true ? true : undefined,
+                event: wrappedEvent,
+                onRequestComplete: function () { me.setBusy(false); }
+            });
+        },
+        setBusy: function (busy) {
+            this._busy = busy === true;
+
+            const $buttonBar = this.$el.children('.webgis-query-builder-buttonbar');
+            $buttonBar.children('button').css('display', this._busy ? 'none' : '');
+            $buttonBar.children('.webgis-query-builder-busy').css('display', this._busy ? '' : 'none');
+            this.$el.toggleClass('webgis-query-builder-busy-state', this._busy);
+        },
         addTableRow: function () {
             const $ = this.$;
             const options = this.options;

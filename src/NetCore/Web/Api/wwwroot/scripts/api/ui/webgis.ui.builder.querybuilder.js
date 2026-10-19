@@ -9,6 +9,8 @@ webgis.ui.builder['query-builder'] = (map, $newElement, element, options) => {
         show_geometry_option: element.show_geometry_option,
         callback_tool_id: element.callback_tool_id,
         callback_argument: element.callback_argument,
+        callback_visfilter_dependent: element.callback_visfilter_dependent === true,
+        remove_button_label: element.remove_button_label || null,
         whereclause_parts: element.whereclause_parts,
         values_source: element.values_source,
         event: options.event,

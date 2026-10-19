@@ -488,6 +488,14 @@ internal class IdentifyServiceMobile
                 UISetters = new List<IUISetter>(),
                 CustomSelectionId = bridge.IdentifyCustomSelection(queryShape, click.SRef, e)
             };
+
+            if (performedQuery is not IdentifyToolQuery && queryFilters.ContainsKey(performedQuery))
+            {
+                ((ApiFeaturesEventResponse)response).QueryRestriction = WebMapping.Core.Api.Models.QueryRestrictionDescriptor.Create(
+                        performedQuery.GetServiceId(), null,
+                        queryFilters[performedQuery],
+                        source: WebMapping.Core.Api.Models.QueryRestrictionDescriptor.Sources.Identify);
+            }
         }
         else
         {

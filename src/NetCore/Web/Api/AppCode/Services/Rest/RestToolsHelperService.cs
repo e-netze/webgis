@@ -472,6 +472,8 @@ public class RestToolsHelperService
                     resultFeatures.Union();
                 }
 
+                resultFeatures.TrySetQueryRestriction(featuresResponse.QueryRestriction, query, _cache, _crypto, ui);
+
                 ((FeaturesResponseDTO)response).features = resultFeatures;
             }
             if (featuresResponse.FeaturesForLinks != null)  // nur 1:n Links neu setzen (zB bei remove from selection)

@@ -1,8 +1,12 @@
 ﻿#nullable enable
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+
+using E.Standard.WebMapping.Core.Abstraction;
 
 using Newtonsoft.Json;
 
@@ -39,6 +43,23 @@ public class UIQueryBuilder : UICollapsableElement
     [System.Text.Json.Serialization.JsonPropertyName("callback_argument")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string? CallbackArgument { get; set; }
+
+    /// <summary>
+    /// The callback tool needs the current display filters (eg. callback tool is not part of the map tools)
+    /// </summary>
+    [JsonProperty("callback_visfilter_dependent", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("callback_visfilter_dependent")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public bool? CallbackVisFilterDependent { get; set; }
+
+    /// <summary>
+    /// Optional: shows a button, that submits an empty definition to the callback tool (remove all conditions).
+    /// Null => no button
+    /// </summary>
+    [JsonProperty("remove_button_label", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("remove_button_label")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? RemoveButtonLabel { get; set; }
 
     [JsonProperty("whereclause_parts", NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonPropertyName("whereclause_parts")]
@@ -152,6 +173,70 @@ public class UIQueryBuilder : UICollapsableElement
         }
 
         WhereClauseParts = tokens.ToArray();
+    }
+
+    /// <summary>
+    /// Validates a client result against the (allowed) layer fields: field must exist, operator must fit the field type,
+    /// value template is taken from the server side field type and values are escaped/validated.
+    /// Throws an ArgumentException for invalid definitions.
+    /// </summary>
+    static public Result Sanitize(Result? result, IEnumerable<IField> allowedFields)
+    {
+        var queryDefs = new List<Result.QueryDef>();
+
+        foreach (var queryDef in result?.QueryDefs ?? [])
+        {
+            var field = allowedFields.FirstOrDefault(f => f.Name.Equals(queryDef.Field, StringComparison.OrdinalIgnoreCase))
+                ?? throw new ArgumentException($"The field '{queryDef.Field}' is not allowed");
+
+            var fieldDef = new FieldDef(field.Name, field.Type);
+
+            var @operator = fieldDef.Operators.FirstOrDefault(o => o.Equals(queryDef.Operator, StringComparison.OrdinalIgnoreCase))
+                ?? throw new ArgumentException($"Invalid operator for field {field.Name}: {queryDef.Operator}");
+
+            var logicalOperator = (queryDef.LogicalOperator ?? "").Trim().ToLowerInvariant();
+            if (logicalOperator != "" && logicalOperator != "and" && logicalOperator != "or")
+            {
+                throw new ArgumentException($"Invalid logical operator: {queryDef.LogicalOperator}");
+            }
+
+            var values = @operator == " in "
+                ? (queryDef.Value ?? "").Split(',').Select(v => v.Trim().Trim('\''))
+                : new[] { queryDef.Value ?? "" };
+
+            values = values.Select(v => fieldDef.ValueType switch
+            {
+                "number" => double.TryParse(v.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out _)
+                                ? v.Trim()
+                                : throw new ArgumentException($"Invalid number value for field {field.Name}: {v}"),
+                "boolean" => v.Trim().ToLowerInvariant() switch
+                {
+                    "true" or "false" or "0" or "1" => v.Trim(),
+                    _ => throw new ArgumentException($"Invalid boolean value for field {field.Name}: {v}")
+                },
+                _ => v.Replace("'", "''")
+            }).ToArray();
+
+            queryDefs.Add(new Result.QueryDef()
+            {
+                Field = field.Name,
+                Operator = @operator,
+                Value = String.Join(",", values),
+                ValueTemplate = fieldDef.ValueTemplate,
+                LogicalOperator = logicalOperator
+            });
+        }
+
+        if (queryDefs.Count > 0)
+        {
+            queryDefs[^1].LogicalOperator = "";
+        }
+
+        return new Result()
+        {
+            GeometryOption = result?.GeometryOption,
+            QueryDefs = queryDefs
+        };
     }
 
     #region Classes

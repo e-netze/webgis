@@ -622,6 +622,11 @@
     "querybuilder-enter-number": "Zahl eingeben",
     "querybuilder-enter-date": "Datum wählen",
     "querybuilder-enter-values-comma": "Werte durch Komma getrennt",
+    "querybuilder-restrict-result": "Einschränken",
+    "querybuilder-restrict-result-tooltip": "Abfrageergebnis mit dem Query Builder weiter einschränken (kein Darstellungsfilter)",
+    "querybuilder-restricted": "Eingeschränkt: {where}",
+    "querybuilder-remove-restriction": "Einschränkung entfernen",
+    "querybuilder-in-progress": "Abfrage wird ausgeführt...",
 
     // construct
     "direction-azimuth": "Richtung (Azimut)",

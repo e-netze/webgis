@@ -249,6 +249,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-querybuilder),
   [Architecture](docs/architecture/querybuilder.md)
 
+- Query result restriction: the results table has a new table tool "Restrict" that opens the
+  QueryBuilder to narrow down a query/identify result (result filter, not a display filter).
+  * The original query is re-run on the server with the QueryBuilder where as an additional
+    condition, including the query geometry (identify, buffer, bbox) and the detail search items.
+  * The origin is sent to the client as a protected token (``QueryRestrictionDescriptor``) in the
+    new ``FeaturesDTO.Meta`` field ``query_restriction`` (only if the QueryBuilder is allowed for the
+    service and fields are enabled); new tool ``QueryResultRestriction`` with the commands
+    ``restrict``, ``remove-restriction`` and ``show-geometry``.
+  * The dialog shows the origin of the result (query geometry, detail search with values, original
+    where); "Show" previews the query geometry briefly (new client command ``showpreviewgeometry``).
+  * Restricted results show a hint row with the where; the restriction can be removed with the
+    "×" in the hint or with "Remove restriction" in the dialog (``UIQueryBuilder.RemoveButtonLabel``).
+  * While the request runs, the buttons are hidden and a loading indicator is shown (double clicks
+    are prevented); new optional ``complete`` callback for ``webgis.ajax`` / tool requests.
+
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/search_identify/operations/results_desktop/results_desktop.html#results-query-restriction),
+  [Architecture](docs/architecture/querybuilder.md)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

@@ -9,6 +9,7 @@ using E.Standard.Localization.Abstractions;
 using E.Standard.WebGIS.Core.Reflection;
 using E.Standard.WebGIS.Tools.Editing.Extensions;
 using E.Standard.WebGIS.Tools.Extensions;
+using E.Standard.WebGIS.Tools.Helpers;
 using E.Standard.WebGIS.Tools.Identify;
 using E.Standard.WebGIS.Tools.Presentation.Extensions;
 using E.Standard.WebGIS.Tools.Presentation.Models;
@@ -589,73 +590,11 @@ public class VisFilter : IApiServerButtonLocalizableAsync<VisFilter>,
          .ThrowIfFalse(() => "Set visibility filters from toc is not allowed");
 
         var tocVisFilterRequest = JSerializer.Deserialize<TocVisFilterRequestDTO>(e["qb_request"]);
-        string fieldName = e["field"];
-        bool autocomplete = e["mode"] == "autocomplete";
-        string term = e["term"] ?? String.Empty;
 
-        int limit = autocomplete
-            ? UIQueryBuilder.AutocompleteMaxValues
-            : UIQueryBuilder.MaxDistinctComboValues + 1;
-
-        var values = new List<string>();
-
-        if (!String.IsNullOrEmpty(fieldName) && tocVisFilterRequest?.ServiceLayers != null)
-        {
-            foreach (var serviceId in tocVisFilterRequest.ServiceLayers.Keys)
-            {
-                var allowedQueryFilterFields = bridge.GetAllowedQueryBuilderFields(serviceId);
-                if (!allowedQueryFilterFields?.Any() == true)
-                {
-                    continue;
-                }
-
-                foreach (var layerId in tocVisFilterRequest.ServiceLayers[serviceId] ?? [])
-                {
-                    var fields = await bridge.GetServiceLayerFields(serviceId, layerId);
-                    var field = allowedQueryFilterFields.SelectAllowedFields(fields.OrEmpty())
-                                    .FirstOrDefault(f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
-
-                    if (field == null)
-                    {
-                        continue;
-                    }
-
-                    string whereClause = autocomplete && !String.IsNullOrEmpty(term)
-                        ? $"UPPER({field.Name}) LIKE '%{term.ToUpperInvariant().Replace("'", "''")}%'"
-                        : $"{field.Name} IS NOT NULL";
-
-                    var layerValues = await bridge.QueryLayerDistinctAsync<object>(
-                                            serviceId, layerId, field.Name,
-                                            whereClause: whereClause,
-                                            orderBy: field.Name,
-                                            limit: limit);
-
-                    values.AddRange(layerValues
-                        .Where(v => v != null && v is not DBNull)
-                        .Select(v => Convert.ToString(v, System.Globalization.CultureInfo.InvariantCulture))
-                        .Where(v => !String.IsNullOrEmpty(v)));
-                }
-            }
-        }
-
-        var distinctValues = values.Distinct().ToArray();
-        distinctValues = distinctValues.All(v => double.TryParse(v, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out _))
-            ? distinctValues.OrderBy(v => double.Parse(v, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture)).ToArray()
-            : distinctValues.OrderBy(v => v, StringComparer.OrdinalIgnoreCase).ToArray();
-
-        if (autocomplete)
-        {
-            return new ApiRawJsonEventResponse(distinctValues
-                .Take(UIQueryBuilder.AutocompleteMaxValues)
-                .ToAutocompleteItems()
-                .ToArray());
-        }
-
-        return new ApiRawJsonEventResponse(new
-        {
-            values = distinctValues.Take(UIQueryBuilder.MaxDistinctComboValues).ToArray(),
-            truncated = distinctValues.Length > UIQueryBuilder.MaxDistinctComboValues
-        });
+        return await QueryBuilderValuesHelper.ValuesResponseAsync(bridge, e,
+            tocVisFilterRequest?.ServiceLayers?
+                .SelectMany(sl => (sl.Value ?? []).Select(layerId => (sl.Key, layerId)))
+                .ToArray() ?? []);
     }
 
     [ServerToolCommand("querybuilder")]

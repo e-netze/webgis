@@ -716,6 +716,45 @@
                 .appendTo($content);
         }
 
+        const queryRestriction = features.metadata ? features.metadata.query_restriction : null;
+        const sendQueryRestrictionCommand = function (command, domElement) {
+            if (domElement._queryRestrictionBusy === true) {  // slow services: don't send the request multiple times
+                return;
+            }
+            domElement._queryRestrictionBusy = true;
+            webgis.tools.onButtonClick(map, {
+                command: command,
+                type: 'servertoolcommand_ext',
+                id: webgis.tools.info.queryRestriction,
+                name: webgis.l10n.get('querybuilder-restrict-result'),
+                map: map,
+                suppressToolDialog: true,
+                visfilter_dependent: true,  // not a map tool => send the current display filters explicitly
+                argument: queryRestriction.token,
+                onRequestComplete: function () { domElement._queryRestrictionBusy = false; }
+            }, domElement, null, null);
+        };
+
+        if (queryRestriction && queryRestriction.where) {
+            const $restricted = $("<div>")
+                .addClass('webgis-result-restricted-notification')
+                .appendTo($content);
+            $("<span>")
+                .text(webgis.l10n.get('querybuilder-restricted', { where: queryRestriction.where }))
+                .appendTo($restricted);
+            if (queryRestriction.token && webgis.tools.info.queryRestriction) {
+                $("<span>")
+                    .addClass('webgis-result-restricted-remove')
+                    .attr('title', webgis.l10n.get('querybuilder-remove-restriction'))
+                    .text('×')
+                    .appendTo($restricted)
+                    .click(function (e) {
+                        e.stopPropagation();
+                        sendQueryRestrictionCommand('remove-restriction', this);
+                    });
+            }
+        }
+
         if (!webgis.usability.tableToolsContainerExtended) {
             $tabToolsContainer.addClass('collapsed');
             $content.addClass('tools-collapsed');
@@ -894,6 +933,16 @@
                 }
             });
         };
+
+        let createQueryRestrictionButton = function ($block) {
+            return createToolbarButton($block, 'querybuilder-restrict-result', webgis.css.imgResource('filter-26.png', 'tools'), 'querybuilder-restrict-result-tooltip')
+                .addClass('webgis-query-restriction-button' + (queryRestriction.where ? ' selected' : ''))
+                .click(function (e) {
+                    e.stopPropagation();
+                    sendQueryRestrictionCommand('restrict', this);
+                });
+        };
+        const hasQueryRestriction = queryRestriction && queryRestriction.token && webgis.tools.info.queryRestriction;
 
         let selectable = map.queryResultFeatures.supportsSelectFeatures();
         let $removeUnchecked = null, $removeChecked = null;
@@ -1088,7 +1137,14 @@
                     });
             }
 
+            if (hasQueryRestriction) {
+                createQueryRestrictionButton($toolBlock = $toolBlock || createToolbarButtonBlock('tools'));
+            }
+
             if ($toolBlock) $toolBlock.addClass('webgis-dependencies webgis-dependency-not-activetool ' + printToolIdClass);
+        }
+        else if (hasQueryRestriction) {
+            createQueryRestrictionButton(createToolbarButtonBlock('tools'));
         }
 
         let $exportBlock = createToolbarButtonBlock('export-transfer').addClass('webgis-dependencies webgis-dependency-not-activetool ' + printToolIdClass);
