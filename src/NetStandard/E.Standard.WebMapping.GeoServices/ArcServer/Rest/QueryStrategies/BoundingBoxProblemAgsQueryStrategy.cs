@@ -56,7 +56,7 @@ internal sealed class BoundingBoxProblemAgsQueryStrategy : IAgsQueryStrategy
         var queryParams = new IdsWorkaroundQueryParams
         {
             Geometry = spatialFilter?.QueryShape,
-            GeometrySrefId = spatialFilter?.FilterSpatialReference != null ? spatialFilter.FilterSpatialReference.Id : 0,
+            GeometrySrefId = resolvedInSrefId,
             Where = where,
             OutFields = String.IsNullOrWhiteSpace(filter.SubFields)
                 ? "*"

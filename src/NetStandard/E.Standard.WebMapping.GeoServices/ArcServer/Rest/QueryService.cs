@@ -383,7 +383,7 @@ internal sealed class QueryService
     {
         return await GetCandidateCountAsync(
             service, featuresReqUrl, authHandler, requestContext,
-            spatialFilter.QueryShape.ShapeEnvelope, resolvedInSrefId, where, inSrefId: 0,
+            spatialFilter.QueryShape.ShapeEnvelope, resolvedInSrefId, where, inSrefId: resolvedInSrefId,
             logKey: "getfeaturecount_bbox");
     }
 

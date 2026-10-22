@@ -83,13 +83,8 @@ class FeatureLayer : RestLayer,
 
         if (spatialFilter != null)
         {
-            inSrefId = spatialFilter.FilterSpatialReference != null
-                ? spatialFilter.FilterSpatialReference.Id
-                : 0;
-
-            requestBuilder
-                .WithGeometry(spatialFilter.QueryShape, inSrefId)
-                .WithSpatialRelationIntersects();
+            inSrefId = (spatialFilter.FilterSpatialReference?.Id ?? 0)
+                .OrTake(spatialFilter.QueryShape?.SrsId ?? 0);
         }
 
         int resolvedInSrefId =
@@ -136,6 +131,13 @@ class FeatureLayer : RestLayer,
 
         // From here on this is exclusively the countOnly path - the feature-returning path
         // above always returns via the strategy.
+        if (spatialFilter != null)
+        {
+            requestBuilder
+                .WithGeometry(spatialFilter.QueryShape, resolvedInSrefId)
+                .WithSpatialRelationIntersects();
+        }
+
         requestBuilder
             .WithOutFields(
                 String.IsNullOrWhiteSpace(filter.SubFields)
