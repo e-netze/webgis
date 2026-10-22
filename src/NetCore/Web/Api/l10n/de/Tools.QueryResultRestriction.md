@@ -15,3 +15,22 @@ Abfrageergebnis mit dem Query Builder weiter einschränken (kein Darstellungsfil
 # info-where: Bedingung der ursprünglichen Abfrage: {0}
 # info-restrict: Dieses Ergebnis wird mit den folgenden Bedingungen weiter eingeschränkt (kein Darstellungsfilter):
 # no-results: Mit diesen Bedingungen wurden keine Ergebnisse gefunden (oder die Bedingung ist für dieses Feld ungültig). Das aktuelle Ergebnis bleibt unverändert.
+# statistics-title: Statistik
+# statistics-field: Feld:
+# statistics-mode: Darstellung:
+# statistics-mode-values: Kennzahlen
+# statistics-mode-groups: Anzahl je Wert
+# statistics-header: Statistik über {0} Objekte (gesamte Abfrage)
+# statistics-info-restriction: Aktuelle Einschränkung: {0}
+# statistics-count: Anzahl (mit Wert)
+# statistics-count-null: Anzahl leer
+# statistics-min: Minimum
+# statistics-max: Maximum
+# statistics-avg: Mittelwert
+# statistics-sum: Summe
+# statistics-restrict-hint: Klick auf einen Wert schränkt das Ergebnis auf diesen Wert ein.
+# statistics-null-value: (leer)
+# statistics-group-count: {0} Objekte ({1})
+# statistics-other-groups: weitere Werte: {0} Objekte
+# statistics-not-supported: Für diese Abfrage ist keine Statistik möglich.
+# statistics-culture: de-AT

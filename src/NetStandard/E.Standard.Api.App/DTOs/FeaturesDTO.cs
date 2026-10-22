@@ -443,6 +443,14 @@ public sealed class FeaturesDTO : VersionDTO, IHtml
         [System.Text.Json.Serialization.JsonPropertyName("where")]
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public string Where { get; set; }
+
+        /// <summary>
+        /// true, if (server-side) statistics over the whole query result are supported for this layer
+        /// </summary>
+        [JsonProperty("statistics", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Text.Json.Serialization.JsonPropertyName("statistics")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public bool? Statistics { get; set; }
     }
 
     public class TableFieldDefintion

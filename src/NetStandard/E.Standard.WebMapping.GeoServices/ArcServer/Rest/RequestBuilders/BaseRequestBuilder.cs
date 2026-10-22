@@ -273,6 +273,14 @@ public class BaseRequestBuilder<T> : IRequestBuilder where T : BaseRequestBuilde
             false => Append("returnDistinctValues=false")
         };
 
+    protected T WithOutStatistics(string outStatisticsJson)
+        => Append($"outStatistics={System.Uri.EscapeDataString(outStatisticsJson)}");
+
+    protected T WithGroupByFieldsForStatistics(string fields)
+        => string.IsNullOrEmpty(fields)
+            ? _self
+            : Append($"groupByFieldsForStatistics={fields}");
+
     #endregion
 
     public string Build() => _builder.ToString();

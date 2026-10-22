@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Models;
 
 namespace E.Standard.WebMapping.Core.Api.Bridge;
 
@@ -21,6 +22,12 @@ public interface IQueryBridge : IApiObjectBridge
     Task<Feature> FirstFeatureAsync(IRequestContext requestContext, ApiQueryFilter filter, string appendFilterClause = "", double mapScale = 0D);
 
     Task<Shape> FirstFeatureGeometryAsync(IRequestContext requestContext, ApiQueryFilter filter, string appendFilterClause = "", double mapScale = 0D);
+
+    /// <summary>
+    /// Server-side statistics over the whole query result (all matching features, not only the loaded ones).
+    /// Only supported if the layer implements <see cref="ILayerStatisticsQuery"/> with SupportsStatistics.
+    /// </summary>
+    Task<LayerStatistics> QueryStatisticsAsync(IRequestContext requestContext, ApiQueryFilter filter, LayerStatisticsRequest statisticsRequest, string appendFilterClause = "", double mapScale = 0D);
 
     void SetMapProperties(SpatialReference sRef, Envelope mapBox4326, int mapImageWidth, int mapImageHeight);
 

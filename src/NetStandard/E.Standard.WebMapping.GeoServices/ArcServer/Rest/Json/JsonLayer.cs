@@ -117,6 +117,20 @@ public class JsonLayer
     public bool SupportsPaginationResolved
         => AdvancedQueryCapabilities?.SupportsPagination ?? SupportsPagination ?? true;
 
+    [JsonProperty("supportsStatistics")]
+    [System.Text.Json.Serialization.JsonPropertyName("supportsStatistics")]
+    public bool? SupportsStatistics { get; set; }
+
+    /// <summary>
+    /// Statistics (outStatistics/groupByFieldsForStatistics) are only used, if the server
+    /// explicitly reports <c>supportsStatistics: true</c>
+    /// (<c>advancedQueryCapabilities</c> takes precedence over the top-level flag).
+    /// </summary>
+    [Newtonsoft.Json.JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
+    public bool SupportsStatisticsResolved
+        => AdvancedQueryCapabilities?.SupportsStatistics ?? SupportsStatistics ?? false;
+
     public string FullName
     {
         get

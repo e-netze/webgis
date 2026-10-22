@@ -16,6 +16,8 @@ using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Collections;
+using E.Standard.WebMapping.Core.Exceptions;
+using E.Standard.WebMapping.Core.Models;
 
 using Newtonsoft.Json;
 
@@ -534,6 +536,25 @@ public sealed class QueryDTO : VersionDTO, IHtml, IAuthClone<QueryDTO>, IQueryBr
         {
             return engine.Features != null && engine.Features.Count > 0 ? engine.Features[0].Shape : null;
         }
+        return null;
+    }
+
+    async public Task<LayerStatistics> QueryStatisticsAsync(IRequestContext requestContext, ApiQueryFilter filter, LayerStatisticsRequest statisticsRequest, string appendFilterClause = "", double mapScale = 0D)
+    {
+        var engine = new QueryEngine() { StatisticsRequest = statisticsRequest };
+        if (await engine.PerformAsync(requestContext, this, filter, QueryEngine.AdvancedQueryMethod.Statistics, appendFilterClause: appendFilterClause, mapScale: mapScale)
+            && engine.Statistics != null)
+        {
+            return engine.Statistics;
+        }
+
+        // eg. QueryEngineInformationException (out of scale, missing search term, ...)
+        var informations = engine.Features?.Informations;
+        if (informations != null && informations.Any())
+        {
+            throw new InfoException(String.Join(Environment.NewLine, informations));
+        }
+
         return null;
     }
 

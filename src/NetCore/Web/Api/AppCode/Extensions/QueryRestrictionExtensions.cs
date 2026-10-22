@@ -9,6 +9,7 @@ using E.Standard.CMS.Core;
 using E.Standard.Extensions.Compare;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebMapping.Core;
+using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Models;
 
 namespace Api.Core.AppCode.Extensions;
@@ -79,7 +80,11 @@ static public class QueryRestrictionExtensions
             features.metadata.QueryRestriction = new FeaturesDTO.QueryRestrictionMeta()
             {
                 Token = descriptor.ToToken(crypto),
-                Where = String.IsNullOrWhiteSpace(descriptor.Restriction) ? null : descriptor.Restriction
+                Where = String.IsNullOrWhiteSpace(descriptor.Restriction) ? null : descriptor.Restriction,
+                Statistics = query.Service.Layers?.FindByLayerId(query.LayerId) is ILayerStatisticsQuery statisticsLayer
+                             && statisticsLayer.SupportsStatistics
+                    ? true
+                    : null
             };
         }
         catch { /* restriction is optional => never break the query result */ }

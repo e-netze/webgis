@@ -154,7 +154,17 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
             const $tdFields = $("<td>").addClass('fields').appendTo($tr),
                 $tdOperator = $("<td>").addClass('operators').appendTo($tr),
                 $tdValue = $("<td>").addClass('value').appendTo($tr),
-                $tdLogicalOperator = $("<td>").addClass('logical-operators').appendTo($tr);
+                $tdLogicalOperator = $("<td>").addClass('logical-operators').appendTo($tr),
+                $tdRemove = $("<td>").addClass('remove-row').appendTo($tr);
+
+            $("<button>")
+                .attr({ type: 'button', title: webgis.l10n.get('querybuilder-remove-row') })
+                .addClass('webgis-query-builder-remove-row-button')
+                .text('×')
+                .appendTo($tdRemove)
+                .on("click.webgis_querybuilder", function () {
+                    me.removeTableRow($(this).closest('.webgis-query-builder-table-row'));
+                });
 
             const $selectFields = $("<select>")
                 .addClass('webgis-input webgis-query-builder-fields')
@@ -219,10 +229,10 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
             $selectLogicalOperator.on("change.webgis_querybuilder", function (e) {
                 const $this = $(this), logialOperator = $this.val(),
                     $row = $this.closest('.webgis-query-builder-table-row'),
-                    rowId = $row.attr('row-id'),
+                    rowId = parseInt($row.attr('row-id'), 10),
                     $table = $row.closest('.webgis-query-builder-table');
 
-                const nextRows = $.grep($table.children('tr'), function (tr) { return $(tr).attr('row-id') > rowId });
+                const nextRows = $.grep($table.children('tr'), function (tr) { return parseInt($(tr).attr('row-id'), 10) > rowId });
 
                 if (!logialOperator) {
                     $.each(nextRows, function (i, e) {
@@ -247,6 +257,26 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
                 if (options.whereclause_parts.length > 0) {
                     $selectLogicalOperator.val(options.whereclause_parts.shift()).trigger('change');
                 }
+            }
+        },
+        removeTableRow: function ($row) {
+            const logicalSelector = '.webgis-input.webgis-query-builder-logical-operators';
+
+            if ($row.siblings('tr').length === 0) {  // last remaining row => reset it (an empty definition removes all conditions)
+                $row.find('.webgis-input.webgis-query-builder-fields').val('').trigger('change');
+                $row.find(logicalSelector).val('');
+                return;
+            }
+
+            // the previous row takes over the logical operator of the removed row (last row => empty)
+            const logicalOperator = $row.find(logicalSelector).val(),
+                $prev = $row.prev('tr');
+
+            this.releaseValueInput($row.find('.webgis-query-builder-value-container'));
+            $row.remove();
+
+            if ($prev.length > 0) {
+                $prev.find(logicalSelector).val(logicalOperator);
             }
         },
         buildValueInput: function ($row, value) {

@@ -627,8 +627,11 @@
     "querybuilder-invalid-value": "Bitte einen gültigen Wert eingeben",
     "querybuilder-restrict-result": "Einschränken",
     "querybuilder-restrict-result-tooltip": "Abfrageergebnis mit dem Query Builder weiter einschränken (kein Darstellungsfilter)",
+    "querybuilder-statistics": "Statistik",
+    "querybuilder-statistics-tooltip": "Statistik zu einem Feld über das gesamte Abfrageergebnis (Anzahl, Min/Max/Mittelwert, Anzahl je Wert)",
     "querybuilder-restricted": "Eingeschränkt: {where}",
     "querybuilder-remove-restriction": "Einschränkung entfernen",
+    "querybuilder-remove-row": "Bedingung entfernen",
     "querybuilder-in-progress": "Abfrage wird ausgeführt...",
 
     // construct

@@ -94,4 +94,10 @@ public class GetFeaturesRequestBuilder : BaseRequestBuilder<GetFeaturesRequestBu
 
     new public GetFeaturesRequestBuilder WithReturnDistinctValues(bool returnDistinctValues)
         => base.WithReturnDistinctValues(returnDistinctValues);
+
+    new public GetFeaturesRequestBuilder WithOutStatistics(string outStatisticsJson)
+        => base.WithOutStatistics(outStatisticsJson);
+
+    new public GetFeaturesRequestBuilder WithGroupByFieldsForStatistics(string fields)
+        => base.WithGroupByFieldsForStatistics(fields);
 }

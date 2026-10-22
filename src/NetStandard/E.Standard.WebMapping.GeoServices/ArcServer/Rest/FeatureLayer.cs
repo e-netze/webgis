@@ -12,6 +12,7 @@ using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
+using E.Standard.WebMapping.Core.Models;
 using E.Standard.WebMapping.Core.Renderer;
 using E.Standard.WebMapping.Core.Renderer.UserRenderers;
 using E.Standard.WebMapping.GeoServices.ArcServer.Rest.Extensions;
@@ -27,6 +28,7 @@ class FeatureLayer : RestLayer,
                      ILayer2,
                      ILayer3,
                      ILayerDistinctQuery,
+                     ILayerStatisticsQuery,
                      ILegendRendererHelper,
                      ILayerFieldDomains,
                      ILayerGeometryDefintion,
@@ -357,6 +359,7 @@ class FeatureLayer : RestLayer,
         clone.HasZ = this.HasZ;
         clone.HasAttachments = this.HasAttachments;
         clone.SupportsPagination = this.SupportsPagination;
+        clone.SupportsStatistics = this.SupportsStatistics;
         clone.DateFieldsTimeZone = this.DateFieldsTimeZone;
 
         base.CloneParentLayerIdsTo(clone);
@@ -622,6 +625,206 @@ class FeatureLayer : RestLayer,
         }
 
         return result;
+    }
+
+    #endregion
+
+    #region ILayerStatisticsQuery
+
+    /// <summary>
+    /// True if the layer reports <c>supportsStatistics: true</c> (read from
+    /// <c>.../MapServer/layers</c> in <see cref="MapService.InitAsync"/>).
+    /// </summary>
+    public bool SupportsStatistics { get; set; }
+
+    private const string StatTotalCount = "wgs_total";
+    private const string StatCount = "wgs_count";
+    private const string StatMin = "wgs_min";
+    private const string StatMax = "wgs_max";
+    private const string StatAvg = "wgs_avg";
+    private const string StatSum = "wgs_sum";
+
+    async public Task<LayerStatistics> QueryStatisticsAsync(QueryFilter filter, LayerStatisticsRequest request, IRequestContext requestContext)
+    {
+        if (!this.SupportsStatistics)
+        {
+            throw new NotSupportedException($"Layer {this.Name} does not support statistics");
+        }
+
+        var countField = String.IsNullOrEmpty(this.IdFieldName) ? request.Field : this.IdFieldName;
+
+        var outStatistics = new List<object>()
+        {
+            OutStatistic("count", countField, StatTotalCount),
+            OutStatistic("count", request.Field, StatCount)
+        };
+
+        if (request.FieldKind == LayerStatisticsFieldKind.Number || request.FieldKind == LayerStatisticsFieldKind.Date)
+        {
+            outStatistics.Add(OutStatistic("min", request.Field, StatMin));
+            outStatistics.Add(OutStatistic("max", request.Field, StatMax));
+        }
+        if (request.FieldKind == LayerStatisticsFieldKind.Number)
+        {
+            outStatistics.Add(OutStatistic("avg", request.Field, StatAvg));
+            outStatistics.Add(OutStatistic("sum", request.Field, StatSum));
+        }
+
+        var summaryAttributes = (await QueryStatisticsFeaturesAsync(filter, outStatistics, null, requestContext))
+                                    .FirstOrDefault() ?? new Dictionary<string, object>();
+
+        var result = new LayerStatistics()
+        {
+            TotalCount = (long)(StatisticsNumber(summaryAttributes, StatTotalCount) ?? 0D)
+        };
+        result.NullCount = Math.Max(0, result.TotalCount - (long)(StatisticsNumber(summaryAttributes, StatCount) ?? 0D));
+
+        if (request.FieldKind == LayerStatisticsFieldKind.Date)
+        {
+            var min = StatisticsValue(summaryAttributes, StatMin);
+            var max = StatisticsValue(summaryAttributes, StatMax);
+            result.Min = min is null ? null : min.EsriDateToString(timeZone: this.DateFieldsTimeZone);
+            result.Max = max is null ? null : max.EsriDateToString(timeZone: this.DateFieldsTimeZone);
+        }
+        else if (request.FieldKind == LayerStatisticsFieldKind.Number)
+        {
+            result.Min = StatisticsNumber(summaryAttributes, StatMin);
+            result.Max = StatisticsNumber(summaryAttributes, StatMax);
+            result.Average = StatisticsNumber(summaryAttributes, StatAvg);
+            result.Sum = StatisticsNumber(summaryAttributes, StatSum);
+        }
+
+        if (request.GroupByValues)
+        {
+            var groupFeatures = await QueryStatisticsFeaturesAsync(
+                filter,
+                [OutStatistic("count", countField, StatCount)],
+                request.Field,
+                requestContext);
+
+            var groups = groupFeatures
+                .Select(attributes =>
+                {
+                    var value = attributes
+                        .Where(a => a.Key.Equals(request.Field, StringComparison.OrdinalIgnoreCase))
+                        .Select(a => JSerializer.AsValueIfJsonValueType(a.Value))
+                        .FirstOrDefault();
+
+                    return new LayerStatisticsGroup()
+                    {
+                        Value = value,
+                        Label = value is not null && _domains?.ContainsKey(request.Field) == true
+                            ? DomainValue(request.Field, value.ToString())
+                            : null,
+                        Count = (long)(StatisticsNumber(attributes, StatCount) ?? 0D)
+                    };
+                })
+                .Where(g => g.Count > 0)
+                .OrderByDescending(g => g.Count)
+                .ThenBy(g => g.Value?.ToString())
+                .ToList();
+
+            var maxGroups = request.MaxGroups > 0 ? request.MaxGroups : int.MaxValue;
+
+            result.Groups = groups.Take(maxGroups).ToList();
+            result.OtherGroupsCount = Math.Max(0, groups.Count - result.Groups.Count);
+            // the service may return less groups than exist (maxRecordCount) => calculate the rest from the total count
+            result.OtherFeaturesCount = Math.Max(0, result.TotalCount - result.Groups.Sum(g => g.Count));
+        }
+
+        return result;
+    }
+
+    async private Task<IEnumerable<IDictionary<string, object>>> QueryStatisticsFeaturesAsync(
+                QueryFilter filter,
+                IEnumerable<object> outStatistics,
+                string groupByField,
+                IRequestContext requestContext)
+    {
+        string featuresReqUrl = $"{_service.Service}/{this._id}/query";
+        string where = UrlEncodeWhere(filter.Where)
+                           .AppendWhereClause(this.Filter)
+                           .OrTake("1=1");
+
+        var requestBuilder = new GetFeaturesRequestBuilder();
+
+        int inSrefId = 0;
+        if (filter is SpatialFilter spatialFilter && spatialFilter.QueryShape != null)
+        {
+            inSrefId = spatialFilter.FilterSpatialReference?.Id ?? 0;
+
+            requestBuilder
+                .WithGeometry(spatialFilter.QueryShape, inSrefId)
+                .WithSpatialRelationIntersects();
+        }
+
+        int resolvedInSrefId = _service.ProjectionMethode switch
+        {
+            ServiceProjectionMethode.Map => inSrefId.OrTake(_service.Map.SpatialReference?.Id ?? 0),
+            ServiceProjectionMethode.Userdefined => inSrefId.OrTake(_service.ProjectionId),
+            _ => inSrefId
+        };
+
+        requestBuilder
+            .WithWhereClause(where)
+            .WithTimeEpoch(filter.TimeEpoch)
+            .WithInSpatialReferenceId(resolvedInSrefId)
+            .WithOutStatistics(JSerializer.Serialize(outStatistics.ToArray()))
+            .WithGroupByFieldsForStatistics(groupByField)
+            .WithReturnGeometry(false)
+            .WithFormat("json");
+
+        var authHandler = requestContext.GetRequiredService<AgsAuthenticationHandler>();
+
+        string response = await requestContext.LogRequest(
+            _service.Server, _service.ServiceShortname, requestBuilder, "querystatistics",
+            (requestBody) => authHandler.TryPostAsync(_service, featuresReqUrl, requestBody));
+
+        var jsonError = JSerializer.Deserialize<JsonError>(response);
+        if (jsonError?.error != null)
+        {
+            throw new Exception($"Statistics query failed: {jsonError.error.message} {String.Join(" ", jsonError.error.details as IEnumerable<object> ?? [])}".Trim());
+        }
+
+        var jsonFeatureResponse = JSerializer.Deserialize<JsonFeatureResponse>(response);
+
+        return jsonFeatureResponse?.Features?
+                    .Select(f => (IDictionary<string, object>)f.Attributes ?? new Dictionary<string, object>())
+                    .ToArray() ?? [];
+    }
+
+    static private object OutStatistic(string type, string field, string outName)
+        => new Dictionary<string, string>()
+        {
+            { "statisticType", type },
+            { "onStatisticField", field },
+            { "outStatisticFieldName", outName }
+        };
+
+    static private object StatisticsValue(IDictionary<string, object> attributes, string name)
+        => JSerializer.AsValueIfJsonValueType(
+                attributes
+                    .Where(a => a.Key.Equals(name, StringComparison.OrdinalIgnoreCase))
+                    .Select(a => a.Value)
+                    .FirstOrDefault());
+
+    static private double? StatisticsNumber(IDictionary<string, object> attributes, string name)
+    {
+        var value = StatisticsValue(attributes, name);
+
+        if (value is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            return Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     #endregion

@@ -9,4 +9,8 @@ public class JsonAdvancedQueryCapabilities
     [JsonProperty("supportsPagination")]
     [System.Text.Json.Serialization.JsonPropertyName("supportsPagination")]
     public bool? SupportsPagination { get; set; }
+
+    [JsonProperty("supportsStatistics")]
+    [System.Text.Json.Serialization.JsonPropertyName("supportsStatistics")]
+    public bool? SupportsStatistics { get; set; }
 }

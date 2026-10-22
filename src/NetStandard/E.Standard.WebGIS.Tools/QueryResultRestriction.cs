@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using E.Standard.Extensions.Compare;
@@ -26,6 +29,7 @@ using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
 using E.Standard.WebMapping.Core.Exceptions;
 using E.Standard.WebMapping.Core.Extensions;
+using E.Standard.WebMapping.Core.Models;
 
 namespace E.Standard.WebGIS.Tools;
 
@@ -45,6 +49,24 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
     public const string QueryBuilderValuesCommand = "querybuilder-values";
     public const string RemoveRestrictionCommand = "remove-restriction";
     public const string ShowGeometryCommand = "show-geometry";
+
+    public const string StatisticsCommand = "statistics";
+    public const string StatisticsFieldCommand = "statistics-field";
+    public const string StatisticsModeCommand = "statistics-mode";
+    public const string StatisticsRestrictCommand = "statistics-restrict";
+
+    private const string StatisticsTokenId = "webgis-qr-statistics-token";
+    private const string StatisticsFieldId = "webgis-qr-statistics-field";
+    private const string StatisticsModeId = "webgis-qr-statistics-mode";
+    private const string StatisticsResultId = "webgis-qr-statistics-result";
+
+    private const string StatisticsModeValues = "values";
+    private const string StatisticsModeGroups = "groups";
+
+    /// <summary>
+    /// Max. number of groups (distinct values) shown in the statistics dialog, the rest is summarized
+    /// </summary>
+    public const int MaxStatisticsGroups = 50;
 
     #region IApiButton
 
@@ -186,19 +208,382 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
         };
     }
 
+    #region Statistics
+
+    /// <summary>
+    /// Statistics dialog: server side statistics of one (QueryBuilder allowed) field over the whole query result
+    /// (all matching features, not only the loaded ones => correct also with has_more)
+    /// </summary>
+    [ServerToolCommand(StatisticsCommand)]
+    async public Task<ApiEventResponse> OnStatistics(IBridge bridge, ApiToolEventArguments e, ILocalizer<QueryResultRestriction> localizer)
+    {
+        var token = e.ServerCommandArgument;
+        var descriptor = QueryRestrictionDescriptor.FromToken(bridge.CryptoService, token);
+        var (query, fields) = await QueryAndAllowedFields(bridge, descriptor);
+        var field = fields.First();
+
+        var fieldSelect = new UISelect(UIButton.UIButtonType.servertoolcommand_ext, StatisticsFieldCommand)
+        {
+            id = StatisticsFieldId,
+            css = UICss.ToClass(new[] { UICss.ToolParameter }),
+            changetool = this.GetType().ToToolId(),
+            defaultvalue = field.Name,
+            options = fields
+                .Select(f => new UISelect.Option()
+                {
+                    value = f.Name,
+                    label = WebUtility.HtmlEncode(String.IsNullOrWhiteSpace(f.Alias) ? f.Name : f.Alias)
+                })
+                .ToArray()
+        };
+
+        return new ApiEventResponse()
+        {
+            UIElements = new IUIElement[]
+            {
+                new UIDiv()
+                {
+                    target = UIElementTarget.modaldialog.ToString(),
+                    targettitle = localizer.Localize("statistics-title"),
+                    targetwidth = "600px",
+                    targetheight = "600px",
+                    elements = new IUIElement[]
+                    {
+                        OriginInfo(descriptor, query, token, localizer, forStatistics: true),
+                        new UIHidden()
+                        {
+                            id = StatisticsTokenId,
+                            css = UICss.ToClass(new[] { UICss.ToolParameter }),
+                            value = token
+                        },
+                        StatisticsFormRow(localizer.Localize("statistics-field"), fieldSelect),
+                        new UIDiv()
+                        {
+                            id = StatisticsResultId,
+                            elements = new IUIElement[]
+                            {
+                                await StatisticsResultAsync(bridge, descriptor, query, field, StatisticsModeValues, localizer)
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    [ServerToolCommand(StatisticsFieldCommand)]
+    async public Task<ApiEventResponse> OnStatisticsField(IBridge bridge, ApiToolEventArguments e, ILocalizer<QueryResultRestriction> localizer)
+        => await StatisticsRefreshAsync(bridge, e, StatisticsModeValues, localizer);
+
+    [ServerToolCommand(StatisticsModeCommand)]
+    async public Task<ApiEventResponse> OnStatisticsMode(IBridge bridge, ApiToolEventArguments e, ILocalizer<QueryResultRestriction> localizer)
+        => await StatisticsRefreshAsync(bridge, e, e[StatisticsModeId], localizer);
+
+    /// <summary>
+    /// Click on a group (value) => restricts the result to this value (ANDed with an existing restriction)
+    /// </summary>
+    [ServerToolCommand(StatisticsRestrictCommand)]
+    async public Task<ApiEventResponse> OnStatisticsRestrict(IBridge bridge, ApiToolEventArguments e, ILocalizer<QueryResultRestriction> localizer)
+    {
+        var descriptor = QueryRestrictionDescriptor.FromToken(bridge.CryptoService, e[StatisticsTokenId]);
+        var (query, fields) = await QueryAndAllowedFields(bridge, descriptor);
+        var field = StatisticsField(fields, e[StatisticsFieldId]);
+
+        if (StatisticsFieldKind(field) == LayerStatisticsFieldKind.Date)
+        {
+            throw new ArgumentException($"Restricting by group values is not supported for field {field.Name}");
+        }
+
+        var condition = StatisticsGroupCondition(field.Name, e["menuitem-value"]);
+
+        return await PerformAsync(bridge, e, descriptor, query,
+                                  CombineRestriction(descriptor.Restriction, condition),
+                                  noResultsMessage: localizer.Localize("no-results"));
+    }
+
+    #endregion
+
     #endregion
 
     #region Helper
 
-    /// <summary>
-    /// Re-executes the original query (geometry, items, where, limit) with the restriction (null => unrestricted).
-    /// noResultsMessage: an empty restricted result (no hits or an invalid condition) throws an InfoException,
-    /// so the dialog stays open with the conditions and the current result is kept.
-    /// </summary>
-    async static private Task<ApiEventResponse> PerformAsync(IBridge bridge, ApiToolEventArguments e, QueryRestrictionDescriptor descriptor, IQueryBridge query, string restriction, string noResultsMessage = null)
+    async private Task<ApiEventResponse> StatisticsRefreshAsync(IBridge bridge, ApiToolEventArguments e, string mode, ILocalizer<QueryResultRestriction> localizer)
     {
-        descriptor.Restriction = String.IsNullOrWhiteSpace(restriction) ? null : restriction;
+        var descriptor = QueryRestrictionDescriptor.FromToken(bridge.CryptoService, e[StatisticsTokenId]);
+        var (query, fields) = await QueryAndAllowedFields(bridge, descriptor);
+        var field = StatisticsField(fields, e[StatisticsFieldId]);
 
+        return new ApiEventResponse()
+        {
+            UIElements = new IUIElement[]
+            {
+                new UIDiv()
+                {
+                    target = $"#{StatisticsResultId}",
+                    elements = new IUIElement[]
+                    {
+                        await StatisticsResultAsync(bridge, descriptor, query, field, mode, localizer)
+                    }
+                }
+            }
+        };
+    }
+
+    async private Task<IUIElement> StatisticsResultAsync(IBridge bridge, QueryRestrictionDescriptor descriptor, IQueryBridge query, IField field, string mode, ILocalizer<QueryResultRestriction> localizer)
+    {
+        var fieldKind = StatisticsFieldKind(field);
+        var groupByValues = fieldKind == LayerStatisticsFieldKind.Text
+                         || (fieldKind == LayerStatisticsFieldKind.Number && mode == StatisticsModeGroups);
+
+        var statistics = await query.QueryStatisticsAsync(bridge.RequestContext,
+                                                          CreateFilter(bridge, descriptor, query, queryGeometry: false),
+                                                          new LayerStatisticsRequest()
+                                                          {
+                                                              Field = field.Name,
+                                                              FieldKind = fieldKind,
+                                                              GroupByValues = groupByValues,
+                                                              MaxGroups = MaxStatisticsGroups
+                                                          },
+                                                          appendFilterClause: descriptor.EffectiveWhereClause(descriptor.Restriction))
+            ?? throw new InfoException(localizer.Localize("statistics-not-supported"));
+
+        var culture = StatisticsCulture(localizer);
+        var elements = new List<IUIElement>();
+
+        if (fieldKind == LayerStatisticsFieldKind.Number)
+        {
+            elements.Add(StatisticsFormRow(localizer.Localize("statistics-mode"), new UISelect(UIButton.UIButtonType.servertoolcommand_ext, StatisticsModeCommand)
+            {
+                id = StatisticsModeId,
+                css = UICss.ToClass(new[] { UICss.ToolParameter }),
+                changetool = this.GetType().ToToolId(),
+                defaultvalue = groupByValues ? StatisticsModeGroups : StatisticsModeValues,
+                options = new[]
+                {
+                    new UISelect.Option() { value = StatisticsModeValues, label = WebUtility.HtmlEncode(localizer.Localize("statistics-mode-values")) },
+                    new UISelect.Option() { value = StatisticsModeGroups, label = WebUtility.HtmlEncode(localizer.Localize("statistics-mode-groups")) }
+                }
+            }));
+        }
+
+        var summary = new List<IUIElement>()
+        {
+            new UILiteralBold() { literal = String.Format(localizer.Localize("statistics-header"), statistics.TotalCount.ToString("N0", culture)) }
+        };
+        if (groupByValues)
+        {
+            summary.Add(new UIDiv()
+            {
+                css = "webgis-statistics-hint",
+                elements = new IUIElement[] { new UILiteral() { literal = localizer.Localize("statistics-restrict-hint") } }
+            });
+        }
+        elements.Add(new UIDiv()
+        {
+            css = "webgis-statistics-summary",
+            elements = summary.ToArray()
+        });
+
+        if (!groupByValues)
+        {
+            var rows = new List<(string label, string value)>()
+            {
+                (localizer.Localize("statistics-count"), (statistics.TotalCount - statistics.NullCount).ToString("N0", culture)),
+                (localizer.Localize("statistics-count-null"), statistics.NullCount.ToString("N0", culture)),
+                (localizer.Localize("statistics-min"), StatisticsValueText(statistics.Min, culture)),
+                (localizer.Localize("statistics-max"), StatisticsValueText(statistics.Max, culture))
+            };
+
+            if (fieldKind == LayerStatisticsFieldKind.Number)
+            {
+                rows.Add((localizer.Localize("statistics-avg"), StatisticsValueText(statistics.Average, culture)));
+                rows.Add((localizer.Localize("statistics-sum"), StatisticsValueText(statistics.Sum, culture)));
+            }
+
+            elements.Add(new UITable(rows
+                .Select(r => new UITableRow(new IUIElement[]
+                {
+                    new UILiteral() { literal = r.label },
+                    new UILiteral() { literal = r.value }
+                }))
+                .ToArray())
+            {
+                css = UICss.ToClass(new[] { "webgis-statistics-values", UICss.TableAlternateRowColor })
+            });
+        }
+        else
+        {
+            var maxCount = Math.Max(1L, statistics.Groups.Select(g => g.Count).DefaultIfEmpty(0).Max());
+            var groups = statistics.Groups
+                .Select(g => new
+                {
+                    Group = g,
+                    Text = g.Value is null
+                        ? localizer.Localize("statistics-null-value")
+                        : g.Label.OrTake(StatisticsValueText(g.Value, culture))
+                })
+                .OrderBy(g => g.Group.Count)
+                .ThenBy(g => g.Text, StringComparer.Create(culture, true));
+
+            var menu = new UIMenu();
+            menu.elements = groups
+                .Select(g => (IUIElement)new UIMenuItem(this, null, UIButton.UIButtonType.servertoolcommand_ext, StatisticsRestrictCommand)
+                {
+                    css = "webgis-statistics-group",
+                    // relative bar length (css variable, see default.css)
+                    style = $"--webgis-statistics-share:{(100D * g.Group.Count / maxCount).ToString("0.#", CultureInfo.InvariantCulture)}%",
+                    text = WebUtility.HtmlEncode(g.Text),
+                    subtext = String.Format(localizer.Localize("statistics-group-count"),
+                                            g.Group.Count.ToString("N0", culture),
+                                            (statistics.TotalCount > 0 ? (double)g.Group.Count / statistics.TotalCount : 0D).ToString("P1", culture)),
+                    value = System.Text.Json.JsonSerializer.Serialize(g.Group.Value)
+                })
+                .ToArray();
+
+            elements.Add(new UIDiv()
+            {
+                css = "webgis-statistics-groups",
+                elements = new IUIElement[] { menu }
+            });
+
+            if (statistics.OtherGroupsCount > 0 || statistics.OtherFeaturesCount > 0)
+            {
+                elements.Add(InfoLine(String.Format(localizer.Localize("statistics-other-groups"),
+                    statistics.OtherFeaturesCount.ToString("N0", culture))));
+            }
+        }
+
+        return new UIDiv()
+        {
+            elements = elements.ToArray()
+        };
+    }
+
+    static private IUIElement StatisticsFormRow(string label, IUIElement input)
+        => new UIDiv()
+        {
+            css = "webgis-statistics-row",
+            elements = new IUIElement[]
+            {
+                new UILabel() { label = label },
+                input
+            }
+        };
+
+    static private IField StatisticsField(IEnumerable<IField> allowedFields, string fieldName)
+        => allowedFields.FirstOrDefault(f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase))
+           ?? throw new ArgumentException($"The field '{fieldName}' is not allowed");
+
+    static private LayerStatisticsFieldKind StatisticsFieldKind(IField field)
+        => field.Type switch
+        {
+            WebMapping.Core.FieldType.SmallInteger or
+            WebMapping.Core.FieldType.Interger or
+            WebMapping.Core.FieldType.BigInteger or
+            WebMapping.Core.FieldType.Float or
+            WebMapping.Core.FieldType.Double => LayerStatisticsFieldKind.Number,
+            WebMapping.Core.FieldType.Date => LayerStatisticsFieldKind.Date,
+            _ => LayerStatisticsFieldKind.Text
+        };
+
+    static private CultureInfo StatisticsCulture(ILocalizer localizer)
+    {
+        try
+        {
+            return CultureInfo.GetCultureInfo(localizer.Localize("statistics-culture"));
+        }
+        catch
+        {
+            return CultureInfo.InvariantCulture;
+        }
+    }
+
+    static private string StatisticsValueText(object value, CultureInfo culture)
+        => value switch
+        {
+            null => "-",
+            double d => d.ToString("#,##0.###", culture),
+            float f => f.ToString("#,##0.###", culture),
+            decimal m => m.ToString("#,##0.###", culture),
+            int or long or short => Convert.ToInt64(value).ToString("N0", culture),
+            _ => value.ToString()
+        };
+
+    /// <summary>
+    /// Condition for a clicked group: the (raw) value comes back as JSON from the client.
+    /// The literal depends on the raw value type (a coded value domain field can have numeric raw values)
+    /// </summary>
+    static private string StatisticsGroupCondition(string fieldName, string jsonValue)
+    {
+        using var document = JsonDocument.Parse(String.IsNullOrWhiteSpace(jsonValue) ? "null" : jsonValue);
+        var element = document.RootElement;
+
+        return element.ValueKind switch
+        {
+            JsonValueKind.Null => $"{fieldName}{UIQueryBuilder.OperatorIsNull}",
+            JsonValueKind.Number when double.TryParse(element.GetRawText(), NumberStyles.Float, CultureInfo.InvariantCulture, out var number)
+                => $"{fieldName}={number.ToString("R", CultureInfo.InvariantCulture)}",
+            JsonValueKind.String => $"{fieldName}='{element.GetString().Replace("'", "''")}'",
+            _ => throw new ArgumentException($"Invalid value for field {fieldName}")
+        };
+    }
+
+    /// <summary>
+    /// ANDs a condition to an existing (flat QueryBuilder) restriction. The QueryBuilder knows no parentheses,
+    /// so the condition is appended to every OR term: a or b => a and c or b and c (AND binds stronger than OR)
+    /// </summary>
+    static internal string CombineRestriction(string restriction, string condition)
+    {
+        if (String.IsNullOrWhiteSpace(restriction))
+        {
+            return condition;
+        }
+
+        return String.Join(" or ", SplitTopLevelOr(restriction).Select(term => $"{term} and {condition}"));
+    }
+
+    static private IEnumerable<string> SplitTopLevelOr(string where)
+    {
+        var terms = new List<string>();
+        int start = 0, depth = 0;
+        bool inString = false;
+
+        for (int i = 0; i < where.Length; i++)
+        {
+            char c = where[i];
+
+            if (c == '\'')
+            {
+                inString = !inString;  // '' (escaped quote) toggles twice
+            }
+            else if (!inString && c == '(')
+            {
+                depth++;
+            }
+            else if (!inString && c == ')')
+            {
+                depth--;
+            }
+            else if (!inString && depth == 0
+                     && Char.IsWhiteSpace(c)
+                     && i + 3 < where.Length
+                     && (where[i + 1] == 'o' || where[i + 1] == 'O')
+                     && (where[i + 2] == 'r' || where[i + 2] == 'R')
+                     && Char.IsWhiteSpace(where[i + 3]))
+            {
+                terms.Add(where.Substring(start, i - start).Trim());
+                start = i + 3;
+                i += 3;
+            }
+        }
+
+        terms.Add(where.Substring(start).Trim());
+
+        return terms.Where(t => t.Length > 0);
+    }
+
+    static private ApiQueryFilter CreateFilter(IBridge bridge, QueryRestrictionDescriptor descriptor, IQueryBridge query, bool queryGeometry = true)
+    {
         var queryShape = descriptor.QueryShape();
         ApiQueryFilter filter = queryShape != null
             ? new ApiSpatialFilter()
@@ -209,8 +594,22 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
             : new ApiQueryFilter();
 
         filter.QueryItems = descriptor.QueryItems();
-        filter.QueryGeometry = true;
+        filter.QueryGeometry = queryGeometry;
         filter.FeatureSpatialReference = bridge.GetSupportedSpatialReference(query, bridge.DefaultSrefId);
+
+        return filter;
+    }
+
+    /// <summary>
+    /// Re-executes the original query (geometry, items, where, limit) with the restriction (null => unrestricted).
+    /// noResultsMessage: an empty restricted result (no hits or an invalid condition) throws an InfoException,
+    /// so the dialog stays open with the conditions and the current result is kept.
+    /// </summary>
+    async static private Task<ApiEventResponse> PerformAsync(IBridge bridge, ApiToolEventArguments e, QueryRestrictionDescriptor descriptor, IQueryBridge query, string restriction, string noResultsMessage = null)
+    {
+        descriptor.Restriction = String.IsNullOrWhiteSpace(restriction) ? null : restriction;
+
+        var filter = CreateFilter(bridge, descriptor, query);
 
         var features = await query.PerformAsync(bridge.RequestContext, filter,
                                                 appendFilterClause: descriptor.EffectiveWhereClause(descriptor.Restriction),
@@ -245,7 +644,7 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
     /// What the result is based on (query, query geometry, detail search items, original where),
     /// so the user knows, that the QueryBuilder conditions restrict this result further
     /// </summary>
-    static private IUIElement OriginInfo(QueryRestrictionDescriptor descriptor, IQueryBridge query, string token, ILocalizer<QueryResultRestriction> localizer)
+    static private IUIElement OriginInfo(QueryRestrictionDescriptor descriptor, IQueryBridge query, string token, ILocalizer<QueryResultRestriction> localizer, bool forStatistics = false)
     {
         var elements = new List<IUIElement>()
         {
@@ -295,7 +694,17 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
             elements.Add(InfoLine(String.Format(localizer.Localize("info-where"), descriptor.Where)));
         }
 
-        elements.Add(InfoLine(localizer.Localize("info-restrict")));
+        if (forStatistics)
+        {
+            if (!String.IsNullOrWhiteSpace(descriptor.Restriction))
+            {
+                elements.Add(InfoLine(String.Format(localizer.Localize("statistics-info-restriction"), descriptor.Restriction)));
+            }
+        }
+        else
+        {
+            elements.Add(InfoLine(localizer.Localize("info-restrict")));
+        }
 
         return new UIDiv()
         {

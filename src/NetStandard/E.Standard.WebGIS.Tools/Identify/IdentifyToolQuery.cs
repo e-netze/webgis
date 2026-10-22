@@ -60,6 +60,11 @@ internal class IdentifyToolQuery : IQueryBridge
         return Task.FromResult<Shape>(null);
     }
 
+    public Task<WebMapping.Core.Models.LayerStatistics> QueryStatisticsAsync(IRequestContext requestContext, ApiQueryFilter filter, WebMapping.Core.Models.LayerStatisticsRequest statisticsRequest, string appendFilterClause = "", double mapScale = 0D)
+    {
+        return Task.FromResult<WebMapping.Core.Models.LayerStatistics>(null);
+    }
+
     public LayerType GetLayerType()
     {
         return LayerType.unknown;

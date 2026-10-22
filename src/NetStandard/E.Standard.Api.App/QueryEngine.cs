@@ -19,6 +19,7 @@ using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Filters;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.Core.Logging.Abstraction;
+using E.Standard.WebMapping.Core.Models;
 
 namespace E.Standard.Api.App;
 
@@ -30,8 +31,19 @@ public class QueryEngine
         HasFeatures,
         FirstFeature,
         FirstFeatureGeometry,
-        FirstLegendValue
+        FirstLegendValue,
+        Statistics
     }
+
+    /// <summary>
+    /// Request for <see cref="AdvancedQueryMethod.Statistics"/>; must be set before calling PerformAsync.
+    /// </summary>
+    public LayerStatisticsRequest StatisticsRequest { get; set; }
+
+    /// <summary>
+    /// Result of an <see cref="AdvancedQueryMethod.Statistics"/> query.
+    /// </summary>
+    public LayerStatistics Statistics { get; private set; }
 
     public int FeatureCount
     {
@@ -532,6 +544,23 @@ public class QueryEngine
                     });
                     this.FeatureCount = 1;
                 }
+            }
+            else if (advancedQueryMethod == AdvancedQueryMethod.Statistics)
+            {
+                if (layer is not ILayerStatisticsQuery statisticsLayer || !statisticsLayer.SupportsStatistics)
+                {
+                    throw new Exception($"{query.Name}: statistics are not supported by this layer");
+                }
+                if (this.StatisticsRequest == null)
+                {
+                    throw new ArgumentException("statistics request is missing");
+                }
+
+                this.Statistics = await statisticsLayer.QueryStatisticsAsync(filter, this.StatisticsRequest, requestContext);
+                this.Features = features;
+                this.FeatureCount = (int)Math.Min(int.MaxValue, this.Statistics?.TotalCount ?? 0);
+
+                return true;
             }
             else if (advancedQueryMethod == AdvancedQueryMethod.FirstLegendValue)
             {

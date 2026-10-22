@@ -307,6 +307,7 @@ public class MapService : IMapService2,
                                 Visible = jsonLayer.DefaultVisbilityIncludesGroups(), // .DefaultVisibility
                                 HasAttachments = jsonLayer.HasAttachments,
                                 SupportsPagination = jsonLayer.SupportsPaginationResolved,
+                                SupportsStatistics = jsonLayer.SupportsStatisticsResolved,
                                 TimeInfo = jsonLayer?.TimeInfo is not null
                                     ? new LayerTimeInfo(
                                         jsonLayer.TimeInfo.TimeExtent,

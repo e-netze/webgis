@@ -1279,6 +1279,90 @@ img.tile {
     min-width: 0px;
 }
 
+/* statistics dialog (tool QueryResultRestriction) */
+.webgis-statistics-row {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    align-items: center;
+    column-gap: 8px;
+    margin: 6px 0px;
+}
+    .webgis-statistics-row .webgis-label {
+        width: auto;
+        margin: 0px;
+        padding: 0px;
+    }
+    .webgis-statistics-row select.webgis-select {
+        width: 100%;
+        margin: 0px;
+        box-sizing: border-box;
+    }
+
+.webgis-statistics-summary {
+    margin: 14px 0px 6px 0px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--webgis-ui-border-subtle);
+}
+    .webgis-statistics-summary .webgis-statistics-hint {
+        margin-top: 2px;
+        font-size: 0.85em;
+        color: var(--webgis-ui-text-label);
+    }
+
+table.webgis-statistics-values {
+    width: 100%;
+    border-collapse: collapse;
+}
+    table.webgis-statistics-values td {
+        padding: 5px 8px;
+    }
+        table.webgis-statistics-values td:last-child {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-weight: bold;
+        }
+
+.webgis-statistics-groups li.webgis-statistics-group {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 8px !important;
+    margin: 0px;
+    font-size: 13px;
+    white-space: normal;
+    background-image: none !important;
+    border-bottom: 1px solid var(--webgis-ui-border-subtle);
+    cursor: pointer;
+    z-index: 0;
+}
+    .webgis-statistics-groups li.webgis-statistics-group::before {
+        content: '';
+        position: absolute;
+        left: 0px;
+        top: 2px;
+        bottom: 2px;
+        width: var(--webgis-statistics-share, 0%);
+        background-color: var(--webgis-brand-primary-light);
+        border-radius: 2px;
+        z-index: -1;
+    }
+    .webgis-statistics-groups li.webgis-statistics-group:hover {
+        background-color: var(--webgis-ui-surface-hover);
+    }
+    .webgis-statistics-groups li.webgis-statistics-group > div:first-child {
+        overflow-wrap: anywhere;
+    }
+    .webgis-statistics-groups li.webgis-statistics-group .subtext {
+        flex-shrink: 0;
+        margin: 0px;
+        font-size: 0.85em;
+        color: var(--webgis-ui-text-label);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
 .webgis-result-restricted-notification .webgis-result-restricted-remove {
     float: right;
     cursor: pointer;
@@ -6250,6 +6334,28 @@ select.webgis-not-valid {
     .webgis-query-builder .webgis-query-builder-table td.logical-operators {
         width: 80px;
     }
+
+    .webgis-query-builder .webgis-query-builder-table td.remove-row {
+        width: 32px;
+        text-align: center;
+    }
+
+    .webgis-query-builder .webgis-query-builder-remove-row-button {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #fff;
+        color: #666;
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+    }
+        .webgis-query-builder .webgis-query-builder-remove-row-button:hover {
+            color: #c00;
+            border-color: #c00;
+        }
 
     .webgis-query-builder .webgis-query-builder-table .webgis-input {
         width: 100%;
