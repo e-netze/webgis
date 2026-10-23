@@ -69,10 +69,16 @@
                         left: $(this).position().left, right: ''
                     });
                     $tab[0].offsetWidth; // apply the start position before the transition
-                    $tab.addClass('webgis-wizard-tab-moving').css({ left: s * 36 });
-                    webgis.effects.afterTransition($tab[0], function () {
-                        $(this).closest('.webgis-wizard').webgis_wizard('setstep', { current_step: parseInt($(this).attr('data-step')) });
-                    });
+                    // self-contained (no webgis.effects / default.css): the wizard is also used on API pages without webgis-api.min.js
+                    $tab.css({ transition: 'left .25s', left: s * 36 });
+                    var done = false;
+                    var onMoved = function () {
+                        if (done) return;
+                        done = true;
+                        $tab.closest('.webgis-wizard').webgis_wizard('setstep', { current_step: parseInt($tab.attr('data-step')) });
+                    };
+                    $tab.one('transitionend', onMoved);
+                    setTimeout(onMoved, 300);
                 });
             }
             var $button = $("<div class='webgis-wizard-bottom'>")

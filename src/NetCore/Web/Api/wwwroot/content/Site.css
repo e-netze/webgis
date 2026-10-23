@@ -1006,48 +1006,6 @@
     .webportal-layout-main-container {
         margin: 10px !important;
     }
-    /*********  Typeahead **************/
-    .tt-menu {
-        background-color: #fff;
-        border: 1px solid #80AFC7;
-        width: 100%;
-        margin-top: 5px;
-        border-radius: 3px;
-    }
-
-    .webgis-modal-body .tt-menu {
-        font-size: 1.7em;
-    }
-
-    .tt-suggestion {
-        padding: 5px;
-        border-bottom: 1px solid #e2e2e2;
-    }
-
-        .tt-suggestion .tt-img {
-            /*border:2px solid #337ab7;
-    border-radius:3px;*/
-        }
-
-        .tt-suggestion .tt-content {
-            padding: 0px 5px;
-            text-align: left;
-            width: 100%;
-        }
-
-    .tt-content span.subtext {
-        font-weight: normal;
-    }
-
-    .tt-suggestion:hover {
-        background-color: #efefef;
-        cursor: pointer;
-    }
-
-    .tt-suggestion.tt-cursor {
-        background-color: #ccc;
-    }
-
     #editor-frame {
         position: absolute;
         left: 0px;

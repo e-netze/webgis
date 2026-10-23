@@ -6193,10 +6193,6 @@ select.webgis-not-valid {
     }
 }
 
-.webgis-wizard-tab-moving {
-    transition: left var(--webgis-fx-duration) ease;
-}
-
 .webgis-checkable-div {
     padding: 5px !important;
     border: 1px solid #efefef;

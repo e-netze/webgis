@@ -17,7 +17,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-toc-contextmenu)
 - **Breaking change:** The legacy tool "Labeling" (`webgis.tools.presentation.labeling`) and the CMS labeling nodes were removed; use the new user labeling from the table of contents instead (labels stored in old maps are ignored).
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-user-labeling)
-- **Breaking change:** The viewer no longer uses twitter typeahead / jQuery UI autocomplete; custom CSS for autocomplete menus must use the new classes `webgis-autocomplete-*` instead of `tt-*` / `.twitter-typeahead`, and custom pages (e.g. Smartmap) no longer need to include `typeahead.jquery.min.js`.
+- **Breaking change:** The viewer no longer uses twitter typeahead / jQuery UI autocomplete; custom CSS for autocomplete menus must use the new classes `webgis-autocomplete-*` instead of `tt-*` / `.twitter-typeahead`, and the API no longer ships `scripts/typeahead/typeahead.jquery.min.js` - remove it from custom pages (e.g. Smartmap).
   [Docs](https://docs.webgiscloud.com/en/webgis-dev/plugins/smartmap-simple.html)
 
 ### New

@@ -324,8 +324,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     per-instance cache, basic ARIA.
   * Removed ``_appendAutocomplete``/``_triggerAutocomplete``/``_autocompleteFitMenu`` from
     ``webgis.js``; ``registerUIEvents`` is a no-op kept for compatibility.
-  * The typeahead script tags were removed from the viewer pages and templates
-    (CMS, multiselect and REST pages still use typeahead).
+  * The typeahead script tags were removed from the viewer pages and templates.
+  * REST browser (``_RestLayout``) and the user/role multiselect
+    (``webgis-jquery-multiselect-autocomplete.js``, portal security) use a small vanilla JS
+    suggestion menu instead of typeahead.
+  * **!! Breaking Change !!** The library folder ``scripts/typeahead`` was removed from the API;
+    custom pages must no longer include ``typeahead.jquery.min.js`` (the CMS keeps its own copy).
   * **!! Breaking Change !!** CSS classes renamed: ``.twitter-typeahead``, ``.tt-menu``,
     ``.tt-suggestion``, ``.tt-cursor``, ... → ``.webgis-autocomplete-wrapper``,
     ``.webgis-autocomplete-menu``, ``.webgis-autocomplete-suggestion``,

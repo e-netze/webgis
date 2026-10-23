@@ -108,13 +108,6 @@
 
         var $input = $("<input class='webgis-autocomplete-multiselect-input' type='text' style='width:240px' />");
         $input.appendTo($("<td style='padding:0px'>").appendTo($inputRow));
-        $input.keydown(function (event) {
-            if(event.keyCode === 13) {
-                event.preventDefault();
-                $(this).closest('.webgis-autocomplete-multiselect').find('.add-button').trigger('click');
-                return false;
-            }
-        });
 
         var $button = $("<button style='font-weight:bold;height:33px;position:relative;top:0px' class='add-button'>+</button>");
         $button.appendTo($("<td style='padding:0px'>").appendTo($inputRow))
@@ -128,66 +121,142 @@
         var $valContainer = $("<div class='webgis-autocomplete-multiselect-value-conatiner' />").appendTo($elem);
         var $value = $("<input class='webgis-autocomplete-multiselect-value' type='hidden' name='" + options.name + "' id='" + options.name + "' />").appendTo($elem);
 
-        if ($.fn.typeahead) {
-            $input.on({
-                'typeahead:select': function (e, item) {
-                    $(this).closest('.webgis-autocomplete-multiselect').webgis_autocomplete_multiselect('add', { value: item, alwaysIncludeOwner: options.alwaysIncludeOwner });
-                },
-                'keyup': function (e) {
-                    if (e.keyCode === 13) {
-                        $(this).typeahead('close');
-                    }
-                }
-            })
-                .typeahead({
-                    hint: false,
-                    highlight: false,
-                    minLength: 3
-                },
-                    {
-                        limit: Number.MAX_VALUE,
-                        async: true,
-                        source: function (query, processSync, processAsync) {
-                            var $element = $(this.$el[0].parentElement.parentElement).children(".webgis-autocomplete-multiselect-input").first(); // Ugly!!!
-                            var $prefix = $(this.$el[0].parentElement.parentElement).closest('.webgis-autocomplete-multiselect').find('.webgis-autocomplete-multiselect-prefix');
+        var suggestions = attachSuggestions($input[0], options, function (value) {
+            $elem.webgis_autocomplete_multiselect('add', { value: value, alwaysIncludeOwner: options.alwaysIncludeOwner });
+        });
 
-                            var source = $element.data('webgis-multiselect-source');
-                            if ($prefix.length > 0) {
-                                source += (source.indexOf('?') > 0 ? '&' : '?') + 'prefix=' + $prefix.val();
-                            }
-
-                            return $.ajax({
-                                url: source,
-                                type: 'get',
-                                data: { term: query },
-                                success: function (data) {
-                                    //console.log(data);
-                                    data = data.slice(0, 12);
-                                    //console.log(data);
-                                    processAsync(data);
-                                },
-                                error: function () {
-                                }
-                            });
-                        }
-                    }).data('webgis-multiselect-source', options.source);
-                
-        } else if ($.fn.autocomplete) {
-            $input.autocomplete({
-                search: function (event, ui) {
-                    var source = $(this).data('webgis-multiselect-source');
-                    var $prefix = $(this).closest('.webgis-autocomplete-multiselect').find('.webgis-autocomplete-multiselect-prefix');
-                    if ($prefix.length > 0) {
-                        source += (source.indexOf('?') > 0 ? '&' : '?') + 'prefix=' + $prefix.val();
-                    }
-                    $(this).autocomplete('option', 'source', source);
-                },
-                minLength: 3,
-                select: function (event, ui) {
-                    $(this).closest('.webgis-autocomplete-multiselect').webgis_autocomplete_multiselect('add', { value: ui.item.value, alwaysIncludeOwner: options.alwaysIncludeOwner });
+        $input.keydown(function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                if (!suggestions.selectCursor()) {
+                    $(this).closest('.webgis-autocomplete-multiselect').find('.add-button').trigger('click');
                 }
-            }).data('webgis-multiselect-source', options.source);
-        }
+                return false;
+            }
+        });
+    };
+
+    // simple suggestion menu below the input (no external autocomplete library)
+    var attachSuggestions = function (input, options, onSelect) {
+        var menu = document.createElement('div');
+        menu.className = 'webgis-autocomplete-multiselect-menu';
+        menu.style.cssText = 'display:none;position:fixed;z-index:99999999;box-sizing:border-box;max-height:300px;overflow-y:auto;background:#fff;border:1px solid #ccc;box-shadow:0 2px 6px rgba(0,0,0,.2);text-align:left';
+        document.body.appendChild(menu);
+
+        var timer = null, controller = null, cursor = -1;
+
+        var items = function () { return menu.querySelectorAll('.webgis-autocomplete-multiselect-menu-item'); };
+        var isOpen = function () { return menu.style.display === 'block'; };
+        var close = function () { menu.style.display = 'none'; cursor = -1; };
+        var open = function () {
+            var rect = input.getBoundingClientRect();
+            menu.style.left = rect.left + 'px';
+            menu.style.top = rect.bottom + 'px';
+            menu.style.width = rect.width + 'px';
+            menu.style.display = 'block';
+        };
+        var select = function (item) {
+            close();
+            onSelect(item.dataset.value);
+        };
+        var setCursor = function (index) {
+            var all = items();
+            if (all.length === 0) {
+                return;
+            }
+            cursor = (index + all.length) % all.length;
+            all.forEach(function (item, i) { item.style.background = i === cursor ? '#e8f0fe' : ''; });
+            all[cursor].scrollIntoView({ block: 'nearest' });
+        };
+
+        var query = function () {
+            var source = options.source;
+            var $prefix = $(input).closest('.webgis-autocomplete-multiselect').find('.webgis-autocomplete-multiselect-prefix');
+            if ($prefix.length > 0) {
+                source += (source.indexOf('?') > 0 ? '&' : '?') + 'prefix=' + encodeURIComponent($prefix.val());
+            }
+            source += (source.indexOf('?') > 0 ? '&' : '?') + 'term=' + encodeURIComponent(input.value);
+
+            if (controller) {
+                controller.abort();
+            }
+            controller = new AbortController();
+
+            fetch(source, { signal: controller.signal })
+                .then(function (response) { return response.json(); })
+                .then(function (data) {
+                    menu.replaceChildren();
+                    cursor = -1;
+                    (data || []).slice(0, 12).forEach(function (entry) {
+                        var div = document.createElement('div');
+                        div.className = 'webgis-autocomplete-multiselect-menu-item';
+                        div.style.cssText = 'padding:4px 8px;cursor:pointer';
+                        div.dataset.value = typeof entry === 'string' ? entry : (entry.value || entry.label || '');
+                        div.textContent = typeof entry === 'string' ? entry : (entry.label || entry.value || '');
+                        div.addEventListener('mouseenter', function () { div.style.background = '#e8f0fe'; });
+                        div.addEventListener('mouseleave', function () { div.style.background = ''; });
+                        menu.appendChild(div);
+                    });
+                    if (menu.children.length > 0) {
+                        open();
+                    } else {
+                        close();
+                    }
+                })
+                .catch(function () { });
+        };
+
+        input.addEventListener('input', function () {
+            clearTimeout(timer);
+            if (input.value.length < 3) {
+                close();
+                return;
+            }
+            timer = setTimeout(query, 250);
+        });
+        input.addEventListener('keydown', function (e) {
+            if (!isOpen()) {
+                return;
+            }
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setCursor(cursor + 1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                setCursor(cursor - 1);
+            } else if (e.key === 'Escape') {
+                close();
+            }
+        });
+        input.addEventListener('blur', close);
+        // mousedown instead of click: fires before the input's blur closes the menu
+        menu.addEventListener('mousedown', function (e) {
+            var item = e.target.closest('.webgis-autocomplete-multiselect-menu-item');
+            if (item) {
+                e.preventDefault();
+                select(item);
+            }
+        });
+        window.addEventListener('resize', close);
+        // fixed menu: close when the page or a dialog scrolls (but not when the menu itself scrolls)
+        window.addEventListener('scroll', function (e) {
+            if (isOpen() && e.target !== menu) {
+                close();
+            }
+        }, true);
+
+        return {
+            // Enter: select the item under the cursor; returns false if there is none
+            selectCursor: function () {
+                var all = items();
+                if (isOpen() && cursor >= 0 && all[cursor]) {
+                    select(all[cursor]);
+                    return true;
+                }
+                close();
+                return false;
+            }
+        };
     };
 
 })(jQuery);
