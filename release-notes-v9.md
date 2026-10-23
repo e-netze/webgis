@@ -19,6 +19,8 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-user-labeling)
 - **Breaking change:** The viewer no longer uses twitter typeahead / jQuery UI autocomplete; custom CSS for autocomplete menus must use the new classes `webgis-autocomplete-*` instead of `tt-*` / `.twitter-typeahead`, and the API no longer ships `scripts/typeahead/typeahead.jquery.min.js` - remove it from custom pages (e.g. Smartmap).
   [Docs](https://docs.webgiscloud.com/en/webgis-dev/plugins/smartmap-simple.html)
+- The CMS node search no longer supports Elasticsearch and always filters the loaded tree; the `cms.config` key `elasticsearch-endpoint` is obsolete and can be removed.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/cms/index.html)
 
 ### New
 

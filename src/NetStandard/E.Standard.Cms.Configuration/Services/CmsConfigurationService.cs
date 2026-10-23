@@ -137,14 +137,6 @@ public class CmsConfigurationService
         return key;
     }
 
-    public bool HasElastic
-    {
-        get
-        {
-            return !String.IsNullOrWhiteSpace(Instance.ElasticSearchEndpoint);
-        }
-    }
-
     public bool AllowCustomBehavior
     {
         get

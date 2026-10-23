@@ -18,10 +18,6 @@ public class CmsConfig : PropertiesParserBaseClass
     [System.Text.Json.Serialization.JsonPropertyName("company")]
     public string Company { get; set; }
 
-    [JsonProperty(PropertyName = "elasticsearch-endpoint")]
-    [System.Text.Json.Serialization.JsonPropertyName("elasticsearch-endpoint")]
-    public string ElasticSearchEndpoint { get; set; }
-
     [JsonProperty(PropertyName = "force-https")]
     [System.Text.Json.Serialization.JsonPropertyName("force-https")]
     public bool ForceHttps { get; set; }

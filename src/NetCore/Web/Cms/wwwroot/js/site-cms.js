@@ -272,126 +272,77 @@ function checkSearchItem(item, terms) {
 }
 
 $(document).ready(function () {
-    if (hasElastic) {
-        $('.cms-search')
-            .css('display', '')
-            .on({
-                'typeahead:cursorchange': function (e, item) {
-                },
-                'typeahead:select': function (e, item) {
-                    //console.log(item);
-                    if (item.cmd && !item.path) {
-                        CMS.openConsole(item.cmd);
+    $('.cms-search')
+        .css('display', '')
+        .attr('autocomplete', 'off')
+        .on('keydown', function (e) {
+            //console.log(e.keyCode);
+            if (e.keyCode === 13) {
+                var items = $('.match.selected');
+
+                if (items.length != 1) {
+                    items = $('.match[data-searchitem]');
+                }
+
+                if (items.length === 1) {
+                    items.trigger('click');
+                }
+
+            }
+            else if (e.keyCode === 40) { // Arrow Down
+                var items = $('.match');
+
+                var found = false;
+                for (var i = 0; i < items.length - 1; i++) {
+                    if ($(items[i]).hasClass('selected')) {
+                        $(items[i]).removeClass('selected');
+                        $(items[i + 1]).addClass('selected');
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (found === false && items.length > 0) {
+                    $(items[0]).addClass('selected');
+                }
+            }
+            else if (e.keyCode === 38) { // Arrow Up
+                var items = $('.match');
+
+                for (var i = 1; i < items.length; i++) {
+                    if ($(items[i]).hasClass('selected')) {
+                        $(items[i]).removeClass('selected');
+                        $(items[i - 1]).addClass('selected');
+                    }
+                }
+            }
+        })
+        .on('keyup', function (e) {
+            var val = $(this).val();
+            var terms = val.split(' ');
+
+            if (val === '') {
+                $('[data-searchitem]').css('display', '');
+            } else {
+                if (e.keyCode !== 40 && e.keyCode !== 38) {
+                    $('.match.selected').removeClass('selected');
+                }
+                $('[data-searchitem]').each(function () {
+                    var $this = $(this);
+                    var match = checkSearchItem($this.attr('data-searchitem'), terms);
+
+                    if (match) {
+                        $this
+                            .addClass('match')
+                            .css('display', '')
                     } else {
-                        updateContent(item.path);
+                        $this
+                            .removeClass('match')
+                            .css('display', 'none');
                     }
-                    $(this).typeahead('val', '');
-                },
-                'typeahead:open': function (e) {
-                },
-                'keyup': function (e) {
-                    if (e.keyCode == 13) {
-                        $(this).typeahead('close');
-                    }
-                }
-            }).typeahead({
-                hint: false,
-                highlight: false,
-                minLength: 1
-            }, {
-                limit: Number.MAX_VALUE,
-                async: true,
-                displayKey: 'suggested_text',
-                source: function (query, processSync, processAsync) {
-                    CMS.api('search', { term: query, id: CMS.id, path: document.currentPath }, function (data) {
-                        data = data.slice(0, 12);
-                        processAsync(data);
-                    });
-                },
-                templates: {
-                    empty: [
-                        '<div class="tt-suggestion">',
-                        '<div class="tt-content">Keine Ergebnisse gefunden</div>',
-                        '</div>'
-                    ].join('\n'),
-                    suggestion: function (item) {
-                        return "<div><div class='tt-content'>" + (item.thumbnail ? "<img class='tt-img' src='" + item.thumbnail + "' />" : "") + "<strong>" + item.suggested_text + "</strong><br/><div>" + item.subtext + "</div><div style='color:#ccc'>" + item.path + "</div></div>";
-                    }
-                }
-            });
-    } else {
-        $('.cms-search')
-            .css('display', '')
-            .attr('autocomplete', 'off')
-            .on('keydown', function (e) {
-                //console.log(e.keyCode);
-                if (e.keyCode === 13) {
-                    var items = $('.match.selected');
-
-                    if (items.length != 1) {
-                        items = $('.match[data-searchitem]');
-                    }
-
-                    if (items.length === 1) {
-                        items.trigger('click');
-                    }
-
-                }
-                else if (e.keyCode === 40) { // Arrow Down
-                    var items = $('.match');
-
-                    var found = false;
-                    for (var i = 0; i < items.length - 1; i++) {
-                        if ($(items[i]).hasClass('selected')) {
-                            $(items[i]).removeClass('selected');
-                            $(items[i + 1]).addClass('selected');
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    if (found === false && items.length > 0) {
-                        $(items[0]).addClass('selected');
-                    }
-                }
-                else if (e.keyCode === 38) { // Arrow Up
-                    var items = $('.match');
-
-                    for (var i = 1; i < items.length; i++) {
-                        if ($(items[i]).hasClass('selected')) {
-                            $(items[i]).removeClass('selected');
-                            $(items[i - 1]).addClass('selected');
-                        }
-                    }
-                }
-            })
-            .on('keyup', function (e) {
-                var val = $(this).val();
-                var terms = val.split(' ');
-
-                if (val === '') {
-                    $('[data-searchitem]').css('display', '');
-                } else {
-                    if (e.keyCode !== 40 && e.keyCode !== 38) {
-                        $('.match.selected').removeClass('selected');
-                    }
-                    $('[data-searchitem]').each(function () {
-                        var $this = $(this);
-                        var match = checkSearchItem($this.attr('data-searchitem'), terms);
-
-                        if (match) {
-                            $this
-                                .addClass('match')
-                                .css('display', '')
-                        } else {
-                            $this
-                                .removeClass('match')
-                                .css('display', 'none');
-                        }
-                    });
-                }
-            });
-    }
+                });
+            }
+        });
 
     document.copyNodePath = [];
 

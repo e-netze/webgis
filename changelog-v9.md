@@ -337,6 +337,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
   [Docs](https://docs.webgiscloud.com/en/webgis-dev/plugins/smartmap-simple.html)
 
+- CMS: removed the Elasticsearch-based node search (``CmsController.Search``, ``ElasticSearchResponse``,
+  ``CmsConfig.ElasticSearchEndpoint``/``HasElastic``). The index was no longer filled by anything, so the
+  search box in the CMS now always filters the loaded tree locally (no typeahead needed for it).
+  * The ``cms.config`` key ``elasticsearch-endpoint`` is obsolete and ignored if still present.
+  * The Elasticsearch search services of the viewer (``ElasticSearch5/7Service``) are not affected.
+
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/cms/index.html)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.
