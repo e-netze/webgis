@@ -73,21 +73,26 @@
             //elem._map.events.on('onremoveservice', removeService, elem);
         }
         var $input = $("<input style='position:absolute;left:" + left + "px;background-color:var(--webgis-ui-surface);width:100%;max-width:" + (320 - (left + 35)) + "px;right:" + (options.detail_search == false ? "36px" : "71px") + "' class='webgis-search-input' type='text' placeholder='Schnellsuche...' />").appendTo($elem)
-            .keyup('enterKey', function (e) {
-            if (e.keyCode == 13)
-                $.webgis_search_query(this);
-        });
         $input.attr('data-service', options.service);
         if (options.service !== 'geojuhu') {
-            $input.attr('data-source', webgis.baseUrl + '/rest/search/' + options.service + '?c=query&');
             $input.addClass('webgis-autocomplete');
             $input.get(0)._map = options.map;
+            $input.webgis_autocomplete({
+                source: webgis.baseUrl + '/rest/search/' + options.service + '?c=query&',
+                onEnter: function (sender) {
+                    $.webgis_search_query(sender);
+                }
+            });
+        } else {
+            $input.keyup('enterKey', function (e) {
+                if (e.keyCode == 13)
+                    $.webgis_search_query(this);
+            });
         }
         $("<div id='webgis-search-button' class='webgis-topbar-button webgis-topbar-button-round' style='position:absolute;right:0px;background-image:url(" + webgis.css.imgResource('search-26.png', 'ui') + ")'></div> ").appendTo($elem).
             click(function () {
                 $.webgis_search_query(this);
             });
-        webgis._appendAutocomplete($elem);
     };
     
     var emptyMask = function (parent) {
@@ -114,7 +119,9 @@
             const $input = $("<input type='text' class='webgis-input' name='" + item.id + "' />").appendTo($form);
             if (item.autocomplete === true) {
                 $input.addClass('webgis-autocomplete');
-                $input.attr('data-source', webgis.baseUrl + "/rest/services/" + path + "?c=autocomplete&_item=" + item.id);
+                $input.webgis_autocomplete({
+                    source: webgis.baseUrl + "/rest/services/" + path + "?c=autocomplete&_item=" + item.id
+                });
             }
             if (item.required === true) {
                 $input.attr('required', 'required');
@@ -122,7 +129,6 @@
         }
         $("<br/><br/><div><div style='display:inline;margin-right:20px' class='webgis-detail-search-hourglass'></div><button type='submit' class='webgis-button webgis-detail-search-button'>" + webgis.l10n.get("search") + "</button></div>")
             .appendTo($form);
-        webgis._appendAutocomplete($form);
     };
     $.webgis_search_fire_detail = function (formId, path) {
         var args = {};
@@ -179,12 +185,12 @@
             $.webgis_search_geojuhu_query(sender);
         }
         else {
-            if (sender._focused == null) {
+            const hasAutocomplete = !!$(sender).data('webgis_autocomplete');
+            if (!hasAutocomplete || !$(sender).webgis_autocomplete('focusedItem')) {
                 $.webgis_search_service_query(sender);
-                try {
-                    $(sender).autocomplete('close');
+                if (hasAutocomplete) {
+                    $(sender).webgis_autocomplete('close');
                 }
-                catch (e) { }
             }
         }
     };

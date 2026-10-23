@@ -33,7 +33,7 @@ dotnet test src\NetCore\Tests\WebGIS.UI.Tests --filter "FullyQualifiedName~Gener
 - No web server: every request to `https://webgis.test/**` is answered from
   `src/NetCore/Web/Api/wwwroot` via Playwright request routing. Requests to other hosts fail the test.
 - The harness page is generated in `Infrastructure/UIBuilderPageTest.cs`:
-  jQuery, typeahead, DOMPurify, then the **source** files of `api.min.js` and `api-ui.min.js`
+  jQuery, DOMPurify, then the **source** files of `api.min.js` and `api-ui.min.js`
   in the order of `bundleconfig.json` (read at runtime), then `Harness/uibuilder-harness.js`.
   `BundleSmokeTests` loads the minified bundles instead (they may be stale, basic check only).
 - `webgis.init()` is **not** called (no server). `map` is a recording fake (`uiHarness.map`, a Proxy):

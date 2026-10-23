@@ -590,10 +590,6 @@
             }
         }
 
-        webgis._appendAutocomplete($parent);
-        webgis._appendAutocomplete($modalContent);
-        webgis._appendAutocomplete($toolModalContent);
-
         // select: kaskadierende Auswahllisten
         $targetRoot.find('.webgis-ui-added.webgis-select-has-dependency-field-ids').each(function (i, select) {
             $(select)

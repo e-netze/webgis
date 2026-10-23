@@ -96,7 +96,7 @@ TODO:
             // Bei Enter alle Suchergebnisse anzeigen (noch nichts ausgewählt)
             // Wenn ich mit Pfeil-Tasten im Autocomplete rauf / runterfahre und auf Enter klicke, wird "normales" on_select von webgis_control_search getriggert UND startSearch
             // => ich will aber nur jenes Enter, wenn ich nicht im Autocomplete stehe! => Einschränkung unterhalb: nur wenn kein Focus auf Autocomplete ist 
-            if (e.which === 13 && $('#geoSearch').find('.tt-cursor').length === 0 && $("ul.ui-autocomplete").find("a.ui-state-focus").length === 0) {
+            if (e.which === 13 && $('#geoSearch').find('.webgis-autocomplete-cursor').length === 0) {
                 //console.log('startsearch');
                 startSearch($geoSearchInput, $resultDiv);
             }
@@ -167,7 +167,9 @@ TODO:
                         // Wenn mobil, zuerst in Animation den Wert hardcodiert berechnen, dann Stil mit Calc setzen
                         if (isMobile.matches) {
                             //$("#geoSearch").css("maxWidth", "calc(100% - 30px)")
-                            webgis._autocompleteFitMenu($('#geoSearchInput'));
+                            if ($('#geoSearchInput').data('webgis_autocomplete')) {
+                                $('#geoSearchInput').webgis_autocomplete('fitMenu');
+                            }
                         }
                     }
                 );

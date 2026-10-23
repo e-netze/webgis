@@ -93,20 +93,15 @@ webgis.ui.definePlugin('webgis_topbar', {
             var $inputContainer = $("<div style='position:absolute;top:0px;bottom:0px;right:" + (right + 35) + "px;background-color:var(--webgis-ui-surface);left:0px'></div>").appendTo($elem);
             var $input = $("<input style='width:100%' class='webgis-search-input' type='text' placeholder='" + webgis.l10n.get("quick-search") + "...' />")
                 .appendTo($inputContainer)
-                .data('autocomplete-onenter', function (e) {
-                    Ctor.searchQuery(this);
-                })
                 .on('click.webgis_topbar', function () {
                     $(this).closest('.webgis-topbar-holder').addClass('webgis-ui-trans-hover').addClass('webgis-topbar-large');
-                    webgis._autocompleteFitMenu(this);
+                    if ($(this).data('webgis_autocomplete')) {
+                        $(this).webgis_autocomplete('fitMenu');
+                    }
                 })
                 .on('blur.webgis_topbar', function () {
                     $(this).closest('.webgis-topbar-holder').removeClass('webgis-ui-trans-hover').removeClass('webgis-topbar-large');
                 });
-
-            if (webgis.useMobileCurrent()) {
-                $input.data('control-parent-selector', '.webgis-topbar-holder');
-            }
 
             var quickSearchServiceString = options.quick_search_service || options.service;
             // distinct the services
@@ -119,6 +114,10 @@ webgis.ui.definePlugin('webgis_topbar', {
                     search_service: quickSearchService,
                     search_categories: options.quick_search_categorie,
                     on_select_get_original: true,
+                    position_target: webgis.useMobileCurrent() ? '.webgis-topbar-holder' : null,
+                    on_enter: function (sender) {
+                        Ctor.searchQuery(sender);
+                    },
                     on_select: function (sender, result, isOriginal) {
                         var map = $(sender).data('map');
                         if (map) {
@@ -184,19 +183,20 @@ webgis.ui.definePlugin('webgis_topbar', {
                 });
         }
 
-        webgis._appendAutocomplete($elem);
-
         if (webgis.usability.appendContentSearchToSearchResults === true) {
             webgis.delayed(function () {
                 if (me._destroyed) return;
                 if ($('.webgis-presentation_toc-search.webgis-content-search-holder').length > 0) {
-                    $elem.find('.webgis-search-input.webgis-autocomplete').data('data-append-items', [{
-                        id: '#content-search',
-                        value: '{0}',
-                        label: '{0}',
-                        subtext: webgis.l10n.get('search-contents-services'),
-                        thumbnail: webgis.css.imgResource('presentations~png', 'toolbar')
-                    }]);
+                    $elem.find('.webgis-search-input.webgis-autocomplete').each(function () {
+                        if (!$(this).data('webgis_autocomplete')) return;
+                        $(this).webgis_autocomplete('option', 'appendItems', [{
+                            id: '#content-search',
+                            value: '{0}',
+                            label: '{0}',
+                            subtext: webgis.l10n.get('search-contents-services'),
+                            thumbnail: webgis.css.imgResource('presentations~png', 'toolbar')
+                        }]);
+                    });
                 }
             }, 1500);
         }
@@ -261,9 +261,11 @@ webgis.ui.definePlugin('webgis_topbar', {
                     $input
                         .addClass('webgis-autocomplete')
                         .data('depends_on', item.autocomplete_depends_on)
-                        .attr('data-source', webgis.baseUrl + "/rest/services/" + path + "?c=autocomplete&_item=" + item.id)
-                        .attr('data-minlength', item.autocomplete_minlength)
-                        .attr('data-debounce-delay', webgis.usability.quickSearch.debounceDelay || 0);
+                        .webgis_autocomplete({
+                            source: webgis.baseUrl + "/rest/services/" + path + "?c=autocomplete&_item=" + item.id,
+                            minLength: parseInt(item.autocomplete_minlength) || 0,
+                            debounceDelay: webgis.usability.quickSearch.debounceDelay || 0
+                        });
                 }
 
                 if (item.required === true) {
@@ -286,20 +288,16 @@ webgis.ui.definePlugin('webgis_topbar', {
                         // beim Verlassen/Bestätigen: Autocomplete der abhängigen Felder neu anstoßen
                         Ctor.getDependentAutocompletes($(this)).each(function () {
                             const $e = $(this);
-
-                            if ($e.val() == "") {  // if empty, change value to force a refresh of the list items...
-                                $e.val("~");       // dummy request => will not be triggered to server (see webgis.js line ~2500)
-                                webgis._triggerAutocomplete($e);
+                            if ($e.data('webgis_autocomplete')) {
+                                $e.webgis_autocomplete('search', '');
+                            } else {
+                                $e.val('');
                             }
-                            $e.val("");
-                            webgis._triggerAutocomplete($e);
                         });
                     });
             }
             $("<br/><br/><div><div style='display:inline;margin-right:20px' class='webgis-detail-search-hourglass'></div><button type='submit' class='webgis-button webgis-detail-search-button'>" + webgis.l10n.get("search") + "</button></div>")
                 .appendTo($form);
-
-            webgis._appendAutocomplete($form);
         },
         // used by the detail search form action: $.webgis_search_fire_detail(formId, path)
         fireDetail: function (formId, path) {
@@ -360,12 +358,12 @@ webgis.ui.definePlugin('webgis_topbar', {
                 this.geojuhuQuery(sender);
             }
             else {
-                if (sender._focused == null) {
+                const hasAutocomplete = !!$(sender).data('webgis_autocomplete');
+                if (!hasAutocomplete || !$(sender).webgis_autocomplete('focusedItem')) {
                     this.serviceQuery(sender);
-                    try {
-                        $(sender).autocomplete('close');
+                    if (hasAutocomplete) {
+                        $(sender).webgis_autocomplete('close');
                     }
-                    catch (e) { }
                 }
             }
         },

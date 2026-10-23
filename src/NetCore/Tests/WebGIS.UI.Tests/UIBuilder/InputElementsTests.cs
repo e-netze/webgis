@@ -408,7 +408,7 @@ public class InputElementsTests : UIBuilderPageTest
 
         await Page.EvaluateAsync("() => $('#elem').trigger('focus').val('Gra').trigger('input')");
         await FlushTimersAsync();
-        await WaitForAsync("() => document.querySelectorAll('.tt-suggestion').length === 2");
+        await WaitForAsync("() => document.querySelectorAll('.webgis-autocomplete-suggestion').length === 2");
 
         Assert.AreEqual(1, requests.Count, string.Join(Environment.NewLine, requests));
         StringAssert.StartsWith(requests[0], AutocompleteSource);

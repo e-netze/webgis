@@ -74,9 +74,16 @@ webgis.ui.builder["input-autocomplete.tagname"] = "input";
 webgis.ui.builder["input-autocomplete.attributes"] = "type='text'";
 webgis.ui.builder["input-autocomplete.toolid"] = false;
 webgis.ui.builder["input-autocomplete"] = (map, $newElement, element) => {
-    $newElement.addClass('webgis-autocomplete').attr('data-source', element.source);
+    $newElement.addClass('webgis-autocomplete');
     if (element.label)
         $newElement.val(element.label);
+};
+// the element is in the DOM now: the plugin wraps the input (the remote parameters are read from the wrapper's parent)
+webgis.ui.builder["input-autocomplete.afterinsert"] = (map, $newElement, element) => {
+    $newElement.webgis_autocomplete({
+        source: element.source,
+        minLength: typeof element.minlength === 'number' ? element.minlength : 0
+    });
 };
 
 // bounding box (4 coordinates) and size (width/height) inputs, used by print and 3D tools

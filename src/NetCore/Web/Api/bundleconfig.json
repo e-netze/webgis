@@ -63,6 +63,7 @@
     "inputFiles": [
         "wwwroot/scripts/api/ui/webgis.ui.plugins.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.general.js",
+        "wwwroot/scripts/api/ui/webgis.ui.plugins.autocomplete.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.bbox_input.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.size_input.js",
         "wwwroot/scripts/api/ui/webgis.ui.plugins.multi_select.js",

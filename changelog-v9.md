@@ -313,6 +313,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
   [Docs](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-css-animations)
 
+- Own autocomplete plugin ``webgis_autocomplete`` (``webgis.ui.plugins.autocomplete.js``) replaces
+  twitter typeahead and jQuery UI autocomplete in the viewer API (next step towards removing
+  external libs from ``webgis-api.min.js``).
+  * Used by quick search/topbar, search forms, tool inputs (``input-autocomplete``), query combo,
+    query builder, geosearch, smartmap and the MapBuilder.
+  * Options ``source`` (url or function), ``minLength``, ``renderItem``, ``onSelect``, ``onEnter``,
+    ... and methods ``val``, ``search``, ``open``, ``close``, ``focusedItem``, ``fitMenu``;
+    fixed-positioned menu, keyboard navigation with label preview (Esc restores the query),
+    per-instance cache, basic ARIA.
+  * Removed ``_appendAutocomplete``/``_triggerAutocomplete``/``_autocompleteFitMenu`` from
+    ``webgis.js``; ``registerUIEvents`` is a no-op kept for compatibility.
+  * The typeahead script tags were removed from the viewer pages and templates
+    (CMS, multiselect and REST pages still use typeahead).
+  * **!! Breaking Change !!** CSS classes renamed: ``.twitter-typeahead``, ``.tt-menu``,
+    ``.tt-suggestion``, ``.tt-cursor``, ... → ``.webgis-autocomplete-wrapper``,
+    ``.webgis-autocomplete-menu``, ``.webgis-autocomplete-suggestion``,
+    ``.webgis-autocomplete-cursor``, ...; custom stylings using the old classes must be adapted.
+
+  [Docs](https://docs.webgiscloud.com/en/webgis-dev/plugins/smartmap-simple.html)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

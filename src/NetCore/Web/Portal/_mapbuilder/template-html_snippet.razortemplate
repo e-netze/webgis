@@ -3,7 +3,6 @@
 <link href="@(Model.ApiUrlHttps)/content/styles/webgis-api.min.css" rel="stylesheet" />
 <link href="@(Model.ApiUrlHttps)/content/api/ui.app.css" rel="stylesheet" />
 
-<script type="text/javascript" src="@(Model.ApiUrlHttps)/scripts/typeahead/typeahead.jquery.min.js"></script>
 
 <script src="@(Model.ApiUrlHttps)/scripts/api/webgis-api.min.js" id="webgis-api-script"></script>
 

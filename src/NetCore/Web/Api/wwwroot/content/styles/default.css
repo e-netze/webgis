@@ -428,7 +428,7 @@ body.webgis-viewer {
     font-size: .73em;
 }
 
-    #tab-tools-content #edit-editmask-container .tt-menu {
+    #tab-tools-content #edit-editmask-container .webgis-autocomplete-menu {
         font-size: 14px;
     }
 
@@ -4200,7 +4200,7 @@ body.webgis-ui-holder {
     }
 
 .webgis-cat-combo-holder .webgis-cat-combo-filter,
-.webgis-cat-combo-holder .twitter-typeahead {
+.webgis-cat-combo-holder .webgis-autocomplete-wrapper {
     display: none !important;
 }
 
@@ -4209,7 +4209,7 @@ body.webgis-ui-holder {
         box-sizing: content-box;
     }
     .webgis-cat-combo-holder.show-filter .webgis-cat-combo-filter,
-    .webgis-cat-combo-holder.show-filter .twitter-typeahead {
+    .webgis-cat-combo-holder.show-filter .webgis-autocomplete-wrapper {
         display: block !important;
         box-sizing: content-box;
     }
@@ -4776,23 +4776,10 @@ body.webgis-ui-holder {
     padding:0px 0px 0px 4px;
     border-bottom:1px solid #e2e2e2;
 }
-.ui-menu-item:last-child .webgis-autocomplete-item .text-cell {
-    border-bottom:none;
-}
-
-.ui-menu-item .webgis-autocomplete-item .webgis-autocomplete-item-details {
-    display:none;
-}
-
 .webgis-autocomplete-item .text-cell .subtext {
     color:#aaa;
     font-size:0.8em;
 }
-.ui-menu-item {
-    padding:0px;
-    margin:0px;
-}
-
 .ui-quickinfo {
     cursor:pointer;
     min-height:40px;
@@ -4908,46 +4895,61 @@ body.webgis-ui-holder {
     z-index: 1000;
 }
 
-/*********  Typeahead **************/
-.tt-menu {
-    background-color: var(--webgis-ui-surface);
-    border: 1px solid #80AFC7;
-    width:100%;
-    margin-top:5px;
-    border-radius:3px;
+/*********  Autocomplete (webgis_autocomplete) **************/
+.webgis-autocomplete-wrapper {
+    position: relative;
 }
 
-.webgis-modal-body .tt-menu {
+.webgis-autocomplete-menu {
+    display: none;
+    position: fixed;   /* top/left/width/max-height are set by the plugin (below the input) */
+    overflow: auto;
+    z-index: 99999999;
+    box-sizing: border-box;
+    background-color: var(--webgis-ui-surface);
+    border: 1px solid #80AFC7;
+    margin-top: 5px;
+    border-radius: 3px;
+}
+
+    .webgis-autocomplete-menu.open {
+        display: block;
+    }
+
+.webgis-modal-body .webgis-autocomplete-menu {
     font-size: 13px;
 }
 
-.tt-suggestion {
-    padding:5px;
-    border-bottom:1px solid #e2e2e2;
+.webgis-autocomplete-suggestion {
+    padding: 5px;
+    border-bottom: 1px solid #e2e2e2;
 }
-.tt-suggestion .tt-img {
-    /*border:2px solid #337ab7;
-    border-radius:3px;*/
-}
-.tt-suggestion .tt-content {
+
+.webgis-autocomplete-suggestion .webgis-autocomplete-content {
     padding: 0px 5px;
-    text-align:left;
-    width:100%;
+    text-align: left;
+    width: 100%;
 }
-.tt-content span.subtext {
+
+.webgis-autocomplete-content span.subtext {
     font-weight: normal;
 }
 
-.tt-suggestion:hover {
+.webgis-autocomplete-suggestion:hover {
     background-color: var(--webgis-ui-surface-hover);
-    cursor:pointer;
+    cursor: pointer;
 }
 
-.tt-suggestion.tt-cursor {
+.webgis-autocomplete-suggestion.webgis-autocomplete-cursor {
     background-color: var(--webgis-ui-surface-hover);
 }
 
-.webgis-modal-content .tt-suggestion {
+.webgis-autocomplete-empty {
+    padding: 5px;
+    color: #aaa;
+}
+
+.webgis-modal-content .webgis-autocomplete-suggestion {
     width: 100%;
     box-sizing: border-box;
 }

@@ -2442,309 +2442,6 @@
             });
         }
     };
-    this._autoCompleteDebounceTimer = null,
-    this._autoCompleteCurrentRequest = null,
-    this._appendAutocomplete = function ($parent) {
-        if (!$parent)
-            return;
-        if ($.fn.typeahead) {
-            if ($parent.find('.webgis-autocomplete').addBack('.webgis-autocomplete').length == 0) {
-                return;
-            }
-            $parent.find('.webgis-autocomplete').addBack('.webgis-autocomplete').each(function (i, e) {
-                if ($(e).hasClass('tt-input')) {
-                    return;
-                }
-                $(e).on({
-                    'typeahead:cursorchange': function (e, item) {
-                        if ($(this).data('map')) {
-                            webgis._autocompleteMapItem($(this).data('map'), item);
-                            this._focused = item;
-                        }
-                        else if (typeof item === 'string') {
-                            this._focused = item;
-                        }
-                    },
-                    'typeahead:select': function (e, item) {
-                        if ($(this).data('autocomplete-onselect')) {
-                            $(this).data('autocomplete-onselect')(this, item);
-                        } else if (typeof item === 'string') {
-                            $(this).typeahead('val', item);
-                        }
-                        $(this).trigger('autocomplete-selected');
-                    },
-                    'typeahead:open': function (e) {
-                        webgis._autocompleteFitMenu(this);
-                    },
-                    'keyup': function (e) {
-                        this._focused = null;
-                        if (e.keyCode === 13) {
-                            var $this = $(this), dataItems = [];
-
-                            $this.closest('.twitter-typeahead').find('.tt-suggestion').each(function (i, e) {   // run over suggestions
-                                var item = $(e).data('item');
-                                if (item && item.id && item.id.indexOf('#') !== 0) {   // ignore metadata items (id starts with '#')
-                                    dataItems.push(item);
-                                }
-                            });
-
-                            // on enter: select first... on enter
-                            if (dataItems.length > 1 && webgis.usability.quickSearch.selectFirstOnEnter === true) {
-                                dataItems = [dataItems[0]];
-                            }
-
-                            // if only one left => do like it is selected => get original ...
-                            if (dataItems.length === 1 && $this.data('autocomplete-onselect')) {
-                                $(this).data('autocomplete-onselect')(this, dataItems[0]);
-                            } else if ($this.data('autocomplete-onenter')) {
-                                $this.data('autocomplete-onenter').apply(this, e);
-                            }
-
-                            $(this).typeahead('close');
-                        }
-                    },
-                    'focus': function (e) {
-                        //var $this = $(this);
-                        //if (Array.isArray($this.data('depends_on'))) {
-                        //    $this.val('~' + $this.val());
-                        //    $this.trigger('input');
-                        //    $this.val($this.val().substr(1));
-                        //    $this.trigger('input');
-                        //}
-                    }
-                })
-                    .typeahead({
-                        hint: false,
-                        highlight: false,
-                        minLength: $(e).attr("data-minlength") ? parseInt($(e).attr("data-minlength")) : 0,
-                    }, {
-                        limit: Number.MAX_VALUE,
-                        async: true,
-                        displayKey: 'label',
-                        source: function (query, processSync, processAsync) {
-                            var typeaheadContext = this;
-                            var $e = $(e);
-
-                            if (query === '~') {
-                                //console.log('dummy request');
-                                return;
-                            }
-
-                            const queryFunc = function (typeaheadContext, $e) {
-                                var $element = $(typeaheadContext.$el[0].parentElement.parentElement)
-                                    .children(".webgis-autocomplete")
-                                    .first();
-
-                                var $ctrl = $element;
-                                var s = $ctrl.attr('data-source');
-
-                                $ctrl.parent().parent()
-                                    .find('.webgis-input,.webgis-autocomplete-parameter')
-                                    .each(function (j, h) {
-                                        s += '&' + (h.name || h.id) + '=' + encodeURIComponent($(h).val());
-                                    });
-
-                                if ($e.attr('data-search-categories')) {
-                                    s += '&categories=' + encodeURIComponent($e.attr('data-search-categories'));
-                                }
-
-                                if (
-                                    webgis.advancedOptions &&
-                                    webgis.advancedOptions.quicksearch_custom_parameters &&
-                                    s.indexOf('/search/') > 0
-                                ) {
-                                    s += '&' + webgis.advancedOptions.quicksearch_custom_parameters;
-                                }
-
-                                s += webgis.hmac.urlParameters() + '&_autocomplete_item_style=label';
-
-                                webgis._autoCompleteCurrentRequest = webgis.ajax({
-                                    url: s,
-                                    type: 'get',
-                                    data: { term: query },
-
-                                    success: function (data) {
-                                        if ($element.data('data-append-items')) {
-                                            for (var i in $element.data('data-append-items')) {
-                                                try {
-                                                    var clone = Object.assign({}, $element.data('data-append-items')[i]);
-                                                    clone.value = (clone.value || '').replaceAll('{0}', query);
-                                                    clone.label = (clone.label || '').replaceAll('{0}', query);
-                                                    data.push(clone);
-                                                } catch (e) { }
-                                            }
-                                        }
-
-                                        processAsync(data);
-                                    },
-
-                                    error: function (xhr, status) {
-                                        if (status !== 'abort') {
-                                            processAsync([]);
-                                        }
-                                    }
-                                });
-                            };
-
-                            var debounceDelay = !$e.hasClass("webgis-autocomplete-suppress-debounce") && $e.attr("data-debounce-delay")
-                                ? parseInt($e.attr("data-debounce-delay"))
-                                : 0
-
-                            if (queryFunc, debounceDelay) {
-                                clearTimeout(webgis._autoCompleteDebounceTimer);
-
-                                if (webgis._autoCompleteCurrentRequest && webgis._autoCompleteCurrentRequest.readyState !== 4) {
-                                    webgis._autoCompleteCurrentRequest.abort();
-                                }
-
-                                webgis._autoCompleteDebounceTimer = setTimeout(function () { queryFunc(typeaheadContext, $e); }, debounceDelay);
-                            } else {
-                                queryFunc(typeaheadContext, $e);
-                            }
-                        },
-                        templates: {
-                            empty: [
-                                // Die Anzeige "Keine Ergebnisse gefunden, nervt bei Projekte laden, neue Darstellungsvariante 
-                                // Frage: braucht man das überhaupt irgendwo?
-                                //'<div class="tt-suggestion">',
-                                //'<div class="tt-content">Keine Ergebnisse gefunden</div>',
-                                //'</div>'
-                            ].join('\n'),
-                            suggestion: function (item) {
-                                //console.log(item);
-                                var html = webgis.autocompleteItem2Html(item);
-                                return $(html).data('item', item);
-                                //return "<div><div class='tt-content'><img class='tt-img' src='" + data.thumbnail + "' /><strong>" + data.label + "<strong><br/><span>" + data.subtext + "</span></div>";
-                                //return $(html).data('tt-item', item).on('mouseenter', function () {
-                                //    var tt = $(this).closest('.twitter-typeahead').find('.tt-input');
-                                //    var item = $(this).data('tt-item');
-                                //    $(tt).trigger('typeahead:cursorchange', item);
-                                //});
-                            }
-                        }
-                    });
-                $(e).closest('.twitter-typeahead')
-                    .css('display', $(e).data('css-display') || 'block')
-                    // Will da Kunde unbedingt haben: Beim Mouseover soll schon gezoomt werden!!
-                    .on('mouseenter', '.tt-suggestion', function () {
-                        var $input = $(this).closest('.twitter-typeahead').find('.webgis-autocomplete');
-
-                        if ($input.data('map') && $(this).data('item')) {
-                            var map = $input.data('map'), item = $(this).data('item');
-                            webgis._autocompleteMapItemTimer.Start({ map: map, item: item });
-                            $input.get(0)._focused = item;
-                        }
-                    })
-                    .on('mouseleave', '.tt-menu', function () {
-                        //console.log('leave');
-                        webgis._autocompleteMapItemTimer.Stop();
-
-                        var $input = $(this).closest('.twitter-typeahead').find('.webgis-autocomplete');
-                        $input.get(0)._focused = null;
-                    });
-                //$(e).closest('.twitter-typeahead').find('.tt-menu').css('margin-top', $(e).height()+10);
-            });
-        }
-        else if ($.fn.autocomplete) {
-            if ($parent.find('.webgis-autocomplete').addBack('.webgis-autocomplete').length === 0)
-                return;
-            $parent.find('.webgis-autocomplete').addBack('.webgis-autocomplete').each(function (i, e) {
-                $(e).autocomplete({
-                    create: function () {
-                        $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
-                            var $li = $("<li class='ui-menu-item'>").data("item.autocomplte", item).attr('data-value', item.value).appendTo(ul);
-                            var $a = $("<a>").appendTo($li);
-                            if (item.thumbnail || item.subtext) {
-                                //$("<table class='webgis-autocomplete-item'><tr><td class='image-cell'>" +
-                                //    (item.thumbnail ? "<img style='max-height:40px' src='" + item.thumbnail + "' /></td><td class='text-cell'>" : "") +
-                                //    (item.label ? "<div><strong>" + item.label + "</strong></div>" : "") +
-                                //    (item.subtext && item.label ? "<span class='subtext'>" + item.subtext + "</span>" : (item.subtext ? "<span>" + item.subtext + "</span>" : "")) +
-                                //    (item.link ? "<div class='webgis-autocomplete-item-details'><a href='" + item.link + "' target='_blank'>" + webgis.l10n.get('details-link') + "</a></div>" : "") +
-                                //    "</td></tr></table>").appendTo($a);
-                                //item._html = $a.html();
-                                $(webgis.autocompleteItem2Html(item)).appendTo($a);
-                            }
-                            else {
-                                $a.html(item.label);
-                            }
-                            return $li;
-                        };
-                    },
-                    search: function (event, ui) {
-                        var s = this.getAttribute('data-source'); //.dataset.source;
-                        $(e.parentNode).find('.webgis-input,.webgis-autocomplete-parameter').each(function (j, h) {
-                            s += '&' + (h.name || h.id) + '=' + encodeURIComponent($(h).val());
-                        });
-                        if ($(e).attr('data-search-categories'))
-                            s += '&categories=' + encodeURIComponent($(e).attr('data-search-categories'));
-                        s += webgis.hmac.urlParameters();
-                        $(this).autocomplete("option", "source", s);
-                        this._focused = null;
-                    },
-                    open: function () {
-                        $(this).autocomplete('widget').css('z-index', 100);
-                        return false;
-                    },
-                    focus: function (event, ui) {
-                        if (ui.item.coords && $(this).data('map')) {
-                            webgis._autocompleteMapItem($(this).data('map'), ui.item);
-                            this._focused = ui.item;
-                        }
-                        else {
-                            this._focused = null;
-                        }
-                    },
-                    select: function (event, ui) {
-                        if ($(this).data('autocomplete-onselect')) {
-                            $(this).data('autocomplete-onselect')(this, ui.item);
-                        } else if (typeof ui.item === 'string') {
-                            $(this).val(ui.item);
-                        }
-                    },
-                    minLength: $(e).attr("data-minlength") ? parseInt($(e).attr("data-minlength")) : 1
-                });
-            })
-                .focus(function () {
-                    try { // falls minLength==0 schon beim anklicken suchen!!
-                        var minLength = parseInt($(this).attr('data-minlength'));
-                        if (minLength <= $(this).val().length)
-                            $(this).autocomplete('search', $(this).val());
-                    }
-                    catch (e) { }
-                });
-        }
-    };
-    this._triggerAutocomplete = function (target) {
-        if ($.fn.typeahead) {
-            $(target)
-                .addClass("webgis-autocomplete-suppress-debounce")
-                .trigger('input')
-                .removeClass("webgis-autocomplete-suppress-debounce");
-        }
-        else if ($.fn.autocomplete) {
-            $(target).autocomplete('search');
-        }
-    };
-    this._autocompleteFitMenu = function (target) {
-        if ($.fn.typeahead) {
-            new webgis.timer(function (target) {
-                var $this = $(target);
-                var $tt = $this.closest('.twitter-typeahead');
-                var $menu = $tt.find('.tt-menu');
-                var $parent = $this.data('control-parent-selector') ? $this.closest($this.data('control-parent-selector')) : $this;
-                $menu.css({
-                    //display: 'block',
-                    top: $parent.offset().top + $parent.outerHeight() - window.pageYOffset,
-                    left: $parent.offset().left,
-                    width: $parent.outerWidth(),
-                    position: 'fixed',
-                    maxHeight: 'calc(100% - ' + ($parent.offset().top + $parent.outerHeight() - window.pageYOffset + 80) + 'px)',
-                    overflow: 'auto',
-                    zIndex: 99999999
-                });
-            }, 300, target).Start();
-        }
-    };
     this.autocompleteItem2Html = function (item) {
         var html = '';
 
@@ -2762,8 +2459,8 @@
         }
 
         if (item.thumbnail || item.subtext) {
-            html = "<table class='tt-suggestion'><tr><td class='tt-img'>" +
-                (item.thumbnail ? "<img style='max-height:40px' src='" + item.thumbnail + "' /></td><td class='tt-content'>" : "") +
+            html = "<table class='webgis-autocomplete-suggestion'><tr><td class='webgis-autocomplete-img'>" +
+                (item.thumbnail ? "<img style='max-height:40px' src='" + item.thumbnail + "' /></td><td class='webgis-autocomplete-content'>" : "") +
                 (item.do_you_mean ? "<div>" + webgis.l10n.get('did-you-mean') + "</div>" : "") +
                 (item.label ? "<div><strong>" + webgis.encodeUntrustedHtml(item.label) + "</strong></div>" : "") +
                 (item.subtext && item.label ? "<span class='subtext'>" + webgis.encodeUntrustedHtml(item.subtext).replaceAll('\n', '<br/>') + "</span>" : (item.subtext ? "<span>" + webgis.encodeUntrustedHtml(item.subtext).replaceAll('\n', '<br/>') + "</span>" : "")) +
@@ -2771,7 +2468,7 @@
                 "</td></tr></table>";
         }
         else {
-            html = "<div class='tt-suggestion tt-content' style='text-align:left'>" + webgis.encodeUntrustedHtml(item.label ? item.label : item) + "</div>";
+            html = "<div class='webgis-autocomplete-suggestion webgis-autocomplete-content' style='text-align:left'>" + webgis.encodeUntrustedHtml(item.label ? item.label : item) + "</div>";
         }
         return html;
     };
@@ -2976,33 +2673,8 @@
     this.validClassName = function (id) {
         return id.replace(/\./g, '-');
     };
-    this.registerUIEvents = function (element) {
-        var refreshAutocomplete = function () {
-            //console.log('refresh autocomplete');
-            $('input.webgis-autocomplete').each(function () {
-                webgis._autocompleteFitMenu(this);
-            });
-        };
-        if (!element) {
-            $(window).resize(function () {
-                refreshAutocomplete();
-            });
-            $(document).scroll(function () {
-                refreshAutocomplete();
-            });
-            //$('.webgis-container').click(function () {
-            //    // eg webgis-tags-combo-popup
-            //    $('.webgis-hide-on-click-outside').css('display', 'none');
-            //});
-        }
-        else {
-            $(element).scroll(function () {
-                refreshAutocomplete();
-            }).find("*").scroll(function () {
-                refreshAutocomplete();
-            });
-        }
-    };
+    // kept for compatibility (custom plugins): the autocomplete menu (webgis_autocomplete) refits itself on resize/scroll
+    this.registerUIEvents = function (element) { };
     this.copy = function (element, selector) {
         var $content = selector ? $(element).find(selector) : $(element);
         var val = $content.html();
@@ -3773,11 +3445,6 @@ webgis.compatiblity = new function () {
 };
 
 webgis.help = {};
-
-(window.jExt || window.jQuery)(document).ready(function () {
-    webgis.registerUIEvents(null);
-    $('webgis-c')
-});
 
 if (!webgis.api_version || webgis.api_version.indexOf('{{') === 0) {
     webgis.$.ajax({

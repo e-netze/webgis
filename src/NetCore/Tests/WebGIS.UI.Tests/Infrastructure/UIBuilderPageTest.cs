@@ -22,7 +22,7 @@ public enum HarnessScripts
 /// Base class for UI builder characterization tests.
 ///
 /// Each test gets a fresh page on https://webgis.test (served from the Api project's wwwroot via
-/// request routing, no web server). The page loads jQuery, typeahead, DOMPurify and the WebGIS
+/// request routing, no web server). The page loads jQuery, DOMPurify and the WebGIS
 /// scripts, then Harness/uibuilder-harness.js, which provides a recording fake map (uiHarness).
 ///
 /// Determinism: fixed fake clock, seeded Math.random, fixed viewport/locale/timezone, GUIDs normalized.
@@ -40,7 +40,6 @@ public abstract class UIBuilderPageTest : PageTest
     private static readonly string[] VendorScripts =
     [
         "/scripts/jquery-3.4.1.min.js",
-        "/scripts/typeahead/typeahead.jquery.min.js",
         "/lib/dompurify/purify.min.js"
     ];
 

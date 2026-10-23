@@ -10,6 +10,8 @@ webgis.ui.definePlugin('webgis_control_search', {
         on_select_get_original_raw: false,
         on_select_get_original_fullgeometry: false,
         css_display: null,
+        on_enter: null,         // function(input): Enter without a cursor item and without a single data item
+        position_target: null,  // selector/element used to position the suggestion menu (default: the input)
         meta: 'meta'
     },
     init: function () {
@@ -18,8 +20,6 @@ webgis.ui.definePlugin('webgis_control_search', {
 
         if (!$elem.is('input[type="text"]') || !options.search_service)
             return;
-        if (options.css_display)
-            $elem.data('css-display', options.css_display);
 
         $elem.addClass('clearable x');
         function tog(v) { return v ? 'addClass' : 'removeClass'; }
@@ -29,22 +29,18 @@ webgis.ui.definePlugin('webgis_control_search', {
         }).on('touchstart.webgis_control_search click.webgis_control_search', function (ev) {
             if ($(this).hasClass('onX')) {
                 ev.preventDefault();
-                $(this).removeClass('onX').val('');
-                webgis._triggerAutocomplete(this);
+                $(this).removeClass('onX');
+                $(this).webgis_autocomplete('search', '');
             }
         });
 
         $elem.attr('data-service', options.search_service);
-        $elem.attr('data-source', webgis.baseUrl + '/rest/search/' + options.search_service + '?c=query&');
-        $elem.attr('data-search-categories', options.search_categories)
-            .attr('data-minlength', webgis.usability.quickSearch.minLength || 0)
-            .attr('data-debounce-delay', webgis.usability.quickSearch.debounceDelay || 0);
         $elem.addClass('webgis-autocomplete');
 
+        let onSelect = null;
         if (options.on_select) {
-            $elem
-              .data('data-options', options)
-              .data('autocomplete-onselect', function (sender, item) {
+            $elem.data('data-options', options);
+            onSelect = function (sender, item) {
                 var options = $(sender).blur().data('data-options');
 
                 if (item.id && item.id.indexOf('#metadata') === 0) {
@@ -208,9 +204,51 @@ webgis.ui.definePlugin('webgis_control_search', {
                         }
                     });
                 }
-            });
+            };
         }
-        webgis._appendAutocomplete($elem);
+
+        $elem.webgis_autocomplete({
+            source: webgis.baseUrl + '/rest/search/' + options.search_service + '?c=query&',
+            categories: options.search_categories,
+            minLength: webgis.usability.quickSearch.minLength || 0,
+            debounceDelay: webgis.usability.quickSearch.debounceDelay || 0,
+            cssDisplay: options.css_display || 'block',
+            positionTarget: options.position_target,
+            onSelect: onSelect,
+            onCursorChange: function (sender, item) {
+                const map = $(sender).data('map');
+                if (map && item && item.coords) {
+                    webgis._autocompleteMapItem(map, item);
+                }
+            },
+            // Kunde will das unbedingt: beim Mouseover soll schon gezoomt werden
+            onItemHover: function (sender, item) {
+                const map = $(sender).data('map');
+                if (map && item) {
+                    webgis._autocompleteMapItemTimer.Start({ map: map, item: item });
+                }
+            },
+            onMenuLeave: function () {
+                webgis._autocompleteMapItemTimer.Stop();
+            },
+            onEnter: function (sender, items) {
+                // ignore metadata items (id starts with '#')
+                let dataItems = items.filter(function (item) {
+                    return item && item.id && item.id.indexOf('#') !== 0;
+                });
+
+                if (dataItems.length > 1 && webgis.usability.quickSearch.selectFirstOnEnter === true) {
+                    dataItems = [dataItems[0]];
+                }
+
+                // only one item left => select it
+                if (dataItems.length === 1 && onSelect) {
+                    onSelect(sender, dataItems[0]);
+                } else if (options.on_enter) {
+                    options.on_enter(sender);
+                }
+            }
+        });
     },
     destroy: function () {
         this.$el.off('.webgis_control_search');

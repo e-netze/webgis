@@ -353,12 +353,14 @@
 
             $("<div style='" + style + "'  class='webgis-input-label'>" + item.name + "</div>").appendTo($itemsPanel);
             if (item.autocomplete == true)
-                $("<input style='" + style + "' type='text' class='webgis-input webgis-autocomplete' name='" + item.id + "' data-source='" + webgis.baseUrl + "/rest/services/" + $select.val() + "?c=autocomplete&_item=" + item.id + "' />").appendTo($itemsPanel);
+                $("<input style='" + style + "' type='text' class='webgis-input webgis-autocomplete' name='" + item.id + "' />")
+                    .appendTo($itemsPanel)
+                    .webgis_autocomplete({
+                        source: webgis.baseUrl + "/rest/services/" + $select.val() + "?c=autocomplete&_item=" + item.id
+                    });
             else
                 $("<input style='" + style + "' type='text' class='webgis-input' name='" + item.id + "' />").appendTo($itemsPanel);
         }
-
-        webgis._appendAutocomplete($itemsPanel);
     };
 
     var appendDynamicContentParameters = function ($parent, namespace) {

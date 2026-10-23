@@ -261,7 +261,7 @@ webgis.ui.definePlugin('webgis_catCombo', {
         }
         this._$catCombo = $catCombo;
 
-        if (!webgis.isMobileDevice() && $.fn.typeahead) {
+        if (!webgis.isMobileDevice()) {
             if (!$combo.hasClass('allow-filter')) {
                 // filter input and its handlers are created only once per combo (class 'allow-filter'),
                 // so they are not removed on reinit (namespace .webgis_catcombo_filter)
@@ -284,7 +284,7 @@ webgis.ui.definePlugin('webgis_catCombo', {
                                 .addClass('show-filter')
                                 .find('.webgis-cat-combo-filter');
 
-                            $input.typeahead('val', '');
+                            $input.webgis_autocomplete('search', '');
 
                             const category = $(this).closest('.webgis-cat-combo-holder').children('.webgis-cat-combo').val();
                             $input.attr('placeholder', category ? webgis.l10n.get('find-layers-in-category', { category: category }) : webgis.l10n.get('find-layers'));
@@ -304,80 +304,66 @@ webgis.ui.definePlugin('webgis_catCombo', {
                     });
 
                 // Initialize Autocomplete
-                $filterInput.on({
-                    'typeahead:select': function (e, item) {
-                        const $holder = $(this)
+                $filterInput.webgis_autocomplete({
+                    minLength: 0,
+                    source: function (query, done) {
+                        const $holder = this.$el.closest('.webgis-cat-combo-holder');
+                        const $combo = $holder.find('.webgis-cat-combo-target');
+
+                        const items = [];
+                        $combo.find('option').each(function (i, option) {
+                            const $option = $(option),
+                                $optGroup = $option.parent().is('optgroup') ? $option.parent() : null;
+
+                            if (!$optGroup ||
+                                $option.css('display') === 'none' ||
+                                $optGroup.css('display') === 'none') {
+                                return;
+                            }
+
+                            const text = $option.text().toLowerCase();
+
+                            let found = true;
+                            $.each(query.split(' '), function (i, term) {
+                                if (text && text.indexOf(term.toLowerCase()) < 0)
+                                    found = false;
+                            });
+
+                            if (found) {
+                                items.push(
+                                    {
+                                        value: $option.val(),
+                                        label: $option.text(),
+                                        category: $optGroup.attr('label')
+                                    }
+                                );
+                            }
+                        });
+
+                        done(items.slice(0, 20));
+                    },
+                    emptyHtml: '<div class="webgis-autocomplete-content">' + webgis.l10n.get('no-results-found') + '</div>',
+                    renderItem: function (item) {
+                        return [
+                            '<div>',
+                            '<div class="webgis-autocomplete-content">',
+                            '<div>' + webgis.encodeUntrustedHtml(item.label) + '</div>',
+                            '<div style="color:#aaa">' + webgis.encodeUntrustedHtml(item.category || '') + '</div>',
+                            '</div>',
+                            '</div>'
+                        ].join('');
+                    },
+                    onSelect: function (sender, item) {
+                        const $holder = $(sender)
                             .closest('.webgis-cat-combo-holder');
                         const $combo = $holder
                             .find('.webgis-cat-combo-target');
 
-                        $(this).typeahead('val', '');
+                        $(sender).webgis_autocomplete('val', '');
                         $combo.val(item.value).trigger('change');
                         $holder.removeClass('show-filter');
                     }
-                })
-                    .typeahead({
-                        hint: false,
-                        highlight: false,
-                        minLength: 0
-                    }, {
-                        limit: Number.MAX_VALUE,
-                        displayKey: 'label',
-                        source: function (query, processSync, processAsync) {
-                            const $holder = this.$el.closest('.webgis-cat-combo-holder');
-                            const $combo = $holder.find('.webgis-cat-combo-target');
-
-                            const items = [];
-                            $combo.find('option').each(function (i, option) {
-                                const $option = $(option),
-                                    $optGroup = $option.parent().is('optgroup') ? $option.parent() : null;
-
-                                if (!$optGroup ||
-                                    $option.css('display') === 'none' ||
-                                    $optGroup.css('display') === 'none') {
-                                    return;
-                                }
-
-                                const text = $option.text().toLowerCase();
-
-                                let found = true;
-                                $.each(query.split(' '), function (i, term) {
-                                    if (text && text.indexOf(term.toLowerCase()) < 0)
-                                        found = false;
-                                });
-
-                                if (found) {
-                                    items.push(
-                                        {
-                                            value: $option.val(),
-                                            label: $option.text(),
-                                            category: $optGroup.attr('label')
-                                        }
-                                    );
-                                }
-                            });
-
-                            processSync(items.length > 0 ? items.slice(0, 20) : null);
-                        },
-                        templates: {
-                            empty: [
-                                '<div class="tt-suggestion">',
-                                '<div class="tt-content">' + webgis.l10n.get('no-results-found') + '</div>',
-                                '</div>'
-                            ].join('\n'),
-                            suggestion: function (item) {
-                                const html = [
-                                    '<div class="tt-suggestion">',
-                                    '<div class="tt-content">',
-                                    '<div>' + item.label + '</div>',
-                                    '<div style="color:#aaa">' + item.category + '</div>',
-                                    '</div>',
-                                    '</div>'
-                                ].join('\n');
-                                return $(html).data('item', item);
-                            }
-                        }
-                    });
+                });
             }
         }
 

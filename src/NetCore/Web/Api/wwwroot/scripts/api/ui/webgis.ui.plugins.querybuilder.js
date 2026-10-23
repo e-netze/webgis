@@ -363,9 +363,10 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
                 if (options.values_source) {
                     $input
                         .addClass('webgis-autocomplete')
-                        .attr('data-source', valuesUrl('autocomplete'))
-                        .attr('data-minlength', 1);
-                    webgis._appendAutocomplete($container);
+                        .webgis_autocomplete({
+                            source: valuesUrl('autocomplete'),
+                            minLength: 1
+                        });
                 }
             }
         },
@@ -376,11 +377,8 @@ webgis.ui.definePlugin("webgis_queryBuilder", {
                 if (input._flatpickr) {
                     input._flatpickr.destroy();
                 }
-                if ($(input).hasClass('tt-input') && $.fn.typeahead) {
-                    $(input).typeahead('destroy');
-                }
             });
-            $container.empty();
+            $container.empty();   // also destroys the autocomplete plugin of the value input
         },
         distinctValues: function (fieldName, url, callback) {
             const cache = this._distinctValues;

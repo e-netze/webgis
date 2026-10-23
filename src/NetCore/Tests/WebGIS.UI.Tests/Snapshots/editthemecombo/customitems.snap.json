@@ -126,142 +126,57 @@
           {
             "tag": "span",
             "attrs": {
-              "class": "twitter-typeahead",
-              "style": "position: relative; display: inline-block;"
+              "class": "webgis-autocomplete-wrapper",
+              "style": "display: block;"
             },
             "children": [
               {
                 "tag": "input",
                 "attrs": {
+                  "aria-autocomplete": "list",
+                  "aria-controls": "webgis-autocomplete-menu-{guid}",
+                  "aria-expanded": "false",
                   "autocomplete": "off",
-                  "class": "webgis-input webgis-cat-combo-filter tt-input",
-                  "dir": "auto",
+                  "class": "webgis-input webgis-cat-combo-filter",
                   "placeholder": "Themen suchen...",
+                  "role": "combobox",
                   "spellcheck": "false",
-                  "style": "position: relative; vertical-align: top;",
                   "type": "text"
                 },
                 "props": {
                   "value": ""
                 },
                 "data": {
-                  "ttAttrs": {
-                    "autocomplete": "[undefined]",
-                    "dir": "[undefined]",
-                    "spellcheck": "[undefined]",
-                    "style": "[undefined]"
-                  },
-                  "ttTypeahead": "[object c]",
-                  "ttWww": {
-                    "classes": {
-                      "cursor": "tt-cursor",
-                      "dataset": "tt-dataset",
-                      "empty": "tt-empty",
-                      "highlight": "tt-highlight",
-                      "hint": "tt-hint",
-                      "input": "tt-input",
-                      "menu": "tt-menu",
-                      "open": "tt-open",
-                      "selectable": "tt-selectable",
-                      "suggestion": "tt-suggestion",
-                      "wrapper": "twitter-typeahead"
-                    },
-                    "css": {
-                      "hint": {
-                        "borderColor": "transparent",
-                        "boxShadow": "none",
-                        "left": "0",
-                        "opacity": "1",
-                        "position": "absolute",
-                        "top": "0"
-                      },
-                      "input": {
-                        "backgroundColor": "transparent",
-                        "position": "relative",
-                        "verticalAlign": "top"
-                      },
-                      "inputWithNoHint": {
-                        "position": "relative",
-                        "verticalAlign": "top"
-                      },
-                      "ltr": {
-                        "left": "0",
-                        "right": "auto"
-                      },
-                      "menu": {
-                        "display": "none",
-                        "left": "0",
-                        "position": "absolute",
-                        "top": "100%",
-                        "zIndex": "100"
-                      },
-                      "rtl": {
-                        "left": "auto",
-                        "right": " 0"
-                      },
-                      "wrapper": {
-                        "display": "inline-block",
-                        "position": "relative"
-                      }
-                    },
-                    "html": {
-                      "menu": "<div class=\"tt-menu\"></div>",
-                      "wrapper": "<span class=\"twitter-typeahead\"></span>"
-                    },
-                    "mixin": "[function]",
-                    "selectors": {
-                      "cursor": ".tt-cursor",
-                      "dataset": ".tt-dataset",
-                      "empty": ".tt-empty",
-                      "highlight": ".tt-highlight",
-                      "hint": ".tt-hint",
-                      "input": ".tt-input",
-                      "menu": ".tt-menu",
-                      "open": ".tt-open",
-                      "selectable": ".tt-selectable",
-                      "suggestion": ".tt-suggestion",
-                      "wrapper": ".twitter-typeahead"
-                    }
-                  }
+                  "__plugins__": [
+                    "[object Ctor]"
+                  ],
+                  "webgis_autocomplete": "[object Ctor]"
                 },
                 "events": {
                   "blur": 1,
-                  "blur.tt": 2,
+                  "blur.webgis_autocomplete": 1,
                   "click.webgis_catcombo_filter": 1,
                   "focus": 1,
-                  "focus.tt": 1,
-                  "input.tt": 1,
-                  "keydown.tt": 1,
+                  "focus.webgis_autocomplete": 1,
+                  "input.webgis_autocomplete": 1,
+                  "keydown.webgis_autocomplete": 1,
                   "mousemove.webgis_catcombo_filter": 1,
-                  "touchstart.webgis_catcombo_filter": 1,
-                  "typeahead:select": 1
-                }
-              },
-              {
-                "tag": "pre",
-                "attrs": {
-                  "aria-hidden": "true",
-                  "style": "position: absolute; visibility: hidden; white-space: pre; font-family: Arial; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"
+                  "touchstart.webgis_catcombo_filter": 1
                 }
               },
               {
                 "tag": "div",
                 "attrs": {
-                  "class": "tt-menu",
-                  "style": "position: absolute; top: 100%; left: 0px; z-index: 100; display: none;"
+                  "class": "webgis-autocomplete-menu",
+                  "id": "webgis-autocomplete-menu-{guid}",
+                  "role": "listbox"
                 },
                 "events": {
-                  "click.tt .tt-selectable": 1,
-                  "mousedown.tt": 1
-                },
-                "children": [
-                  {
-                    "tag": "div",
-                    "attrs": {
-                      "class": "tt-dataset tt-dataset-0"
-                    }
-                  }
-                ]
+                  "click.webgis_autocomplete .webgis-autocomplete-suggestion": 1,
+                  "mousedown.webgis_autocomplete": 1,
+                  "mouseout.webgis_autocomplete": 1,
+                  "mouseover.webgis_autocomplete .webgis-autocomplete-suggestion": 1
+                }
               }
             ]
           },

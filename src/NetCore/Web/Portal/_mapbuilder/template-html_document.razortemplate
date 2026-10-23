@@ -8,7 +8,6 @@
     <title></title>
     
     <script type="text/javascript" src="@(Model.ApiUrl)/scripts/jquery-3.2.0.min.js"></script>
-    <script type="text/javascript" src="@(Model.ApiUrl)/scripts/typeahead/typeahead.jquery.min.js"></script>
 
     <link href="@(Model.ApiUrl)/content/styles/webgis-api.min.css" rel="stylesheet" />
     <link href="@(Model.ApiUrl)/content/api/ui.app.css" rel="stylesheet" />

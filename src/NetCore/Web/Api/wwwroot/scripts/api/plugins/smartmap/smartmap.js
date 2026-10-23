@@ -174,8 +174,8 @@
                 }
             }
         });
-        var $typeahead = $searchBar.closest(".twitter-typeahead").css("z-index", 500);
-        $typeahead.find(".tt-menu.tt-open").css("z-index", 500);
+        var $autocompleteWrapper = $searchBar.closest(".webgis-autocomplete-wrapper").css("z-index", 500);
+        $autocompleteWrapper.find(".webgis-autocomplete-menu.open").css("z-index", 500);
     }
 
     var createEditmask = function (editThemeCapabilities, $target, options) {
