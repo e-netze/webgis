@@ -301,6 +301,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/search_identify/operations/results_desktop/results_desktop.html#results-query-restriction)
 
+- Viewer animations via CSS transitions (first step towards removing jQuery from the API):
+  ``webgis.effects.css_transitions.js`` overrides ``$.fn.slideUp/slideDown/slideToggle`` and
+  ``fadeIn/fadeOut/fadeToggle`` with transient ``webgis-fx-*`` classes (``default.css``); the final
+  state is the same as with jQuery (inline ``display:none``), call sites are unchanged.
+  * Duration ``--webgis-fx-duration`` (250 ms, 0 with ``prefers-reduced-motion``); height animation
+    via ``interpolate-size`` (Chromium only).
+  * Opt-out ``webgis.usability.cssAnimations = false`` (default ``true``) restores the jQuery effects.
+  * Remaining ``animate()``/``scrollTop()`` calls replaced by native ``scrollTo``/``scrollTop`` and a
+    CSS transition (wizard tabs).
+
+  [Docs](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-css-animations)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

@@ -49,6 +49,8 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs custom.js](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-toc-table)
 - Viewer: the Query Builder offers the operators `not like`, `not in`, `is null` and `is not null`, checks values before applying them, and the context menu entry is now called "Display filter (DefinitionQuery)".
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-querybuilder)
+- Viewer: expand/collapse and fade animations use CSS transitions instead of jQuery animations; switch back with `webgis.usability.cssAnimations = false` in `custom.js` if problems occur.
+  [Docs](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-css-animations)
 
 ### Fixed
 

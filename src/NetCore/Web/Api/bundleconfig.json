@@ -23,6 +23,7 @@
       "wwwroot/scripts/api/webgis.storage.js",
       "wwwroot/scripts/api/webgis.markdown.js",
       "wwwroot/scripts/api/webgis.effects.js",
+      "wwwroot/scripts/api/webgis.effects.css_transitions.js",
       "wwwroot/scripts/api/webgis.map.js",
       "wwwroot/scripts/api/webgis.map.queryresults.js",
       "wwwroot/scripts/api/webgis.map.ui.js",

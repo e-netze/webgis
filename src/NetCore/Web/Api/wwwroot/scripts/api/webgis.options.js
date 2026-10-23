@@ -65,6 +65,7 @@ webgis.usability = {
     showErrorsInTabs: true,
     allowUserRemoveErrors: true,
     showTips: false,
+    cssAnimations: true, // slideUp/slideDown/fadeIn/fadeOut... via CSS transitions; false = original jQuery animations
     zoom: {
         zoomSnap: 1,
         zoomDelta: 1,

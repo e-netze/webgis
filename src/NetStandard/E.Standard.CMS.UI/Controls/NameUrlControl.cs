@@ -29,7 +29,7 @@ public class NameUrlControl : UserControl, IInitParameter
         ILocalizer? localizer = servicePack?.GetLocalizer(typeof(NameUrlControl));
 
         this.txtName = new Input("Name") { 
-            Label = localizer.LocalizeOrDefault("name", "Name/Bezedichnung"), 
+            Label = localizer.LocalizeOrDefault("name", "Name/Bezeichnung"), 
             Placeholder = localizer.LocalizeOrDefault("displayname", "Anzeigename"), 
             Required = true };
         this.txtUrl = new Input("Url") { 

@@ -6142,6 +6142,59 @@ select.webgis-not-valid {
     transform: rotateY(-89deg);
 }
 
+/* CSS transitions for jQuery slideUp/slideDown/fadeIn/fadeOut... (webgis.effects.css_transitions.js).
+   Classes are only set while a transition runs. Height animation to/from "auto" needs
+   interpolate-size (Chromium); other browsers collapse/expand without height animation. */
+:root {
+    --webgis-fx-duration: .25s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --webgis-fx-duration: 0s;
+    }
+}
+
+.webgis-fx-slide {
+    interpolate-size: allow-keywords;
+    overflow: hidden !important;
+    transition: height var(--webgis-fx-duration) ease, padding-top var(--webgis-fx-duration) ease, padding-bottom var(--webgis-fx-duration) ease, margin-top var(--webgis-fx-duration) ease, margin-bottom var(--webgis-fx-duration) ease;
+}
+
+    .webgis-fx-slide.webgis-fx-hiding {
+        height: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+.webgis-fx-fade {
+    transition: opacity var(--webgis-fx-duration) ease;
+}
+
+    .webgis-fx-fade.webgis-fx-hiding {
+        opacity: 0 !important;
+    }
+
+@starting-style {
+    .webgis-fx-slide:not(.webgis-fx-hiding) {
+        height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .webgis-fx-fade:not(.webgis-fx-hiding) {
+        opacity: 0;
+    }
+}
+
+.webgis-wizard-tab-moving {
+    transition: left var(--webgis-fx-duration) ease;
+}
+
 .webgis-checkable-div {
     padding: 5px !important;
     border: 1px solid #efefef;

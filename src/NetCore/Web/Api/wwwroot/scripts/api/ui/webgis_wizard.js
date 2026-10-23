@@ -64,13 +64,13 @@
                     opacity: 1 - opStep2 * Math.abs(currentStep - s)
                 }).appendTo($elem).attr('data-step', s)
                     .click(function () {
-                    $(this)
+                    var $tab = $(this)
                         .css({
                         left: $(this).position().left, right: ''
-                    })
-                        .animate({
-                        left: s * 36
-                    }, 300, function () {
+                    });
+                    $tab[0].offsetWidth; // apply the start position before the transition
+                    $tab.addClass('webgis-wizard-tab-moving').css({ left: s * 36 });
+                    webgis.effects.afterTransition($tab[0], function () {
                         $(this).closest('.webgis-wizard').webgis_wizard('setstep', { current_step: parseInt($(this).attr('data-step')) });
                     });
                 });

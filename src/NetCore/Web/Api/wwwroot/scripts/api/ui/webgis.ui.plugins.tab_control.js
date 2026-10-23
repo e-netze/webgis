@@ -279,8 +279,7 @@ webgis.ui.definePlugin('webgis_tab_control', {
                     .attr('tab-id', tab.id)
                     .css('display', 'none')
                     .on('scroll.webgis_tab_control', function () {   // make sure scroll position is saved
-                        const $this = $(this);
-                        $this.data("_scrollTop", $this.scrollTop());
+                        $(this).data("_scrollTop", this.scrollTop);
                     })
                     .appendTo($control);
             }
@@ -459,7 +458,9 @@ webgis.ui.definePlugin('webgis_tab_control', {
                 $tabContent
                     .css("display", "block")
                     .data("$tab", $tab)
-                    .scrollTop($tabContent.data("_scrollTop") || 0);  // and restore scroll position after reopening tab
+                    .each(function () {
+                        this.scrollTop = $(this).data("_scrollTop") || 0;  // and restore scroll position after reopening tab
+                    });
 
                 $tab.removeClass('loading');
             }, 1);

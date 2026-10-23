@@ -2734,11 +2734,11 @@
                 var $parent = $this.data('control-parent-selector') ? $this.closest($this.data('control-parent-selector')) : $this;
                 $menu.css({
                     //display: 'block',
-                    top: $parent.offset().top + $parent.outerHeight() - $(document).scrollTop(),
+                    top: $parent.offset().top + $parent.outerHeight() - window.pageYOffset,
                     left: $parent.offset().left,
                     width: $parent.outerWidth(),
                     position: 'fixed',
-                    maxHeight: 'calc(100% - ' + ($parent.offset().top + $parent.outerHeight() - $(document).scrollTop() + 80) + 'px)',
+                    maxHeight: 'calc(100% - ' + ($parent.offset().top + $parent.outerHeight() - window.pageYOffset + 80) + 'px)',
                     overflow: 'auto',
                     zIndex: 99999999
                 });
@@ -2790,9 +2790,9 @@
 
                 if ($holder.length > 0) {
                     var scroll = $first.offset().top - $holder.offset().top - 34;
-                    $parent.animate({
-                        scrollTop: scroll
-                    }, 200);
+                    $parent.each(function () {
+                        this.scrollTo({ top: scroll, behavior: 'smooth' });
+                    });
                 }
             }, 500);
         }
