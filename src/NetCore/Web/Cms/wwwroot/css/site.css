@@ -1269,12 +1269,6 @@ button {
         background-position: 4px center;
     }
 
-.twitter-typeahead {
-    /*width:600px;
-    max-width:100%;*/
-    width: 100%;
-}
-
 .navbar-search-holder {
     text-align: right;
 }
@@ -1283,7 +1277,6 @@ button {
         display: none;
     }
 
-.twitter-typeahead input,
 input.cms-search {
     /*width: 100%;
     padding: 5px;
@@ -1317,33 +1310,46 @@ input.cms-search {
         opacity: .5;
     }
 
-.tt-menu {
+.cms-autocomplete-menu {
+    position: fixed;
+    z-index: 2147483647;
+    box-sizing: border-box;
     background: #fff;
-    width: 100%;
     border: 1px solid #efefef;
     max-height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
+    padding: 2px;
+    text-align: left;
 }
 
-    .tt-menu .tt-dataset {
-        padding: 2px;
+    .cms-autocomplete-menu .cms-autocomplete-item {
+        padding: 4px;
+        border-bottom: 1px solid #efefef;
+        cursor: pointer;
     }
 
-        .tt-menu .tt-dataset .tt-suggestion {
-            padding: 4px;
-            border-bottom: 1px solid #efefef;
-            cursor: pointer;
+        .cms-autocomplete-menu .cms-autocomplete-item:hover,
+        .cms-autocomplete-menu .cms-autocomplete-item.cms-autocomplete-cursor {
+            background-color: #e3f7cb;
         }
 
-            .tt-menu .tt-dataset .tt-suggestion:hover,
-            .tt-menu .tt-dataset .tt-suggestion.tt-cursor {
-                background-color: #e3f7cb;
-            }
+        .cms-autocomplete-menu .cms-autocomplete-item.cms-autocomplete-empty {
+            cursor: default;
+            background-color: transparent;
+        }
 
-.input-container .tt-menu {
-    z-index: 2147483647;
-}
+    .cms-autocomplete-menu .cms-autocomplete-img {
+        float: left;
+        max-width: 26px;
+        max-height: 26px;
+        margin-right: 6px;
+    }
+
+    .cms-autocomplete-menu .cms-autocomplete-subtext {
+        font-size: .9em;
+        opacity: .75;
+    }
 
 .navbar-brand:hover {
     color: #fff;

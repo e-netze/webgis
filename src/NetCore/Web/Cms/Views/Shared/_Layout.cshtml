@@ -67,7 +67,7 @@
                         @if (isCmsView)
                         {
                             <td style="width:100%" class="navbar-search-holder collapsed">
-                                <input id="cms-search" class="typeahead cms-search" type="text" placeholder="Knoten suchen..." style="display:none">
+                                <input id="cms-search" class="cms-search" type="text" placeholder="Knoten suchen..." style="display:none">
                             </td>
                             <td>
                                 <div class="navbar-search-button">
@@ -147,7 +147,6 @@
         <script src="~/js/cms/Forms.js?@(CmsGlobals.JsVersion)"></script>
         <script src="~/lib/cryptojs/sha512.js"></script>
         <script src="~/lib/cryptojs/enc-base64.js"></script>
-        <script src="~/lib/typeahead/typeahead.bundle.js"></script>
         <script src="~/lib/bootbox.js/bootbox.js"></script>
         <script src="~/lib/showdown/showdown.js"></script>
     </environment>
@@ -158,7 +157,6 @@
         <script src="~/js/site.js" asp-append-version="true"></script>
         <script src="~/js/cms/cms.min.js" asp-append-version="true"></script>
         <script src="~/lib/webportal-layout/webportal-layout.js?@(CmsGlobals.JsVersion)"></script>
-        <script src="~/lib/typeahead/typeahead.bundle.js"></script>
         <script src="~/lib/bootbox.js/bootbox.min.js"></script>
         <script src="~/lib/showdown/showdown.min.js"></script>
     </environment>

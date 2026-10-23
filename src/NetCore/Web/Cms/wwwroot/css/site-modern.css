@@ -863,14 +863,14 @@ button.modaldialog-button-commit,
     background-color: var(--webgis-ui-surface-hover);
 }
 
-.tt-menu {
+.cms-autocomplete-menu {
     border: 1px solid var(--webgis-ui-border);
     border-radius: var(--webgis-ui-radius);
     box-shadow: var(--webgis-ui-shadow-md);
 }
 
-    .tt-menu .tt-dataset .tt-suggestion:hover,
-    .tt-menu .tt-dataset .tt-suggestion.tt-cursor {
+    .cms-autocomplete-menu .cms-autocomplete-item:hover,
+    .cms-autocomplete-menu .cms-autocomplete-item.cms-autocomplete-cursor {
         background-color: var(--webgis-ui-primary-soft);
     }
 

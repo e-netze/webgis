@@ -328,8 +328,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * REST browser (``_RestLayout``) and the user/role multiselect
     (``webgis-jquery-multiselect-autocomplete.js``, portal security) use a small vanilla JS
     suggestion menu instead of typeahead.
+  * CMS: the user/role fields of the node security dialog (``inputautocomplete``,
+    ``CMS.addAutocompleteEvents``) use a small vanilla JS suggestion menu (``.cms-autocomplete-*``);
+    the CMS copy ``lib/typeahead`` and the ``.tt-*`` styles were removed.
   * **!! Breaking Change !!** The library folder ``scripts/typeahead`` was removed from the API;
-    custom pages must no longer include ``typeahead.jquery.min.js`` (the CMS keeps its own copy).
+    custom pages must no longer include ``typeahead.jquery.min.js``.
   * **!! Breaking Change !!** CSS classes renamed: ``.twitter-typeahead``, ``.tt-menu``,
     ``.tt-suggestion``, ``.tt-cursor``, ... → ``.webgis-autocomplete-wrapper``,
     ``.webgis-autocomplete-menu``, ``.webgis-autocomplete-suggestion``,

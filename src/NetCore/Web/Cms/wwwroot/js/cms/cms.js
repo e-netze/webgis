@@ -419,49 +419,154 @@ var CMS = new function () {
             return true;
         }
     };
+    // suggestion menu for 'inputautocomplete' form controls (no external autocomplete library).
+    // One shared menu element (appended to body, fixed) is reused by all inputs, so nothing
+    // is left behind when a form/dialog is removed.
+    var _acMenu = null, _acInput = null, _acCursor = -1, _acRequest = 0, _acTimer = null;
+    var _acItems = function () { return _acMenu ? _acMenu.querySelectorAll('.cms-autocomplete-item[data-value]') : []; };
+    var _acIsOpen = function () { return _acMenu !== null && _acMenu.style.display === 'block'; };
+    var _acClose = function () {
+        clearTimeout(_acTimer);
+        _acRequest++;
+        if (_acMenu) {
+            _acMenu.style.display = 'none';
+        }
+        _acInput = null;
+        _acCursor = -1;
+    };
+    var _acSetCursor = function (index) {
+        var all = _acItems();
+        if (all.length === 0) {
+            return;
+        }
+        _acCursor = (index + all.length) % all.length;
+        for (var i = 0; i < all.length; i++) {
+            all[i].classList.toggle('cms-autocomplete-cursor', i === _acCursor);
+        }
+        all[_acCursor].scrollIntoView({ block: 'nearest' });
+    };
+    var _acSelect = function (item) {
+        var input = _acInput;
+        _acClose();
+        if (input) {
+            input.value = item.getAttribute('data-value');
+            $(input).trigger('change');
+        }
+    };
+    var _acEnsureMenu = function () {
+        if (_acMenu) {
+            return;
+        }
+        _acMenu = document.createElement('div');
+        _acMenu.className = 'cms-autocomplete-menu';
+        _acMenu.style.display = 'none';
+        document.body.appendChild(_acMenu);
+        // mousedown instead of click: fires before the input's blur closes the menu
+        _acMenu.addEventListener('mousedown', function (e) {
+            e.preventDefault();
+            var item = e.target.closest('.cms-autocomplete-item[data-value]');
+            if (item) {
+                _acSelect(item);
+            }
+        });
+        window.addEventListener('resize', _acClose);
+        // fixed menu: close when the page or a dialog scrolls (but not when the menu itself scrolls)
+        window.addEventListener('scroll', function (e) {
+            if (_acIsOpen() && e.target !== _acMenu) {
+                _acClose();
+            }
+        }, true);
+    };
+    var _acRender = function (input, data) {
+        _acMenu.innerHTML = '';
+        _acCursor = -1;
+        if (data.length === 0) {
+            var empty = document.createElement('div');
+            empty.className = 'cms-autocomplete-item cms-autocomplete-empty';
+            empty.textContent = 'Keine Ergebnisse gefunden';
+            _acMenu.appendChild(empty);
+        }
+        data.forEach(function (entry) {
+            var div = document.createElement('div');
+            div.className = 'cms-autocomplete-item';
+            div.setAttribute('data-value', entry.value || entry.suggested_text || '');
+            if (entry.thumbnail) {
+                var img = document.createElement('img');
+                img.className = 'cms-autocomplete-img';
+                img.src = entry.thumbnail;
+                div.appendChild(img);
+            }
+            var strong = document.createElement('strong');
+            strong.textContent = entry.suggested_text || entry.value || '';
+            div.appendChild(strong);
+            if (entry.subtext) {
+                var sub = document.createElement('div');
+                sub.className = 'cms-autocomplete-subtext';
+                sub.textContent = entry.subtext;
+                div.appendChild(sub);
+            }
+            _acMenu.appendChild(div);
+        });
+        var rect = input.getBoundingClientRect();
+        _acMenu.style.left = rect.left + 'px';
+        _acMenu.style.top = rect.bottom + 'px';
+        _acMenu.style.width = rect.width + 'px';
+        _acMenu.style.display = 'block';
+        _acInput = input;
+    };
+    var _acQuery = function (input) {
+        var $input = $(input);
+        var data = CMS.formData($input.closest('.cms-form'));
+        var name = $input.closest('.input-container').attr('data-control-name');
+        var request = ++_acRequest;
+        CMS.api('formautocomplete', { name: name, path: document.currentPath, id: CMS.id, data: JSON.stringify(data) }, function (result) {
+            // ignore outdated responses and responses for an input that lost the focus
+            if (request !== _acRequest || document.activeElement !== input) {
+                return;
+            }
+            _acRender(input, (result || []).slice(0, 60));
+        });
+    };
     this.addAutocompleteEvents = function ($control) {
-        $control.on({
-            'typeahead:cursorchange': function (e, item) {
-            },
-            'typeahead:select': function (e, item) {
-                console.log(item);
-            },
-            'typeahead:open': function (e) {
-            },
-            'keyup': function (e) {
-                if (e.keyCode === 13) {
-                    $(this).typeahead('close');
+        _acEnsureMenu();
+        $control.attr('autocomplete', 'off').each(function () {
+            var input = this;
+            input.addEventListener('focus', function () { _acQuery(input); });
+            input.addEventListener('input', function () {
+                clearTimeout(_acTimer);
+                _acTimer = setTimeout(function () { _acQuery(input); }, 250);
+            });
+            input.addEventListener('blur', function () {
+                if (_acInput === input || _acInput === null) {
+                    _acClose();
                 }
-            }
-        }).typeahead({
-            hint: false,
-            highlight: false,
-            minLength: 0
-        }, {
-            limit: Number.MAX_VALUE,
-            async: true,
-            displayKey: 'value',
-            source: function (query, processSync, processAsync) {
-                var $form = this.$el.closest('.cms-form');
-                var data = CMS.formData($form);
-                var name = this.$el.closest('.input-container').attr('data-control-name');
-                CMS.api('formautocomplete', { name: name, path: document.currentPath, id: CMS.id, data: JSON.stringify(data) }, function (data) {
-                    data = data.slice(0, 60);
-                    processAsync(data);
-                });
-            },
-            templates: {
-                empty: [
-                    '<div class="tt-suggestion">',
-                    '<div class="tt-content">Keine Ergebnisse gefunden</div>',
-                    '</div>'
-                ].join('\n'),
-                suggestion: function (item) {
-                    return "<div><div class='tt-content'>" + (item.thumbnail ? "<img class='tt-img' src='" + item.thumbnail + "' />" : "") + "<strong>" + item.suggested_text + "</strong>"
-                        + (item.subtext ? "<br/><div>" + item.subtext + "</div>" : "") +
-                        "</div >";
+            });
+            input.addEventListener('keydown', function (e) {
+                if (!_acIsOpen() || _acInput !== input) {
+                    return;
                 }
-            }
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    _acSetCursor(_acCursor + 1);
+                }
+                else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    _acSetCursor(_acCursor - 1);
+                }
+                else if (e.key === 'Enter') {
+                    var all = _acItems();
+                    if (_acCursor >= 0 && all[_acCursor]) {
+                        e.preventDefault();
+                        _acSelect(all[_acCursor]);
+                    }
+                    else {
+                        _acClose();
+                    }
+                }
+                else if (e.key === 'Escape') {
+                    _acClose();
+                }
+            });
         });
     };
     this.addPin = function (name, path) {
