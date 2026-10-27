@@ -993,7 +993,7 @@ webgis.ui.definePlugin('webgis_queryResultsTable', {
                                                         .data('map', map)
                                                         .data('oid', feature.oid)
                                                         .data('filterid', filterId)
-                                                        .css('background-image', 'url(' + webgis.css.imgResource('filter-26.png', 'tools') + ')')
+                                                        .css('background-image', 'url(' + webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-filter-table', 'tools') + ')')
                                                         .appendTo($td);
                                                 }
                                             }

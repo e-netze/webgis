@@ -116,8 +116,10 @@ webgis.ui.appendCallback = function ($newElem, element, options) {
             var custom = {};
 
             custom[$this.data('_type') + "-value"] = val;
-            if ($(this).attr('data-item-command'))
-                custom[$this.data('_type') + "-item-command"] = $(this).attr('data-item-command');
+            // the item command comes from the element itself (eg. remove) or from a clicked child element with a data-item-command attribute
+            var $itemCommand = $(e.target).closest('[data-item-command]');
+            if ($itemCommand.length && ($itemCommand[0] === this || $.contains(this, $itemCommand[0])))
+                custom[$this.data('_type') + "-item-command"] = $itemCommand.attr('data-item-command');
 
             if (cb.type === 'toolevent' && cb.tool) {
                 webgis.tools.sendToolRequest($this.data('_map'), cb.tool, cb.type, $this.data('_event'), custom);

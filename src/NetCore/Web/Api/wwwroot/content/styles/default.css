@@ -1308,6 +1308,15 @@ img.tile {
         font-size: 0.85em;
         color: var(--webgis-ui-text-label);
     }
+    .webgis-statistics-summary .webgis-statistics-classes {
+        margin-top: 2px;
+    }
+    .webgis-statistics-summary button.webgis-statistics-download {
+        display: block;
+        margin: 8px 0px 0px 0px;
+        padding: 3px 12px;
+        font-size: 12px;
+    }
 
 table.webgis-statistics-values {
     width: 100%;
@@ -1352,8 +1361,61 @@ table.webgis-statistics-values {
         background-color: var(--webgis-ui-surface-hover);
     }
     .webgis-statistics-groups li.webgis-statistics-group > div:first-child {
+        display: flex;
+        align-items: baseline;
+        flex: 1;
+        min-width: 0px;
+    }
+    .webgis-statistics-groups .webgis-statistics-index,
+    .webgis-statistics-groups .webgis-statistics-rank {
+        flex-shrink: 0;
+        font-variant-numeric: tabular-nums;
+        color: var(--webgis-ui-text-label);
+    }
+    .webgis-statistics-groups .webgis-statistics-index {
+        width: 36px;
+    }
+    .webgis-statistics-groups .webgis-statistics-rank {
+        width: 52px;
+    }
+    .webgis-statistics-groups > ul {
+        margin: 0px;
+    }
+        .webgis-statistics-groups li .webgis-statistics-rank.inherited {
+            opacity: 0.35;
+        }
+        .webgis-statistics-groups li .webgis-statistics-rank.clickable {
+            text-decoration: underline dotted;
+            text-underline-offset: 3px;
+        }
+            .webgis-statistics-groups li .webgis-statistics-rank.clickable:hover {
+                opacity: 1;
+                color: var(--webgis-brand-primary);
+                text-decoration-style: solid;
+            }
+    .webgis-statistics-groups .webgis-statistics-value {
+        flex: 1;
+        min-width: 0px;
         overflow-wrap: anywhere;
     }
+    .webgis-statistics-groups .webgis-statistics-groups-header {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        padding: 4px 8px;
+        font-size: 0.85em;
+        font-weight: bold;
+        color: var(--webgis-ui-text-label);
+        border-bottom: 1px solid var(--webgis-ui-border-subtle);
+    }
+        .webgis-statistics-groups .webgis-statistics-groups-header .webgis-statistics-index,
+        .webgis-statistics-groups .webgis-statistics-groups-header .webgis-statistics-rank {
+            margin-right: -12px;  /* no gap inside the value column (see li > div:first-child) */
+        }
+        .webgis-statistics-groups .webgis-statistics-groups-header .webgis-statistics-count {
+            flex-shrink: 0;
+            text-align: right;
+        }
     .webgis-statistics-groups li.webgis-statistics-group .subtext {
         flex-shrink: 0;
         margin: 0px;

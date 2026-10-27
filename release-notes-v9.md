@@ -55,6 +55,9 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/presentation/index.html#toc-querybuilder)
 - Viewer: expand/collapse and fade animations use CSS transitions instead of jQuery animations; switch back with `webgis.usability.cssAnimations = false` in `custom.js` if problems occur.
   [Docs](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-css-animations)
+- Viewer: new table tool "Statistics" for query results of ArcGIS Server layers with `supportsStatistics` (key figures and count per value with ranks over the whole query, CSV download); clicking a value or rank restricts the result, and single Query Builder rows can be removed. Requires the Query Builder to be allowed for the service.
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/search_identify/operations/results_desktop/results_desktop.html#results-query-statistics)
+  [Docs CMS](https://docs.webgiscloud.com/en/webgis/apps/cms/add_ags_service.html#cms-ags-query-statistics)
 
 ### Fixed
 

@@ -20,6 +20,18 @@ Restrict the query result with the query builder (not a display filter)
 # statistics-mode: Display:
 # statistics-mode-values: Key figures
 # statistics-mode-groups: Count per value
+# statistics-sort: Sort order:
+# statistics-sort-asc: Count ascending
+# statistics-sort-desc: Count descending
+# statistics-group-classes: {0} distinct values (classes); rank 1 = most frequent value
+# statistics-column-index: #
+# statistics-column-rank: Rank
+# statistics-column-value: Value
+# statistics-column-count: Count
+# statistics-column-share: Share (%)
+# statistics-download-csv: Download as CSV
+# statistics-rank-tooltip: Click: restrict the result to all {0} values of rank {1}
+# statistics-rank-not-possible: Restricting to this rank is not possible (empty values, values containing a comma or more than {0} values).
 # statistics-header: Statistics of {0} features (whole query)
 # statistics-info-restriction: Current restriction: {0}
 # statistics-count: Count (with value)
@@ -28,9 +40,9 @@ Restrict the query result with the query builder (not a display filter)
 # statistics-max: Maximum
 # statistics-avg: Average
 # statistics-sum: Sum
-# statistics-restrict-hint: Click a value to restrict the result to this value.
+# statistics-restrict-hint: Click a value to restrict the result to this value, click an (underlined) rank to restrict it to all values of this rank.
 # statistics-null-value: (empty)
-# statistics-group-count: {0} features ({1})
-# statistics-other-groups: Other values: {0} features
+# statistics-group-count: {0} ({1})
+# statistics-other-groups: The service only returns {0} values (service limit). {1} features have further values that are not listed here.
 # statistics-not-supported: Statistics are not available for this query.
 # statistics-culture: en-US

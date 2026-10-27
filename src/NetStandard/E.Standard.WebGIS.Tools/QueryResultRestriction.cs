@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -53,20 +53,23 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
     public const string StatisticsCommand = "statistics";
     public const string StatisticsFieldCommand = "statistics-field";
     public const string StatisticsModeCommand = "statistics-mode";
+    public const string StatisticsSortCommand = "statistics-sort";
+    public const string StatisticsCsvCommand = "statistics-csv";
     public const string StatisticsRestrictCommand = "statistics-restrict";
 
     private const string StatisticsTokenId = "webgis-qr-statistics-token";
     private const string StatisticsFieldId = "webgis-qr-statistics-field";
     private const string StatisticsModeId = "webgis-qr-statistics-mode";
+    private const string StatisticsSortId = "webgis-qr-statistics-sort";
     private const string StatisticsResultId = "webgis-qr-statistics-result";
 
     private const string StatisticsModeValues = "values";
     private const string StatisticsModeGroups = "groups";
+    private const string StatisticsSortAscending = "asc";
+    private const string StatisticsSortDescending = "desc";
+    private const string StatisticsRankItemCommand = "rank";
+    private const int MaxStatisticsRankValues = 1000;  // e.g. Oracle: max. 1000 expressions in a list
 
-    /// <summary>
-    /// Max. number of groups (distinct values) shown in the statistics dialog, the rest is summarized
-    /// </summary>
-    public const int MaxStatisticsGroups = 50;
 
     #region IApiButton
 
@@ -262,7 +265,7 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
                             id = StatisticsResultId,
                             elements = new IUIElement[]
                             {
-                                await StatisticsResultAsync(bridge, descriptor, query, field, StatisticsModeValues, localizer)
+                                await StatisticsResultAsync(bridge, descriptor, query, field, StatisticsModeValues, StatisticsSortDescending, localizer)
                             }
                         }
                     }
@@ -278,6 +281,64 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
     [ServerToolCommand(StatisticsModeCommand)]
     async public Task<ApiEventResponse> OnStatisticsMode(IBridge bridge, ApiToolEventArguments e, ILocalizer<QueryResultRestriction> localizer)
         => await StatisticsRefreshAsync(bridge, e, e[StatisticsModeId], localizer);
+
+    [ServerToolCommand(StatisticsSortCommand)]
+    async public Task<ApiEventResponse> OnStatisticsSort(IBridge bridge, ApiToolEventArguments e, ILocalizer<QueryResultRestriction> localizer)
+        => await StatisticsRefreshAsync(bridge, e, e[StatisticsModeId], localizer);
+
+    /// <summary>
+    /// Downloads the currently shown statistics (field, mode, sort order) as CSV
+    /// </summary>
+    [ServerToolCommand(StatisticsCsvCommand)]
+    async public Task<ApiEventResponse> OnStatisticsCsv(IBridge bridge, ApiToolEventArguments e, ILocalizer<QueryResultRestriction> localizer)
+    {
+        var descriptor = QueryRestrictionDescriptor.FromToken(bridge.CryptoService, e[StatisticsTokenId]);
+        var (query, fields) = await QueryAndAllowedFields(bridge, descriptor);
+        var field = StatisticsField(fields, e[StatisticsFieldId]);
+        var fieldKind = StatisticsFieldKind(field);
+        var groupByValues = fieldKind == LayerStatisticsFieldKind.Text
+                         || (fieldKind == LayerStatisticsFieldKind.Number && e[StatisticsModeId] == StatisticsModeGroups);
+
+        var statistics = await QueryStatisticsAsync(bridge, descriptor, query, field, fieldKind, groupByValues, localizer);
+        var culture = StatisticsCulture(localizer);
+        var fieldTitle = String.IsNullOrWhiteSpace(field.Alias) ? field.Name : field.Alias;
+
+        IEnumerable<string[]> rows;
+        if (groupByValues)
+        {
+            var groupRows = StatisticsGroupRows(statistics.Groups,
+                                                sortDescending: e[StatisticsSortId] != StatisticsSortAscending,
+                                                g => StatisticsGroupCsvValue(g, culture, localizer),
+                                                culture);
+            rows = new[]
+            {
+                new[]
+                {
+                    localizer.Localize("statistics-column-index"),
+                    localizer.Localize("statistics-column-rank"),
+                    fieldTitle,
+                    localizer.Localize("statistics-column-count"),
+                    localizer.Localize("statistics-column-share")
+                }
+            }
+            .Concat(groupRows.Select(g => new[]
+            {
+                g.Index.ToString(CultureInfo.InvariantCulture),
+                g.Rank.ToString(CultureInfo.InvariantCulture),
+                g.Text,
+                g.Group.Count.ToString(CultureInfo.InvariantCulture),
+                (100D * StatisticsShare(g.Group.Count, statistics.TotalCount)).ToString("0.##", culture)
+            }));
+        }
+        else
+        {
+            rows = new[] { new[] { fieldTitle, localizer.Localize("statistics-column-value") } }
+                .Concat(StatisticsValueRows(statistics, fieldKind, culture, localizer).Select(r => new[] { r.label, r.value }));
+        }
+
+        return new ApiRawDownloadEventResponse($"statistics-{StatisticsFileName(field.Name)}.csv",
+                                               bridge.DefaultTextEncoding.GetBytes(StatisticsCsv(rows)));  // UTF8-BOM => umlauts in Excel
+    }
 
     /// <summary>
     /// Click on a group (value) => restricts the result to this value (ANDed with an existing restriction)
@@ -295,6 +356,19 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
         }
 
         var condition = StatisticsGroupCondition(field.Name, e["menuitem-value"]);
+
+        if (e["menuitem-item-command"] == StatisticsRankItemCommand)
+        {
+            // click on the rank => all values with the same count (recalculated, the client sends only the clicked value)
+            var fieldKind = StatisticsFieldKind(field);
+            var statistics = await QueryStatisticsAsync(bridge, descriptor, query, field, fieldKind, groupByValues: true, localizer);
+            var clicked = statistics.Groups.FirstOrDefault(g => System.Text.Json.JsonSerializer.Serialize(g.Value) == e["menuitem-value"]);
+
+            if (clicked != null)
+            {
+                condition = StatisticsRankCondition(field.Name, statistics.Groups.Where(g => g.Count == clicked.Count), localizer);
+            }
+        }
 
         return await PerformAsync(bridge, e, descriptor, query,
                                   CombineRestriction(descriptor.Restriction, condition),
@@ -322,30 +396,20 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
                     target = $"#{StatisticsResultId}",
                     elements = new IUIElement[]
                     {
-                        await StatisticsResultAsync(bridge, descriptor, query, field, mode, localizer)
+                        await StatisticsResultAsync(bridge, descriptor, query, field, mode, e[StatisticsSortId], localizer)
                     }
                 }
             }
         };
     }
 
-    async private Task<IUIElement> StatisticsResultAsync(IBridge bridge, QueryRestrictionDescriptor descriptor, IQueryBridge query, IField field, string mode, ILocalizer<QueryResultRestriction> localizer)
+    async private Task<IUIElement> StatisticsResultAsync(IBridge bridge, QueryRestrictionDescriptor descriptor, IQueryBridge query, IField field, string mode, string sort, ILocalizer<QueryResultRestriction> localizer)
     {
         var fieldKind = StatisticsFieldKind(field);
         var groupByValues = fieldKind == LayerStatisticsFieldKind.Text
                          || (fieldKind == LayerStatisticsFieldKind.Number && mode == StatisticsModeGroups);
 
-        var statistics = await query.QueryStatisticsAsync(bridge.RequestContext,
-                                                          CreateFilter(bridge, descriptor, query, queryGeometry: false),
-                                                          new LayerStatisticsRequest()
-                                                          {
-                                                              Field = field.Name,
-                                                              FieldKind = fieldKind,
-                                                              GroupByValues = groupByValues,
-                                                              MaxGroups = MaxStatisticsGroups
-                                                          },
-                                                          appendFilterClause: descriptor.EffectiveWhereClause(descriptor.Restriction))
-            ?? throw new InfoException(localizer.Localize("statistics-not-supported"));
+        var statistics = await QueryStatisticsAsync(bridge, descriptor, query, field, fieldKind, groupByValues, localizer);
 
         var culture = StatisticsCulture(localizer);
         var elements = new List<IUIElement>();
@@ -366,6 +430,23 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
             }));
         }
 
+        var sortDescending = sort != StatisticsSortAscending;  // default: descending (rank 1 on top)
+        if (groupByValues)
+        {
+            elements.Add(StatisticsFormRow(localizer.Localize("statistics-sort"), new UISelect(UIButton.UIButtonType.servertoolcommand_ext, StatisticsSortCommand)
+            {
+                id = StatisticsSortId,
+                css = UICss.ToClass(new[] { UICss.ToolParameter }),
+                changetool = this.GetType().ToToolId(),
+                defaultvalue = sortDescending ? StatisticsSortDescending : StatisticsSortAscending,
+                options = new[]
+                {
+                    new UISelect.Option() { value = StatisticsSortDescending, label = WebUtility.HtmlEncode(localizer.Localize("statistics-sort-desc")) },
+                    new UISelect.Option() { value = StatisticsSortAscending, label = WebUtility.HtmlEncode(localizer.Localize("statistics-sort-asc")) }
+                }
+            }));
+        }
+
         var summary = new List<IUIElement>()
         {
             new UILiteralBold() { literal = String.Format(localizer.Localize("statistics-header"), statistics.TotalCount.ToString("N0", culture)) }
@@ -374,10 +455,22 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
         {
             summary.Add(new UIDiv()
             {
+                css = "webgis-statistics-classes",
+                elements = new IUIElement[] { new UILiteral() { literal = String.Format(localizer.Localize("statistics-group-classes"), statistics.Groups.Count().ToString("N0", culture)) } }
+            });
+            summary.Add(new UIDiv()
+            {
                 css = "webgis-statistics-hint",
                 elements = new IUIElement[] { new UILiteral() { literal = localizer.Localize("statistics-restrict-hint") } }
             });
         }
+        // after the literals: a literal rewrites the parent html (=> events of previous siblings get lost)
+        summary.Add(new UIButton(UIButton.UIButtonType.servertoolcommand_ext, StatisticsCsvCommand)
+        {
+            id = this.GetType().ToToolId(),  // servertoolcommand_ext: the button id is the target tool id
+            css = UICss.ToClass(new[] { UICss.DefaultButtonStyle, "webgis-statistics-download" }),
+            text = localizer.Localize("statistics-download-csv")
+        });
         elements.Add(new UIDiv()
         {
             css = "webgis-statistics-summary",
@@ -386,19 +479,7 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
 
         if (!groupByValues)
         {
-            var rows = new List<(string label, string value)>()
-            {
-                (localizer.Localize("statistics-count"), (statistics.TotalCount - statistics.NullCount).ToString("N0", culture)),
-                (localizer.Localize("statistics-count-null"), statistics.NullCount.ToString("N0", culture)),
-                (localizer.Localize("statistics-min"), StatisticsValueText(statistics.Min, culture)),
-                (localizer.Localize("statistics-max"), StatisticsValueText(statistics.Max, culture))
-            };
-
-            if (fieldKind == LayerStatisticsFieldKind.Number)
-            {
-                rows.Add((localizer.Localize("statistics-avg"), StatisticsValueText(statistics.Average, culture)));
-                rows.Add((localizer.Localize("statistics-sum"), StatisticsValueText(statistics.Sum, culture)));
-            }
+            var rows = StatisticsValueRows(statistics, fieldKind, culture, localizer);
 
             elements.Add(new UITable(rows
                 .Select(r => new UITableRow(new IUIElement[]
@@ -414,49 +495,232 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
         else
         {
             var maxCount = Math.Max(1L, statistics.Groups.Select(g => g.Count).DefaultIfEmpty(0).Max());
-            var groups = statistics.Groups
-                .Select(g => new
-                {
-                    Group = g,
-                    Text = g.Value is null
-                        ? localizer.Localize("statistics-null-value")
-                        : g.Label.OrTake(StatisticsValueText(g.Value, culture))
-                })
-                .OrderBy(g => g.Group.Count)
-                .ThenBy(g => g.Text, StringComparer.Create(culture, true));
+            var groupList = StatisticsGroupRows(statistics.Groups, sortDescending, g => StatisticsGroupText(g, culture, localizer), culture);
 
             var menu = new UIMenu();
-            menu.elements = groups
+            menu.elements = groupList
                 .Select(g => (IUIElement)new UIMenuItem(this, null, UIButton.UIButtonType.servertoolcommand_ext, StatisticsRestrictCommand)
                 {
                     css = "webgis-statistics-group",
                     // relative bar length (css variable, see default.css)
                     style = $"--webgis-statistics-share:{(100D * g.Group.Count / maxCount).ToString("0.#", CultureInfo.InvariantCulture)}%",
-                    text = WebUtility.HtmlEncode(g.Text),
+                    text = String.Concat(
+                        $"<span class='webgis-statistics-index'>{g.Index.ToString(culture)}</span>",
+                        StatisticsRankHtml(g.Rank, g.RankSize, g.InheritedRank, culture, localizer),
+                        $"<span class='webgis-statistics-value'>{WebUtility.HtmlEncode(g.Text)}</span>"),
                     subtext = String.Format(localizer.Localize("statistics-group-count"),
                                             g.Group.Count.ToString("N0", culture),
-                                            (statistics.TotalCount > 0 ? (double)g.Group.Count / statistics.TotalCount : 0D).ToString("P1", culture)),
+                                            StatisticsShare(g.Group.Count, statistics.TotalCount).ToString("P1", culture)),
                     value = System.Text.Json.JsonSerializer.Serialize(g.Group.Value)
                 })
                 .ToArray();
 
+            if (statistics.OtherFeaturesCount > 0)  // the service returned not all groups (maxRecordCount)
+            {
+                elements.Add(InfoLine(String.Format(localizer.Localize("statistics-other-groups"),
+                    statistics.Groups.Count().ToString("N0", culture),
+                    statistics.OtherFeaturesCount.ToString("N0", culture))));
+            }
+
             elements.Add(new UIDiv()
             {
                 css = "webgis-statistics-groups",
-                elements = new IUIElement[] { menu }
+                elements = new IUIElement[]
+                {
+                    new UIDiv()
+                    {
+                        css = "webgis-statistics-groups-header",
+                        elements = new IUIElement[]
+                        {
+                            new UIDiv() { css = "webgis-statistics-index", elements = new IUIElement[] { new UILiteral() { literal = localizer.Localize("statistics-column-index") } } },
+                            new UIDiv() { css = "webgis-statistics-rank", elements = new IUIElement[] { new UILiteral() { literal = localizer.Localize("statistics-column-rank") } } },
+                            new UIDiv() { css = "webgis-statistics-value", elements = new IUIElement[] { new UILiteral() { literal = localizer.Localize("statistics-column-value") } } },
+                            new UIDiv() { css = "webgis-statistics-count", elements = new IUIElement[] { new UILiteral() { literal = localizer.Localize("statistics-column-count") } } }
+                        }
+                    },
+                    menu
+                }
             });
-
-            if (statistics.OtherGroupsCount > 0 || statistics.OtherFeaturesCount > 0)
-            {
-                elements.Add(InfoLine(String.Format(localizer.Localize("statistics-other-groups"),
-                    statistics.OtherFeaturesCount.ToString("N0", culture))));
-            }
         }
 
         return new UIDiv()
         {
             elements = elements.ToArray()
         };
+    }
+
+    async private Task<LayerStatistics> QueryStatisticsAsync(IBridge bridge, QueryRestrictionDescriptor descriptor, IQueryBridge query, IField field, LayerStatisticsFieldKind fieldKind, bool groupByValues, ILocalizer<QueryResultRestriction> localizer)
+        => await query.QueryStatisticsAsync(bridge.RequestContext,
+                                            CreateFilter(bridge, descriptor, query, queryGeometry: false),
+                                            new LayerStatisticsRequest()
+                                            {
+                                                Field = field.Name,
+                                                FieldKind = fieldKind,
+                                                GroupByValues = groupByValues,
+                                                MaxGroups = 0  // all groups the service returns (limited by its maxRecordCount)
+                                            },
+                                            appendFilterClause: descriptor.EffectiveWhereClause(descriptor.Restriction))
+            ?? throw new InfoException(localizer.Localize("statistics-not-supported"));
+
+    /// <summary>
+    /// Competition ranking by frequency (1, 2, 2, 4): rank 1 = most frequent value
+    /// </summary>
+    static private int StatisticsRank(IEnumerable<long> counts, long count)
+        => 1 + counts.Count(c => c > count);
+
+    internal record StatisticsGroupRow(int Index, int Rank, int RankSize, bool InheritedRank, LayerStatisticsGroup Group, string Text);
+
+    /// <summary>
+    /// Groups sorted by count (then by text) with running index and rank. The rank is independent of the sort direction.
+    /// InheritedRank: same rank as the previous row
+    /// </summary>
+    static internal IReadOnlyList<StatisticsGroupRow> StatisticsGroupRows(IEnumerable<LayerStatisticsGroup> groups, bool sortDescending, Func<LayerStatisticsGroup, string> text, CultureInfo culture)
+    {
+        var groupArray = groups.ToArray();
+        var counts = groupArray.Select(g => g.Count).ToArray();
+        var textComparer = StringComparer.Create(culture, true);
+
+        var items = groupArray.Select(g => (Group: g, Text: text(g)));
+        var sorted = (sortDescending
+            ? items.OrderByDescending(g => g.Group.Count).ThenBy(g => g.Text, textComparer)
+            : items.OrderBy(g => g.Group.Count).ThenBy(g => g.Text, textComparer)).ToArray();
+
+        return sorted
+            .Select((g, index) => new StatisticsGroupRow(
+                Index: index + 1,
+                Rank: StatisticsRank(counts, g.Group.Count),
+                RankSize: counts.Count(c => c == g.Group.Count),
+                InheritedRank: index > 0 && sorted[index - 1].Group.Count == g.Group.Count,
+                Group: g.Group,
+                Text: g.Text))
+            .ToList();
+    }
+
+    static private string StatisticsGroupText(LayerStatisticsGroup group, CultureInfo culture, ILocalizer<QueryResultRestriction> localizer)
+        => group.Value is null
+            ? localizer.Localize("statistics-null-value")
+            : group.Label.OrTake(StatisticsValueText(group.Value, culture));
+
+    /// <summary>
+    /// CSV: numbers without group separators, so spreadsheets can parse them
+    /// </summary>
+    static private string StatisticsGroupCsvValue(LayerStatisticsGroup group, CultureInfo culture, ILocalizer<QueryResultRestriction> localizer)
+        => group.Value switch
+        {
+            null => localizer.Localize("statistics-null-value"),
+            _ when !String.IsNullOrEmpty(group.Label) => group.Label,
+            IFormattable formattable when group.Value is not string => formattable.ToString(null, culture),
+            _ => group.Value.ToString()
+        };
+
+    static private double StatisticsShare(long count, long totalCount)
+        => totalCount > 0 ? (double)count / totalCount : 0D;
+
+    static private List<(string label, string value)> StatisticsValueRows(LayerStatistics statistics, LayerStatisticsFieldKind fieldKind, CultureInfo culture, ILocalizer<QueryResultRestriction> localizer)
+    {
+        var rows = new List<(string label, string value)>()
+        {
+            (localizer.Localize("statistics-count"), (statistics.TotalCount - statistics.NullCount).ToString("N0", culture)),
+            (localizer.Localize("statistics-count-null"), statistics.NullCount.ToString("N0", culture)),
+            (localizer.Localize("statistics-min"), StatisticsValueText(statistics.Min, culture)),
+            (localizer.Localize("statistics-max"), StatisticsValueText(statistics.Max, culture))
+        };
+
+        if (fieldKind == LayerStatisticsFieldKind.Number)
+        {
+            rows.Add((localizer.Localize("statistics-avg"), StatisticsValueText(statistics.Average, culture)));
+            rows.Add((localizer.Localize("statistics-sum"), StatisticsValueText(statistics.Sum, culture)));
+        }
+
+        return rows;
+    }
+
+    /// <summary>
+    /// Semicolon separated (Excel default for de/at), quoted if required.
+    /// Cells starting with =, +, -, @ are prefixed with ' (no formula injection), except numbers
+    /// </summary>
+    static internal string StatisticsCsv(IEnumerable<string[]> rows)
+    {
+        var csv = new System.Text.StringBuilder();
+
+        foreach (var row in rows)
+        {
+            csv.Append(String.Join(";", row.Select(StatisticsCsvCell)));
+            csv.Append("\r\n");
+        }
+
+        return csv.ToString();
+    }
+
+    static private string StatisticsCsvCell(string cell)
+    {
+        cell ??= "";
+
+        if (cell.Length > 0 && "=+-@\t\r".Contains(cell[0])
+            && !double.TryParse(cell, NumberStyles.Any, CultureInfo.InvariantCulture, out _)
+            && !double.TryParse(cell, NumberStyles.Any, CultureInfo.GetCultureInfo("de-AT"), out _))
+        {
+            cell = $"'{cell}";
+        }
+
+        if (cell.IndexOfAny(new[] { ';', '"', '\r', '\n' }) >= 0)
+        {
+            cell = $"\"{cell.Replace("\"", "\"\"")}\"";
+        }
+
+        return cell;
+    }
+
+    static private string StatisticsFileName(string fieldName)
+    {
+        var name = new string(fieldName.Select(c => Char.IsLetterOrDigit(c) || c == '-' || c == '_' ? c : '_').ToArray());
+        return String.IsNullOrEmpty(name) ? "field" : name;
+    }
+
+    /// <summary>
+    /// The rank is clickable (data-item-command, see webgis.ui.appendCallback), if more values share it.
+    /// Repeated ranks (same rank as the previous row) are rendered faded (css class "inherited")
+    /// </summary>
+    static private string StatisticsRankHtml(int rank, int rankSize, bool inherited, CultureInfo culture, ILocalizer<QueryResultRestriction> localizer)
+    {
+        var css = "webgis-statistics-rank" + (inherited ? " inherited" : "");
+        var rankText = $"{rank.ToString(culture)}.";
+
+        if (rankSize < 2)
+        {
+            return $"<span class='{css}'>{rankText}</span>";
+        }
+
+        var title = WebUtility.HtmlEncode(String.Format(localizer.Localize("statistics-rank-tooltip"), rankSize.ToString("N0", culture), rankText));
+        return $"<span class='{css} clickable' data-item-command='{StatisticsRankItemCommand}' title='{title}'>{rankText}</span>";
+    }
+
+    /// <summary>
+    /// Condition for all values of a rank: field in (v1, v2, ...). The values are recalculated on the server (never sent by the client)
+    /// </summary>
+    static internal string StatisticsRankCondition(string fieldName, IEnumerable<LayerStatisticsGroup> groups, ILocalizer<QueryResultRestriction> localizer)
+    {
+        var values = groups.Select(g => g.Value).ToArray();
+
+        if (values.Length == 1)
+        {
+            return StatisticsGroupCondition(fieldName, System.Text.Json.JsonSerializer.Serialize(values[0]));
+        }
+
+        // the flat QueryBuilder can't express "in (...) or is null" and splits "in" values by comma
+        if (values.Length > MaxStatisticsRankValues
+            || values.Any(v => v is null || (v is string s && s.Contains(','))))
+        {
+            throw new InfoException(String.Format(localizer.Localize("statistics-rank-not-possible"), MaxStatisticsRankValues));
+        }
+
+        var literals = values.Select(v => v switch
+        {
+            string s => $"'{s.Replace("'", "''")}'",
+            _ => Convert.ToDouble(v, CultureInfo.InvariantCulture).ToString("R", CultureInfo.InvariantCulture)
+        });
+
+        return $"{fieldName}{UIQueryBuilder.OperatorIn}({String.Join(",", literals)})";
     }
 
     static private IUIElement StatisticsFormRow(string label, IUIElement input)
@@ -513,7 +777,7 @@ public class QueryResultRestriction : IApiServerButtonLocalizableAsync<QueryResu
     /// Condition for a clicked group: the (raw) value comes back as JSON from the client.
     /// The literal depends on the raw value type (a coded value domain field can have numeric raw values)
     /// </summary>
-    static private string StatisticsGroupCondition(string fieldName, string jsonValue)
+    static internal string StatisticsGroupCondition(string fieldName, string jsonValue)
     {
         using var document = JsonDocument.Parse(String.IsNullOrWhiteSpace(jsonValue) ? "null" : jsonValue);
         var element = document.RootElement;

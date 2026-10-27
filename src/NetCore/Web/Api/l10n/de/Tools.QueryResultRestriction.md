@@ -20,6 +20,18 @@ Abfrageergebnis mit dem Query Builder weiter einschränken (kein Darstellungsfil
 # statistics-mode: Darstellung:
 # statistics-mode-values: Kennzahlen
 # statistics-mode-groups: Anzahl je Wert
+# statistics-sort: Sortierung:
+# statistics-sort-asc: Anzahl aufsteigend
+# statistics-sort-desc: Anzahl absteigend
+# statistics-group-classes: {0} verschiedene Werte (Klassen); Platz 1 = häufigster Wert
+# statistics-column-index: #
+# statistics-column-rank: Platz
+# statistics-column-value: Wert
+# statistics-column-count: Anzahl
+# statistics-column-share: Anteil (%)
+# statistics-download-csv: Als CSV herunterladen
+# statistics-rank-tooltip: Klick: Ergebnis auf alle {0} Werte auf Platz {1} einschränken
+# statistics-rank-not-possible: Eine Einschränkung auf diesen Platz ist nicht möglich (leere Werte, Werte mit Komma oder mehr als {0} Werte).
 # statistics-header: Statistik über {0} Objekte (gesamte Abfrage)
 # statistics-info-restriction: Aktuelle Einschränkung: {0}
 # statistics-count: Anzahl (mit Wert)
@@ -28,9 +40,9 @@ Abfrageergebnis mit dem Query Builder weiter einschränken (kein Darstellungsfil
 # statistics-max: Maximum
 # statistics-avg: Mittelwert
 # statistics-sum: Summe
-# statistics-restrict-hint: Klick auf einen Wert schränkt das Ergebnis auf diesen Wert ein.
+# statistics-restrict-hint: Klick auf einen Wert schränkt das Ergebnis auf diesen Wert ein, Klick auf einen (unterstrichenen) Platz auf alle Werte dieses Platzes.
 # statistics-null-value: (leer)
-# statistics-group-count: {0} Objekte ({1})
-# statistics-other-groups: weitere Werte: {0} Objekte
+# statistics-group-count: {0} ({1})
+# statistics-other-groups: Der Dienst liefert nur {0} Werte (Limit des Dienstes). {1} Objekte haben weitere, hier nicht aufgelistete Werte.
 # statistics-not-supported: Für diese Abfrage ist keine Statistik möglich.
 # statistics-culture: de-AT

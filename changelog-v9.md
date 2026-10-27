@@ -348,6 +348,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
   [Docs](https://docs.webgiscloud.com/en/webgis/config/cms/index.html)
 
+- Query result statistics: new table tool "Statistics" (next to "Restrict") with server-side
+  statistics of a QueryBuilder field over the whole query (query geometry, detail search and current
+  restriction; correct also when the result hits the limit / ``has_more``).
+  * New ``ILayerStatisticsQuery`` (models ``LayerStatisticsRequest``/``LayerStatistics``), implemented
+    by the ArcGIS Server ``FeatureLayer`` with ``outStatistics``/``groupByFieldsForStatistics`` if the
+    layer reports ``supportsStatistics``; ``IQueryBridge.QueryStatisticsAsync``, ``QueryEngine``
+    method ``Statistics``. The flag ``statistics`` in ``metadata.query_restriction`` shows the button.
+  * "Key figures" (count, empty, min, max; average and sum for numbers) and "Count per value"
+    (groups, number of classes, competition ranks 1, 2, 2, 4 with faded repeated ranks, share in %,
+    sort by count descending/ascending, hint for values beyond the service limit ``maxRecordCount``).
+  * Click on a value restricts the result to it, click on a rank to all values of this rank
+    (``in`` list, max. 1000 values, not for empty values or values with a comma); conditions are
+    ANDed with the current restriction. Not for date fields.
+  * QueryBuilder rows can be removed (×), e.g. to step back from a restriction.
+  * CSV download of the shown statistics (``;``, UTF-8 BOM, protected against CSV injection).
+  * Unit tests ``QueryResultRestrictionStatisticsTests``.
+
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/search_identify/operations/results_desktop/results_desktop.html#results-query-statistics),
+  [Docs CMS](https://docs.webgiscloud.com/en/webgis/apps/cms/add_ags_service.html#cms-ags-query-statistics),
+  [Architecture](docs/architecture/query-result-restriction.md)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

@@ -935,7 +935,7 @@
         };
 
         let createQueryRestrictionButton = function ($block) {
-            return createToolbarButton($block, 'querybuilder-restrict-result', webgis.css.imgResource('filter-26.png', 'tools'), 'querybuilder-restrict-result-tooltip')
+            return createToolbarButton($block, 'querybuilder-restrict-result', webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-filter-table', 'tools'), 'querybuilder-restrict-result-tooltip')
                 .addClass('webgis-query-restriction-button' + (queryRestriction.where ? ' selected' : ''))
                 .click(function (e) {
                     e.stopPropagation();
@@ -943,7 +943,7 @@
                 });
         };
         let createQueryStatisticsButton = function ($block) {
-            return createToolbarButton($block, 'querybuilder-statistics', webgis.css.imgResource('statistics-26.png', 'tools'), 'querybuilder-statistics-tooltip')
+            return createToolbarButton($block, 'querybuilder-statistics', webgis.css.imgResource(webgis.baseUrl + '/rest/toolresource/webgis-tools-statistics-vertical', 'tools'), 'querybuilder-statistics-tooltip')
                 .addClass('webgis-query-statistics-button')
                 .click(function (e) {
                     e.stopPropagation();
