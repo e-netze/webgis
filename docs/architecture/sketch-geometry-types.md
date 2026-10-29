@@ -65,12 +65,17 @@ None. Geometry types are selected at runtime via `sketch.setGeometryType(name)`.
 - **Deliberately kept behavior** (documented in code): types without `wktType` write no WKT prefix
   (server `ShapeFromWKT` ignores it); `toJson` is only implemented for point, polyline and polygon;
   `elementseries.isValid` is always `false` (the map series sketch is never printed/downloaded).
-- **Polygon holes via fill element**: each part is its own framework element (editing, markers and
-  indices stay per part). For types with `hasFillElement` (only `polygon`) the parts draw only the
-  outline and the facade draws the fill with one extra element containing all rings
-  (`createFillElement`, SVG `fill-rule: evenodd` => inner rings are holes, consistent with
-  `calcProperties`/`webgis.calc.isRingsHole`). Rejected: one multi-ring element for all parts
-  (would change the part/element mapping everywhere). `dimpolygon` (`L.DimPolygon`) supports only one ring.
+- **Rendering by the types**: the type creates the framework elements (leaflet layers) for the
+  vertex model via the hooks `render(model)` (all elements, used by `setGeometryType`/`redraw`),
+  `renderAddedVertex(model, elements, currentIndex, vertex)` (returns the current element index) and
+  `renderAppendPart(model, elements, latLngs)` (returns the elements). The facade only adds/removes the
+  elements to/from the map. Default (`_base`): one element per part, in fan mode one element per ray.
+  Elements are recreated on every `render` (as before), there is no element reuse.
+- **Polygon holes via one multi-ring element**: `polygon` renders all parts as rings of one `L.polygon`
+  (SVG `fill-rule: evenodd` => inner rings are holes, consistent with `calcProperties`/
+  `webgis.calc.isRingsHole`); fan mode uses the default rendering. Markers and vertex indices
+  are independent of the elements. `dimpolygon` (`L.DimPolygon`) supports only one ring and keeps one
+  element per part.
 - **Vertex model owned by the sketch, not by the types**: vertices and part starts live in one
   `webgis.sketch.vertices` instance (`_model` in the facade). The facade keeps `_vertices` only as a
   read-only alias of `_model.vertices`; the part index is private, all part arithmetic and pure vertex
@@ -101,11 +106,13 @@ None. Geometry types are selected at runtime via `sketch.setGeometryType(name)`.
 - **Script order**: the registry and `base.js` must be loaded after `webgis.sketch.js` and before the
   type files - in `bundleconfig.json` and both Portal views.
 - **Freehand** has no vertex marker for every vertex (`_vertexFrameworkElements` is sparse).
-- **Fill element**: part elements are created via `_createPartFrameworkElement` (sets `fill: false` and
-  wraps `redraw` to refresh the fill); `cloneGraphicElements` deliberately uses
-  `_createFrameworkElement` so cloned graphics keep their own fill. `show`/`hide`/`remove`/`setStyle`
-  must keep the fill element in sync. Only the sketch display is affected; `toWKT2`/`toJson`
-  still write the parts unchanged.
+- **Framework element count != part count**: a polygon has one element for all parts. Never index
+  `_frameworkElements` by part number (e.g. `swapDirection` limits the index to the element count).
+- **Leaflet multi-ring pitfalls**: `L.Polygon.addLatLng(latLng)` without a ring adds to the *first*
+  ring => pass the last ring (`getLatLngs()` returns the internal arrays). Never `setLatLngs([[]])`
+  (treated as flat, crashes); `[]` and `[[a, b, c], []]` are fine.
+- **`setGeometryType` empties `_frameworkElements` before `render`**: `createFrameworkElement` reads
+  e.g. the radius via `sketch.getDistanceCircleRadius()` from the current element.
 - **Testing**: there is no automated test for the sketch; verify drawing, editing (drag, insert,
   remove vertex, undo), json/WKT import/export and print for every type after changes.
 
@@ -123,3 +130,4 @@ None. Geometry types are selected at runtime via `sketch.setGeometryType(name)`.
 | `9.26.4104` | Split geometry-type specific logic from `webgis.sketch.js` into a registry and one file per type; fixed several sketch quirks. | branch `v9-sketch` |
 | `9.26.4104` | Polygon sketch draws inner parts as holes (fill element with all rings). | branch `v9-sketch` |
 | `9.26.4104` | Vertices/part index moved into the vertex model `webgis.sketch.vertices` (stable vertex array) incl. selection, fix, move and rotate calculations. | branch `v9-sketch` |
+| `9.26.4104` | Types render their framework elements (`render`, `renderAddedVertex`, `renderAppendPart`); polygon draws all parts as rings of one element, the fill element was removed. | branch `v9-sketch` |

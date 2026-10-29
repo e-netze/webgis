@@ -62,76 +62,6 @@
         return _type().createFrameworkElement(latLngs);
     };
 
-    /********* Fill element (polygon holes) *********/
-    // Every part is its own framework element. For types with hasFillElement the parts only draw the outline,
-    // the fill is drawn by one extra element containing all rings (fill-rule evenodd => inner rings are holes)
-    var _fillElement = null;
-    var _createPartFrameworkElement = function (sketch, latLngs) {
-        var element = sketch._createFrameworkElement(latLngs);
-        if (_type().hasFillElement && element && element.redraw && element.setStyle) {
-            element.setStyle({ fill: false });
-            var redraw = element.redraw;
-            element.redraw = function () {
-                var result = redraw.apply(this, arguments);
-                if (this._map) {
-                    _refreshFillElement(sketch);
-                }
-                return result;
-            };
-        }
-        return element;
-    };
-    var _collectRings = function (latLngs, rings) {
-        if (!latLngs || latLngs.length === 0) {
-            return;
-        }
-        if (Array.isArray(latLngs[0])) {
-            for (var i = 0; i < latLngs.length; i++) {
-                _collectRings(latLngs[i], rings);
-            }
-        } else if (latLngs.length > 2) {
-            rings.push(latLngs);
-        }
-    };
-    var _hideFillElement = function (sketch) {
-        if (_fillElement && _fillElement._map && sketch.map && sketch.map.frameworkElement) {
-            sketch.map.frameworkElement.removeLayer(_fillElement);
-        }
-    };
-    var _refreshFillElement = function (sketch) {
-        var geometryTypeDef = _type();
-        if (!geometryTypeDef.hasFillElement) {
-            _hideFillElement(sketch);
-            _fillElement = null;
-            return;
-        }
-
-        var rings = [], firstPart = null;
-        for (var i = 0; i < _frameworkElements.length; i++) {
-            var element = _frameworkElements[i];
-            if (element && element._map && element.getLatLngs) {
-                firstPart = firstPart || element;
-                _collectRings(element.getLatLngs(), rings);
-            }
-        }
-        if (!firstPart) {
-            _hideFillElement(sketch);
-            return;
-        }
-
-        if (_fillElement) {
-            _fillElement.setLatLngs(rings);
-        } else {
-            _fillElement = geometryTypeDef.createFillElement(rings);
-        }
-        if (!_fillElement._map) {
-            sketch._addToMap(_fillElement);
-        }
-        // draw the fill below the outlines
-        if (_fillElement._path && firstPart._path && _fillElement._path.parentNode === firstPart._path.parentNode && _fillElement._path.nextSibling !== firstPart._path) {
-            firstPart._path.parentNode.insertBefore(_fillElement._path, firstPart._path);
-        }
-    };
     this._isFirstPartVertex = function (index, partIndex) {
         return partIndex ? webgis.sketch.vertices.isFirstPartVertex(partIndex, index) : _model.isFirstPartVertex(index);
     };
@@ -269,33 +199,10 @@
             this.hide();
         }
 
-        _frameworkElements = [];
-        _frameworkElements.push(_createPartFrameworkElement(this));
+        _frameworkElements = [];  // empty before render: createFrameworkElement reads e.g. the radius from the current element
+        _frameworkElements = _type().render(_model);
 
         webgis.sketch.construct.cancel(this);
-
-        var frameworkElement = _frameworkElements[_frameworkElements.length - 1];
-        for (var i = 0; i < _vertices.length; i++) {
-            if (i > 0 && this.isInFanMode()) {
-                _frameworkElements.push(_createPartFrameworkElement(this));
-                frameworkElement = _frameworkElements[_frameworkElements.length - 1];
-                this._addAsLatLng(frameworkElement, _vertices[0]);
-            }
-            else if (_model.isFirstPartVertex(i)) {
-                _frameworkElements.push(_createPartFrameworkElement(this));
-                frameworkElement = _frameworkElements[_frameworkElements.length - 1];
-            }
-
-            var vertex = _vertices[i];
-            this._addAsLatLng(frameworkElement, vertex);
-
-            if (_type().frameworkElementIsVertexMarker) {  // Bei Punkt ist Frameworkelement auch der verschiebbare Marker und brauch den Vertex, damit beim Verschieben im "dragend" die Koordinaten richt übernommen werden.
-                frameworkElement.sketch_vertex_coords = vertex;
-            }
-        }
-        if (_vertices.length > 0 && _model.isPartStart(_vertices.length)) { // Closed Geometry -> start a new Part
-            _frameworkElements.push(_createPartFrameworkElement(this));
-        }
 
         this.setEditable(true);
         this.show();
@@ -316,7 +223,6 @@
             for (var i in _vertexFrameworkElements) {
                 this.map.frameworkElement.removeLayer(_vertexFrameworkElements[i]);
             }
-            _hideFillElement(this);
         }
 
         const isValidBeforeRemove = this.isValid();
@@ -345,7 +251,6 @@
         for (var i in _vertexFrameworkElements) {
             this._addToMap(_vertexFrameworkElements[i]);
         }
-        _refreshFillElement(this);
     };
     this.hide = function () {
         if (_frameworkElements == null || this.map == null || this.map.frameworkElement == null)
@@ -357,7 +262,6 @@
             for (var i in _vertexFrameworkElements) {
                 this.map.frameworkElement.removeLayer(_vertexFrameworkElements[i]);
             }
-            _hideFillElement(this);
             this.hideMoverLine();
             this.hideMoverMarker();
             this.hideTraceLine();
@@ -679,15 +583,11 @@
                 geometryTypeDef.pushVertex(coords);
                 var lastVertex = null;
 
-                if (this.isInFanMode() && _vertices.length > 1) {
-                    _frameworkElements.push(_createPartFrameworkElement(this));
-                    _currentFrameworkIndex = _frameworkElements.length - 1;
-                    this.map.frameworkElement.addLayer(_frameworkElements[_currentFrameworkIndex]);
-                    this._addAsLatLng(_frameworkElements[_currentFrameworkIndex], _vertices[0]);
+                var elementCount = _frameworkElements.length;
+                _currentFrameworkIndex = geometryTypeDef.renderAddedVertex(_model, _frameworkElements, _currentFrameworkIndex, vertex);
+                for (var e = elementCount; e < _frameworkElements.length; e++) {  // fan mode: new element for every ray
+                    this.map.frameworkElement.addLayer(_frameworkElements[e]);
                 }
-
-                this._addAsLatLng(_frameworkElements[_currentFrameworkIndex], vertex);
-                _frameworkElements[_currentFrameworkIndex].sketch_vertex_coords = coords;
 
                 if (!readOnly && !this.isReadOnly()) {    
                     if (geometryTypeDef.addsVertexMarker()) {
@@ -1925,9 +1825,6 @@
                 }
             }
         }
-        if (_fillElement && _type().hasFillElement) {
-            _fillElement.setStyle(style);
-        }
     };
     this.setColor = function (col, geomType) { this.setStyle({ color: _color[_getStyleIndex(geomType)] = col }); };
     this.setOpacity = function (opacity, geomType) { this.setStyle({ opacity: _opacity[_getStyleIndex(geomType)] = opacity }); };
@@ -2556,21 +2453,17 @@
             this.addVertex(vertices[i]);
         }
         this.redraw(true);
-        _currentFrameworkIndex = _model.count() - 1;
+        _currentFrameworkIndex = Math.min(_model.count(), _frameworkElements.length) - 1;
     };
     this.appendPart = function (latLngs, silent) {
         if (!silent) {
             this.addUndo(webgis.l10n.get("sketch-close-section"));
         }
         if (_vertices.length === 0) {
-            _frameworkElements = [_createPartFrameworkElement(this, latLngs)];
             _model.clear();
         }
-        if (_type().createsFrameworkElementPerPart) {
-            _frameworkElements.push(_createPartFrameworkElement(this, latLngs));
-        }
-        // else: no new framework element (drawing can't be continued anyway) => just close the part
         _model.closePart();
+        _frameworkElements = _type().renderAppendPart(_model, _frameworkElements, latLngs);
 
         _currentFrameworkIndex = _frameworkElements.length - 1;
         this._addToMap(_frameworkElements[_currentFrameworkIndex]);

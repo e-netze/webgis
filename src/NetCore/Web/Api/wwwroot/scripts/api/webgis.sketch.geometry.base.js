@@ -34,14 +34,67 @@ webgis.sketch.geometryTypes.define('_base', null, function (ctx) {
     this.vertexMarkerIcon = null;                   // fix icon for vertex markers (otherwise sketch_vertex[_fixed|_selected])
     this.wktType = null;                            // POINT, LINESTRING, POLYGON
                                                     // null => toWKT/toWKT2 write no valid WKT (no prefix), the server (ShapeFromWKT) ignores it => intended
-    this.hasFillElement = false;                    // true => parts draw only the outline, createFillElement draws the fill of all rings (holes)
 
     /********* Hooks *********/
     this.createFrameworkElement = function (latLngs) {
         return undefined;
     };
-    this.createFillElement = function (rings) {
-        return undefined;
+
+    /********* Rendering *********/
+    // The type creates the framework elements (leaflet layers) for the vertex model (webgis.sketch.vertices).
+    // Default: one element per part, in fan mode one element per ray.
+    // The sketch adds/removes the elements to/from the map.
+
+    // all elements for the current vertices (setGeometryType, redraw(true), load, ...)
+    this.render = function (model) {
+        var vertices = model.vertices;
+        var elements = [sketch._createFrameworkElement()], element = elements[0];
+
+        for (var i = 0; i < vertices.length; i++) {
+            if (i > 0 && sketch.isInFanMode()) {
+                element = sketch._createFrameworkElement();
+                elements.push(element);
+                sketch._addAsLatLng(element, vertices[0]);
+            }
+            else if (model.isFirstPartVertex(i)) {
+                element = sketch._createFrameworkElement();
+                elements.push(element);
+            }
+
+            sketch._addAsLatLng(element, vertices[i]);
+
+            if (this.frameworkElementIsVertexMarker) {  // the element is the draggable marker and needs the vertex for "dragend"
+                element.sketch_vertex_coords = vertices[i];
+            }
+        }
+        if (vertices.length > 0 && model.isPartStart(vertices.length)) {  // closed => start a new part
+            elements.push(sketch._createFrameworkElement());
+        }
+        return elements;
+    };
+    // vertex is added to the model (last vertex) => update/append elements, returns the current element index
+    this.renderAddedVertex = function (model, elements, currentIndex, vertex) {
+        if (sketch.isInFanMode() && model.vertices.length > 1) {
+            elements.push(sketch._createFrameworkElement());
+            currentIndex = elements.length - 1;
+            sketch._addAsLatLng(elements[currentIndex], model.vertices[0]);
+        }
+
+        sketch._addAsLatLng(elements[currentIndex], vertex);
+        elements[currentIndex].sketch_vertex_coords = vertex;
+
+        return currentIndex;
+    };
+    // the current part is closed (model.closePart), latLngs: optional (fast json import) => returns the elements
+    this.renderAppendPart = function (model, elements, latLngs) {
+        if (model.vertices.length === 0) {
+            elements = [sketch._createFrameworkElement(latLngs)];
+        }
+        if (this.createsFrameworkElementPerPart) {
+            elements.push(sketch._createFrameworkElement(latLngs));
+        }
+        // else: no new framework element (drawing can't be continued anyway)
+        return elements;
     };
     this.isValid = function () {
         return false;
