@@ -9,6 +9,7 @@ webgis.sketch.geometryTypes.define('dimline', '_line', function (ctx) {
     this.styleIndex = 1;
     this.lengthUnit = 'm';
     this.labelTotalLength = false;
+    this.elementOptions = { lengthUnit: ['getLengthUnit', 'setLengthUnit'], labelTotalLength: ['getLabelTotalLength', 'setLabelTotalLength'] };
 
     this.createFrameworkElement = function (latLngs) {
         var dimLine = L.dimLine(latLngs || [], {

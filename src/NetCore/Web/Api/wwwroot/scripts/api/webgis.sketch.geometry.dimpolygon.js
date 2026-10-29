@@ -9,6 +9,7 @@ webgis.sketch.geometryTypes.define('dimpolygon', '_polygon', function (ctx) {
     this.styleIndex = 1;
     this.areaUnit = 'm²';
     this.labelEdges = true;
+    this.elementOptions = { areaUnit: ['getAreaUnit', 'setAreaUnit'], labelEdges: ['getLabelEdges', 'setLabelEdges'] };
 
     this.createFrameworkElement = function (latLngs) {
         var dimPolygon = L.dimPolygon(latLngs || [], {

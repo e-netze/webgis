@@ -9,6 +9,7 @@ webgis.sketch.geometryTypes.define('circle', '_radius', function (ctx) {
 
     this.wktType = 'POLYGON';
     this.radius = 0;
+    this.elementOptions = { radius: ['getRadius', 'setRadius'] };
 
     this.createFrameworkElement = function (latLngs) {
         var circle = L.circle(latLngs || [0, 0], { radius: this.radius, interactive: true, color: sketch.getColor(), fillColor: sketch.getFillColor(), opacity: sketch.getOpacity(), fillOpacity: sketch.getFillOpacity(), weight: sketch.getWeight(), dashArray: sketch._toDashArray(sketch.getLineStyle()) });

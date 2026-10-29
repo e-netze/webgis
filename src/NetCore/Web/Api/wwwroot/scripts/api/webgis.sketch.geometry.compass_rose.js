@@ -10,6 +10,7 @@ webgis.sketch.geometryTypes.define('compass_rose', '_radius', function (ctx) {
     this.styleIndex = 1;
     this.radius = 10.0;
     this.steps = 36;
+    this.elementOptions = { radius: ['getRadius', 'setRadius'], steps: ['getSteps', 'setSteps'] };
 
     this.createFrameworkElement = function (latLngs) {
         var compassRose = L.compassRose(latLngs || [], {

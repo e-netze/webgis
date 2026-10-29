@@ -9,6 +9,7 @@ webgis.sketch.geometryTypes.define('hectoline', '_line', function (ctx) {
     this.styleIndex = 1;
     this.unit = 'm';
     this.interval = 100;
+    this.elementOptions = { unit: ['getUnit', 'setUnit'], interval: ['getInterval', 'setInterval'] };
 
     this.createFrameworkElement = function (latLngs) {
         var hectoline = L.hectoLine(latLngs || [], {

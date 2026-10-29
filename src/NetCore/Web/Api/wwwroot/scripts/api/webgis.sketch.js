@@ -13,8 +13,7 @@
     var _geometryType = '', _originalSrs = 0, _originalSrsP4Params = null;
     var _frameworkElements = [], _currentFrameworkIndex = 0;
     var _vertexFrameworkElements = [], _currentBubbleMoveVertextFrameworkElement = null;
-    var _color = ['#ff0000', '#000000'], _fillColor = ['#ffff00', '#aaaaaa'], _opacity = [0.8, 1.0], _fillOpacity = [0.2, 0.2], _weight = [2, 2], _linesStyle = [null, null];
-    var _txtColor = ['#000','#000'], _txtStyle = ['',''], _txtSize = [12, 14], _txtRefResolution = 0; 
+    var _txtRefResolution = 0;
     var _sketchProperties = null;
     var _sketchAdvancedProperties = null;
     var _isDraggingMarker = false;
@@ -60,6 +59,7 @@
     var _isSimplePoint = function () { return _type().isSimplePoint === true; };
 
     var _markers = new webgis.sketch.markers(_geometryTypeContext);
+    var _style = new webgis.sketch.style(_geometryTypeContext);
 
     this._resetMarkerImage = function (frameworkElement) {
         frameworkElement.setIcon(webgis.createMarkerIcon({ vertex: frameworkElement.vertex_index + 1, icon: 'sketch_vertex' }));
@@ -1609,16 +1609,17 @@
             }
         }
     };
-    this.setColor = function (col, geomType) { this.setStyle({ color: _color[_getStyleIndex(geomType)] = col }); };
-    this.setOpacity = function (opacity, geomType) { this.setStyle({ opacity: _opacity[_getStyleIndex(geomType)] = opacity }); };
-    this.setFillColor = function (col, geomType) { this.setStyle({ fillColor: _fillColor[_getStyleIndex(geomType)] = col }); };
-    this.setFillOpacity = function (opacity, geomType) { this.setStyle({ fillOpacity: _fillOpacity[_getStyleIndex(geomType)] = opacity }); };
+    /********* Style values => webgis.sketch.style.js *********/
+    this.setColor = function (col, geomType) { this.setStyle({ color: _style.set('color', geomType, col) }); };
+    this.setOpacity = function (opacity, geomType) { this.setStyle({ opacity: _style.set('opacity', geomType, opacity) }); };
+    this.setFillColor = function (col, geomType) { this.setStyle({ fillColor: _style.set('fillColor', geomType, col) }); };
+    this.setFillOpacity = function (opacity, geomType) { this.setStyle({ fillOpacity: _style.set('fillOpacity', geomType, opacity) }); };
     this.setWeight = function (weight, geomType) {
-        this.setStyle({ weight: _weight[_getStyleIndex(geomType)] = weight });
-        this.setStyle({ dashArray: this._toDashArray(_linesStyle[_getStyleIndex(geomType)]) });
+        this.setStyle({ weight: _style.set('weight', geomType, weight) });
+        this.setStyle({ dashArray: this._toDashArray(_style.get('lineStyle', geomType)) });
     };
     this.setLineStyle = function (style, geomType) {
-        _linesStyle[_getStyleIndex(geomType)] = style;
+        _style.set('lineStyle', geomType, style);
 
         if (!_frameworkElements[_currentFrameworkIndex]._webgis) {
             _frameworkElements[_currentFrameworkIndex]._webgis = {};
@@ -1627,183 +1628,49 @@
         _frameworkElements[_currentFrameworkIndex]._webgis.lineStyle = style;
         this.setStyle({ dashArray: this._toDashArray(style) });
     };
-    this.setCircleRadius = function (radius) {
-        if (_frameworkElements[_currentFrameworkIndex].setRadius)
-            _frameworkElements[_currentFrameworkIndex].setRadius(radius);
+    this.setTextColor = function (col, geomType) { this.setStyle({ fill: _style.set('textColor', geomType, col) }); };
+    this.setTextStyle = function (style, geomType) { this.setStyle({ "font-style": _style.set('textStyle', geomType, style) }); };
+    this.setTextSize = function (size, geomType) { this.setStyle({ "font-size": _style.set('textSize', geomType, size) }); };
 
-        _typeOf('circle').radius = radius;
-    };
-    this.setDistanceCircleRadius = function (radius) {
-        if (_frameworkElements[_currentFrameworkIndex].setRadius)
-            _frameworkElements[_currentFrameworkIndex].setRadius(radius);
+    this.getColor = function (geomType) { return _style.get('color', geomType); };
+    this.getOpacity = function (geomType) { return _style.get('opacity', geomType); };
+    this.getFillColor = function (geomType) { return _style.get('fillColor', geomType); };
+    this.getFillOpacity = function (geomType) { return _style.get('fillOpacity', geomType); };
+    this.getWeight = function (geomType) { return _style.get('weight', geomType); };
+    this.getLineStyle = function (geomType) { return _style.get('lineStyle', geomType); };
+    this.getTextColor = function (geomType) { return _style.get('textColor', geomType); };
+    this.getTextStyle = function (geomType) { return _style.get('textStyle', geomType); };
+    this.getTextSize = function (geomType) { return _style.get('textSize', geomType); };
 
-        _typeOf('distance_circle').radius = radius;
-    };
-    this.setDistanceCircleSteps = function (steps) {
-        if (_frameworkElements[_currentFrameworkIndex].setSteps)
-            _frameworkElements[_currentFrameworkIndex].setSteps(steps);
+    this._toDashArray = function (arrayString, geomType) { return _style.toDashArray(arrayString, geomType); };
+    this._fromDashArray = function (array, geomType) { return _style.fromDashArray(array, geomType); };
 
-        _typeOf('distance_circle').steps = steps;
-    };
-    this.setCompassRoseRadius = function (radius) {
-        if (_frameworkElements[_currentFrameworkIndex].setRadius)
-            _frameworkElements[_currentFrameworkIndex].setRadius(radius);
+    /********* Type specific options => elementOptions in webgis.sketch.geometry.<type>.js *********/
+    this.setCircleRadius = function (radius) { _typeOf('circle').setOption('radius', radius); };
+    this.setDistanceCircleRadius = function (radius) { _typeOf('distance_circle').setOption('radius', radius); };
+    this.setDistanceCircleSteps = function (steps) { _typeOf('distance_circle').setOption('steps', steps); };
+    this.setCompassRoseRadius = function (radius) { _typeOf('compass_rose').setOption('radius', radius); };
+    this.setCompassRoseSteps = function (steps) { _typeOf('compass_rose').setOption('steps', steps); };
+    this.setHectolineUnit = function (unit) { _typeOf('hectoline').setOption('unit', unit); };
+    this.setHectolineInterval = function (interval) { _typeOf('hectoline').setOption('interval', interval); };
+    this.setDimLineLengthUnit = function (unit) { _typeOf('dimline').setOption('lengthUnit', unit); };
+    this.setDimLineLabelTotalLength = function (doLabel) { _typeOf('dimline').setOption('labelTotalLength', doLabel); };
+    this.setDimPolygonAreaUnit = function (unit) { _typeOf('dimpolygon').setOption('areaUnit', unit); };
+    this.setDimPolygonLabelEdges = function (doLabel) { _typeOf('dimpolygon').setOption('labelEdges', doLabel); };
+    this.setText = function (text) { _typeOf('text').setOption('text', text); };
 
-        _typeOf('compass_rose').radius = radius;
-    };
-    this.setCompassRoseSteps = function (steps) {
-        if (_frameworkElements[_currentFrameworkIndex].setSteps)
-            _frameworkElements[_currentFrameworkIndex].setSteps(steps);
-
-        _typeOf('compass_rose').steps = steps;
-    };
-    this.setHectolineUnit = function (unit) {
-        if (_frameworkElements[_currentFrameworkIndex].setUnit)
-            _frameworkElements[_currentFrameworkIndex].setUnit(unit);
-
-        _typeOf('hectoline').unit = unit;
-    };
-    this.setHectolineInterval = function (interval) {
-        if (_frameworkElements[_currentFrameworkIndex].setInterval)
-            _frameworkElements[_currentFrameworkIndex].setInterval(interval);
-
-        _typeOf('hectoline').interval = interval;
-    };
-    this.setDimLineLengthUnit = function (unit) {
-        if (_frameworkElements[_currentFrameworkIndex].setLengthUnit)
-            _frameworkElements[_currentFrameworkIndex].setLengthUnit(unit);
-        _typeOf('dimline').lengthUnit = unit;
-    };
-    this.setDimLineLabelTotalLength = function (doLabel) {
-        if (_frameworkElements[_currentFrameworkIndex].setLabelTotalLength)
-            _frameworkElements[_currentFrameworkIndex].setLabelTotalLength(doLabel);
-        _typeOf('dimline').labelTotalLength = doLabel;
-    };
-    this.setDimPolygonAreaUnit = function (unit) {
-        if (_frameworkElements[_currentFrameworkIndex].setAreaUnit)
-            _frameworkElements[_currentFrameworkIndex].setAreaUnit(unit);
-
-        _typeOf('dimpolygon').areaUnit = unit;
-    };
-    this.setDimPolygonLabelEdges = function (doLabel) {
-        if (_frameworkElements[_currentFrameworkIndex].setLabelEdges)
-            _frameworkElements[_currentFrameworkIndex].setLabelEdges(doLabel);
-
-        _typeOf('dimpolygon').labelEdges = doLabel;
-    };
-    this.setText = function (text) {
-        if (_frameworkElements[_currentFrameworkIndex].setText)
-            _frameworkElements[_currentFrameworkIndex].setText(text);
-
-        _typeOf('text').text = text;
-    };
-    this.setTextColor = function (col, geomType) { this.setStyle({ fill: _txtColor[_getStyleIndex(geomType)] = col }); };
-    this.setTextStyle = function (style, geomType) { this.setStyle({ "font-style": _txtStyle[_getStyleIndex(geomType)] = style }); };
-    this.setTextSize = function (size, geomType) { this.setStyle({ "font-size": _txtSize[_getStyleIndex(geomType)] = size }); };
-
-    this.getText = function () {
-        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getText)
-            _typeOf('text').text = _frameworkElements[_currentFrameworkIndex].getText();
-
-        return _typeOf('text').text;
-    };
-    this.getColor = function (geomType) { return _color[_getStyleIndex(geomType)]; };
-    this.getOpacity = function (geomType) { return _opacity[_getStyleIndex(geomType)]; };
-    this.getFillColor = function (geomType) { return _fillColor[_getStyleIndex(geomType)]; };
-    this.getFillOpacity = function (geomType) { return _fillOpacity[_getStyleIndex(geomType)]; };
-    this.getWeight = function (geomType) { return _weight[_getStyleIndex(geomType)]; };
-    this.getLineStyle = function (geomType) { return _linesStyle[_getStyleIndex(geomType)]; };
-    this.getTextColor = function (geomType) { return _txtColor[_getStyleIndex(geomType)]; };
-    this.getTextStyle = function (geomType) { return _txtStyle[_getStyleIndex(geomType)]; };
-    this.getTextSize = function (geomType) { return _txtSize[_getStyleIndex(geomType)]; };
-    this.getCircleRadius = function () {
-        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getRadius)
-            _typeOf('circle').radius = _frameworkElements[_currentFrameworkIndex].getRadius();
-
-        return _typeOf('circle').radius;
-    };
-    this.getDistanceCircleRadius = function () {
-        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getRadius)
-            _typeOf('distance_circle').radius = _frameworkElements[_currentFrameworkIndex].getRadius();
-
-        return _typeOf('distance_circle').radius;
-    };
-    this.getDistanceCircleSteps = function () {
-        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getSteps)
-            _typeOf('distance_circle').steps = _frameworkElements[_currentFrameworkIndex].getSteps();
-
-        return _typeOf('distance_circle').steps;
-    };
-    this.getCompassRoseRadius = function () {
-        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getRadius)
-            _typeOf('compass_rose').radius = _frameworkElements[_currentFrameworkIndex].getRadius();
-
-        return _typeOf('compass_rose').radius;
-    };
-    this.getCompassRoseSteps = function () {
-        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getSteps)
-            _typeOf('compass_rose').steps = _frameworkElements[_currentFrameworkIndex].getSteps();
-
-        return _typeOf('compass_rose').steps;
-    };
-    this.getHectolineUnit = function () {
-        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getUnit)
-            _typeOf('hectoline').unit = _frameworkElements[_currentFrameworkIndex].getUnit();
-
-        return _typeOf('hectoline').unit;
-    };
-    this.getHectolineInterval = function () {
-        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getInterval)
-            _typeOf('hectoline').interval = _frameworkElements[_currentFrameworkIndex].getInterval();
-
-        return _typeOf('hectoline').interval;
-    };
-    this.getDimLineLengthUnit = function () {
-        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getLengthUnit)
-            _typeOf('dimline').lengthUnit = _frameworkElements[_currentFrameworkIndex].getLengthUnit();
-        return _typeOf('dimline').lengthUnit;
-    };
-    this.getDimLineLabelTotalLength = function () {
-        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getLabelTotalLength)
-            _typeOf('dimline').labelTotalLength = _frameworkElements[_currentFrameworkIndex].getLabelTotalLength();
-        return _typeOf('dimline').labelTotalLength;
-    };
-    this.getDimPolygonAreaUnit = function () {
-        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getAreaUnit)
-            _typeOf('dimpolygon').areaUnit = _frameworkElements[_currentFrameworkIndex].getAreaUnit();
-
-        return _typeOf('dimpolygon').areaUnit;
-    };
-    this.getDimPolygonLabelEdges = function () {
-        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getLabelEdges)
-            _typeOf('dimpolygon').labelEdges = _frameworkElements[_currentFrameworkIndex].getLabelEdges();
-
-        return _typeOf('dimpolygon').labelEdges;
-    };
-
-    var _getStyleIndex = function (geomType) {
-        return _typeOf(geomType || _geometryType).styleIndex;
-    }
-
-    this._toDashArray = function (arrayString, geomType) {
-        if (arrayString == null)
-            return null;
-        var ret = [], values = arrayString.split(',');
-        for (var v in values) {
-            var d = parseFloat(values[v]) * this.getWeight(geomType) / 10.0;
-            ret.push(d);
-        }
-        return ret;
-    };
-    this._fromDashArray = function (array, geomType) {
-        var ret = '';
-        for (var i = 0; i < array.length; i++) {
-            if (ret != '')
-                ret += ',';
-            ret += array[i] * 10.0 / this.getWeight(geomType);
-        }
-        return ret;
-    };
+    this.getText = function () { return _typeOf('text').getOption('text'); };
+    this.getCircleRadius = function () { return _typeOf('circle').getOption('radius'); };
+    this.getDistanceCircleRadius = function () { return _typeOf('distance_circle').getOption('radius'); };
+    this.getDistanceCircleSteps = function () { return _typeOf('distance_circle').getOption('steps'); };
+    this.getCompassRoseRadius = function () { return _typeOf('compass_rose').getOption('radius'); };
+    this.getCompassRoseSteps = function () { return _typeOf('compass_rose').getOption('steps'); };
+    this.getHectolineUnit = function () { return _typeOf('hectoline').getOption('unit'); };
+    this.getHectolineInterval = function () { return _typeOf('hectoline').getOption('interval'); };
+    this.getDimLineLengthUnit = function () { return _typeOf('dimline').getOption('lengthUnit'); };
+    this.getDimLineLabelTotalLength = function () { return _typeOf('dimline').getOption('labelTotalLength'); };
+    this.getDimPolygonAreaUnit = function () { return _typeOf('dimpolygon').getOption('areaUnit'); };
+    this.getDimPolygonLabelEdges = function () { return _typeOf('dimpolygon').getOption('labelEdges'); };
     this.setGeometryType('polyline');
     this.vertexCount = function () {
         return _vertices.length;

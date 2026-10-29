@@ -35,6 +35,27 @@ webgis.sketch.geometryTypes.define('_base', null, function (ctx) {
     this.wktType = null;                            // POINT, LINESTRING, POLYGON
                                                     // null => toWKT/toWKT2 write no valid WKT (no prefix), the server (ShapeFromWKT) ignores it => intended
 
+    /********* Element options *********/
+    // type specific values (radius, steps, unit, text, ...) => { <option>: ['<element getter>', '<element setter>'] }
+    // the value is stored in this.<option> (default in the type ctor) and synced with the current framework element
+    // used by the sketch facade (getCircleRadius, setHectolineUnit, getText, ...)
+    this.elementOptions = {};
+
+    this.getOption = function (name) {
+        var accessors = this.elementOptions[name], element = state.frameworkElements[state.currentFrameworkIndex];
+        if (accessors && element && element[accessors[0]])
+            this[name] = element[accessors[0]]();
+
+        return this[name];
+    };
+    this.setOption = function (name, value) {
+        var accessors = this.elementOptions[name], element = state.frameworkElements[state.currentFrameworkIndex];
+        if (accessors && element[accessors[1]])
+            element[accessors[1]](value);
+
+        this[name] = value;
+    };
+
     /********* Hooks *********/
     this.createFrameworkElement = function (latLngs) {
         return undefined;

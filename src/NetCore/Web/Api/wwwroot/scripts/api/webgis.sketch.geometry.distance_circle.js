@@ -10,6 +10,7 @@ webgis.sketch.geometryTypes.define('distance_circle', '_radius', function (ctx) 
     this.styleIndex = 1;
     this.radius = 5000.0;
     this.steps = 3;
+    this.elementOptions = { radius: ['getRadius', 'setRadius'], steps: ['getSteps', 'setSteps'] };
 
     this.createFrameworkElement = function (latLngs) {
         var distanceCircle = L.distanceCircle(latLngs || [], {

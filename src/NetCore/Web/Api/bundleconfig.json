@@ -35,6 +35,7 @@
       "wwwroot/scripts/api/webgis.sketch.js",
       "wwwroot/scripts/api/webgis.sketch.vertices.js",
       "wwwroot/scripts/api/webgis.sketch.markers.js",
+      "wwwroot/scripts/api/webgis.sketch.style.js",
       "wwwroot/scripts/api/webgis.sketch.geometry.js",
       "wwwroot/scripts/api/webgis.sketch.geometry.base.js",
       "wwwroot/scripts/api/webgis.sketch.geometry.point.js",

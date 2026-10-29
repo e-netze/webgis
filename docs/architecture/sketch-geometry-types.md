@@ -26,7 +26,8 @@ inside the sketch anymore, but in one file per geometry type, registered in a sm
 | `_base`, `_line`, `_polygon`, `_radius` (`.../webgis.sketch.geometry.base.js`) | Defaults for all flags and hooks plus shared helpers (json import); the families `_line` (polyline, dimline, hectoline), `_polygon` (polygon, dimpolygon), `_radius` (circle, distance_circle, compass_rose). |
 | `.../webgis.sketch.geometry.<type>.js` | One file per type: `point`, `polyline` (+ alias `linestring`), `polygon`, `freehand`, `rectangle`, `text`, `circle`, `distance_circle`, `compass_rose`, `dimline`, `dimpolygon`, `hectoline`, `elementseries`. |
 | `webgis.sketch.markers` (`.../webgis.sketch.markers.js`) | Vertex marker events (drag, click, mouseover/-out, GPS accuracy reset, click tolerance) and the marker popup menu; used by `_appendMarkerEvents` and `setMarkerTooltip`. Creating/redrawing the markers stays in the facade. |
-| `src/NetCore/Web/Api/bundleconfig.json` | Bundle order: `webgis.sketch.js`, `webgis.sketch.vertices.js`, `webgis.sketch.markers.js`, then `webgis.sketch.geometry.js`, `...base.js`, then the type files. |
+| `webgis.sketch.style` (`.../webgis.sketch.style.js`) | Style values (color, fill, opacity, weight, line style, text color/style/size) per `styleIndex` of the geometry type, plus the line style <=> `dashArray` conversion. The facade keeps `get<Value>/set<Value>` as delegates and applies the values with `setStyle`. |
+| `src/NetCore/Web/Api/bundleconfig.json` | Bundle order: `webgis.sketch.js`, `webgis.sketch.vertices.js`, `webgis.sketch.markers.js`, `webgis.sketch.style.js`, then `webgis.sketch.geometry.js`, `...base.js`, then the type files. |
 | `src/NetCore/Web/Portal/Views/Map/Index.cshtml`, `.../MapBuilder/Index.cshtml` | Same file list for the unbundled (debug) case. |
 
 ## Flow
@@ -126,6 +127,10 @@ None. Geometry types are selected at runtime via `sketch.setGeometryType(name)`.
 - New geometry type: create `webgis.sketch.geometry.<type>.js` with
   `webgis.sketch.geometryTypes.define('<type>', '<_base|_line|_polygon|_radius>', function (ctx, parent) { ... })`,
   override only the needed flags/hooks, and register the file in `bundleconfig.json` and both Portal views.
+- Type specific values (radius, unit, text, ...): set the default in the type ctor (`this.radius = 0;`) and declare
+  the framework element accessors in `this.elementOptions = { radius: ['getRadius', 'setRadius'] }`; the facade
+  getters/setters (`getCircleRadius`, ...) call `_typeOf('<type>').getOption/setOption('<name>')`, which sync the
+  value with the current framework element.
 - Alternative names: `webgis.sketch.geometryTypes.alias('<alias>', '<type>')`.
 
 ## History
@@ -137,3 +142,4 @@ None. Geometry types are selected at runtime via `sketch.setGeometryType(name)`.
 | `9.26.4104` | Vertices/part index moved into the vertex model `webgis.sketch.vertices` (stable vertex array) incl. selection, fix, move and rotate calculations. | branch `v9-sketch` |
 | `9.26.4104` | Vertex marker events and popup menu moved into the component `webgis.sketch.markers`. | branch `v9-sketch` |
 | `9.26.4104` | Types render their framework elements (`render`, `renderAddedVertex`, `renderAppendPart`); polygon draws all parts as rings of one element, the fill element was removed. | branch `v9-sketch` |
+| `9.26.4104` | Style values moved into the component `webgis.sketch.style`; type specific getters/setters use the declarative `elementOptions` with `getOption`/`setOption`. | branch `v9-sketch` |

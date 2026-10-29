@@ -10,6 +10,7 @@ webgis.sketch.geometryTypes.define('text', '_base', function (ctx) {
     this.redrawOnVertexMoved = true;
     this.vertexMarkerIcon = 'sketch_vertex_text';
     this.text = null;
+    this.elementOptions = { text: ['getText', 'setText'] };
 
     this.createFrameworkElement = function (latLngs) {
         var text = L.svgText(latLngs || [0, 0], {
