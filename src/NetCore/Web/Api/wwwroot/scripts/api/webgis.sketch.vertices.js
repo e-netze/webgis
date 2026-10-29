@@ -273,6 +273,38 @@ webgis.sketch.vertices = function () {
         }
     };
 
+    /********* Measure *********/
+    // point at station s (projected length along all vertices, parts are not considered) => { x, y, X, Y } or null
+    this.statPoint = function (s) {
+        var stat = 0.0, stat0 = 0.0;
+        if (_vertices.length == 0)
+            return null;
+        var x1 = _vertices[0].x, y1 = _vertices[0].y;
+        var X1 = _vertices[0].X, Y1 = _vertices[0].Y;
+        for (var i = 1, to = _vertices.length; i < to; i++) {
+            var x2 = _vertices[i].x, y2 = _vertices[i].y;
+            var X2 = _vertices[i].X, Y2 = _vertices[i].Y;
+            stat0 = stat;
+            var l = Math.sqrt((X2 - X1) * (X2 - X1) + (Y2 - Y1) * (Y2 - Y1));
+            if (l > 0) {
+                stat += l;
+                if (stat >= s) {
+                    var t = s - stat0;
+                    var dx = (x2 - x1) / l, dy = (y2 - y1) / l;
+                    var dX = (X2 - X1) / l, dY = (Y2 - Y1) / l;
+                    var x = x1 + dx * t, y = y1 + dy * t;
+                    var X = X1 + dX * t, Y = Y1 + dY * t;
+                    return { x: x, y: y, X: X, Y: Y };
+                }
+            }
+            x1 = x2;
+            y1 = y2;
+            X1 = X2;
+            Y1 = Y2;
+        }
+        return null;
+    };
+
     /********* Change (in place) *********/
     this.clear = function () {
         _vertices.splice(0, _vertices.length);

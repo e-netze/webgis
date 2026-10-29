@@ -2176,35 +2176,7 @@
             }
         }
     };
-    this.statPoint = function (s) {
-        var stat = 0.0, stat0 = 0.0;
-        if (_vertices.length == 0)
-            return null;
-        var x1 = _vertices[0].x, y1 = _vertices[0].y;
-        var X1 = _vertices[0].X, Y1 = _vertices[0].Y;
-        for (var i = 1, to = _vertices.length; i < to; i++) {
-            var x2 = _vertices[i].x, y2 = _vertices[i].y;
-            var X2 = _vertices[i].X, Y2 = _vertices[i].Y;
-            stat0 = stat;
-            var l = Math.sqrt((X2 - X1) * (X2 - X1) + (Y2 - Y1) * (Y2 - Y1));
-            if (l > 0) {
-                stat += l;
-                if (stat >= s) {
-                    var t = s - stat0;
-                    var dx = (x2 - x1) / l, dy = (y2 - y1) / l;
-                    var dX = (X2 - X1) / l, dY = (Y2 - Y1) / l;
-                    var x = x1 + dx * t, y = y1 + dy * t;
-                    var X = X1 + dX * t, Y = Y1 + dY * t;
-                    return { x: x, y: y, X: X, Y: Y };
-                }
-            }
-            x1 = x2;
-            y1 = y2;
-            X1 = X2;
-            Y1 = Y2;
-        }
-        return null;
-    };
+    this.statPoint = function (s) { return _model.statPoint(s); };
     this.bounds = function () {
         if (!_vertices || _vertices.length === 0) return null;
 
@@ -2318,132 +2290,9 @@
         this._isDirty = false;
     };
 
-    // "x y" (WGS84) or "X Y [meta:..] [srs:..] [m:..] [z:..]"
-    var _wktVertex = function (vertex, useWGS84, appendMeta, roundFactor) {
-        if (useWGS84 === true) {
-            return vertex.x + ' ' + vertex.y;
-        }
-
-        var X = vertex.X, Y = vertex.Y;
-        if (roundFactor > 1.0) {
-            X = Math.round(X * roundFactor) / roundFactor;
-            Y = Math.round(Y * roundFactor) / roundFactor;
-        }
-        var wkt = X + ' ' + Y;
-        if (appendMeta) {
-            if (vertex.projEvent && vertex.projEvent !== 'original' && vertex.projEvent !== 'snapped') {
-                wkt += ' meta:' + vertex.projEvent;
-            }
-            if (vertex.srs) {
-                wkt += ' srs:' + vertex.srs;
-            }
-            if (typeof vertex.m === 'number') {  // can be null or undefined also
-                wkt += ' m:' + vertex.m;
-            }
-            if (typeof vertex.z === 'number') {
-                wkt += ' z:' + vertex.z;
-            }
-        }
-        return wkt;
-    };
-
-    this.toWKT = function (useWGS84) {
-        if (_vertices.length == 0) {
-            return '';
-        }
-
-        let wkt = '';
-
-        var geometryTypeDef = _type();
-        if (geometryTypeDef.wktType) {
-            wkt += "MULTI" + geometryTypeDef.wktType + "(";
-        }
-
-        var vertices = geometryTypeDef.wktVertices(useWGS84);
-        var addVertexFunc = function (wkt, vertex) {
-            return wkt + _wktVertex(vertex, useWGS84, true, 0);
-        };
-
-        wkt += "(";
-        for (var i = 0; i < vertices.length; i++) {
-            if (i > 0) {
-                if (this.isInFanMode() && i > 1) {
-                    wkt += '),(';
-                    wkt = addVertexFunc(wkt, vertices[0]);
-                    wkt += ',';
-                }
-                else if (i < vertices.length - 1 && _model.isPartStart(i)) {
-                    wkt += '),(';
-                }
-                else {
-                    wkt += ',';
-                }
-            }
-            wkt = addVertexFunc(wkt, vertices[i]);
-        }
-        wkt += ")";
-        if (wkt !== '')
-            wkt += ")";
-
-        return wkt;
-    };
-
-    this.toWKT2 = function (useWGS84, appendMeta, digits) {
-        if (_vertices.length == 0)
-            return '';
-
-        let isMultipart = _model.count() > 2 || (_model.count() == 2 && _vertices.length > _model.start(1));  // its no an multipart if only the first is "closed";
-        webgis.log('isMultipart', isMultipart, _model.getPartIndex());
-
-        let wkt = '', closeVertex = null;
-        let wktType = _type().wktType;
-        if (wktType === 'POLYGON') {
-            wkt += isMultipart ? "MULTIPOLYGON((" : "POLYGON((";
-            closeVertex = _vertices.length > 0 ? _vertices[0] : null;
-        }
-        else if (wktType) {
-            wkt += (isMultipart ? "MULTI" + wktType : wktType) + "(";
-        }
-        let vertices = _vertices;
-        let roundFactor = 0.0;
-
-        if (digits && digits > 0) {
-            roundFactor = Math.pow(10.0, digits);
-        }
-
-        var addVertexFunc = function (wkt, vertex) {
-            return wkt + _wktVertex(vertex, useWGS84, appendMeta, roundFactor);
-        };
-
-        wkt += isMultipart ? "(" : "";
-        for (var i = 0; i < vertices.length; i++) {
-            if (i > 0) {
-                if (i < vertices.length - 1 && _model.isPartStart(i)) {
-                    if (closeVertex) { 
-                        wkt = addVertexFunc(wkt + ',', closeVertex);
-                        closeVertex = vertices[i];
-                    }
-                    wkt += '),(';
-                } else {
-                    wkt += ',';
-                }
-            }
-            wkt = addVertexFunc(wkt, vertices[i]);
-        }
-
-        if (closeVertex) {
-            wkt = addVertexFunc(wkt + ',', closeVertex);
-        }
-
-        wkt += isMultipart ? ")" : "";
-        if (wkt !== '') {
-            if (wktType === 'POLYGON') {
-                wkt += ")";
-            }
-            wkt += ")";
-        }
-        return wkt;
-    };
+    /********* WKT => webgis.sketch.wkt.js *********/
+    this.toWKT = function (useWGS84) { return webgis.sketch.wkt.toWKT(_model, _type(), useWGS84, this.isInFanMode()); };
+    this.toWKT2 = function (useWGS84, appendMeta, digits) { return webgis.sketch.wkt.toWKT2(_model, _type().wktType, useWGS84, appendMeta, digits); };
 
     this.cloneGraphicElements = function () {
         var elements = [];
