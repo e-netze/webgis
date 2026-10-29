@@ -93,9 +93,9 @@ None. Geometry types are selected at runtime via `sketch.setGeometryType(name)`.
 - **Never reassign `state.vertices`**: there is no setter; change parts via `state.model`
   (`clear`, `setVertices`, ...). Other state values (e.g. framework elements) are still reassigned
   by the sketch, so never cache them in a type instance.
-- **`addPrevVertex(0)` shifts all part starts**, so the part index may not start with `0` afterwards.
-  `partNumber` (used by `getVertexPartNumber`/`neighbors`) keeps the original loop for this case; do not
-  replace it with `partOf` without checking.
+- **The part index may not start with `0`** (e.g. old stored sketches). `partNumber` (used by
+  `getVertexPartNumber`/`neighbors`) keeps the original loop for this case; do not replace it with
+  `partOf` without checking. `addPrevVertex(index <= 0)` is a no-op (it used to shift all part starts).
 - **`reverse`/`mergeParts` empty the model before `remove(true)`**, otherwise `remove` fires an
   additional `ongetsinvalid` event.
 - **Registry lookup is case-sensitive**; `setGeometryType` lowercases and maps `symbol` to point,

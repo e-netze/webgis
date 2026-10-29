@@ -2357,6 +2357,9 @@
 
     /********************************************/
     this.addPrevVertex = function (index) {
+        if (!(index > 0)) {  // no previous vertex => nothing to insert
+            return;
+        }
         this.addUndo(webgis.l10n.get("sketch-add-vertex"));
         var vertices = _cloneArray(_vertices),
             partIndex = _model.getPartIndex();
