@@ -18,7 +18,6 @@
     var _sketchAdvancedProperties = null;
     var _isDraggingMarker = false;
     this._lastChangeTime = new Date().getTime();
-    var _sketchMovingVertexIndex = -1, _sketchRotatingVertexIndex = -1;
     var _ortho = false, _trace = false, _fan = false;
     this._isDirty = false;
 
@@ -34,7 +33,8 @@
         get vertexFrameworkElements() { return _vertexFrameworkElements; },
         get sketchAdvancedProperties() { return _sketchAdvancedProperties; },
         get txtRefResolution() { return _txtRefResolution; },
-        get suppressMover() { return _suppressMover; }, set suppressMover(value) { _suppressMover = value; }
+        get suppressMover() { return _suppressMover; }, set suppressMover(value) { _suppressMover = value; },
+        get ortho() { return _ortho; }, set ortho(value) { _ortho = value; }
     };
     // context for the geometry types and the sketch components (markers, ...)
     var _geometryTypeContext = {
@@ -60,6 +60,7 @@
 
     var _markers = new webgis.sketch.markers(_geometryTypeContext);
     var _style = new webgis.sketch.style(_geometryTypeContext);
+    var _transform = new webgis.sketch.transform(_geometryTypeContext);
 
     this._resetMarkerImage = function (frameworkElement) {
         frameworkElement.setIcon(webgis.createMarkerIcon({ vertex: frameworkElement.vertex_index + 1, icon: 'sketch_vertex' }));
@@ -77,8 +78,6 @@
     this._moverMarker = null;
     this._moverLine = null;
     var _traceLine = null;
-    var _sketchMoveFrameworkElements = [];
-    var _sketchRotateFrameworkElements = [];
     this._constructMover = null;
     this._isReadonly = false;
     this._isEditable = false;
@@ -1708,190 +1707,18 @@
         }
     };
 
-    /************* Move Sketch ***********/
-    // gray preview polylines (one per part) shown while moving/rotating the sketch
-    var _addSketchPreviewElements = function (sketch) {
-        var elements = [], parts = _model.toLatLngs(_type().hasClosingSegment);
-        for (var p = 0; p < parts.length; p++) {
-            var polyline = L.polyline([], { color: 'gray', opacity: .8, weight: 4 });
-            for (var l = 0; l < parts[p].length; l++) {
-                polyline.addLatLng(parts[p][l]);
-            }
-            elements.push(polyline);
-        }
-        for (var e in elements) {
-            sketch._addToMap(elements[e]);
-        }
-        return elements;
-    };
-    var _previewLatLngs = function (elements) {
-        return elements.map(function (element) { return element.getLatLngs(); });
-    };
-    var _setPreviewLatLngs = function (elements, latLngParts) {
-        for (var p in elements) {
-            elements[p].setLatLngs(latLngParts[p]);
-        }
-    };
-    var _sketchMoveRefLatLng = null;
-    this.startSketchMoving = function (index) {
-        this.endSketchRotating();
+    /********* Move / rotate sketch => webgis.sketch.transform.js *********/
+    this.startSketchMoving = function (index) { _transform.startMoving(index); };
+    this.isSketchMoving = function () { return _transform.isMoving(); };
+    this.endSketchMoving = function () { _transform.endMoving(); };
+    this.moveSketchPreview = function (latlng) { _transform.movePreview(latlng); };
+    this.moveSketch = function (latlng) { _transform.move(latlng); };
+    this.startSketchRotating = function (index, startAngle) { _transform.startRotating(index, startAngle); };
+    this.isSketchRotating = function () { return _transform.isRotating(); };
+    this.endSketchRotating = function () { _transform.endRotating(); };
+    this.rotateSketchPreview = function (latlng) { _transform.rotatePreview(latlng); };
+    this.rotateSketch = function (latlng) { _transform.rotate(latlng); };
 
-        if (index >= 0 && index < _vertices.length) {
-            this.endSketchMoving();
-
-            this.hide();
-            var vertex = _vertices[index];
-
-            if (_vertices.length > 1) {
-                _sketchMoveFrameworkElements = _addSketchPreviewElements(this);
-            }
-
-            _sketchMoveRefLatLng = { lat: _vertices[index].y, lng: _vertices[index].x };
-            _sketchMovingVertexIndex = index;
-
-            _ortho = false;
-            this._fixedDirectionVector = null;
-            this._fixedDistance = null;
-        } else {
-            this.endSketchMoving();
-        }
-    };
-    this.isSketchMoving = function () {
-        return _sketchMovingVertexIndex >= 0;
-    };
-    this.endSketchMoving = function () {
-        if (this.isSketchMoving() === false)
-            return;
-
-        _sketchMovingVertexIndex = -1;
-        for (var e in _sketchMoveFrameworkElements) {
-            this.map.frameworkElement.removeLayer(_sketchMoveFrameworkElements[e]);
-        }
-        _sketchMoveFrameworkElements = [];
-        this.show();
-    };
-    this.moveSketchPreview = function (latlng) {
-        if (_sketchMovingVertexIndex >= 0 && _sketchMovingVertexIndex < _vertices.length) {
-            
-            var deltaLng = (this._snappedVertex != null ? this._snappedVertex.x : latlng.lng) - _sketchMoveRefLatLng.lng;
-            var deltaLat = (this._snappedVertex != null ? this._snappedVertex.y : latlng.lat) - _sketchMoveRefLatLng.lat;
-            _sketchMoveRefLatLng = this._snappedVertex != null ? L.latLng(this._snappedVertex.y, this._snappedVertex.x) : latlng;
-
-            var latLngParts = _previewLatLngs(_sketchMoveFrameworkElements);
-            _model.translateLatLngs(latLngParts, deltaLng, deltaLat, this.hasSelectedVertices());
-            _setPreviewLatLngs(_sketchMoveFrameworkElements, latLngParts);
-        }
-    };
-    this.moveSketch = function (latlng) {
-        if (_sketchMovingVertexIndex >= 0 && _sketchMovingVertexIndex < _vertices.length) {
-
-            this.addUndo(webgis.l10n.get("sketch-tool-move"));
-
-            var vertex = _vertices[_sketchMovingVertexIndex];
-
-            var deltaX = (this._snappedVertex != null ? this._snappedVertex.x : latlng.lng) - vertex.x;
-            var deltaY = (this._snappedVertex != null ? this._snappedVertex.y : latlng.lat) - vertex.y;
-            _sketchMoveRefLatLng = null;
-
-            _model.translate(deltaX, deltaY, this.hasSelectedVertices());
-        }
-
-        this.startSuppressUndo();
-        this.load(this.store());  // Force hard redaw
-        this.stopSuppressUndo();
-
-        this.endSketchMoving();
-    };
-    /************* Rotate Sketch ***********/
-    var _sketchRotateRefAngle = 0.0, _sketchStartAngle = 0.0;
-    this.startSketchRotating = function (index, startAngle) {
-        this.endSketchMoving();
-
-        if (index >= 0 && index < _vertices.length) {
-            this.endSketchRotating();
-
-            this.hide();
-            var vertex = _vertices[index];
-
-            if (_vertices.length > 1) {
-                _sketchRotateFrameworkElements = _addSketchPreviewElements(this);
-            }
-
-            _sketchRotateRefAngle = 0.0;
-            _sketchStartAngle = startAngle || 0.0;
-            _sketchRotatingVertexIndex = index;
-
-            _ortho = false;
-            this._fixedDirectionVector = null;
-            this._fixedDistance = null;
-        } else {
-            this.endSketchRotating();
-        }
-    };
-    this.isSketchRotating = function () {
-        return _sketchRotatingVertexIndex >= 0;
-    };
-    this.endSketchRotating = function () {
-        if (this.isSketchRotating() === false)
-            return;
-
-        _sketchRotatingVertexIndex = -1;
-        for (var e in _sketchRotateFrameworkElements) {
-            this.map.frameworkElement.removeLayer(_sketchRotateFrameworkElements[e]);
-        }
-        _sketchRotateFrameworkElements = [];
-        this.show();
-    };
-    this.rotateSketchPreview = function (latlng) {
-        if (_sketchRotatingVertexIndex >= 0 && _sketchRotatingVertexIndex < _vertices.length) {
-            var crs = this.map.calcCrs();
-
-            var vertices = [
-                { x: this._referenceVertex().x, y: this._referenceVertex().y },
-                { x: (this._snappedVertex != null ? this._snappedVertex.x : latlng.lng), y: (this._snappedVertex != null ? this._snappedVertex.y : latlng.lat) }
-            ];
-            webgis.complementProjected(crs, vertices);
-
-            var deltaX = vertices[1].X - vertices[0].X;
-            var deltaY = vertices[1].Y - vertices[0].Y;
-
-            var angle = Math.atan2(deltaY, deltaX) + _sketchStartAngle;
-            var x = angle;
-            angle -= _sketchRotateRefAngle;
-            _sketchRotateRefAngle = x;
-
-            var latLngParts = _previewLatLngs(_sketchRotateFrameworkElements);
-            _model.rotateLatLngs(latLngParts, vertices[0], angle, crs, this.hasSelectedVertices());
-            _setPreviewLatLngs(_sketchRotateFrameworkElements, latLngParts);
-        }
-    };
-    this.rotateSketch = function(latlng) {
-        if (_sketchRotatingVertexIndex >= 0 && _sketchRotatingVertexIndex < _vertices.length) {
-            this.addUndo(webgis.l10n.get("sketch-tool-rotate"));
-
-            var crs = this.map.calcCrs();
-
-            var vertices = [
-                { x: this._referenceVertex().x, y: this._referenceVertex().y },
-                { x: (this._snappedVertex != null ? this._snappedVertex.x : latlng.lng), y: (this._snappedVertex != null ? this._snappedVertex.y : latlng.lat) }
-            ];
-            webgis.complementProjected(crs, vertices);
-
-            var deltaX = vertices[1].X - vertices[0].X;
-            var deltaY = vertices[1].Y - vertices[0].Y;
-
-            var angle = Math.atan2(deltaY, deltaX) + _sketchStartAngle;
-            _sketchRotateRefAngle = 0.0;
-
-            _model.rotate(vertices[0], angle, crs, this.hasSelectedVertices());
-        }
-
-        this.startSuppressUndo();
-        this.load(this.store());  // Force hard redaw
-        this.stopSuppressUndo();
-
-        this.endSketchRotating();
-    };
 
     this.removeVertex = function (index, suppressUndo) {
         this.hide();
@@ -2221,11 +2048,8 @@
     };
 
     this._referenceVertex = function () {
-        if (this.isSketchMoving()) {
-            return _vertices[_sketchMovingVertexIndex];
-        }
-        if (this.isSketchRotating()) {
-            return _vertices[_sketchRotatingVertexIndex];
+        if (this.isSketchMoving() || this.isSketchRotating()) {
+            return _transform.referenceVertex();
         }
 
         if (this.isInFanMode()) {
