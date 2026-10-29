@@ -554,6 +554,7 @@
     "print-errors-occurred": "Errors occurred during printing. The printout may not be complete. Please check if all relevant topics are included in the printout",
 
     // sketch
+    "sketch-no-sketch": "No sketch!",
     "sketch-delete-vertex": "Delete vertex",
     "sketch-insert-vertex-before": "Insert vertex before",
     "sketch-insert-vertex-after": "Insert vertex after",

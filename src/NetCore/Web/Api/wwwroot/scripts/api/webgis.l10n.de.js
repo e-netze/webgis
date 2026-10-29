@@ -554,6 +554,7 @@
     "print-errors-occurred": "Beim Drucken sind Fehler aufgetreten. Der Ausdruck ist eventuell nicht vollständig. Bitte prüfen Sie, ob alle relevanten Themen im Ausdruck enthalten sind",
 
     // sketch
+    "sketch-no-sketch": "Kein Sketch!",
     "sketch-delete-vertex": "Vertex löschen",
     "sketch-insert-vertex-before": "Vorgänger einfügen",
     "sketch-insert-vertex-after": "Nachfolger einfügen",
