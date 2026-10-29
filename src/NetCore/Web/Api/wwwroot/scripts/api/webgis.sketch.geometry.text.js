@@ -29,7 +29,7 @@ webgis.sketch.geometryTypes.define('text', '_base', function (ctx) {
         this._fromJsonSingle(json, crsId);
     };
     this.pushVertex = function (coords) {
-        state.vertices = [coords];
+        state.model.setVertices([coords]);
         var vertexFrameworkElements = state.vertexFrameworkElements;
         if (vertexFrameworkElements.length > 0) {
             sketch.map.frameworkElement.removeLayer(vertexFrameworkElements[0]);

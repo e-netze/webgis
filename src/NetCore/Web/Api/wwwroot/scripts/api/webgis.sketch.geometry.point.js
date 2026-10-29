@@ -49,11 +49,7 @@ webgis.sketch.geometryTypes.define('point', '_base', function (ctx) {
 
     // a point has only one vertex => clear before adding
     this.beforeAddVertex = function (vertex) {
-        var partIndex = state.partIndex;
-
-        state.vertices.splice(0, state.vertices.length);  // clear
-        partIndex.splice(0, partIndex.length);  // clear -> keep reference
-        partIndex.push(0);
+        state.model.clear();
         state.currentFrameworkIndex = 0;
     };
 

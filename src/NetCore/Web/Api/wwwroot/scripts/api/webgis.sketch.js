@@ -7,7 +7,9 @@
     this.map = map;
     this.ui = new webgis.sketch._ui(this);
 
-    var _vertices = [], _partIndex = [0], _undos = [];
+    // vertices and parts => webgis.sketch.vertices.js
+    // _vertices is the (stable) vertex array of the model => read only here, change it with _model methods
+    var _model = new webgis.sketch.vertices(), _vertices = _model.vertices, _undos = [];
     var _geometryType = '', _originalSrs = 0, _originalSrsP4Params = null;
     var _frameworkElements = [], _currentFrameworkIndex = 0;
     var _vertexFrameworkElements = [], _currentBubbleMoveVertextFrameworkElement = null;
@@ -25,8 +27,8 @@
     // the type specific behavior is implemented in webgis.sketch.geometry.<type>.js
     // state => access to the closure variables for the geometry types
     var _state = {
-        get vertices() { return _vertices; }, set vertices(value) { _vertices = value; },
-        get partIndex() { return _partIndex; },
+        get vertices() { return _vertices; },
+        get model() { return _model; },
         get geometryType() { return _geometryType; }, set geometryType(value) { _geometryType = value; },
         get frameworkElements() { return _frameworkElements; },
         get currentFrameworkIndex() { return _currentFrameworkIndex; }, set currentFrameworkIndex(value) { _currentFrameworkIndex = value; },
@@ -59,8 +61,79 @@
     this._createFrameworkElement = function (latLngs) {
         return _type().createFrameworkElement(latLngs);
     };
+
+    /********* Fill element (polygon holes) *********/
+    // Every part is its own framework element. For types with hasFillElement the parts only draw the outline,
+    // the fill is drawn by one extra element containing all rings (fill-rule evenodd => inner rings are holes)
+    var _fillElement = null;
+    var _createPartFrameworkElement = function (sketch, latLngs) {
+        var element = sketch._createFrameworkElement(latLngs);
+        if (_type().hasFillElement && element && element.redraw && element.setStyle) {
+            element.setStyle({ fill: false });
+            var redraw = element.redraw;
+            element.redraw = function () {
+                var result = redraw.apply(this, arguments);
+                if (this._map) {
+                    _refreshFillElement(sketch);
+                }
+                return result;
+            };
+        }
+        return element;
+    };
+    var _collectRings = function (latLngs, rings) {
+        if (!latLngs || latLngs.length === 0) {
+            return;
+        }
+        if (Array.isArray(latLngs[0])) {
+            for (var i = 0; i < latLngs.length; i++) {
+                _collectRings(latLngs[i], rings);
+            }
+        } else if (latLngs.length > 2) {
+            rings.push(latLngs);
+        }
+    };
+    var _hideFillElement = function (sketch) {
+        if (_fillElement && _fillElement._map && sketch.map && sketch.map.frameworkElement) {
+            sketch.map.frameworkElement.removeLayer(_fillElement);
+        }
+    };
+    var _refreshFillElement = function (sketch) {
+        var geometryTypeDef = _type();
+        if (!geometryTypeDef.hasFillElement) {
+            _hideFillElement(sketch);
+            _fillElement = null;
+            return;
+        }
+
+        var rings = [], firstPart = null;
+        for (var i = 0; i < _frameworkElements.length; i++) {
+            var element = _frameworkElements[i];
+            if (element && element._map && element.getLatLngs) {
+                firstPart = firstPart || element;
+                _collectRings(element.getLatLngs(), rings);
+            }
+        }
+        if (!firstPart) {
+            _hideFillElement(sketch);
+            return;
+        }
+
+        if (_fillElement) {
+            _fillElement.setLatLngs(rings);
+        } else {
+            _fillElement = geometryTypeDef.createFillElement(rings);
+        }
+        if (!_fillElement._map) {
+            sketch._addToMap(_fillElement);
+        }
+        // draw the fill below the outlines
+        if (_fillElement._path && firstPart._path && _fillElement._path.parentNode === firstPart._path.parentNode && _fillElement._path.nextSibling !== firstPart._path) {
+            firstPart._path.parentNode.insertBefore(_fillElement._path, firstPart._path);
+        }
+    };
     this._isFirstPartVertex = function (index, partIndex) {
-        return index > 0 && ($.inArray(index, partIndex || _partIndex) >= 0);
+        return partIndex ? webgis.sketch.vertices.isFirstPartVertex(partIndex, index) : _model.isFirstPartVertex(index);
     };
     this._moverMarker = null;
     this._moverLine = null;
@@ -84,7 +157,7 @@
     this.store = function () {
         return {
             vertices: _vertices.slice(0),
-            parts: _partIndex.slice(0),
+            parts: _model.getPartIndex(),
             geometryType: _geometryType,
             closed: this.isClosed(),
             readOnly: this.isReadOnly(),
@@ -197,19 +270,19 @@
         }
 
         _frameworkElements = [];
-        _frameworkElements.push(this._createFrameworkElement());
+        _frameworkElements.push(_createPartFrameworkElement(this));
 
         webgis.sketch.construct.cancel(this);
 
         var frameworkElement = _frameworkElements[_frameworkElements.length - 1];
         for (var i = 0; i < _vertices.length; i++) {
             if (i > 0 && this.isInFanMode()) {
-                _frameworkElements.push(this._createFrameworkElement());
+                _frameworkElements.push(_createPartFrameworkElement(this));
                 frameworkElement = _frameworkElements[_frameworkElements.length - 1];
                 this._addAsLatLng(frameworkElement, _vertices[0]);
             }
-            else if (i > 0 && $.inArray(i, _partIndex) >= 0) {
-                _frameworkElements.push(this._createFrameworkElement());
+            else if (_model.isFirstPartVertex(i)) {
+                _frameworkElements.push(_createPartFrameworkElement(this));
                 frameworkElement = _frameworkElements[_frameworkElements.length - 1];
             }
 
@@ -220,8 +293,8 @@
                 frameworkElement.sketch_vertex_coords = vertex;
             }
         }
-        if (_vertices.length > 0 && $.inArray(_vertices.length, _partIndex) >= 0) { // Closed Geometry -> start a new Part
-            _frameworkElements.push(this._createFrameworkElement());
+        if (_vertices.length > 0 && _model.isPartStart(_vertices.length)) { // Closed Geometry -> start a new Part
+            _frameworkElements.push(_createPartFrameworkElement(this));
         }
 
         this.setEditable(true);
@@ -243,15 +316,14 @@
             for (var i in _vertexFrameworkElements) {
                 this.map.frameworkElement.removeLayer(_vertexFrameworkElements[i]);
             }
+            _hideFillElement(this);
         }
 
         const isValidBeforeRemove = this.isValid();
 
         _vertexFrameworkElements = [];
         _currentFrameworkIndex = 0;
-        _vertices.splice(0, _vertices.length);  // clear -> keep reference
-        _partIndex.splice(0, _partIndex.length);  // clear -> keep reference
-        _partIndex.push(0);
+        _model.clear();
 
         this.stopFanMode();
         this.setGeometryType(_geometryType);
@@ -273,6 +345,7 @@
         for (var i in _vertexFrameworkElements) {
             this._addToMap(_vertexFrameworkElements[i]);
         }
+        _refreshFillElement(this);
     };
     this.hide = function () {
         if (_frameworkElements == null || this.map == null || this.map.frameworkElement == null)
@@ -284,6 +357,7 @@
             for (var i in _vertexFrameworkElements) {
                 this.map.frameworkElement.removeLayer(_vertexFrameworkElements[i]);
             }
+            _hideFillElement(this);
             this.hideMoverLine();
             this.hideMoverMarker();
             this.hideTraceLine();
@@ -606,7 +680,7 @@
                 var lastVertex = null;
 
                 if (this.isInFanMode() && _vertices.length > 1) {
-                    _frameworkElements.push(this._createFrameworkElement());
+                    _frameworkElements.push(_createPartFrameworkElement(this));
                     _currentFrameworkIndex = _frameworkElements.length - 1;
                     this.map.frameworkElement.addLayer(_frameworkElements[_currentFrameworkIndex]);
                     this._addAsLatLng(_frameworkElements[_currentFrameworkIndex], _vertices[0]);
@@ -1132,7 +1206,7 @@
                 _updateTraceLine(this, traceLatLngs ? latLngs : null);
 
                 if (_isPolygon() && _vertices.length >= 2 && !this.isSketchMoving() && !this.isSketchRotating()) {
-                    latLngs.push([_vertices[_partIndex[_partIndex.length - 1]].y, _vertices[_partIndex[_partIndex.length - 1]].x]);
+                    latLngs.push([_vertices[_model.currentPartStart()].y, _vertices[_model.currentPartStart()].x]);
                 }
             }
 
@@ -1325,7 +1399,7 @@
                 var nextPartIndex = (i + 1) >= _vertices.length ? currentPartIndex + 1 : this.vertexPartIndex(i + 1);
                 if (nextPartIndex > currentPartIndex) {
                     if (_type().hasClosingSegment) {
-                        v2 = _vertices[_partIndex[currentPartIndex]];
+                        v2 = _vertices[_model.start(currentPartIndex)];
                     }
                     currentPartIndex = nextPartIndex;
                 }
@@ -1366,23 +1440,22 @@
     };
 
     this.canReverse = function () {
-        return _isLine(_geometryType) && _vertices.length > 1 && _partIndex.length === 1;
+        return _isLine(_geometryType) && _vertices.length > 1 && _model.count() === 1;
     };
     this.reverse = function () {
         if (this.canReverse()) {
             this.addUndo(webgis.l10n.get("sketch-tool-reverse"));
 
-            var vertices = _vertices;
-            vertices.reverse();
+            var vertices = _vertices.slice(0).reverse();
 
-            _vertices = [];
+            _model.setVertices([]);  // empty before remove => remove fires no 'ongetsinvalid'
             this.remove(true);
             this.addVertices(vertices);
         }
     };
 
     this.canMergeParts = function () {
-        if (this.map.construct && _type().supportsMergeParts && _partIndex.length > 1) {
+        if (this.map.construct && _type().supportsMergeParts && _model.count() > 1) {
             return this.map.construct.mergePaths(this.getParts()) != null;
         }
         return false;
@@ -1394,7 +1467,7 @@
             if (vertices != null) {
                 this.addUndo(webgis.l10n.get("sketch-merge-sections"));
 
-                _vertices = [];
+                _model.setVertices([]);  // empty before remove => remove fires no 'ongetsinvalid'
                 this.remove(true);
                 this.addVertices(vertices);
             }
@@ -1406,8 +1479,8 @@
 
         var infoText = [];
 
-        if (_partIndex.length > 1) {
-            infoText.push("Multipart: " + _partIndex.length + " " + webgis.l10n.get("sections"));
+        if (_model.count() > 1) {
+            infoText.push("Multipart: " + _model.count() + " " + webgis.l10n.get("sections"));
         }
 
         _type().infoTextLines(infoText, properties);
@@ -1449,28 +1522,14 @@
     this.addUndo = function (text) {
         if (_suppressUndo === true)
             return;
-        var vertices = [];
-        for (var i = 0, to = _vertices.length; i < to; i++) {
-            vertices.push({
-                x: _vertices[i].x, y: _vertices[i].y,
-                X: _vertices[i].X, Y: _vertices[i].Y,
-                projEvent: _vertices[i].projEvent,
-                fixed: _vertices[i].fixed,
-                selected: _vertices[i].selected,
-                m: _vertices[i].m,
-                z: _vertices[i].z
-            });
-        }
-        var partIndex = new Array();
-        for (var i = 0; i < _partIndex.length; i++)
-            partIndex.push(_partIndex[i]);
+        var snapshot = _model.snapshot();
         if (_undos.length >= 10) {
             var undos = new Array();
             for (var i = _undos.length - 10; i < _undos.length; i++)
                 undos.push(_undos[i]);
             _undos = undos;
         }
-        _undos.push({ vertices: vertices, partIndex: partIndex, text: text });
+        _undos.push({ vertices: snapshot.vertices, partIndex: snapshot.partIndex, text: text });
     };
     this.undo = function () {
         if (!this.canUndo())
@@ -1494,15 +1553,7 @@
             const vertices = [];
 
             for (let v = undo.partIndex[i], to = i == undo.partIndex.length - 1 ? undo.vertices.length : undo.partIndex[i + 1]; v < to; v++) {
-                vertices.push({
-                    x: undo.vertices[v].x, y: undo.vertices[v].y,
-                    X: undo.vertices[v].X, Y: undo.vertices[v].Y,
-                    projEvent: undo.vertices[v].projEvent,
-                    fixed: undo.vertices[v].fixed,
-                    selected: undo.vertices[v].selected,
-                    m: undo.vertices[v].m,
-                    z: undo.vertices[v].z
-                });
+                vertices.push(webgis.sketch.vertices.copyVertex(undo.vertices[v]));
             }
             if (vertices.length > 0)
                 this.addVertices(vertices);  // here gets invalid is fired
@@ -1532,14 +1583,7 @@
         return _type().calcProperties(xParam, yParam);
     };
     this.getCoords = function () {
-        var ret = [];
-        for (var p = 0; p < this.partCount(); p++) {
-            var pv = this.partVertices(p);
-            for (var i = 0; i < pv.length; i++) {
-                ret.push({ x: pv[i].x, y: pv[i].y });
-            }
-        }
-        return ret;
+        return _model.collect(function (vertex) { return { x: vertex.x, y: vertex.y }; });
     };
 
     this.getVertices = function (xParam, yParam) {
@@ -1547,14 +1591,7 @@
             xParam = 'x';
         if (!yParam)
             yParam = 'y';
-        var ret = [];
-        for (var p = 0; p < this.partCount(); p++) {
-            var pv = this.partVertices(p);
-            for (var i = 0; i < pv.length; i++) {
-                ret.push([pv[i][xParam], pv[i][yParam]]);
-            }
-        }
-        return ret;
+        return _model.collect(function (vertex) { return [vertex[xParam], vertex[yParam]]; });
     };
     this._getRawVertices = function () { return _vertices; }
     this.getVerticesPro = function (xParam, yParam, part) {
@@ -1562,49 +1599,24 @@
             xParam = 'x';
         if (!yParam)
             yParam = 'y';
-        var ret = [];
-        for (var p = 0; p < this.partCount(); p++) {
-            var pv = this.partVertices(p);
-            for (var i = 0; i < pv.length; i++) {
-                var vertex = {};
-                vertex[xParam] = pv[i][xParam];
-                vertex[yParam] = pv[i][yParam];
-                if (pv[i].fixed === true) {
-                    vertex.fixed = true;
-                }
-                if (pv[i].selected === true) {
-                    vertex.selected = true;
-                }
-                ret.push(vertex);
+        return _model.collect(function (vertex) {
+            var result = {};
+            result[xParam] = vertex[xParam];
+            result[yParam] = vertex[yParam];
+            if (vertex.fixed === true) {
+                result.fixed = true;
             }
-        }
-        return ret;
+            if (vertex.selected === true) {
+                result.selected = true;
+            }
+            return result;
+        });
     };
     this.getNeighborVertices = function (index, includeVertex) {
-        index = parseInt(index);
-        var vertices = [];
-
-        if (_isLineOrPolygon() && index < _vertices.length) {
-            var partNumber = this.getVertexPartNumber(index);
-
-            var min = partNumber == 0 ? 0 : _partIndex[partNumber];
-            var max = partNumber == _partIndex.length - 1 ? _vertices.length - 1 : _partIndex[partNumber + 1] - 1;
-
-            if (_isPolygon() && index == min) {
-                vertices.push({ x: _vertices[max].x, y: _vertices[max].y, index: max });
-            }
-
-            for (var i = Math.max(min, index - 1), to = Math.min(index + 1, max); i <= to; i++) {
-                if (i !== index || includeVertex === true) {
-                    vertices.push({ x: _vertices[i].x, y: _vertices[i].y, index: i });
-                }
-            } 
-
-            if (_isPolygon() && index == max) {
-                vertices.push({ x: _vertices[min].x, y: _vertices[min].y, index: min });
-            }
+        if (!_isLineOrPolygon()) {
+            return [];
         }
-        return vertices;
+        return _model.neighbors(parseInt(index), includeVertex, _isPolygon());
     };
     this.getVerticesCount = function () { return _vertices ? _vertices.length : 0; };
     this.getVertexIndicesFromBounds = function (bounds) {
@@ -1619,13 +1631,7 @@
             var w = maxX - minX, h = maxY - minY;
 
             if (w > 0 || h > 0) {
-                for (var i in _vertices) {
-                    var vertex = _vertices[i];
-                    if (vertex.x >= minX && vertex.x <= maxX &&
-                        vertex.y >= minY && vertex.y <= maxY) {
-                        indices.push(i);
-                    }
-                }
+                indices = _model.indicesInBounds(minX, minY, maxX, maxY);
             }
             else {
                 var layerPoint = this.map.frameworkElement.latLngToLayerPoint({ lng: minX, lat: minY });
@@ -1697,26 +1703,11 @@
         return vertices;
     };
     this.verticesHasProperty = function (propertyName) {
-        for (var p = 0; p < this.partCount(); p++) {
-            var pv = this.partVertices(p);
-            for (var i = 0; i < pv.length; i++) {
-                if (!pv[i].hasOwnProperty(propertyName)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return _model.allHaveProperty(propertyName);
     };
-    this.partCount = function () { return _partIndex.length; };
+    this.partCount = function () { return _model.count(); };
     this.partVertices = function (partNumber) {
-        if (partNumber < 0 || partNumber >= _partIndex.length)
-            return [];
-        var vertices = [];
-        var to = partNumber < _partIndex.length - 1 ? _partIndex[partNumber + 1] : _vertices.length;
-        for (var i = _partIndex[partNumber]; i < to; i++) {
-            vertices.push(_vertices[i]);
-        }
-        return vertices;
+        return _model.partVertices(partNumber);
     };
     this.getParts = function () {
         var parts = [];
@@ -1726,25 +1717,10 @@
         return parts;
     };
     this.getVertexPartNumber = function (index) {
-        if (_partIndex) {
-            for (var p = 0; p < _partIndex.length - 1; p++) {
-                if (_partIndex[p] <= index && _partIndex[p + 1] > index) {
-                    return p;
-                }
-            }
-
-            return _partIndex.length - 1;
-        }
-
-        return 0;
+        return _model.partNumber(index);
     };
     this.getCurrentPartLength = function () {
-        if (!_partIndex || _partIndex.length <= 1)
-            return _vertices.length;
-
-        var partLength = Math.max(0, _vertices.length - _partIndex[_partIndex.length - 1]);
-
-        return partLength;
+        return _model.currentPartLength();
     };
     this.isValid = function () {
         return _type().isValid();
@@ -1948,6 +1924,9 @@
                 } catch (ex) {
                 }
             }
+        }
+        if (_fillElement && _type().hasFillElement) {
+            _fillElement.setStyle(style);
         }
     };
     this.setColor = function (col, geomType) { this.setStyle({ color: _color[_getStyleIndex(geomType)] = col }); };
@@ -2183,6 +2162,29 @@
     };
 
     /************* Move Sketch ***********/
+    // gray preview polylines (one per part) shown while moving/rotating the sketch
+    var _addSketchPreviewElements = function (sketch) {
+        var elements = [], parts = _model.toLatLngs(_type().hasClosingSegment);
+        for (var p = 0; p < parts.length; p++) {
+            var polyline = L.polyline([], { color: 'gray', opacity: .8, weight: 4 });
+            for (var l = 0; l < parts[p].length; l++) {
+                polyline.addLatLng(parts[p][l]);
+            }
+            elements.push(polyline);
+        }
+        for (var e in elements) {
+            sketch._addToMap(elements[e]);
+        }
+        return elements;
+    };
+    var _previewLatLngs = function (elements) {
+        return elements.map(function (element) { return element.getLatLngs(); });
+    };
+    var _setPreviewLatLngs = function (elements, latLngParts) {
+        for (var p in elements) {
+            elements[p].setLatLngs(latLngParts[p]);
+        }
+    };
     var _sketchMoveRefLatLng = null;
     this.startSketchMoving = function (index) {
         this.endSketchRotating();
@@ -2194,32 +2196,7 @@
             var vertex = _vertices[index];
 
             if (_vertices.length > 1) {
-                var polyline = null;
-                var partIndex = 0;
-                for (var i = 0; i < _vertices.length; i++) {
-                    if (i === 0 || _partIndex[partIndex] === i) {
-                        if (polyline != null && _type().hasClosingSegment) {
-                            var latLngs = polyline.getLatLngs();
-                            if (latLngs.length > 2)
-                                polyline.addLatLng(L.latLng(latLngs[0].lat, latLngs[0].lng));
-                        }
-                        polyline = L.polyline([], { color: 'gray', opacity: .8, weight: 4 });
-                        _sketchMoveFrameworkElements.push(polyline);
-                        partIndex++;
-                    }
-
-                    var vertex = _vertices[i];
-                    polyline.addLatLng(L.latLng(vertex.y, vertex.x));
-                }
-                if (polyline != null && _type().hasClosingSegment) {
-                    var latLngs = polyline.getLatLngs();
-                    if (latLngs.length > 2)
-                        polyline.addLatLng(L.latLng(latLngs[0].lat, latLngs[0].lng));
-                }
-
-                for (var p in _sketchMoveFrameworkElements) {
-                    this._addToMap(_sketchMoveFrameworkElements[p]);
-                }
+                _sketchMoveFrameworkElements = _addSketchPreviewElements(this);
             }
 
             _sketchMoveRefLatLng = { lat: _vertices[index].y, lng: _vertices[index].x };
@@ -2253,23 +2230,9 @@
             var deltaLat = (this._snappedVertex != null ? this._snappedVertex.y : latlng.lat) - _sketchMoveRefLatLng.lat;
             _sketchMoveRefLatLng = this._snappedVertex != null ? L.latLng(this._snappedVertex.y, this._snappedVertex.x) : latlng;
 
-            var hasSelectedVertices = this.hasSelectedVertices();
-
-            var vIndex = 0;
-            for (var p in _sketchMoveFrameworkElements) {
-                var path = _sketchMoveFrameworkElements[p];
-                var pLatLngs = path.getLatLngs();
-                for (var l in pLatLngs) {
-                    var vertex = _vertices[vIndex % _vertices.length], apply = !(vertex.fixed === true || (hasSelectedVertices && vertex.selected !== true));
-            
-                    if (apply) {
-                        pLatLngs[l].lng += deltaLng;
-                        pLatLngs[l].lat += deltaLat;
-                    }
-                    vIndex++;
-                }
-                path.setLatLngs(pLatLngs);
-            }
+            var latLngParts = _previewLatLngs(_sketchMoveFrameworkElements);
+            _model.translateLatLngs(latLngParts, deltaLng, deltaLat, this.hasSelectedVertices());
+            _setPreviewLatLngs(_sketchMoveFrameworkElements, latLngParts);
         }
     };
     this.moveSketch = function (latlng) {
@@ -2283,15 +2246,7 @@
             var deltaY = (this._snappedVertex != null ? this._snappedVertex.y : latlng.lat) - vertex.y;
             _sketchMoveRefLatLng = null;
 
-            var hasSelectedVertices = this.hasSelectedVertices();
-
-            for (var i = 0; i < _vertices.length; i++) {
-                var vertex = _vertices[i], apply = !(vertex.fixed === true || (hasSelectedVertices && vertex.selected !== true));
-
-                if (apply) {
-                    _vertices[i] = { x: _vertices[i].x + deltaX, y: _vertices[i].y + deltaY, selected: _vertices[i].selected };
-                }
-            }
+            _model.translate(deltaX, deltaY, this.hasSelectedVertices());
         }
 
         this.startSuppressUndo();
@@ -2312,32 +2267,7 @@
             var vertex = _vertices[index];
 
             if (_vertices.length > 1) {
-                var polyline = null;
-                var partIndex = 0;
-                for (var i = 0; i < _vertices.length; i++) {
-                    if (i === 0 || _partIndex[partIndex] === i) {
-                        if (polyline != null && _type().hasClosingSegment) {
-                            var latLngs = polyline.getLatLngs();
-                            if (latLngs.length > 2)
-                                polyline.addLatLng(L.latLng(latLngs[0].lat, latLngs[0].lng));
-                        }
-                        polyline = L.polyline([], { color: 'gray', opacity: .8, weight: 4 });
-                        _sketchRotateFrameworkElements.push(polyline);
-                        partIndex++;
-                    }
-
-                    var vertex = _vertices[i];
-                    polyline.addLatLng(L.latLng(vertex.y, vertex.x));
-                }
-                if (polyline != null && _type().hasClosingSegment) {
-                    var latLngs = polyline.getLatLngs();
-                    if (latLngs.length > 2)
-                        polyline.addLatLng(L.latLng(latLngs[0].lat, latLngs[0].lng));
-                }
-
-                for (var p in _sketchRotateFrameworkElements) {
-                    this._addToMap(_sketchRotateFrameworkElements[p]);
-                }
+                _sketchRotateFrameworkElements = _addSketchPreviewElements(this);
             }
 
             _sketchRotateRefAngle = 0.0;
@@ -2383,36 +2313,9 @@
             angle -= _sketchRotateRefAngle;
             _sketchRotateRefAngle = x;
 
-            var hasSelectedVertices = this.hasSelectedVertices();
-
-            var vIndex = 0;
-            for (var p in _sketchRotateFrameworkElements) {
-                var path = _sketchRotateFrameworkElements[p];
-                var pLatLngs = path.getLatLngs();
-                for (var l in pLatLngs) {
-                    var vertex = _vertices[vIndex % _vertices.length], apply = !(vertex.fixed === true || (hasSelectedVertices && vertex.selected !== true));
-
-                    if (apply) {
-                        vertex = { x: pLatLngs[l].lng, y: pLatLngs[l].lat };
-                        webgis.complementProjected(crs, [vertex]);
-
-                        var dX = vertex.X - vertices[0].X;
-                        var dY = vertex.Y - vertices[0].Y;
-
-                        var rVertex = {
-                            X: (Math.cos(angle) * dX - Math.sin(angle) * dY) + vertices[0].X,
-                            Y: (Math.sin(angle) * dX + Math.cos(angle) * dY) + vertices[0].Y
-                        };
-
-                        webgis.complementWGS84(crs, [rVertex]);
-
-                        pLatLngs[l].lng = rVertex.x;
-                        pLatLngs[l].lat = rVertex.y;
-                    }
-                    vIndex++;
-                }
-                path.setLatLngs(pLatLngs);
-            }
+            var latLngParts = _previewLatLngs(_sketchRotateFrameworkElements);
+            _model.rotateLatLngs(latLngParts, vertices[0], angle, crs, this.hasSelectedVertices());
+            _setPreviewLatLngs(_sketchRotateFrameworkElements, latLngParts);
         }
     };
     this.rotateSketch = function(latlng) {
@@ -2433,31 +2336,7 @@
             var angle = Math.atan2(deltaY, deltaX) + _sketchStartAngle;
             _sketchRotateRefAngle = 0.0;
 
-            var cosA = Math.cos(angle), sinA = Math.sin(angle);
-
-            var hasSelectedVertices = this.hasSelectedVertices();
-
-            for (var i = 0; i < _vertices.length; i++) {
-                var vertex = _vertices[i], apply = !(vertex.fixed === true || (hasSelectedVertices && vertex.selected !== true));
-
-                if (apply) {
-                    vertex = { x: _vertices[i].x, y: _vertices[i].y };
-                    webgis.complementProjected(crs, [vertex]);
-
-                    var dX = vertex.X - vertices[0].X;
-                    var dY = vertex.Y - vertices[0].Y;
-
-                    var rVertex = {
-                        X: cosA * dX - sinA * dY + vertices[0].X,
-                        Y: sinA * dX + cosA * dY + vertices[0].Y,
-                        selected: _vertices[i].selected
-                    };
-
-                    webgis.complementWGS84(crs, [rVertex]);
-
-                    _vertices[i] = rVertex;
-                }
-            }
+            _model.rotate(vertices[0], angle, crs, this.hasSelectedVertices());
         }
 
         this.startSuppressUndo();
@@ -2482,13 +2361,9 @@
                 this._resetMarkerImage(_vertexFrameworkElements[i]);
             }
         }
-        _vertices.splice(index, 1);
         _vertexFrameworkElements.splice(index, 1);
+        _model.removeVertex(index);
 
-        for (var p = 0; p < _partIndex.length; p++) {
-            if (_partIndex[p] > index)
-                _partIndex[p] = _partIndex[p] - 1;
-        }
         this.redraw(true);
         this.redrawMarkers();
 
@@ -2498,15 +2373,8 @@
     };
     /******** Fix Vertices **********************/
     this.fixVertex = function (index, fix) {
-        if (index < 0 || index >= _vertices.length) {
+        if (!_model.fix(index, fix)) {
             return;
-        }
-        if (fix === true) {
-            _vertices[index].fixed = true;
-        } else if (fix === false) {
-            _vertices[index].fixed = false;
-        } else {  // toogle
-            _vertices[index].fixed = _vertices[index].fixed === true ? false : true;
         }
 
         this.redrawMarkers();
@@ -2548,16 +2416,7 @@
         if (webgis.usability.allowSelectSketchVertices !== true) {
             return;
         }
-        if (index < 0 || index >= _vertices.length) {
-            return;
-        }
-        if (select === true) {
-            _vertices[index].selected = true;
-        } else if (select === false) {
-            _vertices[index].selected = false;
-        } else {  // toogle
-            _vertices[index].selected = _vertices[index].selected === true ? false : true;
-        }
+        _model.select(index, select);
     };
     this.selectVertex = function (index, select) {
         _selectVertex(index, select);
@@ -2575,15 +2434,15 @@
         this.redrawMarkers();
     };
     this.unselectAllVertices = function () {
-        for (var i in _vertices) {
-            _selectVertex(i, false);
+        if (webgis.usability.allowSelectSketchVertices === true) {
+            _model.selectAll(false);
         }
 
         this.redrawMarkers();
     };
     this.toggleVertexSelection = function () {
-        for (var i in _vertices) {
-            _selectVertex(i, _vertices[i].selected !== true);
+        if (webgis.usability.allowSelectSketchVertices === true) {
+            _model.selectAll();
         }
 
         this.redrawMarkers();
@@ -2592,32 +2451,18 @@
         this.addUndo(webgis.l10n.get("sketch-remove-selected-vertices"));
 
         while (this.hasSelectedVertices()) {
-            for (var i in _vertices) {
-                if (_vertices[i].selected === true) {
-                    this.removeVertex(i, true);
-                    break;
-                }
-            }
+            this.removeVertex(_model.firstSelectedIndex(), true);
         }
     };
     this.hasSelectedVertices = function () {
-        if (webgis.usability.allowSelectSketchVertices !== true) {
-            return false;
-        }
-        for (var i in _vertices) {
-            if (_vertices[i].selected === true) {
-                return true;
-            }
-        }
-
-        return false;
+        return webgis.usability.allowSelectSketchVertices === true && _model.hasSelected();
     };
 
     /********************************************/
     this.addPrevVertex = function (index) {
         this.addUndo(webgis.l10n.get("sketch-add-vertex"));
         var vertices = _cloneArray(_vertices),
-            partIndex = _cloneArray(_partIndex);
+            partIndex = _model.getPartIndex();
         this.remove(true);
 
         this.events.suppress('onchanged');  // Performance!! dont calc area etc on every add (large polygons, ...)
@@ -2635,7 +2480,7 @@
                 partIndex[p] = partIndex[p] + 1;
         }
 
-        _partIndex = partIndex;
+        _model.setPartIndex(partIndex);
 
         this.events.enable('onchanged');
         this.events.fire('onchanged', this);
@@ -2645,7 +2490,7 @@
         _suppressUndo = true;
 
         var vertices = _cloneArray(_vertices),    // clone
-            partIndex = _cloneArray(_partIndex);  // clone
+            partIndex = _model.getPartIndex();  // clone
         var isClosed = this.isClosed();
 
         this.remove(true);
@@ -2663,7 +2508,7 @@
                 var nVertex = null;
                 if (pIndex2 > pIndex1) {
                     if (_type().hasClosingSegment) {
-                        nVertex = vertices[_partIndex[pIndex1]];
+                        nVertex = vertices[_model.start(pIndex1)];
                     }
                     else {
                         continue;
@@ -2704,63 +2549,41 @@
     };
     this.swapDirection = function () {
         var vertices = _cloneArray(_vertices),
-            partIndex = _cloneArray(_partIndex);
+            partIndex = _model.getPartIndex();
         this.remove(true);
-        if (partIndex.length > 0) {
-            var last = vertices.length;
-            for (var i = partIndex.length - 1; i > 0; i--) {
-                _partIndex.push(_partIndex[_partIndex.length - 1] + (last - partIndex[i]));
-                last = partIndex[i];
-            }
-        }
+        _model.setPartIndex(webgis.sketch.vertices.reversedPartIndex(partIndex, vertices.length));
         for (var i = vertices.length - 1; i >= 0; i--) {
             this.addVertex(vertices[i]);
         }
         this.redraw(true);
-        _currentFrameworkIndex = _partIndex.length - 1;
+        _currentFrameworkIndex = _model.count() - 1;
     };
     this.appendPart = function (latLngs, silent) {
         if (!silent) {
             this.addUndo(webgis.l10n.get("sketch-close-section"));
         }
         if (_vertices.length === 0) {
-            _frameworkElements = [this._createFrameworkElement(latLngs)];
-            _partIndex.splice(0, _partIndex.length);  // clear -> keep reference
-            _partIndex.push(0);
+            _frameworkElements = [_createPartFrameworkElement(this, latLngs)];
+            _model.clear();
         }
-        if (!_type().createsFrameworkElementPerPart) {
-            // keine neues Frameworkelement erzeugen, weil man hier sowieso nicht weiterzeichnen kann
-            // einfach PartIndex erhöhen, um Objekte abzuschließen
-            if ($.inArray(_vertices.length, _partIndex) < 0)
-                _partIndex.push(_vertices.length);
+        if (_type().createsFrameworkElementPerPart) {
+            _frameworkElements.push(_createPartFrameworkElement(this, latLngs));
         }
-        else {
-            _frameworkElements.push(this._createFrameworkElement(latLngs));
-            if ($.inArray(_vertices.length, _partIndex) < 0)
-                _partIndex.push(_vertices.length);
-        }
+        // else: no new framework element (drawing can't be continued anyway) => just close the part
+        _model.closePart();
+
         _currentFrameworkIndex = _frameworkElements.length - 1;
         this._addToMap(_frameworkElements[_currentFrameworkIndex]);
         this.hideMoverLine();
     }; 
     this.isMultiPart = function () {
-        return _partIndex == null || _partIndex.length > 1;
+        return _model.count() > 1;
     }
     this.vertexPartIndex = function (vertexIndex, partIndex) {
-        var partIndex = partIndex || _partIndex;
-        if (partIndex == null || partIndex.length <= 1)
-            return 0;
-        for (var p = 1, to = partIndex.length; p < to; p++) {
-            if (partIndex[p] > vertexIndex)
-                return p - 1;
-        }
-        return partIndex.length - 1;
+        return partIndex ? webgis.sketch.vertices.partOf(partIndex, vertexIndex) : _model.partOf(vertexIndex);
     };
     this.firstVertexIndexInCurrentPart = function () {
-        if (_partIndex && _partIndex.length > 0) {
-            return _partIndex[_partIndex.length - 1];
-        }
-        return 0;
+        return _model.currentPartStart();
     };
     this.lastVertexInCurrentPart = function (stepsBack) {
         stepsBack = stepsBack || 0;
@@ -2774,10 +2597,10 @@
         return null;
     };
     this.isClosed = function () {
-        return (_partIndex != null && _partIndex.length > 1 && _partIndex[_partIndex.length - 1] == _vertices.length);
+        return _model.isClosed();
     };
     this.isLastPartClosed = function () {
-        return _partIndex != null && _partIndex.length > 0 && _vertices.length == _partIndex[_partIndex.length - 1];
+        return _model.isLastPartClosed();
     };
     this.close = function () {
         if (!this.isClosed()) {
@@ -3003,7 +2826,7 @@
                     wkt = addVertexFunc(wkt, vertices[0]);
                     wkt += ',';
                 }
-                else if (i < vertices.length - 1 && $.inArray(i, _partIndex) >= 0) {
+                else if (i < vertices.length - 1 && _model.isPartStart(i)) {
                     wkt += '),(';
                 }
                 else {
@@ -3023,8 +2846,8 @@
         if (_vertices.length == 0)
             return '';
 
-        let isMultipart = _partIndex.length > 2 || (_partIndex.length == 2 && _vertices.length > _partIndex[1]);  // its no an multipart if only the first is "closed";
-        webgis.log('isMultipart', isMultipart, _partIndex);
+        let isMultipart = _model.count() > 2 || (_model.count() == 2 && _vertices.length > _model.start(1));  // its no an multipart if only the first is "closed";
+        webgis.log('isMultipart', isMultipart, _model.getPartIndex());
 
         let wkt = '', closeVertex = null;
         let wktType = _type().wktType;
@@ -3049,7 +2872,7 @@
         wkt += isMultipart ? "(" : "";
         for (var i = 0; i < vertices.length; i++) {
             if (i > 0) {
-                if (i < vertices.length - 1 && $.inArray(i, _partIndex) >= 0) {
+                if (i < vertices.length - 1 && _model.isPartStart(i)) {
                     if (closeVertex) { 
                         wkt = addVertexFunc(wkt + ',', closeVertex);
                         closeVertex = vertices[i];
@@ -3078,7 +2901,6 @@
 
     this.cloneGraphicElements = function () {
         var elements = [];
-        var partIndex = 0;
         var element;
         var typeElements = _type().cloneGraphicElements();
         if (typeElements) {
@@ -3087,36 +2909,19 @@
             element = this._createFrameworkElement();
             elements.push(element);
 
-            var partLatLngs = [], latlngs=[];
-            for (var i = 0; i < _vertices.length; i++) {
-                if (i == 0 || _partIndex[partIndex] == i) {
-                    if (latlngs.length > 0) {
-                        partLatLngs.push(latlngs);
-                        latlngs = [];
-                    }
-                    partIndex++;
+            // Do NOT add vertex by vertex (addLatLng), when cloning
+            // otherwise multipart geometries not work correct with MapMarkup
+            if (element.addLatLng) {
+                var partLatLngs = _model.toLatLngs(false);
+                if (partLatLngs.length == 1) {
+                    element.setLatLngs(partLatLngs[0]);
+                } else if (partLatLngs.length) {
+                    element.setLatLngs(partLatLngs);
                 }
-                var vertex = _vertices[i];
-
-                // Do NOT use this, when cloning
-                // otherwise multipart geometries not work correct with MapMarkup
-
-                // Use this
-                if (element.addLatLng) {
-                    latlngs.push(L.latLng(vertex.y, vertex.x));;
-                } else {
-                    element.setLatLng(L.latLng(vertex.y, vertex.x));
+            } else {
+                for (var i = 0; i < _vertices.length; i++) {
+                    element.setLatLng(L.latLng(_vertices[i].y, _vertices[i].x));
                 }
-            }
-
-            if (latlngs.length > 0) {
-                partLatLngs.push(latlngs);
-            }
-
-            if (partLatLngs.length == 1) {
-                element.setLatLngs(partLatLngs[0]);
-            } else if (partLatLngs.length) {
-                element.setLatLngs(partLatLngs);
             }
         }
         return elements;

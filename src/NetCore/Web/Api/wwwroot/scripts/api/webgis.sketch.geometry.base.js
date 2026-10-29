@@ -8,8 +8,9 @@
 // The types itself are defined in webgis.sketch.geometry.<type>.js
 // The registry is defined in webgis.sketch.geometry.js
 //
-// Never cache state.vertices (or other state values) in a type instance.
-// The sketch reassigns these arrays (eg. text, reverse, mergeParts, redrawMarkers)
+// state.vertices is the stable vertex array of the part model (webgis.sketch.vertices.js),
+// change it in place or with state.model methods, never reassign it.
+// Never cache other state values in a type instance, the sketch reassigns some of them (eg. frameworkElements)
 
 webgis.sketch.geometryTypes.define('_base', null, function (ctx) {
     "use strict";
@@ -33,9 +34,13 @@ webgis.sketch.geometryTypes.define('_base', null, function (ctx) {
     this.vertexMarkerIcon = null;                   // fix icon for vertex markers (otherwise sketch_vertex[_fixed|_selected])
     this.wktType = null;                            // POINT, LINESTRING, POLYGON
                                                     // null => toWKT/toWKT2 write no valid WKT (no prefix), the server (ShapeFromWKT) ignores it => intended
+    this.hasFillElement = false;                    // true => parts draw only the outline, createFillElement draws the fill of all rings (holes)
 
     /********* Hooks *********/
     this.createFrameworkElement = function (latLngs) {
+        return undefined;
+    };
+    this.createFillElement = function (rings) {
         return undefined;
     };
     this.isValid = function () {

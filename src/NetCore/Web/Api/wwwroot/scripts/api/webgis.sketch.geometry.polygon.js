@@ -9,6 +9,7 @@ webgis.sketch.geometryTypes.define('polygon', '_polygon', function (ctx) {
     this.isPlainPath = true;
     this.hasClosingSegment = true;
     this.wktType = 'POLYGON';
+    this.hasFillElement = true;
 
     this.createFrameworkElement = function (latLngs) {
         // Interactive = true -> Sonst lässt sich das Polygon beim Redling nicht mehr auswählen
@@ -16,6 +17,10 @@ webgis.sketch.geometryTypes.define('polygon', '_polygon', function (ctx) {
         polygon._webgis = { geometryType: state.geometryType, lineStyle: sketch.getLineStyle() };
         // Kein Click Event -> Man kann sonst nicht mehr Punkte auf die Fläche setzen!!!
         return polygon;
+    };
+    // all rings in one element => fill-rule evenodd draws inner rings as holes
+    this.createFillElement = function (rings) {
+        return L.polygon(rings, { interactive: true, stroke: false, fillColor: sketch.getFillColor(), fillOpacity: sketch.getFillOpacity() });
     };
     this.infoTextLines = function (infoText, properties) {
         infoText.push(webgis.l10n.get("area") + ": " + (Math.round(properties.area * 100) / 100) + 'm²');
