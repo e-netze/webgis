@@ -3777,8 +3777,9 @@
 
         if (options.showSketch === true && this.sketch && this.sketch.isValid()) {
             var sketchCoords = this.sketch.getCoords();
-            var calcCrsId = this.calcCrs(sketchCoords) ?
-                this.calcCrs(sketchCoords).id : webgis.calc.getCalcCrsId(sketchCoords);
+            var calcCrsId = this.calcCrs(sketchCoords)
+                ? this.calcCrs(sketchCoords).id
+                : webgis.calc.getCalcCrsId(sketchCoords);
 
             data._calcSrs = calcCrsId > 0 ? calcCrsId : (this.calcCrs() ? this.calcCrs().id : 0);
 

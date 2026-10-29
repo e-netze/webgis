@@ -24,6 +24,7 @@ which projects and classes are involved, flow diagrams, design decisions and pit
 | [Query Builder & Value Suggestions](querybuilder.md) | API / Viewer | Query Builder field types/operators, live value suggestions (autocomplete, number list, date picker), filters on distinct queries. |
 | [Query Result Restriction & Statistics](query-result-restriction.md) | API / GeoServices / Viewer | Restrict query results with the Query Builder (encrypted query token), server-side field statistics (ArcGIS outStatistics) with ranks, restrict by value and CSV. |
 | [Query Results](query-results.md) | API / Viewer | Query results end-to-end: QueryEngine, DTO metadata, result table/list paging, export. |
+| [Sketch Geometry Types](sketch-geometry-types.md) | Viewer | `webgis.sketch` facade with stable API, geometry-type registry and one file per type (point, polyline, polygon, ...). |
 | [TOC Context Menu & Properties](toc-context-menu.md) | Viewer / Portal | TOC item/group context menu (provider list, hover submenus), Query Builder per layer, properties dialog. |
 | [Tool Events](tool-events.md) | API / Viewer | `/rest/toolevent` request: client parameter collection, JSON `eventBody`, server-side parsing into `ApiToolEventArguments`. |
 | [UI Builder](ui-builder.md) | API / Viewer | Server UI elements to viewer DOM: webgis_uibuilder, builder plugin registry, characterization tests. |

@@ -8,16 +8,11 @@
     this.ui = new webgis.sketch._ui(this);
 
     var _vertices = [], _partIndex = [0], _undos = [];
-    var _lastFreehandVertexIndex = -1;
     var _geometryType = '', _originalSrs = 0, _originalSrsP4Params = null;
     var _frameworkElements = [], _currentFrameworkIndex = 0;
     var _vertexFrameworkElements = [], _currentBubbleMoveVertextFrameworkElement = null;
     var _color = ['#ff0000', '#000000'], _fillColor = ['#ffff00', '#aaaaaa'], _opacity = [0.8, 1.0], _fillOpacity = [0.2, 0.2], _weight = [2, 2], _linesStyle = [null, null];
     var _txtColor = ['#000','#000'], _txtStyle = ['',''], _txtSize = [12, 14], _txtRefResolution = 0; 
-    var _distance_circle_radius = 5000.0, _distance_circle_steps = 3, _compass_rose_radius=10.0, _compass_rose_steps = 36, _circle_radius = 0, _svg_text = null;
-    var _hectoline_unit = 'm', _hectoline_interval = 100;
-    var _dimLine_lengthUnit = 'm', _dimLine_labelTotalLength = false;
-    var _dimPolygon_areaUnit = 'm²', _dimPolygon_labelEdges = true;
     var _sketchProperties = null;
     var _sketchAdvancedProperties = null;
     var _isDraggingMarker = false;
@@ -26,10 +21,34 @@
     var _ortho = false, _trace = false, _fan = false;
     this._isDirty = false;
 
-    var _isLineOrPolygon = function () { return $.inArray(_geometryType, ["polyline", "polygon", "dimline", "dimpolygon", "hectoline", "elementseries"]) >= 0 };
-    var _isLine = function () { return $.inArray(_geometryType, ["polyline", "dimline", "hectoline"]) >= 0 }
-    var _isPolygon = function () { return $.inArray(_geometryType, ["polygon", "dimpolygon"]) >= 0 };
-    var _isSimplePoint = function () { return _geometryType === 'point' };
+    /********* Geometry types *********/
+    // the type specific behavior is implemented in webgis.sketch.geometry.<type>.js
+    // state => access to the closure variables for the geometry types
+    var _state = {
+        get vertices() { return _vertices; }, set vertices(value) { _vertices = value; },
+        get partIndex() { return _partIndex; },
+        get geometryType() { return _geometryType; }, set geometryType(value) { _geometryType = value; },
+        get frameworkElements() { return _frameworkElements; },
+        get currentFrameworkIndex() { return _currentFrameworkIndex; }, set currentFrameworkIndex(value) { _currentFrameworkIndex = value; },
+        get vertexFrameworkElements() { return _vertexFrameworkElements; },
+        get sketchAdvancedProperties() { return _sketchAdvancedProperties; },
+        get txtRefResolution() { return _txtRefResolution; }
+    };
+    var _geometryTypeContext = { sketch: this, state: _state };
+    var _geometryTypeInstances = {};
+    var _typeOf = function (geometryType) {
+        var name = webgis.sketch.geometryTypes.resolve(geometryType);
+        if (!_geometryTypeInstances.hasOwnProperty(name)) {
+            _geometryTypeInstances[name] = webgis.sketch.geometryTypes.create(name, _geometryTypeContext);
+        }
+        return _geometryTypeInstances[name];
+    };
+    var _type = function () { return _typeOf(_geometryType); };
+
+    var _isLineOrPolygon = function () { return _type().isLineOrPolygon === true; };
+    var _isLine = function () { return _type().isLine === true; };
+    var _isPolygon = function () { return _type().isPolygon === true; };
+    var _isSimplePoint = function () { return _type().isSimplePoint === true; };
 
     this._resetMarkerImage = function (frameworkElement) {
         if (webgis.mapFramework == "leaflet") {
@@ -53,115 +72,7 @@
     };
     this._createFrameworkElement = function (latLngs) {
         if (webgis.mapFramework === "leaflet") {
-            switch (_geometryType) {
-                case 'point':
-                    var marker = webgis.createMarker({ draggable: true, lat: 0, lng: 0, icon: 'sketch_vertex', vertex: 1 });
-                    marker.sketch = this;
-                    marker.vertex_index = 0;
-                    this._appendMarkerEvents(marker);
-                    return marker;
-                case 'polyline':
-                case 'linestring':
-                    _geometryType = 'polyline';
-                    var polyline = L.polyline(latLngs || [], { color: this.getColor(), opacity: this.getOpacity(), weight: this.getWeight(), dashArray: this._toDashArray(this.getLineStyle()) });
-                    polyline._webgis = { geometryType: _geometryType, lineStyle: this.getLineStyle() };
-                    return polyline;
-                case 'freehand':
-                    var freeline = L.polyline(latLngs || [], { color: this.getColor(), opacity: this.getOpacity(), weight: this.getWeight(), dashArray: this._toDashArray(this.getLineStyle()) });
-                    freeline._webgis = { geometryType: _geometryType, lineStyle: this.getLineStyle() };
-                    return freeline;
-                case 'polygon':
-                    // Interactive = true -> Sonst lässt sich das Polygon beim Redling nicht mehr auswählen
-                    var polygon = L.polygon(latLngs || [], { interactive: true, color: this.getColor(), fillColor: this.getFillColor(), opacity: this.getOpacity(), fillOpacity: this.getFillOpacity(), weight: this.getWeight(), dashArray: this._toDashArray(this.getLineStyle()) });
-                    polygon._webgis = { geometryType: _geometryType, lineStyle: this.getLineStyle() };
-                    // Kein Click Event -> Man kann sonst nicht mehr Punkte auf die Fläche setzen!!!
-                    //polygon.on('click', function (e) {  
-                    //    this.events.fire('click', this, e);
-                    //}, this);
-                    return polygon;
-                case 'rectangle':
-                    var rect = L.rectangle(latLngs || [[0, 0], [0, 0]], { interactive: true, color: this.getColor(), fillColor: this.getFillColor(), opacity: this.getOpacity(), fillOpacity: this.getFillOpacity(), weight: this.getWeight(), dashArray: this._toDashArray(this.getLineStyle()) });
-                    rect._webgis = { geometryType: _geometryType, lineStyle: this.getLineStyle() };
-                    return rect;
-                case 'circle':
-                    var circle = L.circle(latLngs || [0, 0], { radius: _circle_radius, interactive: true, color: this.getColor(), fillColor: this.getFillColor(), opacity: this.getOpacity(), fillOpacity: this.getFillOpacity(), weight: this.getWeight(), dashArray: this._toDashArray(this.getLineStyle()) });
-                    circle._webgis = { geometryType: _geometryType, lineStyle: this.getLineStyle() };
-                    return circle;
-                case 'text':
-                    var text = L.svgText(latLngs || [0, 0], {
-                        text: _svg_text || 'Text...',
-                        fontColor: this.getTextColor(),
-                        fontSize: this.getTextSize(),
-                        fontStyle: this.getTextStyle(),
-                        refResolution: _txtRefResolution
-                    });
-                    text._webgis = { geometryType: _geometryType };
-                    return text;
-                case 'distance_circle':
-                    var distanceCircle = L.distanceCircle(latLngs || [], {
-                        radius: this.getDistanceCircleRadius(),
-                        steps: this.getDistanceCircleSteps(),
-                        color: this.getColor(),
-                        fillColor: this.getFillColor(),
-                        weight: this.getWeight()
-                    });
-                    distanceCircle._webgis = { geometryType: _geometryType };
-                    return distanceCircle;
-                case 'compass_rose':
-                    var compassRose = L.compassRose(latLngs || [], {
-                        radius: this.getCompassRoseRadius(),
-                        steps: this.getCompassRoseSteps(),
-                        color: this.getColor(),
-                        weight: this.getWeight(),
-                        calcCrs: this.map.calcCrs()
-                    });
-                    compassRose._webgis = { geometryType: _geometryType };
-                    return compassRose;
-                case 'dimline':
-                    var dimLine = L.dimLine(latLngs || [], {
-                        color: this.getColor(),
-                        weight: this.getWeight(),
-                        fontSize: this.getTextSize(),
-                        fontColor: this.getTextColor(),
-                        lengthUnit: this.getDimLineLengthUnit(),
-                        labelTotalLength: this.getDimLineLabelTotalLength()
-                    });
-                    dimLine._webgis = { geometryType: _geometryType };
-                    return dimLine;
-                case 'dimpolygon':
-                    var dimPolygon = L.dimPolygon(latLngs || [], {
-                        fillColor: this.getFillColor(),
-                        fillOpacity: this.getFillOpacity(),
-                        color: this.getColor(),
-                        weight: this.getWeight(),
-                        fontSize: this.getTextSize(),
-                        fontColor: this.getTextColor(),
-                        areaUnit: this.getDimPolygonAreaUnit(),
-                        labelEdges: this.getDimPolygonLabelEdges()
-                    });
-                    dimPolygon._webgis = { geometryType: _geometryType };
-                    return dimPolygon;
-                case 'elementseries':
-                    let series = L.graphicsElementSeries(latLngs || [], {});
-                    this._setElementAdvancedProperties(series, _sketchAdvancedProperties); // to set element size to the last vales
-                    series.on("element-rotated", function (ev) {
-                        if (!_vertices || _vertices.length <= ev.elementIndex) return;
-                        this.addUndo(webgis.l10n.get("sketch-rotate-element"));
-                        ev.sender.setVertexRotation(_vertices[ev.elementIndex], ev.rotation);
-                    }, this);
-                    return series;
-                case 'hectoline':
-                    var hectoline = L.hectoLine(latLngs || [], {
-                        color: this.getColor(),
-                        weight: this.getWeight(),
-                        fontColor: this.getTextColor(),
-                        fontSize: this.getTextSize(),
-                        interval: this.getHectolineInterval(),
-                        unit: this.getHectolineUnit()
-                    });
-                    hectoline._webgis = { geometryType: _geometryType };
-                    return hectoline;
-            }
+            return _type().createFrameworkElement(latLngs);
         }
     };
     this._isFirstPartVertex = function (index, partIndex) {
@@ -337,7 +248,7 @@
                 //}
                 this._addAsLatLng(frameworkElement, vertex);
 
-                if (_geometryType === 'point') {  // Bei Punkt ist Frameworkelement auch der verschiebbare Marker und brauch den Vertex, damit beim Verschieben im "dragend" die Koordinaten richt übernommen werden.
+                if (_type().frameworkElementIsVertexMarker) {  // Bei Punkt ist Frameworkelement auch der verschiebbare Marker und brauch den Vertex, damit beim Verschieben im "dragend" die Koordinaten richt übernommen werden.
                     frameworkElement.sketch_vertex_coords = vertex;
                 }
             }
@@ -478,12 +389,12 @@
             $(this._icon).addClass('dragging');
         }, marker);
         marker.on('dragend', function () {
-            var geomType = this.sketch.getGeometryType();
+            var geomType = this.sketch.getGeometryType(), geomTypeDef = _typeOf(geomType);
             this.sketch._lastChangeTime = new Date().getTime();
             var newLatLng = this.getLatLng();
             if (!this.sketch.checkMaxBBox({ x: newLatLng.lng, y: newLatLng.lat })) {
                 this.setLatLng(this._dragstartLatLng);
-                this.sketch.redraw(geomType === 'polyline' || geomType === 'polygon');
+                this.sketch.redraw(geomTypeDef.isPlainPath);
                 this.sketch._isMarkerDragging = false;
                 return;
             }
@@ -531,20 +442,9 @@
                 }
             }
 
-            if (geomType === 'rectangle' && _frameworkElements.length === 1) {
-                var rectBounds = _frameworkElements[0].getBounds();
-                //console.log('rectBounds', [[this.sketch_vertex_coords.x, this.sketch_vertex_coords.y], [rectBounds.getWest(), rectBounds.getSouth()]]);
-                _vertices[0] = { x: this.sketch_vertex_coords.x, y: this.sketch_vertex_coords.y };
-                _frameworkElements[0].setBounds([[this.sketch_vertex_coords.y, this.sketch_vertex_coords.x], [rectBounds.getSouth(), rectBounds.getEast()]]);
-            }
+            geomTypeDef.onVertexMarkerDragEnd(this, latlng);
 
-            if (geomType === 'elementseries' &&
-                _frameworkElements.length === 1) {
-                //console.log("dragend element series", this.vertex_index, latlng);
-                _frameworkElements[0].setLatLngAt(this.vertex_index, latlng);
-            }
-
-            this.sketch.redraw($.inArray(geomType, ['polyline', 'polygon', 'distance_circle','compass_rose', 'circle', 'text', 'dimline', 'dimpolygon', 'hectoline']) >= 0);
+            this.sketch.redraw(geomTypeDef.redrawOnVertexMoved);
             this.sketch.events.fire('onchangevertex', this.sketch, this.sketch_vertex_coords);
             this.sketch.events.fire('onchanged', this.sketch);
             this.sketch._isDirty = true;
@@ -556,7 +456,7 @@
             }
 
             try {
-                if (geomType === 'polyline' || geomType === 'polygon') {
+                if (geomTypeDef.isPlainPath) {
                     this.dragging._draggable.options.clickTolerance = webgis.usability.mapSketchClickTolerance;
                 }
             } catch (ex) { }
@@ -583,15 +483,7 @@
                 }
             }
 
-            if (this.sketch.getGeometryType() === 'elementseries' &&
-                _frameworkElements.length === 1) {
-                //console.log("drag element", this.vertex_index, latlng);
-                _frameworkElements[0].setLatLngAt(this.vertex_index, latlng);
-            } 
-
-            if (this.sketch.getGeometryType() !== 'elementseries') {
-                this.sketch.showMoverLine(latLngs);
-            }
+            _typeOf(this.sketch.getGeometryType()).onVertexMarkerDrag(this, latlng, latLngs);
         }, marker);
         marker.on('click', function (e) {
             // stop propagation
@@ -613,8 +505,9 @@
             } else {
                 //console.log('marker-click', sketch.isClosed());
                 if (!sketch.isClosed()) {
-                    if (sketch.getGeometryType() === "polygon" || sketch.getGeometryType() === "polyline") {
-                        if (sketch.getGeometryType() === "polygon" && this.vertex_index === sketch.firstVertexIndexInCurrentPart()) {
+                    var clickedGeomTypeDef = _typeOf(sketch.getGeometryType());
+                    if (clickedGeomTypeDef.isPlainPath) {
+                        if (clickedGeomTypeDef.hasClosingSegment && this.vertex_index === sketch.firstVertexIndexInCurrentPart()) {
                             if (sketch.isInTraceMode() == true) {
                                 var latlng = this.getLatLng();
                                 sketch.addVertexCoords(latlng.lng, latlng.lat, true);
@@ -630,8 +523,7 @@
         }, marker);
         marker.on('mouseover', function (e) {
             try {
-                var geomType = this.sketch.getGeometryType();
-                if (geomType === 'polyline' || geomType === 'polygon') {
+                if (_typeOf(this.sketch.getGeometryType()).isPlainPath) {
                     this.dragging._draggable.options.clickTolerance = webgis.usability.mapClickTolerance;
                 }
             } catch (ex) { }
@@ -640,8 +532,7 @@
         marker.on('mouseout', function (e) {
             if (!this.sketch._isMarkerDragging) {
                 try {
-                    var geomType = this.sketch.getGeometryType();
-                    if (geomType === 'polyline' || geomType === 'polygon') {
+                    if (_typeOf(this.sketch.getGeometryType()).isPlainPath) {
                         this.dragging._draggable.options.clickTolerance = webgis.usability.mapSketchClickTolerance;
                     }
                 } catch (ex) { }
@@ -664,7 +555,7 @@
                         var sketch = this.parentNode.sketch;
                         sketch.removeVertex(this.parentNode.vertex_index);
                     });
-                if (_geometryType == 'polyline' || _geometryType == 'polygon' || _geometryType === 'dimline' || _geometryType === 'dimpolygon' || _geometryType === 'hectoline') {
+                if (_isLine() || _isPolygon()) {
                     if (sketch.hasPrevVertex(index)) {
                         $("<li class='webgis-toolbox-tool-item'>").text(webgis.l10n.get('sketch-insert-vertex-before')).appendTo($ul)
                             .click(function () {
@@ -713,7 +604,7 @@
     this.setMarkerTooltip = function (vertex, text) {
         if (webgis.mapFramework == "leaflet") {
             try {
-                var elements = this.getGeometryType() == 'point' ? _frameworkElements : _vertexFrameworkElements;
+                var elements = _typeOf(this.getGeometryType()).frameworkElementIsVertexMarker ? _frameworkElements : _vertexFrameworkElements;
                 //console.log(vertex);
                 if (vertex.x && vertex.y) {
                     for (var v in elements) {
@@ -756,76 +647,10 @@
                 continue;
             if (!this.checkMaxBBox(vertex))
                 break;
-            if (_geometryType === 'point') {
-                //_vertices = [];
-                //_partIndex = [0];
-                _vertices.splice(0, _vertices.length);  // clear
-                _partIndex.splice(0, _partIndex.length);  // clear -> keep reference
-                _partIndex.push(0);
-                _currentFrameworkIndex = 0;
-            }
+            var geometryTypeDef = _type();
+            geometryTypeDef.beforeAddVertex(vertex);
 
-            if ((_geometryType === 'distance_circle' || _geometryType === 'compass_rose' || _geometryType === 'circle') && _vertices.length > 0) {
-                if (/*this.map.calcCrs() &&*/ _frameworkElements.length === 1) {
-                    //var p1 = webgis.fromWGS84(this.map.calcCrs(), L.latLng(vertices[vertices.length - 1].y, vertices[vertices.length - 1].x));
-                    //var p2 = webgis.fromWGS84(this.map.calcCrs(), L.latLng(_vertices[0].y, _vertices[0].x));
-
-                    //var radius = Math.round(Math.sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)) * 10) / 10;
-
-                    var vertex0 = _vertices[0], vertex1 = vertices[vertices.length - 1], radius = 0;
-                    if (vertex0.hasOwnProperty('X') && vertex0.hasOwnProperty('Y') && vertex1.hasOwnProperty('X') && vertex1.hasOwnProperty('Y')) {
-                        radius = Math.sqrt((vertex1.X - vertex0.X) * (vertex1.X - vertex0.X) + (vertex1.Y - vertex0.Y) * (vertex1.Y - vertex0.Y));
-                    } else {
-                        var latLng1 = L.latLng(vertices[vertices.length - 1].y, vertices[vertices.length - 1].x);
-                        var latLng2 = L.latLng(_vertices[0].y, _vertices[0].x);
-
-                        radius = latLng1.distanceTo(latLng2);
-                    }
-
-                    _frameworkElements[0].setRadius(radius);
-
-                    if (_geometryType === 'distance_circle') {
-                        _distance_circle_radius = radius === 0 ? _distance_circle_radius : radius;
-                        // do not close sketch => sonst kann man nachträglich Radius und steps nicht mehr setzen. Wenn man den mover nicht mehr einblenden will ist es besser dafür einen eigene Eigenschaft zu machen (zB this.showMover...)
-                    } else if (_geometryType === 'compass_rose') {
-                        _compass_rose_radius = radius === 0 ? _compass_rose_radius : radius;
-                    } else {
-                        _circle_radius = radius === 0 ? _circle_radius : radius;
-                        //this.close();
-                        //this.hideMoverLine();
-                    }
-                    this.map.ui.refreshUIElements();
-                }
-            }
-            else if (_geometryType === 'rectangle') {
-                if (fireEvents) {
-                    this.events.fire('beforeaddvertex', this, vertex);
-                }
-                var rectBounds = [[0, 0], [0, 0]];
-                if (_vertices.length === 0) {
-                    _vertices.push(vertex);
-                    rectBounds = [[_vertices[0].y, _vertices[0].x], [_vertices[0].y, _vertices[0].x]];
-
-                    _vertexFrameworkElements[_vertices.length - 1] = webgis.createMarker({
-                        lat: vertex.y, lng: vertex.x, draggable: true, icon: "sketch_vertex", vertex: _vertices.length
-                    });
-                    this._addToMap(_vertexFrameworkElements[_vertices.length - 1]);
-                    _vertexFrameworkElements[_vertices.length - 1].sketch_vertex_coords = coords;
-                    _vertexFrameworkElements[_vertices.length - 1].sketch = this;
-                    _vertexFrameworkElements[_vertices.length - 1].vertex_index = _vertices.length - 1;
-                    this._appendMarkerEvents(_vertexFrameworkElements[_vertices.length - 1]);
-                }
-                else if (_vertices.length === 1) {
-                    _vertices.push(vertex);
-                    rectBounds = [[_vertices[0].y, _vertices[0].x], [_vertices[1].y, _vertices[1].x]];
-                }
-                else if (_vertices.length > 1) {
-                    _vertices[1].y = vertex.y, _vertices[1].x = vertex.x;
-                    rectBounds = [[_vertices[0].y, _vertices[0].x], [_vertices[1].y, _vertices[1].x]];
-                }
-                _frameworkElements[0].setBounds(rectBounds);
-            }
-            else {
+            if (!geometryTypeDef.tryAddVertex(vertex, vertices, fireEvents, coords)) {
                 var coords = vertex;
                 if (fireEvents) {
                     this.events.fire('beforeaddvertex', this, coords);
@@ -834,15 +659,7 @@
                     }
                 }
 
-                if (_geometryType === 'text') {
-                    _vertices = [coords];
-                    if (_vertexFrameworkElements.length > 0) {
-                        this.map.frameworkElement.removeLayer(_vertexFrameworkElements[0]);
-                    }
-                } else {
-                    _vertices.push(coords);
-                    this.snapFixVertex(coords);
-                }
+                geometryTypeDef.pushVertex(coords);
                 var lastVertex = null;
 
                 if (this.isInFanMode() && _vertices.length > 1) {
@@ -865,20 +682,10 @@
                     _frameworkElements[_currentFrameworkIndex].sketch_vertex_coords = coords;
 
                     if (!readOnly && !this.isReadOnly()) {    
-                        if (_geometryType === 'polyline'
-                            || _geometryType === 'polygon'
-                            || (_geometryType === 'freehand' && this._addFreehandVertexMarker() === true)
-                            || _geometryType === 'text'
-                            || _geometryType === 'rectangle'
-                            || _geometryType === 'dimline'
-                            || _geometryType === 'dimpolygon'
-                            || _geometryType === 'hectoline'
-                            || _geometryType === 'elementseries'
-                            || ((_geometryType === 'distance_circle' || _geometryType === 'compass_rose' || _geometryType === 'circle') && _vertices.length === 1)
-                        ) {
+                        if (geometryTypeDef.addsVertexMarker()) {
                             var icon = "sketch_vertex";
-                            if (_geometryType === 'text') {
-                                icon = "sketch_vertex_text";
+                            if (geometryTypeDef.vertexMarkerIcon) {
+                                icon = geometryTypeDef.vertexMarkerIcon;
                             }
                             else if (_vertices[_vertices.length - 1].fixed === true) {
                                 icon = "sketch_vertex_fixed";
@@ -942,7 +749,7 @@
         if (_vertices.length % 10 === 0)
             return true;
 
-        if (_vertices.length>0 && _vertices.length === _lastFreehandVertexIndex + 1)
+        if (_vertices.length>0 && _vertices.length === _typeOf('freehand').lastVertexIndex + 1)
             return true;
 
         return false;
@@ -1008,11 +815,9 @@
         }
 
         var addAddVertexUndo = function (sketch, geometryType) {
-            if (geometryType === 'polygon' || geometryType === 'polyline' || geometryType === 'dimline' || geometryType === 'dimpolygon' || geometryType === 'hectoline') {
-                sketch.addUndo(webgis.l10n.get("sketch-add-vertex"));
-            }
-            if (geometryType === 'elementseries') {
-                sketch.addUndo(webgis.l10n.get("sketch-add-element"));
+            var undoKey = _typeOf(geometryType).addVertexUndoKey;
+            if (undoKey) {
+                sketch.addUndo(webgis.l10n.get(undoKey));
             }
         }
 
@@ -1223,10 +1028,7 @@
     };
     this.onMapMouseup = function (map, e) {
         if (e && e.originalEvent && e.originalEvent.button === 0) {  // Left button
-            if (_geometryType === 'freehand') {
-                //map._disableBBoxToolHandling();
-                this.close();
-            }
+            _type().onMapMouseUp();
             this._mapMousePressed = false;
         }
     };
@@ -1263,51 +1065,7 @@
             return;
         }
 
-        if (_geometryType === 'distance_circle' || _geometryType === 'compass_rose' || _geometryType === 'circle') {
-            if (this.isClosed()) {
-                return;
-            }
-            if (_vertices.length > 0) {
-                var latLng1 = latlng;
-                var latLng2 = L.latLng(_vertices[0].y, _vertices[0].x);
-
-                var r = latLng1.distanceTo(latLng2);
-
-                //console.log('radius', r);
-
-                var radius = latLng1.distanceTo(latLng2);
-
-                if (this._moverLine === null || !this._moverLine.setRadius) {
-                    this.hideMoverLine();
-
-                    this._moverLine = L.circlePro([L.latLng(_vertices[0].y, _vertices[0].x)], { color: 'green', weight: 1, fillColor: 'none' });
-                    this._moverLine.setCirclePoint(latlng);
-
-                    this._addToMap(this._moverLine);
-                }
-                else {
-                    this._moverLine.setCirclePoint(latlng);
-                }
-            }
-            return;
-        }
-
-        if (_geometryType === 'rectangle') {
-            if (this.isClosed()) {
-                return;
-            }
-            if (_vertices.length > 0) {
-                var rectBounds = [[latlng.lat, latlng.lng], [_vertices[0].y, _vertices[0].x]];
-
-                if (this._moverLine === null || !this._moverLine.setBounds) {
-                    this.hideMoverLine();
-                    this._moverLine = L.rectangle(rectBounds, { color: 'green', weight: 1, fillColor: 'none' });
-                    this._addToMap(this._moverLine);
-                }
-                else {
-                    this._moverLine.setBounds(rectBounds);
-                }
-            }
+        if (_type().handleMapMouseMove(latlng)) {
             return;
         }
 
@@ -1317,8 +1075,7 @@
         }
         
 
-        if (this._mapMousePressed && this.isClosed() === false && this.isReadOnly() === false && _geometryType === 'freehand') {
-            this.addVertex({ x: latlng.lng, y: latlng.lat });
+        if (_type().handleFreeDrawMouseMove(latlng)) {
             return;
         }
 
@@ -1371,7 +1128,7 @@
             latLngs.push([ll.lat, ll.lng]);
         }
 
-        if (_geometryType === 'polyline' || _geometryType === 'linestring' || _geometryType === 'polygon' || _geometryType === 'dimline' || _geometryType === 'dimpolygon' || _geometryType === 'hectoline') {
+        if (_isLine() || _isPolygon()) {
             if (!this.isClosed()) {
                 var traceLatLngs = [], lastNodeIndex = null, currentNodeIndex = null;
 
@@ -1632,13 +1389,13 @@
     this._closestEdge = function (map, pos) {
         if (_isLineOrPolygon(_geometryType) && _vertices.length >= 2) {
             var index = -1, dist = 0, t = .5, pIndex = 1, to = _vertices.length - 1, currentPartIndex = 0;
-            if (_geometryType === 'polygon')
+            if (_type().hasClosingSegment)
                 to++;
             for (var i = 0; i < to; i++) {
                 var v1 = _vertices[i], v2 = null;
                 var nextPartIndex = (i + 1) >= _vertices.length ? currentPartIndex + 1 : this.vertexPartIndex(i + 1);
                 if (nextPartIndex > currentPartIndex) {
-                    if (_geometryType === 'polygon') {
+                    if (_type().hasClosingSegment) {
                         //console.log('last partVertex: ('+currentPartIndex+') ' + _partIndex[currentPartIndex]);
                         v2 = _vertices[_partIndex[currentPartIndex]];
                     }
@@ -1697,7 +1454,7 @@
     };
 
     this.canMergeParts = function () {
-        if (this.map.construct && _geometryType == 'polyline' && _partIndex.length > 1) {
+        if (this.map.construct && _type().supportsMergeParts && _partIndex.length > 1) {
             return this.map.construct.mergePaths(this.getParts()) != null;
         }
         return false;
@@ -1726,13 +1483,7 @@
             infoText.push("Multipart: " + _partIndex.length + " " + webgis.l10n.get("sections"));
         }
 
-        if (_geometryType === 'polygon') {
-            infoText.push(webgis.l10n.get("area") + ": " + (Math.round(properties.area * 100) / 100) + 'm²');
-            infoText.push(webgis.l10n.get("circumference") + ": " + (Math.round(properties.circumference * 100) / 100) + 'm');
-        }
-        else if (_geometryType === 'polyline') {
-            infoText.push(webgis.l10n.get("length") + ": " + (Math.round)(properties.length * 100) / 100 + 'm');
-        }
+        _type().infoTextLines(infoText, properties);
 
         return infoText;
     };
@@ -1859,89 +1610,14 @@
         if (!yParam)
             yParam = 'y';
 
-        //console.log('_geometryType', _geometryType);
-        //console.log('_vertices', _vertices);
-        if (_isSimplePoint()) {
-            if (_vertices.length === 1) {
-                var pos = webgis.calc.project(_vertices[0].x, _vertices[0].y);
-                //console.log(pos);
-                return { posX: pos[xParam], posY: pos[yParam], srs: xParam === 'X' ? pos.srs : 4326 };
-            }
-        }
-        if (_isLine()) {
-            var len = 0;
-            for (var i = 0; i < this.partCount(); i++) {
-                len += webgis.calc.length(this.partVertices(i), xParam, yParam);
-            }
-            return {
-                length: len,
-                set_values: true
-            };
-        }
-        if (_isPolygon()) {
-            var circum = 0, area = 0;
-            if (this.isValid()) {
-                var partsVertices = [];
-                for (var i = 0; i < this.partCount(); i++) {
-                    var partVertices = this.partVertices(i);
-                    partsVertices.push(partVertices);
-                }
-
-                //console.log('calc polygon area with ' + partsVertices.length + ' parts');
-
-                // Check for self intersecting
-                var selfIntersecting = webgis.calc.isSelfIntersecting(partsVertices, true);
-
-                // Nach Größe sortieren... eigentlich nicht notwendig
-                //partsVertices.sort(function (ring1, ring2) {
-                //    var a1 = webgis.calc.area(ring1, xParam, yParam);
-                //    var a2 = webgis.calc.area(ring2, xParam, yParam);
-                //    if (a1 > a2) return 1;
-                //    if (a1 < a2) return -1;
-                //    return 0;
-                //});
-                //partsVertices.reverse();
-                //for (var i = 0; i < this.partCount(); i++) {
-                //    console.log(webgis.calc.area(partsVertices[i], xParam, yParam));
-                //}
-
-                for (var i = 0; i < partsVertices.length; i++) {
-                    if (selfIntersecting == true) {
-                        //console.log('selfintersecting polygon => area==NaN');
-                        area = Math.NaN;
-                    } else {
-                        var otherRings = [];
-                        // Jeden Ring mit allen anderen testen
-                        for (var j = 0; j < partsVertices.length; j++) {
-                            if (j != i) otherRings.push(partsVertices[j]);
-                        }
-
-                        if (webgis.calc.isRingsHole(otherRings, partsVertices[i])) {
-                            //console.log(i, 'hole');
-                            area -= webgis.calc.area(partsVertices[i], xParam, yParam);
-                        } else {
-                            //console.log(i, 'ring');
-                            area += webgis.calc.area(partsVertices[i], xParam, yParam);
-                        }
-                    }
-                    //console.log('area', area);
-                    circum += webgis.calc.length(partsVertices[i], xParam, yParam, true);
-                }
-            }
-            return {
-                circumference: circum,
-                area: area,
-                set_values: true,
-            };
-        }
-        return {};
+        return _type().calcProperties(xParam, yParam);
     };
     this.getCoords = function () {
         var ret = [];
         for (var p = 0; p < this.partCount(); p++) {
             var pv = this.partVertices(p);
             for (var i = 0; i < pv.length; i++) {
-                ret.push({ x: pv[i].x, y: pv[i].x });
+                ret.push({ x: pv[i].x, y: pv[i].y });
             }
         }
         return ret;
@@ -1997,7 +1673,7 @@
             var max = partNumber == _partIndex.length - 1 ? _vertices.length - 1 : _partIndex[partNumber + 1] - 1;
 
             if (_isPolygon() && index == min) {
-                vertices.push({ x: _vertices[max].x, y: _vertices[max].y, index: i });
+                vertices.push({ x: _vertices[max].x, y: _vertices[max].y, index: max });
             }
 
             for (var i = Math.max(min, index - 1), to = Math.min(index + 1, max); i <= to; i++) {
@@ -2007,7 +1683,7 @@
             } 
 
             if (_isPolygon() && index == max) {
-                vertices.push({ x: _vertices[min].x, y: _vertices[min].y, index: i });
+                vertices.push({ x: _vertices[min].x, y: _vertices[min].y, index: min });
             }
         }
         return vertices;
@@ -2155,35 +1831,7 @@
         return partLength;
     };
     this.isValid = function () {
-        switch (_geometryType) {
-            case 'point':
-                return _vertices.length > 0;
-            case 'polyline':
-            case 'linestring':
-                _geometryType = 'polyline';
-                // ToDo: Parts
-                return _vertices.length > 1;
-            case 'freehand':
-                _geometryType = 'freehand';
-                return _vertices.length > 1;
-            case 'polygon':
-                // ToDo: Parts
-                return _vertices.length > 2;
-            case 'circle':
-            case 'distance_circle':
-            case 'compass_rose':
-                return _vertices.length > 0;
-            case 'rectangle':
-                return _vertices.length > 1;
-            case 'text':
-                return _vertices.length > 0;
-            case 'hectoline':
-            case 'dimline':
-                return _vertices.length > 1;
-            case 'dimpolygon':
-                return _vertices.length > 2;
-        }
-        return false;
+        return _type().isValid();
     };
     this.getBounds = function (projected, addLngLat) {
         var bounds = null;
@@ -2233,8 +1881,8 @@
                 }
                 else {
                     bounds = {};
-                    bounds.minLng = bounds.maxLng = vertex.lng;
-                    bounds.minLat = bounds.maxLat = vertex.lat;
+                    bounds.minLng = bounds.maxLng = addLngLat.lng;
+                    bounds.minLat = bounds.maxLat = addLngLat.lat;
                 }
             }
             if (bounds && bounds.minLng && bounds.minLat && bounds.maxLng && bounds.maxLat) {
@@ -2413,71 +2061,71 @@
         if (_frameworkElements[_currentFrameworkIndex].setRadius)
             _frameworkElements[_currentFrameworkIndex].setRadius(radius);
 
-        _circle_radius = radius;
+        _typeOf('circle').radius = radius;
     };
     this.setDistanceCircleRadius = function (radius) {
         if (_frameworkElements[_currentFrameworkIndex].setRadius)
             _frameworkElements[_currentFrameworkIndex].setRadius(radius);
 
-        _distance_circle_radius = radius;
+        _typeOf('distance_circle').radius = radius;
     };
     this.setDistanceCircleSteps = function (steps) {
         if (_frameworkElements[_currentFrameworkIndex].setSteps)
             _frameworkElements[_currentFrameworkIndex].setSteps(steps);
 
-        _distance_circle_steps = steps;
+        _typeOf('distance_circle').steps = steps;
     };
     this.setCompassRoseRadius = function (radius) {
         if (_frameworkElements[_currentFrameworkIndex].setRadius)
             _frameworkElements[_currentFrameworkIndex].setRadius(radius);
 
-        _compass_rose_radius = radius;
+        _typeOf('compass_rose').radius = radius;
     };
     this.setCompassRoseSteps = function (steps) {
         if (_frameworkElements[_currentFrameworkIndex].setSteps)
             _frameworkElements[_currentFrameworkIndex].setSteps(steps);
 
-        _compass_rose_steps = steps;
+        _typeOf('compass_rose').steps = steps;
     };
     this.setHectolineUnit = function (unit) {
         if (_frameworkElements[_currentFrameworkIndex].setUnit)
             _frameworkElements[_currentFrameworkIndex].setUnit(unit);
 
-        _hectoline_unit = unit;
+        _typeOf('hectoline').unit = unit;
     };
     this.setHectolineInterval = function (interval) {
         if (_frameworkElements[_currentFrameworkIndex].setInterval)
             _frameworkElements[_currentFrameworkIndex].setInterval(interval);
 
-        _hectoline_interval = interval;
+        _typeOf('hectoline').interval = interval;
     };
     this.setDimLineLengthUnit = function (unit) {
         if (_frameworkElements[_currentFrameworkIndex].setLengthUnit)
             _frameworkElements[_currentFrameworkIndex].setLengthUnit(unit);
-        _dimLine_lengthUnit = unit;
+        _typeOf('dimline').lengthUnit = unit;
     };
     this.setDimLineLabelTotalLength = function (doLabel) {
         if (_frameworkElements[_currentFrameworkIndex].setLabelTotalLength)
             _frameworkElements[_currentFrameworkIndex].setLabelTotalLength(doLabel);
-        _dimLine_labelTotalLength = doLabel;
+        _typeOf('dimline').labelTotalLength = doLabel;
     };
     this.setDimPolygonAreaUnit = function (unit) {
         if (_frameworkElements[_currentFrameworkIndex].setAreaUnit)
             _frameworkElements[_currentFrameworkIndex].setAreaUnit(unit);
 
-        _dimPolygon_areaUnit = unit;
+        _typeOf('dimpolygon').areaUnit = unit;
     };
     this.setDimPolygonLabelEdges = function (doLabel) {
         if (_frameworkElements[_currentFrameworkIndex].setLabelEdges)
             _frameworkElements[_currentFrameworkIndex].setLabelEdges(doLabel);
 
-        _dimPolygon_labelEdges = doLabel;
+        _typeOf('dimpolygon').labelEdges = doLabel;
     };
     this.setText = function (text) {
         if (_frameworkElements[_currentFrameworkIndex].setText)
             _frameworkElements[_currentFrameworkIndex].setText(text);
 
-        _svg_text = text;
+        _typeOf('text').text = text;
     };
     this.setTextColor = function (col, geomType) { this.setStyle({ fill: _txtColor[_getStyleIndex(geomType)] = col }); };
     this.setTextStyle = function (style, geomType) { this.setStyle({ "font-style": _txtStyle[_getStyleIndex(geomType)] = style }); };
@@ -2485,9 +2133,9 @@
 
     this.getText = function () {
         if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getText)
-            _frameworkElements[_currentFrameworkIndex].getText();
+            _typeOf('text').text = _frameworkElements[_currentFrameworkIndex].getText();
 
-        return _svg_text;
+        return _typeOf('text').text;
     };
     this.getColor = function (geomType) { /*console.log('getcolor[' + _getStyleIndex() + ']=' + _color[_getStyleIndex()]);*/ return _color[_getStyleIndex(geomType)]; };
     this.getOpacity = function (geomType) { return _opacity[_getStyleIndex(geomType)]; };
@@ -2500,80 +2148,71 @@
     this.getTextSize = function (geomType) { return _txtSize[_getStyleIndex(geomType)]; };
     this.getCircleRadius = function () {
         if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getRadius)
-            _circle_radius = _frameworkElements[_currentFrameworkIndex].getRadius();
+            _typeOf('circle').radius = _frameworkElements[_currentFrameworkIndex].getRadius();
 
-        return _circle_radius;
+        return _typeOf('circle').radius;
     };
     this.getDistanceCircleRadius = function () {
         if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getRadius)
-            _distance_circle_radius = _frameworkElements[_currentFrameworkIndex].getRadius();
+            _typeOf('distance_circle').radius = _frameworkElements[_currentFrameworkIndex].getRadius();
 
-        return _distance_circle_radius;
+        return _typeOf('distance_circle').radius;
     };
     this.getDistanceCircleSteps = function () {
         if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getSteps)
-            _distance_circle_steps = _frameworkElements[_currentFrameworkIndex].getSteps();
+            _typeOf('distance_circle').steps = _frameworkElements[_currentFrameworkIndex].getSteps();
 
-        return _distance_circle_steps;
+        return _typeOf('distance_circle').steps;
     };
     this.getCompassRoseRadius = function () {
         if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getRadius)
-            _compass_rose_radius = _frameworkElements[_currentFrameworkIndex].getRadius();
+            _typeOf('compass_rose').radius = _frameworkElements[_currentFrameworkIndex].getRadius();
 
-        return _compass_rose_radius;
+        return _typeOf('compass_rose').radius;
     };
     this.getCompassRoseSteps = function () {
         if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getSteps)
-            _compass_rose_steps = _frameworkElements[_currentFrameworkIndex].getSteps();
+            _typeOf('compass_rose').steps = _frameworkElements[_currentFrameworkIndex].getSteps();
 
-        return _compass_rose_steps;
+        return _typeOf('compass_rose').steps;
     };
     this.getHectolineUnit = function () {
         if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getUnit)
-            _hectoline_unit = _frameworkElements[_currentFrameworkIndex].getUnit();
+            _typeOf('hectoline').unit = _frameworkElements[_currentFrameworkIndex].getUnit();
 
-        return _hectoline_unit;
+        return _typeOf('hectoline').unit;
     };
     this.getHectolineInterval = function () {
-        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getInverval)
-            _hectoline_interval = _frameworkElements[_currentFrameworkIndex].getInverval();
+        if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getInterval)
+            _typeOf('hectoline').interval = _frameworkElements[_currentFrameworkIndex].getInterval();
 
-        return _hectoline_interval;
+        return _typeOf('hectoline').interval;
     };
     this.getDimLineLengthUnit = function () {
         if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getLengthUnit)
-            _dimLine_lengthUnit = _frameworkElements[_currentFrameworkIndex].getLengthUnit();
-        return _dimLine_lengthUnit;
+            _typeOf('dimline').lengthUnit = _frameworkElements[_currentFrameworkIndex].getLengthUnit();
+        return _typeOf('dimline').lengthUnit;
     };
     this.getDimLineLabelTotalLength = function () {
         if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getLabelTotalLength)
-            _dimLine_labelTotalLength = _frameworkElements[_currentFrameworkIndex].getLabelTotalLength();
-        return _dimLine_labelTotalLength;
+            _typeOf('dimline').labelTotalLength = _frameworkElements[_currentFrameworkIndex].getLabelTotalLength();
+        return _typeOf('dimline').labelTotalLength;
     };
     this.getDimPolygonAreaUnit = function () {
         if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getAreaUnit)
-            _dimPolygon_areaUnit = _frameworkElements[_currentFrameworkIndex].getAreaUnit();
+            _typeOf('dimpolygon').areaUnit = _frameworkElements[_currentFrameworkIndex].getAreaUnit();
 
-        return _dimPolygon_areaUnit;
+        return _typeOf('dimpolygon').areaUnit;
     };
     this.getDimPolygonLabelEdges = function () {
         if (_frameworkElements[_currentFrameworkIndex] && _frameworkElements[_currentFrameworkIndex].getLabelEdges)
-            _dimPolygon_labelEdges = _frameworkElements[_currentFrameworkIndex].getLabelEdges();
+            _typeOf('dimpolygon').labelEdges = _frameworkElements[_currentFrameworkIndex].getLabelEdges();
 
-        return _dimPolygon_labelEdges;
+        return _typeOf('dimpolygon').labelEdges;
     };
 
     var _getStyleIndex = function (geomType) {
-        switch (geomType || _geometryType) {
-            case 'dimline':
-            case 'dimpolygon': 
-            case 'hectoline':
-            case 'distance_circle':
-            case 'compass_rose':
-                return 1;
-            default:
-                return 0;
-        }
+        return _typeOf(geomType || _geometryType).styleIndex;
     }
 
     this._toDashArray = function (arrayString, geomType) {
@@ -2589,7 +2228,6 @@
     this._fromDashArray = function (array, geomType) {
         var ret = '';
         for (var i = 0; i < array.length; i++) {
-            if (ret != '')
             if (ret != '')
                 ret += ',';
             ret += array[i] * 10.0 / this.getWeight(geomType);
@@ -2608,7 +2246,7 @@
         return index < _vertices.length - 1;
     };
     this.startBubbleMoveVertex = function (index) {
-        if (_geometryType === 'point') {
+        if (_type().frameworkElementIsVertexMarker) {
             //console.log('_frameworkElements', _frameworkElements);
             if (_frameworkElements.length > 0) {
                 _currentBubbleMoveVertextFrameworkElement = _frameworkElements[0];
@@ -2650,7 +2288,7 @@
                 var partIndex = 0;
                 for (var i = 0; i < _vertices.length; i++) {
                     if (i === 0 || _partIndex[partIndex] === i) {
-                        if (polyline != null && _geometryType === 'polygon') {
+                        if (polyline != null && _type().hasClosingSegment) {
                             var latLngs = polyline.getLatLngs();
                             if (latLngs.length > 2)
                                 polyline.addLatLng(L.latLng(latLngs[0].lat, latLngs[0].lng));
@@ -2663,7 +2301,7 @@
                     var vertex = _vertices[i];
                     polyline.addLatLng(L.latLng(vertex.y, vertex.x));
                 }
-                if (polyline != null && _geometryType === 'polygon') {
+                if (polyline != null && _type().hasClosingSegment) {
                     var latLngs = polyline.getLatLngs();
                     if (latLngs.length > 2)
                         polyline.addLatLng(L.latLng(latLngs[0].lat, latLngs[0].lng));
@@ -2770,7 +2408,7 @@
                 var partIndex = 0;
                 for (var i = 0; i < _vertices.length; i++) {
                     if (i === 0 || _partIndex[partIndex] === i) {
-                        if (polyline != null && _geometryType === 'polygon') {
+                        if (polyline != null && _type().hasClosingSegment) {
                             var latLngs = polyline.getLatLngs();
                             if (latLngs.length > 2)
                                 polyline.addLatLng(L.latLng(latLngs[0].lat, latLngs[0].lng));
@@ -2783,7 +2421,7 @@
                     var vertex = _vertices[i];
                     polyline.addLatLng(L.latLng(vertex.y, vertex.x));
                 }
-                if (polyline != null && _geometryType === 'polygon') {
+                if (polyline != null && _type().hasClosingSegment) {
                     var latLngs = polyline.getLatLngs();
                     if (latLngs.length > 2)
                         polyline.addLatLng(L.latLng(latLngs[0].lat, latLngs[0].lng));
@@ -2933,7 +2571,7 @@
         for (var i = 0; i < _vertices.length; i++) {
             if (i == index)
                 continue;
-            if (i > index) {
+            if (i > index && _vertexFrameworkElements[i]) {  // freehand: not every vertex has a marker
                 _vertexFrameworkElements[i].vertex_index--;
                 this._resetMarkerImage(_vertexFrameworkElements[i]);
             }
@@ -3122,7 +2760,7 @@
                 var pIndex1 = this.vertexPartIndex(i), pIndex2 = (i + 1) >= vertices.length ? pIndex1 + 1 : this.vertexPartIndex(i + 1, partIndex);
                 var nVertex = null;
                 if (pIndex2 > pIndex1) {
-                    if (_geometryType == 'polygon') {
+                    if (_type().hasClosingSegment) {
                         nVertex = vertices[_partIndex[pIndex1]];
                     }
                     else {
@@ -3169,7 +2807,7 @@
             vertices[1].Y - vertices[0].Y,
             vertices[1].X - vertices[0].X
         );
-    },
+    };
     this.swapDirection = function () {
         var vertices = _cloneArray(_vertices),
             partIndex = _cloneArray(_partIndex);
@@ -3196,7 +2834,7 @@
             _partIndex.splice(0, _partIndex.length);  // clear -> keep reference
             _partIndex.push(0);
         }
-        if (_geometryType === "freehand") {
+        if (!_type().createsFrameworkElementPerPart) {
             // keine neues Frameworkelement erzeugen, weil man hier sowieso nicht weiterzeichnen kann
             // einfach PartIndex erhöhen, um Objekte abzuschließen
             if ($.inArray(_vertices.length, _partIndex) < 0)
@@ -3346,12 +2984,7 @@
         var info = {
             geometryType: _geometryType
         };
-        if (_geometryType === 'circle') {
-            info.radius = _circle_radius;
-            if (_vertices.length > 0) {
-                info.center = { lat: _vertices[0].y, lng: _vertices[0].x };
-            }
-        }
+        _type().metaInfo(info);
         return info;
     };
 
@@ -3413,33 +3046,7 @@
         var ret = {
             geometry: {}, valid: false
         };
-        if (_geometryType == 'point' && _vertices.length > 0) {
-            ret.geometry.type = "Point";
-            if (crsId)
-                ret.geometry.SRID = crsId;
-            ret.geometry.coordinates = crsId ? webgis.project(crsId, [_vertices[0].x, _vertices[0].y]) : [_vertices[0].x, _vertices[0].y];
-            ret.geometry.COORDINATES = [_vertices[0].X, _vertices[0].Y];
-        }
-        if (_geometryType == 'polyline' || _geometryType == 'polygon') {
-            if (_geometryType == 'polyline' && _vertices.length >= 2) {
-                ret.geometry.type = 'LineString';
-                ret.valid = true;
-            }
-            if (_geometryType == 'polygon' && _vertices.length >= 3) {
-                ret.geometry.type = 'Polygon';
-                ret.valid = true;
-            }
-            if (ret.valid) {
-                if (crsId)
-                    ret.geometry.SRID = crsId;
-                ret.geometry.coordinates = [];
-                ret.geometry.COORDINATES = [];
-                for (var i = 0; i < _vertices.length; i++) {
-                    ret.geometry.coordinates.push(crsId ? webgis.project(crsId, [_vertices[i].x, _vertices[i].y]) : [_vertices[i].x, _vertices[i].y]);
-                    ret.geometry.COORDINATES.push([_vertices[i].X, _vertices[i].Y]);
-                }
-            }
-        }
+        _type().toJson(ret, crsId);
         return ret;
     };
     this.fromJson = function (json, append, readOnly) {
@@ -3451,114 +3058,8 @@
         this.setGeometryType(json.type);
         var crsId = json.SRID;
 
-        var isMultiPartArray = _geometryType === 'polygon' || json.type.toLowerCase() === 'multilinestring' || _geometryType === 'dimpolygon';
+        _type().fromJson(json, crsId, readOnly);
 
-        if (_geometryType === 'point' || _geometryType === 'distance_circle' || _geometryType === 'compass_rose' || _geometryType === 'circle' || _geometryType === 'text') {
-            var coordinates = crsId ? webgis.unproject(crsId, json.coordinates) : json.coordinates;
-            if (json.COORDINATES && json.COORDINATES.length > 1) {
-                var XYIndex = 0;
-
-                vertex = { x: coordinates[0], y: coordinates[1], X: json.COORDINATES[XYIndex++], Y: json.COORDINATES[XYIndex++], projEvent: 'original' };
-                if (json.hasZ === true && XYIndex < json.COORDINATES.length) {
-                    vertex.z = json.COORDINATES[XYIndex++];
-                }
-                if (json.hasM === true && XYIndex < json.COORDINATES.length) {
-                    vertex.m = json.COORDINATES[XYIndex++];
-                }
-
-                this.addVertex(vertex);
-            }
-            else {
-                this.addVertexCoords(coordinates[0], coordinates[1]);
-            }
-        }
-        else if (isMultiPartArray) {
-            for (var r = 0; r < json.coordinates.length; r++) {
-                var coordinateArray = json.coordinates[r];
-                var COORDINATEArray = json.COORDINATES ? json.COORDINATES[r] : null;
-                var firstPoint = true;
-                var vertices = [];
-                for (var i = 0; i < coordinateArray.length; i++) {
-                    var xy = coordinateArray[i];
-                    xy = crsId ? webgis.unproject(crsId, xy) : xy;
-                    if (i > 0 && i == coordinateArray.length - 1) {
-                        if (coordinateArray[0][0] == xy[0] && coordinateArray[0][1] == xy[1])
-                            continue;
-                    }
-                    if (firstPoint && _vertices.length > 0) {
-                        this.appendPart();
-                    }
-                    firstPoint = false;
-                    if (COORDINATEArray) {
-                        var XY = COORDINATEArray[i], XYIndex = 0;
-
-                        var vertex = { x: xy[0], y: xy[1], X: XY[XYIndex++], Y: XY[XYIndex++], projEvent: 'original' };
-                        if (json.hasZ === true && XYIndex < XY.length) {
-                            vertex.z = XY[XYIndex++];
-                        }
-                        if (json.hasM === true && XYIndex < XY.length) {
-                            vertex.m = XY[XYIndex++];
-                        }
-
-                        vertices.push(vertex/*{ x: xy[0], y: xy[1], X: XY[0], Y: XY[1], projEvent: 'original' }*/);
-                    }
-                    else {
-                        vertices.push({ x: xy[0], y: xy[1] });
-                    }
-                }
-                if (vertices.length > 0) {
-                    this.addVertices(vertices, false, readOnly);
-                }
-            }
-        }
-        else if (_geometryType === 'rectangle') {
-            if (json.coordinates.length === 1) {
-                var coordinateArray = json.coordinates[0], minx, miny, maxx, maxy;
-                for (var i = 0; i < coordinateArray.length; i++) {
-                    if (i === 0) {
-                        minx = maxx = coordinateArray[i][0];
-                        miny = maxy = coordinateArray[i][1];
-                    } else {
-                        minx = Math.min(coordinateArray[i][0], minx);
-                        miny = Math.min(coordinateArray[i][1], miny);
-                        maxx = Math.max(coordinateArray[i][0], maxx);
-                        maxy = Math.max(coordinateArray[i][1], maxy);
-                    }
-                }
-
-                this.addVertices([{ x: minx, y: maxy }, { x: maxx, y: miny }]);
-            }
-        }
-        else {
-            if (_geometryType === 'freehand')
-                _lastFreehandVertexIndex = json.coordinates.length - 1;
-
-            var partIndex = json.partindex;
-            for (var i = 0; i < json.coordinates.length; i++) {
-                if (partIndex && $.inArray(i, partIndex) >= 0)
-                    this.appendPart();
-                var xy = json.coordinates[i];
-                xy = crsId ? webgis.unproject(crsId, xy) : xy;
-                if (json.COORDINATES && json.COORDINATES.length > i) {
-                    var XY = json.COORDINATES[i], XYIndex=0;
-
-                    var vertex = { x: xy[0], y: xy[1], X: XY[XYIndex++], Y: XY[XYIndex++], projEvent: 'original' };
-                    if (json.hasZ === true && XYIndex < XY.length) {
-                        vertex.z = XY[XYIndex++];
-                    }
-                    if (json.hasM === true && XYIndex < XY.length) {
-                        vertex.m = XY[XYIndex++];
-                    }
-
-                    this.addVertices([vertex]);
-                }
-                else {
-                    this.addVertices([{ x: xy[0], y: xy[1] }]);
-                }
-                //var latLng = webgis.toWGS84(map.calcCrs(), xy[0], xy[1]);
-                //this.addVertex(latLng.lng, latLng.lat);
-            }
-        }
         _originalSrs = json.COORDINATES_srefid ? json.COORDINATES_srefid : 0;
         _originalSrsP4Params = json.COORDINATES_sref_p4 ? json.COORDINATES_sref_p4 : null;
 
@@ -3588,49 +3089,7 @@
         this.setGeometryType(json.type);
         var crsId = json.SRID;
 
-        var isMultiPartArray = _geometryType === 'polygon' || json.type.toLowerCase() === 'multilinestring';
-
-        if (_geometryType == 'point') {
-            var coordinates = crsId ? webgis.unproject(crsId, json.coordinates) : json.coordinates;
-            if (json.COORDINATES && json.COORDINATES.length > 1) {
-                this.addVertex({ x: coordinates[0], y: coordinates[1], X: json.COORDINATES[0], Y: json.COORDINATES[1], projEvent: 'original' });
-            }
-            else {
-                this.addVertexCoords(coordinates[0], coordinates[1]);
-            }
-        }
-        else if (isMultiPartArray) {
-            this.appendPart(json.coordinates, true);
-            for (var r = 0; r < json.coordinates.length; r++) {
-                var coorindateArray = json.coordinates[r];
-                for (var i = 0; i < coorindateArray.length; i++) {
-                    var xy = coorindateArray[i];
-                    xy = crsId ? webgis.unproject(crsId, xy) : xy;
-                    if (i > 0 && i == coorindateArray.length - 1) {
-                        if (coorindateArray[0][0] == xy[0] && coorindateArray[0][1] == xy[1])
-                            continue;
-                    }
-                    _vertices.push({ x: xy[0], y: xy[1] });
-                    //_frameworkElements[_currentFrameworkIndex].addLatLng(L.latLng(xy[1], xy[0]));
-                }
-            }
-        }
-        else {
-            for (var i = 0; i < json.coordinates.length; i++) {
-                var xy = json.coordinates[i];
-                xy = crsId ? webgis.unproject(crsId, xy) : xy;
-
-                if (json.COORDINATES && json.COORDINATES.length > i) {
-                    var XY = json.COORDINATES[i];
-                    this.addVertex({ x: xy[0], y: xy[1], X: XY[0], Y: XY[1], projEvent: 'original' });
-                }
-                else {
-                    this.addVertexCoords(xy[0], xy[1]);
-                }
-                //var latLng = webgis.toWGS84(map.calcCrs(), xy[0], xy[1]);
-                //this.addVertex(latLng.lng, latLng.lat);
-            }
-        }
+        _type().fromJsonFast(json, crsId);
         this.events.fire('onchanged', this);
 
         // console.log('fromJsonFast', json);
@@ -3646,47 +3105,12 @@
 
         let wkt = '';
 
-        if (_geometryType === 'point' || _geometryType === 'elementseries') {
-            wkt += "MULTIPOINT(";
-        }
-        else if (_geometryType === 'polyline') {
-            wkt += "MULTILINESTRING(";
-        }
-        else if (_geometryType === 'polygon' || _geometryType === 'circle') {
-            wkt += "MULTIPOLYGON(";
+        var geometryTypeDef = _type();
+        if (geometryTypeDef.wktType) {
+            wkt += "MULTI" + geometryTypeDef.wktType + "(";
         }
 
-        var vertices = _vertices;
-
-        if (_geometryType === 'circle') {
-            vertices = [];
-            var center = _frameworkElements[0]._latlng;
-            var radius = _frameworkElements[0].getRadius();
-            
-            var alpha = radius / 6371000.0, lat = 90.0 - center.lat, lng = 90.0 - center.lng;
-            var sin_a = Math.sin(alpha), cos_a = Math.cos(alpha);
-            var sin_lat = Math.sin(lat * Math.PI / 180.0), cos_lat = Math.cos(lat * Math.PI / 180.0);
-            var sin_lng = Math.sin(lng * Math.PI / 180.0), cos_lng = Math.cos(lng * Math.PI / 180.0);
-
-            for (var t = 0; t < Math.PI * 2.0; t += .01) {  // ToDO: Strittweite: 0.01??
-                // https://math.stackexchange.com/questions/643130/circle-on-sphere
-
-                var x =  (sin_a * cos_lat * cos_lng) * Math.cos(t) + (sin_a * sin_lng) * Math.sin(t) - (cos_a * sin_lat * cos_lng);
-                var y = -(sin_a * cos_lat * sin_lng) * Math.cos(t) + (sin_a * cos_lng) * Math.sin(t) + (cos_a * sin_lat * sin_lng);
-                var z =  (sin_a * sin_lat) * Math.cos(t) + cos_a * cos_lat;
-
-                var lat_ = Math.asin(z) * 180.0 /Math.PI;
-                var lng_ = -Math.atan2(x, y) * 180.0 / Math.PI;
-
-                if (useWGS84) {
-                    vertices.push({ x: lng_, y: lat_  });
-                } else {
-                    var projected = webgis.fromWGS84(this.map.calcCrs(), lat_, lng_);
-                    vertices.push({ X: projected.x, Y: projected.y });
-                }
-            }
-        } 
-
+        var vertices = geometryTypeDef.wktVertices(useWGS84);
         var addVertexFunc = function (wkt, vertex) {
             if (useWGS84 === true) {
                 wkt += vertex.x + ' ' + vertex.y;
@@ -3741,17 +3165,14 @@
         webgis.log('isMultipart', isMultipart, _partIndex);
 
         let wkt = '', closeVertex = null;
-        if (_geometryType === 'point' || _geometryType === 'elementseries') {
-            wkt += isMultipart ? "MULTIPOINT(" : "POINT(";
-        }
-        else if (_geometryType === 'polyline') {
-            wkt += isMultipart ? "MULTILINESTRING(" : "LINESTRING(";
-        }
-        else if (_geometryType === 'polygon' || _geometryType === 'circle') {
+        let wktType = _type().wktType;
+        if (wktType === 'POLYGON') {
             wkt += isMultipart ? "MULTIPOLYGON((" : "POLYGON((";
             closeVertex = _vertices.length > 0 ? _vertices[0] : null;
         }
-
+        else if (wktType) {
+            wkt += (isMultipart ? "MULTI" + wktType : wktType) + "(";
+        }
         let vertices = _vertices;
         let roundFactor = 0.0;
 
@@ -3811,7 +3232,7 @@
 
         wkt += isMultipart ? ")" : "";
         if (wkt !== '') {
-            if (_geometryType === 'polygon' || _geometryType === 'circle') {
+            if (wktType === 'POLYGON') {
                 wkt += ")";
             }
             wkt += ")";
@@ -3824,14 +3245,9 @@
         var partIndex = 0;
         var element;
         if (webgis.mapFramework === "leaflet") {
-            if (_geometryType === 'rectangle') {
-                //console.log('rectangle has valid bounds', _frameworkElements[_currentFrameworkIndex].getBounds().isValid(), _frameworkElements[_currentFrameworkIndex].getBounds());
-                var bounds = _frameworkElements[_currentFrameworkIndex].getBounds();
-                if (bounds.getWest() !== bounds.getEast() && bounds.getSouth() !== bounds.getNorth()) {
-                    element = this._createFrameworkElement();
-                    element.setBounds(_frameworkElements[_currentFrameworkIndex].getBounds());
-                    elements.push(element);
-                }
+            var typeElements = _type().cloneGraphicElements();
+            if (typeElements) {
+                return typeElements;
             } else {
                 element = this._createFrameworkElement();
                 elements.push(element);
@@ -3878,54 +3294,8 @@
         var jsonGeometry = frameworkElement.toGeoJSON().geometry;
 
         if (frameworkElement._webgis) {
-            //console.log(frameworkElement._webgis);
-            switch (frameworkElement._webgis.geometryType) {
-                case 'freehand':
-                    jsonGeometry.type = 'freehand';
-                    break;
-                case 'distance_circle':
-                    jsonGeometry.type = 'distance_circle';
-                    _distance_circle_radius = frameworkElement.getRadius();
-                    _distance_circle_steps = frameworkElement.getSteps();
-                    break;
-                case 'compass_rose':
-                    jsonGeometry.type = 'compass_rose';
-                    _compass_rose_radius = frameworkElement.getRadius();
-                    _compass_rose_steps = frameworkElement.getSteps();
-                    break;
-                case 'circle':
-                    jsonGeometry.type = 'circle';
-                    _circle_radius = frameworkElement.getRadius();
-                    break;
-                case 'rectangle':
-                    jsonGeometry.type = 'rectangle';
-                    break;
-                case 'dimline':
-                    jsonGeometry.type = 'dimline';
-                    _dimLine_lengthUnit = frameworkElement.getLengthUnit();
-                    _dimLine_labelTotalLength = frameworkElement.getLabelTotalLength();
-                    break;
-                case 'dimpolygon':
-                    jsonGeometry.type = 'dimpolygon';
-                    _dimPolygon_areaUnit = frameworkElement.getAreaUnit();
-                    _dimPolygon_labelEdges = frameworkElement.getLabelEdges();
-                    break;
-                case 'hectoline':
-                    jsonGeometry.type = 'hectoline';
-                    _hectoline_unit = frameworkElement.getUnit();
-                    _hectoline_interval = frameworkElement.getInterval();
-                    break;
-                case 'point':
-                    jsonGeometry.type = 'point';
-                    break;
-                    break;
-                case 'text':
-                    jsonGeometry.type = 'text';
-                    _svg_text = frameworkElement.getText();
-                    break;
-            }
+            _typeOf(frameworkElement._webgis.geometryType).fromFrameworkElement(frameworkElement, jsonGeometry);
         }
-
         var geomType = jsonGeometry.type;
 
         //console.log('frameworkElement.options', frameworkElement.options)
