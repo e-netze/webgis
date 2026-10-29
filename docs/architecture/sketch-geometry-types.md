@@ -25,7 +25,8 @@ inside the sketch anymore, but in one file per geometry type, registered in a sm
 | `webgis.sketch.geometryTypes` (`.../webgis.sketch.geometry.js`) | Registry: `define(name, baseName, ctor)`, `alias(alias, name)`, `resolve(name)`, `create(name, ctx)`. |
 | `_base`, `_line`, `_polygon`, `_radius` (`.../webgis.sketch.geometry.base.js`) | Defaults for all flags and hooks plus shared helpers (json import); the families `_line` (polyline, dimline, hectoline), `_polygon` (polygon, dimpolygon), `_radius` (circle, distance_circle, compass_rose). |
 | `.../webgis.sketch.geometry.<type>.js` | One file per type: `point`, `polyline` (+ alias `linestring`), `polygon`, `freehand`, `rectangle`, `text`, `circle`, `distance_circle`, `compass_rose`, `dimline`, `dimpolygon`, `hectoline`, `elementseries`. |
-| `src/NetCore/Web/Api/bundleconfig.json` | Bundle order: `webgis.sketch.js`, `webgis.sketch.vertices.js`, then `webgis.sketch.geometry.js`, `...base.js`, then the type files. |
+| `webgis.sketch.markers` (`.../webgis.sketch.markers.js`) | Vertex marker events (drag, click, mouseover/-out, GPS accuracy reset, click tolerance) and the marker popup menu; used by `_appendMarkerEvents` and `setMarkerTooltip`. Creating/redrawing the markers stays in the facade. |
+| `src/NetCore/Web/Api/bundleconfig.json` | Bundle order: `webgis.sketch.js`, `webgis.sketch.vertices.js`, `webgis.sketch.markers.js`, then `webgis.sketch.geometry.js`, `...base.js`, then the type files. |
 | `src/NetCore/Web/Portal/Views/Map/Index.cshtml`, `.../MapBuilder/Index.cshtml` | Same file list for the unbundled (debug) case. |
 
 ## Flow
@@ -56,8 +57,12 @@ None. Geometry types are selected at runtime via `sketch.setGeometryType(name)`.
   Only the internals are delegated.
 - **One instance per sketch and type**: type instances are created lazily and cached in the sketch
   (`_geometryTypeInstances`); switching the geometry type just resolves another instance.
-- **State via getters/setters**: type instances get `ctx = { sketch, state }`; `state` exposes the
+- **State via getters/setters**: type instances get `ctx = { sketch, state, typeOf(name), type() }`; `state` exposes the
   sketch's closure variables via accessors, so types never own a copy of the state.
+- **Sketch components with one-line delegates**: larger type-independent parts of the facade live in
+  their own component (`webgis.sketch.markers`, ...), created once per sketch with the same `ctx`.
+  The facade keeps every public `this.x = function (...)` with unchanged parameters as a one-line
+  delegate, so the whole API stays visible in `webgis.sketch.js`.
 - **Families via prototype chain**: `define(name, baseName, ...)` builds the instance with
   `Object.create(parent)`; the ctor receives `parent` to call the base implementation.
 - **Hooks with "not handled" return values**: e.g. `tryAddVertex` / `handleMapMouseMove` return
@@ -130,4 +135,5 @@ None. Geometry types are selected at runtime via `sketch.setGeometryType(name)`.
 | `9.26.4104` | Split geometry-type specific logic from `webgis.sketch.js` into a registry and one file per type; fixed several sketch quirks. | branch `v9-sketch` |
 | `9.26.4104` | Polygon sketch draws inner parts as holes (fill element with all rings). | branch `v9-sketch` |
 | `9.26.4104` | Vertices/part index moved into the vertex model `webgis.sketch.vertices` (stable vertex array) incl. selection, fix, move and rotate calculations. | branch `v9-sketch` |
+| `9.26.4104` | Vertex marker events and popup menu moved into the component `webgis.sketch.markers`. | branch `v9-sketch` |
 | `9.26.4104` | Types render their framework elements (`render`, `renderAddedVertex`, `renderAppendPart`); polygon draws all parts as rings of one element, the fill element was removed. | branch `v9-sketch` |
