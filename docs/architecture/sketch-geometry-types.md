@@ -1,4 +1,4 @@
-# Sketch Geometry Types
+﻿# Sketch Geometry Types
 
 ## Overview
 
@@ -21,7 +21,7 @@ inside the sketch anymore, but in one file per geometry type, registered in a sm
 | Class / file | Responsibility |
 |--------------|----------------|
 | `webgis.sketch` (`src/NetCore/Web/Api/wwwroot/scripts/api/webgis.sketch.js`) | Facade with the public API, closure state (vertices, parts, framework elements, styles), map/marker events, undo. Delegates type specific parts via `_type()` / `_typeOf(name)`. |
-| `webgis.sketch.vertices` (`.../webgis.sketch.vertices.js`) | Type-independent vertex model: owns the flat vertex array and the part start indices (private) and does all pure vertex calculations. Parts (`count`, `start`, `end`, `partOf`, `partNumber`, `partVertices`, `isClosed`, ...), reads (`collect`, `allHaveProperty`, `neighbors`, `indicesInBounds`, `toLatLngs`), selection/fix (`select`, `selectAll`, `hasSelected`, `firstSelectedIndex`, `fix`, `isMovable`), move/rotate (`translate`, `rotate`, `translateLatLngs`, `rotateLatLngs` for the preview) and changes (`clear`, `setVertices`, `setPartIndex`, `removeVertex`, `closePart`, `snapshot`) plus static helpers (`partOf`, `isFirstPartVertex`, `reversedPartIndex`, `copyVertex`). No events, undo, markers or map access. |
+| `webgis.sketch.vertices` (`.../webgis.sketch.vertices.js`) | Type-independent vertex model: owns the flat vertex array and the part start indices (private) and does all pure vertex calculations. Parts (`count`, `start`, `end`, `partOf`, `partNumber`, `partVertices`, `isClosed`, ...), reads (`collect`, `allHaveProperty`, `neighbors`, `indicesInBounds`, `toLatLngs`), selection/fix (`select`, `selectAll`, `hasSelected`, `firstSelectedIndex`, `fix`, `isMovable`), move/rotate (`translate`, `rotate`, `translateLatLngs`, `rotateLatLngs` for the preview), bounds (`extent` for `bounds()`, `bounds(projected, addVertex)` for `getBounds`), closest vertex/edge in screen points (`closestVertex`/`closestEdge` with a `toPoint` function, used by `_closestVertex`/`_closestEdge`) and changes (`clear`, `setVertices`, `setPartIndex`, `removeVertex`, `closePart`, `snapshot`) plus static helpers (`partOf`, `isFirstPartVertex`, `reversedPartIndex`, `copyVertex`). No events, undo, markers or map access. |
 | `webgis.sketch.geometryTypes` (`.../webgis.sketch.geometry.js`) | Registry: `define(name, baseName, ctor)`, `alias(alias, name)`, `resolve(name)`, `create(name, ctx)`. |
 | `_base`, `_line`, `_polygon`, `_radius` (`.../webgis.sketch.geometry.base.js`) | Defaults for all flags and hooks plus shared helpers (json import); the families `_line` (polyline, dimline, hectoline), `_polygon` (polygon, dimpolygon), `_radius` (circle, distance_circle, compass_rose). |
 | `.../webgis.sketch.geometry.<type>.js` | One file per type: `point`, `polyline` (+ alias `linestring`), `polygon`, `freehand`, `rectangle`, `text`, `circle`, `distance_circle`, `compass_rose`, `dimline`, `dimpolygon`, `hectoline`, `elementseries`. |
@@ -150,3 +150,4 @@ None. Geometry types are selected at runtime via `sketch.setGeometryType(name)`.
 | `9.26.4104` | Move/rotate sketch sessions moved into the component `webgis.sketch.transform`. | branch `v9-sketch` |
 | `9.26.4104` | Mover line/marker, snapping marker, construct and trace line moved into the component `webgis.sketch.mover`. | branch `v9-sketch` |
 | `9.26.4104` | Bubble move (touch vertex dragging) moved into the component `webgis.sketch.markers`. | branch `v9-sketch` |
+| `9.26.4104` | Vertex bounds (`getBounds`, vertex part of `bounds()`) and closest vertex/edge calculations moved into the vertex model. JSON stays in the facade/types (decision: no further abstraction). | branch `v9-sketch` |

@@ -304,6 +304,128 @@ webgis.sketch.vertices = function () {
         }
         return null;
     };
+    // extent of the vertices (x, y) => [minX, minY, maxX, maxY] or null (no vertices)
+    this.extent = function () {
+        if (_vertices.length === 0) return null;
+
+        var minX = _vertices[0].x, minY = _vertices[0].y, maxX = _vertices[0].x, maxY = _vertices[0].y;
+        for (var i = 1; i < _vertices.length; i++) {
+            var vertex = _vertices[i];
+            minX = Math.min(minX, vertex.x);
+            minY = Math.min(minY, vertex.y);
+            maxX = Math.max(maxX, vertex.x);
+            maxY = Math.max(maxY, vertex.y);
+        }
+        return [minX, minY, maxX, maxY];
+    };
+    // bounds of the vertices (+ an optional additional vertex) or null
+    // projected => { minX, maxX, minY, maxY, width, height } (X, Y)
+    // otherwise => { minLng, maxLng, minLat, maxLat, width, height } (x, y)
+    // width/height are only set, if all min/max values are truthy (a value of 0 => no width/height, kept as before)
+    this.bounds = function (projected, addVertex) {
+        var xp = projected ? 'X' : 'x', yp = projected ? 'Y' : 'y';
+        var minX = projected ? 'minX' : 'minLng', maxX = projected ? 'maxX' : 'maxLng',
+            minY = projected ? 'minY' : 'minLat', maxY = projected ? 'maxY' : 'maxLat';
+        var bounds = null;
+        var add = function (vertex) {
+            if (bounds === null) {
+                bounds = {};
+                bounds[minX] = bounds[maxX] = vertex[xp];
+                bounds[minY] = bounds[maxY] = vertex[yp];
+            } else {
+                bounds[minX] = Math.min(vertex[xp], bounds[minX]);
+                bounds[maxX] = Math.max(vertex[xp], bounds[maxX]);
+                bounds[minY] = Math.min(vertex[yp], bounds[minY]);
+                bounds[maxY] = Math.max(vertex[yp], bounds[maxY]);
+            }
+        };
+        for (var i = 0; i < _vertices.length; i++) {
+            add(_vertices[i]);
+        }
+        if (addVertex) {
+            add(addVertex);
+        }
+        if (bounds && bounds[minX] && bounds[minY] && bounds[maxX] && bounds[maxY]) {
+            bounds.width = Math.abs(bounds[maxX] - bounds[minX]);
+            bounds.height = Math.abs(bounds[maxY] - bounds[minY]);
+        }
+        return bounds;
+    };
+
+    /********* Closest vertex/edge (screen points) *********/
+    // toPoint(vertex) => { x, y } (e.g. map layer point), pos => { x, y }
+    // => { index (string, for..in), vertex, dist } or null
+    this.closestVertex = function (toPoint, pos) {
+        var index = -1, dist = 0;
+        for (var v in _vertices) {
+            var point = toPoint(_vertices[v]);
+            var d = (point.x - pos.x) * (point.x - pos.x) + (point.y - pos.y) * (point.y - pos.y);
+            if (index < 0 || d < dist) {
+                index = v;
+                dist = d;
+            }
+        }
+        if (index >= 0) {
+            return {
+                index: index,
+                vertex: _vertices[index],
+                dist: Math.sqrt(dist)
+            };
+        }
+        return null;
+    };
+    // hasClosingSegment => the segment last => first vertex of each part is included
+    // => { index (segment start vertex), t (0..1), dist } or null
+    this.closestEdge = function (toPoint, pos, hasClosingSegment) {
+        if (_vertices.length < 2) {
+            return null;
+        }
+        var index = -1, dist = 0, t = .5, to = _vertices.length - 1, currentPartIndex = 0;
+        if (hasClosingSegment)
+            to++;
+        for (var i = 0; i < to; i++) {
+            var v1 = _vertices[i], v2 = null;
+            var nextPartIndex = (i + 1) >= _vertices.length ? currentPartIndex + 1 : this.partOf(i + 1);
+            if (nextPartIndex > currentPartIndex) {
+                if (hasClosingSegment) {
+                    v2 = _vertices[_partIndex[currentPartIndex]];
+                }
+                currentPartIndex = nextPartIndex;
+            }
+            else {
+                v2 = _vertices[i + 1];
+            }
+            if (!v2)
+                continue;
+            var p1 = toPoint(v1), p2 = toPoint(v2);
+            var rx = p2.x - p1.x, ry = p2.y - p1.y;
+            var lx = pos.x - p1.x, ly = pos.y - p1.y;
+            var linEq = new webgis.calc.linearEquation2(lx, ly, rx, -ry, ry, rx);
+            if (linEq.solve()) {
+                var t1 = linEq.var1();
+                if (t1 >= 0 && t1 <= 1.0) {
+                    var p = {
+                        x: p1.x + t1 * rx,
+                        y: p1.y + t1 * ry
+                    };
+                    var d = (pos.x - p.x) * (pos.x - p.x) + (pos.y - p.y) * (pos.y - p.y);
+                    if (index < 0 || d < dist) {
+                        dist = d;
+                        index = i;
+                        t = t1;
+                    }
+                }
+            }
+        }
+        if (index >= 0) {
+            return {
+                index: index,
+                t: t,
+                dist: Math.sqrt(dist)
+            };
+        }
+        return null;
+    };
 
     /********* Change (in place) *********/
     this.clear = function () {
