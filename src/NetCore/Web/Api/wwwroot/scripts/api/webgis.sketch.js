@@ -61,6 +61,7 @@
     var _markers = new webgis.sketch.markers(_geometryTypeContext);
     var _style = new webgis.sketch.style(_geometryTypeContext);
     var _transform = new webgis.sketch.transform(_geometryTypeContext);
+    var _mover = new webgis.sketch.mover(_geometryTypeContext);
 
     this._resetMarkerImage = function (frameworkElement) {
         frameworkElement.setIcon(webgis.createMarkerIcon({ vertex: frameworkElement.vertex_index + 1, icon: 'sketch_vertex' }));
@@ -77,7 +78,6 @@
     };
     this._moverMarker = null;
     this._moverLine = null;
-    var _traceLine = null;
     this._constructMover = null;
     this._isReadonly = false;
     this._isEditable = false;
@@ -443,39 +443,12 @@
         return false;
     };
 
-    this.hideMoverLine = function () {
-        if (this._moverLine) {
-            this.map.frameworkElement.removeLayer(this._moverLine);
-            this._moverLine = null;
-        }
-    };
-    this.showMoverLine = function (latLngs) {
-        if (this._moverLine == null) {
-            this._moverLine = L.polyline(latLngs, { color: 'green', weight: 1 });
-            this._addToMap(this._moverLine);
-        }
-        else {
-            this._moverLine.setLatLngs(latLngs);
-        }
-    };
-    this.hideMoverMarker = function () {
-        if (this._moverMarker) {
-            this.map.frameworkElement.removeLayer(this._moverMarker);
-            this._moverMarker = null;
-        }
-    };
-    this.hideTraceLine = function () {
-        if (_traceLine != null) {
-            this.map.frameworkElement.removeLayer(_traceLine);
-            _traceLine = null;
-        }
-    };
-    this.hideConstructMover = function () {
-        if (this._constructMover) {
-            this.map.frameworkElement.removeLayer(this._constructMover);
-            this._constructMover = null;
-        }
-    };
+    /********* Mouse feedback (mover line/marker, trace line) => webgis.sketch.mover.js *********/
+    this.hideMoverLine = function () { _mover.hideLine(); };
+    this.showMoverLine = function (latLngs) { _mover.showLine(latLngs); };
+    this.hideMoverMarker = function () { _mover.hideMarker(); };
+    this.hideTraceLine = function () { _mover.hideTraceLine(); };
+    this.hideConstructMover = function () { _mover.hideConstructMover(); };
 
     this.addVertex = function (vertex) {
         if (_currentBubbleMoveVertextFrameworkElement) {
@@ -797,35 +770,6 @@
         }
         return traceLatLngs;
     };
-    // latLngs null => remove the trace line
-    var _updateTraceLine = function (sketch, latLngs) {
-        if (latLngs) {
-            if (_traceLine == null) {
-                _traceLine = L.polyline(latLngs, { color: 'blue', weight: 3 });
-                sketch._addToMap(_traceLine);
-            }
-            else {
-                _traceLine.setLatLngs(latLngs);
-            }
-        }
-        else if (_traceLine != null) {
-            sketch.map.frameworkElement.removeLayer(_traceLine);
-            _traceLine = null;
-        }
-    };
-    // red => the sketch would exceed the max. bbox
-    var _updateMoverLineColor = function (sketch, latlng) {
-        if (_sketchProperties && _sketchProperties.maxBBox && !sketch.isSketchMoving() && !sketch.isSketchRotating()) {
-            var bbox = sketch.getBounds(true, latlng);
-            if (bbox.width > _sketchProperties.maxBBox.width ||
-                bbox.height > _sketchProperties.maxBBox.height) {
-                sketch._moverLine.setStyle({ color: 'red' });
-            }
-            else {
-                sketch._moverLine.setStyle({ color: 'green' });
-            }
-        }
-    };
 
     this.onMapMouseMove = function (map, latlng) {
         if (this._isMarkerDragging === true) {
@@ -885,7 +829,7 @@
                 if (traceLatLngs && traceLatLngs.length > 0) {
                     latLngs = traceLatLngs;
                 }
-                _updateTraceLine(this, traceLatLngs ? latLngs : null);
+                _mover.updateTraceLine(traceLatLngs ? latLngs : null);
 
                 if (_isPolygon() && _vertices.length >= 2 && !this.isSketchMoving() && !this.isSketchRotating()) {
                     latLngs.push([_vertices[_model.currentPartStart()].y, _vertices[_model.currentPartStart()].x]);
@@ -894,7 +838,7 @@
 
             if (!this.isClosed() || this.isSketchMoving() || this.isSketchRotating() && _suppressMover !== true) {
                 this.showMoverLine(latLngs);
-                _updateMoverLineColor(this, latlng);
+                _mover.updateLineColor(latlng, _sketchProperties && _sketchProperties.maxBBox);
             }
 
             if (this.isSketchMoving() === true) {
@@ -972,81 +916,8 @@
         webgis.sketch.construct.onMapKeyUp(this, e);
     };
 
-    this._showMoveMarker = function (latlng) {
-        if (!latlng) {
-            this.hideConstructMover();
-            return;
-        }
-        if (!this.map.construct.hasSnapping(this) || this.map.toolSketch() != this) {
-            if (this._moverMarker != null) {
-                this.map.frameworkElement.removeLayer(this._moverMarker);
-                this._moverMarker = null;
-            }
-            this._snappedVertex = null;
-            return;
-        }
-        var snapResult = this.map.construct.performSnap(latlng.lng, latlng.lat, null, this);
-        if (snapResult != null) {
-            latlng.lng = snapResult.result.x;
-            latlng.lat = snapResult.result.y;
-            this._snappedVertex = snapResult.result;
-        }
-        else {
-            this._snappedVertex = null;
-        }
-        // Captured before being overwritten below, so we can tell whether the snap state actually
-        // changed (entered/left a snap target) - needed so the "leaving snap" fix below doesn't
-        // fire currentstate on every single mouse move (which caused visible overlay flicker).
-        var hadSnapResult = this._moverMarker != null && this._moverMarker.snapResult ? true : false;
-
-        if (this._moverMarker == null) {
-            this._moverMarker = webgis.createMarker({
-                lat: latlng.lat, lng: latlng.lng, draggable: false, icon: "sketch_mover"
-            });
-            this._moverMarker.setZIndexOffset(-1000);
-            this._addToMap(this._moverMarker);
-        }
-        else {
-            this._moverMarker.setLatLng(latlng);
-        }
-        this._moverMarker.snapResult = snapResult;
-        if (snapResult) {
-            if (snapResult.vertices && snapResult.vertices.length == 2) {
-                var v1 = this.map.construct.getTopoVertexWGS84(snapResult.vertices[0]);
-                var v2 = this.map.construct.getTopoVertexWGS84(snapResult.vertices[1]);
-                if (v1 && v2) {
-                    var latLngs = [[v1[1], v1[0]], [v2[1], v2[0]]];
-                    if (this._constructMover == null) {
-                        this._constructMover = L.polyline(latLngs, {
-                            color: 'yellow', weight: 2
-                        });
-                        this._addToMap(this._constructMover);
-                    }
-                    else {
-                        this._constructMover.setLatLngs(latLngs);
-                    }
-                }
-            }
-            else {
-                this.hideConstructMover();
-            }
-
-            this.fireCurrentState();
-        }
-        else {
-            this.hideConstructMover();
-
-            // Only fire when a snap target was actually left (transition snapped -> unsnapped) -
-            // NOT on every plain mouse move without snapping, otherwise the sketch-info overlay
-            // re-renders constantly while just moving the mouse and visibly flickers. Callers like
-            // the vertex-drag handler ('drag' event on marker) rely solely on this call to keep the
-            // overlay's snapping section in sync, since - unlike onMapMouseMove - they don't fire
-            // currentstate again on their own afterwards.
-            if (hadSnapResult) {
-                this.fireCurrentState();
-            }
-        }
-    };
+    // snapping + mover marker => webgis.sketch.mover.js
+    this._showMoveMarker = function (latlng) { _mover.showMarker(latlng); };
 
     this._fixedDirectionVector = null;
     this._fixedDistance = null;

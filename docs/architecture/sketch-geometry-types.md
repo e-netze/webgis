@@ -29,7 +29,8 @@ inside the sketch anymore, but in one file per geometry type, registered in a sm
 | `webgis.sketch.style` (`.../webgis.sketch.style.js`) | Style values (color, fill, opacity, weight, line style, text color/style/size) per `styleIndex` of the geometry type, plus the line style <=> `dashArray` conversion. The facade keeps `get<Value>/set<Value>` as delegates and applies the values with `setStyle`. |
 | `webgis.sketch.wkt` (`.../webgis.sketch.wkt.js`) | Static WKT export of the vertex model: `toWKT(model, typeDef, useWGS84, fanMode)`, `toWKT2(model, wktType, useWGS84, appendMeta, digits)`, `vertex(...)`. |
 | `webgis.sketch.transform` (`.../webgis.sketch.transform.js`) | Move/rotate session of the whole sketch (or the selected vertices): state, gray preview polylines, apply via the vertex model (`translate`, `rotate`, `*LatLngs`). Used by `startSketchMoving`, `moveSketchPreview`, `moveSketch`, `...Rotating`, `_referenceVertex`. Calls other sketch methods via `sketch.` (e.g. `sketch.endSketchRotating()`), so overrides still apply. |
-| `src/NetCore/Web/Api/bundleconfig.json` | Bundle order: `webgis.sketch.js`, `webgis.sketch.vertices.js`, `webgis.sketch.markers.js`, `webgis.sketch.style.js`, `webgis.sketch.wkt.js`, `webgis.sketch.transform.js`, then `webgis.sketch.geometry.js`, `...base.js`, then the type files. |
+| `webgis.sketch.mover` (`.../webgis.sketch.mover.js`) | Visual mouse feedback only: mover line (green, red if `maxBBox` is exceeded), mover marker with snapping (`_showMoveMarker`), yellow construct line along the snapped edge, blue trace line. The decisions (when to show what) stay in the input handlers. `sketch._moverLine`, `_moverMarker`, `_constructMover` and `_snappedVertex` stay public sketch properties. |
+| `src/NetCore/Web/Api/bundleconfig.json` | Bundle order: `webgis.sketch.js`, `webgis.sketch.vertices.js`, `webgis.sketch.markers.js`, `webgis.sketch.style.js`, `webgis.sketch.wkt.js`, `webgis.sketch.transform.js`, `webgis.sketch.mover.js`, then `webgis.sketch.geometry.js`, `...base.js`, then the type files. |
 | `src/NetCore/Web/Portal/Views/Map/Index.cshtml`, `.../MapBuilder/Index.cshtml` | Same file list for the unbundled (debug) case. |
 
 ## Flow
@@ -147,3 +148,4 @@ None. Geometry types are selected at runtime via `sketch.setGeometryType(name)`.
 | `9.26.4104` | Style values moved into the component `webgis.sketch.style`; type specific getters/setters use the declarative `elementOptions` with `getOption`/`setOption`. | branch `v9-sketch` |
 | `9.26.4104` | WKT export moved into the static module `webgis.sketch.wkt`; `statPoint` calculation moved into the vertex model. | branch `v9-sketch` |
 | `9.26.4104` | Move/rotate sketch sessions moved into the component `webgis.sketch.transform`. | branch `v9-sketch` |
+| `9.26.4104` | Mover line/marker, snapping marker, construct and trace line moved into the component `webgis.sketch.mover`. | branch `v9-sketch` |
