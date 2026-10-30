@@ -19,6 +19,8 @@ Simple drawing on the map.
 ## dimline: Dimensioning
 ## dimpolygon: Dimensioning Polygon
 ## hectoline: Hectometer Line
+## view_angle: Field of View (Angle)
+## intersection_angle: Intersection Angle
 
 ## save: Save Drawing
 ## open: Load Drawing
@@ -62,6 +64,17 @@ Simple drawing on the map.
 ## area-unit: Area unit
 ## label-edges: Label edges
 ## label-total-length: Label total length
+## angle: Opening angle
+## apply-angle: Apply angle
+## angle-unit-deg: Degrees
+## angle-unit-gon: Gon
+## angle-unit-both: Degrees and gon
+## label-axis-length: Label axis length
+## show-angles: Show angles
+## show-angles-intersection: Intersection angle
+## show-angles-adjacent: Adjacent angle
+## show-angles-both: Both
+## show-angles-all: All
 
 # draw-symbol: Set symbol
 # draw-point: Set point
@@ -74,6 +87,8 @@ Simple drawing on the map.
 # draw-dimline: Draw dimensioning
 # draw-dimpolygon: Draw dimensioning polygon
 # draw-hectoline: Draw hectometer line
+# draw-view-angle: Draw field of view (angle)
+# draw-intersection-angle: Draw intersection angle
 
 # apply-line: Apply line
 # apply-polygon: Apply polygon

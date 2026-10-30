@@ -544,6 +544,142 @@ static internal class UIElementExtensions
         return collection;
     }
 
+    static public List<IUIElement> AddViewAngleStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    {
+        collection.Add(CreateHolder(e, stagedOnly, 
+        [
+            .. AngleBaseStyleElements(e, localizer, collapseExclusive),
+            new UIOptionContainer()
+            {
+                title = localizer.Localize("symbology.properties"),
+                CollapseState = IsCollapsed(isCollapsed),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                elements = new IUIElement[]
+                {
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.unit")}:"
+                    },
+                    AngleUnitSelect(localizer, ApiClientButtonCommand.setgraphicsviewangleunit, "mapmarkup-view_angle-unit", UICss.GraphicsViewAngleUnit),
+                    new UIBreak(),
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.angle")}:"
+                    },
+                    new UIInputNumber() {
+                        MinValue = 0,
+                        MaxValue = 400,
+                        id = "mapmarkup-view_angle-angle",
+                        value = e.GetValue("mapmarkup-view_angle-angle", "30"),
+                        css = UICss.ToClass(new string[]{ UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.GraphicsViewAngleAngle })
+                    },
+                    new UIButtonContainer(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsviewangleangle)
+                    {
+                        text = localizer.Localize("symbology.apply-angle"),
+                        css = UICss.ToClass(new string[]{ UICss.CancelButtonStyle })
+                    }),
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.label-axis-length")}:"
+                    },
+                    YesNoSelect(localizer, ApiClientButtonCommand.setgraphicsviewanglelabellength, "mapmarkup-view_angle-label-length", UICss.GraphicsViewAngleLabelLength, defaultYes: false)
+                }
+            }
+        ]));
+
+        return collection;
+    }
+
+    static public List<IUIElement> AddIntersectionAngleStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    {
+        collection.Add(CreateHolder(e, stagedOnly, 
+        [
+            .. AngleBaseStyleElements(e, localizer, collapseExclusive),
+            new UIOptionContainer()
+            {
+                title = localizer.Localize("symbology.properties"),
+                CollapseState = IsCollapsed(isCollapsed),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                elements = new IUIElement[]
+                {
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.unit")}:"
+                    },
+                    AngleUnitSelect(localizer, ApiClientButtonCommand.setgraphicsintersectionangleunit, "mapmarkup-intersection_angle-unit", UICss.GraphicsIntersectionAngleUnit),
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.show-angles")}:"
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsintersectionangleangles)
+                    {
+                        options = new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value = "angle", label = localizer.Localize("symbology.show-angles-intersection") },
+                            new UISelect.Option() { value = "adjacent", label = localizer.Localize("symbology.show-angles-adjacent") },
+                            new UISelect.Option() { value = "both", label = localizer.Localize("symbology.show-angles-both") },
+                            new UISelect.Option() { value = "all", label = localizer.Localize("symbology.show-angles-all") }
+                        },
+                        id = "mapmarkup-intersection_angle-angles",
+                        css = UICss.ToClass(new string[] { UICss.GraphicsIntersectionAngleAngles })
+                    }
+                }
+            }
+        ]));
+
+        return collection;
+    }
+
+    static private IUIElement[] AngleBaseStyleElements(ApiToolEventArguments e, ILocalizer localizer, bool collapseExclusive)
+        => new IUIElement[]
+        {
+            new UIColorSelector(localizer.Localize("symbology.line-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinecolor, false) {
+                CollapseState = IsCollapsed(true),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                value = e.GetValue("mapmarkup-color", "#000000")?.ToString(),
+                id = "mapmarkup-color"
+            },
+            new UILineWieghtSelector(localizer.Localize("symbology.line-weight"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslineweight){
+                CollapseState = IsCollapsed(true),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                value = e.GetValue("mapmarkup-lineweight", 2),
+                id = "mapmarkup-lineweight"
+            },
+            new UIFontSizeSelector(localizer.Localize("symbology.font-size"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicstextsize)
+            {
+                CollapseState = IsCollapsed(true),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                value = e.GetValue("mapmarkup-fontsize", 14),
+                id = "mapmarkup-fontsize"
+            }
+        };
+
+    static private UISelect AngleUnitSelect(ILocalizer localizer, ApiClientButtonCommand command, string id, string css)
+        => new UISelect(UIButton.UIButtonType.clientbutton, command)
+        {
+            options = new UISelect.Option[]
+            {
+                new UISelect.Option() { value = "deg", label = $"{localizer.Localize("symbology.angle-unit-deg")} [°]" },
+                new UISelect.Option() { value = "gon", label = $"{localizer.Localize("symbology.angle-unit-gon")} [gon]" },
+                new UISelect.Option() { value = "both", label = $"{localizer.Localize("symbology.angle-unit-both")} [° / gon]" }
+            },
+            id = id,
+            css = UICss.ToClass(new string[] { css })
+        };
+
+    static private UISelect YesNoSelect(ILocalizer localizer, ApiClientButtonCommand command, string id, string css, bool defaultYes)
+        => new UISelect(UIButton.UIButtonType.clientbutton, command)
+        {
+            options = defaultYes
+                ? new UISelect.Option[]
+                {
+                    new UISelect.Option() { value = "true", label = localizer.Localize("yes") },
+                    new UISelect.Option() { value = "false", label = localizer.Localize("no") }
+                }
+                : new UISelect.Option[]
+                {
+                    new UISelect.Option() { value = "false", label = localizer.Localize("no") },
+                    new UISelect.Option() { value = "true", label = localizer.Localize("yes") }
+                },
+            id = id,
+            css = UICss.ToClass(new string[] { css })
+        };
+
     static private UICollapsableElement.CollapseStatus IsCollapsed(bool stageOnly)
         => stageOnly
             ? UICollapsableElement.CollapseStatus.Collapsed

@@ -49,7 +49,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     private const string SaveDialogValidationMessage = "save-dilaog-validation-message";
 
     protected readonly string[] MobileTools = [ "pointer", "symbol", "freehand", "line", "polygon", "dimline", "share", "save", "open", "upload", "download" ];
-    protected readonly string[] AdvancedTools = [ "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline" ];  // Do not use with Internet Explorer
+    protected readonly string[] AdvancedTools = [ "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle" ];  // Do not use with Internet Explorer
 
     private static readonly Dictionary<string, string> ToolGroups = new()
     {
@@ -57,6 +57,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         ["line"] = "draw", ["polygon"] = "draw", ["rectangle"] = "draw", ["circle"] = "draw",
         ["distance_circle"] = "measure", ["compass_rose"] = "measure", ["dimline"] = "measure",
         ["dimpolygon"] = "measure", ["hectoline"] = "measure",
+        ["view_angle"] = "measure", ["intersection_angle"] = "measure",
         ["save"] = "io", ["open"] = "io", ["share"] = "io", ["upload"] = "io", ["download"] = "io"
     };
 
@@ -135,6 +136,18 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                         {
                             value = "hectoline",
                             text = localizer.Localize("tools.hectoline"),
+                            css = UICss.Narrow
+                        },
+                        new UIImageButton(this.GetType(),"view_angle", UIButton.UIButtonType.servertoolcommand,"view_angle")
+                        {
+                            value = "view_angle",
+                            text = localizer.Localize("tools.view_angle"),
+                            css = UICss.Narrow
+                        },
+                        new UIImageButton(this.GetType(),"intersection_angle", UIButton.UIButtonType.servertoolcommand,"intersection_angle")
+                        {
+                            value = "intersection_angle",
+                            text = localizer.Localize("tools.intersection_angle"),
                             css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"distance_circle", UIButton.UIButtonType.servertoolcommand,"distance_circle")
@@ -353,6 +366,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         toolResourceManager.AddImageResource("upload", Properties.Resources.upload);
         toolResourceManager.AddImageResource("dimline", Properties.Resources.dimline_26);
         toolResourceManager.AddImageResource("hectoline", Properties.Resources.hectoline_26);
+        toolResourceManager.AddImageResource("view_angle", Properties.Resources.view_angle_26);
+        toolResourceManager.AddImageResource("intersection_angle", Properties.Resources.intersection_angle_26);
     }
 
     #endregion
@@ -774,6 +789,34 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         };
     }
 
+    [ServerToolCommand("view_angle")]
+    public ApiEventResponse OnViewAngleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+        => AngleToolResponse(bridge,
+                             GraphicsTool.View_Angle,
+                             localizer.Localize("draw-view-angle"),
+                             new List<IUIElement>().AddViewAngleStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e));
+
+    [ServerToolCommand("intersection_angle")]
+    public ApiEventResponse OnIntersectionAngleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+        => AngleToolResponse(bridge,
+                             GraphicsTool.Intersection_Angle,
+                             localizer.Localize("draw-intersection-angle"),
+                             new List<IUIElement>().AddIntersectionAngleStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e));
+
+    // angle tools finish automatically after the required number of vertices => no apply button (mobile)
+    private ApiEventResponse AngleToolResponse(IBridge bridge, GraphicsTool graphicsTool, string title, List<IUIElement> uiElements)
+        => new ApiEventResponse()
+        {
+            Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = graphicsTool },
+            UIElements = new IUIElement[] {
+                new UIDiv(){
+                    target = $"#{toolContainerId}",
+                    targettitle = title,
+                    elements = uiElements.ToArray()
+                }
+            }
+        };
+
     [ServerToolCommand("element-selected")]
     async public Task<ApiEventResponse> OnElementClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
@@ -819,6 +862,12 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             case "hectoline":
                 resp = OnHectoLineToolClick(bridge, e, localizer);
                 break;
+            case "view_angle":
+                resp = OnViewAngleToolClick(bridge, e, localizer);
+                break;
+            case "intersection_angle":
+                resp = OnIntersectionAngleToolClick(bridge, e, localizer);
+                break;
         }
 
         if (resp != null)
@@ -854,6 +903,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             "dimline" => new List<IUIElement>().AddDimLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             "dimpolygon" => new List<IUIElement>().AddDimPolygonStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             "hectoline" => new List<IUIElement>().AddHectoLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "view_angle" => new List<IUIElement>().AddViewAngleStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "intersection_angle" => new List<IUIElement>().AddIntersectionAngleStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             _ => new()
                         })
             );

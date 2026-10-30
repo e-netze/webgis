@@ -67,6 +67,8 @@
     "mapmarkup-tool-dimline": "Bemaßung",
     "mapmarkup-tool-dimpolygon": "Bemaßung Polygon",
     "mapmarkup-tool-hectoline": "Hektometrierungslinie",
+    "mapmarkup-tool-view_angle": "Sichtfeld (Winkel)",
+    "mapmarkup-tool-intersection_angle": "Schnittwinkel",
 
     "mapmarkup-pointer": "Zum Bearbeiten eines bestehenden Map-Markup-Objektes in der Karte auf das Objekt klicken. Zum Zeichnen eines neuen Objektes muss das entsprechende Werkzeug ausgewählt werden.",
     "mapmarkup-symbol": "In die Karte klicken, um ein Symbol zu setzen...",
@@ -82,6 +84,9 @@
     "mapmarkup-dimline": "In die Karte klicken, um mindestens zwei Stützpunkte der Linie zu definieren. Die einzelnen Segemente werden mit der jeweiligen Länge [m] beschriftet.",
     "mapmarkup-dimpolygon": "In die Karte klicken, um mindestens drei Stützpunkte der Fläche zu definieren. Die einzelnen Segmente werden mit der jeweiligen Länge [m] beschriftet. Die Fläche wird mit der jeweiligen Fläche [m²] beschriftet.", 
     "mapmarkup-hectoline": "In die Karte klicken, um mindestens zwei Stützpunkte der Linie zu definieren. Die Zwischenpunkte werden je nach eingestelltem Abstand (unter Eigenschaften) markiert und beschriftet.",
+    "mapmarkup-view_angle": "In die Karte klicken, um den Scheitelpunkt festzulegen. Danach noch einmal klicken, um Richtung und Länge der Achse festzulegen. Der Öffnungswinkel und die Einheit können unter Eigenschaften eingestellt werden.",
+    "mapmarkup-intersection_angle": "In die Karte klicken, um mit zwei Punkten die erste Linie und danach mit zwei weiteren Punkten die zweite Linie festzulegen. Der Schnittwinkel der (verlängerten) Linien wird beschriftet.",
+    "mapmarkup-intersection-angle-parallel": "parallel",
 
     "service-order": "Zeichenreihenfolge",
     "info-service-order": "Hier kann die Zeichenreihenfolge der Kartendienste geändert werden. Dienste, die weiter oben liegen überdecken die darunter liegenden Dienste. Die Reihenfolge kann durch Ziehen der Dienste geändert werden. Zusätzlich kann auch die Deckkraft der einzelnen Dienste angepasst werden.",
@@ -98,6 +103,8 @@
     "dimline": "Bemaßung",
     "dimpolygon": "Bemaßung Polygon",
     "hectoline": "Hektometrierungslinie",
+    "view_angle": "Sichtfeld (Winkel)",
+    "intersection_angle": "Schnittwinkel",
     "rectangle": "Rechteck",
     "circle": "Kreis",
     "distance_circle": "Umgebungskreis",

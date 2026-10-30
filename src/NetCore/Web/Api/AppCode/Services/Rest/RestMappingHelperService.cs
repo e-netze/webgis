@@ -647,7 +647,9 @@ public class RestMappingHelperService /*: IDisposable*/
 
             if ((graphicsTool == "dimline"
                 || graphicsTool == "dimpolygon"
-                || graphicsTool == "hectoline") && feature.GetPropery<int>("_calcCrs") > 0)
+                || graphicsTool == "hectoline"
+                || graphicsTool == "view_angle"
+                || graphicsTool == "intersection_angle") && feature.GetPropery<int>("_calcCrs") > 0)
             {
                 calcShape = feature.ToShape();
                 using (var calcTransformer = new GeometricTransformerPro(ApiGlobals.SRefStore.SpatialReferences, 4326, feature.GetPropery<int>("_calcCrs")))
@@ -759,6 +761,27 @@ public class RestMappingHelperService /*: IDisposable*/
                        feature.GetPropery<string>("hl-unit"),
                        calcPolyline: calcShape as Polyline,
                        fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor));
+                }
+                else if (graphicsTool == "view_angle")
+                {
+                    map.GraphicsContainer.Add(new ViewAngleElement((Polyline)shape,
+                       feature.GetPropery<string>("stroke").HexToColor(),
+                       feature.GetPropery<float>("stroke-width"),
+                       angle: feature.GetPropery<double>("va-angle"),
+                       unit: feature.GetPropery<string>("va-unit"),
+                       labelLength: feature.GetPropery<bool>("va-label-length"),
+                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
+                       calcPolyline: calcShape as Polyline));
+                }
+                else if (graphicsTool == "intersection_angle")
+                {
+                    map.GraphicsContainer.Add(new IntersectionAngleElement((Polyline)shape,
+                       feature.GetPropery<string>("stroke").HexToColor(),
+                       feature.GetPropery<float>("stroke-width"),
+                       unit: feature.GetPropery<string>("ia-unit"),
+                       angles: feature.GetPropery<string>("ia-angles"),
+                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
+                       calcPolyline: calcShape as Polyline));
                 }
                 else
                 {

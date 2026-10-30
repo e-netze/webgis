@@ -856,6 +856,17 @@
             $('.webgis-graphics-dimpolygon-label-edges').val((map.graphics.getDimPolygonLabelEdges() !== false).toString().toLowerCase());
         }
 
+        if (this._map.graphics.getTool() === 'view_angle') {
+            $('.webgis-graphics-view_angle-angle').val(map.graphics.getViewAngleAngle());
+            $('.webgis-graphics-view_angle-unit').val(map.graphics.getViewAngleUnit());
+            $('.webgis-graphics-view_angle-label-length').val((map.graphics.getViewAngleLabelLength() === true).toString().toLowerCase());
+        }
+
+        if (this._map.graphics.getTool() === 'intersection_angle') {
+            $('.webgis-graphics-intersection_angle-unit').val(map.graphics.getIntersectionAngleUnit());
+            $('.webgis-graphics-intersection_angle-angles').val(map.graphics.getIntersectionAngleAngles());
+        }
+
         $('.webgis-query-combo.require-ui-refresh').each(function (i, e) {
             $(e).webgis_queryCombo('refresh');
         });

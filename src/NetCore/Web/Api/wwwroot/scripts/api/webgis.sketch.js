@@ -410,6 +410,13 @@
             this.events.fire('ongetsvalid', this);
         }
 
+        // only for vertices added by the user (fireEvents), not when loading (fromJson, fromFrameworkElement)
+        var closeAfterVertices = _type().closeAfterVertices;
+        if (fireEvents && closeAfterVertices > 0 && _vertices.length >= closeAfterVertices && !this.isClosed()) {
+            this.close();
+            return;
+        }
+
         if (_ortho && this.getCurrentPartLength() >= 2) {
             var vertices = this.getConstructionVerticesPro();
             var v1 = vertices[vertices.length - 2], v2 = vertices[vertices.length - 1];
@@ -1170,6 +1177,11 @@
     this.setDimLineLabelTotalLength = function (doLabel) { _typeOf('dimline').setOption('labelTotalLength', doLabel); };
     this.setDimPolygonAreaUnit = function (unit) { _typeOf('dimpolygon').setOption('areaUnit', unit); };
     this.setDimPolygonLabelEdges = function (doLabel) { _typeOf('dimpolygon').setOption('labelEdges', doLabel); };
+    this.setViewAngleAngle = function (angle) { _typeOf('view_angle').setOption('angle', angle); };
+    this.setViewAngleUnit = function (unit) { _typeOf('view_angle').setOption('unit', unit); };
+    this.setViewAngleLabelLength = function (doLabel) { _typeOf('view_angle').setOption('labelLength', doLabel); };
+    this.setIntersectionAngleUnit = function (unit) { _typeOf('intersection_angle').setOption('unit', unit); };
+    this.setIntersectionAngleAngles = function (angles) { _typeOf('intersection_angle').setOption('angles', angles); };
     this.setText = function (text) { _typeOf('text').setOption('text', text); };
 
     this.getText = function () { return _typeOf('text').getOption('text'); };
@@ -1184,6 +1196,11 @@
     this.getDimLineLabelTotalLength = function () { return _typeOf('dimline').getOption('labelTotalLength'); };
     this.getDimPolygonAreaUnit = function () { return _typeOf('dimpolygon').getOption('areaUnit'); };
     this.getDimPolygonLabelEdges = function () { return _typeOf('dimpolygon').getOption('labelEdges'); };
+    this.getViewAngleAngle = function () { return _typeOf('view_angle').getOption('angle'); };
+    this.getViewAngleUnit = function () { return _typeOf('view_angle').getOption('unit'); };
+    this.getViewAngleLabelLength = function () { return _typeOf('view_angle').getOption('labelLength'); };
+    this.getIntersectionAngleUnit = function () { return _typeOf('intersection_angle').getOption('unit'); };
+    this.getIntersectionAngleAngles = function () { return _typeOf('intersection_angle').getOption('angles'); };
     this.setGeometryType('polyline');
     this.vertexCount = function () {
         return _vertices.length;

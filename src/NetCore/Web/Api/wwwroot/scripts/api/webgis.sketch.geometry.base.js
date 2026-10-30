@@ -1,7 +1,7 @@
 ﻿// Base geometry type for webgis.sketch (webgis.sketch.js) and the shared families
 //   _base    => defaults for all hooks and flags + shared helpers (json, ...)
 //               Unknown geometry types use _base directly
-//   _line    => polyline, dimline, hectoline
+//   _line    => polyline, dimline, hectoline, view_angle, intersection_angle
 //   _polygon => polygon, dimpolygon
 //   _radius  => circle, distance_circle, compass_rose
 //
@@ -32,6 +32,7 @@ webgis.sketch.geometryTypes.define('_base', null, function (ctx) {
     this.styleIndex = 0;
     this.addVertexUndoKey = null;                   // l10n key
     this.vertexMarkerIcon = null;                   // fix icon for vertex markers (otherwise sketch_vertex[_fixed|_selected])
+    this.closeAfterVertices = 0;                    // > 0 => sketch is closed automatically when the user added this number of vertices (view_angle, intersection_angle)
     this.wktType = null;                            // POINT, LINESTRING, POLYGON
                                                     // null => toWKT/toWKT2 write no valid WKT (no prefix), the server (ShapeFromWKT) ignores it => intended
 
@@ -306,7 +307,7 @@ webgis.sketch.geometryTypes.define('_base', null, function (ctx) {
     };
 });
 
-// polyline, dimline, hectoline
+// polyline, dimline, hectoline, view_angle, intersection_angle
 webgis.sketch.geometryTypes.define('_line', '_base', function (ctx) {
     "use strict";
 

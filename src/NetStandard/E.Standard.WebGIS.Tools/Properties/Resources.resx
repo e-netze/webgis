@@ -181,6 +181,12 @@
   <data name="hectoline_26" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\shape-hecto-line_26@1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="view_angle_26" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\shape-view-angle_26@1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="intersection_angle_26" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\shape-intersection-angle_26@1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="heightabovedatum" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\altitude_26@1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

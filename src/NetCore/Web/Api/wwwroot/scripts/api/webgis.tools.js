@@ -286,6 +286,26 @@
                     if (map && map.graphics && tool.value)
                         map.graphics.setDimPolygonLabelEdges(tool.value == 'true');
                     break;
+                case 'setgraphicsviewangleangle':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setViewAngleAngle(tool.value);
+                    break;
+                case 'setgraphicsviewangleunit':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setViewAngleUnit(tool.value);
+                    break;
+                case 'setgraphicsviewanglelabellength':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setViewAngleLabelLength(tool.value == 'true');
+                    break;
+                case 'setgraphicsintersectionangleunit':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setIntersectionAngleUnit(tool.value);
+                    break;
+                case 'setgraphicsintersectionangleangles':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setIntersectionAngleAngles(tool.value);
+                    break;
                 case 'setgraphicstextstyle':
                 case 'setgraphics_text_style_and_apply_to_selected':
                     if (map && map.graphics && tool.value)
@@ -1849,7 +1869,7 @@
             tool != null &&
             (tool.tooltype === 'sketch1d' || tool.tooltype === 'sketch2d' ||
                 (tool.tooltype === 'sketchany' && map.sketch && $.inArray(map.sketch.getGeometryType(), ["polyline", "polygon"]) >= 0) ||
-                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "dimpolygon", "hectoline"]) >= 0));
+                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle"]) >= 0));
     };
 
     this.replaceCustomToolUrl = function (map, url, eventObject) {

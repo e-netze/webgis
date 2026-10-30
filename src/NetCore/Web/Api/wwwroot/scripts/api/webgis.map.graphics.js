@@ -16,7 +16,7 @@
     this._sketchMetaSouce = null;
     this._stagedElement = null;
 
-    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline"];
+    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle"];
 
     this._sketch.events.on(['onchangevertex'], function (e, sender, coord) {
         if (this._tool === 'symbol' && this._currentMarker) {
@@ -154,8 +154,8 @@
         if (this._map.getActiveTool() && this._map.getActiveTool().is_graphics_tool === true) {
             //console.log(this._tool);
             this._map._refreshToolBubbles(this._map.getActiveTool(),
-                $.inArray(this._tool, ["symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle","compass_rose", "dimline", "hectoline"]) >= 0,
-                $.inArray(this._tool, ["symbol", "text", "line", "polygon", "dimline", "dimpolygon", "hectoline"]) >= 0);
+                $.inArray(this._tool, ["symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle","compass_rose", "dimline", "hectoline", "view_angle", "intersection_angle"]) >= 0,
+                $.inArray(this._tool, ["symbol", "text", "line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle"]) >= 0);
         }
 
         this._refreshInfoContainers();
@@ -397,6 +397,28 @@
     this.setDimPolygonLabelEdges = function (doLabel) {
         this._sketch.setDimPolygonLabelEdges(doLabel);
     };
+    // angle input in the current unit (gon => gon, otherwise degrees)
+    this.setViewAngleAngle = function (angle) {
+        angle = parseFloat(angle);
+        if (isNaN(angle))
+            return;
+        if (this.getViewAngleUnit() === 'gon')
+            angle = angle * 0.9;
+        this._sketch.setViewAngleAngle(angle);
+    };
+    this.setViewAngleUnit = function (unit) {
+        this._sketch.setViewAngleUnit(unit);
+        this._map.ui.refreshUIElements();
+    };
+    this.setViewAngleLabelLength = function (doLabel) {
+        this._sketch.setViewAngleLabelLength(doLabel);
+    };
+    this.setIntersectionAngleUnit = function (unit) {
+        this._sketch.setIntersectionAngleUnit(unit);
+    };
+    this.setIntersectionAngleAngles = function (angles) {
+        this._sketch.setIntersectionAngleAngles(angles);
+    };
     this.getOpacity = function (geomType) {
         return this._sketch.getOpacity(geomType);
     };
@@ -455,6 +477,25 @@
     };
     this.getDimPolygonLabelEdges = function () {
         return this._sketch.getDimPolygonLabelEdges();
+    };
+    // angle in the current unit (gon => gon, otherwise degrees)
+    this.getViewAngleAngle = function () {
+        var angle = this._sketch.getViewAngleAngle();
+        if (this.getViewAngleUnit() === 'gon')
+            angle = angle / 0.9;
+        return Math.round(angle * 100) / 100;
+    };
+    this.getViewAngleUnit = function () {
+        return this._sketch.getViewAngleUnit();
+    };
+    this.getViewAngleLabelLength = function () {
+        return this._sketch.getViewAngleLabelLength();
+    };
+    this.getIntersectionAngleUnit = function () {
+        return this._sketch.getIntersectionAngleUnit();
+    };
+    this.getIntersectionAngleAngles = function () {
+        return this._sketch.getIntersectionAngleAngles();
     };
 
     this.getTextColor = function (geomType) { return this._sketch.getTextColor(geomType); };
@@ -1191,6 +1232,37 @@
                         };
                     }
                     break;
+                case 'view_angle':
+                    if (element.frameworkElement.options) {
+                        properties["stroke"] = element.frameworkElement.options.color || _color;
+                        properties["stroke-width"] = element.frameworkElement.options.weight || _weight;
+                        properties["font-color"] = element.frameworkElement.options.fontColor || '#000';
+                        properties["font-size"] = element.frameworkElement.options.fontSize || 14;
+                        properties["va-angle"] = element.frameworkElement.options.angle || 30;
+                        properties["va-unit"] = element.frameworkElement.options.unit || 'deg';
+                        properties["va-label-length"] = element.frameworkElement.options.labelLength === true;
+                        properties["_meta"] = {
+                            tool: "view_angle",
+                            text: element.metaText,
+                            source: element.metaSource
+                        };
+                    }
+                    break;
+                case 'intersection_angle':
+                    if (element.frameworkElement.options) {
+                        properties["stroke"] = element.frameworkElement.options.color || _color;
+                        properties["stroke-width"] = element.frameworkElement.options.weight || _weight;
+                        properties["font-color"] = element.frameworkElement.options.fontColor || '#000';
+                        properties["font-size"] = element.frameworkElement.options.fontSize || 14;
+                        properties["ia-unit"] = element.frameworkElement.options.unit || 'both';
+                        properties["ia-angles"] = element.frameworkElement.options.angles || 'angle';
+                        properties["_meta"] = {
+                            tool: "intersection_angle",
+                            text: element.metaText,
+                            source: element.metaSource
+                        };
+                    }
+                    break;
             }
 
             // calcCrs for DimLine, Hectoline, ...
@@ -1310,6 +1382,19 @@
                                 this.setHectolineUnit(feature.properties["hl-unit"]);
                                 this.setHectolineInterval(feature.properties["hl-interval"]);
                                 this.setTextSize(feature.properties["font-size"]);
+                            } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "view_angle") {
+                                this.setTool('view_angle');
+                                feature.geometry.type = 'view_angle';
+                                this.setViewAngleUnit(feature.properties["va-unit"] || 'deg');
+                                this._sketch.setViewAngleAngle(parseFloat(feature.properties["va-angle"]) || 30);  // always degrees
+                                this.setViewAngleLabelLength(feature.properties["va-label-length"] === true);
+                                this.setTextSize(feature.properties["font-size"]);
+                            } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "intersection_angle") {
+                                this.setTool('intersection_angle');
+                                feature.geometry.type = 'intersection_angle';
+                                this.setIntersectionAngleUnit(feature.properties["ia-unit"] || 'both');
+                                this.setIntersectionAngleAngles(feature.properties["ia-angles"] || 'angle');
+                                this.setTextSize(feature.properties["font-size"]);
                             } else {
                                 this.setTool('line');
                             }
@@ -1416,6 +1501,8 @@
         if (activeTool && activeTool.tooltype === 'graphics') {
             switch (this.getTool()) {
                 case 'hectoline':
+                case 'view_angle':
+                case 'intersection_angle':
                 case 'dimpolygon': 
                 case 'dimline':
                     json.type = this.getTool();
@@ -1444,6 +1531,8 @@
                 case 'dimline':
                 case 'dimpolygon': 
                 case 'hectoline':
+                case 'view_angle':
+                case 'intersection_angle':
                     return true;
             }
         }
@@ -1616,8 +1705,10 @@
                     });
                     break;
                 case 'hectoline':
+                case 'view_angle':
+                case 'intersection_angle':
                     result.push({
-                        type: 'hectoline',
+                        type: element.type,
                         stroke: element.frameworkElement.options.color,
                         strokeWidth: element.frameworkElement.options.weight,
                         fontColor: element.frameworkElement.options.fontColor,
@@ -1655,7 +1746,9 @@
             case 'compass_rose': return { name: 'line', styles: ['stroke-color'] };
             case 'dimline':
             case 'dimpolygon':
-            case 'hectoline': return { name: 'line', styles: ['stroke-color'] };
+            case 'hectoline':
+            case 'view_angle':
+            case 'intersection_angle': return { name: 'line', styles: ['stroke-color'] };
             default: return [];
         }
     };
@@ -1695,7 +1788,7 @@
     };
 
     this._defaultBehaviour = function (type) {
-        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'dimpolygon', 'hectoline']) >= 0;
+        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'dimpolygon', 'hectoline', 'view_angle', 'intersection_angle']) >= 0;
     };
 
     this.hideContextMenu = function () {

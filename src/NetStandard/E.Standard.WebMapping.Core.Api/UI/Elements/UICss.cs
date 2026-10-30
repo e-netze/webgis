@@ -164,6 +164,13 @@ public class UICss
     public const string GraphicsDimPolygonAreaUnit = "webgis-graphics-dimpolygon-area-unit";
     public const string GraphicsDimPolygonLabelEdges = "webgis-graphics-dimpolygon-label-edges";
 
+    public const string GraphicsViewAngleAngle = "webgis-graphics-view_angle-angle";
+    public const string GraphicsViewAngleUnit = "webgis-graphics-view_angle-unit";
+    public const string GraphicsViewAngleLabelLength = "webgis-graphics-view_angle-label-length";
+
+    public const string GraphicsIntersectionAngleUnit = "webgis-graphics-intersection_angle-unit";
+    public const string GraphicsIntersectionAngleAngles = "webgis-graphics-intersection_angle-angles";
+
     public const string ModalCloseElement = "webgis-modal-close-element";
 
     public const string MapScalesSelect = "webgis-map-scales-select";

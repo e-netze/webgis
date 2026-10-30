@@ -9,6 +9,7 @@ using E.Standard.GeoJson;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
+using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebGIS.Tools.MapMarkup.Export;
 
@@ -79,6 +80,19 @@ class ShapeFileExport : IExport
 
                     var shape = feature.ToShape();
                     transformer.Transform(shape);
+
+                    // intersection_angle: vertices 0,1 => line 1, vertices 2,3 => line 2 => two parts
+                    if (toolType == "intersection_angle" && shape is Polyline anglePolyline
+                        && anglePolyline.PathCount == 1 && anglePolyline[0].PointCount == 4)
+                    {
+                        var path = anglePolyline[0];
+                        shape = new Polyline(new[]
+                        {
+                            new E.Standard.WebMapping.Core.Geometry.Path(new List<Point>() { path[0], path[1] }),
+                            new E.Standard.WebMapping.Core.Geometry.Path(new List<Point>() { path[2], path[3] })
+                        });
+                    }
+
                     shapeFeature.Shape = shape;
 
                     foreach (var fieldName in propertyMapping.Keys)

@@ -84,6 +84,24 @@ static class Mapping
                 { "STEPS", "dc-steps" },
                 { "TEXT", "_meta.text" }
             }
+        },
+        {
+            "view_angle", new Dictionary<string, string>()
+            {
+                { "WIDTH", "stroke-width" },
+                { "COLOR", "stroke" },
+                { "ANGLE", "va-angle" },  // always degrees
+                { "UNIT", "va-unit" }
+            }
+        },
+        {
+            "intersection_angle", new Dictionary<string, string>()
+            {
+                { "WIDTH", "stroke-width" },
+                { "COLOR", "stroke" },
+                { "UNIT", "ia-unit" },
+                { "ANGLES", "ia-angles" }
+            }
         }
     };
 
@@ -97,6 +115,8 @@ static class Mapping
         {  "polygon", ShapeFile.geometryType.Polygon },
         {  "rectangle", ShapeFile.geometryType.Polygon },
         {  "circle", ShapeFile.geometryType.Polygon },
-        {  "distance_circle", ShapeFile.geometryType.Polygon }
+        {  "distance_circle", ShapeFile.geometryType.Polygon },
+        {  "view_angle", ShapeFile.geometryType.Polyline },
+        {  "intersection_angle", ShapeFile.geometryType.Polyline }
     };
 }

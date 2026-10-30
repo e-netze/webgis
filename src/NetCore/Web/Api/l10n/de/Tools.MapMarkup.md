@@ -19,6 +19,8 @@ Einfaches Zeichnen in der Karte.
 ## dimline: Bemaßung
 ## dimpolygon: Bemaßungsfläche
 ## hectoline: Hektometrierungslinine
+## view_angle: Sichtfeld (Winkel)
+## intersection_angle: Schnittwinkel
 
 ## save: Zeichnung speichern
 ## open: Zeichnung laden
@@ -62,6 +64,17 @@ Einfaches Zeichnen in der Karte.
 ## area-unit: Flächen Einheit
 ## label-edges: Kanten beschriften
 ## label-total-length: Gesamt-Länge beschriften
+## angle: Öffnungswinkel
+## apply-angle: Winkel übernehmen
+## angle-unit-deg: Grad
+## angle-unit-gon: Gon
+## angle-unit-both: Grad und Gon
+## label-axis-length: Achsenlänge beschriften
+## show-angles: Winkel anzeigen
+## show-angles-intersection: Schnittwinkel
+## show-angles-adjacent: Nebenwinkel
+## show-angles-both: Beide
+## show-angles-all: Alle
 
 # draw-symbol: Symbol setzen
 # draw-point: Punkt setzen
@@ -74,6 +87,8 @@ Einfaches Zeichnen in der Karte.
 # draw-dimline: Bemaßung zeichnen
 # draw-dimpolygon: Bemaßungsfläche zeichnen
 # draw-hectoline: Hektometrierungslinie zeichnen
+# draw-view-angle: Sichtfeld (Winkel) zeichnen
+# draw-intersection-angle: Schnittwinkel zeichnen
 
 # apply-line: Linie übernehmen
 # apply-polygon: Fläche übernehmen

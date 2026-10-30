@@ -54,7 +54,9 @@ public enum GraphicsTool
     HectoLine = 11,
     Point = 12,
     Compass_Rose = 13,
-    DimPolygon = 14
+    DimPolygon = 14,
+    View_Angle = 15,
+    Intersection_Angle = 16
 }
 
 public enum LookupType
@@ -168,6 +170,11 @@ public enum ApiClientButtonCommand
     setgraphicsdimlinelabeltotallength = 91,
     timefilterremoveall = 92,
     showpreviewgeometry = 93,
+    setgraphicsviewangleangle = 94,
+    setgraphicsviewangleunit = 95,
+    setgraphicsviewanglelabellength = 96,
+    setgraphicsintersectionangleunit = 97,
+    setgraphicsintersectionangleangles = 98,
 }
 
 public enum ApiToolEvents

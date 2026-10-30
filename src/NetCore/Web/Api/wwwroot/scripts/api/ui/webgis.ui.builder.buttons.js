@@ -53,6 +53,10 @@ webgis.ui.builder["button"] = (map, $newElement, element, options) => {
                 var $intervalControl = $(this).closest('.webgis-ui-optionscontainer').find('.webgis-graphics-hectoline-interval');
                 $this.data('_value', $intervalControl.length === 1 ? parseFloat($intervalControl.val()) : null);
                 break;
+            case "setgraphicsviewangleangle":
+                var $angleControl = $(this).closest('.webgis-ui-optionscontainer').find('.webgis-graphics-view_angle-angle');
+                $this.data('_value', $angleControl.length === 1 ? parseFloat($angleControl.val()) : null);
+                break;
         }
         webgis.tools.onButtonClick(map,
             {
