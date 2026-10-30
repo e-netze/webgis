@@ -51,6 +51,15 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     protected readonly string[] MobileTools = [ "pointer", "symbol", "freehand", "line", "polygon", "dimline", "share", "save", "open", "upload", "download" ];
     protected readonly string[] AdvancedTools = [ "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline" ];  // Do not use with Internet Explorer
 
+    private static readonly Dictionary<string, string> ToolGroups = new()
+    {
+        ["symbol"] = "draw", ["text"] = "draw", ["point"] = "draw", ["freehand"] = "draw",
+        ["line"] = "draw", ["polygon"] = "draw", ["rectangle"] = "draw", ["circle"] = "draw",
+        ["distance_circle"] = "measure", ["compass_rose"] = "measure", ["dimline"] = "measure",
+        ["dimpolygon"] = "measure", ["hectoline"] = "measure",
+        ["save"] = "io", ["open"] = "io", ["share"] = "io", ["upload"] = "io", ["download"] = "io"
+    };
+
     #region IApiServerTool Member
 
     public ApiEventResponse OnButtonClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
@@ -110,18 +119,6 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             text = localizer.Localize("tools.circle"),
                             css = UICss.Narrow
                         },
-                        new UIImageButton(this.GetType(),"distance_circle", UIButton.UIButtonType.servertoolcommand,"distance_circle")
-                        {
-                            value = "distance_circle",
-                            text = localizer.Localize("tools.distance_circle"),
-                            css = UICss.Narrow
-                        },
-                        new UIImageButton(this.GetType(),"compass", UIButton.UIButtonType.servertoolcommand,"compass_rose")
-                        {
-                            value = "compass_rose",
-                            text = localizer.Localize("tools.compass_rose"),
-                            css = UICss.Narrow
-                        },
                         new UIImageButton(this.GetType(),"dimline", UIButton.UIButtonType.servertoolcommand,"dimline")
                         {
                             value = "dimline",
@@ -138,6 +135,18 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                         {
                             value = "hectoline",
                             text = localizer.Localize("tools.hectoline"),
+                            css = UICss.Narrow
+                        },
+                        new UIImageButton(this.GetType(),"distance_circle", UIButton.UIButtonType.servertoolcommand,"distance_circle")
+                        {
+                            value = "distance_circle",
+                            text = localizer.Localize("tools.distance_circle"),
+                            css = UICss.Narrow
+                        },
+                        new UIImageButton(this.GetType(),"compass", UIButton.UIButtonType.servertoolcommand,"compass_rose")
+                        {
+                            value = "compass_rose",
+                            text = localizer.Localize("tools.compass_rose"),
                             css = UICss.Narrow
                         }
                         //,new UIBreak()
@@ -193,6 +202,15 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                         //    css=UICss.ToClass(new string[]{UICss.ToolParameter, UICss.AutoSetterMapGraphicsTool})
                         //}
             });
+
+        foreach (var imageButton in uiImageButtons.OfType<UIImageButton>())
+        {
+            if (ToolGroups.TryGetValue(imageButton.value?.ToString() ?? "", out var group))
+            {
+                imageButton.group = group;
+                imageButton.grouptext = localizer.Localize($"toolgroups.{group}");
+            }
+        }
 
         List<IUIElement> uiElements = new List<IUIElement>();
 

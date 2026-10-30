@@ -27,6 +27,11 @@ Simple drawing on the map.
 ## upload: Upload (GPX, ...)
 ## download: Download (GPX, Shape)
 
+# toolgroups:
+## draw: Draw
+## measure: Measure
+## io: Import/Export
+
 # symbology:
 ## set: Set Symbology
 

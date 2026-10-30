@@ -58,6 +58,9 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Viewer: new table tool "Statistics" for query results of ArcGIS Server layers with `supportsStatistics` (key figures and count per value with ranks over the whole query, CSV download); clicking a value or rank restricts the result, and single Query Builder rows can be removed. Requires the Query Builder to be allowed for the service.
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/search_identify/operations/results_desktop/results_desktop.html#results-query-statistics)
   [Docs CMS](https://docs.webgiscloud.com/en/webgis/apps/cms/add_ags_service.html#cms-ags-query-statistics)
+- Viewer: the tools of "Drawing (Map Markup)" are combined into the groups "Draw", "Measure" and "Import/Export" to save space; switch back to the flat list with `webgis.usability.groupToolOptions = false` in `custom.js`.
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/tools/general/mapmarkup/manual.html#mapmarkup-tool-groups)
+  [Docs custom.js](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-group-tool-options)
 
 ### Fixed
 

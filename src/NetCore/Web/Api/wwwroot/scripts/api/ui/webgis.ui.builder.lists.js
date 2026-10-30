@@ -78,6 +78,104 @@
             $newElement.trigger('click');
     };
 
+    // option groups: image buttons with the same data-group (UIImageButton.group) are moved into a flyout
+    // of a group button (webgis.usability.groupToolOptions). The group button shows the icon of the last
+    // selected option of its group and is selected, if an option of its group is selected.
+    webgis.ui.optionsContainerGroups = {
+        // all options of a container (including the options in group flyouts), in document order
+        items: function ($container) {
+            return $container.children().not('.webgis-ui-option-group, .webgis-ui-option-group-flyout')
+                .add($container.children('.webgis-ui-option-group-flyout').children());
+        },
+        build: function ($container) {
+            if (webgis.usability.groupToolOptions === false) {
+                return;
+            }
+
+            var groups = {};
+            $container.children('[data-group]').each(function (i, item) {
+                var group = $(item).attr('data-group');
+                (groups[group] = groups[group] || []).push(item);
+            });
+
+            for (var group in groups) {
+                var items = groups[group];
+                if (items.length < 2) {
+                    continue;
+                }
+
+                var $first = $(items[0]),
+                    groupText = $first.data('group-text') || group;
+                var $groupButton = $("<div>")
+                    .addClass('webgis-ui-imagebutton webgis-ui-option-group')
+                    .attr('data-option-group', group)
+                    .attr('title', groupText)
+                    .css('background-image', $first.css('background-image'))
+                    .insertBefore($first);
+                $("<div>").text(groupText).addClass('webgis-ui-imagebutton-text').appendTo($groupButton);
+
+                var $flyout = $("<div>")
+                    .addClass('webgis-ui-option-group-flyout')
+                    .attr('data-option-group', group)
+                    .css('display', 'none')
+                    .appendTo($container);
+                $(items).appendTo($flyout);
+
+                $groupButton.click(function (e) {
+                    e.stopPropagation();
+                    var $button = $(this),
+                        $groupFlyout = $button.parent().children(".webgis-ui-option-group-flyout[data-option-group='" + $button.attr('data-option-group') + "']"),
+                        isOpen = $groupFlyout.is(':visible');
+
+                    webgis.ui.optionsContainerGroups.closeFlyouts();
+                    if (!isOpen) {
+                        $groupFlyout
+                            .css('top', ($button.position().top + $button.outerHeight(true)) + 'px')
+                            .css('display', 'block');
+                        $button.addClass('webgis-ui-option-group-open');
+                    }
+                });
+            }
+
+            if ($container.children('.webgis-ui-option-group').length > 0) {
+                $container.addClass('webgis-ui-optionscontainer-grouped');
+            }
+        },
+        // updates the selection state and icon of the group buttons (call after the selected option changed)
+        sync: function ($container) {
+            $container.children('.webgis-ui-option-group').each(function (i, groupButton) {
+                var $groupButton = $(groupButton),
+                    $selected = $container
+                        .children(".webgis-ui-option-group-flyout[data-option-group='" + $groupButton.attr('data-option-group') + "']")
+                        .children('.webgis-ui-option-selected');
+
+                if ($selected.length > 0) {
+                    $groupButton
+                        .addClass('webgis-ui-option-selected')
+                        .css('background-image', $selected.first().css('background-image'));
+                } else {
+                    $groupButton.removeClass('webgis-ui-option-selected');
+                }
+            });
+        },
+        closeFlyouts: function () {
+            $('.webgis-ui-option-group-flyout').css('display', 'none');
+            $('.webgis-ui-option-group-open').removeClass('webgis-ui-option-group-open');
+        }
+    };
+
+    $(document)
+        .on('mousedown.webgis-option-group touchstart.webgis-option-group', function (e) {
+            if ($(e.target).closest('.webgis-ui-option-group, .webgis-ui-option-group-flyout').length === 0) {
+                webgis.ui.optionsContainerGroups.closeFlyouts();
+            }
+        })
+        .on('keydown.webgis-option-group', function (e) {
+            if (e.key === 'Escape') {
+                webgis.ui.optionsContainerGroups.closeFlyouts();
+            }
+        });
+
     // optionscontainer: the options (e.g. imagebuttons) set container.value and call container.onChange when clicked
     webgis.ui.builder["optionscontainer"] = (map, $newElement, element) => {
         $newElement.addClass('webgis-ui-optionscontainer');
@@ -98,7 +196,7 @@
 
         // clicks the option matching the current container value (the argument is ignored)
         newElement.setValue = function (val) {
-            $(this).children().each(function (i, e) {
+            webgis.ui.optionsContainerGroups.items($(this)).each(function (i, e) {
                 var $e = $(e);
 
                 if ($e.data('_value') == newElement.value ||
@@ -113,6 +211,9 @@
     // after the options are inserted: select the current value, a configured default (webgis.usability.optionContainerDefault) or the first option
     webgis.ui.builder["optionscontainer.afterinsert"] = (map, $newElement, element) => {
         var newElement = $newElement.get(0);
+        webgis.ui.optionsContainerGroups.build($newElement);
+        var $items = webgis.ui.optionsContainerGroups.items($newElement);
+
         if (!newElement.value && !$newElement.hasClass('allow-null-values')) {
             var defaultValue = null;
             for (var d in webgis.usability.optionContainerDefault) {
@@ -122,10 +223,10 @@
                     defaultValue = ocd.value;
                 }
             }
-            if (defaultValue && $newElement.children("[data-value='" + defaultValue + "']").length === 1) {
-                $newElement.children("[data-value='" + defaultValue + "']").trigger('click');
+            if (defaultValue && $items.filter("[data-value='" + defaultValue + "']").length === 1) {
+                $items.filter("[data-value='" + defaultValue + "']").trigger('click');
             } else {
-                $newElement.children(':first-child').trigger('click');
+                $items.first().trigger('click');
             }
         }
         else {

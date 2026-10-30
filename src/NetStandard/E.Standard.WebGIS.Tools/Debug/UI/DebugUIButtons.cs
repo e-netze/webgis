@@ -129,6 +129,17 @@ public class DebugUIButtons : DebugUIToolBase, IApiButtonResources, IApiUndoTool
                     Hint("allow_null_values: nothing selected initially; servertoolcommand imagebuttons => echo on every click."),
                     OptionContainer("options-null", UIButton.UIButtonType.servertoolcommand, EchoCommand, allowNullValues: true)
                         .AsToolParameter(UICss.OptionContainerWithLabels),
+                    Hint("Option groups (UIImageButton.group): 'shapes' is a group button with a flyout (shows the last selected option, selected if an option of the group is selected; closes on selection, outside click, Esc). 'single' has only one option => shown flat. webgis.usability.groupToolOptions = false => all flat."),
+                    new UIOptionContainer()
+                    {
+                        id = Id("options-grouped"),
+                        elements = [
+                            new UIImageButton(GetType(), "pointer", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.unknown.ToString()) { value = "pointer", text = "pointer" },
+                            new UIImageButton(GetType(), "rectangle", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.unknown.ToString()) { value = "rectangle", text = "rectangle", group = "shapes", grouptext = "shapes" },
+                            new UIImageButton(GetType(), "polygon", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.unknown.ToString()) { value = "polygon", text = "polygon", group = "shapes", grouptext = "shapes" },
+                            new UIImageButton(GetType(), "circle", UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.unknown.ToString()) { value = "circle", text = "circle", group = "single", grouptext = "single" },
+                        ]
+                    }.AsToolParameter(UICss.OptionContainerWithLabels),
                     EchoButton()),
 
                 Section("click-toggle",

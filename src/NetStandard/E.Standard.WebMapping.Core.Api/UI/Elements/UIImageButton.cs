@@ -4,6 +4,8 @@ using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Extensions;
 
+using Newtonsoft.Json;
+
 namespace E.Standard.WebMapping.Core.Api.UI.Elements;
 
 public class UIImageButton : UIElement, IUIElementText
@@ -42,6 +44,16 @@ public class UIImageButton : UIElement, IUIElementText
 
     public string buttontype { get; set; }
     public string buttoncommand { get; set; }
+
+    // optional: inside an optionscontainer, buttons with the same group are combined
+    // into a group button with a flyout (client option webgis.usability.groupToolOptions)
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string group { get; set; }
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string grouptext { get; set; }
 
     public static string ToolResourceImage(Type owner, string imageName)
     {

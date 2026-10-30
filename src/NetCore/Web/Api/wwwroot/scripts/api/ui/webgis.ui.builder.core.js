@@ -493,6 +493,7 @@
                     $optionContainer.find("[data-value='" + setter.val + "']").addClass('webgis-ui-option-selected');
                     if ($optionContainer.hasClass('webgis-ui-optionscontainer')) {
                         $optionContainer.get(0).value = setter.val;  // like the default setter: also set the value (sent as tool parameter)
+                        webgis.ui.optionsContainerGroups.sync($optionContainer);
                     }
                 }
                 else if (setter.name === "_anonymous-user-id") {
@@ -515,13 +516,14 @@
 
                         if ($e.hasClass('webgis-ui-optionscontainer')) {
                             e.value = setter.val;
-                            $e.children().removeClass('webgis-ui-option-selected').each(function (i, c) {
+                            webgis.ui.optionsContainerGroups.items($e).removeClass('webgis-ui-option-selected').each(function (i, c) {
                                 var $c = $(c);
                                 if ($c.data('_value') == setter.val) {
                                     $c.addClass('webgis-ui-option-selected');
                                     return false;
                                 }
                             });
+                            webgis.ui.optionsContainerGroups.sync($e);
                         }
                         else if ($e.hasClass('webgis-bbox-input-holder')) {
                             $e.webgis_bbox_input('val', setter.val);

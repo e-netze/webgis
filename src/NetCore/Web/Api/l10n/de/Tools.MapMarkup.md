@@ -27,6 +27,11 @@ Einfaches Zeichnen in der Karte.
 ## upload: Hochladen (GPX, ...)
 ## download: Herunterladen (GPX, Shape)
 
+# toolgroups:
+## draw: Zeichnen
+## measure: Messen
+## io: Import/Export
+
 # symbology:
 ## set: Symbolik ändern
 

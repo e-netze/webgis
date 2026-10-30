@@ -369,6 +369,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [Docs CMS](https://docs.webgiscloud.com/en/webgis/apps/cms/add_ags_service.html#cms-ags-query-statistics),
   [Architecture](docs/architecture/query-result-restriction.md)
 
+- Option groups for image buttons in option containers: buttons with the same ``UIImageButton.group``
+  (``grouptext`` = label) are combined into a group button with a flyout. The group button shows the
+  icon of the last selected option and is selected while one of its options is active (also via
+  ``setValue``/setters); the flyout closes on selection, outside click and ``Esc``. Groups with only
+  one option are shown flat. Disable with ``webgis.usability.groupToolOptions = false`` (default ``true``).
+  * Map Markup uses the groups "Draw", "Measure" and "Import/Export" ("Select" stays ungrouped).
+  * Demo in the debug tool "UI: Buttons & Menus".
+
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/tools/general/mapmarkup/manual.html#mapmarkup-tool-groups),
+  [Docs custom.js](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-group-tool-options)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

@@ -3912,6 +3912,37 @@ body.webgis-ui-holder {
     border-bottom: var(--webgis-ui-border-width-item-selected) solid var(--webgis-brand-primary);
 }
 
+/* option groups (webgis.usability.groupToolOptions): group button + flyout with the options of the group */
+.webgis-ui-optionscontainer.webgis-ui-optionscontainer-grouped {
+    position: relative;
+}
+
+.webgis-ui-imagebutton.webgis-ui-option-group::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--webgis-ui-text);
+}
+
+.webgis-ui-imagebutton.webgis-ui-option-group.webgis-ui-option-group-open {
+    background-color: var(--webgis-ui-surface-hover);
+}
+
+.webgis-ui-option-group-flyout {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 2px;
+    background-color: var(--webgis-ui-surface);
+    border: 1px solid var(--webgis-ui-border);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
+
 .webgis-ui-collapsable-title {
     cursor: pointer;
     background: var(--webgis-ui-surface-sunken);

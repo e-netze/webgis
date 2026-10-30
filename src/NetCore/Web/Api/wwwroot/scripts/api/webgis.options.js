@@ -34,6 +34,7 @@ webgis.usability = {
         bottom: 0
     },
     optionContainerDefault: [],
+    groupToolOptions: true, // combine image buttons of an option container (e.g. Map Markup tools) with the same group into a group button with a flyout; false => flat list
     presentationTocSearch: false,
     allowDarkmode: false,
     allowStyleClassSelection: false,

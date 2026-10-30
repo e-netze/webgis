@@ -72,6 +72,9 @@ webgis.ui.builder["imagebutton"] = (map, $newElement, element, options) => {
         $newElement.css('background-image', 'url(' + webgis.css.imgResource(element.src) + ')');
     }
     $newElement.data('_value', element.value);
+    if (element.group) {
+        $newElement.attr('data-group', element.group).data('group-text', element.grouptext);
+    }
 
     var button = $newElement.get(0);
     button.buttoncommand = element.buttoncommand;
@@ -91,6 +94,8 @@ webgis.ui.builder["imagebutton"] = (map, $newElement, element, options) => {
             optContainer.value = $this.data('_value');
             $optContainer.find('.webgis-ui-option-selected').removeClass('webgis-ui-option-selected');
             $(this).addClass('webgis-ui-option-selected');
+            webgis.ui.optionsContainerGroups.sync($optContainer);
+            webgis.ui.optionsContainerGroups.closeFlyouts();
             if (optContainer.onChange)
                 optContainer.onChange();
         }
