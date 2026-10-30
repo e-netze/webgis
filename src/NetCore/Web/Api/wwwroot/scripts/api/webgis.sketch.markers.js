@@ -242,4 +242,64 @@ webgis.sketch.markers = function (ctx) {
         }
         catch (e) { }
     };
+
+    /********* Bubble move (touch devices) *********/
+    // simulates dragging a vertex marker: the marker follows the map mouse position (click bubble)
+    // start => dragstart, mouse move => drag, end (next map click) => dragend
+    // the null checks are kept as before (!== null, != null, truthy), the element may be undefined (sparse freehand markers)
+    var _bubbleElement = null;
+
+    this.isBubbleMoving = function () { return _bubbleElement ? true : false; };
+    this.startBubbleMove = function (index) {
+        var sketch = ctx.sketch;
+        if (ctx.type().frameworkElementIsVertexMarker) {
+            if (state.frameworkElements.length > 0) {
+                _bubbleElement = state.frameworkElements[0];
+            }
+        } else {
+            if (index < 0 || index >= state.vertexFrameworkElements.length)
+                return;
+
+            sketch.hideMoverLine();
+            sketch.hideMoverMarker();
+            sketch.hideTraceLine();
+
+            _bubbleElement = state.vertexFrameworkElements[index];
+        }
+
+        _bubbleElement.fire('dragstart');
+        sketch.map.ui.setClickBubbleLatLng(_bubbleElement.getLatLng());
+    };
+    this.endBubbleMove = function () {
+        if (_bubbleElement !== null) {
+            _bubbleElement.fire('dragend');
+            _bubbleElement = null;
+        }
+    };
+    // map mouse move while a marker is dragged
+    this.bubbleMoveTo = function (latlng) {
+        if (_bubbleElement !== null && latlng != null) {
+            _bubbleElement.setLatLng(latlng);
+            _bubbleElement.fire('drag');
+        }
+    };
+    // map moved/zoomed => cancel without dragend
+    this.cancelBubbleMove = function (map) {
+        if (_bubbleElement !== null) {
+            _bubbleElement = null;
+            ctx.sketch._isMarkerDragging = false;
+            map.ui.setClickBubbleLatLng(null); // Park
+        }
+    };
+    // => sketch.resetMarkerDragging: back to the drag start position
+    this.resetDragging = function () {
+        var sketch = ctx.sketch;
+        if (sketch._isMarkerDragging) {
+            if (_bubbleElement != null) {
+                _bubbleElement.setLatLng(_bubbleElement._dragstartLatLng);
+                _bubbleElement = null;
+            }
+            sketch._isMarkerDragging = false;
+        }
+    };
 };

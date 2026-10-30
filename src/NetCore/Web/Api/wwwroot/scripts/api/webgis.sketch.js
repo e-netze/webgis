@@ -12,7 +12,7 @@
     var _model = new webgis.sketch.vertices(), _vertices = _model.vertices, _undos = [];
     var _geometryType = '', _originalSrs = 0, _originalSrsP4Params = null;
     var _frameworkElements = [], _currentFrameworkIndex = 0;
-    var _vertexFrameworkElements = [], _currentBubbleMoveVertextFrameworkElement = null;
+    var _vertexFrameworkElements = [];
     var _txtRefResolution = 0;
     var _sketchProperties = null;
     var _sketchAdvancedProperties = null;
@@ -317,15 +317,7 @@
             }
         }
     };
-    this.resetMarkerDragging = function () {
-        if (this._isMarkerDragging) {
-            if (_currentBubbleMoveVertextFrameworkElement != null) {
-                _currentBubbleMoveVertextFrameworkElement.setLatLng(_currentBubbleMoveVertextFrameworkElement._dragstartLatLng);
-                _currentBubbleMoveVertextFrameworkElement = null;
-            }
-            this._isMarkerDragging = false;
-        }
-    };
+    this.resetMarkerDragging = function () { _markers.resetDragging(); };
     /********* Vertex markers => webgis.sketch.markers.js *********/
     this._appendMarkerEvents = function (marker) {
         _markers.appendEvents(marker, this._menu);
@@ -451,7 +443,7 @@
     this.hideConstructMover = function () { _mover.hideConstructMover(); };
 
     this.addVertex = function (vertex) {
-        if (_currentBubbleMoveVertextFrameworkElement) {
+        if (_markers.isBubbleMoving()) {
             this.endBubbleMoveVertex();
             return;
         }
@@ -664,11 +656,7 @@
         this._isConstructContextMenuVisible = true;
     };
     var mapOnZoomEnd = function (e, map) {
-        if (_currentBubbleMoveVertextFrameworkElement !== null) {
-            _currentBubbleMoveVertextFrameworkElement = null;
-            this._isMarkerDragging = false;
-            map.ui.setClickBubbleLatLng(null); // Park
-        }
+        _markers.cancelBubbleMove(map);
     };
     this.map.events.on('rightclick', mapOnRightClick, this);
     this.map.events.on(['moveend', 'zoomend'], mapOnZoomEnd, this);
@@ -773,10 +761,7 @@
 
     this.onMapMouseMove = function (map, latlng) {
         if (this._isMarkerDragging === true) {
-            if (_currentBubbleMoveVertextFrameworkElement !== null && latlng != null) {
-                _currentBubbleMoveVertextFrameworkElement.setLatLng(latlng);
-                _currentBubbleMoveVertextFrameworkElement.fire('drag');
-            }
+            _markers.bubbleMoveTo(latlng);
             return;
         }
 
@@ -1552,31 +1537,9 @@
         // ToDo: Parts!!
         return index < _vertices.length - 1;
     };
-    this.startBubbleMoveVertex = function (index) {
-        if (_type().frameworkElementIsVertexMarker) {
-            if (_frameworkElements.length > 0) {
-                _currentBubbleMoveVertextFrameworkElement = _frameworkElements[0];
-            }
-        } else {
-            if (index < 0 || index >= _vertexFrameworkElements.length)
-                return;
-
-            this.hideMoverLine();
-            this.hideMoverMarker();
-            this.hideTraceLine();
-
-            _currentBubbleMoveVertextFrameworkElement = _vertexFrameworkElements[index];
-        }
-
-        _currentBubbleMoveVertextFrameworkElement.fire('dragstart');
-        this.map.ui.setClickBubbleLatLng(_currentBubbleMoveVertextFrameworkElement.getLatLng());
-    };
-    this.endBubbleMoveVertex = function () {
-        if (_currentBubbleMoveVertextFrameworkElement !== null) {
-            _currentBubbleMoveVertextFrameworkElement.fire('dragend');
-            _currentBubbleMoveVertextFrameworkElement = null;
-        }
-    };
+    /********* Bubble move (touch devices) => webgis.sketch.markers.js *********/
+    this.startBubbleMoveVertex = function (index) { _markers.startBubbleMove(index); };
+    this.endBubbleMoveVertex = function () { _markers.endBubbleMove(); };
 
     /********* Move / rotate sketch => webgis.sketch.transform.js *********/
     this.startSketchMoving = function (index) { _transform.startMoving(index); };
