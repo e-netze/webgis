@@ -39,6 +39,7 @@
       "wwwroot/scripts/api/webgis.sketch.wkt.js",
       "wwwroot/scripts/api/webgis.sketch.transform.js",
       "wwwroot/scripts/api/webgis.sketch.mover.js",
+      "wwwroot/scripts/api/webgis.sketch.input.js",
       "wwwroot/scripts/api/webgis.sketch.geometry.js",
       "wwwroot/scripts/api/webgis.sketch.geometry.base.js",
       "wwwroot/scripts/api/webgis.sketch.geometry.point.js",
