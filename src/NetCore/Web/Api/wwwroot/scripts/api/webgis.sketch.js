@@ -1182,6 +1182,9 @@
     this.setViewAngleLabelLength = function (doLabel) { _typeOf('view_angle').setOption('labelLength', doLabel); };
     this.setIntersectionAngleUnit = function (unit) { _typeOf('intersection_angle').setOption('unit', unit); };
     this.setIntersectionAngleAngles = function (angles) { _typeOf('intersection_angle').setOption('angles', angles); };
+    this.setAzimuthUnit = function (unit) { _typeOf('azimuth').setOption('unit', unit); };
+    this.setAzimuthLabelLength = function (doLabel) { _typeOf('azimuth').setOption('labelLength', doLabel); };
+    this.setAzimuthLengthUnit = function (unit) { _typeOf('azimuth').setOption('lengthUnit', unit); };
     this.setText = function (text) { _typeOf('text').setOption('text', text); };
 
     this.getText = function () { return _typeOf('text').getOption('text'); };
@@ -1201,6 +1204,9 @@
     this.getViewAngleLabelLength = function () { return _typeOf('view_angle').getOption('labelLength'); };
     this.getIntersectionAngleUnit = function () { return _typeOf('intersection_angle').getOption('unit'); };
     this.getIntersectionAngleAngles = function () { return _typeOf('intersection_angle').getOption('angles'); };
+    this.getAzimuthUnit = function () { return _typeOf('azimuth').getOption('unit'); };
+    this.getAzimuthLabelLength = function () { return _typeOf('azimuth').getOption('labelLength'); };
+    this.getAzimuthLengthUnit = function () { return _typeOf('azimuth').getOption('lengthUnit'); };
     this.setGeometryType('polyline');
     this.vertexCount = function () {
         return _vertices.length;

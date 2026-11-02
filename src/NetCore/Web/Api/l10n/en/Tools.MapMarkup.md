@@ -21,6 +21,7 @@ Simple drawing on the map.
 ## hectoline: Hectometer Line
 ## view_angle: Field of View (Angle)
 ## intersection_angle: Intersection Angle
+## azimuth: Azimuth
 
 ## save: Save Drawing
 ## open: Load Drawing
@@ -75,6 +76,8 @@ Simple drawing on the map.
 ## show-angles-adjacent: Adjacent angle
 ## show-angles-both: Both
 ## show-angles-all: All
+## label-line-length: Label line length
+## length-unit: Length unit
 
 # draw-symbol: Set symbol
 # draw-point: Set point
@@ -89,6 +92,7 @@ Simple drawing on the map.
 # draw-hectoline: Draw hectometer line
 # draw-view-angle: Draw field of view (angle)
 # draw-intersection-angle: Draw intersection angle
+# draw-azimuth: Draw azimuth
 
 # apply-line: Apply line
 # apply-polygon: Apply polygon

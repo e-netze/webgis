@@ -61,6 +61,8 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Viewer: the tools of "Drawing (Map Markup)" are combined into the groups "Draw", "Measure" and "Import/Export" to save space; switch back to the flat list with `webgis.usability.groupToolOptions = false` in `custom.js`.
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/tools/general/mapmarkup/manual.html#mapmarkup-tool-groups)
   [Docs custom.js](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-group-tool-options)
+- Viewer: "Drawing (Map Markup)" has two new measure tools, "View angle" (cone with a given opening angle) and "Intersection angle" (angle between two lines, optionally with the adjacent angle); both are printed and exported like the other drawings.
+  [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
 
 ### Fixed
 

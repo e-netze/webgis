@@ -69,6 +69,7 @@
     "mapmarkup-tool-hectoline": "Hectometer line",
     "mapmarkup-tool-view_angle": "Field of view (angle)",
     "mapmarkup-tool-intersection_angle": "Intersection angle",
+    "mapmarkup-tool-azimuth": "Azimuth",
 
     "mapmarkup-pointer": "Click on an existing mapmarkup object in the map to edit it. To draw a new object, the corresponding tool must be selected.",
     "mapmarkup-symbol": "Click on the map to place a symbol...",
@@ -86,6 +87,7 @@
     "mapmarkup-hectoline": "Click on the map to define at least two vertices of the line. Intermediate points will be marked and labeled depending on the configured distance (under Properties).",
     "mapmarkup-view_angle": "Click on the map to define the apex. Click again to define the direction and length of the axis. The opening angle and the unit can be set under Properties.",
     "mapmarkup-intersection_angle": "Click on the map to define the first line with two points and then the second line with two more points. The intersection angle of the (extended) lines is labeled.",
+    "mapmarkup-azimuth": "Click on the map to define at least two vertices of the traverse. For each segment the azimuth (direction angle against north) is labeled.",
     "mapmarkup-intersection-angle-parallel": "parallel",
 
     "service-order": "Service Order",
@@ -105,6 +107,7 @@
     "hectoline": "Hectometer line",
     "view_angle": "Field of view (angle)",
     "intersection_angle": "Intersection angle",
+    "azimuth": "Azimuth",
     "rectangle": "Rectangle",
     "circle": "Circle",
     "distance_circle": "Buffer circle",

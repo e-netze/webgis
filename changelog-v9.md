@@ -380,6 +380,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/tools/general/mapmarkup/manual.html#mapmarkup-tool-groups),
   [Docs custom.js](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-group-tool-options)
 
+- Map Markup: new measure tools "View angle" (``view_angle``) and "Intersection angle" (``intersection_angle``)
+  in the group "Measure".
+  * View angle: 2 clicks (apex, axis end) draw a cone with a given opening angle (default 30°, the last
+    entered angle is the default for further objects in the session), dashed side lines, arcs and labels
+    of the total and half angles; unit degrees, gon or both; optional axis length label.
+  * Intersection angle: 4 clicks (2 lines) draw the angle at the intersection of the (extended) lines,
+    with dashed extensions if the intersection is outside of a segment ("parallel" label for parallel lines).
+    "Show angles": intersection angle, adjacent angle (180° - angle), both or all (mirrored at the intersection).
+  * Leaflet plugins ``webgis-graphics.view_angle.js`` / ``webgis-graphics.intersection_angle.js``, sketch
+    geometry types with auto-close after 2/4 vertices (``closeAfterVertices``).
+  * Print: ``ViewAngleElement`` / ``IntersectionAngleElement`` (same geometry as the client).
+  * Export: shapefile attributes ``ANGLE``/``UNIT`` resp. ``UNIT``/``ANGLES``, the intersection angle is
+    exported as 2-part polyline.
+  * Icons are placeholders for now.
+
+  [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

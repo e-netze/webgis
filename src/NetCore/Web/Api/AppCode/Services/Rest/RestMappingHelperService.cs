@@ -649,7 +649,8 @@ public class RestMappingHelperService /*: IDisposable*/
                 || graphicsTool == "dimpolygon"
                 || graphicsTool == "hectoline"
                 || graphicsTool == "view_angle"
-                || graphicsTool == "intersection_angle") && feature.GetPropery<int>("_calcCrs") > 0)
+                || graphicsTool == "intersection_angle"
+                || graphicsTool == "azimuth") && feature.GetPropery<int>("_calcCrs") > 0)
             {
                 calcShape = feature.ToShape();
                 using (var calcTransformer = new GeometricTransformerPro(ApiGlobals.SRefStore.SpatialReferences, 4326, feature.GetPropery<int>("_calcCrs")))
@@ -780,6 +781,17 @@ public class RestMappingHelperService /*: IDisposable*/
                        feature.GetPropery<float>("stroke-width"),
                        unit: feature.GetPropery<string>("ia-unit"),
                        angles: feature.GetPropery<string>("ia-angles"),
+                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
+                       calcPolyline: calcShape as Polyline));
+                }
+                else if (graphicsTool == "azimuth")
+                {
+                    map.GraphicsContainer.Add(new AzimuthElement((Polyline)shape,
+                       feature.GetPropery<string>("stroke").HexToColor(),
+                       feature.GetPropery<float>("stroke-width"),
+                       unit: feature.GetPropery<string>("az-unit"),
+                       labelLength: feature.GetPropery<bool>("az-label-length"),
+                       lengthUnit: feature.GetPropery<string>("az-length-unit"),
                        fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
                        calcPolyline: calcShape as Polyline));
                 }

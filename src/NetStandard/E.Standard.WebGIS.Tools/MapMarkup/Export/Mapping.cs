@@ -102,6 +102,16 @@ static class Mapping
                 { "UNIT", "ia-unit" },
                 { "ANGLES", "ia-angles" }
             }
+        },
+        {
+            "azimuth", new Dictionary<string, string>()
+            {
+                { "WIDTH", "stroke-width" },
+                { "COLOR", "stroke" },
+                { "UNIT", "az-unit" },
+                { "LABEL_LEN", "az-label-length" },
+                { "LEN_UNIT", "az-length-unit" }
+            }
         }
     };
 
@@ -117,6 +127,7 @@ static class Mapping
         {  "circle", ShapeFile.geometryType.Polygon },
         {  "distance_circle", ShapeFile.geometryType.Polygon },
         {  "view_angle", ShapeFile.geometryType.Polyline },
-        {  "intersection_angle", ShapeFile.geometryType.Polyline }
+        {  "intersection_angle", ShapeFile.geometryType.Polyline },
+        {  "azimuth", ShapeFile.geometryType.Polyline }
     };
 }

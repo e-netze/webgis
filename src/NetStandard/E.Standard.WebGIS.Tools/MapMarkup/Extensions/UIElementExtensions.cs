@@ -625,6 +625,46 @@ static internal class UIElementExtensions
         return collection;
     }
 
+    static public List<IUIElement> AddAzimuthStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    {
+        collection.Add(CreateHolder(e, stagedOnly,
+        [
+            .. AngleBaseStyleElements(e, localizer, collapseExclusive),
+            new UIOptionContainer()
+            {
+                title = localizer.Localize("symbology.properties"),
+                CollapseState = IsCollapsed(isCollapsed),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                elements = new IUIElement[]
+                {
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.unit")}:"
+                    },
+                    AngleUnitSelect(localizer, ApiClientButtonCommand.setgraphicsazimuthunit, "mapmarkup-azimuth-unit", UICss.GraphicsAzimuthUnit),
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.label-line-length")}:"
+                    },
+                    YesNoSelect(localizer, ApiClientButtonCommand.setgraphicsazimuthlabellength, "mapmarkup-azimuth-label-length", UICss.GraphicsAzimuthLabelLength, defaultYes: true),
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.length-unit")}:"
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsazimuthlengthunit)
+                    {
+                        options = new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value = "m", label = $"{localizer.Localize("meters")} [m]" },
+                            new UISelect.Option() { value = "km", label = $"{localizer.Localize("kilometers")} [km]" }
+                        },
+                        id = "mapmarkup-azimuth-length-unit",
+                        css = UICss.ToClass(new string[] { UICss.GraphicsAzimuthLengthUnit })
+                    }
+                }
+            }
+        ]));
+
+        return collection;
+    }
+
     static private IUIElement[] AngleBaseStyleElements(ApiToolEventArguments e, ILocalizer localizer, bool collapseExclusive)
         => new IUIElement[]
         {

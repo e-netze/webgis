@@ -5,6 +5,7 @@ using System.Linq;
 
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
+using E.Standard.WebMapping.Core.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 using E.Standard.WebMapping.GeoServices.Graphics.GraphicsElements.Extensions;
 
@@ -98,6 +99,20 @@ internal class AngleElementHelper : IDisposable
 
             _canvas.DrawOutlineLabel(_map, text, imagePoint, font, brush, haloBrush, format);
         }
+    }
+
+    // segment length label parallel to the segment (above the line), like dimline (PolylineElement)
+    public void DrawSegmentLength(Point calcFrom, Point calcTo, double length, Unit unit)
+    {
+        Point from = ToImage(calcFrom.X, calcFrom.Y), to = ToImage(calcTo.X, calcTo.Y);
+
+        _canvas.LabelSegmentLength(_map,
+                                   (float)from.X, (float)from.Y, (float)to.X, (float)to.Y,
+                                   length,
+                                   fontSize: _fontSize,
+                                   dpiFactor: _dpiFactor,
+                                   lineAlignment: StringAlignment.Far,
+                                   unit: unit);
     }
 
     static public Point At(Point center, double radius, double direction)

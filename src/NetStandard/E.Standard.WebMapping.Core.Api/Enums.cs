@@ -56,7 +56,8 @@ public enum GraphicsTool
     Compass_Rose = 13,
     DimPolygon = 14,
     View_Angle = 15,
-    Intersection_Angle = 16
+    Intersection_Angle = 16,
+    Azimuth = 17
 }
 
 public enum LookupType
@@ -175,6 +176,9 @@ public enum ApiClientButtonCommand
     setgraphicsviewanglelabellength = 96,
     setgraphicsintersectionangleunit = 97,
     setgraphicsintersectionangleangles = 98,
+    setgraphicsazimuthunit = 99,
+    setgraphicsazimuthlabellength = 100,
+    setgraphicsazimuthlengthunit = 101,
 }
 
 public enum ApiToolEvents
