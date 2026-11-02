@@ -7,10 +7,10 @@
     var allowChangePresentation = true;
 
     var _isSimplePoint = function () { return sketch.getGeometryType() === 'point' };
-    var _isLineOrPolygon = function () { return $.inArray(sketch.getGeometryType(), ["polyline", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth"]) >= 0 };
+    var _isLineOrPolygon = function () { return $.inArray(sketch.getGeometryType(), ["polyline", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular"]) >= 0 };
     // dont allow multiparts with dimline, hectoline, ...
     var _allowMultipart = function () { return $.inArray(sketch.getGeometryType(), ["polyline", "polygon"]) >= 0 };
-    var _isLine = function () { return $.inArray(sketch.getGeometryType(), ["polyline", "dimline", "hectoline", "view_angle", "intersection_angle", "azimuth"]) >= 0 };
+    var _isLine = function () { return $.inArray(sketch.getGeometryType(), ["polyline", "dimline", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular"]) >= 0 };
     var _isPolygon = function () { return $.inArray(sketch.getGeometryType(), ["polygon", "dimpolygon"]) >= 0 };
 
     this.SetAllowChangePresentation = function (value) {
@@ -521,7 +521,8 @@
                                 sketch.remove();
                         });
                 }
-                if (_allowMultipart() && !sketch.isLastPartClosed()) {
+                var canCloseSection = sketch.canCloseSection();
+                if ((canCloseSection === true || (canCloseSection === null && _allowMultipart())) && !sketch.isLastPartClosed()) {
                     $_menuItem($container, webgis.l10n.get("sketch-close-section"), webgis.css.imgResource('sketch_new_section-26.png', 'tools'))
                         .click(function () {
                             var map = $(this).closest('.webgis-contextmenu').data('map'), sketch = map.toolSketch();

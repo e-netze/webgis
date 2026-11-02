@@ -22,6 +22,7 @@ Simple drawing on the map.
 ## view_angle: Field of View (Angle)
 ## intersection_angle: Intersection Angle
 ## azimuth: Azimuth
+## perpendicular: Perpendicular distance
 
 ## save: Save Drawing
 ## open: Load Drawing
@@ -78,6 +79,10 @@ Simple drawing on the map.
 ## show-angles-all: All
 ## label-line-length: Label line length
 ## length-unit: Length unit
+## station-format: Station
+## station-format-m: Meters (156.24m)
+## station-format-km: Chainage (0+156.24)
+## station-format-none: None
 
 # draw-symbol: Set symbol
 # draw-point: Set point
@@ -93,8 +98,10 @@ Simple drawing on the map.
 # draw-view-angle: Draw field of view (angle)
 # draw-intersection-angle: Draw intersection angle
 # draw-azimuth: Draw azimuth
+# draw-perpendicular: Draw perpendicular distance
 
 # apply-line: Apply line
+# finish-reference-line: Finish reference line
 # apply-polygon: Apply polygon
 # apply-symbol: Apply symbol
 

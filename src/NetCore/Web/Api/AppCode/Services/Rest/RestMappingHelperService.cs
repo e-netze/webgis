@@ -650,7 +650,8 @@ public class RestMappingHelperService /*: IDisposable*/
                 || graphicsTool == "hectoline"
                 || graphicsTool == "view_angle"
                 || graphicsTool == "intersection_angle"
-                || graphicsTool == "azimuth") && feature.GetPropery<int>("_calcCrs") > 0)
+                || graphicsTool == "azimuth"
+                || graphicsTool == "perpendicular") && feature.GetPropery<int>("_calcCrs") > 0)
             {
                 calcShape = feature.ToShape();
                 using (var calcTransformer = new GeometricTransformerPro(ApiGlobals.SRefStore.SpatialReferences, 4326, feature.GetPropery<int>("_calcCrs")))
@@ -792,6 +793,17 @@ public class RestMappingHelperService /*: IDisposable*/
                        unit: feature.GetPropery<string>("az-unit"),
                        labelLength: feature.GetPropery<bool>("az-label-length"),
                        lengthUnit: feature.GetPropery<string>("az-length-unit"),
+                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
+                       calcPolyline: calcShape as Polyline));
+                }
+                else if (graphicsTool == "perpendicular")
+                {
+                    map.GraphicsContainer.Add(new PerpendicularElement((Polyline)shape,
+                       feature.GetPropery<string>("stroke").HexToColor(),
+                       feature.GetPropery<float>("stroke-width"),
+                       lineVertexCount: feature.GetPropery<int>("pp-line-vertices"),
+                       stationFormat: feature.GetPropery<string>("pp-station-format"),
+                       lengthUnit: feature.GetPropery<string>("pp-length-unit"),
                        fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
                        calcPolyline: calcShape as Polyline));
                 }

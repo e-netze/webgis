@@ -318,6 +318,18 @@
                     if (map && map.graphics && tool.value)
                         map.graphics.setAzimuthLengthUnit(tool.value);
                     break;
+                case 'setgraphicsperpendicularstationformat':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setPerpendicularStationFormat(tool.value);
+                    break;
+                case 'setgraphicsperpendicularlengthunit':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setPerpendicularLengthUnit(tool.value);
+                    break;
+                case 'closegraphicssketchsection':
+                    if (map && map.graphics && map.graphics._sketch && map.graphics._sketch.canCloseSection() === true && !map.graphics._sketch.isLastPartClosed())
+                        map.graphics._sketch.appendPart();
+                    break;
                 case 'setgraphicstextstyle':
                 case 'setgraphics_text_style_and_apply_to_selected':
                     if (map && map.graphics && tool.value)
@@ -1881,7 +1893,7 @@
             tool != null &&
             (tool.tooltype === 'sketch1d' || tool.tooltype === 'sketch2d' ||
                 (tool.tooltype === 'sketchany' && map.sketch && $.inArray(map.sketch.getGeometryType(), ["polyline", "polygon"]) >= 0) ||
-                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth"]) >= 0));
+                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular"]) >= 0));
     };
 
     this.replaceCustomToolUrl = function (map, url, eventObject) {

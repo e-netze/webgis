@@ -57,7 +57,8 @@ public enum GraphicsTool
     DimPolygon = 14,
     View_Angle = 15,
     Intersection_Angle = 16,
-    Azimuth = 17
+    Azimuth = 17,
+    Perpendicular = 18
 }
 
 public enum LookupType
@@ -179,6 +180,9 @@ public enum ApiClientButtonCommand
     setgraphicsazimuthunit = 99,
     setgraphicsazimuthlabellength = 100,
     setgraphicsazimuthlengthunit = 101,
+    setgraphicsperpendicularstationformat = 102,
+    setgraphicsperpendicularlengthunit = 103,
+    closegraphicssketchsection = 104,
 }
 
 public enum ApiToolEvents

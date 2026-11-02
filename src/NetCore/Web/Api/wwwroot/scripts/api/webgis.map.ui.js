@@ -873,6 +873,11 @@
             $('.webgis-graphics-azimuth-length-unit').val(map.graphics.getAzimuthLengthUnit() || 'm');
         }
 
+        if (this._map.graphics.getTool() === 'perpendicular') {
+            $('.webgis-graphics-perpendicular-station-format').val(map.graphics.getPerpendicularStationFormat() || 'm');
+            $('.webgis-graphics-perpendicular-length-unit').val(map.graphics.getPerpendicularLengthUnit() || 'm');
+        }
+
         $('.webgis-query-combo.require-ui-refresh').each(function (i, e) {
             $(e).webgis_queryCombo('refresh');
         });

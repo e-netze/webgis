@@ -190,7 +190,7 @@
 
             // Dimline/hectoline behave like polyline (segment length/azimuth per section),
             // dimpolygon behaves like polygon - both should show the same segment info.
-            if (!constructionMode && $.inArray(geometryType, ["polygon", "polyline", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth"]) >= 0) {
+            if (!constructionMode && $.inArray(geometryType, ["polygon", "polyline", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular"]) >= 0) {
                 $tabSegment.css('display', 'block');
                 $divConstruction.css('display', 'none');
 

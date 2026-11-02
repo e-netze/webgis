@@ -70,6 +70,7 @@
     "mapmarkup-tool-view_angle": "Field of view (angle)",
     "mapmarkup-tool-intersection_angle": "Intersection angle",
     "mapmarkup-tool-azimuth": "Azimuth",
+    "mapmarkup-tool-perpendicular": "Perpendicular distance",
 
     "mapmarkup-pointer": "Click on an existing mapmarkup object in the map to edit it. To draw a new object, the corresponding tool must be selected.",
     "mapmarkup-symbol": "Click on the map to place a symbol...",
@@ -88,6 +89,7 @@
     "mapmarkup-view_angle": "Click on the map to define the apex. Click again to define the direction and length of the axis. The opening angle and the unit can be set under Properties.",
     "mapmarkup-intersection_angle": "Click on the map to define the first line with two points and then the second line with two more points. The intersection angle of the (extended) lines is labeled.",
     "mapmarkup-azimuth": "Click on the map to define at least two vertices of the traverse. For each segment the azimuth (direction angle against north) is labeled.",
+    "mapmarkup-perpendicular": "Click on the map to draw the reference line. Finish the line with a double click on its last point (or 'Close section' in the context menu or key F). Then set any number of points: for each point the perpendicular onto the reference line is labeled with its distance (and optionally the station). Finish with 'Apply' or a double click on the last point.",
     "mapmarkup-intersection-angle-parallel": "parallel",
 
     "service-order": "Service Order",
@@ -108,6 +110,7 @@
     "view_angle": "Field of view (angle)",
     "intersection_angle": "Intersection angle",
     "azimuth": "Azimuth",
+    "perpendicular": "Perpendicular distance",
     "rectangle": "Rectangle",
     "circle": "Circle",
     "distance_circle": "Buffer circle",

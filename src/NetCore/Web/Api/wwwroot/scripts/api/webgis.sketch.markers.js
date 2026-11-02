@@ -128,7 +128,12 @@ webgis.sketch.markers = function (ctx) {
         }
 
         if (new Date().getTime() - this._creationDate < 1000) {
-            sketch.close();
+            if (sketch.canCloseSection() === true) {
+                // double click: only finish the current section (eg. reference line of 'perpendicular'), not the whole sketch
+                sketch.appendPart();
+            } else {
+                sketch.close();
+            }
             webgis.delayed(function (marker) {
                 if (marker && marker._map)
                     marker._map.closePopup();

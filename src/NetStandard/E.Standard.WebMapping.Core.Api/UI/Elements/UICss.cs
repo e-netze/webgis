@@ -173,6 +173,8 @@ public class UICss
     public const string GraphicsAzimuthUnit = "webgis-graphics-azimuth-unit";
     public const string GraphicsAzimuthLabelLength = "webgis-graphics-azimuth-label-length";
     public const string GraphicsAzimuthLengthUnit = "webgis-graphics-azimuth-length-unit";
+    public const string GraphicsPerpendicularStationFormat = "webgis-graphics-perpendicular-station-format";
+    public const string GraphicsPerpendicularLengthUnit = "webgis-graphics-perpendicular-length-unit";
 
     public const string ModalCloseElement = "webgis-modal-close-element";
 

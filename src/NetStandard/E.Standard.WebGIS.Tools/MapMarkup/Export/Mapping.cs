@@ -112,6 +112,16 @@ static class Mapping
                 { "LABEL_LEN", "az-label-length" },
                 { "LEN_UNIT", "az-length-unit" }
             }
+        },
+        {
+            "perpendicular", new Dictionary<string, string>()
+            {
+                { "WIDTH", "stroke-width" },
+                { "COLOR", "stroke" },
+                { "LINE_VERTS", "pp-line-vertices" },
+                { "STAT_FMT", "pp-station-format" },
+                { "LEN_UNIT", "pp-length-unit" }
+            }
         }
     };
 
@@ -128,6 +138,7 @@ static class Mapping
         {  "distance_circle", ShapeFile.geometryType.Polygon },
         {  "view_angle", ShapeFile.geometryType.Polyline },
         {  "intersection_angle", ShapeFile.geometryType.Polyline },
-        {  "azimuth", ShapeFile.geometryType.Polyline }
+        {  "azimuth", ShapeFile.geometryType.Polyline },
+        {  "perpendicular", ShapeFile.geometryType.Polyline }
     };
 }

@@ -708,6 +708,10 @@
         }
     };
 
+    // null => default: 'f' key for lines and polygons, context menu for polyline and polygon
+    this.canCloseSection = function () {
+        return _type().canCloseSection();
+    };
     this.canMergeParts = function () {
         if (this.map.construct && _type().supportsMergeParts && _model.count() > 1) {
             return this.map.construct.mergePaths(this.getParts()) != null;
@@ -1185,6 +1189,8 @@
     this.setAzimuthUnit = function (unit) { _typeOf('azimuth').setOption('unit', unit); };
     this.setAzimuthLabelLength = function (doLabel) { _typeOf('azimuth').setOption('labelLength', doLabel); };
     this.setAzimuthLengthUnit = function (unit) { _typeOf('azimuth').setOption('lengthUnit', unit); };
+    this.setPerpendicularStationFormat = function (format) { _typeOf('perpendicular').setOption('stationFormat', format); };
+    this.setPerpendicularLengthUnit = function (unit) { _typeOf('perpendicular').setOption('lengthUnit', unit); };
     this.setText = function (text) { _typeOf('text').setOption('text', text); };
 
     this.getText = function () { return _typeOf('text').getOption('text'); };
@@ -1207,6 +1213,8 @@
     this.getAzimuthUnit = function () { return _typeOf('azimuth').getOption('unit'); };
     this.getAzimuthLabelLength = function () { return _typeOf('azimuth').getOption('labelLength'); };
     this.getAzimuthLengthUnit = function () { return _typeOf('azimuth').getOption('lengthUnit'); };
+    this.getPerpendicularStationFormat = function () { return _typeOf('perpendicular').getOption('stationFormat'); };
+    this.getPerpendicularLengthUnit = function () { return _typeOf('perpendicular').getOption('lengthUnit'); };
     this.setGeometryType('polyline');
     this.vertexCount = function () {
         return _vertices.length;

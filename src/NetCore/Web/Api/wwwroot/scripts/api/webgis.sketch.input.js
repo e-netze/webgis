@@ -249,7 +249,8 @@ webgis.sketch.input = function (ctx, components) {
                 break;
             case 'f':
                 if (e.ctrlKey === false) {
-                    if (ctx.type().isLineOrPolygon !== true)
+                    var canCloseSection = ctx.type().canCloseSection();
+                    if (canCloseSection === false || (canCloseSection === null && ctx.type().isLineOrPolygon !== true))
                         break;
 
                     if (!sketch.isLastPartClosed()) {

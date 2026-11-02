@@ -16,7 +16,7 @@
     this._sketchMetaSouce = null;
     this._stagedElement = null;
 
-    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth"];
+    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular"];
 
     this._sketch.events.on(['onchangevertex'], function (e, sender, coord) {
         if (this._tool === 'symbol' && this._currentMarker) {
@@ -154,8 +154,8 @@
         if (this._map.getActiveTool() && this._map.getActiveTool().is_graphics_tool === true) {
             //console.log(this._tool);
             this._map._refreshToolBubbles(this._map.getActiveTool(),
-                $.inArray(this._tool, ["symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle","compass_rose", "dimline", "hectoline", "view_angle", "intersection_angle", "azimuth"]) >= 0,
-                $.inArray(this._tool, ["symbol", "text", "line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth"]) >= 0);
+                $.inArray(this._tool, ["symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle",                "compass_rose", "dimline", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular"]) >= 0,
+                                $.inArray(this._tool, ["symbol", "text", "line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular"]) >= 0);
         }
 
         this._refreshInfoContainers();
@@ -428,6 +428,12 @@
     this.setAzimuthLengthUnit = function (unit) {
         this._sketch.setAzimuthLengthUnit(unit);
     };
+    this.setPerpendicularStationFormat = function (format) {
+        this._sketch.setPerpendicularStationFormat(format);
+    };
+    this.setPerpendicularLengthUnit = function (unit) {
+        this._sketch.setPerpendicularLengthUnit(unit);
+    };
     this.getOpacity = function (geomType) {
         return this._sketch.getOpacity(geomType);
     };
@@ -514,6 +520,12 @@
     };
     this.getAzimuthLengthUnit = function () {
         return this._sketch.getAzimuthLengthUnit();
+    };
+    this.getPerpendicularStationFormat = function () {
+        return this._sketch.getPerpendicularStationFormat();
+    };
+    this.getPerpendicularLengthUnit = function () {
+        return this._sketch.getPerpendicularLengthUnit();
     };
 
     this.getTextColor = function (geomType) { return this._sketch.getTextColor(geomType); };
@@ -1297,6 +1309,22 @@
                         };
                     }
                     break;
+                case 'perpendicular':
+                    if (element.frameworkElement.options) {
+                        properties["stroke"] = element.frameworkElement.options.color || _color;
+                        properties["stroke-width"] = element.frameworkElement.options.weight || _weight;
+                        properties["font-color"] = element.frameworkElement.options.fontColor || '#000';
+                        properties["font-size"] = element.frameworkElement.options.fontSize || 14;
+                        properties["pp-line-vertices"] = element.frameworkElement.getLineVertexCount();
+                        properties["pp-station-format"] = element.frameworkElement.options.stationFormat || 'm';
+                        properties["pp-length-unit"] = element.frameworkElement.options.lengthUnit || 'm';
+                        properties["_meta"] = {
+                            tool: "perpendicular",
+                            text: element.metaText,
+                            source: element.metaSource
+                        };
+                    }
+                    break;
             }
 
             // calcCrs for DimLine, Hectoline, ...
@@ -1436,6 +1464,13 @@
                                 this.setAzimuthLabelLength(feature.properties["az-label-length"] !== false);
                                 this.setAzimuthLengthUnit(feature.properties["az-length-unit"] || 'm');
                                 this.setTextSize(feature.properties["font-size"]);
+                            } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "perpendicular") {
+                                this.setTool('perpendicular');
+                                feature.geometry.type = 'perpendicular';
+                                feature.geometry.lineVertexCount = feature.properties["pp-line-vertices"];
+                                this.setPerpendicularStationFormat(feature.properties["pp-station-format"] || 'm');
+                                this.setPerpendicularLengthUnit(feature.properties["pp-length-unit"] || 'm');
+                                this.setTextSize(feature.properties["font-size"]);
                             } else {
                                 this.setTool('line');
                             }
@@ -1545,6 +1580,7 @@
                 case 'view_angle':
                 case 'intersection_angle':
                 case 'azimuth':
+                case 'perpendicular':
                 case 'dimpolygon': 
                 case 'dimline':
                     json.type = this.getTool();
@@ -1576,6 +1612,7 @@
                 case 'view_angle':
                 case 'intersection_angle':
                 case 'azimuth':
+                case 'perpendicular':
                     return true;
             }
         }
@@ -1751,6 +1788,7 @@
                 case 'view_angle':
                 case 'intersection_angle':
                 case 'azimuth':
+                case 'perpendicular':
                     result.push({
                         type: element.type,
                         stroke: element.frameworkElement.options.color,
@@ -1793,7 +1831,8 @@
             case 'hectoline':
             case 'view_angle':
             case 'intersection_angle':
-            case 'azimuth': return { name: 'line', styles: ['stroke-color'] };
+            case 'azimuth':
+            case 'perpendicular': return { name: 'line', styles: ['stroke-color'] };
             default: return [];
         }
     };
@@ -1833,7 +1872,7 @@
     };
 
     this._defaultBehaviour = function (type) {
-        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'dimpolygon', 'hectoline', 'view_angle', 'intersection_angle', 'azimuth']) >= 0;
+        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'dimpolygon', 'hectoline', 'view_angle', 'intersection_angle', 'azimuth', 'perpendicular']) >= 0;
     };
 
     this.hideContextMenu = function () {

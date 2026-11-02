@@ -22,6 +22,7 @@ Einfaches Zeichnen in der Karte.
 ## view_angle: Sichtfeld (Winkel)
 ## intersection_angle: Schnittwinkel
 ## azimuth: Richtungswinkel
+## perpendicular: Normalabstand
 
 ## save: Zeichnung speichern
 ## open: Zeichnung laden
@@ -78,6 +79,10 @@ Einfaches Zeichnen in der Karte.
 ## show-angles-all: Alle
 ## label-line-length: Länge beschriften
 ## length-unit: Längeneinheit
+## station-format: Stationierung
+## station-format-m: Meter (156,24m)
+## station-format-km: Kilometrierung (0+156,24)
+## station-format-none: Keine
 
 # draw-symbol: Symbol setzen
 # draw-point: Punkt setzen
@@ -93,8 +98,10 @@ Einfaches Zeichnen in der Karte.
 # draw-view-angle: Sichtfeld (Winkel) zeichnen
 # draw-intersection-angle: Schnittwinkel zeichnen
 # draw-azimuth: Richtungswinkel zeichnen
+# draw-perpendicular: Normalabstand zeichnen
 
 # apply-line: Linie übernehmen
+# finish-reference-line: Bezugslinie beenden
 # apply-polygon: Fläche übernehmen
 # apply-symbol: Symbol übernehmen
 

@@ -50,7 +50,7 @@ internal class AngleElementHelper : IDisposable
         return _map.WorldToImage(point);
     }
 
-    public void DrawLine(IEnumerable<Point> calcPoints, bool dashed)
+    public void DrawLine(IEnumerable<Point> calcPoints, bool dashed, float? width = null)
     {
         var imagePoints = calcPoints.Select(p => ToImage(p.X, p.Y)).ToArray();
         if (imagePoints.Length < 2)
@@ -58,7 +58,7 @@ internal class AngleElementHelper : IDisposable
             return;
         }
 
-        using (var pen = Current.Engine.CreatePen(_color, _width * _dpiFactor))
+        using (var pen = Current.Engine.CreatePen(_color, (width ?? _width) * _dpiFactor))
         using (IGraphicsPath gp = Current.Engine.CreateGraphicsPath())
         {
             pen.DashStyle = dashed ? LineDashStyle.Dash : LineDashStyle.Solid;
@@ -113,6 +113,73 @@ internal class AngleElementHelper : IDisposable
                                    dpiFactor: _dpiFactor,
                                    lineAlignment: StringAlignment.Far,
                                    unit: unit);
+    }
+
+    // label parallel to the direction calcDirFrom => calcDirTo (always readable), at calcAt
+    // above => text above the direction (like dimline), otherwise below
+    public void DrawParallelLabel(Point calcAt, Point calcDirFrom, Point calcDirTo, string text, bool above)
+    {
+        Point at = ToImage(calcAt.X, calcAt.Y);
+
+        try
+        {
+            using (var font = Current.Engine.CreateFont(E.Standard.Platform.SystemInfo.DefaultFontName, _fontSize * _dpiFactor))
+            using (var brush = Current.Engine.CreateSolidBrush(ArgbColor.Black))
+            using (var haloBrush = Current.Engine.CreateSolidBrush(ArgbColor.White))
+            {
+                _canvas.TranslateTransform(new CanvasPointF((float)at.X, (float)at.Y));
+                _canvas.RotateTransform(ImageTextAngle(calcDirFrom, calcDirTo));
+
+                var format = Current.Engine.CreateDrawTextFormat();
+                format.Alignment = StringAlignment.Center;
+                format.LineAlignment = above ? StringAlignment.Far : StringAlignment.Near;
+
+                _canvas.DrawOutlineLabel(_map, text, new Point(0, 0), font, brush, haloBrush, format);
+            }
+        }
+        catch { }
+        finally
+        {
+            _canvas.ResetTransform();
+        }
+    }
+
+    // is calcPoint above the text written at calcAt in direction calcDirFrom => calcDirTo (see DrawParallelLabel)
+    public bool IsAboveText(Point calcAt, Point calcDirFrom, Point calcDirTo, Point calcPoint)
+    {
+        Point at = ToImage(calcAt.X, calcAt.Y), point = ToImage(calcPoint.X, calcPoint.Y);
+        double angle = ImageTextAngle(calcDirFrom, calcDirTo) * Math.PI / 180.0;
+        double px = point.X - at.X, py = point.Y - at.Y;
+
+        return (-Math.Sin(angle) * px + Math.Cos(angle) * py) < 0;  // image y axis points down
+    }
+
+    public void FillPoint(Point calcPoint, float size)
+    {
+        var point = ToImage(calcPoint.X, calcPoint.Y);
+        float r = size * _dpiFactor;
+
+        using (var brush = Current.Engine.CreateSolidBrush(_color))
+        {
+            _canvas.FillEllipse(brush, (float)point.X - r, (float)point.Y - r, r * 2f, r * 2f);
+        }
+    }
+
+    // image angle in degrees of the direction, always readable (not upside down)
+    private float ImageTextAngle(Point calcFrom, Point calcTo)
+    {
+        Point from = ToImage(calcFrom.X, calcFrom.Y), to = ToImage(calcTo.X, calcTo.Y);
+
+        var angle = (float)(Math.Atan2(to.Y - from.Y, to.X - from.X) * 180.0 / Math.PI);
+        if (angle < 0)
+        {
+            angle += 360f;
+        }
+        if (angle > 90f && angle < 270f)
+        {
+            angle += 180f;
+        }
+        return angle;
     }
 
     static public Point At(Point center, double radius, double direction)

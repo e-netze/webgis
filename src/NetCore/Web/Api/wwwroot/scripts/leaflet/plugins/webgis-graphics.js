@@ -22,6 +22,7 @@
  *   webgis-graphics.view_angle.js                   L.ViewAngle / L.viewAngle
  *   webgis-graphics.intersection_angle.js           L.IntersectionAngle / L.intersectionAngle
  *   webgis-graphics.azimuth.js                      L.Azimuth / L.azimuth
+ *   webgis-graphics.perpendicular.js                L.Perpendicular / L.perpendicular
  *   webgis-graphics.pass_point.js                   L.PassPoint / L.passPoint
  *   webgis-graphics.label_marker.js                 L.LabelMarker / L.labelMarker
  *   webgis-graphics.direction_line.js               L.DirectionLine / L.directionLine

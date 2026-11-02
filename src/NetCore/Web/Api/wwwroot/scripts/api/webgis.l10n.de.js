@@ -70,6 +70,7 @@
     "mapmarkup-tool-view_angle": "Sichtfeld (Winkel)",
     "mapmarkup-tool-intersection_angle": "Schnittwinkel",
     "mapmarkup-tool-azimuth": "Richtungswinkel",
+    "mapmarkup-tool-perpendicular": "Normalabstand",
 
     "mapmarkup-pointer": "Zum Bearbeiten eines bestehenden Map-Markup-Objektes in der Karte auf das Objekt klicken. Zum Zeichnen eines neuen Objektes muss das entsprechende Werkzeug ausgewählt werden.",
     "mapmarkup-symbol": "In die Karte klicken, um ein Symbol zu setzen...",
@@ -88,6 +89,7 @@
     "mapmarkup-view_angle": "In die Karte klicken, um den Scheitelpunkt festzulegen. Danach noch einmal klicken, um Richtung und Länge der Achse festzulegen. Der Öffnungswinkel und die Einheit können unter Eigenschaften eingestellt werden.",
     "mapmarkup-intersection_angle": "In die Karte klicken, um mit zwei Punkten die erste Linie und danach mit zwei weiteren Punkten die zweite Linie festzulegen. Der Schnittwinkel der (verlängerten) Linien wird beschriftet.",
     "mapmarkup-azimuth": "In die Karte klicken, um mindestens zwei Stützpunkte des Polygonzuges zu definieren. Für jedes Segment wird der Richtungswinkel (Azimut) gegenüber Norden beschriftet.",
+    "mapmarkup-perpendicular": "In die Karte klicken, um die Bezugslinie zu zeichnen. Die Linie mit einem Doppelklick auf den letzten Punkt abschließen (oder 'Abschnitt schließen' im Kontextmenü bzw. Taste F). Danach beliebig viele Punkte setzen: für jeden Punkt wird das Lot auf die Bezugslinie mit dem Normalabstand (und optional der Station) beschriftet. Mit 'Übernehmen' oder einem Doppelklick auf den letzten Punkt fertigstellen.",
     "mapmarkup-intersection-angle-parallel": "parallel",
 
     "service-order": "Zeichenreihenfolge",
@@ -108,6 +110,7 @@
     "view_angle": "Sichtfeld (Winkel)",
     "intersection_angle": "Schnittwinkel",
     "azimuth": "Richtungswinkel",
+    "perpendicular": "Normalabstand",
     "rectangle": "Rechteck",
     "circle": "Kreis",
     "distance_circle": "Umgebungskreis",
