@@ -1733,6 +1733,52 @@
         return geoJson;
     };
 
+    // "add from selection" (gr.usecurrentstyle): the server only sends the geometry and the _meta (tool, text)
+    // => the current style/options of the tool (by _meta.tool) are used for the missing properties
+    this._currentStyleProperties = function () {
+        var me = this;
+        var strokeFill = function (geomType, fill) {
+            var p = {
+                'stroke': me.getColor(geomType),
+                'stroke-opacity': me.getOpacity(geomType),
+                'stroke-width': me.getWeight(geomType),
+                'stroke-style': me.getLineStyle(geomType)
+            };
+            if (fill) {
+                p['fill'] = me.getFillColor(geomType);
+                p['fill-opacity'] = me.getFillOpacity(geomType);
+            }
+            return p;
+        };
+
+        return {
+            point: { 'point-color': this.getPointColor(), 'point-size': this.getPointSize() },
+            line: strokeFill('polyline'),
+            polygon: strokeFill('polygon', true),
+            dimline: $.extend(strokeFill('dimline'), {
+                'font-size': this.getTextSize('dimline'),
+                'length-unit': this.getDimLineLengthUnit(),
+                'label-total-length': this.getDimLineLabelTotalLength(),
+                'dim-angle-unit': this.getDimLineAngleUnit(),
+                'dim-angle-type': this.getDimLineAngleType()
+            }),
+            dimpolygon: $.extend(strokeFill('dimpolygon', true), {
+                'font-size': this.getTextSize('dimpolygon'),
+                'area-unit': this.getDimPolygonAreaUnit(),
+                'label-edges': this.getDimPolygonLabelEdges(),
+                'dim-angle-unit': this.getDimPolygonAngleUnit()
+            }),
+            hectoline: $.extend(strokeFill('hectoline'), {
+                'font-size': this.getTextSize('hectoline'),
+                'hl-unit': this.getHectolineUnit(),
+                'hl-interval': this.getHectolineInterval()
+            }),
+            buffer_zone: $.extend(strokeFill('buffer_zone', true), {
+                'font-size': this.getTextSize('buffer_zone')
+            })
+        };
+    };
+
     this.fromGeoJson = function (gr) {
         try {
             this._serializing = true;
@@ -1743,9 +1789,19 @@
                 gr.geojson = $.parseJSON(gr.geojson);
             //alert(JSON.stringify(gr.geojson));
             var bounds = null, bufferZoneRings = null;
+            var currentStyle = gr.usecurrentstyle === true ? this._currentStyleProperties() : null;
 
             for (var i in gr.geojson.features) {
                 var feature = gr.geojson.features[i];
+                if (currentStyle) {
+                    feature.properties = feature.properties || {};
+                    var styleProperties = feature.properties["_meta"] ? currentStyle[feature.properties["_meta"].tool] : null;
+                    for (var styleProperty in styleProperties || {}) {
+                        if (feature.properties[styleProperty] === undefined) {
+                            feature.properties[styleProperty] = styleProperties[styleProperty];
+                        }
+                    }
+                }
                 switch (feature.geometry.type.toLowerCase()) {
                     case 'point':
                         var meta = feature.properties["_meta"], txt;

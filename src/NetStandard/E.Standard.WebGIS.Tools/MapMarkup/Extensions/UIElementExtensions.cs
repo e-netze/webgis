@@ -778,7 +778,7 @@ static internal class UIElementExtensions
         return collection;
     }
 
-    static public List<IUIElement> AddBufferZoneStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    static public List<IUIElement> AddBufferZoneStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true, bool fromSelection = false)
     {
         collection.Add(CreateHolder(e, stagedOnly,
         [
@@ -801,7 +801,9 @@ static internal class UIElementExtensions
                 title = localizer.Localize("symbology.properties"),
                 CollapseState = IsCollapsed(isCollapsed),
                 ExpandBehavior = ExpandMode(collapseExclusive),
-                elements = new IUIElement[]
+                elements = fromSelection
+                    ? BufferZoneFromSelectionPropertyElements(e, localizer)
+                    : new IUIElement[]
                 {
                     new UILabel(){
                         label = $"{localizer.Localize("symbology.buffer-source-type")}:"
@@ -840,6 +842,22 @@ static internal class UIElementExtensions
 
         return collection;
     }
+
+    // add from selection: the source type follows from the selected geometries, the width is sent with the add-from-selection command
+    static private IUIElement[] BufferZoneFromSelectionPropertyElements(ApiToolEventArguments e, ILocalizer localizer)
+        => new IUIElement[]
+        {
+            new UILabel(){
+                label = $"{localizer.Localize("symbology.buffer-width")} [m]:"
+            },
+            new UIInputNumber() {
+                MinValue = -double.MaxValue,  // negative => inner buffer (polygons only)
+                MaxValue = double.MaxValue,
+                id = "mapmarkup-from-selection-bz-width",
+                value = e.GetValue("mapmarkup-buffer_zone-width", "10"),
+                css = UICss.ToClass(new string[]{ UICss.ToolParameter })
+            }
+        };
 
     static private IUIElement[] AngleBaseStyleElements(ApiToolEventArguments e, ILocalizer localizer, bool collapseExclusive)
         => new IUIElement[]

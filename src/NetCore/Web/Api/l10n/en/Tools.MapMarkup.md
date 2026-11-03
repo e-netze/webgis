@@ -133,6 +133,10 @@ Simple drawing on the map.
 ## text-from-selection: Text from selection {0}
 ## line-from-selection: Lines from selection {0}
 ## polygon-from-selection: Polygons from selection {0}
+## dimline-from-selection: Dimension lines from selection {0}
+## dimpolygon-from-selection: Dimension polygons from selection {0}
+## hectoline-from-selection: Hectometer lines from selection {0}
+## buffer_zone-from-selection: Buffer zones from selection {0}
 
 # selection: Selection
 ## take-from: Take from selection
@@ -144,6 +148,12 @@ The selected objects from {0} can be transferred to the Map-Markup tool.
 can be changed individually for each object later.
 |To better distinguish the Map-Markup elements, they can be identified later using the field specified here:
 
+## merge: Merge objects
+## merge-no: No, one element per object
+## merge-yes: Yes, unite into one element
+## info-parts-split: Note: Multipart objects were split into single elements.
+## info-holes-removed: Note: Holes (inner rings) of polygons were not transferred.
+## exception-invalid-buffer-width: Invalid buffer width: must be greater than 0 (polygons: not 0, negative = inner buffer)
 ## exception-to-many-objects: A maximum of {0} objects can be transferred to Map-Markup
 ## exception-to-many-vertices: A selection of geo-objects with more than {0} vertices cannot be transferred to Map-Markup!
 

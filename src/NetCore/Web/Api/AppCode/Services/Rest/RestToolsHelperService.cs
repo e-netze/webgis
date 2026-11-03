@@ -581,6 +581,7 @@ public class RestToolsHelperService
             response.graphics.geojson = apiResponse.Graphics.Elements;
             response.graphics.replaceelements = apiResponse.Graphics.ReplaceElements;
             response.graphics.suppressZoom = apiResponse.Graphics.SuppressZoom == true ? true : null;
+            response.graphics.usecurrentstyle = apiResponse.Graphics.UseCurrentStyle == true ? true : null;
             response.graphics.symbols = apiResponse.Graphics.SymbolsDefinition;
         }
         if (apiResponse.MapViewLense != null)

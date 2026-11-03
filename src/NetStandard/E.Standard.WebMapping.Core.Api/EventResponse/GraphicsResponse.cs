@@ -90,6 +90,9 @@ public class GraphicsResponse
 
     public bool? SuppressZoom { get; set; }
 
+    // the client completes missing style properties of the elements with its current style settings (eg. add from selection)
+    public bool? UseCurrentStyle { get; set; }
+
     public object SymbolsDefinition
     {
         get;

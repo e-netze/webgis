@@ -332,10 +332,22 @@ webgis.ui.definePlugin('webgis_modalDialog', {
             else {
                 const position = $modalBody.position();
                 if (position) {
+                    // the size changes => center the dialog again (keep a margin, if there is enough space)
+                    var height = contentHeight + 60, top = position.top, left = position.left;
+                    var $parent = $modalBody.parent(), parentHeight = $parent.height(), parentWidth = $parent.width();
+                    if (parentHeight) {
+                        // too high => margin top/bottom, the content scrolls
+                        top = Math.max(Math.min(20, parentHeight / 10), (parentHeight - height) / 2);
+                    }
+                    if (parentWidth) {
+                        left = Math.max(0, (parentWidth - contentWidth) / 2);
+                    }
                     $modalBody.css({
                         width: contentWidth,
-                        height: contentHeight + 60,
-                        maxHeight: 'calc(100% - ' + position.top + 'px)'
+                        height: height,
+                        top: top,
+                        left: left,
+                        maxHeight: 'calc(100% - ' + 2 * top + 'px)'
                     });
                 }
             }

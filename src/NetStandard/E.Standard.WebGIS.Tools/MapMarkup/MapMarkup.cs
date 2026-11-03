@@ -449,17 +449,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             });
         }
 
-        if (e.SelectionInfo != null)
-        {
-            if (e.GetConfigBool(ConfigAllowAddFromSelection, false))
-            {
-                uiElements.Add(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection-dialog")
-                {
-                    text = String.Format(localizer.Localize("text.symbols-from-selection"), await e.SelectionInfo.GetQueryName(bridge)),
-                    css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.LineBreakButton })
-                });
-            }
-        }
+        await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.symbols-from-selection");
 
         return new ApiEventResponse()
         {
@@ -480,17 +470,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     {
         var uiElements = new List<IUIElement>().AddPointStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
-        if (e.SelectionInfo != null)
-        {
-            if (e.GetConfigBool(ConfigAllowAddFromSelection, false) && e.SelectionInfo.GeometryType == "point")
-            {
-                uiElements.Add(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection-dialog")
-                {
-                    text = String.Format(localizer.Localize("text.points-from-selection"), await e.SelectionInfo.GetQueryName(bridge)),
-                    css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.LineBreakButton })
-                });
-            }
-        }
+        await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.points-from-selection", "point");
 
         return new ApiEventResponse()
         {
@@ -511,17 +491,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     {
         var uiElements = new List<IUIElement>().AddTextStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
-        if (e.GetConfigBool(ConfigAllowAddFromSelection, false))
-        {
-            if (e.SelectionInfo != null)
-            {
-                uiElements.Add(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection-dialog")
-                {
-                    text = String.Format(localizer.Localize("text.text-from-selection"), await e.SelectionInfo.GetQueryName(bridge)),
-                    css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.LineBreakButton })
-                });
-            }
-        }
+        await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.text-from-selection");
 
         return new ApiEventResponse()
         {
@@ -590,17 +560,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             });
         }
 
-        if (e.GetConfigBool(ConfigAllowAddFromSelection, false))
-        {
-            if (e.SelectionInfo != null && e.SelectionInfo.GeometryType == "line")
-            {
-                uiElements.Add(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection-dialog")
-                {
-                    text = String.Format(localizer.Localize("text.line-from-selection"), await e.SelectionInfo.GetQueryName(bridge)),
-                    css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.LineBreakButton })
-                });
-            }
-        }
+        await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.line-from-selection", "line");
 
         return new ApiEventResponse()
         {
@@ -633,19 +593,10 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                                 }
             });
         }
-        else
+
+        if (tool == GraphicsTool.Polygon)
         {
-            if (e.GetConfigBool(ConfigAllowAddFromSelection, false))
-            {
-                if (e.SelectionInfo != null && e.SelectionInfo.GeometryType == "polygon" && tool == GraphicsTool.Polygon)
-                {
-                    uiElements.Add(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection-dialog")
-                    {
-                        text = String.Format(localizer.Localize("text.polygon-from-selection"), await e.SelectionInfo.GetQueryName(bridge)),
-                        css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.LineBreakButton })
-                    });
-                }
-            }
+            await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.polygon-from-selection", "polygon");
         }
 
         return new ApiEventResponse()
@@ -718,7 +669,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     }
 
     [ServerToolCommand("dimline")]
-    public ApiEventResponse OnDimLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+    async public Task<ApiEventResponse> OnDimLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddDimLineStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
@@ -737,6 +688,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             });
         }
 
+        await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.dimline-from-selection", "line");
+
         return new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.DimLine },
@@ -751,7 +704,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     }
 
     [ServerToolCommand("dimpolygon")]
-    public ApiEventResponse OnDimPolygonToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+    async public Task<ApiEventResponse> OnDimPolygonToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddDimPolygonStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
@@ -770,6 +723,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             });
         }
 
+        await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.dimpolygon-from-selection", "polygon");
+
         return new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.DimPolygon },
@@ -785,7 +740,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
 
     [ServerToolCommand("hectoline")]
-    public ApiEventResponse OnHectoLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+    async public Task<ApiEventResponse> OnHectoLineToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddHectoLineStyleElements(e, localizer).AsStagedStyleElements(e);
 
@@ -803,6 +758,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                         }
             });
         }
+
+        await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.hectoline-from-selection", "line");
 
         return new ApiEventResponse()
         {
@@ -866,7 +823,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     }
 
     [ServerToolCommand("buffer_zone")]
-    public ApiEventResponse OnBufferZoneToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+    async public Task<ApiEventResponse> OnBufferZoneToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddBufferZoneStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e);
 
@@ -884,6 +841,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                 }
             });
         }
+
+        await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.buffer_zone-from-selection", "point", "line", "polygon");
 
         return AngleToolResponse(bridge, GraphicsTool.Buffer_Zone, localizer.Localize("draw-buffer-zone"), uiElements);
     }
@@ -1143,13 +1102,13 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                 resp = await OnTextToolClick(bridge, e, localizer);
                 break;
             case "dimline":
-                resp = OnDimLineToolClick(bridge, e, localizer);
+                resp = await OnDimLineToolClick(bridge, e, localizer);
                 break;
             case "dimpolygon":
-                resp = OnDimPolygonToolClick(bridge, e, localizer);
+                resp = await OnDimPolygonToolClick(bridge, e, localizer);
                 break;
             case "hectoline":
-                resp = OnHectoLineToolClick(bridge, e, localizer);
+                resp = await OnHectoLineToolClick(bridge, e, localizer);
                 break;
             case "view_angle":
                 resp = OnViewAngleToolClick(bridge, e, localizer);
@@ -1164,7 +1123,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                 resp = OnPerpendicularToolClick(bridge, e, localizer);
                 break;
             case "buffer_zone":
-                resp = OnBufferZoneToolClick(bridge, e, localizer);
+                resp = await OnBufferZoneToolClick(bridge, e, localizer);
                 break;
             case "object_distance":
                 resp = OnObjectDistanceToolClick(bridge, e, localizer);
@@ -1572,6 +1531,26 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                                                            .ToArray()
                                         },
                                         new UIBreak(2),
+                                        FromSelectionMergeTools.Contains(e["mapmarkup-tool"]) && e.SelectionInfo.ObjectIds.Count() > 1
+                                            ? new UIDiv()
+                                            {
+                                                elements = new IUIElement[]
+                                                {
+                                                    new UILabel() { label = $"{localizer.Localize("selection.merge")}:" },
+                                                    new UISelect()
+                                                    {
+                                                        id = "mapmarkup-from-selection-merge",
+                                                        css = UICss.ToClass(new string[]{ UICss.ToolParameter }),
+                                                        options = new UISelect.Option[]
+                                                        {
+                                                            new UISelect.Option() { value = "no", label = localizer.Localize("selection.merge-no") },
+                                                            new UISelect.Option() { value = "yes", label = localizer.Localize("selection.merge-yes") }
+                                                        }
+                                                    },
+                                                    new UIBreak(2)
+                                                }
+                                            }
+                                            : new UIEmpty(),
                                         new UIButtonContainer(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection")
                                         {
                                             css = UICss.ToClass(new string[] { UICss.DefaultButtonStyle }),
@@ -1595,6 +1574,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                                                 "dimline" => new List<IUIElement>().AddDimLineStyleElements(e, localizer),
                                                 "dimpolygon" => new List<IUIElement>().AddDimPolygonStyleElements(e, localizer),
                                                 "hectoline" => new List<IUIElement>().AddHectoLineStyleElements(e, localizer),
+                                                "buffer_zone" => new List<IUIElement>().AddBufferZoneStyleElements(e, localizer, isCollapsed: false, fromSelection: true),
                                                 _ => new()
                                             }
                                         },
@@ -1633,10 +1613,16 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             }
         }
 
-        GeoJsonFeatures geoJsonFeatures = new GeoJsonFeatures();
-
         string textFieldName = e["mapmarkup-from-selection-textfield"];
         var mapmarkupTool = e["mapmarkup-tool"];
+
+        if (mapmarkupTool != "symbol" && mapmarkupTool != "text")
+        {
+            return AddFromSelectionWithCurrentStyle(bridge, e, localizer, mapmarkupTool,
+                selectedFeatures.Where(f => f.Shape != null).Select(f => (f.Shape, (string)f[textFieldName])));
+        }
+
+        GeoJsonFeatures geoJsonFeatures = new GeoJsonFeatures();
 
         geoJsonFeatures.Features = selectedFeatures
                                             .Select(selectedFeature =>
@@ -1653,15 +1639,6 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                                                     case "text":
                                                         selectedFeatureShape = selectedFeatureShape.ShapeToPoint(sRef: sRef4326);
                                                         geoJsonFeature.Properties = e.DefaultTextJsonProperties(selectedFeature[textFieldName], "selection");
-                                                        break;
-                                                    case "point":
-                                                        geoJsonFeature.Properties = e.DefaultPointGeoJsonProperties(selectedFeature[textFieldName], "selection");
-                                                        break;
-                                                    case "polygon":
-                                                        geoJsonFeature.Properties = e.DefaultPolygonGeoJsonProperties(selectedFeature[textFieldName], "selection");
-                                                        break;
-                                                    case "line":
-                                                        geoJsonFeature.Properties = e.DefaultLineGeoJsonProperties(selectedFeature[textFieldName], "selection");
                                                         break;
                                                 }
 
@@ -1687,6 +1664,236 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             }
         };
     }
+
+    #region From Selection Helpers
+
+    // tools that take the style/options of the current client tool (graphics.usecurrentstyle) and support "merge objects"
+    static private readonly string[] FromSelectionMergeTools = ["line", "polygon", "dimline", "dimpolygon", "hectoline", "buffer_zone"];
+
+    async private Task AddFromSelectionButton(List<IUIElement> uiElements, IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer, string l10nKey, params string[] geometryTypes)
+    {
+        if (e.SelectionInfo == null
+            || !e.GetConfigBool(ConfigAllowAddFromSelection, false)
+            || (geometryTypes.Length > 0 && !geometryTypes.Contains(e.SelectionInfo.GeometryType)))
+        {
+            return;
+        }
+
+        uiElements.Add(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection-dialog")
+        {
+            text = String.Format(localizer.Localize(l10nKey), await e.SelectionInfo.GetQueryName(bridge)),
+            css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.LineBreakButton })
+        });
+    }
+
+    static private bool FromSelectionAcceptsShape(string tool, Shape shape) => tool switch
+    {
+        "point" => shape is Point || shape is MultiPoint,
+        "line" or "dimline" or "hectoline" => shape is Polyline,
+        "polygon" or "dimpolygon" => shape is Polygon,
+        "buffer_zone" => shape is Point || shape is MultiPoint || shape is Polyline || shape is Polygon,
+        _ => false
+    };
+
+    static private string MergeTexts(IEnumerable<string> texts)
+    {
+        var distinct = texts.Where(t => !String.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).Distinct().ToList();
+        return distinct.Count > 5
+            ? $"{String.Join(", ", distinct.Take(5))}, …"
+            : String.Join(", ", distinct);
+    }
+
+    // the client builds the elements with the current style/options of the tool => only geometry and _meta (+ buffer zone values)
+    private ApiEventResponse AddFromSelectionWithCurrentStyle(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer,
+                                                              string tool, IEnumerable<(Shape shape, string text)> sources)
+    {
+        var items = sources.Where(s => FromSelectionAcceptsShape(tool, s.shape)).ToList();
+
+        if (items.Count > 1
+            && FromSelectionMergeTools.Contains(tool)
+            && e["mapmarkup-from-selection-merge"] == "yes")
+        {
+            var merged = ShapeMerger.Merge(items.Select(i => i.shape), e.CalcCrs ?? 0);
+            if (merged != null)
+            {
+                items = [(merged, MergeTexts(items.Select(i => i.text)))];
+            }
+        }
+
+        double bufferWidth = tool == "buffer_zone" ? e.GetDouble("mapmarkup-from-selection-bz-width") : 0;
+        bool partsSplit = false, holesRemoved = false;
+        var features = new List<GeoJsonFeature>();
+
+        foreach (var (shape, text) in items)
+        {
+            switch (tool)
+            {
+                case "point":
+                    var points = shape is MultiPoint multiPoint
+                        ? Enumerable.Range(0, multiPoint.PointCount).Select(i => multiPoint[i])
+                        : [(Point)shape];
+                    features.AddRange(points.Select(p => FromSelectionFeature(tool, text, new Point(p.X, p.Y))));
+                    break;
+                case "dimline":
+                case "hectoline":
+                    var polyline = (Polyline)shape;
+                    var paths = Enumerable.Range(0, polyline.PathCount).Select(i => polyline[i]).Where(p => p.PointCount >= 2).ToList();
+                    partsSplit |= paths.Count > 1;
+                    features.AddRange(paths.Select(p => FromSelectionFeature(tool, text, new Polyline(p))));
+                    break;
+                case "dimpolygon":
+                    var polygon = (Polygon)shape;
+                    polygon.VerifyHoles();
+                    var rings = Enumerable.Range(0, polygon.RingCount).Select(i => polygon[i]).ToList();
+                    var outerRings = rings.Where(r => r is not Hole && r.PointCount >= 3).ToList();
+                    holesRemoved |= rings.Count > outerRings.Count;
+                    partsSplit |= outerRings.Count > 1;
+                    features.AddRange(outerRings.Select(r => FromSelectionFeature(tool, text, new Polygon(new Ring(r)))));
+                    break;
+                case "buffer_zone":
+                    var bufferZoneFeature = FromSelectionBufferZoneFeature(e, localizer, text, shape, bufferWidth);
+                    if (bufferZoneFeature != null)
+                    {
+                        features.Add(bufferZoneFeature);
+                    }
+                    break;
+                default:  // line, polygon
+                    features.Add(FromSelectionFeature(tool, text, shape));
+                    break;
+            }
+        }
+
+        var infos = new List<string>();
+        if (partsSplit)
+        {
+            infos.Add(localizer.Localize("selection.info-parts-split"));
+        }
+        if (holesRemoved)
+        {
+            infos.Add(localizer.Localize("selection.info-holes-removed"));
+        }
+
+        return new ApiEventResponse()
+        {
+            Graphics = new GraphicsResponse(bridge)
+            {
+                Elements = new GeoJsonFeatures() { Features = features.ToArray() },
+                ActiveGraphicsTool = tool.ParseOrDefault(GraphicsTool.Pointer),
+                ReplaceElements = false,
+                UseCurrentStyle = true
+            },
+            InfoMessage = infos.Count > 0 ? String.Join(" ", infos) : null,
+            UIElements = new IUIElement[] {
+                new UIEmpty(){
+                    target = UIElementTarget.modaldialog.ToString(),
+                }
+            }
+        };
+    }
+
+    static private GeoJsonFeature FromSelectionFeature(string tool, string text, Shape shape, Dictionary<string, object> properties = null)
+    {
+        properties ??= new Dictionary<string, object>();
+        properties["_meta"] = new { tool, text = text ?? String.Empty, source = "selection" };
+
+        var feature = new GeoJsonFeature() { Properties = properties };
+        feature.FromShape(shape);
+
+        return feature;
+    }
+
+    // buffer_zone element: the source geometry is stored as LineString with a flat vertex list (bz-parts => start index of each part)
+    // polygon rings without closing vertex; the buffer is calculated here (like buffer-zone-calc)
+    static private GeoJsonFeature FromSelectionBufferZoneFeature(ApiToolEventArguments e, ILocalizer<MapMarkup> localizer, string text, Shape shape, double width)
+    {
+        string sourceType;
+        var parts = new List<List<Point>>();
+
+        switch (shape)
+        {
+            case Point point:
+                sourceType = "point";
+                parts.Add([new Point(point.X, point.Y)]);
+                break;
+            case MultiPoint multiPoint:
+                sourceType = multiPoint.PointCount == 1 ? "point" : "multipoint";
+                parts.Add(Enumerable.Range(0, multiPoint.PointCount).Select(i => new Point(multiPoint[i].X, multiPoint[i].Y)).ToList());
+                break;
+            case Polyline polyline:
+                sourceType = "line";
+                parts.AddRange(Enumerable.Range(0, polyline.PathCount)
+                    .Select(i => polyline[i].ToArray().Select(p => new Point(p.X, p.Y)).ToList())
+                    .Where(p => p.Count >= 2));
+                break;
+            case Polygon polygon:
+                sourceType = "polygon";
+                foreach (var ring in Enumerable.Range(0, polygon.RingCount).Select(i => polygon[i]))
+                {
+                    var ringPoints = ring.ToArray().Select(p => new Point(p.X, p.Y)).ToList();
+                    if (ringPoints.Count > 1
+                        && ringPoints[0].X == ringPoints[ringPoints.Count - 1].X
+                        && ringPoints[0].Y == ringPoints[ringPoints.Count - 1].Y)
+                    {
+                        ringPoints.RemoveAt(ringPoints.Count - 1);
+                    }
+                    if (ringPoints.Count >= 3)
+                    {
+                        parts.Add(ringPoints);
+                    }
+                }
+                break;
+            default:
+                return null;
+        }
+
+        if (parts.Count == 0)
+        {
+            return null;
+        }
+
+        if (!BufferZoneCalculator.IsValidWidth(sourceType, width))
+        {
+            throw new Exception(localizer.Localize("selection.exception-invalid-buffer-width"));
+        }
+
+        var points = parts.SelectMany(p => p).ToList();
+        var partStarts = new List<int>();
+        int start = 0;
+        foreach (var part in parts)
+        {
+            partStarts.Add(start);
+            start += part.Count;
+        }
+        bool isPointSource = sourceType == "point" || sourceType == "multipoint";
+
+        var rings = BufferZoneCalculator.CalcBufferRings(points, sourceType, width, e.CalcCrs ?? 0,
+                                                         isPointSource ? null : partStarts.ToArray());
+
+        var properties = new Dictionary<string, object>()
+        {
+            { "bz-source-type", sourceType },
+            { "bz-width", width }
+        };
+        if (!isPointSource)
+        {
+            properties["bz-parts"] = String.Join(",", partStarts);
+        }
+        if (rings != null)
+        {
+            properties["bz-buffer"] = JSerializer.Serialize(rings);  // string: like the client (nested arrays)
+        }
+
+        var feature = FromSelectionFeature("buffer_zone", text, null, properties);
+        feature.Geometry = new GeoJsonFeature.JsonGeometry()
+        {
+            type = "LineString",
+            coordinates = points.Select(p => new double[] { p.X, p.Y }).ToArray()
+        };
+
+        return feature;
+    }
+
+    #endregion
 
     #endregion
 

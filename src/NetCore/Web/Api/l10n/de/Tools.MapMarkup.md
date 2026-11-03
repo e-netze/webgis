@@ -133,6 +133,10 @@ Einfaches Zeichnen in der Karte.
 ## text-from-selection: Texte aus Auswahl {0} übernehmen
 ## line-from-selection: Linien aus Auswahl {0} übernehmen
 ## polygon-from-selection: Flächen aus Auswahl {0} übernehmen
+## dimline-from-selection: Bemaßungen aus Auswahl {0} übernehmen
+## dimpolygon-from-selection: Bemaßungsflächen aus Auswahl {0} übernehmen
+## hectoline-from-selection: Hektometrierungen aus Auswahl {0} übernehmen
+## buffer_zone-from-selection: Pufferzonen aus Auswahl {0} übernehmen
 
 # selection: Auswahl
 ## take-from: Aus Auswahl übernehmen
@@ -145,6 +149,12 @@ können nachher für jedes Objekt wieder einzeln geändert werden.
 |Um die Map-Markup Elemente
 besser zu unterscheiden, können sie später über das hier angegeben Feld identifiziert werden:
 
+## merge: Objekte zusammenführen
+## merge-no: Nein, ein Element je Objekt
+## merge-yes: Ja, zu einem Element vereinigen
+## info-parts-split: Hinweis: Mehrteilige Objekte wurden in einzelne Elemente aufgeteilt.
+## info-holes-removed: Hinweis: Löcher (Innenringe) von Flächen wurden nicht übernommen.
+## exception-invalid-buffer-width: Ungültige Pufferbreite: muss größer 0 sein (bei Flächen ungleich 0, negativ = Innenpuffer)
 ## exception-to-many-objects: Es dürfen maximal {0} ins Map-Markup übernommen werden
 ## exception-to-many-vertices: Eine Auswahl von Geo-Objekten mit mehr als {0} Stützpunkten dürfen nicht ins Map-Markup übernommen werden!
 
