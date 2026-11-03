@@ -22,7 +22,6 @@ Einfaches Zeichnen in der Karte.
 ## view_angle: Sichtfeld (Winkel)
 ## intersection_angle: Schnittwinkel
 ## circle_arc: Kreisbogen
-## azimuth: Richtungswinkel
 ## perpendicular: Normalabstand
 ## buffer_zone: Pufferzone
 
@@ -77,6 +76,7 @@ Einfaches Zeichnen in der Karte.
 ## angle-type: Winkelart
 ## angle-type-inner: Innenwinkel
 ## angle-type-deflection: Ablenkwinkel (L/R)
+## angle-type-azimuth: Richtungswinkel (Azimut)
 ## label-axis-length: Achsenlänge beschriften
 ## show-angles: Winkel anzeigen
 ## show-angles-intersection: Schnittwinkel
@@ -116,7 +116,6 @@ Einfaches Zeichnen in der Karte.
 # draw-view-angle: Sichtfeld (Winkel) zeichnen
 # draw-intersection-angle: Schnittwinkel zeichnen
 # draw-circle-arc: Kreisbogen zeichnen
-# draw-azimuth: Richtungswinkel zeichnen
 # draw-perpendicular: Normalabstand zeichnen
 # draw-buffer-zone: Pufferzone zeichnen
 

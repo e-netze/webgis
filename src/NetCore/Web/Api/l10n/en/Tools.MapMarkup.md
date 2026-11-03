@@ -22,7 +22,6 @@ Simple drawing on the map.
 ## view_angle: Field of View (Angle)
 ## intersection_angle: Intersection Angle
 ## circle_arc: Circular Arc
-## azimuth: Azimuth
 ## perpendicular: Perpendicular distance
 ## buffer_zone: Buffer zone
 
@@ -77,6 +76,7 @@ Simple drawing on the map.
 ## angle-type: Angle type
 ## angle-type-inner: Interior angle
 ## angle-type-deflection: Deflection angle (L/R)
+## angle-type-azimuth: Azimuth
 ## label-axis-length: Label axis length
 ## show-angles: Show angles
 ## show-angles-intersection: Intersection angle
@@ -116,7 +116,6 @@ Simple drawing on the map.
 # draw-view-angle: Draw field of view (angle)
 # draw-intersection-angle: Draw intersection angle
 # draw-circle-arc: Draw circular arc
-# draw-azimuth: Draw azimuth
 # draw-perpendicular: Draw perpendicular distance
 # draw-buffer-zone: Draw buffer zone
 

@@ -1,7 +1,7 @@
 ﻿// Base geometry type for webgis.sketch (webgis.sketch.js) and the shared families
 //   _base    => defaults for all hooks and flags + shared helpers (json, ...)
 //               Unknown geometry types use _base directly
-//   _line    => polyline, dimline, hectoline, view_angle, intersection_angle, circle_arc, azimuth, perpendicular, buffer_zone
+//   _line    => polyline, dimline, hectoline, view_angle, intersection_angle, circle_arc, perpendicular, buffer_zone
 //   _polygon => polygon, dimpolygon
 //   _radius  => circle, distance_circle, compass_rose
 //
@@ -327,7 +327,7 @@ webgis.sketch.geometryTypes.define('_base', null, function (ctx) {
     };
 });
 
-// polyline, dimline, hectoline, view_angle, intersection_angle, circle_arc, azimuth, perpendicular, buffer_zone
+// polyline, dimline, hectoline, view_angle, intersection_angle, circle_arc, perpendicular, buffer_zone
 webgis.sketch.geometryTypes.define('_line', '_base', function (ctx) {
     "use strict";
 

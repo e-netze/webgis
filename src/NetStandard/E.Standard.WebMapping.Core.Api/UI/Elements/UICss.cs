@@ -175,9 +175,6 @@ public class UICss
     public const string GraphicsIntersectionAngleAngles = "webgis-graphics-intersection_angle-angles";
     public const string GraphicsCircleArcUnit = "webgis-graphics-circle_arc-unit";
     public const string GraphicsCircleArcLabels = "webgis-graphics-circle_arc-labels";
-    public const string GraphicsAzimuthUnit = "webgis-graphics-azimuth-unit";
-    public const string GraphicsAzimuthLabelLength = "webgis-graphics-azimuth-label-length";
-    public const string GraphicsAzimuthLengthUnit = "webgis-graphics-azimuth-length-unit";
     public const string GraphicsPerpendicularStationFormat = "webgis-graphics-perpendicular-station-format";
     public const string GraphicsPerpendicularLengthUnit = "webgis-graphics-perpendicular-length-unit";
     public const string GraphicsBufferZoneSourceType = "webgis-graphics-buffer_zone-source-type";

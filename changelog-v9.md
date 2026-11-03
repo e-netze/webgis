@@ -399,15 +399,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
   [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
 
-- Map Markup: new measure tool "Azimuth" (``azimuth``, "Richtungswinkel") in the group "Measure".
-  * Polyline/traverse: for each segment the azimuth is measured clockwise from (grid) north of the calc
-    crs, with a dashed north line and an arc; unit degrees, gon or both.
-  * Optional segment length label parallel to the segment (like the dimension line), unit m or km.
-  * Leaflet plugin ``webgis-graphics.azimuth.js``, print ``AzimuthElement``, export attributes
-    (incl. ``LEN_UNIT``). Icons are placeholders for now.
-
-  [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
-
 - Map Markup: new measure tool "Perpendicular distance" (``perpendicular``, "Normalabstand") in the group "Measure".
   * First the reference line is drawn and finished with "Close section" or a double click on its last
     vertex; then any number of points, each with the perpendicular onto the reference line and its distance.
@@ -442,7 +433,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * Polygon: true interior angle (0-360°, depends on the ring orientation) at every corner.
   * Line: only at the intermediate vertices; property "Angle type": interior angle between the segments
     (0-180°, default) or deflection angle (change of direction) with side suffix ``L``/``R`` and a dashed
-    extension of the incoming segment.
+    extension of the incoming segment, or azimuth ("Richtungswinkel", 0-360° clockwise from (grid) north
+    of the calc crs) for every segment, with a dashed north line. This replaces the separate (unreleased)
+    measure tool "Azimuth", which was removed (``webgis-graphics.azimuth.js``, ``AzimuthElement``).
   * Arc (radius 20% of the shorter adjacent segment) and label on the bisector; the last chosen values
     are the default for further objects in the session. Stored as ``dim-angle-unit`` / ``dim-angle-type``;
     existing graphics are unchanged (no angles).

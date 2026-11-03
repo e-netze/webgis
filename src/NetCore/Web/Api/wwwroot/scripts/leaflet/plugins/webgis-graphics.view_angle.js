@@ -206,13 +206,28 @@ L.ViewAngle.formatNumber = function (value) {
 // angles at the vertices of dimline/dimpolygon (calc crs points {X,Y}), same geometry as AngleElementHelper.VertexAngles (print)
 //   closed (polygon) => interior angle 0-360° (orientation of the ring), otherwise only at the inner vertices:
 //   angleType 'inner' => angle between the segments 0-180°, 'deflection' => change of direction 0-180° with side L/R
-// returns [{ center, radius, start, delta, degrees, side, extension }] (radians, extension => dashed prolongation of the incoming segment)
+//   angleType 'azimuth' => for each segment (at its start vertex) the azimuth 0-360° clockwise from (grid) north of the calc crs
+// returns [{ center, radius, start, delta, degrees, side, extension }] (radians, extension => dashed line in start direction: prolongation of the incoming segment resp. north)
 L.ViewAngle.vertexAngles = function (points, closed, angleType) {
     var pts = points.slice(), result = [];
     if (closed && pts.length > 1 && pts[0].X === pts[pts.length - 1].X && pts[0].Y === pts[pts.length - 1].Y)
         pts.pop();
 
     var n = pts.length;
+
+    if (!closed && angleType === 'azimuth') {
+        for (var s = 0; s < n - 1; s++) {
+            var a = pts[s], b = pts[s + 1], dx = b.X - a.X, dy = b.Y - a.Y, len = Math.sqrt(dx * dx + dy * dy);
+            if (len === 0)
+                continue;
+
+            var azimuth = (90.0 - Math.atan2(dy, dx) * 180.0 / Math.PI) % 360.0;
+            if (azimuth < 0) azimuth += 360.0;
+            result.push({ center: a, radius: 0.15 * len, start: Math.PI / 2.0, delta: -azimuth * Math.PI / 180.0, degrees: azimuth, side: '', extension: true });
+        }
+        return result;
+    }
+
     if (n < 3)
         return result;
 
@@ -271,7 +286,7 @@ L.ViewAngle.vertexAngles = function (points, closed, angleType) {
 // draws the vertex angles (see vertexAngles) into a L.LayerCollection: arcs, extensions and labels
 // angleUnit: none | deg | gon | both
 L.ViewAngle.addVertexAngles = function (collection, latLngs, closed, angleUnit, angleType, options) {
-    if (!angleUnit || angleUnit === 'none' || !latLngs || latLngs.length < 3)
+    if (!angleUnit || angleUnit === 'none' || !latLngs || latLngs.length < (!closed && angleType === 'azimuth' ? 2 : 3))
         return;
 
     var calc = L.ViewAngle.toCalc(latLngs);

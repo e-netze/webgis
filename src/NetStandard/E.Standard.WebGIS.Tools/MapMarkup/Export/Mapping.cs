@@ -117,16 +117,6 @@ static class Mapping
             }
         },
         {
-            "azimuth", new Dictionary<string, string>()
-            {
-                { "WIDTH", "stroke-width" },
-                { "COLOR", "stroke" },
-                { "UNIT", "az-unit" },
-                { "LABEL_LEN", "az-label-length" },
-                { "LEN_UNIT", "az-length-unit" }
-            }
-        },
-        {
             "perpendicular", new Dictionary<string, string>()
             {
                 { "WIDTH", "stroke-width" },
@@ -182,7 +172,6 @@ static class Mapping
         {  "view_angle", ShapeFile.geometryType.Polyline },
         {  "intersection_angle", ShapeFile.geometryType.Polyline },
         {  "circle_arc", ShapeFile.geometryType.Polyline },
-        {  "azimuth", ShapeFile.geometryType.Polyline },
         {  "perpendicular", ShapeFile.geometryType.Polyline },
         {  "dimline", ShapeFile.geometryType.Polyline },
         {  "dimpolygon", ShapeFile.geometryType.Polygon },

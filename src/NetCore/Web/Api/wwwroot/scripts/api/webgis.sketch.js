@@ -1184,9 +1184,6 @@
     this.setIntersectionAngleAngles = function (angles) { _typeOf('intersection_angle').setOption('angles', angles); };
     this.setCircleArcUnit = function (unit) { _typeOf('circle_arc').setOption('unit', unit); };
     this.setCircleArcLabels = function (labels) { _typeOf('circle_arc').setOption('labels', labels); };
-    this.setAzimuthUnit = function (unit) { _typeOf('azimuth').setOption('unit', unit); };
-    this.setAzimuthLabelLength = function (doLabel) { _typeOf('azimuth').setOption('labelLength', doLabel); };
-    this.setAzimuthLengthUnit = function (unit) { _typeOf('azimuth').setOption('lengthUnit', unit); };
     this.setPerpendicularStationFormat = function (format) { _typeOf('perpendicular').setOption('stationFormat', format); };
     this.setPerpendicularLengthUnit = function (unit) { _typeOf('perpendicular').setOption('lengthUnit', unit); };
     this.setBufferZoneSourceType = function (sourceType) {
@@ -1231,9 +1228,6 @@
     this.getIntersectionAngleAngles = function () { return _typeOf('intersection_angle').getOption('angles'); };
     this.getCircleArcUnit = function () { return _typeOf('circle_arc').getOption('unit'); };
     this.getCircleArcLabels = function () { return _typeOf('circle_arc').getOption('labels'); };
-    this.getAzimuthUnit = function () { return _typeOf('azimuth').getOption('unit'); };
-    this.getAzimuthLabelLength = function () { return _typeOf('azimuth').getOption('labelLength'); };
-    this.getAzimuthLengthUnit = function () { return _typeOf('azimuth').getOption('lengthUnit'); };
     this.getPerpendicularStationFormat = function () { return _typeOf('perpendicular').getOption('stationFormat'); };
     this.getPerpendicularLengthUnit = function () { return _typeOf('perpendicular').getOption('lengthUnit'); };
     this.getBufferZoneSourceType = function () { return _typeOf('buffer_zone').getOption('sourceType'); };

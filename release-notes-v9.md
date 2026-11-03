@@ -63,9 +63,9 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs custom.js](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-group-tool-options)
 - Viewer: "Drawing (Map Markup)" has two new measure tools, "View angle" (cone with a given opening angle) and "Intersection angle" (angle between two lines, optionally with the adjacent angle); both are printed and exported like the other drawings.
   [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
-- Viewer: "Drawing (Map Markup)" has three further measure tools: "Azimuth" (direction angle of each segment of a traverse, optionally with segment lengths), "Perpendicular distance" (distances and stations of points to a reference line) and "Buffer zone" (buffer around points, lines or polygons incl. multipart/holes and inner buffers, also from a feature geometry); all are printed and exported like the other drawings.
+- Viewer: "Drawing (Map Markup)" has two further measure tools: "Perpendicular distance" (distances and stations of points to a reference line) and "Buffer zone" (buffer around points, lines or polygons incl. multipart/holes and inner buffers, also from a feature geometry); both are printed and exported like the other drawings.
   [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
-- Viewer: the drawing tools "Dimension" and "Dimension polygon" can optionally label the vertex angles (polygon: interior angles; line: interior or deflection angle with left/right) in degrees, gon or both; both tools are now also included in the shapefile export.
+- Viewer: the drawing tools "Dimension" and "Dimension polygon" can optionally label the vertex angles (polygon: interior angles; line: interior or deflection angle with left/right, or the azimuth of each segment) in degrees, gon or both; both tools are now also included in the shapefile export.
   [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
 ### Fixed
 

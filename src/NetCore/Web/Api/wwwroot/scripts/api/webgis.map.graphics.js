@@ -16,7 +16,7 @@
     this._sketchMetaSouce = null;
     this._stagedElement = null;
 
-    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "azimuth", "perpendicular", "buffer_zone"];
+    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone"];
 
     this._sketch.events.on(['onchangevertex'], function (e, sender, coord) {
         if (this._tool === 'symbol' && this._currentMarker) {
@@ -154,8 +154,8 @@
         if (this._map.getActiveTool() && this._map.getActiveTool().is_graphics_tool === true) {
             //console.log(this._tool);
             this._map._refreshToolBubbles(this._map.getActiveTool(),
-                $.inArray(this._tool, ["symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle",                "compass_rose", "dimline", "hectoline", "view_angle", "intersection_angle", "circle_arc", "azimuth", "perpendicular", "buffer_zone"]) >= 0,
-                                $.inArray(this._tool, ["symbol", "text", "line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "azimuth", "perpendicular", "buffer_zone"]) >= 0);
+                $.inArray(this._tool, ["symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle",                "compass_rose", "dimline", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone"]) >= 0,
+                                $.inArray(this._tool, ["symbol", "text", "line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone"]) >= 0);
         }
 
         this._refreshInfoContainers();
@@ -434,15 +434,6 @@
     this.setCircleArcLabels = function (labels) {
         this._sketch.setCircleArcLabels(labels);
     };
-    this.setAzimuthUnit = function (unit) {
-        this._sketch.setAzimuthUnit(unit);
-    };
-    this.setAzimuthLabelLength = function (doLabel) {
-        this._sketch.setAzimuthLabelLength(doLabel);
-    };
-    this.setAzimuthLengthUnit = function (unit) {
-        this._sketch.setAzimuthLengthUnit(unit);
-    };
     this.setPerpendicularStationFormat = function (format) {
         this._sketch.setPerpendicularStationFormat(format);
     };
@@ -614,15 +605,6 @@
     };
     this.getCircleArcLabels = function () {
         return this._sketch.getCircleArcLabels();
-    };
-    this.getAzimuthUnit = function () {
-        return this._sketch.getAzimuthUnit();
-    };
-    this.getAzimuthLabelLength = function () {
-        return this._sketch.getAzimuthLabelLength();
-    };
-    this.getAzimuthLengthUnit = function () {
-        return this._sketch.getAzimuthLengthUnit();
     };
     this.getPerpendicularStationFormat = function () {
         return this._sketch.getPerpendicularStationFormat();
@@ -1427,22 +1409,6 @@
                         };
                     }
                     break;
-                case 'azimuth':
-                    if (element.frameworkElement.options) {
-                        properties["stroke"] = element.frameworkElement.options.color || _color;
-                        properties["stroke-width"] = element.frameworkElement.options.weight || _weight;
-                        properties["font-color"] = element.frameworkElement.options.fontColor || '#000';
-                        properties["font-size"] = element.frameworkElement.options.fontSize || 14;
-                        properties["az-unit"] = element.frameworkElement.options.unit || 'deg';
-                        properties["az-label-length"] = element.frameworkElement.options.labelLength === true;
-                        properties["az-length-unit"] = element.frameworkElement.options.lengthUnit || 'm';
-                        properties["_meta"] = {
-                            tool: "azimuth",
-                            text: element.metaText,
-                            source: element.metaSource
-                        };
-                    }
-                    break;
                 case 'perpendicular':
                     if (element.frameworkElement.options) {
                         properties["stroke"] = element.frameworkElement.options.color || _color;
@@ -1625,13 +1591,6 @@
                                 this.setCircleArcUnit(feature.properties["ca-unit"] || 'both');
                                 this.setCircleArcLabels(feature.properties["ca-labels"] || 'all');
                                 this.setTextSize(feature.properties["font-size"]);
-                            } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "azimuth") {
-                                this.setTool('azimuth');
-                                feature.geometry.type = 'azimuth';
-                                this.setAzimuthUnit(feature.properties["az-unit"] || 'deg');
-                                this.setAzimuthLabelLength(feature.properties["az-label-length"] !== false);
-                                this.setAzimuthLengthUnit(feature.properties["az-length-unit"] || 'm');
-                                this.setTextSize(feature.properties["font-size"]);
                             } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "perpendicular") {
                                 this.setTool('perpendicular');
                                 feature.geometry.type = 'perpendicular';
@@ -1766,7 +1725,6 @@
                 case 'view_angle':
                 case 'intersection_angle':
                 case 'circle_arc':
-                case 'azimuth':
                 case 'perpendicular':
                 case 'buffer_zone':
                     if (json.type && json.type !== 'buffer_zone' && !json.sourceGeometryType) {
@@ -1805,7 +1763,6 @@
                 case 'view_angle':
                 case 'intersection_angle':
                 case 'circle_arc':
-                case 'azimuth':
                 case 'perpendicular':
                 case 'buffer_zone':
                     return true;
@@ -1983,7 +1940,6 @@
                 case 'view_angle':
                 case 'intersection_angle':
                 case 'circle_arc':
-                case 'azimuth':
                 case 'perpendicular':
                     result.push({
                         type: element.type,
@@ -2042,7 +1998,6 @@
             case 'view_angle':
             case 'intersection_angle':
             case 'circle_arc':
-            case 'azimuth':
             case 'perpendicular': return { name: 'line', styles: ['stroke-color'] };
             case 'buffer_zone': return { name: 'line', styles: ['stroke-color', 'fill-color', 'fill-opacity'] };
             default: return [];
@@ -2084,7 +2039,7 @@
     };
 
     this._defaultBehaviour = function (type) {
-        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'dimpolygon', 'hectoline', 'view_angle', 'intersection_angle', 'circle_arc', 'azimuth', 'perpendicular', 'buffer_zone']) >= 0;
+        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'dimpolygon', 'hectoline', 'view_angle', 'intersection_angle', 'circle_arc', 'perpendicular', 'buffer_zone']) >= 0;
     };
 
     this.hideContextMenu = function () {

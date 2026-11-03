@@ -207,6 +207,7 @@ internal class AngleElementHelper : IDisposable
     // same geometry as L.ViewAngle.vertexAngles (webgis-graphics.view_angle.js)
     //   closed (polygon) => interior angle 0-360° (orientation of the ring), otherwise only at the inner vertices:
     //   angleType "inner" => angle between the segments 0-180°, "deflection" => change of direction 0-180° with side L/R
+    //   angleType "azimuth" => for each segment (at its start vertex) the azimuth 0-360° clockwise from (grid) north of the calc crs
     static public List<VertexAngle> VertexAngles(IList<Point> points, bool closed, string angleType)
     {
         var pts = new List<Point>(points);
@@ -218,6 +219,25 @@ internal class AngleElementHelper : IDisposable
         }
 
         int n = pts.Count;
+
+        if (!closed && "azimuth".Equals(angleType, StringComparison.OrdinalIgnoreCase))
+        {
+            for (int s = 0; s < n - 1; s++)
+            {
+                Point a = pts[s], b = pts[s + 1];
+                double dx = b.X - a.X, dy = b.Y - a.Y, len = Math.Sqrt(dx * dx + dy * dy);
+                if (len == 0)
+                {
+                    continue;
+                }
+
+                double azimuth = (90.0 - Math.Atan2(dy, dx) * 180.0 / Math.PI) % 360.0;
+                if (azimuth < 0) azimuth += 360.0;
+                result.Add(new VertexAngle(a, 0.15 * len, Math.PI / 2.0, -azimuth * Math.PI / 180.0, azimuth, String.Empty, true));
+            }
+            return result;
+        }
+
         if (n < 3)
         {
             return result;

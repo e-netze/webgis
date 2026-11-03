@@ -326,18 +326,6 @@
                     if (map && map.graphics && tool.value)
                         map.graphics.setCircleArcLabels(tool.value);
                     break;
-                case 'setgraphicsazimuthunit':
-                    if (map && map.graphics && tool.value)
-                        map.graphics.setAzimuthUnit(tool.value);
-                    break;
-                case 'setgraphicsazimuthlabellength':
-                    if (map && map.graphics && tool.value)
-                        map.graphics.setAzimuthLabelLength(tool.value == 'true');
-                    break;
-                case 'setgraphicsazimuthlengthunit':
-                    if (map && map.graphics && tool.value)
-                        map.graphics.setAzimuthLengthUnit(tool.value);
-                    break;
                 case 'setgraphicsperpendicularstationformat':
                     if (map && map.graphics && tool.value)
                         map.graphics.setPerpendicularStationFormat(tool.value);
@@ -1925,7 +1913,7 @@
             tool != null &&
             (tool.tooltype === 'sketch1d' || tool.tooltype === 'sketch2d' ||
                 (tool.tooltype === 'sketchany' && map.sketch && $.inArray(map.sketch.getGeometryType(), ["polyline", "polygon"]) >= 0) ||
-                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "azimuth", "perpendicular", "buffer_zone"]) >= 0));
+                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone"]) >= 0));
     };
 
     this.replaceCustomToolUrl = function (map, url, eventObject) {

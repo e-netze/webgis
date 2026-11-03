@@ -651,7 +651,6 @@ public class RestMappingHelperService /*: IDisposable*/
                 || graphicsTool == "view_angle"
                 || graphicsTool == "intersection_angle"
                 || graphicsTool == "circle_arc"
-                || graphicsTool == "azimuth"
                 || graphicsTool == "perpendicular"
                 || graphicsTool == "buffer_zone") && feature.GetPropery<int>("_calcCrs") > 0)
             {
@@ -796,17 +795,6 @@ public class RestMappingHelperService /*: IDisposable*/
                        feature.GetPropery<float>("stroke-width"),
                        unit: feature.GetPropery<string>("ca-unit"),
                        labels: feature.GetPropery<string>("ca-labels"),
-                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
-                       calcPolyline: calcShape as Polyline));
-                }
-                else if (graphicsTool == "azimuth")
-                {
-                    map.GraphicsContainer.Add(new AzimuthElement((Polyline)shape,
-                       feature.GetPropery<string>("stroke").HexToColor(),
-                       feature.GetPropery<float>("stroke-width"),
-                       unit: feature.GetPropery<string>("az-unit"),
-                       labelLength: feature.GetPropery<bool>("az-label-length"),
-                       lengthUnit: feature.GetPropery<string>("az-length-unit"),
                        fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
                        calcPolyline: calcShape as Polyline));
                 }

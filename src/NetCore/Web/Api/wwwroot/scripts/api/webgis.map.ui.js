@@ -875,12 +875,6 @@
             $('.webgis-graphics-circle_arc-labels').val(map.graphics.getCircleArcLabels());
         }
 
-        if (this._map.graphics.getTool() === 'azimuth') {
-            $('.webgis-graphics-azimuth-unit').val(map.graphics.getAzimuthUnit());
-            $('.webgis-graphics-azimuth-label-length').val((map.graphics.getAzimuthLabelLength() !== false).toString().toLowerCase());
-            $('.webgis-graphics-azimuth-length-unit').val(map.graphics.getAzimuthLengthUnit() || 'm');
-        }
-
         if (this._map.graphics.getTool() === 'perpendicular') {
             $('.webgis-graphics-perpendicular-station-format').val(map.graphics.getPerpendicularStationFormat() || 'm');
             $('.webgis-graphics-perpendicular-length-unit').val(map.graphics.getPerpendicularLengthUnit() || 'm');

@@ -433,16 +433,6 @@ namespace E.Standard.WebGIS.Tools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] azimuth_26 {
-            get {
-                object obj = ResourceManager.GetObject("azimuth_26", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] buffer_zone_26 {
             get {
                 object obj = ResourceManager.GetObject("buffer_zone_26", resourceCulture);

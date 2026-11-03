@@ -57,7 +57,6 @@ public enum GraphicsTool
     DimPolygon = 14,
     View_Angle = 15,
     Intersection_Angle = 16,
-    Azimuth = 17,
     Perpendicular = 18,
     Buffer_Zone = 19,
     Circle_Arc = 20
@@ -179,9 +178,6 @@ public enum ApiClientButtonCommand
     setgraphicsviewanglelabellength = 96,
     setgraphicsintersectionangleunit = 97,
     setgraphicsintersectionangleangles = 98,
-    setgraphicsazimuthunit = 99,
-    setgraphicsazimuthlabellength = 100,
-    setgraphicsazimuthlengthunit = 101,
     setgraphicsperpendicularstationformat = 102,
     setgraphicsperpendicularlengthunit = 103,
     closegraphicssketchsection = 104,
