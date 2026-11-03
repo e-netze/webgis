@@ -14,8 +14,8 @@ using gView.GraphicsEngine.Abstraction;
 
 namespace E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 
-// shared drawing logic for the MapMarkup angle measure tools (ViewAngleElement, IntersectionAngleElement)
-// the geometry must be the same as in the client: webgis-graphics.view_angle.js, webgis-graphics.intersection_angle.js
+// shared drawing logic for the MapMarkup angle measure tools (ViewAngleElement, IntersectionAngleElement, CircleArcElement, ...)
+// the geometry must be the same as in the client: webgis-graphics.view_angle.js, webgis-graphics.intersection_angle.js, webgis-graphics.circle_arc.js, ...
 internal class AngleElementHelper : IDisposable
 {
     private readonly IMap _map;

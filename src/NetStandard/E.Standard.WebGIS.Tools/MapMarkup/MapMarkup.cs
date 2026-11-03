@@ -49,7 +49,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     private const string SaveDialogValidationMessage = "save-dilaog-validation-message";
 
     protected readonly string[] MobileTools = [ "pointer", "symbol", "freehand", "line", "polygon", "dimline", "share", "save", "open", "upload", "download" ];
-    protected readonly string[] AdvancedTools = [ "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular", "buffer_zone" ];  // Do not use with Internet Explorer
+    protected readonly string[] AdvancedTools = [ "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "azimuth", "perpendicular", "buffer_zone" ];  // Do not use with Internet Explorer
 
     private static readonly Dictionary<string, string> ToolGroups = new()
     {
@@ -57,7 +57,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         ["line"] = "draw", ["polygon"] = "draw", ["rectangle"] = "draw", ["circle"] = "draw",
         ["distance_circle"] = "measure", ["compass_rose"] = "measure", ["dimline"] = "measure",
         ["dimpolygon"] = "measure", ["hectoline"] = "measure",
-        ["view_angle"] = "measure", ["intersection_angle"] = "measure", ["azimuth"] = "measure", ["perpendicular"] = "measure", ["buffer_zone"] = "measure",
+        ["view_angle"] = "measure", ["intersection_angle"] = "measure", ["circle_arc"] = "measure", ["azimuth"] = "measure", ["perpendicular"] = "measure", ["buffer_zone"] = "measure",
         ["save"] = "io", ["open"] = "io", ["share"] = "io", ["upload"] = "io", ["download"] = "io"
     };
 
@@ -148,6 +148,12 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                         {
                             value = "intersection_angle",
                             text = localizer.Localize("tools.intersection_angle"),
+                            css = UICss.Narrow
+                        },
+                        new UIImageButton(this.GetType(),"circle_arc", UIButton.UIButtonType.servertoolcommand,"circle_arc")
+                        {
+                            value = "circle_arc",
+                            text = localizer.Localize("tools.circle_arc"),
                             css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"azimuth", UIButton.UIButtonType.servertoolcommand,"azimuth")
@@ -386,6 +392,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         toolResourceManager.AddImageResource("hectoline", Properties.Resources.hectoline_26);
         toolResourceManager.AddImageResource("view_angle", Properties.Resources.view_angle_26);
         toolResourceManager.AddImageResource("intersection_angle", Properties.Resources.intersection_angle_26);
+        toolResourceManager.AddImageResource("circle_arc", Properties.Resources.circle_arc_26);
         toolResourceManager.AddImageResource("azimuth", Properties.Resources.azimuth_26);
         toolResourceManager.AddImageResource("perpendicular", Properties.Resources.perpendicular_26);
         toolResourceManager.AddImageResource("buffer_zone", Properties.Resources.buffer_zone_26);
@@ -824,6 +831,13 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                              localizer.Localize("draw-intersection-angle"),
                              new List<IUIElement>().AddIntersectionAngleStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e));
 
+    [ServerToolCommand("circle_arc")]
+    public ApiEventResponse OnCircleArcToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+        => AngleToolResponse(bridge,
+                             GraphicsTool.Circle_Arc,
+                             localizer.Localize("draw-circle-arc"),
+                             new List<IUIElement>().AddCircleArcStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e));
+
     [ServerToolCommand("azimuth")]
     public ApiEventResponse OnAzimuthToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
@@ -921,7 +935,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         };
     }
 
-    // view_angle/intersection_angle finish automatically after the required number of vertices => no apply button (mobile)
+    // view_angle/intersection_angle/circle_arc finish automatically after the required number of vertices => no apply button (mobile)
     private ApiEventResponse AngleToolResponse(IBridge bridge, GraphicsTool graphicsTool, string title, List<IUIElement> uiElements)
         => new ApiEventResponse()
         {
@@ -986,6 +1000,9 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             case "intersection_angle":
                 resp = OnIntersectionAngleToolClick(bridge, e, localizer);
                 break;
+            case "circle_arc":
+                resp = OnCircleArcToolClick(bridge, e, localizer);
+                break;
             case "azimuth":
                 resp = OnAzimuthToolClick(bridge, e, localizer);
                 break;
@@ -1032,6 +1049,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             "hectoline" => new List<IUIElement>().AddHectoLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             "view_angle" => new List<IUIElement>().AddViewAngleStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             "intersection_angle" => new List<IUIElement>().AddIntersectionAngleStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "circle_arc" => new List<IUIElement>().AddCircleArcStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             "azimuth" => new List<IUIElement>().AddAzimuthStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             "perpendicular" => new List<IUIElement>().AddPerpendicularStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                                                         "buffer_zone" => new List<IUIElement>().AddBufferZoneStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),

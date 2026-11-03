@@ -306,6 +306,14 @@
                     if (map && map.graphics && tool.value)
                         map.graphics.setIntersectionAngleAngles(tool.value);
                     break;
+                case 'setgraphicscirclearcunit':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setCircleArcUnit(tool.value);
+                    break;
+                case 'setgraphicscirclearclabels':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setCircleArcLabels(tool.value);
+                    break;
                 case 'setgraphicsazimuthunit':
                     if (map && map.graphics && tool.value)
                         map.graphics.setAzimuthUnit(tool.value);
@@ -1905,7 +1913,7 @@
             tool != null &&
             (tool.tooltype === 'sketch1d' || tool.tooltype === 'sketch2d' ||
                 (tool.tooltype === 'sketchany' && map.sketch && $.inArray(map.sketch.getGeometryType(), ["polyline", "polygon"]) >= 0) ||
-                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular", "buffer_zone"]) >= 0));
+                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "azimuth", "perpendicular", "buffer_zone"]) >= 0));
     };
 
     this.replaceCustomToolUrl = function (map, url, eventObject) {

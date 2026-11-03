@@ -91,6 +91,13 @@ class ShapeFileExport : IExport
                         }
                     }
 
+                    // circle_arc: export the arc itself (WGS84, the 3 construction points are not exported)
+                    if (toolType == "circle_arc")
+                    {
+                        shape = CircleArcCalculator.ArcPolylineWgs84(SpatialAlgorithms.ShapePoints(shape, false), feature.GetPropery<int>("_calcCrs"))
+                                ?? shape;  // collinear => the line
+                    }
+
                     transformer.Transform(shape);
 
                     // intersection_angle: vertices 0,1 => line 1, vertices 2,3 => line 2 => two parts

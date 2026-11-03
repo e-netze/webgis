@@ -1,7 +1,7 @@
 ﻿// Base geometry type for webgis.sketch (webgis.sketch.js) and the shared families
 //   _base    => defaults for all hooks and flags + shared helpers (json, ...)
 //               Unknown geometry types use _base directly
-//   _line    => polyline, dimline, hectoline, view_angle, intersection_angle, azimuth, perpendicular, buffer_zone
+//   _line    => polyline, dimline, hectoline, view_angle, intersection_angle, circle_arc, azimuth, perpendicular, buffer_zone
 //   _polygon => polygon, dimpolygon
 //   _radius  => circle, distance_circle, compass_rose
 //
@@ -180,7 +180,7 @@ webgis.sketch.geometryTypes.define('_base', null, function (ctx) {
 
     /********* Helpers *********/
 
-    // fixed number of vertices (view_angle, intersection_angle): further clicks replace the last vertex
+    // fixed number of vertices (view_angle, intersection_angle, circle_arc): further clicks replace the last vertex
     // the sketch stays open (like the radius of the circles) => the properties (angle, ...) can still be changed
     this._replaceLastVertex = function (vertex) {
         if (state.vertices.length === 0)
@@ -327,7 +327,7 @@ webgis.sketch.geometryTypes.define('_base', null, function (ctx) {
     };
 });
 
-// polyline, dimline, hectoline, view_angle, intersection_angle, azimuth, perpendicular, buffer_zone
+// polyline, dimline, hectoline, view_angle, intersection_angle, circle_arc, azimuth, perpendicular, buffer_zone
 webgis.sketch.geometryTypes.define('_line', '_base', function (ctx) {
     "use strict";
 

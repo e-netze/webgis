@@ -104,6 +104,19 @@ static class Mapping
             }
         },
         {
+            "circle_arc", new Dictionary<string, string>()
+            {
+                { "WIDTH", "stroke-width" },
+                { "COLOR", "stroke" },
+                { "UNIT", "ca-unit" },
+                { "LABELS", "ca-labels" },
+                { "RADIUS", "ca-radius" },
+                { "ARC_LEN", "ca-arc-length" },
+                { "ANGLE_DEG", "ca-angle-deg" },
+                { "ANGLE_GON", "ca-angle-gon" }
+            }
+        },
+        {
             "azimuth", new Dictionary<string, string>()
             {
                 { "WIDTH", "stroke-width" },
@@ -148,6 +161,7 @@ static class Mapping
         {  "distance_circle", ShapeFile.geometryType.Polygon },
         {  "view_angle", ShapeFile.geometryType.Polyline },
         {  "intersection_angle", ShapeFile.geometryType.Polyline },
+        {  "circle_arc", ShapeFile.geometryType.Polyline },
         {  "azimuth", ShapeFile.geometryType.Polyline },
         {  "perpendicular", ShapeFile.geometryType.Polyline },
         {  "buffer_zone", ShapeFile.geometryType.Polygon }

@@ -625,6 +625,44 @@ static internal class UIElementExtensions
         return collection;
     }
 
+    static public List<IUIElement> AddCircleArcStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    {
+        collection.Add(CreateHolder(e, stagedOnly,
+        [
+            .. AngleBaseStyleElements(e, localizer, collapseExclusive),
+            new UIOptionContainer()
+            {
+                title = localizer.Localize("symbology.properties"),
+                CollapseState = IsCollapsed(isCollapsed),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                elements = new IUIElement[]
+                {
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.show-labels")}:"
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicscirclearclabels)
+                    {
+                        options = new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value = "all", label = localizer.Localize("symbology.show-labels-all") },
+                            new UISelect.Option() { value = "radius", label = localizer.Localize("symbology.show-labels-radius") },
+                            new UISelect.Option() { value = "length", label = localizer.Localize("symbology.show-labels-arc-length") },
+                            new UISelect.Option() { value = "angle", label = localizer.Localize("symbology.show-labels-central-angle") }
+                        },
+                        id = "mapmarkup-circle_arc-labels",
+                        css = UICss.ToClass(new string[] { UICss.GraphicsCircleArcLabels })
+                    },
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.unit")}:"
+                    },
+                    AngleUnitSelect(localizer, ApiClientButtonCommand.setgraphicscirclearcunit, "mapmarkup-circle_arc-unit", UICss.GraphicsCircleArcUnit)
+                }
+            }
+        ]));
+
+        return collection;
+    }
+
     static public List<IUIElement> AddAzimuthStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
         collection.Add(CreateHolder(e, stagedOnly,

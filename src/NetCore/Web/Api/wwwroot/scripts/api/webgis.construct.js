@@ -430,7 +430,7 @@ var webgis_construct = function (map) {
             //Snap to Sketch
             var sketchSnappingTypes = sketch.map.getSnappingTypes(webgis.sketchSnappingSchemeId);
 
-            if ($.inArray(sketch.getGeometryType(), ["polyline", "polygon", "dimline", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular", "buffer_zone"]) >= 0 && sketchSnappingTypes && sketchSnappingTypes.length > 0) {
+            if ($.inArray(sketch.getGeometryType(), ["polyline", "polygon", "dimline", "hectoline", "view_angle", "intersection_angle", "circle_arc", "azimuth", "perpendicular", "buffer_zone"]) >= 0 && sketchSnappingTypes && sketchSnappingTypes.length > 0) {
 
                 var sketchParts = sketch.getParts();
                 var sketchDistance = 1e8, snappedVertex = null;

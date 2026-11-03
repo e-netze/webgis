@@ -650,6 +650,7 @@ public class RestMappingHelperService /*: IDisposable*/
                 || graphicsTool == "hectoline"
                 || graphicsTool == "view_angle"
                 || graphicsTool == "intersection_angle"
+                || graphicsTool == "circle_arc"
                 || graphicsTool == "azimuth"
                 || graphicsTool == "perpendicular"
                 || graphicsTool == "buffer_zone") && feature.GetPropery<int>("_calcCrs") > 0)
@@ -783,6 +784,16 @@ public class RestMappingHelperService /*: IDisposable*/
                        feature.GetPropery<float>("stroke-width"),
                        unit: feature.GetPropery<string>("ia-unit"),
                        angles: feature.GetPropery<string>("ia-angles"),
+                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
+                       calcPolyline: calcShape as Polyline));
+                }
+                else if (graphicsTool == "circle_arc")
+                {
+                    map.GraphicsContainer.Add(new CircleArcElement((Polyline)shape,
+                       feature.GetPropery<string>("stroke").HexToColor(),
+                       feature.GetPropery<float>("stroke-width"),
+                       unit: feature.GetPropery<string>("ca-unit"),
+                       labels: feature.GetPropery<string>("ca-labels"),
                        fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
                        calcPolyline: calcShape as Polyline));
                 }

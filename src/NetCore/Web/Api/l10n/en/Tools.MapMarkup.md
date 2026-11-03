@@ -21,6 +21,7 @@ Simple drawing on the map.
 ## hectoline: Hectometer Line
 ## view_angle: Field of View (Angle)
 ## intersection_angle: Intersection Angle
+## circle_arc: Circular Arc
 ## azimuth: Azimuth
 ## perpendicular: Perpendicular distance
 ## buffer_zone: Buffer zone
@@ -91,6 +92,11 @@ Simple drawing on the map.
 ## buffer-source-polygon: Polygon
 ## buffer-width: Buffer width (polygons: also negative)
 ## apply-buffer-width: Apply buffer width
+## show-labels: Labels
+## show-labels-all: All
+## show-labels-radius: Radius
+## show-labels-arc-length: Arc length
+## show-labels-central-angle: Central angle
 
 # draw-symbol: Set symbol
 # draw-point: Set point
@@ -105,6 +111,7 @@ Simple drawing on the map.
 # draw-hectoline: Draw hectometer line
 # draw-view-angle: Draw field of view (angle)
 # draw-intersection-angle: Draw intersection angle
+# draw-circle-arc: Draw circular arc
 # draw-azimuth: Draw azimuth
 # draw-perpendicular: Draw perpendicular distance
 # draw-buffer-zone: Draw buffer zone

@@ -59,7 +59,8 @@ public enum GraphicsTool
     Intersection_Angle = 16,
     Azimuth = 17,
     Perpendicular = 18,
-    Buffer_Zone = 19
+    Buffer_Zone = 19,
+    Circle_Arc = 20
 }
 
 public enum LookupType
@@ -187,6 +188,8 @@ public enum ApiClientButtonCommand
     setgraphicsbufferzonesourcetype = 105,
     setgraphicsbufferzonewidth = 106,
     setgraphicsbufferzonebuffer = 107,
+    setgraphicscirclearcunit = 108,
+    setgraphicscirclearclabels = 109,
 }
 
 public enum ApiToolEvents

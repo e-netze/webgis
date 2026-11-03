@@ -7,10 +7,10 @@
     var allowChangePresentation = true;
 
     var _isSimplePoint = function () { return sketch.getGeometryType() === 'point' };
-    var _isLineOrPolygon = function () { return $.inArray(sketch.getGeometryType(), ["polyline", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular", "buffer_zone"]) >= 0 };
+    var _isLineOrPolygon = function () { return $.inArray(sketch.getGeometryType(), ["polyline", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "azimuth", "perpendicular", "buffer_zone"]) >= 0 };
     // dont allow multiparts with dimline, hectoline, ...
     var _allowMultipart = function () { return $.inArray(sketch.getGeometryType(), ["polyline", "polygon"]) >= 0 };
-    var _isLine = function () { return $.inArray(sketch.getGeometryType(), ["polyline", "dimline", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular", "buffer_zone"]) >= 0 };
+    var _isLine = function () { return $.inArray(sketch.getGeometryType(), ["polyline", "dimline", "hectoline", "view_angle", "intersection_angle", "circle_arc", "azimuth", "perpendicular", "buffer_zone"]) >= 0 };
     var _isPolygon = function () { return $.inArray(sketch.getGeometryType(), ["polygon", "dimpolygon"]) >= 0 };
 
     this.SetAllowChangePresentation = function (value) {

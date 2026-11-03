@@ -21,6 +21,7 @@ Einfaches Zeichnen in der Karte.
 ## hectoline: Hektometrierungslinine
 ## view_angle: Sichtfeld (Winkel)
 ## intersection_angle: Schnittwinkel
+## circle_arc: Kreisbogen
 ## azimuth: Richtungswinkel
 ## perpendicular: Normalabstand
 ## buffer_zone: Pufferzone
@@ -91,6 +92,11 @@ Einfaches Zeichnen in der Karte.
 ## buffer-source-polygon: Fläche
 ## buffer-width: Pufferbreite (bei Flächen auch negativ)
 ## apply-buffer-width: Pufferbreite übernehmen
+## show-labels: Beschriftung
+## show-labels-all: Alle
+## show-labels-radius: Radius
+## show-labels-arc-length: Bogenlänge
+## show-labels-central-angle: Zentriwinkel
 
 # draw-symbol: Symbol setzen
 # draw-point: Punkt setzen
@@ -105,6 +111,7 @@ Einfaches Zeichnen in der Karte.
 # draw-hectoline: Hektometrierungslinie zeichnen
 # draw-view-angle: Sichtfeld (Winkel) zeichnen
 # draw-intersection-angle: Schnittwinkel zeichnen
+# draw-circle-arc: Kreisbogen zeichnen
 # draw-azimuth: Richtungswinkel zeichnen
 # draw-perpendicular: Normalabstand zeichnen
 # draw-buffer-zone: Pufferzone zeichnen
