@@ -493,6 +493,13 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
                     }
 
                     break;
+                case "point":  // eg. MapMarkup buffer_zone with source type point/multipoint
+                    if (layerType != WebMapping.Core.LayerType.point)
+                    {
+                        continue;
+                    }
+
+                    break;
                 default:
                     continue;
             }

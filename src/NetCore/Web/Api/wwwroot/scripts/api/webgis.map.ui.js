@@ -878,6 +878,11 @@
             $('.webgis-graphics-perpendicular-length-unit').val(map.graphics.getPerpendicularLengthUnit() || 'm');
         }
 
+        if (this._map.graphics.getTool() === 'buffer_zone') {
+            $('.webgis-graphics-buffer_zone-source-type').val(map.graphics.getBufferZoneSourceType() || 'line');
+            $('.webgis-graphics-buffer_zone-width').val(map.graphics.getBufferZoneWidth());
+        }
+
         $('.webgis-query-combo.require-ui-refresh').each(function (i, e) {
             $(e).webgis_queryCombo('refresh');
         });

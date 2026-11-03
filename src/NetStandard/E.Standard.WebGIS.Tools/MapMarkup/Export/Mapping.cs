@@ -122,6 +122,16 @@ static class Mapping
                 { "STAT_FMT", "pp-station-format" },
                 { "LEN_UNIT", "pp-length-unit" }
             }
+        },
+        {
+            "buffer_zone", new Dictionary<string, string>()
+            {
+                { "FILLCOL", "fill" },
+                { "BORDERCOL", "stroke" },
+                { "TRANSP", "fill-opacity" },
+                { "SRC_TYPE", "bz-source-type" },
+                { "BUF_WIDTH", "bz-width" }
+            }
         }
     };
 
@@ -139,6 +149,7 @@ static class Mapping
         {  "view_angle", ShapeFile.geometryType.Polyline },
         {  "intersection_angle", ShapeFile.geometryType.Polyline },
         {  "azimuth", ShapeFile.geometryType.Polyline },
-        {  "perpendicular", ShapeFile.geometryType.Polyline }
+        {  "perpendicular", ShapeFile.geometryType.Polyline },
+        {  "buffer_zone", ShapeFile.geometryType.Polygon }
     };
 }

@@ -711,6 +711,69 @@ static internal class UIElementExtensions
         return collection;
     }
 
+    static public List<IUIElement> AddBufferZoneStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    {
+        collection.Add(CreateHolder(e, stagedOnly,
+        [
+            new UIColorSelector(localizer.Localize("symbology.fill-color"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsfillcolor, true){
+                CollapseState = IsCollapsed(true),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                value = e.GetValue("mapmarkup-fillcolor", "#aaaaaa")?.ToString(),
+                id = "mapmarkup-fillcolor"
+            },
+            new UIOpacitySelector(localizer.Localize("symbology.fill-opacity"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsfillopacity)
+            {
+                CollapseState = IsCollapsed(true),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                value = e.GetValue("mapmarkup-fillopacity", "20"),
+                id = "mapmarkup-fillopacity"
+            },
+            .. AngleBaseStyleElements(e, localizer, collapseExclusive),
+            new UIOptionContainer()
+            {
+                title = localizer.Localize("symbology.properties"),
+                CollapseState = IsCollapsed(isCollapsed),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                elements = new IUIElement[]
+                {
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.buffer-source-type")}:"
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsbufferzonesourcetype)
+                    {
+                        options = new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value = "point", label = localizer.Localize("symbology.buffer-source-point") },
+                            new UISelect.Option() { value = "multipoint", label = localizer.Localize("symbology.buffer-source-multipoint") },
+                            new UISelect.Option() { value = "line", label = localizer.Localize("symbology.buffer-source-line") },
+                            new UISelect.Option() { value = "polygon", label = localizer.Localize("symbology.buffer-source-polygon") }
+                        },
+                        id = "mapmarkup-buffer_zone-source-type",
+                        css = UICss.ToClass(new string[] { UICss.GraphicsBufferZoneSourceType })
+                    },
+                    new UIBreak(),
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.buffer-width")} [m]:"
+                    },
+                    new UIInputNumber() {
+                        MinValue = -double.MaxValue,  // negative => inner buffer (polygons only)
+                        MaxValue = double.MaxValue,
+                        id = "mapmarkup-buffer_zone-width",
+                        value = e.GetValue("mapmarkup-buffer_zone-width", "10"),
+                        css = UICss.ToClass(new string[]{ UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.GraphicsBufferZoneWidth })
+                    },
+                    new UIButtonContainer(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsbufferzonewidth)
+                    {
+                        text = localizer.Localize("symbology.apply-buffer-width"),
+                        css = UICss.ToClass(new string[]{ UICss.CancelButtonStyle })
+                    })
+                }
+            }
+        ]));
+
+        return collection;
+    }
+
     static private IUIElement[] AngleBaseStyleElements(ApiToolEventArguments e, ILocalizer localizer, bool collapseExclusive)
         => new IUIElement[]
         {

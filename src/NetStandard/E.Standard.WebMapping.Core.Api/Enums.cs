@@ -58,7 +58,8 @@ public enum GraphicsTool
     View_Angle = 15,
     Intersection_Angle = 16,
     Azimuth = 17,
-    Perpendicular = 18
+    Perpendicular = 18,
+    Buffer_Zone = 19
 }
 
 public enum LookupType
@@ -183,6 +184,9 @@ public enum ApiClientButtonCommand
     setgraphicsperpendicularstationformat = 102,
     setgraphicsperpendicularlengthunit = 103,
     closegraphicssketchsection = 104,
+    setgraphicsbufferzonesourcetype = 105,
+    setgraphicsbufferzonewidth = 106,
+    setgraphicsbufferzonebuffer = 107,
 }
 
 public enum ApiToolEvents

@@ -326,6 +326,18 @@
                     if (map && map.graphics && tool.value)
                         map.graphics.setPerpendicularLengthUnit(tool.value);
                     break;
+                case 'setgraphicsbufferzonesourcetype':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setBufferZoneSourceType(tool.value);
+                    break;
+                case 'setgraphicsbufferzonewidth':
+                    if (map && map.graphics && parseFloat(tool.value))  // polygon: negative => inner buffer
+                        map.graphics.setBufferZoneWidth(tool.value);
+                    break;
+                case 'setgraphicsbufferzonebuffer':  // server response of 'buffer-zone-calc' => data: { key, rings }
+                    if (map && map.graphics)
+                        map.graphics.setBufferZoneBuffer(data);
+                    break;
                 case 'closegraphicssketchsection':
                     if (map && map.graphics && map.graphics._sketch && map.graphics._sketch.canCloseSection() === true && !map.graphics._sketch.isLastPartClosed())
                         map.graphics._sketch.appendPart();
@@ -1118,7 +1130,7 @@
             if (activeTool && activeTool.tooltype === 'graphics') {
                 map.graphics._resetGeoJsonType(response.sketch);
                 map.graphics._sketch.fromJson(response.sketch);
-                if (response.close_sketch === true) {
+                if (response.close_sketch === true && map.graphics.getTool() !== 'buffer_zone') {  // buffer_zone stays open => width can still be changed
                     map.graphics._sketch.close();
                 }
                 if (response.focus_sketch === true) {
@@ -1893,7 +1905,7 @@
             tool != null &&
             (tool.tooltype === 'sketch1d' || tool.tooltype === 'sketch2d' ||
                 (tool.tooltype === 'sketchany' && map.sketch && $.inArray(map.sketch.getGeometryType(), ["polyline", "polygon"]) >= 0) ||
-                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular"]) >= 0));
+                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular", "buffer_zone"]) >= 0));
     };
 
     this.replaceCustomToolUrl = function (map, url, eventObject) {

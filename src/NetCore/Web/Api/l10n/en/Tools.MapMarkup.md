@@ -23,6 +23,7 @@ Simple drawing on the map.
 ## intersection_angle: Intersection Angle
 ## azimuth: Azimuth
 ## perpendicular: Perpendicular distance
+## buffer_zone: Buffer zone
 
 ## save: Save Drawing
 ## open: Load Drawing
@@ -83,6 +84,13 @@ Simple drawing on the map.
 ## station-format-m: Meters (156.24m)
 ## station-format-km: Chainage (0+156.24)
 ## station-format-none: None
+## buffer-source-type: Source type
+## buffer-source-point: Point
+## buffer-source-multipoint: Multiple points
+## buffer-source-line: Line
+## buffer-source-polygon: Polygon
+## buffer-width: Buffer width (polygons: also negative)
+## apply-buffer-width: Apply buffer width
 
 # draw-symbol: Set symbol
 # draw-point: Set point
@@ -99,6 +107,7 @@ Simple drawing on the map.
 # draw-intersection-angle: Draw intersection angle
 # draw-azimuth: Draw azimuth
 # draw-perpendicular: Draw perpendicular distance
+# draw-buffer-zone: Draw buffer zone
 
 # apply-line: Apply line
 # finish-reference-line: Finish reference line

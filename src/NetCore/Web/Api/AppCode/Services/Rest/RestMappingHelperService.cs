@@ -651,7 +651,8 @@ public class RestMappingHelperService /*: IDisposable*/
                 || graphicsTool == "view_angle"
                 || graphicsTool == "intersection_angle"
                 || graphicsTool == "azimuth"
-                || graphicsTool == "perpendicular") && feature.GetPropery<int>("_calcCrs") > 0)
+                || graphicsTool == "perpendicular"
+                || graphicsTool == "buffer_zone") && feature.GetPropery<int>("_calcCrs") > 0)
             {
                 calcShape = feature.ToShape();
                 using (var calcTransformer = new GeometricTransformerPro(ApiGlobals.SRefStore.SpatialReferences, 4326, feature.GetPropery<int>("_calcCrs")))
@@ -804,6 +805,38 @@ public class RestMappingHelperService /*: IDisposable*/
                        lineVertexCount: feature.GetPropery<int>("pp-line-vertices"),
                        stationFormat: feature.GetPropery<string>("pp-station-format"),
                        lengthUnit: feature.GetPropery<string>("pp-length-unit"),
+                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
+                       calcPolyline: calcShape as Polyline));
+                }
+                else if (graphicsTool == "buffer_zone")
+                {
+                    var sourceType = feature.GetPropery<string>("bz-source-type");
+                    var bufferWidth = feature.GetPropery<double>("bz-width");
+
+                    double[][][] rings = null;
+                    var bufferJson = feature.GetPropery<string>("bz-buffer");
+                    if (!String.IsNullOrEmpty(bufferJson))
+                    {
+                        try { rings = JSerializer.Deserialize<double[][][]>(bufferJson); } catch { }
+                    }
+                    rings ??= BufferZoneCalculator.CalcBufferRings(
+                                SpatialAlgorithms.ShapePoints(feature.ToShape(), false),
+                                sourceType, bufferWidth, feature.GetPropery<int>("_calcCrs"));
+
+                    var buffer = BufferZoneCalculator.ToPolygon(rings);
+                    if (buffer is not null && transformer != null)
+                    {
+                        transformer.Transform(buffer);
+                        buffer.SrsId = shape.SrsId;
+                    }
+
+                    map.GraphicsContainer.Add(new BufferZoneElement((Polyline)shape,
+                       buffer,
+                       feature.GetPropery<string>("stroke").HexToColor(),
+                       feature.GetPropery<string>("fill").HexToColor(feature.GetPropery<float>("fill-opacity")),
+                       feature.GetPropery<float>("stroke-width"),
+                       sourceType,
+                       bufferWidth,
                        fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
                        calcPolyline: calcShape as Polyline));
                 }

@@ -1184,6 +1184,24 @@
     this.setAzimuthLengthUnit = function (unit) { _typeOf('azimuth').setOption('lengthUnit', unit); };
     this.setPerpendicularStationFormat = function (format) { _typeOf('perpendicular').setOption('stationFormat', format); };
     this.setPerpendicularLengthUnit = function (unit) { _typeOf('perpendicular').setOption('lengthUnit', unit); };
+    this.setBufferZoneSourceType = function (sourceType) {
+        _typeOf('buffer_zone').setOption('sourceType', sourceType);
+        if (_geometryType === 'buffer_zone') {
+            _typeOf('buffer_zone').onSourceTypeChanged();
+        }
+    };
+    this.setBufferZoneWidth = function (width) { _typeOf('buffer_zone').setOption('width', width); };
+    // key: identifies the geometry/options the buffer was calculated for (L.BufferZone.key), null => current
+    // returns false, if the key doesn't match the current sketch (stale server response)
+    this.setBufferZoneBuffer = function (rings, key) {
+        var element = _geometryType === 'buffer_zone' ? _frameworkElements[_currentFrameworkIndex] : null;
+        var currentKey = element && element.getBufferKey ? element.getBufferKey() : null;
+        if (!currentKey || (key && key !== currentKey))
+            return false;
+
+        _typeOf('buffer_zone').setOption('buffer', rings ? { key: currentKey, rings: rings } : null);
+        return true;
+    };
     this.setText = function (text) { _typeOf('text').setOption('text', text); };
 
     this.getText = function () { return _typeOf('text').getOption('text'); };
@@ -1208,6 +1226,17 @@
     this.getAzimuthLengthUnit = function () { return _typeOf('azimuth').getOption('lengthUnit'); };
     this.getPerpendicularStationFormat = function () { return _typeOf('perpendicular').getOption('stationFormat'); };
     this.getPerpendicularLengthUnit = function () { return _typeOf('perpendicular').getOption('lengthUnit'); };
+    this.getBufferZoneSourceType = function () { return _typeOf('buffer_zone').getOption('sourceType'); };
+    this.getBufferZoneWidth = function () { return _typeOf('buffer_zone').getOption('width'); };
+    this.getBufferZoneBuffer = function () { return _typeOf('buffer_zone').getOption('buffer'); };
+    this.getBufferZoneBufferKey = function () {
+        var element = _geometryType === 'buffer_zone' ? _frameworkElements[_currentFrameworkIndex] : null;
+        return element && element.getBufferKey ? element.getBufferKey() : null;
+    };
+    this.hasValidBufferZoneBuffer = function () {
+        var element = _geometryType === 'buffer_zone' ? _frameworkElements[_currentFrameworkIndex] : null;
+        return element && element.getValidBufferRings ? element.getValidBufferRings() !== null : false;
+    };
     this.setGeometryType('polyline');
     this.vertexCount = function () {
         return _vertices.length;

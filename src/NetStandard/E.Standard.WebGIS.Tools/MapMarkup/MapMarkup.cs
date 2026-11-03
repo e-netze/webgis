@@ -49,7 +49,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     private const string SaveDialogValidationMessage = "save-dilaog-validation-message";
 
     protected readonly string[] MobileTools = [ "pointer", "symbol", "freehand", "line", "polygon", "dimline", "share", "save", "open", "upload", "download" ];
-    protected readonly string[] AdvancedTools = [ "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular" ];  // Do not use with Internet Explorer
+    protected readonly string[] AdvancedTools = [ "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular", "buffer_zone" ];  // Do not use with Internet Explorer
 
     private static readonly Dictionary<string, string> ToolGroups = new()
     {
@@ -57,7 +57,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         ["line"] = "draw", ["polygon"] = "draw", ["rectangle"] = "draw", ["circle"] = "draw",
         ["distance_circle"] = "measure", ["compass_rose"] = "measure", ["dimline"] = "measure",
         ["dimpolygon"] = "measure", ["hectoline"] = "measure",
-        ["view_angle"] = "measure", ["intersection_angle"] = "measure", ["azimuth"] = "measure", ["perpendicular"] = "measure",
+        ["view_angle"] = "measure", ["intersection_angle"] = "measure", ["azimuth"] = "measure", ["perpendicular"] = "measure", ["buffer_zone"] = "measure",
         ["save"] = "io", ["open"] = "io", ["share"] = "io", ["upload"] = "io", ["download"] = "io"
     };
 
@@ -160,6 +160,12 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                         {
                             value = "perpendicular",
                             text = localizer.Localize("tools.perpendicular"),
+                            css = UICss.Narrow
+                        },
+                        new UIImageButton(this.GetType(),"buffer_zone", UIButton.UIButtonType.servertoolcommand,"buffer_zone")
+                        {
+                            value = "buffer_zone",
+                            text = localizer.Localize("tools.buffer_zone"),
                             css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"distance_circle", UIButton.UIButtonType.servertoolcommand,"distance_circle")
@@ -382,6 +388,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         toolResourceManager.AddImageResource("intersection_angle", Properties.Resources.intersection_angle_26);
         toolResourceManager.AddImageResource("azimuth", Properties.Resources.azimuth_26);
         toolResourceManager.AddImageResource("perpendicular", Properties.Resources.perpendicular_26);
+        toolResourceManager.AddImageResource("buffer_zone", Properties.Resources.buffer_zone_26);
     }
 
     #endregion
@@ -868,6 +875,51 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         return AngleToolResponse(bridge, GraphicsTool.Perpendicular, localizer.Localize("draw-perpendicular"), uiElements);
     }
 
+    [ServerToolCommand("buffer_zone")]
+    public ApiEventResponse OnBufferZoneToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+    {
+        var uiElements = new List<IUIElement>().AddBufferZoneStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e);
+
+        if (e.UseMobileBehavior())
+        {
+            uiElements.AddRange(new IUIElement[]
+            {
+                new UIBreak(),
+                new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.removecurrentgraphicselement){
+                    text = localizer.Localize("remove-sketch"),
+                    css=UICss.ToClass(new string[] { UICss.CancelButtonStyle })
+                },
+                new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.assumecurrentgraphicselement){
+                    text = localizer.Localize("apply-line")
+                }
+            });
+        }
+
+        return AngleToolResponse(bridge, GraphicsTool.Buffer_Zone, localizer.Localize("draw-buffer-zone"), uiElements);
+    }
+
+    // calculates the buffer polygon for the client (buffer_zone tool), coordinates are WGS84
+    [ServerToolCommand("buffer-zone-calc")]
+    public ApiEventResponse OnBufferZoneCalc(IBridge bridge, ApiToolEventArguments e)
+    {
+        var coords = JSerializer.Deserialize<double[][]>(e["bz-coords"] ?? "[]") ?? [];
+        var sourceType = e["bz-source-type"];
+        var width = e.GetDouble("bz-width");
+        var calcCrsId = e.GetInt("bz-calc-crs");
+
+        var rings = BufferZoneCalculator.CalcBufferRings(coords, sourceType, width, calcCrsId);
+
+        return new ApiEventResponse()
+        {
+            ClientCommands = [ApiClientButtonCommand.setgraphicsbufferzonebuffer],
+            ClientCommandData = new
+            {
+                key = e["bz-key"],
+                rings = rings ?? []
+            }
+        };
+    }
+
     // view_angle/intersection_angle finish automatically after the required number of vertices => no apply button (mobile)
     private ApiEventResponse AngleToolResponse(IBridge bridge, GraphicsTool graphicsTool, string title, List<IUIElement> uiElements)
         => new ApiEventResponse()
@@ -939,6 +991,9 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             case "perpendicular":
                 resp = OnPerpendicularToolClick(bridge, e, localizer);
                 break;
+            case "buffer_zone":
+                resp = OnBufferZoneToolClick(bridge, e, localizer);
+                break;
         }
 
         if (resp != null)
@@ -978,7 +1033,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             "intersection_angle" => new List<IUIElement>().AddIntersectionAngleStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             "azimuth" => new List<IUIElement>().AddAzimuthStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             "perpendicular" => new List<IUIElement>().AddPerpendicularStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            _ => new()
+                                                        "buffer_zone" => new List<IUIElement>().AddBufferZoneStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                                                        _ => new()
                         })
             );
 

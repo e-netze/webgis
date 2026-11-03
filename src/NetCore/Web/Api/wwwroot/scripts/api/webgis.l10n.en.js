@@ -71,6 +71,7 @@
     "mapmarkup-tool-intersection_angle": "Intersection angle",
     "mapmarkup-tool-azimuth": "Azimuth",
     "mapmarkup-tool-perpendicular": "Perpendicular distance",
+    "mapmarkup-tool-buffer_zone": "Buffer zone",
 
     "mapmarkup-pointer": "Click on an existing mapmarkup object in the map to edit it. To draw a new object, the corresponding tool must be selected.",
     "mapmarkup-symbol": "Click on the map to place a symbol...",
@@ -90,6 +91,7 @@
     "mapmarkup-intersection_angle": "Click on the map to define the first line with two points and then the second line with two more points. Further clicks only move the end point of the second line. The intersection angle of the (extended) lines is labeled.",
     "mapmarkup-azimuth": "Click on the map to define at least two vertices of the traverse. For each segment the azimuth (direction angle against north) is labeled.",
     "mapmarkup-perpendicular": "Click on the map to draw the reference line. Finish the line with a double click on its last point (or 'Close section' in the context menu or key F). Then set any number of points: for each point the perpendicular onto the reference line is labeled with its distance (and optionally the station). Finish with 'Apply' or a double click on the last point.",
+    "mapmarkup-buffer_zone": "Choose the source type (point, multiple points, line, polygon) and the buffer width in the properties and draw the source geometry on the map. The buffer zone is calculated by the server and shown after a short moment. For the source type point, every further click moves the point; for multiple points, every click adds a point. For polygons, a negative buffer width creates an inner buffer. Finish with 'Apply' or a double click on the last point.",
     "mapmarkup-intersection-angle-parallel": "parallel",
 
     "service-order": "Service Order",
@@ -111,6 +113,7 @@
     "intersection_angle": "Intersection angle",
     "azimuth": "Azimuth",
     "perpendicular": "Perpendicular distance",
+    "buffer_zone": "Buffer zone",
     "rectangle": "Rectangle",
     "circle": "Circle",
     "distance_circle": "Buffer circle",

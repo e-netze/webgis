@@ -16,7 +16,7 @@
     this._sketchMetaSouce = null;
     this._stagedElement = null;
 
-    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular"];
+    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular", "buffer_zone"];
 
     this._sketch.events.on(['onchangevertex'], function (e, sender, coord) {
         if (this._tool === 'symbol' && this._currentMarker) {
@@ -154,8 +154,8 @@
         if (this._map.getActiveTool() && this._map.getActiveTool().is_graphics_tool === true) {
             //console.log(this._tool);
             this._map._refreshToolBubbles(this._map.getActiveTool(),
-                $.inArray(this._tool, ["symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle",                "compass_rose", "dimline", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular"]) >= 0,
-                                $.inArray(this._tool, ["symbol", "text", "line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular"]) >= 0);
+                $.inArray(this._tool, ["symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle",                "compass_rose", "dimline", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular", "buffer_zone"]) >= 0,
+                                $.inArray(this._tool, ["symbol", "text", "line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "azimuth", "perpendicular", "buffer_zone"]) >= 0);
         }
 
         this._refreshInfoContainers();
@@ -434,6 +434,80 @@
     this.setPerpendicularLengthUnit = function (unit) {
         this._sketch.setPerpendicularLengthUnit(unit);
     };
+    this.setBufferZoneSourceType = function (sourceType) {
+        this._sketch.setBufferZoneSourceType(sourceType);
+        this._requestBufferZoneBuffer();
+    };
+    this.setBufferZoneWidth = function (width) {
+        width = parseFloat(width);
+        if (isFinite(width) && width !== 0) {  // negative => inner buffer (polygons only, see L.BufferZone.isValidWidth)
+            this._sketch.setBufferZoneWidth(width);
+            this._requestBufferZoneBuffer();
+        }
+    };
+    // server response of 'buffer-zone-calc' => { key, rings }
+    this.setBufferZoneBuffer = function (data) {
+        if (!data || !data.key)
+            return;
+
+        var rings = data.rings && data.rings.length ? data.rings : null;
+        if (this._sketch.setBufferZoneBuffer(rings, data.key))
+            return;
+
+        // the element is already committed (eg. tool changed before the response arrived)
+        for (var i in this._elements) {
+            var frameworkElement = this._elements[i].frameworkElement;
+            if (this._elements[i].type === 'buffer_zone' && frameworkElement && frameworkElement.getBufferKey && frameworkElement.getBufferKey() === data.key) {
+                frameworkElement.setBuffer({ key: data.key, rings: rings });
+            }
+        }
+    };
+
+    // debounced server request: the buffer is calculated by the server (MapMarkup tool command 'buffer-zone-calc')
+    this._bufferZoneTimer = null;
+    this._requestBufferZoneBuffer = function () {
+        if (this._bufferZoneTimer) {
+            clearTimeout(this._bufferZoneTimer);
+            this._bufferZoneTimer = null;
+        }
+        if (this._tool !== 'buffer_zone' || this._serializing === true)
+            return;
+
+        var me = this;
+        this._bufferZoneTimer = setTimeout(function () {
+            me._bufferZoneTimer = null;
+
+            var sketch = me._sketch, map = me._map, tool = map ? map.getActiveTool() : null;
+            if (me._tool !== 'buffer_zone' || !tool || !sketch.isValid() || sketch.hasValidBufferZoneBuffer())
+                return;
+
+            var key = sketch.getBufferZoneBufferKey();
+            if (!key)
+                return;
+
+            var sourceType = sketch.getBufferZoneSourceType() || 'line', vertices = sketch.partVertices(0);
+            if (!L.BufferZone.isValidWidth(sourceType, sketch.getBufferZoneWidth()))
+                return;
+            if (sourceType === 'point')
+                vertices = vertices.slice(0, 1);
+
+            var latLngs = vertices.map(function (v) { return L.latLng(v.y, v.x); });
+
+            webgis.tools.sendToolRequest(map, tool, 'servertoolcommand', null, {
+                _method: 'buffer-zone-calc',
+                'bz-coords': JSON.stringify(vertices.map(function (v) { return [v.x, v.y]; })),
+                'bz-source-type': sourceType,
+                'bz-width': sketch.getBufferZoneWidth(),
+                'bz-calc-crs': L.ViewAngle.toCalc(latLngs).crsId || 0,
+                'bz-key': key
+            });
+        }, 500);
+    };
+    this._sketch.events.on(['onchanged'], function (e, sender) {
+        if (this._tool === 'buffer_zone') {
+            this._requestBufferZoneBuffer();
+        }
+    }, this);
     this.getOpacity = function (geomType) {
         return this._sketch.getOpacity(geomType);
     };
@@ -526,6 +600,12 @@
     };
     this.getPerpendicularLengthUnit = function () {
         return this._sketch.getPerpendicularLengthUnit();
+    };
+    this.getBufferZoneSourceType = function () {
+        return this._sketch.getBufferZoneSourceType();
+    };
+    this.getBufferZoneWidth = function () {
+        return this._sketch.getBufferZoneWidth();
     };
 
     this.getTextColor = function (geomType) { return this._sketch.getTextColor(geomType); };
@@ -1325,6 +1405,28 @@
                         };
                     }
                     break;
+                case 'buffer_zone':
+                    if (element.frameworkElement.options) {
+                        var bzOptions = element.frameworkElement.options;
+                        properties["stroke"] = bzOptions.color || _color;
+                        properties["stroke-width"] = bzOptions.weight || _weight;
+                        properties["fill"] = bzOptions.fillColor || '#aaaaaa';
+                        properties["fill-opacity"] = bzOptions.fillOpacity >= 0 ? bzOptions.fillOpacity : 0.2;
+                        properties["font-color"] = bzOptions.fontColor || '#000';
+                        properties["font-size"] = bzOptions.fontSize || 14;
+                        properties["bz-source-type"] = bzOptions.sourceType || 'line';
+                        properties["bz-width"] = bzOptions.width || 10;
+                        var bzRings = element.frameworkElement.getValidBufferRings();
+                        if (bzRings) {
+                            properties["bz-buffer"] = JSON.stringify(bzRings);  // string: server-side FeatureDTO can't convert nested arrays
+                        }
+                        properties["_meta"] = {
+                            tool: "buffer_zone",
+                            text: element.metaText,
+                            source: element.metaSource
+                        };
+                    }
+                    break;
             }
 
             // calcCrs for DimLine, Hectoline, ...
@@ -1357,7 +1459,7 @@
             if (typeof gr.geojson === "string")
                 gr.geojson = $.parseJSON(gr.geojson);
             //alert(JSON.stringify(gr.geojson));
-            var bounds = null;
+            var bounds = null, bufferZoneRings = null;
 
             for (var i in gr.geojson.features) {
                 var feature = gr.geojson.features[i];
@@ -1471,6 +1573,18 @@
                                 this.setPerpendicularStationFormat(feature.properties["pp-station-format"] || 'm');
                                 this.setPerpendicularLengthUnit(feature.properties["pp-length-unit"] || 'm');
                                 this.setTextSize(feature.properties["font-size"]);
+                            } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "buffer_zone") {
+                                this.setTool('buffer_zone');
+                                feature.geometry.type = 'buffer_zone';
+                                this._sketch.setBufferZoneSourceType(feature.properties["bz-source-type"] || 'line');
+                                this._sketch.setBufferZoneWidth(parseFloat(feature.properties["bz-width"]) || 10);
+                                this.setFillColor(feature.properties["fill"] || '#aaaaaa');
+                                this.setFillOpacity(feature.properties["fill-opacity"] >= 0 ? feature.properties["fill-opacity"] : 0.2);
+                                this.setTextSize(feature.properties["font-size"]);
+                                bufferZoneRings = null;
+                                try {
+                                    bufferZoneRings = feature.properties["bz-buffer"] ? JSON.parse(feature.properties["bz-buffer"]) : null;
+                                } catch (ex) { }
                             } else {
                                 this.setTool('line');
                             }
@@ -1483,6 +1597,10 @@
 
                         }
                         this._sketch.fromJson(feature.geometry);
+                        if (bufferZoneRings) {
+                            this._sketch.setBufferZoneBuffer(bufferZoneRings);  // after the vertices => current key
+                            bufferZoneRings = null;
+                        }
                         break;
                     case 'polygon':
                         var meta = feature.properties["_meta"];
@@ -1581,6 +1699,7 @@
                 case 'intersection_angle':
                 case 'azimuth':
                 case 'perpendicular':
+                case 'buffer_zone':
                 case 'dimpolygon': 
                 case 'dimline':
                     json.type = this.getTool();
@@ -1613,6 +1732,7 @@
                 case 'intersection_angle':
                 case 'azimuth':
                 case 'perpendicular':
+                case 'buffer_zone':
                     return true;
             }
         }
@@ -1800,6 +1920,19 @@
                         metaText: element.metaText,
                         readonly_selected: element.readonly_selected
                     });
+                case 'buffer_zone':
+                    result.push({
+                        type: element.type,
+                        fill: element.frameworkElement.options.fillColor,
+                        fillOpacity: element.frameworkElement.options.fillOpacity,
+                        stroke: element.frameworkElement.options.color,
+                        strokeWidth: element.frameworkElement.options.weight,
+                        fontColor: element.frameworkElement.options.fontColor,
+                        fontSize: element.frameworkElement.options.fontSize,
+                        originalElement: element,
+                        metaText: element.metaText,
+                        readonly_selected: element.readonly_selected
+                    });
                     break;
             }
 
@@ -1833,6 +1966,7 @@
             case 'intersection_angle':
             case 'azimuth':
             case 'perpendicular': return { name: 'line', styles: ['stroke-color'] };
+            case 'buffer_zone': return { name: 'line', styles: ['stroke-color', 'fill-color', 'fill-opacity'] };
             default: return [];
         }
     };
@@ -1872,7 +2006,7 @@
     };
 
     this._defaultBehaviour = function (type) {
-        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'dimpolygon', 'hectoline', 'view_angle', 'intersection_angle', 'azimuth', 'perpendicular']) >= 0;
+        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'dimpolygon', 'hectoline', 'view_angle', 'intersection_angle', 'azimuth', 'perpendicular', 'buffer_zone']) >= 0;
     };
 
     this.hideContextMenu = function () {

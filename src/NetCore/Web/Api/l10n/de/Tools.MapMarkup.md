@@ -23,6 +23,7 @@ Einfaches Zeichnen in der Karte.
 ## intersection_angle: Schnittwinkel
 ## azimuth: Richtungswinkel
 ## perpendicular: Normalabstand
+## buffer_zone: Pufferzone
 
 ## save: Zeichnung speichern
 ## open: Zeichnung laden
@@ -83,6 +84,13 @@ Einfaches Zeichnen in der Karte.
 ## station-format-m: Meter (156,24m)
 ## station-format-km: Kilometrierung (0+156,24)
 ## station-format-none: Keine
+## buffer-source-type: Quelltyp
+## buffer-source-point: Punkt
+## buffer-source-multipoint: Mehrere Punkte
+## buffer-source-line: Linie
+## buffer-source-polygon: Fläche
+## buffer-width: Pufferbreite (bei Flächen auch negativ)
+## apply-buffer-width: Pufferbreite übernehmen
 
 # draw-symbol: Symbol setzen
 # draw-point: Punkt setzen
@@ -99,6 +107,7 @@ Einfaches Zeichnen in der Karte.
 # draw-intersection-angle: Schnittwinkel zeichnen
 # draw-azimuth: Richtungswinkel zeichnen
 # draw-perpendicular: Normalabstand zeichnen
+# draw-buffer-zone: Pufferzone zeichnen
 
 # apply-line: Linie übernehmen
 # finish-reference-line: Bezugslinie beenden

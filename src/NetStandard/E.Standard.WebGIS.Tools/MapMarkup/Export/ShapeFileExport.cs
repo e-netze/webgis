@@ -6,6 +6,7 @@ using System.Linq;
 using E.Standard.Esri.Shapefile;
 using E.Standard.Esri.Shapefile.IO;
 using E.Standard.GeoJson;
+using E.Standard.Json;
 using E.Standard.WebMapping.Core;
 using E.Standard.WebMapping.Core.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -79,6 +80,17 @@ class ShapeFileExport : IExport
                     Feature shapeFeature = new Feature();
 
                     var shape = feature.ToShape();
+
+                    // buffer_zone: export the buffer polygon (WGS84, calculated by the client or recalculated here)
+                    if (toolType == "buffer_zone")
+                    {
+                        shape = BufferZonePolygon(feature, shape);
+                        if (shape is null)
+                        {
+                            continue;
+                        }
+                    }
+
                     transformer.Transform(shape);
 
                     // intersection_angle: vertices 0,1 => line 1, vertices 2,3 => line 2 => two parts
@@ -114,6 +126,24 @@ class ShapeFileExport : IExport
                 #endregion
             }
         }
+    }
+
+    static private Polygon BufferZonePolygon(GeoJsonFeature feature, Shape source)
+    {
+        double[][][] rings = null;
+        var bufferJson = feature.GetPropery<string>("bz-buffer");
+        if (!String.IsNullOrEmpty(bufferJson))
+        {
+            try { rings = JSerializer.Deserialize<double[][][]>(bufferJson); } catch { }
+        }
+
+        rings ??= BufferZoneCalculator.CalcBufferRings(
+                    SpatialAlgorithms.ShapePoints(source, false),
+                    feature.GetPropery<string>("bz-source-type"),
+                    feature.GetPropery<double>("bz-width"),
+                    feature.GetPropery<int>("_calcCrs"));
+
+        return BufferZoneCalculator.ToPolygon(rings);
     }
 
     public byte[] GetBytes(bool throwExcetionIfEmpty)

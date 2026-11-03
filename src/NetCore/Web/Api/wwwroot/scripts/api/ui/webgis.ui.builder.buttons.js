@@ -57,6 +57,10 @@ webgis.ui.builder["button"] = (map, $newElement, element, options) => {
                 var $angleControl = $(this).closest('.webgis-ui-optionscontainer').find('.webgis-graphics-view_angle-angle');
                 $this.data('_value', $angleControl.length === 1 ? parseFloat($angleControl.val()) : null);
                 break;
+            case "setgraphicsbufferzonewidth":
+                var $widthControl = $(this).closest('.webgis-ui-optionscontainer').find('.webgis-graphics-buffer_zone-width');
+                $this.data('_value', $widthControl.length === 1 ? parseFloat($widthControl.val()) : null);
+                break;
         }
         webgis.tools.onButtonClick(map,
             {
