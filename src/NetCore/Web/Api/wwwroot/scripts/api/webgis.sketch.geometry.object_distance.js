@@ -130,6 +130,22 @@ webgis.sketch.geometryTypes.define('object_distance', '_base', function (ctx) {
         sketch.addUndo(webgis.l10n.get('object-distance-undo-add-b'));
         sketch.addVertices(vertices, false);
     };
+    // add from selection => all lines in one undo step, returns the number of added lines
+    this.addLines = function (lines) {
+        if (state.vertices.length === 0)
+            return 0;
+
+        var vertices = [];
+        for (var i = 0; i < lines.length; i++) {
+            vertices = vertices.concat(_lineVertices(lines[i]));
+        }
+        if (vertices.length === 0)
+            return 0;
+
+        sketch.addUndo(webgis.l10n.get('object-distance-undo-add-from-selection'));
+        sketch.addVertices(vertices, false);
+        return vertices.length / 2;
+    };
     this.removeLine = function (index) {
         var from = 1 + 2 * index;
         if (index < 0 || from + 1 >= state.vertices.length)

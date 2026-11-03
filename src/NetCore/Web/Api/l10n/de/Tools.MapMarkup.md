@@ -137,6 +137,8 @@ Einfaches Zeichnen in der Karte.
 ## dimpolygon-from-selection: Bemaßungsflächen aus Auswahl {0} übernehmen
 ## hectoline-from-selection: Hektometrierungen aus Auswahl {0} übernehmen
 ## buffer_zone-from-selection: Pufferzonen aus Auswahl {0} übernehmen
+## object_distance-from-selection: Auswahl {0} als Objekte B übernehmen
+## perpendicular-from-selection: Punkte aus Auswahl {0} übernehmen
 
 # selection: Auswahl
 ## take-from: Aus Auswahl übernehmen

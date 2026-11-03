@@ -86,6 +86,51 @@ webgis.sketch.geometryTypes.define('perpendicular', '_line', function (ctx) {
         return [element];
     };
 
+    /********* perpendicular specific (sketch facade: addPerpendicularPoints) *********/
+
+    // reference line with at least 2 vertices (finished or not)
+    this.hasReferenceLine = function () {
+        return sketch.partVertices(0).length >= 2;
+    };
+    // add from selection: points [[lng, lat], ...] => an unfinished reference line is finished,
+    // points already in the sketch (< 1 cm) are skipped, one undo step => { added, skipped } or null (no reference line)
+    this.addPoints = function (points) {
+        if (!this.hasReferenceLine())
+            return null;
+
+        var existing = state.model.count() > 1 ? state.vertices.slice(state.model.start(1)) : [];
+        var _isDuplicate = function (x, y) {
+            for (var i = 0; i < existing.length; i++) {
+                var kx = 111320.0 * Math.cos(y * Math.PI / 180.0);
+                var dx = (existing[i].x - x) * kx, dy = (existing[i].y - y) * 110540.0;
+                if (dx * dx + dy * dy < 0.0001)
+                    return true;
+            }
+            return false;
+        };
+
+        var vertices = [], skipped = 0;
+        for (var p = 0; p < (points || []).length; p++) {
+            var x = points[p][0], y = points[p][1];
+            if (_isDuplicate(x, y)) {
+                skipped++;
+                continue;
+            }
+            var vertex = { x: x, y: y };
+            vertices.push(vertex);
+            existing.push(vertex);
+        }
+
+        if (vertices.length > 0) {
+            sketch.addUndo(webgis.l10n.get('perpendicular-undo-add-from-selection'));
+            if (state.model.count() === 1) {
+                sketch.appendPart(null, true);
+            }
+            sketch.addVertices(vertices, false);
+        }
+        return { added: vertices.length, skipped: skipped };
+    };
+
     this.fromJson = function (json, crsId, readOnly) {
         var count = json.coordinates.length, lineVertexCount = parseInt(json.lineVertexCount);
         for (var i = 0; i < count; i++) {

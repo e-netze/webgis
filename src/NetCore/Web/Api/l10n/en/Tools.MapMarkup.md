@@ -137,6 +137,8 @@ Simple drawing on the map.
 ## dimpolygon-from-selection: Dimension polygons from selection {0}
 ## hectoline-from-selection: Hectometer lines from selection {0}
 ## buffer_zone-from-selection: Buffer zones from selection {0}
+## object_distance-from-selection: Selection {0} as objects B
+## perpendicular-from-selection: Points from selection {0}
 
 # selection: Selection
 ## take-from: Take from selection

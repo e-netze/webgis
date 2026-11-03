@@ -632,6 +632,10 @@
         }
 
         var candidate = calc.candidate;
+        if (calc.fromSelection === true) {
+            this._addObjectDistanceLinesFromSelection(data.lines || [], current);
+            return;
+        }
         for (var line of (data.lines || [])) {
             if (line.found !== true) {
                 webgis.toastMessage(webgis.l10n.get('info'), webgis.l10n.get('object-distance-no-object'));
@@ -645,6 +649,118 @@
                 oid: candidate.oid,
                 geometry: candidate.geometry
             }));
+        }
+    };
+
+    /********* add from selection (object_distance: objects B, perpendicular: points) *********/
+
+    // object_distance: selection => objects B of the current object A (server 'object-distance-from-selection' => setObjectDistanceLines)
+    this.objectDistanceFromSelection = function () {
+        var map = this._map, tool = map ? map.getActiveTool() : null;
+        if (this._tool !== 'object_distance' || !tool)
+            return;
+
+        var current = this._sketch.getObjectDistanceData();
+        if (!current || !current.a) {
+            webgis.toastMessage(webgis.l10n.get('info'), webgis.l10n.get('object-distance-select-a-first'));
+            return;
+        }
+
+        this._removeObjectDistanceMenu();
+        var key = 'od-' + (++this._objectDistanceCounter);
+        this._objectDistanceCalc = { key: key, fromSelection: true };
+
+        var aLatLng = L.latLng(current.a.y, current.a.x);
+        webgis.tools.sendToolRequest(map, tool, 'servertoolcommand', null, {
+            _method: 'object-distance-from-selection',
+            'od-a': current.a.ref,
+            'od-b-existing': JSON.stringify(current.lines.map(function (l) { return l.ref; })),
+            'od-calc-crs': L.ViewAngle.toCalc([aLatLng, aLatLng]).crsId || 0,
+            'od-key': key
+        });
+    };
+    this._addObjectDistanceLinesFromSelection = function (lines, current) {
+        var existing = current.lines.map(function (l) { return l.ref; });
+        var add = [], notFound = 0, touching = 0;
+
+        for (var line of lines) {
+            if (line.found !== true) {
+                notFound++;
+                continue;
+            }
+            if (line.ref === current.a.ref || existing.indexOf(line.ref) >= 0)
+                continue;
+            if (line.touching === true)
+                touching++;
+            existing.push(line.ref);
+            add.push(line);
+        }
+
+        var added = this._sketch.addObjectDistanceLines(add);
+        if (notFound > 0)
+            webgis.toastMessage(webgis.l10n.get('info'), webgis.l10n.get('object-distance-from-selection-not-found').replace('{0}', notFound));
+        if (touching > 0)
+            webgis.toastMessage(webgis.l10n.get('info'), webgis.l10n.get('object-distance-from-selection-touching').replace('{0}', touching));
+        if (added === 0 && notFound === 0)
+            webgis.toastMessage(webgis.l10n.get('info'), webgis.l10n.get('from-selection-nothing-added'));
+
+        if (added > 0)
+            this._zoomToSketchIfOutside();
+    };
+
+    // perpendicular: selected points => points of the current sketch (server 'perpendicular-from-selection' => setPerpendicularPoints)
+    this._perpendicularCounter = 0;
+    this._perpendicularFromSelection = null;  // pending request: { key }
+    this.perpendicularFromSelection = function () {
+        var map = this._map, tool = map ? map.getActiveTool() : null;
+        if (this._tool !== 'perpendicular' || !tool)
+            return;
+
+        if (!this._sketch.hasPerpendicularReferenceLine()) {
+            webgis.toastMessage(webgis.l10n.get('info'), webgis.l10n.get('perpendicular-draw-line-first'));
+            return;
+        }
+
+        var key = 'pp-' + (++this._perpendicularCounter);
+        this._perpendicularFromSelection = { key: key };
+
+        webgis.tools.sendToolRequest(map, tool, 'servertoolcommand', null, {
+            _method: 'perpendicular-from-selection',
+            'pp-key': key
+        });
+    };
+    // server response of 'perpendicular-from-selection' => { key, points: [[lng, lat], ...] }
+    this.setPerpendicularPoints = function (data) {
+        var request = this._perpendicularFromSelection;
+        if (!data || !request || data.key !== request.key)
+            return;
+
+        this._perpendicularFromSelection = null;
+        if (this._tool !== 'perpendicular')
+            return;
+
+        var result = this._sketch.addPerpendicularPoints(data.points || []);
+        if (!result) {
+            webgis.toastMessage(webgis.l10n.get('info'), webgis.l10n.get('perpendicular-draw-line-first'));
+            return;
+        }
+        if (result.added === 0) {
+            webgis.toastMessage(webgis.l10n.get('info'), webgis.l10n.get('from-selection-nothing-added'));
+            return;
+        }
+
+        this._zoomToSketchIfOutside();
+    };
+
+    // zoom to the whole sketch only if it isn't completely inside the current map extent
+    this._zoomToSketchIfOutside = function () {
+        var map = this._map, extent = this._sketch.bounds();
+        if (!map || !extent)
+            return;
+
+        var mapBounds = map.frameworkElement.getBounds();
+        if (!mapBounds.contains(L.latLngBounds([extent[1], extent[0]], [extent[3], extent[2]]))) {
+            this._sketch.zoomTo();
         }
     };
 

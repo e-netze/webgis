@@ -24,6 +24,7 @@ using E.Standard.WebMapping.Core.Api.UI;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
 using E.Standard.WebMapping.Core.Api.UI.Elements;
 using E.Standard.WebMapping.Core.Api.UI.Elements.Advanced;
+using E.Standard.WebMapping.Core.Collections;
 using E.Standard.WebMapping.Core.Geometry;
 
 namespace E.Standard.WebGIS.Tools.MapMarkup;
@@ -796,7 +797,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                              new List<IUIElement>().AddCircleArcStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e));
 
     [ServerToolCommand("perpendicular")]
-    public ApiEventResponse OnPerpendicularToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+    async public Task<ApiEventResponse> OnPerpendicularToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         // reference line (finished with "close section"), then any number of points => apply button for mobile like dimline
         var uiElements = new List<IUIElement>().AddPerpendicularStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e);
@@ -818,6 +819,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                 }
             });
         }
+
+        await AddSketchFromSelectionButton(uiElements, bridge, e, localizer, "text.perpendicular-from-selection", ApiClientButtonCommand.graphicsperpendicularfromselection, "point");
 
         return AngleToolResponse(bridge, GraphicsTool.Perpendicular, localizer.Localize("draw-perpendicular"), uiElements);
     }
@@ -849,7 +852,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
     // object_distance: object A and any number of objects B are selected by map clicks (object-distance-pick/-calc)
     [ServerToolCommand("object_distance")]
-    public ApiEventResponse OnObjectDistanceToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+    async public Task<ApiEventResponse> OnObjectDistanceToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var uiElements = new List<IUIElement>().AddObjectDistanceStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e);
 
@@ -867,6 +870,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                 }
             });
         }
+
+        await AddSketchFromSelectionButton(uiElements, bridge, e, localizer, "text.object_distance-from-selection", ApiClientButtonCommand.graphicsobjectdistancefromselection, "point", "line", "polygon");
 
         return AngleToolResponse(bridge, GraphicsTool.Object_Distance, localizer.Localize("draw-object-distance"), uiElements);
     }
@@ -1006,6 +1011,135 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         };
     }
 
+    // object_distance: the selected features become objects B of the current object A (od-a), already existing B (od-b-existing) are skipped
+    // => same response as object-distance-calc (from_selection: lines with layer, oid and geometry)
+    [ServerToolCommand("object-distance-from-selection")]
+    async public Task<ApiEventResponse> OnObjectDistanceFromSelection(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+    {
+        var (query, features) = await SketchFromSelectionFeatures(bridge, e, localizer);
+        if (query is null)
+        {
+            return null;
+        }
+
+        var refA = e["od-a"];
+        var existingRefs = new HashSet<string>(JSerializer.Deserialize<string[]>(e["od-b-existing"] ?? "[]") ?? []);
+        var calcCrsId = e.GetInt("od-calc-crs");
+        var themeId = bridge.GetQueryThemeId(query);
+
+        var shapeA = await ObjectDistanceShape(bridge, refA);
+        var lines = new List<object>();
+
+        if (shapeA != null)
+        {
+            foreach (var feature in features.Where(f => f.Shape != null))
+            {
+                var refB = $"{themeId}|{feature.Oid}";
+                if (refB == refA || !existingRefs.Add(refB))
+                {
+                    continue;
+                }
+
+                var result = ObjectDistanceCalculator.Calc(shapeA, feature.Shape, calcCrsId);
+
+                lines.Add(new
+                {
+                    @ref = refB,
+                    found = result != null,
+                    from = result?.From,
+                    to = result?.To,
+                    length = result?.Length,
+                    touching = result?.Touching ?? false,
+                    layer = query.Name,
+                    oid = feature.Oid,
+                    geometry = ObjectDistanceGeoJsonGeometry(feature.Shape)
+                });
+            }
+        }
+
+        return new ApiEventResponse()
+        {
+            ClientCommands = [ApiClientButtonCommand.setgraphicsobjectdistancelines],
+            ClientCommandData = new
+            {
+                key = e["od-key"],
+                a = refA,
+                found_a = shapeA != null,
+                from_selection = true,
+                lines
+            }
+        };
+    }
+
+    // perpendicular: the selected points (multipoints are split) => WGS84 coordinates, the client appends them to the current sketch
+    [ServerToolCommand("perpendicular-from-selection")]
+    async public Task<ApiEventResponse> OnPerpendicularFromSelection(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+    {
+        var (query, features) = await SketchFromSelectionFeatures(bridge, e, localizer);
+        if (query is null)
+        {
+            return null;
+        }
+
+        var points = new List<double[]>();
+        foreach (var shape in features.Select(f => f.Shape))
+        {
+            if (shape is MultiPoint multiPoint)
+            {
+                for (int i = 0; i < multiPoint.PointCount; i++)
+                {
+                    points.Add([multiPoint[i].X, multiPoint[i].Y]);
+                }
+            }
+            else if (shape is Point point)
+            {
+                points.Add([point.X, point.Y]);
+            }
+        }
+
+        return new ApiEventResponse()
+        {
+            ClientCommands = [ApiClientButtonCommand.setgraphicsperpendicularpoints],
+            ClientCommandData = new
+            {
+                key = e["pp-key"],
+                points
+            }
+        };
+    }
+
+    // selection => query and WGS84 features (with geometry), checks the add-from-selection config and limits
+    async private Task<(IQueryBridge query, FeatureCollection features)> SketchFromSelectionFeatures(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+    {
+        if (e.SelectionInfo == null || !e.GetConfigBool(ConfigAllowAddFromSelection, false))
+        {
+            return (null, null);
+        }
+
+        var maxFeatures = e.GetConfigInt(ConfigAllowAddFromSelectionMaxFeatures);
+        if (maxFeatures > 0 && e.SelectionInfo.ObjectIds.Count() > maxFeatures)
+        {
+            throw new Exception(String.Format(localizer.Localize("selection.exception-to-many-objects"), maxFeatures));
+        }
+
+        var query = await bridge.GetQuery(e.SelectionInfo.ServiceId, e.SelectionInfo.QueryId);
+        if (query == null)
+        {
+            throw new Exception("Can't determine selelction query");
+        }
+
+        var features = await e.FeaturesFromSelectionAsync(bridge, featureSpatialReference: bridge.CreateSpatialReference(4326));
+
+        int maxVertices = e.GetConfigInt(ConfigAllowAddFromSelectionMaxVertices);
+        if (maxVertices > 0
+            && features.Where(f => f.Shape != null).Sum(f => SpatialAlgorithms.ShapePoints(f.Shape, false).Count) > maxVertices)
+        {
+            throw new Exception(String.Format(localizer.Localize("selection.exception-to-many-vertices"), maxVertices));
+        }
+
+        return (query, features);
+    }
+
     private const int ObjectDistanceMaxCandidatesPerLayer = 10;
 
     // reference: "<theme-id>|<oid>" => WGS84 geometry or null (unknown query/feature)
@@ -1120,13 +1254,13 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                 resp = OnCircleArcToolClick(bridge, e, localizer);
                 break;
             case "perpendicular":
-                resp = OnPerpendicularToolClick(bridge, e, localizer);
+                resp = await OnPerpendicularToolClick(bridge, e, localizer);
                 break;
             case "buffer_zone":
                 resp = await OnBufferZoneToolClick(bridge, e, localizer);
                 break;
             case "object_distance":
-                resp = OnObjectDistanceToolClick(bridge, e, localizer);
+                resp = await OnObjectDistanceToolClick(bridge, e, localizer);
                 break;
         }
 
@@ -1680,6 +1814,23 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         }
 
         uiElements.Add(new UIButton(UIButton.UIButtonType.servertoolcommand, "add-from-selection-dialog")
+        {
+            text = String.Format(localizer.Localize(l10nKey), await e.SelectionInfo.GetQueryName(bridge)),
+            css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.LineBreakButton })
+        });
+    }
+
+    // phase 2 (object_distance, perpendicular): client button, the client sends the current sketch with the selection to the server
+    async private Task AddSketchFromSelectionButton(List<IUIElement> uiElements, IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer, string l10nKey, ApiClientButtonCommand command, params string[] geometryTypes)
+    {
+        if (e.SelectionInfo == null
+            || !e.GetConfigBool(ConfigAllowAddFromSelection, false)
+            || (geometryTypes.Length > 0 && !geometryTypes.Contains(e.SelectionInfo.GeometryType)))
+        {
+            return;
+        }
+
+        uiElements.Add(new UIButton(UIButton.UIButtonType.clientbutton, command)
         {
             text = String.Format(localizer.Localize(l10nKey), await e.SelectionInfo.GetQueryName(bridge)),
             css = UICss.ToClass(new string[] { UICss.CancelButtonStyle, UICss.LineBreakButton })

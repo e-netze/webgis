@@ -103,6 +103,13 @@
     "object-distance-undo-select-a": "Select object A",
     "object-distance-undo-add-b": "Add object B",
     "object-distance-undo-remove-b": "Remove object B",
+    "object-distance-undo-add-from-selection": "Objects B from selection",
+    "object-distance-select-a-first": "First select object A in the map",
+    "object-distance-from-selection-not-found": "{0} object(s) of the selection not found",
+    "object-distance-from-selection-touching": "{0} object(s) touch/intersect object A (0 m)",
+    "perpendicular-undo-add-from-selection": "Points from selection",
+    "perpendicular-draw-line-first": "First draw the reference line (at least 2 points)",
+    "from-selection-nothing-added": "No new objects in the selection",
 
     "service-order": "Service Order",
     "info-service-order": "Here you can change the drawing order of map services. Services higher in the list will overlay those below. The order can be changed by dragging. Additionally, you can adjust the opacity of each service.",

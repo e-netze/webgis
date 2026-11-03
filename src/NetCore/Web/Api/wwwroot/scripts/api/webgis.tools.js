@@ -354,6 +354,18 @@
                     if (map && map.graphics)
                         map.graphics.setObjectDistanceLines(data);
                     break;
+                case 'graphicsobjectdistancefromselection':  // button "selection as objects B"
+                    if (map && map.graphics)
+                        map.graphics.objectDistanceFromSelection();
+                    break;
+                case 'graphicsperpendicularfromselection':  // button "points from selection"
+                    if (map && map.graphics)
+                        map.graphics.perpendicularFromSelection();
+                    break;
+                case 'setgraphicsperpendicularpoints':  // server response of 'perpendicular-from-selection' => data: { key, points }
+                    if (map && map.graphics)
+                        map.graphics.setPerpendicularPoints(data);
+                    break;
                 case 'setgraphicsobjectdistancelengthunit':
                     if (map && map.graphics && tool.value)
                         map.graphics.setObjectDistanceLengthUnit(tool.value);

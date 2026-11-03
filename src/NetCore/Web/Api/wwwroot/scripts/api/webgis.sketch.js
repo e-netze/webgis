@@ -1210,6 +1210,9 @@
     this.getObjectDistanceData = function () { return _geometryType === 'object_distance' ? _typeOf('object_distance').getData() : null; };
     this.setObjectDistanceA = function (candidate, latLng) { if (_geometryType === 'object_distance') _typeOf('object_distance').setA(candidate, latLng); };
     this.addObjectDistanceLine = function (line) { if (_geometryType === 'object_distance') _typeOf('object_distance').addLine(line); };
+    this.addObjectDistanceLines = function (lines) { return _geometryType === 'object_distance' ? _typeOf('object_distance').addLines(lines) : 0; };
+    this.hasPerpendicularReferenceLine = function () { return _geometryType === 'perpendicular' && _typeOf('perpendicular').hasReferenceLine(); };
+    this.addPerpendicularPoints = function (points) { return _geometryType === 'perpendicular' ? _typeOf('perpendicular').addPoints(points) : null; };
     this.removeObjectDistanceLine = function (index) { if (_geometryType === 'object_distance') _typeOf('object_distance').removeLine(index); };
     this.setText = function (text) { _typeOf('text').setOption('text', text); };
 

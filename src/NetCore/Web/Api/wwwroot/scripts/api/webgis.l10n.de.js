@@ -103,6 +103,13 @@
     "object-distance-undo-select-a": "Objekt A wählen",
     "object-distance-undo-add-b": "Objekt B hinzufügen",
     "object-distance-undo-remove-b": "Objekt B entfernen",
+    "object-distance-undo-add-from-selection": "Objekte B aus Auswahl",
+    "object-distance-select-a-first": "Zuerst Objekt A in der Karte wählen",
+    "object-distance-from-selection-not-found": "{0} Objekt(e) der Auswahl nicht gefunden",
+    "object-distance-from-selection-touching": "{0} Objekt(e) berühren/schneiden Objekt A (0 m)",
+    "perpendicular-undo-add-from-selection": "Punkte aus Auswahl",
+    "perpendicular-draw-line-first": "Zuerst die Bezugslinie zeichnen (mindestens 2 Punkte)",
+    "from-selection-nothing-added": "Keine neuen Objekte in der Auswahl",
 
     "service-order": "Zeichenreihenfolge",
     "info-service-order": "Hier kann die Zeichenreihenfolge der Kartendienste geändert werden. Dienste, die weiter oben liegen überdecken die darunter liegenden Dienste. Die Reihenfolge kann durch Ziehen der Dienste geändert werden. Zusätzlich kann auch die Deckkraft der einzelnen Dienste angepasst werden.",

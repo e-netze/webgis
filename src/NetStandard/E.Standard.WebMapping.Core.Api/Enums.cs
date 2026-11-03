@@ -194,6 +194,9 @@ public enum ApiClientButtonCommand
     setgraphicsobjectdistancelines = 114,
     setgraphicsobjectdistancelengthunit = 115,
     setgraphicsobjectdistanceshownumber = 116,
+    graphicsobjectdistancefromselection = 117,
+    graphicsperpendicularfromselection = 118,
+    setgraphicsperpendicularpoints = 119,
 }
 
 public enum ApiToolEvents
