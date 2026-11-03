@@ -9,7 +9,12 @@ webgis.sketch.geometryTypes.define('dimline', '_line', function (ctx) {
     this.styleIndex = 1;
     this.lengthUnit = 'm';
     this.labelTotalLength = false;
-    this.elementOptions = { lengthUnit: ['getLengthUnit', 'setLengthUnit'], labelTotalLength: ['getLabelTotalLength', 'setLabelTotalLength'] };
+    this.angleUnit = 'none';
+    this.angleType = 'inner';
+    this.elementOptions = {
+        lengthUnit: ['getLengthUnit', 'setLengthUnit'], labelTotalLength: ['getLabelTotalLength', 'setLabelTotalLength'],
+        angleUnit: ['getAngleUnit', 'setAngleUnit'], angleType: ['getAngleType', 'setAngleType']
+    };
 
     this.createFrameworkElement = function (latLngs) {
         var dimLine = L.dimLine(latLngs || [], {
@@ -18,7 +23,9 @@ webgis.sketch.geometryTypes.define('dimline', '_line', function (ctx) {
             fontSize: sketch.getTextSize(),
             fontColor: sketch.getTextColor(),
             lengthUnit: sketch.getDimLineLengthUnit(),
-            labelTotalLength: sketch.getDimLineLabelTotalLength()
+            labelTotalLength: sketch.getDimLineLabelTotalLength(),
+            angleUnit: sketch.getDimLineAngleUnit(),
+            angleType: sketch.getDimLineAngleType()
         });
         dimLine._webgis = { geometryType: state.geometryType };
         return dimLine;
@@ -28,5 +35,7 @@ webgis.sketch.geometryTypes.define('dimline', '_line', function (ctx) {
         jsonGeometry.type = 'dimline';
         this.lengthUnit = frameworkElement.getLengthUnit();
         this.labelTotalLength = frameworkElement.getLabelTotalLength();
+        this.angleUnit = frameworkElement.getAngleUnit();
+        this.angleType = frameworkElement.getAngleType();
     };
 });

@@ -10,6 +10,7 @@
         circleMarkerOptions: { same_as_line: true, radius: 4, color: '#000', weight: 2, fillcolor: '#eee' },
         areaUnit: 'm²',
         labelEdges: false,
+        angleUnit: 'none',   // none | deg | gon | both
         attributes: {}
     },
 
@@ -33,6 +34,13 @@
 
     onAdd: function () {
         this.rebuild();
+    },
+    // angle arcs/extensions have their own styles (dashArray, no fill) => rebuild
+    setStyle: function (style) {
+        L.LayerCollection.prototype.setStyle.call(this, style);
+        if (this.options.angleUnit && this.options.angleUnit !== 'none')
+            this.rebuild();
+        return this;
     },
     setLatLngs: function (latLngs) {
         this._latLngs = latLngs;
@@ -61,6 +69,13 @@
     },
     getLabelEdges: function () {
         return this.options.labelEdges;
+    },
+    setAngleUnit: function (unit) {
+        this.options.angleUnit = unit;
+        this.rebuild();
+    },
+    getAngleUnit: function () {
+        return this.options.angleUnit;
     },
     redraw: function () {
         this.rebuild();
@@ -191,6 +206,8 @@
 
             let circle = L.circleMarker(this._latLngs[this._latLngs.length - 1], this.options.circleMarkerOptions);
             this.addChildLayer(circle);
+
+            L.ViewAngle.addVertexAngles(this, this._latLngs, true, this.options.angleUnit, null, this.options);
         }
     },
     toGeoJSON: function () {

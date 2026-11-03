@@ -26,7 +26,7 @@ internal class AngleElementHelper : IDisposable
     private readonly float _fontSize;
     private readonly float _dpiFactor;
 
-    public AngleElementHelper(ICanvas canvas, IMap map, Polyline polyline, Polyline calcPolyline, ArgbColor color, float width, float fontSize)
+    public AngleElementHelper(ICanvas canvas, IMap map, Shape shape, Shape calcShape, ArgbColor color, float width, float fontSize)
     {
         _canvas = canvas;
         _map = map;
@@ -35,9 +35,9 @@ internal class AngleElementHelper : IDisposable
         _fontSize = fontSize > 0 ? fontSize : 11f;
         _dpiFactor = map.DpiFactor();
 
-        CalcPoints = SpatialAlgorithms.ShapePoints(calcPolyline ?? polyline, true);
-        _calcTransformer = calcPolyline != null
-            ? new GeometricTransformerPro(CoreApiGlobals.SRefStore, polyline.SrsId, calcPolyline.SrsId)
+        CalcPoints = SpatialAlgorithms.ShapePoints(calcShape ?? shape, true);
+        _calcTransformer = calcShape != null
+            ? new GeometricTransformerPro(CoreApiGlobals.SRefStore, shape.SrsId, calcShape.SrsId)
             : null;
     }
 
@@ -199,6 +199,125 @@ internal class AngleElementHelper : IDisposable
             _ => deg
         };
     }
+
+    #region Vertex angles (dimline, dimpolygon)
+
+    public record VertexAngle(Point Center, double Radius, double Start, double Delta, double Degrees, string Side, bool Extension);
+
+    // same geometry as L.ViewAngle.vertexAngles (webgis-graphics.view_angle.js)
+    //   closed (polygon) => interior angle 0-360° (orientation of the ring), otherwise only at the inner vertices:
+    //   angleType "inner" => angle between the segments 0-180°, "deflection" => change of direction 0-180° with side L/R
+    static public List<VertexAngle> VertexAngles(IList<Point> points, bool closed, string angleType)
+    {
+        var pts = new List<Point>(points);
+        var result = new List<VertexAngle>();
+
+        if (closed && pts.Count > 1 && pts[0].X == pts[^1].X && pts[0].Y == pts[^1].Y)
+        {
+            pts.RemoveAt(pts.Count - 1);
+        }
+
+        int n = pts.Count;
+        if (n < 3)
+        {
+            return result;
+        }
+
+        double signedArea = 0;
+        if (closed)
+        {
+            for (int k = 0; k < n; k++)
+            {
+                Point p1 = pts[k], p2 = pts[(k + 1) % n];
+                signedArea += p1.X * p2.Y - p2.X * p1.Y;
+            }
+            if (signedArea == 0)
+            {
+                return result;
+            }
+        }
+
+        static double Normalize(double a)  // => (-PI, PI]
+        {
+            while (a > Math.PI) a -= 2.0 * Math.PI;
+            while (a <= -Math.PI) a += 2.0 * Math.PI;
+            return a;
+        }
+
+        for (int i = closed ? 0 : 1; i < (closed ? n : n - 1); i++)
+        {
+            Point c = pts[i], prev = pts[(i - 1 + n) % n], next = pts[(i + 1) % n];
+            double lenPrev = Math.Sqrt((prev.X - c.X) * (prev.X - c.X) + (prev.Y - c.Y) * (prev.Y - c.Y)),
+                   lenNext = Math.Sqrt((next.X - c.X) * (next.X - c.X) + (next.Y - c.Y) * (next.Y - c.Y));
+            if (lenPrev == 0 || lenNext == 0)
+            {
+                continue;
+            }
+
+            double aPrev = Math.Atan2(prev.Y - c.Y, prev.X - c.X), aNext = Math.Atan2(next.Y - c.Y, next.X - c.X);
+            double radius = 0.2 * Math.Min(lenPrev, lenNext), start, delta;
+            string side = String.Empty;
+            bool extension = false;
+
+            if (closed)
+            {
+                // counter clockwise ring => interior from the direction to the next vertex counter clockwise to the direction to the previous vertex
+                double from = signedArea > 0 ? aNext : aPrev, to = signedArea > 0 ? aPrev : aNext;
+                double interior = to - from;
+                while (interior < 0) interior += 2.0 * Math.PI;
+                while (interior >= 2.0 * Math.PI) interior -= 2.0 * Math.PI;
+                start = from;
+                delta = interior;
+            }
+            else if (angleType?.ToLowerInvariant() == "deflection")
+            {
+                double aIn = aPrev + Math.PI;
+                start = aIn;
+                delta = Normalize(aNext - aIn);
+                extension = true;
+                side = Math.Abs(delta) < 1e-9 ? String.Empty : (delta > 0 ? "L" : "R");
+            }
+            else
+            {
+                start = aNext;
+                delta = Normalize(aPrev - aNext);
+            }
+
+            result.Add(new VertexAngle(c, radius, start, delta, Math.Abs(delta) * 180.0 / Math.PI, side, extension));
+        }
+
+        return result;
+    }
+
+    // draws the vertex angles: arcs, extensions and labels; angleUnit: none | deg | gon | both
+    public void DrawVertexAngles(bool closed, string angleUnit, string angleType)
+    {
+        if (String.IsNullOrEmpty(angleUnit) || angleUnit.Equals("none", StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        foreach (var angle in VertexAngles(CalcPoints, closed, angleType))
+        {
+            if (angle.Extension)
+            {
+                DrawLine([angle.Center, At(angle.Center, angle.Radius * 1.5, angle.Start)], true);
+            }
+            if (angle.Delta != 0)
+            {
+                DrawArc(angle.Center, angle.Radius, angle.Start, angle.Start + angle.Delta);
+            }
+
+            var text = FormatAngle(angle.Degrees, angleUnit);
+            if (!String.IsNullOrEmpty(angle.Side))
+            {
+                text = $"{text} {angle.Side}";
+            }
+            DrawLabel(At(angle.Center, angle.Radius * 1.4, angle.Start + angle.Delta / 2.0), text);
+        }
+    }
+
+    #endregion
 
     public void Dispose()
     {

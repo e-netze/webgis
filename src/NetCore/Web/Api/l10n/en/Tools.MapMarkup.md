@@ -73,6 +73,10 @@ Simple drawing on the map.
 ## angle-unit-deg: Degrees
 ## angle-unit-gon: Gon
 ## angle-unit-both: Degrees and gon
+## angle-unit-none: None
+## angle-type: Angle type
+## angle-type-inner: Interior angle
+## angle-type-deflection: Deflection angle (L/R)
 ## label-axis-length: Label axis length
 ## show-angles: Show angles
 ## show-angles-intersection: Intersection angle

@@ -73,6 +73,10 @@ Einfaches Zeichnen in der Karte.
 ## angle-unit-deg: Grad
 ## angle-unit-gon: Gon
 ## angle-unit-both: Grad und Gon
+## angle-unit-none: Keine
+## angle-type: Winkelart
+## angle-type-inner: Innenwinkel
+## angle-type-deflection: Ablenkwinkel (L/R)
 ## label-axis-length: Achsenlänge beschriften
 ## show-angles: Winkel anzeigen
 ## show-angles-intersection: Schnittwinkel

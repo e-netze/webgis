@@ -203,6 +203,101 @@ L.ViewAngle.formatNumber = function (value) {
     return (Math.round(value * 100.0) / 100.0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
 
+// angles at the vertices of dimline/dimpolygon (calc crs points {X,Y}), same geometry as AngleElementHelper.VertexAngles (print)
+//   closed (polygon) => interior angle 0-360° (orientation of the ring), otherwise only at the inner vertices:
+//   angleType 'inner' => angle between the segments 0-180°, 'deflection' => change of direction 0-180° with side L/R
+// returns [{ center, radius, start, delta, degrees, side, extension }] (radians, extension => dashed prolongation of the incoming segment)
+L.ViewAngle.vertexAngles = function (points, closed, angleType) {
+    var pts = points.slice(), result = [];
+    if (closed && pts.length > 1 && pts[0].X === pts[pts.length - 1].X && pts[0].Y === pts[pts.length - 1].Y)
+        pts.pop();
+
+    var n = pts.length;
+    if (n < 3)
+        return result;
+
+    var signedArea = 0;
+    if (closed) {
+        for (var k = 0; k < n; k++) {
+            var p1 = pts[k], p2 = pts[(k + 1) % n];
+            signedArea += p1.X * p2.Y - p2.X * p1.Y;
+        }
+        if (signedArea === 0)
+            return result;
+    }
+
+    var normalize = function (a) {  // => (-PI, PI]
+        while (a > Math.PI) a -= 2.0 * Math.PI;
+        while (a <= -Math.PI) a += 2.0 * Math.PI;
+        return a;
+    };
+
+    for (var i = closed ? 0 : 1; i < (closed ? n : n - 1); i++) {
+        var c = pts[i], prev = pts[(i - 1 + n) % n], next = pts[(i + 1) % n];
+        var lenPrev = Math.sqrt((prev.X - c.X) * (prev.X - c.X) + (prev.Y - c.Y) * (prev.Y - c.Y)),
+            lenNext = Math.sqrt((next.X - c.X) * (next.X - c.X) + (next.Y - c.Y) * (next.Y - c.Y));
+        if (lenPrev === 0 || lenNext === 0)
+            continue;
+
+        var aPrev = Math.atan2(prev.Y - c.Y, prev.X - c.X), aNext = Math.atan2(next.Y - c.Y, next.X - c.X);
+        var angle = { center: c, radius: 0.2 * Math.min(lenPrev, lenNext), side: '', extension: false };
+
+        if (closed) {
+            // counter clockwise ring => interior from the direction to the next vertex counter clockwise to the direction to the previous vertex
+            var from = signedArea > 0 ? aNext : aPrev, to = signedArea > 0 ? aPrev : aNext;
+            var interior = to - from;
+            while (interior < 0) interior += 2.0 * Math.PI;
+            while (interior >= 2.0 * Math.PI) interior -= 2.0 * Math.PI;
+            angle.start = from;
+            angle.delta = interior;
+        } else if (angleType === 'deflection') {
+            var aIn = aPrev + Math.PI;
+            angle.start = aIn;
+            angle.delta = normalize(aNext - aIn);
+            angle.extension = true;
+            angle.side = Math.abs(angle.delta) < 1e-9 ? '' : (angle.delta > 0 ? 'L' : 'R');
+        } else {
+            angle.start = aNext;
+            angle.delta = normalize(aPrev - aNext);
+        }
+
+        angle.degrees = Math.abs(angle.delta) * 180.0 / Math.PI;
+        result.push(angle);
+    }
+
+    return result;
+};
+
+// draws the vertex angles (see vertexAngles) into a L.LayerCollection: arcs, extensions and labels
+// angleUnit: none | deg | gon | both
+L.ViewAngle.addVertexAngles = function (collection, latLngs, closed, angleUnit, angleType, options) {
+    if (!angleUnit || angleUnit === 'none' || !latLngs || latLngs.length < 3)
+        return;
+
+    var calc = L.ViewAngle.toCalc(latLngs);
+    var lineOptions = { color: options.color, weight: options.weight, opacity: 1.0, fill: false };
+    var dashedOptions = L.extend({}, lineOptions, { dashArray: (options.weight * 3) + ',' + (options.weight * 3) });
+
+    L.ViewAngle.vertexAngles(calc.points, closed, angleType).forEach(function (angle) {
+        var at = function (radius, direction) {
+            return calc.toLatLng(angle.center.X + radius * Math.cos(direction), angle.center.Y + radius * Math.sin(direction));
+        };
+
+        if (angle.extension === true)
+            collection.addChildLayer(L.polyline([at(0, angle.start), at(angle.radius * 1.5, angle.start)], dashedOptions));
+        if (angle.delta !== 0)
+            collection.addChildLayer(L.polyline(L.ViewAngle.arc(at, angle.radius, angle.start, angle.start + angle.delta), lineOptions));
+
+        collection.addChildLayer(L.svgLabel(at(angle.radius * 1.4, angle.start + angle.delta / 2.0), {
+            text: L.ViewAngle.formatAngle(angle.degrees, angleUnit) + (angle.side ? ' ' + angle.side : ''),
+            fontSize: options.fontSize,
+            fontColor: options.fontColor,
+            anchor: 'middle',
+            alignmentBaseline: 'central'
+        }));
+    });
+};
+
 // degrees => text in the given unit (deg | gon | both)
 L.ViewAngle.formatAngle = function (degrees, unit) {
     var deg = L.ViewAngle.formatNumber(degrees) + '°',

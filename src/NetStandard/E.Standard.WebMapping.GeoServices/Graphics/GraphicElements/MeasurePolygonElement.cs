@@ -17,6 +17,9 @@ public class MeasurePolygonElement : PolygonElement
     private float _fontSize = 11f;
     private Unit _areaUnit = Unit.Meter;
     private Unit _lengthUnit = Unit.Meter;
+    private string _angleUnit;
+    private ArgbColor _penColor;
+    private float _width;
 
     //public MeasurePolygonElement(Polygon polygon, ArgbColor color, float width, LineDashStyle dashStyle = LineDashStyle.Solid, Polygon calcPolygon = null, bool labelSegments = false)
     //    : this(polygon, color, color, width, dashStyle, calcPolygon, labelSegments)
@@ -31,9 +34,13 @@ public class MeasurePolygonElement : PolygonElement
                 float fontSize = 11f,
                 Polygon calcPolygon = null,
                 bool labelSegments = false,
-                string areaUnit = "m²")
+                string areaUnit = "m²",
+                string angleUnit = "none")
         : base(polygon, penColor, brushColor, width, dashStyle, fontSize, areaUnit)
     {
+        _angleUnit = angleUnit;
+        _penColor = penColor;
+        _width = width;
         _fontSize = fontSize > 0 ? fontSize : 11f;
         _calcPolygon = calcPolygon;
         _labelSegments = labelSegments;
@@ -51,6 +58,18 @@ public class MeasurePolygonElement : PolygonElement
     {
         float dpiFactor = map.DpiFactor();
         base.Draw(canvas, map, _labelSegments, _labelSegments, _calcPolygon);
+
+        if (!String.IsNullOrEmpty(_angleUnit) && _angleUnit != "none" && base.Polygon != null && base.Polygon.RingCount == 1)
+        {
+            try
+            {
+                using (var helper = new AngleElementHelper(canvas, map, base.Polygon, _calcPolygon, _penColor, _width, _fontSize))
+                {
+                    helper.DrawVertexAngles(true, _angleUnit, null);
+                }
+            }
+            catch { }
+        }
 
         try
         {

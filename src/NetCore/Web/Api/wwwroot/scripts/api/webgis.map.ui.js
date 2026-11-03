@@ -849,11 +849,14 @@
         if (this._map.graphics.getTool() === 'dimline') {
             $('.webgis-graphics-dimline-length-unit').val(map.graphics.getDimLineLengthUnit());
             $('.webgis-graphics-dimline-label-total-length').val((map.graphics.getDimLineLabelTotalLength() === true).toString().toLowerCase());
+            $('.webgis-graphics-dimline-angle-unit').val(map.graphics.getDimLineAngleUnit() || 'none');
+            $('.webgis-graphics-dimline-angle-type').val(map.graphics.getDimLineAngleType() || 'inner');
         }
 
         if (this._map.graphics.getTool() === 'dimpolygon') {
             $('.webgis-graphics-dimpolygon-area-unit').val(map.graphics.getDimPolygonAreaUnit());
             $('.webgis-graphics-dimpolygon-label-edges').val((map.graphics.getDimPolygonLabelEdges() !== false).toString().toLowerCase());
+            $('.webgis-graphics-dimpolygon-angle-unit').val(map.graphics.getDimPolygonAngleUnit() || 'none');
         }
 
         if (this._map.graphics.getTool() === 'view_angle') {

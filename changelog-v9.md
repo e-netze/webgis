@@ -437,6 +437,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   (``toPreviewGeoJSON``): perpendicular => only the reference line, intersection angle => the two lines
   unconnected, buffer zone => the (thinned out) buffer.
 
+- Map Markup: the dimension tools "Dimension" (``dimline``) and "Dimension polygon" (``dimpolygon``) can
+  label vertex angles (new property "Show angles": none (default), degrees, gon or both).
+  * Polygon: true interior angle (0-360°, depends on the ring orientation) at every corner.
+  * Line: only at the intermediate vertices; property "Angle type": interior angle between the segments
+    (0-180°, default) or deflection angle (change of direction) with side suffix ``L``/``R`` and a dashed
+    extension of the incoming segment.
+  * Arc (radius 20% of the shorter adjacent segment) and label on the bisector; the last chosen values
+    are the default for further objects in the session. Stored as ``dim-angle-unit`` / ``dim-angle-type``;
+    existing graphics are unchanged (no angles).
+  * Shared helper ``L.ViewAngle.vertexAngles`` / ``addVertexAngles`` (client) and
+    ``AngleElementHelper.DrawVertexAngles`` (print, used by ``MeasurePolylineElement`` /
+    ``MeasurePolygonElement``).
+  * Shapefile export: ``dimline`` and ``dimpolygon`` are now exported (previously skipped), with the
+    attributes ``LEN_UNIT``/``AREA_UNIT``, ``ANGLE_UNIT`` and ``ANGLE_TYPE``.
+
+  [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

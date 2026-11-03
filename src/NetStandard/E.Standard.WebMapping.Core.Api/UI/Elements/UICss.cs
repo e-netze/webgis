@@ -160,9 +160,12 @@ public class UICss
 
     public const string GraphicsDimLineLengthUnit = "webgis-graphics-dimline-length-unit";
     public const string GraphicsDimLineLabelTotalLength = "webgis-graphics-dimline-label-total-length";
+    public const string GraphicsDimLineAngleUnit = "webgis-graphics-dimline-angle-unit";
+    public const string GraphicsDimLineAngleType = "webgis-graphics-dimline-angle-type";
 
     public const string GraphicsDimPolygonAreaUnit = "webgis-graphics-dimpolygon-area-unit";
     public const string GraphicsDimPolygonLabelEdges = "webgis-graphics-dimpolygon-label-edges";
+    public const string GraphicsDimPolygonAngleUnit = "webgis-graphics-dimpolygon-angle-unit";
 
     public const string GraphicsViewAngleAngle = "webgis-graphics-view_angle-angle";
     public const string GraphicsViewAngleUnit = "webgis-graphics-view_angle-unit";

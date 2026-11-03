@@ -9,7 +9,8 @@ webgis.sketch.geometryTypes.define('dimpolygon', '_polygon', function (ctx) {
     this.styleIndex = 1;
     this.areaUnit = 'm²';
     this.labelEdges = true;
-    this.elementOptions = { areaUnit: ['getAreaUnit', 'setAreaUnit'], labelEdges: ['getLabelEdges', 'setLabelEdges'] };
+    this.angleUnit = 'none';
+    this.elementOptions = { areaUnit: ['getAreaUnit', 'setAreaUnit'], labelEdges: ['getLabelEdges', 'setLabelEdges'], angleUnit: ['getAngleUnit', 'setAngleUnit'] };
 
     this.createFrameworkElement = function (latLngs) {
         var dimPolygon = L.dimPolygon(latLngs || [], {
@@ -20,7 +21,8 @@ webgis.sketch.geometryTypes.define('dimpolygon', '_polygon', function (ctx) {
             fontSize: sketch.getTextSize(),
             fontColor: sketch.getTextColor(),
             areaUnit: sketch.getDimPolygonAreaUnit(),
-            labelEdges: sketch.getDimPolygonLabelEdges()
+            labelEdges: sketch.getDimPolygonLabelEdges(),
+            angleUnit: sketch.getDimPolygonAngleUnit()
         });
         dimPolygon._webgis = { geometryType: state.geometryType };
         return dimPolygon;
@@ -30,5 +32,6 @@ webgis.sketch.geometryTypes.define('dimpolygon', '_polygon', function (ctx) {
         jsonGeometry.type = 'dimpolygon';
         this.areaUnit = frameworkElement.getAreaUnit();
         this.labelEdges = frameworkElement.getLabelEdges();
+        this.angleUnit = frameworkElement.getAngleUnit();
     };
 });

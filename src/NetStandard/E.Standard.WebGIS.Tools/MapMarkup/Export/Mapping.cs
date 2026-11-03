@@ -137,6 +137,26 @@ static class Mapping
             }
         },
         {
+            "dimline", new Dictionary<string, string>()
+            {
+                { "WIDTH", "stroke-width" },
+                { "COLOR", "stroke" },
+                { "LEN_UNIT", "length-unit" },
+                { "ANGLE_UNIT", "dim-angle-unit" },
+                { "ANGLE_TYPE", "dim-angle-type" }
+            }
+        },
+        {
+            "dimpolygon", new Dictionary<string, string>()
+            {
+                { "FILLCOL", "fill" },
+                { "BORDERCOL", "stroke" },
+                { "TRANSP", "fill-opacity" },
+                { "AREA_UNIT", "area-unit" },
+                { "ANGLE_UNIT", "dim-angle-unit" }
+            }
+        },
+        {
             "buffer_zone", new Dictionary<string, string>()
             {
                 { "FILLCOL", "fill" },
@@ -164,6 +184,8 @@ static class Mapping
         {  "circle_arc", ShapeFile.geometryType.Polyline },
         {  "azimuth", ShapeFile.geometryType.Polyline },
         {  "perpendicular", ShapeFile.geometryType.Polyline },
+        {  "dimline", ShapeFile.geometryType.Polyline },
+        {  "dimpolygon", ShapeFile.geometryType.Polygon },
         {  "buffer_zone", ShapeFile.geometryType.Polygon }
     };
 }

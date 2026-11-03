@@ -388,6 +388,25 @@ static internal class UIElementExtensions
                         },
                         id="mapmarkup-dimline-label-edges",
                         css=UICss.ToClass(new string[]{ UICss.GraphicsDimLineLabelTotalLength })
+                    },
+                    new UILabel()
+                    {
+                        label = $"{localizer.Localize("symbology.show-angles")}:"
+                    },
+                    DimAngleUnitSelect(localizer, ApiClientButtonCommand.setgraphicsdimlineangleunit, "mapmarkup-dimline-angle-unit", UICss.GraphicsDimLineAngleUnit),
+                    new UILabel()
+                    {
+                        label = $"{localizer.Localize("symbology.angle-type")}:"
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsdimlineangletype)
+                    {
+                        options=new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value="inner", label= localizer.Localize("symbology.angle-type-inner") },
+                            new UISelect.Option() { value="deflection", label= localizer.Localize("symbology.angle-type-deflection") }
+                        },
+                        id="mapmarkup-dimline-angle-type",
+                        css=UICss.ToClass(new string[]{ UICss.GraphicsDimLineAngleType })
                     }
                 }
             }
@@ -466,7 +485,11 @@ static internal class UIElementExtensions
                         },
                         id="mapmarkup-dimpolygon-label-edges",
                         css=UICss.ToClass(new string[]{ UICss.GraphicsDimPolygonLabelEdges })
-                    }
+                    },
+                    new UILabel(){
+                            label = $"{localizer.Localize("symbology.show-angles")}:"
+                    },
+                    DimAngleUnitSelect(localizer, ApiClientButtonCommand.setgraphicsdimpolygonangleunit, "mapmarkup-dimpolygon-angle-unit", UICss.GraphicsDimPolygonAngleUnit)
                 }
             }
         }));
@@ -834,6 +857,21 @@ static internal class UIElementExtensions
                 value = e.GetValue("mapmarkup-fontsize", 14),
                 id = "mapmarkup-fontsize"
             }
+        };
+
+    // dimline/dimpolygon vertex angles: none (default, previous behavior) | deg | gon | both
+    static private UISelect DimAngleUnitSelect(ILocalizer localizer, ApiClientButtonCommand command, string id, string css)
+        => new UISelect(UIButton.UIButtonType.clientbutton, command)
+        {
+            options = new UISelect.Option[]
+            {
+                new UISelect.Option() { value = "none", label = localizer.Localize("symbology.angle-unit-none") },
+                new UISelect.Option() { value = "deg", label = $"{localizer.Localize("symbology.angle-unit-deg")} [°]" },
+                new UISelect.Option() { value = "gon", label = $"{localizer.Localize("symbology.angle-unit-gon")} [gon]" },
+                new UISelect.Option() { value = "both", label = $"{localizer.Localize("symbology.angle-unit-both")} [° / gon]" }
+            },
+            id = id,
+            css = UICss.ToClass(new string[] { css })
         };
 
     static private UISelect AngleUnitSelect(ILocalizer localizer, ApiClientButtonCommand command, string id, string css)

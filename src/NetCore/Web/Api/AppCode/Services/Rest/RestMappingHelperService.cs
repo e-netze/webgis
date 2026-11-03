@@ -752,7 +752,9 @@ public class RestMappingHelperService /*: IDisposable*/
                        labelSegments: true,
                        labelPointNumbers: false,
                        fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
-                       lengthUnit: feature.GetPropery<string>("length-unit"))
+                       lengthUnit: feature.GetPropery<string>("length-unit"),
+                       angleUnit: feature.GetPropery<string>("dim-angle-unit"),
+                       angleType: feature.GetPropery<string>("dim-angle-type"))
                        );
                 }
                 else if (graphicsTool == "hectoline")
@@ -873,7 +875,8 @@ public class RestMappingHelperService /*: IDisposable*/
                        fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
                        calcPolygon: calcShape as Polygon,
                        labelSegments: feature.GetPropery<bool>("label-edges"),
-                       areaUnit: feature.GetPropery<string>("area-unit")));
+                       areaUnit: feature.GetPropery<string>("area-unit"),
+                       angleUnit: feature.GetPropery<string>("dim-angle-unit")));
                 }
                 else
                 {

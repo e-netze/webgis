@@ -8,6 +8,8 @@
         circleMarkerOptions: { same_as_line: true, radius: 4, color: '#000', weight: 2, fillcolor: '#eee' },
         lengthUnit: 'm',
         labelTotalLength: false,
+        angleUnit: 'none',   // none | deg | gon | both
+        angleType: 'inner',  // inner | deflection
         attributes: {}
     },
 
@@ -31,6 +33,13 @@
 
     onAdd: function () {
         this.rebuild();
+    },
+    // angle arcs/extensions have their own styles (dashArray) => rebuild
+    setStyle: function (style) {
+        L.LayerCollection.prototype.setStyle.call(this, style);
+        if (this.options.angleUnit && this.options.angleUnit !== 'none')
+            this.rebuild();
+        return this;
     },
     setLatLngs: function (latLngs) {
         this._latLngs = latLngs;
@@ -59,6 +68,20 @@
     },
     getLabelTotalLength: function () {
         return this.options.labelTotalLength;
+    },
+    setAngleUnit: function (unit) {
+        this.options.angleUnit = unit;
+        this.rebuild();
+    },
+    getAngleUnit: function () {
+        return this.options.angleUnit;
+    },
+    setAngleType: function (angleType) {
+        this.options.angleType = angleType;
+        this.rebuild();
+    },
+    getAngleType: function () {
+        return this.options.angleType;
     },
     redraw: function () {
         this.rebuild();
@@ -145,6 +168,8 @@
 
             var circle = L.circleMarker(this._latLngs[this._latLngs.length - 1], this.options.circleMarkerOptions);
             this.addChildLayer(circle);
+
+            L.ViewAngle.addVertexAngles(this, this._latLngs, false, this.options.angleUnit, this.options.angleType, this.options);
 
             if (this.options.labelTotalLength && this._latLngs.length > 2) {
                 this.addChildLayer(L.svgText(this._latLngs[this._latLngs.length - 1], {

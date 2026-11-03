@@ -190,6 +190,9 @@ public enum ApiClientButtonCommand
     setgraphicsbufferzonebuffer = 107,
     setgraphicscirclearcunit = 108,
     setgraphicscirclearclabels = 109,
+    setgraphicsdimlineangleunit = 110,
+    setgraphicsdimlineangletype = 111,
+    setgraphicsdimpolygonangleunit = 112,
 }
 
 public enum ApiToolEvents

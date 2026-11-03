@@ -1174,6 +1174,9 @@
     this.setDimLineLabelTotalLength = function (doLabel) { _typeOf('dimline').setOption('labelTotalLength', doLabel); };
     this.setDimPolygonAreaUnit = function (unit) { _typeOf('dimpolygon').setOption('areaUnit', unit); };
     this.setDimPolygonLabelEdges = function (doLabel) { _typeOf('dimpolygon').setOption('labelEdges', doLabel); };
+    this.setDimLineAngleUnit = function (unit) { _typeOf('dimline').setOption('angleUnit', unit); };
+    this.setDimLineAngleType = function (angleType) { _typeOf('dimline').setOption('angleType', angleType); };
+    this.setDimPolygonAngleUnit = function (unit) { _typeOf('dimpolygon').setOption('angleUnit', unit); };
     this.setViewAngleAngle = function (angle) { _typeOf('view_angle').setOption('angle', angle); };
     this.setViewAngleUnit = function (unit) { _typeOf('view_angle').setOption('unit', unit); };
     this.setViewAngleLabelLength = function (doLabel) { _typeOf('view_angle').setOption('labelLength', doLabel); };
@@ -1218,6 +1221,9 @@
     this.getDimLineLabelTotalLength = function () { return _typeOf('dimline').getOption('labelTotalLength'); };
     this.getDimPolygonAreaUnit = function () { return _typeOf('dimpolygon').getOption('areaUnit'); };
     this.getDimPolygonLabelEdges = function () { return _typeOf('dimpolygon').getOption('labelEdges'); };
+    this.getDimLineAngleUnit = function () { return _typeOf('dimline').getOption('angleUnit'); };
+    this.getDimLineAngleType = function () { return _typeOf('dimline').getOption('angleType'); };
+    this.getDimPolygonAngleUnit = function () { return _typeOf('dimpolygon').getOption('angleUnit'); };
     this.getViewAngleAngle = function () { return _typeOf('view_angle').getOption('angle'); };
     this.getViewAngleUnit = function () { return _typeOf('view_angle').getOption('unit'); };
     this.getViewAngleLabelLength = function () { return _typeOf('view_angle').getOption('labelLength'); };

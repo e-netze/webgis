@@ -286,6 +286,18 @@
                     if (map && map.graphics && tool.value)
                         map.graphics.setDimPolygonLabelEdges(tool.value == 'true');
                     break;
+                case 'setgraphicsdimlineangleunit':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setDimLineAngleUnit(tool.value);
+                    break;
+                case 'setgraphicsdimlineangletype':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setDimLineAngleType(tool.value);
+                    break;
+                case 'setgraphicsdimpolygonangleunit':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setDimPolygonAngleUnit(tool.value);
+                    break;
                 case 'setgraphicsviewangleangle':
                     if (map && map.graphics && tool.value)
                         map.graphics.setViewAngleAngle(tool.value);

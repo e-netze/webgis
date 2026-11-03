@@ -397,6 +397,15 @@
     this.setDimPolygonLabelEdges = function (doLabel) {
         this._sketch.setDimPolygonLabelEdges(doLabel);
     };
+    this.setDimLineAngleUnit = function (unit) {
+        this._sketch.setDimLineAngleUnit(unit);
+    };
+    this.setDimLineAngleType = function (angleType) {
+        this._sketch.setDimLineAngleType(angleType);
+    };
+    this.setDimPolygonAngleUnit = function (unit) {
+        this._sketch.setDimPolygonAngleUnit(unit);
+    };
     // angle input in the current unit (gon => gon, otherwise degrees)
     this.setViewAngleAngle = function (angle) {
         angle = parseFloat(angle);
@@ -571,6 +580,15 @@
     };
     this.getDimPolygonLabelEdges = function () {
         return this._sketch.getDimPolygonLabelEdges();
+    };
+    this.getDimLineAngleUnit = function () {
+        return this._sketch.getDimLineAngleUnit();
+    };
+    this.getDimLineAngleType = function () {
+        return this._sketch.getDimLineAngleType();
+    };
+    this.getDimPolygonAngleUnit = function () {
+        return this._sketch.getDimPolygonAngleUnit();
     };
     // angle in the current unit (gon => gon, otherwise degrees)
     this.getViewAngleAngle = function () {
@@ -1312,6 +1330,8 @@
                         properties["font-size"] = element.frameworkElement.options.fontSize || 14;
                         properties["length-unit"] = element.frameworkElement.options.lengthUnit || 'm'; 
                         properties["label-total-length"] = element.frameworkElement.options.labelTotalLength === true; 
+                        properties["dim-angle-unit"] = element.frameworkElement.options.angleUnit || 'none';
+                        properties["dim-angle-type"] = element.frameworkElement.options.angleType || 'inner';
                         properties["_meta"] = {
                             tool: "dimline",
                             text: element.metaText,
@@ -1330,6 +1350,7 @@
                         properties["font-size"] = element.frameworkElement.options.fontSize || 14;
                         properties["area-unit"] = element.frameworkElement.options.areaUnit || 'm²';
                         properties["label-edges"] = element.frameworkElement.options.labelEdges !== false;
+                        properties["dim-angle-unit"] = element.frameworkElement.options.angleUnit || 'none';
                         properties["_meta"] = {
                             tool: "dimpolygon",
                             text: element.metaText,
@@ -1577,6 +1598,8 @@
                                 this.setTextSize(feature.properties["font-size"]);
                                 this.setDimLineLengthUnit(feature.properties["length-unit"]);
                                 this.setDimLineLabelTotalLength(feature.properties["label-total-length"] === true); 
+                                this.setDimLineAngleUnit(feature.properties["dim-angle-unit"] || 'none');
+                                this.setDimLineAngleType(feature.properties["dim-angle-type"] || 'inner');
                             } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "hectoline") {
                                 this.setTool('hectoline');
                                 feature.geometry.type = 'hectoline';
@@ -1672,6 +1695,7 @@
                             this.setTextSize(feature.properties["font-size"]);
                             this.setDimPolygonAreaUnit(feature.properties["area-unit"]);
                             this.setDimPolygonLabelEdges(feature.properties["label-edges"] !== false); 
+                            this.setDimPolygonAngleUnit(feature.properties["dim-angle-unit"] || 'none');
 
                             this._sketch.fromJson(feature.geometry);
                         } else {

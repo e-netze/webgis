@@ -18,6 +18,10 @@ public class MeasurePolylineElement : PolylineElement
     private bool _labelTotalLength = true;
     private float _fontSize;
     private Unit _lengthUnit = Unit.Meter;
+    private string _angleUnit;
+    private string _angleType;
+    private ArgbColor _color;
+    private float _width;
 
     public MeasurePolylineElement(Polyline polyline,
                                   ArgbColor color,
@@ -28,7 +32,9 @@ public class MeasurePolylineElement : PolylineElement
                                   bool labelPointNumbers = false,
                                   bool labelTotalLength = true,
                                   float fontSize = 11f,
-                                  string lengthUnit = "m")
+                                  string lengthUnit = "m",
+                                  string angleUnit = "none",
+                                  string angleType = "inner")
         : base(polyline, color, width, dashStyle, fontSize, lengthUnit)
     {
         _calcPolyline = calcPolyline;
@@ -37,6 +43,10 @@ public class MeasurePolylineElement : PolylineElement
         _labelTotalLength = labelTotalLength;
         _fontSize = fontSize > 0 ? fontSize : 11f;
         _lengthUnit = (!String.IsNullOrEmpty(lengthUnit) ? lengthUnit : "m").FromUnitAbbreviation();
+        _angleUnit = angleUnit;
+        _angleType = angleType;
+        _color = color;
+        _width = width;
     }
 
     #region IGraphicElement Member
@@ -45,6 +55,18 @@ public class MeasurePolylineElement : PolylineElement
     {
         base.Draw(canvas, map, _labelPointNumbers, _labelSegments, _calcPolyline);
         float dpiFactor = map.DpiFactor();
+
+        if (!String.IsNullOrEmpty(_angleUnit) && _angleUnit != "none" && base.Polyline != null)
+        {
+            try
+            {
+                using (var helper = new AngleElementHelper(canvas, map, base.Polyline, _calcPolyline, _color, _width, _fontSize))
+                {
+                    helper.DrawVertexAngles(false, _angleUnit, _angleType);
+                }
+            }
+            catch { }
+        }
 
         if (_labelTotalLength)
         {
