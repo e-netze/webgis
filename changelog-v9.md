@@ -389,13 +389,53 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     with dashed extensions if the intersection is outside of a segment ("parallel" label for parallel lines).
     "Show angles": intersection angle, adjacent angle (180° - angle), both or all (mirrored at the intersection).
   * Leaflet plugins ``webgis-graphics.view_angle.js`` / ``webgis-graphics.intersection_angle.js``, sketch
-    geometry types with auto-close after 2/4 vertices (``closeAfterVertices``).
+    geometry types. The sketch stays active after 2/4 vertices (like the distance circle): further clicks
+    only move the last point, the mover line starts at the apex resp. the first point of the second line
+    (``referenceVertexIndex``), so the properties can still be changed.
   * Print: ``ViewAngleElement`` / ``IntersectionAngleElement`` (same geometry as the client).
   * Export: shapefile attributes ``ANGLE``/``UNIT`` resp. ``UNIT``/``ANGLES``, the intersection angle is
     exported as 2-part polyline.
   * Icons are placeholders for now.
 
   [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
+
+- Map Markup: new measure tool "Azimuth" (``azimuth``, "Richtungswinkel") in the group "Measure".
+  * Polyline/traverse: for each segment the azimuth is measured clockwise from (grid) north of the calc
+    crs, with a dashed north line and an arc; unit degrees, gon or both.
+  * Optional segment length label parallel to the segment (like the dimension line), unit m or km.
+  * Leaflet plugin ``webgis-graphics.azimuth.js``, print ``AzimuthElement``, export attributes
+    (incl. ``LEN_UNIT``). Icons are placeholders for now.
+
+  [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
+
+- Map Markup: new measure tool "Perpendicular distance" (``perpendicular``, "Normalabstand") in the group "Measure".
+  * First the reference line is drawn and finished with "Close section" or a double click on its last
+    vertex; then any number of points, each with the perpendicular onto the reference line and its distance.
+    If the foot point is outside the line, the line is extended with a dashed segment.
+  * Station of the foot point: "Meters" (``156,24m``, default), "km + m" (``0+156,24``) or none; length unit m/km.
+  * One framework element for the line and the points (``lineVertexCount``, stored as ``pp-line-vertices``).
+  * Leaflet plugin ``webgis-graphics.perpendicular.js``, print ``PerpendicularElement``, export as polyline
+    (``LINE_VERTS``, ``STAT_FMT``, ``LEN_UNIT``). Icons are placeholders for now.
+
+  [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
+
+- Map Markup: new measure tool "Buffer zone" (``buffer_zone``, "Pufferzone") in the group "Measure".
+  * Source type point, multiple points, line or polygon, buffer width in meters (the last value is the
+    default for further objects in the session); polygons accept a negative width (inner buffer).
+  * Lines and polygons can be multipart: "Close section" starts a further part (e.g. holes); stored as
+    ``bz-parts`` (part start indices). The width dimension line is drawn at the first part.
+  * The buffer is calculated by the server (MapMarkup command ``buffer-zone-calc``, ``BufferZoneCalculator``)
+    and stored with the element (``bz-buffer``); it is only shown if it matches the current geometry (key).
+  * "Take from feature geometry" queries point, line and polygon themes for this tool and sets the source
+    type from the returned geometry (incl. multipart and holes); other tools are unchanged.
+  * Leaflet plugin ``webgis-graphics.buffer_zone.js``, print ``BufferZoneElement``, shapefile export of the
+    buffer polygon. Icons are placeholders for now.
+
+  [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
+
+- Map Markup: hovering a composite measure graphic in the graphics list highlights a meaningful geometry
+  (``toPreviewGeoJSON``): perpendicular => only the reference line, intersection angle => the two lines
+  unconnected, buffer zone => the (thinned out) buffer.
 
 ### Fixed
 

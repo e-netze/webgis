@@ -812,6 +812,7 @@ public class RestMappingHelperService /*: IDisposable*/
                 {
                     var sourceType = feature.GetPropery<string>("bz-source-type");
                     var bufferWidth = feature.GetPropery<double>("bz-width");
+                    var partStarts = BufferZoneCalculator.ParsePartStarts(feature.GetPropery<string>("bz-parts"));
 
                     double[][][] rings = null;
                     var bufferJson = feature.GetPropery<string>("bz-buffer");
@@ -821,7 +822,7 @@ public class RestMappingHelperService /*: IDisposable*/
                     }
                     rings ??= BufferZoneCalculator.CalcBufferRings(
                                 SpatialAlgorithms.ShapePoints(feature.ToShape(), false),
-                                sourceType, bufferWidth, feature.GetPropery<int>("_calcCrs"));
+                                sourceType, bufferWidth, feature.GetPropery<int>("_calcCrs"), partStarts);
 
                     var buffer = BufferZoneCalculator.ToPolygon(rings);
                     if (buffer is not null && transformer != null)
@@ -837,6 +838,7 @@ public class RestMappingHelperService /*: IDisposable*/
                        feature.GetPropery<float>("stroke-width"),
                        sourceType,
                        bufferWidth,
+                       partStarts: partStarts,
                        fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
                        calcPolyline: calcShape as Polyline));
                 }

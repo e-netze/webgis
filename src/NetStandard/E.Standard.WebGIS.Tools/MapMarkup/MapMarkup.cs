@@ -907,7 +907,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         var width = e.GetDouble("bz-width");
         var calcCrsId = e.GetInt("bz-calc-crs");
 
-        var rings = BufferZoneCalculator.CalcBufferRings(coords, sourceType, width, calcCrsId);
+        var rings = BufferZoneCalculator.CalcBufferRings(coords, sourceType, width, calcCrsId,
+                                                         BufferZoneCalculator.ParsePartStarts(e["bz-parts"]));
 
         return new ApiEventResponse()
         {

@@ -22,12 +22,45 @@ static public class BufferZoneCalculator
     static public bool IsValidWidth(string sourceType, double width)
         => !double.IsNaN(width) && !double.IsInfinity(width) && (sourceType == "polygon" ? width != 0 : width > 0);
 
-    static public double[][][] CalcBufferRings(double[][] lngLats, string sourceType, double width, int calcCrsId)
+    // multipart sources (line, polygon): the vertices are a flat list, partStarts => index of the first vertex of each part
+    // (bz-parts: comma separated, eg. "0,5,9"). Polygons: rings inside other rings are holes (even-odd)
+    static public int[] ParsePartStarts(string partStarts)
+        => String.IsNullOrWhiteSpace(partStarts)
+            ? null
+            : partStarts.Split(',')
+                .Select(s => int.TryParse(s.Trim(), out int i) ? i : -1)
+                .Where(i => i >= 0)
+                .ToArray();
+
+    // point sources ignore the parts
+    static public List<List<Point>> SplitParts(IList<Point> points, int[] partStarts, string sourceType)
+    {
+        var parts = new List<List<Point>>();
+        if (points is null || points.Count == 0)
+        {
+            return parts;
+        }
+
+        var starts = (sourceType == "point" || sourceType == "multipoint" || partStarts is null)
+            ? new List<int>()
+            : partStarts.Where(s => s > 0 && s < points.Count).Distinct().OrderBy(s => s).ToList();
+        starts.Insert(0, 0);
+
+        for (int i = 0; i < starts.Count; i++)
+        {
+            int end = i + 1 < starts.Count ? starts[i + 1] : points.Count;
+            parts.Add(points.Skip(starts[i]).Take(end - starts[i]).ToList());
+        }
+
+        return parts;
+    }
+
+    static public double[][][] CalcBufferRings(double[][] lngLats, string sourceType, double width, int calcCrsId, int[] partStarts = null)
         => CalcBufferRings(lngLats?
                 .Where(c => c != null && c.Length >= 2)
-                .Select(c => new Point(c[0], c[1])), sourceType, width, calcCrsId);
+                .Select(c => new Point(c[0], c[1])), sourceType, width, calcCrsId, partStarts);
 
-    static public double[][][] CalcBufferRings(IEnumerable<Point> lngLats, string sourceType, double width, int calcCrsId)
+    static public double[][][] CalcBufferRings(IEnumerable<Point> lngLats, string sourceType, double width, int calcCrsId, int[] partStarts = null)
     {
         var points = lngLats?.Select(p => new Point(p.X, p.Y)).ToList();
         if (points is null || !IsValidWidth(sourceType, width) || points.Count < MinVertexCount(sourceType))
@@ -53,10 +86,19 @@ static public class BufferZoneCalculator
                 points = points.Select(p => new Point(p.X * kx, p.Y * ky)).ToList();
             }
 
+            int minVertexCount = MinVertexCount(sourceType);
+            var parts = SplitParts(points, partStarts, sourceType)
+                .Where(p => p.Count >= minVertexCount)  // eg. the part currently drawn
+                .ToList();
+            if (parts.Count == 0)
+            {
+                return null;
+            }
+
             Shape source = sourceType switch
             {
-                "line" => new Polyline(new Path(points)),
-                "polygon" => new Polygon(new Ring(points)),
+                "line" => new Polyline(parts.Select(p => new Path(p))),
+                "polygon" => new Polygon(parts.Select(p => new Ring(p))),
                 "multipoint" => new MultiPoint(points),
                 _ => points[0]
             };

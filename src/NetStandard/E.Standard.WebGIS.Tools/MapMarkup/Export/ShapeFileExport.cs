@@ -141,7 +141,8 @@ class ShapeFileExport : IExport
                     SpatialAlgorithms.ShapePoints(source, false),
                     feature.GetPropery<string>("bz-source-type"),
                     feature.GetPropery<double>("bz-width"),
-                    feature.GetPropery<int>("_calcCrs"));
+                    feature.GetPropery<int>("_calcCrs"),
+                    BufferZoneCalculator.ParsePartStarts(feature.GetPropery<string>("bz-parts")));
 
         return BufferZoneCalculator.ToPolygon(rings);
     }

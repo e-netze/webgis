@@ -1237,6 +1237,11 @@
         var element = _geometryType === 'buffer_zone' ? _frameworkElements[_currentFrameworkIndex] : null;
         return element && element.getValidBufferRings ? element.getValidBufferRings() !== null : false;
     };
+    // source geometry of the current element (same as the buffer key): { latLngs, partStarts }
+    this.getBufferZoneSource = function () {
+        var element = _geometryType === 'buffer_zone' ? _frameworkElements[_currentFrameworkIndex] : null;
+        return element && element.getPartStarts ? { latLngs: element.getLatLngs() || [], partStarts: element.getPartStarts() } : null;
+    };
     this.setGeometryType('polyline');
     this.vertexCount = function () {
         return _vertices.length;

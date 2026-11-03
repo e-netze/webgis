@@ -13,7 +13,8 @@ using gView.GraphicsEngine.Abstraction;
 namespace E.Standard.WebMapping.GeoServices.Graphics.GraphicElements;
 
 // MapMarkup measure tool 'buffer_zone' (Pufferzone)
-// polyline: source vertices (sourceType point => 1 vertex, multipoint => points, line, polygon => ring without closing vertex)
+// polyline: source vertices (sourceType point => 1 vertex, multipoint => points, line, polygon => rings without closing vertex)
+// partStarts: multipart line/polygon (flat vertex list, index of the first vertex of each part)
 // buffer: the buffer polygon (map srs), calculated by BufferZoneCalculator (polygons: negative width => inner buffer)
 // the buffer width is labeled with a dimension line, same geometry as webgis-graphics.buffer_zone.js (L.BufferZone.dimension)
 public class BufferZoneElement : IGraphicElement
@@ -25,6 +26,7 @@ public class BufferZoneElement : IGraphicElement
     private readonly string _sourceType;
     private readonly double _bufferWidth;
     private readonly float _fontSize;
+    private readonly int[] _partStarts;
 
     public BufferZoneElement(Polyline polyline,
                              Polygon buffer,
@@ -33,6 +35,7 @@ public class BufferZoneElement : IGraphicElement
                              float width,
                              string sourceType,
                              double bufferWidth,
+                             int[] partStarts = null,
                              float fontSize = 11f,
                              Polyline calcPolyline = null)
     {
@@ -43,6 +46,7 @@ public class BufferZoneElement : IGraphicElement
         _width = width;
         _sourceType = !String.IsNullOrEmpty(sourceType) ? sourceType.ToLowerInvariant() : "line";
         _bufferWidth = bufferWidth;
+        _partStarts = partStarts;
         _fontSize = fontSize;
         _calcPolyline = calcPolyline;
     }
@@ -60,6 +64,7 @@ public class BufferZoneElement : IGraphicElement
             }
 
             bool pointSource = _sourceType == "point" || _sourceType == "multipoint";
+            var parts = BufferZoneCalculator.SplitParts(points, _partStarts, _sourceType);
 
             if (pointSource || points.Count < 2)
             {
@@ -68,18 +73,25 @@ public class BufferZoneElement : IGraphicElement
                     helper.FillPoint(point, Math.Max(3f, _width + 1f));
                 }
             }
-            else if (_sourceType == "polygon" && points.Count > 2)
-            {
-                helper.DrawLine(points.Concat([points[0]]), false);
-            }
             else
             {
-                helper.DrawLine(points, false);
+                foreach (var part in parts)
+                {
+                    if (_sourceType == "polygon" && part.Count > 2)
+                    {
+                        helper.DrawLine(part.Concat([part[0]]), false);
+                    }
+                    else if (part.Count > 1)
+                    {
+                        helper.DrawLine(part, false);
+                    }
+                }
             }
 
             if (_buffer is not null && BufferZoneCalculator.IsValidWidth(_sourceType, _bufferWidth))
             {
-                var dim = Dimension(pointSource ? points.Take(1).ToList() : points, _sourceType, _bufferWidth);
+                // multipart: only at the first part
+                var dim = Dimension(pointSource ? points.Take(1).ToList() : parts[0], _sourceType, _bufferWidth);
                 if (dim is not null)
                 {
                     helper.DrawLine([dim.Value.from, dim.Value.to], false, Math.Max(1f, _width / 2f));

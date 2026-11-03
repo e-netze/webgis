@@ -481,22 +481,21 @@
             if (me._tool !== 'buffer_zone' || !tool || !sketch.isValid() || sketch.hasValidBufferZoneBuffer())
                 return;
 
-            var key = sketch.getBufferZoneBufferKey();
-            if (!key)
+            var key = sketch.getBufferZoneBufferKey(), source = sketch.getBufferZoneSource();
+            if (!key || !source)
                 return;
 
-            var sourceType = sketch.getBufferZoneSourceType() || 'line', vertices = sketch.partVertices(0);
+            var sourceType = sketch.getBufferZoneSourceType() || 'line', latLngs = source.latLngs;
             if (!L.BufferZone.isValidWidth(sourceType, sketch.getBufferZoneWidth()))
                 return;
             if (sourceType === 'point')
-                vertices = vertices.slice(0, 1);
-
-            var latLngs = vertices.map(function (v) { return L.latLng(v.y, v.x); });
+                latLngs = latLngs.slice(0, 1);
 
             webgis.tools.sendToolRequest(map, tool, 'servertoolcommand', null, {
                 _method: 'buffer-zone-calc',
-                'bz-coords': JSON.stringify(vertices.map(function (v) { return [v.x, v.y]; })),
+                'bz-coords': JSON.stringify(latLngs.map(function (latLng) { return [latLng.lng, latLng.lat]; })),
                 'bz-source-type': sourceType,
+                'bz-parts': L.BufferZone.isPointSource(sourceType) ? '' : L.BufferZone.partStartsToString(source.partStarts),
                 'bz-width': sketch.getBufferZoneWidth(),
                 'bz-calc-crs': L.ViewAngle.toCalc(latLngs).crsId || 0,
                 'bz-key': key
@@ -1416,6 +1415,10 @@
                         properties["font-size"] = bzOptions.fontSize || 14;
                         properties["bz-source-type"] = bzOptions.sourceType || 'line';
                         properties["bz-width"] = bzOptions.width || 10;
+                        var bzParts = L.BufferZone.isPointSource(bzOptions.sourceType) ? '' : L.BufferZone.partStartsToString(element.frameworkElement.getPartStarts());
+                        if (bzParts) {
+                            properties["bz-parts"] = bzParts;  // string: see bz-buffer
+                        }
                         var bzRings = element.frameworkElement.getValidBufferRings();
                         if (bzRings) {
                             properties["bz-buffer"] = JSON.stringify(bzRings);  // string: server-side FeatureDTO can't convert nested arrays
@@ -1576,6 +1579,7 @@
                             } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "buffer_zone") {
                                 this.setTool('buffer_zone');
                                 feature.geometry.type = 'buffer_zone';
+                                feature.geometry.partindex = L.BufferZone.partStartsFromString(feature.properties["bz-parts"]);
                                 this._sketch.setBufferZoneSourceType(feature.properties["bz-source-type"] || 'line');
                                 this._sketch.setBufferZoneWidth(parseFloat(feature.properties["bz-width"]) || 10);
                                 this.setFillColor(feature.properties["fill"] || '#aaaaaa');
@@ -1700,6 +1704,11 @@
                 case 'azimuth':
                 case 'perpendicular':
                 case 'buffer_zone':
+                    if (json.type && json.type !== 'buffer_zone' && !json.sourceGeometryType) {
+                        json.sourceGeometryType = json.type;  // => sketch type buffer_zone sets the source type from the feature geometry
+                    }
+                    json.type = this.getTool();
+                    break;
                 case 'dimpolygon': 
                 case 'dimline':
                     json.type = this.getTool();

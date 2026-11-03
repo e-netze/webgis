@@ -493,8 +493,10 @@ public class IdentifyDefault : IApiServerToolLocalizableAsync<IdentifyDefault>,
                     }
 
                     break;
-                case "point":  // eg. MapMarkup buffer_zone with source type point/multipoint
-                    if (layerType != WebMapping.Core.LayerType.point)
+                case "buffer_zone":  // MapMarkup buffer_zone: source can be any geometry type => the client sets the source type from the result
+                    if (layerType != WebMapping.Core.LayerType.point &&
+                        layerType != WebMapping.Core.LayerType.line &&
+                        layerType != WebMapping.Core.LayerType.polygon)
                     {
                         continue;
                     }

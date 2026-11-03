@@ -1,5 +1,6 @@
 // MapMarkup measure tool 'buffer_zone' (Pufferzone):
 //   latLngs => source geometry (sourceType: point => 1 vertex, multipoint => points, line, polygon => closed ring)
+//   multipart line/polygon (incl. holes): flat latLngs + partStarts (index of the first vertex of each part)
 //   polygons can have a negative width (inner buffer)
 //   the buffer (rings, WGS84) is calculated by the server (MapMarkup tool command 'buffer-zone-calc', BufferZoneCalculator.cs)
 //   buffer = { key, rings }: only drawn, if the key matches the current geometry/options (L.BufferZone.key) => no stale buffer while the response is pending
@@ -22,6 +23,7 @@ L.BufferZone = L.LayerCollection.extend({
 
     _calcCrs: 0,
     _latLngs: null,
+    _partStarts: null,  // multipart line/polygon: index of the first vertex of each part (flat latLngs), null => one part
     _setLatLngs: function (latLngs) {
         this.setLatLngs(latLngs);
     },
@@ -63,6 +65,16 @@ L.BufferZone = L.LayerCollection.extend({
     getLatLngs: function () { return this._latLngs; },
     getCalcCrs: function () { return this._calcCrs; },
 
+    setPartStarts: function (partStarts) {
+        this._partStarts = partStarts && partStarts.length > 1 ? partStarts.slice(0) : null;
+        this.rebuild();
+    },
+    getPartStarts: function () { return this._partStarts ? this._partStarts.slice(0) : null; },
+    // [[latLng,...],...], point sources => one part
+    getParts: function () {
+        return L.BufferZone.splitParts(this._latLngs, this._partStarts, this.options.sourceType);
+    },
+
     setSourceType: function (sourceType) {
         this.options.sourceType = sourceType;
         this.rebuild();
@@ -80,7 +92,7 @@ L.BufferZone = L.LayerCollection.extend({
     getBuffer: function () { return this.options.buffer; },
 
     getBufferKey: function () {
-        return L.BufferZone.key(this._latLngs, this.options.sourceType, this.options.width);
+        return L.BufferZone.key(this._latLngs, this.options.sourceType, this.options.width, this._partStarts);
     },
     // rings of the buffer, if it matches the current geometry, otherwise null
     getValidBufferRings: function () {
@@ -90,7 +102,8 @@ L.BufferZone = L.LayerCollection.extend({
         return buffer.key === this.getBufferKey() ? buffer.rings : null;
     },
     isValidSource: function () {
-        return (this._latLngs ? this._latLngs.length : 0) >= L.BufferZone.minVertexCount(this.options.sourceType);
+        var parts = this.getParts();
+        return parts.length > 0 && parts[0].length >= L.BufferZone.minVertexCount(this.options.sourceType);
     },
 
     redraw: function () {
@@ -128,17 +141,23 @@ L.BufferZone = L.LayerCollection.extend({
             for (var m = 0; m < this._latLngs.length; m++) {
                 this._addPointMarker(this._latLngs[m]);
             }
-        } else if (sourceType === 'polygon' && this._latLngs.length > 2) {
-            this._addChild(L.polyline(this._latLngs.concat([this._latLngs[0]]), lineOptions));
-        } else if (this._latLngs.length > 1) {
-            this._addChild(L.polyline(this._latLngs, lineOptions));
         } else {
-            this._addPointMarker(this._latLngs[0]);
+            var parts = this.getParts();
+            for (var p = 0; p < parts.length; p++) {
+                if (sourceType === 'polygon' && parts[p].length > 2) {
+                    this._addChild(L.polyline(parts[p].concat([parts[p][0]]), lineOptions));
+                } else if (parts[p].length > 1) {
+                    this._addChild(L.polyline(parts[p], lineOptions));
+                } else if (parts[p].length === 1) {
+                    this._addPointMarker(parts[p][0]);
+                }
+            }
         }
 
         var width = parseFloat(this.options.width);
         if (rings && L.BufferZone.isValidWidth(sourceType, width)) {
-            var calc = L.ViewAngle.toCalc(L.BufferZone.isPointSource(sourceType) ? this._latLngs.slice(0, 1) : this._latLngs);
+            // multipart: dimension line only at the first part
+            var calc = L.ViewAngle.toCalc(L.BufferZone.isPointSource(sourceType) ? this._latLngs.slice(0, 1) : this.getParts()[0]);
             this._calcCrs = calc.crsId;
 
             var dim = L.BufferZone.dimension(calc.points, sourceType, width);
@@ -194,10 +213,11 @@ L.BufferZone = L.LayerCollection.extend({
         return geoJson;
     },
     // highlight (e.g. hovering the graphics list): the buffer, otherwise the source
+    // the buffer rings can have thousands of vertices (arcs) => thinned out, the preview sketch is slow with many vertices
     toPreviewGeoJSON: function () {
         var rings = this.getValidBufferRings();
         if (rings) {
-            return { geometry: { type: 'Polygon', coordinates: rings } };
+            return { geometry: { type: 'Polygon', coordinates: rings.map(function (ring) { return L.BufferZone.thinOut(ring, 100); }) } };
         }
 
         var geoJson = this.toGeoJSON();
@@ -206,6 +226,21 @@ L.BufferZone = L.LayerCollection.extend({
         }
         if (this.options.sourceType === 'multipoint') {
             return { geometry: { type: 'MultiPoint', coordinates: geoJson.geometry.coordinates } };
+        }
+
+        var parts = this.getParts().map(function (part) {
+            return part.map(function (latLng) { return [latLng.lng, latLng.lat]; });
+        });
+        if (this.options.sourceType === 'polygon') {
+            return {
+                geometry: {
+                    type: 'Polygon', coordinates: parts.filter(function (part) { return part.length > 2; })
+                        .map(function (part) { return part.concat([part[0]]); })
+                }
+            };
+        }
+        if (parts.length > 1) {
+            return { geometry: { type: 'MultiLineString', coordinates: parts } };
         }
         return geoJson;
     }
@@ -227,11 +262,17 @@ L.BufferZone.isPointSource = function (sourceType) {
     return sourceType === 'point' || sourceType === 'multipoint';
 };
 
-// "take sketch from feature geometry": geometry type sent to the server (IdentifyDefault.OnSketchFromGeometry) => layers to query
-L.BufferZone.queryGeometryType = function (sourceType) {
-    if (L.BufferZone.isPointSource(sourceType))
-        return 'point';
-    return sourceType === 'polygon' ? 'polygon' : 'polyline';
+// every n-th vertex, max. maxCount vertices (first and last vertex are kept => ring stays closed)
+L.BufferZone.thinOut = function (coords, maxCount) {
+    if (!coords || coords.length <= maxCount)
+        return coords;
+
+    var step = Math.ceil(coords.length / maxCount), result = [];
+    for (var i = 0; i < coords.length - 1; i += step) {
+        result.push(coords[i]);
+    }
+    result.push(coords[coords.length - 1]);
+    return result;
 };
 
 // negative width (inner buffer) only for polygons, same as BufferZoneCalculator.IsValidWidth
@@ -241,13 +282,46 @@ L.BufferZone.isValidWidth = function (sourceType, width) {
 };
 
 // identifies the geometry/options a buffer was calculated for
-L.BufferZone.key = function (latLngs, sourceType, width) {
+L.BufferZone.key = function (latLngs, sourceType, width, partStarts) {
     var count = latLngs ? (sourceType === 'point' ? Math.min(1, latLngs.length) : latLngs.length) : 0;
     var coords = [];
     for (var i = 0; i < count; i++) {
         coords.push(latLngs[i].lng.toFixed(8) + ',' + latLngs[i].lat.toFixed(8));
     }
-    return (sourceType || 'line') + '|' + parseFloat(width) + '|' + coords.join(';');
+    var parts = !L.BufferZone.isPointSource(sourceType) && partStarts && partStarts.length > 1 ? partStarts.join(',') : '0';
+    return (sourceType || 'line') + '|' + parseFloat(width) + '|' + parts + '|' + coords.join(';');
+};
+
+// flat latLngs => parts [[latLng,...],...], point sources => one part (same as BufferZoneCalculator.SplitParts)
+L.BufferZone.splitParts = function (latLngs, partStarts, sourceType) {
+    if (!latLngs || latLngs.length === 0)
+        return [];
+    if (L.BufferZone.isPointSource(sourceType) || !partStarts || partStarts.length < 2)
+        return [latLngs.slice(0)];
+
+    var starts = [0];
+    for (var s = 0; s < partStarts.length; s++) {
+        var start = parseInt(partStarts[s]);
+        if (start > starts[starts.length - 1] && start < latLngs.length)
+            starts.push(start);
+    }
+
+    var parts = [];
+    for (var i = 0; i < starts.length; i++) {
+        parts.push(latLngs.slice(starts[i], i + 1 < starts.length ? starts[i + 1] : latLngs.length));
+    }
+    return parts;
+};
+
+// "0,5,9" (feature property bz-parts) <=> [0,5,9]
+L.BufferZone.partStartsToString = function (partStarts) {
+    return partStarts && partStarts.length > 1 ? partStarts.join(',') : '';
+};
+L.BufferZone.partStartsFromString = function (partStarts) {
+    if (!partStarts)
+        return null;
+    var starts = String(partStarts).split(',').map(function (s) { return parseInt(s); }).filter(function (i) { return i >= 0; });
+    return starts.length > 1 ? starts : null;
 };
 
 // dimension line of the buffer width (calc crs {X,Y}) => { from, to } or null

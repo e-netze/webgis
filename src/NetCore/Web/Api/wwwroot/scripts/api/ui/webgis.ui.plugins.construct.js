@@ -593,9 +593,7 @@ webgis.ui.definePlugin('webgis_sketchFromGeometry', {
                 customEvents["identify-all-queries"] = $hidden.val();
                 customEvents["identify-map-scale"] = map.scale();
                 customEvents["identify-srs"] = options.map.crs.id;
-                customEvents["sketch-geometry"] = sketch.getGeometryType() === 'buffer_zone'
-                    ? L.BufferZone.queryGeometryType(sketch.getBufferZoneSourceType())
-                    : sketch.getGeometryType();
+                customEvents["sketch-geometry"] = sketch.getGeometryType();
                 customEvents["current-activetool-id"] = map.getActiveTool() ? map.getActiveTool().id : null;
 
                 $hidden.remove();
