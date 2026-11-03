@@ -21,6 +21,7 @@ which projects and classes are involved, flow diagrams, design decisions and pit
 | [Detachable Windows](detachable-windows.md) | Viewer | `webgis.windowManager`: detach toolbar/query results into a Document Picture-in-Picture window, jQuery hooks, restore state. |
 | [Expressions & AutoValues](expressions-autovalues.md) | API / Editing / CMS | Expression language (parser, syntax detection), Editing AutoValues, table column expressions. |
 | [Logging & Observability](logging-observability.md) | API / CMS / Portal | Logging backends and fan-out, DB batch logging, OpenTelemetry, Serilog. |
+| [MapMarkup Measure Tools](mapmarkup-measure-tools.md) | Viewer / API / GeoServices | Composite measure graphics (angles, buffer zone, object distance, measurement grid, ...) and "add from selection": Leaflet plugin, sketch type, server calculators for print and shapefile export. |
 | [Query Builder & Value Suggestions](querybuilder.md) | API / Viewer | Query Builder field types/operators, live value suggestions (autocomplete, number list, date picker), filters on distinct queries. |
 | [Query Result Restriction & Statistics](query-result-restriction.md) | API / GeoServices / Viewer | Restrict query results with the Query Builder (encrypted query token), server-side field statistics (ArcGIS outStatistics) with ranks, restrict by value and CSV. |
 | [Query Results](query-results.md) | API / Viewer | Query results end-to-end: QueryEngine, DTO metadata, result table/list paging, export. |

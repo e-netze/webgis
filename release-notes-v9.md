@@ -67,6 +67,11 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
 - Viewer: the drawing tools "Dimension" and "Dimension polygon" can optionally label the vertex angles (polygon: interior angles; line: interior or deflection angle with left/right, or the azimuth of each segment) in degrees, gon or both; both tools are now also included in the shapefile export.
   [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
+- Viewer: "Drawing (Map Markup)" has a new measure tool "Measurement grid" (labeled grid with a given cell size, rotated or aligned to round coordinates, e.g. for sampling or survey grids); it is printed and exported to shapefiles as one polygon per cell.
+  [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
+- Viewer: "Drawing (Map Markup)" has a new measure tool "Object distance" (shortest distance between two map features, e.g. building to parcel boundary, from one object to any number of others); it is printed and exported to shapefiles as one line per distance with the layers and object ids.
+  [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
+- Viewer: "Add from selection" (`allow-add-from-selection` of the Map Markup tool) now works for all draw and measure tools with the current tool style, can optionally merge the selected objects, and adds selected objects to "Object distance" or selected points to "Perpendicular distance".
 ### Fixed
 
 - Validation messages are now shown directly below the affected input field (e.g. in edit masks) instead of at the bottom of the dialog.

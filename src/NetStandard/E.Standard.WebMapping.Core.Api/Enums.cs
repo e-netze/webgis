@@ -60,7 +60,8 @@ public enum GraphicsTool
     Perpendicular = 18,
     Buffer_Zone = 19,
     Circle_Arc = 20,
-    Object_Distance = 21
+    Object_Distance = 21,
+    Measure_Grid = 22
 }
 
 public enum LookupType
@@ -197,6 +198,10 @@ public enum ApiClientButtonCommand
     graphicsobjectdistancefromselection = 117,
     graphicsperpendicularfromselection = 118,
     setgraphicsperpendicularpoints = 119,
+    setgraphicsmeasuregridcellsize = 120,
+    setgraphicsmeasuregridlabels = 121,
+    setgraphicsmeasuregridaligntogrid = 122,
+    setgraphicsmeasuregridorigin = 123,
 }
 
 public enum ApiToolEvents

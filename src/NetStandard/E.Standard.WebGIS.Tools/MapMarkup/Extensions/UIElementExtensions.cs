@@ -778,6 +778,120 @@ static internal class UIElementExtensions
         return collection;
     }
 
+    // measure_grid: the align/origin holders are hidden by the client without a calc crs (webgis.map.graphics.refreshMeasureGridUIElements)
+    static public List<IUIElement> AddMeasureGridStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    {
+        collection.Add(CreateHolder(e, stagedOnly,
+        [
+            .. AngleBaseStyleElements(e, localizer, collapseExclusive),
+            new UILineStyleSelector(localizer.Localize("symbology.line-style"), UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicslinestyle)
+            {
+                CollapseState = IsCollapsed(true),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                id = "mapmarkup-measure_grid-linestyle",
+                value = e.GetValue("mapmarkup-linestyle", "1")
+            },
+            new UIOptionContainer()
+            {
+                title = localizer.Localize("symbology.properties"),
+                CollapseState = IsCollapsed(isCollapsed),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                elements = new IUIElement[]
+                {
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.grid-cell-width")}:"
+                    },
+                    new UIInputNumber() {
+                        MinValue = 0,
+                        MaxValue = double.MaxValue,
+                        StepWidth = 0.01,
+                        id = "mapmarkup-measure_grid-cell-width",
+                        value = e.GetValue("mapmarkup-measure_grid-cell-width", "10"),
+                        css = UICss.ToClass(new string[]{ UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.GraphicsMeasureGridCellWidth })
+                    },
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.grid-cell-height")}:"
+                    },
+                    new UIInputNumber() {
+                        MinValue = 0,
+                        MaxValue = double.MaxValue,
+                        StepWidth = 0.01,
+                        id = "mapmarkup-measure_grid-cell-height",
+                        value = e.GetValue("mapmarkup-measure_grid-cell-height", "10"),
+                        css = UICss.ToClass(new string[]{ UICss.ToolParameter, UICss.ToolParameterPersistent, UICss.GraphicsMeasureGridCellHeight })
+                    },
+                    new UIButtonContainer(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsmeasuregridcellsize)
+                    {
+                        text = localizer.Localize("symbology.apply-grid-cell-size"),
+                        css = UICss.ToClass(new string[]{ UICss.CancelButtonStyle })
+                    }),
+                    new UIBreak(),
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.grid-labels")}:"
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsmeasuregridlabels)
+                    {
+                        options = new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value = "cells", label = localizer.Localize("symbology.grid-labels-cells") },
+                            new UISelect.Option() { value = "border", label = localizer.Localize("symbology.grid-labels-border") },
+                            new UISelect.Option() { value = "coords", label = localizer.Localize("symbology.grid-labels-coords") },
+                            new UISelect.Option() { value = "none", label = localizer.Localize("symbology.grid-labels-none") }
+                        },
+                        id = "mapmarkup-measure_grid-labels",
+                        css = UICss.ToClass(new string[] { UICss.GraphicsMeasureGridLabels })
+                    },
+                    new UIDiv()
+                    {
+                        css = UICss.ToClass(new string[] { UICss.GraphicsMeasureGridAlignHolder }),
+                        elements = new IUIElement[]
+                        {
+                            new UILabel(){
+                                label = $"{localizer.Localize("symbology.grid-align")}:"
+                            },
+                            YesNoSelect(localizer, ApiClientButtonCommand.setgraphicsmeasuregridaligntogrid, "mapmarkup-measure_grid-align", UICss.GraphicsMeasureGridAlign, defaultYes: false)
+                        }
+                    },
+                    new UIDiv()
+                    {
+                        css = UICss.ToClass(new string[] { UICss.GraphicsMeasureGridOriginHolder }),
+                        elements = new IUIElement[]
+                        {
+                            new UIBreak(),
+                            new UILabel(){
+                                label = $"{localizer.Localize("symbology.grid-origin-x")}:"
+                            },
+                            new UIInputNumber() {
+                                MinValue = -double.MaxValue,
+                                MaxValue = double.MaxValue,
+                                StepWidth = 0.01,
+                        id = "mapmarkup-measure_grid-origin-x",
+                                css = UICss.ToClass(new string[]{ UICss.GraphicsMeasureGridOriginX })
+                            },
+                            new UILabel(){
+                                label = $"{localizer.Localize("symbology.grid-origin-y")}:"
+                            },
+                            new UIInputNumber() {
+                                MinValue = -double.MaxValue,
+                                MaxValue = double.MaxValue,
+                                StepWidth = 0.01,
+                        id = "mapmarkup-measure_grid-origin-y",
+                                css = UICss.ToClass(new string[]{ UICss.GraphicsMeasureGridOriginY })
+                            },
+                            new UIButtonContainer(new UIButton(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsmeasuregridorigin)
+                            {
+                                text = localizer.Localize("symbology.apply-grid-origin"),
+                                css = UICss.ToClass(new string[]{ UICss.CancelButtonStyle })
+                            })
+                        }
+                    }
+                }
+            }
+        ]));
+
+        return collection;
+    }
+
     static public List<IUIElement> AddBufferZoneStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true, bool fromSelection = false)
     {
         collection.Add(CreateHolder(e, stagedOnly,

@@ -50,7 +50,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     private const string SaveDialogValidationMessage = "save-dilaog-validation-message";
 
     protected readonly string[] MobileTools = [ "pointer", "symbol", "freehand", "line", "polygon", "dimline", "share", "save", "open", "upload", "download" ];
-    protected readonly string[] AdvancedTools = [ "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone", "object_distance" ];  // Do not use with Internet Explorer
+    protected readonly string[] AdvancedTools = [ "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone", "object_distance", "measure_grid" ];  // Do not use with Internet Explorer
 
     private static readonly Dictionary<string, string> ToolGroups = new()
     {
@@ -58,7 +58,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         ["line"] = "draw", ["polygon"] = "draw", ["rectangle"] = "draw", ["circle"] = "draw",
         ["distance_circle"] = "measure", ["compass_rose"] = "measure", ["dimline"] = "measure",
         ["dimpolygon"] = "measure", ["hectoline"] = "measure",
-        ["view_angle"] = "measure", ["intersection_angle"] = "measure", ["circle_arc"] = "measure", ["perpendicular"] = "measure", ["buffer_zone"] = "measure", ["object_distance"] = "measure",
+        ["view_angle"] = "measure", ["intersection_angle"] = "measure", ["circle_arc"] = "measure", ["perpendicular"] = "measure", ["buffer_zone"] = "measure", ["object_distance"] = "measure", ["measure_grid"] = "measure",
         ["save"] = "io", ["open"] = "io", ["share"] = "io", ["upload"] = "io", ["download"] = "io"
     };
 
@@ -173,6 +173,12 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                         {
                             value = "object_distance",
                             text = localizer.Localize("tools.object_distance"),
+                            css = UICss.Narrow
+                        },
+                        new UIImageButton(this.GetType(),"measure_grid", UIButton.UIButtonType.servertoolcommand,"measure_grid")
+                        {
+                            value = "measure_grid",
+                            text = localizer.Localize("tools.measure_grid"),
                             css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"distance_circle", UIButton.UIButtonType.servertoolcommand,"distance_circle")
@@ -397,6 +403,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         toolResourceManager.AddImageResource("perpendicular", Properties.Resources.perpendicular_26);
         toolResourceManager.AddImageResource("buffer_zone", Properties.Resources.buffer_zone_26);
         toolResourceManager.AddImageResource("object_distance", Properties.Resources.object_distance_26);
+        toolResourceManager.AddImageResource("measure_grid", Properties.Resources.measure_grid_26);
     }
 
     #endregion
@@ -876,6 +883,30 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         return AngleToolResponse(bridge, GraphicsTool.Object_Distance, localizer.Localize("draw-object-distance"), uiElements);
     }
 
+    // measure_grid: the grid itself is calculated on the client (L.MeasureGrid.calc), for print see MeasureGridElement
+    [ServerToolCommand("measure_grid")]
+    public ApiEventResponse OnMeasureGridToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+    {
+        var uiElements = new List<IUIElement>().AddMeasureGridStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e);
+
+        if (e.UseMobileBehavior())
+        {
+            uiElements.AddRange(new IUIElement[]
+            {
+                new UIBreak(),
+                new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.removecurrentgraphicselement){
+                    text = localizer.Localize("remove-sketch"),
+                    css=UICss.ToClass(new string[] { UICss.CancelButtonStyle })
+                },
+                new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.assumecurrentgraphicselement){
+                    text = localizer.Localize("apply-line")
+                }
+            });
+        }
+
+        return AngleToolResponse(bridge, GraphicsTool.Measure_Grid, localizer.Localize("draw-measure-grid"), uiElements);
+    }
+
     // calculates the buffer polygon for the client (buffer_zone tool), coordinates are WGS84
     [ServerToolCommand("buffer-zone-calc")]
     public ApiEventResponse OnBufferZoneCalc(IBridge bridge, ApiToolEventArguments e)
@@ -1262,6 +1293,9 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             case "object_distance":
                 resp = await OnObjectDistanceToolClick(bridge, e, localizer);
                 break;
+            case "measure_grid":
+                resp = OnMeasureGridToolClick(bridge, e, localizer);
+                break;
         }
 
         if (resp != null)
@@ -1303,6 +1337,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             "perpendicular" => new List<IUIElement>().AddPerpendicularStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                                                         "buffer_zone" => new List<IUIElement>().AddBufferZoneStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             "object_distance" => new List<IUIElement>().AddObjectDistanceStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "measure_grid" => new List<IUIElement>().AddMeasureGridStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                                                         _ => new()
                         })
             );

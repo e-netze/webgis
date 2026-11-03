@@ -155,6 +155,34 @@ static class Mapping
                 { "SRC_TYPE", "bz-source-type" },
                 { "BUF_WIDTH", "bz-width" }
             }
+        },
+        {
+            // one polyline per connection line (A => B), the attributes are set per line by the ShapeFileExport
+            "object_distance", new Dictionary<string, string>()
+            {
+                { "NR", "" },
+                { "LENGTH_M", "" },
+                { "LAYER_A", "" },
+                { "OID_A", "" },
+                { "LAYER_B", "" },
+                { "OID_B", "" },
+                { "WIDTH", "stroke-width" },
+                { "COLOR", "stroke" }
+            }
+        },
+        {
+            // one polygon per cell, LABEL/COL/ROW are set per cell by the ShapeFileExport
+            "measure_grid", new Dictionary<string, string>()
+            {
+                { "LABEL", "" },
+                { "COL", "" },
+                { "ROW", "" },
+                { "WIDTH", "stroke-width" },
+                { "COLOR", "stroke" },
+                { "CELL_W", "mg-cell-width" },
+                { "CELL_H", "mg-cell-height" },
+                { "ALIGN", "mg-align" }
+            }
         }
     };
 
@@ -175,6 +203,8 @@ static class Mapping
         {  "perpendicular", ShapeFile.geometryType.Polyline },
         {  "dimline", ShapeFile.geometryType.Polyline },
         {  "dimpolygon", ShapeFile.geometryType.Polygon },
-        {  "buffer_zone", ShapeFile.geometryType.Polygon }
+        {  "buffer_zone", ShapeFile.geometryType.Polygon },
+        {  "object_distance", ShapeFile.geometryType.Polyline },
+        {  "measure_grid", ShapeFile.geometryType.Polygon }
     };
 }

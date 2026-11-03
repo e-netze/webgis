@@ -2,7 +2,7 @@
 //   _base    => defaults for all hooks and flags + shared helpers (json, ...)
 //               Unknown geometry types use _base directly
 //               object_distance derives from _base (no vertex markers, the vertices are calculated)
-//   _line    => polyline, dimline, hectoline, view_angle, intersection_angle, circle_arc, perpendicular, buffer_zone
+//   _line    => polyline, dimline, hectoline, view_angle, intersection_angle, circle_arc, perpendicular, buffer_zone, measure_grid
 //   _polygon => polygon, dimpolygon
 //   _radius  => circle, distance_circle, compass_rose
 //
@@ -328,7 +328,7 @@ webgis.sketch.geometryTypes.define('_base', null, function (ctx) {
     };
 });
 
-// polyline, dimline, hectoline, view_angle, intersection_angle, circle_arc, perpendicular, buffer_zone
+// polyline, dimline, hectoline, view_angle, intersection_angle, circle_arc, perpendicular, buffer_zone, measure_grid
 webgis.sketch.geometryTypes.define('_line', '_base', function (ctx) {
     "use strict";
 

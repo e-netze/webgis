@@ -374,6 +374,22 @@
                     if (map && map.graphics)
                         map.graphics.setObjectDistanceShowNumber(tool.value === true || tool.value === 'true');
                     break;
+                case 'setgraphicsmeasuregridcellsize':  // value: [width, height]
+                    if (map && map.graphics && tool.value && tool.value.length === 2)
+                        map.graphics.setMeasureGridCellSize(tool.value[0], tool.value[1]);
+                    break;
+                case 'setgraphicsmeasuregridlabels':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setMeasureGridLabels(tool.value);
+                    break;
+                case 'setgraphicsmeasuregridaligntogrid':
+                    if (map && map.graphics)
+                        map.graphics.setMeasureGridAlignToGrid(tool.value === true || tool.value === 'true');
+                    break;
+                case 'setgraphicsmeasuregridorigin':  // value: [X, Y]
+                    if (map && map.graphics && tool.value && tool.value.length === 2)
+                        map.graphics.setMeasureGridOrigin(tool.value[0], tool.value[1]);
+                    break;
                 case 'closegraphicssketchsection':
                     if (map && map.graphics && map.graphics._sketch && map.graphics._sketch.canCloseSection() === true && !map.graphics._sketch.isLastPartClosed())
                         map.graphics._sketch.appendPart();
@@ -1941,7 +1957,7 @@
             tool != null &&
             (tool.tooltype === 'sketch1d' || tool.tooltype === 'sketch2d' ||
                 (tool.tooltype === 'sketchany' && map.sketch && $.inArray(map.sketch.getGeometryType(), ["polyline", "polygon"]) >= 0) ||
-                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone"]) >= 0));
+                (tool.tooltype === 'graphics' && $.inArray(map.graphics.getTool(), ["line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone", "measure_grid"]) >= 0));
     };
 
     this.replaceCustomToolUrl = function (map, url, eventObject) {

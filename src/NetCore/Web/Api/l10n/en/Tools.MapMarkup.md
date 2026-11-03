@@ -25,6 +25,7 @@ Simple drawing on the map.
 ## perpendicular: Perpendicular distance
 ## buffer_zone: Buffer zone
 ## object_distance: Object distance
+## measure_grid: Measurement grid
 
 ## save: Save Drawing
 ## open: Load Drawing
@@ -103,6 +104,18 @@ Simple drawing on the map.
 ## show-labels-arc-length: Arc length
 ## show-labels-central-angle: Central angle
 ## show-number: Show number
+## grid-cell-width: Cell size X / width [m]
+## grid-cell-height: Cell size Y / height [m] (empty = same as width)
+## apply-grid-cell-size: Apply cell size
+## grid-labels: Labels
+## grid-labels-cells: Cells (A1, B1, ...)
+## grid-labels-border: Border (columns/rows)
+## grid-labels-coords: Coordinates (aligned only)
+## grid-labels-none: None
+## grid-align: Align to coordinate grid
+## grid-origin-x: Origin X (corner of A1)
+## grid-origin-y: Origin Y (corner of A1)
+## apply-grid-origin: Apply origin
 
 # draw-symbol: Set symbol
 # draw-point: Set point
@@ -121,6 +134,7 @@ Simple drawing on the map.
 # draw-perpendicular: Draw perpendicular distance
 # draw-buffer-zone: Draw buffer zone
 # draw-object-distance: Measure object distance (click objects in the map)
+# draw-measure-grid: Draw measurement grid
 
 # apply-line: Apply line
 # finish-reference-line: Finish reference line

@@ -16,7 +16,7 @@
     this._sketchMetaSouce = null;
     this._stagedElement = null;
 
-    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle",     "circle_arc", "perpendicular", "buffer_zone", "object_distance"];
+    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle",     "circle_arc", "perpendicular", "buffer_zone", "object_distance", "measure_grid"];
 
     this._sketch.events.on(['onchangevertex'], function (e, sender, coord) {
         if (this._tool === 'symbol' && this._currentMarker) {
@@ -154,8 +154,8 @@
         if (this._map.getActiveTool() && this._map.getActiveTool().is_graphics_tool === true) {
             //console.log(this._tool);
             this._map._refreshToolBubbles(this._map.getActiveTool(),
-                $.inArray(this._tool, ["symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle",                                "compass_rose", "dimline", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone", "object_distance"]) >= 0,
-                                $.inArray(this._tool, ["symbol", "text", "line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone"]) >= 0);
+                $.inArray(this._tool, ["symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle",                                                "compass_rose", "dimline", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone", "object_distance", "measure_grid"]) >= 0,
+                                                $.inArray(this._tool, ["symbol", "text", "line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone", "measure_grid"]) >= 0);
         }
 
         this._refreshInfoContainers();
@@ -512,7 +512,67 @@
         if (this._tool === 'buffer_zone') {
             this._requestBufferZoneBuffer();
         }
+        if (this._tool === 'measure_grid') {
+            this.refreshMeasureGridUIElements();
+        }
     }, this);
+
+    /********* measure_grid: Messgitter (webgis.sketch.geometry.measure_grid.js) *********/
+    // cell size in meters, height empty/invalid => width
+    this.setMeasureGridCellSize = function (width, height) {
+        width = parseFloat(width);
+        height = parseFloat(height);
+        if (!(width > 0))
+            return;
+        if (!(height > 0))
+            height = width;
+
+        this._sketch.setMeasureGridCellWidth(width);
+        this._sketch.setMeasureGridCellHeight(height);
+        this.refreshMeasureGridUIElements();
+    };
+    this.setMeasureGridLabels = function (labels) {
+        this._sketch.setMeasureGridLabels(labels);
+    };
+    this.setMeasureGridAlignToGrid = function (align) {
+        this._sketch.setMeasureGridAlignToGrid(align === true || align === 'true');
+        this.refreshMeasureGridUIElements();
+    };
+    this.setMeasureGridOrigin = function (X, Y) {
+        var result = this._sketch.setMeasureGridOrigin(X, Y);
+        this.refreshMeasureGridUIElements();
+        return result;
+    };
+    this.getMeasureGridCellWidth = function () { return this._sketch.getMeasureGridCellWidth(); };
+    this.getMeasureGridCellHeight = function () { return this._sketch.getMeasureGridCellHeight(); };
+    this.getMeasureGridLabels = function () { return this._sketch.getMeasureGridLabels(); };
+    this.getMeasureGridAlignToGrid = function () { return this._sketch.getMeasureGridAlignToGrid(); };
+    // calc crs of the grid, no grid => calc crs at the map center, 0 => web mercator (no real coordinates)
+    this._measureGridCalcCrsId = function (grid) {
+        if (grid)
+            return grid.crsId;
+        if (!this._map || !this._map.getCenter)
+            return 0;
+        var center = this._map.getCenter();
+        return center ? L.ViewAngle.toCalc([L.latLng(center[1], center[0])]).crsId : 0;
+    };
+    // origin inputs (X/Y of A1), visibility of the origin/align elements and the 'coords' label option (calc crs only)
+    this.refreshMeasureGridUIElements = function () {
+        if (this._tool !== 'measure_grid')
+            return;
+
+        var grid = this._sketch.getMeasureGrid(), crsId = this._measureGridCalcCrsId(grid);
+        var hasCrs = crsId > 0 && crsId !== 3857;
+
+        $('.webgis-graphics-measure_grid-align-holder').css('display', hasCrs ? '' : 'none');
+        $('.webgis-graphics-measure_grid-origin-holder').css('display', hasCrs && grid ? '' : 'none');
+        $('.webgis-graphics-measure_grid-labels').find("option[value='coords']").css('display', hasCrs ? '' : 'none');
+
+        if (grid && hasCrs) {
+            $('.webgis-graphics-measure_grid-origin-x').val(L.MeasureGrid.formatCoordinate(grid.origin.X));
+            $('.webgis-graphics-measure_grid-origin-y').val(L.MeasureGrid.formatCoordinate(grid.origin.Y));
+        }
+    };
 
     /********* object_distance: the objects A/B are selected by map clicks (webgis.sketch.geometry.object_distance.js) *********/
     // map click => server 'object-distance-pick' (candidates at the click position) => one candidate: apply, more: menu
@@ -1826,6 +1886,26 @@
                         };
                     }
                     break;
+                case 'measure_grid':
+                    if (element.frameworkElement.options) {
+                        var mgOptions = element.frameworkElement.options;
+                        properties["stroke"] = mgOptions.color || _color;
+                        properties["stroke-width"] = mgOptions.weight || _weight;
+                        properties["stroke-style"] = element.frameworkElement._webgis && element.frameworkElement._webgis.lineStyle
+                            ? element.frameworkElement._webgis.lineStyle
+                            : "1";
+                        properties["font-size"] = mgOptions.fontSize || 14;
+                        properties["mg-cell-width"] = mgOptions.cellWidth || 10;
+                        properties["mg-cell-height"] = mgOptions.cellHeight || mgOptions.cellWidth || 10;
+                        properties["mg-labels"] = mgOptions.labels || 'cells';
+                        properties["mg-align"] = mgOptions.alignToGrid === true;
+                        properties["_meta"] = {
+                            tool: "measure_grid",
+                            text: element.metaText,
+                            source: element.metaSource
+                        };
+                    }
+                    break;
             }
 
             // calcCrs for DimLine, Hectoline, ...
@@ -2056,6 +2136,15 @@
                                 this.setObjectDistanceLengthUnit(feature.properties["od-length-unit"] || 'm');
                                 this.setObjectDistanceShowNumber(feature.properties["od-show-number"] === true || feature.properties["od-show-number"] === 'true');
                                 this.setTextSize(feature.properties["font-size"]);
+                            } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "measure_grid") {
+                                this.setTool('measure_grid');
+                                feature.geometry.type = 'measure_grid';
+                                // align first: removes surplus vertices of the current sketch
+                                this._sketch.setMeasureGridAlignToGrid(feature.properties["mg-align"] === true || feature.properties["mg-align"] === 'true');
+                                this._sketch.setMeasureGridCellWidth(parseFloat(feature.properties["mg-cell-width"]) || 10);
+                                this._sketch.setMeasureGridCellHeight(parseFloat(feature.properties["mg-cell-height"]) || parseFloat(feature.properties["mg-cell-width"]) || 10);
+                                this.setMeasureGridLabels(feature.properties["mg-labels"] || 'cells');
+                                this.setTextSize(feature.properties["font-size"]);
                             } else {
                                 this.setTool('line');
                             }
@@ -2211,6 +2300,7 @@
                 case 'perpendicular':
                 case 'buffer_zone':
                 case 'object_distance':
+                case 'measure_grid':
                     return true;
             }
         }
@@ -2388,6 +2478,7 @@
                 case 'circle_arc':
                 case 'perpendicular':
                 case 'object_distance':
+                case 'measure_grid':
                     result.push({
                         type: element.type,
                         stroke: element.frameworkElement.options.color,
@@ -2448,6 +2539,7 @@
             case 'perpendicular':
             case 'object_distance': return { name: 'line', styles: ['stroke-color'] };
             case 'buffer_zone': return { name: 'line', styles: ['stroke-color', 'fill-color', 'fill-opacity'] };
+            case 'measure_grid': return { name: 'line', styles: ['stroke-color', 'stroke-weight', 'stroke-style'] };
             default: return [];
         }
     };
@@ -2487,7 +2579,7 @@
     };
 
     this._defaultBehaviour = function (type) {
-        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'dimpolygon', 'hectoline', 'view_angle', 'intersection_angle',         'circle_arc', 'perpendicular', 'buffer_zone', 'object_distance']) >= 0;
+        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'dimpolygon', 'hectoline', 'view_angle', 'intersection_angle',         'circle_arc', 'perpendicular', 'buffer_zone', 'object_distance', 'measure_grid']) >= 0;
     };
 
     this.hideContextMenu = function () {

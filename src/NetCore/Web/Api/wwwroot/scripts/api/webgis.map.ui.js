@@ -899,6 +899,14 @@
             $('.webgis-graphics-object_distance-show-number').val((map.graphics.getObjectDistanceShowNumber() === true).toString());
         }
 
+        if (this._map.graphics.getTool() === 'measure_grid') {
+            $('.webgis-graphics-measure_grid-cell-width').val(map.graphics.getMeasureGridCellWidth());
+            $('.webgis-graphics-measure_grid-cell-height').val(map.graphics.getMeasureGridCellHeight());
+            $('.webgis-graphics-measure_grid-labels').val(map.graphics.getMeasureGridLabels() || 'cells');
+            $('.webgis-graphics-measure_grid-align').val((map.graphics.getMeasureGridAlignToGrid() === true).toString());
+            map.graphics.refreshMeasureGridUIElements();
+        }
+
         $('.webgis-query-combo.require-ui-refresh').each(function (i, e) {
             $(e).webgis_queryCombo('refresh');
         });

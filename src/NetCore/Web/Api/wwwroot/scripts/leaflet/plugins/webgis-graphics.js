@@ -25,6 +25,7 @@
  *   webgis-graphics.circle_arc.js                   L.CircleArc / L.circleArc
  *   webgis-graphics.buffer_zone.js                  L.BufferZone / L.bufferZone
  *   webgis-graphics.object_distance.js              L.ObjectDistance / L.objectDistance
+ *   webgis-graphics.measure_grid.js                 L.MeasureGrid / L.measureGrid
  *   webgis-graphics.pass_point.js                   L.PassPoint / L.passPoint
  *   webgis-graphics.label_marker.js                 L.LabelMarker / L.labelMarker
  *   webgis-graphics.direction_line.js               L.DirectionLine / L.directionLine

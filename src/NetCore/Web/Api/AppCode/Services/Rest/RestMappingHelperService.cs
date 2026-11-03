@@ -652,7 +652,8 @@ public class RestMappingHelperService /*: IDisposable*/
                 || graphicsTool == "intersection_angle"
                 || graphicsTool == "circle_arc"
                 || graphicsTool == "perpendicular"
-                || graphicsTool == "buffer_zone") && feature.GetPropery<int>("_calcCrs") > 0)
+                || graphicsTool == "buffer_zone"
+                || graphicsTool == "object_distance") && feature.GetPropery<int>("_calcCrs") > 0)
             {
                 calcShape = feature.ToShape();
                 using (var calcTransformer = new GeometricTransformerPro(ApiGlobals.SRefStore.SpatialReferences, 4326, feature.GetPropery<int>("_calcCrs")))
@@ -842,6 +843,30 @@ public class RestMappingHelperService /*: IDisposable*/
                        partStarts: partStarts,
                        fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
                        calcPolyline: calcShape as Polyline));
+                }
+                else if (graphicsTool == "object_distance")
+                {
+                    map.GraphicsContainer.Add(new ObjectDistanceElement((Polyline)shape,
+                       feature.GetPropery<string>("stroke").HexToColor(),
+                       feature.GetPropery<float>("stroke-width"),
+                       lengthUnit: feature.GetPropery<string>("od-length-unit"),
+                       showNumber: feature.GetPropery<bool>("od-show-number"),
+                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
+                       calcPolyline: calcShape as Polyline));
+                }
+                else if (graphicsTool == "measure_grid")
+                {
+                    map.GraphicsContainer.Add(new MeasureGridElement((Polyline)shape,
+                       feature.ToShape() as Polyline,
+                       feature.GetPropery<int>("_calcCrs"),
+                       feature.GetPropery<string>("stroke").HexToColor(),
+                       feature.GetPropery<float>("stroke-width"),
+                       feature.GetPropery<string>("stroke-style").ToLineStyle(),
+                       cellWidth: feature.GetPropery<double>("mg-cell-width"),
+                       cellHeight: feature.GetPropery<double>("mg-cell-height"),
+                       labels: feature.GetPropery<string>("mg-labels"),
+                       align: feature.GetPropery<bool>("mg-align"),
+                       fontSize: feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor));
                 }
                 else
                 {

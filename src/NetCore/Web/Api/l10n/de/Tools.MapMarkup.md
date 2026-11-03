@@ -25,6 +25,7 @@ Einfaches Zeichnen in der Karte.
 ## perpendicular: Normalabstand
 ## buffer_zone: Pufferzone
 ## object_distance: Objektabstand
+## measure_grid: Messgitter
 
 ## save: Zeichnung speichern
 ## open: Zeichnung laden
@@ -103,6 +104,18 @@ Einfaches Zeichnen in der Karte.
 ## show-labels-arc-length: Bogenlänge
 ## show-labels-central-angle: Zentriwinkel
 ## show-number: Nummer anzeigen
+## grid-cell-width: Maschenweite X / Breite [m]
+## grid-cell-height: Maschenweite Y / Höhe [m] (leer = wie Breite)
+## apply-grid-cell-size: Maschenweite übernehmen
+## grid-labels: Beschriftung
+## grid-labels-cells: Felder (A1, B1, ...)
+## grid-labels-border: Rand (Spalten/Zeilen)
+## grid-labels-coords: Koordinaten (nur ausgerichtet)
+## grid-labels-none: Keine
+## grid-align: Am Koordinatenraster ausrichten
+## grid-origin-x: Ursprung X (Ecke A1)
+## grid-origin-y: Ursprung Y (Ecke A1)
+## apply-grid-origin: Ursprung übernehmen
 
 # draw-symbol: Symbol setzen
 # draw-point: Punkt setzen
@@ -121,6 +134,7 @@ Einfaches Zeichnen in der Karte.
 # draw-perpendicular: Normalabstand zeichnen
 # draw-buffer-zone: Pufferzone zeichnen
 # draw-object-distance: Objektabstand messen (Objekte in der Karte anklicken)
+# draw-measure-grid: Messgitter zeichnen
 
 # apply-line: Linie übernehmen
 # finish-reference-line: Bezugslinie beenden

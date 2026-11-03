@@ -1214,6 +1214,18 @@
     this.hasPerpendicularReferenceLine = function () { return _geometryType === 'perpendicular' && _typeOf('perpendicular').hasReferenceLine(); };
     this.addPerpendicularPoints = function (points) { return _geometryType === 'perpendicular' ? _typeOf('perpendicular').addPoints(points) : null; };
     this.removeObjectDistanceLine = function (index) { if (_geometryType === 'object_distance') _typeOf('object_distance').removeLine(index); };
+    this.setMeasureGridCellWidth = function (width) { if (parseFloat(width) > 0) _typeOf('measure_grid').setOption('cellWidth', parseFloat(width)); };
+    this.setMeasureGridCellHeight = function (height) { if (parseFloat(height) > 0) _typeOf('measure_grid').setOption('cellHeight', parseFloat(height)); };
+    this.setMeasureGridLabels = function (labels) { _typeOf('measure_grid').setOption('labels', labels); };
+    this.setMeasureGridAlignToGrid = function (align) {
+        _typeOf('measure_grid').setOption('alignToGrid', align === true || align === 'true');
+        if (_geometryType === 'measure_grid') {
+            _typeOf('measure_grid').onAlignToGridChanged();
+        }
+    };
+    // moves the grid, so that the origin (corner of cell A1) is at X/Y (calc crs), see webgis.sketch.geometry.measure_grid.js
+    this.setMeasureGridOrigin = function (X, Y) { return _geometryType === 'measure_grid' ? _typeOf('measure_grid').setOrigin(X, Y) : false; };
+    this.getMeasureGrid = function () { return _geometryType === 'measure_grid' ? _typeOf('measure_grid').getGrid() : null; };
     this.setText = function (text) { _typeOf('text').setOption('text', text); };
 
     this.getText = function () { return _typeOf('text').getOption('text'); };
@@ -1245,6 +1257,10 @@
     this.getBufferZoneBuffer = function () { return _typeOf('buffer_zone').getOption('buffer'); };
     this.getObjectDistanceLengthUnit = function () { return _typeOf('object_distance').getOption('lengthUnit'); };
     this.getObjectDistanceShowNumber = function () { return _typeOf('object_distance').getOption('showNumber'); };
+    this.getMeasureGridCellWidth = function () { return _typeOf('measure_grid').getOption('cellWidth'); };
+    this.getMeasureGridCellHeight = function () { return _typeOf('measure_grid').getOption('cellHeight'); };
+    this.getMeasureGridLabels = function () { return _typeOf('measure_grid').getOption('labels'); };
+    this.getMeasureGridAlignToGrid = function () { return _typeOf('measure_grid').getOption('alignToGrid'); };
     this.getBufferZoneBufferKey = function () {
         var element = _geometryType === 'buffer_zone' ? _frameworkElements[_currentFrameworkIndex] : null;
         return element && element.getBufferKey ? element.getBufferKey() : null;

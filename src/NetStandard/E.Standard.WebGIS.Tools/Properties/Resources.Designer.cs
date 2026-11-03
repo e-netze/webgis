@@ -453,6 +453,16 @@ namespace E.Standard.WebGIS.Tools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] measure_grid_26 {
+            get {
+                object obj = ResourceManager.GetObject("measure_grid_26", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] perpendicular_26 {
             get {
                 object obj = ResourceManager.GetObject("perpendicular_26", resourceCulture);

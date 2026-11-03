@@ -181,6 +181,14 @@ public class UICss
     public const string GraphicsBufferZoneWidth = "webgis-graphics-buffer_zone-width";
     public const string GraphicsObjectDistanceLengthUnit = "webgis-graphics-object_distance-length-unit";
     public const string GraphicsObjectDistanceShowNumber = "webgis-graphics-object_distance-show-number";
+    public const string GraphicsMeasureGridCellWidth = "webgis-graphics-measure_grid-cell-width";
+    public const string GraphicsMeasureGridCellHeight = "webgis-graphics-measure_grid-cell-height";
+    public const string GraphicsMeasureGridLabels = "webgis-graphics-measure_grid-labels";
+    public const string GraphicsMeasureGridAlign = "webgis-graphics-measure_grid-align";
+    public const string GraphicsMeasureGridAlignHolder = "webgis-graphics-measure_grid-align-holder";
+    public const string GraphicsMeasureGridOriginX = "webgis-graphics-measure_grid-origin-x";
+    public const string GraphicsMeasureGridOriginY = "webgis-graphics-measure_grid-origin-y";
+    public const string GraphicsMeasureGridOriginHolder = "webgis-graphics-measure_grid-origin-holder";
 
     public const string ModalCloseElement = "webgis-modal-close-element";
 

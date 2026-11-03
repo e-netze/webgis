@@ -61,6 +61,20 @@ webgis.ui.builder["button"] = (map, $newElement, element, options) => {
                 var $widthControl = $(this).closest('.webgis-ui-optionscontainer').find('.webgis-graphics-buffer_zone-width');
                 $this.data('_value', $widthControl.length === 1 ? parseFloat($widthControl.val()) : null);
                 break;
+            case "setgraphicsmeasuregridcellsize":  // [width, height], height empty => width
+                var $mgContainer = $(this).closest('.webgis-ui-optionscontainer');
+                $this.data('_value', [
+                    parseFloat($mgContainer.find('.webgis-graphics-measure_grid-cell-width').val()),
+                    parseFloat($mgContainer.find('.webgis-graphics-measure_grid-cell-height').val())
+                ]);
+                break;
+            case "setgraphicsmeasuregridorigin":  // [X, Y] of cell A1 (calc crs)
+                var $mgOriginContainer = $(this).closest('.webgis-ui-optionscontainer');
+                $this.data('_value', [
+                    parseFloat(String($mgOriginContainer.find('.webgis-graphics-measure_grid-origin-x').val()).replace(',', '.')),
+                    parseFloat(String($mgOriginContainer.find('.webgis-graphics-measure_grid-origin-y').val()).replace(',', '.'))
+                ]);
+                break;
         }
         webgis.tools.onButtonClick(map,
             {

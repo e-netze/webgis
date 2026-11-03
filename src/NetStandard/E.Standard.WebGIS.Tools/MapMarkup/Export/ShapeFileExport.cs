@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 
 using E.Standard.Esri.Shapefile;
 using E.Standard.Esri.Shapefile.IO;
@@ -81,6 +82,63 @@ class ShapeFileExport : IExport
 
                     var shape = feature.ToShape();
 
+                    // measure_grid: one polygon per cell (frame only, if there are too many cells)
+                    if (toolType == "measure_grid")
+                    {
+                        foreach (var cell in MeasureGridCells(feature, shape))
+                        {
+                            transformer.Transform(cell.polygon);
+
+                            var cellFeature = new Feature() { Shape = cell.polygon };
+                            foreach (var fieldName in propertyMapping.Keys)
+                            {
+                                string value = fieldName switch
+                                {
+                                    "LABEL" => cell.label,
+                                    "COL" => cell.col,
+                                    "ROW" => cell.row,
+                                    _ => feature.GetPropery<string>(propertyMapping[fieldName])
+                                };
+                                cellFeature.Attributes.Add(new WebMapping.Core.Attribute(fieldName, value));
+                            }
+
+                            shapeFile.WriteShape(cellFeature);
+                            _featuresCount++;
+                        }
+
+                        continue;
+                    }
+
+                    // object_distance: one polyline per connection line (touching objects => no line)
+                    if (toolType == "object_distance")
+                    {
+                        foreach (var line in ObjectDistanceLines(feature))
+                        {
+                            transformer.Transform(line.polyline);
+
+                            var lineFeature = new Feature() { Shape = line.polyline };
+                            foreach (var fieldName in propertyMapping.Keys)
+                            {
+                                string value = fieldName switch
+                                {
+                                    "NR" => line.nr,
+                                    "LENGTH_M" => line.length,
+                                    "LAYER_A" => line.layerA,
+                                    "OID_A" => line.oidA,
+                                    "LAYER_B" => line.layerB,
+                                    "OID_B" => line.oidB,
+                                    _ => feature.GetPropery<string>(propertyMapping[fieldName])
+                                };
+                                lineFeature.Attributes.Add(new WebMapping.Core.Attribute(fieldName, value));
+                            }
+
+                            shapeFile.WriteShape(lineFeature);
+                            _featuresCount++;
+                        }
+
+                        continue;
+                    }
+
                     // buffer_zone: export the buffer polygon (WGS84, calculated by the client or recalculated here)
                     if (toolType == "buffer_zone")
                     {
@@ -152,6 +210,123 @@ class ShapeFileExport : IExport
                     BufferZoneCalculator.ParsePartStarts(feature.GetPropery<string>("bz-parts")));
 
         return BufferZoneCalculator.ToPolygon(rings);
+    }
+
+    // WGS84 connection lines from the stored od-lines (see webgis.map.graphics.js), numbers like the labels (index + 1)
+    static private IEnumerable<(Polyline polyline, string nr, string length, string layerA, string oidA, string layerB, string oidB)> ObjectDistanceLines(GeoJsonFeature feature)
+    {
+        var lines = new List<(Polyline, string, string, string, string, string, string)>();
+
+        static string Value(JsonElement element, string name)
+            => element.ValueKind == JsonValueKind.Object && element.TryGetProperty(name, out var value)
+                ? value.ValueKind switch
+                {
+                    JsonValueKind.String => value.GetString(),
+                    JsonValueKind.Null or JsonValueKind.Undefined => String.Empty,
+                    _ => value.GetRawText()
+                }
+                : String.Empty;
+
+        static Point LngLat(JsonElement element, string name)
+            => element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.Array && value.GetArrayLength() >= 2
+                ? new Point(value[0].GetDouble(), value[1].GetDouble())
+                : null;
+
+        try
+        {
+            string layerA = String.Empty, oidA = String.Empty;
+            var aJson = feature.GetPropery<string>("od-a");
+            if (!String.IsNullOrEmpty(aJson))
+            {
+                using (var a = JsonDocument.Parse(aJson))
+                {
+                    layerA = Value(a.RootElement, "layer");
+                    oidA = Value(a.RootElement, "oid");
+                }
+            }
+
+            var linesJson = feature.GetPropery<string>("od-lines");
+            if (String.IsNullOrEmpty(linesJson))
+            {
+                return lines;
+            }
+
+            using (var doc = JsonDocument.Parse(linesJson))
+            {
+                int index = 0;
+                foreach (var line in doc.RootElement.EnumerateArray())
+                {
+                    index++;
+
+                    Point from = LngLat(line, "from"), to = LngLat(line, "to");
+                    if (from is null || to is null
+                        || (line.TryGetProperty("touching", out var touching) && touching.ValueKind == JsonValueKind.True))
+                    {
+                        continue;
+                    }
+
+                    double length = line.TryGetProperty("length", out var lengthElement) && lengthElement.ValueKind == JsonValueKind.Number
+                        ? lengthElement.GetDouble()
+                        : 0;
+
+                    lines.Add((new Polyline(new[] { new E.Standard.WebMapping.Core.Geometry.Path(new List<Point>() { from, to }) }),
+                               index.ToString(),
+                               Math.Round(length, 2).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                               layerA, oidA,
+                               Value(line, "layer"), Value(line, "oid")));
+                }
+            }
+        }
+        catch { }
+
+        return lines;
+    }
+
+    // WGS84 cell polygons, same grid as the print (MeasureGridElement) and the client (L.MeasureGrid)
+    static private IEnumerable<(Polygon polygon, string label, string col, string row)> MeasureGridCells(GeoJsonFeature feature, Shape source)
+    {
+        var cells = new List<(Polygon, string, string, string)>();
+
+        using (var grid = MeasureGridCalculator.Calc(
+                    SpatialAlgorithms.ShapePoints(source, false),
+                    feature.GetPropery<int>("_calcCrs"),
+                    feature.GetPropery<double>("mg-cell-width"),
+                    feature.GetPropery<double>("mg-cell-height"),
+                    feature.GetPropery<bool>("mg-align")))
+        {
+            if (grid is null)
+            {
+                return cells;
+            }
+
+            Polygon CellPolygon(double c0, double r0, double c1, double r1)
+                => new Polygon(new[]
+                {
+                    new Ring(new List<Point>()
+                    {
+                        grid.LngLat(c0, r0), grid.LngLat(c1, r0), grid.LngLat(c1, r1), grid.LngLat(c0, r1), grid.LngLat(c0, r0)
+                    })
+                });
+
+            if (grid.TooMany)
+            {
+                cells.Add((CellPolygon(0, 0, grid.Cols, grid.Rows), String.Empty, String.Empty, String.Empty));
+                return cells;
+            }
+
+            for (int r = 0; r < grid.Rows; r++)
+            {
+                for (int c = 0; c < grid.Cols; c++)
+                {
+                    cells.Add((CellPolygon(c, r, c + 1, r + 1),
+                               MeasureGridCalculator.CellName(c, r),
+                               MeasureGridCalculator.ColumnName(c),
+                               (r + 1).ToString()));
+                }
+            }
+        }
+
+        return cells;
     }
 
     public byte[] GetBytes(bool throwExcetionIfEmpty)

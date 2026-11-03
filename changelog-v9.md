@@ -447,6 +447,56 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
   [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
 
+- Map Markup: new measure tool "Measurement grid" (``measure_grid``, "Messgitter") in the group "Measure".
+  * 3 clicks: base edge (direction of the columns) and depth => rotated grid with the given cell
+    width/height in meters (default 10 m, the last values are the default for further objects in the session).
+  * "Align to grid": 2 clicks (opposite corners), axis-parallel grid with lines on multiples of the cell
+    size in the calc crs. The origin (corner of A1) can be set to exact coordinates (e.g. round values).
+    Align mode and origin are only available with a calc crs.
+  * Labels: cell names (``A1``, ``B1``, ...), column/row names along the border, grid coordinates
+    (aligned only) or none; line color/width/style and font size like the other tools.
+  * Max. 2500 cells; larger grids only show the frame with a hint.
+  * Leaflet plugin ``webgis-graphics.measure_grid.js``, sketch geometry type, print ``MeasureGridElement``
+    with ``MeasureGridCalculator`` (same geometry as the client). Shapefile export: one polygon per cell
+    with ``LABEL``, ``COL``, ``ROW``, ``WIDTH``, ``COLOR``, ``CELL_W``, ``CELL_H``, ``ALIGN``.
+    Icons are placeholders for now.
+
+  [Issue #486](https://github.com/e-netze/webgis-community/issues/486),
+  [Architecture](docs/architecture/mapmarkup-measure-tools.md)
+
+- Map Markup: new measure tool "Object distance" (``object_distance``, "Objektabstand") in the group "Measure":
+  shortest connection between features of the map (point, line, polygon, also multipart), e.g. building to
+  parcel boundary or distances between utility lines.
+  * Click object A, then any number of objects B (clicking a B again removes it); several features at the
+    click position => candidate menu with highlight on hover. A/B are highlighted while editing.
+  * Server commands ``object-distance-pick`` (candidates of the visible point/line/polygon layers) and
+    ``object-distance-calc``: the features are queried again and the distance is calculated by
+    ``ObjectDistanceCalculator`` in the calc crs (polygons = boundary, touching objects => length 0, no line).
+  * Each connection is drawn like a dimension line with its length (m/km), optionally numbered.
+    Stored as a snapshot (``od-a``, ``od-lines``), not recalculated when loading.
+  * Leaflet plugin ``webgis-graphics.object_distance.js``, sketch geometry type, print ``ObjectDistanceElement``.
+    Shapefile export: one polyline per connection with ``NR``, ``LENGTH_M``, ``LAYER_A``, ``OID_A``,
+    ``LAYER_B``, ``OID_B``, ``WIDTH``, ``COLOR``. Icons are placeholders for now.
+
+  [Issue #486](https://github.com/e-netze/webgis-community/issues/486),
+  [Architecture](docs/architecture/mapmarkup-measure-tools.md)
+
+- Map Markup: "Add from selection" (``allow-add-from-selection``) is available for all draw and measure tools.
+  * Point, line, polygon, dimension line/polygon, hectometer line and buffer zone: the elements get the
+    current style and options of the tool (``GraphicsResponse.UseCurrentStyle``); the dialog shows the
+    style elements of the tool (buffer zone: buffer width, calculated by the server).
+  * New dialog option "Merge objects" (more than one feature): ``ShapeMerger`` (polygon union, lines joined
+    at their end points, points => multipoint).
+  * Dimension line/hectometer line: multipart lines become one element per part; dimension polygon: one
+    element per outer ring, holes are removed (both with a hint).
+  * Object distance: the selected features become objects B of the current object A.
+  * Perpendicular distance: the selected points are added to the current reference line (the line is
+    finished automatically, duplicates skipped).
+  * One undo step per takeover; the map only zooms if the sketch is outside the current extent.
+  * Modal dialogs re-center themselves when their content changes (``fit``), instead of growing downwards.
+
+  [Architecture](docs/architecture/mapmarkup-measure-tools.md)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.
