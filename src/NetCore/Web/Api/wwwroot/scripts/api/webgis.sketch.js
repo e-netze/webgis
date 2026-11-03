@@ -410,13 +410,6 @@
             this.events.fire('ongetsvalid', this);
         }
 
-        // only for vertices added by the user (fireEvents), not when loading (fromJson, fromFrameworkElement)
-        var closeAfterVertices = _type().closeAfterVertices;
-        if (fireEvents && closeAfterVertices > 0 && _vertices.length >= closeAfterVertices && !this.isClosed()) {
-            this.close();
-            return;
-        }
-
         if (_ortho && this.getCurrentPartLength() >= 2) {
             var vertices = this.getConstructionVerticesPro();
             var v1 = vertices[vertices.length - 2], v2 = vertices[vertices.length - 1];
@@ -1569,6 +1562,11 @@
 
         if (this.getCurrentPartLength() === 0) {
             return null;
+        }
+
+        var index = _type().referenceVertexIndex();
+        if (index !== null && index >= 0 && index < _vertices.length) {
+            return _vertices[index];
         }
 
         return _vertices[_vertices.length - 1];

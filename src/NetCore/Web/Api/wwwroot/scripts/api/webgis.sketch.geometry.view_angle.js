@@ -10,11 +10,21 @@ webgis.sketch.geometryTypes.define('view_angle', '_line', function (ctx) {
     this.angle = 30;        // degrees
     this.unit = 'deg';      // deg | gon | both
     this.labelLength = false;
-    this.closeAfterVertices = 2;
     this.elementOptions = { angle: ['getAngle', 'setAngle'], unit: ['getUnit', 'setUnit'], labelLength: ['getLabelLength', 'setLabelLength'] };
 
+    // apex + axis end: further clicks only move the axis end, the sketch stays open (properties can still be changed)
     this.tryAddVertex = function (vertex, vertices, fireEvents, coords) {
-        return state.vertices.length >= this.closeAfterVertices;  // ignore further vertices
+        if (state.vertices.length < 2)
+            return false;
+
+        if (fireEvents)
+            this._replaceLastVertex(vertex);
+        return true;
+    };
+
+    // mover line always starts at the apex
+    this.referenceVertexIndex = function () {
+        return state.vertices.length >= 2 ? 0 : null;
     };
 
     this.createFrameworkElement = function (latLngs) {

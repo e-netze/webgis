@@ -192,6 +192,12 @@ L.Perpendicular = L.LayerCollection.extend({
         }
 
         return geoJson;
+    },
+    // highlight (e.g. hovering the graphics list): only the reference line
+    toPreviewGeoJSON: function () {
+        var geoJson = this.toGeoJSON();
+        geoJson.geometry.coordinates = geoJson.geometry.coordinates.slice(0, this.getLineVertexCount());
+        return geoJson;
     }
 });
 

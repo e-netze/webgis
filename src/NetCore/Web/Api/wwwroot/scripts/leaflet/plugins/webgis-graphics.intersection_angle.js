@@ -173,6 +173,14 @@ L.IntersectionAngle = L.LayerCollection.extend({
         }
 
         return geoJson;
+    },
+    // highlight (e.g. hovering the graphics list): both lines as separate parts (not connected)
+    toPreviewGeoJSON: function () {
+        var geoJson = this.toGeoJSON();
+        if (geoJson.geometry.coordinates.length > 2) {
+            geoJson.geometry.partindex = [2];
+        }
+        return geoJson;
     }
 });
 

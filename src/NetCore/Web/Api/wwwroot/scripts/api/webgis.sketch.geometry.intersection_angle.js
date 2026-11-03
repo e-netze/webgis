@@ -9,15 +9,25 @@ webgis.sketch.geometryTypes.define('intersection_angle', '_line', function (ctx)
     this.styleIndex = 1;
     this.unit = 'both';     // deg | gon | both
     this.angles = 'angle';  // angle | adjacent | both | all
-    this.closeAfterVertices = 4;
     this.elementOptions = { unit: ['getUnit', 'setUnit'], angles: ['getAngles', 'setAngles'] };
 
     this.isValid = function () {
         return state.vertices.length >= 4;
     };
 
+    // both lines finished: further clicks only move the end of the second line, the sketch stays open (properties can still be changed)
     this.tryAddVertex = function (vertex, vertices, fireEvents, coords) {
-        return state.vertices.length >= this.closeAfterVertices;  // ignore further vertices
+        if (state.vertices.length < 4)
+            return false;
+
+        if (fireEvents)
+            this._replaceLastVertex(vertex);
+        return true;
+    };
+
+    // mover line starts at the first vertex of the second line
+    this.referenceVertexIndex = function () {
+        return state.vertices.length >= 4 ? 2 : null;
     };
 
     // first line finished => the next vertex starts the second line, no mover line from the last vertex

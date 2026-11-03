@@ -130,7 +130,9 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                             const map = $(this).closest('.webgis-graphics-info-container-holder').data('map');
                             const element = $(this).data('element');
                             if (element && !element.updating && element.originalElement && element.originalElement.frameworkElement) {
-                                map.graphics.addPreviewFromJson(element.originalElement.frameworkElement.toGeoJSON().geometry, false, true);
+                                const frameworkElement = element.originalElement.frameworkElement;
+                                const geoJson = frameworkElement.toPreviewGeoJSON ? frameworkElement.toPreviewGeoJSON() : frameworkElement.toGeoJSON();
+                                map.graphics.addPreviewFromJson(geoJson.geometry, false, true);
                             }
                         })
                         .on('mouseleave.webgis_graphics_info_container', function (e) {

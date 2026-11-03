@@ -32,7 +32,6 @@ webgis.sketch.geometryTypes.define('_base', null, function (ctx) {
     this.styleIndex = 0;
     this.addVertexUndoKey = null;                   // l10n key
     this.vertexMarkerIcon = null;                   // fix icon for vertex markers (otherwise sketch_vertex[_fixed|_selected])
-    this.closeAfterVertices = 0;                    // > 0 => sketch is closed automatically when the user added this number of vertices (view_angle, intersection_angle)
     this.wktType = null;                            // POINT, LINESTRING, POLYGON
                                                     // null => toWKT/toWKT2 write no valid WKT (no prefix), the server (ShapeFromWKT) ignores it => intended
 
@@ -156,6 +155,10 @@ webgis.sketch.geometryTypes.define('_base', null, function (ctx) {
     this.canCloseSection = function () {
         return null;
     };
+    // index of the vertex the mover line (and construction: distance, direction, ...) starts from, null => default (last vertex)
+    this.referenceVertexIndex = function () {
+        return null;
+    };
 
     // map events
     this.onMapMouseUp = function () { };
@@ -176,6 +179,19 @@ webgis.sketch.geometryTypes.define('_base', null, function (ctx) {
     this.fromFrameworkElement = function (frameworkElement, jsonGeometry) { };
 
     /********* Helpers *********/
+
+    // fixed number of vertices (view_angle, intersection_angle): further clicks replace the last vertex
+    // the sketch stays open (like the radius of the circles) => the properties (angle, ...) can still be changed
+    this._replaceLastVertex = function (vertex) {
+        if (state.vertices.length === 0)
+            return;
+
+        sketch.addUndo(webgis.l10n.get("sketch-move-vertex"));
+        state.vertices[state.vertices.length - 1] = vertex;
+        sketch.snapFixVertex(vertex);
+        sketch.redraw(true);
+        sketch.redrawMarkers();  // redraw(true) keeps the existing vertex markers
+    };
     this._jsonVertex = function (json, xy, XY) {
         var XYIndex = 0;
 
