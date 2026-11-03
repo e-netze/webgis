@@ -733,6 +733,51 @@ static internal class UIElementExtensions
         return collection;
     }
 
+    static public List<IUIElement> AddObjectDistanceStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
+    {
+        collection.Add(CreateHolder(e, stagedOnly,
+        [
+            .. AngleBaseStyleElements(e, localizer, collapseExclusive),
+            new UIOptionContainer()
+            {
+                title = localizer.Localize("symbology.properties"),
+                CollapseState = IsCollapsed(isCollapsed),
+                ExpandBehavior = ExpandMode(collapseExclusive),
+                elements = new IUIElement[]
+                {
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.length-unit")}:"
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsobjectdistancelengthunit)
+                    {
+                        options = new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value = "m", label = $"{localizer.Localize("meters")} [m]" },
+                            new UISelect.Option() { value = "km", label = $"{localizer.Localize("kilometers")} [km]" }
+                        },
+                        id = "mapmarkup-object_distance-length-unit",
+                        css = UICss.ToClass(new string[] { UICss.GraphicsObjectDistanceLengthUnit })
+                    },
+                    new UILabel(){
+                        label = $"{localizer.Localize("symbology.show-number")}:"
+                    },
+                    new UISelect(UIButton.UIButtonType.clientbutton, ApiClientButtonCommand.setgraphicsobjectdistanceshownumber)
+                    {
+                        options = new UISelect.Option[]
+                        {
+                            new UISelect.Option() { value = "false", label = localizer.Localize("no") },
+                            new UISelect.Option() { value = "true", label = localizer.Localize("yes") }
+                        },
+                        id = "mapmarkup-object_distance-show-number",
+                        css = UICss.ToClass(new string[] { UICss.GraphicsObjectDistanceShowNumber })
+                    }
+                }
+            }
+        ]));
+
+        return collection;
+    }
+
     static public List<IUIElement> AddBufferZoneStyleElements(this List<IUIElement> collection, ApiToolEventArguments e, ILocalizer localizer, bool stagedOnly = false, bool collapseExclusive = true, bool isCollapsed = true)
     {
         collection.Add(CreateHolder(e, stagedOnly,

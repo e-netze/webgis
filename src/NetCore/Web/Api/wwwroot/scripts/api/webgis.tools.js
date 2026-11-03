@@ -346,6 +346,22 @@
                     if (map && map.graphics)
                         map.graphics.setBufferZoneBuffer(data);
                     break;
+                case 'setgraphicsobjectdistancecandidates':  // server response of 'object-distance-pick' => data: { key, candidates }
+                    if (map && map.graphics)
+                        map.graphics.setObjectDistanceCandidates(data);
+                    break;
+                case 'setgraphicsobjectdistancelines':  // server response of 'object-distance-calc' => data: { key, a, found_a, lines }
+                    if (map && map.graphics)
+                        map.graphics.setObjectDistanceLines(data);
+                    break;
+                case 'setgraphicsobjectdistancelengthunit':
+                    if (map && map.graphics && tool.value)
+                        map.graphics.setObjectDistanceLengthUnit(tool.value);
+                    break;
+                case 'setgraphicsobjectdistanceshownumber':
+                    if (map && map.graphics)
+                        map.graphics.setObjectDistanceShowNumber(tool.value === true || tool.value === 'true');
+                    break;
                 case 'closegraphicssketchsection':
                     if (map && map.graphics && map.graphics._sketch && map.graphics._sketch.canCloseSection() === true && !map.graphics._sketch.isLastPartClosed())
                         map.graphics._sketch.appendPart();

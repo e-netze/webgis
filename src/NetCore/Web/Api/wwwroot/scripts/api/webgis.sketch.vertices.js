@@ -491,6 +491,7 @@ webgis.sketch.vertices.copyVertex = function (vertex) {
         fixed: vertex.fixed,
         selected: vertex.selected,
         m: vertex.m,
-        z: vertex.z
+        z: vertex.z,
+        od: vertex.od  // object_distance: meta data of the objects A/B (webgis.sketch.geometry.object_distance.js), shared (read only)
     };
 };

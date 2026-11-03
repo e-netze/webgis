@@ -179,6 +179,8 @@ public class UICss
     public const string GraphicsPerpendicularLengthUnit = "webgis-graphics-perpendicular-length-unit";
     public const string GraphicsBufferZoneSourceType = "webgis-graphics-buffer_zone-source-type";
     public const string GraphicsBufferZoneWidth = "webgis-graphics-buffer_zone-width";
+    public const string GraphicsObjectDistanceLengthUnit = "webgis-graphics-object_distance-length-unit";
+    public const string GraphicsObjectDistanceShowNumber = "webgis-graphics-object_distance-show-number";
 
     public const string ModalCloseElement = "webgis-modal-close-element";
 

@@ -313,6 +313,55 @@
         return tab + (hasMore === true ? '...' : '');
     };
 
+    // all queries with an associated layer in scale: "<service-id>,<query-id>,<visible 0|1>;..." (identify, object_distance, ...)
+    this.allQueriesString = function () {
+        var me = this, qString = '';
+        let currentServiceScale = this._map.crsScale();
+
+        var serviceIds = me._map.serviceIds();
+        for (var s = 0; s < serviceIds.length; s++) {
+            var service = me._map.services[serviceIds[s]];
+            for (var q = 0, to = service.queries.length; q < to; q++) {
+                var query = service.queries[q];
+
+                if (query.visible == false)
+                    continue;
+                // associated layer in scale??
+                if (query.associatedlayers && query.associatedlayers.length > 0) {
+                    var inScale = false;
+                    for (var a = 0; a < query.associatedlayers.length; a++) {
+                        var associatedLayerDef = query.associatedlayers[a];
+                        inScale = inScale || service.layerInScale(associatedLayerDef.id, currentServiceScale);
+                    }
+                    if (!inScale) {
+                        continue;
+                    }
+                }
+                if (qString.length > 0)
+                    qString += ';';
+                qString += service.id + ',' + query.id + ',';
+                // associated layer visible??
+                var vis = 0;
+                if (query.associatedlayers) {
+                    for (var a = 0; a < query.associatedlayers.length; a++) {
+                        var associatedLayerDef = query.associatedlayers[a];
+                        var associatedService = service;
+                        if (associatedLayerDef.serviceid) {
+                            associatedService = me._map.services[associatedLayerDef.serviceid];
+                        }
+                        if (!associatedService)
+                            continue;
+                        vis = (associatedService.checkLayerVisibility([associatedLayerDef.id]));
+                        if (vis == 1)
+                            break;
+                    }
+                }
+                qString += vis;
+            }
+        }
+        return qString;
+    };
+
     this.refreshUIElements = function (servercommand) {
         //console.log('refreshUIElements', servercommand);
 
@@ -324,47 +373,7 @@
 
         $('.webgis-all-queries').each(function (i, e) {
             if (qString === '') {
-                var serviceIds = me._map.serviceIds();
-                for (var s = 0; s < serviceIds.length; s++) {
-                    var service = me._map.services[serviceIds[s]];
-                    for (var q = 0, to = service.queries.length; q < to; q++) {
-                        var query = service.queries[q];
-
-                        if (query.visible == false)
-                            continue;
-                        // associated layer in scale??
-                        if (query.associatedlayers && query.associatedlayers.length > 0) {
-                            var inScale = false;
-                            for (var a = 0; a < query.associatedlayers.length; a++) {
-                                var associatedLayerDef = query.associatedlayers[a];
-                                inScale = inScale || service.layerInScale(associatedLayerDef.id, currentServiceScale);
-                            }
-                            if (!inScale) {
-                                continue;
-                            }
-                        }
-                        if (qString.length > 0)
-                            qString += ';';
-                        qString += service.id + ',' + query.id + ',';
-                        // associated layer visible??
-                        var vis = 0;
-                        if (query.associatedlayers) {
-                            for (var a = 0; a < query.associatedlayers.length; a++) {
-                                var associatedLayerDef = query.associatedlayers[a];
-                                var associatedService = service;
-                                if (associatedLayerDef.serviceid) {
-                                    associatedService = me._map.services[associatedLayerDef.serviceid];
-                                }
-                                if (!associatedService)
-                                    continue;
-                                vis = (associatedService.checkLayerVisibility([associatedLayerDef.id]));
-                                if (vis == 1)
-                                    break;
-                            }
-                        }
-                        qString += vis;
-                    }
-                }
+                qString = me.allQueriesString();
             }
             $(e).val(qString);
         });
@@ -883,6 +892,11 @@
         if (this._map.graphics.getTool() === 'buffer_zone') {
             $('.webgis-graphics-buffer_zone-source-type').val(map.graphics.getBufferZoneSourceType() || 'line');
             $('.webgis-graphics-buffer_zone-width').val(map.graphics.getBufferZoneWidth());
+        }
+
+        if (this._map.graphics.getTool() === 'object_distance') {
+            $('.webgis-graphics-object_distance-length-unit').val(map.graphics.getObjectDistanceLengthUnit() || 'm');
+            $('.webgis-graphics-object_distance-show-number').val((map.graphics.getObjectDistanceShowNumber() === true).toString());
         }
 
         $('.webgis-query-combo.require-ui-refresh').each(function (i, e) {

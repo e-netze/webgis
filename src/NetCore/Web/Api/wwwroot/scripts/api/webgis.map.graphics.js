@@ -16,7 +16,7 @@
     this._sketchMetaSouce = null;
     this._stagedElement = null;
 
-    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone"];
+    this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle",     "circle_arc", "perpendicular", "buffer_zone", "object_distance"];
 
     this._sketch.events.on(['onchangevertex'], function (e, sender, coord) {
         if (this._tool === 'symbol' && this._currentMarker) {
@@ -154,7 +154,7 @@
         if (this._map.getActiveTool() && this._map.getActiveTool().is_graphics_tool === true) {
             //console.log(this._tool);
             this._map._refreshToolBubbles(this._map.getActiveTool(),
-                $.inArray(this._tool, ["symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle",                "compass_rose", "dimline", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone"]) >= 0,
+                $.inArray(this._tool, ["symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle",                                "compass_rose", "dimline", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone", "object_distance"]) >= 0,
                                 $.inArray(this._tool, ["symbol", "text", "line", "polygon", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone"]) >= 0);
         }
 
@@ -513,6 +513,233 @@
             this._requestBufferZoneBuffer();
         }
     }, this);
+
+    /********* object_distance: the objects A/B are selected by map clicks (webgis.sketch.geometry.object_distance.js) *********/
+    // map click => server 'object-distance-pick' (candidates at the click position) => one candidate: apply, more: menu
+    // apply: no A => A, A => ignored, existing B => removed (toggle), otherwise => server 'object-distance-calc' => new line A-B
+    this._objectDistanceCounter = 0;
+    this._objectDistancePick = null;  // pending pick request: { key, latLng }
+    this._objectDistanceCalc = null;  // pending calc request: { key, candidate }
+
+    this.setObjectDistanceLengthUnit = function (unit) {
+        this._sketch.setObjectDistanceLengthUnit(unit);
+    };
+    this.setObjectDistanceShowNumber = function (show) {
+        this._sketch.setObjectDistanceShowNumber(show === true || show === 'true');
+    };
+
+    this._sketch.events.on(['onobjectdistancepick'], function (e, sender, vertex) {
+        var map = this._map, tool = map ? map.getActiveTool() : null;
+        if (this._tool !== 'object_distance' || !tool || !vertex)
+            return;
+
+        this._removeObjectDistanceMenu();
+        var key = 'od-' + (++this._objectDistanceCounter);
+        this._objectDistancePick = { key: key, latLng: L.latLng(vertex.y, vertex.x) };
+
+        webgis.tools.sendToolRequest(map, tool, 'servertoolcommand', null, {
+            _method: 'object-distance-pick',
+            'od-lng': vertex.x,
+            'od-lat': vertex.y,
+            'od-map-scale': map.scale(),
+            'od-queries': map.ui.allQueriesString(),
+            'od-key': key
+        });
+    }, this);
+
+    // server response of 'object-distance-pick' => { key, candidates: [{ ref, layer, oid, geometry }] }
+    this.setObjectDistanceCandidates = function (data) {
+        var pick = this._objectDistancePick;
+        if (!data || !pick || data.key !== pick.key)
+            return;
+
+        this._objectDistancePick = null;
+        if (this._tool !== 'object_distance')
+            return;
+
+        var candidates = data.candidates || [], current = this._sketch.getObjectDistanceData();
+        if (candidates.length === 0) {
+            webgis.toastMessage(webgis.l10n.get('info'), webgis.l10n.get('object-distance-no-object'));
+            return;
+        }
+
+        // A can't be selected again => only A at the click position: ignore the click
+        if (current && current.a) {
+            candidates = candidates.filter(function (c) { return c.ref !== current.a.ref; });
+            if (candidates.length === 0)
+                return;
+        }
+
+        if (candidates.length === 1) {
+            this._applyObjectDistanceCandidate(candidates[0], pick.latLng);
+        } else {
+            this._showObjectDistanceMenu(candidates, pick.latLng);
+        }
+    };
+
+    this._applyObjectDistanceCandidate = function (candidate, latLng) {
+        var map = this._map, tool = map ? map.getActiveTool() : null, sketch = this._sketch;
+        var current = sketch.getObjectDistanceData();
+        if (!current || !candidate)
+            return;
+
+        if (!current.a) {
+            sketch.setObjectDistanceA(candidate, latLng);
+            return;
+        }
+        if (candidate.ref === current.a.ref)
+            return;
+
+        for (var i = 0; i < current.lines.length; i++) {
+            if (current.lines[i].ref === candidate.ref) {
+                sketch.removeObjectDistanceLine(i);
+                return;
+            }
+        }
+
+        if (!tool)
+            return;
+
+        var key = 'od-' + (++this._objectDistanceCounter);
+        this._objectDistanceCalc = { key: key, candidate: candidate };
+
+        webgis.tools.sendToolRequest(map, tool, 'servertoolcommand', null, {
+            _method: 'object-distance-calc',
+            'od-a': current.a.ref,
+            'od-b': JSON.stringify([candidate.ref]),
+            'od-calc-crs': L.ViewAngle.toCalc([L.latLng(current.a.y, current.a.x), latLng]).crsId || 0,
+            'od-key': key
+        });
+    };
+
+    // server response of 'object-distance-calc' => { key, a, found_a, lines: [{ ref, found, from, to, length, touching }] }
+    this.setObjectDistanceLines = function (data) {
+        var calc = this._objectDistanceCalc;
+        if (!data || !calc || data.key !== calc.key)
+            return;
+
+        this._objectDistanceCalc = null;
+        if (this._tool !== 'object_distance')
+            return;
+
+        var current = this._sketch.getObjectDistanceData();
+        if (!current || !current.a || current.a.ref !== data.a)
+            return;  // A changed (undo, new sketch) in the meantime
+
+        if (data.found_a !== true) {
+            webgis.toastMessage(webgis.l10n.get('info'), webgis.l10n.get('object-distance-a-not-found'));
+            return;
+        }
+
+        var candidate = calc.candidate;
+        for (var line of (data.lines || [])) {
+            if (line.found !== true) {
+                webgis.toastMessage(webgis.l10n.get('info'), webgis.l10n.get('object-distance-no-object'));
+                continue;
+            }
+            if (line.touching === true) {
+                webgis.toastMessage(webgis.l10n.get('info'), (candidate.layer || '') + ': ' + webgis.l10n.get('object-distance-touching'));
+            }
+            this._sketch.addObjectDistanceLine($.extend({}, line, {
+                layer: candidate.layer,
+                oid: candidate.oid,
+                geometry: candidate.geometry
+            }));
+        }
+    };
+
+    // more than one candidate at the click position => menu (like select_sketch, webgis.ui.plugins.construct.js), hover => highlight
+    this._removeObjectDistanceMenu = function () {
+        $('.webgis-object-distance-menu-blocker').remove();
+        if (this._objectDistanceHighlight) {
+            this._objectDistanceHighlight.remove();
+            this._objectDistanceHighlight = null;
+        }
+    };
+    this._showObjectDistanceMenu = function (candidates, latLng) {
+        var me = this, map = this._map;
+        this._removeObjectDistanceMenu();
+
+        var highlight = function (candidate) {
+            if (me._objectDistanceHighlight) {
+                me._objectDistanceHighlight.remove();
+                me._objectDistanceHighlight = null;
+            }
+            if (candidate && candidate.geometry) {
+                me._objectDistanceHighlight = L.geoJSON(candidate.geometry, {
+                    style: { color: L.ObjectDistance.highlightColorB, weight: 4, opacity: 0.9, fillOpacity: 0.2 },
+                    pointToLayer: function (feature, ll) {
+                        return L.circleMarker(ll, { radius: 8, color: L.ObjectDistance.highlightColorB, weight: 3, fillOpacity: 0.3 });
+                    },
+                    interactive: false
+                }).addTo(map.frameworkElement);
+            }
+        };
+
+        var $blocker = $("<div class='blocker webgis-object-distance-menu-blocker' style='z-index:9999999;position:absolute;left:0px;right:0px;top:0px;bottom:0px;background:rgba(0,0,0,0.2)' oncontextmenu='return false;'></div>")
+            .appendTo('body')
+            .on('click', function () {
+                me._removeObjectDistanceMenu();
+            });
+
+        var $menuHolder = $("<div class='webgis-contextmenu icons' style='position:absolute;background:#fff;display:inline-block;max-height:60vh;overflow-y:auto'>")
+            .appendTo($blocker);
+
+        var $menu = $("<ul>").addClass('webgis-toolbox-tool-item-group-details').css({
+            padding: 0, margin: 0, minWidth: '200px'
+        }).appendTo($menuHolder);
+
+        $("<li>")
+            .addClass('webgis-toolbox-tool-item')
+            .append($("<strong>").text(webgis.l10n.get('object-distance-select-object')))
+            .appendTo($menu)
+            .on('click', function (e) { e.stopPropagation(); });
+
+        for (var candidate of candidates) {
+            $("<li>")
+                .text(candidate.layer || '')
+                .addClass('webgis-toolbox-tool-item')
+                .data('candidate', candidate)
+                .append('<br>')
+                .append($("<span style='color:#aaa;font-size:.8em'>").text('OID: ' + candidate.oid))
+                .appendTo($menu)
+                .on('click', function (e) {
+                    e.stopPropagation();
+                    var c = $(this).data('candidate');
+                    me._removeObjectDistanceMenu();
+                    me._applyObjectDistanceCandidate(c, latLng);
+                })
+                .on('mouseenter', function () {
+                    highlight($(this).data('candidate'));
+                })
+                .on('mouseleave', function () {
+                    highlight(null);
+                });
+        }
+
+        $("<li>").text(webgis.l10n.get('cancel'))
+            .addClass('webgis-toolbox-tool-item')
+            .appendTo($menu)
+            .on('click', function (e) {
+                e.stopPropagation();
+                me._removeObjectDistanceMenu();
+            });
+
+        var pos = [10, 10];
+        if (map.elem) {
+            var offset = $(map.elem).offset();
+            var point = map.frameworkElement.latLngToContainerPoint(latLng);
+            pos[0] = offset.left + point.x + 10;
+            pos[1] = offset.top + point.y + 10;
+        }
+
+        // keep the menu inside the window
+        var width = $menuHolder.outerWidth(), height = $menuHolder.outerHeight();
+        pos[0] = Math.max(0, Math.min(pos[0], $(window).width() - width - 10));
+        pos[1] = Math.max(0, Math.min(pos[1], $(window).height() - height - 10));
+
+        $menuHolder.css({ left: pos[0], top: pos[1] });
+    };
     this.getOpacity = function (geomType) {
         return this._sketch.getOpacity(geomType);
     };
@@ -617,6 +844,12 @@
     };
     this.getBufferZoneWidth = function () {
         return this._sketch.getBufferZoneWidth();
+    };
+    this.getObjectDistanceLengthUnit = function () {
+        return this._sketch.getObjectDistanceLengthUnit();
+    };
+    this.getObjectDistanceShowNumber = function () {
+        return this._sketch.getObjectDistanceShowNumber();
     };
 
     this.getTextColor = function (geomType) { return this._sketch.getTextColor(geomType); };
@@ -1451,6 +1684,32 @@
                         };
                     }
                     break;
+                case 'object_distance':
+                    if (element.frameworkElement.options) {
+                        var odOptions = element.frameworkElement.options, odData = element.frameworkElement.getData();
+                        properties["stroke"] = odOptions.color || _color;
+                        properties["stroke-width"] = odOptions.weight || _weight;
+                        properties["font-color"] = odOptions.fontColor || '#000';
+                        properties["font-size"] = odOptions.fontSize || 14;
+                        properties["od-length-unit"] = odOptions.lengthUnit || 'm';
+                        properties["od-show-number"] = odOptions.showNumber === true;
+                        // strings: server-side FeatureDTO can't convert nested objects/arrays, no geometries of A/B (not recalculated when loading)
+                        if (odData.a) {
+                            properties["od-a"] = JSON.stringify({ ref: odData.a.ref, layer: odData.a.layer, oid: odData.a.oid, x: odData.a.x, y: odData.a.y });
+                        }
+                        properties["od-lines"] = JSON.stringify(odData.lines.map(function (line) {
+                            return {
+                                ref: line.ref, layer: line.layer, oid: line.oid, length: line.length, touching: line.touching === true,
+                                from: [line.from.lng, line.from.lat], to: [line.to.lng, line.to.lat]
+                            };
+                        }));
+                        properties["_meta"] = {
+                            tool: "object_distance",
+                            text: element.metaText,
+                            source: element.metaSource
+                        };
+                    }
+                    break;
             }
 
             // calcCrs for DimLine, Hectoline, ...
@@ -1611,6 +1870,20 @@
                                 try {
                                     bufferZoneRings = feature.properties["bz-buffer"] ? JSON.parse(feature.properties["bz-buffer"]) : null;
                                 } catch (ex) { }
+                            } else if (feature.properties["_meta"] && feature.properties["_meta"].tool === "object_distance") {
+                                this.setTool('object_distance');
+                                feature.geometry.type = 'object_distance';
+                                try {
+                                    feature.geometry.od = {
+                                        a: feature.properties["od-a"] ? JSON.parse(feature.properties["od-a"]) : null,
+                                        lines: feature.properties["od-lines"] ? JSON.parse(feature.properties["od-lines"]) : []
+                                    };
+                                } catch (ex) {
+                                    feature.geometry.od = null;
+                                }
+                                this.setObjectDistanceLengthUnit(feature.properties["od-length-unit"] || 'm');
+                                this.setObjectDistanceShowNumber(feature.properties["od-show-number"] === true || feature.properties["od-show-number"] === 'true');
+                                this.setTextSize(feature.properties["font-size"]);
                             } else {
                                 this.setTool('line');
                             }
@@ -1765,6 +2038,7 @@
                 case 'circle_arc':
                 case 'perpendicular':
                 case 'buffer_zone':
+                case 'object_distance':
                     return true;
             }
         }
@@ -1941,6 +2215,7 @@
                 case 'intersection_angle':
                 case 'circle_arc':
                 case 'perpendicular':
+                case 'object_distance':
                     result.push({
                         type: element.type,
                         stroke: element.frameworkElement.options.color,
@@ -1998,7 +2273,8 @@
             case 'view_angle':
             case 'intersection_angle':
             case 'circle_arc':
-            case 'perpendicular': return { name: 'line', styles: ['stroke-color'] };
+            case 'perpendicular':
+            case 'object_distance': return { name: 'line', styles: ['stroke-color'] };
             case 'buffer_zone': return { name: 'line', styles: ['stroke-color', 'fill-color', 'fill-opacity'] };
             default: return [];
         }
@@ -2039,7 +2315,7 @@
     };
 
     this._defaultBehaviour = function (type) {
-        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'dimpolygon', 'hectoline', 'view_angle', 'intersection_angle', 'circle_arc', 'perpendicular', 'buffer_zone']) >= 0;
+        return $.inArray(type, ['line', 'polygon', 'freehand', 'distance_circle', 'compass_rose', 'circle', 'rectangle', 'text', 'dimline', 'dimpolygon', 'hectoline', 'view_angle', 'intersection_angle',         'circle_arc', 'perpendicular', 'buffer_zone', 'object_distance']) >= 0;
     };
 
     this.hideContextMenu = function () {

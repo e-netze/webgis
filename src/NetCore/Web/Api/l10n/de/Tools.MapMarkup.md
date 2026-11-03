@@ -24,6 +24,7 @@ Einfaches Zeichnen in der Karte.
 ## circle_arc: Kreisbogen
 ## perpendicular: Normalabstand
 ## buffer_zone: Pufferzone
+## object_distance: Objektabstand
 
 ## save: Zeichnung speichern
 ## open: Zeichnung laden
@@ -101,6 +102,7 @@ Einfaches Zeichnen in der Karte.
 ## show-labels-radius: Radius
 ## show-labels-arc-length: Bogenlänge
 ## show-labels-central-angle: Zentriwinkel
+## show-number: Nummer anzeigen
 
 # draw-symbol: Symbol setzen
 # draw-point: Punkt setzen
@@ -118,6 +120,7 @@ Einfaches Zeichnen in der Karte.
 # draw-circle-arc: Kreisbogen zeichnen
 # draw-perpendicular: Normalabstand zeichnen
 # draw-buffer-zone: Pufferzone zeichnen
+# draw-object-distance: Objektabstand messen (Objekte in der Karte anklicken)
 
 # apply-line: Linie übernehmen
 # finish-reference-line: Bezugslinie beenden

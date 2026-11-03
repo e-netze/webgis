@@ -1204,6 +1204,13 @@
         _typeOf('buffer_zone').setOption('buffer', rings ? { key: currentKey, rings: rings } : null);
         return true;
     };
+    this.setObjectDistanceLengthUnit = function (unit) { _typeOf('object_distance').setOption('lengthUnit', unit); };
+    this.setObjectDistanceShowNumber = function (show) { _typeOf('object_distance').setOption('showNumber', show); };
+    // object A/B (webgis.map.graphics => server 'object-distance-pick/-calc'), see webgis.sketch.geometry.object_distance.js
+    this.getObjectDistanceData = function () { return _geometryType === 'object_distance' ? _typeOf('object_distance').getData() : null; };
+    this.setObjectDistanceA = function (candidate, latLng) { if (_geometryType === 'object_distance') _typeOf('object_distance').setA(candidate, latLng); };
+    this.addObjectDistanceLine = function (line) { if (_geometryType === 'object_distance') _typeOf('object_distance').addLine(line); };
+    this.removeObjectDistanceLine = function (index) { if (_geometryType === 'object_distance') _typeOf('object_distance').removeLine(index); };
     this.setText = function (text) { _typeOf('text').setOption('text', text); };
 
     this.getText = function () { return _typeOf('text').getOption('text'); };
@@ -1233,6 +1240,8 @@
     this.getBufferZoneSourceType = function () { return _typeOf('buffer_zone').getOption('sourceType'); };
     this.getBufferZoneWidth = function () { return _typeOf('buffer_zone').getOption('width'); };
     this.getBufferZoneBuffer = function () { return _typeOf('buffer_zone').getOption('buffer'); };
+    this.getObjectDistanceLengthUnit = function () { return _typeOf('object_distance').getOption('lengthUnit'); };
+    this.getObjectDistanceShowNumber = function () { return _typeOf('object_distance').getOption('showNumber'); };
     this.getBufferZoneBufferKey = function () {
         var element = _geometryType === 'buffer_zone' ? _frameworkElements[_currentFrameworkIndex] : null;
         return element && element.getBufferKey ? element.getBufferKey() : null;

@@ -49,7 +49,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     private const string SaveDialogValidationMessage = "save-dilaog-validation-message";
 
     protected readonly string[] MobileTools = [ "pointer", "symbol", "freehand", "line", "polygon", "dimline", "share", "save", "open", "upload", "download" ];
-    protected readonly string[] AdvancedTools = [ "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone" ];  // Do not use with Internet Explorer
+    protected readonly string[] AdvancedTools = [ "text", "distance_circle", "compass", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle", "circle_arc", "perpendicular", "buffer_zone", "object_distance" ];  // Do not use with Internet Explorer
 
     private static readonly Dictionary<string, string> ToolGroups = new()
     {
@@ -57,7 +57,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         ["line"] = "draw", ["polygon"] = "draw", ["rectangle"] = "draw", ["circle"] = "draw",
         ["distance_circle"] = "measure", ["compass_rose"] = "measure", ["dimline"] = "measure",
         ["dimpolygon"] = "measure", ["hectoline"] = "measure",
-        ["view_angle"] = "measure", ["intersection_angle"] = "measure", ["circle_arc"] = "measure", ["perpendicular"] = "measure", ["buffer_zone"] = "measure",
+        ["view_angle"] = "measure", ["intersection_angle"] = "measure", ["circle_arc"] = "measure", ["perpendicular"] = "measure", ["buffer_zone"] = "measure", ["object_distance"] = "measure",
         ["save"] = "io", ["open"] = "io", ["share"] = "io", ["upload"] = "io", ["download"] = "io"
     };
 
@@ -166,6 +166,12 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                         {
                             value = "buffer_zone",
                             text = localizer.Localize("tools.buffer_zone"),
+                            css = UICss.Narrow
+                        },
+                        new UIImageButton(this.GetType(),"object_distance", UIButton.UIButtonType.servertoolcommand,"object_distance")
+                        {
+                            value = "object_distance",
+                            text = localizer.Localize("tools.object_distance"),
                             css = UICss.Narrow
                         },
                         new UIImageButton(this.GetType(),"distance_circle", UIButton.UIButtonType.servertoolcommand,"distance_circle")
@@ -389,6 +395,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         toolResourceManager.AddImageResource("circle_arc", Properties.Resources.circle_arc_26);
         toolResourceManager.AddImageResource("perpendicular", Properties.Resources.perpendicular_26);
         toolResourceManager.AddImageResource("buffer_zone", Properties.Resources.buffer_zone_26);
+        toolResourceManager.AddImageResource("object_distance", Properties.Resources.object_distance_26);
     }
 
     #endregion
@@ -881,6 +888,30 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         return AngleToolResponse(bridge, GraphicsTool.Buffer_Zone, localizer.Localize("draw-buffer-zone"), uiElements);
     }
 
+    // object_distance: object A and any number of objects B are selected by map clicks (object-distance-pick/-calc)
+    [ServerToolCommand("object_distance")]
+    public ApiEventResponse OnObjectDistanceToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
+    {
+        var uiElements = new List<IUIElement>().AddObjectDistanceStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e);
+
+        if (e.UseMobileBehavior())
+        {
+            uiElements.AddRange(new IUIElement[]
+            {
+                new UIBreak(),
+                new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.removecurrentgraphicselement){
+                    text = localizer.Localize("remove-sketch"),
+                    css=UICss.ToClass(new string[] { UICss.CancelButtonStyle })
+                },
+                new UIButton(UIButton.UIButtonType.clientbutton,ApiClientButtonCommand.assumecurrentgraphicselement){
+                    text = localizer.Localize("apply-line")
+                }
+            });
+        }
+
+        return AngleToolResponse(bridge, GraphicsTool.Object_Distance, localizer.Localize("draw-object-distance"), uiElements);
+    }
+
     // calculates the buffer polygon for the client (buffer_zone tool), coordinates are WGS84
     [ServerToolCommand("buffer-zone-calc")]
     public ApiEventResponse OnBufferZoneCalc(IBridge bridge, ApiToolEventArguments e)
@@ -902,6 +933,163 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                 rings = rings ?? []
             }
         };
+    }
+
+    // object_distance: features of all visible point/line/polygon layers at the click position (od-lng, od-lat: WGS84)
+    // => candidates for the objects A/B: reference ("<theme-id>|<oid>"), layer name and WGS84 geometry (highlight)
+    [ServerToolCommand("object-distance-pick")]
+    async public Task<ApiEventResponse> OnObjectDistancePick(IBridge bridge, ApiToolEventArguments e)
+    {
+        double lng = e.GetDouble("od-lng"), lat = e.GetDouble("od-lat"), mapScale = e.GetDouble("od-map-scale");
+        var queries = await QueryDefinition.QueriesFromString(bridge, e["od-queries"] ?? "", QueryDefinition.VisibilityFlag.Visible);
+
+        double tolerance = 15.0 * mapScale / (96.0 / 0.0254);  // meters, 15 pixel like identify
+        double tolX = tolerance / (111320.0 * Math.Cos(lat * Math.PI / 180.0)), tolY = tolerance / 110540.0;
+        var sRef4326 = bridge.CreateSpatialReference(4326);
+
+        var filter = new ApiSpatialFilter()
+        {
+            QueryShape = new Envelope(lng - tolX, lat - tolY, lng + tolX, lat + tolY),
+            FilterSpatialReference = sRef4326,
+            FeatureSpatialReference = sRef4326,
+            QueryGeometry = true,
+            Fields = QueryFields.Id
+        };
+
+        var candidates = new List<object>();
+        foreach (var query in queries)
+        {
+            var layerType = query.GetLayerType();
+            if (layerType != WebMapping.Core.LayerType.point &&
+                layerType != WebMapping.Core.LayerType.line &&
+                layerType != WebMapping.Core.LayerType.polygon)
+            {
+                continue;
+            }
+
+            var themeId = bridge.GetQueryThemeId(query);
+            if (String.IsNullOrEmpty(themeId))
+            {
+                continue;
+            }
+
+            var features = await query.PerformAsync(bridge.RequestContext, filter, mapScale: mapScale);
+            if (features is null)
+            {
+                continue;
+            }
+
+            features.OrderByPointDistance(new Point(lng, lat));
+            foreach (var feature in features.Where(f => f.Shape != null).Take(ObjectDistanceMaxCandidatesPerLayer))
+            {
+                candidates.Add(new
+                {
+                    @ref = $"{themeId}|{feature.Oid}",
+                    layer = query.Name,
+                    oid = feature.Oid,
+                    geometry = ObjectDistanceGeoJsonGeometry(feature.Shape)
+                });
+            }
+        }
+
+        return new ApiEventResponse()
+        {
+            ClientCommands = [ApiClientButtonCommand.setgraphicsobjectdistancecandidates],
+            ClientCommandData = new
+            {
+                key = e["od-key"],
+                candidates
+            }
+        };
+    }
+
+    // object_distance: shortest connection from object A (od-a) to each object B (od-b: json array), references see object-distance-pick
+    // the features are queried again (current geometry), the distance is calculated in the calc crs (od-calc-crs)
+    [ServerToolCommand("object-distance-calc")]
+    async public Task<ApiEventResponse> OnObjectDistanceCalc(IBridge bridge, ApiToolEventArguments e)
+    {
+        var refA = e["od-a"];
+        var refsB = JSerializer.Deserialize<string[]>(e["od-b"] ?? "[]") ?? [];
+        var calcCrsId = e.GetInt("od-calc-crs");
+
+        var shapeA = await ObjectDistanceShape(bridge, refA);
+        var lines = new List<object>();
+
+        if (shapeA != null)
+        {
+            foreach (var refB in refsB.Where(r => !String.IsNullOrEmpty(r) && r != refA).Distinct())
+            {
+                var shapeB = await ObjectDistanceShape(bridge, refB);
+                var result = shapeB != null ? ObjectDistanceCalculator.Calc(shapeA, shapeB, calcCrsId) : null;
+
+                lines.Add(new
+                {
+                    @ref = refB,
+                    found = result != null,
+                    from = result?.From,
+                    to = result?.To,
+                    length = result?.Length,
+                    touching = result?.Touching ?? false
+                });
+            }
+        }
+
+        return new ApiEventResponse()
+        {
+            ClientCommands = [ApiClientButtonCommand.setgraphicsobjectdistancelines],
+            ClientCommandData = new
+            {
+                key = e["od-key"],
+                a = refA,
+                found_a = shapeA != null,
+                lines
+            }
+        };
+    }
+
+    private const int ObjectDistanceMaxCandidatesPerLayer = 10;
+
+    // reference: "<theme-id>|<oid>" => WGS84 geometry or null (unknown query/feature)
+    async private Task<Shape> ObjectDistanceShape(IBridge bridge, string reference)
+    {
+        int pos = reference?.LastIndexOf('|') ?? -1;
+        if (pos <= 0 || !long.TryParse(reference.Substring(pos + 1), out long oid))
+        {
+            return null;
+        }
+
+        var query = await bridge.GetQueryFromThemeId(reference.Substring(0, pos));
+        if (query is null)
+        {
+            return null;
+        }
+
+        var features = await query.PerformAsync(bridge.RequestContext, new ApiOidFilter(oid)
+        {
+            QueryGeometry = true,
+            Fields = QueryFields.Id,
+            FeatureSpatialReference = bridge.CreateSpatialReference(4326)
+        });
+
+        return features?.FirstOrDefault(f => f.Shape != null)?.Shape;
+    }
+
+    static private object ObjectDistanceGeoJsonGeometry(Shape shape)
+    {
+        if (shape is MultiPoint multiPoint && multiPoint.PointCount > 1)
+        {
+            return new
+            {
+                type = "MultiPoint",
+                coordinates = Enumerable.Range(0, multiPoint.PointCount)
+                                        .Select(i => new double[] { multiPoint[i].X, multiPoint[i].Y })
+                                        .ToArray()
+            };
+        }
+
+        var feature = new GeoJsonFeature();
+        feature.FromShape(shape);
+        return feature.Geometry;
     }
 
     // view_angle/intersection_angle/circle_arc finish automatically after the required number of vertices => no apply button (mobile)
@@ -978,6 +1166,9 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             case "buffer_zone":
                 resp = OnBufferZoneToolClick(bridge, e, localizer);
                 break;
+            case "object_distance":
+                resp = OnObjectDistanceToolClick(bridge, e, localizer);
+                break;
         }
 
         if (resp != null)
@@ -1018,6 +1209,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                             "circle_arc" => new List<IUIElement>().AddCircleArcStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                             "perpendicular" => new List<IUIElement>().AddPerpendicularStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                                                         "buffer_zone" => new List<IUIElement>().AddBufferZoneStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+                            "object_distance" => new List<IUIElement>().AddObjectDistanceStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
                                                         _ => new()
                         })
             );

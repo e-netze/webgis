@@ -1,6 +1,7 @@
 ﻿// Base geometry type for webgis.sketch (webgis.sketch.js) and the shared families
 //   _base    => defaults for all hooks and flags + shared helpers (json, ...)
 //               Unknown geometry types use _base directly
+//               object_distance derives from _base (no vertex markers, the vertices are calculated)
 //   _line    => polyline, dimline, hectoline, view_angle, intersection_angle, circle_arc, perpendicular, buffer_zone
 //   _polygon => polygon, dimpolygon
 //   _radius  => circle, distance_circle, compass_rose

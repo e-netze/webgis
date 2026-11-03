@@ -59,7 +59,8 @@ public enum GraphicsTool
     Intersection_Angle = 16,
     Perpendicular = 18,
     Buffer_Zone = 19,
-    Circle_Arc = 20
+    Circle_Arc = 20,
+    Object_Distance = 21
 }
 
 public enum LookupType
@@ -189,6 +190,10 @@ public enum ApiClientButtonCommand
     setgraphicsdimlineangleunit = 110,
     setgraphicsdimlineangletype = 111,
     setgraphicsdimpolygonangleunit = 112,
+    setgraphicsobjectdistancecandidates = 113,
+    setgraphicsobjectdistancelines = 114,
+    setgraphicsobjectdistancelengthunit = 115,
+    setgraphicsobjectdistanceshownumber = 116,
 }
 
 public enum ApiToolEvents

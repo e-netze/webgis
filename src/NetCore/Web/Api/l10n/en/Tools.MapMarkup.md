@@ -24,6 +24,7 @@ Simple drawing on the map.
 ## circle_arc: Circular Arc
 ## perpendicular: Perpendicular distance
 ## buffer_zone: Buffer zone
+## object_distance: Object distance
 
 ## save: Save Drawing
 ## open: Load Drawing
@@ -101,6 +102,7 @@ Simple drawing on the map.
 ## show-labels-radius: Radius
 ## show-labels-arc-length: Arc length
 ## show-labels-central-angle: Central angle
+## show-number: Show number
 
 # draw-symbol: Set symbol
 # draw-point: Set point
@@ -118,6 +120,7 @@ Simple drawing on the map.
 # draw-circle-arc: Draw circular arc
 # draw-perpendicular: Draw perpendicular distance
 # draw-buffer-zone: Draw buffer zone
+# draw-object-distance: Measure object distance (click objects in the map)
 
 # apply-line: Apply line
 # finish-reference-line: Finish reference line
