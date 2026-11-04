@@ -13,6 +13,12 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 ### New
 ### Fixed
 
+## 
+
+### 8.26.4301
+### New
+### Fixed
+
 - AGS Query: Suppress pagination for layer without oid-field
   [Issue #520](https://github.com/e-netze/webgis-community/issues/520)
 - Identify: If a single service/layer fails, the results of the other layers are still shown;
