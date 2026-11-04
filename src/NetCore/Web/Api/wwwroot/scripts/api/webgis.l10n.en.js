@@ -699,6 +699,9 @@
     "remove-selection": "Remove selection",
     "remove-selected-elements": "Remove selected elements",
     "reverse-order": "Reverse order",
+    "mapmarkup-symbology-tool": "Symbology: {0}",
+    "mapmarkup-symbology-selection": "Symbology: Selection",
+    "mapmarkup-show-properties": "Show symbology/properties of the drawing tool",
 
     // query results
     "next-feature": "Next feature",

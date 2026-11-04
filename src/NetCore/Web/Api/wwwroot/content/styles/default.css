@@ -4638,6 +4638,24 @@ body.webgis-ui-holder {
         width: calc(100% - 80px);
     }
 
+    .webgis-dockpanel-no-maximize .webgis-dockpanel-title .text {
+        padding-right: 5px;
+        width: calc(100% - 44px);
+    }
+
+/* right docked tool panel (eg. MapMarkup properties) => same spacing as tool dialogs */
+.webgis-dockpanel-content.webgis-tool-sidebar-right-content {
+    padding: 5px 10px;
+}
+
+    .webgis-dockpanel-content.webgis-tool-sidebar-right-content .webgis-ui-collapsable {
+        margin: 0 -10px;
+    }
+
+    .webgis-dockpanel-content.webgis-tool-sidebar-right-content .webgis-select {
+        width: 100%;
+    }
+
 
 .webgis-dockpanel-content {
     position: absolute;
@@ -5571,6 +5589,12 @@ div.webgis-copy {
                 background-image: url('../api/img/text-26-g.png');
                 left: 2px;
             }
+                .webgis-graphics-info-container-holder .webgis-graphics-info-list .webgis-graphics-info-listitem .button.symbol.marker-icon {
+                    background-size: contain;
+                    background-origin: content-box;
+                    padding: 3px;
+                    opacity: 1;
+                }
 
             .webgis-graphics-info-container-holder .webgis-graphics-info-list .webgis-graphics-info-listitem .button.label {
                 background-image: url('../api/img/text-26-b.png');

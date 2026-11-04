@@ -120,10 +120,16 @@
         this._sketch.remove(true);
 
         this._sketchMetaText = null;
+        this._propertiesPanelShowsSelection = false;
+
+        if (tool !== 'pointer') {  // new drawing tool => remove the list selection
+            this.clearElementSelection();
+        }
 
         if (tool === 'pointer') {
             this._appendClickEvents();
             this._map._disableSketchClickHandling();
+            this.closePropertiesPanel();
         }
         else {
             this._removeClickEvents();
@@ -165,11 +171,104 @@
         return this._tool;
     };
 
+    // properties panel (right docked, desktop): opened automatically by the server with a drawing tool,
+    // unless disabled (webgis.usability.mapMarkupAutoOpenProperties) or closed by the user (until the tool is reopened)
+    this._propertiesPanelClosedByUser = false;
+
+    this.getPropertiesAutoOpen = function () {
+        return (webgis.usability.mapMarkupAutoOpenProperties !== false && this._propertiesPanelClosedByUser !== true).toString();
+    };
+
+    this.onPropertiesPanelClosed = function () {
+        this._propertiesPanelClosedByUser = true;
+        this.refreshUI();
+    };
+
+    this.resetPropertiesPanelClosedByUser = function () {
+        this._propertiesPanelClosedByUser = false;
+    };
+
+    this.closePropertiesPanel = function () {
+        this._propertiesPanelShowsSelection = false;
+        var activeTool = this._map.getActiveTool();
+        if (activeTool && activeTool.id && webgis.ui && webgis.ui.removeDockPanel) {
+            webgis.ui.removeDockPanel($('#' + webgis.ui.getDockPanelId({ id: activeTool.id + '_sidebar_right' })));
+        }
+    };
+
+    this.showPropertiesPanel = function () {
+        var activeTool = this._map.getActiveTool();
+        var symbolType = this._tool;
+        if (!activeTool || !symbolType || symbolType === 'pointer') {
+            return;
+        }
+
+        this.resetPropertiesPanelClosedByUser();
+        this._propertiesPanelShowsSelection = false;
+        this.refreshUI();  // list: tool description moves into the panel
+        webgis.tools.onButtonClick(this._map,
+            { command: 'show-symbol-selector', type: 'servertoolcommand', map: this._map },
+            null,
+            null,
+            { 'mapmarkup-symbol-type': symbolType });
+    };
+
+    // properties panel shows the symbology of the selected elements (graphics list)
+    this._propertiesPanelShowsSelection = false;
+
+    this.showSelectionPropertiesPanel = function (styles, sender) {
+        if (!styles || !this._map.getActiveTool()) {
+            return;
+        }
+
+        this._propertiesPanelShowsSelection = true;
+        webgis.tools.onButtonClick(this._map,
+            { command: 'show-single-symbol-selector', type: 'servertoolcommand', map: this._map },
+            sender || null,
+            null,
+            { 'mapmarkup-styles': styles });
+    };
+
+    this.onSelectionPropertiesPanelClosed = function () {
+        this._propertiesPanelShowsSelection = false;
+        this.refreshUI();
+    };
+
+    // selection removed => close the selection symbology panel and show the panel of the current drawing tool again (if auto open)
+    this.onSelectionCleared = function () {
+        if (this._propertiesPanelShowsSelection !== true) {
+            return;
+        }
+
+        this.closePropertiesPanel();
+        if (this._tool && this._tool !== 'pointer' && this.getPropertiesAutoOpen() === 'true') {
+            this.showPropertiesPanel();
+        }
+    };
+
     this.isRegularTool = function (tool) { return this._tools.includes(tool); }
 
     this.getToolDescription = function (tool) {
         return webgis.l10n.get("mapmarkup-" + (tool || this._tool)) || '';
     };
+
+    // desktop: the tool description is shown in the properties panel (instead of the graphics list)
+    this.showsToolDescriptionInPanel = function () {
+        return !webgis.isMobileDevice() && this._tool !== 'pointer' && this.getPropertiesAutoOpen() === 'true';
+    };
+
+    map.events.on('ui-builder-targetelement-changed', function (e, sender, args) {
+        if (!args || args.target !== 'tool_sidebar_right' || !args.element) return;
+
+        const description = this.getToolDescription();
+        $(args.element).find('.webgis-map-graphics-tool-description').each(function () {
+            if (description) {
+                $(this).text(description).css('display', '');
+            } else {
+                $(this).css('display', 'none');
+            }
+        });
+    }, this);
 
     this.setColor = function (col) {
         this._sketch.setColor(col);
@@ -350,6 +449,10 @@
                     this._setStyle(element.frameworkElement, styleClass);
                 }
             }
+        }
+
+        if (webgis.ui.updateGraphicsInfoContainerItems) {
+            webgis.ui.updateGraphicsInfoContainerItems();  // list: color border/symbol of the changed elements
         }
     };
 
@@ -2576,6 +2679,48 @@
         //console.log('removePreview');
         this._previewSketch1.remove();
         this._previewSketch2.remove();
+    };
+
+    // highlight of the selected elements (list selection) in the map
+    this._selectionSketches = [];
+    this.refreshSelectionHighlight = function () {
+        const elements = this._elements.filter(e => e.selected === true && e.updating !== true && e !== this._stagedElement);
+        let index = 0;
+
+        for (let element of elements) {
+            const frameworkElement = element.frameworkElement;
+            if (!frameworkElement) continue;
+
+            const geoJson = frameworkElement.toPreviewGeoJSON ? frameworkElement.toPreviewGeoJSON() : frameworkElement.toGeoJSON();
+            if (!geoJson || !geoJson.geometry) continue;
+
+            let sketch = this._selectionSketches[index];
+            if (!sketch) {
+                sketch = new webgis.sketch(map);
+                sketch.setColor('#ff0');
+                sketch.setFillColor('#ff0');
+                sketch.setOpacity(0.35);
+                sketch.setFillOpacity(0.15);
+                sketch.setWeight(14);
+                this._selectionSketches.push(sketch);
+            }
+            sketch.fromJson(geoJson.geometry, false, true);
+
+            // halo behind the element => the element itself stays visible in its (changed) symbology
+            if (typeof frameworkElement.bringToFront === 'function') {
+                frameworkElement.bringToFront();
+            }
+            index++;
+        }
+
+        for (; index < this._selectionSketches.length; index++) {
+            this._selectionSketches[index].remove();
+        }
+    };
+    this.removeSelectionHighlight = function () {
+        for (let sketch of this._selectionSketches) {
+            sketch.remove();
+        }
     };
 
     this._defaultBehaviour = function (type) {

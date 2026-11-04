@@ -23,6 +23,7 @@ webgis.usability = {
     enableHistoryManagement: webgis.isMobileDevice(),
     useMarkerPopup: true,
     useGraphicsMarkerPopups: true,   // Popups or MarkerInfoPanel
+    mapMarkupAutoOpenProperties: true, // Map Markup (desktop): open the (right docked, non-modal) properties panel automatically when a drawing/measure tool is selected
     showMarkerInfoPanel: true,
     showSingleResultPopup: false,
     useCatCombos: true,

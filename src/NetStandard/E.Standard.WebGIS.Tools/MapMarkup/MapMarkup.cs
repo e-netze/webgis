@@ -40,6 +40,9 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 {
     protected string toolContainerId = "webgis-mapmarkup-tool-container";
 
+    // "false" => no automatic opening of the properties panel (custom.js option or closed by the user), see webgis.map.graphics.js
+    private const string PropertiesAutoOpenParameter = "mapmarkup-properties-autoopen";
+
     private const string ConfigAllowAddFromSelection = "allow-add-from-selection";
     private const string ConfigAllowAddFromSelectionMaxFeatures = "allow-add-from-selection-max-features";
     private const string ConfigAllowAddFromSelectionMaxVertices = "allow-add-from-selection-max-vertices";
@@ -323,6 +326,10 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                 new UIHidden(){
                     id = "mapmarkup-pointsize",
                     css = UICss.ToClass(new []{ UICss.ToolParameter, UICss.AutoSetterMapGraphicsPointSize })
+                },
+                new UIHidden(){
+                    id = PropertiesAutoOpenParameter,
+                    css = UICss.ToClass(new []{ UICss.ToolParameter, UICss.AutoSetterMapGraphicsPropertiesAutoOpen })
                 }
         });
 
@@ -459,7 +466,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
         await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.symbols-from-selection");
 
-        return new ApiEventResponse()
+        return WithPropertiesPanel(bridge, e, localizer, new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Symbol },
             UIElements = new IUIElement[]
@@ -470,7 +477,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     elements = uiElements.ToArray()
                 }
             }
-        };
+        });
     }
 
     [ServerToolCommand("point")]
@@ -480,7 +487,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
         await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.points-from-selection", "point");
 
-        return new ApiEventResponse()
+        return WithPropertiesPanel(bridge, e, localizer, new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Point },
             UIElements = new IUIElement[]
@@ -491,7 +498,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     elements = uiElements.ToArray()
                 }
             }
-        };
+        });
     }
 
     [ServerToolCommand("text")]
@@ -501,7 +508,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
         await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.text-from-selection");
 
-        return new ApiEventResponse()
+        return WithPropertiesPanel(bridge, e, localizer, new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Text },
             UIElements = new IUIElement[]
@@ -512,7 +519,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     elements = uiElements.ToArray()
                 }
             }
-        };
+        });
     }
 
     [ServerToolCommand("freehand")]
@@ -535,7 +542,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             });
         }
 
-        return new ApiEventResponse()
+        return WithPropertiesPanel(bridge, e, localizer, new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Freehand },
             UIElements = new IUIElement[] {
@@ -545,7 +552,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     elements = uiElements.ToArray()
                 }
             }
-        };
+        });
     }
 
     [ServerToolCommand("line")]
@@ -570,7 +577,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
         await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.line-from-selection", "line");
 
-        return new ApiEventResponse()
+        return WithPropertiesPanel(bridge, e, localizer, new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Line },
             UIElements = new IUIElement[] {
@@ -580,7 +587,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     elements = uiElements.ToArray()
                 }
             }
-        };
+        });
     }
 
     async public Task<ApiEventResponse> On2DToolClick(IBridge bridge, ApiToolEventArguments e, GraphicsTool tool, ILocalizer<MapMarkup> localizer)
@@ -607,7 +614,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.polygon-from-selection", "polygon");
         }
 
-        return new ApiEventResponse()
+        return WithPropertiesPanel(bridge, e, localizer, new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = tool },
             UIElements = new IUIElement[] {
@@ -622,7 +629,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     }
                 }
             }
-        };
+        });
     }
 
     [ServerToolCommand("polygon")]
@@ -645,7 +652,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     {
         var uiElements = new List<IUIElement>().AddDistanceCircleStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
-        return new ApiEventResponse()
+        return WithPropertiesPanel(bridge, e, localizer, new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Distance_Circle },
             UIElements = new IUIElement[] {
@@ -655,7 +662,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     elements = uiElements.ToArray()
                 }
             }
-        };
+        });
     }
 
     [ServerToolCommand("compass_rose")]
@@ -663,7 +670,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     {
         var uiElements = new List<IUIElement>().AddCompassRoseStyleElements(e, localizer, true).AsStagedStyleElements(e);
 
-        return new ApiEventResponse()
+        return WithPropertiesPanel(bridge, e, localizer, new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.Compass_Rose },
             UIElements = new IUIElement[] {
@@ -673,7 +680,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     elements = uiElements.ToArray()
                 }
             }
-        };
+        });
     }
 
     [ServerToolCommand("dimline")]
@@ -698,7 +705,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
         await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.dimline-from-selection", "line");
 
-        return new ApiEventResponse()
+        return WithPropertiesPanel(bridge, e, localizer, new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.DimLine },
             UIElements = new IUIElement[] {
@@ -708,7 +715,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     elements = uiElements.ToArray()
                 }
             }
-        };
+        });
     }
 
     [ServerToolCommand("dimpolygon")]
@@ -733,7 +740,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
         await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.dimpolygon-from-selection", "polygon");
 
-        return new ApiEventResponse()
+        return WithPropertiesPanel(bridge, e, localizer, new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.DimPolygon },
             UIElements = new IUIElement[] {
@@ -743,7 +750,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     elements = uiElements.ToArray()
                 }
             }
-        };
+        });
     }
 
 
@@ -769,7 +776,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
         await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.hectoline-from-selection", "line");
 
-        return new ApiEventResponse()
+        return WithPropertiesPanel(bridge, e, localizer, new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = GraphicsTool.HectoLine },
             UIElements = new IUIElement[] {
@@ -779,26 +786,26 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     elements = uiElements.ToArray()
                 }
             }
-        };
+        });
     }
 
     [ServerToolCommand("view_angle")]
     public ApiEventResponse OnViewAngleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
-        => AngleToolResponse(bridge,
+        => AngleToolResponse(bridge, e, localizer,
                              GraphicsTool.View_Angle,
                              localizer.Localize("draw-view-angle"),
                              new List<IUIElement>().AddViewAngleStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e));
 
     [ServerToolCommand("intersection_angle")]
     public ApiEventResponse OnIntersectionAngleToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
-        => AngleToolResponse(bridge,
+        => AngleToolResponse(bridge, e, localizer,
                              GraphicsTool.Intersection_Angle,
                              localizer.Localize("draw-intersection-angle"),
                              new List<IUIElement>().AddIntersectionAngleStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e));
 
     [ServerToolCommand("circle_arc")]
     public ApiEventResponse OnCircleArcToolClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
-        => AngleToolResponse(bridge,
+        => AngleToolResponse(bridge, e, localizer,
                              GraphicsTool.Circle_Arc,
                              localizer.Localize("draw-circle-arc"),
                              new List<IUIElement>().AddCircleArcStyleElements(e, localizer, isCollapsed: false).AsStagedStyleElements(e));
@@ -829,7 +836,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
         await AddSketchFromSelectionButton(uiElements, bridge, e, localizer, "text.perpendicular-from-selection", ApiClientButtonCommand.graphicsperpendicularfromselection, "point");
 
-        return AngleToolResponse(bridge, GraphicsTool.Perpendicular, localizer.Localize("draw-perpendicular"), uiElements);
+        return AngleToolResponse(bridge, e, localizer, GraphicsTool.Perpendicular, localizer.Localize("draw-perpendicular"), uiElements);
     }
 
     [ServerToolCommand("buffer_zone")]
@@ -854,7 +861,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
         await AddFromSelectionButton(uiElements, bridge, e, localizer, "text.buffer_zone-from-selection", "point", "line", "polygon");
 
-        return AngleToolResponse(bridge, GraphicsTool.Buffer_Zone, localizer.Localize("draw-buffer-zone"), uiElements);
+        return AngleToolResponse(bridge, e, localizer, GraphicsTool.Buffer_Zone, localizer.Localize("draw-buffer-zone"), uiElements);
     }
 
     // object_distance: object A and any number of objects B are selected by map clicks (object-distance-pick/-calc)
@@ -880,7 +887,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
 
         await AddSketchFromSelectionButton(uiElements, bridge, e, localizer, "text.object_distance-from-selection", ApiClientButtonCommand.graphicsobjectdistancefromselection, "point", "line", "polygon");
 
-        return AngleToolResponse(bridge, GraphicsTool.Object_Distance, localizer.Localize("draw-object-distance"), uiElements);
+        return AngleToolResponse(bridge, e, localizer, GraphicsTool.Object_Distance, localizer.Localize("draw-object-distance"), uiElements);
     }
 
     // measure_grid: the grid itself is calculated on the client (L.MeasureGrid.calc), for print see MeasureGridElement
@@ -904,7 +911,7 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
             });
         }
 
-        return AngleToolResponse(bridge, GraphicsTool.Measure_Grid, localizer.Localize("draw-measure-grid"), uiElements);
+        return AngleToolResponse(bridge, e, localizer, GraphicsTool.Measure_Grid, localizer.Localize("draw-measure-grid"), uiElements);
     }
 
     // calculates the buffer polygon for the client (buffer_zone tool), coordinates are WGS84
@@ -1217,8 +1224,8 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     }
 
     // view_angle/intersection_angle/circle_arc finish automatically after the required number of vertices => no apply button (mobile)
-    private ApiEventResponse AngleToolResponse(IBridge bridge, GraphicsTool graphicsTool, string title, List<IUIElement> uiElements)
-        => new ApiEventResponse()
+    private ApiEventResponse AngleToolResponse(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer, GraphicsTool graphicsTool, string title, List<IUIElement> uiElements)
+        => WithPropertiesPanel(bridge, e, localizer, new ApiEventResponse()
         {
             Graphics = new GraphicsResponse(bridge) { ActiveGraphicsTool = graphicsTool },
             UIElements = new IUIElement[] {
@@ -1228,7 +1235,90 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
                     elements = uiElements.ToArray()
                 }
             }
+        });
+
+    #region Properties panel
+
+    // desktop: right docked, non-modal panel; mobile: (non-blocking) tool dialog as before
+    static private string PropertiesPanelTarget(ApiToolEventArguments e)
+        => e.UseMobileBehavior()
+            ? UIElementTarget.tool_modaldialog_noblocking_closable.ToString()
+            : UIElementTarget.tool_sidebar_right.ToString();
+
+    static private List<IUIElement> SymbolTypeStyleElements(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer, string symbolType)
+        => symbolType switch
+        {
+            "symbol" => new List<IUIElement>().AddSymbolStyleElements(bridge, e, localizer),
+            "text" => new List<IUIElement>().AddTextStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "point" => new List<IUIElement>().AddPointStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "freehand" => new List<IUIElement>().AddFreehandStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "line" => new List<IUIElement>().AddLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "polygon" => new List<IUIElement>().Add2DStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "rectangle" => new List<IUIElement>().Add2DStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "circle" => new List<IUIElement>().Add2DStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "distance_circle" => new List<IUIElement>().AddDistanceCircleStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "compass_rose" => new List<IUIElement>().AddCompassRoseStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "dimline" => new List<IUIElement>().AddDimLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "dimpolygon" => new List<IUIElement>().AddDimPolygonStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "hectoline" => new List<IUIElement>().AddHectoLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "view_angle" => new List<IUIElement>().AddViewAngleStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "intersection_angle" => new List<IUIElement>().AddIntersectionAngleStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "circle_arc" => new List<IUIElement>().AddCircleArcStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "perpendicular" => new List<IUIElement>().AddPerpendicularStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "buffer_zone" => new List<IUIElement>().AddBufferZoneStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "object_distance" => new List<IUIElement>().AddObjectDistanceStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            "measure_grid" => new List<IUIElement>().AddMeasureGridStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
+            _ => new()
         };
+
+    static private UIDiv SymbolTypePropertiesPanel(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer, string symbolType)
+    {
+        var panel = new UIDiv()
+            .WithTarget(PropertiesPanelTarget(e))
+            .WithTargetTitle(string.Format(localizer.Localize("symbology.panel-title"), localizer.Localize($"tools.{symbolType}")))
+            .WithTargetOnClose(e.UseMobileBehavior()
+                ? ApiClientButtonCommand.refreshgraphicsui.ToString()
+                : ApiClientButtonCommand.graphicspropertiespanelclosed.ToString());
+
+        var styleElements = SymbolTypeStyleElements(bridge, e, localizer, symbolType);
+        if (styleElements.Count == 0)
+        {
+            return panel;
+        }
+
+        panel.AddChildren(styleElements);
+        if (!e.UseMobileBehavior())
+        {
+            // placeholder: the client fills in the (client side localized) description of the drawing tool
+            panel.AddChild(new UIDiv() { css = UICss.ToClass(new[] { "webgis-info", UICss.MapGraphicsToolDescription }) });
+        }
+
+        return panel;
+    }
+
+    // drawing/measure tool selected (desktop) => open the properties panel of the tool (if not disabled/closed by the user)
+    private ApiEventResponse WithPropertiesPanel(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer, ApiEventResponse response)
+    {
+        if (response?.Graphics == null
+            || e.UseMobileBehavior()
+            || "false".Equals(e[PropertiesAutoOpenParameter], StringComparison.OrdinalIgnoreCase))
+        {
+            return response;
+        }
+
+        string symbolType = response.Graphics.ActiveGraphicsTool.ToString().ToLowerInvariant();
+        var panel = SymbolTypePropertiesPanel(bridge, e, localizer, symbolType);
+        if (panel.elements == null || !panel.elements.Any())
+        {
+            return response;
+        }
+
+        response.UIElements = [.. (response.UIElements ?? []), panel];
+
+        return response;
+    }
+
+    #endregion
 
     [ServerToolCommand("element-selected")]
     async public Task<ApiEventResponse> OnElementClick(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
@@ -1311,39 +1401,10 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
     [ServerToolCommand("show-symbol-selector")]
     public ApiEventResponse OnShowSymbolSelector(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
         => new ApiEventResponse()
-            .AddUIElements(
-                new UIDiv()
-                    .WithTarget(UIElementTarget.tool_modaldialog_noblocking_closable.ToString())
-                        .WithTargetTitle($"{localizer.Localize("symbology.set")}: {localizer.Localize($"tools.{e["mapmarkup-symbol-type"]}")}")
-                        .WithTargetOnClose(ApiClientButtonCommand.refreshgraphicsui.ToString())
-                        .AddChildren(e["mapmarkup-symbol-type"] switch
-                        {
-                            "symbol" => new List<IUIElement>().AddSymbolStyleElements(bridge, e, localizer),
-                            "text" => new List<IUIElement>().AddTextStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "point" => new List<IUIElement>().AddPointStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "freehand" => new List<IUIElement>().AddFreehandStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "line" => new List<IUIElement>().AddLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "polygon" => new List<IUIElement>().Add2DStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "rectangle" => new List<IUIElement>().Add2DStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "circle" => new List<IUIElement>().Add2DStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "distance_circle" => new List<IUIElement>().AddDistanceCircleStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "compass_rose" => new List<IUIElement>().AddCompassRoseStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "dimline" => new List<IUIElement>().AddDimLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "dimpolygon" => new List<IUIElement>().AddDimPolygonStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "hectoline" => new List<IUIElement>().AddHectoLineStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "view_angle" => new List<IUIElement>().AddViewAngleStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "intersection_angle" => new List<IUIElement>().AddIntersectionAngleStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "circle_arc" => new List<IUIElement>().AddCircleArcStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "perpendicular" => new List<IUIElement>().AddPerpendicularStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                                                        "buffer_zone" => new List<IUIElement>().AddBufferZoneStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "object_distance" => new List<IUIElement>().AddObjectDistanceStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                            "measure_grid" => new List<IUIElement>().AddMeasureGridStyleElements(e, localizer, collapseExclusive: false, isCollapsed: false),
-                                                        _ => new()
-                        })
-            );
+            .AddUIElements(SymbolTypePropertiesPanel(bridge, e, localizer, e["mapmarkup-symbol-type"]));
 
     [ServerToolCommand("show-single-symbol-selector")]
-    public ApiEventResponse OnShowSelectedSymbolSelector(IBridge bridge, ApiToolEventArguments e)
+    public ApiEventResponse OnShowSelectedSymbolSelector(IBridge bridge, ApiToolEventArguments e, ILocalizer<MapMarkup> localizer)
     {
         var styles = e.GetArray<string>("mapmarkup-styles");
         bool expanded = styles.Length <= 3;
@@ -1351,9 +1412,11 @@ public class MapMarkup : IApiServerToolLocalizable<MapMarkup>,
         return new ApiEventResponse()
                 .AddUIElements(
                     new UIDiv()
-                        .WithTarget(UIElementTarget.tool_modaldialog_noblocking_closable.ToString())
-                        .WithTargetTitle("Symbolik ändern")
-                        .WithTargetOnClose(ApiClientButtonCommand.refreshgraphicsui.ToString())
+                        .WithTarget(PropertiesPanelTarget(e))
+                        .WithTargetTitle(string.Format(localizer.Localize("symbology.panel-title"), localizer.Localize("symbology.selection")))
+                        .WithTargetOnClose(e.UseMobileBehavior()
+                            ? ApiClientButtonCommand.refreshgraphicsui.ToString()
+                            : ApiClientButtonCommand.graphicsselectionpanelclosed.ToString())
                         .AddChildren(styles.SelectMany(style => style switch
                         {
                             "symbol" => new List<IUIElement>().AddSymbolIdElements(bridge),

@@ -41,6 +41,8 @@ Einfaches Zeichnen in der Karte.
 
 # symbology:
 ## set: Symbolik ändern
+## panel-title: Symbolik: {0}
+## selection: Auswahl
 
 ## symbol: Symbol
 

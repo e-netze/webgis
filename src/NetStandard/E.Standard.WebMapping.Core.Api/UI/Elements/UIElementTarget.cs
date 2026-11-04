@@ -12,5 +12,6 @@ public enum UIElementTarget
     tool_sidebar_bottom,
     tool_sidebar_left,
     tool_sidebar_top,
-    tool_persistent_topic
+    tool_persistent_topic,
+    tool_sidebar_right
 }

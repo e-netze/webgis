@@ -22,7 +22,10 @@ webgis.ui.definePlugin('webgis_dockPanel', {
         usePadding: true,
         refElement: null,
         canClose: true,
+        canMaximize: true,
         useIdSelector: false,
+        // dock 'right' only: shift left of other visible right panels (eg. help) instead of overlapping them
+        avoidOverlap: false,
         map: null
     },
     init: function () {
@@ -60,18 +63,19 @@ webgis.ui.definePlugin('webgis_dockPanel', {
         $panel
             .data('options', options)
             .attr('data-size', options.size)
-            .attr('data-maxsize', options.maxSize !== null ? options.maxSize : 'auto')
-            .css('max-' + sizeProperty, options.maxSize !== null ? options.maxSize : 'auto');
+            .attr('data-maxsize', options.maxSize !== null ? options.maxSize : 'none')
+            .css('max-' + sizeProperty, Plugin.cssSize(options.maxSize !== null ? options.maxSize : 'none'));
 
         if (options.adverseSize || options.maxAdverseSize) {
             $panel.attr('data-adverse-size', options.adverseSize)
-                .attr('data-adverse-maxsize', options.maxAdverseSize !== null ? options.maxAdverseSize : 'auto')
-                .css('max-' + adverseSizeProperty, options.maxAdverseSize !== null ? options.maxAdverseSize : 'auto');
+                .attr('data-adverse-maxsize', options.maxAdverseSize !== null ? options.maxAdverseSize : 'none')
+                .css('max-' + adverseSizeProperty, Plugin.cssSize(options.maxAdverseSize !== null ? options.maxAdverseSize : 'none'));
         }
 
         if (options.maximizeAdverse === true) {
             $panel.addClass('webgis-dockpanel-maximize-adverse');
         }
+        $panel.toggleClass('webgis-dockpanel-no-maximize', options.canMaximize === false);
 
         Plugin.updateSize($panel);
 
@@ -87,6 +91,9 @@ webgis.ui.definePlugin('webgis_dockPanel', {
                         $panel.removeClass('minimized');
                         return;
                     }
+                    if ($panel.hasClass('webgis-dockpanel-no-maximize')) {
+                        return;
+                    }
 
                     $panel.toggleClass('maximized');
                     var maximizeAdverse = $(this).closest('.webgis-dockpanel').hasClass('webgis-dockpanel-maximize-adverse');
@@ -98,22 +105,26 @@ webgis.ui.definePlugin('webgis_dockPanel', {
                     if ($panel.hasClass('maximized')) {
                         $panel.css(sizeProperty, $panel.attr('data-maximized'));
                     } else {
-                        $panel.css(sizeProperty, $panel.attr('data-size'));
+                        $panel.css(sizeProperty, Plugin.cssSize($panel.attr('data-size')));
                     }
 
                     Plugin.updateSize($panel);
                 });
 
             if (options.canClose) {
-                $("<div class='webgis-dockpanel-resize'></div>").appendTo($title);
+                if (options.canMaximize !== false) {
+                    $("<div class='webgis-dockpanel-resize'></div>").appendTo($title);
+                }
                 $close = $("<div class='webgis-dockpanel-close'></div>").css({}).appendTo($title)
                     .on('click.webgis_dockPanel', function (e) {
                         e.stopPropagation();
                         var $panel = $(this).closest('.webgis-dockpanel');
+                        var $container = $panel.parent();
                         var options = $panel.data('options');
                         if (options.onclose)
                             options.onclose($panel);
                         $panel.remove();
+                        Plugin.updateOverlapPanels($container);
                     });
             } else {
                 $("<div class='webgis-dockpanel-minimize'></div>").css({}).appendTo($title)
@@ -128,7 +139,9 @@ webgis.ui.definePlugin('webgis_dockPanel', {
                 backgroundImage: "url(" + options.titleImg + ")"
             });
         }
-        $title.children('.text').html(options.title);
+        $title.children('.text')
+            .html(options.title)
+            .attr('title', $('<div>').html(options.title || '').text());  // full title, if truncated (ellipsis)
 
         var $content = $panel.children('.webgis-dockpanel-content');
         if ($content.length === 0) {
@@ -141,7 +154,12 @@ webgis.ui.definePlugin('webgis_dockPanel', {
         webgis.delayed(function () {
             var resize = options.autoResize || options.autoResizeBoth;
             if (resize === false || sizeProperty === 'width')
-                $panel.css(sizeProperty, $panel.attr('data-size'));
+                $panel.css(sizeProperty, Plugin.cssSize($panel.attr('data-size')));
+
+            if (options.dock === 'right') {
+                // panel width is known now => reposition panels that avoid overlapping right panels
+                webgis.delayed(function () { Plugin.updateOverlapPanels($parent); }, 400);
+            }
 
             webgis.delayed(function () {
                 if (options.onload) {
@@ -241,9 +259,34 @@ webgis.ui.definePlugin('webgis_dockPanel', {
             const $ = webgis.$ || jQuery;
             $panel = $($panel);
             if ($panel.hasClass('webgis-dockpanel')) {
+                var $container = $panel.parent();
                 webgis.removeHistoryItem($panel.find('.webgis-dockpanel-close'));
                 $panel.remove();
+                this.updateOverlapPanels($container);
             }
+        },
+        updateOverlapPanels: function ($container) {
+            const $ = webgis.$ || jQuery;
+            const Plugin = this;
+            $($container).children('.webgis-dockpanel-right').each(function (i, panel) {
+                var $p = $(panel), options = $p.data('options');
+                if (options && options.avoidOverlap === true) {
+                    Plugin.updateSize($p);
+                }
+            });
+        },
+        overlapOffsetRight: function ($panel) {
+            // sum of the widths of the other visible right panels (that do not avoid overlapping themselves)
+            const $ = webgis.$ || jQuery;
+            var offset = 0;
+            $panel.parent().children('.webgis-dockpanel-right').each(function (i, other) {
+                var $o = $(other), otherOptions = $o.data('options');
+                if (other === $panel.get(0) || !$o.is(':visible') || (otherOptions && otherOptions.avoidOverlap === true)) {
+                    return;
+                }
+                offset += $o.outerWidth() || parseInt($o.attr('data-size')) || 0;
+            });
+            return offset;
         },
         removeAll: function ($container) {
             const $ = webgis.$ || jQuery;
@@ -255,8 +298,12 @@ webgis.ui.definePlugin('webgis_dockPanel', {
             if (options.size) {
                 var sizeProperty = $panel.hasClass('webgis-dockpanel-top') || $panel.hasClass('webgis-dockpanel-bottom') ? "height" : "width";
                 $panel.attr('data-size', options.size);
-                $panel.css(sizeProperty, options.size);
+                $panel.css(sizeProperty, this.cssSize(options.size));
             }
+        },
+        cssSize: function (size) {
+            // data-* attributes are strings: a unitless "330" would be ignored by the browser
+            return typeof size === 'string' && /^\d+(\.\d+)?$/.test(size) ? size + 'px' : size;
         },
         set_title: function (options) {
             const $ = webgis.$ || jQuery;
@@ -282,7 +329,7 @@ webgis.ui.definePlugin('webgis_dockPanel', {
             var sizeProperty = options.dock === 'top' || options.dock === 'bottom' ? "height" : "width";
 
             var initalSize = $panel.hasClass('minimized') ?
-                $panel.attr('data-size') :
+                this.cssSize($panel.attr('data-size')) :
                 $panel.css(sizeProperty);
 
             var sizeMaximized = '100%', deltaWidth = 0, deltaHeight = 0;
@@ -324,7 +371,8 @@ webgis.ui.definePlugin('webgis_dockPanel', {
                     break;
                 case 'right':
                     $panel.css({
-                        right: (dockRef ? dockRef.right : 0) + (options.usePadding ? webgis.usability.dockPanelPadding.right : 0),
+                        right: (dockRef ? dockRef.right : 0) + (options.usePadding ? webgis.usability.dockPanelPadding.right : 0)
+                            + (options.avoidOverlap === true ? this.overlapOffsetRight($panel) : 0),
                         top: options.adverseSize ? '' : (dockRef && dockRef.top ? dockRef.top : 0) + (options.usePadding ? webgis.usability.dockPanelPadding.top : 0),
                         bottom: (dockRef && dockRef.bottom ? dockRef.bottom : 0) + (options.usePadding ? webgis.usability.dockPanelPadding.bottom : 0),
                         width: initalSize,
@@ -371,7 +419,7 @@ webgis.ui.definePlugin('webgis_dockPanel', {
             if ($panel.hasClass('maximized')) {
                 $panel.css('max-' + sizeProperty, sizeMaximized);
             } else {
-                $panel.css('max-' + sizeProperty, $panel.attr('data-maxsize'));
+                $panel.css('max-' + sizeProperty, this.cssSize($panel.attr('data-maxsize')));
             }
 
             if ($panel.hasClass('maximized')) {

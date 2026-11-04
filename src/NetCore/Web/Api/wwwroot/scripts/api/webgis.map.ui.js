@@ -488,6 +488,7 @@
         //console.log('servercommand', servercommand);
 
         $('.webgis-map-graphics-tool').val(this._map.graphics.getTool());
+        $('.webgis-map-graphics-properties-autoopen').val(this._map.graphics.getPropertiesAutoOpen());
 
         var graphicsTool = this._map.graphics.isRegularTool(servercommand)
             ? servercommand

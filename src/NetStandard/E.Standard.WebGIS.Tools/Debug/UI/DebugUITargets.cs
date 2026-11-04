@@ -54,7 +54,7 @@ public class DebugUITargets : DebugUIToolBase
     private static readonly string[] DockTargets =
     [
         nameof(UIElementTarget.tool_sidebar_bottom), nameof(UIElementTarget.tool_sidebar_top),
-        nameof(UIElementTarget.tool_sidebar_left), ToolAsideTarget
+        nameof(UIElementTarget.tool_sidebar_left), nameof(UIElementTarget.tool_sidebar_right), ToolAsideTarget
     ];
 
     public override string Name => "UI: Targets & Dialogs";

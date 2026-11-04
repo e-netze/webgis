@@ -202,6 +202,8 @@ public enum ApiClientButtonCommand
     setgraphicsmeasuregridlabels = 121,
     setgraphicsmeasuregridaligntogrid = 122,
     setgraphicsmeasuregridorigin = 123,
+    graphicspropertiespanelclosed = 124,
+    graphicsselectionpanelclosed = 125,
 }
 
 public enum ApiToolEvents

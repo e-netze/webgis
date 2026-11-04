@@ -2446,10 +2446,13 @@
             if (this._activeTool) {
                 if (webgis.ui && webgis.ui.closeModal)
                     webgis.ui.closeModal(this._activeTool.id);
-                if ($.fn.webgis_dockPanel)
+                if ($.fn.webgis_dockPanel) {
                     webgis.ui.closeDockPanel({
                         id: this._activeTool.id
                     });
+                    // right docked tool panel (eg. MapMarkup properties) => remove without onclose (not closed by the user)
+                    webgis.ui.removeDockPanel($('#' + webgis.ui.getDockPanelId({ id: this._activeTool.id + '_sidebar_right' })));
+                }
                 $('.tool-' + webgis.validClassName(this._activeTool.id)).removeClass('active');
                 this._activeTool._isInitialized = false;
 
@@ -2468,6 +2471,8 @@
 
                 if (this._activeTool.tooltype === 'graphics') {
                     this.graphics.assumeCurrentElement(true);
+                    this.graphics.resetPropertiesPanelClosedByUser();
+                    this.graphics.removeSelectionHighlight();
                 }
 
                 if (this.selections[this._activeTool.id]) {

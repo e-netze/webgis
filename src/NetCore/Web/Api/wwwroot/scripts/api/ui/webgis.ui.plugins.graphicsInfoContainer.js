@@ -85,11 +85,21 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
 
             const hasMultiSelection = self.getSelectedCount(elements) > 1;
 
-            if (!readOnly && !map.graphics.hasSelectedElements() && !map.graphics.hasStagedElement()) {
+            if (!readOnly && !map.graphics.hasSelectedElements() && !map.graphics.hasStagedElement() && !map.graphics.showsToolDescriptionInPanel()) {
                 var tool = map.graphics.getTool();
-                $("<h3><img style='margin-right:10px' src='" + webgis.css.imgResource('rest/toolresource/webgis-tools-mapmarkup-mapmarkup-' + tool) + "'></h2>")
+                var $header = $("<h3><img style='margin-right:10px' src='" + webgis.css.imgResource('rest/toolresource/webgis-tools-mapmarkup-mapmarkup-' + tool) + "'></h2>")
                     .text(self.translateType(tool))
                     .appendTo($elem);
+                if (self.canShowProperties(map)) {
+                    $header
+                        .addClass('webgis-graphics-info-header-properties')
+                        .css('cursor', 'pointer')
+                        .attr('title', webgis.l10n.get('mapmarkup-show-properties'))
+                        .on('click.webgis_graphics_info_container', function (e) {
+                            e.stopPropagation();
+                            map.graphics.showPropertiesPanel();
+                        });
+                }
                 $("<div>")
                     .addClass('webgis-info')
                     .text(map.graphics.getToolDescription(tool))
@@ -109,8 +119,11 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
 
             const $ul = $("<ul>")
                 .addClass('webgis-graphics-info-list')
-                .css('height', 'calc(100vh - ' + (440 + usedHeight) + 'px')  // 440 empiric
+                .css('height', 'calc(100vh - ' + (440 + usedHeight) + 'px')  // 440 empiric (fallback, if the available height can't be calculated)
                 .appendTo($elem);
+
+            self.fitListHeight($ul);
+            webgis.delayed(function () { self.fitListHeight($ul); }, 1);  // container maybe not visible/attached yet
 
             const hasStagedElement = map.graphics.hasStagedElement();
             const hasUpdatingElement = map.graphics.hasUpdatingElement();
@@ -180,14 +193,16 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                     txt = hasLabel ? element.metaText : self.translateType(element.type);
 
                 $li.css({
-                    borderLeft: '8px solid ' + (element.fill || element.stroke || element.color || '#fff'),
+                    borderLeft: self.itemBorder(element),
                 });
 
+                const symbolIconUrl = self.symbolIconUrl(element);
                 const $btnSymbol = $("<div>")
                     .addClass('button symbol')
                     .addClass(element.updating ? '' : 'inactive')
+                    .addClass(symbolIconUrl ? 'marker-icon' : '')
                     .css({
-                        backgroundImage: 'url(' + webgis.css.imgResource('rest/toolresource/webgis-tools-mapmarkup-mapmarkup-' + element.type) + ')',
+                        backgroundImage: self.itemIcon(element, symbolIconUrl),
                     })
                     .appendTo($li);
 
@@ -306,6 +321,14 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
             const selectedElements = map.graphics.selectedElements();
             const $menu = $parent.find('.webgis-graphics-info-list-menu').empty();
 
+            if (selectedElements.length === 0 && !$parent.hasClass('readonly')) {
+                map.graphics.onSelectionCleared();  // closes a panel showing the symbology of the (now empty) selection
+            }
+
+            if (!$parent.hasClass('readonly')) {
+                map.graphics.refreshSelectionHighlight();
+            }
+
             if (map.graphics.hasStagedElement() === true) { // show tools for selected
                 $('<div>')
                     .addClass('button delete')
@@ -316,25 +339,16 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
 
                         map.graphics.removeCurrentElement();
                     });
+
+                self.appendPropertiesButton($parent, $menu, map);
             }
             else if (selectedElements.length > 0) {  // show tools for selected
-                // collect styles ids (stroke-color, fill-color, ...)
-                const styleTypes = new Set();
+                const styles = self.selectedStyles(map, selectedElements);
 
-                for (let type of [... new Set(selectedElements.map(e => e.type))]) { // Set => distict => only unique values
-                    const styleType = map.graphics.getStyleTypes(type);
-
-                    if (!styleType || !styleType.styles) continue;
-
-                    for (let style of styleType.styles) {
-                        styleTypes.add(style);
-                    }
-                }
-
-                if (styleTypes.size > 0) {
+                if (styles) {
                     var $textButton = $('<div>')
                         .addClass('text-button')
-                        .data('styles', Array.from(styleTypes).toString())
+                        .data('styles', styles)
                         .appendTo($menu)
                         .on('click.webgis_graphics_info_container', function (e) {
                             e.stopPropagation();
@@ -348,11 +362,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                                 return;
                             }
 
-                            webgis.tools.onButtonClick(map,
-                                { command: 'show-single-symbol-selector', type: 'servertoolcommand', map: map },
-                                this,
-                                null,
-                                { 'mapmarkup-styles': $(this).data('styles') });
+                            map.graphics.showSelectionPropertiesPanel($(this).data('styles'), this);
                         });
 
                     $('<div>')
@@ -363,7 +373,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                         })
                         .appendTo($textButton)
 
-                    $("<div>").addClass('text').text(webgis.l10n.get('symbology')).appendTo($textButton);
+                    $("<div>").addClass('text').text(webgis.l10n.get('mapmarkup-symbology-selection')).appendTo($textButton);
                 }
 
                 if (map.graphics.hasUpdatingElement() !== true) {
@@ -376,7 +386,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
 
                             map.graphics.clearElementSelection();
                             $parent.find('.webgis-graphics-info-listitem').removeClass('selected');
-                            $menu.empty();
+                            self.buildMenu($parent);  // closes the selection symbology panel, shows the default menu
                         });
 
                     $('<div>')
@@ -389,18 +399,139 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                             map.graphics.removeElements(selectedElements);
                         });
                 }
-            } else if (map.graphics.countElements() > 0) {  // show swap ordering
-                $('<div>')
-                    .addClass('button order')
-                    .attr('title', webgis.l10n.get('reverse-order'))
-                    .appendTo($menu)
-                    .on('click.webgis_graphics_info_container', function (e) {
-                        e.stopPropagation();
+            } else {
+                if (map.graphics.countElements() > 0) {  // show swap ordering
+                    $('<div>')
+                        .addClass('button order')
+                        .attr('title', webgis.l10n.get('reverse-order'))
+                        .appendTo($menu)
+                        .on('click.webgis_graphics_info_container', function (e) {
+                            e.stopPropagation();
 
-                        const $holder = $(this).closest('.webgis-graphics-info-container-holder');
-                        self.renderContainer($holder.toggleClass('order-descending'), {});
-                    });
+                            const $holder = $(this).closest('.webgis-graphics-info-container-holder');
+                            self.renderContainer($holder.toggleClass('order-descending'), {});
+                        });
+                }
+                self.appendPropertiesButton($parent, $menu, map);
             }
+        },
+        appendPropertiesButton: function ($parent, $menu, map) {
+            // (re)open the properties panel of the current drawing tool
+            const $ = webgis.$ || jQuery;
+            const self = $.fn.webgis_graphicsInfoContainer.plugin;
+
+            if ($parent.hasClass('readonly') || !self.canShowProperties(map)) return;
+
+            var $propertiesButton = $('<div>')
+                .addClass('text-button')
+                .attr('title', webgis.l10n.get('mapmarkup-show-properties'))
+                .appendTo($menu)
+                .on('click.webgis_graphics_info_container', function (e) {
+                    e.stopPropagation();
+                    map.graphics.showPropertiesPanel();
+                });
+
+            $('<div>')
+                .addClass('button')
+                .css({
+                    backgroundImage: 'url(' + webgis.css.imgResource('content/api/img/graphics/ui/polygon-styles.png') + ')',
+                })
+                .appendTo($propertiesButton);
+
+            $("<div>").addClass('text')
+                .text(webgis.l10n.get('mapmarkup-symbology-tool').replace('{0}', self.translateType(map.graphics.getTool())))
+                .appendTo($propertiesButton);
+        },
+        canShowProperties: function (map) {
+            const tool = map.graphics.getTool();
+            return !!tool && tool !== 'pointer';
+        },
+        itemBorder: function (element) {
+            return '8px solid ' + (element.fill || element.stroke || element.color || '#fff');
+        },
+        itemIcon: function (element, symbolIconUrl) {
+            return 'url(' + (symbolIconUrl || webgis.css.imgResource('rest/toolresource/webgis-tools-mapmarkup-mapmarkup-' + element.type)) + ')';
+        },
+        updateAllContainerItems: function () {
+            // refresh color border & symbol of the existing list items in-place (eg. after changing the symbology of the selection)
+            // => no rerendering: scroll position, selection, ... stays untouched
+            const $ = webgis.$ || jQuery;
+            const self = $.fn.webgis_graphicsInfoContainer.plugin;
+
+            $('.webgis-graphics-info-container-holder').each(function () {
+                const map = $(this).data('map');
+                if (!map) return;
+
+                const elements = map.graphics.getElements();
+
+                $(this).find('.webgis-graphics-info-listitem').each(function () {
+                    const $li = $(this);
+                    const current = $li.data('element');
+                    if (!current || !current.originalElement) return;
+
+                    const element = elements.find(e => e.originalElement === current.originalElement);
+                    if (!element) return;
+
+                    element.updating = current.updating;
+                    $li.data('element', element)
+                        .css('borderLeft', self.itemBorder(element));
+
+                    const symbolIconUrl = self.symbolIconUrl(element);
+                    $li.children('.button.symbol')
+                        .toggleClass('marker-icon', !!symbolIconUrl)
+                        .css('backgroundImage', self.itemIcon(element, symbolIconUrl));
+                });
+            });
+        },
+        symbolIconUrl: function (element) {
+            // type 'symbol': show the marker icon itself instead of the generic tool icon
+            if (!element || element.type !== 'symbol' || !element.originalElement) return null;
+
+            const frameworkElement = element.originalElement.frameworkElement;
+            const icon = frameworkElement && frameworkElement.options ? frameworkElement.options.icon : null;
+            if (icon && icon.options && icon.options.iconUrl) return icon.options.iconUrl;
+
+            const symbol = element.originalElement.symbol;
+            return symbol && typeof symbol.icon === 'string' ? symbol.icon : null;
+        },
+        fitListHeight: function ($ul) {
+            // use the available space down to the bottom of the (scrollable) sidebar container
+            const $ = webgis.$ || jQuery;
+
+            if (!$ul.is(':visible')) return;
+
+            let $container = null;
+            $ul.parents().each(function (i, p) {
+                const overflowY = $(p).css('overflow-y');
+                if (overflowY === 'auto' || overflowY === 'scroll') {
+                    $container = $(p);
+                    return false;
+                }
+            });
+            if (!$container) return;
+
+            const containerBottom = $container.offset().top + $container[0].clientHeight;
+            const available = Math.floor(containerBottom - $ul.offset().top - 10);
+
+            if (available > 150) {
+                $ul.css('height', available + 'px');
+            }
+        },
+        selectedStyles: function (map, selectedElements) {
+            // collect styles ids (stroke-color, fill-color, ...) => comma separated or null
+            const styleTypes = new Set();
+
+            for (let type of [... new Set(selectedElements.map(e => e.type))]) { // Set => distict => only unique values
+                const styleType = map.graphics.getStyleTypes(type);
+
+                if (!styleType || !styleType.styles) continue;
+
+                for (let style of styleType.styles) {
+                    styleTypes.add(style);
+                }
+            }
+
+            return styleTypes.size > 0 ? Array.from(styleTypes).toString() : null;
         },
         selectElement: function ($li, elements, element, key) {
             const $ = webgis.$ || jQuery;
@@ -443,6 +574,18 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
             });
 
             self.buildMenu($li.closest('.webgis-graphics-info-container-holder'));
+
+            // desktop: show the symbology of the selected elements in the (right docked) properties panel
+            const map = $li.closest('.webgis-graphics-info-container-holder').data('map');
+            if (map && webgis.usability.mapMarkupAutoOpenProperties !== false && !webgis.isMobileDevice()) {
+                const selectedElements = map.graphics.selectedElements();
+                const styles = selectedElements.length > 0 ? self.selectedStyles(map, selectedElements) : null;
+                if (styles) {
+                    map.graphics.showSelectionPropertiesPanel(styles);
+                } else {
+                    map.graphics.onSelectionCleared();
+                }
+            }
         },
         getSelectedCount: function (elements, excludeElement) {
             return elements.filter(el => el != excludeElement && el.originalElement.selected === true).length;
@@ -476,4 +619,7 @@ webgis.ui.hasGraphicsInfoContainers = function (options) {
 };
 webgis.ui.refreshGraphicsInfoContainers = function (options) {
     (webgis.$ || jQuery).fn.webgis_graphicsInfoContainer.plugin.refreshAllContainers(options);
+};
+webgis.ui.updateGraphicsInfoContainerItems = function () {
+    (webgis.$ || jQuery).fn.webgis_graphicsInfoContainer.plugin.updateAllContainerItems();
 };

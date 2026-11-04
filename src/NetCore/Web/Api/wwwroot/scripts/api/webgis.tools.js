@@ -426,6 +426,14 @@
                     if (map && map.graphics)
                         map.graphics.refreshUI();
                     break;
+                case "graphicspropertiespanelclosed":
+                    if (map && map.graphics)
+                        map.graphics.onPropertiesPanelClosed();
+                    break;
+                case "graphicsselectionpanelclosed":
+                    if (map && map.graphics)
+                        map.graphics.onSelectionPropertiesPanelClosed();
+                    break;
                 case "removelivesharemarker":
                     if (webgis.liveshare)
                         webgis.liveshare.removeUserMarker();

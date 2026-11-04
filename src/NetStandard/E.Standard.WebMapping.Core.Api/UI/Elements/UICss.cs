@@ -45,6 +45,8 @@ public class UICss
     public const string AutoSetterMapGraphicsFontStyle = "webgis-map-graphics-fontstyle";
     public const string AutoSetterMapGraphicsPointColor = "webgis-map-graphics-pointcolor";
     public const string AutoSetterMapGraphicsPointSize = "webgis-map-graphics-pointsize";
+    public const string AutoSetterMapGraphicsPropertiesAutoOpen = "webgis-map-graphics-properties-autoopen";
+    public const string MapGraphicsToolDescription = "webgis-map-graphics-tool-description";
     public const string AutoSetterCurrentToolSketch = "webgis-current-toolsketch";
 
 

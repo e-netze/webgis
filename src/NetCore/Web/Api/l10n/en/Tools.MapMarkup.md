@@ -41,6 +41,8 @@ Simple drawing on the map.
 
 # symbology:
 ## set: Set Symbology
+## panel-title: Symbology: {0}
+## selection: Selection
 
 ## symbol: Symbol
 

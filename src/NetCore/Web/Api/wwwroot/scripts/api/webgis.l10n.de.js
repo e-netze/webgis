@@ -699,6 +699,9 @@
     "remove-selection": "Auswahl entfernen",
     "remove-selected-elements": "Ausgewählte Elemente entfernen",
     "reverse-order": "Reihenfolge umkehren",
+    "mapmarkup-symbology-tool": "Symbolik: {0}",
+    "mapmarkup-symbology-selection": "Symbolik: Auswahl",
+    "mapmarkup-show-properties": "Symbolik/Eigenschaften des Zeichenwerkzeugs anzeigen",
 
     // query results
     "next-feature": "Nächstes Objekt",

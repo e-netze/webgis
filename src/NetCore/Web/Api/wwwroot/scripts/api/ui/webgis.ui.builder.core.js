@@ -51,6 +51,7 @@
             $toolSidebarLeftContent = null,
             $toolSidebarBottomContent = null,
             $toolSidebarTopContent = null,
+            $toolSidebarRightContent = null,
             $toolAsideContent = null;
 
         if (options.map && options.tool && options.tool.id && options.suppressOnBuildToolUi !== true) {
@@ -70,6 +71,7 @@
                 hasSidebarLeftElements = false,
                 hasSidebarBottomElements = false,
                 hasSidebarTopElements = false,
+                hasSidebarRightElements = false,
                 hasAsideToolElements = false,
                 hasToolPersistentTopic = false;
 
@@ -77,7 +79,8 @@
                 toolModalDialogTitle = options.title,
                 sidebarLeftTitle = options.title,
                 sidebarBottomTitle = options.title,
-                sidebarTopTitle = options.title;
+                sidebarTopTitle = options.title,
+                sidebarRightTitle = options.title;
 
             var modalDialogWidth = '330px',
                 modalDialogHeight = null;
@@ -87,6 +90,7 @@
                 closeSidebarLeft = false,
                 closeSidebarBottom = false,
                 closeSidebarTop = false,
+                closeSidebarRight = false,
                 closeAsideToolElement = false;
 
             var modalDialogVisible = true,
@@ -97,7 +101,8 @@
             // for onTargetClosed... => user closes dialog => action(),
             // a targetClose for sidebar is not implemented for now, 
             // can be done in the same way if needed
-            var modalDialogElement = null;  
+            var modalDialogElement = null,
+                sidebarRightElement = null;  
 
             for (var i = 0, to = options.elements.length; i < to; i++) {
                 if (options.elements[i].target && options.elements[i].target.indexOf('#') === 0) {  // Id selector
@@ -169,6 +174,12 @@
                             hasSidebarLeftElements = true;
                             sidebarLeftTitle = options.elements[i].targettitle || sidebarLeftTitle;
                             closeSidebarLeft = closeTarget(options.elements[i]);
+                            break;
+                        case "tool_sidebar_right":
+                            hasSidebarRightElements = true;
+                            sidebarRightElement = options.elements[i];
+                            sidebarRightTitle = options.elements[i].targettitle || sidebarRightTitle;
+                            closeSidebarRight = closeTarget(options.elements[i]);
                             break;
                         case "tool_aside":
                             hasAsideToolElements = true;
@@ -381,6 +392,34 @@
                     $targetRoot = $toolSidebarLeftContent = options.map.ui.webgisContainer().webgis_dockPanel('content', { id: options.toolDialogId });
                 }
             }
+            if (hasSidebarRightElements === true) {
+                // non-modal panel docked right (next to other right panels), eg. MapMarkup properties
+                var sidebarRightId = options.toolDialogId + "_sidebar_right";
+                if (closeSidebarRight) {
+                    // programmatic close => no onclose callback (not closed by the user)
+                    webgis.ui.removeDockPanel($('#' + webgis.ui.getDockPanelId({ id: sidebarRightId })));
+                } else {
+                    var sidebarRightOnCloseElement = sidebarRightElement;
+                    options.map.ui.webgisContainer().webgis_dockPanel({
+                        title: sidebarRightTitle,
+                        dock: 'right',
+                        id: sidebarRightId,
+                        useIdSelector: true,
+                        size: 330,
+                        canClose: true,
+                        canMaximize: false,
+                        avoidOverlap: true,
+                        refElement: options.map.ui.mapContainer(),
+                        map: options.map,
+                        onclose: () => onCloseTarget(options.map, sidebarRightOnCloseElement)
+                    });
+                    $toolSidebarRightContent = options.map.ui.webgisContainer().webgis_dockPanel('content', { id: sidebarRightId })
+                        .addClass('webgis-tool-sidebar-right-content');
+                    if ($targetRoot === $parent) {
+                        $targetRoot = $toolSidebarRightContent;
+                    }
+                }
+            }
             if (hasAsideToolElements === true) {
                 if (closeAsideToolElement) {
                     webgis.ui.closeDockPanel({ dock: 'right', id: options.toolDialogId + "_aside" });
@@ -438,6 +477,9 @@
                             break;
                         case "tool_sidebar_left":
                             target = $toolSidebarLeftContent;
+                            break;
+                        case "tool_sidebar_right":
+                            target = $toolSidebarRightContent;
                             break;
                         case "tool_aside":
                             target = $toolAsideContent;
