@@ -52,6 +52,10 @@ Simple drawing on the map.
 ## font-size: Font size
 ## font-style: Font style
 ## font-color: Font color
+## rotation: Rotation (°)
+## rotation-label: Clockwise rotation (°), 0 = horizontal
+## apply-rotation: Apply rotation
+## reset-rotation: 0°
 
 ## line-color: Line color
 ## line-weight: Line weight

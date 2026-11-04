@@ -875,6 +875,10 @@
             $('.webgis-graphics-view_angle-label-length').val((map.graphics.getViewAngleLabelLength() === true).toString().toLowerCase());
         }
 
+        if (this._map.graphics.getTool() === 'text') {
+            $('.webgis-graphics-text-rotation').val(map.graphics.getTextRotation());
+        }
+
         if (this._map.graphics.getTool() === 'intersection_angle') {
             $('.webgis-graphics-intersection_angle-unit').val(map.graphics.getIntersectionAngleUnit());
             $('.webgis-graphics-intersection_angle-angles').val(map.graphics.getIntersectionAngleAngles());

@@ -673,7 +673,8 @@ public class RestMappingHelperService /*: IDisposable*/
                         textColor,
                         (textColor.R + textColor.G + textColor.B) / 3 > 150 ? ArgbColor.Black : ArgbColor.White,
                         E.Standard.Platform.SystemInfo.DefaultFontName,
-                        feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor));
+                        feature.GetPropery<float>("font-size") * SystemInfo.FontSizeFactor,
+                        feature.GetPropery<float>("font-rotation")));
                 }
                 else if (graphicsTool == "distance_circle")
                 {

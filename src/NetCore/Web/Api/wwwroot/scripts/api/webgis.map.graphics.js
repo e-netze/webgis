@@ -120,6 +120,7 @@
         this._sketch.remove(true);
 
         this._sketchMetaText = null;
+        this._sketch.setTextRotation(0);
         this._propertiesPanelShowsSelection = false;
 
         if (tool !== 'pointer') {  // new drawing tool => remove the list selection
@@ -425,6 +426,8 @@
                 break;
             case "text-size": styleClassesFunc = (fe) => [{ 'font-size': this.getTextSize() }];
                 break;
+            case "text-rotation": styleClassesFunc = (fe) => [{ 'rotation': this.getTextRotation() }];
+                break;
             case "symbol": styleClassesFunc = (fe) => [{ 'symbol': this._currentMarkerSymbol }]; // clone _currentMarkerSymbol???
                 break;
 
@@ -618,7 +621,19 @@
         if (this._tool === 'measure_grid') {
             this.refreshMeasureGridUIElements();
         }
+        if (this._tool === 'text') {
+            this._sketch.refreshTextRotationHandle();
+        }
     }, this);
+
+    /********* text rotation: handle in the map (L.SVGText.showRotationHandle) or symbology panel *********/
+    this._sketch.events.on(['ontextrotating', 'ontextrotated'], function (e, sender, rotation) {
+        $('.webgis-graphics-text-rotation').val(rotation);
+    }, this);
+    this.setTextRotation = function (rotation) {
+        this._sketch.setTextRotation(rotation);
+    };
+    this.getTextRotation = function () { return this._sketch.getTextRotation(); };
 
     /********* measure_grid: Messgitter (webgis.sketch.geometry.measure_grid.js) *********/
     // cell size in meters, height empty/invalid => width
@@ -1423,6 +1438,7 @@
         //}
         // unset text always instead of only if tool is not text
         this._sketch.setText('');
+        this._sketch.setTextRotation(0);  // every new text starts horizontal (not sticky)
         this._sketchMetaText = null;
 
         this._sketchMetaSouce = null;
@@ -1442,6 +1458,7 @@
 
     this.removeCurrentElement = function () {
         this._sketch.remove(true);
+        this._sketch.setTextRotation(0);
         if (this._currentMarker) {
             this._currentMarker.closePopup();
             if (this._tool === 'symbol') {  // sollte man das nicht immer machen??  Sonst funktionert beim Symbol am Handy => Sketch entfernen nicht
@@ -1800,6 +1817,7 @@
                     properties["font-color"] = element.frameworkElement.options.fontColor || this.getTextColor();
                     properties["font-style"] = element.frameworkElement.options.fontStyle || this.getTextStyle();
                     properties["font-size"] = element.frameworkElement.options.fontSize || this.getFontSize();
+                    properties["font-rotation"] = element.frameworkElement.getRotation ? element.frameworkElement.getRotation() : 0;
                     properties["_meta"] = {
                         tool: "text",
                         text: element.metaText,
@@ -2125,6 +2143,7 @@
                             this.setTextColor(feature.properties["font-color"]);
                             this.setTextStyle(feature.properties["font-style"]);
                             this.setTextSize(feature.properties["font-size"]);
+                            this.setTextRotation(feature.properties["font-rotation"] || 0);
                             this.setMetaText(meta.text);
                         } else if (meta && (meta.tool === 'point')) { 
                             this.setTool('point');  
@@ -2625,7 +2644,7 @@
         switch (type) {
             case 'symbol': return { name: 'symbol', styles: ['symbol'] };
             case 'point': return { name: 'point', styles: ['point-color', 'point-size'] };
-            case 'text': return { name: 'text', styles: ['text-color', 'text-size'] };
+            case 'text': return { name: 'text', styles: ['text-color', 'text-size', 'text-rotation'] };
             case 'freehand':
             case 'line': return { name: 'line', styles: ['stroke-color', 'stroke-weight', 'stroke-style'] };
             case 'polygon':

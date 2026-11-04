@@ -6,6 +6,7 @@
         text: 'SVG Text',
         refResolution: 0,
         textAnchor: '',
+        rotation: 0,   // degrees, clockwise, around the insertion point
         attributes: {}
     },
 
@@ -36,6 +37,8 @@
             this._textNode2 = null;
         }
 
+        this._removeRotationHandle();
+
         this._map.off('moveend', this.redraw, this);
         this._map.off('zoomend', this.redraw, this);
         this._map.off('click', this._mapClick, this);
@@ -53,6 +56,108 @@
     },
     getText: function () {
         return this.options.text;
+    },
+
+    setRotation: function (rotation) {
+        rotation = parseFloat(rotation);
+        this.options.rotation = isNaN(rotation) ? 0 : L.SVGText.normalizeRotation(rotation);
+        this.redraw();
+    },
+    getRotation: function () {
+        return this.options.rotation || 0;
+    },
+
+    /* Rotation handle (marker right of the first line), only while the text is edited in the sketch */
+    showRotationHandle: function (show) {
+        this._rotationHandleEnabled = show === true;
+        if (this._rotationHandleEnabled) {
+            this._updateRotationHandle();
+        } else {
+            this._removeRotationHandle();
+        }
+    },
+
+    _rotationHandleEnabled: false,
+    _rotationHandle: null,
+    _rotationHandleDragging: false,
+
+    _rotationHandleOffset: function () {  // offset (layer points, unrotated) from the insertion point
+        var width = 0;
+        try {
+            var firstLine = this._textNode && this._textNode.firstChild;
+            width = firstLine && firstLine.getComputedTextLength ? firstLine.getComputedTextLength() : 0;
+        } catch (ex) { }
+
+        return L.point(width + 18, -this.options.fontSize * 0.35);
+    },
+    _rotatePoint: function (point, rotation) {
+        var a = rotation * Math.PI / 180.0, cos = Math.cos(a), sin = Math.sin(a);
+        return L.point(point.x * cos - point.y * sin, point.x * sin + point.y * cos);
+    },
+    _updateRotationHandle: function () {
+        if (!this._rotationHandleEnabled || !this._map || !this._pos || !this._textNode) {
+            this._removeRotationHandle();
+            return;
+        }
+        if (this._rotationHandleDragging) {
+            return;
+        }
+
+        var anchor = this._map.latLngToLayerPoint(this._pos);
+        var handleLatLng = this._map.layerPointToLatLng(anchor.add(this._rotatePoint(this._rotationHandleOffset(), this.getRotation())));
+
+        if (!this._rotationHandle) {
+            this._rotationHandle = L.marker(handleLatLng, {
+                draggable: true,
+                zIndexOffset: 1000,
+                title: webgis.l10n.get('graphics-text-rotation-handle'),
+                icon: L.icon({
+                    iconUrl: webgis.css.imgResource('rotate_26.png', 'markers'),
+                    iconSize: [26, 26],
+                    iconAnchor: [13, 13]
+                })
+            });
+            this._rotationHandle.on('dragstart', this._onRotationHandleDragStart, this);
+            this._rotationHandle.on('drag', this._onRotationHandleDrag, this);
+            this._rotationHandle.on('dragend', this._onRotationHandleDragEnd, this);
+            this._rotationHandle.addTo(this._map);
+        } else {
+            this._rotationHandle.setLatLng(handleLatLng);
+        }
+    },
+    _removeRotationHandle: function () {
+        if (this._rotationHandle) {
+            this._rotationHandle.off();
+            if (this._rotationHandle._map) {
+                this._rotationHandle._map.removeLayer(this._rotationHandle);
+            }
+            this._rotationHandle = null;
+        }
+        this._rotationHandleDragging = false;
+    },
+    _onRotationHandleDragStart: function () {
+        this._rotationHandleDragging = true;
+        this._rotationHandleOffsetAngle = (function (o) { return Math.atan2(o.y, o.x) * 180.0 / Math.PI; })(this._rotationHandleOffset());
+    },
+    _onRotationHandleDrag: function (e) {
+        if (!this._map || !this._pos) return;
+
+        var anchor = this._map.latLngToLayerPoint(this._pos);
+        var p = this._map.latLngToLayerPoint(this._rotationHandle.getLatLng());
+        if (p.distanceTo(anchor) < 2) return;
+
+        var rotation = Math.atan2(p.y - anchor.y, p.x - anchor.x) * 180.0 / Math.PI - this._rotationHandleOffsetAngle;
+        var originalEvent = e && e.originalEvent;
+
+        this.setRotation(L.SVGText.snapRotation(rotation,
+            originalEvent && originalEvent.shiftKey === true,
+            originalEvent && (originalEvent.ctrlKey === true || originalEvent.metaKey === true)));
+        this.fire('rotating', { rotation: this.getRotation() });
+    },
+    _onRotationHandleDragEnd: function () {
+        this._rotationHandleDragging = false;
+        this._updateRotationHandle();
+        this.fire('rotated', { rotation: this.getRotation() });
     },
 
     setStyle: function (style) {
@@ -73,6 +178,10 @@
                     this.options.fontSize = style[i];
                     this._setRefSize();
                     this.redraw();
+                    break;
+                case 'rotation':
+                case 'font-rotation':
+                    this.setRotation(style[i]);
                     break;
                 case 'font-style':
                 case 'fontstyle':
@@ -151,7 +260,18 @@
             this._textNode2.setAttribute('x', point.x);
             this._textNode2.setAttribute('y', point.y);
 
+            var rotation = this.getRotation();
+            if (rotation) {
+                var transform = 'rotate(' + rotation + ' ' + point.x + ' ' + point.y + ')';
+                this._textNode.setAttribute('transform', transform);
+                this._textNode2.setAttribute('transform', transform);
+            } else {
+                this._textNode.removeAttribute('transform');
+                this._textNode2.removeAttribute('transform');
+            }
+
             this._setRefSize();
+            this._updateRotationHandle();
         }
 
         return this;
@@ -193,6 +313,11 @@
     _mapClick: function (e) {
         if (this._pos && this._textNode) {
             var clickPoint = this._map.latLngToLayerPoint(e.latlng);
+            var rotation = this.getRotation();
+            if (rotation) {  // getBBox is unrotated => rotate the click point back around the insertion point
+                var anchor = this._map.latLngToLayerPoint(this._pos);
+                clickPoint = anchor.add(this._rotatePoint(clickPoint.subtract(anchor), -rotation));
+            }
             var bbox = this._textNode.getBBox();
             
             if (clickPoint.x >= bbox.x && clickPoint.y >= bbox.y &&
@@ -275,6 +400,24 @@
         return geoJson;
     }
 });
+
+// => [0, 360)
+L.SVGText.normalizeRotation = function (rotation) {
+    rotation = Math.round(rotation * 10) / 10 % 360;
+    return rotation < 0 ? rotation + 360 : rotation;
+};
+
+// SHIFT => 5° steps, CTRL => 15° steps, always: snap to 0/90/180/270 (±2°)
+L.SVGText.snapRotation = function (rotation, shift, ctrl) {
+    var step = ctrl ? 15 : (shift ? 5 : 0);
+    if (step) {
+        rotation = Math.round(rotation / step) * step;
+    } else {
+        var right = Math.round(rotation / 90) * 90;
+        rotation = Math.abs(rotation - right) <= 2 ? right : Math.round(rotation);
+    }
+    return L.SVGText.normalizeRotation(rotation);
+};
 
 L.svgText = function (latLng, options) {
     return new L.SVGText(latLng, options);

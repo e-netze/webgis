@@ -304,6 +304,7 @@
     "sketch-add-vertex": "Stützpunkt Hinzufügen",
     "sketch-add-trace-vertices": "Trace-Punkte hinzufügen",
     "sketch-remove-sketch": "Sketch entfernen",
+    "graphics-text-rotation-handle": "Text drehen (SHIFT: 5°-Schritte, STRG: 15°-Schritte)",
     "sketch-close-section": "Abschnitt schließen/neuen beginnen",
     "sketch-merge-sections": "Abschnitte zusammenführen (merge)",
     "sketch-from-feature-geometry": "Aus Geo-Objekt Geometrie übernehmen",

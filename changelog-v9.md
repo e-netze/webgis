@@ -497,6 +497,35 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
   [Architecture](docs/architecture/mapmarkup-measure-tools.md)
 
+- Map Markup: non-modal symbology panel docked on the right (desktop) instead of a dialog covering
+  the tool sidebar, so the toolbar and the graphics list stay visible and drawing can continue.
+  * New UI target ``tool_sidebar_right`` (``UIElementTarget``), a right ``webgis_dockPanel`` next to
+    other right dock panels (help, LiveShare); closing it with "x" fires ``graphicspropertiespanelclosed``
+    / ``graphicsselectionpanelclosed``.
+  * Opens automatically when a draw/measure tool is selected, so the style can be set before drawing;
+    after closing it with "x" it stays closed until the tool is reopened. New ``custom.js`` option
+    ``webgis.usability.mapMarkupAutoOpenProperties`` (default ``true``). Mobile is unchanged.
+  * Button and panel title "Symbology: {tool}" / "Symbology: Selection"; selecting graphics in the list
+    (SHIFT for multiple) shows the selection symbology. The tool info text moved into the panel.
+  * Graphics list: fills the sidebar height, selected graphics are highlighted in the map, the selection
+    is cleared when another draw tool is chosen, symbols show their marker icon, and list items are
+    updated in place after a style change.
+
+  [Docs custom.js](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-mapmarkup-auto-open-properties),
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/tools/general/mapmarkup/manual.html#mapmarkup-symbology-panel)
+
+- Map Markup: texts can be rotated.
+  * Drag handle right of the first text line while the text is edited (live rotation around the
+    insertion point, SHIFT = 5° steps, CTRL = 15° steps, snaps to 0/90/180/270°).
+  * Symbology option "Rotation (°)" with apply and "0°" button, also for selected texts
+    (``setgraphicstextrotation``, ``setgraphics_text_rotation_and_apply_to_selected``). Every new
+    text starts at 0°.
+  * Clockwise relative to the map; stored as GeoJSON property ``font-rotation``, printed
+    (``LabelElement``, respects the display rotation) and exported to shapefiles (``ROTATION``).
+  * While the text marker is dragged, the text (and its rotation handle) moves live with it.
+
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/tools/general/mapmarkup/manual.html#mapmarkup-text-rotation)
+
 ### Fixed
 
 - CMS export: ``root.acl`` was read from a wrong path, so a root-level ACL was never applied.

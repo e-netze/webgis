@@ -304,6 +304,7 @@
     "sketch-add-vertex": "Add vertex",
     "sketch-add-trace-vertices": "Add trace vertices",
     "sketch-remove-sketch": "Remove sketch", 
+    "graphics-text-rotation-handle": "Rotate text (SHIFT: 5° steps, CTRL: 15° steps)",
     "sketch-close-section": "Close section/start new",
     "sketch-merge-sections": "Merge sections",
     "sketch-from-feature-geometry": "From geo-object geometry",

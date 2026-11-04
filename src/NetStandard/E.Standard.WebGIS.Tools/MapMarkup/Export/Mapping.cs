@@ -20,6 +20,7 @@ static class Mapping
             {
                 { "SIZE","font-size" },
                 { "COLOR", "font-color" },
+                { "ROTATION", "font-rotation" },  // degrees, clockwise
                 { "TEXT", "_meta.text" }
             }
         },

@@ -42,7 +42,8 @@ webgis.sketch.markers = function (ctx) {
         var newLatLng = this.getLatLng();
         if (!this.sketch.checkMaxBBox({ x: newLatLng.lng, y: newLatLng.lat })) {
             this.setLatLng(this._dragstartLatLng);
-            this.sketch.redraw(geomTypeDef.isPlainPath);
+            // redrawOnVertexMoved: types that move their element live while dragging (text) must be reset
+            this.sketch.redraw(geomTypeDef.isPlainPath || geomTypeDef.redrawOnVertexMoved);
             this.sketch._isMarkerDragging = false;
             return;
         }

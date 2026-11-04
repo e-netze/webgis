@@ -204,6 +204,8 @@ public enum ApiClientButtonCommand
     setgraphicsmeasuregridorigin = 123,
     graphicspropertiespanelclosed = 124,
     graphicsselectionpanelclosed = 125,
+    setgraphicstextrotation = 126,
+    setgraphics_text_rotation_and_apply_to_selected = 127,
 }
 
 public enum ApiToolEvents

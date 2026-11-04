@@ -72,6 +72,12 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Viewer: "Drawing (Map Markup)" has a new measure tool "Object distance" (shortest distance between two map features, e.g. building to parcel boundary, from one object to any number of others); it is printed and exported to shapefiles as one line per distance with the layers and object ids.
   [Issue #486](https://github.com/e-netze/webgis-community/issues/486)
 - Viewer: "Add from selection" (`allow-add-from-selection` of the Map Markup tool) now works for all draw and measure tools with the current tool style, can optionally merge the selected objects, and adds selected objects to "Object distance" or selected points to "Perpendicular distance".
+- Viewer: the symbology of "Drawing (Map Markup)" is shown in a non-modal panel on the right that opens automatically when a draw or measure tool is selected, so the toolbar and the list of graphics stay visible; disable the automatic opening with `webgis.usability.mapMarkupAutoOpenProperties = false` in `custom.js`.
+  [Docs custom.js](https://docs.webgiscloud.com/en/webgis/apps/viewer/customjs/usability.html#customjs-mapmarkup-auto-open-properties)
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/tools/general/mapmarkup/manual.html#mapmarkup-symbology-panel)
+- Viewer: texts of "Drawing (Map Markup)" can be rotated with a handle in the map or a rotation angle in the symbology; the rotation is printed and exported to shapefiles.
+  [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/tools/general/mapmarkup/manual.html#mapmarkup-text-rotation)
+
 ### Fixed
 
 - Validation messages are now shown directly below the affected input field (e.g. in edit masks) instead of at the bottom of the dialog.

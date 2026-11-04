@@ -52,6 +52,10 @@ Einfaches Zeichnen in der Karte.
 ## font-size: Schriftgröße
 ## font-style: Schriftstil
 ## font-color: Schriftfarbe
+## rotation: Drehung (°)
+## rotation-label: Drehung im Uhrzeigersinn (°), 0 = waagrecht
+## apply-rotation: Drehung übernehmen
+## reset-rotation: 0°
 
 ## line-color: Linienfarbe
 ## line-weight: Linienstärke

@@ -57,6 +57,15 @@ webgis.ui.builder["button"] = (map, $newElement, element, options) => {
                 var $angleControl = $(this).closest('.webgis-ui-optionscontainer').find('.webgis-graphics-view_angle-angle');
                 $this.data('_value', $angleControl.length === 1 ? parseFloat($angleControl.val()) : null);
                 break;
+            case "setgraphicstextrotation":
+            case "setgraphics_text_rotation_and_apply_to_selected":  // argument => fixed value (e.g. 0°)
+                var $rotationControl = $(this).closest('.webgis-ui-optionscontainer').find('.webgis-graphics-text-rotation');
+                if (this.buttoncommand_argument !== undefined && this.buttoncommand_argument !== null && this.buttoncommand_argument !== '') {
+                    $rotationControl.val(this.buttoncommand_argument);
+                }
+                var rotation = $rotationControl.length === 1 ? parseFloat(String($rotationControl.val()).replace(',', '.')) : NaN;
+                $this.data('_value', isNaN(rotation) ? null : rotation);
+                break;
             case "setgraphicsbufferzonewidth":
                 var $widthControl = $(this).closest('.webgis-ui-optionscontainer').find('.webgis-graphics-buffer_zone-width');
                 $this.data('_value', $widthControl.length === 1 ? parseFloat($widthControl.val()) : null);

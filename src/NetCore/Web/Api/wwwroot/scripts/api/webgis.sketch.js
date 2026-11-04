@@ -1227,6 +1227,16 @@
     this.setMeasureGridOrigin = function (X, Y) { return _geometryType === 'measure_grid' ? _typeOf('measure_grid').setOrigin(X, Y) : false; };
     this.getMeasureGrid = function () { return _geometryType === 'measure_grid' ? _typeOf('measure_grid').getGrid() : null; };
     this.setText = function (text) { _typeOf('text').setOption('text', text); };
+    this.setTextRotation = function (rotation) {
+        rotation = parseFloat(rotation);
+        rotation = isNaN(rotation) ? 0 : L.SVGText.normalizeRotation(rotation);
+        if (_geometryType === 'text')
+            _typeOf('text').setOption('rotation', rotation);
+        else
+            _typeOf('text').rotation = rotation;  // current element is not a text (e.g. L.RotatableRectangle also has setRotation)
+    };
+    this.getTextRotation = function () { return (_geometryType === 'text' ? _typeOf('text').getOption('rotation') : _typeOf('text').rotation) || 0; };
+    this.refreshTextRotationHandle = function () { _typeOf('text').refreshRotationHandle(); };
 
     this.getText = function () { return _typeOf('text').getOption('text'); };
     this.getCircleRadius = function () { return _typeOf('circle').getOption('radius'); };

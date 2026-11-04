@@ -170,6 +170,7 @@ public class UICss
     public const string GraphicsDimPolygonAngleUnit = "webgis-graphics-dimpolygon-angle-unit";
 
     public const string GraphicsViewAngleAngle = "webgis-graphics-view_angle-angle";
+    public const string GraphicsTextRotation = "webgis-graphics-text-rotation";
     public const string GraphicsViewAngleUnit = "webgis-graphics-view_angle-unit";
     public const string GraphicsViewAngleLabelLength = "webgis-graphics-view_angle-label-length";
 

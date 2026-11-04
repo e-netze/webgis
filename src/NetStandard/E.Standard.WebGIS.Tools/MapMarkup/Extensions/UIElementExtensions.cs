@@ -87,8 +87,55 @@ static internal class UIElementExtensions
                 value = e.GetValue("mapmarkup-fontcolor","#000000"),
                 //css = UICss.ToClass(new string[] { UICss.ToolParameter, UICss.ToolParameterPersistent }),
                 id = "mapmarkup-text-fontcolor"
-            }
+            },
+            TextRotationOptionContainer(localizer, ApiClientButtonCommand.setgraphicstextrotation, collapseExclusive, isCollapsed: true)
         }));
+
+        return collection;
+    }
+
+    static private UIOptionContainer TextRotationOptionContainer(ILocalizer localizer, ApiClientButtonCommand command, bool collapseExclusive, bool isCollapsed)
+        => new UIOptionContainer()
+        {
+            title = localizer.Localize("symbology.rotation"),
+            CollapseState = IsCollapsed(isCollapsed),
+            ExpandBehavior = ExpandMode(collapseExclusive),
+            elements = new IUIElement[]
+            {
+                new UILabel()
+                {
+                    label = $"{localizer.Localize("symbology.rotation-label")}:"
+                },
+                new UIInputNumber()
+                {
+                    MinValue = -360,
+                    MaxValue = 360,
+                    id = command == ApiClientButtonCommand.setgraphicstextrotation
+                        ? "mapmarkup-text-rotation"
+                        : "mapmarkup-text-rotation-selected",
+                    value = command == ApiClientButtonCommand.setgraphicstextrotation ? "0" : "",  // not persistent: every new text starts horizontal
+                    css = UICss.ToClass(new string[] { UICss.GraphicsTextRotation })
+                },
+                new UIButtonContainer(new IUIElement[]
+                {
+                    new UIButton(UIButton.UIButtonType.clientbutton, command)
+                    {
+                        text = localizer.Localize("symbology.apply-rotation"),
+                        css = UICss.ToClass(new string[] { UICss.CancelButtonStyle })
+                    },
+                    new UIButton(UIButton.UIButtonType.clientbutton, command)
+                    {
+                        text = localizer.Localize("symbology.reset-rotation"),
+                        buttoncommand_argument = "0",
+                        css = UICss.ToClass(new string[] { UICss.CancelButtonStyle })
+                    }
+                })
+            }
+        };
+
+    static public List<IUIElement> AddTextRotationElements(this List<IUIElement> collection, ILocalizer localizer, bool expanded = true)
+    {
+        collection.Add(TextRotationOptionContainer(localizer, ApiClientButtonCommand.setgraphics_text_rotation_and_apply_to_selected, collapseExclusive: false, isCollapsed: !expanded));
 
         return collection;
     }

@@ -261,6 +261,11 @@
                     if (map && map.graphics && tool.value)
                         map.graphics.setTextSize(tool.value);
                     break;
+                case 'setgraphicstextrotation':
+                case 'setgraphics_text_rotation_and_apply_to_selected':
+                    if (map && map.graphics && (tool.value || tool.value === 0))
+                        map.graphics.setTextRotation(tool.value);
+                    break;
                 case 'setgraphicshectolineunit':
                     if (map && map.graphics && tool.value)
                         map.graphics.setHectolineUnit(tool.value);
@@ -774,7 +779,7 @@
                 //console.log('apply to selected', tool.value);
                 const c = tool.command.substring('setgraphics_'.length, tool.command.length - '_and_apply_to_selected'.length).replaceAll('_', '-');
                 //console.log(c);
-                if (map && map.graphics && tool.value)
+                if (map && map.graphics && (tool.value || tool.value === 0))
                     map.graphics.applyStyleToSelectedElements(c);
             }
         }
