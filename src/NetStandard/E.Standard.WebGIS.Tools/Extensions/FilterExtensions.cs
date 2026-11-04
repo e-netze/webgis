@@ -1,5 +1,6 @@
 ﻿using System;
 
+using E.Standard.Extensions.Compare;
 using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Geometry;
@@ -33,5 +34,7 @@ static internal class FilterExtensions
                 click.WorldX - toleranceX, click.WorldY - toleranceY,
                 click.WorldX + toleranceX, click.WorldY + toleranceY);
         }
+
+        filter.QueryShape.SrsId = filter.QueryShape.SrsId.OrTake(e.MapCrs ?? 0);
     }
 }

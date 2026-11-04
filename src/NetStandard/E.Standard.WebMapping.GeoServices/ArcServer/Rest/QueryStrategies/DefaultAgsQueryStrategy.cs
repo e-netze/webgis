@@ -120,7 +120,7 @@ internal sealed class DefaultAgsQueryStrategy : IAgsQueryStrategy
             if (spatialFilter != null)
             {
                 requestBuilder
-                    .WithGeometry(spatialFilter.QueryShape, spatialFilter.FilterSpatialReference?.Id ?? 0)
+                    .WithGeometry(spatialFilter.QueryShape, resolvedInSrefId)
                     .WithSpatialRelationIntersects();
             }
 

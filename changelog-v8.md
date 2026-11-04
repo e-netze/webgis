@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Fixed
 
+## 8.26.4301
+
+### Added
+### Fixed
+
 - AGS Query: Suppress pagination for layer without oid-field
   [Issue #520](https://github.com/e-netze/webgis-community/issues/520)
 - Identify (Desktop): A failing layer query no longer discards the results of all other queries.

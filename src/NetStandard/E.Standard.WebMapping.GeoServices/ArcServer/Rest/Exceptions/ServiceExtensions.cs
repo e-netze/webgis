@@ -99,7 +99,10 @@ static class ServiceExtensions
                         }
                         if (visible && (serviceLegend.LegendOptMethod == LegendOptimization.Themes || serviceLegend.LegendOptMethod == LegendOptimization.Symbols))
                         {
-                            SpatialFilter filter = new SpatialFilter(serviceLayer.IdFieldName, service.Map.Extent, 1000, 0);
+                            SpatialFilter filter = new SpatialFilter(serviceLayer.IdFieldName, service.Map.Extent, 1000, 0)
+                            {
+                                FilterSpatialReference = service.Map.SpatialReference
+                            };
 
                             if (serviceLayer is ILayer2)
                             {
@@ -141,7 +144,10 @@ static class ServiceExtensions
                                     var legendRendererHelper = (ILegendRendererHelper)serviceLayer;
                                     if (legendRendererHelper.LengendRendererType == LayerRendererType.UniqueValue)
                                     {
-                                        SpatialFilter filter = new SpatialFilter(serviceLayer.IdFieldName, service.Map.Extent, 1000, 0);
+                                        SpatialFilter filter = new SpatialFilter(serviceLayer.IdFieldName, service.Map.Extent, 1000, 0)
+                                        {
+                                            FilterSpatialReference = service.Map.SpatialReference
+                                        };
                                         filter.SubFields = (
                                             (String.IsNullOrWhiteSpace(legendRendererHelper.UniqueValue_Field1) ? String.Empty : legendRendererHelper.UniqueValue_Field1 + " ") +
                                             (String.IsNullOrWhiteSpace(legendRendererHelper.UniqueValue_Field2) ? String.Empty : legendRendererHelper.UniqueValue_Field2 + " ") +
