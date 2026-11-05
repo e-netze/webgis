@@ -16,6 +16,12 @@
     this._sketchMetaSouce = null;
     this._stagedElement = null;
 
+    // user defined element groups; 'default' always exists and can't be removed
+    this._groups = [{ id: 'default', name: null }];
+    this._activeGroupId = 'default';  // new elements are added to this group
+    this._groupFilter = '*';          // group shown in the element list ('*' => all)
+    this._loadingGroupName = undefined;  // set while fromGeoJson creates elements
+
     this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle",     "circle_arc", "perpendicular", "buffer_zone", "object_distance", "measure_grid"];
 
     this._sketch.events.on(['onchangevertex'], function (e, sender, coord) {
@@ -1412,7 +1418,7 @@
                         metaSource: this._sketchMetaSouce
                     };
 
-                    this._elements.push(newElement);
+                    this._elements.push(this._assignGroup(newElement));
                 }
             } else if (selectedElements.length === 1 && frameworkElements.length === 1) {
                 frameworkElements[0].addTo(this._map.frameworkElement);
@@ -1659,7 +1665,7 @@
                 }
             }
             this._unstagePendingElements();
-            this._elements.push(symbolElement);
+            this._elements.push(this._assignGroup(symbolElement));
             this._refreshInfoContainers();
 
             this._map.events.fire('graphics_changed', this._map);
@@ -1684,20 +1690,20 @@
             }
 
             this._unstagePendingElements();
-            this._elements.push(this._currentPointMarkerSymbol = {
+            this._elements.push(this._assignGroup(this._currentPointMarkerSymbol = {
                 type: 'point',
                 frameworkElement: this._currentPointMarker,
                 map: this._map,
                 metaText: this._currentPointMarker.metaText = metaText,
                 _pending_staged: true
-            });
+            }));
 
             this._refreshInfoContainers();
         }
     };
 
     this._serializing = false;
-    this.toGeoJson = function (supressAssumeCurrent) {
+    this.toGeoJson = function (supressAssumeCurrent, options) {
         this._serializing = true;
 
         if (supressAssumeCurrent !== true) {
@@ -2039,6 +2045,18 @@
                 continue;
             if (geometry.type == 'Polygon' && (geometry.coordinates[0].length == 0 || geometry.coordinates[0][0] == null))
                 continue;
+
+            var groupId = this.getElementGroupId(element);
+            if (properties["_meta"]) {
+                if (groupId !== 'default') {
+                    properties["_meta"].group = this.getGroupName(groupId);
+                }
+                if (!this.isGroupVisible(groupId)) {
+                    if (options && options.visibleOnly === true) continue;
+                    properties["_meta"].groupHidden = true;
+                }
+            }
+
             geoJson.features.push({
                 type: "Feature",
                 geometry: geometry,
@@ -2110,6 +2128,13 @@
 
             for (var i in gr.geojson.features) {
                 var feature = gr.geojson.features[i];
+                var featureGroup = feature.properties && feature.properties["_meta"] ? feature.properties["_meta"].group : null;
+                // without group: "add from selection" => active group, loaded data => default group
+                this._loadingGroupName = featureGroup || (gr.usecurrentstyle === true ? undefined : null);
+                if (feature.properties && feature.properties["_meta"] && feature.properties["_meta"].groupHidden === true) {
+                    var hiddenGroup = this._groupById(this._groupIdByName(this._loadingGroupName));
+                    if (hiddenGroup) hiddenGroup.hidden = true;
+                }
                 if (currentStyle) {
                     feature.properties = feature.properties || {};
                     var styleProperties = feature.properties["_meta"] ? currentStyle[feature.properties["_meta"].tool] : null;
@@ -2361,6 +2386,10 @@
 
         this._serializing = false;
         this._suppressRefreshInfoContainer = false;
+        this._loadingGroupName = undefined;
+        for (let element of this._elements) {
+            this._applyElementVisibility(element);  // loaded hidden groups
+        }
 
         //alert(bounds);
         //alert(JSON.stringify(gr.geojson));
@@ -2638,6 +2667,151 @@
     };
     this.countElements = function () {
         return this._elements.length;
+    };
+
+    // ---- element groups ----
+    this.getGroups = function () {
+        return this._groups.slice();
+    };
+    this._groupById = function (id) {
+        return this._groups.find(g => g.id === id) || null;
+    };
+    this.getGroupName = function (id) {
+        var group = this._groupById(id);
+        if (!group) return '';
+        return group.name || webgis.l10n.get('mapmarkup-group-default');
+    };
+    this._groupIdByName = function (name) {  // creates the group, if it doesn't exist
+        if (!name) return 'default';
+        var group = this._groups.find(g => this.getGroupName(g.id) === name);
+        if (group) return group.id;
+
+        var id = webgis.guid();
+        this._groups.push({ id: id, name: name });
+        return id;
+    };
+    this.getElementGroupId = function (element) {
+        return element && this._groupById(element.group) ? element.group : 'default';
+    };
+    this._assignGroup = function (element) {
+        if (element && !element.group) {
+            element.group = this._loadingGroupName !== undefined
+                ? this._groupIdByName(this._loadingGroupName)
+                : this.getActiveGroupId();
+        }
+        if (element && this._loadingGroupName === undefined && !this.isGroupVisible(element.group)) {
+            this.setGroupVisible(element.group, true, true);  // drawing into a hidden group => show it
+        }
+        return element;
+    };
+    this.isGroupVisible = function (id) {
+        var group = this._groupById(id);
+        return !group || group.hidden !== true;
+    };
+    this.isElementVisible = function (element) {
+        return this.isGroupVisible(this.getElementGroupId(element));
+    };
+    this.setGroupVisible = function (id, visible, silent) {
+        var group = this._groupById(id);
+        if (!group) return;
+
+        group.hidden = visible === false;
+        for (let element of this._elements.filter(e => this.getElementGroupId(e) === id)) {
+            this._applyElementVisibility(element);
+        }
+
+        if (silent !== true) {
+            this._refreshInfoContainers();
+            this._map.events.fire('graphics_changed', this._map);
+        }
+    };
+    this._applyElementVisibility = function (element) {
+        var frameworkElement = element.frameworkElement, mapElement = this._map.frameworkElement;
+        if (!frameworkElement || !mapElement) return;
+
+        var visible = this.isElementVisible(element);
+        if (visible && !mapElement.hasLayer(frameworkElement)) {
+            frameworkElement.addTo(mapElement);
+        } else if (!visible && mapElement.hasLayer(frameworkElement)) {
+            mapElement.removeLayer(frameworkElement);
+        }
+    };
+    this.getActiveGroupId = function () {
+        return this._groupById(this._activeGroupId) ? this._activeGroupId : 'default';
+    };
+    this.setActiveGroupId = function (id) {
+        if (this._groupById(id)) {
+            this._activeGroupId = id;
+        }
+    };
+    this.getGroupFilter = function () {
+        return this._groupFilter === '*' || this._groupById(this._groupFilter) ? this._groupFilter : '*';
+    };
+    this.setGroupFilter = function (id) {
+        if (id === '*') {
+            this._groupFilter = '*';
+        } else if (this._groupById(id)) {
+            this._groupFilter = id;
+            this._activeGroupId = id;
+        }
+        this._refreshInfoContainers();
+    };
+    this.countGroupElements = function (id) {
+        return this._elements.filter(e => e._pending_staged !== true && this.getElementGroupId(e) === id).length;
+    };
+    this.addGroup = function (name) {
+        name = (name || '').trim();
+        if (!name) return null;
+
+        var id = this._groupIdByName(name);
+        this._activeGroupId = id;
+        this._groupFilter = id;
+        this._refreshInfoContainers();
+        return id;
+    };
+    this.renameGroup = function (id, name) {
+        var group = this._groupById(id);
+        name = (name || '').trim();
+        if (!group || !name) return false;
+        if (this._groups.find(g => g.id !== id && this.getGroupName(g.id) === name)) return false;  // names must be unique (serialization)
+
+        group.name = name;
+        this._refreshInfoContainers();
+        this._map.events.fire('graphics_changed', this._map);
+        return true;
+    };
+    this.removeGroup = function (id, removeElements) {
+        if (id === 'default' || !this._groupById(id)) return;
+
+        var elements = this._elements.filter(e => this.getElementGroupId(e) === id);
+        if (removeElements === true) {
+            for (let element of elements) {
+                this.removeElement(element, true, false);
+            }
+        } else {
+            for (let element of elements) {
+                element.group = 'default';
+                this._applyElementVisibility(element);
+            }
+        }
+
+        this._groups = this._groups.filter(g => g.id !== id);
+        if (this._activeGroupId === id) this._activeGroupId = 'default';
+        if (this._groupFilter === id) this._groupFilter = '*';
+
+        this._refreshInfoContainers();
+        this._map.events.fire('graphics_changed', this._map);
+    };
+    this.moveElementsToGroup = function (elements, id) {
+        if (!this._groupById(id)) return;
+
+        for (let element of elements || []) {
+            element.group = id;
+            this._applyElementVisibility(element);
+        }
+
+        this._refreshInfoContainers();
+        this._map.events.fire('graphics_changed', this._map);
     };
 
     this.getStyleTypes = function (type) {

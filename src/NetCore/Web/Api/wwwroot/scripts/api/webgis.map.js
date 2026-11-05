@@ -3757,7 +3757,7 @@
     };
     /****** Print *****/
     this.print = function (options, callback) {
-        var graphicsJson = JSON.stringify(this.graphics.toGeoJson(), null, 2);
+        var graphicsJson = JSON.stringify(this.graphics.toGeoJson(false, { visibleOnly: true }), null, 2);
         var mapJson = JSON.stringify(this.serialize({ ui: false, applyFallback: true, visibleBasemapsOnly: true }), null, 2);
 
         webgis.log('printoptions', options);
@@ -3863,7 +3863,7 @@
         });
     };
     this.downloadImage = function (options, callback) {
-        var graphicsJson = JSON.stringify(this.graphics.toGeoJson(), null, 2);
+        var graphicsJson = JSON.stringify(this.graphics.toGeoJson(false, { visibleOnly: true }), null, 2);
         var serializedMap = this.serialize({ ui: false, applyFallback: true, visibleBasemapsOnly: true });
         if (options.useCustomServices) {
             serializedMap.services = options.useCustomServices;

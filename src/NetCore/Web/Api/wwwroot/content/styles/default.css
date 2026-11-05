@@ -5537,7 +5537,7 @@ div.webgis-copy {
 
             .webgis-graphics-info-container-holder .webgis-graphics-info-list .webgis-graphics-info-listitem .label-text {
                 padding: 4px 2px;
-                width:calc(100% - 70px);
+                width:calc(100% - 102px);
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
@@ -5599,6 +5599,11 @@ div.webgis-copy {
 
             .webgis-graphics-info-container-holder .webgis-graphics-info-list .webgis-graphics-info-listitem .button.label {
                 background-image: url('../api/img/text-26-b.png');
+                right: 98px;
+            }
+
+            .webgis-graphics-info-container-holder .webgis-graphics-info-list .webgis-graphics-info-listitem .button.zoom {
+                background-image: url('../api/img/zoom-26-g.png');
                 right: 66px;
             }
 
@@ -5617,7 +5622,8 @@ div.webgis-copy {
     }
 
     .webgis-graphics-info-container-holder .webgis-graphics-info-list-menu {
-        height: 36px;
+        min-height: 36px;
+        display: flow-root;  /* grows with wrapped (floated) items, e.g. the "move to group" combo */
     }
         .webgis-graphics-info-container-holder .webgis-graphics-info-list-menu .button {
             width: 30px;
@@ -5643,6 +5649,108 @@ div.webgis-copy {
                 background-image: url('../api/img/tools/order.png');
                 float: right;
             }
+
+            .webgis-graphics-info-container-holder .webgis-graphics-info-list-menu .webgis-graphics-info-move-to-group {
+                float: right;
+                max-width: 150px;
+                margin: 4px;
+                padding: 4px;
+            }
+
+    .webgis-graphics-info-container-holder .webgis-graphics-info-groups {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 2px;
+        margin: 4px 0;
+    }
+        .webgis-graphics-info-container-holder .webgis-graphics-info-groups select {
+            flex: 1 1 auto;
+            min-width: 0;
+            padding: 4px;
+        }
+        .webgis-graphics-info-container-holder .webgis-graphics-info-groups .button,
+        .webgis-graphics-info-container-holder .webgis-graphics-info-groups-edit .button {
+            flex: 0 0 30px;
+            width: 30px;
+            height: 30px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 20px;
+            cursor: pointer;
+            opacity: .7;
+        }
+            .webgis-graphics-info-container-holder .webgis-graphics-info-groups .button:hover {
+                opacity: 1;
+            }
+            .webgis-graphics-info-container-holder .webgis-graphics-info-groups .button.add::before {
+                content: '+';
+                display: block;
+                text-align: center;
+                font-size: 24px;
+                line-height: 30px;
+            }
+            .webgis-graphics-info-container-holder .webgis-graphics-info-groups .button.edit {
+                background-image: url('../api/img/tools/edit.png');
+            }
+            .webgis-graphics-info-container-holder .webgis-graphics-info-groups .button.delete {
+                background-image: url('../api/img/tools/remove.png');
+            }
+            .webgis-graphics-info-container-holder .webgis-graphics-info-groups .button.commit {
+                background-image: url('../api/img/tools/check.png');
+            }
+            .webgis-graphics-info-container-holder .webgis-graphics-info-groups .button.cancel {
+                background-image: url('../api/img/close-26.png');
+            }
+        .webgis-graphics-info-container-holder .webgis-graphics-info-groups-edit {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            width: 100%;
+        }
+            .webgis-graphics-info-container-holder .webgis-graphics-info-groups-edit input {
+                flex: 1 1 auto;
+                min-width: 0;
+                padding: 4px 6px;
+            }
+                .webgis-graphics-info-container-holder .webgis-graphics-info-groups-edit input.error {
+                    border-color: red;
+                }
+        .webgis-graphics-info-container-holder .webgis-graphics-info-groups-hint {
+            width: 100%;
+            font-size: .85em;
+            opacity: .6;
+        }
+
+    .webgis-graphics-info-container-holder .button.group-visibility {
+        flex: 0 0 24px;
+        width: 24px;
+        height: 24px;
+        background-image: url(../api/img/ui/checkbox-unchecked_16@1.png);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 16px;
+        cursor: pointer;
+    }
+        .webgis-graphics-info-container-holder .button.group-visibility.checked {
+            background-image: url(../api/img/ui/checkbox-checked_16@1.png);
+        }
+
+    .webgis-graphics-info-container-holder .webgis-graphics-info-list .webgis-graphics-info-listitem.group-hidden {
+        opacity: .45;
+    }
+
+    .webgis-graphics-info-container-holder .webgis-graphics-info-list .webgis-graphics-info-groupheader {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 4px 2px 4px;
+        font-weight: bold;
+        font-size: .9em;
+        opacity: .75;
+        border-bottom: 1px solid #ccc;
+    }
 
         .webgis-graphics-info-container-holder .webgis-graphics-info-list-menu .text-button {
             display: inline-block;

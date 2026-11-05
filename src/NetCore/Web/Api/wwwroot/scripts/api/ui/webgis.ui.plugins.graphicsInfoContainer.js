@@ -81,6 +81,13 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
             const elements = map.graphics.getElements();
             const readOnly = $elem.hasClass('readonly');
 
+            // number per type in drawing order (independent of list order), e.g. "Point 3"
+            const typeNumbers = new Map(), typeCounters = {};
+            for (let element of elements) {
+                typeCounters[element.type] = (typeCounters[element.type] || 0) + 1;
+                typeNumbers.set(element, typeCounters[element.type]);
+            }
+
             if ($elem.hasClass('order-descending')) elements.reverse();
 
             const hasMultiSelection = self.getSelectedCount(elements) > 1;
@@ -111,6 +118,10 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                 .appendTo($elem);
             self.buildMenu($elem);
 
+            if (!readOnly) {
+                self.buildGroupBar($elem, map);
+            }
+
             var usedHeight = 0;
 
             $elem.children().each(function (i, e) {
@@ -129,12 +140,40 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
             const hasUpdatingElement = map.graphics.hasUpdatingElement();
             const hasStagedOrUpdatingElements = hasStagedElement || hasUpdatingElement;
 
-            for (let element of elements) {
+            // groups: filter by the selected group or (all) sort by group order with headings
+            const groupFilter = readOnly ? '*' : map.graphics.getGroupFilter();
+            const groupIds = map.graphics.getGroups().map(g => g.id);
+            const groupIndex = function (element) {
+                return element.updating ? -1 : groupIds.indexOf(map.graphics.getElementGroupId(element.originalElement));
+            };
+            const listElements = elements
+                .filter(e => e.updating || groupFilter === '*' || map.graphics.getElementGroupId(e.originalElement) === groupFilter)
+                .map((e, i) => ({ e: e, i: i }))
+                .sort((a, b) => (groupIndex(a.e) - groupIndex(b.e)) || (a.i - b.i))
+                .map(x => x.e);
+            const showGroupHeadings = groupFilter === '*' &&
+                new Set(listElements.filter(e => !e.updating).map(e => groupIndex(e))).size > 1;
+            let lastGroupIndex = null;
+
+            for (let element of listElements) {
                 if (readOnly === true && element.type === 'text')
                     continue;
 
+                if (showGroupHeadings && !element.updating && groupIndex(element) !== lastGroupIndex) {
+                    lastGroupIndex = groupIndex(element);
+                    const headerGroupId = map.graphics.getElementGroupId(element.originalElement);
+                    const $header = $("<li>")
+                        .addClass('webgis-graphics-info-groupheader')
+                        .appendTo($ul);
+                    self.appendGroupVisibilityButton($header, map, headerGroupId);
+                    $("<span>")
+                        .text(map.graphics.getGroupName(headerGroupId))
+                        .appendTo($header);
+                }
+
                 const $li = $("<li></li>")
                     .addClass('webgis-graphics-info-listitem' + (element.originalElement && element.originalElement.selected === true ? ' selected' : ''))
+                    .toggleClass('group-hidden', !element.updating && !map.graphics.isElementVisible(element.originalElement))
                     .appendTo($ul)
                     .data('element', element)
 
@@ -163,7 +202,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
 
                             if (readOnly === false) {
                                 if (e.shiftKey) {
-                                    self.selectElement($li, elements, element, 'shift');
+                                    self.selectElement($li, listElements, element, 'shift');
                                 } else if (e.ctrlKey) {
                                     self.selectElement($li, elements, element, 'ctrl');
                                 } else {
@@ -190,7 +229,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
 
                 let hasLabel = element.metaText && element.metaText.length > 0,
                     txtCls = hasLabel ? '' : 'unlabeled',
-                    txt = hasLabel ? element.metaText : self.translateType(element.type);
+                    txt = hasLabel ? element.metaText : self.translateType(element.type) + ' ' + typeNumbers.get(element);
 
                 $li.css({
                     borderLeft: self.itemBorder(element),
@@ -278,6 +317,17 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                                     map.graphics.labelElement(element.originalElement);
                                 });
                         }
+                        $("<div>")
+                            .addClass('button zoom')
+                            .attr('title', webgis.l10n.get('zoom-to-feature'))
+                            .appendTo($li)
+                            .on('click.webgis_graphics_info_container', function (e) {
+                                e.stopPropagation();
+                                var map = $(this).closest('.webgis-graphics-info-container-holder').data('map');
+                                var element = $(this).closest('.webgis-graphics-info-listitem').data('element');
+
+                                map.graphics.zoomTo(element);
+                            });
                         $("<div>")
                             .addClass('button edit')
                             .appendTo($li)
@@ -398,6 +448,23 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
 
                             map.graphics.removeElements(selectedElements);
                         });
+
+                    const $move = $('<select>')
+                        .addClass('webgis-input webgis-graphics-info-move-to-group')
+                        .appendTo($menu)
+                        .on('click.webgis_graphics_info_container', function (e) {
+                            e.stopPropagation();
+                        })
+                        .on('change.webgis_graphics_info_container', function (e) {
+                            const id = $(this).val();
+                            if (id) {
+                                map.graphics.moveElementsToGroup(selectedElements, id);
+                            }
+                        });
+                    $('<option>').val('').text(webgis.l10n.get('mapmarkup-group-move-to')).appendTo($move);
+                    for (let group of map.graphics.getGroups()) {
+                        $('<option>').val(group.id).text(map.graphics.getGroupName(group.id)).appendTo($move);
+                    }
                 }
             } else {
                 if (map.graphics.countElements() > 0) {  // show swap ordering
@@ -414,6 +481,138 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                 }
                 self.appendPropertiesButton($parent, $menu, map);
             }
+        },
+        buildGroupBar: function ($parent, map) {
+            const $ = webgis.$ || jQuery;
+            const self = $.fn.webgis_graphicsInfoContainer.plugin;
+
+            const $bar = $('<div>')
+                .addClass('webgis-graphics-info-groups')
+                .appendTo($parent);
+
+            const filter = map.graphics.getGroupFilter();
+
+            const showNameInput = function (initialValue, onCommit) {
+                $bar.children().css('display', 'none');
+                const $edit = $('<div>').addClass('webgis-graphics-info-groups-edit').appendTo($bar);
+                const $input = $('<input type="text">')
+                    .addClass('webgis-input')
+                    .attr('placeholder', webgis.l10n.get('mapmarkup-group-name'))
+                    .val(initialValue || '')
+                    .appendTo($edit);
+                const commit = function () {
+                    if (onCommit($input.val()) === false) {
+                        $input.addClass('error').trigger('focus');
+                        return;
+                    }
+                    map.graphics._refreshInfoContainers();
+                };
+                const cancel = function () {
+                    map.graphics._refreshInfoContainers();
+                };
+                $input.on('keydown.webgis_graphics_info_container', function (e) {
+                    if (e.key === 'Enter') { e.preventDefault(); commit(); }
+                    else if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+                });
+                $('<div>').addClass('button commit').attr('title', webgis.l10n.get('apply')).appendTo($edit)
+                    .on('click.webgis_graphics_info_container', function (e) { e.stopPropagation(); commit(); });
+                $('<div>').addClass('button cancel').attr('title', webgis.l10n.get('cancel')).appendTo($edit)
+                    .on('click.webgis_graphics_info_container', function (e) { e.stopPropagation(); cancel(); });
+                $input.trigger('focus');
+            };
+
+            const $select = $('<select>')
+                .addClass('webgis-input')
+                .appendTo($bar)
+                .on('change.webgis_graphics_info_container', function () {
+                    map.graphics.setGroupFilter($(this).val());
+                });
+            $('<option>').val('*').text(webgis.l10n.get('mapmarkup-group-all')).appendTo($select);
+            for (let group of map.graphics.getGroups()) {
+                $('<option>')
+                    .val(group.id)
+                    .text(map.graphics.getGroupName(group.id) + ' (' + map.graphics.countGroupElements(group.id) + ')' +
+                        (map.graphics.isGroupVisible(group.id) ? '' : ' – ' + webgis.l10n.get('mapmarkup-group-hidden')))
+                    .appendTo($select);
+            }
+            $select.val(filter);
+
+            if (filter !== '*') {
+                self.appendGroupVisibilityButton($bar, map, filter);
+            }
+
+            $('<div>')
+                .addClass('button add')
+                .attr('title', webgis.l10n.get('mapmarkup-group-add'))
+                .appendTo($bar)
+                .on('click.webgis_graphics_info_container', function (e) {
+                    e.stopPropagation();
+                    showNameInput('', function (name) {
+                        return map.graphics.addGroup(name) !== null;
+                    });
+                });
+
+            if (filter !== '*') {
+                $('<div>')
+                    .addClass('button edit')
+                    .attr('title', webgis.l10n.get('mapmarkup-group-rename'))
+                    .appendTo($bar)
+                    .on('click.webgis_graphics_info_container', function (e) {
+                        e.stopPropagation();
+                        showNameInput(map.graphics.getGroupName(filter), function (name) {
+                            return map.graphics.renameGroup(filter, name);
+                        });
+                    });
+            }
+
+            if (filter !== '*' && filter !== 'default') {
+                $('<div>')
+                    .addClass('button delete')
+                    .attr('title', webgis.l10n.get('mapmarkup-group-remove'))
+                    .appendTo($bar)
+                    .on('click.webgis_graphics_info_container', function (e) {
+                        e.stopPropagation();
+                        const count = map.graphics.countGroupElements(filter);
+                        if (count === 0) {
+                            map.graphics.removeGroup(filter, false);
+                            return;
+                        }
+                        webgis.confirm({
+                            title: webgis.l10n.get('mapmarkup-group-remove'),
+                            message: webgis.l10n.get('mapmarkup-group-remove-question')
+                                .replace('{0}', map.graphics.getGroupName(filter))
+                                .replace('{1}', count)
+                                .replace('{2}', map.graphics.getGroupName('default')),
+                            okText: webgis.l10n.get('mapmarkup-group-remove-move-elements'),
+                            maybeText: webgis.l10n.get('mapmarkup-group-remove-with-elements'),
+                            cancelText: webgis.l10n.get('cancel'),
+                            onOk: function () { map.graphics.removeGroup(filter, false); },
+                            onMaybe: function () { map.graphics.removeGroup(filter, true); }
+                        });
+                    });
+            }
+
+            if (filter === '*' && map.graphics.getGroups().length > 1) {
+                $('<div>')
+                    .addClass('webgis-graphics-info-groups-hint')
+                    .text(webgis.l10n.get('mapmarkup-group-new-elements-to')
+                        .replace('{0}', map.graphics.getGroupName(map.graphics.getActiveGroupId())))
+                    .appendTo($bar);
+            }
+        },
+        appendGroupVisibilityButton: function ($parent, map, groupId) {
+            const $ = webgis.$ || jQuery;
+            const visible = map.graphics.isGroupVisible(groupId);
+
+            return $('<div>')
+                .addClass('button group-visibility')
+                .addClass(visible ? 'checked' : '')
+                .attr('title', webgis.l10n.get(visible ? 'mapmarkup-group-hide' : 'mapmarkup-group-show'))
+                .appendTo($parent)
+                .on('click.webgis_graphics_info_container', function (e) {
+                    e.stopPropagation();
+                    map.graphics.setGroupVisible(groupId, !visible);
+                });
         },
         appendPropertiesButton: function ($parent, $menu, map) {
             // (re)open the properties panel of the current drawing tool
@@ -574,6 +773,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
             });
 
             self.buildMenu($li.closest('.webgis-graphics-info-container-holder'));
+            self.fitListHeight($li.closest('.webgis-graphics-info-list'));
 
             // desktop: show the symbology of the selected elements in the (right docked) properties panel
             const map = $li.closest('.webgis-graphics-info-container-holder').data('map');
