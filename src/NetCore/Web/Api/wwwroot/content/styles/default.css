@@ -4102,6 +4102,7 @@ body.webgis-ui-holder {
     min-width: 320px;
     max-width: 100%;
     transition: width .3s ease;
+    z-index: 999999 !important;
 }
 
 .webgis-topbar-holder.webgis-topbar-large{
