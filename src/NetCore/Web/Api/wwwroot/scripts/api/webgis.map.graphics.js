@@ -20,6 +20,7 @@
     this._groups = [{ id: 'default', name: null }];
     this._activeGroupId = 'default';  // new elements are added to this group
     this._groupFilter = '*';          // group shown in the element list ('*' => all)
+    this._listFilter = '';            // text filter of the element list (list only, not the map)
     this._loadingGroupName = undefined;  // set while fromGeoJson creates elements
 
     this._tools = ["pointer", "symbol", "text", "point", "line", "polygon", "rectangle", "circle", "distance_circle", "compass_rose", "dimline", "dimpolygon", "hectoline", "view_angle", "intersection_angle",     "circle_arc", "perpendicular", "buffer_zone", "object_distance", "measure_grid"];
@@ -2755,6 +2756,12 @@
             this._activeGroupId = id;
         }
         this._refreshInfoContainers();
+    };
+    this.getListFilter = function () {
+        return this._listFilter || '';
+    };
+    this.setListFilter = function (text) {
+        this._listFilter = text || '';
     };
     this.countGroupElements = function (id) {
         return this._elements.filter(e => e._pending_staged !== true && this.getElementGroupId(e) === id).length;

@@ -24,6 +24,7 @@ webgis.usability = {
     useMarkerPopup: true,
     useGraphicsMarkerPopups: true,   // Popups or MarkerInfoPanel
     mapMarkupAutoOpenProperties: true, // Map Markup (desktop): open the (right docked, non-modal) properties panel automatically when a drawing/measure tool is selected
+    mapMarkupListFilterMinElements: 10, // Map Markup element list: show the text filter if the current view (group/all) contains more elements than this; <= 0 => never show the filter
     showMarkerInfoPanel: true,
     showSingleResultPopup: false,
     useCatCombos: true,

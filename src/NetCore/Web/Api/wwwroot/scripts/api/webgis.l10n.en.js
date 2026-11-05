@@ -717,6 +717,9 @@
     "mapmarkup-group-hide": "Hide group in the map",
     "mapmarkup-group-show": "Show group in the map",
     "mapmarkup-group-hidden": "hidden",
+    "mapmarkup-list-filter": "Filter…",
+    "mapmarkup-list-filter-select-hits": "Select matches",
+    "mapmarkup-list-filter-clear": "Clear filter",
 
     // query results
     "next-feature": "Next feature",

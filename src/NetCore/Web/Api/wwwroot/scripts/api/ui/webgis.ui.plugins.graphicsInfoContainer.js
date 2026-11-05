@@ -202,7 +202,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
 
                             if (readOnly === false) {
                                 if (e.shiftKey) {
-                                    self.selectElement($li, listElements, element, 'shift');
+                                    self.selectElement($li, self.visibleListElements($li.closest('.webgis-graphics-info-container-holder')), element, 'shift');
                                 } else if (e.ctrlKey) {
                                     self.selectElement($li, elements, element, 'ctrl');
                                 } else {
@@ -286,7 +286,8 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                         .appendTo($li);
                 }
 
-                $li.addClass(txtCls);
+                $li.addClass(txtCls)
+                    .data('search', (txt + ' ' + self.translateType(element.type)).toLowerCase());
                 if (readOnly && element.readonly_selected) {
                     $li.addClass('selected');
                 }
@@ -359,6 +360,42 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                     }
                 }
             }
+
+            if (!readOnly) {
+                self.applyListFilter($elem);
+            }
+        },
+        // text filter: hides (doesn't rebuild) the not matching list items => the filter input keeps the focus
+        applyListFilter: function ($elem) {
+            const $ = webgis.$ || jQuery;
+
+            const map = $elem.data('map');
+            const filter = (map ? map.graphics.getListFilter() : '').trim().toLowerCase();
+            const $ul = $elem.children('.webgis-graphics-info-list');
+
+            $ul.children('.webgis-graphics-info-listitem').each(function () {
+                const $li = $(this);
+                const element = $li.data('element');
+                const match = !filter || (element && element.updating) || ($li.data('search') || '').indexOf(filter) >= 0;
+                $li.toggleClass('filtered-out', !match);
+            });
+
+            $ul.children('.webgis-graphics-info-groupheader').each(function () {
+                const $header = $(this);
+                const hasItems = $header.nextUntil('.webgis-graphics-info-groupheader').not('.filtered-out').length > 0;
+                $header.toggleClass('filtered-out', !hasItems);
+            });
+
+            $elem.find('.webgis-graphics-info-filter .button.select-hits')
+                .css('display', filter && $ul.children('.webgis-graphics-info-listitem:not(.filtered-out)').length > 0 ? '' : 'none');
+        },
+        visibleListElements: function ($elem) {
+            const $ = webgis.$ || jQuery;
+
+            return $elem.find('.webgis-graphics-info-list > .webgis-graphics-info-listitem:not(.filtered-out)')
+                .map(function () { return $(this).data('element'); })
+                .get()
+                .filter(e => e);
         },
         buildMenu: function ($parent) {
             const $ = webgis.$ || jQuery;
@@ -598,6 +635,55 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                     .text(webgis.l10n.get('mapmarkup-group-new-elements-to')
                         .replace('{0}', map.graphics.getGroupName(map.graphics.getActiveGroupId())))
                     .appendTo($bar);
+            }
+
+            const viewCount = filter === '*'
+                ? map.graphics.getGroups().reduce((sum, g) => sum + map.graphics.countGroupElements(g.id), 0)
+                : map.graphics.countGroupElements(filter);
+
+            const filterMinElements = typeof webgis.usability.mapMarkupListFilterMinElements === 'number'
+                ? webgis.usability.mapMarkupListFilterMinElements
+                : 10;
+
+            if (filterMinElements <= 0 && map.graphics.getListFilter()) {
+                map.graphics.setListFilter('');
+            }
+
+            if (filterMinElements > 0 && (viewCount > filterMinElements || map.graphics.getListFilter())) {
+                const $filter = $('<div>')
+                    .addClass('webgis-graphics-info-filter')
+                    .appendTo($parent);
+                const $input = $('<input type="text">')
+                    .addClass('webgis-input')
+                    .attr('placeholder', webgis.l10n.get('mapmarkup-list-filter'))
+                    .val(map.graphics.getListFilter())
+                    .appendTo($filter)
+                    .on('input.webgis_graphics_info_container', function () {
+                        map.graphics.setListFilter($(this).val());
+                        $clear.css('display', $(this).val() ? '' : 'none');
+                        self.applyListFilter($parent);
+                    });
+                $('<div>')
+                    .addClass('button select-hits')
+                    .attr('title', webgis.l10n.get('mapmarkup-list-filter-select-hits'))
+                    .appendTo($filter)
+                    .on('click.webgis_graphics_info_container', function (e) {
+                        e.stopPropagation();
+                        const hits = self.visibleListElements($parent).filter(el => !el.updating);
+                        map.graphics.getElements().forEach(el => { if (el.originalElement) el.originalElement.selected = false; });
+                        hits.forEach(el => el.originalElement.selected = true);
+                        map.graphics._refreshInfoContainers();
+                    });
+                const $clear = $('<div>')
+                    .addClass('button cancel')
+                    .attr('title', webgis.l10n.get('mapmarkup-list-filter-clear'))
+                    .css('display', map.graphics.getListFilter() ? '' : 'none')
+                    .appendTo($filter)
+                    .on('click.webgis_graphics_info_container', function (e) {
+                        e.stopPropagation();
+                        map.graphics.setListFilter('');
+                        map.graphics._refreshInfoContainers();
+                    });
             }
         },
         appendGroupVisibilityButton: function ($parent, map, groupId) {

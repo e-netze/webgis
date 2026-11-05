@@ -717,6 +717,9 @@
     "mapmarkup-group-hide": "Gruppe in der Karte ausblenden",
     "mapmarkup-group-show": "Gruppe in der Karte einblenden",
     "mapmarkup-group-hidden": "ausgeblendet",
+    "mapmarkup-list-filter": "Filtern…",
+    "mapmarkup-list-filter-select-hits": "Treffer auswählen",
+    "mapmarkup-list-filter-clear": "Filter löschen",
 
     // query results
     "next-feature": "Nächstes Objekt",

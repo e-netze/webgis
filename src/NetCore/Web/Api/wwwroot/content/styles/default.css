@@ -5722,6 +5722,42 @@ div.webgis-copy {
             opacity: .6;
         }
 
+    .webgis-graphics-info-container-holder .webgis-graphics-info-filter {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        margin: 0 0 4px 0;
+    }
+        .webgis-graphics-info-container-holder .webgis-graphics-info-filter input {
+            flex: 1 1 auto;
+            min-width: 0;
+            padding: 4px 6px;
+        }
+        .webgis-graphics-info-container-holder .webgis-graphics-info-filter .button {
+            flex: 0 0 30px;
+            width: 30px;
+            height: 30px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 20px;
+            cursor: pointer;
+            opacity: .7;
+        }
+            .webgis-graphics-info-container-holder .webgis-graphics-info-filter .button:hover {
+                opacity: 1;
+            }
+            .webgis-graphics-info-container-holder .webgis-graphics-info-filter .button.select-hits {
+                background-image: url(../api/img/ui/checkbox-checked_16@1.png);
+                background-size: 16px;
+            }
+            .webgis-graphics-info-container-holder .webgis-graphics-info-filter .button.cancel {
+                background-image: url('../api/img/close-26.png');
+            }
+
+    .webgis-graphics-info-container-holder .webgis-graphics-info-list .filtered-out {
+        display: none !important;
+    }
+
     .webgis-graphics-info-container-holder .button.group-visibility {
         flex: 0 0 24px;
         width: 24px;
