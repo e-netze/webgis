@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Text;
 
+using Api.Core.AppCode.Services;
+
 using E.Standard.OpenIdConnect.Extensions;
 using E.Standard.Security.App.Extensions;
 using E.Standard.Security.App.Json;
@@ -22,16 +24,19 @@ public class AuthenticateController : Controller
     private readonly SubscriberDatabaseService _subscriberDb;
     private readonly ICryptoService _crypto;
     private readonly JwtAccessTokenService _jwtAccessTokenService;
+    private readonly UrlHelperService _urlHelper;
 
     public AuthenticateController(IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
                                   SubscriberDatabaseService subscriberDb,
                                   ICryptoService crypto,
-                                  JwtAccessTokenService jwtAccessTokenService)
+                                  JwtAccessTokenService jwtAccessTokenService,
+                                  UrlHelperService urlHelper)
     {
         _appSecurityConfig = appSecurityConfig.CurrentValue;
         _subscriberDb = subscriberDb;
         _crypto = crypto;
         _jwtAccessTokenService = jwtAccessTokenService;
+        _urlHelper = urlHelper;
     }
 
     [Authorize]
@@ -83,10 +88,15 @@ public class AuthenticateController : Controller
 
         if (!String.IsNullOrWhiteSpace(pageId) && !String.IsNullOrWhiteSpace(redirect))
         {
+            if (!_urlHelper.IsAllowedPortalLoginRedirect(redirect))
+            {
+                return BadRequest("Redirect target is not allowed");
+            }
+
             //string credentials = pageId + "|" + subscriber.FullName + "|" + DateTime.UtcNow.Ticks;
             //credentials = _crypto.EncryptTextDefault(credentials, CryptoResultStringType.Hex);
 
-            var credentialToken = _jwtAccessTokenService.GenerateToken(subscriber.FullName, 1);
+            var credentialToken = _jwtAccessTokenService.GenerateToken(subscriber.FullName, 1, JwtAccessTokenService.PortalLoginAudience);
 
             return Redirect($"{redirect}{(redirect.Contains("?") ? "&" : "?")}credential_token={credentialToken}");
         }

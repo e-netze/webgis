@@ -180,11 +180,16 @@ public class SubscribersController : ApiBaseController
 
                     if (!String.IsNullOrWhiteSpace(login.Redirect))
                     {
+                        if (!_urlHelper.IsAllowedPortalLoginRedirect(login.Redirect))
+                        {
+                            return BadRequest("Redirect target is not allowed");
+                        }
+
                         //string credentials = id + "|" + subscriber.FullName + "|" + DateTime.UtcNow.Ticks;
                         //credentials = _crypto.EncryptTextDefault(credentials, CryptoResultStringType.Hex);
 
                         _logger.LogInformation("Gernerate JWT Token for {fullname}", subscriber.FullName);
-                        var credentialToken = _jwtAccessTokenService.GenerateToken(subscriber.FullName, 1);
+                        var credentialToken = _jwtAccessTokenService.GenerateToken(subscriber.FullName, 1, JwtAccessTokenService.PortalLoginAudience);
 
                         var accessTokenInstance = new AccessToken(_crypto);
                         _logger.LogInformation("Create JWT Token for {fullname}", subscriber.FullName);
@@ -766,7 +771,7 @@ public class SubscribersController : ApiBaseController
         //string credentials = id + "|" + subscriber.FullName + "|" + DateTime.UtcNow.Ticks;
         //credentials = _crypto.EncryptTextDefault(credentials, CryptoResultStringType.Hex);
 
-        string credentialToken = _jwtAccessTokenService.GenerateToken(subscriber.FullName, 1);
+        string credentialToken = _jwtAccessTokenService.GenerateToken(subscriber.FullName, 1, JwtAccessTokenService.PortalLoginAudience);
 
         return JsonObject(new
         {

@@ -24,6 +24,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     results. Adjust `term-whitelist` if required. An unquoted `{0}` in a configured lookup SQL is
     only escaped, not parameterized; quote it (`'{0}'`) to get a parameter.
   [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-lookup)
+- Security (Subscriber login): The redirect target of the subscriber login (`/subscribers/login`,
+  `/authenticate?redirect=`) is validated before a credential token is appended (open redirect /
+  token leak). Only `portal-url` (path `/auth/loginAsAdmin/...`) and hosts listed in the new
+  `api.config` key `subscriber-login-allowed-redirect-hosts` are allowed; other targets return
+  `400 Bad Request`.
+  - Portal credential tokens are bound to the audience `webgis-portal-login`
+    (`JwtAccessTokenService.GenerateToken/ValidateToken` with optional audience); `Portal`
+    `AuthController.LoginAsAdmin` rejects tokens without it.
+  - **!! Breaking Change !!** If the portal is reachable under a host other than `portal-url`, add
+    that host to `subscriber-login-allowed-redirect-hosts`. API and Portal must be updated together.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html)
 
 ## 8.26.4301
 

@@ -153,6 +153,15 @@ static public class ConfigurationServiceExtensions
         return config.Get<bool>(ApiConfigKeys.AllowSubscriberLogin, false);
     }
 
+    static public string[] SubscriberLoginAllowedRedirectHosts(this ConfigurationService config)
+    {
+        return config[ApiConfigKeys.SubscriberLoginAllowedRedirectHosts]?
+                    .Split(',')
+                    .Select(s => s.Trim().ToLowerInvariant())
+                    .Where(s => !string.IsNullOrEmpty(s))
+                    .ToArray() ?? [];
+    }
+
     static public bool AllowRegisterNewSubscribers(this ConfigurationService config)
     {
         return config.Get<bool>(ApiConfigKeys.AllowRegisterNewSubscribers, false);

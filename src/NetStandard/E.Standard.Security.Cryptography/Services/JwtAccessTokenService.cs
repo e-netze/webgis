@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -39,7 +40,9 @@ public class JwtAccessTokenService
         };
     }
 
-    public string GenerateToken(string userName, int lifeTimeMinutes)
+    public const string PortalLoginAudience = "webgis-portal-login";
+
+    public string GenerateToken(string userName, int lifeTimeMinutes, string audience = null)
     {
         var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);
 
@@ -54,6 +57,7 @@ public class JwtAccessTokenService
             Expires = DateTime.UtcNow.AddMinutes(lifeTimeMinutes),
             SigningCredentials = credentials,
             Issuer = DefaultIssuer,
+            Audience = String.IsNullOrEmpty(audience) ? null : audience,
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -62,7 +66,7 @@ public class JwtAccessTokenService
         return tokenHandler.WriteToken(securityToken);
     }
 
-    public ClaimsPrincipal ValidateToken(string token)
+    public ClaimsPrincipal ValidateToken(string token, string requiredAudience = null)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -80,6 +84,16 @@ public class JwtAccessTokenService
                 {
                     throw new SecurityTokenException("Invalid token algorithm");
                 }
+
+                if (!String.IsNullOrEmpty(requiredAudience)
+                    && !jwtToken.Audiences.Contains(requiredAudience))
+                {
+                    throw new SecurityTokenException("Invalid token audience");
+                }
+            }
+            else if (!String.IsNullOrEmpty(requiredAudience))
+            {
+                throw new SecurityTokenException("Invalid token audience");
             }
 
             return principal;
@@ -90,8 +104,8 @@ public class JwtAccessTokenService
         }
     }
 
-    public string ValidatedName(string token)
-        => ValidateToken(token).Identity.Name;
+    public string ValidatedName(string token, string requiredAudience = null)
+        => ValidateToken(token, requiredAudience).Identity.Name;
 
     static public JwtAccessTokenService Create(string signingPassword)
     {
