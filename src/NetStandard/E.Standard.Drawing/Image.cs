@@ -45,7 +45,9 @@ public class ImageWrapper : IDisposable
     {
         // Clone Stream,
         // otherwise there can be GDI+ generic errors on saving the image
-        _image = Current.Engine.CreateBitmap(CloneToMemoryStream(stream));
+        var ms = CloneToMemoryStream(stream);
+        EnsureSupportedImageFormat(ms);
+        _image = Current.Engine.CreateBitmap(ms);
         _imageWidth = _image.Width;
         _imageHeight = _image.Height;
     }
@@ -78,6 +80,27 @@ public class ImageWrapper : IDisposable
     }
 
     #region Helper
+
+    // TIFF decoding is not needed for printing and has known ImageSharp vulnerabilities
+    private static void EnsureSupportedImageFormat(MemoryStream ms)
+    {
+        var buffer = new byte[4];
+        ms.Position = 0;
+        if (ms.Read(buffer, 0, 4) < 4)
+        {
+            throw new ArgumentException("Invalid image data");
+        }
+
+        bool isTiff = (buffer[0] == 0x49 && buffer[1] == 0x49 && (buffer[2] == 0x2A || buffer[2] == 0x2B) && buffer[3] == 0x00)
+                   || (buffer[0] == 0x4D && buffer[1] == 0x4D && buffer[2] == 0x00 && (buffer[3] == 0x2A || buffer[3] == 0x2B));
+
+        if (isTiff)
+        {
+            throw new NotSupportedException("TIFF images are not supported");
+        }
+
+        ms.Position = 0;
+    }
 
     private MemoryStream CloneToMemoryStream(Stream stream)
     {
@@ -112,9 +135,9 @@ public class ImageWrapper : IDisposable
 
     async static public Task<ImageWrapper> CreateImageWrapper(IHttpService httpService, string path)
     {
-        var image = await path.ImageFromUri(httpService);
+        using var ms = await path.BytesFromUri(httpService);
 
-        return new ImageWrapper(image, path);
+        return new ImageWrapper(ms);
     }
 
     #endregion
