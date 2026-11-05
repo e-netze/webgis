@@ -35,6 +35,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - **!! Breaking Change !!** If the portal is reachable under a host other than `portal-url`, add
     that host to `subscriber-login-allowed-redirect-hosts`. API and Portal must be updated together.
   [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html)
+- Security (Portal CORS): The default CORS policy of the Portal (all pages except `/hmac`) no longer
+  reflects the request `Origin` together with credentials (any website could call the portal with
+  the visitor's cookies). Allowed origins are the portal url, the api url and the origins in the new
+  `portal.config` key `add-cors-origins-for-default`.
+  - New optional `portal.config` key `cors-default-allow-any-origin-without-credentials` (default
+    `false`): other origins may read responses, but without credentials.
+  - The `hmac` policy is unchanged. A warning is logged at startup if the test wildcard `~` is
+    configured in `add-cors-origins-for-default` or `add-cors-origins-for-hmac`.
+  - **!! Breaking Change !!** Third-party sites calling Portal pages (other than `/hmac`)
+    cross-origin with credentials must be added to `add-cors-origins-for-default`.
+  [Docs](https://docs.webgiscloud.com/en/webgis/annex/cors.html#annex-cors)
 
 ## 8.26.4301
 

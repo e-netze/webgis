@@ -15,12 +15,16 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-lookup)
 - **Breaking change:** Subscriber login redirects are restricted to `portal-url` (and hosts in the new `api.config` key `subscriber-login-allowed-redirect-hosts`), and portal login tokens are audience-bound. If the portal runs under another host name, add it to the key; update API and Portal together.
   [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html)
+- **Breaking change:** The default CORS policy of the Portal (all pages except `/hmac`) only allows the portal url, the api url and origins listed in the new `portal.config` key `add-cors-origins-for-default`; other sites can no longer call the portal with credentials. Add third-party hosts that need this to the key. The `hmac` policy is unchanged.
+  [Docs](https://docs.webgiscloud.com/en/webgis/annex/cors.html#annex-cors)
 
 ### New
 ### Fixed
 
 - Security: SQL injection in lookup/autocomplete queries (VisFilter) fixed; search terms are bound as parameters or escaped.
 - Security: Open redirect in the subscriber login no longer leaks portal credential tokens to arbitrary URLs.
+- Security: Portal CORS no longer reflects any origin with credentials; optional keys `add-cors-origins-for-default` and `cors-default-allow-any-origin-without-credentials` in `portal.config`, startup warning if `~` is used.
+  [Docs](https://docs.webgiscloud.com/en/webgis/annex/cors.html#annex-cors)
 
 ## 
 
