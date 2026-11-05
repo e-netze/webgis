@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Fixed
 
+- Security (VisFilter lookups): The search term of lookup/autocomplete queries is no longer inserted
+  unchecked into SQL (SQL injection).
+  - DB lookups: `{0}` inside string literals (`'{0}'`, `'{0}%'`, `'%{0}%'`) is bound as a
+    database parameter (`+` for SQL Server, `||` for Oracle/PostgreSQL/SQLite). Other `{0}` and
+    `{key}` placeholders are inserted with escaped quotes.
+  - Distinct-layer lookups (`ConnectionString = "#"`): the term is escaped in the `like` expression.
+  - Search terms and parameter values must match the new `api.config` setting
+    `lookup:term-whitelist`; otherwise the lookup returns an empty list.
+  - **!! Breaking Change !!** Search terms containing characters outside the default whitelist
+    (e.g. `;`, `"`, `=`, `<`, `>`, `*`, `?`, `\`) or longer than 120 characters no longer return
+    results. Adjust `term-whitelist` if required. An unquoted `{0}` in a configured lookup SQL is
+    only escaped, not parameterized; quote it (`'{0}'`) to get a parameter.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-lookup)
+
 ## 8.26.4301
 
 ### Added

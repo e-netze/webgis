@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using E.Standard.DbConnector;
@@ -40,9 +43,14 @@ public class LookupService
 
             if (layer is ILayerDistinctQuery)
             {
+                if (!String.IsNullOrEmpty(term) && !LookupSettings.IsValidTerm(term))
+                {
+                    return values;
+                }
+
                 var distinctValues = await ((ILayerDistinctQuery)layer).QueryDistinctValues(
                     _requestContext, parameter,
-                    where: String.IsNullOrEmpty(term) ? null : $"{parameter} like '{term}%'",
+                    where: String.IsNullOrEmpty(term) ? null : $"{parameter} like '{EscapeSqlLiteral(term)}%'",
                     orderBy: parameter);
 
                 foreach (var distinctValue in distinctValues.OrEmpty())
@@ -105,21 +113,74 @@ public class LookupService
         {
             #region Db Connection
 
-            string sql = lookupConnection.SqlClause.Replace("{0}", term);
-            if (replacements != null)
+            term ??= String.Empty;
+
+            if (!LookupSettings.IsValidTerm(term))
             {
-                foreach (var key in replacements.Keys)
+                return values;
+            }
+
+            foreach (var replacementValue in replacements?.Values ?? Enumerable.Empty<string>())
+            {
+                if (!LookupSettings.IsValidTerm(replacementValue))
                 {
-                    sql = sql.Replace($"{{{key}}}", replacements[key]);
+                    return values;
                 }
             }
 
             using (DBFactory dbFactory = new DBFactory(lookupConnection.ConnectionString))
             using (var dbConnection = dbFactory.GetConnection())
             {
+                var termParameters = new List<DbParameter>();
+                string concatOperator = dbFactory.DatabaseType is DBType.sql or DBType.microsoftsql ? " + " : " || ";
+
+                // '{0}' / '{0}%' / '%{0}%' inside string literals are bound as parameters
+                string sql = SqlLiteralRegex.Replace(lookupConnection.SqlClause ?? String.Empty, m =>
+                {
+                    if (!m.Value.Contains("{0}"))
+                    {
+                        return m.Value;
+                    }
+
+                    var parts = m.Value.Substring(1, m.Value.Length - 2).Split(new[] { "{0}" }, StringSplitOptions.None);
+                    var expressions = new List<string>();
+
+                    for (int i = 0; i < parts.Length; i++)
+                    {
+                        if (parts[i].Length > 0)
+                        {
+                            expressions.Add($"'{parts[i]}'");
+                        }
+
+                        if (i < parts.Length - 1)
+                        {
+                            var name = $"lookupterm{termParameters.Count}";
+                            termParameters.Add(dbFactory.GetParameter(name, term));
+                            expressions.Add(dbFactory.ParaName(name));
+                        }
+                    }
+
+                    return $"({String.Join(concatOperator, expressions)})";
+                });
+
+                // remaining {0} outside of string literals: validated and escaped
+                sql = sql.Replace("{0}", EscapeSqlLiteral(term));
+
+                if (replacements != null)
+                {
+                    foreach (var key in replacements.Keys)
+                    {
+                        sql = sql.Replace($"{{{key}}}", EscapeSqlLiteral(replacements[key]));
+                    }
+                }
+
                 await dbConnection.OpenAsync();
                 var dbCommand = dbFactory.GetCommand(dbConnection);
                 dbCommand.CommandText = sql;
+                foreach (var termParameter in termParameters)
+                {
+                    dbCommand.Parameters.Add(termParameter);
+                }
 
                 using (var dbReader = await dbCommand.ExecuteReaderAsync())
                 {
@@ -166,6 +227,10 @@ public class LookupService
 
         return values;
     }
+
+    private static readonly Regex SqlLiteralRegex = new Regex(@"'(?:[^']|'')*'", RegexOptions.Compiled);
+
+    private static string EscapeSqlLiteral(string value) => (value ?? String.Empty).Replace("'", "''");
 
     public bool RequiresLayer(ILookupConnection lookupConnection)
         => lookupConnection?.ConnectionString == "#";

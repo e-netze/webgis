@@ -10,8 +10,14 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 ## Unreleased
 
 ### Upgrade notes
+
+- **Breaking change:** Lookup/autocomplete search terms (VisFilter) are now validated against the whitelist `lookup:term-whitelist` in `api.config`; terms with other characters (e.g. `;`, `"`, `=`, `*`) or more than 120 characters return no results. Adjust the key if needed, and quote `{0}` in configured lookup SQL (`'{0}%'`) so it is bound as a parameter.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-lookup)
+
 ### New
 ### Fixed
+
+- Security: SQL injection in lookup/autocomplete queries (VisFilter) fixed; search terms are bound as parameters or escaped.
 
 ## 
 
