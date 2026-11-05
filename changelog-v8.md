@@ -11,6 +11,42 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Fixed
 
+- Security (VisFilter lookups): The search term of lookup/autocomplete queries is no longer inserted
+  unchecked into SQL (SQL injection).
+  - DB lookups: `{0}` inside string literals (`'{0}'`, `'{0}%'`, `'%{0}%'`) is bound as a
+    database parameter (`+` for SQL Server, `||` for Oracle/PostgreSQL/SQLite). Other `{0}` and
+    `{key}` placeholders are inserted with escaped quotes.
+  - Distinct-layer lookups (`ConnectionString = "#"`): the term is escaped in the `like` expression.
+  - Search terms and parameter values must match the new `api.config` setting
+    `lookup:term-whitelist`; otherwise the lookup returns an empty list.
+  - **!! Breaking Change !!** Search terms containing characters outside the default whitelist
+    (e.g. `;`, `"`, `=`, `<`, `>`, `*`, `?`, `\`) or longer than 120 characters no longer return
+    results. Adjust `term-whitelist` if required. An unquoted `{0}` in a configured lookup SQL is
+    only escaped, not parameterized; quote it (`'{0}'`) to get a parameter.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-lookup)
+- Security (Subscriber login): The redirect target of the subscriber login (`/subscribers/login`,
+  `/authenticate?redirect=`) is validated before a credential token is appended (open redirect /
+  token leak). Only `portal-url` (path `/auth/loginAsAdmin/...`) and hosts listed in the new
+  `api.config` key `subscriber-login-allowed-redirect-hosts` are allowed; other targets return
+  `400 Bad Request`.
+  - Portal credential tokens are bound to the audience `webgis-portal-login`
+    (`JwtAccessTokenService.GenerateToken/ValidateToken` with optional audience); `Portal`
+    `AuthController.LoginAsAdmin` rejects tokens without it.
+  - **!! Breaking Change !!** If the portal is reachable under a host other than `portal-url`, add
+    that host to `subscriber-login-allowed-redirect-hosts`. API and Portal must be updated together.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html)
+- Security (Portal CORS): The default CORS policy of the Portal (all pages except `/hmac`) no longer
+  reflects the request `Origin` together with credentials (any website could call the portal with
+  the visitor's cookies). Allowed origins are the portal url, the api url and the origins in the new
+  `portal.config` key `add-cors-origins-for-default`.
+  - New optional `portal.config` key `cors-default-allow-any-origin-without-credentials` (default
+    `false`): other origins may read responses, but without credentials.
+  - The `hmac` policy is unchanged. A warning is logged at startup if the test wildcard `~` is
+    configured in `add-cors-origins-for-default` or `add-cors-origins-for-hmac`.
+  - **!! Breaking Change !!** Third-party sites calling Portal pages (other than `/hmac`)
+    cross-origin with credentials must be added to `add-cors-origins-for-default`.
+  [Docs](https://docs.webgiscloud.com/en/webgis/annex/cors.html#annex-cors)
+
 ## 8.26.4301
 
 ### Added

@@ -9,6 +9,7 @@ using Api.AppCode.Mvc.Wrapper;
 using E.Standard.Api.App;
 using E.Standard.Api.App.Configuration;
 using E.Standard.Api.App.Extensions;
+using E.Standard.Api.App.Services;
 using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
@@ -116,6 +117,8 @@ public class ApiGlobalsService
         {
             ApiGlobals.TocTableFeatureLimit = tocTableFeatureLimit;
         }
+
+        LookupSettings.TermWhiteList = config[ApiConfigKeys.ToKey("lookup:term-whitelist")];
 
         EsriDateExtensions.DateFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-date-format")].OrTake(EsriDateExtensions.DateFormatString);
         EsriDateExtensions.TimeFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-time-format")].OrTake(EsriDateExtensions.TimeFormatString);

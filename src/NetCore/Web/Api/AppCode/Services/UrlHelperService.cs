@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 using Api.Core.AppCode.Extensions;
@@ -142,6 +143,28 @@ public class UrlHelperService : IUrlHelperService,
     #endregion
 
     #region Portal
+
+    public bool IsAllowedPortalLoginRedirect(string redirect)
+    {
+        if (!Uri.TryCreate(redirect, UriKind.Absolute, out var target)
+            || (target.Scheme != Uri.UriSchemeHttp && target.Scheme != Uri.UriSchemeHttps)
+            || !String.IsNullOrEmpty(target.UserInfo))
+        {
+            return false;
+        }
+
+        if (Uri.TryCreate(PortalUrl(HttpSchema.Default), UriKind.Absolute, out var portal)
+            && String.Equals(portal.Host, target.Host, StringComparison.OrdinalIgnoreCase)
+            && portal.Port == target.Port
+            && target.AbsolutePath.StartsWith($"{portal.AbsolutePath.TrimEnd('/')}/auth/loginasadmin/", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        var hostWithPort = $"{target.Host}:{target.Port}".ToLowerInvariant();
+        return _config.SubscriberLoginAllowedRedirectHosts()
+                      .Any(h => h == target.Host.ToLowerInvariant() || h == hostWithPort);
+    }
 
     public string PortalInternalUrl()
     {

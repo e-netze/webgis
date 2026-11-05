@@ -186,7 +186,7 @@ public class AuthController : PortalBaseController
     {
         try
         {
-            var subscriberName = _jwtAccessTokenService.ValidatedName(credential_token);
+            var subscriberName = _jwtAccessTokenService.ValidatedName(credential_token, JwtAccessTokenService.PortalLoginAudience);
 
             if (!String.IsNullOrEmpty(subscriberName))
             {

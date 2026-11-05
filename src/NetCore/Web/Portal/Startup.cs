@@ -332,6 +332,11 @@ public class Startup
     {
         logger.LogInformation("Configure Application");
 
+        foreach (var policy in Configuration.CorsReflectingPolicies())
+        {
+            logger.LogWarning("SECURITY: add-cors-origins-for-{Policy} contains '~' - every request origin is allowed (with credentials). Use for testing only, never in production!", policy);
+        }
+
         //if (Environment.IsDevelopment())
         //{
         //    //app.UseBrowserLink();

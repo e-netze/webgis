@@ -45,6 +45,7 @@ public class ApiConfigKeys
 
     public const string SubscriberDbConnectionString = ConfigurationSectionName + ":subscriber-db-connectionstring";
     public const string AllowSubscriberLogin = ConfigurationSectionName + ":allow-subscriber-login";
+    public const string SubscriberLoginAllowedRedirectHosts = ConfigurationSectionName + ":subscriber-login-allowed-redirect-hosts";
     public const string AllowRegisterNewSubscribers = ConfigurationSectionName + ":allow-register-new-subscribers";
     public const string AdminSubscribers = ConfigurationSectionName + ":subscriber-admins";
     public const string SubscriberTools = ConfigurationSectionName + ":subscription-tools";

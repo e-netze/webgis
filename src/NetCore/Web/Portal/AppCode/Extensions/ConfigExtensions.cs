@@ -487,5 +487,15 @@ static public class ConfigExtensions
                 .ToArray();
     }
 
+    static public bool CorsDefaultAllowAnyOriginWithoutCredentials(this IConfiguration config)
+        => "true".Equals(config[PortalConfigKeys.ToKey("cors-default-allow-any-origin-without-credentials")]?.Trim(),
+                         StringComparison.OrdinalIgnoreCase);
+
+    // "~" reflects the request origin (test only) and must never be used in production
+    static public string[] CorsReflectingPolicies(this IConfiguration config)
+        => new[] { "default", "hmac" }
+            .Where(p => config.AdditionalCorsOriginsFor(p).Contains("~"))
+            .ToArray();
+
     #endregion
 }
