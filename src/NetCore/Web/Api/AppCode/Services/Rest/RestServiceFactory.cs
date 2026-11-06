@@ -35,6 +35,8 @@ public class RestServiceFactory : IDisposable
     public RestToolsHelperService Tools => _serviceProvider.GetRequiredService<RestToolsHelperService>();
     public RestSnappingService Snapping => _serviceProvider.GetRequiredService<RestSnappingService>();
 
+    public Api.PortalMapAuthorAuthorizationService PortalMapAuthorAuthorization => _serviceProvider.GetRequiredService<Api.PortalMapAuthorAuthorizationService>();
+
     public BridgeService Bridge => _serviceProvider.GetRequiredService<BridgeService>();
 
     public RestImagingService Imaging => _serviceProvider.GetRequiredService<RestImagingService>();

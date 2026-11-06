@@ -120,6 +120,24 @@ public class ApiGlobalsService
 
         LookupSettings.TermWhiteList = config[ApiConfigKeys.ToKey("lookup:term-whitelist")];
 
+        DynamicContentSettings.SetAllowedHosts(config[ApiConfigKeys.ToKey("dynamic-content:allow-hosts")]);
+        if (int.TryParse(config[ApiConfigKeys.ToKey("dynamic-content:timeout-seconds")], out int dynamicContentTimeout) && dynamicContentTimeout > 0)
+        {
+            DynamicContentSettings.TimeoutSeconds = dynamicContentTimeout;
+        }
+        if (long.TryParse(config[ApiConfigKeys.ToKey("dynamic-content:max-response-bytes")], out long dynamicContentMaxBytes) && dynamicContentMaxBytes > 0)
+        {
+            DynamicContentSettings.MaxResponseBytes = dynamicContentMaxBytes;
+        }
+        if (int.TryParse(config[ApiConfigKeys.ToKey("dynamic-content:max-redirects")], out int dynamicContentMaxRedirects) && dynamicContentMaxRedirects >= 0)
+        {
+            DynamicContentSettings.MaxRedirects = dynamicContentMaxRedirects;
+        }
+        if (bool.TryParse(config[ApiConfigKeys.ToKey("dynamic-content:allow-unsigned")], out bool dynamicContentAllowUnsigned))
+        {
+            DynamicContentSettings.AllowUnsigned = dynamicContentAllowUnsigned;
+        }
+
         EsriDateExtensions.DateFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-date-format")].OrTake(EsriDateExtensions.DateFormatString);
         EsriDateExtensions.TimeFormatString = config[ApiConfigKeys.ToKey("tool-identify:result-time-format")].OrTake(EsriDateExtensions.TimeFormatString);
         if (!String.IsNullOrEmpty(config[ApiConfigKeys.ToKey("tool-identify:result-date-time-culture")]))

@@ -12,6 +12,7 @@ using E.Standard.WebMapping.Core.Api;
 using E.Standard.WebMapping.Core.Api.Abstraction;
 using E.Standard.WebMapping.Core.Api.Bridge;
 using E.Standard.WebMapping.Core.Api.EventResponse;
+using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Api.IO;
 using E.Standard.WebMapping.Core.Api.Reflection;
 using E.Standard.WebMapping.Core.Api.UI.Abstractions;
@@ -171,6 +172,7 @@ public class ShareMap : IApiServerButtonLocalizable<ShareMap>,
 
         string name = Guid.NewGuid().ToString().HashHex();
 
+        DynamicContentSignature.EnsureMapJsonSigned(e["serialization-share-mapjson"], bridge.CryptoService);
         bridge.Storage.Save(name, e["serialization-share-mapjson"]);
 
         string geoJson = e["serialization-share-graphics-geojson"];

@@ -499,12 +499,17 @@ public class RestToolsHelperService
 
         if (apiResponse is ApiDynamicContentEventResponse)
         {
+            var dynamicContentResponse = (ApiDynamicContentEventResponse)apiResponse;
+            string dynamicContentType = dynamicContentResponse.Type.ToString().ToLower();
+
             response.DynamicContent = new DynamicContentEventDTO()
             {
                 Id = "dyncontent_" + Guid.NewGuid().ToString("N").ToLower(),
-                Name = ((ApiDynamicContentEventResponse)apiResponse).Name,
-                Url = ((ApiDynamicContentEventResponse)apiResponse).Url,
-                Type = ((ApiDynamicContentEventResponse)apiResponse).Type.ToString().ToLower(),
+                Name = dynamicContentResponse.Name,
+                Url = DynamicContentSignature.RequiresSignature(dynamicContentType)
+                        ? DynamicContentSignature.Sign(_crypto, dynamicContentType, dynamicContentResponse.Url)
+                        : dynamicContentResponse.Url,
+                Type = dynamicContentType,
             };
         }
 

@@ -1,4 +1,4 @@
-# Architecture / Developer Documentation
+﻿# Architecture / Developer Documentation
 
 Developer-oriented documentation of WebGIS features and subsystems: how they work technically,
 which projects and classes are involved, flow diagrams, design decisions and pitfalls.
@@ -19,6 +19,7 @@ which projects and classes are involved, flow diagrams, design decisions and pit
 | [CMS Deployment](cms-deployment.md) | CMS / API / Portal | Main deploy, branch deploys (API discovery, branch selection), fast deploy file snapshot, single-pass export. |
 | [CMS Git Support](cms-git.md) | CMS | Optional git versioning per cms-item: user working copies, branches, push/pull, merge and conflict resolution. |
 | [Detachable Windows](detachable-windows.md) | Viewer | `webgis.windowManager`: detach toolbar/query results into a Document Picture-in-Picture window, jQuery hooks, restore state. |
+| [Dynamic Content Security](dynamic-content-security.md) | API / Viewer | SSRF-safe download of dynamic content (GeoRSS/GeoJSON), signed urls, `toc-api-query`. |
 | [Expressions & AutoValues](expressions-autovalues.md) | API / Editing / CMS | Expression language (parser, syntax detection), Editing AutoValues, table column expressions. |
 | [Logging & Observability](logging-observability.md) | API / CMS / Portal | Logging backends and fan-out, DB batch logging, OpenTelemetry, Serilog. |
 | [MapMarkup Measure Tools](mapmarkup-measure-tools.md) | Viewer / API / GeoServices | Composite measure graphics (angles, buffer zone, object distance, measurement grid, ...) and "add from selection": Leaflet plugin, sketch type, server calculators for print and shapefile export. |

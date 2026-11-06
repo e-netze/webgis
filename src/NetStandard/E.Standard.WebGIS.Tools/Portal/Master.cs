@@ -68,6 +68,7 @@ public class Master : IApiServerButton, IStorageInteractions
     #region Commands
 
     [ServerToolCommand("set-master")]
+    [PortalMapAuthorRequired]
     public ApiEventResponse OnSaveMap(IBridge bridge, ApiToolEventArguments e)
     {
         string name = MasterBlobName;

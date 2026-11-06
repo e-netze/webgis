@@ -216,6 +216,7 @@ public class SaveMap : IApiServerButtonLocalizable<SaveMap>,
             bridge.Storage.Remove($"{name}-graphics", StorageBlobType.Data);
         }
 
+        DynamicContentSignature.EnsureMapJsonSigned(e["serialization-save-mapjson"], bridge.CryptoService);
         bridge.Storage.Save(encodedName, e["serialization-save-mapjson"]);
 
         string geoJson = e["serialization-save-graphics-geojson"];

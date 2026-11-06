@@ -1,8 +1,11 @@
 ﻿using System;
 
 using E.Standard.CMS.Core;
+using E.Standard.Api.App.Services;
 using E.Standard.Platform;
+using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebGIS.Core;
+using E.Standard.WebMapping.Core.Api.Extensions;
 using E.Standard.WebMapping.Core.Geometry;
 
 using Microsoft.AspNetCore.Http;
@@ -24,9 +27,22 @@ static public class DynamicContentRequestExtensions
         return null;
     }
 
-    static public string DynamicContentUrl(this HttpRequest request, CmsDocument.UserIdentification ui)
+    static public string DynamicContentUrl(this HttpRequest request, CmsDocument.UserIdentification ui, ICryptoService crypto)
     {
-        string url = request.Form["url"].ToString().ReplacePlaceholders(ui);
+        string type = request.DynamicContentType();
+        if (type == DynamicContentSignature.TocApiQueryType)
+        {
+            return request.Form["url"].ToString();
+        }
+
+        string url = DynamicContentSignature.Unwrap(crypto, type, request.Form["url"].ToString(), out bool signed);
+
+        if (DynamicContentSignature.RequiresSignature(type) && !signed && !DynamicContentSettings.AllowUnsigned)
+        {
+            throw new UnauthorizedAccessException("Dynamic content url is not signed. Reload the map.");
+        }
+
+        url = url.ReplacePlaceholders(ui);
 
         var bbox = request.DynamicContentBbox();
         if (bbox != null)

@@ -158,13 +158,13 @@ public class LoadMap : IApiServerButtonLocalizable<LoadMap>,
 
         if (bridge.Storage.Exists(encodedName))
         {
-            mapJson = bridge.Storage.LoadString(encodedName).ReplaceLegacyMapJsonItems();
+            mapJson = bridge.Storage.LoadString(encodedName).ReplaceLegacyMapJsonItemsAndSignDynamicContent(bridge.CryptoService);
             geoJson = bridge.Storage.LoadString($"{encodedName}-graphics", StorageBlobType.Data);
         }
         else if (bridge.Storage.Exists(name))
         {
             // Old projects do not has an encoded name
-            mapJson = bridge.Storage.LoadString(name).ReplaceLegacyMapJsonItems();
+            mapJson = bridge.Storage.LoadString(name).ReplaceLegacyMapJsonItemsAndSignDynamicContent(bridge.CryptoService);
             geoJson = bridge.Storage.LoadString($"{name}-graphics", StorageBlobType.Data);
         }
 
@@ -237,7 +237,7 @@ public class LoadMap : IApiServerButtonLocalizable<LoadMap>,
             }
         }
 
-        string mapJson = bridge.Storage.LoadString(project).ReplaceLegacyMapJsonItems();
+        string mapJson = bridge.Storage.LoadString(project).ReplaceLegacyMapJsonItemsAndSignDynamicContent(bridge.CryptoService);
         string geoJson = bridge.Storage.LoadString(
             bridge.Storage.AppendToName(project, "-graphics"), StorageBlobType.Data);
 
