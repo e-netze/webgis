@@ -17,10 +17,14 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html)
 - **Breaking change:** The default CORS policy of the Portal (all pages except `/hmac`) only allows the portal url, the api url and origins listed in the new `portal.config` key `add-cors-origins-for-default`; other sites can no longer call the portal with credentials. Add third-party hosts that need this to the key. The `hmac` policy is unchanged.
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/cors.html#annex-cors)
+- **Breaking change:** Dynamic content (GeoRSS/GeoJSON/API queries) is downloaded with SSRF protection and only from signed urls: internal sources must be added to the new `api.config` key `dynamic-content:allow-hosts`, and maps with unsigned dynamic content (MapBuilder static html, urls set in `custom.js`) only load it if `dynamic-content:allow-unsigned` is `true`. Maps with unsigned dynamic content must be reloaded and saved again.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-dynamic-content)
 
 ### New
 ### Fixed
 
+- Security: SSRF via the dynamic content proxy fixed; only public targets are downloaded and dynamic content urls are signed by the API (new `api.config` section `dynamic-content`).
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-dynamic-content)
 - Security: SQL injection in lookup/autocomplete queries (VisFilter) fixed; search terms are bound as parameters or escaped.
 - Security: Open redirect in the subscriber login no longer leaks portal credential tokens to arbitrary URLs.
 - Security: Portal CORS no longer reflects any origin with credentials; optional keys `add-cors-origins-for-default` and `cors-default-allow-any-origin-without-credentials` in `portal.config`, startup warning if `~` is used.

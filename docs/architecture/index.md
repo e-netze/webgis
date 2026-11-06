@@ -15,6 +15,7 @@ which projects and classes are involved, flow diagrams, design decisions and pit
 | [System Overview](system-overview.md) | All | Start here: applications, how they interact, project layout, configuration, deployment. |
 | [AGS Query Strategy](ags-query-strategy.md) | API / GeoServices | Workaround for incomplete ArcGIS Server spatial query results (bounding-box pre-filter bug). |
 | [Authentication & Roles](authentication-roles.md) | Portal / API / CMS | Login methods, roles and role parameters, Portal-API HMAC, CMS item authorization. |
+| [Dynamic Content Security](dynamic-content-security.md) | API / Viewer | SSRF-safe download of dynamic content (GeoRSS/GeoJSON), signed urls, `toc-api-query`. |
 | [Expressions & AutoValues](expressions-autovalues.md) | API / Editing / CMS | Expression language (parser, syntax detection), Editing AutoValues, table column expressions. |
 | [Logging & Observability](logging-observability.md) | API / CMS / Portal | Logging backends and fan-out, DB batch logging, OpenTelemetry, Serilog. |
 | [Query Results](query-results.md) | API / Viewer | Query results end-to-end: QueryEngine, DTO metadata, result table/list paging, export. |

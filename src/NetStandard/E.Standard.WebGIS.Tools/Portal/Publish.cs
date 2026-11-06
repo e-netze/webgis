@@ -149,6 +149,7 @@ public class Publish : IApiServerButton, IStorageInteractions
 
         var visibility = MapVisibility(bridge);
 
+        DynamicContentSignature.EnsureMapJsonSigned(e["page-publish-mapjson"], bridge.CryptoService);
         bridge.Storage.Save(name, e["page-publish-mapjson"]);
 
         string geoJson = e["page-publish-graphics-geojson"];
@@ -309,7 +310,7 @@ public class Publish : IApiServerButton, IStorageInteractions
             throw new Exception("Karte existiert nicht oder Sie sind nicht berechtigt diese Karte anzuzeigen");
         }
 
-        string mapJson = bridge.Storage.LoadString(map).ReplaceLegacyMapJsonItems();
+        string mapJson = bridge.Storage.LoadString(map).ReplaceLegacyMapJsonItemsAndSignDynamicContent(bridge.CryptoService);
         string geoJson = bridge.Storage.LoadString(
             bridge.Storage.AppendToName(map, ".graphics"), WebMapping.Core.Api.IO.StorageBlobType.Data);
 

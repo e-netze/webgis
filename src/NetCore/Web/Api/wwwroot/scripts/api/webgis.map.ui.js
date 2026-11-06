@@ -1729,6 +1729,7 @@
                         img = webgis.css.imgResource('rss-16.png', 'toc');
                         break;
                     case 'api-query':
+                    case 'toc-api-query':
                         img = webgis.css.imgResource('binoculars-16.png', 'toc');
                         break;
                     default:

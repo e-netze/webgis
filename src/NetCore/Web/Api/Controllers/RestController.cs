@@ -1464,9 +1464,32 @@ public class RestController : ApiBaseController
         return await SecureMethodHandlerAsync(async (ui) =>
         {
             string type = Request.DynamicContentType();
-            string url = Request.DynamicContentUrl(ui);
+            string url = Request.DynamicContentUrl(ui, _crypto);
 
-            if (type == "api-query" || type == "apiquery")
+            if (type == DynamicContentSignature.TocApiQueryType)
+            {
+                // service ids look like "cmsservice@cmsid", so the query id is everything after the last '@'
+                int separator = url.LastIndexOf('@');
+                string tocServiceId = separator > 0 ? url.Substring(0, separator) : null;
+                string tocQueryId = separator > 0 ? url.Substring(separator + 1) : null;
+                if (String.IsNullOrWhiteSpace(tocServiceId) || String.IsNullOrWhiteSpace(tocQueryId))
+                {
+                    throw new ArgumentException("Invalid toc query: expected serviceId@queryId");
+                }
+
+                var tocQueryString = HttpUtility.ParseQueryString("f=json");
+                foreach (string key in Request.Query.Keys)
+                {
+                    if (String.IsNullOrEmpty(tocQueryString[key]))
+                    {
+                        tocQueryString.Add(key, Request.Query[key]);
+                    }
+                }
+
+                // PerformQueryAsync loads the query for the user and fails if it does not exist or is not allowed
+                return await _restService.Query.PerformQueryAsync(this, tocServiceId, tocQueryId, tocQueryString, true, QueryGeometryType.Simple, ui);
+            }
+            else if (type == "api-query" || type == "apiquery")
             {
                 string[] rawUrlParts = url.Split('?')[0].Split('/');
 
@@ -1492,7 +1515,8 @@ public class RestController : ApiBaseController
             }
             else if (type == "georss")
             {
-                var features = await FeaturesDTO.FromGeoRSS(_http, url);
+                var rssString = await DynamicContentFetcher.GetStringAsync(url, _http.GetProxy(url));
+                var features = FeaturesDTO.FromGeoRSS(rssString);
 
                 return await JsonObject(features);
             }
@@ -1500,8 +1524,7 @@ public class RestController : ApiBaseController
             {
                 try
                 {
-                    byte[] data = await _http.GetDataAsync(url);  //dummyConnector.GetBytes(url);
-
+                    byte[] data = await DynamicContentFetcher.GetBytesAsync(url, _http.GetProxy(url));
 
                     return RawResponse(data, "application/json", null);
                 }
@@ -1514,7 +1537,7 @@ public class RestController : ApiBaseController
             {
                 try
                 {
-                    string dataString = await _http.GetStringAsync(url);
+                    string dataString =                     await DynamicContentFetcher.GetStringAsync(url, _http.GetProxy(url));
 
                     var geoJsonResponse = JSerializer.Deserialize<GeoJsonResponseDTO>(dataString);
 

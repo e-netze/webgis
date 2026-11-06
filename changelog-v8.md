@@ -46,6 +46,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - **!! Breaking Change !!** Third-party sites calling Portal pages (other than `/hmac`)
     cross-origin with credentials must be added to `add-cors-origins-for-default`.
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/cors.html#annex-cors)
+- Security (Dynamic content / SSRF): The `DynamicContentProxy` no longer downloads arbitrary urls
+  from the server side, and the urls of dynamic content cannot be manipulated by the client.
+  - New `DynamicContentFetcher` (`E.Standard.Api.App`): only `http`/`https` without user info,
+    the resolved addresses must be public (loopback, private, link-local/metadata, CGNAT,
+    multicast/reserved and IPv4-mapped IPv6 are rejected, checked at connect time), redirects are
+    followed manually and validated per hop, timeout and maximum response size. Certificates are
+    validated; `UrlInputRedirections` are not applied.
+  - New `api.config` section `dynamic-content`: `allow-hosts`, `timeout-seconds`,
+    `max-response-bytes`, `max-redirects`, `allow-unsigned`.
+  - The urls of all dynamic content types (`georss`, `geojson`, `geojson-embedded`, `api-query`)
+    are signed (`url#webgis-sig=...`, `DynamicContentSignature`) when a map is loaded
+    (`ReplaceLegacyMapJsonItemsAndSignDynamicContent` in `LoadMap`/`Publish.MapJson`) and in tool
+    event responses. Saving, sharing and publishing a map with unsigned dynamic content is
+    rejected; the proxy only processes signed urls unless `allow-unsigned` is `true`.
+  - TOC themes with display style `DynamicContentMarker` use the new type `toc-api-query` with the
+    url `serviceId@queryId`; the server builds and authorizes the query itself.
+  - **!! Breaking Change !!** Internal sources must be listed in `dynamic-content:allow-hosts`.
+    Dynamic content with unsigned urls (maps created as static html by the MapBuilder, urls set
+    in `custom.js`) is no longer loaded unless `dynamic-content:allow-unsigned` is `true`.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-dynamic-content)
+  [Architecture](docs/architecture/dynamic-content-security.md)
 
 ## 8.26.4301
 
