@@ -142,6 +142,7 @@ public class Publish : IApiServerButton, IStorageInteractions
     #region Commands
 
     [ServerToolCommand("publish-map")]
+    [PortalMapAuthorRequired]
     public ApiEventResponse OnSaveMap(IBridge bridge, ApiToolEventArguments e)
     {
         string name = MapName(bridge).ToMapNameOrCategory();
@@ -181,13 +182,10 @@ public class Publish : IApiServerButton, IStorageInteractions
     }
 
     [ServerToolCommand("upload-map-image")]
+    [PortalMapAuthorRequired]
     public ApiEventResponse OnUploadContentImage(IBridge bridge, ApiToolEventArguments e)
     {
         string map = e["map"];
-        if (!IsMapAuthor(bridge, map))
-        {
-            throw new Exception("Not authorized");
-        }
 
         byte[] data = Convert.FromBase64String(bridge.SecurityDecryptString(e["page-map-imagedata"]));
 
@@ -217,17 +215,13 @@ public class Publish : IApiServerButton, IStorageInteractions
     }
 
     [ServerToolCommand("map-update-description")]
+    [PortalMapAuthorRequired]
     public ApiEventResponse OnUpdateContentDescription(IBridge bridge, ApiToolEventArguments e)
     {
         string map = e["map"];
-        if (!IsMapAuthor(bridge, map))
-        {
-            throw new Exception("Not authorized");
-        }
 
         byte[] data = System.Text.Encoding.Unicode.GetBytes(e["description"]);
 
-        // ToDo: Sercuriry!!! darf nur Map Author!!!
         bridge.Storage.Save(bridge.Storage.AppendToName(map, ".description"), data, WebMapping.Core.Api.IO.StorageBlobType.Data);
 
         return new ApiRawStringEventResponse(String.Empty, "text/html");
@@ -301,6 +295,7 @@ public class Publish : IApiServerButton, IStorageInteractions
     }
 
     [ServerToolCommand("sign-dynamic-content")]
+    [PortalMapAuthorRequired]
     public ApiEventResponse SignDynamicContent(IBridge bridge, ApiToolEventArguments e)
     {
         // MapBuilder html snippets: the portal renders the dynamic content into the page, so the urls have to carry the signature
@@ -528,13 +523,10 @@ public class Publish : IApiServerButton, IStorageInteractions
     }
 
     [ServerToolCommand("delete-map")]
+    [PortalMapAuthorRequired]
     public ApiEventResponse DeleteMap(IBridge bridge, ApiToolEventArguments e)
     {
         string map = e["map"];
-        if (!IsMapAuthor(bridge, map))
-        {
-            throw new Exception("Not authorized");
-        }
 
         bridge.Storage.Remove(map, WebMapping.Core.Api.IO.StorageBlobType.Normal, true);
 
@@ -542,6 +534,7 @@ public class Publish : IApiServerButton, IStorageInteractions
     }
 
     [ServerToolCommand("remove-category")]
+    [PortalMapAuthorRequired]
     public ApiEventResponse DeleteCategory(IBridge bridge, ApiToolEventArguments e)
     {
         string pageId = e["page"], category = e["category"];
@@ -557,6 +550,7 @@ public class Publish : IApiServerButton, IStorageInteractions
     }
 
     [ServerToolCommand("remove-allcategories")]
+    [PortalMapAuthorRequired]
     public ApiEventResponse DeleteAllCategories(IBridge bridge, ApiToolEventArguments e)
     {
         if (!bridge.Storage.Remove(String.Empty, type: WebMapping.Core.Api.IO.StorageBlobType.Folder, recursive: true))
@@ -578,6 +572,7 @@ public class Publish : IApiServerButton, IStorageInteractions
     }
 
     [ServerToolCommand("set-item-order")]
+    [PortalMapAuthorRequired]
     public ApiEventResponse OnSetItemOrder(IBridge bridge, ApiToolEventArguments e)
     {
         if (String.IsNullOrEmpty(PageId(bridge)))

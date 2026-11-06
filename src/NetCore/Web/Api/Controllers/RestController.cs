@@ -1028,6 +1028,8 @@ public class RestController : ApiBaseController
                                 {
                                     if (methodName == attribute.Method)
                                     {
+                                        _restService.PortalMapAuthorAuthorization.EnsureAuthorized(HttpContext, methodInfo, serverCommandInstance, bridge, methodName);
+
                                         try
                                         {
                                             //apiResponse = (ApiEventResponse)methodInfo.Invoke(button, new object[] { bridge, e });
@@ -1117,6 +1119,8 @@ public class RestController : ApiBaseController
                 {
                     if (method == attribute.Method)
                     {
+                        _restService.PortalMapAuthorAuthorization.EnsureAuthorized(HttpContext, methodInfo, serverCommandInstance, bridge, method);
+
                         apiResponse = await restToolHelper.InvokeMethodAsync<ApiEventResponse>(methodInfo, serverCommandInstance, dependencyProvider);
                     }
                 }

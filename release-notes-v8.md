@@ -19,6 +19,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/cors.html#annex-cors)
 - **Breaking change:** Dynamic content (GeoRSS/GeoJSON/API queries) is downloaded with SSRF protection and only from signed urls: internal sources must be added to the new `api.config` key `dynamic-content:allow-hosts`, and maps with unsigned dynamic content (MapBuilder html snippets created before this version, urls set in `custom.js`) only load it if `dynamic-content:allow-unsigned` is `true`. Maps with unsigned dynamic content must be reloaded and saved again.
   [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-dynamic-content)
+- **Breaking change:** Only users listed in the map authors of a portal page can publish, change or delete its maps and apps (previously also non-authors, e.g. the original author of a map). Check the map authors of your portal pages; API and Portal must be updated together.
 
 ### New
 ### Fixed
@@ -29,6 +30,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Security: Open redirect in the subscriber login no longer leaks portal credential tokens to arbitrary URLs.
 - Security: Portal CORS no longer reflects any origin with credentials; optional keys `add-cors-origins-for-default` and `cors-default-allow-any-origin-without-credentials` in `portal.config`, startup warning if `~` is used.
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/cors.html#annex-cors)
+- Security: Publishing, changing and deleting portal maps/apps (including signing MapBuilder dynamic content) is now checked by the API and only allowed for map authors of the portal page.
 
 ## 
 

@@ -90,7 +90,7 @@ User docs: https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-conf
 
 ## Pitfalls / things to watch
 
-- `publish-map` and `sign-dynamic-content` (and tool methods in general) are not restricted to map authors on the API side: `ProxyController.ToolMethod` and `RestController.ToolMethod` only authenticate, the author check exists only in the Portal UI controllers. Any authenticated portal user can therefore get arbitrary urls signed. To be tackled separately (e.g. check `ContentAuthors` of the portal page). The host/IP checks of the fetcher still apply.
+- `publish-map`, `sign-dynamic-content` and the other writing commands of `Publish`/`PublishApp`/`Master` are restricted on the API side to map authors of the portal page (`[PortalMapAuthorRequired]`, `PortalMapAuthorAuthorizationService`, checked in `RestController.ToolMethod` and for `servertoolcommand` events). The page id is taken from the tool's storage path, so callers must send `page-id` (the MapBuilder does this for `sign-dynamic-content`). The host/IP checks of the fetcher still apply.
 - HTML snippets created by the MapBuilder (Portal `CreateTemplate`) are signed on the client side beforehand (`webgis-mapbuilder.js` calls `sign-dynamic-content`). Snippets created with older versions stay unsigned and need `allow-unsigned=true` or a new snippet.
 - Urls set in `custom.js` are unsigned.
 - Changing the `DefaultPassword` invalidates all signatures; maps are re-signed on the next load, but unsigned maps in the client must be reloaded before saving.

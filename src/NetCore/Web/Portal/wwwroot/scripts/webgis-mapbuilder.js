@@ -895,7 +895,7 @@ function createTemplate(template) {
         // the API signs the urls, otherwise the dynamic content proxy rejects them in the html snippet
         $.ajax({
             url: webgis.url.relative('../proxy/toolmethod/webgis-tools-portal-publish/sign-dynamic-content'),
-            data: { dynamiccontent: dynContentString },
+            data: { dynamiccontent: dynContentString, 'page-id': _openMap ? _openMap.mapPortal : '' },
             type: 'post',
             async: false,
             success: function (result) {

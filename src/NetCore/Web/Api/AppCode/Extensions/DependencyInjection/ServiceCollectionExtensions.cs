@@ -72,6 +72,7 @@ static public class ServiceCollectionExtensions
         services.AddScoped<HttpRequestContextService>();
 
         services.AddTransient<ApiToolsService>();
+        services.AddTransient<PortalMapAuthorAuthorizationService>();
         services.AddTransient<UploadFilesService>();
         services.AddTransient<WebgisPortalService>();
         services.AddTransient<EtagService>();

@@ -138,6 +138,7 @@ public class PublishApp : IApiServerButton, IStorageInteractions
     #region Commands
 
     [ServerToolCommand("publish-app")]
+    [PortalMapAuthorRequired]
     public ApiEventResponse OnSaveTemplate(IBridge bridge, ApiToolEventArguments e)
     {
         string name = TemplateName(bridge);
@@ -160,6 +161,7 @@ public class PublishApp : IApiServerButton, IStorageInteractions
     }
 
     [ServerToolCommand("upload-app-image")]
+    [PortalMapAuthorRequired]
     public ApiEventResponse OnUploadContentImage(IBridge bridge, ApiToolEventArguments e)
     {
         string app = e["app"];
@@ -167,8 +169,6 @@ public class PublishApp : IApiServerButton, IStorageInteractions
 
         app = app.ToLower().StartsWith("app@") ? app : "app@" + app;
 
-
-        // ToDo: Sercuriry!!! darf nur Map Author!!!
         bridge.Storage.Save(bridge.Storage.AppendToName(app, ".image"), data, StorageBlobType.Data);
 
         return new ApiRawStringEventResponse(String.Empty, "text/html");
@@ -260,16 +260,10 @@ public class PublishApp : IApiServerButton, IStorageInteractions
     }
 
     [ServerToolCommand("delete-app")]
+    [PortalMapAuthorRequired]
     public ApiEventResponse DeleteMap(IBridge bridge, ApiToolEventArguments e)
     {
         string app = e["app"];
-
-        var metadata = AppMetadata(bridge, $"app@{app}");
-
-        if (metadata.Author != bridge.CurrentUser?.Username)
-        {
-            throw new Exception("Not authorized");
-        }
 
         bridge.Storage.Remove($"app@{app}", WebMapping.Core.Api.IO.StorageBlobType.Normal, true);
 
