@@ -417,6 +417,7 @@ function selectionChanged() {
             if (includedDynContent[d].selected == true)
                 dynContent.push(includedDynContent[d]);
         }
+        dynContent = signDynamicContent(dynContent);
 
         var queryDefinitions = queries ? eval(queries) : null;
         _map = webgis.createMap('map', {
@@ -889,21 +890,8 @@ function createTemplate(template) {
         if (includedDynContent[d].selected === true)
             dynContent.push(_map._serializeDynamicContent(includedDynContent[d]));
     }
-    var dynContentString = JSON.stringify(dynContent);
+    var dynContentString = JSON.stringify(signDynamicContent(dynContent));
 
-    if (dynContent.length > 0) {
-        // the API signs the urls, otherwise the dynamic content proxy rejects them in the html snippet
-        $.ajax({
-            url: webgis.url.relative('../proxy/toolmethod/webgis-tools-portal-publish/sign-dynamic-content'),
-            data: { dynamiccontent: dynContentString, 'page-id': _openMap ? _openMap.mapPortal : '' },
-            type: 'post',
-            async: false,
-            success: function (result) {
-                if (result && typeof result.dynamiccontent === 'string')
-                    dynContentString = result.dynamiccontent;
-            }
-        });
-    }
     _scale = _map.scale();
     _center = _map.getCenter();
     _bounds = _map.getExtent();
@@ -1634,6 +1622,27 @@ function getDynamicContent() {
         contents.push($(e).data('content'));
     });
     return contents;
+}
+
+// the API signs the urls (map author only), otherwise the dynamic content proxy rejects them.
+// returns signed copies, the items in the UI keep their original urls
+function signDynamicContent(contentItems) {
+    if (!contentItems || contentItems.length === 0)
+        return contentItems;
+
+    var signed = contentItems;
+    $.ajax({
+        url: webgis.url.relative('../proxy/toolmethod/webgis-tools-portal-publish/sign-dynamic-content'),
+        data: { dynamiccontent: JSON.stringify(contentItems), 'page-id': _openMap ? _openMap.mapPortal : '' },
+        type: 'post',
+        async: false,
+        success: function (result) {
+            if (result && typeof result.dynamiccontent === 'string')
+                signed = JSON.parse(result.dynamiccontent);
+        }
+    });
+
+    return signed;
 }
 
 var _snapshots = { active: "default", snapshots:[] };

@@ -1494,7 +1494,7 @@
         if (result && result.features && result.features.length > 0) {
             for (var f in result.features) { // zB Höhenabfrage, Stationierung sind keine echen Abfragen auf ein Service. Hies soll der Ergebnissreiter nicht angezeigt werden, dafür gleich das Popup aufgehen.
                 var feature = result.features[f];
-                if (feature.oid) {
+                if (feature.oid && feature.oid.split) {
                     var qid = feature.oid.split(':');
                     if (qid[0] && qid[0] !== 'unknown') {
                         isServiceQuery = true;
