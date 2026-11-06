@@ -1538,8 +1538,8 @@ webgis.ui.definePlugin('webgis_presentationToc', {
                                         name: presentation.name,
                                         suppressAutoLoad: true,
                                         suppressShowResult: true,
-                                        type: 'api-query',
-                                        url: webgis.baseUrl + '/rest/services/' + service.id + '/queries/' + query.id + '/query?f=json&'
+                                        type: 'toc-api-query',
+                                        url: service.id + '@' + query.id
                                     })
                                     .on('click.webgis_presentation_toc', function (e) {
                                         e.stopPropagation();
