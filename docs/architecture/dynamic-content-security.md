@@ -14,7 +14,7 @@ signed by the API. The client can no longer introduce arbitrary urls.
 | `webgis-api.csproj` | `DynamicContentProxy`, request parsing, settings from `api.config`, signing of tool event responses |
 | `E.Standard.Api.App.csproj` | `DynamicContentFetcher` (SSRF-safe download) and `DynamicContentSettings` |
 | `E.Standard.WebMapping.Core.Api.csproj` | `DynamicContentSignature` (sign/verify, map json processing) |
-| `E.Standard.WebGIS.Tools.csproj` | Signing on map load, signature check on save/share/publish |
+| `E.Standard.WebGIS.Tools.csproj` | Signing on map load and publish, signature check on save/share |
 
 ## Key classes / files
 
@@ -28,7 +28,10 @@ signed by the API. The client can no longer introduce arbitrary urls.
 | `ApiGlobalsService` (`src/NetCore/Web/Api/AppCode/Services/ApiGlobalsService.cs`) | Reads the `dynamic-content:*` keys from `api.config` |
 | `ReplaceLegacyMapJsonItemsAndSignDynamicContent` (`src/NetStandard/E.Standard.WebGIS.Tools/Extensions/LegacyExtensions.cs`) | Legacy map json replacement plus signing |
 | `LoadMap`, `Publish.MapJson` (`src/NetStandard/E.Standard.WebGIS.Tools/Serialization/LoadMap.cs`, `.../Portal/Publish.cs`) | Deliver maps with signed dynamic content |
-| `SaveMap`, `ShareMap`, `Publish` (`.../Serialization/SaveMap.cs`, `.../Serialization/ShareMap.cs`, `.../Portal/Publish.cs`) | Reject unsigned dynamic content on save/share/publish |
+| `SaveMap`, `ShareMap` (`.../Serialization/SaveMap.cs`, `.../Serialization/ShareMap.cs`) | Reject unsigned dynamic content on save/share |
+| `Publish.OnSaveMap` (`.../Portal/Publish.cs`) | `publish-map` (MapBuilder, trusted authors): signs unsigned dynamic content instead of rejecting |
+| `Publish.SignDynamicContent` (`.../Portal/Publish.cs`) | Tool command `sign-dynamic-content`: signs a json array of dynamic content for MapBuilder html snippets |
+| `webgis-mapbuilder.js` (`src/NetCore/Web/Portal/wwwroot/scripts/webgis-mapbuilder.js`) | Calls `sign-dynamic-content` before `mapbuilder/createtemplate` |
 | `RestToolsHelperService` (`src/NetCore/Web/Api/AppCode/Services/Rest/RestToolsHelperService.cs`) | Signs urls of `ApiDynamicContentEventResponse` |
 | `webgis_presentationToc.js` (`src/NetCore/Web/Api/wwwroot/scripts/api/ui/webgis_presentationToc.js`) | TOC theme marker: sends `toc-api-query` with `serviceId@queryId` |
 
@@ -56,9 +59,10 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-    A[Save / share / publish map] --> B{dynamiccontent urls signed?}
+    A[Save / share map] --> B{dynamiccontent urls signed?}
     B -- yes --> C[store map]
     B -- no --> D[error: reload map and save again]
+    E[Publish map - MapBuilder] --> F[sign unsigned urls] --> C
 ```
 
 ## Configuration
@@ -75,17 +79,19 @@ User docs: https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-conf
 
 ## Design decisions
 
-- **Signature instead of host allowlist only:** The urls are admin/map-author content. Signing on map load plus a signature check on save/share/publish makes sure only urls the API has seen can be stored, even though any user can save maps.
+- **Signature instead of host allowlist only:** The urls are admin/map-author content. Signing on map load plus a signature check on save/share makes sure normal users can only store urls the API has seen. Publishing (MapBuilder) is reserved for trusted map authors and signs instead, so existing dynamic content of a loaded map can be re-published.
 - **Signature format:** `Base64(SHA256(StaticDefaultEncrypt_Aes("dynamic-content|{type}|{url}")))`, appended as `#webgis-sig=...` to the url, so it survives the client round-trip. It uses the static `DefaultPassword` of the `ICryptoService` (like `VisFilterDefinitionDTOExtensions.CalcSignature`), because the service offers no HMAC. All API instances sharing a storage need the same `DefaultPassword`.
 - **Verification before placeholders:** Placeholders (`{lng_min}`, user placeholders) are part of the signed template and are replaced by the server afterwards.
 - **Connect-time IP check:** Validating the resolved address in the `ConnectCallback` prevents DNS rebinding; redirects are followed manually and validated per hop. With a configured `WebProxy` the host is resolved and checked before each request.
 - **`toc-api-query`:** TOC theme markers no longer send a url. The client only sends `serviceId@queryId` (split at the last `@`, because service ids look like `cmsservice@cmsid`); the server loads the query for the user, so existence and permission are checked and nothing needs to be signed.
 - **Secure default:** `allow-unsigned` is `false`; admins opt in to less security.
-- Rejected: strict host allowlist only (too much admin effort), a signing endpoint (anyone could get arbitrary urls signed).
+- **Signing command for html snippets:** The Portal renders MapBuilder html snippets itself and has no key, so the MapBuilder client signs the dynamic content first via the API tool command `sign-dynamic-content` (`Publish`).
+- Rejected: strict host allowlist only (too much admin effort).
 
 ## Pitfalls / things to watch
 
-- Maps created by the MapBuilder as static html (Portal `CreateTemplate`) never pass through the API map json and stay unsigned; they only work with `allow-unsigned=true`. Saving such a map fails, and reloading does not help.
+- `publish-map` and `sign-dynamic-content` (and tool methods in general) are not restricted to map authors on the API side: `ProxyController.ToolMethod` and `RestController.ToolMethod` only authenticate, the author check exists only in the Portal UI controllers. Any authenticated portal user can therefore get arbitrary urls signed. To be tackled separately (e.g. check `ContentAuthors` of the portal page). The host/IP checks of the fetcher still apply.
+- HTML snippets created by the MapBuilder (Portal `CreateTemplate`) are signed on the client side beforehand (`webgis-mapbuilder.js` calls `sign-dynamic-content`). Snippets created with older versions stay unsigned and need `allow-unsigned=true` or a new snippet.
 - Urls set in `custom.js` are unsigned.
 - Changing the `DefaultPassword` invalidates all signatures; maps are re-signed on the next load, but unsigned maps in the client must be reloaded before saving.
 - A new place that stores or delivers a map json has to use `ReplaceLegacyMapJsonItemsAndSignDynamicContent` (deliver) or `EnsureMapJsonSigned` (store).
@@ -101,3 +107,4 @@ User docs: https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-conf
 | Version | Change | Reference |
 |---------|--------|-----------|
 | `8.26.4301` | Initial: SSRF-safe download, signed dynamic content urls, `toc-api-query` | changelog-v8.md |
+| `8.26.4301` | Publish signs instead of rejecting; MapBuilder html snippets get signed urls (`sign-dynamic-content`) | changelog-v8.md |

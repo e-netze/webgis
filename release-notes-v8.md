@@ -17,7 +17,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html)
 - **Breaking change:** The default CORS policy of the Portal (all pages except `/hmac`) only allows the portal url, the api url and origins listed in the new `portal.config` key `add-cors-origins-for-default`; other sites can no longer call the portal with credentials. Add third-party hosts that need this to the key. The `hmac` policy is unchanged.
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/cors.html#annex-cors)
-- **Breaking change:** Dynamic content (GeoRSS/GeoJSON/API queries) is downloaded with SSRF protection and only from signed urls: internal sources must be added to the new `api.config` key `dynamic-content:allow-hosts`, and maps with unsigned dynamic content (MapBuilder static html, urls set in `custom.js`) only load it if `dynamic-content:allow-unsigned` is `true`. Maps with unsigned dynamic content must be reloaded and saved again.
+- **Breaking change:** Dynamic content (GeoRSS/GeoJSON/API queries) is downloaded with SSRF protection and only from signed urls: internal sources must be added to the new `api.config` key `dynamic-content:allow-hosts`, and maps with unsigned dynamic content (MapBuilder html snippets created before this version, urls set in `custom.js`) only load it if `dynamic-content:allow-unsigned` is `true`. Maps with unsigned dynamic content must be reloaded and saved again.
   [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-dynamic-content)
 
 ### New

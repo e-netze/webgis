@@ -90,6 +90,29 @@ static public class DynamicContentSignature
             return mapJson;
         }
 
+        bool changed = ProcessItems(items, crypto, requireSigned);
+
+        return changed ? rootObject.ToJsonString() : mapJson;
+    }
+
+    /// <summary>Signs all unsigned urls of a json array of dynamic content (e.g. for MapBuilder html snippets).</summary>
+    static public string SignContentJson(string contentArrayJson, ICryptoService crypto)
+    {
+        if (String.IsNullOrWhiteSpace(contentArrayJson))
+        {
+            return contentArrayJson;
+        }
+
+        if (JsonNode.Parse(contentArrayJson) is not JsonArray items)
+        {
+            return contentArrayJson;
+        }
+
+        return ProcessItems(items, crypto, requireSigned: false) ? items.ToJsonString() : contentArrayJson;
+    }
+
+    private static bool ProcessItems(JsonArray items, ICryptoService crypto, bool requireSigned)
+    {
         bool changed = false;
         foreach (var item in items)
         {
@@ -119,7 +142,7 @@ static public class DynamicContentSignature
             changed = true;
         }
 
-        return changed ? rootObject.ToJsonString() : mapJson;
+        return changed;
     }
 
     private static string StripMarker(string url)

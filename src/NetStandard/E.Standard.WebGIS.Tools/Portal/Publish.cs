@@ -149,8 +149,9 @@ public class Publish : IApiServerButton, IStorageInteractions
 
         var visibility = MapVisibility(bridge);
 
-        DynamicContentSignature.EnsureMapJsonSigned(e["page-publish-mapjson"], bridge.CryptoService);
-        bridge.Storage.Save(name, e["page-publish-mapjson"]);
+        // Publishing is reserved for trusted map authors (MapBuilder): their dynamic content urls are signed here
+        string mapJson = DynamicContentSignature.SignMapJson(e["page-publish-mapjson"], bridge.CryptoService);
+        bridge.Storage.Save(name, mapJson);
 
         string geoJson = e["page-publish-graphics-geojson"];
         if (!String.IsNullOrWhiteSpace(geoJson) && geoJson.Length > 2)
@@ -297,6 +298,16 @@ public class Publish : IApiServerButton, IStorageInteractions
         values.Sort();
 
         return new ApiRawJsonEventResponse(values.ToArray());
+    }
+
+    [ServerToolCommand("sign-dynamic-content")]
+    public ApiEventResponse SignDynamicContent(IBridge bridge, ApiToolEventArguments e)
+    {
+        // MapBuilder html snippets: the portal renders the dynamic content into the page, so the urls have to carry the signature
+        return new ApiRawJsonEventResponse(new
+        {
+            dynamiccontent = DynamicContentSignature.SignContentJson(e["dynamiccontent"], bridge.CryptoService)
+        });
     }
 
     [ServerToolCommand("mapjson")]

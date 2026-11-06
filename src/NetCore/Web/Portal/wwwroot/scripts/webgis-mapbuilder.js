@@ -891,6 +891,19 @@ function createTemplate(template) {
     }
     var dynContentString = JSON.stringify(dynContent);
 
+    if (dynContent.length > 0) {
+        // the API signs the urls, otherwise the dynamic content proxy rejects them in the html snippet
+        $.ajax({
+            url: webgis.url.relative('../proxy/toolmethod/webgis-tools-portal-publish/sign-dynamic-content'),
+            data: { dynamiccontent: dynContentString },
+            type: 'post',
+            async: false,
+            success: function (result) {
+                if (result && typeof result.dynamiccontent === 'string')
+                    dynContentString = result.dynamiccontent;
+            }
+        });
+    }
     _scale = _map.scale();
     _center = _map.getCenter();
     _bounds = _map.getExtent();

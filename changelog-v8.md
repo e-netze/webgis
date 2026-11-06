@@ -58,12 +58,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - The urls of all dynamic content types (`georss`, `geojson`, `geojson-embedded`, `api-query`)
     are signed (`url#webgis-sig=...`, `DynamicContentSignature`) when a map is loaded
     (`ReplaceLegacyMapJsonItemsAndSignDynamicContent` in `LoadMap`/`Publish.MapJson`) and in tool
-    event responses. Saving, sharing and publishing a map with unsigned dynamic content is
-    rejected; the proxy only processes signed urls unless `allow-unsigned` is `true`.
+    event responses. Saving and sharing a map with unsigned dynamic content is rejected; publishing
+    (`publish-map`, MapBuilder, trusted map authors) signs unsigned dynamic content instead; the proxy only processes signed urls unless `allow-unsigned` is `true`.
+  - HTML snippets created by the MapBuilder (`CreateTemplate`) contain signed dynamic content urls:
+    the MapBuilder client signs them beforehand with the new tool command
+    `webgis-tools-portal-publish/sign-dynamic-content`.
   - TOC themes with display style `DynamicContentMarker` use the new type `toc-api-query` with the
     url `serviceId@queryId`; the server builds and authorizes the query itself.
   - **!! Breaking Change !!** Internal sources must be listed in `dynamic-content:allow-hosts`.
-    Dynamic content with unsigned urls (maps created as static html by the MapBuilder, urls set
+    Dynamic content with unsigned urls (static html created by the MapBuilder before this version, urls set
     in `custom.js`) is no longer loaded unless `dynamic-content:allow-unsigned` is `true`.
   [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-dynamic-content)
   [Architecture](docs/architecture/dynamic-content-security.md)
