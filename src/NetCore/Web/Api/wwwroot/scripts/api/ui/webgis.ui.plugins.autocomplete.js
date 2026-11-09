@@ -324,6 +324,40 @@ webgis.ui.definePlugin('webgis_autocomplete', {
                     .data('item', item)
                     .appendTo(me._$menu);
             });
+
+            // copyright/terms of use of the search services (e.g. DORIS)
+            const $footer = this._copyrightFooter(this._items);
+            if ($footer) this._$menu.append($footer);
+        },
+        _copyrightInfos: function (items) {
+            const copyrightInfos = [];
+            (items || []).forEach(function (item) {
+                const cr = item ? item.copyright_info : null;
+                if (cr && cr.id && !copyrightInfos.some(function (c) { return c.id === cr.id; })) {
+                    copyrightInfos.push(cr);
+                }
+            });
+            return copyrightInfos;
+        },
+        _copyrightFooter: function (items) {
+            const $ = this.$, copyrightInfos = this._copyrightInfos(items);
+            if (copyrightInfos.length === 0) return null;
+
+            const $footer = $("<div>").addClass('webgis-autocomplete-copyright');
+            copyrightInfos.forEach(function (cr) {
+                const $line = $("<div>").appendTo($footer);
+                if (cr.logo)
+                    $("<img>").attr('src', cr.logo).addClass('webgis-autocomplete-copyright-logo').appendTo($line);
+                if (cr.copyright)
+                    $("<span>").html(cr.copyright).appendTo($line);
+                if (cr.link) {
+                    $("<a target='_blank' rel='noopener'>")
+                        .attr('href', cr.link)
+                        .text(cr.link_text || webgis.l10n.get('copyright-terms-of-use'))
+                        .appendTo($line);
+                }
+            });
+            return $footer;
         },
         _openIfFocused: function () {
             if (document.activeElement === this.$el.get(0)) {

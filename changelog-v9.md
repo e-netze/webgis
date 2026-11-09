@@ -525,6 +525,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * While the text marker is dragged, the text (and its rotation handle) moves live with it.
 
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/tools/general/mapmarkup/manual.html#mapmarkup-text-rotation)
+- Quick search: The CMS copyright info of a search service (e.g. DORIS SOLR search service) is
+  now shown to the user, to comply with the terms of use of external search services.
+  - Every autocomplete item carries the `copyright_info` of its search service.
+  - The `webgis_autocomplete` result list shows a compact footer with logo, copyright text and link
+    (link text defaults to the new l10n key `copyright-terms-of-use`).
+  - The copyright of a selected quick search result is shown in the "Info & Copyright" tab
+    (`copyright-search-result`) and removed together with the result.
 
 ### Fixed
 

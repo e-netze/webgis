@@ -171,6 +171,8 @@ webgis.ui.definePlugin('webgis_topbar', {
                                 };
 
                                 map.ui.showQueryResults(features, true, true);
+                                // after showQueryResults: after_showqueryresults resets the search result copyright
+                                map.setSearchResultCopyright(result.copyright_info);
                                 map.zoomToBoundsOrScale(features.bounds, webgis.featuresZoomMinScale(features))
                             }
                         }

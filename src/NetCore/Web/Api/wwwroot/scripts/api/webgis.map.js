@@ -1830,6 +1830,9 @@
     this.getSearchResultCopyright = function () {
         return this._searchResultCopyright;
     };
+    this.events.on(['clearqueryresults', 'after_showqueryresults'], function () {
+        this.setSearchResultCopyright(null);
+    }, this);
 
     var _mapDescription = '';
     this.setMapDescription = function (description) {
