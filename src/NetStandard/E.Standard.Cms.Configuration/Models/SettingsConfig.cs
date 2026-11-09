@@ -12,6 +12,10 @@ public class SettingsConfig
     [System.Text.Json.Serialization.JsonPropertyName("logging_connection_string")]
     public string LoggingConnectionString { get; set; }
 
+    [JsonProperty("allow_untrusted_server_certificates")]
+    [System.Text.Json.Serialization.JsonPropertyName("allow_untrusted_server_certificates")]
+    public bool AllowUntrustedServerCertificates { get; set; }
+
     public SettingsConfig AddDefaults()
     {
         if (this.Proxy == null)

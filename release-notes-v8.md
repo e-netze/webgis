@@ -20,8 +20,10 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - **Breaking change:** Dynamic content (GeoRSS/GeoJSON/API queries) is downloaded with SSRF protection and only from signed urls: internal sources must be added to the new `api.config` key `dynamic-content:allow-hosts`, and maps with unsigned dynamic content (MapBuilder html snippets created before this version, urls set in `custom.js`) only load it if `dynamic-content:allow-unsigned` is `true`. Maps with unsigned dynamic content must be reloaded and saved again.
   [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-dynamic-content)
 - **Breaking change:** Only users listed in the map authors of a portal page can publish, change or delete its maps and apps (previously also non-authors, e.g. the original author of a map). Check the map authors of your portal pages; API and Portal must be updated together.
+- **Breaking change:** Server certificates of outbound HTTPS connections (Api, Portal, Cms) are now validated; services with self-signed or internal-CA certificates fail with a TLS error. Install the CA in the server's certificate store, or as a workaround set `security:allow-untrusted-server-certificates` to `true` in `api.config`/`portal.config` (Cms: `allow_untrusted_server_certificates` in `settings.config`); `true` is insecure.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-security-untrusted-certificates)
 
-### New
+  ### New
 
 - Quick search shows the copyright info assigned to a search service in the CMS (logo, text, link) below the result list and, for the selected result, in the "Info & Copyright" tab; use it e.g. to meet the terms of use of the DORIS search service.
 
@@ -35,6 +37,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/cors.html#annex-cors)
 - Security: Publishing, changing and deleting portal maps/apps (including signing MapBuilder dynamic content) is now checked by the API and only allowed for map authors of the portal page.
 - Security: DOM XSS via links in feature properties (query result table) fixed; only the link text and `http`/`https`/relative urls are used, additional markup, `onclick` and `javascript:`/`mailto:` links in attribute values are no longer supported.
+- Security: TLS server certificates of outbound connections are no longer accepted blindly (man-in-the-middle); see upgrade notes for the opt-out key `allow-untrusted-server-certificates`.
 
 ## 
 

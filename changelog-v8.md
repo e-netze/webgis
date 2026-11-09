@@ -103,6 +103,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - The `onclick` for `target="dialog"` links in the search result list is replaced by a click listener.
   - **!! Breaking Change !!** Additional markup inside the link, `onclick` attributes and `javascript:`/`mailto:`
     urls in feature property links are no longer supported; regular links open in a new tab.
+- Security (Outbound TLS): Server certificates of outbound HTTPS connections are now validated; previously every
+  certificate was accepted (man-in-the-middle). Affects the `default`/`default-proxy` `HttpClient`s of Api, Portal
+  and Cms, `HttpService` and the `ServicePointManager` callback.
+  - New central switch `E.Standard.Platform.TlsCertificateValidation.AllowUntrustedServerCertificates`
+    (default `false`), set at startup of each app.
+  - Opt-out for legacy internal services with self-signed certificates: `api.config` / `portal.config` section
+    `security`, key `allow-untrusted-server-certificates` (`true`); Cms: `allow_untrusted_server_certificates`
+    in `settings.config`.
+  - **!! Breaking Change !!** Connections to services with self-signed or internal-CA certificates fail with a
+    TLS error. Install the CA in the server's certificate store (recommended) or set the key to `true`.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-security-untrusted-certificates)
 
 ## 8.26.4301
 

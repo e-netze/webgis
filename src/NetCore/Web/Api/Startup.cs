@@ -266,6 +266,9 @@ public class Startup
 
         #region HttpClient
 
+        E.Standard.Platform.TlsCertificateValidation.AllowUntrustedServerCertificates =
+            bool.TryParse(Configuration[ApiConfigKeys.ToKey("security:allow-untrusted-server-certificates")], out bool allowUntrustedCerts) && allowUntrustedCerts;
+
         var webProxy = Configuration.GetWebProxy();
 
 #pragma warning disable SYSLIB0039 // allow old protocols (tls, tls11)
@@ -280,7 +283,7 @@ public class Startup
         .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
         {
             SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13 | SslProtocols.Tls | SslProtocols.Tls11,
-            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+            ServerCertificateCustomValidationCallback = E.Standard.Platform.TlsCertificateValidation.Validate,
         });
         if (webProxy != null)
         {
@@ -294,7 +297,7 @@ public class Startup
             .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
             {
                 SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13 | SslProtocols.Tls | SslProtocols.Tls11,
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+                ServerCertificateCustomValidationCallback = E.Standard.Platform.TlsCertificateValidation.Validate,
                 Proxy = webProxy
             });
         }

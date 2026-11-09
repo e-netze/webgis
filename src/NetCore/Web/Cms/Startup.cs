@@ -64,6 +64,8 @@ public class Startup
         this.Settings = settingsAppConfig.Exists ?
             settingsAppConfig.Deserialize<SettingsConfig>().AddDefaults() :
             SettingsConfig.Defaults;
+
+        E.Standard.Platform.TlsCertificateValidation.AllowUntrustedServerCertificates = this.Settings.AllowUntrustedServerCertificates;
     }
 
     private void ConfigureCmsApplication()
@@ -74,7 +76,7 @@ public class Startup
         System.Net.WebRequest.DefaultWebProxy = null;
 
 #pragma warning disable SYSLIB0014
-        System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+        System.Net.ServicePointManager.ServerCertificateValidationCallback += E.Standard.Platform.TlsCertificateValidation.ValidateLegacy;
         System.Net.ServicePointManager.SecurityProtocol |=
                     System.Net.SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls13;
 #pragma warning restore SYSLIB0014
@@ -254,14 +256,14 @@ public class Startup
         services.AddHttpClient("default").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
         {
             SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13 | SslProtocols.Tls,
-            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+            ServerCertificateCustomValidationCallback = E.Standard.Platform.TlsCertificateValidation.Validate,
         });
         if (webProxy != null)
         {
             services.AddHttpClient("default-proxy").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
             {
                 SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13 | SslProtocols.Tls,
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+                ServerCertificateCustomValidationCallback = E.Standard.Platform.TlsCertificateValidation.Validate,
                 Proxy = webProxy
             });
         }
