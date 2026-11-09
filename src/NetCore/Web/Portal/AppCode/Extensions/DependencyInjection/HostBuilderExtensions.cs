@@ -26,7 +26,7 @@ static internal class HostBuilderExtensions
         System.Net.WebRequest.DefaultWebProxy = null;
 
 #pragma warning disable SYSLIB0014
-        System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+        System.Net.ServicePointManager.ServerCertificateValidationCallback += E.Standard.Platform.TlsCertificateValidation.ValidateLegacy;
         System.Net.ServicePointManager.SecurityProtocol |=
                     System.Net.SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls13;
 #pragma warning restore SYSLIB0014

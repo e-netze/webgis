@@ -83,7 +83,7 @@ public class HttpService : IHttpService
 #pragma warning disable SYSLIB0039 // allow old protocols (tls, tls11)
                                 clientHandler.SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13 | SslProtocols.Tls;
 #pragma warning restore SYSLIB0039 // allow old protocols (tls, tls11)
-                                clientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+                                clientHandler.ServerCertificateCustomValidationCallback = E.Standard.Platform.TlsCertificateValidation.Validate;
                             }
                             clientHandler.UseDefaultCredentials = authorization.UseDefaultCredentials;
 
@@ -462,7 +462,7 @@ public class HttpService : IHttpService
 #pragma warning disable SYSLIB0039 // allow old protocols (tls, tls11)
                                 clientHandler.SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13 | SslProtocols.Tls;
 #pragma warning restore SYSLIB0039 // allow old protocols (tls, tls11)
-                                clientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+                                clientHandler.ServerCertificateCustomValidationCallback = E.Standard.Platform.TlsCertificateValidation.Validate;
                             }
                             clientHandler.UseDefaultCredentials = authorization.UseDefaultCredentials;
 

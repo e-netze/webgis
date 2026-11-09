@@ -60,6 +60,9 @@ public class Startup
         Environment = environment;
         CustomStartupServices = CustomStartupServiceFactory.LoadCustomStartupServices(WebGISAppliationTarget.Portal) ?? Array.Empty<ICustomStartupService>();
 
+        E.Standard.Platform.TlsCertificateValidation.AllowUntrustedServerCertificates =
+            bool.TryParse(Configuration[PortalConfigKeys.ToKey("security:allow-untrusted-server-certificates")], out bool allowUntrustedCerts) && allowUntrustedCerts;
+
         #region Create Folders
 
         Configuration.TryCreateDirectoryIfNotExistes(PortalConfigKeys.ToKey("cache-connectionstring"));
@@ -107,7 +110,7 @@ public class Startup
             SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13 | SslProtocols.Tls | SslProtocols.Tls11,
 #pragma warning restore SYSLIB0039 // allow old protocols (tls, tls11)
             //ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
-            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            ServerCertificateCustomValidationCallback = E.Standard.Platform.TlsCertificateValidation.Validate
         });
         services.AddHttpService<HttpService>(config =>
         {
