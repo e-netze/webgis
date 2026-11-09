@@ -95,6 +95,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - **!! Breaking Change !!** Users who are not listed in `MapAuthors` of the portal page can no
     longer publish, change or delete maps/apps, even their own.
   [Architecture](docs/architecture/dynamic-content-security.md)
+- Security: DOM XSS in the query result table (`webgis_queryResults.js`) fixed. Links in feature properties were
+  inserted as HTML and, for `target="dialog"`/`datalinq_pdf_report`, concatenated into inline `onclick` attributes.
+  - New `webgis.buildSafeLink(html, options)` (`webgis.js`): parses the value inertly (`DOMParser`), takes only
+    `href`, `target` and the text, allows only `http:`/`https:`/relative urls (`options.allowedSchemes`) and uses
+    click listeners instead of inline handlers.
+  - The `onclick` for `target="dialog"` links in the search result list is replaced by a click listener.
+  - **!! Breaking Change !!** Additional markup inside the link, `onclick` attributes and `javascript:`/`mailto:`
+    urls in feature property links are no longer supported; regular links open in a new tab.
 
 ## 8.26.4301
 
