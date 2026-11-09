@@ -860,6 +860,12 @@
 
                     let descriptionCount = 0;
 
+                    let $searchResultCopyrightHolder = $("<div>")
+                        .addClass('webgis-search-result-copyright-holder')
+                        .data('map', map)
+                        .appendTo($descriptionTabContent);
+                    $.presentationToc.renderSearchResultCopyright(null, map);
+
                     let mapDescription = map.getMapDescription(true);
                     if (mapDescription) {
                         descriptionCount++;
@@ -1077,6 +1083,47 @@
             return service
                 ? 999999 - service.getOrder()
                 : 0;
+        },
+        renderSearchResultCopyright: function (event, map) {
+            $('.webgis-search-result-copyright-holder').each(function () {
+                let $holder = $(this);
+                if ($holder.data('map') !== map)
+                    return;
+
+                $holder.empty();
+                let copyright = map.getSearchResultCopyright();
+                if (!copyright)
+                    return;
+
+                $("<h2></h2>")
+                    .text(webgis.l10n.get('copyright-search-result'))
+                    .appendTo($holder);
+
+                let $cp = $("<div></div>")
+                    .addClass('webgis-service-copyrighttext')
+                    .appendTo($holder);
+
+                if (copyright.logo) {
+                    $("<img>")
+                        .attr('src', copyright.logo)
+                        .css('width', copyright.logo_size && copyright.logo_size[0] > 0 ? copyright.logo_size[0] : 'auto')
+                        .css('height', copyright.logo_size && copyright.logo_size[1] > 0 ? copyright.logo_size[1] : 'auto')
+                        .css('display', 'block')
+                        .appendTo($cp);
+                }
+                if (copyright.copyright) {
+                    $("<strong></strong>").html(copyright.copyright).appendTo($cp);
+                }
+                if (copyright.advice) {
+                    $("<p></p>").text(copyright.advice).appendTo($cp);
+                }
+                if (copyright.link) {
+                    $("<a target='_blank' rel='noopener'>")
+                        .attr('href', copyright.link)
+                        .text(copyright.link_text || webgis.l10n.get('copyright-terms-of-use'))
+                        .appendTo($cp);
+                }
+            });
         }
     };
 
@@ -1138,6 +1185,7 @@
         elem._map.events.on('refresh', $.presentationToc.checkItemScaleVisibility, elem);
         elem._map.events.on('refresh', $.presentationToc.refreshLegend, elem);
         elem._map.events.on('onbuildtoolui', $.presentationToc.hideLegend, elem);
+        elem._map.events.on('onsearchresultcopyrightchanged', $.presentationToc.renderSearchResultCopyright, elem);
         elem._map.events.on('showhourglass_guids', function (e, sender, guids) {
             $elem.find('.webgis-presentation_toc-title, .webgis-presentation_toc-item-group').each(function (i, container) {
                 let $container = $(container);

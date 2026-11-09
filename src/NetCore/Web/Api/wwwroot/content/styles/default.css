@@ -4309,6 +4309,21 @@ body.webgis-ui-holder {
     padding:5px;
     border-bottom:1px solid #e2e2e2;
 }
+.tt-menu .webgis-autocomplete-copyright {
+    padding: 3px 8px;
+    font-size: 0.75em;
+    color: #888;
+    text-align: left;
+}
+.tt-menu .webgis-autocomplete-copyright a {
+    margin-left: 6px;
+}
+.tt-menu .webgis-autocomplete-copyright .webgis-autocomplete-copyright-logo {
+    height: 16px;
+    width: auto;
+    margin-right: 6px;
+    vertical-align: middle;
+}
 .tt-suggestion .tt-img {
     /*border:2px solid #337ab7;
     border-radius:3px;*/

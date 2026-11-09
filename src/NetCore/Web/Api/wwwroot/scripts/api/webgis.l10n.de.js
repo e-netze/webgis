@@ -42,6 +42,8 @@
     "legend": "Legende",
     "layers": "Themen", 
     "info-and-copyright": "Info & Copyright",
+    "copyright-terms-of-use": "Nutzungsbedingungen",
+    "copyright-search-result": "Schnellsuche (aktuelles Suchergebnis)",
     "info-no-legend": "In diesem Ausschnitt/Maßstab bzw. bei dieser Layerschaltung wird für die gewählten Dienste keine Legende angeboten.",
     "find-layers": "Themen suchen...",
 

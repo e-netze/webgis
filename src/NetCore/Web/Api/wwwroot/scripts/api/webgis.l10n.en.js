@@ -42,6 +42,8 @@
     "legend": "Legend",
     "layers": "Layers",
     "info-and-copyright": "Info & Copyright",
+    "copyright-terms-of-use": "Terms of use",
+    "copyright-search-result": "Quick search (current search result)",
     "info-no-legend": "At this map extent/scale or with the current layer configuration, no legend is available for the selected services.",
     "find-layers": "Find layers...",
 

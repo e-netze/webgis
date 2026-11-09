@@ -195,6 +195,7 @@
 
                                 //console.log('on_select', features, result);
                                 map.ui.showQueryResults(features, true, true);
+                                map.setSearchResultCopyright(result.copyright_info);
                                 map.zoomToBoundsOrScale(features.bounds, webgis.featuresZoomMinScale(features))
                                 //webgis._autocompleteMapItem(map, result);
                             }
