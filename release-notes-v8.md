@@ -34,6 +34,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Security: Portal CORS no longer reflects any origin with credentials; optional keys `add-cors-origins-for-default` and `cors-default-allow-any-origin-without-credentials` in `portal.config`, startup warning if `~` is used.
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/cors.html#annex-cors)
 - Security: Publishing, changing and deleting portal maps/apps (including signing MapBuilder dynamic content) is now checked by the API and only allowed for map authors of the portal page.
+- Security: DOM XSS via links in feature properties (query result table) fixed; only the link text and `http`/`https`/relative urls are used, additional markup, `onclick` and `javascript:`/`mailto:` links in attribute values are no longer supported.
 
 ## 
 

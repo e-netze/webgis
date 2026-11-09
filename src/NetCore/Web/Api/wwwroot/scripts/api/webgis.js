@@ -167,6 +167,46 @@
         return html;
     };
 
+    // Builds a safe link ($) from untrusted html containing an <a> tag. Only href, target and the text are taken over.
+    this.buildSafeLink = function (html, options) {
+        options = $.extend({ allowedSchemes: ['http:', 'https:'] }, options);
+
+        var a = new DOMParser().parseFromString(html, 'text/html').querySelector('a');
+        if (!a) {
+            return null;
+        }
+
+        var href = a.getAttribute('href') || '';
+        var target = a.getAttribute('target') || '';
+        var label = a.textContent;
+
+        var safe = false;
+        try {
+            safe = options.allowedSchemes.indexOf(new URL(href, window.location.href).protocol) >= 0;
+        } catch (e) { }
+        if (!safe) {
+            return $('<span>').text(label);
+        }
+
+        var $link = $('<a>').text(label).attr('href', href);
+
+        if (target === 'dialog') {
+            $link.attr('href', '#').on('click', function (e) {
+                e.preventDefault();
+                webgis.iFrameDialog(href, label);
+            });
+        } else if (target === 'datalinq_pdf_report') {
+            $link.attr('href', '#').on('click', function (e) {
+                e.preventDefault();
+                webgis.downloadDataLinqPdf(href);
+            });
+        } else {
+            $link.attr({ target: '_blank', rel: 'noopener noreferrer' });
+        }
+
+        return $link;
+    };
+
     this.alert = function (message, title, onClose) {
         title = title || 'WebGIS Meldung';
 

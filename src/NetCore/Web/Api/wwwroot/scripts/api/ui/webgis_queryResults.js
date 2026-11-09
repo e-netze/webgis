@@ -487,9 +487,13 @@
         $parent.find("a[target='dialog']").each(function (i, link) {
             var $link = $(link);
             var href = $link.attr('href');
+            var label = $link.text();
             $link
-                .attr('href', '')
-                .attr('onclick', "webgis.iFrameDialog('" + href + "','" + $link.html() + "');return false;");
+                .attr('href', '#')
+                .on('click', function (e) {
+                    e.preventDefault();
+                    webgis.iFrameDialog(href, label);
+                });
         });
     };
 
@@ -1118,21 +1122,12 @@
                             
                             if (text.indexOf("<a ") >= 0) {  // ToDo: kann man das besser machen?
                                 $td.addClass('has-link');
-                                const $link = $(text);
-                                if ($link.attr('target') === 'dialog') {
-                                    const href = $link.attr('href');
-                                    $link
-                                        .attr('href', '')
-                                        .attr('onclick', "webgis.iFrameDialog('" + href + "','" + $link.text() + "');return false;");
-                                    text = $link.prop('outerHTML');
-                                } else if ($link.attr('target') === 'datalinq_pdf_report') {
-                                    const href = $link.attr('href');
-                                    $link
-                                        .attr('href', '')
-                                        .attr('onclick', "webgis.downloadDataLinqPdf('" + href + "');return false;");
-                                    text = $link.prop('outerHTML');
+                                const $safeLink = webgis.buildSafeLink(text);
+                                if ($safeLink) {
+                                    $safeLink.appendTo($td);
+                                } else {
+                                    $td.text(text);
                                 }
-                                $td.html(text);
                             } else if (text.indexOf("<img ") === 0) {
                                 const $image = $(text);
                                 const src = $image.attr('src');
