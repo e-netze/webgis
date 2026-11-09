@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="PdfSharpCore" Version="1.3.67" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.2.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" NoWarn="NU1902;NU1903" /> <!-- 3.2.0 fixes the advisories but requires a Six Labors license key at build time -->
 
 		
   </ItemGroup>
