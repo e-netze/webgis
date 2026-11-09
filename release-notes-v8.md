@@ -11,6 +11,14 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 
 ### Upgrade notes
 
+### New
+
+### Fixed
+
+## 8.26.4501
+
+### Upgrade notes
+
 - **Breaking change:** Lookup/autocomplete search terms (VisFilter) are now validated against the whitelist `lookup:term-whitelist` in `api.config`; terms with other characters (e.g. `;`, `"`, `=`, `*`) or more than 120 characters return no results. Adjust the key if needed, and quote `{0}` in configured lookup SQL (`'{0}%'`) so it is bound as a parameter.
   [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-lookup)
 - **Breaking change:** Subscriber login redirects are restricted to `portal-url` (and hosts in the new `api.config` key `subscriber-login-allowed-redirect-hosts`), and portal login tokens are audience-bound. If the portal runs under another host name, add it to the key; update API and Portal together.
@@ -39,9 +47,8 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Security: DOM XSS via links in feature properties (query result table) fixed; only the link text and `http`/`https`/relative urls are used, additional markup, `onclick` and `javascript:`/`mailto:` links in attribute values are no longer supported.
 - Security: TLS server certificates of outbound connections are no longer accepted blindly (man-in-the-middle); see upgrade notes for the opt-out key `allow-untrusted-server-certificates`.
 
-## 
+## 8.26.4301
 
-### 8.26.4301
 ### New
 ### Fixed
 

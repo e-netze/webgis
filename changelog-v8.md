@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+### Fixed
+
+## 8.26.4501
+
+### Added
+
 - Quick search: The CMS copyright info of a search service (e.g. DORIS SOLR search service) is
   now shown to the user, to comply with the terms of use of external search services.
   - Every autocomplete item carries the `copyright_info` of its search service.
