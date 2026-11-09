@@ -212,6 +212,16 @@
 
         var $link = $('<a>').text(label).attr('href', href);
 
+        if (options.asHtml && (target === 'dialog' || target === 'datalinq_pdf_report')) {
+            // html strings can't carry listeners => data attributes + one delegated handler
+            webgis._ensureSafeLinkHandlers();
+            return $link
+                .attr('href', '#')
+                .attr(target === 'dialog' ? 'data-webgis-dialog' : 'data-webgis-datalinq-pdf', href)
+                .attr('data-webgis-title', label)
+                .prop('outerHTML');
+        }
+
         if (target === 'dialog') {
             $link.attr('href', '#').on('click', function (e) {
                 e.preventDefault();
@@ -227,6 +237,28 @@
         }
 
         return $link;
+    };
+
+    var _safeLinkHandlersRegistered = false;
+    this._ensureSafeLinkHandlers = function () {
+        if (_safeLinkHandlersRegistered) {
+            return;
+        }
+        _safeLinkHandlersRegistered = true;
+
+        $(document)
+            .on('click', '[data-webgis-feature-details]', function (e) {
+                e.preventDefault();
+                webgis.showFeatureResultDetails($(this).attr('data-webgis-map-guid'), $(this).attr('data-webgis-feature-details'));
+            })
+            .on('click', '[data-webgis-dialog]', function (e) {
+                e.preventDefault();
+                webgis.iFrameDialog($(this).attr('data-webgis-dialog'), $(this).attr('data-webgis-title'));
+            })
+            .on('click', '[data-webgis-datalinq-pdf]', function (e) {
+                e.preventDefault();
+                webgis.downloadDataLinqPdf($(this).attr('data-webgis-datalinq-pdf'));
+            });
     };
 
     this.alert = function (message, title, onClose) {
