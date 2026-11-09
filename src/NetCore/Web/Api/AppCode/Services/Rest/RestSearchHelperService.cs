@@ -304,9 +304,22 @@ public class RestSearchHelperService
         else
         {
             List<AutocompleteItemDTO> ret = new List<AutocompleteItemDTO>();
+            var copyrightInfos = new Dictionary<string, CopyrightInfoDTO>();
             foreach (var item in items.Items)
             {
-                ret.Add(new AutocompleteItemDTO(item));
+                var dto = new AutocompleteItemDTO(item);
+
+                string copyrightId = item.Service?.CopyrightId;
+                if (!String.IsNullOrEmpty(copyrightId))
+                {
+                    if (!copyrightInfos.TryGetValue(copyrightId, out var copyrightInfo))
+                    {
+                        copyrightInfo = copyrightInfos[copyrightId] = _cache.CopyrightInfo(copyrightId, ui);
+                    }
+                    dto.CopyrightInfo = copyrightInfo;
+                }
+
+                ret.Add(dto);
             }
 
             return await controller.JsonObject(ret.ToArray());

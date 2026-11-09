@@ -1819,6 +1819,18 @@
         return null;
     };
 
+    this._searchResultCopyright = null;
+    this.setSearchResultCopyright = function (copyrightInfo) {
+        copyrightInfo = copyrightInfo && copyrightInfo.id ? copyrightInfo : null;
+        if (this._searchResultCopyright === copyrightInfo)
+            return;
+        this._searchResultCopyright = copyrightInfo;
+        this.events.fire('onsearchresultcopyrightchanged', this, copyrightInfo);
+    };
+    this.getSearchResultCopyright = function () {
+        return this._searchResultCopyright;
+    };
+
     var _mapDescription = '';
     this.setMapDescription = function (description) {
         _mapDescription = description || '';

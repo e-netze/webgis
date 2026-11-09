@@ -75,6 +75,11 @@ public class AutocompleteItemDTO
     [System.Text.Json.Serialization.JsonPropertyName("do_you_mean")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public bool? DoYouMean { get; set; }
+
+    [JsonProperty(PropertyName = "copyright_info", NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonPropertyName("copyright_info")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public CopyrightInfoDTO CopyrightInfo { get; set; }
 }
 
 public sealed class AutocomplteItemMetadata

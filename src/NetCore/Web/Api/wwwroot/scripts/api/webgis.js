@@ -2442,6 +2442,41 @@
             });
         }
     };
+    this._autocompleteCopyrightInfos = function (items) {
+        var copyrightInfos = [];
+        if (!Array.isArray(items))
+            return copyrightInfos;
+
+        for (var i in items) {
+            var cr = items[i] ? items[i].copyright_info : null;
+            if (cr && cr.id && !copyrightInfos.some(function (c) { return c.id === cr.id; })) {
+                copyrightInfos.push(cr);
+            }
+        }
+        return copyrightInfos;
+    };
+    this._autocompleteCopyrightFooter = function (items) {
+        var copyrightInfos = this._autocompleteCopyrightInfos(items);
+        if (copyrightInfos.length === 0)
+            return '';
+
+        var $footer = $("<div>").addClass('webgis-autocomplete-copyright');
+        for (var c in copyrightInfos) {
+            var cr = copyrightInfos[c];
+            var $line = $("<div>").appendTo($footer);
+            if (cr.logo)
+                $("<img>").attr('src', cr.logo).addClass('webgis-autocomplete-copyright-logo').appendTo($line);
+            if (cr.copyright)
+                $("<span>").html(cr.copyright).appendTo($line);
+            if (cr.link) {
+                $("<a target='_blank' rel='noopener'>")
+                    .attr('href', cr.link)
+                    .text(cr.link_text || webgis.l10n.get('copyright-terms-of-use'))
+                    .appendTo($line);
+            }
+        }
+        return $footer;
+    };
     this.autocompleteItem2Html = function (item) {
         var html = '';
 
