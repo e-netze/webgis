@@ -244,20 +244,12 @@
                     for (let v in vals) {
                         let val = vals[v], valType = typeof (val);
 
-                        if (webgis.isSuspiciousHtml(val)) {
-                            console.log("sanitize suspicious val:", val);
-                            val = webgis.sanitizeHtml(val);
-                            console.log("to", val);
-                        }
-
-                        if (valType === 'string' && val.indexOf("<a") === 0) {
-                            let $val = $(val);
-                            if ($val.attr('target') === 'dialog') {
-                                let href = $val.attr('href');
-                                $val
-                                    .attr('href', '')
-                                    .attr('onclick', "webgis.iFrameDialog('" + href + "','" + $val.text() + "');return false;");
-                                val = $val.prop('outerHTML');
+                        if (valType === 'string') {
+                            const safeLink = val.indexOf("<a") === 0 ? webgis.buildSafeLink(val, { asHtml: true }) : null;
+                            if (safeLink) {
+                                val = typeof safeLink === 'string' ? safeLink : $('<div>').append(safeLink).html();
+                            } else {
+                                val = webgis.sanitizeHtml(val);
                             }
                         }
 
@@ -288,7 +280,7 @@
             }
             else if ( /*typeof (max) == "undefined" &&*/count === 0 && properties.hasOwnProperty('_fulltext')) {
                 tabContent += "<tr>";
-                tabContent += "<td class='webgis-result-table-cell'>" + properties['_fulltext'] + "</td>";
+                tabContent += "<td class='webgis-result-table-cell'>" + webgis.sanitizeHtml(properties['_fulltext']) + "</td>";
                 tabContent += "</tr>";
             }
             if (tabContent) {
@@ -304,10 +296,14 @@
         }
 
         if (!hideTitle && propertiesArray[0] && propertiesArray[0]._title) {
-            tab = "<h3>" + propertiesArray[0]._title + "</h3>" + tab;
+            tab = "<h3>" + webgis.sanitizeHtml(propertiesArray[0]._title) + "</h3>" + tab;
         }
         if (propertiesArray[0].hasOwnProperty('_details')) {
-            tab += "<button onclick=\"webgis.showFeatureResultDetails('" + this._map.guid + "','" + propertiesArray[0]['_details'] + "')\" class='webgis-button' >Mehr...</button>";
+            webgis._ensureSafeLinkHandlers();
+            tab += $('<button>').addClass('webgis-button').text('Mehr...')
+                .attr('data-webgis-map-guid', this._map.guid)
+                .attr('data-webgis-feature-details', propertiesArray[0]['_details'])
+                .prop('outerHTML');
         }
 
         return tab + (hasMore === true ? '...' : '');
