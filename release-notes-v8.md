@@ -22,6 +22,9 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - **Breaking change:** Only users listed in the map authors of a portal page can publish, change or delete its maps and apps (previously also non-authors, e.g. the original author of a map). Check the map authors of your portal pages; API and Portal must be updated together.
 
 ### New
+
+- Quick search shows the copyright info assigned to a search service in the CMS (logo, text, link) below the result list and, for the selected result, in the "Info & Copyright" tab; use it e.g. to meet the terms of use of the DORIS search service.
+
 ### Fixed
 
 - Security: SSRF via the dynamic content proxy fixed; only public targets are downloaded and dynamic content urls are signed by the API (new `api.config` section `dynamic-content`).
