@@ -1241,6 +1241,12 @@ img.tile {
         padding: 0px;
         margin: 0px;
         display: block;
+        white-space: nowrap;
+        overflow-x: auto;
+    }
+
+    .webgis-result-table-tools-container .webgis-result-table-tools .webgis-toolbox-tool-block {
+        white-space: normal;
     }
 
     .webgis-result-table-tools-container.collapsed .webgis-result-table-tools {

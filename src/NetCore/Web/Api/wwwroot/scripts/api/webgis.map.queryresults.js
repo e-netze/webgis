@@ -854,27 +854,6 @@
                 }
             });
 
-            
-            if($tabTools.find('.webgis-toolbox-tool-item.webgis-dependency-activetool.webgis-tools-editing-edit').length > 0) {
-               createToolbarButtonBlock('tip-edit','webgis-tips webgis-dependencies webgis-dependency-not-activetool webgis-tools-editing-edit', 'div')
-                    .text(webgis.l10n.get("tip-edit-content"))
-                    .click(function(e) {
-                        e.stopPropagation();
-                        $(this).closest('.webgis-result-table-tools').find('.webgis-selection-edittool-shortcut').trigger('click');
-                    });
-            }
-            else if($tabTools.find('.webgis-toolbox-tool-item.webgis-dependencies.webgis-dependency-hasselection').length > 0) {
-                createToolbarButtonBlock('tip-select', 'webgis-tips webgis-dependencies webgis-dependency-hasnoselection', 'div')
-                    .text(webgis.l10n.get("tip-select-content"))
-                    .click(function (e) {
-                        e.stopPropagation();
-                        $(this).closest('.webgis-result-table-tools').find('.webgis-selection-button').trigger('click');
-                    });
-            }
-
-            createToolbarButtonBlock('tip-tools','webgis-tips', 'div')
-                .text(webgis.l10n.get("tip-tools-content"));
-                
         }; 
 
         let exportButtonClick = function (e) {
