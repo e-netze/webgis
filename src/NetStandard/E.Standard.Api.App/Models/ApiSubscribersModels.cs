@@ -91,4 +91,12 @@ public class RegisterSubscriberModel : ErrorHandlingModel
     public string Password1 { get; set; }
     [DisplayName("Repeat password")]
     public string Password2 { get; set; }
+
+    [DisplayName("Current password")]
+    public string CurrentPassword { get; set; }
+
+    /// <summary>
+    /// True if a subscriber changes its own password => current password is required.
+    /// </summary>
+    public bool RequireCurrentPassword { get; set; }
 }

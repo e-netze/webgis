@@ -1,4 +1,5 @@
 ﻿@model E.Standard.Api.App.Models.RegisterSubscriberModel
+@inject Microsoft.Extensions.Options.IOptions<E.Standard.Api.App.Configuration.SubscriberSecurityOptions> SecurityOptions
 
 @{
     ViewBag.Title = "Edit Api Client";
@@ -43,11 +44,20 @@
 @using (Html.BeginForm("ChangePassword", "Subscribers", FormMethod.Post))
 {
     @Html.HiddenFor(m => m.Id);
+    @Html.HiddenFor(m => m.RequireCurrentPassword);
+    @if (Model.RequireCurrentPassword)
+    {
+        @Html.LabelFor(m => m.CurrentPassword)
+        @Html.PasswordFor(m => m.CurrentPassword, new { autocomplete = "current-password" })
+        <br />
+    }
     @Html.LabelFor(m => m.Password1)
-    @Html.PasswordFor(m => m.Password1)
+    @Html.PasswordFor(m => m.Password1, new { autocomplete = "new-password", minlength = SecurityOptions.Value.PasswordMinLength, maxlength = E.Standard.Api.App.Configuration.SubscriberSecurityOptions.PasswordMaxLength })
     <br />
     @Html.LabelFor(m => m.Password2)
-    @Html.PasswordFor(m => m.Password2)
+    @Html.PasswordFor(m => m.Password2, new { autocomplete = "new-password" })
+    <br />
+    <small>Min. @SecurityOptions.Value.PasswordMinLength characters</small>
     <br />
     <br />
     <button type="submit">

@@ -1,6 +1,6 @@
 ---
 name: add-api-config-setting
-description: Makes a hardcoded constant/setting configurable via api.config, following the existing tool-identify pattern. Use when a hardcoded value should become an api.config setting.
+description: Makes a hardcoded constant/setting configurable via api.config using the options pattern (XxxOptions + IConfiguration bind extension + services.Configure in Startup + IOptions<T> DI). Use when a hardcoded value should become an api.config setting.
 ---
 
 # Skill: Add an api.config Setting
@@ -8,8 +8,44 @@ description: Makes a hardcoded constant/setting configurable via api.config, fol
 Use this skill whenever a hardcoded constant (e.g. a static class with fixed default values) should
 become configurable per-instance via `api.config`.
 
-This is a recurring, simple plumbing pattern in this repo: **settings class (compiled defaults) →
-`api.config` key → `ApiGlobalsService` read → override the default at startup**.
+## Preferred: options pattern (all new settings)
+
+**Do not create new static settings classes** (especially not under `/Services`). For new settings
+use **options class (compiled defaults) → `api.config` key → `IConfiguration` bind extension →
+`services.Configure<T>` in `Startup.cs` → `IOptions<T>` via DI**. Reference implementation:
+`SubscriberSecurityOptions`.
+
+1. **Options class**: plain (non-static) class `XxxOptions` with defaults as property initializers,
+   e.g. `src/NetStandard/E.Standard.Api.App/Configuration/SubscriberSecurityOptions.cs`. Real
+   constants (not configurable) may stay `const`. Add a `<remarks>` block listing the `api.config`
+   keys → properties.
+2. **Keys**: add constants to `src/NetStandard/E.Standard.Api.App/Configuration/ApiConfigKeys.cs`
+   (e.g. `SecurityPasswordMinLength = ConfigurationSectionName + ":security:password-min-length"`)
+   and the key with its default + comment to `src/NetCore/Web/Api/_setup/proto/_api.config`
+   (see step 1 below).
+3. **Bind extension**: add `static public void BindXxxOptions(this IConfiguration config, XxxOptions options)`
+   to `src/NetStandard/E.Standard.Api.App/Extensions/ConfigurationServiceExtensions.cs`. Only
+   override a default when parsing succeeds (`int.TryParse`, `Enum.TryParse(..., true, ...)`, ...);
+   keys are never mandatory.
+4. **Register** in `src/NetCore/Web/Api/Startup.cs` (fitting `#region`, e.g. `Security`):
+
+   ```csharp
+   services.Configure<XxxOptions>(Configuration.BindXxxOptions);
+   ```
+
+5. **Consume** via DI: constructor parameter `IOptions<XxxOptions> options` → `_options = options.Value`.
+   Razor views: `@inject Microsoft.Extensions.Options.IOptions<XxxOptions> XxxOptions`.
+   Static helpers/extension methods get the options passed in as a parameter (no static state).
+6. Do **not** read these keys in `ApiGlobalsService`.
+
+Then continue with steps 4–6 below (docs, build, changelog).
+
+## Legacy: existing static settings classes
+
+Only for **already existing** static settings classes whose consumers have no DI access (e.g.
+`AgsQuerySettings` deep in GeoServices). Do not use this for new settings. The legacy plumbing is:
+**static settings class (compiled defaults) → `api.config` key → `ApiGlobalsService` read →
+override the default at startup**.
 
 ## 0. Locate the settings class
 

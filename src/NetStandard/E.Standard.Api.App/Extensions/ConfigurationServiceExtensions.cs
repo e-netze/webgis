@@ -403,6 +403,26 @@ static public class ConfigurationServiceExtensions
         => config[ApiConfigKeys.SecuritySecureEndpointBasicAuthPassword] ?? "";
 
 
+    static public void BindSubscriberSecurityOptions(this IConfiguration config, SubscriberSecurityOptions options)
+    {
+        if (Enum.TryParse(config[ApiConfigKeys.SecurityCookieSecure], true, out CookieSecureMode cookieSecure))
+        {
+            options.CookieSecure = cookieSecure;
+        }
+        if (int.TryParse(config[ApiConfigKeys.SecuritySessionMaxLifetimeMinutes], out int sessionMaxLifetime) && sessionMaxLifetime >= 0)
+        {
+            options.SessionMaxLifetimeMinutes = sessionMaxLifetime;
+        }
+        if (int.TryParse(config[ApiConfigKeys.SecuritySessionIdleTimeoutMinutes], out int sessionIdleTimeout) && sessionIdleTimeout >= 0)
+        {
+            options.SessionIdleTimeoutMinutes = sessionIdleTimeout;
+        }
+        if (int.TryParse(config[ApiConfigKeys.SecurityPasswordMinLength], out int passwordMinLength) && passwordMinLength > 0)
+        {
+            options.PasswordMinLength = Math.Min(passwordMinLength, SubscriberSecurityOptions.PasswordMaxLength);
+        }
+    }
+
     static public Dictionary<string, string> UrlOutputRedirectionsOrNull(this IConfiguration config)
         => UrlRedirectionsOrNull(config, " => ");
 

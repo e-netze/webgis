@@ -446,6 +446,8 @@ public class Startup
             config.EndpointAuthorizationBearerUsername = "admin";
         });
 
+        services.Configure<SubscriberSecurityOptions>(Configuration.BindSubscriberSecurityOptions);
+
 
         #endregion
 
