@@ -8,6 +8,7 @@ using Api.Core.AppCode.Services;
 using Api.Core.AppCode.Services.Api;
 using Api.Core.AppCode.Services.Api.DataLinqEngines;
 using Api.Core.AppCode.Services.Authentication;
+using Api.Core.AppCode.Services.Authentication.LoginThrottling;
 using Api.Core.AppCode.Services.DataLinq;
 using Api.Core.AppCode.Services.Endpoints;
 using Api.Core.AppCode.Services.Logging;
@@ -45,6 +46,8 @@ using E.Standard.WebMapping.GeoServices.Extensions.DependencyInjection;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Api.Core.AppCode.Extensions.DependencyInjection;
 
@@ -137,6 +140,20 @@ static public class ServiceCollectionExtensions
         });
 
         services.AddBotDetection();
+
+        services.AddSingleton<SubscriberPasswordVerificationService>();
+        services.AddSingleton<SubscriberLoginThrottleService>();
+        services.AddSingleton<ILoginThrottleStore>(serviceProvider =>
+        {
+            var options = serviceProvider.GetRequiredService<IOptions<SubscriberSecurityOptions>>().Value;
+            if (!String.IsNullOrWhiteSpace(options.LoginThrottleRedisConnectionString))
+            {
+                return new RedisLoginThrottleStore(
+                    options.LoginThrottleRedisConnectionString,
+                    serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger<RedisLoginThrottleStore>());
+            }
+            return new InMemoryLoginThrottleStore();
+        });
 
 
         return services;

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 using Api.Core.AppCode.Extensions;
 using Api.Core.AppCode.Services;
+using Api.Core.AppCode.Services.Authentication;
 
 using E.Standard.Api.App.Extensions;
 using E.Standard.CMS.Core;
@@ -27,7 +28,8 @@ public class BasicAuthenticationMiddleware
     public async Task InvokeAsync(HttpContext httpContext,
                                   IEndPointReflectionProvider endpointReflection,
                                   BotDetectionService botDetection,
-                                  SubscriberDatabaseService subscriberDb)
+                                  SubscriberDatabaseService subscriberDb,
+                                  SubscriberPasswordVerificationService passwordVerification)
     {
         if (httpContext.User.ApplyAuthenticationMiddleware(endpointReflection, ApiAuthenticationTypes.BasicAuthentication))
         {
@@ -55,7 +57,7 @@ public class BasicAuthenticationMiddleware
                         {
                             await botDetection.BlockSuspicousUserAsync(subscriber.FullName);
                         }
-                        if (subscriber.VerifyPassword(password))
+                        if (passwordVerification.VerifyPassword(subscriber, password))
                         {
                             botDetection.RemoveSuspiciousUser(subscriber.FullName);
 

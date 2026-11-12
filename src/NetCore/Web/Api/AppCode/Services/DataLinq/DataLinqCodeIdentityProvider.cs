@@ -2,6 +2,7 @@
 using System.Linq;
 
 using Api.Core.AppCode.Extensions;
+using Api.Core.AppCode.Services.Authentication;
 
 using E.DataLinq.Core.Models.Authentication;
 using E.DataLinq.Core.Services.Abstraction;
@@ -16,11 +17,15 @@ public class DataLinqCodeIdentityProvider : IDataLinqCodeIdentityProvider
 {
     private readonly SubscriberDatabaseService _subscriberDb;
     private readonly JwtAccessTokenService _jwTokenService;
+    private readonly SubscriberPasswordVerificationService _passwordVerification;
 
-    public DataLinqCodeIdentityProvider(SubscriberDatabaseService subscriberDb, JwtAccessTokenService jwTokenService)
+    public DataLinqCodeIdentityProvider(SubscriberDatabaseService subscriberDb,
+                                        JwtAccessTokenService jwTokenService,
+                                        SubscriberPasswordVerificationService passwordVerification)
     {
         _subscriberDb = subscriberDb;
         _jwTokenService = jwTokenService;
+        _passwordVerification = passwordVerification;
     }
 
     public DataLinqCodeIdentity TryGetIdentity(string name, string password)
@@ -30,7 +35,7 @@ public class DataLinqCodeIdentityProvider : IDataLinqCodeIdentityProvider
         var subscriber = db.GetSubscriberByName(name);
         if (subscriber != null)
         {
-            if (subscriber.VerifyPassword(password))
+            if (_passwordVerification.VerifyPassword(subscriber, password))
             {
                 return new DataLinqCodeIdentity()
                 {

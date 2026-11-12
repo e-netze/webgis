@@ -905,22 +905,21 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
         {
             set
             {
-                this.PasswordHash = HashPassword(value);
+                this.PasswordHash = Security.SubscriberPasswordHasher.Hash(value);
             }
         }
 
         public bool VerifyPassword(string password)
-        {
-            if (String.IsNullOrEmpty(this.PasswordHash) || this.PasswordHash.Length < 32)
-            {
-                return false;
-            }
+            => Security.SubscriberPasswordHasher.Verify(password, this.PasswordHash);
 
-            string salt = this.PasswordHash.Substring(0, 64);
-            string hash = HashPassword(password, salt);
-
-            return hash.Equals(this.PasswordHash);
-        }
+        /// <summary>
+        /// True if the stored hash uses a legacy/weaker format and should be replaced
+        /// (after a successful <see cref="VerifyPassword"/>) by re-setting the password.
+        /// </summary>
+        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public bool PasswordNeedsRehash
+            => Security.SubscriberPasswordHasher.NeedsRehash(this.PasswordHash);
 
 
         private string _fullName = null;
@@ -937,50 +936,6 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
                 _fullName = value;
             }
         }
-
-        #region Password Hashing
-
-        private string GenerateSalt()
-        {
-            byte[] tokenData = RandomNumberGenerator.GetBytes(32);
-
-            string salt = String.Empty;
-            foreach (byte x in tokenData)
-            {
-                salt += String.Format("{0:x2}", x);
-            }
-
-            return salt;
-        }
-
-        private string HashPassword(string password, string salt = "")
-        {
-            if (String.IsNullOrEmpty(salt))
-            {
-                salt = GenerateSalt();
-            }
-
-            if (salt.Length != 64)
-            {
-                throw new ArgumentException("Invalid salt length");
-            }
-
-            password += salt;
-
-            byte[] bytes = Encoding.Unicode.GetBytes(password);
-            using var hashstring = SHA256.Create();
-            byte[] hash = hashstring.ComputeHash(bytes);
-            string hashString = string.Empty;
-
-            foreach (byte x in hash)
-            {
-                hashString += String.Format("{0:x2}", x);
-            }
-
-            return salt + hashString;
-        }
-
-        #endregion
     }
 
     // Never change the values

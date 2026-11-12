@@ -16,6 +16,11 @@
         errorMessage = localizedError.ResourceNotFound
             ? L["subscribers.login.error.login-failed"].Value
             : localizedError.Value;
+
+        if (!String.IsNullOrEmpty(Model.ErrorMessageArgument))
+        {
+            errorMessage = errorMessage.Replace("{0}", Model.ErrorMessageArgument);
+        }
     }
 
     ViewBag.Title = L["subscribers.login.title"].Value;
@@ -54,11 +59,14 @@
             <br />
             @if (!String.IsNullOrWhiteSpace(Model.CaptchaCodeEncrypted))
             {
-                <input type="hidden" name="CaptchaCodeEncrypted" value="@Model.CaptchaCodeEncrypted" />
-                <img src="data:image/png;base64, @Model.CaptchaDataBase64" alt="@L["subscribers.login.captcha-hint"]" />
+                <input type="hidden" id="CaptchaCodeEncrypted" name="CaptchaCodeEncrypted" value="@Model.CaptchaCodeEncrypted" />
+                <img id="subscriber-login-captcha-image" src="data:image/png;base64, @Model.CaptchaDataBase64" alt="@L["subscribers.login.captcha-hint"]" />
+                <br />
+                <a href="#" id="subscriber-login-captcha-reload" data-url="@Url.Action("LoginCaptcha", "Subscribers")">@L["subscribers.login.captcha-reload"]</a>
+                <div id="subscriber-login-captcha-reload-failed" role="alert" style="display:none;color:red">@L["subscribers.login.captcha-reload-failed"]</div>
                 <br />
                 <label for="CaptchaInput">@L["subscribers.login.captcha"]</label>
-                @Html.TextBoxFor(m => m.CaptchaInput, new { autocomplete = "off", autocapitalize = "characters", spellcheck = "false" })
+                @Html.TextBoxFor(m => m.CaptchaInput, new { autocomplete = "off", autocapitalize = "characters", spellcheck = "false", required = "required" })
                 <br />
             }
 
@@ -96,6 +104,20 @@
             if ($('#CaptchaInput').length && $('#Username').val()) {
                 $('#Password').trigger('focus');
             }
+
+            $('#subscriber-login-captcha-reload').on('click', function (e) {
+                e.preventDefault();
+                $.ajax({ url: $(this).data('url'), cache: false, dataType: 'json' })
+                    .done(function (result) {
+                        $('#CaptchaCodeEncrypted').val(result.encrypted);
+                        $('#subscriber-login-captcha-image').attr('src', 'data:image/png;base64, ' + result.base64);
+                        $('#CaptchaInput').val('').trigger('focus');
+                        $('#subscriber-login-captcha-reload-failed').css('display', 'none');
+                    })
+                    .fail(function () {
+                        $('#subscriber-login-captcha-reload-failed').css('display', 'block');
+                    });
+            });
 
             $('#subscriber-login-form').on('submit', function () {
                 // never submit a visible (plain text) password field state to the browser history/autofill

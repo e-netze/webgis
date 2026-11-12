@@ -461,6 +461,9 @@ public class Startup
                     ForwardedHeaders.XForwardedFor |
                     ForwardedHeaders.XForwardedProto |
                     ForwardedHeaders.XForwardedHost;
+
+                // Without entries only loopback proxies are trusted (ASP.NET Core default)
+                Configuration.BindForwardedHeadersKnownProxies(options.KnownProxies, options.KnownIPNetworks);
             });
         }
 

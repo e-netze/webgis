@@ -11,6 +11,7 @@ using Api.Core.AppCode.Reflection;
 using Api.Core.AppCode.Services;
 using Api.Core.AppCode.Services.Api;
 using Api.Core.AppCode.Services.Authentication;
+using Api.Core.AppCode.Services.Authentication.LoginThrottling;
 
 using E.Standard.Api.App;
 using E.Standard.Api.App.Configuration;
@@ -61,7 +62,7 @@ public class SubscribersController : ApiBaseController
     private readonly SDKPluginManagerService _sdkPlugins;
     private readonly ApplicationSecurityConfig _appSecurityConfig;
     private readonly ICryptoService _crypto;
-    private readonly BotDetectionService _botDetection;
+    private readonly SubscriberLoginThrottleService _loginThrottle;
     private readonly JwtAccessTokenService _jwtAccessTokenService;
     private readonly IEnumerable<ICustomSubscriberIdenticationService> _customSubscriberIdentications;
     private readonly ILogger _auditLogger;
@@ -70,8 +71,10 @@ public class SubscribersController : ApiBaseController
     private static readonly SubscriberDb.Subscriber TimingDummySubscriber = new SubscriberDb.Subscriber() { Password = Guid.NewGuid().ToString() };
 
     internal const string LoginErrorInvalidCredentials = "invalid-credentials";
+    internal const string LoginErrorCaptchaRequired = "captcha-required";
     internal const string LoginErrorCaptchaInvalid = "captcha-invalid";
     internal const string LoginErrorTooManyAttempts = "too-many-attempts";
+    internal const string LoginErrorTooManyAttemptsMinutes = "too-many-attempts-minutes";
     internal const string LoginErrorFailed = "login-failed";
 
     /// <summary>Fixed log category for security relevant events (logins, lockouts, ...), e.g. for SIEM filtering.</summary>
@@ -92,7 +95,7 @@ public class SubscribersController : ApiBaseController
                                  ApiCookieAuthenticationService cookies,
                                  SDKPluginManagerService sdkPlugins,
                                  ICryptoService crypto,
-                                 BotDetectionService botDetection,
+                                 SubscriberLoginThrottleService loginThrottle,
                                  IHttpService http,
                                  IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
                                  IOptions<SubscriberSecurityOptions> securityOptions,
@@ -116,7 +119,7 @@ public class SubscribersController : ApiBaseController
         _securityOptions = securityOptions.Value;
         _customSubscriberIdentications = customSubscriberIdentications;
         _crypto = crypto;
-        _botDetection = botDetection;
+        _loginThrottle = loginThrottle;
         _jwtAccessTokenService = jwtAccessTokenService;
     }
 
@@ -160,10 +163,17 @@ public class SubscribersController : ApiBaseController
             return RedirectToActionResult("Index", "Authenticate", new { redirect = Request.Query["redirect"], pageId = id });
         }
 
-        return ViewResult(new ApiSubscribersLogin()
+        var login = new ApiSubscribersLogin()
         {
             Redirect = Request.Query["redirect"]
-        });
+        };
+
+        if (_loginThrottle.GetStatus(null, HttpContext.Connection.RemoteIpAddress?.ToString()).CaptchaRequired)
+        {
+            ApplyNewCaptcha(login);
+        }
+
+        return ViewResult(login);
     }
 
     [HttpPost]
@@ -186,26 +196,45 @@ public class SubscribersController : ApiBaseController
                 throw new SubscriberLoginException(LoginErrorInvalidCredentials);
             }
 
-            #region Bot Detection
+            #region Throttling / Captcha
 
-            if (_botDetection.IsSuspiciousUser(login.Username))
+            var throttleStatus = _loginThrottle.GetStatus(login.Username, clientIp);
+
+            if (throttleStatus.IsLocked)
             {
-                try
+                // don't verify the password while locked => brute force is not possible during the lockout
+                throw new SubscriberLoginException(LoginErrorTooManyAttemptsMinutes, LockedMinutes(throttleStatus.LockedSeconds));
+            }
+
+            if (throttleStatus.IpThrottled)
+            {
+                await Task.Delay(1000);
+            }
+
+            if (throttleStatus.CaptchaRequired)
+            {
+                if (String.IsNullOrWhiteSpace(login.CaptchaInput))
                 {
-                    await _botDetection.BlockSuspicousUserAsync(login.Username, 5000);
-                }
-                catch (Exception ex)
-                {
-                    throw new SubscriberLoginException(LoginErrorTooManyAttempts, ex);
+                    throw new SubscriberLoginException(LoginErrorCaptchaRequired);
                 }
 
+                string captchaNonce;
                 try
                 {
-                    CaptchaResult.VerifyCaptchaCode(_crypto, login.Username, login.CaptchaInput, login.CaptchaCodeEncrypted);
+                    captchaNonce = CaptchaResult.VerifyCaptchaCode(_crypto, login.CaptchaInput, login.CaptchaCodeEncrypted,
+                                                                   TimeSpan.FromMinutes(_securityOptions.CaptchaLifetimeMinutes));
                 }
                 catch (Exception ex)
                 {
+                    // a wrong captcha only counts for the client IP, otherwise anybody could lock out a user
+                    _loginThrottle.RegisterFailure(login.Username, clientIp, countForUsername: false);
                     throw new SubscriberLoginException(LoginErrorCaptchaInvalid, ex);
+                }
+
+                if (!_loginThrottle.TryConsumeCaptchaNonce(captchaNonce))
+                {
+                    _loginThrottle.RegisterFailure(login.Username, clientIp, countForUsername: false);
+                    throw new SubscriberLoginException(LoginErrorCaptchaInvalid);
                 }
             }
 
@@ -228,12 +257,28 @@ public class SubscribersController : ApiBaseController
 
             if (!passwordValid)
             {
+                // unknown usernames are counted too, so the throttling doesn't reveal whether a user exists
+                _loginThrottle.RegisterFailure(login.Username, clientIp);
                 throw new SubscriberLoginException(LoginErrorInvalidCredentials);
             }
 
-            _botDetection.RemoveSuspiciousUser(login.Username);
+            _loginThrottle.RegisterSuccess(login.Username);
 
             _auditLogger.LogInformation("Subscriber login succeeded: {username} from {clientIp}", subscriber.Name, clientIp);
+
+            if (subscriber.PasswordNeedsRehash)
+            {
+                try
+                {
+                    // upgrade legacy/weaker password hashes transparently on login
+                    db.UpdateApiSubscriberPassword(subscriber, login.Password);
+                    _auditLogger.LogInformation("Subscriber password hash upgraded: {username}", subscriber.Name);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Subscriber password hash upgrade failed: {username}", subscriber.Name);
+                }
+            }
 
             if (!String.IsNullOrWhiteSpace(login.Redirect))
             {
@@ -260,6 +305,7 @@ public class SubscribersController : ApiBaseController
         catch (Exception ex)
         {
             string errorKey = ex is SubscriberLoginException sle ? sle.ErrorKey : LoginErrorFailed;
+            string errorArgument = (ex as SubscriberLoginException)?.ErrorArgument;
 
             if (ex is SubscriberLoginException)
             {
@@ -271,25 +317,68 @@ public class SubscribersController : ApiBaseController
                 _auditLogger.LogWarning("Subscriber login failed (error): {username} from {clientIp}", login.Username, clientIp);
             }
 
-            _botDetection.AddSuspiciousUser(login.Username);
-
-            var captchaCode = Captcha.GenerateCaptchaCode(login.Username);
-            var captchaResult = Captcha.GenerateCaptchaImage(captchaCode);
+            var throttleStatus = _loginThrottle.GetStatus(login.Username, clientIp);
+            if (throttleStatus.IsLocked)
+            {
+                if (errorKey != LoginErrorTooManyAttemptsMinutes)
+                {
+                    _auditLogger.LogWarning("Subscriber login locked: {username} from {clientIp} for {seconds} seconds", login.Username, clientIp, throttleStatus.LockedSeconds);
+                }
+                errorKey = LoginErrorTooManyAttemptsMinutes;
+                errorArgument = LockedMinutes(throttleStatus.LockedSeconds);
+            }
 
             login.Password = null;
             login.CaptchaInput = null;
             login.ErrorMessage = errorKey;
-            login.CaptchaCodeEncrypted = captchaResult.CaptchaCodeEncrypted(_crypto);
-            login.CaptchaDataBase64 = captchaResult.CaptchBase64Data;
+            login.ErrorMessageArgument = errorArgument;
+            login.CaptchaCodeEncrypted = login.CaptchaDataBase64 = null;
+
+            if (throttleStatus.CaptchaRequired)
+            {
+                ApplyNewCaptcha(login);
+            }
 
             if (Request.Query["f"] == "json")
             {
-                return await JsonObject(new { succeeded = false });
+                return await JsonObject(new
+                {
+                    succeeded = false,
+                    captcha_required = throttleStatus.CaptchaRequired,
+                    locked_seconds = throttleStatus.LockedSeconds
+                });
             }
 
             return ViewResult(login);
         }
     }
+
+    [AppRole(AppRoles.All)]
+    public IActionResult LoginCaptcha()
+    {
+        if (_config.AllowSubscriberLogin() == false)
+        {
+            return NotFound();
+        }
+
+        var login = ApplyNewCaptcha(new ApiSubscribersLogin());
+
+        Response.Headers.CacheControl = "no-store";
+        return Json(new { encrypted = login.CaptchaCodeEncrypted, base64 = login.CaptchaDataBase64 });
+    }
+
+    private ApiSubscribersLogin ApplyNewCaptcha(ApiSubscribersLogin login)
+    {
+        var captchaResult = Captcha.GenerateCaptchaImage(Captcha.GenerateCaptchaCode());
+
+        login.CaptchaCodeEncrypted = captchaResult.CaptchaCodeEncrypted(_crypto);
+        login.CaptchaDataBase64 = captchaResult.CaptchBase64Data;
+
+        return login;
+    }
+
+    private static string LockedMinutes(int lockedSeconds)
+        => Math.Max(1, (int)Math.Ceiling(lockedSeconds / 60.0)).ToString();
 
     [AppRole(AppRoles.All)]
     public IActionResult Logout()

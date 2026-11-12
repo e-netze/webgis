@@ -63,6 +63,11 @@ public class ApiSubscribersLogin : ErrorHandlingModel
     public string CaptchaDataBase64 { get; set; }
     [DisplayName("Captcha-Code")]
     public string CaptchaInput { get; set; }
+
+    /// <summary>
+    /// Optional value for a {0} placeholder in the localized error message (e.g. remaining lockout minutes).
+    /// </summary>
+    public string ErrorMessageArgument { get; set; }
 }
 
 public class RegisterSubscriberModel : ErrorHandlingModel
