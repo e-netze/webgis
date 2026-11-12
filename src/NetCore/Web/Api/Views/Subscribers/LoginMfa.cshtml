@@ -33,62 +33,65 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>
-    <a href="@Url.Action(setup ? "Account" : "Login", "Subscribers")" class="back-button"></a>
-    @ViewBag.Title
-</h2>
-<br />
-@if (errorMessage != null)
-{
-    <div role="alert" style="color:red">@errorMessage</div>
-    <br />
-}
-
-@using (Html.BeginForm(setup ? "MfaSetup" : "LoginMfa", "Subscribers", method: FormMethod.Post, htmlAttributes: new { id = "subscriber-mfa-form" }))
-{
-    @if (verify)
-    {
-        <p>@L["subscribers.mfa.verify-hint"]</p>
-    }
-    else
-    {
-        @if (!setup)
-        {
-            <p><strong>@L["subscribers.mfa.enroll-required"]</strong></p>
-        }
-        <p>@L["subscribers.mfa.setup-hint"]</p>
-        <div style="max-width:220px;background:#fff;padding:8px">
-            @Html.Raw(Model.QrCodeSvg)
+<div class="webgis-auth">
+    <div class="webgis-auth-card">
+        <div class="webgis-auth-card-header">
+            <h2>
+                <a href="@Url.Action(setup ? "Account" : "Login", "Subscribers")" class="back-button" aria-label="Back"></a>
+                @ViewBag.Title
+            </h2>
         </div>
-        <p>
-            @L["subscribers.mfa.setup-manual"]<br />
-            <code style="font-size:1.1em;letter-spacing:2px;user-select:all">@Model.Secret</code>
-        </p>
-    }
 
-    <label for="Code">@L[verify ? "subscribers.mfa.code-or-recovery" : "subscribers.mfa.code"]</label>
-    <input type="text" id="Code" name="Code" required="required" autofocus="autofocus"
-           autocomplete="one-time-code" autocapitalize="none" spellcheck="false"
-           inputmode="@(verify ? "text" : "numeric")" maxlength="20" />
-    <br />
-    <br />
+        <div class="webgis-auth-card-body">
+            @if (errorMessage != null)
+            {
+                <div role="alert" class="webgis-auth-alert error">@errorMessage</div>
+            }
 
-    @Html.HiddenFor(m => m.Mode)
-    @Html.HiddenFor(m => m.Token)
-    @if (!String.IsNullOrEmpty(uiLanguage))
-    {
-        <input type="hidden" name="_ul" value="@uiLanguage" />
-    }
+            @using (Html.BeginForm(setup ? "MfaSetup" : "LoginMfa", "Subscribers", method: FormMethod.Post, htmlAttributes: new { id = "subscriber-mfa-form", @class = "webgis-auth-form" }))
+            {
+                @if (verify)
+                {
+                    <p>@L["subscribers.mfa.verify-hint"]</p>
+                }
+                else
+                {
+                    @if (!setup)
+                    {
+                        <div class="webgis-auth-alert warning">@L["subscribers.mfa.enroll-required"]</div>
+                    }
+                    <p>@L["subscribers.mfa.setup-hint"]</p>
+                    <div class="webgis-auth-qr">
+                        @Html.Raw(Model.QrCodeSvg)
+                    </div>
+                    <p class="webgis-auth-help">@L["subscribers.mfa.setup-manual"]</p>
+                    <code class="webgis-auth-secret">@Model.Secret</code>
+                }
 
-    <button type="submit">@L[verify ? "subscribers.mfa.verify-submit" : "subscribers.mfa.setup-submit"]</button>
+                <div class="webgis-auth-field">
+                    <label for="Code">@L[verify ? "subscribers.mfa.code-or-recovery" : "subscribers.mfa.code"]</label>
+                    <input type="text" id="Code" name="Code" class="webgis-auth-code" required="required" autofocus="autofocus"
+                           autocomplete="one-time-code" autocapitalize="none" spellcheck="false"
+                           inputmode="@(verify ? "text" : "numeric")" maxlength="20" />
+                </div>
+
+                @Html.HiddenFor(m => m.Mode)
+                @Html.HiddenFor(m => m.Token)
+                @if (!String.IsNullOrEmpty(uiLanguage))
+                {
+                    <input type="hidden" name="_ul" value="@uiLanguage" />
+                }
+
+                <button type="submit" class="primary block">@L[verify ? "subscribers.mfa.verify-submit" : "subscribers.mfa.setup-submit"]</button>
+            }
+        </div>
+    </div>
+</div>
+
+@section styles {
+    <link href="~/content/subscriber-auth.css" rel="stylesheet" asp-append-version="true" />
 }
 
 @section scripts {
-    <script type="text/javascript">
-        $(function () {
-            $('#subscriber-mfa-form').on('submit', function () {
-                $(this).find('button[type=submit]').prop('disabled', true);
-            });
-        });
-    </script>
+    <script src="~/scripts/api/subscriber-auth.js" asp-append-version="true"></script>
 }

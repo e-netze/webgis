@@ -3,6 +3,7 @@
 
 @inject E.Standard.Configuration.Services.ConfigurationService config
 @inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+@inject E.Standard.Localization.Abstractions.ICultureProvider CultureProvider
 
 @{
     var L = LocalizerFactory.Create(typeof(object));
@@ -25,82 +26,86 @@
 
     ViewBag.Title = L["subscribers.login.title"].Value;
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string redirectQuery = String.IsNullOrEmpty(Model.Redirect) ? "" : "&redirect=" + Uri.EscapeDataString(Model.Redirect);
+    string activeLanguage = CultureProvider.Culture?.ToLowerInvariant();
 }
 
-<h2>
-    <a href="@Url.Action("Index","Home")" class="back-button"></a>
-    @L["subscribers.login.title"]
-</h2>
-<div style="text-align:right">
-    <a href="?_ul=de@(String.IsNullOrEmpty(Model.Redirect) ? "" : "&redirect=" + Uri.EscapeDataString(Model.Redirect))">DE</a> |
-    <a href="?_ul=en@(String.IsNullOrEmpty(Model.Redirect) ? "" : "&redirect=" + Uri.EscapeDataString(Model.Redirect))">EN</a>
-</div>
-<br />
-@if (errorMessage != null)
-{
-    <div role="alert" style="color:red">@errorMessage</div>
-}
-<br />
+<div class="webgis-auth">
+    <div class="webgis-auth-card">
+        <div class="webgis-auth-card-header">
+            <div class="webgis-auth-header-row">
+                <h2>@L["subscribers.login.title"]</h2>
+                <nav class="webgis-auth-lang" aria-label="Language">
+                    <a href="?_ul=de@(redirectQuery)" class="@(activeLanguage == "de" ? "active" : "")" lang="de">DE</a>
+                    <a href="?_ul=en@(redirectQuery)" class="@(activeLanguage == "en" ? "active" : "")" lang="en">EN</a>
+                </nav>
+            </div>
+        </div>
 
-@using (Html.BeginForm("Login", "Subscribers", method: FormMethod.Post, htmlAttributes: new { id = "subscriber-login-form" }))
-{
-    <div id="wizard" class="webgis-wizard" data-wizard-submit-method="submit" data-wizard-submit-title="@L["subscribers.login.submit"]">
-        <div class="webgis-wizard-step" data-wizard-step-title="Subscriber">
-            <label for="Username">@L["subscribers.login.username"]</label>
-            @Html.TextBoxFor(m => m.Username, new { autocomplete = "username", autocapitalize = "none", spellcheck = "false", required = "required", autofocus = "autofocus" })
-            <br />
-            <label for="Password">@L["subscribers.login.password"]</label>
-            @Html.PasswordFor(m => m.Password, new { autocomplete = "current-password", required = "required" })
-            <div id="subscriber-login-capslock" role="status" style="display:none;color:#b35c00">@L["subscribers.login.capslock"]</div>
-            <label style="font-weight:normal">
-                <input type="checkbox" id="subscriber-login-show-password" />
-                @L["subscribers.login.show-password"]
-            </label>
-            <br />
-            @if (!String.IsNullOrWhiteSpace(Model.CaptchaCodeEncrypted))
+        <div class="webgis-auth-card-body">
+            @if (errorMessage != null)
             {
-                <input type="hidden" id="CaptchaCodeEncrypted" name="CaptchaCodeEncrypted" value="@Model.CaptchaCodeEncrypted" />
-                <img id="subscriber-login-captcha-image" src="data:image/png;base64, @Model.CaptchaDataBase64" alt="@L["subscribers.login.captcha-hint"]" />
-                <br />
-                <a href="#" id="subscriber-login-captcha-reload" data-url="@Url.Action("LoginCaptcha", "Subscribers")">@L["subscribers.login.captcha-reload"]</a>
-                <div id="subscriber-login-captcha-reload-failed" role="alert" style="display:none;color:red">@L["subscribers.login.captcha-reload-failed"]</div>
-                <br />
-                <label for="CaptchaInput">@L["subscribers.login.captcha"]</label>
-                @Html.TextBoxFor(m => m.CaptchaInput, new { autocomplete = "off", autocapitalize = "characters", spellcheck = "false", required = "required" })
-                <br />
+                <div role="alert" class="webgis-auth-alert error">@errorMessage</div>
             }
 
-            @Html.HiddenFor(m => m.Redirect)
-            @if (!String.IsNullOrEmpty(uiLanguage))
+            @using (Html.BeginForm("Login", "Subscribers", method: FormMethod.Post, htmlAttributes: new { id = "subscriber-login-form", @class = "webgis-auth-form" }))
             {
-                <input type="hidden" name="_ul" value="@uiLanguage" />
+                <div class="webgis-auth-field">
+                    <label for="Username">@L["subscribers.login.username"]</label>
+                    @Html.TextBoxFor(m => m.Username, new { autocomplete = "username", autocapitalize = "none", spellcheck = "false", required = "required", autofocus = "autofocus" })
+                </div>
+
+                <div class="webgis-auth-field">
+                    <label for="Password">@L["subscribers.login.password"]</label>
+                    <div class="webgis-auth-password" data-toggle-label="@L["subscribers.login.show-password"]">
+                        @Html.PasswordFor(m => m.Password, new { autocomplete = "current-password", required = "required", data_capslock_hint = "subscriber-login-capslock" })
+                    </div>
+                    <div id="subscriber-login-capslock" role="status" class="webgis-auth-help" style="display:none;color:#b35c00">&#9888; @L["subscribers.login.capslock"]</div>
+                </div>
+
+                @if (!String.IsNullOrWhiteSpace(Model.CaptchaCodeEncrypted))
+                {
+                    <div class="webgis-auth-field">
+                        <input type="hidden" id="CaptchaCodeEncrypted" name="CaptchaCodeEncrypted" value="@Model.CaptchaCodeEncrypted" />
+                        <div class="webgis-auth-captcha">
+                            <img id="subscriber-login-captcha-image" src="data:image/png;base64, @Model.CaptchaDataBase64" alt="@L["subscribers.login.captcha-hint"]" />
+                            <a href="#" id="subscriber-login-captcha-reload" class="webgis-auth-link" data-url="@Url.Action("LoginCaptcha", "Subscribers")">&#8635; @L["subscribers.login.captcha-reload"]</a>
+                        </div>
+                        <div id="subscriber-login-captcha-reload-failed" role="alert" class="webgis-auth-alert error" style="display:none">@L["subscribers.login.captcha-reload-failed"]</div>
+                        <label for="CaptchaInput">@L["subscribers.login.captcha"]</label>
+                        @Html.TextBoxFor(m => m.CaptchaInput, new { autocomplete = "off", autocapitalize = "characters", spellcheck = "false", required = "required" })
+                        <div class="webgis-auth-help">@L["subscribers.login.captcha-hint"]</div>
+                    </div>
+                }
+
+                @Html.HiddenFor(m => m.Redirect)
+                @if (!String.IsNullOrEmpty(uiLanguage))
+                {
+                    <input type="hidden" name="_ul" value="@uiLanguage" />
+                }
+
+                <button type="submit" class="primary block" data-submitting="@L["subscribers.login.submitting"]">@L["subscribers.login.submit"]</button>
             }
         </div>
+
+        @if (config.AllowRegisterNewSubscribers())
+        {
+            <div class="webgis-auth-card-footer">
+                @Html.ActionLink(L["subscribers.login.register"].Value, "Register")
+            </div>
+        }
     </div>
-}
+</div>
 
-<br />
-<br />
-
-@if (config.AllowRegisterNewSubscribers())
-{
-    @Html.ActionLink(L["subscribers.login.register"].Value, "Register")
+@section styles {
+    <link href="~/content/subscriber-auth.css" rel="stylesheet" asp-append-version="true" />
 }
 
 @section scripts {
+    <script src="~/scripts/api/subscriber-auth.js" asp-append-version="true"></script>
     <script type="text/javascript">
         $(function () {
-            var $password = $('#Password');
-
-            $('#subscriber-login-show-password').on('change', function () {
-                $password.attr('type', this.checked ? 'text' : 'password');
-            });
-
-            $password.on('keyup keydown', function (e) {
-                var capsLock = e.originalEvent && e.originalEvent.getModifierState && e.originalEvent.getModifierState('CapsLock');
-                $('#subscriber-login-capslock').css('display', capsLock ? 'block' : 'none');
-            });
-
             if ($('#CaptchaInput').length && $('#Username').val()) {
                 $('#Password').trigger('focus');
             }
@@ -117,14 +122,6 @@
                     .fail(function () {
                         $('#subscriber-login-captcha-reload-failed').css('display', 'block');
                     });
-            });
-
-            $('#subscriber-login-form').on('submit', function () {
-                // never submit a visible (plain text) password field state to the browser history/autofill
-                $password.attr('type', 'password');
-                $(this).find('button[type=submit]')
-                    .prop('disabled', true)
-                    .text(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["subscribers.login.submitting"].Value)));
             });
         });
     </script>

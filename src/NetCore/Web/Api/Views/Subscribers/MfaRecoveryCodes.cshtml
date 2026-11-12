@@ -11,43 +11,50 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>@ViewBag.Title</h2>
-<br />
-<div role="alert" style="color:#b35c00">@L["subscribers.mfa.recovery-hint"]</div>
-<br />
+<div class="webgis-auth">
+    <div class="webgis-auth-card">
+        <div class="webgis-auth-card-header">
+            <h2>@ViewBag.Title</h2>
+        </div>
 
-<pre id="subscriber-mfa-recovery-codes" style="font-size:1.2em;line-height:1.6em;user-select:all">@String.Join("\n", Model.RecoveryCodes ?? Array.Empty<string>())</pre>
+        <div class="webgis-auth-card-body">
+            <div role="alert" class="webgis-auth-alert warning">@L["subscribers.mfa.recovery-hint"]</div>
 
-<button type="button" id="subscriber-mfa-recovery-copy">@L["subscribers.mfa.recovery-copy"]</button>
-<br />
-<br />
+            <ul id="subscriber-mfa-recovery-codes" class="webgis-auth-codes">
+                @foreach (var code in Model.RecoveryCodes ?? Array.Empty<string>())
+                {
+                    <li>@code</li>
+                }
+            </ul>
 
-@if (!String.IsNullOrEmpty(Model.ContinueToken))
-{
-    using (Html.BeginForm("LoginMfaContinue", "Subscribers", FormMethod.Post))
-    {
-        <input type="hidden" name="continueToken" value="@Model.ContinueToken" />
-        @if (!String.IsNullOrEmpty(uiLanguage))
-        {
-            <input type="hidden" name="_ul" value="@uiLanguage" />
-        }
-        <button type="submit">@L["subscribers.mfa.recovery-continue"]</button>
-    }
-}
-else
-{
-    <a href="@Url.Action("Account", "Subscribers")">@L["subscribers.mfa.recovery-continue"]</a>
+            <div class="webgis-auth-actions" style="justify-content:space-between">
+                <button type="button" id="subscriber-mfa-recovery-copy" data-copy-target="subscriber-mfa-recovery-codes">@L["subscribers.mfa.recovery-copy"]</button>
+
+                @if (!String.IsNullOrEmpty(Model.ContinueToken))
+                {
+                    using (Html.BeginForm("LoginMfaContinue", "Subscribers", FormMethod.Post, new { @class = "webgis-auth-form" }))
+                    {
+                        <input type="hidden" name="continueToken" value="@Model.ContinueToken" />
+                        @if (!String.IsNullOrEmpty(uiLanguage))
+                        {
+                            <input type="hidden" name="_ul" value="@uiLanguage" />
+                        }
+                        <button type="submit" class="primary">@L["subscribers.mfa.recovery-continue"] &rarr;</button>
+                    }
+                }
+                else
+                {
+                    <a href="@Url.Action("Account", "Subscribers")" class="webgis-auth-button primary">@L["subscribers.mfa.recovery-continue"] &rarr;</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section styles {
+    <link href="~/content/subscriber-auth.css" rel="stylesheet" asp-append-version="true" />
 }
 
 @section scripts {
-    <script type="text/javascript">
-        $(function () {
-            $('#subscriber-mfa-recovery-copy').on('click', function () {
-                var text = $('#subscriber-mfa-recovery-codes').text();
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(text);
-                }
-            });
-        });
-    </script>
+    <script src="~/scripts/api/subscriber-auth.js" asp-append-version="true"></script>
 }

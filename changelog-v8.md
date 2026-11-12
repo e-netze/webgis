@@ -10,6 +10,52 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Security (Subscriber login): Hardened the forms login `/Subscribers/Login` (map authors and admins),
+  which can now be reachable from the internet.
+  - Auth cookie: `HttpOnly`, `SameSite=Lax`, `Secure` flag via new `api.config` key
+    `security:cookie-secure` (`auto` = HTTPS only, so `http://localhost` keeps working; `always`;
+    `never`), absolute lifetime `security:session-max-lifetime-minutes` (default 480) and optional
+    idle timeout `security:session-idle-timeout-minutes`.
+  - Generic login error messages, timing protection against username enumeration, audit log of
+    logins.
+  - Passwords are hashed with PBKDF2-SHA256; legacy hashes are still accepted and re-hashed on the
+    next successful login.
+  - Brute force protection per username and client IP: captcha after failed attempts, escalating
+    temporary lockout, slow-down per IP (`security:login-*` keys, in-memory or shared via Redis
+    `security:login-throttle-redis-connectionstring`). Captchas are single-use and expire
+    (`security:captcha-lifetime-minutes`).
+  - Successful Basic-Auth/DataLinq password verifications are cached
+    (`security:password-verification-cache-seconds`).
+  - New `api.config` keys `middleware:x-forwarded-known-proxies` / `x-forwarded-known-networks` for
+    reverse proxies that are not on the same machine (default: loopback only, as before).
+  - Settings are bound to `SubscriberSecurityOptions` (options pattern).
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-security-subscriber-login)
+- Security (Subscriber login): Optional two-factor authentication (TOTP) for subscribers.
+  - Set up on the new account page with QR code and recovery codes; admins can reset it.
+  - Can be made mandatory via `api.config` key `security:mfa-required` (`none` (default), `admins`,
+    `all`); affected subscribers are guided through the setup at login. Issuer name:
+    `security:mfa-issuer`.
+  - Stored separately from the subscribers (SQL: new table `webgis_api_subscriber_mfa`, created by
+    the Setup page; FileDb/MongoDb work out of the box). Without the table, MFA is greyed out with a
+    hint and the login works as before.
+  - The auth cookie (v3) contains a security stamp, so changing the password or MFA invalidates
+    other sessions.
+  - Basic-Auth and DataLinq still use username/password only.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/hardening/index.html#hardening-subscriber-mfa)
+- Subscriber account page: Subscribers can change their own password (current password required) and
+  manage two-factor authentication.
+- Subscriber password policy for new/changed passwords (existing passwords remain valid):
+  - minimum length `security:password-min-length` (default 12), built-in blocklist of common
+    passwords plus optional `security:password-blocklist-file`, no username/name/email, no trivial
+    repetitions or sequences, optional `security:password-required-character-classes` (0-4).
+  - The default password `webgisauthor` of the initial installation is blocked; subscribers logging
+    in with it must change it immediately (not enforced in DEBUG builds).
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/hardening/index.html#hardening-default-passwords)
+- Redesigned subscriber login, two-factor and account pages (card layout, language switch,
+  show-password toggle, caps lock hint, password confirmation check).
+  - New `wwwroot/content/subscriber-auth.css`, `wwwroot/scripts/api/subscriber-auth.js` and partial
+    `_NewPasswordFields.cshtml`; `_Layout.cshtml` got an optional `styles` section.
+
 ### Fixed
 
 ## 8.26.4501
