@@ -1097,3 +1097,122 @@ button.modaldialog-button-commit,
     outline: none;
     box-shadow: none;
 }
+/****************************************************************************************
+ Start page (tiles), login, sidebar - api-pages style
+*****************************************************************************************/
+
+body .login-panel {
+    max-width: 400px;
+    margin: 48px auto;
+    padding: 24px 28px;
+    background-color: var(--webgis-ui-surface);
+    border: none;
+    border-top: 4px solid var(--webgis-brand-primary);
+    border-radius: var(--webgis-ui-radius);
+    box-shadow: var(--webgis-ui-shadow-md);
+}
+
+    body .login-panel h2 {
+        margin: 0 0 16px 0;
+        font-size: 22px;
+        color: var(--webgis-ui-text);
+    }
+
+    body .login-panel input {
+        display: block;
+        margin: 6px 0;
+        padding: 8px 10px;
+        border: 1px solid var(--webgis-ui-border-strong);
+        border-radius: var(--webgis-ui-radius-sm);
+        background-color: var(--webgis-ui-surface);
+        color: var(--webgis-ui-text);
+    }
+
+        body .login-panel input:focus {
+            outline: none;
+            border-color: var(--webgis-brand-primary);
+            box-shadow: 0 0 0 3px var(--webgis-ui-focus-ring);
+        }
+
+    body .login-panel button {
+        width: 100%;
+        padding: 9px 16px;
+        border: 1px solid var(--webgis-brand-primary);
+        border-radius: var(--webgis-ui-radius-sm);
+        background-color: var(--webgis-brand-primary);
+        color: #fff;
+        font-weight: 600;
+    }
+
+        body .login-panel button:hover {
+            background-color: var(--webgis-ui-primary-strong);
+            border-color: var(--webgis-ui-primary-strong);
+        }
+
+    body .login-panel .error-message {
+        margin-bottom: 8px;
+        padding: 8px 10px;
+        border: 1px solid #f5c2c7;
+        border-radius: var(--webgis-ui-radius-sm);
+        background-color: #fdecee;
+        color: #b42318;
+    }
+
+.body-content h1 {
+    margin: 28px 0 12px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--webgis-ui-text);
+}
+
+.tile {
+    width: 170px;
+    height: 150px;
+    margin: 0 10px 10px 0;
+    background-color: var(--webgis-ui-surface);
+    color: var(--webgis-ui-text);
+    border: 1px solid var(--webgis-ui-border);
+    border-top: 4px solid var(--webgis-brand-primary);
+    border-radius: var(--webgis-ui-radius);
+    box-shadow: var(--webgis-ui-shadow-sm);
+    transition: box-shadow .15s ease, transform .15s ease;
+}
+
+    .tile:hover {
+        box-shadow: var(--webgis-ui-shadow-md);
+        transform: translateY(-2px);
+    }
+
+    .tile .text {
+        padding: 8px;
+        font-weight: 600;
+    }
+
+    .tile.warning {
+        border-top-color: #c62828;
+    }
+
+.webportal-layout-sidebar {
+    background-color: var(--webgis-ui-surface);
+}
+
+    .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item:hover {
+        background-color: var(--webgis-brand-primary-light);
+    }
+
+        .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item:hover a {
+            color: var(--webgis-brand-primary-light-text-color);
+        }
+
+    .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item.hr .text {
+        background-color: var(--webgis-ui-surface);
+    }
+
+.webportal-layout-footer {
+    background-color: var(--webgis-ui-surface);
+}

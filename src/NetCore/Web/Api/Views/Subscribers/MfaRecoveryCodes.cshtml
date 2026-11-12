@@ -11,14 +11,14 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="webgis-auth">
-    <div class="webgis-auth-card">
-        <div class="webgis-auth-card-header">
+<div class="webgis-page narrow">
+    <div class="webgis-page-card">
+        <div class="webgis-page-card-header">
             <h2>@ViewBag.Title</h2>
         </div>
 
-        <div class="webgis-auth-card-body">
-            <div role="alert" class="webgis-auth-alert warning">@L["subscribers.mfa.recovery-hint"]</div>
+        <div class="webgis-page-card-body">
+            <div role="alert" class="webgis-page-alert warning">@L["subscribers.mfa.recovery-hint"]</div>
 
             <ul id="subscriber-mfa-recovery-codes" class="webgis-auth-codes">
                 @foreach (var code in Model.RecoveryCodes ?? Array.Empty<string>())
@@ -27,7 +27,7 @@
                 }
             </ul>
 
-            <div class="webgis-auth-actions" style="justify-content:space-between">
+            <div class="webgis-page-actions" style="justify-content:space-between">
                 <button type="button" id="subscriber-mfa-recovery-copy" data-copy-target="subscriber-mfa-recovery-codes">@L["subscribers.mfa.recovery-copy"]</button>
 
                 @if (!String.IsNullOrEmpty(Model.ContinueToken))
@@ -44,7 +44,7 @@
                 }
                 else
                 {
-                    <a href="@Url.Action("Account", "Subscribers")" class="webgis-auth-button primary">@L["subscribers.mfa.recovery-continue"] &rarr;</a>
+                    <a href="@Url.Action("Account", "Subscribers")" class="webgis-page-button primary">@L["subscribers.mfa.recovery-continue"] &rarr;</a>
                 }
             </div>
         </div>

@@ -32,35 +32,35 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="webgis-auth wide">
-    <div class="webgis-auth-page-title">
+<div class="webgis-page medium">
+    <div class="webgis-page-page-title">
         <h2>
             <a href="@Url.Action("Index","Subscribers")" class="back-button" aria-label="Back"></a>
             @ViewBag.Title
         </h2>
         @if (!String.IsNullOrWhiteSpace(username))
         {
-            <div class="webgis-auth-subtitle">@username</div>
+            <div class="webgis-page-subtitle">@username</div>
         }
     </div>
 
     @if (errorMessage != null)
     {
-        <div role="alert" class="webgis-auth-alert error">@errorMessage</div>
+        <div role="alert" class="webgis-page-alert error">@errorMessage</div>
     }
     @if (successMessage != null)
     {
-        <div role="status" class="webgis-auth-alert success">@successMessage</div>
+        <div role="status" class="webgis-page-alert success">@successMessage</div>
     }
 
-    <section class="webgis-auth-card" aria-labelledby="account-password-title">
-        <div class="webgis-auth-card-header">
+    <section class="webgis-page-card" aria-labelledby="account-password-title">
+        <div class="webgis-page-card-header">
             <h3 id="account-password-title">@L["subscribers.account.change-password"]</h3>
         </div>
-        <div class="webgis-auth-card-body">
+        <div class="webgis-page-card-body">
             @using (Html.BeginForm("AccountChangePassword", "Subscribers", FormMethod.Post, new { @class = "webgis-auth-form" }))
             {
-                <div class="webgis-auth-field">
+                <div class="webgis-page-field">
                     <label for="pw-current">@L["subscribers.mfa.current-password"]</label>
                     <div class="webgis-auth-password" data-toggle-label="@showPasswordLabel">
                         <input type="password" id="pw-current" name="CurrentPassword" autocomplete="current-password" required="required" />
@@ -74,36 +74,36 @@
         </div>
     </section>
 
-    <section class="webgis-auth-card" aria-labelledby="account-mfa-title">
-        <div class="webgis-auth-card-header">
-            <div class="webgis-auth-header-row">
+    <section class="webgis-page-card" aria-labelledby="account-mfa-title">
+        <div class="webgis-page-card-header">
+            <div class="webgis-page-header-row">
                 <h3 id="account-mfa-title">@L["subscribers.mfa.title"]</h3>
-                <span class="webgis-auth-badge @(Model.Available && Model.Enabled ? "on" : Model.Available ? "off" : "")">
+                <span class="webgis-page-badge @(Model.Available && Model.Enabled ? "on" : Model.Available ? "off" : "")">
                     @L[Model.Available && Model.Enabled ? "subscribers.mfa.status-enabled" : "subscribers.mfa.status-disabled"]
                 </span>
             </div>
         </div>
-        <div class="webgis-auth-card-body">
+        <div class="webgis-page-card-body">
             @if (!Model.Available)
             {
-                <div class="webgis-auth-alert warning">@L["subscribers.mfa.not-available"]</div>
+                <div class="webgis-page-alert warning">@L["subscribers.mfa.not-available"]</div>
                 <button type="button" disabled="disabled">@L["subscribers.mfa.setup"]</button>
             }
             else if (!Model.Enabled)
             {
-                <div class="webgis-auth-alert @(Model.Required ? "warning" : "info")">@L[Model.Required ? "subscribers.mfa.required-hint" : "subscribers.mfa.recommended"]</div>
-                <a href="@Url.Action("MfaSetup", "Subscribers")" class="webgis-auth-button primary">@L["subscribers.mfa.setup"]</a>
+                <div class="webgis-page-alert @(Model.Required ? "warning" : "info")">@L[Model.Required ? "subscribers.mfa.required-hint" : "subscribers.mfa.recommended"]</div>
+                <a href="@Url.Action("MfaSetup", "Subscribers")" class="webgis-page-button primary">@L["subscribers.mfa.setup"]</a>
             }
             else
             {
                 <p>@L["subscribers.mfa.recovery-left"].Value.Replace("{0}", Model.RecoveryCodesLeft.ToString())</p>
 
-                <details class="webgis-auth-details">
+                <details class="webgis-page-details">
                     <summary>@L["subscribers.mfa.regenerate"]</summary>
-                    <div class="webgis-auth-details-body">
+                    <div class="webgis-page-details-body">
                         @using (Html.BeginForm("MfaRegenerateRecoveryCodes", "Subscribers", FormMethod.Post, new { @class = "webgis-auth-form" }))
                         {
-                            <div class="webgis-auth-field">
+                            <div class="webgis-page-field">
                                 <label for="regen-password">@L["subscribers.mfa.current-password"]</label>
                                 <div class="webgis-auth-password" data-toggle-label="@showPasswordLabel">
                                     <input type="password" id="regen-password" name="CurrentPassword" autocomplete="current-password" required="required" />
@@ -116,16 +116,16 @@
 
                 @if (Model.Required)
                 {
-                    <div class="webgis-auth-alert info" style="margin-top:12px;margin-bottom:0">@L["subscribers.mfa.required-hint"]</div>
+                    <div class="webgis-page-alert info" style="margin-top:12px;margin-bottom:0">@L["subscribers.mfa.required-hint"]</div>
                 }
                 else
                 {
-                    <details class="webgis-auth-details">
+                    <details class="webgis-page-details">
                         <summary>@L["subscribers.mfa.disable"]</summary>
-                        <div class="webgis-auth-details-body">
+                        <div class="webgis-page-details-body">
                             @using (Html.BeginForm("MfaDisable", "Subscribers", FormMethod.Post, new { @class = "webgis-auth-form" }))
                             {
-                                <div class="webgis-auth-field">
+                                <div class="webgis-page-field">
                                     <label for="disable-password">@L["subscribers.mfa.current-password"]</label>
                                     <div class="webgis-auth-password" data-toggle-label="@showPasswordLabel">
                                         <input type="password" id="disable-password" name="CurrentPassword" autocomplete="current-password" required="required" />

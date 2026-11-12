@@ -1,78 +1,116 @@
 ﻿@model Api.Core.Models.Home.ErrorModel
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+@inject E.Standard.Localization.Abstractions.ICultureProvider CultureProvider
 @{
     Layout = null;
+    var L = LocalizerFactory.Create(typeof(object));
 }
 
 <!doctype html>
 
-<html lang="en">
+<html lang="@CultureProvider.Culture">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width" />
 
-    <title>WebGIS API Error</title>
-    <meta name="description" content="The HTML5 Herald">
-    <meta name="author" content="SitePoint">
+    <title>@L["pages.error.title"]</title>
 
+    @* self-contained on purpose: the error page should not depend on other resources *@
     <style>
         body {
-            background: #808080;
-            text-align: center;
+            margin: 0;
+            padding: 32px 12px;
+            background: #f3f4f6;
             font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+            color: #1f2937;
         }
 
-        .error-message {
+        .error-card {
+            box-sizing: border-box;
             max-width: 800px;
-            text-align: left;
             margin: auto;
             background: #fff;
-            border-radius: 5px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+            border: 1px solid #dcdfe3;
+            border-top: 4px solid #c62828;
+            border-radius: 10px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
             overflow: hidden;
         }
 
-            .error-message h1 {
-                color: #80c826;
-                background: #f8f8f8;
-                padding: 20px;
-                margin: 0px;
-                font-weight: normal;
+            .error-card h1 {
+                margin: 0;
+                padding: 20px 24px 6px 24px;
+                font-size: 1.5em;
+                font-weight: 600;
             }
 
-            .error-message h2 {
-                padding: 20px;
-                font-weight: normal;
-                color: #ff0000;
-                margin: 0px;
+            .error-card .subtitle {
+                margin: 0;
+                padding: 0 24px 14px 24px;
+                color: #6b7280;
             }
 
-            .error-message .message {
-                padding: 20px;
+            .error-card .message {
+                margin: 0 24px 20px 24px;
+                padding: 10px 12px;
+                background: #fdecea;
+                border-left: 4px solid #c62828;
+                border-radius: 6px;
+                color: #7f1d1d;
+                line-height: 1.4;
+                overflow-wrap: anywhere;
             }
 
-            .error-message .stacktrace {
-                padding: 20px;
-                color: #acacac;
+            .error-card details {
+                margin: 0 24px 20px 24px;
+                border: 1px solid #dcdfe3;
+                border-radius: 8px;
+            }
+
+                .error-card details summary {
+                    cursor: pointer;
+                    padding: 10px 14px;
+                    font-weight: 600;
+                }
+
+            .error-card .stacktrace {
+                margin: 0;
+                padding: 10px 14px;
+                border-top: 1px solid #dcdfe3;
+                color: #6b7280;
                 font-size: 12px;
+                white-space: pre-wrap;
+                overflow-wrap: anywhere;
             }
-    </style>
 
+            .error-card .footer {
+                padding: 14px 24px;
+                background: #f7f8f9;
+                border-top: 1px solid #dcdfe3;
+                text-align: center;
+            }
+
+                .error-card .footer a {
+                    color: inherit;
+                }
+    </style>
 </head>
 
 <body>
-    <div class="error-message">
-        <h1>WebGIS API Error</h1>
-        <h2>Bei Ihrer Anforderung sind Fehler aufgetreten:</h2>
-        <div class="message">
-            @Model.Message
-        </div>
+    <div class="error-card">
+        <h1>@L["pages.error.title"]</h1>
+        <p class="subtitle">@L["pages.error.subtitle"]</p>
+        <div class="message" role="alert">@Model.Message</div>
         @if (!String.IsNullOrEmpty(Model.StackTrace))
         {
-        <p class="stacktrace">
-            @Html.Raw(Model.StackTrace.Replace("\n", "<br/>"))
-        </p>
+            <details>
+                <summary>@L["pages.error.details"]</summary>
+                <pre class="stacktrace">@Model.StackTrace</pre>
+            </details>
         }
-    </div> 
+        <div class="footer">
+            <a href="@Url.Action("Index", "Home")">@L["pages.error.home"]</a>
+        </div>
+    </div>
 </body>
 </html>
-
-

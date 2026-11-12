@@ -78,6 +78,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Viewer: texts of "Drawing (Map Markup)" can be rotated with a handle in the map or a rotation angle in the symbology; the rotation is printed and exported to shapefiles.
   [Docs manual](https://docs.webgiscloud.com/en/webgis-manual/mapviewer/tools/general/mapmarkup/manual.html#mapmarkup-text-rotation)
 - Quick search shows the copyright info assigned to a search service in the CMS (logo, text, link) below the result list and, for the selected result, in the "Info & Copyright" tab; use it e.g. to meet the terms of use of the DORIS search service.
+- Modernized design of the WebGIS API pages (subscriber management, REST directory), CMS login/start page and Portal (login, portal page, MapBuilder, AppBuilder), including a DE/EN language switch on the API pages; custom CSS targeting the old page markup may need to be checked.
 
 ### Fixed
 

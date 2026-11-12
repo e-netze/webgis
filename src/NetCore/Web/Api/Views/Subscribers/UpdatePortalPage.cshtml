@@ -1,86 +1,111 @@
 ﻿@model E.Standard.WebGIS.Core.Models.ApiPortalPageDTO
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
 
 @{
-    ViewBag.Title = "Edit Portal Page";
+    var L = LocalizerFactory.Create(typeof(object));
+    bool isNew = String.IsNullOrWhiteSpace(Model.Id);
+    ViewBag.Title = L[isNew ? "pages.portal-edit.title-new" : "pages.portal-edit.title-update"].Value;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <script src="~/scripts/webgis-jquery-multiselect-autocomplete.js"></script>
 
-<h2>
-    <a href="@Url.Action("PortalPages","Subscribers")" class="back-button"></a>
-    @(String.IsNullOrWhiteSpace(Model.Id) ? "Create" : "Update") Api Portal Page
-</h2>
-<br />
-
-@if (!String.IsNullOrEmpty(Model.ErrorMessage))
-{
-    <span style="color:red">@(Model.ErrorMessage)</span>
-}
-<br />
-<br />
-
-@using (Html.BeginForm("UpdatePortalPage", "Subscribers", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-    <div id="wizard" class="webgis-wizard" data-wizard-submit-method="submit" data-wizard-submit-title="@(String.IsNullOrWhiteSpace(Model.Id) ? "Create" : "Update")">
-        <div class="webgis-wizard-step" data-wizard-step-title="General">
-            <span>Portal Id: *</span>
-            <br />
-            @Html.TextBoxFor(m => m.Id, "", String.IsNullOrWhiteSpace(Model.Id) ? (object)null : (object)new { @readonly = "readonly" })
-            <br />
-            <span>Portal Name: *</span>
-            <br />
-            @Html.TextBoxFor(m => m.Name)
-            <br />
-            <span>Description:</span>
-            <br />
-            @Html.TextAreaFor(m => m.Description, new { rows = 10 })
-            <br />
-            <span>Banner-Image:</span>
-            <br />
-            <input type="file" name="banner-image" />
-            <br />
-            <br />
-        </div>
-        <div class="webgis-wizard-step" data-wizard-step-title="Securiry">
-            <br />
-            <span>Authorized Users:</span>
-            <div id="auth-users"></div>
-            <br />
-            <span>Authorized (Map) Authors:</span>
-            <div id="auth-map-authors"></div>
-            <br />
-            <span>Authorized (Content) Authors:</span>
-            <div id="auth-content-authors"></div>
-            <br />
-        </div>
-        <div class="webgis-wizard-step" data-wizard-step-title="Meta">
-            <span>HTML Meta Tags:</span>
-            <br />
-            @Html.TextAreaFor(m => m.HtmlMetaTags, new { rows = 10 })
-        </div>
-        <div class="webgis-wizard-step" data-wizard-step-title="Creation Info">
-            <span>Creation Date (UTC):</span>
-            <br />
-            @Html.TextBoxFor(m => m.Created, "", new { @readonly = "readonly" })
-            <br />
-            <br />
-            <span>Owner:</span>
-            <br />
-            @Html.TextBoxFor(m => m.Subscriber, "", new { @readonly = "readonly" })
-            <br />
-            <br />
-        </div>
-
-        <!--
-        <button type="submit" class="webgis-wizard-submit">
-            @(String.IsNullOrWhiteSpace(Model.Id) ? "Create" : "Update")
-        </button>-->
-
+<div class="webgis-page medium">
+    <div class="webgis-page-page-title">
+        <h2>
+            <a href="@Url.Action("PortalPages","Subscribers")" class="back-button" aria-label="@L["pages.layout.back"]"></a>
+            @ViewBag.Title
+        </h2>
     </div>
 
-}
+    @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="webgis-page-alert error" role="alert">@Model.ErrorMessage</div>
+    }
 
+    @using (Html.BeginForm("UpdatePortalPage", "Subscribers", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.HiddenFor(m => m.Subscriber)
+        @Html.HiddenFor(m => m.Created)
+        <section class="webgis-page-card">
+            <div class="webgis-page-card-header">
+                <h3>@L["pages.form.step-general"]</h3>
+            </div>
+            <div class="webgis-page-card-body">
+                <div class="webgis-page-field">
+                    <label for="@Html.IdFor(m => m.Id)">@L["pages.portal-edit.id"] *</label>
+                    @Html.TextBoxFor(m => m.Id, "", isNew ? (object)new { required = "required" } : (object)new { @readonly = "readonly" })
+                </div>
+                <div class="webgis-page-field">
+                    <label for="@Html.IdFor(m => m.Name)">@L["pages.portal-edit.name"] *</label>
+                    @Html.TextBoxFor(m => m.Name, new { required = "required" })
+                </div>
+                <div class="webgis-page-field">
+                    <label for="@Html.IdFor(m => m.Description)">@L["pages.portal-edit.description"]</label>
+                    @Html.TextAreaFor(m => m.Description, new { rows = 6 })
+                </div>
+                <div class="webgis-page-field">
+                    <label for="banner-image">@L["pages.portal-edit.banner"]</label>
+                    <input type="file" id="banner-image" name="banner-image" accept="image/*" />
+                </div>
+            </div>
+        </section>
+
+        <section class="webgis-page-card">
+            <div class="webgis-page-card-header">
+                <h3>@L["pages.form.step-security"]</h3>
+            </div>
+            <div class="webgis-page-card-body">
+                <div class="webgis-page-field">
+                    <label>@L["pages.portal-edit.users"]</label>
+                    <div id="auth-users"></div>
+                </div>
+                <div class="webgis-page-field">
+                    <label>@L["pages.portal-edit.map-authors"]</label>
+                    <div id="auth-map-authors"></div>
+                </div>
+                <div class="webgis-page-field">
+                    <label>@L["pages.portal-edit.content-authors"]</label>
+                    <div id="auth-content-authors"></div>
+                </div>
+            </div>
+        </section>
+
+        <details class="webgis-page-card webgis-page-card-collapsible">
+            <summary class="webgis-page-card-header">
+                <h3>@L["pages.portal-edit.step-meta"]</h3>
+            </summary>
+            <div class="webgis-page-card-body">
+                <div class="webgis-page-field">
+                    <label for="@Html.IdFor(m => m.HtmlMetaTags)">@L["pages.portal-edit.meta-tags"]</label>
+                    @Html.TextAreaFor(m => m.HtmlMetaTags, new { rows = 6 })
+                </div>
+            </div>
+        </details>
+
+        @if (!isNew)
+        {
+            <section class="webgis-page-card">
+                <div class="webgis-page-card-header">
+                    <h3>@L["pages.form.step-creation"]</h3>
+                </div>
+                <div class="webgis-page-card-body">
+                    <dl class="webgis-page-properties">
+                        <dt>@L["pages.form.created"]</dt>
+                        <dd>@Model.Created</dd>
+                        <dt>@L["pages.portal-edit.owner"]</dt>
+                        <dd>@Model.Subscriber</dd>
+                    </dl>
+                </div>
+            </section>
+        }
+
+        <div class="webgis-page-actions">
+            <button type="submit" class="webgis-page-button primary">@L[isNew ? "pages.form.create" : "pages.form.save"]</button>
+            <a class="webgis-page-link" href="@Url.Action("PortalPages","Subscribers")">@L["pages.form.cancel"]</a>
+        </div>
+    }
+</div>
 <script type="text/javascript">
     $(document).ready(function () {
         $('#auth-users').webgis_autocomplete_multiselect({

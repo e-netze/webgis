@@ -1,51 +1,75 @@
 ﻿@model E.Standard.WebGIS.Core.Models.ApiPortals
 
-@using  E.Standard.Api.App.Extensions   
+@using E.Standard.Api.App.Extensions
 @inject Api.Core.AppCode.Services.UrlHelperService urlHelper
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
 @{
-    ViewBag.Title = "Api Portals";
+    var L = LocalizerFactory.Create(typeof(object));
+    ViewBag.Title = L["pages.portals.title"].Value;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var portals = Model?.Portals?.ToArray() ?? Array.Empty<E.Standard.WebGIS.Core.Models.ApiPortalPageDTO>();
 }
 
-<h2>
-    <a href="@Url.Action("Index","Subscribers")" class="back-button"></a>
-    Portal Pages
-</h2>
+<div class="webgis-page">
+    <div class="webgis-page-page-title">
+        <h2>
+            <a href="@Url.Action("Index","Subscribers")" class="back-button" aria-label="@L["pages.layout.back"]"></a>
+            @ViewBag.Title
+        </h2>
+    </div>
 
-<div style="padding:10px">
-
-    @if (Model != null && Model.Portals != null)
-    {
-        foreach (var portal in Model.Portals)
+    <section class="webgis-page-card">
+        @if (portals.Length == 0)
         {
-            <div class="webgis-api-tile-pro">
-                <div class="webgis-api-tile" onclick="document.location='@Url.Action("UpdatePortalPage", new { id = portal.Id })'">
-                    <img class="webgis-api-tile-image" src="~/content/api/img/portal-100.png" />
-                    <span class="webgis-api-tile-title">@portal.Id</span>
-                    <span class="webgis-api-tile-description">
-                        @portal.Name
-                    </span>
-                </div>
-                <div class="webgis-api-tile-pro-link" title="Poral" alt="Portal" onclick="var c=portalCedentials('@portal.Id');window.open('@(urlHelper.PortalUrl().RemoveEndingSlashes()+"/auth/loginAsAdmin/" +@portal.Id)?credential_token=' + c);">
-                    <div>&nbsp;Portal</div>
-                </div>
+            <div class="webgis-page-card-body">@L["pages.portals.empty"]</div>
+        }
+        else
+        {
+            <div class="webgis-page-table-wrapper">
+                <table class="webgis-page-table">
+                    <thead>
+                        <tr>
+                            <th>@L["pages.portals.id"]</th>
+                            <th>@L["pages.portals.name"]</th>
+                            <th class="actions"><span class="sr-only">@L["pages.list.actions"]</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var portal in portals)
+                        {
+                            <tr>
+                                <td>@Html.ActionLink(portal.Id, "UpdatePortalPage", new { id = portal.Id }, new { @class = "webgis-page-link" })</td>
+                                <td>@portal.Name</td>
+                                <td class="actions">
+                                    <button type="button" class="webgis-page-button small" data-portal-id="@portal.Id">@L["pages.portals.open"]</button>
+                                    <a class="webgis-page-button small" href="@Url.Action("UpdatePortalPage", new { id = portal.Id })">@L["pages.list.edit"]</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         }
-    }
-
-    <br />
-    <br />
-
-    @Html.ActionLink("New Portal Page", "NewPortalPage")
+        <div class="webgis-page-card-footer">
+            <a class="webgis-page-button primary" href="@Url.Action("NewPortalPage")">@L["pages.portals.new"]</a>
+        </div>
+    </section>
 </div>
 
 <script type="text/javascript">
+    $(function () {
+        $('button[data-portal-id]').on('click', function () {
+            var id = $(this).attr('data-portal-id');
+            var c = portalCedentials(id);
+            window.open('@(urlHelper.PortalUrl().RemoveEndingSlashes())/auth/loginAsAdmin/' + encodeURIComponent(id) + '?credential_token=' + c);
+        });
+    });
 
     function portalCedentials(id) {
         var c = '';
         $.ajax({
             type: 'post',
-            url: 'CreatePortalCredentialToken/' + id,
+            url: '@Url.Action("CreatePortalCredentialToken")/' + encodeURIComponent(id),
             dataType: 'json',
             success: function (result) { c = result.credentialToken },
             data: {},
@@ -54,5 +78,4 @@
 
         return c;
     }
-
 </script>

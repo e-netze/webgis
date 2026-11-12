@@ -1,47 +1,54 @@
 ﻿@model E.Standard.Api.App.Models.RegisterSubscriberModel
 @inject Microsoft.Extensions.Options.IOptions<E.Standard.Api.App.Configuration.SubscriberSecurityOptions> SecurityOptions
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
 
 @{
-    ViewBag.Title = "Edit Api Client";
+    var L = LocalizerFactory.Create(typeof(object));
+    ViewBag.Title = L["pages.register.title"].Value;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Register new subscriber</h2>
-<br />
-<br />
-
-@if (!String.IsNullOrEmpty(Model.ErrorMessage))
-{
-    <span style="color:red">@(Model.ErrorMessage)</span>
-}
-<br />
-<br />
-
-@using (Html.BeginForm("Register", "Subscribers", FormMethod.Post))
-{
-    <div id="wizard" class="webgis-wizard" data-wizard-submit-method="submit" data-wizard-submit-title="Register">
-        <div class="webgis-wizard-step" data-wizard-step-title="Subscriber">
-            @Html.LabelFor(m => m.Username)
-            @Html.TextBoxFor(m => m.Username, new { autocomplete = "username" })
-            <br />
-            @Html.LabelFor(m => m.FirstName)
-            @Html.TextBoxFor(m => m.FirstName, new { autocomplete = "given-name" })
-            <br />
-            @Html.LabelFor(m => m.LastName)
-            @Html.TextBoxFor(m => m.LastName, new { autocomplete = "family-name" })
-            <br />
-            @Html.LabelFor(m => m.Email)
-            @Html.TextBoxFor(m => m.Email, new { autocomplete = "email", type = "email" })
-            <br />
-            @Html.LabelFor(m => m.Password1)
-            @Html.PasswordFor(m => m.Password1, new { autocomplete = "new-password", minlength = SecurityOptions.Value.PasswordMinLength, maxlength = E.Standard.Api.App.Configuration.SubscriberSecurityOptions.PasswordMaxLength })
-            <br />
-            @Html.LabelFor(m => m.Password2)
-            @Html.PasswordFor(m => m.Password2, new { autocomplete = "new-password" })
-            <br />
-            <small>Min. @SecurityOptions.Value.PasswordMinLength characters</small>
-            <br />
-
-        </div>
+<div class="webgis-page narrow">
+    <div class="webgis-page-page-title">
+        <h2>@ViewBag.Title</h2>
     </div>
-}
+
+    @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="webgis-page-alert error" role="alert">@Model.ErrorMessage</div>
+    }
+
+    <section class="webgis-page-card">
+        <div class="webgis-page-card-body">
+            @using (Html.BeginForm("Register", "Subscribers", FormMethod.Post))
+            {
+                        <div class="webgis-page-field">
+                            <label for="@Html.IdFor(m => m.Username)">@L["pages.subscriber-form.username"]</label>
+                            @Html.TextBoxFor(m => m.Username, new { autocomplete = "username" })
+                        </div>
+                        <div class="webgis-page-field">
+                            <label for="@Html.IdFor(m => m.FirstName)">@L["pages.subscriber-form.first-name"]</label>
+                            @Html.TextBoxFor(m => m.FirstName, new { autocomplete = "given-name" })
+                        </div>
+                        <div class="webgis-page-field">
+                            <label for="@Html.IdFor(m => m.LastName)">@L["pages.subscriber-form.last-name"]</label>
+                            @Html.TextBoxFor(m => m.LastName, new { autocomplete = "family-name" })
+                        </div>
+                        <div class="webgis-page-field">
+                            <label for="@Html.IdFor(m => m.Email)">@L["pages.subscriber-form.email"]</label>
+                            @Html.TextBoxFor(m => m.Email, new { autocomplete = "email", type = "email" })
+                        </div>
+                        <div class="webgis-page-field">
+                            <label for="@Html.IdFor(m => m.Password1)">@L["pages.subscriber-form.password"]</label>
+                            @Html.PasswordFor(m => m.Password1, new { autocomplete = "new-password", minlength = SecurityOptions.Value.PasswordMinLength, maxlength = E.Standard.Api.App.Configuration.SubscriberSecurityOptions.PasswordMaxLength })
+                            <div class="webgis-page-help">@L["pages.register.password-hint"].Value.Replace("{0}", SecurityOptions.Value.PasswordMinLength.ToString())</div>
+                        </div>
+                        <div class="webgis-page-field">
+                            <label for="@Html.IdFor(m => m.Password2)">@L["pages.subscriber-form.password-repeat"]</label>
+                            @Html.PasswordFor(m => m.Password2, new { autocomplete = "new-password" })
+                        </div>
+                        <button type="submit" class="webgis-page-button primary block">@L["pages.register.submit"]</button>
+            }
+        </div>
+    </section>
+</div>

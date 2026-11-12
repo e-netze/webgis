@@ -1,187 +1,5 @@
-/* Subscriber login / account pages (Views/Subscribers: Login, LoginMfa, LoginChangePassword, MfaRecoveryCodes, Account) */
-
-.webgis-auth {
-    --webgis-auth-radius: 10px;
-    --webgis-auth-border: #dcdfe3;
-    --webgis-auth-muted: #6b7280;
-    --webgis-auth-error: #c62828;
-    --webgis-auth-warning: #b35c00;
-    --webgis-auth-success: #2e7d32;
-    box-sizing: border-box;
-    max-width: 420px;
-    margin: 32px auto 48px auto;
-    padding: 0 12px;
-    font-size: 1.05em;
-}
-
-    .webgis-auth.wide {
-        max-width: 600px;
-    }
-
-    .webgis-auth *,
-    .webgis-auth *::before,
-    .webgis-auth *::after {
-        box-sizing: border-box;
-    }
-
-.webgis-auth-card {
-    background: #fff;
-    border: 1px solid var(--webgis-auth-border);
-    border-radius: var(--webgis-auth-radius);
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
-.webgis-auth-card-header {
-    position: relative;
-    padding: 20px 24px 14px 24px;
-    border-top: 4px solid var(--webgis-brand-primary);
-}
-
-    .webgis-auth-card-header h2,
-    .webgis-auth-card-header h3 {
-        margin: 0;
-        padding: 0;
-        font-weight: 600;
-        line-height: 1.3;
-    }
-
-    .webgis-auth-card-header h2 {
-        font-size: 1.5em;
-    }
-
-        .webgis-auth-card-header .back-button {
-            top: 4px;
-            margin-right: 4px;
-            padding: 0;
-        }
-
-            .webgis-auth-card-header .back-button:hover {
-                background-color: transparent;
-                opacity: .7;
-            }
-
-    .webgis-auth-card-header h3 {
-        font-size: 1.2em;
-    }
-
-    .webgis-auth-card-header .webgis-auth-subtitle {
-        margin: 6px 0 0 0;
-        color: var(--webgis-auth-muted);
-    }
-
-    .webgis-auth-card-header .webgis-auth-header-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-    }
-
-.webgis-auth-card-body {
-    padding: 6px 24px 24px 24px;
-}
-
-    .webgis-auth-card-body p {
-        margin: 0 0 12px 0;
-        line-height: 1.45;
-    }
-
-.webgis-auth-card-footer {
-    padding: 14px 24px;
-    background: #f7f8f9;
-    border-top: 1px solid var(--webgis-auth-border);
-    text-align: center;
-}
-
-.webgis-auth-page-title {
-    margin: 0 0 16px 0;
-}
-
-    .webgis-auth-page-title h2 {
-        margin: 0;
-        font-weight: 600;
-    }
-
-    .webgis-auth-page-title .back-button {
-        top: 4px;
-        margin-right: 4px;
-        padding: 0;
-    }
-
-        .webgis-auth-page-title .back-button:hover {
-            background-color: transparent;
-            opacity: .7;
-        }
-
-    .webgis-auth-page-title .webgis-auth-subtitle {
-        margin: 4px 0 0 36px;
-        color: var(--webgis-auth-muted);
-    }
-
-/* language switch */
-.webgis-auth-lang {
-    display: inline-flex;
-    border: 1px solid var(--webgis-auth-border);
-    border-radius: 14px;
-    overflow: hidden;
-    font-size: .85em;
-    flex-shrink: 0;
-}
-
-    .webgis-auth-lang a {
-        padding: 3px 10px;
-        text-decoration: none;
-        color: var(--webgis-auth-muted) !important;
-    }
-
-        .webgis-auth-lang a:hover {
-            background: #f0f1f2;
-        }
-
-        .webgis-auth-lang a.active {
-            background: var(--webgis-brand-primary-light);
-            color: #000 !important;
-        }
-
-/* form fields */
-.webgis-auth-field {
-    margin-bottom: 16px;
-}
-
-    .webgis-auth-field label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: 600;
-        font-size: .95em;
-    }
-
-    .webgis-auth-field input[type="text"],
-    .webgis-auth-field input[type="password"],
-    .webgis-auth-field input:not([type]) {
-        display: block;
-        width: 100%;
-        margin: 0;
-        padding: 9px 11px;
-        font-size: 1.05em;
-        border: 1px solid #c5cad1;
-        border-radius: 6px;
-        background: #fff;
-        transition: border-color .15s, box-shadow .15s;
-    }
-
-        .webgis-auth-field input:focus {
-            outline: none;
-            border-color: var(--webgis-brand-primary);
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--webgis-brand-primary) 25%, transparent);
-        }
-
-    .webgis-auth-field .webgis-auth-help {
-        margin-top: 6px;
-        color: var(--webgis-auth-muted);
-        font-size: .88em;
-        line-height: 1.4;
-    }
+/* Subscriber login / account pages (Views/Subscribers: Login, LoginMfa, LoginChangePassword, MfaRecoveryCodes, Account).
+   Builds on the shared page design in api-pages.css */
 
 /* password field with inline show/hide toggle */
 .webgis-auth-password {
@@ -205,7 +23,7 @@
         border: none;
         border-radius: 6px;
         background: transparent;
-        color: var(--webgis-auth-muted);
+        color: var(--webgis-page-muted);
         font-size: 1.1em;
         line-height: 0;
         display: flex;
@@ -216,7 +34,7 @@
 
         .webgis-auth-password .webgis-auth-password-toggle:hover,
         .webgis-auth-password .webgis-auth-password-toggle:focus-visible {
-            background: #f0f1f2;
+            background: var(--webgis-page-hover);
             color: #000;
             box-shadow: none;
         }
@@ -226,147 +44,12 @@
         }
 
 /* one-time code input */
-.webgis-auth-field input.webgis-auth-code {
+.webgis-page-field input.webgis-auth-code {
     font-family: Consolas, "Courier New", monospace;
     font-size: 1.5em;
     letter-spacing: 4px;
     text-align: center;
 }
-
-/* buttons */
-.webgis-auth button,
-.webgis-auth .webgis-auth-button {
-    font-family: inherit;
-    border-radius: 6px;
-    padding: 9px 18px;
-    font-size: 1em;
-    min-width: 0;
-}
-
-    .webgis-auth button.primary,
-    .webgis-auth .webgis-auth-button.primary {
-        background-color: var(--webgis-brand-primary);
-        border-color: var(--webgis-brand-primary);
-        color: #fff;
-        font-weight: 600;
-    }
-
-        .webgis-auth button.primary:hover,
-        .webgis-auth .webgis-auth-button.primary:hover {
-            background-color: color-mix(in srgb, var(--webgis-brand-primary) 85%, black);
-            color: #fff;
-        }
-
-    .webgis-auth button.danger {
-        background-color: #fff;
-        border-color: var(--webgis-auth-error);
-        color: var(--webgis-auth-error);
-    }
-
-        .webgis-auth button.danger:hover {
-            background-color: var(--webgis-auth-error);
-            color: #fff;
-        }
-
-    .webgis-auth button.block {
-        display: block;
-        width: 100%;
-    }
-
-    .webgis-auth button:disabled {
-        opacity: .55;
-        cursor: not-allowed;
-        box-shadow: none;
-    }
-
-.webgis-auth .webgis-auth-button {
-    display: inline-block;
-    text-decoration: none;
-    border: 2px solid var(--webgis-brand-primary);
-}
-
-/* alerts */
-.webgis-auth-alert {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    margin: 0 0 16px 0;
-    padding: 10px 12px;
-    border-radius: 6px;
-    border-left: 4px solid;
-    line-height: 1.4;
-}
-
-    .webgis-auth-alert::before {
-        font-weight: 700;
-        flex-shrink: 0;
-    }
-
-    .webgis-auth-alert.error {
-        background: #fdecea;
-        border-color: var(--webgis-auth-error);
-        color: #7f1d1d;
-    }
-
-        .webgis-auth-alert.error::before {
-            content: "\2716";
-            color: var(--webgis-auth-error);
-        }
-
-    .webgis-auth-alert.warning {
-        background: #fff4e5;
-        border-color: #f0a030;
-        color: #663c00;
-    }
-
-        .webgis-auth-alert.warning::before {
-            content: "\26A0";
-            color: var(--webgis-auth-warning);
-        }
-
-    .webgis-auth-alert.success {
-        background: #edf7ed;
-        border-color: var(--webgis-auth-success);
-        color: #1e4620;
-    }
-
-        .webgis-auth-alert.success::before {
-            content: "\2714";
-            color: var(--webgis-auth-success);
-        }
-
-    .webgis-auth-alert.info {
-        background: #eef4fb;
-        border-color: #4a90d9;
-        color: #1c3d5a;
-    }
-
-        .webgis-auth-alert.info::before {
-            content: "\2139";
-            color: #4a90d9;
-        }
-
-/* status badge */
-.webgis-auth-badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: .8em;
-    font-weight: 600;
-    white-space: nowrap;
-    background: #eceff1;
-    color: #455a64;
-}
-
-    .webgis-auth-badge.on {
-        background: #e3f3e3;
-        color: var(--webgis-auth-success);
-    }
-
-    .webgis-auth-badge.off {
-        background: #fff4e5;
-        color: var(--webgis-auth-warning);
-    }
 
 /* captcha */
 .webgis-auth-captcha {
@@ -378,16 +61,10 @@
 }
 
     .webgis-auth-captcha img {
-        border: 1px solid var(--webgis-auth-border);
+        border: 1px solid var(--webgis-page-border);
         border-radius: 6px;
         max-width: 100%;
     }
-
-.webgis-auth-link {
-    color: var(--webgis-auth-muted) !important;
-    font-size: .9em;
-    padding: 0;
-}
 
 /* QR code / secret */
 .webgis-auth-qr {
@@ -396,7 +73,7 @@
     margin: 4px auto 14px auto;
     padding: 10px;
     background: #fff;
-    border: 1px solid var(--webgis-auth-border);
+    border: 1px solid var(--webgis-page-border);
     border-radius: 8px;
 }
 
@@ -430,7 +107,7 @@
     padding: 14px;
     list-style: none;
     background: #f4f5f7;
-    border: 1px solid var(--webgis-auth-border);
+    border: 1px solid var(--webgis-page-border);
     border-radius: 8px;
     user-select: all;
 }
@@ -443,55 +120,3 @@
         background: #fff;
         border-radius: 4px;
     }
-
-/* collapsible sub sections (account page) */
-.webgis-auth-details {
-    margin-top: 12px;
-    border: 1px solid var(--webgis-auth-border);
-    border-radius: 8px;
-}
-
-    .webgis-auth-details summary {
-        cursor: pointer;
-        padding: 10px 14px;
-        font-weight: 600;
-        list-style-position: inside;
-    }
-
-        .webgis-auth-details summary:hover {
-            background: #f7f8f9;
-        }
-
-    .webgis-auth-details[open] summary {
-        border-bottom: 1px solid var(--webgis-auth-border);
-    }
-
-    .webgis-auth-details .webgis-auth-details-body {
-        padding: 14px;
-    }
-
-.webgis-auth-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-.webgis-auth-disabled {
-    opacity: .55;
-    pointer-events: none;
-}
-
-@media (max-width: 480px) {
-    .webgis-auth {
-        margin-top: 12px;
-        padding: 0 4px;
-    }
-
-    .webgis-auth-card-header,
-    .webgis-auth-card-body,
-    .webgis-auth-card-footer {
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-}

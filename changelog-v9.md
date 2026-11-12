@@ -532,6 +532,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     (link text defaults to the new l10n key `copyright-terms-of-use`).
   - The copyright of a selected quick search result is shown in the "Info & Copyright" tab
     (`copyright-search-result`) and removed together with the result.
+- Modernized page design (card style of the subscriber login) for API, CMS and Portal pages:
+  * WebGIS API: new shared stylesheet `content/api-pages.css`; Home, Error, Authenticate, REST
+    login and all subscriber management pages rebuilt as cards, tile grids and tables with an
+    actions column; all texts localized (DE/EN, `l10n/{de,en}/Pages.md`).
+  * Central DE/EN language switch in the API layout (`?_ul=`, cookie `webgis-api-ul`).
+  * Subscriber client/portal page editors and registration no longer use the step wizard but
+    stacked cards with a single submit button; permission lists shown as chips.
+  * Modern sidebar, back button and footer; REST directory pages (`rest-pages.css`) adopt the style.
+  * CMS (login, start tiles, sidebar) and Portal (login, portal page, MapBuilder, AppBuilder)
+    restyled via CSS only, without functional changes.
 
 ### Fixed
 

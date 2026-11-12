@@ -1,27 +1,50 @@
 ﻿@model E.Standard.WebGIS.SubscriberDatabase.SubscriberDb.Subscriber[]
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
 
 @{
-    ViewBag.Title = "Admin Subscribers";
+    var L = LocalizerFactory.Create(typeof(object));
+    ViewBag.Title = L["pages.admin-subscribers.title"].Value;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>
-    <a href="@Url.Action("Index","Subscribers")" class="back-button"></a>
-    Admin subscribers
-</h2>
-
-<br />
-<br />
-
-@foreach(var subscriber in Model)
-{
-    <div>
-        @Html.ActionLink(subscriber.Name, "Update", new { id = subscriber.Id })
-        <div>
-            @(subscriber.FirstName+" "+subscriber.LastName)
-        </div>
+<div class="webgis-page">
+    <div class="webgis-page-page-title">
+        <h2>
+            <a href="@Url.Action("Index","Subscribers")" class="back-button" aria-label="@L["pages.layout.back"]"></a>
+            @ViewBag.Title
+        </h2>
     </div>
-    <br/>
-}
 
-
+    <section class="webgis-page-card">
+        @if (Model == null || Model.Length == 0)
+        {
+            <div class="webgis-page-card-body">@L["pages.admin-subscribers.empty"]</div>
+        }
+        else
+        {
+            <div class="webgis-page-table-wrapper">
+                <table class="webgis-page-table">
+                    <thead>
+                        <tr>
+                            <th>@L["pages.admin-subscribers.username"]</th>
+                            <th>@L["pages.admin-subscribers.name"]</th>
+                            <th class="actions"><span class="sr-only">@L["pages.list.actions"]</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var subscriber in Model)
+                        {
+                            <tr>
+                                <td>@Html.ActionLink(subscriber.Name, "Update", new { id = subscriber.Id }, new { @class = "webgis-page-link" })</td>
+                                <td>@(subscriber.FirstName + " " + subscriber.LastName)</td>
+                                <td class="actions">
+                                    <a class="webgis-page-button small" href="@Url.Action("Update", new { id = subscriber.Id })">@L["pages.list.edit"]</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</div>

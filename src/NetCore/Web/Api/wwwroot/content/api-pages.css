@@ -1,0 +1,798 @@
+/* Shared design for the WebGIS API html pages (Views using _Layout: Home, Subscribers, Authenticate, Rest/Login, ...).
+   Page specific additions: subscriber-auth.css (login/account pages) */
+
+:root {
+    --webgis-page-radius: 10px;
+    --webgis-page-border: #dcdfe3;
+    --webgis-page-muted: #6b7280;
+    --webgis-page-error: #c62828;
+    --webgis-page-warning: #b35c00;
+    --webgis-page-success: #2e7d32;
+    --webgis-page-hover: #f0f1f2;
+    --webgis-page-subtle: #f7f8f9;
+}
+
+.webgis-page {
+    box-sizing: border-box;
+    max-width: 1040px;
+    margin: 32px auto 48px auto;
+    padding: 0 12px;
+    font-size: 1.05em;
+}
+
+    .webgis-page.narrow {
+        max-width: 420px;
+    }
+
+    .webgis-page.medium {
+        max-width: 600px;
+    }
+
+    .webgis-page *,
+    .webgis-page *::before,
+    .webgis-page *::after {
+        box-sizing: border-box;
+    }
+
+/* layout header (brand + language switch) */
+.webgis-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+    .webgis-page-header .webgis-page-lang {
+        background: #fff;
+    }
+
+/* cards */
+.webgis-page-card {
+    background: #fff;
+    border: 1px solid var(--webgis-page-border);
+    border-radius: var(--webgis-page-radius);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.webgis-page-card-header {
+    position: relative;
+    padding: 20px 24px 14px 24px;
+    border-top: 4px solid var(--webgis-brand-primary);
+}
+
+    .webgis-page-card-header h2,
+    .webgis-page-card-header h3 {
+        margin: 0;
+        padding: 0;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    .webgis-page-card-header h2 {
+        font-size: 1.5em;
+    }
+
+    .webgis-page-card-header h3 {
+        font-size: 1.2em;
+    }
+
+    .webgis-page-card-header .webgis-page-subtitle {
+        margin: 6px 0 0 0;
+        color: var(--webgis-page-muted);
+    }
+
+    .webgis-page-card-header .webgis-page-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+.webgis-page-card-body {
+    padding: 6px 24px 24px 24px;
+}
+
+    .webgis-page-card-body p {
+        margin: 0 0 12px 0;
+        line-height: 1.45;
+    }
+
+.webgis-page-card-footer {
+    padding: 14px 24px;
+    background: var(--webgis-page-subtle);
+    border-top: 1px solid var(--webgis-page-border);
+    text-align: center;
+}
+
+/* page title (above cards) */
+.webgis-page-page-title {
+    margin: 0 0 16px 0;
+}
+
+    .webgis-page-page-title h2 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .webgis-page-page-title .webgis-page-subtitle {
+        margin: 4px 0 0 36px;
+        color: var(--webgis-page-muted);
+    }
+
+    .webgis-page-page-title .webgis-page-intro {
+        margin: 8px 0 0 0;
+        color: var(--webgis-page-muted);
+        line-height: 1.45;
+    }
+
+/* label/value list */
+.webgis-page-properties {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px 16px;
+    margin: 0;
+}
+
+    .webgis-page-properties dt {
+        font-weight: 600;
+    }
+
+    .webgis-page-properties dd {
+        margin: 0;
+        color: var(--webgis-page-muted);
+        overflow-wrap: anywhere;
+    }
+
+/* language switch (card header and layout header) */
+.webgis-page-lang {
+    display: inline-flex;
+    border: 1px solid var(--webgis-page-border);
+    border-radius: 14px;
+    overflow: hidden;
+    font-size: .85em;
+    flex-shrink: 0;
+}
+
+    .webgis-page-lang a {
+        padding: 3px 10px;
+        text-decoration: none;
+        color: var(--webgis-page-muted) !important;
+    }
+
+        .webgis-page-lang a:hover {
+            background: var(--webgis-page-hover);
+        }
+
+        .webgis-page-lang a.active {
+            background: var(--webgis-brand-primary-light);
+            color: #000 !important;
+        }
+
+/* form fields */
+.webgis-page-field {
+    margin-bottom: 16px;
+}
+
+    .webgis-page-field label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        font-size: .95em;
+    }
+
+    .webgis-page-field input[type="text"],
+    .webgis-page-field input[type="password"],
+    .webgis-page-field input[type="email"],
+    .webgis-page-field input[type="url"],
+    .webgis-page-field input:not([type]),
+    .webgis-page-field select,
+    .webgis-page-field textarea {
+        display: block;
+        width: 100%;
+        margin: 0;
+        padding: 9px 11px;
+        font-size: 1.05em;
+        font-family: inherit;
+        border: 1px solid #c5cad1;
+        border-radius: 6px;
+        background: #fff;
+        transition: border-color .15s, box-shadow .15s;
+    }
+
+        .webgis-page-field input:focus,
+        .webgis-page-field select:focus,
+        .webgis-page-field textarea:focus {
+            outline: none;
+            border-color: var(--webgis-brand-primary);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--webgis-brand-primary) 25%, transparent);
+        }
+
+    .webgis-page-field .webgis-page-help {
+        margin-top: 6px;
+        color: var(--webgis-page-muted);
+        font-size: .88em;
+        line-height: 1.4;
+    }
+
+/* buttons */
+.webgis-page button,
+.webgis-page .webgis-page-button {
+    font-family: inherit;
+    border-radius: 6px;
+    padding: 9px 18px;
+    font-size: 1em;
+    min-width: 0;
+}
+
+    .webgis-page button.primary,
+    .webgis-page .webgis-page-button.primary {
+        background-color: var(--webgis-brand-primary);
+        border-color: var(--webgis-brand-primary);
+        color: #fff;
+        font-weight: 600;
+    }
+
+        .webgis-page button.primary:hover,
+        .webgis-page .webgis-page-button.primary:hover {
+            background-color: color-mix(in srgb, var(--webgis-brand-primary) 85%, black);
+            color: #fff;
+        }
+
+    .webgis-page button.danger,
+    .webgis-page .webgis-page-button.danger {
+        background-color: #fff;
+        border-color: var(--webgis-page-error);
+        color: var(--webgis-page-error);
+    }
+
+        .webgis-page button.danger:hover,
+        .webgis-page .webgis-page-button.danger:hover {
+            background-color: var(--webgis-page-error);
+            color: #fff;
+        }
+
+    .webgis-page button.block {
+        display: block;
+        width: 100%;
+    }
+
+    .webgis-page button:disabled {
+        opacity: .55;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+.webgis-page .webgis-page-button {
+    display: inline-block;
+    text-decoration: none;
+    border: 2px solid var(--webgis-brand-primary);
+}
+
+    .webgis-page .webgis-page-button.small {
+        padding: 4px 10px;
+        font-size: .9em;
+    }
+
+/* alerts */
+.webgis-page-alert {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 0 0 16px 0;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border-left: 4px solid;
+    line-height: 1.4;
+}
+
+    .webgis-page-alert::before {
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .webgis-page-alert.error {
+        background: #fdecea;
+        border-color: var(--webgis-page-error);
+        color: #7f1d1d;
+    }
+
+        .webgis-page-alert.error::before {
+            content: "\2716";
+            color: var(--webgis-page-error);
+        }
+
+    .webgis-page-alert.warning {
+        background: #fff4e5;
+        border-color: #f0a030;
+        color: #663c00;
+    }
+
+        .webgis-page-alert.warning::before {
+            content: "\26A0";
+            color: var(--webgis-page-warning);
+        }
+
+    .webgis-page-alert.success {
+        background: #edf7ed;
+        border-color: var(--webgis-page-success);
+        color: #1e4620;
+    }
+
+        .webgis-page-alert.success::before {
+            content: "\2714";
+            color: var(--webgis-page-success);
+        }
+
+    .webgis-page-alert.info {
+        background: #eef4fb;
+        border-color: #4a90d9;
+        color: #1c3d5a;
+    }
+
+        .webgis-page-alert.info::before {
+            content: "\2139";
+            color: #4a90d9;
+        }
+
+/* status badge */
+.webgis-page-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: .8em;
+    font-weight: 600;
+    white-space: nowrap;
+    background: #eceff1;
+    color: #455a64;
+}
+
+    .webgis-page-badge.on {
+        background: #e3f3e3;
+        color: var(--webgis-page-success);
+    }
+
+    .webgis-page-badge.off {
+        background: #fff4e5;
+        color: var(--webgis-page-warning);
+    }
+
+.webgis-page-link {
+    color: var(--webgis-page-muted) !important;
+    font-size: .9em;
+    padding: 0;
+}
+
+/* collapsible sub sections */
+.webgis-page-details {
+    margin-top: 12px;
+    border: 1px solid var(--webgis-page-border);
+    border-radius: 8px;
+}
+
+    .webgis-page-details summary {
+        cursor: pointer;
+        padding: 10px 14px;
+        font-weight: 600;
+        list-style-position: inside;
+    }
+
+        .webgis-page-details summary:hover {
+            background: var(--webgis-page-subtle);
+        }
+
+    .webgis-page-details[open] summary {
+        border-bottom: 1px solid var(--webgis-page-border);
+    }
+
+    .webgis-page-details .webgis-page-details-body {
+        padding: 14px;
+    }
+
+.webgis-page-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.webgis-page-disabled {
+    opacity: .55;
+    pointer-events: none;
+}
+
+/* tile grid (navigation cards) */
+.webgis-page-section-title {
+    margin: 28px 0 12px 0;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.webgis-page-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 0 0 20px 0;
+    padding: 0;
+    list-style: none;
+}
+
+.webgis-page-tile {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 16px 18px;
+    background: #fff;
+    border: 1px solid var(--webgis-page-border);
+    border-top: 4px solid var(--webgis-brand-primary);
+    border-radius: var(--webgis-page-radius);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    color: inherit !important;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: box-shadow .15s, transform .15s;
+}
+
+    .webgis-page-tile:hover,
+    .webgis-page-tile:focus-visible {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+        outline: none;
+    }
+
+    .webgis-page-tile img {
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+    }
+
+    .webgis-page-tile .webgis-page-tile-title {
+        display: block;
+        margin-bottom: 4px;
+        font-weight: 600;
+        font-size: 1.1em;
+    }
+
+    .webgis-page-tile .webgis-page-tile-description {
+        display: block;
+        color: var(--webgis-page-muted);
+        font-size: .92em;
+        line-height: 1.4;
+    }
+
+/* tables */
+.webgis-page-table-wrapper {
+    overflow-x: auto;
+}
+
+.webgis-page-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .webgis-page-table th,
+    .webgis-page-table td {
+        padding: 10px 12px;
+        text-align: left;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--webgis-page-border);
+    }
+
+    .webgis-page-table th {
+        font-weight: 600;
+        font-size: .9em;
+        color: var(--webgis-page-muted);
+        background: var(--webgis-page-subtle);
+        white-space: nowrap;
+    }
+
+    .webgis-page-table tbody tr:hover {
+        background: var(--webgis-page-subtle);
+    }
+
+    .webgis-page-table td.actions {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+/* webgis_autocomplete_multiselect (portal page security) inside a field */
+.webgis-page-field .webgis-autocomplete-multiselect table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .webgis-page-field .webgis-autocomplete-multiselect td:nth-child(2) {
+        width: 100%;
+    }
+
+.webgis-page-field .webgis-autocomplete-multiselect input.webgis-autocomplete-multiselect-input {
+    width: 100% !important;
+    border-radius: 0;
+}
+
+.webgis-page-field .webgis-autocomplete-multiselect select {
+    border-radius: 6px 0 0 6px;
+    border-right: 0;
+    background-color: #f5f7f9;
+}
+
+.webgis-page-field .webgis-autocomplete-multiselect .add-button {
+    height: auto !important;
+    margin: 0;
+    padding: 9px 16px;
+    font-size: 1.05em;
+    font-weight: 700;
+    border: 1px solid #8bc34a !important;
+    border-radius: 0 6px 6px 0;
+    background: #8bc34a !important;
+    color: #fff !important;
+    cursor: pointer;
+}
+
+    .webgis-page-field .webgis-autocomplete-multiselect .add-button:hover {
+        background: #7cb342 !important;
+    }
+
+.webgis-page-field .webgis-autocomplete-multiselect-value-conatiner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.webgis-page-field .webgis-autocomplete-multiselect-value-item {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+    margin: 0 !important;
+    padding: 3px 4px 3px 12px !important;
+    border: 1px solid #c5e1a5 !important;
+    border-radius: 999px;
+    background: #f1f8e9 !important;
+    color: #33691e;
+    font-size: .9em;
+    line-height: 1.4;
+}
+
+    .webgis-page-field .webgis-autocomplete-multiselect-value-item strong {
+        font-weight: 600;
+    }
+
+    .webgis-page-field .webgis-autocomplete-multiselect-value-item > div {
+        float: none !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px !important;
+        height: 20px !important;
+        margin: 0 !important;
+        border-radius: 50% !important;
+        background: transparent !important;
+        color: #558b2f !important;
+        font-size: 0 !important;
+        transition: background .15s, color .15s;
+    }
+
+        .webgis-page-field .webgis-autocomplete-multiselect-value-item > div::before {
+            content: "\2715";
+            font-size: 12px;
+        }
+
+        .webgis-page-field .webgis-autocomplete-multiselect-value-item > div:hover {
+            background: #c62828 !important;
+            color: #fff !important;
+        }
+
+/* collapsible card (<details class="webgis-page-card webgis-page-card-collapsible">) */
+.webgis-page-card-collapsible > summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+    .webgis-page-card-collapsible > summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .webgis-page-card-collapsible > summary::after {
+        content: "\25B8";
+        color: var(--webgis-page-muted);
+        transition: transform .15s;
+    }
+
+.webgis-page-card-collapsible[open] > summary::after {
+    transform: rotate(90deg);
+}
+
+.webgis-page-card-collapsible:not([open]) > summary {
+    border-bottom: 0;
+}
+
+.webgis-page-field input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    border: 1px dashed #c5cad1;
+    border-radius: 6px;
+    background: var(--webgis-page-subtle);
+}
+
+.webgis-page .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (max-width: 480px) {
+    .webgis-page {
+        margin-top: 12px;
+        padding: 0 4px;
+    }
+
+    .webgis-page-card-header,
+    .webgis-page-card-body,
+    .webgis-page-card-footer {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+/* back button (replaces the legacy leave-26.png icon) */
+.webgis-page .back-button {
+    position: relative;
+    top: -3px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-right: 10px !important;
+    padding: 0 !important;
+    vertical-align: middle;
+    border: 1px solid var(--webgis-page-border);
+    border-radius: 50%;
+    background: #fff none !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    text-decoration: none !important;
+    transition: background-color .15s, border-color .15s, transform .15s;
+}
+
+    .webgis-page .back-button::before {
+        content: "";
+        width: 9px;
+        height: 9px;
+        margin-left: 4px;
+        border-left: 2px solid #455a64;
+        border-bottom: 2px solid #455a64;
+        transform: rotate(45deg);
+    }
+
+    .webgis-page .back-button:hover {
+        opacity: 1 !important;
+        background-color: var(--webgis-brand-primary-light) !important;
+        border-color: var(--webgis-brand-primary);
+        transform: translateX(-2px);
+    }
+
+/* sidebar (overrides lib/webportal-layout) */
+body .webportal-layout-sidebar {
+    background-color: #fff;
+    border-right: 1px solid var(--webgis-page-border);
+    box-shadow: none;
+    font-size: 14px;
+    padding: 6px;
+}
+
+    body .webportal-layout-sidebar .collapse-button {
+        height: auto;
+        padding: 6px 12px;
+        border-radius: 8px;
+        color: var(--webgis-page-muted);
+    }
+
+        body .webportal-layout-sidebar .collapse-button:hover {
+            background-color: var(--webgis-page-hover);
+        }
+
+    body .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 2px 0;
+        padding: 8px 10px;
+        border-radius: 8px;
+        transition: background-color .15s;
+    }
+
+        body .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item:hover {
+            background-color: var(--webgis-brand-primary-light);
+        }
+
+        body .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item a {
+            flex: 1;
+            color: #263238 !important;
+            font-weight: 500;
+        }
+
+        body .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item img {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            opacity: .75;
+        }
+
+        body .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item.hr {
+            display: block;
+            height: auto;
+            margin: 8px 0;
+            padding: 0 10px;
+            overflow: visible;
+        }
+
+            body .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item.hr:hover {
+                background-color: transparent;
+            }
+
+            body .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item.hr hr {
+                border-top-color: var(--webgis-page-border);
+            }
+
+            body .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item.hr .text {
+                position: static;
+                display: block;
+                margin: 8px 0 0 0;
+                padding: 0;
+                background: none;
+                color: var(--webgis-page-muted);
+                font-size: .8em;
+                font-weight: 600;
+                letter-spacing: .04em;
+                text-transform: uppercase;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+                body .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item.hr .text:empty {
+                    display: none;
+                }
+
+body.sidebar-collapsed .webportal-layout-sidebar {
+    width: 52px;
+    padding: 6px 4px;
+}
+
+    body.sidebar-collapsed .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item {
+        justify-content: center;
+    }
+
+    body.sidebar-collapsed .webportal-layout-sidebar .webportal-layout-sidebar-items .webportal-layout-sidebar-item.hr .text {
+        display: none;
+    }
+
+body.sidebar-collapsed .webportal-layout-main {
+    left: 52px;
+}
+/* footer (overrides lib/webportal-layout) */
+body .webportal-layout-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+    background-color: #fff;
+    border-top: 1px solid var(--webgis-page-border);
+    color: var(--webgis-page-muted);
+    font-size: 12px;
+}
+
+    body .webportal-layout-footer strong {
+        font-weight: 600;
+    }

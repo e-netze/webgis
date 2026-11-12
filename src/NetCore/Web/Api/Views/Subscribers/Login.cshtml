@@ -25,57 +25,58 @@
     }
 
     ViewBag.Title = L["subscribers.login.title"].Value;
+    ViewData["page-has-language-switch"] = true;
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     string redirectQuery = String.IsNullOrEmpty(Model.Redirect) ? "" : "&redirect=" + Uri.EscapeDataString(Model.Redirect);
     string activeLanguage = CultureProvider.Culture?.ToLowerInvariant();
 }
 
-<div class="webgis-auth">
-    <div class="webgis-auth-card">
-        <div class="webgis-auth-card-header">
-            <div class="webgis-auth-header-row">
+<div class="webgis-page narrow">
+    <div class="webgis-page-card">
+        <div class="webgis-page-card-header">
+            <div class="webgis-page-header-row">
                 <h2>@L["subscribers.login.title"]</h2>
-                <nav class="webgis-auth-lang" aria-label="Language">
+                <nav class="webgis-page-lang" aria-label="Language">
                     <a href="?_ul=de@(redirectQuery)" class="@(activeLanguage == "de" ? "active" : "")" lang="de">DE</a>
                     <a href="?_ul=en@(redirectQuery)" class="@(activeLanguage == "en" ? "active" : "")" lang="en">EN</a>
                 </nav>
             </div>
         </div>
 
-        <div class="webgis-auth-card-body">
+        <div class="webgis-page-card-body">
             @if (errorMessage != null)
             {
-                <div role="alert" class="webgis-auth-alert error">@errorMessage</div>
+                <div role="alert" class="webgis-page-alert error">@errorMessage</div>
             }
 
             @using (Html.BeginForm("Login", "Subscribers", method: FormMethod.Post, htmlAttributes: new { id = "subscriber-login-form", @class = "webgis-auth-form" }))
             {
-                <div class="webgis-auth-field">
+                <div class="webgis-page-field">
                     <label for="Username">@L["subscribers.login.username"]</label>
                     @Html.TextBoxFor(m => m.Username, new { autocomplete = "username", autocapitalize = "none", spellcheck = "false", required = "required", autofocus = "autofocus" })
                 </div>
 
-                <div class="webgis-auth-field">
+                <div class="webgis-page-field">
                     <label for="Password">@L["subscribers.login.password"]</label>
                     <div class="webgis-auth-password" data-toggle-label="@L["subscribers.login.show-password"]">
                         @Html.PasswordFor(m => m.Password, new { autocomplete = "current-password", required = "required", data_capslock_hint = "subscriber-login-capslock" })
                     </div>
-                    <div id="subscriber-login-capslock" role="status" class="webgis-auth-help" style="display:none;color:#b35c00">&#9888; @L["subscribers.login.capslock"]</div>
+                    <div id="subscriber-login-capslock" role="status" class="webgis-page-help" style="display:none;color:#b35c00">&#9888; @L["subscribers.login.capslock"]</div>
                 </div>
 
                 @if (!String.IsNullOrWhiteSpace(Model.CaptchaCodeEncrypted))
                 {
-                    <div class="webgis-auth-field">
+                    <div class="webgis-page-field">
                         <input type="hidden" id="CaptchaCodeEncrypted" name="CaptchaCodeEncrypted" value="@Model.CaptchaCodeEncrypted" />
                         <div class="webgis-auth-captcha">
                             <img id="subscriber-login-captcha-image" src="data:image/png;base64, @Model.CaptchaDataBase64" alt="@L["subscribers.login.captcha-hint"]" />
-                            <a href="#" id="subscriber-login-captcha-reload" class="webgis-auth-link" data-url="@Url.Action("LoginCaptcha", "Subscribers")">&#8635; @L["subscribers.login.captcha-reload"]</a>
+                            <a href="#" id="subscriber-login-captcha-reload" class="webgis-page-link" data-url="@Url.Action("LoginCaptcha", "Subscribers")">&#8635; @L["subscribers.login.captcha-reload"]</a>
                         </div>
-                        <div id="subscriber-login-captcha-reload-failed" role="alert" class="webgis-auth-alert error" style="display:none">@L["subscribers.login.captcha-reload-failed"]</div>
+                        <div id="subscriber-login-captcha-reload-failed" role="alert" class="webgis-page-alert error" style="display:none">@L["subscribers.login.captcha-reload-failed"]</div>
                         <label for="CaptchaInput">@L["subscribers.login.captcha"]</label>
                         @Html.TextBoxFor(m => m.CaptchaInput, new { autocomplete = "off", autocapitalize = "characters", spellcheck = "false", required = "required" })
-                        <div class="webgis-auth-help">@L["subscribers.login.captcha-hint"]</div>
+                        <div class="webgis-page-help">@L["subscribers.login.captcha-hint"]</div>
                     </div>
                 }
 
@@ -91,7 +92,7 @@
 
         @if (config.AllowRegisterNewSubscribers())
         {
-            <div class="webgis-auth-card-footer">
+            <div class="webgis-page-card-footer">
                 @Html.ActionLink(L["subscribers.login.register"].Value, "Register")
             </div>
         }

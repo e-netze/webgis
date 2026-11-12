@@ -1,57 +1,52 @@
 ﻿@using E.Standard.Api.App.Extensions
-@inject E.Standard.Configuration.Services.ConfigurationService config 
+@inject E.Standard.Configuration.Services.ConfigurationService config
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+@inject E.Standard.Localization.Abstractions.ICultureProvider CultureProvider
+
+@{
+    var L = LocalizerFactory.Create(typeof(object));
+    ViewBag.Title = L["pages.home.title"].Value;
+    string subscriberName = (string)ViewData["append-subscriber-username"];
+    string docsLanguage = CultureProvider.Culture?.ToLowerInvariant() == "de" ? "de" : "en";
+}
 
 <script src="~/scripts/api/webgis-api.min.js" id="webgis-api-script"></script>
 
-<div id="body" style="background:white">
-    <div style="padding:10px">
-        
-            <h1>Welcome to webgis 5 API!</h1>
-            <p>An API for creating interactive WebGIS maps.</p>
-            
+<div class="webgis-page">
+    <div class="webgis-page-page-title">
+        <h2>@L["pages.home.title"]</h2>
+        <p class="webgis-page-intro">@L["pages.home.intro"]</p>
     </div>
 
-
-    <div style="padding:10px">
-
+    <div class="webgis-page-tiles">
         @if (config.AllowSubscriberLogin() && config.AppRoles().IsAllowed(E.Standard.Api.App.AppRoles.SubscriberPages))
         {
-        <div class="webgis-api-tile" onclick="document.location='@Url.Action("index", "subscribers")'">
-            <img class="webgis-api-tile-image" src="~/content/api/img/user-100.png" />
-            <span class="webgis-api-tile-title">@(!String.IsNullOrWhiteSpace((string)ViewData["append-subscriber-username"]) ? (string)ViewData["append-subscriber-username"] : "Subscriber Login")</span>
-            <span class="webgis-api-tile-description">
-                Manage your WebGIS API Clients and Portals
-            </span>
-        </div>
+            <a class="webgis-page-tile" href="@Url.Action("index", "subscribers")">
+                <img src="~/content/api/img/user-100.png" alt="" />
+                <span>
+                    <span class="webgis-page-tile-title">@(!String.IsNullOrWhiteSpace(subscriberName) ? subscriberName : L["pages.home.subscriber-title"].Value)</span>
+                    <span class="webgis-page-tile-description">@L["pages.home.subscriber-description"]</span>
+                </span>
+            </a>
         }
 
         @if (config.AppRoles().IsAllowed(E.Standard.Api.App.AppRoles.WebgisApi))
         {
-        <div class="webgis-api-tile" onclick="document.location='@Url.Action("index", "rest")'">
-            <img class="webgis-api-tile-image" src="~/content/api/img/code-100.png" />
-            <span class="webgis-api-tile-title">Rest API</span>
-            <span class="webgis-api-tile-description">
-                The REST Api to create interactive WebGIS maps.
-            </span>
-        </div>
+            <a class="webgis-page-tile" href="@Url.Action("index", "rest")">
+                <img src="~/content/api/img/code-100.png" alt="" />
+                <span>
+                    <span class="webgis-page-tile-title">@L["pages.home.rest-title"]</span>
+                    <span class="webgis-page-tile-description">@L["pages.home.rest-description"]</span>
+                </span>
+            </a>
         }
 
-        <div id="api-doc-tile" class="webgis-api-tile" style="width:285px;opacity:0.5">
-            <img class="webgis-api-tile-image" src="~/content/api/img/doc-100.png" />
-            <span class="webgis-api-tile-title">JS API</span>
-            <span class="webgis-api-tile-description">
-                The Javascript API Reference.
+        <a class="webgis-page-tile" href="https://docs.webgiscloud.com/@(docsLanguage)/dev/API/API_JavaScript/index.html" target="_blank" rel="noopener">
+            <img src="~/content/api/img/doc-100.png" alt="" />
+            <span>
+                <span class="webgis-page-tile-title">@L["pages.home.jsapi-title"]</span>
+                <span class="webgis-page-tile-description">@L["pages.home.jsapi-description"]</span>
             </span>
-        </div>
-
+        </a>
     </div>
 </div>
-
-<script type="text/javascript">
-    $(function () {
-        $('#api-doc-tile').click(function () {
-            document.location = 'https://docs.webgiscloud.com/en/dev/API/API_JavaScript/index.html';
-        });
-    });
-</script>
-

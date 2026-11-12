@@ -1,5 +1,5 @@
 ﻿.navbar {
-    border-bottom: 2px solid #808080 !important;
+    border-bottom: 1px solid #dcdfe3 !important;
 }
 
 .webgis-toolbox-tool-item-options{
@@ -15,10 +15,11 @@
     margin: 3px;
     padding: 8px 8px 8px 30px;
     white-space: nowrap;
-    color:#aaa;
+    color:#6b7280;
 
-    border: 1px solid #eee;
-    border-radius:5px;
+    border: 1px solid #dcdfe3;
+    border-radius:6px;
+    transition: background-color .15s, border-color .15s;
     width:262px;
 
     background-image:url(../content/img/check-26-g.png);
@@ -29,18 +30,20 @@
 
 .webgis-toolbox-tool-item-option.webgis-toolbox-tool-item-selected {
     background-image:url(../content/img/check-26-b.png);
-    background-color:transparent !important;
-    color:#333;
+    background-color:var(--webgis-brand-primary-light) !important;
+    border-color:var(--webgis-brand-primary);
+    color:#263238;
 }
 
 .webgis-presentation_toc-title {
-    background: #f8f8f8;
-    color: #333;
-    border-bottom: 1px solid #ddd;
+    background: #fff;
+    color: #263238;
+    border-bottom: 1px solid #dcdfe3;
+    font-weight: 600;
 }
 
     .webgis-presentation_toc-title:hover {
-        background-color: #f0f0f0;
+        background-color: #f0f1f2;
     }
 
 
@@ -50,10 +53,10 @@
     top: 0px;
     left: 0px;
     bottom: 0px;
-    width: 398px;
-    background: #f6f6f6;
+    width: 399px;
+    background: #fff;
     overflow: auto;
-    border-right: 2px solid #808080
+    border-right: 1px solid #dcdfe3
 }
 
     #mapbuilder-container .selector-container.custom {
@@ -103,3 +106,29 @@
 .select2-container {
     z-index: 99999;
 }
+
+.webgis-toolbox-tool-item-option:hover {
+    border-color: var(--webgis-brand-primary);
+}
+
+#mapbuilder-container input[type="text"],
+#mapbuilder-container input:not([type]),
+#mapbuilder-container select,
+#mapbuilder-container textarea,
+.template-selector-holder #template-selector {
+    border: 1px solid #c5cad1;
+    border-radius: 6px;
+    background: #fff;
+    font-family: inherit;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+    #mapbuilder-container input[type="text"]:focus,
+    #mapbuilder-container input:not([type]):focus,
+    #mapbuilder-container select:focus,
+    #mapbuilder-container textarea:focus,
+    .template-selector-holder #template-selector:focus {
+        outline: none;
+        border-color: var(--webgis-brand-primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--webgis-brand-primary) 25%, transparent);
+    }

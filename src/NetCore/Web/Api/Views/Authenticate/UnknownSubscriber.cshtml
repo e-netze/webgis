@@ -1,12 +1,18 @@
-﻿
+﻿@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+
 @{
-    ViewData["Title"] = "Forbidden";
+    var L = LocalizerFactory.Create(typeof(object));
+    ViewData["Title"] = L["pages.unknown-subscriber.title"].Value;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1 style="color:red">Unknown Subsciber (id)</h1>
-
-<p>
-    Check Subsbriber Id in application-security.json and map to existing subscriber
-</p>
-
+<div class="webgis-page medium">
+    <div class="webgis-page-card">
+        <div class="webgis-page-card-header">
+            <h2>@L["pages.unknown-subscriber.title"]</h2>
+        </div>
+        <div class="webgis-page-card-body">
+            <div role="alert" class="webgis-page-alert error">@L["pages.unknown-subscriber.text"]</div>
+        </div>
+    </div>
+</div>

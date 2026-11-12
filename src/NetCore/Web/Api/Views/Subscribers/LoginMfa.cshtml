@@ -33,19 +33,19 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="webgis-auth">
-    <div class="webgis-auth-card">
-        <div class="webgis-auth-card-header">
+<div class="webgis-page narrow">
+    <div class="webgis-page-card">
+        <div class="webgis-page-card-header">
             <h2>
                 <a href="@Url.Action(setup ? "Account" : "Login", "Subscribers")" class="back-button" aria-label="Back"></a>
                 @ViewBag.Title
             </h2>
         </div>
 
-        <div class="webgis-auth-card-body">
+        <div class="webgis-page-card-body">
             @if (errorMessage != null)
             {
-                <div role="alert" class="webgis-auth-alert error">@errorMessage</div>
+                <div role="alert" class="webgis-page-alert error">@errorMessage</div>
             }
 
             @using (Html.BeginForm(setup ? "MfaSetup" : "LoginMfa", "Subscribers", method: FormMethod.Post, htmlAttributes: new { id = "subscriber-mfa-form", @class = "webgis-auth-form" }))
@@ -58,17 +58,17 @@
                 {
                     @if (!setup)
                     {
-                        <div class="webgis-auth-alert warning">@L["subscribers.mfa.enroll-required"]</div>
+                        <div class="webgis-page-alert warning">@L["subscribers.mfa.enroll-required"]</div>
                     }
                     <p>@L["subscribers.mfa.setup-hint"]</p>
                     <div class="webgis-auth-qr">
                         @Html.Raw(Model.QrCodeSvg)
                     </div>
-                    <p class="webgis-auth-help">@L["subscribers.mfa.setup-manual"]</p>
+                    <p class="webgis-page-help">@L["subscribers.mfa.setup-manual"]</p>
                     <code class="webgis-auth-secret">@Model.Secret</code>
                 }
 
-                <div class="webgis-auth-field">
+                <div class="webgis-page-field">
                     <label for="Code">@L[verify ? "subscribers.mfa.code-or-recovery" : "subscribers.mfa.code"]</label>
                     <input type="text" id="Code" name="Code" class="webgis-auth-code" required="required" autofocus="autofocus"
                            autocomplete="one-time-code" autocapitalize="none" spellcheck="false"

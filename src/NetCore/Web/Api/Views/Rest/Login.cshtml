@@ -1,31 +1,36 @@
 ﻿@model E.Standard.Api.App.Models.RestLoginModel
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
 
 @{
-    ViewBag.Title = "Login";
+    var L = LocalizerFactory.Create(typeof(object));
+    ViewBag.Title = L["pages.rest-login.title"].Value;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Rest Login</h2>
-<br />
-<br />
-@if (!String.IsNullOrEmpty(Model.ErrorMessage))
-{
-    <span style="color:red">@(Model.ErrorMessage)</span>
-}
-<br />
-<br />
+<div class="webgis-page narrow">
+    <div class="webgis-page-card">
+        <div class="webgis-page-card-header">
+            <h2>@L["pages.rest-login.title"]</h2>
+            <p class="webgis-page-subtitle">@L["pages.rest-login.subtitle"]</p>
+        </div>
+        <div class="webgis-page-card-body">
+            @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div role="alert" class="webgis-page-alert error">@Model.ErrorMessage</div>
+            }
 
-@using (Html.BeginForm("Login", "Rest", FormMethod.Post))
-{
-    <div id="wizard" class="webgis-wizard" data-wizard-submit-method="submit" data-wizard-submit-title="Login">
-        <div class="webgis-wizard-step" data-wizard-step-title="REST Client">
-            @Html.LabelFor(m => m.ClientId)
-            @Html.TextBoxFor(m => m.ClientId)
-            <br />
-            @Html.LabelFor(m => m.ClientSecret)
-            @Html.PasswordFor(m => m.ClientSecret)
-            <br />
+            @using (Html.BeginForm("Login", "Rest", FormMethod.Post))
+            {
+                <div class="webgis-page-field">
+                    <label for="ClientId">@L["pages.rest-login.client-id"]</label>
+                    @Html.TextBoxFor(m => m.ClientId, new { autocomplete = "username", required = "required", autofocus = "autofocus" })
+                </div>
+                <div class="webgis-page-field">
+                    <label for="ClientSecret">@L["pages.rest-login.client-secret"]</label>
+                    @Html.PasswordFor(m => m.ClientSecret, new { autocomplete = "current-password", required = "required" })
+                </div>
+                <button type="submit" class="primary block">@L["pages.rest-login.submit"]</button>
+            }
         </div>
     </div>
-}
-
+</div>

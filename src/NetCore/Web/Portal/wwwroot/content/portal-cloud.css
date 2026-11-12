@@ -209,3 +209,275 @@
     #all-maps .webgis-page-map-item.tile.webgis-content-search-match {
         display: block !important;
     }
+/* design aligned with webgis-api pages (api-pages.css) */
+.webportal-layout-main {
+    background-color: #f7f8f9;
+}
+
+.webportal-layout-main-container .page-content-frame {
+    border: 1px solid #dcdfe3;
+    border-top: 4px solid var(--webgis-brand-primary);
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    padding: 20px 24px 24px 24px;
+}
+
+    .webportal-layout-main-container .page-content-frame .heading {
+        background-color: transparent;
+        margin: 0 0 12px 0;
+        padding: 0;
+        border-radius: 0;
+    }
+
+        .webportal-layout-main-container .page-content-frame .heading h1 {
+            color: #263238;
+            font-size: 1.5em;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+    .webportal-layout-main-container .page-content-frame > p {
+        color: #6b7280;
+        line-height: 1.45;
+    }
+
+.page-content-item-list {
+    background: transparent;
+}
+
+.page-content-item-block {
+    margin: 0 0 12px 0;
+    padding: 12px 0;
+    border-bottom: 1px solid #dcdfe3;
+    background-color: #fff;
+}
+
+    .page-content-item-block:last-child {
+        border-bottom: 0;
+    }
+
+.webgis-page-content-new-item,
+.webgis-page-content-edit-styles,
+.webgis-page-content-edit-customjs,
+.webgis-page-content-edit-portalcss,
+.webgis-page-content-edit-defaultcss {
+    border-radius: 6px;
+    font-weight: 600;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    transition: background-color .15s, box-shadow .15s;
+}
+
+    .webgis-page-content-new-item:hover,
+    .webgis-page-content-edit-styles:hover,
+    .webgis-page-content-edit-customjs:hover,
+    .webgis-page-content-edit-portalcss:hover,
+    .webgis-page-content-edit-defaultcss:hover {
+        background-color: color-mix(in srgb, var(--webgis-brand-primary) 85%, black);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+/* map categories and tiles */
+#category-content .webgis-page-category-header {
+    background-color: #fff;
+    border-bottom-color: #dcdfe3;
+}
+
+#category-content .webgis-page-category-item-title {
+    border-radius: 8px 8px 0 0;
+}
+
+.webgis-page-map-item,
+.webgis-page-map-new-item {
+    border-radius: 10px;
+    border: 1px solid #dcdfe3;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    transition: box-shadow .15s, transform .15s;
+}
+
+    .webgis-page-map-item:hover,
+    .webgis-page-map-new-item:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+    }
+
+.webgis-page-map-item-image {
+    border-radius: 10px;
+}
+
+.webgis-tile-container.list .webgis-page-map-item {
+    border-color: #dcdfe3;
+}
+
+/* map tiles: white card with green accent (like webgis-api tiles) */
+#category-content .webgis-page-map-item,
+#all-maps .webgis-page-map-item {
+    background-color: #fff;
+}
+
+    #category-content .webgis-page-map-item .webgis-page-map-item-image,
+    #all-maps .webgis-page-map-item .webgis-page-map-item-image {
+        background-color: #f7f8f9;
+    }
+
+    #category-content .webgis-page-map-item .webgis-page-map-item-text,
+    #all-maps .webgis-page-map-item .webgis-page-map-item-text {
+        background-color: rgba(255, 255, 255, 0.97);
+        border-top: 3px solid var(--webgis-brand-primary);
+        color: #263238;
+    }
+
+        /* title is white with white platform icons -> invert both to dark */
+        #category-content .webgis-page-map-item .webgis-page-map-item-text .title,
+        #all-maps .webgis-page-map-item .webgis-page-map-item-text .title {
+            color: #fff;
+            font-weight: 600;
+            filter: invert(0.85);
+        }
+
+        #category-content .webgis-page-map-item .webgis-page-map-item-text .description,
+        #all-maps .webgis-page-map-item .webgis-page-map-item-text .description {
+            color: #6b7280;
+        }
+
+        #category-content .webgis-page-map-item .webgis-page-map-item-text .more,
+        #all-maps .webgis-page-map-item .webgis-page-map-item-text .more {
+            background: var(--webgis-brand-primary);
+            color: #fff;
+            border-radius: 6px 0 0 0;
+        }
+
+#category-content .webgis-page-map-item:hover,
+#all-maps .webgis-page-map-item:hover {
+    border-color: var(--webgis-brand-primary);
+}
+
+/* page footer buttons: smaller outline buttons, icon on a small green square */
+.webgis-page-content-new-item,
+.webgis-page-content-edit-styles,
+.webgis-page-content-edit-customjs,
+.webgis-page-content-edit-portalcss,
+.webgis-page-content-edit-defaultcss {
+    width: auto;
+    height: auto;
+    padding: 8px 14px 8px 44px;
+    border: 1px solid #c5cad1;
+    border-radius: 6px;
+    background-color: #fff;
+    background-image: url('img/css-32-w.png'), linear-gradient(var(--webgis-brand-primary), var(--webgis-brand-primary));
+    background-repeat: no-repeat, no-repeat;
+    background-position: 10px center, 8px center;
+    background-size: 20px 20px, 28px 28px;
+    color: #263238;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 20px;
+    box-shadow: none;
+}
+
+.webgis-page-content-new-item {
+    background-image: url('img/plus-32-w.png'), linear-gradient(var(--webgis-brand-primary), var(--webgis-brand-primary));
+}
+
+.webgis-page-content-edit-customjs {
+    background-image: url('img/js-32-w.png'), linear-gradient(var(--webgis-brand-primary), var(--webgis-brand-primary));
+}
+
+    .webgis-page-content-new-item:hover,
+    .webgis-page-content-edit-styles:hover,
+    .webgis-page-content-edit-customjs:hover,
+    .webgis-page-content-edit-portalcss:hover,
+    .webgis-page-content-edit-defaultcss:hover {
+        background-color: var(--webgis-brand-primary-light);
+        border-color: var(--webgis-brand-primary);
+        box-shadow: none;
+    }
+
+/* edit sorting button: outline like the page footer buttons */
+.webgis-portal-edit-ordering-button.webgis-button {
+    height: auto;
+    margin: 4px;
+    padding: 7px 14px;
+    border: 1px solid #c5cad1;
+    border-radius: 6px;
+    background: #fff;
+    color: #263238;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 20px;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+    .webgis-portal-edit-ordering-button.webgis-button:hover {
+        border-color: var(--webgis-brand-primary);
+        background: var(--webgis-brand-primary-light);
+    }
+
+/* platform filter buttons + user access buttons: small square outline buttons */
+#category-content .webgis-page-category-item-title .optimization-buttons {
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+    height: auto;
+    display: flex;
+    gap: 4px;
+}
+
+    #category-content .webgis-page-category-item-title .optimization-buttons .optimization-button,
+    #category-content.filter .webgis-page-category-item-title .optimization-buttons .optimization-button.allplatforms {
+        width: 32px;
+        height: 32px;
+        border: 1px solid #c5cad1;
+        border-radius: 6px;
+        background-color: #fff;
+        background-size: 20px 20px;
+        opacity: .55;
+        transition: background-color .15s, border-color .15s, opacity .15s;
+    }
+
+        #category-content .webgis-page-category-item-title .optimization-buttons .optimization-button:hover {
+            opacity: 1;
+            border-color: var(--webgis-brand-primary);
+        }
+
+    #category-content .webgis-page-category-item-title .optimization-buttons .optimization-button.allplatforms,
+    #category-content.filter-desktop .webgis-page-category-item-title .optimization-buttons .optimization-button.desktop,
+    #category-content.filter-mobile .webgis-page-category-item-title .optimization-buttons .optimization-button.mobile {
+        border: 1px solid var(--webgis-brand-primary);
+        background-color: var(--webgis-brand-primary-light);
+        opacity: 1;
+    }
+
+#category-content .edit-access {
+    box-sizing: border-box;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #c5cad1;
+    border-radius: 6px;
+    background-color: #fff;
+    background-size: 20px 20px;
+    transition: background-color .15s, border-color .15s;
+}
+
+    #category-content .edit-access:hover {
+        border-color: var(--webgis-brand-primary);
+        background-color: var(--webgis-brand-primary-light);
+    }
+
+#category-content .webgis-page-category-item-title .edit-access {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    float: none;
+}
+
+#category-content .webgis-page-category-item-title.has-edit-access .optimization-buttons {
+    right: 42px;
+}
+
+#category-content .webgis-page-map-item > .edit-access {
+    right: 6px !important;
+    top: 6px !important;
+    z-index: 2;
+}

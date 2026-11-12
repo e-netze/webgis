@@ -1,44 +1,57 @@
 ﻿@model E.Standard.Api.App.Models.ApiClients
-@inject Api.Core.AppCode.Services.UrlHelperService urlHelper;
+@inject Api.Core.AppCode.Services.UrlHelperService urlHelper
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
 
 @{
-    ViewBag.Title = "Api Clients";
+    var L = LocalizerFactory.Create(typeof(object));
+    ViewBag.Title = L["pages.clients.title"].Value;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var clients = Model?.Clients?.ToArray() ?? Array.Empty<E.Standard.WebGIS.SubscriberDatabase.SubscriberDb.Client>();
 }
 
-<h2>
-    <a href="@Url.Action("Index","Subscribers")" class="back-button"></a>
-    Clients
-</h2>
+<div class="webgis-page">
+    <div class="webgis-page-page-title">
+        <h2>
+            <a href="@Url.Action("Index","Subscribers")" class="back-button" aria-label="@L["pages.layout.back"]"></a>
+            @ViewBag.Title
+        </h2>
+    </div>
 
-    @if (Model != null && Model.Clients != null)
-    {
-
-        foreach (var client in Model.Clients)
+    <section class="webgis-page-card">
+        @if (clients.Length == 0)
         {
-            <div class="webgis-api-tile-pro links2">
-                <div class="webgis-api-tile" onclick="document.location='@Url.Action("UpdateClient", new { clientId = client.ClientId })'">
-                    <img class="webgis-api-tile-image" src="~/content/api/img/api-100.png" />
-                    <span class="webgis-api-tile-title">@client.ClientName</span>
-                    <span class="webgis-api-tile-description">
-                        @client.ClientReferer
-                    </span>
-                    
-                </div>
-                <div class="webgis-api-tile-pro-link link2" title="REST" alt="REST" onclick="document.location='@Url.Action("LoginAsClient", new { clientId = client.ClientId })'">
-                    <div>&nbsp;REST</div>
-                </div>
-                <div class="webgis-api-tile-pro-link" title="Map Builder" alt="Map Builder" onclick="window.open('@(urlHelper.MapBuilderUrl() + "?clientid=" + client.ClientId)')">
-                    <div>&nbsp;MapBuilder</div>
-                </div>
+            <div class="webgis-page-card-body">@L["pages.clients.empty"]</div>
+        }
+        else
+        {
+            <div class="webgis-page-table-wrapper">
+                <table class="webgis-page-table">
+                    <thead>
+                        <tr>
+                            <th>@L["pages.clients.name"]</th>
+                            <th>@L["pages.clients.referer"]</th>
+                            <th class="actions"><span class="sr-only">@L["pages.list.actions"]</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var client in clients)
+                        {
+                            <tr>
+                                <td>@Html.ActionLink(client.ClientName ?? client.ClientId, "UpdateClient", new { clientId = client.ClientId }, new { @class = "webgis-page-link" })</td>
+                                <td>@client.ClientReferer</td>
+                                <td class="actions">
+                                    <a class="webgis-page-button small" href="@Url.Action("LoginAsClient", new { clientId = client.ClientId })">@L["pages.clients.rest"]</a>
+                                    <a class="webgis-page-button small" href="@(urlHelper.MapBuilderUrl() + "?clientid=" + client.ClientId)" target="_blank" rel="noopener">@L["pages.clients.mapbuilder"]</a>
+                                    <a class="webgis-page-button small" href="@Url.Action("UpdateClient", new { clientId = client.ClientId })">@L["pages.list.edit"]</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         }
-
-    }
-
-
-
-                <br />
-                <br />
-
-                @Html.ActionLink("New Api Client", "NewClient")
+        <div class="webgis-page-card-footer">
+            <a class="webgis-page-button primary" href="@Url.Action("NewClient")">@L["pages.clients.new"]</a>
+        </div>
+    </section>
+</div>

@@ -1,23 +1,30 @@
-﻿
+﻿@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+
 @{
-    ViewData["Title"] = "Forbidden";
+    var L = LocalizerFactory.Create(typeof(object));
+    ViewData["Title"] = L["pages.forbidden.title"].Value;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1 style="color:red">Forbidden</h1>
+<div class="webgis-page medium">
+    <div class="webgis-page-card">
+        <div class="webgis-page-card-header">
+            <h2>@L["pages.forbidden.title"]</h2>
+        </div>
+        <div class="webgis-page-card-body">
+            <div role="alert" class="webgis-page-alert error">@L["pages.forbidden.text"]</div>
 
-<h4>Username: @ViewData["Username"]</h4>
-<p style="color:#aaa">
-    Roles:
-      @ViewData["Roles"]
-</p>
-<p style="color:#aaa">
-    Claims:
-    @ViewData["Claims"]
-</p>
-
-<br />
-<br />
-<br />
-@Html.ActionLink("Abmelden", "Logout", "Subscribers")
-
+            <dl class="webgis-page-properties">
+                <dt>@L["pages.forbidden.username"]</dt>
+                <dd>@ViewData["Username"]</dd>
+                <dt>@L["pages.forbidden.roles"]</dt>
+                <dd>@ViewData["Roles"]</dd>
+                <dt>@L["pages.forbidden.claims"]</dt>
+                <dd>@ViewData["Claims"]</dd>
+            </dl>
+        </div>
+        <div class="webgis-page-card-footer">
+            <a href="@Url.Action("Logout", "Subscribers")">@L["pages.forbidden.logout"]</a>
+        </div>
+    </div>
+</div>

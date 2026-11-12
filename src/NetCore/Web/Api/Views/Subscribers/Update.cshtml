@@ -1,84 +1,106 @@
 ﻿@model E.Standard.Api.App.Models.RegisterSubscriberModel
 @inject Microsoft.Extensions.Options.IOptions<E.Standard.Api.App.Configuration.SubscriberSecurityOptions> SecurityOptions
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
 
 @{
-    ViewBag.Title = "Edit Api Client";
+    var L = LocalizerFactory.Create(typeof(object));
+    ViewBag.Title = L["pages.subscriber-edit.title"].Value;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>
-    <a href="@Url.Action("Index","Subscribers")" class="back-button"></a>
-    Update subscriber
-</h2>
-<br />
-<br />
-@if (!String.IsNullOrEmpty(Model.ErrorMessage))
-{
-    <span style="color:red">@(Model.ErrorMessage)</span>
-}
+<div class="webgis-page medium">
+    <div class="webgis-page-page-title">
+        <h2>
+            <a href="@Url.Action("Index","Subscribers")" class="back-button" aria-label="@L["pages.layout.back"]"></a>
+            @ViewBag.Title
+        </h2>
+    </div>
 
-@using (Html.BeginForm("Update", "Subscribers", FormMethod.Post))
-{
-    @Html.HiddenFor(m => m.Id);
-    @Html.LabelFor(m => m.Username)
-    @Html.TextBoxFor(m => m.Username, new { @readonly = "readolny" })
-    <br />
-    @Html.LabelFor(m => m.FirstName)
-    @Html.TextBoxFor(m => m.FirstName)
-    <br />
-    @Html.LabelFor(m => m.LastName)
-    @Html.TextBoxFor(m => m.LastName)
-    <br />
-    @Html.LabelFor(m => m.Email)
-    @Html.TextBoxFor(m => m.Email)
-    <br />
-    <br/>
-    <button type="submit">
-        Change Settings
-    </button>
-}
-
-<br />
-<br />
-
-@using (Html.BeginForm("ChangePassword", "Subscribers", FormMethod.Post))
-{
-    @Html.HiddenFor(m => m.Id);
-    @Html.HiddenFor(m => m.RequireCurrentPassword);
-    @if (Model.RequireCurrentPassword)
+    @if (!String.IsNullOrEmpty(Model.ErrorMessage))
     {
-        @Html.LabelFor(m => m.CurrentPassword)
-        @Html.PasswordFor(m => m.CurrentPassword, new { autocomplete = "current-password" })
-        <br />
+        <div class="webgis-page-alert error" role="alert">@Model.ErrorMessage</div>
     }
-    @Html.LabelFor(m => m.Password1)
-    @Html.PasswordFor(m => m.Password1, new { autocomplete = "new-password", minlength = SecurityOptions.Value.PasswordMinLength, maxlength = E.Standard.Api.App.Configuration.SubscriberSecurityOptions.PasswordMaxLength })
-    <br />
-    @Html.LabelFor(m => m.Password2)
-    @Html.PasswordFor(m => m.Password2, new { autocomplete = "new-password" })
-    <br />
-    <small>Min. @SecurityOptions.Value.PasswordMinLength characters</small>
-    <br />
-    <br />
-    <button type="submit">
-        Change Password
-    </button>
-}
 
-@if (Model.MfaAvailable && !Model.RequireCurrentPassword)
-{
-    <br />
-    <br />
-    <h3>Two-factor authentication</h3>
-    <p>@(Model.MfaEnabled ? "Enabled" : "Not enabled")</p>
-    @if (Model.CanResetMfa)
+    <section class="webgis-page-card">
+        <div class="webgis-page-card-header">
+            <h3>@L["pages.subscriber-edit.settings"]</h3>
+        </div>
+        <div class="webgis-page-card-body">
+            @using (Html.BeginForm("Update", "Subscribers", FormMethod.Post))
+            {
+                @Html.HiddenFor(m => m.Id)
+                <div class="webgis-page-field">
+                    <label for="@Html.IdFor(m => m.Username)">@L["pages.subscriber-form.username"]</label>
+                    @Html.TextBoxFor(m => m.Username, new { @readonly = "readonly" })
+                </div>
+                <div class="webgis-page-field">
+                    <label for="@Html.IdFor(m => m.FirstName)">@L["pages.subscriber-form.first-name"]</label>
+                    @Html.TextBoxFor(m => m.FirstName)
+                </div>
+                <div class="webgis-page-field">
+                    <label for="@Html.IdFor(m => m.LastName)">@L["pages.subscriber-form.last-name"]</label>
+                    @Html.TextBoxFor(m => m.LastName)
+                </div>
+                <div class="webgis-page-field">
+                    <label for="@Html.IdFor(m => m.Email)">@L["pages.subscriber-form.email"]</label>
+                    @Html.TextBoxFor(m => m.Email)
+                </div>
+                <button type="submit" class="webgis-page-button primary">@L["pages.subscriber-edit.save-settings"]</button>
+            }
+        </div>
+    </section>
+
+    <section class="webgis-page-card">
+        <div class="webgis-page-card-header">
+            <h3>@L["pages.subscriber-edit.password"]</h3>
+        </div>
+        <div class="webgis-page-card-body">
+            @using (Html.BeginForm("ChangePassword", "Subscribers", FormMethod.Post))
+            {
+                @Html.HiddenFor(m => m.Id)
+                @Html.HiddenFor(m => m.RequireCurrentPassword)
+                @if (Model.RequireCurrentPassword)
+                {
+                    <div class="webgis-page-field">
+                        <label for="@Html.IdFor(m => m.CurrentPassword)">@L["pages.subscriber-form.current-password"]</label>
+                        @Html.PasswordFor(m => m.CurrentPassword, new { autocomplete = "current-password" })
+                    </div>
+                }
+                <div class="webgis-page-field">
+                    <label for="@Html.IdFor(m => m.Password1)">@L["pages.subscriber-form.password"]</label>
+                    @Html.PasswordFor(m => m.Password1, new { autocomplete = "new-password", minlength = SecurityOptions.Value.PasswordMinLength, maxlength = E.Standard.Api.App.Configuration.SubscriberSecurityOptions.PasswordMaxLength })
+                    <div class="webgis-page-help">@L["pages.register.password-hint"].Value.Replace("{0}", SecurityOptions.Value.PasswordMinLength.ToString())</div>
+                </div>
+                <div class="webgis-page-field">
+                    <label for="@Html.IdFor(m => m.Password2)">@L["pages.subscriber-form.password-repeat"]</label>
+                    @Html.PasswordFor(m => m.Password2, new { autocomplete = "new-password" })
+                </div>
+                <button type="submit" class="webgis-page-button primary">@L["pages.subscriber-edit.save-password"]</button>
+            }
+        </div>
+    </section>
+
+    @if (Model.MfaAvailable && !Model.RequireCurrentPassword)
     {
-        using (Html.BeginForm("MfaReset", "Subscribers", FormMethod.Post))
-        {
-            <input type="hidden" name="id" value="@Model.Id" />
-            <button type="submit" onclick="return confirm('Reset two-factor authentication for this subscriber? All sessions of the subscriber will be terminated.')">
-                Reset two-factor authentication
-            </button>
-        }
+        <section class="webgis-page-card">
+            <div class="webgis-page-card-header">
+                <h3>@L["subscribers.mfa.title"]</h3>
+            </div>
+            <div class="webgis-page-card-body">
+                <p>
+                    <span class="webgis-page-badge @(Model.MfaEnabled ? "on" : "off")">@L[Model.MfaEnabled ? "subscribers.mfa.status-enabled" : "subscribers.mfa.status-disabled"]</span>
+                </p>
+                @if (Model.CanResetMfa)
+                {
+                    using (Html.BeginForm("MfaReset", "Subscribers", FormMethod.Post))
+                    {
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="webgis-page-button danger" data-confirm="@L["pages.subscriber-edit.mfa-reset-confirm"]" onclick="return confirm(this.getAttribute('data-confirm'))">
+                            @L["pages.subscriber-edit.mfa-reset"]
+                        </button>
+                    }
+                }
+            </div>
+        </section>
     }
-}
+</div>

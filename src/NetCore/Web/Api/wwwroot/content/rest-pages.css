@@ -1,0 +1,243 @@
+/* REST directory pages (Views using _RestLayout, markup from E.Standard.Api.App.DTOs.HtmlHelper).
+   Builds on api-pages.css. The generated markup carries inline styles and no classes,
+   so structural selectors and !important are needed here. */
+
+.webportal-layout-main-container {
+    box-sizing: border-box;
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 24px 12px 48px 12px;
+}
+
+    .webportal-layout-main-container h1,
+    .webportal-layout-main-container h2,
+    .webportal-layout-main-container h3 {
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    .webportal-layout-main-container h1 {
+        margin: 0 0 16px 0;
+        padding: 0 0 10px 0;
+        font-size: 1.6em;
+        border-bottom: 4px solid var(--webgis-brand-primary);
+    }
+
+    .webportal-layout-main-container h2 {
+        margin: 24px 0 10px 0;
+        font-size: 1.35em;
+    }
+
+    .webportal-layout-main-container h3 {
+        margin: 20px 0 8px 0;
+        font-size: 1.1em;
+        color: var(--webgis-page-muted);
+    }
+
+    .webportal-layout-main-container > h2:first-child,
+    .webportal-layout-main-container > ul:first-child > li:first-child > h1 {
+        margin-top: 0;
+    }
+
+    .webportal-layout-main-container ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .webportal-layout-main-container li {
+        list-style: none;
+    }
+
+    /* navigation links (HtmlHelper.ToNextLevelLink) */
+    .webportal-layout-main-container a[onclick^="moveDown"] {
+        display: block;
+        color: inherit !important;
+    }
+
+        .webportal-layout-main-container a[onclick^="moveDown"] > div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-sizing: border-box;
+            width: 100% !important;
+            margin: 0 0 8px 0 !important;
+            padding: 10px 14px !important;
+            background: #fff !important;
+            border: 1px solid var(--webgis-page-border) !important;
+            border-left: 4px solid var(--webgis-brand-primary) !important;
+            border-radius: var(--webgis-page-radius) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            transition: box-shadow .15s, transform .15s, background-color .15s;
+        }
+
+            .webportal-layout-main-container a[onclick^="moveDown"] > div:hover {
+                background: var(--webgis-brand-primary-light) !important;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+                transform: translateY(-1px);
+            }
+
+            .webportal-layout-main-container a[onclick^="moveDown"] > div > span {
+                position: static !important;
+                font-weight: 500;
+            }
+
+            .webportal-layout-main-container a[onclick^="moveDown"] > div > .enter-button {
+                flex-shrink: 0;
+                margin: 0;
+                opacity: .75;
+            }
+
+    /* collapsible property blocks (HtmlHelper.CollapsableProperties) */
+    .webportal-layout-main-container div[onclick*="slideToggle"] {
+        margin-top: 8px !important;
+        padding: 8px 14px !important;
+        background: var(--webgis-page-subtle) !important;
+        border: 1px solid var(--webgis-page-border) !important;
+        border-radius: 8px !important;
+        transition: background-color .15s;
+    }
+
+        .webportal-layout-main-container div[onclick*="slideToggle"]:hover {
+            background: var(--webgis-page-hover) !important;
+        }
+
+        .webportal-layout-main-container div[onclick*="slideToggle"] td:last-child {
+            color: var(--webgis-page-muted);
+            white-space: nowrap;
+        }
+
+    .webportal-layout-main-container .col_div {
+        margin: 0 0 4px 0;
+        padding: 6px 14px !important;
+        background: #fff;
+        border: 1px solid var(--webgis-page-border);
+        border-top: 0;
+        border-radius: 0 0 8px 8px;
+    }
+
+    /* property tables */
+    .webportal-layout-main-container table {
+        border-collapse: collapse;
+    }
+
+    .webportal-layout-main-container td,
+    .webportal-layout-main-container th {
+        padding: 6px 10px 6px 0;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    .webportal-layout-main-container .col_div tr + tr td,
+    .webportal-layout-main-container table[style*="border-bottom"] td {
+        border-top: 1px solid var(--webgis-page-border);
+    }
+
+    .webportal-layout-main-container table[style*="border-bottom"] {
+        border-bottom: 0 !important;
+    }
+
+    .webportal-layout-main-container td > strong {
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .webportal-layout-main-container td + td {
+        overflow-wrap: anywhere;
+    }
+
+    /* forms (query / test pages) */
+    .webportal-layout-main-container input.webgis-input,
+    .webportal-layout-main-container select.webgis-input,
+    .webportal-layout-main-container textarea,
+    .webportal-layout-main-container input[type="text"] {
+        box-sizing: border-box;
+        max-width: 100%;
+        margin: 4px 0 12px 0;
+        padding: 8px 10px;
+        font-family: inherit;
+        font-size: 1em;
+        border: 1px solid #c5cad1;
+        border-radius: 6px;
+        background: #fff;
+        transition: border-color .15s, box-shadow .15s;
+    }
+
+        .webportal-layout-main-container input.webgis-input:focus,
+        .webportal-layout-main-container select.webgis-input:focus,
+        .webportal-layout-main-container textarea:focus,
+        .webportal-layout-main-container input[type="text"]:focus {
+            outline: none;
+            border-color: var(--webgis-brand-primary);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--webgis-brand-primary) 25%, transparent);
+        }
+
+    .webportal-layout-main-container input[type="checkbox"] {
+        accent-color: var(--webgis-brand-primary);
+    }
+
+    .webportal-layout-main-container button,
+    .webportal-layout-main-container input[type="submit"],
+    .webportal-layout-main-container input[type="button"] {
+        padding: 9px 18px;
+        font-family: inherit;
+        font-size: 1em;
+        font-weight: 600;
+        color: #fff;
+        background-color: var(--webgis-brand-primary);
+        border: 2px solid var(--webgis-brand-primary);
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+        .webportal-layout-main-container button:hover,
+        .webportal-layout-main-container input[type="submit"]:hover,
+        .webportal-layout-main-container input[type="button"]:hover {
+            background-color: color-mix(in srgb, var(--webgis-brand-primary) 85%, black);
+        }
+
+    /* error / warning boxes (HtmlHelper.ErrorMessage / WarningMessage) */
+    .webportal-layout-main-container div[style*="color:red"] {
+        display: block !important;
+        margin: 0 0 12px 0;
+        padding: 10px 12px !important;
+        color: #7f1d1d !important;
+        background: #fdecea !important;
+        border: 0 !important;
+        border-left: 4px solid var(--webgis-page-error) !important;
+        border-radius: 6px !important;
+    }
+
+    .webportal-layout-main-container div[style*="border:2px solid #ffa"] {
+        display: block !important;
+        margin: 0 0 12px 0;
+        padding: 10px 12px !important;
+        color: #663c00 !important;
+        background: #fff4e5 !important;
+        border: 0 !important;
+        border-left: 4px solid #f0a030 !important;
+        border-radius: 6px !important;
+    }
+
+    /* property link bar below the content (_html.cshtml) */
+    .webportal-layout-main-container .content-wrapper {
+        margin-top: 16px;
+        background: transparent !important;
+    }
+
+/* autocomplete menu (_RestLayout) */
+.rest-autocomplete-menu {
+    border-color: var(--webgis-page-border) !important;
+    border-radius: 6px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08) !important;
+}
+
+.rest-autocomplete-item:hover,
+.rest-autocomplete-item.cursor {
+    background: var(--webgis-brand-primary-light) !important;
+}
+
+.rest-autocomplete-empty,
+.rest-autocomplete-subtext {
+    color: var(--webgis-page-muted) !important;
+}

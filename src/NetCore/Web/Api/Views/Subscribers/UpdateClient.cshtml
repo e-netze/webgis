@@ -1,61 +1,76 @@
 ﻿@model E.Standard.Api.App.Models.UpdateClient
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
 
 @{
-    ViewBag.Title = "Edit Api Client";
+    var L = LocalizerFactory.Create(typeof(object));
+    bool isNew = String.IsNullOrWhiteSpace(Model.ClientId);
+    ViewBag.Title = L[isNew ? "pages.client-edit.title-new" : "pages.client-edit.title-update"].Value;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>
-    <a href="@Url.Action("Clients","Subscribers")" class="back-button"></a>
-    Create/Update Api Client
-</h2>
-<br />
-<br />
-
-@if (!String.IsNullOrEmpty(Model.ErrorMessage))
-{
-    <span style="color:red">@(Model.ErrorMessage)</span>
-}
-<br/>
-<br />
-
-@using (Html.BeginForm("UpdateClient", "Subscribers", FormMethod.Post))
-{
-    <div id="wizard" class="webgis-wizard" data-wizard-submit-method="submit" data-wizard-submit-title="Save" >
-        <div class="webgis-wizard-step" data-wizard-step-title="General">
-            <span>Client Name</span>
-            <br />
-            @Html.TextBoxFor(m => m.ClientName)
-            <br />
-            <span>Client Http Referer</span>
-            <br/>
-            @Html.TextBoxFor(m => m.ClientReferer)
-            <br />
-        </div>
-
-        <div class="webgis-wizard-step" data-wizard-step-title="Securiry">
-            <br />
-            <span>Client Id:</span>
-            <br />
-            @Html.TextBoxFor(m => m.ClientId, "", new { @readonly = "readonly" })
-            <br />
-            <span>Client Secret:</span>
-            <br />
-            @Html.TextBoxFor(m => m.ClientSecret, "", new { @readonly = "readonly" })
-            <br />
-            <br />
-        </div>
-
-        <div class="webgis-wizard-step" data-wizard-step-title="Creation Info">
-            <span>Creation Date (UTC)</span>
-            <br />
-            @Html.TextBoxFor(m => m.Created, "", new { @readonly = "readonly" })
-            <br />
-        </div>
-        <!--
-            <button type="submit">
-                Save
-            </button>
-        -->
+<div class="webgis-page medium">
+    <div class="webgis-page-page-title">
+        <h2>
+            <a href="@Url.Action("Clients","Subscribers")" class="back-button" aria-label="@L["pages.layout.back"]"></a>
+            @ViewBag.Title
+        </h2>
     </div>
-   }
+
+    @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="webgis-page-alert error" role="alert">@Model.ErrorMessage</div>
+    }
+
+    @using (Html.BeginForm("UpdateClient", "Subscribers", FormMethod.Post))
+    {
+        <section class="webgis-page-card">
+            <div class="webgis-page-card-header">
+                <h3>@L["pages.form.step-general"]</h3>
+            </div>
+            <div class="webgis-page-card-body">
+                <div class="webgis-page-field">
+                    <label for="@Html.IdFor(m => m.ClientName)">@L["pages.client-edit.client-name"]</label>
+                    @Html.TextBoxFor(m => m.ClientName)
+                </div>
+                <div class="webgis-page-field">
+                    <label for="@Html.IdFor(m => m.ClientReferer)">@L["pages.client-edit.client-referer"]</label>
+                    @Html.TextBoxFor(m => m.ClientReferer)
+                </div>
+            </div>
+        </section>
+
+        @if (!isNew)
+        {
+            <section class="webgis-page-card">
+                <div class="webgis-page-card-header">
+                    <h3>@L["pages.form.step-security"]</h3>
+                </div>
+                <div class="webgis-page-card-body">
+                    <div class="webgis-page-field">
+                        <label for="@Html.IdFor(m => m.ClientId)">@L["pages.client-edit.client-id"]</label>
+                        @Html.TextBoxFor(m => m.ClientId, "", new { @readonly = "readonly" })
+                    </div>
+                    <div class="webgis-page-field">
+                        <label for="@Html.IdFor(m => m.ClientSecret)">@L["pages.client-edit.client-secret"]</label>
+                        @Html.TextBoxFor(m => m.ClientSecret, "", new { @readonly = "readonly" })
+                    </div>
+                    <div class="webgis-page-field">
+                        <label for="@Html.IdFor(m => m.Created)">@L["pages.form.created"]</label>
+                        @Html.TextBoxFor(m => m.Created, "", new { @readonly = "readonly" })
+                    </div>
+                </div>
+            </section>
+        }
+        else
+        {
+            @Html.HiddenFor(m => m.ClientId)
+            @Html.HiddenFor(m => m.ClientSecret)
+            @Html.HiddenFor(m => m.Created)
+        }
+
+        <div class="webgis-page-actions">
+            <button type="submit" class="webgis-page-button primary">@L[isNew ? "pages.form.create" : "pages.form.save"]</button>
+            <a class="webgis-page-link" href="@Url.Action("Clients","Subscribers")">@L["pages.form.cancel"]</a>
+        </div>
+    }
+</div>
