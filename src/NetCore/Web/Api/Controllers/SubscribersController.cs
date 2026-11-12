@@ -12,6 +12,8 @@ using Api.Core.AppCode.Services;
 using Api.Core.AppCode.Services.Api;
 using Api.Core.AppCode.Services.Authentication;
 using Api.Core.AppCode.Services.Authentication.LoginThrottling;
+using Api.Core.AppCode.Services.Authentication.Mfa;
+using Api.Core.AppCode.Services.Authentication.PasswordPolicy;
 
 using E.Standard.Api.App;
 using E.Standard.Api.App.Configuration;
@@ -48,7 +50,7 @@ namespace Api.Core.Controllers;
 
 [ApiAuthentication(ApiAuthenticationTypes.Cookie)]
 [AppRole(AppRoles.SubscriberPages)]
-public class SubscribersController : ApiBaseController
+public partial class SubscribersController : ApiBaseController
 {
     private readonly ILogger<SubscribersController> _logger;
     private readonly UrlHelperService _urlHelper;
@@ -67,6 +69,8 @@ public class SubscribersController : ApiBaseController
     private readonly IEnumerable<ICustomSubscriberIdenticationService> _customSubscriberIdentications;
     private readonly ILogger _auditLogger;
     private readonly SubscriberSecurityOptions _securityOptions;
+    private readonly SubscriberAccountSecurityService _accountSecurity;
+    private readonly SubscriberPasswordPolicyService _passwordPolicy;
 
     private static readonly SubscriberDb.Subscriber TimingDummySubscriber = new SubscriberDb.Subscriber() { Password = Guid.NewGuid().ToString() };
 
@@ -79,9 +83,6 @@ public class SubscribersController : ApiBaseController
 
     /// <summary>Fixed log category for security relevant events (logins, lockouts, ...), e.g. for SIEM filtering.</summary>
     public const string SecurityAuditLogCategory = "WebGIS.Security.Audit";
-
-    private string InvalidPasswordMessage
-        => $"Invalid password: min. {_securityOptions.PasswordMinLength}, max. {SubscriberSecurityOptions.PasswordMaxLength} characters, must not be equal to the username";
 
     public SubscribersController(ILogger<SubscribersController> logger,
                                  ILoggerFactory loggerFactory,
@@ -96,6 +97,8 @@ public class SubscribersController : ApiBaseController
                                  SDKPluginManagerService sdkPlugins,
                                  ICryptoService crypto,
                                  SubscriberLoginThrottleService loginThrottle,
+                                 SubscriberAccountSecurityService accountSecurity,
+                                 SubscriberPasswordPolicyService passwordPolicy,
                                  IHttpService http,
                                  IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
                                  IOptions<SubscriberSecurityOptions> securityOptions,
@@ -120,6 +123,8 @@ public class SubscribersController : ApiBaseController
         _customSubscriberIdentications = customSubscriberIdentications;
         _crypto = crypto;
         _loginThrottle = loginThrottle;
+        _accountSecurity = accountSecurity;
+        _passwordPolicy = passwordPolicy;
         _jwtAccessTokenService = jwtAccessTokenService;
     }
 
@@ -135,6 +140,11 @@ public class SubscribersController : ApiBaseController
         try
         {
             var subscriber = CurrentAuthSubscriber();
+
+            var mfaInfo = TryGetSecurityInfo(subscriber.Id);
+            ViewData["mfa-available"] = mfaInfo != null;
+            ViewData["mfa-enabled"] = mfaInfo?.MfaEnabled == true;
+            ViewData["mfa-required"] = _accountSecurity.IsMfaRequired(subscriber);
 
             return ViewResult(subscriber);
         }
@@ -262,10 +272,6 @@ public class SubscribersController : ApiBaseController
                 throw new SubscriberLoginException(LoginErrorInvalidCredentials);
             }
 
-            _loginThrottle.RegisterSuccess(login.Username);
-
-            _auditLogger.LogInformation("Subscriber login succeeded: {username} from {clientIp}", subscriber.Name, clientIp);
-
             if (subscriber.PasswordNeedsRehash)
             {
                 try
@@ -280,27 +286,19 @@ public class SubscribersController : ApiBaseController
                 }
             }
 
-            if (!String.IsNullOrWhiteSpace(login.Redirect))
+            if (!String.IsNullOrWhiteSpace(login.Redirect) && !_urlHelper.IsAllowedPortalLoginRedirect(login.Redirect))
             {
-                if (!_urlHelper.IsAllowedPortalLoginRedirect(login.Redirect))
-                {
-                    _auditLogger.LogWarning("Subscriber login: redirect target not allowed for {username} from {clientIp}: {redirect}", subscriber.Name, clientIp, login.Redirect);
-                    return BadRequest("Redirect target is not allowed");
-                }
-
-                var credentialToken = _jwtAccessTokenService.GenerateToken(subscriber.FullName, 1, JwtAccessTokenService.PortalLoginAudience);
-
-                return RedirectResult($"{login.Redirect}{(login.Redirect.Contains("?") ? "&" : "?")}credential_token={credentialToken}");
+                _auditLogger.LogWarning("Subscriber login: redirect target not allowed for {username} from {clientIp}: {redirect}", subscriber.Name, clientIp, login.Redirect);
+                return BadRequest("Redirect target is not allowed");
             }
 
-            AuthenticateSubscriber(subscriber);
-
-            if (Request.Query["f"] == "json")
+            bool passwordChangeRequired = _passwordPolicy.IsKnownDefaultPassword(login.Password);
+            if (passwordChangeRequired)
             {
-                return await JsonObject(new { succeeded = true });
+                _auditLogger.LogWarning("Subscriber login with a known default password, password change required: {username} from {clientIp}", subscriber.Name, clientIp);
             }
 
-            return RedirectToActionResult("Index");
+            return await ContinueLogin(subscriber, login.Redirect, clientIp, passwordChangeRequired, secondFactorDone: false);
         }
         catch (Exception ex)
         {
@@ -430,9 +428,10 @@ public class SubscribersController : ApiBaseController
                 throw new Exception("Passwords are not ident");
             }
 
-            if (!registerSubscriber.Password1.IsValidPassword(_securityOptions, registerSubscriber.Username))
+            var passwordPolicy = _passwordPolicy.Validate(registerSubscriber.Password1, registerSubscriber.Username, registerSubscriber.FirstName, registerSubscriber.LastName, registerSubscriber.Email);
+            if (!passwordPolicy.IsValid)
             {
-                throw new Exception(InvalidPasswordMessage);
+                throw new Exception(passwordPolicy.ToEnglishMessage());
             }
 
             var subscriber = db.GetSubscriberByName(registerSubscriber.Username);
@@ -460,6 +459,11 @@ public class SubscribersController : ApiBaseController
             subscriber = db.GetSubscriberByName(registerSubscriber.Username);
             if (subscriber != null)
             {
+                if (_accountSecurity.IsMfaRequired(subscriber) && _accountSecurity.IsMfaAvailable())
+                {
+                    return MfaEnrollView(subscriber, null);
+                }
+
                 AuthenticateSubscriber(subscriber);
             }
 
@@ -490,9 +494,16 @@ public class SubscribersController : ApiBaseController
                 subscriber = db.GetSubscriberById(id);
             }
 
+            var currentSubscriber = CurrentAuthSubscriber();
+            bool isOtherSubscriber = subscriber.Id != currentSubscriber.Id;
+            var mfaInfo = isOtherSubscriber ? TryGetSecurityInfo(subscriber.Id) : null;
+
             return ViewResult(new RegisterSubscriberModel(subscriber)
             {
-                RequireCurrentPassword = subscriber.Id == CurrentAuthSubscriber().Id
+                RequireCurrentPassword = !isOtherSubscriber,
+                MfaAvailable = mfaInfo != null,
+                MfaEnabled = mfaInfo?.MfaEnabled == true,
+                CanResetMfa = isOtherSubscriber && mfaInfo?.MfaEnabled == true
             });
         }
         catch (NotAuthorizedException)
@@ -583,14 +594,22 @@ public class SubscribersController : ApiBaseController
                 }
             }
 
-            if (!updateSubscriber.Password1.IsValidPassword(_securityOptions, subscriber.Name))
+            var passwordPolicy = _passwordPolicy.Validate(updateSubscriber.Password1, subscriber.Name, subscriber.FirstName, subscriber.LastName, subscriber.Email);
+            if (!passwordPolicy.IsValid)
             {
-                throw new Exception(InvalidPasswordMessage);
+                throw new Exception(passwordPolicy.ToEnglishMessage());
             }
 
             db.UpdateApiSubscriberPassword(subscriber, updateSubscriber.Password1);
 
             _auditLogger.LogInformation("Subscriber password changed: {username} by {changedBy} from {clientIp}", subscriber.Name, currentSubscriber.Name, HttpContext.Connection.RemoteIpAddress?.ToString());
+
+            // terminate all other sessions of this subscriber
+            _accountSecurity.RotateSecurityStamp(subscriber.Id);
+            if (subscriber.Id == currentSubscriber.Id)
+            {
+                AuthenticateSubscriber(currentSubscriber);
+            }
 
             return RedirectToActionResult("Index");
         }
@@ -757,7 +776,7 @@ public class SubscribersController : ApiBaseController
             }
 
             _cookies.SignOut(HttpContext);
-            _cookies.SetAuthCookie(HttpContext, "clientid:" + client.ClientId + ":" + subscriber.Name + "@" + client.ClientName);
+            _cookies.SetAuthCookie(HttpContext, "clientid:" + client.ClientId + ":" + subscriber.Name + "@" + client.ClientName, subscriber.Id);
 
             return RedirectToActionResult("Index", "Rest");
         }
@@ -979,7 +998,7 @@ public class SubscribersController : ApiBaseController
 
     private void AuthenticateSubscriber(SubscriberDb.Subscriber subscriber)
     {
-        _cookies.SetAuthCookie(HttpContext, $"subscriber:{subscriber.Id}:{subscriber.Name.ToLower()}");
+        _cookies.SetAuthCookie(HttpContext, $"subscriber:{subscriber.Id}:{subscriber.Name.ToLower()}", subscriber.Id);
     }
 
     internal SubscriberDb.Subscriber CurrentAuthSubscriber(bool throwException = true, string endpoint = "", ApiAuthenticationTypes acceptedAuthTypes = ApiAuthenticationTypes.Cookie)

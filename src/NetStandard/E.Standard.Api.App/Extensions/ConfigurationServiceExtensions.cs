@@ -421,6 +421,14 @@ static public class ConfigurationServiceExtensions
         {
             options.PasswordMinLength = Math.Min(passwordMinLength, SubscriberSecurityOptions.PasswordMaxLength);
         }
+        if (int.TryParse(config[ApiConfigKeys.SecurityPasswordRequiredCharacterClasses], out int characterClasses) && characterClasses >= 0)
+        {
+            options.PasswordRequiredCharacterClasses = Math.Min(characterClasses, SubscriberSecurityOptions.PasswordCharacterClassCount);
+        }
+        if (!String.IsNullOrWhiteSpace(config[ApiConfigKeys.SecurityPasswordBlocklistFile]))
+        {
+            options.PasswordBlocklistFile = config[ApiConfigKeys.SecurityPasswordBlocklistFile].Trim();
+        }
 
         BindNonNegativeInt(ApiConfigKeys.SecurityLoginCaptchaAfterFailedAttempts, value => options.LoginCaptchaAfterFailedAttempts = value);
         BindNonNegativeInt(ApiConfigKeys.SecurityLoginLockoutAfterFailedAttempts, value => options.LoginLockoutAfterFailedAttempts = value);
@@ -443,6 +451,15 @@ static public class ConfigurationServiceExtensions
         if (!String.IsNullOrWhiteSpace(config[ApiConfigKeys.SecurityLoginThrottleRedisConnectionString]))
         {
             options.LoginThrottleRedisConnectionString = config[ApiConfigKeys.SecurityLoginThrottleRedisConnectionString];
+        }
+
+        if (Enum.TryParse(config[ApiConfigKeys.SecurityMfaRequired], true, out MfaRequiredMode mfaRequired))
+        {
+            options.MfaRequired = mfaRequired;
+        }
+        if (!String.IsNullOrWhiteSpace(config[ApiConfigKeys.SecurityMfaIssuer]))
+        {
+            options.MfaIssuer = config[ApiConfigKeys.SecurityMfaIssuer].Trim();
         }
 
         void BindNonNegativeInt(string key, Action<int> apply)

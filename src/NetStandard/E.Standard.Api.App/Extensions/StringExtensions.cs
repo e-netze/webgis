@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using E.Standard.Api.App.Configuration;
 using E.Standard.Security.Cryptography.Abstractions;
 
 namespace E.Standard.Api.App.Extensions;
@@ -64,35 +63,6 @@ public static class StringExtension
 
         var regex = new Regex(pattern);
         return regex.IsMatch(s);
-    }
-
-    /// <summary>
-    /// Policy for new or changed subscriber passwords (NIST 800-63B style: length only, no composition rules).
-    /// </summary>
-    public static bool IsValidPassword(this string s, SubscriberSecurityOptions options, string username = null)
-    {
-        if (String.IsNullOrEmpty(s))
-        {
-            return false;
-        }
-
-        if (s.Length < options.PasswordMinLength
-            || s.Length > SubscriberSecurityOptions.PasswordMaxLength)
-        {
-            return false;
-        }
-
-        if (String.IsNullOrWhiteSpace(s))
-        {
-            return false;
-        }
-
-        if (!String.IsNullOrEmpty(username) && s.Equals(username, StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        return true;
     }
 
     public static bool IsValidUrlId(this string s)

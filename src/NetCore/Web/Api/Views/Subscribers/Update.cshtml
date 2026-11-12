@@ -64,3 +64,21 @@
         Change Password
     </button>
 }
+
+@if (Model.MfaAvailable && !Model.RequireCurrentPassword)
+{
+    <br />
+    <br />
+    <h3>Two-factor authentication</h3>
+    <p>@(Model.MfaEnabled ? "Enabled" : "Not enabled")</p>
+    @if (Model.CanResetMfa)
+    {
+        using (Html.BeginForm("MfaReset", "Subscribers", FormMethod.Post))
+        {
+            <input type="hidden" name="id" value="@Model.Id" />
+            <button type="submit" onclick="return confirm('Reset two-factor authentication for this subscriber? All sessions of the subscriber will be terminated.')">
+                Reset two-factor authentication
+            </button>
+        }
+    }
+}

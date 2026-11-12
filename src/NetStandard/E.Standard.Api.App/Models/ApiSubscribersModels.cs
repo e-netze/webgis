@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 
 using E.Standard.WebGIS.SubscriberDatabase;
@@ -104,4 +104,80 @@ public class RegisterSubscriberModel : ErrorHandlingModel
     /// True if a subscriber changes its own password => current password is required.
     /// </summary>
     public bool RequireCurrentPassword { get; set; }
+
+    #region MFA (admin view of another subscriber)
+
+    public bool MfaAvailable { get; set; }
+    public bool MfaEnabled { get; set; }
+    public bool CanResetMfa { get; set; }
+
+    #endregion
+}
+
+/// <summary>
+/// Second login step (verify), forced setup at login (enroll) or setup from the account page (setup).
+/// </summary>
+public class ApiSubscribersMfaLogin : ErrorHandlingModel
+{
+    public const string ModeVerify = "verify";
+    public const string ModeEnroll = "enroll";
+    public const string ModeSetup = "setup";
+
+    public string Mode { get; set; }
+
+    /// <summary>Encrypted flow state (subscriber, stage, secret, redirect...).</summary>
+    public string Token { get; set; }
+
+    public string Code { get; set; }
+
+    // setup/enroll only (display)
+    public string QrCodeSvg { get; set; }
+    public string Secret { get; set; }
+
+    public string ErrorMessageArgument { get; set; }
+}
+
+public class ApiSubscribersMfaRecoveryCodes : ErrorHandlingModel
+{
+    public string[] RecoveryCodes { get; set; }
+
+    /// <summary>Set during the login (enrollment) => continue to complete the login.</summary>
+    public string ContinueToken { get; set; }
+}
+
+/// <summary>
+/// Forced password change during the login (e.g. the password is a known default password like the one of the initial installation).
+/// </summary>
+public class ApiSubscribersLoginChangePassword : ErrorHandlingModel
+{
+    /// <summary>Encrypted flow state (subscriber, stage, redirect...).</summary>
+    public string Token { get; set; }
+
+    public string NewPassword1 { get; set; }
+    public string NewPassword2 { get; set; }
+
+    public string ErrorMessageArgument { get; set; }
+}
+
+public class ApiSubscribersAccount : ErrorHandlingModel
+{
+    public bool Available { get; set; }
+    public bool Enabled { get; set; }
+    public bool Required { get; set; }
+    public int RecoveryCodesLeft { get; set; }
+
+    [DisplayName("Current password")]
+    public string CurrentPassword { get; set; }
+
+    #region Change password
+
+    public string NewPassword1 { get; set; }
+    public string NewPassword2 { get; set; }
+
+    #endregion
+
+    /// <summary>Localization key (subscribers.account.success.*) of a success message.</summary>
+    public string SuccessMessage { get; set; }
+
+    public string ErrorMessageArgument { get; set; }
 }

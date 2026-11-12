@@ -10,6 +10,7 @@
 @inject IUrlHelperService UrlHelper
 @inject JwtAccessTokenService TokenService
 @inject IOptions<SecurityOptions> SecurityOptions
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
 
 @{
     ViewBag.Title = "Api Clients";
@@ -28,6 +29,35 @@
 
     <br/>
     <br/>
+}
+
+@{
+    var L = LocalizerFactory.Create(typeof(object));
+    bool mfaAvailable = ViewData["mfa-available"] as bool? == true;
+    bool mfaEnabled = ViewData["mfa-enabled"] as bool? == true;
+    bool mfaRequired = ViewData["mfa-required"] as bool? == true;
+}
+
+@if (Model != null)
+{
+    @if (!mfaAvailable && (mfaRequired || config.IsAdminSubscriber(Model.Name)))
+    {
+        <div role="alert" style="color:#b35c00;margin-bottom:10px">@L["subscribers.mfa.not-available"]</div>
+    }
+    else if (mfaAvailable && !mfaEnabled)
+    {
+        <div role="alert" style="color:#b35c00;margin-bottom:10px">@L[mfaRequired ? "subscribers.mfa.required-hint" : "subscribers.mfa.recommended"]</div>
+    }
+
+    <h3>@L["subscribers.account.title"]</h3>
+    <div class="webgis-api-tile" onclick="document.location='@Url.Action("account")'">
+        <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+        <span class="webgis-api-tile-title">@L["subscribers.account.title"]</span>
+        <span class="webgis-api-tile-description">
+            @L["subscribers.account.tile-description"]<br />
+            @L["subscribers.mfa.title"]: @L[mfaEnabled ? "subscribers.mfa.status-enabled" : "subscribers.mfa.status-disabled"]
+        </span>
+    </div>
 }
 
 @if (config.IsAdminSubscriber(Model?.Name))

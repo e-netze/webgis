@@ -102,6 +102,13 @@ public class SubscriberLoginThrottleService
         => !String.IsNullOrEmpty(nonce) &&
            _store.TryAddMarker($"captcha:{nonce}", TimeSpan.FromMinutes(Math.Max(1, _options.CaptchaLifetimeMinutes) + 1));
 
+    /// <summary>
+    /// Marks a one-time token (e.g. an MFA login step) as used. Returns false if it was already used before (replay).
+    /// </summary>
+    public bool TryConsumeOneTimeNonce(string nonce, TimeSpan lifetime)
+        => !String.IsNullOrEmpty(nonce) &&
+           _store.TryAddMarker($"once:{nonce}", lifetime + TimeSpan.FromMinutes(1));
+
     #region Helper
 
     private LoginThrottleEntry GetUserEntry(string username, DateTime now)

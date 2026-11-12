@@ -9,6 +9,8 @@ using Api.Core.AppCode.Services.Api;
 using Api.Core.AppCode.Services.Api.DataLinqEngines;
 using Api.Core.AppCode.Services.Authentication;
 using Api.Core.AppCode.Services.Authentication.LoginThrottling;
+using Api.Core.AppCode.Services.Authentication.Mfa;
+using Api.Core.AppCode.Services.Authentication.PasswordPolicy;
 using Api.Core.AppCode.Services.DataLinq;
 using Api.Core.AppCode.Services.Endpoints;
 using Api.Core.AppCode.Services.Logging;
@@ -142,6 +144,11 @@ static public class ServiceCollectionExtensions
         services.AddBotDetection();
 
         services.AddSingleton<SubscriberPasswordVerificationService>();
+        services.AddSingleton<TotpService>();
+        services.AddSingleton<SubscriberPasswordPolicyService>();
+        services.AddSingleton<SubscriberSecurityStampCache>();
+        services.AddTransient<SubscriberAccountSecurityService>();
+        services.AddHostedService<SubscriberMfaStartupCheckService>();
         services.AddSingleton<SubscriberLoginThrottleService>();
         services.AddSingleton<ILoginThrottleStore>(serviceProvider =>
         {

@@ -31,6 +31,8 @@ public class ApiConfigKeys
     public const string SecuritySessionMaxLifetimeMinutes = ConfigurationSectionName + ":security:session-max-lifetime-minutes";
     public const string SecuritySessionIdleTimeoutMinutes = ConfigurationSectionName + ":security:session-idle-timeout-minutes";
     public const string SecurityPasswordMinLength = ConfigurationSectionName + ":security:password-min-length";
+    public const string SecurityPasswordRequiredCharacterClasses = ConfigurationSectionName + ":security:password-required-character-classes";
+    public const string SecurityPasswordBlocklistFile = ConfigurationSectionName + ":security:password-blocklist-file";
     public const string SecurityLoginCaptchaAfterFailedAttempts = ConfigurationSectionName + ":security:login-captcha-after-failed-attempts";
     public const string SecurityLoginLockoutAfterFailedAttempts = ConfigurationSectionName + ":security:login-lockout-after-failed-attempts";
     public const string SecurityLoginLockoutMinutes = ConfigurationSectionName + ":security:login-lockout-minutes";
@@ -40,6 +42,8 @@ public class ApiConfigKeys
     public const string SecurityLoginThrottleRedisConnectionString = ConfigurationSectionName + ":security:login-throttle-redis-connectionstring";
     public const string SecurityCaptchaLifetimeMinutes = ConfigurationSectionName + ":security:captcha-lifetime-minutes";
     public const string SecurityPasswordVerificationCacheSeconds = ConfigurationSectionName + ":security:password-verification-cache-seconds";
+    public const string SecurityMfaRequired = ConfigurationSectionName + ":security:mfa-required";
+    public const string SecurityMfaIssuer = ConfigurationSectionName + ":security:mfa-issuer";
 
     public const string UseXForwardedHeadersMiddleware = ConfigurationSectionName + ":middleware:use-x-forwarded-headers";
     public const string UseXForwardedHeadersLoggingMiddleware = ConfigurationSectionName + ":middleware:use-x-forwarded-headers-logging";

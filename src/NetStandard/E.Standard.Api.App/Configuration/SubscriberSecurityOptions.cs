@@ -8,6 +8,16 @@ public enum CookieSecureMode
     Never
 }
 
+public enum MfaRequiredMode
+{
+    /// <summary>MFA is optional (offered and recommended).</summary>
+    None,
+    /// <summary>MFA is mandatory for admin subscribers.</summary>
+    Admins,
+    /// <summary>MFA is mandatory for all subscribers.</summary>
+    All
+}
+
 /// <summary>
 /// Security options for the subscriber (forms) login and the API auth cookie.
 /// </summary>
@@ -19,6 +29,8 @@ public enum CookieSecureMode
 /// <item><c>security:session-max-lifetime-minutes</c> → <see cref="SessionMaxLifetimeMinutes"/></item>
 /// <item><c>security:session-idle-timeout-minutes</c> → <see cref="SessionIdleTimeoutMinutes"/></item>
 /// <item><c>security:password-min-length</c> → <see cref="PasswordMinLength"/></item>
+/// <item><c>security:password-required-character-classes</c> (0-4) → <see cref="PasswordRequiredCharacterClasses"/></item>
+/// <item><c>security:password-blocklist-file</c> → <see cref="PasswordBlocklistFile"/></item>
 /// <item><c>security:login-captcha-after-failed-attempts</c> → <see cref="LoginCaptchaAfterFailedAttempts"/></item>
 /// <item><c>security:login-lockout-after-failed-attempts</c> → <see cref="LoginLockoutAfterFailedAttempts"/></item>
 /// <item><c>security:login-lockout-minutes</c> (e.g. "1,5,15") → <see cref="LoginLockoutMinutes"/></item>
@@ -28,6 +40,8 @@ public enum CookieSecureMode
 /// <item><c>security:login-throttle-redis-connectionstring</c> → <see cref="LoginThrottleRedisConnectionString"/></item>
 /// <item><c>security:captcha-lifetime-minutes</c> → <see cref="CaptchaLifetimeMinutes"/></item>
 /// <item><c>security:password-verification-cache-seconds</c> → <see cref="PasswordVerificationCacheSeconds"/></item>
+/// <item><c>security:mfa-required</c> (none|admins|all) → <see cref="MfaRequired"/></item>
+/// <item><c>security:mfa-issuer</c> → <see cref="MfaIssuer"/></item>
 /// </list>
 /// </remarks>
 public class SubscriberSecurityOptions
@@ -50,6 +64,20 @@ public class SubscriberSecurityOptions
     /// Minimum length for new or changed subscriber passwords (existing passwords stay valid).
     /// </summary>
     public int PasswordMinLength { get; set; } = 12;
+
+    /// <summary>
+    /// Number of different character classes (lowercase, uppercase, digit, special character) a new password must contain.
+    /// 0 = no composition rules (recommended, NIST SP 800-63B), 4 = all classes.
+    /// </summary>
+    public int PasswordRequiredCharacterClasses { get; set; } = 0;
+
+    public const int PasswordCharacterClassCount = 4;
+
+    /// <summary>
+    /// Optional text file (one password per line) with additional blocked passwords, e.g. a list of common/breached passwords.
+    /// Relative paths are resolved against the application content root. Empty = built-in list only.
+    /// </summary>
+    public string PasswordBlocklistFile { get; set; } = "";
 
     /// <summary>
     /// Failed logins (per username or client IP) after which a captcha is required. 0 = always.
@@ -91,4 +119,15 @@ public class SubscriberSecurityOptions
     /// because hashing (PBKDF2) is intentionally expensive. 0 = disabled.
     /// </summary>
     public int PasswordVerificationCacheSeconds { get; set; } = 300;
+
+    /// <summary>
+    /// Who must use two-factor authentication (TOTP). Subscribers without MFA are forced to set it up at the next login.
+    /// If the MFA storage is not available (SQL table missing, Setup not run), login works without MFA (fail-open + warning).
+    /// </summary>
+    public MfaRequiredMode MfaRequired { get; set; } = MfaRequiredMode.None;
+
+    /// <summary>
+    /// Issuer name shown in the authenticator app.
+    /// </summary>
+    public string MfaIssuer { get; set; } = "WebGIS";
 }

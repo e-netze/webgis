@@ -2,6 +2,8 @@
 
 using System;
 
+using Api.Core.AppCode.Services.Authentication.Mfa;
+
 using E.Standard.Api.App.Configuration;
 using E.Standard.Security.Cryptography.Abstractions;
 
@@ -13,20 +15,30 @@ namespace Api.Core.AppCode.Services.Authentication;
 public class ApiCookieAuthenticationService
 {
     private readonly ICryptoService _crypto;
+    private readonly SubscriberAccountSecurityService _accountSecurity;
     private readonly SubscriberSecurityOptions _options;
 
     public ApiCookieAuthenticationService(ICryptoService crypto,
+                                          SubscriberAccountSecurityService accountSecurity,
                                           IOptions<SubscriberSecurityOptions> options)
     {
         _crypto = crypto;
+        _accountSecurity = accountSecurity;
         _options = options.Value;
     }
 
-    public void SetAuthCookie(HttpContext context, string cookieValue)
+    /// <param name="subscriberId">
+    /// If set, the cookie is bound to the current security stamp of this subscriber
+    /// => it gets invalid when the password or the MFA settings change.
+    /// </param>
+    public void SetAuthCookie(HttpContext context, string cookieValue, string? subscriberId = null)
     {
         long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        string stamp = String.IsNullOrEmpty(subscriberId)
+            ? String.Empty
+            : _accountSecurity.GetSecurityStamp(subscriberId) ?? String.Empty;
 
-        AppendAuthCookie(context, $"{CookieFormatVersion}|{now}|{now}|{cookieValue}");
+        AppendAuthCookie(context, Payload(now, now, subscriberId, stamp, cookieValue));
         context.Response.Headers.Append("P3P", "CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'");
     }
 
@@ -47,18 +59,19 @@ public class ApiCookieAuthenticationService
 
             string cookieValue = _crypto.DecryptCookieValue(cookie) ?? String.Empty;
 
-            // format: v2|created|lastActivity|value  (unix seconds)
-            var parts = cookieValue.Split('|', 4);
-            if (parts.Length != 4
+            // format: v3|created|lastActivity|subscriberId|securityStamp|value  (unix seconds)
+            var parts = cookieValue.Split('|', 6);
+            if (parts.Length != 6
                 || parts[0] != CookieFormatVersion
                 || !long.TryParse(parts[1], out long created)
                 || !long.TryParse(parts[2], out long lastActivity))
             {
-                // legacy cookies without timestamps are not accepted anymore
+                // legacy cookies (without timestamps or security stamp) are not accepted anymore
                 SignOut(context);
                 return null;
             }
 
+            string subscriberId = parts[3], stamp = parts[4], value = parts[5];
             long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             if (_options.SessionMaxLifetimeMinutes > 0
@@ -75,14 +88,28 @@ public class ApiCookieAuthenticationService
                     SignOut(context);
                     return null;
                 }
+            }
 
-                if (now - lastActivity > SlidingRefreshSeconds && !context.Response.HasStarted)
+            if (!String.IsNullOrEmpty(subscriberId))
+            {
+                // null => can't be checked (MFA storage not available)
+                string? currentStamp = _accountSecurity.GetSecurityStamp(subscriberId);
+                if (currentStamp != null && currentStamp != stamp)
                 {
-                    AppendAuthCookie(context, $"{CookieFormatVersion}|{created}|{now}|{parts[3]}");
+                    // password or MFA settings changed => session is invalid
+                    SignOut(context);
+                    return null;
                 }
             }
 
-            return parts[3];
+            if (_options.SessionIdleTimeoutMinutes > 0
+                && now - lastActivity > SlidingRefreshSeconds
+                && !context.Response.HasStarted)
+            {
+                AppendAuthCookie(context, Payload(created, now, subscriberId, stamp, value));
+            }
+
+            return value;
         }
         catch (System.Security.Cryptography.CryptographicException)
         {
@@ -102,6 +129,9 @@ public class ApiCookieAuthenticationService
         context.Response.Cookies.Append(AuthCookieName, _crypto.EncryptCookieValue(payload), CreateCookieOptions(context));
     }
 
+    private static string Payload(long created, long lastActivity, string? subscriberId, string stamp, string value)
+        => $"{CookieFormatVersion}|{created}|{lastActivity}|{subscriberId?.Replace("|", "")}|{stamp}|{value}";
+
     private CookieOptions CreateCookieOptions(HttpContext context)
         => new CookieOptions()
         {
@@ -117,6 +147,6 @@ public class ApiCookieAuthenticationService
         };
 
     private const string AuthCookieName = "webgis5core-api-auth";
-    private const string CookieFormatVersion = "v2";
+    private const string CookieFormatVersion = "v3";
     private const int SlidingRefreshSeconds = 60;
 }

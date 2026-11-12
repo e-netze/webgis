@@ -1,0 +1,53 @@
+@model E.Standard.Api.App.Models.ApiSubscribersMfaRecoveryCodes
+
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+
+@{
+    var L = LocalizerFactory.Create(typeof(object));
+    string uiLanguage = Context.Request.Query["_ul"].FirstOrDefault()
+                        ?? (Context.Request.HasFormContentType ? Context.Request.Form["_ul"].FirstOrDefault() : null);
+
+    ViewBag.Title = L["subscribers.mfa.recovery-title"].Value;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+<br />
+<div role="alert" style="color:#b35c00">@L["subscribers.mfa.recovery-hint"]</div>
+<br />
+
+<pre id="subscriber-mfa-recovery-codes" style="font-size:1.2em;line-height:1.6em;user-select:all">@String.Join("\n", Model.RecoveryCodes ?? Array.Empty<string>())</pre>
+
+<button type="button" id="subscriber-mfa-recovery-copy">@L["subscribers.mfa.recovery-copy"]</button>
+<br />
+<br />
+
+@if (!String.IsNullOrEmpty(Model.ContinueToken))
+{
+    using (Html.BeginForm("LoginMfaContinue", "Subscribers", FormMethod.Post))
+    {
+        <input type="hidden" name="continueToken" value="@Model.ContinueToken" />
+        @if (!String.IsNullOrEmpty(uiLanguage))
+        {
+            <input type="hidden" name="_ul" value="@uiLanguage" />
+        }
+        <button type="submit">@L["subscribers.mfa.recovery-continue"]</button>
+    }
+}
+else
+{
+    <a href="@Url.Action("Account", "Subscribers")">@L["subscribers.mfa.recovery-continue"]</a>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $('#subscriber-mfa-recovery-copy').on('click', function () {
+                var text = $('#subscriber-mfa-recovery-codes').text();
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text);
+                }
+            });
+        });
+    </script>
+}

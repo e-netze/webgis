@@ -1,0 +1,94 @@
+@model E.Standard.Api.App.Models.ApiSubscribersMfaLogin
+@using E.Standard.Api.App.Models
+
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+
+@{
+    var L = LocalizerFactory.Create(typeof(object));
+    string uiLanguage = Context.Request.Query["_ul"].FirstOrDefault()
+                        ?? (Context.Request.HasFormContentType ? Context.Request.Form["_ul"].FirstOrDefault() : null);
+
+    bool verify = Model.Mode == ApiSubscribersMfaLogin.ModeVerify;
+    bool setup = Model.Mode == ApiSubscribersMfaLogin.ModeSetup;
+
+    string errorMessage = null;
+    if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        var localizedError = L[$"subscribers.mfa.error.{Model.ErrorMessage}"];
+        if (localizedError.ResourceNotFound)
+        {
+            localizedError = L[$"subscribers.login.error.{Model.ErrorMessage}"];
+        }
+        errorMessage = localizedError.ResourceNotFound
+            ? L["subscribers.login.error.login-failed"].Value
+            : localizedError.Value;
+
+        if (!String.IsNullOrEmpty(Model.ErrorMessageArgument))
+        {
+            errorMessage = errorMessage.Replace("{0}", Model.ErrorMessageArgument);
+        }
+    }
+
+    ViewBag.Title = L[verify ? "subscribers.mfa.verify-title" : "subscribers.mfa.setup-title"].Value;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    <a href="@Url.Action(setup ? "Account" : "Login", "Subscribers")" class="back-button"></a>
+    @ViewBag.Title
+</h2>
+<br />
+@if (errorMessage != null)
+{
+    <div role="alert" style="color:red">@errorMessage</div>
+    <br />
+}
+
+@using (Html.BeginForm(setup ? "MfaSetup" : "LoginMfa", "Subscribers", method: FormMethod.Post, htmlAttributes: new { id = "subscriber-mfa-form" }))
+{
+    @if (verify)
+    {
+        <p>@L["subscribers.mfa.verify-hint"]</p>
+    }
+    else
+    {
+        @if (!setup)
+        {
+            <p><strong>@L["subscribers.mfa.enroll-required"]</strong></p>
+        }
+        <p>@L["subscribers.mfa.setup-hint"]</p>
+        <div style="max-width:220px;background:#fff;padding:8px">
+            @Html.Raw(Model.QrCodeSvg)
+        </div>
+        <p>
+            @L["subscribers.mfa.setup-manual"]<br />
+            <code style="font-size:1.1em;letter-spacing:2px;user-select:all">@Model.Secret</code>
+        </p>
+    }
+
+    <label for="Code">@L[verify ? "subscribers.mfa.code-or-recovery" : "subscribers.mfa.code"]</label>
+    <input type="text" id="Code" name="Code" required="required" autofocus="autofocus"
+           autocomplete="one-time-code" autocapitalize="none" spellcheck="false"
+           inputmode="@(verify ? "text" : "numeric")" maxlength="20" />
+    <br />
+    <br />
+
+    @Html.HiddenFor(m => m.Mode)
+    @Html.HiddenFor(m => m.Token)
+    @if (!String.IsNullOrEmpty(uiLanguage))
+    {
+        <input type="hidden" name="_ul" value="@uiLanguage" />
+    }
+
+    <button type="submit">@L[verify ? "subscribers.mfa.verify-submit" : "subscribers.mfa.setup-submit"]</button>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $('#subscriber-mfa-form').on('submit', function () {
+                $(this).find('button[type=submit]').prop('disabled', true);
+            });
+        });
+    </script>
+}

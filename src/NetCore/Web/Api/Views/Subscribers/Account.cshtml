@@ -1,0 +1,122 @@
+@model E.Standard.Api.App.Models.ApiSubscribersAccount
+
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+@inject Microsoft.Extensions.Options.IOptions<E.Standard.Api.App.Configuration.SubscriberSecurityOptions> SecurityOptions
+
+@{
+    var L = LocalizerFactory.Create(typeof(object));
+
+    string errorMessage = null;
+    if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        var localizedError = L[$"subscribers.account.error.{Model.ErrorMessage}"];
+        if (localizedError.ResourceNotFound)
+        {
+            localizedError = L[$"subscribers.mfa.error.{Model.ErrorMessage}"];
+        }
+        errorMessage = localizedError.ResourceNotFound ? Model.ErrorMessage : localizedError.Value;
+
+        if (!String.IsNullOrEmpty(Model.ErrorMessageArgument))
+        {
+            errorMessage = errorMessage.Replace("{0}", Model.ErrorMessageArgument);
+        }
+    }
+
+    string successMessage = String.IsNullOrEmpty(Model.SuccessMessage)
+        ? null
+        : L[$"subscribers.account.success.{Model.SuccessMessage}"].Value;
+
+    ViewBag.Title = L["subscribers.account.title"].Value;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    <a href="@Url.Action("Index","Subscribers")" class="back-button"></a>
+    @ViewBag.Title
+</h2>
+<br />
+@if (errorMessage != null)
+{
+    <div role="alert" style="color:red">@errorMessage</div>
+    <br />
+}
+@if (successMessage != null)
+{
+    <div role="status" style="color:green">@successMessage</div>
+    <br />
+}
+
+<h3>@L["subscribers.account.change-password"]</h3>
+@using (Html.BeginForm("AccountChangePassword", "Subscribers", FormMethod.Post))
+{
+    <label for="pw-current">@L["subscribers.mfa.current-password"]</label>
+    <input type="password" id="pw-current" name="CurrentPassword" autocomplete="current-password" required="required" />
+    <br />
+    <label for="pw-new1">@L["subscribers.account.new-password"]</label>
+    <input type="password" id="pw-new1" name="NewPassword1" autocomplete="new-password" required="required"
+           minlength="@SecurityOptions.Value.PasswordMinLength" maxlength="@E.Standard.Api.App.Configuration.SubscriberSecurityOptions.PasswordMaxLength" />
+    <br />
+    <label for="pw-new2">@L["subscribers.account.new-password-repeat"]</label>
+    <input type="password" id="pw-new2" name="NewPassword2" autocomplete="new-password" required="required" />
+    <br />
+    <small>@L["subscribers.account.password-rules"].Value.Replace("{0}", SecurityOptions.Value.PasswordMinLength.ToString())</small>
+    @if (SecurityOptions.Value.PasswordRequiredCharacterClasses > 0)
+    {
+        <br />
+        <small>@L["subscribers.account.password-rules-classes"].Value.Replace("{0}", SecurityOptions.Value.PasswordRequiredCharacterClasses.ToString())</small>
+    }
+    <br />
+    <br />
+    <button type="submit">@L["subscribers.account.change-password"]</button>
+}
+<br />
+<br />
+
+<h3>@L["subscribers.mfa.title"]</h3>
+
+@if (!Model.Available)
+{
+    <div style="opacity:.6">
+        <p>@L["subscribers.mfa.status-disabled"]</p>
+        <button type="button" disabled="disabled">@L["subscribers.mfa.setup"]</button>
+    </div>
+    <p style="color:#b35c00">@L["subscribers.mfa.not-available"]</p>
+}
+else if (!Model.Enabled)
+{
+    <p>@L["subscribers.mfa.status-disabled"]</p>
+    <p>@L[Model.Required ? "subscribers.mfa.required-hint" : "subscribers.mfa.recommended"]</p>
+    <button type="button" onclick="document.location='@Url.Action("MfaSetup", "Subscribers")'">@L["subscribers.mfa.setup"]</button>
+}
+else
+{
+    <p style="color:green">@L["subscribers.mfa.status-enabled"]</p>
+    <p>@L["subscribers.mfa.recovery-left"].Value.Replace("{0}", Model.RecoveryCodesLeft.ToString())</p>
+    <br />
+
+    using (Html.BeginForm("MfaRegenerateRecoveryCodes", "Subscribers", FormMethod.Post))
+    {
+        <h3>@L["subscribers.mfa.regenerate"]</h3>
+        <label for="regen-password">@L["subscribers.mfa.current-password"]</label>
+        <input type="password" id="regen-password" name="CurrentPassword" autocomplete="current-password" required="required" />
+        <br />
+        <button type="submit">@L["subscribers.mfa.regenerate"]</button>
+    }
+    <br />
+
+    @if (Model.Required)
+    {
+        <p>@L["subscribers.mfa.required-hint"]</p>
+    }
+    else
+    {
+        using (Html.BeginForm("MfaDisable", "Subscribers", FormMethod.Post))
+        {
+            <h3>@L["subscribers.mfa.disable"]</h3>
+            <label for="disable-password">@L["subscribers.mfa.current-password"]</label>
+            <input type="password" id="disable-password" name="CurrentPassword" autocomplete="current-password" required="required" />
+            <br />
+            <button type="submit" onclick="return confirm(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["subscribers.mfa.disable-confirm"].Value)))">@L["subscribers.mfa.disable"]</button>
+        }
+    }
+}
