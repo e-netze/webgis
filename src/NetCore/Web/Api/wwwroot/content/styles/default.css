@@ -5744,6 +5744,46 @@ div.webgis-copy {
             opacity: .6;
         }
 
+    .webgis-graphics-info-container-holder .webgis-graphics-info-group-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        width: 100%;
+    }
+    .webgis-group-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        background-color: var(--webgis-ui-surface);
+        padding: 2px 8px;
+        cursor: pointer;
+        user-select: none;
+    }
+        .webgis-group-badge.active {
+            background-color: var(--webgis-brand-primary-light);
+        }
+        .webgis-group-badge.hidden-group {
+            opacity: .55;
+        }
+        .webgis-group-badge .check,
+        .webgis-group-badge .action {
+            flex: 0 0 16px;
+            width: 16px;
+            height: 16px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+        }
+        .webgis-group-badge .check { background-image: url(../api/img/ui/checkbox-unchecked_16@1.png); }
+        .webgis-group-badge .check.checked { background-image: url(../api/img/ui/checkbox-checked_16@1.png); }
+        .webgis-group-badge .check.mixed { background-image: url(../api/img/ui/checkbox-checked_16@1.png); opacity: .5; }
+        .webgis-group-badge .action { opacity: .7; }
+        .webgis-group-badge .action:hover { opacity: 1; }
+        .webgis-group-badge .action.edit { background-image: url(../api/img/tools/edit.png); }
+        .webgis-group-badge .action.delete { background-image: url(../api/img/tools/remove.png); }
+
     .webgis-graphics-info-container-holder .webgis-graphics-info-filter {
         display: flex;
         align-items: center;

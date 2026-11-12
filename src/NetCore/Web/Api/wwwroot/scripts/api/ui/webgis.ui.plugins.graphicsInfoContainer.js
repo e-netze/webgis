@@ -558,76 +558,7 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                 $input.trigger('focus');
             };
 
-            const $select = $('<select>')
-                .addClass('webgis-input')
-                .appendTo($bar)
-                .on('change.webgis_graphics_info_container', function () {
-                    map.graphics.setGroupFilter($(this).val());
-                });
-            $('<option>').val('*').text(webgis.l10n.get('mapmarkup-group-all')).appendTo($select);
-            for (let group of map.graphics.getGroups()) {
-                $('<option>')
-                    .val(group.id)
-                    .text(map.graphics.getGroupName(group.id) + ' (' + map.graphics.countGroupElements(group.id) + ')' +
-                        (map.graphics.isGroupVisible(group.id) ? '' : ' – ' + webgis.l10n.get('mapmarkup-group-hidden')))
-                    .appendTo($select);
-            }
-            $select.val(filter);
-
-            if (filter !== '*') {
-                self.appendGroupVisibilityButton($bar, map, filter);
-            }
-
-            $('<div>')
-                .addClass('button add')
-                .attr('title', webgis.l10n.get('mapmarkup-group-add'))
-                .appendTo($bar)
-                .on('click.webgis_graphics_info_container', function (e) {
-                    e.stopPropagation();
-                    showNameInput('', function (name) {
-                        return map.graphics.addGroup(name) !== null;
-                    });
-                });
-
-            if (filter !== '*') {
-                $('<div>')
-                    .addClass('button edit')
-                    .attr('title', webgis.l10n.get('mapmarkup-group-rename'))
-                    .appendTo($bar)
-                    .on('click.webgis_graphics_info_container', function (e) {
-                        e.stopPropagation();
-                        showNameInput(map.graphics.getGroupName(filter), function (name) {
-                            return map.graphics.renameGroup(filter, name);
-                        });
-                    });
-            }
-
-            if (filter !== '*' && filter !== 'default') {
-                $('<div>')
-                    .addClass('button delete')
-                    .attr('title', webgis.l10n.get('mapmarkup-group-remove'))
-                    .appendTo($bar)
-                    .on('click.webgis_graphics_info_container', function (e) {
-                        e.stopPropagation();
-                        const count = map.graphics.countGroupElements(filter);
-                        if (count === 0) {
-                            map.graphics.removeGroup(filter, false);
-                            return;
-                        }
-                        webgis.confirm({
-                            title: webgis.l10n.get('mapmarkup-group-remove'),
-                            message: webgis.l10n.get('mapmarkup-group-remove-question')
-                                .replace('{0}', map.graphics.getGroupName(filter))
-                                .replace('{1}', count)
-                                .replace('{2}', map.graphics.getGroupName('default')),
-                            okText: webgis.l10n.get('mapmarkup-group-remove-move-elements'),
-                            maybeText: webgis.l10n.get('mapmarkup-group-remove-with-elements'),
-                            cancelText: webgis.l10n.get('cancel'),
-                            onOk: function () { map.graphics.removeGroup(filter, false); },
-                            onMaybe: function () { map.graphics.removeGroup(filter, true); }
-                        });
-                    });
-            }
+            self.appendGroupBadges($bar, map, filter, showNameInput);
 
             if (filter === '*' && map.graphics.getGroups().length > 1) {
                 $('<div>')
@@ -684,6 +615,152 @@ webgis.ui.definePlugin('webgis_graphicsInfoContainer', {
                         map.graphics.setListFilter('');
                         map.graphics._refreshInfoContainers();
                     });
+            }
+        },
+        groupBadgesExpanded: false,
+        appendGroupBadges: function ($bar, map, filter, showNameInput) {
+            const $ = webgis.$ || jQuery;
+            const self = $.fn.webgis_graphicsInfoContainer.plugin;
+            const maxRows = 3;
+
+            const $badges = $('<div>').addClass('webgis-graphics-info-group-badges').appendTo($bar);
+            const groups = map.graphics.getGroups();
+
+            const createBadge = function (cls, text) {
+                const $badge = $('<div>').addClass('webgis-group-badge ' + cls).appendTo($badges);
+                $('<span>').addClass('label').text(text).appendTo($badge);
+                return $badge;
+            };
+            const createCheck = function ($badge, state, title, onClick) {
+                const $check = $('<span>').addClass('check ' + state).attr('title', title).prependTo($badge)
+                    .on('click.webgis_graphics_info_container', function (e) {
+                        e.stopPropagation();
+                        onClick();
+                    });
+                return $check;
+            };
+            const createAction = function ($badge, cls, title, onClick) {
+                $('<span>').addClass('action ' + cls).attr('title', title).appendTo($badge)
+                    .on('click.webgis_graphics_info_container', function (e) {
+                        e.stopPropagation();
+                        onClick();
+                    });
+            };
+
+            const visibleCount = groups.filter(g => map.graphics.isGroupVisible(g.id)).length;
+            const allCount = groups.reduce((sum, g) => sum + map.graphics.countGroupElements(g.id), 0);
+            const allState = visibleCount === groups.length ? 'checked' : (visibleCount === 0 ? 'unchecked' : 'mixed');
+
+            const $all = createBadge('all' + (filter === '*' ? ' active' : ''),
+                webgis.l10n.get('mapmarkup-group-all') + ' (' + allCount + ')')
+                .on('click.webgis_graphics_info_container', function () { map.graphics.setGroupFilter('*'); });
+            createCheck($all, allState, webgis.l10n.get(allState === 'checked' ? 'mapmarkup-group-hide' : 'mapmarkup-group-show'), function () {
+                const show = allState !== 'checked';
+                groups.forEach(g => map.graphics.setGroupVisible(g.id, show, true));
+                map.graphics._refreshInfoContainers();
+                map.events.fire('graphics_changed', map);
+            });
+
+            for (let group of groups) {
+                const id = group.id;
+                const visible = map.graphics.isGroupVisible(id);
+                const active = filter === id;
+                const $badge = createBadge('group' + (active ? ' active' : '') + (visible ? '' : ' hidden-group'),
+                    map.graphics.getGroupName(id) + ' (' + map.graphics.countGroupElements(id) + ')')
+                    .attr('title', visible ? '' : webgis.l10n.get('mapmarkup-group-hidden'))
+                    .on('click.webgis_graphics_info_container', function () { map.graphics.setGroupFilter(id); });
+                createCheck($badge, visible ? 'checked' : 'unchecked',
+                    webgis.l10n.get(visible ? 'mapmarkup-group-hide' : 'mapmarkup-group-show'),
+                    function () { map.graphics.setGroupVisible(id, !visible); });
+
+                if (active) {
+                    createAction($badge, 'edit', webgis.l10n.get('mapmarkup-group-rename'), function () {
+                        showNameInput(map.graphics.getGroupName(id), function (name) {
+                            return map.graphics.renameGroup(id, name);
+                        });
+                    });
+                    if (id !== 'default') {
+                        createAction($badge, 'delete', webgis.l10n.get('mapmarkup-group-remove'), function () {
+                            const count = map.graphics.countGroupElements(id);
+                            if (count === 0) {
+                                map.graphics.removeGroup(id, false);
+                                return;
+                            }
+                            webgis.confirm({
+                                title: webgis.l10n.get('mapmarkup-group-remove'),
+                                message: webgis.l10n.get('mapmarkup-group-remove-question')
+                                    .replace('{0}', map.graphics.getGroupName(id))
+                                    .replace('{1}', count)
+                                    .replace('{2}', map.graphics.getGroupName('default')),
+                                okText: webgis.l10n.get('mapmarkup-group-remove-move-elements'),
+                                maybeText: webgis.l10n.get('mapmarkup-group-remove-with-elements'),
+                                cancelText: webgis.l10n.get('cancel'),
+                                onOk: function () { map.graphics.removeGroup(id, false); },
+                                onMaybe: function () { map.graphics.removeGroup(id, true); }
+                            });
+                        });
+                    }
+                }
+            }
+
+            const $more = createBadge('more', '').css('display', 'none')
+                .on('click.webgis_graphics_info_container', function () {
+                    self.groupBadgesExpanded = !self.groupBadgesExpanded;
+                    layout();
+                });
+
+            createBadge('add', '+').attr('title', webgis.l10n.get('mapmarkup-group-add'))
+                .on('click.webgis_graphics_info_container', function () {
+                    showNameInput('', function (name) {
+                        return map.graphics.addGroup(name) !== null;
+                    });
+                });
+
+            // keep at most maxRows rows: hide trailing inactive groups behind a "… +N" badge
+            const layout = function () {
+                const $groupBadges = $badges.children('.group');
+                const first = $badges.children().first()[0];
+                if (!first || !first.isConnected || !first.offsetHeight) return;
+
+                $groupBadges.css('display', '');
+                $more.css('display', 'none');
+
+                const rowHeight = first.offsetHeight;
+                const limit = first.offsetTop + rowHeight * (maxRows - 0.5);
+                const lastTop = function () { return $badges.children().last()[0].offsetTop; };
+
+                if (lastTop() < limit) return;
+
+                $more.css('display', '');
+                const setMore = function (hidden) {
+                    $more.children('.label').text(self.groupBadgesExpanded ? '▴' : '… +' + hidden);
+                    $more.attr('title', webgis.l10n.get(self.groupBadgesExpanded ? 'mapmarkup-group-less' : 'mapmarkup-group-more'));
+                };
+                if (self.groupBadgesExpanded) {
+                    setMore(0);
+                    return;
+                }
+
+                let hidden = 0;
+                setMore(hidden);
+                const candidates = $groupBadges.not('.active').toArray().reverse();
+                for (let badge of candidates) {
+                    if (lastTop() < limit) break;
+                    $(badge).css('display', 'none');
+                    setMore(++hidden);
+                }
+            };
+
+            window.requestAnimationFrame(layout);
+
+            if (window.ResizeObserver) {
+                let lastWidth = 0;
+                const observer = new ResizeObserver(function () {
+                    if (!$bar[0].isConnected) { observer.disconnect(); return; }
+                    const width = $bar[0].clientWidth;
+                    if (width !== lastWidth) { lastWidth = width; layout(); }
+                });
+                observer.observe($bar[0]);
             }
         },
         appendGroupVisibilityButton: function ($parent, map, groupId) {

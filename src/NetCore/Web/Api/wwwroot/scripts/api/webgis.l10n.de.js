@@ -719,6 +719,8 @@
     "mapmarkup-group-hide": "Gruppe in der Karte ausblenden",
     "mapmarkup-group-show": "Gruppe in der Karte einblenden",
     "mapmarkup-group-hidden": "ausgeblendet",
+    "mapmarkup-group-more": "Alle Gruppen anzeigen",
+    "mapmarkup-group-less": "Gruppen einklappen",
     "mapmarkup-list-filter": "Filtern…",
     "mapmarkup-list-filter-select-hits": "Treffer auswählen",
     "mapmarkup-list-filter-clear": "Filter löschen",
