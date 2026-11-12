@@ -29,6 +29,18 @@ addition to the task-specific skills in `.github/skills/*/SKILL.md`.
 
   Confirm success by checking for `0 Error(s)` / absence of `error CS` lines, not just exit code.
 
+## Code design: settings/options
+
+- No new static settings/config classes (especially not under `/Services`). Use the options pattern:
+  - a plain `XxxOptions` class with compiled-in defaults (e.g. in
+    `src/NetStandard/E.Standard.Api.App/Configuration/`),
+  - an `IConfiguration` extension method that binds the `api.config` keys (e.g.
+    `BindSubscriberSecurityOptions` in `ConfigurationServiceExtensions.cs`), registered in
+    `Startup.cs` via `services.Configure<XxxOptions>(Configuration.BindXxxOptions)`,
+  - consumers get it via DI as `IOptions<XxxOptions>` (views: `@inject IOptions<XxxOptions> ...`;
+    static helpers/extensions receive the options as a parameter).
+- Reference: `SubscriberSecurityOptions`. Details: `add-api-config-setting` skill.
+
 ## User-facing strings (l10n)
 
 - Never hardcode user-facing text in viewer JS. Add a key to both

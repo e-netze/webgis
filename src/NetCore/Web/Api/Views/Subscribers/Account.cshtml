@@ -1,0 +1,150 @@
+@model E.Standard.Api.App.Models.ApiSubscribersAccount
+
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+
+@{
+    var L = LocalizerFactory.Create(typeof(object));
+
+    string errorMessage = null;
+    if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        var localizedError = L[$"subscribers.account.error.{Model.ErrorMessage}"];
+        if (localizedError.ResourceNotFound)
+        {
+            localizedError = L[$"subscribers.mfa.error.{Model.ErrorMessage}"];
+        }
+        errorMessage = localizedError.ResourceNotFound ? Model.ErrorMessage : localizedError.Value;
+
+        if (!String.IsNullOrEmpty(Model.ErrorMessageArgument))
+        {
+            errorMessage = errorMessage.Replace("{0}", Model.ErrorMessageArgument);
+        }
+    }
+
+    string successMessage = String.IsNullOrEmpty(Model.SuccessMessage)
+        ? null
+        : L[$"subscribers.account.success.{Model.SuccessMessage}"].Value;
+
+    string username = ViewData["append-subscriber-username"] as string;
+    string showPasswordLabel = L["subscribers.login.show-password"].Value;
+
+    ViewBag.Title = L["subscribers.account.title"].Value;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="webgis-auth wide">
+    <div class="webgis-auth-page-title">
+        <h2>
+            <a href="@Url.Action("Index","Subscribers")" class="back-button" aria-label="Back"></a>
+            @ViewBag.Title
+        </h2>
+        @if (!String.IsNullOrWhiteSpace(username))
+        {
+            <div class="webgis-auth-subtitle">@username</div>
+        }
+    </div>
+
+    @if (errorMessage != null)
+    {
+        <div role="alert" class="webgis-auth-alert error">@errorMessage</div>
+    }
+    @if (successMessage != null)
+    {
+        <div role="status" class="webgis-auth-alert success">@successMessage</div>
+    }
+
+    <section class="webgis-auth-card" aria-labelledby="account-password-title">
+        <div class="webgis-auth-card-header">
+            <h3 id="account-password-title">@L["subscribers.account.change-password"]</h3>
+        </div>
+        <div class="webgis-auth-card-body">
+            @using (Html.BeginForm("AccountChangePassword", "Subscribers", FormMethod.Post, new { @class = "webgis-auth-form" }))
+            {
+                <div class="webgis-auth-field">
+                    <label for="pw-current">@L["subscribers.mfa.current-password"]</label>
+                    <div class="webgis-auth-password" data-toggle-label="@showPasswordLabel">
+                        <input type="password" id="pw-current" name="CurrentPassword" autocomplete="current-password" required="required" />
+                    </div>
+                </div>
+
+                @await Html.PartialAsync("_NewPasswordFields", false)
+
+                <button type="submit" class="primary">@L["subscribers.account.change-password"]</button>
+            }
+        </div>
+    </section>
+
+    <section class="webgis-auth-card" aria-labelledby="account-mfa-title">
+        <div class="webgis-auth-card-header">
+            <div class="webgis-auth-header-row">
+                <h3 id="account-mfa-title">@L["subscribers.mfa.title"]</h3>
+                <span class="webgis-auth-badge @(Model.Available && Model.Enabled ? "on" : Model.Available ? "off" : "")">
+                    @L[Model.Available && Model.Enabled ? "subscribers.mfa.status-enabled" : "subscribers.mfa.status-disabled"]
+                </span>
+            </div>
+        </div>
+        <div class="webgis-auth-card-body">
+            @if (!Model.Available)
+            {
+                <div class="webgis-auth-alert warning">@L["subscribers.mfa.not-available"]</div>
+                <button type="button" disabled="disabled">@L["subscribers.mfa.setup"]</button>
+            }
+            else if (!Model.Enabled)
+            {
+                <div class="webgis-auth-alert @(Model.Required ? "warning" : "info")">@L[Model.Required ? "subscribers.mfa.required-hint" : "subscribers.mfa.recommended"]</div>
+                <a href="@Url.Action("MfaSetup", "Subscribers")" class="webgis-auth-button primary">@L["subscribers.mfa.setup"]</a>
+            }
+            else
+            {
+                <p>@L["subscribers.mfa.recovery-left"].Value.Replace("{0}", Model.RecoveryCodesLeft.ToString())</p>
+
+                <details class="webgis-auth-details">
+                    <summary>@L["subscribers.mfa.regenerate"]</summary>
+                    <div class="webgis-auth-details-body">
+                        @using (Html.BeginForm("MfaRegenerateRecoveryCodes", "Subscribers", FormMethod.Post, new { @class = "webgis-auth-form" }))
+                        {
+                            <div class="webgis-auth-field">
+                                <label for="regen-password">@L["subscribers.mfa.current-password"]</label>
+                                <div class="webgis-auth-password" data-toggle-label="@showPasswordLabel">
+                                    <input type="password" id="regen-password" name="CurrentPassword" autocomplete="current-password" required="required" />
+                                </div>
+                            </div>
+                            <button type="submit">@L["subscribers.mfa.regenerate"]</button>
+                        }
+                    </div>
+                </details>
+
+                @if (Model.Required)
+                {
+                    <div class="webgis-auth-alert info" style="margin-top:12px;margin-bottom:0">@L["subscribers.mfa.required-hint"]</div>
+                }
+                else
+                {
+                    <details class="webgis-auth-details">
+                        <summary>@L["subscribers.mfa.disable"]</summary>
+                        <div class="webgis-auth-details-body">
+                            @using (Html.BeginForm("MfaDisable", "Subscribers", FormMethod.Post, new { @class = "webgis-auth-form" }))
+                            {
+                                <div class="webgis-auth-field">
+                                    <label for="disable-password">@L["subscribers.mfa.current-password"]</label>
+                                    <div class="webgis-auth-password" data-toggle-label="@showPasswordLabel">
+                                        <input type="password" id="disable-password" name="CurrentPassword" autocomplete="current-password" required="required" />
+                                    </div>
+                                </div>
+                                <button type="submit" class="danger" onclick="return confirm(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["subscribers.mfa.disable-confirm"].Value)))">@L["subscribers.mfa.disable"]</button>
+                            }
+                        </div>
+                    </details>
+                }
+            }
+        </div>
+    </section>
+</div>
+
+@section styles {
+    <link href="~/content/subscriber-auth.css" rel="stylesheet" asp-append-version="true" />
+}
+
+@section scripts {
+    <script src="~/scripts/api/subscriber-auth.js" asp-append-version="true"></script>
+}

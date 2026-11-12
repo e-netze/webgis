@@ -27,9 +27,28 @@ public class ApiConfigKeys
     public const string SecuritySecureEndpointUrlPassword = ConfigurationSectionName + ":security:secure-endpoint-url-password";
     public const string SecuritySecureEndpointBasicAuthUsername = ConfigurationSectionName + ":security:secure-endpoint-basicauth-username";
     public const string SecuritySecureEndpointBasicAuthPassword = ConfigurationSectionName + ":security:secure-endpoint-basicauth-password";
+    public const string SecurityCookieSecure = ConfigurationSectionName + ":security:cookie-secure";
+    public const string SecuritySessionMaxLifetimeMinutes = ConfigurationSectionName + ":security:session-max-lifetime-minutes";
+    public const string SecuritySessionIdleTimeoutMinutes = ConfigurationSectionName + ":security:session-idle-timeout-minutes";
+    public const string SecurityPasswordMinLength = ConfigurationSectionName + ":security:password-min-length";
+    public const string SecurityPasswordRequiredCharacterClasses = ConfigurationSectionName + ":security:password-required-character-classes";
+    public const string SecurityPasswordBlocklistFile = ConfigurationSectionName + ":security:password-blocklist-file";
+    public const string SecurityLoginCaptchaAfterFailedAttempts = ConfigurationSectionName + ":security:login-captcha-after-failed-attempts";
+    public const string SecurityLoginLockoutAfterFailedAttempts = ConfigurationSectionName + ":security:login-lockout-after-failed-attempts";
+    public const string SecurityLoginLockoutMinutes = ConfigurationSectionName + ":security:login-lockout-minutes";
+    public const string SecurityLoginFailedAttemptsResetMinutes = ConfigurationSectionName + ":security:login-failed-attempts-reset-minutes";
+    public const string SecurityLoginIpMaxFailedAttempts = ConfigurationSectionName + ":security:login-ip-max-failed-attempts";
+    public const string SecurityLoginIpWindowMinutes = ConfigurationSectionName + ":security:login-ip-window-minutes";
+    public const string SecurityLoginThrottleRedisConnectionString = ConfigurationSectionName + ":security:login-throttle-redis-connectionstring";
+    public const string SecurityCaptchaLifetimeMinutes = ConfigurationSectionName + ":security:captcha-lifetime-minutes";
+    public const string SecurityPasswordVerificationCacheSeconds = ConfigurationSectionName + ":security:password-verification-cache-seconds";
+    public const string SecurityMfaRequired = ConfigurationSectionName + ":security:mfa-required";
+    public const string SecurityMfaIssuer = ConfigurationSectionName + ":security:mfa-issuer";
 
     public const string UseXForwardedHeadersMiddleware = ConfigurationSectionName + ":middleware:use-x-forwarded-headers";
     public const string UseXForwardedHeadersLoggingMiddleware = ConfigurationSectionName + ":middleware:use-x-forwarded-headers-logging";
+    public const string XForwardedHeadersKnownProxies = ConfigurationSectionName + ":middleware:x-forwarded-known-proxies";
+    public const string XForwardedHeadersKnownNetworks = ConfigurationSectionName + ":middleware:x-forwarded-known-networks";
 
     public const string StorageRootPath = ConfigurationSectionName + ":storage-rootpath";
     public const string StorageRootPath2 = ConfigurationSectionName + ":storage-rootpath2";

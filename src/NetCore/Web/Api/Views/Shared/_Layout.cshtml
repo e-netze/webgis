@@ -11,6 +11,7 @@
     <title>@ViewBag.Title</title>
     
     <link href="~/content/Site.css" rel="stylesheet" />
+    @RenderSection("styles", required: false)
     <link href="~/content/site.overrides.css" rel="stylesheet" />
 
     <style>:root { @Html.Raw(StyleService.GetBrandVariablesFromEnvironment()) }</style>

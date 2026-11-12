@@ -19,8 +19,12 @@ using Newtonsoft.Json;
 
 namespace E.Standard.WebGIS.SubscriberDatabase;
 
-public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
+public class SubscriberDb : ISubscriberDb, ISubscriberSecurityStore, IDbSchemaProvider
 {
+    private const string SecurityTableName = "webgis_api_subscriber_mfa";
+    private static readonly TimeSpan SecurityTableMissingRecheckInterval = TimeSpan.FromSeconds(60);
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, (bool exists, DateTime checkedUtc)> _securityTableExists = new();
+
     private readonly string _connectionString;
 
     private SubscriberDb(string connectionString)
@@ -58,6 +62,19 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
             table.Columns.Add(new DataColumn("clientsecret:80", typeof(string)));
             table.Columns.Add(new DataColumn("created", typeof(DateTime)));
             table.Columns.Add(new DataColumn("expires", typeof(DateTime)));
+            dataset.Tables.Add(table);
+
+            // Never add columns to existing tables: the Setup only creates missing tables (no ALTER TABLE).
+            // New subscriber related data => new table (see ISubscriberSecurityStore).
+            table = new DataTable(SecurityTableName);
+            table.Columns.Add(new DataColumn("@id", typeof(int)));
+            table.Columns.Add(new DataColumn("!subscriber", typeof(int)));
+            table.Columns.Add(new DataColumn("security_stamp:64", typeof(string)));
+            table.Columns.Add(new DataColumn("mfa_enabled", typeof(bool)));
+            table.Columns.Add(new DataColumn("totp_secret:255", typeof(string)));
+            table.Columns.Add(new DataColumn("recovery_codes:1024", typeof(string)));
+            table.Columns.Add(new DataColumn("last_totp_step", typeof(long)));
+            table.Columns.Add(new DataColumn("changed", typeof(DateTime)));
             dataset.Tables.Add(table);
 
             return dataset;
@@ -521,6 +538,111 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
 
     #endregion
 
+    #region ISubscriberSecurityStore
+
+    public bool IsSubscriberSecurityStoreAvailable()
+    {
+        if (_securityTableExists.TryGetValue(_connectionString, out var cached)
+            && (cached.exists || DateTime.UtcNow - cached.checkedUtc < SecurityTableMissingRecheckInterval))
+        {
+            return cached.exists;
+        }
+
+        bool exists;
+        try
+        {
+            exists = new DBFactory(_connectionString).TableExits(SecurityTableName);
+        }
+        catch
+        {
+            exists = false;
+        }
+
+        _securityTableExists[_connectionString] = (exists, DateTime.UtcNow);
+        return exists;
+    }
+
+    public SubscriberSecurityInfo GetSubscriberSecurity(string subscriberId)
+    {
+        using (DBConnection conn = new DBConnection())
+        {
+            conn.OleDbConnectionMDB = _connectionString;
+
+            using (DbConnection dbconn = conn.GetConnection())
+            {
+                DbCommand command = conn.GetCommand();
+                command.Connection = dbconn;
+                command.CommandText = $"select * from {SecurityTableName} where subscriber=" + conn.ParaName("subscriber");
+                command.Parameters.Add(conn.GetParameter("subscriber", int.Parse(subscriberId)));
+
+                dbconn.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    if (!reader.Read())
+                    {
+                        return null;
+                    }
+
+                    return new SubscriberSecurityInfo()
+                    {
+                        SubscriberId = subscriberId,
+                        SecurityStamp = ToStringOrNull(reader["security_stamp"]),
+                        MfaEnabled = reader["mfa_enabled"] != null && reader["mfa_enabled"] != DBNull.Value && Convert.ToBoolean(reader["mfa_enabled"]),
+                        TotpSecret = ToStringOrNull(reader["totp_secret"]),
+                        RecoveryCodeHashes = ToStringOrNull(reader["recovery_codes"]),
+                        LastTotpTimeStep = reader["last_totp_step"] != null && reader["last_totp_step"] != DBNull.Value ? Convert.ToInt64(reader["last_totp_step"]) : 0,
+                        Changed = reader["changed"] != null && reader["changed"] != DBNull.Value ? Convert.ToDateTime(reader["changed"]) : DateTime.MinValue
+                    };
+                }
+            }
+        }
+
+        static string ToStringOrNull(object value) => value == null || value == DBNull.Value ? null : Convert.ToString(value);
+    }
+
+    public bool SetSubscriberSecurity(SubscriberSecurityInfo info)
+    {
+        using (DBConnection conn = new DBConnection())
+        {
+            conn.OleDbConnectionMDB = _connectionString;
+
+            using (DbConnection dbconn = conn.GetConnection())
+            {
+                dbconn.Open();
+
+                DbCommand command = conn.GetCommand();
+                command.Connection = dbconn;
+                command.CommandText = $"update {SecurityTableName} set security_stamp={conn.ParaName("security_stamp")},mfa_enabled={conn.ParaName("mfa_enabled")},totp_secret={conn.ParaName("totp_secret")},recovery_codes={conn.ParaName("recovery_codes")},last_totp_step={conn.ParaName("last_totp_step")},changed={conn.ParaName("changed")} where subscriber={conn.ParaName("subscriber")}";
+                AddParameters(command);
+
+                if (command.ExecuteNonQuery() > 0)
+                {
+                    return true;
+                }
+
+                command = conn.GetCommand();
+                command.Connection = dbconn;
+                command.CommandText = $"insert into {SecurityTableName} (subscriber,security_stamp,mfa_enabled,totp_secret,recovery_codes,last_totp_step,changed) values (" + conn.ParaName("subscriber,security_stamp,mfa_enabled,totp_secret,recovery_codes,last_totp_step,changed") + ")";
+                AddParameters(command);
+
+                return command.ExecuteNonQuery() > 0;
+            }
+
+            void AddParameters(DbCommand command)
+            {
+                command.Parameters.Add(conn.GetParameter("subscriber", int.Parse(info.SubscriberId)));
+                command.Parameters.Add(conn.GetParameter("security_stamp", info.SecurityStamp ?? String.Empty));
+                command.Parameters.Add(conn.GetParameter("mfa_enabled", info.MfaEnabled));
+                command.Parameters.Add(conn.GetParameter("totp_secret", info.TotpSecret ?? String.Empty));
+                command.Parameters.Add(conn.GetParameter("recovery_codes", info.RecoveryCodeHashes ?? String.Empty));
+                command.Parameters.Add(conn.GetParameter("last_totp_step", info.LastTotpTimeStep));
+                command.Parameters.Add(conn.GetParameter("changed", DateTime.UtcNow));
+            }
+        }
+    }
+
+    #endregion
+
     #region Favorites
 
     async public Task<UserFavoriteStatus> GetFavUserStatusAsync(string username)
@@ -905,22 +1027,21 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
         {
             set
             {
-                this.PasswordHash = HashPassword(value);
+                this.PasswordHash = Security.SubscriberPasswordHasher.Hash(value);
             }
         }
 
         public bool VerifyPassword(string password)
-        {
-            if (String.IsNullOrEmpty(this.PasswordHash) || this.PasswordHash.Length < 32)
-            {
-                return false;
-            }
+            => Security.SubscriberPasswordHasher.Verify(password, this.PasswordHash);
 
-            string salt = this.PasswordHash.Substring(0, 64);
-            string hash = HashPassword(password, salt);
-
-            return hash.Equals(this.PasswordHash);
-        }
+        /// <summary>
+        /// True if the stored hash uses a legacy/weaker format and should be replaced
+        /// (after a successful <see cref="VerifyPassword"/>) by re-setting the password.
+        /// </summary>
+        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public bool PasswordNeedsRehash
+            => Security.SubscriberPasswordHasher.NeedsRehash(this.PasswordHash);
 
 
         private string _fullName = null;
@@ -937,50 +1058,6 @@ public class SubscriberDb : ISubscriberDb, IDbSchemaProvider
                 _fullName = value;
             }
         }
-
-        #region Password Hashing
-
-        private string GenerateSalt()
-        {
-            byte[] tokenData = RandomNumberGenerator.GetBytes(32);
-
-            string salt = String.Empty;
-            foreach (byte x in tokenData)
-            {
-                salt += String.Format("{0:x2}", x);
-            }
-
-            return salt;
-        }
-
-        private string HashPassword(string password, string salt = "")
-        {
-            if (String.IsNullOrEmpty(salt))
-            {
-                salt = GenerateSalt();
-            }
-
-            if (salt.Length != 64)
-            {
-                throw new ArgumentException("Invalid salt length");
-            }
-
-            password += salt;
-
-            byte[] bytes = Encoding.Unicode.GetBytes(password);
-            using var hashstring = SHA256.Create();
-            byte[] hash = hashstring.ComputeHash(bytes);
-            string hashString = string.Empty;
-
-            foreach (byte x in hash)
-            {
-                hashString += String.Format("{0:x2}", x);
-            }
-
-            return salt + hashString;
-        }
-
-        #endregion
     }
 
     // Never change the values

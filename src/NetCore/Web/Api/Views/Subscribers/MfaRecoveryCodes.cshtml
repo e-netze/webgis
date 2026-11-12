@@ -1,0 +1,60 @@
+@model E.Standard.Api.App.Models.ApiSubscribersMfaRecoveryCodes
+
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+
+@{
+    var L = LocalizerFactory.Create(typeof(object));
+    string uiLanguage = Context.Request.Query["_ul"].FirstOrDefault()
+                        ?? (Context.Request.HasFormContentType ? Context.Request.Form["_ul"].FirstOrDefault() : null);
+
+    ViewBag.Title = L["subscribers.mfa.recovery-title"].Value;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="webgis-auth">
+    <div class="webgis-auth-card">
+        <div class="webgis-auth-card-header">
+            <h2>@ViewBag.Title</h2>
+        </div>
+
+        <div class="webgis-auth-card-body">
+            <div role="alert" class="webgis-auth-alert warning">@L["subscribers.mfa.recovery-hint"]</div>
+
+            <ul id="subscriber-mfa-recovery-codes" class="webgis-auth-codes">
+                @foreach (var code in Model.RecoveryCodes ?? Array.Empty<string>())
+                {
+                    <li>@code</li>
+                }
+            </ul>
+
+            <div class="webgis-auth-actions" style="justify-content:space-between">
+                <button type="button" id="subscriber-mfa-recovery-copy" data-copy-target="subscriber-mfa-recovery-codes">@L["subscribers.mfa.recovery-copy"]</button>
+
+                @if (!String.IsNullOrEmpty(Model.ContinueToken))
+                {
+                    using (Html.BeginForm("LoginMfaContinue", "Subscribers", FormMethod.Post, new { @class = "webgis-auth-form" }))
+                    {
+                        <input type="hidden" name="continueToken" value="@Model.ContinueToken" />
+                        @if (!String.IsNullOrEmpty(uiLanguage))
+                        {
+                            <input type="hidden" name="_ul" value="@uiLanguage" />
+                        }
+                        <button type="submit" class="primary">@L["subscribers.mfa.recovery-continue"] &rarr;</button>
+                    }
+                }
+                else
+                {
+                    <a href="@Url.Action("Account", "Subscribers")" class="webgis-auth-button primary">@L["subscribers.mfa.recovery-continue"] &rarr;</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section styles {
+    <link href="~/content/subscriber-auth.css" rel="stylesheet" asp-append-version="true" />
+}
+
+@section scripts {
+    <script src="~/scripts/api/subscriber-auth.js" asp-append-version="true"></script>
+}

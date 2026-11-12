@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 using gView.GraphicsEngine;
@@ -8,19 +9,18 @@ namespace E.Standard.Security.Captcha;
 
 public static class Captcha
 {
-    private const string Letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    // without easily confusable characters (0/O, 1/I)
+    private const string Letters = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 
-    public static string GenerateCaptchaCode(string username)
+    public const int DefaultCodeLength = 5;
+
+    public static string GenerateCaptchaCode(int length = DefaultCodeLength)
     {
-        Random rand = new Random();
-        int maxRand = Letters.Length - 1;
+        StringBuilder sb = new StringBuilder(length);
 
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < length; i++)
         {
-            int index = rand.Next(maxRand);
-            sb.Append(Letters[index]);
+            sb.Append(Letters[RandomNumberGenerator.GetInt32(Letters.Length)]);
         }
 
         return sb.ToString();
@@ -52,7 +52,7 @@ public static class Captcha
             {
                 CaptchaCode = captchaCode,
                 CaptchaByteData = ms.ToArray(),
-                Timestamp = DateTime.Now
+                Timestamp = DateTime.UtcNow
             };
 
             int GetFontSize(int imageWidth, int captchCodeCount)

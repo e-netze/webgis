@@ -7,7 +7,7 @@ public class WebGISVersion
     public const int Major = 9;
     public const int Minor = 26;
 
-    private static Version _version = new Version(Major, Minor, 4501);
+    private static Version _version = new Version(Major, Minor, 4502);
     private static string _versionString = _version.ToString();
 
     public static Version Version => _version;

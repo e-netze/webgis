@@ -1,0 +1,97 @@
+@model E.Standard.Api.App.Models.ApiSubscribersMfaLogin
+@using E.Standard.Api.App.Models
+
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
+
+@{
+    var L = LocalizerFactory.Create(typeof(object));
+    string uiLanguage = Context.Request.Query["_ul"].FirstOrDefault()
+                        ?? (Context.Request.HasFormContentType ? Context.Request.Form["_ul"].FirstOrDefault() : null);
+
+    bool verify = Model.Mode == ApiSubscribersMfaLogin.ModeVerify;
+    bool setup = Model.Mode == ApiSubscribersMfaLogin.ModeSetup;
+
+    string errorMessage = null;
+    if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        var localizedError = L[$"subscribers.mfa.error.{Model.ErrorMessage}"];
+        if (localizedError.ResourceNotFound)
+        {
+            localizedError = L[$"subscribers.login.error.{Model.ErrorMessage}"];
+        }
+        errorMessage = localizedError.ResourceNotFound
+            ? L["subscribers.login.error.login-failed"].Value
+            : localizedError.Value;
+
+        if (!String.IsNullOrEmpty(Model.ErrorMessageArgument))
+        {
+            errorMessage = errorMessage.Replace("{0}", Model.ErrorMessageArgument);
+        }
+    }
+
+    ViewBag.Title = L[verify ? "subscribers.mfa.verify-title" : "subscribers.mfa.setup-title"].Value;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="webgis-auth">
+    <div class="webgis-auth-card">
+        <div class="webgis-auth-card-header">
+            <h2>
+                <a href="@Url.Action(setup ? "Account" : "Login", "Subscribers")" class="back-button" aria-label="Back"></a>
+                @ViewBag.Title
+            </h2>
+        </div>
+
+        <div class="webgis-auth-card-body">
+            @if (errorMessage != null)
+            {
+                <div role="alert" class="webgis-auth-alert error">@errorMessage</div>
+            }
+
+            @using (Html.BeginForm(setup ? "MfaSetup" : "LoginMfa", "Subscribers", method: FormMethod.Post, htmlAttributes: new { id = "subscriber-mfa-form", @class = "webgis-auth-form" }))
+            {
+                @if (verify)
+                {
+                    <p>@L["subscribers.mfa.verify-hint"]</p>
+                }
+                else
+                {
+                    @if (!setup)
+                    {
+                        <div class="webgis-auth-alert warning">@L["subscribers.mfa.enroll-required"]</div>
+                    }
+                    <p>@L["subscribers.mfa.setup-hint"]</p>
+                    <div class="webgis-auth-qr">
+                        @Html.Raw(Model.QrCodeSvg)
+                    </div>
+                    <p class="webgis-auth-help">@L["subscribers.mfa.setup-manual"]</p>
+                    <code class="webgis-auth-secret">@Model.Secret</code>
+                }
+
+                <div class="webgis-auth-field">
+                    <label for="Code">@L[verify ? "subscribers.mfa.code-or-recovery" : "subscribers.mfa.code"]</label>
+                    <input type="text" id="Code" name="Code" class="webgis-auth-code" required="required" autofocus="autofocus"
+                           autocomplete="one-time-code" autocapitalize="none" spellcheck="false"
+                           inputmode="@(verify ? "text" : "numeric")" maxlength="20" />
+                </div>
+
+                @Html.HiddenFor(m => m.Mode)
+                @Html.HiddenFor(m => m.Token)
+                @if (!String.IsNullOrEmpty(uiLanguage))
+                {
+                    <input type="hidden" name="_ul" value="@uiLanguage" />
+                }
+
+                <button type="submit" class="primary block">@L[verify ? "subscribers.mfa.verify-submit" : "subscribers.mfa.setup-submit"]</button>
+            }
+        </div>
+    </div>
+</div>
+
+@section styles {
+    <link href="~/content/subscriber-auth.css" rel="stylesheet" asp-append-version="true" />
+}
+
+@section scripts {
+    <script src="~/scripts/api/subscriber-auth.js" asp-append-version="true"></script>
+}

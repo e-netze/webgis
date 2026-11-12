@@ -11,7 +11,24 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 
 ### Upgrade notes
 
+- After the update, all subscribers have to log in again once. Passwords are re-hashed (PBKDF2) at the next login, so an older API version can no longer verify them: update all instances of a load-balanced installation together, and after a rollback affected subscribers need a new password.
+- If subscribers are stored in a SQL database, run the API Setup page once to create the table for two-factor authentication; until then two-factor authentication is greyed out.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/hardening/index.html#hardening-subscriber-mfa)
+- If the API runs behind a reverse proxy on another server with `use-x-forwarded-headers`, add the proxy to the new `api.config` keys `middleware:x-forwarded-known-proxies` or `x-forwarded-known-networks`, otherwise the brute force protection counts failed logins per proxy IP.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-security-subscriber-login)
+
 ### New
+
+- Subscriber login hardened for internet use: secure auth cookie with session lifetime, captcha and temporary lockout after failed logins, single-use captchas; configurable in the `api.config` section `security` (`cookie-secure`, `session-*`, `login-*`, `captcha-lifetime-minutes`), optionally shared between instances via Redis.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-security-subscriber-login)
+- Optional two-factor authentication (authenticator app) for subscribers, recommended for admins; make it mandatory with `security:mfa-required` (`admins` or `all`).
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/hardening/index.html#hardening-subscriber-mfa)
+- New account page where subscribers can change their own password and manage two-factor authentication.
+- Password rules for new and changed subscriber passwords (min. 12 characters, blocklist, no personal data); configurable via `security:password-min-length`, `password-required-character-classes` and `password-blocklist-file`.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-security-subscriber-login)
+- The default password `webgisauthor` is blocked; subscribers logging in with it must set a new password.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/hardening/index.html#hardening-default-passwords)
+- Redesigned subscriber login and account pages.
 
 ### Fixed
 

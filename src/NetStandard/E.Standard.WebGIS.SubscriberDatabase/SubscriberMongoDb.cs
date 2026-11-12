@@ -12,7 +12,7 @@ using MongoDB.Driver;
 
 namespace E.Standard.WebGIS.SubscriberDatabase;
 
-public class SubscriberMongoDb : ISubscriberDb2
+public class SubscriberMongoDb : ISubscriberDb2, ISubscriberSecurityStore
 {
     private string _connectionString;
 
@@ -301,7 +301,40 @@ public class SubscriberMongoDb : ISubscriberDb2
 
     #endregion
 
+    #region ISubscriberSecurityStore
+
+    public bool IsSubscriberSecurityStoreAvailable() => true;
+
+    public SubscriberSecurityInfo GetSubscriberSecurity(string subscriberId)
+    {
+        var item = SubscriberSecurityCollection()
+            .Find(Builders<SubscriberSecurityDocument>.Filter.Eq(d => d.SubscriberId, subscriberId))
+            .FirstOrDefault();
+
+        return item?.ToInfo();
+    }
+
+    public bool SetSubscriberSecurity(SubscriberSecurityInfo info)
+    {
+        var result = SubscriberSecurityCollection().ReplaceOne(
+            Builders<SubscriberSecurityDocument>.Filter.Eq(d => d.SubscriberId, info.SubscriberId),
+            new SubscriberSecurityDocument(info),
+            new ReplaceOptions() { IsUpsert = true });
+
+        return result.IsAcknowledged;
+    }
+
+    #endregion
+
     #region Helper
+
+    private IMongoCollection<SubscriberSecurityDocument> SubscriberSecurityCollection()
+    {
+        var client = new MongoClient(_connectionString.GetMongoConnetion());
+        var database = client.GetDatabase(_connectionString.GetMongoDatabase());
+
+        return database.GetCollection<SubscriberSecurityDocument>("webgis-subscriber-security");
+    }
 
     private IMongoCollection<SubscriberDocument> SubscriberCollection()
     {
@@ -324,6 +357,55 @@ public class SubscriberMongoDb : ISubscriberDb2
     #endregion
 
     #region Classes
+
+    class SubscriberSecurityDocument
+    {
+        public SubscriberSecurityDocument() { }
+
+        public SubscriberSecurityDocument(SubscriberSecurityInfo info)
+        {
+            this.SubscriberId = info.SubscriberId;
+            this.SecurityStamp = info.SecurityStamp;
+            this.MfaEnabled = info.MfaEnabled;
+            this.TotpSecret = info.TotpSecret;
+            this.RecoveryCodeHashes = info.RecoveryCodeHashes;
+            this.LastTotpTimeStep = info.LastTotpTimeStep;
+            this.Changed = DateTime.UtcNow;
+        }
+
+        // the subscriber id is the document id => upsert by id, no extra index needed
+        [BsonId]
+        public string SubscriberId { get; set; }
+
+        [BsonElement("SecurityStamp")]
+        public string SecurityStamp { get; set; }
+
+        [BsonElement("MfaEnabled")]
+        public bool MfaEnabled { get; set; }
+
+        [BsonElement("TotpSecret")]
+        public string TotpSecret { get; set; }
+
+        [BsonElement("RecoveryCodeHashes")]
+        public string RecoveryCodeHashes { get; set; }
+
+        [BsonElement("LastTotpTimeStep")]
+        public long LastTotpTimeStep { get; set; }
+
+        [BsonElement("Changed")]
+        public DateTime Changed { get; set; }
+
+        public SubscriberSecurityInfo ToInfo() => new SubscriberSecurityInfo()
+        {
+            SubscriberId = this.SubscriberId,
+            SecurityStamp = this.SecurityStamp,
+            MfaEnabled = this.MfaEnabled,
+            TotpSecret = this.TotpSecret,
+            RecoveryCodeHashes = this.RecoveryCodeHashes,
+            LastTotpTimeStep = this.LastTotpTimeStep,
+            Changed = this.Changed
+        };
+    }
 
     class SubscriberDocument
     {

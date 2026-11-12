@@ -403,6 +403,97 @@ static public class ConfigurationServiceExtensions
         => config[ApiConfigKeys.SecuritySecureEndpointBasicAuthPassword] ?? "";
 
 
+    static public void BindSubscriberSecurityOptions(this IConfiguration config, SubscriberSecurityOptions options)
+    {
+        if (Enum.TryParse(config[ApiConfigKeys.SecurityCookieSecure], true, out CookieSecureMode cookieSecure))
+        {
+            options.CookieSecure = cookieSecure;
+        }
+        if (int.TryParse(config[ApiConfigKeys.SecuritySessionMaxLifetimeMinutes], out int sessionMaxLifetime) && sessionMaxLifetime >= 0)
+        {
+            options.SessionMaxLifetimeMinutes = sessionMaxLifetime;
+        }
+        if (int.TryParse(config[ApiConfigKeys.SecuritySessionIdleTimeoutMinutes], out int sessionIdleTimeout) && sessionIdleTimeout >= 0)
+        {
+            options.SessionIdleTimeoutMinutes = sessionIdleTimeout;
+        }
+        if (int.TryParse(config[ApiConfigKeys.SecurityPasswordMinLength], out int passwordMinLength) && passwordMinLength > 0)
+        {
+            options.PasswordMinLength = Math.Min(passwordMinLength, SubscriberSecurityOptions.PasswordMaxLength);
+        }
+        if (int.TryParse(config[ApiConfigKeys.SecurityPasswordRequiredCharacterClasses], out int characterClasses) && characterClasses >= 0)
+        {
+            options.PasswordRequiredCharacterClasses = Math.Min(characterClasses, SubscriberSecurityOptions.PasswordCharacterClassCount);
+        }
+        if (!String.IsNullOrWhiteSpace(config[ApiConfigKeys.SecurityPasswordBlocklistFile]))
+        {
+            options.PasswordBlocklistFile = config[ApiConfigKeys.SecurityPasswordBlocklistFile].Trim();
+        }
+
+        BindNonNegativeInt(ApiConfigKeys.SecurityLoginCaptchaAfterFailedAttempts, value => options.LoginCaptchaAfterFailedAttempts = value);
+        BindNonNegativeInt(ApiConfigKeys.SecurityLoginLockoutAfterFailedAttempts, value => options.LoginLockoutAfterFailedAttempts = value);
+        BindNonNegativeInt(ApiConfigKeys.SecurityLoginFailedAttemptsResetMinutes, value => options.LoginFailedAttemptsResetMinutes = value);
+        BindNonNegativeInt(ApiConfigKeys.SecurityLoginIpMaxFailedAttempts, value => options.LoginIpMaxFailedAttempts = value);
+        BindNonNegativeInt(ApiConfigKeys.SecurityLoginIpWindowMinutes, value => options.LoginIpWindowMinutes = value);
+        BindNonNegativeInt(ApiConfigKeys.SecurityCaptchaLifetimeMinutes, value => options.CaptchaLifetimeMinutes = value);
+        BindNonNegativeInt(ApiConfigKeys.SecurityPasswordVerificationCacheSeconds, value => options.PasswordVerificationCacheSeconds = value);
+
+        var lockoutMinutes = config[ApiConfigKeys.SecurityLoginLockoutMinutes]?
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(s => int.TryParse(s, out int minutes) ? minutes : 0)
+            .Where(minutes => minutes > 0)
+            .ToArray();
+        if (lockoutMinutes?.Length > 0)
+        {
+            options.LoginLockoutMinutes = lockoutMinutes;
+        }
+
+        if (!String.IsNullOrWhiteSpace(config[ApiConfigKeys.SecurityLoginThrottleRedisConnectionString]))
+        {
+            options.LoginThrottleRedisConnectionString = config[ApiConfigKeys.SecurityLoginThrottleRedisConnectionString];
+        }
+
+        if (Enum.TryParse(config[ApiConfigKeys.SecurityMfaRequired], true, out MfaRequiredMode mfaRequired))
+        {
+            options.MfaRequired = mfaRequired;
+        }
+        if (!String.IsNullOrWhiteSpace(config[ApiConfigKeys.SecurityMfaIssuer]))
+        {
+            options.MfaIssuer = config[ApiConfigKeys.SecurityMfaIssuer].Trim();
+        }
+
+        void BindNonNegativeInt(string key, Action<int> apply)
+        {
+            if (int.TryParse(config[key], out int value) && value >= 0)
+            {
+                apply(value);
+            }
+        }
+    }
+
+    static public void BindForwardedHeadersKnownProxies(this IConfiguration config, ICollection<IPAddress> knownProxies, ICollection<IPNetwork> knownNetworks)
+    {
+        foreach (var proxy in (config[ApiConfigKeys.XForwardedHeadersKnownProxies] ?? "")
+                                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            if (!IPAddress.TryParse(proxy, out var address))
+            {
+                throw new ArgumentException($"Invalid IP address in {ApiConfigKeys.XForwardedHeadersKnownProxies}: {proxy}");
+            }
+            knownProxies.Add(address);
+        }
+
+        foreach (var network in (config[ApiConfigKeys.XForwardedHeadersKnownNetworks] ?? "")
+                                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            if (!IPNetwork.TryParse(network, out var ipNetwork))
+            {
+                throw new ArgumentException($"Invalid network (CIDR) in {ApiConfigKeys.XForwardedHeadersKnownNetworks}: {network}");
+            }
+            knownNetworks.Add(ipNetwork);
+        }
+    }
+
     static public Dictionary<string, string> UrlOutputRedirectionsOrNull(this IConfiguration config)
         => UrlRedirectionsOrNull(config, " => ");
 

@@ -1715,7 +1715,7 @@ public class RestController : ApiBaseController
                 throw new Exception("Unknown subscriber!?");
             }
 
-            _cookies.SetAuthCookie(HttpContext, $"clientid:{client.ClientId}:{subscriber.Name}@{client.ClientName}");
+            _cookies.SetAuthCookie(HttpContext, $"clientid:{client.ClientId}:{subscriber.Name}@{client.ClientName}", subscriber.Id);
 
             return RedirectToActionResult("Index");
         }

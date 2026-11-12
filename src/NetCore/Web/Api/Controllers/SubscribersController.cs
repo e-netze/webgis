@@ -11,8 +11,12 @@ using Api.Core.AppCode.Reflection;
 using Api.Core.AppCode.Services;
 using Api.Core.AppCode.Services.Api;
 using Api.Core.AppCode.Services.Authentication;
+using Api.Core.AppCode.Services.Authentication.LoginThrottling;
+using Api.Core.AppCode.Services.Authentication.Mfa;
+using Api.Core.AppCode.Services.Authentication.PasswordPolicy;
 
 using E.Standard.Api.App;
+using E.Standard.Api.App.Configuration;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Models;
 using E.Standard.Api.App.Reflection;
@@ -46,7 +50,7 @@ namespace Api.Core.Controllers;
 
 [ApiAuthentication(ApiAuthenticationTypes.Cookie)]
 [AppRole(AppRoles.SubscriberPages)]
-public class SubscribersController : ApiBaseController
+public partial class SubscribersController : ApiBaseController
 {
     private readonly ILogger<SubscribersController> _logger;
     private readonly UrlHelperService _urlHelper;
@@ -60,11 +64,28 @@ public class SubscribersController : ApiBaseController
     private readonly SDKPluginManagerService _sdkPlugins;
     private readonly ApplicationSecurityConfig _appSecurityConfig;
     private readonly ICryptoService _crypto;
-    private readonly BotDetectionService _botDetection;
+    private readonly SubscriberLoginThrottleService _loginThrottle;
     private readonly JwtAccessTokenService _jwtAccessTokenService;
     private readonly IEnumerable<ICustomSubscriberIdenticationService> _customSubscriberIdentications;
+    private readonly ILogger _auditLogger;
+    private readonly SubscriberSecurityOptions _securityOptions;
+    private readonly SubscriberAccountSecurityService _accountSecurity;
+    private readonly SubscriberPasswordPolicyService _passwordPolicy;
+
+    private static readonly SubscriberDb.Subscriber TimingDummySubscriber = new SubscriberDb.Subscriber() { Password = Guid.NewGuid().ToString() };
+
+    internal const string LoginErrorInvalidCredentials = "invalid-credentials";
+    internal const string LoginErrorCaptchaRequired = "captcha-required";
+    internal const string LoginErrorCaptchaInvalid = "captcha-invalid";
+    internal const string LoginErrorTooManyAttempts = "too-many-attempts";
+    internal const string LoginErrorTooManyAttemptsMinutes = "too-many-attempts-minutes";
+    internal const string LoginErrorFailed = "login-failed";
+
+    /// <summary>Fixed log category for security relevant events (logins, lockouts, ...), e.g. for SIEM filtering.</summary>
+    public const string SecurityAuditLogCategory = "WebGIS.Security.Audit";
 
     public SubscribersController(ILogger<SubscribersController> logger,
+                                 ILoggerFactory loggerFactory,
                                  UrlHelperService urlHelper,
                                  ConfigurationService config,
                                  SubscriberDatabaseService subscriberDb,
@@ -75,15 +96,19 @@ public class SubscribersController : ApiBaseController
                                  ApiCookieAuthenticationService cookies,
                                  SDKPluginManagerService sdkPlugins,
                                  ICryptoService crypto,
-                                 BotDetectionService botDetection,
+                                 SubscriberLoginThrottleService loginThrottle,
+                                 SubscriberAccountSecurityService accountSecurity,
+                                 SubscriberPasswordPolicyService passwordPolicy,
                                  IHttpService http,
                                  IOptionsMonitor<ApplicationSecurityConfig> appSecurityConfig,
+                                 IOptions<SubscriberSecurityOptions> securityOptions,
                                  JwtAccessTokenService jwtAccessTokenService,
                                  IEnumerable<ICustomApiService> customServices = null,
                                  IEnumerable<ICustomSubscriberIdenticationService> customSubscriberIdentications = null)
         : base(logger, urlHelper, http, customServices)
     {
         _logger = logger;
+        _auditLogger = loggerFactory.CreateLogger(SecurityAuditLogCategory);
         _urlHelper = urlHelper;
         _config = config;
         _subscriberDb = subscriberDb;
@@ -94,9 +119,12 @@ public class SubscribersController : ApiBaseController
         _cookies = cookies;
         _sdkPlugins = sdkPlugins;
         _appSecurityConfig = appSecurityConfig.CurrentValue;
+        _securityOptions = securityOptions.Value;
         _customSubscriberIdentications = customSubscriberIdentications;
         _crypto = crypto;
-        _botDetection = botDetection;
+        _loginThrottle = loginThrottle;
+        _accountSecurity = accountSecurity;
+        _passwordPolicy = passwordPolicy;
         _jwtAccessTokenService = jwtAccessTokenService;
     }
 
@@ -112,6 +140,11 @@ public class SubscribersController : ApiBaseController
         try
         {
             var subscriber = CurrentAuthSubscriber();
+
+            var mfaInfo = TryGetSecurityInfo(subscriber.Id);
+            ViewData["mfa-available"] = mfaInfo != null;
+            ViewData["mfa-enabled"] = mfaInfo?.MfaEnabled == true;
+            ViewData["mfa-required"] = _accountSecurity.IsMfaRequired(subscriber);
 
             return ViewResult(subscriber);
         }
@@ -140,10 +173,17 @@ public class SubscribersController : ApiBaseController
             return RedirectToActionResult("Index", "Authenticate", new { redirect = Request.Query["redirect"], pageId = id });
         }
 
-        return ViewResult(new ApiSubscribersLogin()
+        var login = new ApiSubscribersLogin()
         {
             Redirect = Request.Query["redirect"]
-        });
+        };
+
+        if (_loginThrottle.GetStatus(null, HttpContext.Connection.RemoteIpAddress?.ToString()).CaptchaRequired)
+        {
+            ApplyNewCaptcha(login);
+        }
+
+        return ViewResult(login);
     }
 
     [HttpPost]
@@ -155,87 +195,188 @@ public class SubscribersController : ApiBaseController
         {
             return RedirectToActionResult("Index", "Home");
         }
-        var db = _subscriberDb.CreateInstance(_logger);
+
+        login ??= new ApiSubscribersLogin();
+        string clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+
         try
         {
-            #region Bot Detection
-
-            if (_botDetection.IsSuspiciousUser(login.Username))
+            if (String.IsNullOrWhiteSpace(login.Username) || String.IsNullOrEmpty(login.Password))
             {
-                await _botDetection.BlockSuspicousUserAsync(login.Username, 5000);
+                throw new SubscriberLoginException(LoginErrorInvalidCredentials);
+            }
 
-                CaptchaResult.VerifyCaptchaCode(_crypto, login.Username, login.CaptchaInput, login.CaptchaCodeEncrypted);
+            #region Throttling / Captcha
+
+            var throttleStatus = _loginThrottle.GetStatus(login.Username, clientIp);
+
+            if (throttleStatus.IsLocked)
+            {
+                // don't verify the password while locked => brute force is not possible during the lockout
+                throw new SubscriberLoginException(LoginErrorTooManyAttemptsMinutes, LockedMinutes(throttleStatus.LockedSeconds));
+            }
+
+            if (throttleStatus.IpThrottled)
+            {
+                await Task.Delay(1000);
+            }
+
+            if (throttleStatus.CaptchaRequired)
+            {
+                if (String.IsNullOrWhiteSpace(login.CaptchaInput))
+                {
+                    throw new SubscriberLoginException(LoginErrorCaptchaRequired);
+                }
+
+                string captchaNonce;
+                try
+                {
+                    captchaNonce = CaptchaResult.VerifyCaptchaCode(_crypto, login.CaptchaInput, login.CaptchaCodeEncrypted,
+                                                                   TimeSpan.FromMinutes(_securityOptions.CaptchaLifetimeMinutes));
+                }
+                catch (Exception ex)
+                {
+                    // a wrong captcha only counts for the client IP, otherwise anybody could lock out a user
+                    _loginThrottle.RegisterFailure(login.Username, clientIp, countForUsername: false);
+                    throw new SubscriberLoginException(LoginErrorCaptchaInvalid, ex);
+                }
+
+                if (!_loginThrottle.TryConsumeCaptchaNonce(captchaNonce))
+                {
+                    _loginThrottle.RegisterFailure(login.Username, clientIp, countForUsername: false);
+                    throw new SubscriberLoginException(LoginErrorCaptchaInvalid);
+                }
             }
 
             #endregion
 
+            var db = _subscriberDb.CreateInstance(_logger);
             var subscriber = db.GetSubscriberByName(login.Username);
+
+            bool passwordValid;
             if (subscriber != null)
             {
-                if (subscriber.VerifyPassword(login.Password))
+                passwordValid = subscriber.VerifyPassword(login.Password);
+            }
+            else
+            {
+                // always verify a password hash, so unknown users can't be detected by response timing
+                TimingDummySubscriber.VerifyPassword(login.Password);
+                passwordValid = false;
+            }
+
+            if (!passwordValid)
+            {
+                // unknown usernames are counted too, so the throttling doesn't reveal whether a user exists
+                _loginThrottle.RegisterFailure(login.Username, clientIp);
+                throw new SubscriberLoginException(LoginErrorInvalidCredentials);
+            }
+
+            if (subscriber.PasswordNeedsRehash)
+            {
+                try
                 {
-                    _botDetection.RemoveSuspiciousUser(login.Username);
-
-                    _logger.LogInformation("Successfully logged in subscriber {name}", subscriber.Name);
-
-                    if (!String.IsNullOrWhiteSpace(login.Redirect))
-                    {
-                        if (!_urlHelper.IsAllowedPortalLoginRedirect(login.Redirect))
-                        {
-                            return BadRequest("Redirect target is not allowed");
-                        }
-
-                        //string credentials = id + "|" + subscriber.FullName + "|" + DateTime.UtcNow.Ticks;
-                        //credentials = _crypto.EncryptTextDefault(credentials, CryptoResultStringType.Hex);
-
-                        _logger.LogInformation("Gernerate JWT Token for {fullname}", subscriber.FullName);
-                        var credentialToken = _jwtAccessTokenService.GenerateToken(subscriber.FullName, 1, JwtAccessTokenService.PortalLoginAudience);
-
-                        var accessTokenInstance = new AccessToken(_crypto);
-                        _logger.LogInformation("Create JWT Token for {fullname}", subscriber.FullName);
-                        string accessToken = accessTokenInstance.Create(
-                            new E.Standard.Security.Cryptography.Token.Models.Header()
-                            {
-                                alg = "",
-                                typ = "webgis-api-accesstoken"
-                            },
-                            new E.Standard.Security.Cryptography.Token.Models.Payload(60)
-                            {
-                                iis = _urlHelper.AppRootUrl(HttpSchema.Https),
-                                sub = subscriber.Id,
-                                name = $"subscriber::{subscriber.Name}",
-                            });
-
-                        return RedirectResult($"{login.Redirect}{(login.Redirect.Contains("?") ? "&" : "?")}credential_token={credentialToken}");
-                    }
-                    AuthenticateSubscriber(subscriber);
-
-                    if (Request.Query["f"] == "json")
-                    {
-                        return await JsonObject(new { succeeded = true });
-                    }
-
-                    return RedirectToActionResult("Index");
+                    // upgrade legacy/weaker password hashes transparently on login
+                    db.UpdateApiSubscriberPassword(subscriber, login.Password);
+                    _auditLogger.LogInformation("Subscriber password hash upgraded: {username}", subscriber.Name);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Subscriber password hash upgrade failed: {username}", subscriber.Name);
                 }
             }
 
-            throw new ArgumentException("Invalid user or password");
+            if (!String.IsNullOrWhiteSpace(login.Redirect) && !_urlHelper.IsAllowedPortalLoginRedirect(login.Redirect))
+            {
+                _auditLogger.LogWarning("Subscriber login: redirect target not allowed for {username} from {clientIp}: {redirect}", subscriber.Name, clientIp, login.Redirect);
+                return BadRequest("Redirect target is not allowed");
+            }
+
+            bool passwordChangeRequired = _passwordPolicy.IsKnownDefaultPassword(login.Password);
+            if (passwordChangeRequired)
+            {
+                _auditLogger.LogWarning("Subscriber login with a known default password, password change required: {username} from {clientIp}", subscriber.Name, clientIp);
+            }
+
+            return await ContinueLogin(subscriber, login.Redirect, clientIp, passwordChangeRequired, secondFactorDone: false);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Login error: {0}", ex.Message);
-            _botDetection.AddSuspiciousUser(login?.Username);
+            string errorKey = ex is SubscriberLoginException sle ? sle.ErrorKey : LoginErrorFailed;
+            string errorArgument = (ex as SubscriberLoginException)?.ErrorArgument;
 
-            var captchaCode = Captcha.GenerateCaptchaCode(login.Username);
-            var captchaResult = Captcha.GenerateCaptchaImage(captchaCode);
+            if (ex is SubscriberLoginException)
+            {
+                _auditLogger.LogWarning("Subscriber login failed ({reason}): {username} from {clientIp}", errorKey, login.Username, clientIp);
+            }
+            else
+            {
+                _logger.LogError(ex, "Subscriber login error");
+                _auditLogger.LogWarning("Subscriber login failed (error): {username} from {clientIp}", login.Username, clientIp);
+            }
 
-            login.ErrorMessage = ex.Message;
-            login.CaptchaCodeEncrypted = captchaResult.CaptchaCodeEncrypted(_crypto);
-            login.CaptchaDataBase64 = captchaResult.CaptchBase64Data;
+            var throttleStatus = _loginThrottle.GetStatus(login.Username, clientIp);
+            if (throttleStatus.IsLocked)
+            {
+                if (errorKey != LoginErrorTooManyAttemptsMinutes)
+                {
+                    _auditLogger.LogWarning("Subscriber login locked: {username} from {clientIp} for {seconds} seconds", login.Username, clientIp, throttleStatus.LockedSeconds);
+                }
+                errorKey = LoginErrorTooManyAttemptsMinutes;
+                errorArgument = LockedMinutes(throttleStatus.LockedSeconds);
+            }
+
+            login.Password = null;
+            login.CaptchaInput = null;
+            login.ErrorMessage = errorKey;
+            login.ErrorMessageArgument = errorArgument;
+            login.CaptchaCodeEncrypted = login.CaptchaDataBase64 = null;
+
+            if (throttleStatus.CaptchaRequired)
+            {
+                ApplyNewCaptcha(login);
+            }
+
+            if (Request.Query["f"] == "json")
+            {
+                return await JsonObject(new
+                {
+                    succeeded = false,
+                    captcha_required = throttleStatus.CaptchaRequired,
+                    locked_seconds = throttleStatus.LockedSeconds
+                });
+            }
 
             return ViewResult(login);
         }
     }
+
+    [AppRole(AppRoles.All)]
+    public IActionResult LoginCaptcha()
+    {
+        if (_config.AllowSubscriberLogin() == false)
+        {
+            return NotFound();
+        }
+
+        var login = ApplyNewCaptcha(new ApiSubscribersLogin());
+
+        Response.Headers.CacheControl = "no-store";
+        return Json(new { encrypted = login.CaptchaCodeEncrypted, base64 = login.CaptchaDataBase64 });
+    }
+
+    private ApiSubscribersLogin ApplyNewCaptcha(ApiSubscribersLogin login)
+    {
+        var captchaResult = Captcha.GenerateCaptchaImage(Captcha.GenerateCaptchaCode());
+
+        login.CaptchaCodeEncrypted = captchaResult.CaptchaCodeEncrypted(_crypto);
+        login.CaptchaDataBase64 = captchaResult.CaptchBase64Data;
+
+        return login;
+    }
+
+    private static string LockedMinutes(int lockedSeconds)
+        => Math.Max(1, (int)Math.Ceiling(lockedSeconds / 60.0)).ToString();
 
     [AppRole(AppRoles.All)]
     public IActionResult Logout()
@@ -287,9 +428,10 @@ public class SubscribersController : ApiBaseController
                 throw new Exception("Passwords are not ident");
             }
 
-            if (!registerSubscriber.Password1.IsValidPassword())
+            var passwordPolicy = _passwordPolicy.Validate(registerSubscriber.Password1, registerSubscriber.Username, registerSubscriber.FirstName, registerSubscriber.LastName, registerSubscriber.Email);
+            if (!passwordPolicy.IsValid)
             {
-                throw new Exception("Invalid password: min. 8 characters, no spaces allowed");
+                throw new Exception(passwordPolicy.ToEnglishMessage());
             }
 
             var subscriber = db.GetSubscriberByName(registerSubscriber.Username);
@@ -317,6 +459,11 @@ public class SubscribersController : ApiBaseController
             subscriber = db.GetSubscriberByName(registerSubscriber.Username);
             if (subscriber != null)
             {
+                if (_accountSecurity.IsMfaRequired(subscriber) && _accountSecurity.IsMfaAvailable())
+                {
+                    return MfaEnrollView(subscriber, null);
+                }
+
                 AuthenticateSubscriber(subscriber);
             }
 
@@ -347,7 +494,17 @@ public class SubscribersController : ApiBaseController
                 subscriber = db.GetSubscriberById(id);
             }
 
-            return ViewResult(new RegisterSubscriberModel(subscriber));
+            var currentSubscriber = CurrentAuthSubscriber();
+            bool isOtherSubscriber = subscriber.Id != currentSubscriber.Id;
+            var mfaInfo = isOtherSubscriber ? TryGetSecurityInfo(subscriber.Id) : null;
+
+            return ViewResult(new RegisterSubscriberModel(subscriber)
+            {
+                RequireCurrentPassword = !isOtherSubscriber,
+                MfaAvailable = mfaInfo != null,
+                MfaEnabled = mfaInfo?.MfaEnabled == true,
+                CanResetMfa = isOtherSubscriber && mfaInfo?.MfaEnabled == true
+            });
         }
         catch (NotAuthorizedException)
         {
@@ -405,17 +562,13 @@ public class SubscribersController : ApiBaseController
     {
         try
         {
-            if (!updateSubscriber.Password1.IsValidPassword())
-            {
-                throw new Exception("Invalid password: min. 8 characters, no spaces allowed");
-            }
-
             if (updateSubscriber.Password1 != updateSubscriber.Password2)
             {
                 throw new ArgumentException("Passwords not ident");
             }
 
-            var subscriber = CurrentAuthSubscriber();
+            var currentSubscriber = CurrentAuthSubscriber();
+            var subscriber = currentSubscriber;
 
             var db = _subscriberDb.CreateInstance();
 
@@ -428,8 +581,35 @@ public class SubscribersController : ApiBaseController
 
                 subscriber = db.GetSubscriberById(updateSubscriber.Id);
             }
+            else
+            {
+                updateSubscriber.RequireCurrentPassword = true;
+
+                // re-authenticate: changing the own password requires the current password
+                var storedSubscriber = db.GetSubscriberById(subscriber.Id);
+                if (storedSubscriber == null || !storedSubscriber.VerifyPassword(updateSubscriber.CurrentPassword ?? String.Empty))
+                {
+                    _auditLogger.LogWarning("Subscriber password change rejected (wrong current password): {username} from {clientIp}", subscriber.Name, HttpContext.Connection.RemoteIpAddress?.ToString());
+                    throw new Exception("Current password is not correct");
+                }
+            }
+
+            var passwordPolicy = _passwordPolicy.Validate(updateSubscriber.Password1, subscriber.Name, subscriber.FirstName, subscriber.LastName, subscriber.Email);
+            if (!passwordPolicy.IsValid)
+            {
+                throw new Exception(passwordPolicy.ToEnglishMessage());
+            }
 
             db.UpdateApiSubscriberPassword(subscriber, updateSubscriber.Password1);
+
+            _auditLogger.LogInformation("Subscriber password changed: {username} by {changedBy} from {clientIp}", subscriber.Name, currentSubscriber.Name, HttpContext.Connection.RemoteIpAddress?.ToString());
+
+            // terminate all other sessions of this subscriber
+            _accountSecurity.RotateSecurityStamp(subscriber.Id);
+            if (subscriber.Id == currentSubscriber.Id)
+            {
+                AuthenticateSubscriber(currentSubscriber);
+            }
 
             return RedirectToActionResult("Index");
         }
@@ -596,7 +776,7 @@ public class SubscribersController : ApiBaseController
             }
 
             _cookies.SignOut(HttpContext);
-            _cookies.SetAuthCookie(HttpContext, "clientid:" + client.ClientId + ":" + subscriber.Name + "@" + client.ClientName);
+            _cookies.SetAuthCookie(HttpContext, "clientid:" + client.ClientId + ":" + subscriber.Name + "@" + client.ClientName, subscriber.Id);
 
             return RedirectToActionResult("Index", "Rest");
         }
@@ -818,7 +998,7 @@ public class SubscribersController : ApiBaseController
 
     private void AuthenticateSubscriber(SubscriberDb.Subscriber subscriber)
     {
-        _cookies.SetAuthCookie(HttpContext, $"subscriber:{subscriber.Id}:{subscriber.Name.ToLower()}");
+        _cookies.SetAuthCookie(HttpContext, $"subscriber:{subscriber.Id}:{subscriber.Name.ToLower()}", subscriber.Id);
     }
 
     internal SubscriberDb.Subscriber CurrentAuthSubscriber(bool throwException = true, string endpoint = "", ApiAuthenticationTypes acceptedAuthTypes = ApiAuthenticationTypes.Cookie)

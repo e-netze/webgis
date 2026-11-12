@@ -65,26 +65,6 @@ public static class StringExtension
         return regex.IsMatch(s);
     }
 
-    public static bool IsValidPassword(this string s)
-    {
-        if (s == null || s.Length == 0)
-        {
-            return false;
-        }
-
-        if (s.Contains(" "))
-        {
-            return false;
-        }
-
-        if (s.Length < 8)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
     public static bool IsValidUrlId(this string s)
     {
         if (String.IsNullOrWhiteSpace(s))

@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace E.Standard.WebGIS.SubscriberDatabase;
 
-public class SubscriberFileDb : ISubscriberDb2
+public class SubscriberFileDb : ISubscriberDb2, ISubscriberSecurityStore
 {
     private readonly string _rootPath;
     private readonly ILogger? _logger;
@@ -324,6 +324,41 @@ public class SubscriberFileDb : ISubscriberDb2
 
     #endregion
 
+    #region ISubscriberSecurityStore
+
+    public bool IsSubscriberSecurityStoreAvailable() => true;
+
+    public SubscriberSecurityInfo? GetSubscriberSecurity(string subscriberId)
+    {
+        string path = Path.Combine(SubscriberSecurityRootPath, $"{ToSafeFileName(subscriberId)}.json");
+
+        return File.Exists(path)
+            ? JSerializer.Deserialize<SubscriberSecurityInfo>(File.ReadAllText(path))
+            : null;
+    }
+
+    public bool SetSubscriberSecurity(SubscriberSecurityInfo info)
+    {
+        info.Changed = DateTime.UtcNow;
+
+        string path = Path.Combine(SubscriberSecurityRootPath, $"{ToSafeFileName(info.SubscriberId)}.json");
+        File.WriteAllText(path, JSerializer.Serialize(info));
+
+        return true;
+    }
+
+    private static string ToSafeFileName(string id)
+    {
+        if (String.IsNullOrWhiteSpace(id) || id.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || id.Contains(".."))
+        {
+            throw new ArgumentException("Invalid subscriber id");
+        }
+
+        return id;
+    }
+
+    #endregion
+
     #region Helper
 
     private void CreateIfNoExist(string path)
@@ -350,6 +385,16 @@ public class SubscriberFileDb : ISubscriberDb2
         get
         {
             string path = Path.Combine(_rootPath, "clients");
+            CreateIfNoExist(path);
+            return path;
+        }
+    }
+
+    private string SubscriberSecurityRootPath
+    {
+        get
+        {
+            string path = Path.Combine(_rootPath, "subscriber-security");
             CreateIfNoExist(path);
             return path;
         }
