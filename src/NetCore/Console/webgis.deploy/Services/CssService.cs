@@ -16,11 +16,15 @@ namespace webgis.deploy.Services;
 internal class CssService
 {
     private readonly DeployRepositoryService _deployRepositoryService;
+    private readonly ConsoleService _console;
 
-    public CssService(DeployRepositoryService deployRepositoryService)
+    public CssService(DeployRepositoryService deployRepositoryService, ConsoleService console)
     {
         _deployRepositoryService = deployRepositoryService;
+        _console = console;
     }
+
+    public int CreatedFiles { get; private set; }
 
     public void ModifyDefaultCss(string profile, string targetPath, string company)
     {
@@ -44,25 +48,25 @@ internal class CssService
     private void ModifyCSS(string profile, string originalCssFile, string subFolder = "")
     {
         var originalFi = new FileInfo(originalCssFile);
-        Console.WriteLine($"Build {originalFi.Name} css overrides...");
+        _console.Log($"Build {originalFi.Name} css overrides...");
 
         if (!originalFi.Exists)
         {
-            Console.WriteLine($"Canceld: {originalFi.FullName} not exits");
+            _console.Log($"Canceld: {originalFi.FullName} not exits");
             return;
         }
 
         var cssModifyDi = new DirectoryInfo(Path.Combine(_deployRepositoryService.RepositoryRootDirectory, "profiles", profile, "css-modify", originalFi.Name));
         if (!cssModifyDi.Exists)
         {
-            Console.WriteLine($"Canceld: {cssModifyDi.FullName} not exits");
+            _console.Log($"Canceld: {cssModifyDi.FullName} not exits");
             return;
         }
 
         var cssModifyFi = new FileInfo(Path.Combine(cssModifyDi.FullName, "modify.json"));
         if (!cssModifyFi.Exists)
         {
-            Console.WriteLine($"Canceld: {cssModifyFi.FullName} not exits");
+            _console.Log($"Canceld: {cssModifyFi.FullName} not exits");
             return;
         }
 
@@ -122,15 +126,16 @@ internal class CssService
                 }
             }
         }
-        //Console.WriteLine(sbAll.ToString());
+        //_console.Log(sbAll.ToString());
 
         if (System.IO.File.Exists(outputFile))
         {
-            Console.WriteLine("Delete existing file: " + outputFile);
+            _console.Log("Delete existing file: " + outputFile);
             System.IO.File.Delete(outputFile);
         }
 
-        Console.WriteLine("Create file: " + outputFile);
+        _console.Log("Create file: " + outputFile);
+        CreatedFiles++;
 
         var fi = new FileInfo(outputFile);
         if (!fi.Directory.Exists)
@@ -142,9 +147,9 @@ internal class CssService
 
         if (!String.IsNullOrWhiteSpace(appendFile))
         {
-            Console.WriteLine("Append " + appendFile);
+            _console.Log("Append " + appendFile);
             System.IO.File.AppendAllText(outputFile, System.IO.File.ReadAllText(appendFile));
-            //Console.WriteLine(System.IO.File.ReadAllText(appendFile));
+            //_console.Log(System.IO.File.ReadAllText(appendFile));
         }
     }
 

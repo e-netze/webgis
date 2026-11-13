@@ -1,28 +1,18 @@
-﻿using webgis.deploy.Extensions;
+using webgis.deploy.Extensions;
 using webgis.deploy.Services;
 
 #if DEBUG || DEBUG_INTERNAL
 string workDirectory = @"C:\deploy\webgis";
 #else
-string workDirectory = Environment.CurrentDirectory; // Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+string workDirectory = Environment.CurrentDirectory;
 #endif
 
 // -p local -v latest --download-latest --deploy-portal --deploy-api
 
-Console.WriteLine($"******************************************");
-Console.WriteLine($"*                                        *");
-Console.WriteLine($"*      WebGIS.Deploy Tool {DeployVersionService.DeployToolVersion}      *");
-#if INTERNAL
-Console.WriteLine($"*             !!!!!!!!!!!!!!             *");
-Console.WriteLine($"*             !! INTERNAL !!             *");
-Console.WriteLine($"*             !!!!!!!!!!!!!!             *");
-#endif
-Console.WriteLine($"*                                        *");
-Console.WriteLine($"******************************************");
-
-Console.WriteLine($"Work-Directory: {workDirectory}");
-
-bool runAutomated = false;
+bool runAutomated = false,
+     nonInteractive = false,
+     noColor = false,
+     verbose = false;
 
 string profile = String.Empty,
        version = String.Empty;
@@ -34,61 +24,90 @@ bool deployCms = false,
      deployApi = false,
      portable = false;
 
-var consoleService = new ConsoleService();
+try
+{
+    for (int i = 0; i < (args?.Length ?? 0); i++)
+    {
+        string NextArg() => i + 1 < args!.Length
+            ? args[++i]
+            : throw new ArgumentException($"Missing value for parameter {args[i]}");
+
+        switch (args![i])
+        {
+            case "-h":
+            case "--help":
+                new ConsoleService(nonInteractive, noColor).WriteHelp();
+                return 0;
+            case "-p":
+            case "--profile":
+                profile = NextArg();
+                runAutomated = true;
+                break;
+#if !INTERNAL
+            case "-d":
+            case "--download-latest":
+                downloadLatest = true;
+                break;
+#endif
+            case "-v":
+            case "--version":
+                version = NextArg();
+                break;
+            case "--cms":
+            case "--deploy-cms":
+                deployCms = true;
+                break;
+            case "--portal":
+            case "--deploy-portal":
+                deployPortal = true;
+                break;
+            case "--api":
+            case "--deploy-api":
+                deployApi = true;
+                break;
+            case "--portable":
+                portable = true;
+                break;
+            case "--non-interactive":
+                nonInteractive = true;
+                break;
+            case "--no-color":
+                noColor = true;
+                break;
+            case "--verbose":
+                verbose = true;
+                break;
+        }
+    }
+}
+catch (ArgumentException ex)
+{
+    Console.Error.WriteLine(ex.Message);
+    return 1;
+}
+
+var consoleService = new ConsoleService(nonInteractive, noColor, verbose);
+var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+#if INTERNAL
+const bool isInternal = true;
+#else
+const bool isInternal = false;
+#endif
+
+consoleService.WriteBanner(DeployVersionService.DeployToolVersion.ToString(), workDirectory, isInternal);
 
 try
 {
-    if (args != null)
-    {
-        for (int i = 0; i < args.Length; i++)
-        {
-            switch (args[i])
-            {
-                case "-h":
-                case "--help":
-                    consoleService.WriteHelp();
-                    return 0;
-                case "-p":
-                case "--profile":
-                    profile = args[i + 1];
-                    runAutomated = true;
-                    break;
-#if !INTERNAL
-                case "-d":
-                case "--download-latest":
-                    downloadLatest = true;
-                    break;
-#endif
-                case "-v":
-                case "--version":
-                    version = args[i + 1];
-                    break;
-                case "--cms":
-                case "--deploy-cms":
-                    deployCms = true;
-                    break;
-                case "--portal":
-                case "--deploy-portal":
-                    deployPortal = true;
-                    break;
-                case "--api":
-                case "--deploy-api":
-                    deployApi = true;
-                    break;
-                case "--portable":
-                    portable = true;
-                    break;
-            }
-        }
-    }
-
-    var ioService = new IOService();
+    var ioService = new IOService(consoleService);
     var repoService = new DeployRepositoryService(ioService, workDirectory);
-    var versionService = new DeployVersionService(repoService, ioService, portable);
-    var cssService = new CssService(repoService);
+    var versionService = new DeployVersionService(repoService, ioService, consoleService, portable);
+    var cssService = new CssService(repoService, consoleService);
     var securityService = new SecurityService(repoService);
 
-    securityService.Init();
+    consoleService.Quiet(securityService.Init);
+
+    // 1. Profile
 
     if (String.IsNullOrEmpty(profile))
     {
@@ -98,51 +117,30 @@ try
     }
 
 #if !INTERNAL
-    if (!portable && (downloadLatest || consoleService.DoYouWant("to download the latest version from GitHub")))
+    // 2. Download
+
+    if (!portable && (downloadLatest || consoleService.DoYouWant("to download the latest version from GitHub", defaultValue: consoleService.IsInteractive)))
     {
-        var githubReleaseService = new GitHubReleaseService("e-netze", "webgis");
+        consoleService.Section("Download");
 
-        foreach (var url in await githubReleaseService.GetLatestReleaseDownloadUrlsAsync())
+        if (!await DownloadLatestAsync())
         {
-            var fileName = url.Split('/').Last();
-
-            Console.WriteLine($"Found newest version of {fileName}");
-
-            if (!versionService.Exits(fileName))
-            {
-                try
-                {
-                    using (HttpClient client = new HttpClient())
-                    {
-                        Console.Write("downloading ...");
-                        var fileByptes = await client.GetByteArrayAsync(url);
-                        Console.Write("write to disk ...");
-                        await versionService.AppendAsync(fileName, fileByptes);
-                        Console.WriteLine("done!");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Exception on downloading file: {ex.Message}");
-                    return 1;
-                }
-            }
-            else
-            {
-                Console.WriteLine("... already exists in your download folder");
-            }
+            return 1;
         }
     }
 #endif
 
+    // 3. Version
+
     if (String.IsNullOrEmpty(version))
     {
-        version = consoleService.ChooseFrom(versionService.GetVersions().Take(5), "version");
+        version = consoleService.ChooseFrom(versionService.GetVersions(), "version");
     }
 
     if ("latest".Equals(version, StringComparison.OrdinalIgnoreCase))
     {
-        version = versionService.GetVersions().First();
+        version = versionService.GetVersions().FirstOrDefault()
+            ?? throw new Exception("No version found in your download folder");
     }
 
     if (String.IsNullOrEmpty(profile) ||
@@ -152,23 +150,18 @@ try
         return 1;
     }
 
-    #region Create config overrides
-
     versionService.InitOverrides(profile, version);
-
-    #endregion
-
-    #region Create Modify-CSS
-
     versionService.CreateDefaultModifyCss(profile);
 
-    #endregion
+    // 4. Confirm
 
-    Console.WriteLine($"Deploy version {version} to profile {profile}");
+    consoleService.WriteSummary(("Profile", profile), ("Version", version), ("Platform", webgis.deploy.Platform.PlatformName));
     if (!runAutomated && !consoleService.DoYouWantToContinue())
     {
         return 1;
     }
+
+    // 5. Deploy settings
 
     var deployVersionModel = repoService.GetDeployModel(profile);
     if (consoleService.InputRequiredModelProperties(deployVersionModel))
@@ -184,119 +177,168 @@ try
 
     if (!webgisRepoPath.Exists)
     {
-        consoleService.WriteBlock($"Create a new webgis repository {deployVersionModel.RepositoryPath}");
+        consoleService.Section("Repository");
 
-        versionService.ExtractZipFolderRecursive(version, "webgis-api/_setup/proto/_webgis-repository", deployVersionModel.RepositoryPath);
-        versionService.ExtractZipFolderRecursive(version, "webgis-portal/_setup/proto/_webgis-repository", deployVersionModel.RepositoryPath);
-        versionService.ExtractZipFolderRecursive(version, "webgis-cms/_setup/proto/_webgis-repository", deployVersionModel.RepositoryPath);
+        foreach (var app in new[] { "webgis-api", "webgis-portal", "webgis-cms" })
+        {
+            Extract($"Create repository ({app})", $"{app}/_setup/proto/_webgis-repository", deployVersionModel.RepositoryPath);
+        }
     }
 
-    var targetExists = Directory.Exists(Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)));
+    var installationPath = deployVersionModel.ProfileTargetInstallationPath(profile, version);
+    var targetExists = Directory.Exists(installationPath);
+
+    // 6. Components
 
     if (!runAutomated)
     {
-        deployApi = deployApi || consoleService.DoYouWant("to deploy WebGIS API");
-        deployPortal = deployPortal || consoleService.DoYouWant("to deploy WebGIS Portal");
-        deployCms = deployCms || consoleService.DoYouWant("to deploy WebGIS CMS");
+        var preselected = new List<string>() { "WebGIS API", "WebGIS Portal", "WebGIS CMS" };
+        var selected = consoleService.ChooseMultiple(preselected, "components", preselected);
+
+        deployApi = deployApi || selected.Contains("WebGIS API");
+        deployPortal = deployPortal || selected.Contains("WebGIS Portal");
+        deployCms = deployCms || selected.Contains("WebGIS CMS");
     }
 
-    Console.WriteLine();
-    Console.WriteLine($"Deploy version {version}");
+    // 7. Extract
+
+    consoleService.Section($"Deploy WebGIS {version}");
 
     if (!targetExists)
     {
         if (deployApi)
         {
-            Console.WriteLine("Deploy WebGIS API:");
-            versionService.ExtractZipFolderRecursive(version, "webgis-api", Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version), "webgis-api"));
+            Extract("WebGIS API", "webgis-api", Path.Combine(installationPath, "webgis-api"));
         }
 
         if (deployPortal)
         {
-            Console.WriteLine("Deploy WebGIS Portal:");
-            versionService.ExtractZipFolderRecursive(version, "webgis-portal", Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version), "webgis-portal"));
+            Extract("WebGIS Portal", "webgis-portal", Path.Combine(installationPath, "webgis-portal"));
         }
 
         if (deployCms)
         {
-            Console.WriteLine("Deploy WebGIS CMS:");
-            versionService.ExtractZipFolderRecursive(version, "webgis-cms", Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version), "webgis-cms"));
+            Extract("WebGIS CMS", "webgis-cms", Path.Combine(installationPath, "webgis-cms"));
         }
 
         if (profile == "local" || profile == "local_internal")
         {
-            Console.WriteLine("Deploy WebGIS Scripts:");
-            versionService.ExtractZipFolderRecursive(version, "_scripts", Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version), "_scripts"));
+            Extract("WebGIS Scripts", "_scripts", Path.Combine(installationPath, "_scripts"));
+            Extract("WebGIS Requirements", "_requirements", Path.Combine(installationPath, "_requirements"));
 
-            Console.WriteLine("Deploy WebGIS Scripts:");
-            versionService.ExtractZipFolderRecursive(version, "_requirements", Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version), "_requirements"));
-
-            Console.WriteLine("Copy root files");
-            versionService.ExtractFiles(version, "", Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)));
+            consoleService.RunProgress("Root files",
+                () => versionService.ExtractFiles(version, "", installationPath));
         }
     }
     else
     {
-        consoleService.WriteBlock("Warning: version already deployed");
+        consoleService.Warning("Version already deployed, files are not extracted again");
     }
 
-    Console.WriteLine("Append keys.config");
+    // 8. Keys, overrides, css
+
+    consoleService.Section("Configure");
+
     securityService.CopyKeysConfigTo(Path.Combine(deployVersionModel.RepositoryPath, "security", "keys"));
+    consoleService.Success("Security keys");
 
-    Console.WriteLine("Overrides");
-    if (deployApi)
+    foreach (var (deploy, app) in new[] { (deployApi, "webgis-api"), (deployPortal, "webgis-portal"), (deployCms, "webgis-cms") })
     {
-        versionService.CopyOverrides(profile, "webgis-api", Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)), deployVersionModel);
+        if (deploy)
+        {
+            List<string> overrideFiles = null;
+            consoleService.RunProgress($"Overrides {app}",
+                () => overrideFiles = versionService.CopyOverrides(profile, app, installationPath, deployVersionModel));
+
+            if (overrideFiles?.Count > 0)
+            {
+                consoleService.WriteFileTree(app, overrideFiles);
+            }
+        }
     }
 
-    if (deployPortal)
-    {
-        versionService.CopyOverrides(profile, "webgis-portal", Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)), deployVersionModel);
-    }
-
-    if (deployCms)
-    {
-        versionService.CopyOverrides(profile, "webgis-cms", Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)), deployVersionModel);
-    }
-
-    string portalConfigPath = Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version), "webgis-portal", "_config", "portal.config");
+    string portalConfigPath = Path.Combine(installationPath, "webgis-portal", "_config", "portal.config");
     var company = portalConfigPath.GetXmlConfigValue("company");
 
-    #region Create Admin/Author User
+    cssService.ModifyDefaultCss(profile, installationPath, company);
+    cssService.ModifyPortalCss(profile, installationPath, company);
+    cssService.ModifySiteCss(profile, installationPath);
+    consoleService.Success("Custom CSS", $"({cssService.CreatedFiles} {(cssService.CreatedFiles == 1 ? "file" : "files")})");
 
-    // current author id: 11702178
-    //var subscriberDb = SubscriberDb.Create(@"fs:c:\temp\test-subscriberdb");
-    //subscriberDb.CreateApiSubscriber(new SubscriberDb.Subscriber()
-    //{
-    //    Name = "heinzi",
-    //    Email = "heinzi@no-mail.com",
-    //    Password = "paßW0rd"
-    //});
+    var components = new[] { (deployApi, "API"), (deployPortal, "Portal"), (deployCms, "CMS") }
+        .Where(c => c.Item1)
+        .Select(c => c.Item2);
 
-    #endregion
+    consoleService.WriteResult($"WebGIS {version} deployed", true,
+        ("Profile", profile),
+        ("Components", String.Join(", ", components)),
+        ("Installation", installationPath),
+        ("Repository", deployVersionModel.RepositoryPath),
+        ("Duration", stopwatch.Elapsed.ToString(@"m\:ss") + " min"));
 
-    #region CSS Modify
+    void Extract(string description, string relativeSourcePath, string targetPath)
+        => consoleService.RunProgress(description,
+            () => versionService.ExtractZipFolderRecursive(version, relativeSourcePath, targetPath));
 
-    Console.WriteLine("Create Custom CSS");
-    cssService.ModifyDefaultCss(profile, Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)), company);
-    cssService.ModifyPortalCss(profile, Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)), company);
-    cssService.ModifySiteCss(profile, Path.Combine(deployVersionModel.ProfileTargetInstallationPath(profile, version)));
+#if !INTERNAL
+    async Task<bool> DownloadLatestAsync()
+    {
+        var githubReleaseService = new GitHubReleaseService("e-netze", "webgis");
 
-    #endregion
+        foreach (var url in await githubReleaseService.GetLatestReleaseDownloadUrlsAsync())
+        {
+            var fileName = url.Split('/').Last();
 
-    consoleService.WriteBlock($"Deployment WebGIS {version} succeeded", '#');
+            if (versionService.Exits(fileName))
+            {
+                consoleService.Success($"Latest version {fileName}", "(already downloaded)");
+                continue;
+            }
+
+            try
+            {
+                await consoleService.RunProgressAsync($"Download {fileName}", async () =>
+                {
+                    using var client = new HttpClient();
+                    using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+                    response.EnsureSuccessStatusCode();
+
+                    var total = response.Content.Headers.ContentLength ?? 0;
+                    using var memory = new MemoryStream();
+                    using var stream = await response.Content.ReadAsStreamAsync();
+
+                    var buffer = new byte[81920];
+                    int read;
+                    while ((read = await stream.ReadAsync(buffer)) > 0)
+                    {
+                        memory.Write(buffer, 0, read);
+                        consoleService.Report($"Download {fileName}", (int)(memory.Length / 1024 / 1024), (int)(total / 1024 / 1024));
+                    }
+
+                    await versionService.AppendAsync(fileName, memory.ToArray());
+                }, unit: "MB");
+            }
+            catch (Exception ex)
+            {
+                consoleService.Error($"Exception on downloading file: {ex.Message}");
+                return false;
+            }
+        }
+
+        return true;
+    }
+#endif
 }
 catch (Exception ex)
 {
-    consoleService.WriteBlock($"Error: {ex.Message}", '!');
+    consoleService.WriteBlock($"Error: {ex.Message}", success: false);
 
     return 1;
 }
 
-if (!runAutomated)
+if (!runAutomated && consoleService.IsInteractive)
 {
-    Console.Write("Press ENTER to quit...");
-    Console.ReadLine();
+    consoleService.WaitForEnter();
 }
 
 return 0;

@@ -16,12 +16,19 @@
 		<DefineConstants>INTERNAL;DEBUG_INTERNAL</DefineConstants>
 	</PropertyGroup>	
 	
+	<PropertyGroup>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+		<CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+		<AllowedReferenceRelatedFileExtensions>.xml</AllowedReferenceRelatedFileExtensions>
+	</PropertyGroup>
+
   <ItemGroup>
     <None Remove="usage.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ExCSS" Version="4.3.2" />
+    <PackageReference Include="Spectre.Console" Version="0.57.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,5 +50,11 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <Target Name="CleanPublishSymbols" AfterTargets="Publish" Condition="'$(PublishSingleFile)'=='true'">
+    <ItemGroup>
+      <_PublishedPdb Include="$(PublishDir)*.pdb" />
+    </ItemGroup>
+    <Delete Files="@(_PublishedPdb)" />
+  </Target>
 
 </Project>

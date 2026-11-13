@@ -20,13 +20,16 @@ internal class DeployVersionService
     private readonly string _versionsDirectory;
     private readonly DeployRepositoryService _deployRepositoryService;
     private readonly IOService _ioService;
+    private readonly ConsoleService _console;
 
     public DeployVersionService(DeployRepositoryService repositoryService,
                                 IOService ioService,
+                                ConsoleService console,
                                 bool portable = false)
     {
         _deployRepositoryService = repositoryService;
         _ioService = ioService;
+        _console = console;
 
         ZipPrefix = portable ? PortableZipPrefix : DefaultZipPrefix;
 
@@ -72,7 +75,7 @@ internal class DeployVersionService
     public void ExtractZipFolderRecursive(string version, string relativeSourcePath, string targetPath)
     {
         string path = Path.Combine(_versionsDirectory, $"{ZipFile(version)}");
-        Console.WriteLine($"Extracting files from {path} to {targetPath}");
+        _console.Log($"Extracting files from {path} to {targetPath}");
 
         using (var fileStream = new FileStream(path, FileMode.Open))
         using (ZipArchive zipArchive = new ZipArchive(fileStream, ZipArchiveMode.Read))
@@ -146,12 +149,13 @@ internal class DeployVersionService
         }
     }
 
-    public void CopyOverrides(string profile, string appFolder, string targetPath, DeployVersionModel versionModel)
+    // returns the copied files relative to the app folder
+    public List<string> CopyOverrides(string profile, string appFolder, string targetPath, DeployVersionModel versionModel)
     {
         string sourcePath = Path.Combine(_deployRepositoryService.ProfileDirectory(profile), appFolder, "override");
         targetPath = Path.Combine(targetPath, appFolder);
 
-        _ioService.OverrideFolderRecursive(sourcePath, targetPath, versionModel);
+        return _ioService.OverrideFolderRecursive(sourcePath, targetPath, versionModel);
     }
 
     #endregion

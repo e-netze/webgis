@@ -7,6 +7,13 @@ namespace webgis.deploy.Services;
 
 internal class IOService
 {
+    private readonly ConsoleService _console;
+
+    public IOService(ConsoleService console)
+    {
+        _console = console;
+    }
+
     public bool CopyIfNotExists(string sourceFile, string targetFile)
     {
         var sourceFileInfo = new FileInfo(sourceFile);
@@ -71,44 +78,43 @@ internal class IOService
             Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
         }
 
-        foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+        var files = Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories);
+
+        foreach (string newPath in files)
         {
             counter++;
 
-            ClearCurrentConsoleLine();
-            var message = $"Copy {newPath}";
-            Console.Write(message.Substring(0, Math.Min(message.Length, Console.WindowWidth)));
+            _console.Report($"Copy {newPath}", counter, files.Length);
 
             File.Copy(newPath, newPath.Replace(sourcePath, targetPath), true);
         }
 
-        ClearCurrentConsoleLine();
-        Console.WriteLine($"...succeeded {counter} items created");
+        _console.Log($"...succeeded {counter} items created");
     }
 
     public void CopyFiles(string sourcePath, string targetPath, string filter = "*.*")
     {
         int counter = 0;
 
-        foreach (var fi in new DirectoryInfo(sourcePath).GetFiles(filter))
+        var files = new DirectoryInfo(sourcePath).GetFiles(filter);
+
+        foreach (var fi in files)
         {
             counter++;
-            ClearCurrentConsoleLine();
-            var message = $"Copy {fi.FullName}";
-            Console.Write(message.Substring(0, Math.Min(message.Length, Console.WindowWidth)));
+            _console.Report($"Copy {fi.FullName}", counter, files.Length);
 
             fi.CopyTo(Path.Combine(targetPath, fi.Name));
         }
 
-        ClearCurrentConsoleLine();
-        Console.WriteLine($"...succeeded {counter} items created");
+        _console.Log($"...succeeded {counter} items created");
     }
 
-    public void OverrideFolderRecursive(string sourcePath,
+    public List<string> OverrideFolderRecursive(string sourcePath,
                                         string targetPath,
                                         DeployVersionModel versionModel)
     {
         int counter = 0;
+        var copiedFiles = new List<string>();
         if (!Directory.Exists(targetPath))
         {
             Directory.CreateDirectory(targetPath);
@@ -121,12 +127,13 @@ internal class IOService
             Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
         }
 
-        foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+        var files = Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories);
+
+        foreach (string newPath in files)
         {
             counter++;
 
-            var message = $"Copy {newPath}";
-            Console.WriteLine(message);
+            _console.Report($"Copy {newPath}", counter, files.Length);
 
             FileInfo soureFileInfo = new FileInfo(newPath);
 
@@ -146,9 +153,13 @@ internal class IOService
             {
                 File.Copy(newPath, newPath.Replace(sourcePath, targetPath), true);
             }
+
+            copiedFiles.Add(Path.GetRelativePath(sourcePath, newPath));
         }
 
-        Console.WriteLine($"...succeeded {counter} items created/overridden");
+        _console.Log($"...succeeded {counter} items created/overridden");
+
+        return copiedFiles;
     }
 
     public void ExtractZipFolderRecursive(ZipArchive zipArchive, string relativeSourcePath, string targetPath)
@@ -186,16 +197,13 @@ internal class IOService
                     fi.Directory?.Create();
                 }
 
-                ClearCurrentConsoleLine();
-                var message = $"{(int)(counter * 100.0 / entriesLength)}% {counter}/{entriesLength} Extract {entry.FullName}";
-                Console.Write(message.Substring(0, Math.Min(message.Length, Console.WindowWidth)));
+                _console.Report($"Extract {entry.FullName}", counter, entriesLength);
 
                 entry.ExtractToFile($"{targetPath}/{entry.FullName.Substring(relativeSourcePath.Length)}");
             }
         }
 
-        ClearCurrentConsoleLine();
-        Console.WriteLine($"...succeeded {counter} items created");
+        _console.Log($"...succeeded {counter} items created");
     }
 
     public void ExtractFiles(ZipArchive zipArchive, string relativeSourcePath, string targetPath)
@@ -213,32 +221,20 @@ internal class IOService
             targetDirectory.Create();
         }
 
-        foreach (var entry in zipArchive.Entries
+        var entries = zipArchive.Entries
             .Where(e => e.Length > 0 && e.FullName.StartsWith($"{relativeSourcePath}"))
-            .Where(e => e.FullName == $"{relativeSourcePath}{e.Name}"))
+            .Where(e => e.FullName == $"{relativeSourcePath}{e.Name}")
+            .ToArray();
+
+        foreach (var entry in entries)
         {
             counter++;
 
-            ClearCurrentConsoleLine();
-            var message = $"Extract {entry.FullName}";
-            Console.Write(message.Substring(0, Math.Min(message.Length, Console.WindowWidth)));
+            _console.Report($"Extract {entry.FullName}", counter, entries.Length);
 
             entry.ExtractToFile(Path.Combine(targetDirectory.FullName, entry.Name));
         }
 
-        ClearCurrentConsoleLine();
-        Console.WriteLine($"...succeeded {counter} items created");
+        _console.Log($"...succeeded {counter} items created");
     }
-
-    #region Helper
-
-    private void ClearCurrentConsoleLine()
-    {
-        int currentLineCursor = Console.CursorTop;
-        Console.SetCursorPosition(0, Console.CursorTop);
-        Console.Write(new string(' ', Console.WindowWidth));
-        Console.SetCursorPosition(0, currentLineCursor);
-    }
-
-    #endregion
 }
