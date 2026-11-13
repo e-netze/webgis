@@ -88,6 +88,15 @@
             </span>
         </div>
 
+        <h3>Sicherheit</h3>
+        <div class="webgis-api-tile" onclick="document.location='@Url.Action("index", "securityreport", new { token = TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10) })'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Security-Bericht</span>
+            <span class="webgis-api-tile-description">
+                Sicherheitsrelevante Einstellungen prüfen
+            </span>
+        </div>
+
         <h3>API Cache</h3>
         <div class="webgis-api-tile" onclick="document.location='@Url.Action("clear", "cache", new { token = TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10) })'">
             <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />

@@ -17,6 +17,7 @@ using Api.Core.AppCode.Services.Logging;
 using Api.Core.AppCode.Services.Logging.Db;
 using Api.Core.AppCode.Services.Ogc;
 using Api.Core.AppCode.Services.Rest;
+using Api.Core.AppCode.Services.Security;
 using Api.Core.Models.DataLinq;
 
 using E.DataLinq.Core;
@@ -149,6 +150,9 @@ static public class ServiceCollectionExtensions
         services.AddSingleton<SubscriberSecurityStampCache>();
         services.AddTransient<SubscriberAccountSecurityService>();
         services.AddHostedService<SubscriberMfaStartupCheckService>();
+        services.AddSingleton<SecurityReportService>();
+        services.AddTransient<SubscriberSecurityOverviewService>();
+        services.AddHostedService<SecurityReportStartupService>();
         services.AddSingleton<SubscriberLoginThrottleService>();
         services.AddSingleton<ILoginThrottleStore>(serviceProvider =>
         {

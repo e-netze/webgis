@@ -29,6 +29,8 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - The default password `webgisauthor` is blocked; subscribers logging in with it must set a new password.
   [Docs](https://docs.webgiscloud.com/en/webgis/config/hardening/index.html#hardening-default-passwords)
 - Redesigned subscriber login and account pages.
+- New security report page `/SecurityReport` (tile *Security-Bericht* in the subscriber admin) that rates the security-relevant `api.config` keys for internet and intranet installations and lists all subscribers with their two-factor status. It is protected by the secure-endpoint credentials (`security:secure-endpoint-url-password` or `secure-endpoint-basicauth-*`); without them it is only reachable directly on the server.
+  [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-report)
 
 ### Fixed
 
