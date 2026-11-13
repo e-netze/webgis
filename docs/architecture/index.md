@@ -31,3 +31,4 @@ which projects and classes are involved, flow diagrams, design decisions and pit
 | [Tool Events](tool-events.md) | API / Viewer | `/rest/toolevent` request: client parameter collection, JSON `eventBody`, server-side parsing into `ApiToolEventArguments`. |
 | [UI Builder](ui-builder.md) | API / Viewer | Server UI elements to viewer DOM: webgis_uibuilder, builder plugin registry, characterization tests. |
 | [User Renderer & User Labeling](user-renderer-labeling.md) | API / GeoServices / Viewer | User-defined layer presentation and labeling from the TOC via AGS dynamicLayers: model, validation, translators, editors, badges. |
+| [Security Report](security-report.md) | API | Admin page rating security-relevant `api.config` keys for internet/intranet; access control, rules. |

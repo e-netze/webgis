@@ -84,6 +84,57 @@
         <div class="webgis-page-tiles">
             @{ Tile(Url.Action("clear", "cache", new { token = AdminToken() }), "admin-100.png", "cache-clear-title", "api-cache-clear-description"); }
             @{ Tile(Url.Action("collect", "cache", new { token = AdminToken() }), "admin-100.png", "gc-title", "gc-description"); }
+        <h3>Sicherheit</h3>
+        <div class="webgis-api-tile" onclick="document.location='@Url.Action("index", "securityreport", new { token = TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10) })'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Security-Bericht</span>
+            <span class="webgis-api-tile-description">
+                Sicherheitsrelevante Einstellungen prüfen
+            </span>
+        </div>
+
+        <h3>API Cache</h3>
+        <div class="webgis-api-tile" onclick="document.location='@Url.Action("clear", "cache", new { token = TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10) })'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Cache Clear</span>
+            <span class="webgis-api-tile-description">
+                Clear the API cache
+            </span>
+        </div>
+
+        <div class="webgis-api-tile" onclick="document.location='@Url.Action("collect", "cache", new { token = TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10) })'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Collect Garbage</span>
+            <span class="webgis-api-tile-description">
+                Force Gargabe Collector
+            </span>
+        </div>
+
+        <h3>Portal Cache</h3>
+        <div class="webgis-api-tile" onclick="document.location='@($"{UrlHelper.PortalUrl()}/cache/clear?token={TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10)}")'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Cache Clear</span>
+            <span class="webgis-api-tile-description">
+                Clear the Portal/User cache
+            </span>
+        </div>
+
+        <div class="webgis-api-tile" onclick="document.location='@($"{UrlHelper.PortalUrl()}/cache/collect?token={TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10)}")'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">Collect Garbage</span>
+            <span class="webgis-api-tile-description">
+                Force Gargabe Collector
+            </span>
+        </div>
+
+        <h3>Portal Diagnostics...</h3> 
+
+        <div class="webgis-api-tile" onclick="document.location='@($"{UrlHelper.PortalUrl()}/cache/list?token={TokenService.GenerateToken(SecurityOptions.Value.EndpointAuthorizationBearerUsername, 10)}")'">
+            <img class="webgis-api-tile-image" src="~/content/api/img/admin-100.png" />
+            <span class="webgis-api-tile-title">List Usercache</span>
+            <span class="webgis-api-tile-description">
+                List users in user cache
+            </span>
         </div>
 
         <h3 class="webgis-page-section-title">@L["pages.subscriber.section-portal-cache"]</h3>

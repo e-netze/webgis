@@ -55,6 +55,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   show-password toggle, caps lock hint, password confirmation check).
   - New `wwwroot/content/subscriber-auth.css`, `wwwroot/scripts/api/subscriber-auth.js` and partial
     `_NewPasswordFields.cshtml`; `_Layout.cshtml` got an optional `styles` section.
+- Security report page `/SecurityReport` (admin tile *Security-Bericht* in the subscriber admin): rates the
+  security-relevant `api.config` keys (value, default, category, risk) for internet and intranet installations side by
+  side and lists all subscribers with their 2FA status. UI text is German only (localization follows in v9).
+  - Own endpoint, independent of the subscriber login: `[EndpointAuthorization]` (url password, Basic, bearer token),
+    fail-closed: without configured credentials only direct local requests (no proxy headers) are allowed.
+  - Rules in `SecurityReportRules` (kept in sync with the annex table manually), `SecurityReportService`,
+    `SubscriberSecurityOverviewService`; `SecurityReportStartupService` logs high/medium findings under
+    `WebGIS.Security.Audit` at startup. Secrets are only shown as set / not set.
+  [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-report)
+  [Architecture](docs/architecture/security-report.md)
 
 ### Fixed
 
