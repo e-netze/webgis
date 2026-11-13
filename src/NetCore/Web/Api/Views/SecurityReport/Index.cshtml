@@ -1,10 +1,13 @@
 ﻿@using Api.Core.AppCode.Services.Security
 @model SecurityReport
+@inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
 
 @{
-    ViewBag.Title = "Security-Bericht";
+    var L = LocalizerFactory.Create(typeof(object));
+    string T(string key) => L[$"pages.security-report.{key}"].Value;
+    ViewBag.Title = T("title");
     Layout = "~/Views/Shared/_Layout.cshtml";
-    const string docsBase = "https://docs.webgiscloud.com/de/webgis/annex/security.html";
+    string docsBase = T("docs-url");
 
     string Css(SecurityStatus s) => s.ToString().ToLower();
     string Icon(SecurityStatus s) => s switch
@@ -17,183 +20,176 @@
     };
     string StatusText(SecurityStatus s) => s switch
     {
-        SecurityStatus.Ok => "OK",
-        SecurityStatus.Warning => "Abweichung (mittel)",
-        SecurityStatus.Critical => "Abweichung (hoch)",
-        SecurityStatus.Hint => "Hinweis",
-        _ => "Nicht relevant"
+        SecurityStatus.Ok => T("status-ok"),
+        SecurityStatus.Warning => T("status-warning"),
+        SecurityStatus.Critical => T("status-critical"),
+        SecurityStatus.Hint => T("status-hint"),
+        _ => T("status-na")
     };
     string CategoryText(SecurityCategory c) => c switch
     {
-        SecurityCategory.CompatibilityOptOut => "Kompatibilitäts-Opt-out",
-        SecurityCategory.FeatureEnablement => "Feature-Freischaltung",
-        _ => "Feinjustierung"
+        SecurityCategory.CompatibilityOptOut => T("category-optout"),
+        SecurityCategory.FeatureEnablement => T("category-feature"),
+        _ => T("category-tuning")
     };
-    string RiskText(object r) => r.ToString() switch { "High" => "Hoch", "Medium" => "Mittel", "Low" => "Niedrig", _ => "Info" };
+    string RiskText(object r) => r.ToString() switch { "High" => T("risk-high"), "Medium" => T("risk-medium"), "Low" => T("risk-low"), _ => T("risk-info") };
     var statuses = new[] { SecurityStatus.Critical, SecurityStatus.Warning, SecurityStatus.Hint, SecurityStatus.Ok, SecurityStatus.NotApplicable };
 }
 
-<style>
-    .sr { padding: 10px 16px; }
-    .sr-badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 10px 2px 8px; border-radius: 12px; font-size: .85em; font-weight: 600; white-space: nowrap; border: 1px solid transparent; }
-    .sr-ok { background: #e3f5e8; color: #1b6b30; border-color: #a9dcb8; }
-    .sr-warning { background: #fff3cd; color: #8a6300; border-color: #f0d98a; }
-    .sr-critical { background: #fde2df; color: #a3211a; border-color: #f2aaa5; }
-    .sr-hint { background: #e8ecf1; color: #3d4b5c; border-color: #c5cdd8; font-style: italic; }
-    .sr-notapplicable { background: #f4f4f4; color: #8a8a8a; border-color: #dcdcdc; }
-    .sr-cards { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0 20px; }
-    .sr-card { border: 1px solid #ddd; border-radius: 8px; padding: 10px 14px; min-width: 260px; }
-    .sr-card h4 { margin: 0 0 8px; }
-    .sr-card .sr-badge { margin: 0 6px 6px 0; }
-    .sr-table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: .92em; }
-    .sr-table th { position: sticky; top: 0; background: #f6f7f9; text-align: left; padding: 8px 10px; border-bottom: 2px solid #c9ced6; }
-    .sr-table td { padding: 7px 10px; border-bottom: 1px solid #eceff2; vertical-align: middle; }
-    .sr-table tbody tr:hover { background: #f3f8ff; }
-    .sr-pill { display: inline-block; padding: 1px 8px; border-radius: 4px; background: #eef0f3; font-size: .85em; }
-    .sr-risk-high { background: #fde2df; color: #a3211a; font-weight: 600; }
-    .sr-risk-medium { background: #fff3cd; color: #8a6300; }
-    .sr-filter { display: block; margin: 8px 0 12px; }
-</style>
+<div class="webgis-page wide security-report">
+    <div class="webgis-page-page-title">
+        <h2>@T("title")</h2>
+    </div>
 
-<div class="sr">
-    <h2>Security-Bericht</h2>
-    <p>
-        Zeigt die sicherheitsrelevanten Einstellungen der api.config, ihr Risiko und eine Bewertung für Internet- und Intranet-Installationen.
-        Die Empfehlungen entsprechen der Tabelle "Übersicht aller sicherheitsrelevanten Schlüssel" im
-        <a href="@($"{docsBase}#annex-security-keys")" target="_blank" rel="noopener">Security-Anhang</a> der Admin-Dokumentation.
-        Geheimnisse und Connection-Strings werden nur als gesetzt / nicht gesetzt angezeigt.
-    </p>
+    <div class="webgis-page-alert info">
+        <span>
+            @T("intro")
+            <a href="@($"{docsBase}#annex-security-keys")" target="_blank" rel="noopener">@T("docs-link")</a>
+        </span>
+    </div>
 
     @if (!Model.LoginEnabled)
     {
-        <p role="status">Der Subscriber-Login ist deaktiviert (allow-subscriber-login). Einstellungen, die nur den Login betreffen, werden als nicht relevant angezeigt.</p>
+        <div class="webgis-page-alert info" role="status">@T("login-disabled")</div>
     }
     @if (!Model.HasEndpointCredentials)
     {
-        <p role="alert" style="color:#b35c00">Es sind keine Secure-Endpoint-Zugangsdaten konfiguriert (security:secure-endpoint-url-password oder security:secure-endpoint-basicauth-*). Diese Seite ist daher nur direkt am Server (localhost) erreichbar.</p>
+        <div class="webgis-page-alert warning" role="alert">@T("no-credentials")</div>
     }
 
     <div class="sr-cards">
         @foreach (var internet in new[] { true, false })
         {
-            <div class="sr-card">
-                <h4>@(internet ? "Internet" : "Intranet")</h4>
-                @foreach (var s in statuses)
-                {
-                    var n = Model.Count(internet, s);
-                    if (n > 0)
+            <div class="webgis-page-card sr-card">
+                <div class="webgis-page-card-body">
+                    <h3>@T(internet ? "internet" : "intranet")</h3>
+                    @foreach (var s in statuses)
                     {
-                        <span class="sr-badge sr-@Css(s)">@Icon(s) @n &nbsp;@StatusText(s)</span>
+                        var n = Model.Count(internet, s);
+                        if (n > 0)
+                        {
+                            <span class="sr-badge sr-@Css(s)">@Icon(s) @n &nbsp;@StatusText(s)</span>
+                        }
                     }
-                }
+                </div>
             </div>
         }
     </div>
 
-    <label class="sr-filter">
-        <input type="checkbox" id="sr-only-findings" /> Nur Abweichungen anzeigen
-    </label>
-
-    <table class="sr-table">
-        <thead>
-            <tr>
-                <th>Schlüssel</th>
-                <th>Aktueller Wert</th>
-                <th>Standard</th>
-                <th>Kategorie</th>
-                <th>Risiko</th>
-                <th>Internet</th>
-                <th>Intranet</th>
-                <th>Doku</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var row in Model.Rows)
-            {
-                var rule = row.Rule;
-                var finding = row.Internet is SecurityStatus.Critical or SecurityStatus.Warning
-                              || row.Intranet is SecurityStatus.Critical or SecurityStatus.Warning;
-                <tr data-finding="@(finding ? "1" : "0")">
-                    <td><code>@rule.Key</code></td>
-                    <td>
-                        @if (rule.Secret)
-                        {
-                            @(row.IsSet ? "gesetzt" : "nicht gesetzt")
-                        }
-                        else if (row.IsSet)
-                        {
-                            @row.Value
-                        }
-                        else
-                        {
-                            <i>Standard</i>
-                        }
-                    </td>
-                    <td>@rule.DefaultValue</td>
-                    <td><span class="sr-pill">@CategoryText(rule.Category)</span></td>
-                    <td><span class="sr-pill sr-risk-@rule.Risk.ToString().ToLower()">@RiskText(rule.Risk)</span></td>
-                    <td><span class="sr-badge sr-@Css(row.Internet)">@Icon(row.Internet) @StatusText(row.Internet)</span></td>
-                    <td><span class="sr-badge sr-@Css(row.Intranet)">@Icon(row.Intranet) @StatusText(row.Intranet)</span></td>
-                    <td><a href="@($"{docsBase}#{rule.AnnexAnchor}")" target="_blank" rel="noopener">Anhang</a></td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="webgis-page-card">
+        <div class="webgis-page-card-header webgis-page-header-row">
+            <h3>@T("settings")</h3>
+            <label class="sr-filter">
+                <input type="checkbox" id="sr-only-findings" /> @T("only-findings")
+            </label>
+        </div>
+        <div class="sr-scroll">
+            <table class="webgis-page-table sr-table">
+                <thead>
+                    <tr>
+                        <th>@T("col-key")</th>
+                        <th>@T("col-value")</th>
+                        <th>@T("col-default")</th>
+                        <th>@T("col-category")</th>
+                        <th>@T("col-risk")</th>
+                        <th>@T("internet")</th>
+                        <th>@T("intranet")</th>
+                        <th>@T("col-docs")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Rows)
+                    {
+                        var rule = row.Rule;
+                        var finding = row.Internet is SecurityStatus.Critical or SecurityStatus.Warning
+                                      || row.Intranet is SecurityStatus.Critical or SecurityStatus.Warning;
+                        <tr data-finding="@(finding ? "1" : "0")">
+                            <td><code>@rule.Key</code></td>
+                            <td>
+                                @if (rule.Secret)
+                                {
+                                    @T(row.IsSet ? "set" : "not-set")
+                                }
+                                else if (row.IsSet)
+                                {
+                                    @row.Value
+                                }
+                                else
+                                {
+                                    <i>@T("default")</i>
+                                }
+                            </td>
+                            <td>@rule.DefaultValue</td>
+                            <td><span class="sr-pill">@CategoryText(rule.Category)</span></td>
+                            <td><span class="sr-pill sr-risk-@rule.Risk.ToString().ToLower()">@RiskText(rule.Risk)</span></td>
+                            <td><span class="sr-badge sr-@Css(row.Internet)">@Icon(row.Internet) @StatusText(row.Internet)</span></td>
+                            <td><span class="sr-badge sr-@Css(row.Intranet)">@Icon(row.Intranet) @StatusText(row.Intranet)</span></td>
+                            <td><a href="@($"{docsBase}#{rule.AnnexAnchor}")" target="_blank" rel="noopener">@T("annex")</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     @if (Model.SubscribersError)
     {
-        <h3>Subscriber</h3>
-        <p role="alert" style="color:#b35c00">Die Subscriber-Liste konnte nicht gelesen werden (siehe Log).</p>
+        <h3 class="webgis-page-section-title">@T("subscribers")</h3>
+        <div class="webgis-page-alert warning" role="alert">@T("subscribers-error")</div>
     }
     else if (Model.Subscribers != null)
     {
         var withMfa = Model.Subscribers.Count(s => s.Mfa == SubscriberMfaState.Enabled);
-        <h3>Subscriber</h3>
-        <p>
-            @Model.Subscribers.Count Subscriber, davon @withMfa mit Zwei-Faktor-Authentifizierung (2FA).
-            Es werden nur Benutzernamen angezeigt.
-        </p>
-        <table class="sr-table">
-            <thead>
-                <tr>
-                    <th>Benutzer</th>
-                    <th>Rolle</th>
-                    <th>2FA</th>
-                    <th>2FA erforderlich</th>
-                    <th>Verbleibende Recovery-Codes</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var s in Model.Subscribers)
-                {
-                    var mfaCss = s.Mfa switch
-                    {
-                        SubscriberMfaState.Enabled => "ok",
-                        SubscriberMfaState.NotEnabled => s.IsAdmin ? "critical" : "warning",
-                        _ => "notapplicable"
-                    };
-                    var mfaText = s.Mfa switch
-                    {
-                        SubscriberMfaState.Enabled => "✔ Aktiv",
-                        SubscriberMfaState.NotEnabled => "✖ Nicht aktiv",
-                        _ => "– Nicht verfügbar"
-                    };
-                    <tr>
-                        <td>@s.Name</td>
-                        <td>@(s.IsAdmin ? "Administrator" : "Subscriber")</td>
-                        <td><span class="sr-badge sr-@mfaCss">@mfaText</span></td>
-                        <td>@(s.MfaRequired ? "ja" : "nein")</td>
-                        <td>@(s.Mfa == SubscriberMfaState.Enabled ? s.RecoveryCodesLeft.ToString() : "")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <div class="webgis-page-card">
+            <div class="webgis-page-card-header">
+                <h3>@T("subscribers")</h3>
+                <div class="webgis-page-subtitle">@T("subscribers-summary").Replace("{0}", Model.Subscribers.Count.ToString()).Replace("{1}", withMfa.ToString())</div>
+            </div>
+            <div class="sr-scroll">
+                <table class="webgis-page-table sr-table">
+                    <thead>
+                        <tr>
+                            <th>@T("col-user")</th>
+                            <th>@T("col-role")</th>
+                            <th>@T("col-mfa")</th>
+                            <th>@T("col-mfa-required")</th>
+                            <th>@T("col-recovery")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model.Subscribers)
+                        {
+                            var mfaCss = s.Mfa switch
+                            {
+                                SubscriberMfaState.Enabled => "ok",
+                                SubscriberMfaState.NotEnabled => s.IsAdmin ? "critical" : "warning",
+                                _ => "notapplicable"
+                            };
+                            var mfaText = s.Mfa switch
+                            {
+                                SubscriberMfaState.Enabled => "✔ " + T("mfa-enabled"),
+                                SubscriberMfaState.NotEnabled => "✖ " + T("mfa-disabled"),
+                                _ => "– " + T("mfa-na")
+                            };
+                            <tr>
+                                <td>@s.Name</td>
+                                <td>@T(s.IsAdmin ? "role-admin" : "role-subscriber")</td>
+                                <td><span class="sr-badge sr-@mfaCss">@mfaText</span></td>
+                                <td>@T(s.MfaRequired ? "yes" : "no")</td>
+                                <td>@(s.Mfa == SubscriberMfaState.Enabled ? s.RecoveryCodesLeft.ToString() : "")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     }
+</div>
 
 <script>
     document.getElementById('sr-only-findings').addEventListener('change', function () {
         var only = this.checked;
-        document.querySelectorAll('.sr-table tbody tr').forEach(function (tr) {
+        document.querySelectorAll('.sr-table tbody tr[data-finding]').forEach(function (tr) {
             tr.style.display = (only && tr.dataset.finding !== '1') ? 'none' : '';
         });
     });

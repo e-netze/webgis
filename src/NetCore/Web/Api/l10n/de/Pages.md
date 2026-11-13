@@ -65,6 +65,9 @@
 ## setup-description: Datenbank(en) einrichten oder Status prüfen
 ## migrate-title: Migration
 ## migrate-description: Datenbank(en) migrieren
+## section-security: Sicherheit
+## security-report-title: Security-Bericht
+## security-report-description: Sicherheitsrelevante Einstellungen prüfen
 ## section-api-cache: API-Cache
 ## cache-clear-title: Cache leeren
 ## api-cache-clear-description: Den API-Cache leeren
@@ -153,3 +156,52 @@
 ## save-password: Passwort ändern
 ## mfa-reset: Zwei-Faktor-Authentifizierung zurücksetzen
 ## mfa-reset-confirm: Zwei-Faktor-Authentifizierung für diesen Subscriber zurücksetzen? Alle Sitzungen des Subscribers werden beendet.
+
+# security-report: Security-Bericht
+## title: Security-Bericht
+## intro: Zeigt die sicherheitsrelevanten Einstellungen der api.config, ihr Risiko und eine Bewertung für Internet- und Intranet-Installationen. Die Empfehlungen entsprechen der Tabelle "Übersicht aller sicherheitsrelevanten Schlüssel" im Security-Anhang der Admin-Dokumentation. Geheimnisse und Connection-Strings werden nur als gesetzt / nicht gesetzt angezeigt.
+## docs-link: Security-Anhang öffnen
+## docs-url: https://docs.webgiscloud.com/de/webgis/annex/security.html
+## login-disabled: Der Subscriber-Login ist deaktiviert (allow-subscriber-login). Einstellungen, die nur den Login betreffen, werden als nicht relevant angezeigt.
+## no-credentials: Es sind keine Secure-Endpoint-Zugangsdaten konfiguriert (security:secure-endpoint-url-password oder security:secure-endpoint-basicauth-*). Diese Seite ist daher nur direkt am Server (localhost) erreichbar.
+## internet: Internet
+## intranet: Intranet
+## status-ok: OK
+## status-warning: Abweichung (mittel)
+## status-critical: Abweichung (hoch)
+## status-hint: Hinweis
+## status-na: Nicht relevant
+## category-optout: Kompatibilitäts-Opt-out
+## category-feature: Feature-Freischaltung
+## category-tuning: Feinjustierung
+## risk-high: Hoch
+## risk-medium: Mittel
+## risk-low: Niedrig
+## risk-info: Info
+## only-findings: Nur Abweichungen anzeigen
+## settings: Einstellungen
+## col-key: Schlüssel
+## col-value: Aktueller Wert
+## col-default: Standard
+## col-category: Kategorie
+## col-risk: Risiko
+## col-docs: Doku
+## set: gesetzt
+## not-set: nicht gesetzt
+## default: Standard
+## annex: Anhang
+## subscribers: Subscriber
+## subscribers-error: Die Subscriber-Liste konnte nicht gelesen werden (siehe Log).
+## subscribers-summary: {0} Subscriber, davon {1} mit Zwei-Faktor-Authentifizierung (2FA). Es werden nur Benutzernamen angezeigt.
+## col-user: Benutzer
+## col-role: Rolle
+## col-mfa: 2FA
+## col-mfa-required: 2FA erforderlich
+## col-recovery: Verbleibende Recovery-Codes
+## role-admin: Administrator
+## role-subscriber: Subscriber
+## mfa-enabled: Aktiv
+## mfa-disabled: Nicht aktiv
+## mfa-na: Nicht verfügbar
+## yes: ja
+## no: nein

@@ -542,6 +542,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * Modern sidebar, back button and footer; REST directory pages (`rest-pages.css`) adopt the style.
   * CMS (login, start tiles, sidebar) and Portal (login, portal page, MapBuilder, AppBuilder)
     restyled via CSS only, without functional changes.
+  * Security report page (`/securityreport`) adopts the card style and is localized (DE/EN);
+    its admin tile is now localized as well.
 
 ### Fixed
 

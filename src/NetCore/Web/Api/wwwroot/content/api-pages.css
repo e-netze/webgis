@@ -796,3 +796,78 @@ body .webportal-layout-footer {
     body .webportal-layout-footer strong {
         font-weight: 600;
     }
+/* security report (Views/SecurityReport) */
+.webgis-page.wide {
+    max-width: none;
+}
+
+.security-report .sr-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+    .security-report .sr-cards .sr-card {
+        flex: 1 1 260px;
+    }
+
+    .security-report .sr-card h3 {
+        margin: 0 0 10px 0;
+    }
+
+    .security-report .sr-card .sr-badge {
+        margin: 0 6px 6px 0;
+    }
+
+.security-report .sr-scroll {
+    overflow-x: auto;
+}
+
+.security-report .sr-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .9em;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.security-report .sr-table {
+    font-size: .92em;
+}
+
+    .security-report .sr-table code {
+        font-size: .95em;
+        color: #263238;
+        white-space: nowrap;
+    }
+
+.security-report .sr-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: .85em;
+    font-weight: 600;
+    white-space: nowrap;
+    border: 1px solid transparent;
+}
+
+.security-report .sr-ok { background: #edf7ed; color: #1e4620; border-color: #b7dfb9; }
+.security-report .sr-warning { background: #fff4e5; color: #663c00; border-color: #f5d29a; }
+.security-report .sr-critical { background: #fdecea; color: #7f1d1d; border-color: #f2aaa5; }
+.security-report .sr-hint { background: #eef4fb; color: #1c3d5a; border-color: #c3d8ef; }
+.security-report .sr-notapplicable { background: var(--webgis-page-subtle); color: var(--webgis-page-muted); border-color: var(--webgis-page-border); }
+
+.security-report .sr-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--webgis-page-subtle);
+    font-size: .85em;
+    white-space: nowrap;
+}
+
+    .security-report .sr-pill.sr-risk-high { background: #fdecea; color: #7f1d1d; font-weight: 600; }
+    .security-report .sr-pill.sr-risk-medium { background: #fff4e5; color: #663c00; }

@@ -65,6 +65,9 @@
 ## setup-description: Set up database(s) or check their state
 ## migrate-title: Migration
 ## migrate-description: Migrate database(s)
+## section-security: Security
+## security-report-title: Security report
+## security-report-description: Review security-relevant settings
 ## section-api-cache: API cache
 ## cache-clear-title: Clear cache
 ## api-cache-clear-description: Clear the API cache
@@ -153,3 +156,52 @@
 ## save-password: Change password
 ## mfa-reset: Reset two-factor authentication
 ## mfa-reset-confirm: Reset two-factor authentication for this subscriber? All sessions of the subscriber will be terminated.
+
+# security-report: Security report
+## title: Security report
+## intro: Shows the security-relevant settings of the api.config, their risk and an assessment for internet and intranet installations. The recommendations correspond to the table "Overview of all security-relevant keys" in the security annex of the admin documentation. Secrets and connection strings are only shown as set / not set.
+## docs-link: Open security annex
+## docs-url: https://docs.webgiscloud.com/en/webgis/annex/security.html
+## login-disabled: The subscriber login is disabled (allow-subscriber-login). Settings that only affect the login are shown as not relevant.
+## no-credentials: No secure endpoint credentials are configured (security:secure-endpoint-url-password or security:secure-endpoint-basicauth-*). This page is therefore only reachable directly on the server (localhost).
+## internet: Internet
+## intranet: Intranet
+## status-ok: OK
+## status-warning: Deviation (medium)
+## status-critical: Deviation (high)
+## status-hint: Hint
+## status-na: Not relevant
+## category-optout: Compatibility opt-out
+## category-feature: Feature enablement
+## category-tuning: Fine tuning
+## risk-high: High
+## risk-medium: Medium
+## risk-low: Low
+## risk-info: Info
+## only-findings: Show deviations only
+## settings: Settings
+## col-key: Key
+## col-value: Current value
+## col-default: Default
+## col-category: Category
+## col-risk: Risk
+## col-docs: Docs
+## set: set
+## not-set: not set
+## default: Default
+## annex: Annex
+## subscribers: Subscribers
+## subscribers-error: The subscriber list could not be read (see log).
+## subscribers-summary: {0} subscribers, {1} of them with two-factor authentication (2FA). Only user names are shown.
+## col-user: User
+## col-role: Role
+## col-mfa: 2FA
+## col-mfa-required: 2FA required
+## col-recovery: Remaining recovery codes
+## role-admin: Administrator
+## role-subscriber: Subscriber
+## mfa-enabled: Enabled
+## mfa-disabled: Not enabled
+## mfa-na: Not available
+## yes: yes
+## no: no
