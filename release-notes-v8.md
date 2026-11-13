@@ -34,6 +34,9 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 
 ### Fixed
 
+- Secured ArcGIS Server services (e.g. MapServer WMTS basemaps) with stored credentials work again with ArcGIS Server 12.1.
+  [Issue #533](https://github.com/e-netze/webgis-community/issues/533)
+
 ## 8.26.4501
 
 ### Upgrade notes

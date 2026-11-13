@@ -12,6 +12,10 @@
   -->
 	
 	<ItemGroup>
+    <InternalsVisibleTo Include="E.Standard.WebMapping.GeoServices.Tests" />
+  </ItemGroup>
+
+	<ItemGroup>
     <ProjectReference Include="..\E.Standard.ArcXml\E.Standard.ArcXml.csproj" />
     <ProjectReference Include="..\E.Standard.Converters\E.Standard.Converters.csproj" />
     <ProjectReference Include="..\E.Standard.GeoJson\E.Standard.GeoJson.csproj" />

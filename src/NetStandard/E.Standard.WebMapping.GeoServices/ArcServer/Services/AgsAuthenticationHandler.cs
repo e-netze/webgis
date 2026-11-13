@@ -51,7 +51,7 @@ internal class AgsAuthenticationHandler
                 string ret = String.Empty;
                 try
                 {
-                    ret = await _httpService.GetStringAsync(requestUrl.AddAgsToken(token),
+                    ret = await _httpService.GetStringAsync(requestUrl.AddAgsFormatJsonIfMissing().AddAgsToken(token),
                         new RequestAuthorization() { Credentials = mapService.HttpCredentials },
                         timeOutSeconds: mapService.Timeout.ToTimeoutSecondOrDefault());
                 }
@@ -106,7 +106,7 @@ internal class AgsAuthenticationHandler
                 byte[] data;
                 try
                 {
-                    data = await _httpService.GetDataAsync(requestUrl.AddAgsToken(token),
+                    data = await _httpService.GetDataAsync(requestUrl.AddAgsFormatJsonIfMissing().AddAgsToken(token),
                         new RequestAuthorization() { Credentials = mapService.HttpCredentials },
                         timeOutSeconds: mapService.Timeout.ToTimeoutSecondOrDefault());
                 }
@@ -140,6 +140,8 @@ internal class AgsAuthenticationHandler
                 string requestUrl,
                 string postBodyData)
     {
+        requestUrl = requestUrl.AddAgsFormatJsonIfMissing(postBodyData);
+
         int i = 0;
 
         while (true)
@@ -211,6 +213,8 @@ internal class AgsAuthenticationHandler
                 string requestUrl,
                 string postBodyData)
     {
+        requestUrl = requestUrl.AddAgsFormatJsonIfMissing(postBodyData);
+
         int i = 0;
 
         while (true)
