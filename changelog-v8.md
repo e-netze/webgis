@@ -68,6 +68,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- ArcGIS Server authentication (e.g. MapServer WMTS services) against ArcGIS Server 12.1:
+  without an `f` parameter, AGS 12.1 redirects unauthenticated requests to an HTML login page
+  instead of returning error 499, so no token was requested. `AgsAuthenticationHandler` now appends
+  `f=json` to requests that have no `f` parameter (URL or POST body).
+  [Issue #533](https://github.com/e-netze/webgis-community/issues/533)
+
 ## 8.26.4501
 
 ### Added
