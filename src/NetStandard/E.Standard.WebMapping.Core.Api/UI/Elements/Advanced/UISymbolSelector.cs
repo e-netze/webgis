@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -32,7 +33,7 @@ public class UISymbolSelector : UIOptionContainer
             symbolsDef.Load($"{markerPath}/symbols.xml");
         }
 
-        foreach (var fi in new DirectoryInfo(markerPath).GetFiles())
+        foreach (var fi in new DirectoryInfo(markerPath).GetFiles().OrderBy(f => f.Name))
         {
             string name = fi.Name.ToLower();
             if (!name.EndsWith(".png") && !name.EndsWith(".gif"))
