@@ -84,6 +84,14 @@ public class HMACController : PortalBaseController
         var hmacObject = await _hmacService.CreateHmacObjectAsync(portalUser);
 
         if (!string.IsNullOrEmpty(redirect)
+            && (_appSecurityConfig.UseOpenIdConnect() || _appSecurityConfig.UseAzureAD())
+            && !_urlHelper.IsAllowedRedirectUrl(this.Request, this, redirect))
+        {
+            _logger.LogWarning("Redirect target is not allowed (see Portal:security:allowed-redirect-hosts): {redirect}", redirect);
+            redirect = null;
+        }
+
+        if (!string.IsNullOrEmpty(redirect)
             && (_appSecurityConfig.UseOpenIdConnect() || _appSecurityConfig.UseAzureAD()))
         {
             // eg. to authenticate datalinq pages

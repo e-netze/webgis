@@ -127,6 +127,9 @@ static public class ConfigExtensions
     {
         options.AcceptLegacyAuthCookie =
             "true".Equals(config[PortalConfigKeys.SecurityAcceptLegacyAuthCookie]?.Trim(), StringComparison.OrdinalIgnoreCase);
+
+        options.AllowedRedirectHosts = (config[PortalConfigKeys.SecurityAllowedRedirectHosts] ?? "")
+            .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }
 
     static public string DefaultSecurityMethod(this ConfigurationService config)
