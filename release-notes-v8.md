@@ -16,6 +16,10 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs](https://docs.webgiscloud.com/en/webgis/config/hardening/index.html#hardening-subscriber-mfa)
 - If the API runs behind a reverse proxy on another server with `use-x-forwarded-headers`, add the proxy to the new `api.config` keys `middleware:x-forwarded-known-proxies` or `x-forwarded-known-networks`, otherwise the brute force protection counts failed logins per proxy IP.
   [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-security-subscriber-login)
+- **Breaking change:** The Portal login cookie uses a new format and expires; existing Portal sessions are invalidated and users have to log in once again. Update all Portal instances of a cluster together. For a short transition, `security:accept-legacy-auth-cookie` = `true` in `portal.config` accepts old cookies.
+  [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-sessions)
+- **Breaking change:** Redirects via `/hmac?redirect=` (DataLinq with OpenID Connect/Azure AD) are only signed for the Portal and API hosts; add other hosts to `security:allowed-redirect-hosts` in `portal.config`. Old `webgis-redirect` links stop working.
+  [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-redirects)
 
 ### New
 
@@ -31,6 +35,8 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Redesigned subscriber login and account pages.
 - New security report page `/SecurityReport` (tile *Security-Bericht* in the subscriber admin) that rates the security-relevant `api.config` keys for internet and intranet installations and lists all subscribers with their two-factor status. It is protected by the secure-endpoint credentials (`security:secure-endpoint-url-password` or `secure-endpoint-basicauth-*`); without them it is only reachable directly on the server.
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-report)
+- Portal: hardened login cookie and `/hmac` redirect handling; new `portal.config` keys `security:accept-legacy-auth-cookie` and `security:allowed-redirect-hosts`.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/portal/index.html#portal-config-security)
 
 ### Fixed
 

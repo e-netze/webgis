@@ -65,6 +65,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     `WebGIS.Security.Audit` at startup. Secrets are only shown as set / not set.
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-report)
   [Architecture](docs/architecture/security-report.md)
+- Portal: hardened handling of `/hmac?redirect=`. **!! Breaking Change !!**
+  - The redirect target is now signed
+    (`CryptoImpl.SignText`/`TryVerifyText`, HMAC-SHA256 with an HKDF-derived key, format `hex(payload).hex(sig)`,
+    timestamp, valid 10 minutes) and verified again in `AuthController.LoginOidc`. Old encrypted `webgis-redirect`
+    links no longer work.
+  - Redirect targets must be absolute http/https URLs and are checked against an allow-list
+    (`UrlHelperService.IsAllowedRedirectUrl`): host of `AppRootUrl` and `ApiUrl` are always allowed, further hosts via
+    `portal.config` `security:allowed-redirect-hosts` (exact host or `*.domain`, comma/semicolon separated). External
+    DataLinq hosts must be added there, otherwise `/hmac` returns no `authEndpoint`.
+  [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-redirects)
+- Portal auth cookie (`webgis5core-portal-auth2`) uses a new, hardened format (AES-GCM , `v2.` prefix, purpose as AAD,
+  new `ICryptoService.EncryptAuthenticated`/`TryDecryptAuthenticated`) and its `Expires` is now checked (also for legacy
+  cookies). Invalid or expired cookies are deleted. **!! Breaking Change !!**
+ - Legacy cookies are rejected by default, so users have to log in once again; old Portal instances
+    cannot read `v2.` cookies (update all instances together). Opt-out: `portal.config` `security:accept-legacy-auth-cookie`
+    = `true` (default `false`), new `PortalSecurityOptions`.
+  [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-sessions)
 
 ### Fixed
 
