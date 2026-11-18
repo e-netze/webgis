@@ -123,6 +123,12 @@ static public class ConfigExtensions
 
     #region Security Methods/Default
 
+    static public void BindPortalSecurityOptions(this IConfiguration config, PortalSecurityOptions options)
+    {
+        options.AcceptLegacyAuthCookie =
+            "true".Equals(config[PortalConfigKeys.SecurityAcceptLegacyAuthCookie]?.Trim(), StringComparison.OrdinalIgnoreCase);
+    }
+
     static public string DefaultSecurityMethod(this ConfigurationService config)
     {
         return config[PortalConfigKeys.DefaultSecurityMethod]?.ToLower();

@@ -314,6 +314,8 @@ public class Startup
             config.EndpointAuthorizationBearerUsername = "admin";
         });
 
+        services.Configure<PortalSecurityOptions>(Configuration.BindPortalSecurityOptions);
+
 
         #endregion
 

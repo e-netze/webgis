@@ -9,28 +9,36 @@ using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebGIS.Core;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 using Newtonsoft.Json;
 
+using Portal.Core.AppCode.Configuration;
 using Portal.Core.AppCode.Extensions;
 
 namespace Portal.Core.AppCode.Services.Authentication;
 
 public class WebgisCookieService
 {
+    private const string CookieVersionPrefix = "v2.";
+    private const string CookiePurpose = "portal-auth-cookie";
+
     private readonly IEnumerable<IPortalAuthenticationService> _authenticationServices;
     private readonly UrlHelperService _urlHelper;
     private readonly ICryptoService _crypto;
+    private readonly PortalSecurityOptions _securityOptions;
 
     internal const string AuthCookieName = E.Standard.WebMapping.Core.Web.Const.WebgisPortalCookieName;
 
     public WebgisCookieService(UrlHelperService urlHelper,
                                IEnumerable<IPortalAuthenticationService> authenticationServices,
-                               ICryptoService crypto)
+                               ICryptoService crypto,
+                               IOptions<PortalSecurityOptions> securityOptions)
     {
         _authenticationServices = authenticationServices;
         _urlHelper = urlHelper;
         _crypto = crypto;
+        _securityOptions = securityOptions.Value;
     }
 
     async public Task<PortalUser> TryGetCookieUser(HttpContext context, string cookieValue = null)
@@ -38,7 +46,14 @@ public class WebgisCookieService
         try
         {
             var data = GetCookieData(context, cookieValue);
-            if (data != null)
+            if (data == null)
+            {
+                if ((cookieValue ?? context.Request.Cookies[AuthCookieName]) != null)
+                {
+                    context.Response.Cookies.Delete(AuthCookieName);  // cookie not valid (anymore)
+                }
+            }
+            else
             {
                 switch ((UserType)data.AuthType)
                 {
@@ -94,10 +109,12 @@ public class WebgisCookieService
             Roles = userRoles
         };
 
-        string dataString = _crypto.EncryptTextDefault(JSerializer.Serialize(data));
+        if (expires != null)
+        {
+            data.Expires = expires.Value.UtcTicks;
+        }
 
-        //if (persistentCookie)
-        //    cookie.Expires = DateTime.Now.AddDays(7);
+        string cookieValue = CookieVersionPrefix + _crypto.EncryptAuthenticated(JSerializer.Serialize(data), CookiePurpose);
 
         CookieOptions options = null;
 
@@ -111,11 +128,11 @@ public class WebgisCookieService
 
         if (options == null)
         {
-            context.Response.Cookies.Append(AuthCookieName, _crypto.EncryptTextDefault(dataString));
+            context.Response.Cookies.Append(AuthCookieName, cookieValue);
         }
         else
         {
-            context.Response.Cookies.Append(AuthCookieName, _crypto.EncryptTextDefault(dataString), options);
+            context.Response.Cookies.Append(AuthCookieName, cookieValue, options);
         }
         context.Response.Headers.Append("P3P", "CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'");
     }
@@ -166,10 +183,27 @@ public class WebgisCookieService
             return null;
         }
 
-        var dataString = _crypto.DecryptTextDefault(_crypto.DecryptTextDefault(cookieValue));
+        string dataString;
+
+        if (cookieValue.StartsWith(CookieVersionPrefix, StringComparison.Ordinal))
+        {
+            if (!_crypto.TryDecryptAuthenticated(cookieValue.Substring(CookieVersionPrefix.Length), CookiePurpose, out dataString))
+            {
+                return null;
+            }
+        }
+        else if (_securityOptions.AcceptLegacyAuthCookie)
+        {
+            dataString = _crypto.DecryptTextDefault(_crypto.DecryptTextDefault(cookieValue));
+        }
+        else
+        {
+            return null;
+        }
+
         var data = JSerializer.Deserialize<CookieData>(dataString);
 
-        return data;
+        return data == null || data.IsExpired ? null : data;
     }
 
     #endregion
