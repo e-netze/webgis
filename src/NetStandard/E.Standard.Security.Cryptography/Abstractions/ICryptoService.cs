@@ -8,6 +8,9 @@ public interface ICryptoService
 
     string DecryptTextDefault(string input);
 
+    string SignText(string input, string purpose);
+    bool TryVerifyText(string signedInput, string purpose, out string text);
+
     string EncryptText(string input, string password, CryptoStrength strength = CryptoStrength.AES128, bool useRandomSalt = true, CryptoResultStringType resultStringType = CryptoResultStringType.Base64);
     string EncryptText(string input, int customPasswordIndex, CryptoStrength strength = CryptoStrength.AES128, bool useRandomSalt = true, CryptoResultStringType resultStringType = CryptoResultStringType.Base64);
 

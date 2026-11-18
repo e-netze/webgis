@@ -237,6 +237,59 @@ public partial class CryptoImpl
         return DecryptText(input, _options.DefaultPassword, CryptoStrength.AES128, true);
     }
 
+    #region Signed Text
+
+    // Output: hex(payload).hex(HMAC-SHA256). The payload is readable, but can't be forged.
+    // The signing key is derived per purpose (HKDF), so signatures are not interchangeable between purposes.
+    public string SignText(string input, string purpose)
+    {
+        var payload = Encoding.UTF8.GetBytes(input);
+
+        return $"{Convert.ToHexString(payload)}.{Convert.ToHexString(ComputeSignature(payload, purpose))}";
+    }
+
+    public bool TryVerifyText(string signedInput, string purpose, out string text)
+    {
+        text = null;
+
+        var parts = signedInput?.Split('.');
+        if (parts?.Length != 2 || parts[0].Length == 0)
+        {
+            return false;
+        }
+
+        try
+        {
+            var payload = Convert.FromHexString(parts[0]);
+            var signature = Convert.FromHexString(parts[1]);
+
+            if (!CryptographicOperations.FixedTimeEquals(ComputeSignature(payload, purpose), signature))
+            {
+                return false;
+            }
+
+            text = Encoding.UTF8.GetString(payload);
+            return true;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+    }
+
+    private byte[] ComputeSignature(byte[] payload, string purpose)
+    {
+        var key = HKDF.DeriveKey(HashAlgorithmName.SHA256,
+                                 Encoding.UTF8.GetBytes(_options.DefaultPassword),
+                                 32,
+                                 _options.HashBytesSalt,
+                                 Encoding.UTF8.GetBytes($"webgis-sign:{purpose}"));
+
+        return HMACSHA256.HashData(key, payload);
+    }
+
+    #endregion
+
     #region Static Encrypt
 
     private static byte[] _static_iv = new byte[8] { 11, 127, 102, 78, 48, 67, 12, 96 };

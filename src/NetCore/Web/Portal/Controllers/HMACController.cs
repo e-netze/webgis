@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
@@ -87,7 +88,8 @@ public class HMACController : PortalBaseController
         {
             // eg. to authenticate datalinq pages
             // => datalinq.js will call this url, if no username is set
-            hmacObject.authEndpoint = $"{_urlHelper.AppRootUrl(this.Request, this).RemoveEndingSlashes()}/auth/LoginOidc?webgis-redirect={_crypto.EncryptTextDefault(redirect, Security.Cryptography.CryptoResultStringType.Hex)}";
+            var signedRedirect = _crypto.SignText($"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}|{redirect}", "webgis-redirect");
+            hmacObject.authEndpoint = $"{_urlHelper.AppRootUrl(this.Request, this).RemoveEndingSlashes()}/auth/LoginOidc?webgis-redirect={signedRedirect}";
         }
 
         #region Add Roles when correct password is given
