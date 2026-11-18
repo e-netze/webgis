@@ -237,6 +237,118 @@ public partial class CryptoImpl
         return DecryptText(input, _options.DefaultPassword, CryptoStrength.AES128, true);
     }
 
+    #region Signed Text
+
+    // Output: hex(payload).hex(HMAC-SHA256). The payload is readable, but can't be forged.
+    // The signing key is derived per purpose (HKDF), so signatures are not interchangeable between purposes.
+    public string SignText(string input, string purpose)
+    {
+        var payload = Encoding.UTF8.GetBytes(input);
+
+        return $"{Convert.ToHexString(payload)}.{Convert.ToHexString(ComputeSignature(payload, purpose))}";
+    }
+
+    public bool TryVerifyText(string signedInput, string purpose, out string text)
+    {
+        text = null;
+
+        var parts = signedInput?.Split('.');
+        if (parts?.Length != 2 || parts[0].Length == 0)
+        {
+            return false;
+        }
+
+        try
+        {
+            var payload = Convert.FromHexString(parts[0]);
+            var signature = Convert.FromHexString(parts[1]);
+
+            if (!CryptographicOperations.FixedTimeEquals(ComputeSignature(payload, purpose), signature))
+            {
+                return false;
+            }
+
+            text = Encoding.UTF8.GetString(payload);
+            return true;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+    }
+
+    private byte[] DeriveKey(string info)
+    {
+        return HKDF.DeriveKey(HashAlgorithmName.SHA256,
+                              Encoding.UTF8.GetBytes(_options.DefaultPassword),
+                              32,
+                              _options.HashBytesSalt,
+                              Encoding.UTF8.GetBytes(info));
+    }
+
+    private byte[] ComputeSignature(byte[] payload, string purpose)
+    {
+        return HMACSHA256.HashData(DeriveKey($"webgis-sign:{purpose}"), payload);
+    }
+
+    #endregion
+
+    #region Authenticated Encryption (AES-GCM)
+
+    private const int GcmNonceSize = 12;
+    private const int GcmTagSize = 16;
+
+    // Output: base64url(nonce | tag | ciphertext). The purpose is bound as key info and as associated data.
+    public string EncryptAuthenticated(string input, string purpose)
+    {
+        var plain = Encoding.UTF8.GetBytes(input);
+        var result = new byte[GcmNonceSize + GcmTagSize + plain.Length];
+
+        var nonce = result.AsSpan(0, GcmNonceSize);
+        RandomNumberGenerator.Fill(nonce);
+
+        using var gcm = new AesGcm(DeriveKey($"webgis-aead:{purpose}"), GcmTagSize);
+        gcm.Encrypt(nonce,
+                    plain,
+                    result.AsSpan(GcmNonceSize + GcmTagSize),
+                    result.AsSpan(GcmNonceSize, GcmTagSize),
+                    Encoding.UTF8.GetBytes(purpose));
+
+        return System.Buffers.Text.Base64Url.EncodeToString(result);
+    }
+
+    public bool TryDecryptAuthenticated(string input, string purpose, out string text)
+    {
+        text = null;
+
+        try
+        {
+            var data = System.Buffers.Text.Base64Url.DecodeFromChars(input ?? String.Empty);
+            if (data.Length < GcmNonceSize + GcmTagSize)
+            {
+                return false;
+            }
+
+            var plain = new byte[data.Length - GcmNonceSize - GcmTagSize];
+
+            using var gcm = new AesGcm(DeriveKey($"webgis-aead:{purpose}"), GcmTagSize);
+            gcm.Decrypt(data.AsSpan(0, GcmNonceSize),
+                        data.AsSpan(GcmNonceSize + GcmTagSize),
+                        data.AsSpan(GcmNonceSize, GcmTagSize),
+                        plain,
+                        Encoding.UTF8.GetBytes(purpose));
+
+            text = Encoding.UTF8.GetString(plain);
+            return true;
+        }
+        catch (Exception ex) when (ex is CryptographicException or FormatException or ArgumentException)
+        {
+            return false;
+        }
+    }
+
+    #endregion
+
     #region Static Encrypt
 
     private static byte[] _static_iv = new byte[8] { 11, 127, 102, 78, 48, 67, 12, 96 };

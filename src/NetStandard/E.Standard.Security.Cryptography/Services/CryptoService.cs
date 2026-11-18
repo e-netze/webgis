@@ -34,6 +34,42 @@ public class CryptoService : ICryptoService
         catch (Exception ex) { throw new CryptographyException(ex); }
     }
 
+    public string SignText(string input, string purpose)
+    {
+        try
+        {
+            return Impl.SignText(input, purpose);
+        }
+        catch (Exception ex) { throw new CryptographyException(ex); }
+    }
+
+    public bool TryVerifyText(string signedInput, string purpose, out string text)
+    {
+        try
+        {
+            return Impl.TryVerifyText(signedInput, purpose, out text);
+        }
+        catch (Exception ex) { throw new CryptographyException(ex); }
+    }
+
+    public string EncryptAuthenticated(string input, string purpose)
+    {
+        try
+        {
+            return Impl.EncryptAuthenticated(input, purpose);
+        }
+        catch (Exception ex) { throw new CryptographyException(ex); }
+    }
+
+    public bool TryDecryptAuthenticated(string input, string purpose, out string text)
+    {
+        try
+        {
+            return Impl.TryDecryptAuthenticated(input, purpose, out text);
+        }
+        catch (Exception ex) { throw new CryptographyException(ex); }
+    }
+
     public string EncryptText(string input, string password, CryptoStrength strength = CryptoStrength.AES128, bool useRandomSalt = true, CryptoResultStringType resultStringType = CryptoResultStringType.Base64)
     {
         try

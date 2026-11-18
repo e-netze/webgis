@@ -240,9 +240,19 @@ public class AuthController : PortalBaseController
         // => redirect back to the datalinq page
         if (!String.IsNullOrEmpty(this.Request.Query["webgis-redirect"]))
         {
-            var redirectUrl = _crypto.DecryptTextDefault(this.Request.Query["webgis-redirect"]);
+            if (_crypto.TryVerifyText(this.Request.Query["webgis-redirect"], "webgis-redirect", out var signedRedirect))
+            {
+                var separator = signedRedirect.IndexOf('|');
+                if (separator > 0
+                    && long.TryParse(signedRedirect.AsSpan(0, separator), out var issuedAt)
+                    && DateTimeOffset.UtcNow.ToUnixTimeSeconds() - issuedAt is >= -60 and <= 600
+                    && _urlHelper.IsAllowedRedirectUrl(this.Request, this, signedRedirect[(separator + 1)..]))
+                {
+                    return Redirect(signedRedirect[(separator + 1)..]);
+                }
+            }
 
-            return Redirect(redirectUrl);
+            _logger.LogWarning("Invalid or expired webgis-redirect on LoginOidc");
         }
 
         return RedirectToActionResult("Index", "Home", new { id = id });

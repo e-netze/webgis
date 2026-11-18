@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
@@ -83,11 +84,20 @@ public class HMACController : PortalBaseController
         var hmacObject = await _hmacService.CreateHmacObjectAsync(portalUser);
 
         if (!string.IsNullOrEmpty(redirect)
+            && (_appSecurityConfig.UseOpenIdConnect() || _appSecurityConfig.UseAzureAD())
+            && !_urlHelper.IsAllowedRedirectUrl(this.Request, this, redirect))
+        {
+            _logger.LogWarning("Redirect target is not allowed (see Portal:security:allowed-redirect-hosts): {redirect}", redirect);
+            redirect = null;
+        }
+
+        if (!string.IsNullOrEmpty(redirect)
             && (_appSecurityConfig.UseOpenIdConnect() || _appSecurityConfig.UseAzureAD()))
         {
             // eg. to authenticate datalinq pages
             // => datalinq.js will call this url, if no username is set
-            hmacObject.authEndpoint = $"{_urlHelper.AppRootUrl(this.Request, this).RemoveEndingSlashes()}/auth/LoginOidc?webgis-redirect={_crypto.EncryptTextDefault(redirect, Security.Cryptography.CryptoResultStringType.Hex)}";
+            var signedRedirect = _crypto.SignText($"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}|{redirect}", "webgis-redirect");
+            hmacObject.authEndpoint = $"{_urlHelper.AppRootUrl(this.Request, this).RemoveEndingSlashes()}/auth/LoginOidc?webgis-redirect={signedRedirect}";
         }
 
         #region Add Roles when correct password is given

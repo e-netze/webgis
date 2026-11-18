@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.Extensions.Options;
 
 using Portal.Core.AppCode.Configuration;
 using Portal.Core.AppCode.Extensions;
@@ -21,11 +22,50 @@ public class UrlHelperService
 {
     private readonly ConfigurationService _config;
     private readonly IWebHostEnvironment _environment;
+    private readonly PortalSecurityOptions _securityOptions;
 
-    public UrlHelperService(ConfigurationService config, IWebHostEnvironment environment)
+    public UrlHelperService(ConfigurationService config,
+                            IWebHostEnvironment environment,
+                            IOptions<PortalSecurityOptions> securityOptions)
     {
         _config = config;
         _environment = environment;
+        _securityOptions = securityOptions.Value;
+    }
+
+    // Login redirects may only point to the portal, the api or explicitly allowed hosts
+    public bool IsAllowedRedirectUrl(HttpRequest request, PortalBaseController controller, string url)
+    {
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var target)
+            || (target.Scheme != Uri.UriSchemeHttp && target.Scheme != Uri.UriSchemeHttps))
+        {
+            return false;
+        }
+
+        foreach (var knownUrl in new[] { AppRootUrl(request, controller), ApiUrl(request) })
+        {
+            if (Uri.TryCreate(knownUrl, UriKind.Absolute, out var known)
+                && known.Host.Equals(target.Host, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        foreach (var allowed in _securityOptions.AllowedRedirectHosts)
+        {
+            var host = allowed.Contains("://") && Uri.TryCreate(allowed, UriKind.Absolute, out var allowedUri)
+                ? allowedUri.Host
+                : allowed;
+
+            if (host.StartsWith("*.")
+                ? target.Host.EndsWith(host.Substring(1), StringComparison.OrdinalIgnoreCase)
+                : host.Equals(target.Host, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public string ApiUrl(HttpRequest request, HttpSchema httpSchema = HttpSchema.Default)
