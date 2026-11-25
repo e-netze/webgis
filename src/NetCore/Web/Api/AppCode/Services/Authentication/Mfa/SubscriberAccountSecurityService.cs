@@ -295,7 +295,7 @@ public class SubscriberAccountSecurityService
             String.Join(",", flags.Where(f => !String.IsNullOrEmpty(f))),
             redirect ?? String.Empty);   // last: may contain any characters
 
-        return _crypto.EncryptTextDefault(payload, CryptoResultStringType.Base64);
+        return _crypto.EncryptAuthenticated(payload, CryptoPurposes.MfaFlowToken);
     }
 
     /// <summary>
@@ -308,9 +308,14 @@ public class SubscriberAccountSecurityService
             return null;
         }
 
+        if (!_crypto.TryDecryptAuthenticated(token, CryptoPurposes.MfaFlowToken, out var payload))
+        {
+            return null;
+        }
+
         try
         {
-            var parts = _crypto.DecryptTextDefault(token).Split('|', 9);
+            var parts = payload.Split('|', 9);
             if (parts.Length != 9
                 || parts[0] != FlowTokenVersion
                 || parts[1] != expectedStage

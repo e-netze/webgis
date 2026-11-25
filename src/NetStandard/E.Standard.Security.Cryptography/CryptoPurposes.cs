@@ -57,4 +57,9 @@ public static class CryptoPurposes
     /// Encrypted captcha verification token (<c>CaptchaCodeEncrypted</c>) of the subscriber login.
     /// </summary>
     public const string CaptchaToken = "captcha-token";
+
+    /// <summary>
+    /// Encrypted MFA flow token (login/setup stages, may contain the new TOTP secret during setup).
+    /// </summary>
+    public const string MfaFlowToken = "mfa-flow-token";
 }
