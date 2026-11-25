@@ -40,7 +40,7 @@ public class AppBuilderInit
             }
 
             return "'" + HMACObject + ":" +
-                _crypto.EncryptTextDefault(HMACObject + "," + DateTime.UtcNow.Ticks.ToString(), CryptoResultStringType.Hex) + "'";
+                _crypto.SignText($"{HMACObject}|{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}", CryptoPurposes.HmacRefererSubstitution) + "'";
         }
     }
 }

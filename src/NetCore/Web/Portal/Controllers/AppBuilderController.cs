@@ -78,7 +78,7 @@ public class AppBuilderController : PortalBaseController
             }
             else
             {
-                //clientid = "'" + clientid + "'";
+                VerifySignedBuilderClientId(clientid);
             }
 
             bool isPortalOwner = false;

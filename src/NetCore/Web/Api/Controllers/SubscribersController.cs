@@ -786,6 +786,31 @@ public partial class SubscribersController : ApiBaseController
         }
     }
 
+    public IActionResult OpenMapBuilder(string clientId)
+    {
+        try
+        {
+            var subscriber = CurrentAuthSubscriber();
+
+            ISubscriberDb db = _subscriberDb.CreateInstance();
+
+            SubscriberDb.Client client = db.GetClientByClientId(clientId);
+
+            if (client == null || client.Subscriber != subscriber.Id)
+            {
+                return RedirectToActionResult("Index");
+            }
+
+            var signature = _crypto.SignText($"{client.ClientId}|{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}", CryptoPurposes.BuilderClientId);
+
+            return Redirect($"{_urlHelper.MapBuilderUrl()}?clientid={Uri.EscapeDataString(client.ClientId)}&clientid-sig={signature}");
+        }
+        catch (NotAuthorizedException)
+        {
+            return RedirectToActionResult("Login");
+        }
+    }
+
     #endregion
 
     #region Portal Pages

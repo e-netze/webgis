@@ -1,5 +1,4 @@
 ﻿@model E.Standard.Api.App.Models.ApiClients
-@inject Api.Core.AppCode.Services.UrlHelperService urlHelper
 @inject Microsoft.Extensions.Localization.IStringLocalizerFactory LocalizerFactory
 
 @{
@@ -41,7 +40,7 @@
                                 <td>@client.ClientReferer</td>
                                 <td class="actions">
                                     <a class="webgis-page-button small" href="@Url.Action("LoginAsClient", new { clientId = client.ClientId })">@L["pages.clients.rest"]</a>
-                                    <a class="webgis-page-button small" href="@(urlHelper.MapBuilderUrl() + "?clientid=" + client.ClientId)" target="_blank" rel="noopener">@L["pages.clients.mapbuilder"]</a>
+                                    <a class="webgis-page-button small" href="@Url.Action("OpenMapBuilder", new { clientId = client.ClientId })" target="_blank" rel="noopener">@L["pages.clients.mapbuilder"]</a>
                                     <a class="webgis-page-button small" href="@Url.Action("UpdateClient", new { clientId = client.ClientId })">@L["pages.list.edit"]</a>
                                 </td>
                             </tr>
