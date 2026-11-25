@@ -29,7 +29,7 @@ public class CaptchaResult
         var nonce = Convert.ToHexString(RandomNumberGenerator.GetBytes(16));
         var issued = new DateTimeOffset(Timestamp.ToUniversalTime()).ToUnixTimeSeconds();
 
-        return crypto.EncryptTextDefault($"{TokenVersion}|{this.CaptchaCode}|{issued}|{nonce}", CryptoResultStringType.Base64);
+        return crypto.EncryptAuthenticated($"{TokenVersion}|{this.CaptchaCode}|{issued}|{nonce}", CryptoPurposes.CaptchaToken);
     }
 
     public DateTime Timestamp { get; set; }
@@ -54,15 +54,12 @@ public class CaptchaResult
             throw new ArgumentException("Captcha verification code required");
         }
 
-        string[] parts;
-        try
+        if (!crypto.TryDecryptAuthenticated(encryptedCode, CryptoPurposes.CaptchaToken, out var token))
         {
-            parts = crypto.DecryptTextDefault(encryptedCode).Split('|');
+            throw new Exception("Captcha verification code invalid");
         }
-        catch (Exception ex)
-        {
-            throw new Exception("Captcha verification code invalid", ex);
-        }
+
+        string[] parts = token.Split('|');
 
         if (parts.Length != 4 || parts[0] != TokenVersion || !long.TryParse(parts[2], out long issued))
         {

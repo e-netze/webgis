@@ -52,4 +52,9 @@ public static class CryptoPurposes
     /// tool urls/ids (portal content images, mobile files, georef images, ...) and form values the portal sends to API tools.
     /// </summary>
     public const string ApiBridge = "api-bridge";
+
+    /// <summary>
+    /// Encrypted captcha verification token (<c>CaptchaCodeEncrypted</c>) of the subscriber login.
+    /// </summary>
+    public const string CaptchaToken = "captcha-token";
 }
