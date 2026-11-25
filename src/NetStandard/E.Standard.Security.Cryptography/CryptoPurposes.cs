@@ -21,4 +21,9 @@ public static class CryptoPurposes
     /// (secured WMTS tiles). Deterministic, so the tile urls stay browser-cacheable.
     /// </summary>
     public const string TileCacheRedirect = "tilecache-redirect";
+
+    /// <summary>
+    /// Encrypted hotlink url in <c>payload:...</c> links of query results, resolved by <c>rest/resolve-url-payload</c>.
+    /// </summary>
+    public const string HotlinkUrlPayload = "hotlink-url-payload";
 }
