@@ -69,10 +69,19 @@ public class OutStream : IApiButton, IApiCustomToolServiceProvider
     {
         string id = e["id"];
 
-        string blobName = bridge.SecurityDecryptString(id);
+        string blobName = bridge.SecurityDecryptStringOrLegacy(id)
+            ?? throw new System.IO.FileNotFoundException();
         string contentType = $"image/{blobName.Split('.').Last().ToLower()}";
 
-        byte[] data = bridge.Storage.Load(blobName, WebMapping.Core.Api.IO.StorageBlobType.Data);
+        byte[] data;
+        try
+        {
+            data = bridge.Storage.Load(blobName, WebMapping.Core.Api.IO.StorageBlobType.Data);
+        }
+        catch
+        {
+            throw new System.IO.FileNotFoundException();
+        }
 
         var response = new ApiRawBytesEventResponse(data, contentType);
         response.AddEtag(DateTime.UtcNow.AddDays(7));

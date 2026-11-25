@@ -31,7 +31,7 @@ static public class BridgeExtensions
 
     static public string GenerateGeorefImageId(this IBridge bridge)
     {
-        return $"{typeof(OutStream).ToToolId()}:{bridge.SecurityEncryptString(bridge.CurrentUser.Username + ":" + Guid.NewGuid().ToString("N").ToLower())}";
+        return $"{typeof(OutStream).ToToolId()}:{bridge.SecurityEncryptStringLegacy(bridge.CurrentUser.Username + ":" + Guid.NewGuid().ToString("N").ToLower())}";
     }
 
     static public GeorefImageMetadata GetGeorefImageMetata(this IBridge bridge, string id)
@@ -60,8 +60,8 @@ static public class BridgeExtensions
     {
         if (!string.IsNullOrEmpty(id) && id.Contains(":"))
         {
-            var usernameTitle = bridge.SecurityDecryptString(id.Split(':')[1]);
-            if (usernameTitle.Contains(":"))
+            var usernameTitle = bridge.SecurityDecryptStringOrLegacy(id.Split(':')[1]);
+            if (usernameTitle?.Contains(":") == true)
             {
                 return usernameTitle.Substring(0, usernameTitle.LastIndexOf(":"));
             }
@@ -94,7 +94,7 @@ static public class BridgeExtensions
 
         string filePath = $"{owner.Username2StorageDirectory()}/_georefimages/{georefImageMetadata.Id.GeorefImageIdToStorageName()}.{georefImageMetadata.ImageExtension}";
 
-        return $"{bridge.AppRootUrl}/rest/tooldata/{typeof(OutStream).ToToolId()}/get?id={bridge.SecurityEncryptString(filePath)}";
+        return $"{bridge.AppRootUrl}/rest/tooldata/{typeof(OutStream).ToToolId()}/get?id={bridge.SecurityEncryptStringLegacy(filePath)}";
     }
 
     static public string GeorefImageUrl(this IBridge bridge, string filename)
@@ -106,7 +106,7 @@ static public class BridgeExtensions
 
         string filePath = $"{bridge.CurrentUser.Username.Username2StorageDirectory()}/_georefimages/{filename}";
 
-        return $"{bridge.AppRootUrl}/rest/tooldata/{typeof(OutStream).ToToolId()}/get?id={bridge.SecurityEncryptString(filePath)}";
+        return $"{bridge.AppRootUrl}/rest/tooldata/{typeof(OutStream).ToToolId()}/get?id={bridge.SecurityEncryptStringLegacy(filePath)}";
     }
 
     static public string GeorefImageUrlToStorageName(this IBridge bridge, string url)
@@ -118,7 +118,13 @@ static public class BridgeExtensions
 
         var filePathEncrypted = url.Substring(url.IndexOf("?id=") + 4);
 
-        return bridge.SecurityDecryptString(filePathEncrypted).Replace("\\", "/").Split('/').Last();
+        var filePath = bridge.SecurityDecryptStringOrLegacy(filePathEncrypted);
+        if (filePath is null)
+        {
+            return String.Empty;
+        }
+
+        return filePath.Replace("\\", "/").Split('/').Last();
     }
 
     static public string GeorefImageIdToStorageName(this string georefImageId)

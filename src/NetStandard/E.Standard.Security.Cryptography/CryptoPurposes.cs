@@ -46,4 +46,10 @@ public static class CryptoPurposes
     /// Encrypted json response of the portal <c>proxy/query/{method}</c> endpoint (read by API and CMS).
     /// </summary>
     public const string PortalProxyQueryResponse = "portal-proxy-query-response";
+
+    /// <summary>
+    /// <c>IAppCryptography.SecurityEncryptString/SecurityDecryptString</c> of the API bridge: encrypted tool parameters,
+    /// tool urls/ids (portal content images, mobile files, georef images, ...) and form values the portal sends to API tools.
+    /// </summary>
+    public const string ApiBridge = "api-bridge";
 }

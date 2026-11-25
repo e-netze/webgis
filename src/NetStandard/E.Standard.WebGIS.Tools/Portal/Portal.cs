@@ -340,7 +340,7 @@ public class Portal : IApiServerButton, IStorageInteractions
                         imagePath,
                         data, WebMapping.Core.Api.IO.StorageBlobType.Data);
 
-                    return new ApiRawStringEventResponse(bridge.SecurityEncryptString(pageId + @"/" + imagePath), "text/html");
+                    return new ApiRawStringEventResponse(bridge.SecurityEncryptStringLegacy(pageId + @"/" + imagePath), "text/html");
                 }
             }
         }
@@ -352,14 +352,19 @@ public class Portal : IApiServerButton, IStorageInteractions
     public ApiEventResponse OnContentImage(IBridge bridge, ApiToolEventArguments e)
     {
         string id = e["id"];
-        string imageId = bridge.SecurityDecryptString(id);
+        string imageId = bridge.SecurityDecryptStringOrLegacy(id);
 
         byte[] data = null;
-        if (bridge.Storage.Exists(imageId, WebMapping.Core.Api.IO.StorageBlobType.Data))
+        try
         {
-            data = bridge.Storage.Load(imageId, WebMapping.Core.Api.IO.StorageBlobType.Data);
+            if (imageId is not null && bridge.Storage.Exists(imageId, WebMapping.Core.Api.IO.StorageBlobType.Data))
+            {
+                data = bridge.Storage.Load(imageId, WebMapping.Core.Api.IO.StorageBlobType.Data);
+            }
         }
-        else
+        catch { }  // invalid id => default banner (uniform behaviour)
+
+        if (data is null)
         {
             MemoryStream ms = new MemoryStream(Properties.Resources.default_banner);
             data = ms.ToArray();

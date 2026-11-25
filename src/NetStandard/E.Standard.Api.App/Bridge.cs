@@ -1240,12 +1240,48 @@ public class Bridge : IBridge
 
     public string SecurityEncryptString(string input)
     {
-        return _crypto.EncryptTextDefault(input, CryptoResultStringType.Hex);
+        return _crypto.EncryptAuthenticated(input ?? String.Empty, CryptoPurposes.ApiBridge);
     }
 
     public string SecurityDecryptString(string encInput)
     {
-        return _crypto.DecryptTextDefault(encInput);
+        if (!_crypto.TryDecryptAuthenticated(encInput, CryptoPurposes.ApiBridge, out var text))
+        {
+            throw new ArgumentException("Invalid encrypted value");
+        }
+
+        return text;
+    }
+
+    public string SecurityEncryptStringLegacy(string input)
+    {
+        return _crypto.EncryptTextDefault(input, CryptoResultStringType.Hex);
+    }
+
+    public string SecurityDecryptStringOrLegacy(string encInput)
+    {
+        if (_crypto.TryDecryptAuthenticated(encInput, CryptoPurposes.ApiBridge, out var text))
+        {
+            return text;
+        }
+
+        // legacy values (default key AES-CBC, hex "0x...") may still be persisted in stored urls/ids
+        if (encInput?.StartsWith("0x") != true)
+        {
+            return null;
+        }
+
+        try
+        {
+            var legacy = _crypto.DecryptTextDefault(encInput);
+
+            // a forged block with valid padding decrypts to random bytes => reject, so it looks like any other failure
+            return legacy.Any(c => Char.IsControl(c) || c == '\uFFFD') ? null : legacy;
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public string SecurityEncryptString(string input, int customPasswordIndex, CryptoStrength strength = CryptoStrength.AES256)

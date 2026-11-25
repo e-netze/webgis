@@ -938,7 +938,7 @@ public partial class SubscribersController : ApiBaseController
                 byte[] buffer = file.Data;
 
                 parameters.Add("page-banner-image", Convert.ToBase64String(buffer));
-                page.BannerId = _crypto.EncryptTextDefault(page.Id, CryptoResultStringType.Hex);
+                page.BannerId = _crypto.EncryptAuthenticated(page.Id ?? String.Empty, CryptoPurposes.ApiBridge);
             }
 
             parameters.Add("page-json", JSerializer.Serialize(page));
