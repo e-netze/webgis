@@ -148,7 +148,7 @@ public class OgcController : ApiBaseController
                 {
                     WmsServices = wmsServices.ToArray(),
                     LoginService = _ogcRequest.OgcLoginService(this.Request),
-                    LogoutService = this.ActionUrl("logout", new { ogc_ticket_logout = _crypto.EncryptTextDefault(Request.Query["ogc_ticket"], E.Standard.Security.Cryptography.CryptoResultStringType.Hex) }),
+                    LogoutService = this.ActionUrl("logout", new { ogc_ticket_logout = _crypto.EncryptAuthenticated(Request.Query["ogc_ticket"].ToString(), E.Standard.Security.Cryptography.CryptoPurposes.OgcLogoutTicket) }),
                     Username = ui.Username,
                     //ServiceParameters = !String.IsNullOrWhiteSpace(Request.QueryString["ogc_ticket"]) ? "&ogc_ticket=" + Request.QueryString["ogc_ticket"] : String.Empty
                     CustomToken = token
@@ -331,6 +331,11 @@ public class OgcController : ApiBaseController
     {
         _tokenServices.GetCustomToken(this.Request);
 
-        return Redirect(_ogcRequest.OgcLogoutService(this.Request, _crypto.DecryptTextDefault(ogc_ticket_logout)));
+        if (!_crypto.TryDecryptAuthenticated(ogc_ticket_logout, E.Standard.Security.Cryptography.CryptoPurposes.OgcLogoutTicket, out var ogcTicket))
+        {
+            return BadRequest();
+        }
+
+        return Redirect(_ogcRequest.OgcLogoutService(this.Request, ogcTicket));
     }
 }

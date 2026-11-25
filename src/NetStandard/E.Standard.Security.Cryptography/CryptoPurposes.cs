@@ -31,4 +31,9 @@ public static class CryptoPurposes
     /// Encrypted output file name (<c>downloadid</c>) for <c>rest/download</c> (prints, exports, tool downloads).
     /// </summary>
     public const string DownloadId = "download-id";
+
+    /// <summary>
+    /// Encrypted OGC ticket in the <c>ogc_ticket_logout</c> parameter of the OGC logout url.
+    /// </summary>
+    public const string OgcLogoutTicket = "ogc-logout-ticket";
 }
