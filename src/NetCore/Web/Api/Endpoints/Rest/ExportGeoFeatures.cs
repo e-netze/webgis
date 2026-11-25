@@ -77,7 +77,7 @@ public class ExportGeoFeatures : IApiEndpoint
 
         return new DownloadDTO()
         {
-            EncryptedFilename = crypto.EncryptTextDefault(fileName, CryptoResultStringType.Hex),
+            EncryptedFilename = crypto.EncryptAuthenticated(fileName, CryptoPurposes.DownloadId),
             Name = name
         };
     }

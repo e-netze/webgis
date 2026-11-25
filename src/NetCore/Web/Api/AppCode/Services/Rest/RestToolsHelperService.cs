@@ -331,7 +331,7 @@ public class RestToolsHelperService
             return await controller.JsonObject(new
             {
                 action = "download",
-                downloadId = _crypto.EncryptTextDefault(fileName, CryptoResultStringType.Hex),
+                downloadId = _crypto.EncryptAuthenticated(fileName, CryptoPurposes.DownloadId),
                 name = downloadResponse.Name,
                 contentType = downloadResponse.ContentType,
                 successs = true
@@ -529,7 +529,7 @@ public class RestToolsHelperService
                 Url = ((ApiPrintEventResponse)apiResponse).Url,
                 Preview = ((ApiPrintEventResponse)apiResponse).PreviewUrl,
                 Length = ((ApiPrintEventResponse)apiResponse).Length,
-                EncryptedFilename = _crypto.EncryptTextDefault(outputRelFileName, CryptoResultStringType.Hex)
+                EncryptedFilename = _crypto.EncryptAuthenticated(outputRelFileName, CryptoPurposes.DownloadId)
             };
         }
 

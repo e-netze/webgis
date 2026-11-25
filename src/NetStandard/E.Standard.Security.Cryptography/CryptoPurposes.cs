@@ -26,4 +26,9 @@ public static class CryptoPurposes
     /// Encrypted hotlink url in <c>payload:...</c> links of query results, resolved by <c>rest/resolve-url-payload</c>.
     /// </summary>
     public const string HotlinkUrlPayload = "hotlink-url-payload";
+
+    /// <summary>
+    /// Encrypted output file name (<c>downloadid</c>) for <c>rest/download</c> (prints, exports, tool downloads).
+    /// </summary>
+    public const string DownloadId = "download-id";
 }
