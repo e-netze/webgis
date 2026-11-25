@@ -1343,14 +1343,17 @@ public class CmsController : ApplicationSecurityController
 
     private string EncryptComplex(string val)
     {
-        return $"complex#{_crypto.EncryptTextDefault(val, resultStringType: CryptoResultStringType.Hex)}";
+        return $"complex#{_crypto.EncryptAuthenticated(val ?? String.Empty, CryptoPurposes.CmsComplexPropertyValue)}";
     }
 
     private string DecryptComplex(string complex)
     {
         if (complex.StartsWith("complex#"))
         {
-            complex = _crypto.DecryptTextDefault(complex.Substring(8));
+            if (!_crypto.TryDecryptAuthenticated(complex.Substring(8), CryptoPurposes.CmsComplexPropertyValue, out complex))
+            {
+                throw new Exception("Invalid property value");
+            }
         }
 
         return complex;

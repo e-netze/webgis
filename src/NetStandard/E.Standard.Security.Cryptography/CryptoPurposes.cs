@@ -62,4 +62,9 @@ public static class CryptoPurposes
     /// Encrypted MFA flow token (login/setup stages, may contain the new TOTP secret during setup).
     /// </summary>
     public const string MfaFlowToken = "mfa-flow-token";
+
+    /// <summary>
+    /// Encrypted <c>complex#...</c> property values the CMS property grid round-trips through the browser.
+    /// </summary>
+    public const string CmsComplexPropertyValue = "cms-complex-property-value";
 }
