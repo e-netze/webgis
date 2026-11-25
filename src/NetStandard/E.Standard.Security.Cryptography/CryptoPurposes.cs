@@ -67,4 +67,10 @@ public static class CryptoPurposes
     /// Encrypted <c>complex#...</c> property values the CMS property grid round-trips through the browser.
     /// </summary>
     public const string CmsComplexPropertyValue = "cms-complex-property-value";
+
+    /// <summary>
+    /// Encrypted connection ("url=...;name=...;usr=...;pwd=...") of user-added custom services
+    /// (<c>custom_request_parameters.connection</c> / <c>custom.{serviceId}.connection</c>, also stored in saved maps).
+    /// </summary>
+    public const string CustomServiceConnection = "custom-service-connection";
 }

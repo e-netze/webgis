@@ -680,7 +680,7 @@ public class MapServiceInitializerService
         {
             var connectionParameter = requestFormParameters[$"custom.{serviceId}.connection"];
 
-            string connectionString = _crypto.StaticDefaultDecrypt_Aes_or_Legacy3Des_or_Empty(connectionParameter);
+            string connectionString = DecodeCustomServiceConnectionString(connectionParameter);
 
             if (!String.IsNullOrEmpty(connectionString))
             {
@@ -706,7 +706,32 @@ public class MapServiceInitializerService
 
     public string EncodeCustomServiceConnectionString(string url, string displayName, string user, string password, CmsDocument.UserIdentification ui)
     {
-        return $"{_crypto.StaticDefaultEncrypt_Aes($"url={url};name={displayName};usr={user};pwd={password}", CryptoResultStringType.Hex)}";
+        return _crypto.EncryptAuthenticated($"url={url};name={displayName};usr={user};pwd={password}", CryptoPurposes.CustomServiceConnection);
+    }
+
+    /// <summary>
+    /// Returns String.Empty for any invalid value. Legacy values (static default key AES/3DES) may still be
+    /// persisted in saved maps, so they are accepted, but every failure must look the same (no padding oracle).
+    /// </summary>
+    private string DecodeCustomServiceConnectionString(string connectionParameter)
+    {
+        if (_crypto.TryDecryptAuthenticated(connectionParameter, CryptoPurposes.CustomServiceConnection, out var connectionString))
+        {
+            return connectionString;
+        }
+
+        connectionString = _crypto.StaticDefaultDecrypt_Aes_or_Legacy3Des_or_Empty(connectionParameter);
+
+        // a forged ciphertext with valid padding decrypts to random bytes => reject, so it looks like any other failure
+        if (!connectionString.StartsWith("url=")
+            || connectionString.Any(c => Char.IsControl(c) || c == '\uFFFD')
+            || !Uri.TryCreate(connectionString.ExtractConnectionStringValue("url"), UriKind.Absolute, out var uri)
+            || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+        {
+            return String.Empty;
+        }
+
+        return connectionString;
     }
 
     public bool IsCustomService(string serviceId) => serviceId != null && serviceId.StartsWith(CustomServicePrefix) && !serviceId.Contains("@");

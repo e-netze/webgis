@@ -28,6 +28,7 @@ public static class SecurityReportRules
     private const string Endpoints = "annex-security-endpoints";
     private const string Proxy = "annex-security-proxy";
     private const string Keys = "annex-security-keys";
+    private const string CustomServices = "annex-security-custom-services";
 
     private const string DefaultTermWhiteList = @"^[\p{L}\p{N} _.,%/#:()+&@'\-]{0,120}$";
 
@@ -64,6 +65,28 @@ public static class SecurityReportRules
         }
 
         return internet ? Deviation : Hint;
+    }
+
+    // user-added custom services: "forbidden" => ok, host blacklist => partly secured, nothing => all hosts reachable (SSRF)
+    private static SecurityVerdict CustomServiceHostBlacklist(SecurityRuleContext c, bool internet)
+    {
+        var entries = c.Str("security-add-custom-services-host-blacklist", "")
+            .Split(',')
+            .Select(s => s.Trim())
+            .Where(s => s.Length > 0)
+            .ToArray();
+
+        if (entries.Contains("forbidden"))
+        {
+            return Ok;
+        }
+
+        if (!internet)
+        {
+            return entries.Length > 0 ? Ok : Hint;
+        }
+
+        return entries.Length > 0 ? PartialDeviation : Deviation;
     }
 
     private static SecurityRule Rule(string key, string def, SecurityCategory cat, SecurityRisk risk, string anchor,
@@ -158,6 +181,10 @@ public static class SecurityReportRules
             c => InRange(c, "dynamic-content:max-response-bytes", 52428800, 1, 52428800)),
         Rule("dynamic-content:max-redirects", "5", Fine, SecurityRisk.Low, DynamicContent,
             c => InRange(c, "dynamic-content:max-redirects", 5, 0, 5)),
+
+        Rule("security-add-custom-services-host-blacklist", "-", Feature, SecurityRisk.High, CustomServices,
+            c => CustomServiceHostBlacklist(c, true),
+            c => CustomServiceHostBlacklist(c, false)),
 
         Rule("lookup:term-whitelist", "(default)", Fine, SecurityRisk.Medium, Keys,
             c => !c.IsSet("lookup:term-whitelist") || c.Str("lookup:term-whitelist", "") == DefaultTermWhiteList ? Ok : Hint),

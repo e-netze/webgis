@@ -94,6 +94,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     they must be secured before they are re-enabled.
   - An `http(s)` URL in `api.config` `storage-rootpath` is no longer supported; use a local or
     shared directory instead.
+- Security (custom services): The connection of user-added custom services (url, name, user, password in
+  `custom_request_parameters.connection` / `custom.{serviceId}.connection`, also stored in saved maps) is now
+  encrypted with purpose-bound AES-GCM (`CryptoPurposes.CustomServiceConnection`) instead of the static default key
+  AES-CBC (padding oracle). **!! Breaking Change !!**
+  - Legacy values (static AES/3DES) in existing saved maps are still accepted; every invalid value (also a forged one
+    that decrypts to garbage) is treated the same way as a missing connection.
+  - Maps with custom services saved with this version cannot be opened by older API versions (e.g. when copying
+    storage from a test to a production system that is not updated yet).
+- Security report: new rule for `security-add-custom-services-host-blacklist` (user-added custom services, SSRF).
+  Internet: `forbidden` => ok, blacklist => warning (new verdict `SecurityVerdict.PartialDeviation`), not set =>
+  critical; intranet: not set => hint.
+  [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-custom-services)
 
 ### Fixed
 

@@ -22,6 +22,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-redirects)
 - **Breaking change:** Security hardening of the MapBuilder/AppBuilder: API and Portal must be updated together, and bookmarked MapBuilder links with a `clientid` parameter stop working; open the MapBuilder from the subscriber clients page of the API instead.
 - **Breaking change:** The `/storage` endpoint of the API (HTTP storage shared between API instances) was removed for security reasons, so `storage-rootpath` in `api.config` must be a local or shared directory and no longer an `http(s)` URL.
+- **Breaking change:** User-added custom services (with user/password) in saved maps are encrypted in a new, more secure format; existing maps keep working, but maps saved with this version cannot be opened by older API versions, so update the production system before copying storage from an updated test system.
 ### New
 
 - Subscriber login hardened for internet use: secure auth cookie with session lifetime, captcha and temporary lockout after failed logins, single-use captchas; configurable in the `api.config` section `security` (`cookie-secure`, `session-*`, `login-*`, `captcha-lifetime-minutes`), optionally shared between instances via Redis.
@@ -36,6 +37,8 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - Redesigned subscriber login and account pages.
 - New security report page `/SecurityReport` (tile *Security-Bericht* in the subscriber admin) that rates the security-relevant `api.config` keys for internet and intranet installations and lists all subscribers with their two-factor status. It is protected by the secure-endpoint credentials (`security:secure-endpoint-url-password` or `secure-endpoint-basicauth-*`); without them it is only reachable directly on the server.
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-report)
+- The security report also rates `security-add-custom-services-host-blacklist`; for internet installations set it to `forbidden` to disable user-added custom services (a blacklist is rated as medium, no entry as high risk).
+  [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-custom-services)
 - Portal: hardened login cookie and `/hmac` redirect handling; new `portal.config` keys `security:accept-legacy-auth-cookie` and `security:allowed-redirect-hosts`.
   [Docs](https://docs.webgiscloud.com/en/webgis/config/portal/index.html#portal-config-security)
 
