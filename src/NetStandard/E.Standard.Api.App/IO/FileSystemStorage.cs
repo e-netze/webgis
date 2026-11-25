@@ -90,17 +90,25 @@ public class FileSystemStorage : IStorage, IStorage2
         {
             IStorageInteractions si = (IStorageInteractions)currentTool;
 
+            // format parameters (e.g. portal page id, category) may come from the client
+            string FormatParameter(int index)
+            {
+                var parameter = si.StoragePathFormatParameter(Bridge, index);
+                ValidatePathPart(parameter);
+                return parameter;
+            }
+
             if (currentPath.Contains("{2}") && currentPath.Contains("{1}") && currentPath.Contains("{0}"))
             {
-                currentPath = String.Format(currentPath, si.StoragePathFormatParameter(Bridge, 0), si.StoragePathFormatParameter(Bridge, 1), si.StoragePathFormatParameter(Bridge, 2));
+                currentPath = String.Format(currentPath, FormatParameter(0), FormatParameter(1), FormatParameter(2));
             }
             else if (currentPath.Contains("{1}") && currentPath.Contains("{0}"))
             {
-                currentPath = String.Format(currentPath, si.StoragePathFormatParameter(Bridge, 0), si.StoragePathFormatParameter(Bridge, 1));
+                currentPath = String.Format(currentPath, FormatParameter(0), FormatParameter(1));
             }
             else if (currentPath.Contains("{0}"))
             {
-                currentPath = String.Format(currentPath, si.StoragePathFormatParameter(Bridge, 0));
+                currentPath = String.Format(currentPath, FormatParameter(0));
             }
         }
 
@@ -126,7 +134,7 @@ public class FileSystemStorage : IStorage, IStorage2
 
     private SecureDirectoryInfo CurrentPathInfo(bool create = true, Type currentToolType = null)
     {
-        SecureDirectoryInfo di = new SecureDirectoryInfo(this.Bridge, CurrentPath(currentToolType));
+        SecureDirectoryInfo di = new SecureDirectoryInfo(this.Bridge, EnsureInToolRoot(CurrentPath(currentToolType), currentToolType));
         if (create && !di.Exists)
         {
             di.Create();
@@ -158,6 +166,8 @@ public class FileSystemStorage : IStorage, IStorage2
 
     private SecureDirectoryInfo CurrentRawPathInfo(string subDir)
     {
+        ValidatePathPart(subDir);
+
         string path = this.RawCurrentPath(null) + subDir;
 
         bool isUnc = path.StartsWith(@"\\");
@@ -177,11 +187,16 @@ public class FileSystemStorage : IStorage, IStorage2
             path = @"\" + path;
         }
 
-        return new SecureDirectoryInfo(this.Bridge, path);
+        return new SecureDirectoryInfo(this.Bridge, EnsureInToolRoot(path));
     }
 
     private void ValidateName(string name)
     {
+        if (String.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("Invalid storage name");
+        }
+
         string regexString = $"[{Regex.Escape(new string(Path.GetInvalidPathChars()))}]";
         Regex containsABadCharacter = new Regex(regexString);
 
@@ -189,6 +204,89 @@ public class FileSystemStorage : IStorage, IStorage2
         {
             throw new ArgumentException($"The charakters {new string(Path.GetInvalidPathChars())} are not allowed in names");
         }
+
+        ValidatePathPart(name);
+    }
+
+    // SECURITY (SEC_TIRIS High Storage PathTraversal / Critical 2.1):
+    // client supplied names, ids and path parameters must never navigate upwards or be absolute paths.
+    private static void ValidatePathPart(string part)
+    {
+        if (String.IsNullOrEmpty(part))
+        {
+            return;
+        }
+
+        if (Path.IsPathRooted(part) || part.IndexOf(':') == 1)
+        {
+            throw new ArgumentException("Invalid storage name");
+        }
+
+        foreach (var segment in part.Split(PathSeparators))
+        {
+            var trimmed = segment.Trim();
+            if (trimmed.Length > 1 && trimmed.Trim('.').Length == 0)  // "..", "...", ".. "
+            {
+                throw new ArgumentException("Invalid storage name");
+            }
+        }
+    }
+
+    private static readonly char[] PathSeparators = new[] { '/', '\\' };
+
+    private string ToolRootFullPath(Type currentToolType = null)
+    {
+        var type = CurrentToolType(Bridge, currentToolType);
+
+        string toolStorageId = type.ToToolId();
+        var toolStorageIdAttribute = type.GetCustomAttribute<ToolStorageIdAttribute>();
+        if (toolStorageIdAttribute != null)
+        {
+            toolStorageId = toolStorageIdAttribute.ToolStorageId;
+        }
+
+        string rootPath = PathFromToolStorageId(toolStorageId);
+
+        // placeholders ({user}, {0}, ...) are resolved below the tool root
+        int placeholderPos = rootPath.IndexOf('{');
+        if (placeholderPos >= 0)
+        {
+            rootPath = rootPath.Substring(0, rootPath.LastIndexOfAny(PathSeparators, placeholderPos) + 1);
+        }
+
+        rootPath = Path.GetFullPath(rootPath);
+        if (!rootPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+        {
+            rootPath += Path.DirectorySeparatorChar;
+        }
+
+        return rootPath;
+    }
+
+    // Every path resolved by this storage must stay within the storage root of the current tool
+    // (prevents writing e.g. DataLinq definitions or files of other tools/users).
+    private string EnsureInToolRoot(string path, Type currentToolType = null)
+    {
+        string fullPath = Path.GetFullPath(path);
+        string rootPath = ToolRootFullPath(currentToolType);
+
+        var comparison = Path.DirectorySeparatorChar == '\\'
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
+
+        if (!(fullPath + Path.DirectorySeparatorChar).StartsWith(rootPath, comparison))
+        {
+            throw new ArgumentException("Invalid storage name");
+        }
+
+        return fullPath;
+    }
+
+    private string ResolveFilePath(SecureDirectoryInfo pathInfo, string name, StorageBlobType type, Type currentToolType = null)
+    {
+        ValidateName(name);
+
+        return EnsureInToolRoot(Path.Combine(pathInfo.FullName, FilenameWithExtentsion(name, type)), currentToolType);
     }
 
     private string FilenameWithExtentsion(string name, StorageBlobType type)
@@ -251,9 +349,7 @@ public class FileSystemStorage : IStorage, IStorage2
                 }
             }
 
-            this.ValidateName(name);
-
-            SecureFileInfo fi = new SecureFileInfo(this.Bridge, Path.Combine(pathInfo.FullName, FilenameWithExtentsion(name, type)));
+            SecureFileInfo fi = new SecureFileInfo(this.Bridge, ResolveFilePath(pathInfo, name, type));
             if (!fi.Directory.Exists)
             {
                 fi.Directory.Create();
@@ -281,9 +377,7 @@ public class FileSystemStorage : IStorage, IStorage2
                 }
             }
 
-            this.ValidateName(name);
-
-            SecureFileInfo fi = new SecureFileInfo(this.Bridge, Path.Combine(pathInfo.FullName, FilenameWithExtentsion(name, type)));
+            SecureFileInfo fi = new SecureFileInfo(this.Bridge, ResolveFilePath(pathInfo, name, type));
             if (!fi.Directory.Exists)
             {
                 fi.Directory.Create();
@@ -312,7 +406,7 @@ public class FileSystemStorage : IStorage, IStorage2
             }
 
             //Console.WriteLine($"Storage: { name } exists in { pathInfo.FullName }");
-            return new SecureFileInfo(this.Bridge, Path.Combine(pathInfo.FullName, FilenameWithExtentsion(name, type))).Exists;
+            return new SecureFileInfo(this.Bridge, ResolveFilePath(pathInfo, name, type)).Exists;
         }
     }
 
@@ -359,7 +453,7 @@ public class FileSystemStorage : IStorage, IStorage2
                 return null;
             }
 
-            SecureFileInfo fi = new SecureFileInfo(this.Bridge, Path.Combine(pathInfo.FullName, FilenameWithExtentsion(name, type)));
+            SecureFileInfo fi = new SecureFileInfo(this.Bridge, ResolveFilePath(pathInfo, name, type));
 
             if (!fi.Exists)
             {
@@ -393,7 +487,7 @@ public class FileSystemStorage : IStorage, IStorage2
             }
 
             SecureFileInfo fi = new SecureFileInfo(this.Bridge,
-                Path.Combine(pathInfo.FullName, FilenameWithExtentsion(name, type)));
+                ResolveFilePath(pathInfo, name, type));
 
             if (!fi.Exists)
             {
@@ -432,7 +526,7 @@ public class FileSystemStorage : IStorage, IStorage2
                 }
 
                 SecureFileInfo fi = new SecureFileInfo(this.Bridge,
-                    Path.Combine(pathInfo.FullName, FilenameWithExtentsion(name, type)));
+                    ResolveFilePath(pathInfo, name, type));
 
                 if (!fi.Exists)
                 {
@@ -462,6 +556,8 @@ public class FileSystemStorage : IStorage, IStorage2
                 }
             }
 
+            ValidateName(name);
+
             while (name.Contains(@"\\"))
             {
                 name = name.Replace(@"\\", @"\");
@@ -477,7 +573,7 @@ public class FileSystemStorage : IStorage, IStorage2
                 if (name.Contains(slash))
                 {
                     int lastPos = name.LastIndexOf(slash);
-                    pathInfo = new SecureDirectoryInfo(this.Bridge, pathInfo.FullName + @"/" + name.Substring(0, lastPos));
+                    pathInfo = new SecureDirectoryInfo(this.Bridge, EnsureInToolRoot(pathInfo.FullName + @"/" + name.Substring(0, lastPos)));
                     name = name.Substring(lastPos + 1, name.Length - lastPos - 1);
                 }
             }
@@ -489,7 +585,7 @@ public class FileSystemStorage : IStorage, IStorage2
 
             if (type == StorageBlobType.Folder)
             {
-                SecureDirectoryInfo folder = new SecureDirectoryInfo(this.Bridge, Path.Combine(pathInfo.FullName, name));
+                SecureDirectoryInfo folder = new SecureDirectoryInfo(this.Bridge, EnsureInToolRoot(Path.Combine(pathInfo.FullName, name)));
                 folder.Remove(recursive);
 
                 return true;
@@ -498,7 +594,7 @@ public class FileSystemStorage : IStorage, IStorage2
             {
 
                 SecureFileInfo fi = new SecureFileInfo(this.Bridge,
-                    Path.Combine(pathInfo.FullName, FilenameWithExtentsion(name, type)));
+                    ResolveFilePath(pathInfo, name, type));
 
                 fi.Delete();
 
@@ -532,6 +628,8 @@ public class FileSystemStorage : IStorage, IStorage2
                 }
             }
 
+            ValidateName(name);
+
             while (name.Contains(@"\\"))
             {
                 name = name.Replace(@"\\", @"\");
@@ -542,18 +640,18 @@ public class FileSystemStorage : IStorage, IStorage2
             if (name.Contains(@"/"))
             {
                 int lastPos = name.LastIndexOf(@"/");
-                pathInfo = new SecureDirectoryInfo(this.Bridge, pathInfo.FullName + @"/" + name.Substring(0, lastPos));
+                pathInfo = new SecureDirectoryInfo(this.Bridge, EnsureInToolRoot(pathInfo.FullName + @"/" + name.Substring(0, lastPos), storageToolType));
                 name = name.Substring(lastPos + 1, name.Length - lastPos - 1);
             }
 
-            var directoryInfo = new SecureDirectoryInfo(this.Bridge, pathInfo.FullName + @"/" + name);
+            var directoryInfo = new SecureDirectoryInfo(this.Bridge, EnsureInToolRoot(pathInfo.FullName + @"/" + name, storageToolType));
             if (directoryInfo.Exists)
             {
                 pathInfo = directoryInfo;
                 name = "_";   // Directory -> _.acl
             }
 
-            var aclFile = new FileInfo(pathInfo.FullName + @"/" + name + ".acl");
+            var aclFile = new FileInfo(EnsureInToolRoot(pathInfo.FullName + @"/" + name + ".acl", storageToolType));
             if (aclFile.Exists)
             {
                 return JSerializer.Deserialize<string[]>(File.ReadAllText(aclFile.FullName));
@@ -579,6 +677,8 @@ public class FileSystemStorage : IStorage, IStorage2
                 }
             }
 
+            ValidateName(name);
+
             while (name.Contains(@"\\"))
             {
                 name = name.Replace(@"\\", @"\");
@@ -589,18 +689,18 @@ public class FileSystemStorage : IStorage, IStorage2
             if (name.Contains(@"/"))
             {
                 int lastPos = name.LastIndexOf(@"/");
-                pathInfo = new SecureDirectoryInfo(this.Bridge, pathInfo.FullName + @"/" + name.Substring(0, lastPos));
+                pathInfo = new SecureDirectoryInfo(this.Bridge, EnsureInToolRoot(pathInfo.FullName + @"/" + name.Substring(0, lastPos), storageToolType));
                 name = name.Substring(lastPos + 1, name.Length - lastPos - 1);
             }
 
-            var directoryInfo = new SecureDirectoryInfo(this.Bridge, pathInfo.FullName + @"/" + name);
+            var directoryInfo = new SecureDirectoryInfo(this.Bridge, EnsureInToolRoot(pathInfo.FullName + @"/" + name, storageToolType));
             if (directoryInfo.Exists)
             {
                 pathInfo = directoryInfo;
                 name = "_";   // Directory -> _.acl
             }
 
-            var aclFile = new FileInfo(pathInfo.FullName + @"/" + name + ".acl");
+            var aclFile = new FileInfo(EnsureInToolRoot(pathInfo.FullName + @"/" + name + ".acl", storageToolType));
 
             access = access.Where(a => !String.IsNullOrWhiteSpace(a))
                            .ToArray();
@@ -802,14 +902,16 @@ public class FileSystemStorage : IStorage, IStorage2
             var pathInfo = this.GetCurrentIndexPathInfo(false);
 
             indexName = indexName.Username2StorageDirectory(); // Index ist oft Username
+            ValidatePathPart(indexName);
 
-            var indexDirectory = new SecureDirectoryInfo(this.Bridge, pathInfo.FullName + @"/_index/" + indexName);
+            var indexDirectory = new SecureDirectoryInfo(this.Bridge, EnsureInToolRoot(pathInfo.FullName + @"/_index/" + indexName));
             if (!indexDirectory.Exists)
             {
                 indexDirectory.Create();
             }
 
-            File.WriteAllText(indexDirectory.FullName + @"/" + key + ".idx", val);
+            ValidateName(key);
+            File.WriteAllText(EnsureInToolRoot(indexDirectory.FullName + @"/" + key + ".idx"), val);
 
             return true;
         }
@@ -822,8 +924,10 @@ public class FileSystemStorage : IStorage, IStorage2
             var pathInfo = this.GetCurrentIndexPathInfo(false);
 
             indexName = indexName.Username2StorageDirectory(); // Index ist oft Username
+            ValidatePathPart(indexName);
+            ValidatePathPart(key);
 
-            var fi = new SecureFileInfo(this.Bridge, pathInfo.FullName + @"/_index/" + indexName + @"/" + key + ".idx");
+            var fi = new SecureFileInfo(this.Bridge, EnsureInToolRoot(pathInfo.FullName + @"/_index/" + indexName + @"/" + key + ".idx"));
             if (!fi.Exists)
             {
                 return String.Empty;
@@ -840,9 +944,10 @@ public class FileSystemStorage : IStorage, IStorage2
             var pathInfo = this.GetCurrentIndexPathInfo(false);
 
             indexName = indexName.Username2StorageDirectory(); // Index ist oft Username
+            ValidatePathPart(indexName);
 
             List<string> keys = new List<string>();
-            var di = new SecureDirectoryInfo(this.Bridge, pathInfo.FullName + @"/_index/" + indexName + @"/");
+            var di = new SecureDirectoryInfo(this.Bridge, EnsureInToolRoot(pathInfo.FullName + @"/_index/" + indexName + @"/"));
             if (!di.Exists)
             {
                 return keys.ToArray();
@@ -863,11 +968,13 @@ public class FileSystemStorage : IStorage, IStorage2
             var pathInfo = this.GetCurrentIndexPathInfo(false);
 
             indexName = indexName.Username2StorageDirectory(); // Index ist oft Username
+            ValidatePathPart(indexName);
+            ValidatePathPart(key);
 
-            var fi = new SecureFileInfo(this.Bridge, pathInfo.FullName + @"/_index/" + indexName + @"/" + key + ".idx");
+            var fi = new SecureFileInfo(this.Bridge, EnsureInToolRoot(pathInfo.FullName + @"/_index/" + indexName + @"/" + key + ".idx"));
             fi.Delete();
 
-            var di = new SecureDirectoryInfo(this.Bridge, pathInfo.FullName + @"/_index/" + indexName);
+            var di = new SecureDirectoryInfo(this.Bridge, EnsureInToolRoot(pathInfo.FullName + @"/_index/" + indexName));
             if (di.GetFiles("*.idx").Count() == 0)
             {
                 di.Remove(false);
@@ -903,7 +1010,8 @@ public class FileSystemStorage : IStorage, IStorage2
         {
             var pathInfo = this.CurrentPathInfo(true);
 
-            SecureFileInfo fi = new SecureFileInfo(this.Bridge, pathInfo.FullName + @"/" + id + ".tmp");
+            ValidateName(id);
+            SecureFileInfo fi = new SecureFileInfo(this.Bridge, EnsureInToolRoot(pathInfo.FullName + @"/" + id + ".tmp"));
             if (fi.Exists)
             {
                 return System.IO.File.ReadAllText(fi.FullName);
