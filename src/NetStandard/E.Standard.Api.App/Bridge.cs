@@ -98,7 +98,9 @@ public class Bridge : IBridge
         storagePath = storagePath.OrTake(_config.StorageRootPath().ToLower());
         if (storagePath.StartsWith("http://") || storagePath.StartsWith("https://"))
         {
-            this.Storage = new IO.WebStorage(this, storagePath);
+            // Legacy HTTP storage is disabled for security reasons (see IO/WebStorage.cs)
+            // this.Storage = new IO.WebStorage(this, storagePath);
+            throw new Exception("HTTP storage (storage-rootpath as http(s) url) is not supported. Use a local or shared directory.");
         }
         else
         {

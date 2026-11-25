@@ -87,6 +87,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - The MapBuilder for a subscriber client is opened via the new API action `Subscribers/OpenMapBuilder`
     (clients page); old/bookmarked MapBuilder links with a `clientid` parameter no longer work.
   - API and Portal must be updated together.
+- Security (Storage): Disabled the legacy HTTP storage (API -> API via `/storage/...`), which
+  derived the user identity from client-supplied, only encrypted (not authenticated) parameters and
+  allowed anonymous writes. **!! Breaking Change !!**
+  - `StorageController` and `WebStorage` are excluded from the build (`#if LEGACY_HTTP_STORAGE`);
+    they must be secured before they are re-enabled.
+  - An `http(s)` URL in `api.config` `storage-rootpath` is no longer supported; use a local or
+    shared directory instead.
 
 ### Fixed
 
