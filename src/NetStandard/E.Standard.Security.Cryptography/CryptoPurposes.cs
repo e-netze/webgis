@@ -36,4 +36,14 @@ public static class CryptoPurposes
     /// Encrypted OGC ticket in the <c>ogc_ticket_logout</c> parameter of the OGC logout url.
     /// </summary>
     public const string OgcLogoutTicket = "ogc-logout-ticket";
+
+    /// <summary>
+    /// Encrypted form values the API posts to the portal <c>proxy/query/{method}</c> endpoint (e.g. <c>cookievalue</c>).
+    /// </summary>
+    public const string PortalProxyQueryRequest = "portal-proxy-query-request";
+
+    /// <summary>
+    /// Encrypted json response of the portal <c>proxy/query/{method}</c> endpoint (read by API and CMS).
+    /// </summary>
+    public const string PortalProxyQueryResponse = "portal-proxy-query-response";
 }

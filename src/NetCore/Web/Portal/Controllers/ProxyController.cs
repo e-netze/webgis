@@ -6,6 +6,7 @@ using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Json;
 using E.Standard.Security.App.Json;
+using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 
 using Microsoft.AspNetCore.Mvc;
@@ -111,7 +112,10 @@ public class ProxyController : PortalBaseController
 
         if (id == "webgis-portal-auth2")
         {
-            string cookievalue = _crypto.DecryptTextDefault(Request.Form["cookievalue"]);
+            if (!_crypto.TryDecryptAuthenticated(Request.Form["cookievalue"], CryptoPurposes.PortalProxyQueryRequest, out var cookievalue))
+            {
+                return BadRequest();
+            }
 
             return JsonObjectEncrypted(
                 new
@@ -126,6 +130,10 @@ public class ProxyController : PortalBaseController
 
     #region Helper
 
+    private IActionResult JsonObjectEncrypted(object obj)
+    {
+        return JsonView(_crypto.EncryptAuthenticated(JsonString(obj), CryptoPurposes.PortalProxyQueryResponse));
+    }
 
     #endregion
 

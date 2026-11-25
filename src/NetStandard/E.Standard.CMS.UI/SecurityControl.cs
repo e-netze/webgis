@@ -329,7 +329,10 @@ public class SecurityControl : UserControl
                 UseDefaultCredentials = true
             }).Result;
 
-        string jsonString = _crypto.DecryptTextDefault(jsonStringEncrypted.Trim());
+        if (!_crypto.TryDecryptAuthenticated(jsonStringEncrypted?.Trim(), E.Standard.Security.Cryptography.CryptoPurposes.PortalProxyQueryResponse, out var jsonString))
+        {
+            throw new Exception("Invalid portal response");
+        }
         var jsonObject = JSerializer.Deserialize<JsonValueResponse<T>>(jsonString);
 
         return jsonObject.value;

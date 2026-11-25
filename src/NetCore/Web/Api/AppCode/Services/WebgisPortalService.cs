@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using E.Standard.Extensions.Collections;
 using E.Standard.Extensions.ErrorHandling;
 using E.Standard.Json;
+using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Abstractions;
 using E.Standard.Web.Models;
@@ -101,14 +102,14 @@ public class WebgisPortalService
                 {
                     UseDefaultCredentials = true
                 });
-            jsonString = _crypto.DecryptTextDefault(response.Trim());
+            jsonString = DecryptPortalResponse(response);
         }
         else
         {
             var nvcEnc = new NameValueCollection();
             foreach (string key in nvc.Keys)
             {
-                nvcEnc[key] = _crypto.EncryptTextDefault(nvc[key]);
+                nvcEnc[key] = _crypto.EncryptAuthenticated(nvc[key] ?? String.Empty, CryptoPurposes.PortalProxyQueryRequest);
             }
 
             var response = await _http.PostValues($"{portalQueryUrl}/proxy/query/{method}",
@@ -117,11 +118,21 @@ public class WebgisPortalService
                 {
                     UseDefaultCredentials = true
                 });
-            jsonString = _crypto.DecryptTextDefault(response.Trim());
+            jsonString = DecryptPortalResponse(response);
         }
 
         var jsonObject = JSerializer.Deserialize<JsonValueResponse<T>>(jsonString);
         return jsonObject.value;
+    }
+
+    private string DecryptPortalResponse(string response)
+    {
+        if (!_crypto.TryDecryptAuthenticated(response?.Trim(), CryptoPurposes.PortalProxyQueryResponse, out var jsonString))
+        {
+            throw new Exception("Invalid portal response");
+        }
+
+        return jsonString;
     }
 
     #endregion
