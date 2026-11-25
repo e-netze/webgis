@@ -241,7 +241,7 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
             {
                 return RedirectToActionResult("LoginOidc", "Auth",
                     new Dictionary<string, object> {
-                        {  "webgis-redirect" , _crypto.EncryptTextDefault(this.Request.GetDisplayUrl(), CryptoResultStringType.Hex) }
+                        {  "webgis-redirect" , _crypto.SignText($"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}|{this.Request.GetDisplayUrl()}", "webgis-redirect") }
                     });
             }
         }
