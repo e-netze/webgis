@@ -29,6 +29,7 @@ public static class SecurityReportRules
     private const string Proxy = "annex-security-proxy";
     private const string Keys = "annex-security-keys";
     private const string CustomServices = "annex-security-custom-services";
+    private const string DataLinq = "annex-security-datalinq";
 
     private const string DefaultTermWhiteList = @"^[\p{L}\p{N} _.,%/#:()+&@'\-]{0,120}$";
 
@@ -87,6 +88,24 @@ public static class SecurityReportRules
         }
 
         return entries.Length > 0 ? PartialDeviation : Deviation;
+    }
+
+    // DataLinq code editing allows changing/uploading Razor code that is compiled and executed in the API process
+    // (only with login, but still). It should only be enabled in development environments:
+    // internet => critical, intranet => warning
+    private static SecurityVerdict DataLinqCodeEditing(SecurityRuleContext c, bool internet)
+    {
+        if (!c.Bool("datalinq:include", false))
+        {
+            return NotApplicable;
+        }
+
+        if (!c.Bool("datalinq:allow-code-editing", false))
+        {
+            return Ok;
+        }
+
+        return internet ? Deviation : PartialDeviation;
     }
 
     private static SecurityRule Rule(string key, string def, SecurityCategory cat, SecurityRisk risk, string anchor,
@@ -185,6 +204,10 @@ public static class SecurityReportRules
         Rule("security-add-custom-services-host-blacklist", "-", Feature, SecurityRisk.High, CustomServices,
             c => CustomServiceHostBlacklist(c, true),
             c => CustomServiceHostBlacklist(c, false)),
+
+        Rule("datalinq:allow-code-editing", "false", Feature, SecurityRisk.High, DataLinq,
+            c => DataLinqCodeEditing(c, true),
+            c => DataLinqCodeEditing(c, false)),
 
         Rule("lookup:term-whitelist", "(default)", Fine, SecurityRisk.Medium, Keys,
             c => !c.IsSet("lookup:term-whitelist") || c.Str("lookup:term-whitelist", "") == DefaultTermWhiteList ? Ok : Hint),
