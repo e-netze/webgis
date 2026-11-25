@@ -147,7 +147,7 @@ public class WmtsService : BaseWmtsService, IMapServiceAuthentication
                 var crypto = requestContext.GetRequiredService<ICryptoService>();
                 var urlHelper = requestContext.GetRequiredService<IUrlHelperService>();
 
-                result.tileUrl = $"{urlHelper.AppRootUrl()}/tilecache/redirect/{this.Url}/{crypto.StaticDefaultEncrypt_Aes(result.tileUrl, Security.Cryptography.CryptoResultStringType.Hex)}/[LEVEL]/[ROW]/[COL]";
+                result.tileUrl = $"{urlHelper.AppRootUrl()}/tilecache/redirect/{this.Url}/{crypto.EncryptAuthenticatedDeterministic($"{this.Url}|{result.tileUrl}", Security.Cryptography.CryptoPurposes.TileCacheRedirect)}/[LEVEL]/[ROW]/[COL]";
             }
         }
 

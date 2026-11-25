@@ -6,6 +6,7 @@ using System.Text;
 using E.Standard.Api.App.Extensions;
 using E.Standard.Api.App.Services.Cache;
 using E.Standard.Configuration.Services;
+using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebApp.Abstraction;
 using E.Standard.WebGIS.Api.Abstractions;
@@ -56,7 +57,14 @@ public class Redirect : IApiEndpoint
                     return;
                 }
 
-                var url = crypto.StaticDefaultDecrypt_Aes(encryptedUrl)
+                if (!crypto.TryDecryptAuthenticated(encryptedUrl, CryptoPurposes.TileCacheRedirect, out var signedUrl)
+                    || !signedUrl.StartsWith($"{serviceId}|", StringComparison.Ordinal))
+                {
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    return;
+                }
+
+                var url = signedUrl.Substring(serviceId.Length + 1)
                                 .Replace("[LEVEL]", level)
                                 .Replace("[ROW]", row)
                                 .Replace("[COL]", col);

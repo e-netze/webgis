@@ -15,4 +15,10 @@ public static class CryptoPurposes
     /// as <c>clientid-sig</c>, to proof that the caller owns the clientid.
     /// </summary>
     public const string BuilderClientId = "builder-clientid";
+
+    /// <summary>
+    /// Deterministically encrypted "serviceId|tileUrl" in <c>/tilecache/redirect/{serviceId}/{token}/...</c> urls
+    /// (secured WMTS tiles). Deterministic, so the tile urls stay browser-cacheable.
+    /// </summary>
+    public const string TileCacheRedirect = "tilecache-redirect";
 }

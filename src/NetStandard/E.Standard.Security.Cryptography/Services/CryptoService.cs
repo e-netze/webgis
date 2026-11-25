@@ -61,6 +61,15 @@ public class CryptoService : ICryptoService
         catch (Exception ex) { throw new CryptographyException(ex); }
     }
 
+    public string EncryptAuthenticatedDeterministic(string input, string purpose)
+    {
+        try
+        {
+            return Impl.EncryptAuthenticatedDeterministic(input, purpose);
+        }
+        catch (Exception ex) { throw new CryptographyException(ex); }
+    }
+
     public bool TryDecryptAuthenticated(string input, string purpose, out string text)
     {
         try
