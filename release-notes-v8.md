@@ -20,6 +20,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-sessions)
 - **Breaking change:** Redirects via `/hmac?redirect=` (DataLinq with OpenID Connect/Azure AD) are only signed for the Portal and API hosts; add other hosts to `security:allowed-redirect-hosts` in `portal.config`. Old `webgis-redirect` links stop working.
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-redirects)
+- **Breaking change:** Security hardening of the MapBuilder/AppBuilder: API and Portal must be updated together, and bookmarked MapBuilder links with a `clientid` parameter stop working; open the MapBuilder from the subscriber clients page of the API instead.
 
 ### New
 

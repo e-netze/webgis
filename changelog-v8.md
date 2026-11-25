@@ -82,6 +82,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     cannot read `v2.` cookies (update all instances together). Opt-out: `portal.config` `security:accept-legacy-auth-cookie`
     = `true` (default `false`), new `PortalSecurityOptions`.
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-sessions)
+- Security (MapBuilder/AppBuilder): Hardened the handover of client IDs between API and Portal; parameters are now
+  signed and short-lived (new purpose constants in `CryptoPurposes`). **!! Breaking Change !!**
+  - The MapBuilder for a subscriber client is opened via the new API action `Subscribers/OpenMapBuilder`
+    (clients page); old/bookmarked MapBuilder links with a `clientid` parameter no longer work.
+  - API and Portal must be updated together.
 
 ### Fixed
 

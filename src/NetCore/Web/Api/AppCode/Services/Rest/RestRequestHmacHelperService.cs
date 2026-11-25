@@ -13,6 +13,7 @@ using E.Standard.Configuration.Services;
 using E.Standard.Custom.Core.Abstractions;
 using E.Standard.Custom.Core.Extensions;
 using E.Standard.Extensions.Compare;
+using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Extensions;
@@ -33,6 +34,8 @@ public class RestRequestHmacHelperService
     private readonly IEnumerable<ICustomApiService> _customServices;
     private readonly IRequestContext _requestContext;
     private readonly IEnumerable<ICustomApiSubscriberClientnameService> _customSubscriberClientnameServices = null;
+
+    private const int RefererSubstitutionMaxAgeSeconds = 30;
 
     public RestRequestHmacHelperService(SubscriberDatabaseService subscriberDb,
                                         KeyValueCacheService keyValueCacke,
@@ -114,23 +117,12 @@ public class RestRequestHmacHelperService
             {
                 #region Check HttpReferer
 
-                // Übergibt MapBuilder... hier wird natürlich nicht der echte HttpReferer übergeben. Dafür muss ein verschlüsselter Wert mit übergeben werden (=clientid,ticks-utc)
+                // Übergibt MapBuilder... hier wird natürlich nicht der echte HttpReferer übergeben. Dafür wird ein signierter Wert mit übergeben (=clientid|unix-seconds)
                 if (!String.IsNullOrWhiteSpace(httpRefererCheckSubstituition))
                 {
-                    httpRefererCheckSubstituition = _crypto.DecryptTextDefault(httpRefererCheckSubstituition);
-                    if (!httpRefererCheckSubstituition.Contains(","))
+                    if (!IsValidRefererSubstitution(httpRefererCheckSubstituition, clientid))
                     {
                         throw new ArgumentException("Invalid Http Referer Substitution");
-                    }
-
-                    if (httpRefererCheckSubstituition.Split(',')[0] != clientid)
-                    {
-                        throw new ArgumentException("Invalid Http Referer Substitution (wrong cliendid)");
-                    }
-
-                    if (Math.Abs(long.Parse(httpRefererCheckSubstituition.Split(',')[1]) - DateTime.UtcNow.Ticks) > new TimeSpan(0, 0, 30).Ticks)
-                    {
-                        throw new ArgumentException("Invalid Http Referer Substitution (timestamp)");
                     }
                 }
                 else
@@ -239,5 +231,20 @@ public class RestRequestHmacHelperService
             _mapServiceInitializer.LogException(_requestContext, ex, "requesthmac");
             return await controller.ThrowJsonException(ex);
         }
+    }
+
+    private bool IsValidRefererSubstitution(string substitution, string clientid)
+    {
+        if (!_crypto.TryVerifyText(substitution, CryptoPurposes.HmacRefererSubstitution, out var signed))
+        {
+            return false;
+        }
+
+        var separator = signed.LastIndexOf('|');
+
+        return separator > 0
+            && signed[..separator] == clientid
+            && long.TryParse(signed[(separator + 1)..], out var issuedAt)
+            && Math.Abs(DateTimeOffset.UtcNow.ToUnixTimeSeconds() - issuedAt) <= RefererSubstitutionMaxAgeSeconds;
     }
 }

@@ -201,6 +201,25 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         return portal.Subscriber == portalUser.Username;
     }
 
+    private const int BuilderClientIdSignatureMaxAgeSeconds = 60;
+
+    // A clientid from the query (MapBuilder/AppBuilder) is only accepted with a signature
+    // from the api (subscriber clients page), that proofs the caller owns the client.
+    protected void VerifySignedBuilderClientId(string clientid)
+    {
+        var separator = -1;
+
+        if (!System.Text.RegularExpressions.Regex.IsMatch(clientid, "^[A-Za-z0-9_-]+$")
+            || !_crypto.TryVerifyText(this.Request.Query["clientid-sig"], CryptoPurposes.BuilderClientId, out var signed)
+            || (separator = signed.LastIndexOf('|')) <= 0
+            || signed[..separator] != clientid
+            || !long.TryParse(signed[(separator + 1)..], out var issuedAt)
+            || Math.Abs(DateTimeOffset.UtcNow.ToUnixTimeSeconds() - issuedAt) > BuilderClientIdSignatureMaxAgeSeconds)
+        {
+            throw new Exception("Invalid or expired clientid. Please open the MapBuilder again from the WebGIS API subscriber clients page.");
+        }
+    }
+
     protected new void SignOut()
     {
         Response.Cookies.Delete(WebgisCookieService.AuthCookieName);

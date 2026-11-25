@@ -85,7 +85,7 @@ public class MapBuilderController : PortalBaseController
             }
             else
             {
-                //clientid = "'" + clientid + "'";
+                VerifySignedBuilderClientId(clientid);
             }
 
             bool isPortalOwner = false;
