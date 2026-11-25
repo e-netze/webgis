@@ -12,6 +12,7 @@ public interface ICryptoService
     bool TryVerifyText(string signedInput, string purpose, out string text);
 
     string EncryptAuthenticated(string input, string purpose);
+    string EncryptAuthenticatedDeterministic(string input, string purpose);
     bool TryDecryptAuthenticated(string input, string purpose, out string text);
 
     string EncryptText(string input, string password, CryptoStrength strength = CryptoStrength.AES128, bool useRandomSalt = true, CryptoResultStringType resultStringType = CryptoResultStringType.Base64);

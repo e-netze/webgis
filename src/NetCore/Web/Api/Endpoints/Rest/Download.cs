@@ -8,6 +8,7 @@ using Api.Core.AppCode.Services.Endpoints;
 
 using E.Standard.Api.App;
 using E.Standard.Extensions.Text;
+using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.Web.Abstractions;
 using E.Standard.Web.Extensions;
@@ -59,7 +60,10 @@ public class Download : IApiEndpoint
                 string contentType
         ) => endpointHandler.HandlerAsync(async (ui) =>
     {
-        string fileName = crypto.DecryptTextDefault(id);
+        if (!crypto.TryDecryptAuthenticated(id, CryptoPurposes.DownloadId, out var fileName))
+        {
+            throw new Exception("Invalid download id");
+        }
 
         if (fileName.Contains("/") || fileName.Contains(@"\"))
         {

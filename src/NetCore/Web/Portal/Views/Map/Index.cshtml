@@ -45,7 +45,7 @@
         }
         else
         {
-            <link href="@(customContent.CustomScriptContent(Model.PageId, Model.CurrentUsername, "portal.css", portalCssVersion))" rel="stylesheet" />
+            <link href="@(customContent.CustomScriptContent(Model.PageId, "portal.css", portalCssVersion))" rel="stylesheet" />
         }
     }
 
@@ -67,7 +67,7 @@
 
     @if (!String.IsNullOrWhiteSpace(customContent.PortalCustomContentRootPath) && customContent.ApiPageDefaultCssExists(Model.PageId))
     {
-        <link href="@(customContent.CustomScriptContent(Model.PageId, Model.CurrentUsername, "default.css", portalCssVersion))" rel="stylesheet" />
+        <link href="@(customContent.CustomScriptContent(Model.PageId, "default.css", portalCssVersion))" rel="stylesheet" />
     }
 
     @if (customContent.PageMapDefaultCssExists(Model.PageId))
@@ -306,7 +306,7 @@
         }
         else
         {
-            <script src="@(customContent.CustomScriptContent(Model.PageId, Model.CurrentUsername, "custom.js", customJsVersion))"></script>
+            <script src="@(customContent.CustomScriptContent(Model.PageId, "custom.js", customJsVersion))"></script>
         }
     }
 

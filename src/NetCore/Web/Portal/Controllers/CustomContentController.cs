@@ -56,13 +56,12 @@ public class CustomContentController : PortalBaseController
 
             if (!String.IsNullOrWhiteSpace(t))
             {
-                var identity = _customContent.FromTempPortalToken(t);
-                if (identity.pageId != id) // Is token valid for this portal?
+                if (!_customContent.IsValidPortalContentToken(t, id)) // Is token valid for this portal?
                 {
                     throw new NotAuthorizedException();
                 }
 
-                path = $"{_customContent.PortalCustomContentRootPath}/{identity.pageId}/{c}";
+                path = $"{_customContent.PortalCustomContentRootPath}/{id}/{c}";
             }
             else if (!String.IsNullOrWhiteSpace(id) && f == "json")
             {
@@ -110,7 +109,9 @@ public class CustomContentController : PortalBaseController
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            _logger.LogWarning(ex, "Loading custom content {content} for portal {portal} failed", c, id);
+
+            return StatusCode(500);
         }
     }
 

@@ -26,6 +26,8 @@ public enum SecurityVerdict
 {
     Ok,
     Deviation,
+    /// <summary>Partly secured: always reported as warning, independent of the rule's risk.</summary>
+    PartialDeviation,
     Hint,
     NotApplicable
 }
@@ -121,6 +123,7 @@ public class SecurityRule
             SecurityVerdict.Ok => SecurityStatus.Ok,
             SecurityVerdict.NotApplicable => SecurityStatus.NotApplicable,
             SecurityVerdict.Hint => SecurityStatus.Hint,
+            SecurityVerdict.PartialDeviation => SecurityStatus.Warning,
             _ => Risk switch
             {
                 SecurityRisk.High => SecurityStatus.Critical,

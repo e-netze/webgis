@@ -300,12 +300,28 @@ public partial class CryptoImpl
 
     // Output: base64url(nonce | tag | ciphertext). The purpose is bound as key info and as associated data.
     public string EncryptAuthenticated(string input, string purpose)
+        => EncryptAuthenticated(input, purpose, deterministic: false);
+
+    // Same output format as EncryptAuthenticated (decrypt with TryDecryptAuthenticated), but the nonce is derived
+    // from the plaintext via HMAC (SIV construction): equal inputs give equal outputs (e.g. browser-cacheable urls).
+    // Only reveals whether two plaintexts are equal; nonces are reused only for identical plaintexts.
+    public string EncryptAuthenticatedDeterministic(string input, string purpose)
+        => EncryptAuthenticated(input, purpose, deterministic: true);
+
+    private string EncryptAuthenticated(string input, string purpose, bool deterministic)
     {
         var plain = Encoding.UTF8.GetBytes(input);
         var result = new byte[GcmNonceSize + GcmTagSize + plain.Length];
 
         var nonce = result.AsSpan(0, GcmNonceSize);
-        RandomNumberGenerator.Fill(nonce);
+        if (deterministic)
+        {
+            HMACSHA256.HashData(DeriveKey($"webgis-aead-siv:{purpose}"), plain).AsSpan(0, GcmNonceSize).CopyTo(nonce);
+        }
+        else
+        {
+            RandomNumberGenerator.Fill(nonce);
+        }
 
         using var gcm = new AesGcm(DeriveKey($"webgis-aead:{purpose}"), GcmTagSize);
         gcm.Encrypt(nonce,

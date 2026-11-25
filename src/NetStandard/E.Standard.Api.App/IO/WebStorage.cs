@@ -1,4 +1,13 @@
-﻿using System;
+﻿// SECURITY (SEC_TIRIS Critical 1.3): Legacy HTTP storage (API -> API via /storage/...) is disabled.
+// The storage endpoint derived the user identity from client supplied, only encrypted (not
+// authenticated) request parameters (__un, __ur, __urp, __tid) -> anonymous writes were possible.
+// The feature was only intended for multiple API instances sharing one storage without a shared
+// directory and has never been used in practice.
+// Before re-enabling it (LEGACY_HTTP_STORAGE), it MUST be secured first: authenticate the calling
+// API (shared secret/HMAC or mTLS), no identity from client parameters, AEAD + expiry, and an
+// api.config switch that keeps the endpoint disabled by default.
+#if LEGACY_HTTP_STORAGE
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
@@ -307,3 +316,5 @@ public class WebStorage : IStorage
 
     #endregion
 }
+
+#endif

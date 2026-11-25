@@ -135,7 +135,7 @@ public class Files : IApiButton
             dateString = imageMetadata != null ? imageMetadata.DateTimeOriginal.ToString() : "",
             contenttype = contentType,
             editfieldname = fieldName,
-            url = "/rest/toolmethod/" + this.GetType().ToToolId() + "/load?id=" + bridge.SecurityEncryptString(blobName),
+            url = "/rest/toolmethod/" + this.GetType().ToToolId() + "/load?id=" + bridge.SecurityEncryptStringLegacy(blobName),
             success = true
         });
     }
@@ -154,9 +154,17 @@ public class Files : IApiButton
             throw new ArgumentException("Can't determine blobname");
         }
 
-        string blobName = bridge.SecurityDecryptString(url.Substring(pos + 4).Split('&')[0]);
+        string blobName = bridge.SecurityDecryptStringOrLegacy(url.Substring(pos + 4).Split('&')[0])
+            ?? throw new ArgumentException("Can't determine blobname");
 
-        bridge.Storage.Remove(blobName, StorageBlobType.Data, true);
+        try
+        {
+            bridge.Storage.Remove(blobName, StorageBlobType.Data, true);
+        }
+        catch
+        {
+            throw new ArgumentException("Can't determine blobname");
+        }
         //bridge.Storage.Remove(blobName, Core.Api.IO.StorageBlobType.Metadata, true);
 
         return new ApiRawJsonEventResponse(new
@@ -171,10 +179,20 @@ public class Files : IApiButton
         string id = e["id"];
         int size = e.GetInt("size");
 
-        string blobName = bridge.SecurityDecryptString(id);
+        string blobName = bridge.SecurityDecryptStringOrLegacy(id)
+            ?? throw new FileNotFoundException();
         string thumbnailSizeExtentsion = String.Empty;
 
-        var fileMetaString = bridge.Storage.LoadString(blobName, StorageBlobType.Metadata);
+        string fileMetaString;
+        try
+        {
+            fileMetaString = bridge.Storage.LoadString(blobName, StorageBlobType.Metadata);
+        }
+        catch
+        {
+            throw new FileNotFoundException();
+        }
+
         if (!String.IsNullOrEmpty(fileMetaString))
         {
             var meta = JSerializer.Deserialize<FileMeta>(fileMetaString);

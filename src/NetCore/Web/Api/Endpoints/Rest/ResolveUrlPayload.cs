@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using System;
 using System.Threading.Tasks;
 
 using Api.Core.AppCode.Extensions;
@@ -8,6 +9,7 @@ using Api.Core.AppCode.Services.Endpoints;
 
 using E.DataLinq.Web.Models.TokenCache;
 using E.DataLinq.Web.Services.TokenCache;
+using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 using E.Standard.WebApp.Abstraction;
 using E.Standard.WebGIS.Api.Abstractions;
@@ -48,7 +50,10 @@ public class ResolveUrlPayload : IApiEndpoint
                 [FromServices] IDataLinqCacheTokenService? tokenService = null  // optional: set [FromServices] here because otherweise ASPNET.Core do not know its a Service...
             ) => endpointHandler.HandlerAsync(async (ui) =>
             {
-                var payloadUrl = crypto.DecryptTextDefault(payload);
+                if (!crypto.TryDecryptAuthenticated(payload, CryptoPurposes.HotlinkUrlPayload, out var payloadUrl))
+                {
+                    throw new Exception("Invalid payload");
+                }
 
                 var resultUrl = payloadUrl switch
                 {

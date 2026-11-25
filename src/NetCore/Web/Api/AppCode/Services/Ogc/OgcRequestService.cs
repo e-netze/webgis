@@ -78,7 +78,7 @@ public class OgcRequestService
     public string OgcLogoutService(HttpRequest request, string ogcTicket)
     {
         string service = _config.OgcLogoutService();
-        string onlineResource = OgcOnlineResouce(request) + "?ogc_ticket_logout=" + _crypto.EncryptTextDefault(ogcTicket, CryptoResultStringType.Hex);
+        string onlineResource = OgcOnlineResouce(request) + "?ogc_ticket_logout=" + _crypto.EncryptAuthenticated(ogcTicket ?? String.Empty, CryptoPurposes.OgcLogoutTicket);
 
         return service.Replace("{redirect}", onlineResource).Replace("{ogc_ticket}", ogcTicket);
     }

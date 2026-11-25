@@ -32,7 +32,7 @@
 </environment>
 @if (!String.IsNullOrWhiteSpace(customContent.PortalCustomContentRootPath) && customContent.ApiPageDefaultCssExists(Model.PortalId))
 {
-    <link href="@(customContent.CustomScriptContent(Model.PortalId, Model.CurrentUsername, "default.css", WebGISVersion.CssVersion))" rel="stylesheet" />
+    <link href="@(customContent.CustomScriptContent(Model.PortalId, "default.css", WebGISVersion.CssVersion))" rel="stylesheet" />
 }
 @if (customContent.PageMapDefaultCssExists(Model.PortalId))
 {
@@ -197,7 +197,7 @@
     }
     else
     {
-        <link href="@(customContent.CustomScriptContent(Model.PortalId, Model.CurrentUsername, "portal.css", portalCssVersion))" rel="stylesheet" />
+        <link href="@(customContent.CustomScriptContent(Model.PortalId, "portal.css", portalCssVersion))" rel="stylesheet" />
     }
 }
 
@@ -245,7 +245,7 @@
     }
     else
     {
-        <script src="@(customContent.CustomScriptContent(Model.PortalId, Model.CurrentUsername, "custom.js", customJsVersion))"></script>
+        <script src="@(customContent.CustomScriptContent(Model.PortalId, "custom.js", customJsVersion))"></script>
     }
 }
 

@@ -172,8 +172,8 @@ public class WebgisApiService
         var parameters = new Dictionary<string, string>()
             {
                 {"page-id",id},
-                {"sorting-method", _crypto.EncryptTextDefault(sortingMethod, CryptoResultStringType.Hex) },
-                {"sorting-items", _crypto.EncryptTextDefault(items, CryptoResultStringType.Hex) }
+                {"sorting-method", _crypto.EncryptAuthenticated(sortingMethod ?? String.Empty, CryptoPurposes.ApiBridge) },
+                {"sorting-items", _crypto.EncryptAuthenticated(items ?? String.Empty, CryptoPurposes.ApiBridge) }
             };
 
         if (!String.IsNullOrEmpty(category))
@@ -192,9 +192,9 @@ public class WebgisApiService
             new Dictionary<string, string>()
             {
                 {"page-id",id},
-                {"page-content-id", _crypto.EncryptTextDefault(contentId, CryptoResultStringType.Hex) },
-                {"page-content",  _crypto.EncryptTextDefault(content, CryptoResultStringType.Hex) },
-                {"page-content-sorting", _crypto.EncryptTextDefault(sorting, CryptoResultStringType.Hex) },
+                {"page-content-id", _crypto.EncryptAuthenticated(contentId ?? String.Empty, CryptoPurposes.ApiBridge) },
+                {"page-content",  _crypto.EncryptAuthenticated(content ?? String.Empty, CryptoPurposes.ApiBridge) },
+                {"page-content-sorting", _crypto.EncryptAuthenticated(sorting ?? String.Empty, CryptoPurposes.ApiBridge) },
             });
 
         return true;
@@ -206,7 +206,7 @@ public class WebgisApiService
             new Dictionary<string, string>()
             {
                 {"page-id",id},
-                {"page-content-id", _crypto.EncryptTextDefault(contentId, CryptoResultStringType.Hex) },
+                {"page-content-id", _crypto.EncryptAuthenticated(contentId ?? String.Empty, CryptoPurposes.ApiBridge) },
             });
 
         return true;
@@ -218,7 +218,7 @@ public class WebgisApiService
             new Dictionary<string, string>()
             {
                 {"page-id",id},
-                {"page-content-sorting", _crypto.EncryptTextDefault(sorting, CryptoResultStringType.Hex) },
+                {"page-content-sorting", _crypto.EncryptAuthenticated(sorting ?? String.Empty, CryptoPurposes.ApiBridge) },
             });
 
         return true;
@@ -230,8 +230,8 @@ public class WebgisApiService
             new Dictionary<string, string>()
             {
                 {"page-id",id},
-                {"page-content-id", _crypto.EncryptTextDefault(contentId, CryptoResultStringType.Hex) },
-                {"page-content-imagedata",_crypto.EncryptTextDefault( Convert.ToBase64String(data), CryptoResultStringType.Hex) }
+                {"page-content-id", _crypto.EncryptAuthenticated(contentId ?? String.Empty, CryptoPurposes.ApiBridge) },
+                {"page-content-imagedata",_crypto.EncryptAuthenticated(Convert.ToBase64String(data), CryptoPurposes.ApiBridge) }
             });
 
         return portalString;
@@ -264,7 +264,7 @@ public class WebgisApiService
                 {"page-publish-page-id", id},
                 {"page-publish-category", category},
                 {"map",map},
-                {"page-map-imagedata", _crypto.EncryptTextDefault( Convert.ToBase64String(data), CryptoResultStringType.Hex) }
+                {"page-map-imagedata", _crypto.EncryptAuthenticated(Convert.ToBase64String(data), CryptoPurposes.ApiBridge) }
             });
 
         return portalString;
@@ -304,7 +304,7 @@ public class WebgisApiService
                 {"page-publish-page-id", id},
                 {"page-publish-category", category},
                 {"app",app},
-                {"page-app-imagedata", _crypto.EncryptTextDefault( Convert.ToBase64String(data), CryptoResultStringType.Hex) }
+                {"page-app-imagedata", _crypto.EncryptAuthenticated(Convert.ToBase64String(data), CryptoPurposes.ApiBridge) }
             });
 
         return portalString;

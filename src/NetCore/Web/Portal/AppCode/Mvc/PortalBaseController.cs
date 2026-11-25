@@ -460,11 +460,6 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         //}
     }
 
-    protected IActionResult JsonObjectEncrypted(object obj)
-    {
-        return JsonView(_crypto.EncryptTextDefault(JsonString(obj), CryptoResultStringType.Hex));
-    }
-
     protected string JsonString(object obj)
     {
         var json = JSerializer.Serialize(obj);

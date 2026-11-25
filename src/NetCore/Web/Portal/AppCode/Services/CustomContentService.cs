@@ -3,7 +3,6 @@ using System.IO;
 
 using E.Standard.Configuration.Services;
 using E.Standard.Platform;
-using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 
 using Microsoft.AspNetCore.Http;
@@ -15,6 +14,8 @@ namespace Portal.Core.AppCode.Services;
 
 public class CustomContentService
 {
+    private const string PortalContentTokenPurpose = "portal-custom-content";
+
     private readonly ConfigurationService _config;
     private readonly UrlHelperService _urlHelper;
     private readonly ICryptoService _crypto;
@@ -35,7 +36,7 @@ public class CustomContentService
 
     public string PortalCustomContentRootPath { get; }
 
-    public string CustomScriptContent(string pageId, string username, string contentName, string version = "")
+    public string CustomScriptContent(string pageId, string contentName, string version = "")
     {
         if (String.IsNullOrWhiteSpace(version))
         {
@@ -43,7 +44,7 @@ public class CustomContentService
         }
 
         string baseUri = _urlHelper.AppRootUrlFromConfig(_request, false),
-               path = $"customcontent/{pageId}/load?c={contentName}&t={TempPortalToken(pageId, username)}&v={version}";
+               path = $"customcontent/{pageId}/load?c={contentName}&t={PortalContentToken(pageId)}&v={version}";
 
         if (String.IsNullOrEmpty(baseUri))
         {
@@ -53,9 +54,18 @@ public class CustomContentService
         return new Uri(new Uri(baseUri), path).ToString();
     }
 
-    public string TempPortalToken(string pageId, string username)
+    // HMAC-signed (not encrypted): deterministic per page, so the content urls stay cacheable,
+    // and no decryption of client input -> no padding oracle.
+    private string PortalContentToken(string pageId)
     {
-        return _crypto.StaticDefaultEncrypt_Aes($"{pageId};{username}", resultStringType: CryptoResultStringType.Hex);
+        return _crypto.SignText(pageId, PortalContentTokenPurpose);
+    }
+
+    public bool IsValidPortalContentToken(string token, string pageId)
+    {
+        return !String.IsNullOrWhiteSpace(pageId)
+            && _crypto.TryVerifyText(token, PortalContentTokenPurpose, out var signedPageId)
+            && signedPageId == pageId;
     }
 
     public bool PageMapDefaultCssExists(string pageId)
@@ -133,19 +143,6 @@ public class CustomContentService
     public bool PageMapBuilderCssExists(string pageId)
     {
         return File.Exists(Path.Combine(_urlHelper.WWWRootPath(), "content", "portals", pageId, "mapbuilder.css").ToPlatformPath());
-    }
-
-    public (string pageId, string username) FromTempPortalToken(string token)
-    {
-        var param = _crypto.StaticDefaultDecrypt_Aes(token).Split(';');
-
-        if (param.Length != 2)
-        {
-            //Console.WriteLine($"Invalid Token: { new Crypto().StaticDefaultDecrypt(token) }");
-            throw new Exception("Invalid token");
-        }
-
-        return (pageId: param[0], username: param[1]);
     }
 
     #region Metadata

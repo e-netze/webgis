@@ -59,13 +59,13 @@ public class ApiToolEventArguments
             }
 
             var val = nvc[key];
-            if (decode && val.StartsWith("0x"))
+            if (decode)
             {
                 try
                 {
                     val = bridge.SecurityDecryptString(val);
                 }
-                catch { }
+                catch { }  // not encrypted (e.g. the autocomplete term)
             }
 
             parameters[key] = val;

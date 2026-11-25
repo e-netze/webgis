@@ -749,7 +749,7 @@ public class RestPrintHelperService
             {
                 url = map.AsOutputUrl(fileName),
                 preview = map.AsOutputUrl(previewFileName),
-                downloadid = _crypto.EncryptTextDefault(fileName, CryptoResultStringType.Hex),
+                downloadid = _crypto.EncryptAuthenticated(fileName, CryptoPurposes.DownloadId),
                 n = fileName,
                 length = outputFileBytes.Length,
                 page_format = form["format"],
@@ -1877,7 +1877,7 @@ public class RestPrintHelperService
         return await controller.JsonObject(new DownloadDTO()
         {
             Name = name,
-            EncryptedFilename = _crypto.EncryptTextDefault(new FileInfo(filePath).Name, CryptoResultStringType.Hex)
+            EncryptedFilename = _crypto.EncryptAuthenticated(new FileInfo(filePath).Name, CryptoPurposes.DownloadId)
         });
     }
 

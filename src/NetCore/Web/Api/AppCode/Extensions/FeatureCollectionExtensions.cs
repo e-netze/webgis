@@ -45,7 +45,7 @@ static public class FeatureCollectionExtensions
 
                     if (usePayload && crypto is not null)
                     {
-                        hotLinkUrl = $"payload:{crypto.EncryptTextDefault(hotLinkUrl, CryptoResultStringType.Hex)}";
+                        hotLinkUrl = $"payload:{crypto.EncryptAuthenticated(hotLinkUrl, CryptoPurposes.HotlinkUrlPayload)}";
                     }
 
                     if (!String.IsNullOrEmpty(hotLinkUrl))
