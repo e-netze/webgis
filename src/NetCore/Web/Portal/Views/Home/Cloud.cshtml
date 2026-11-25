@@ -35,7 +35,7 @@
 
 @if (!String.IsNullOrWhiteSpace(customContent.PortalCustomContentRootPath) && customContent.ApiPageDefaultCssExists(Model.PortalPageId))
 {
-    <link href="@(customContent.CustomScriptContent(Model.PortalPageId, Model.CurrentUsername, "default.css", WebGISVersion.CssVersion))" rel="stylesheet" />
+    <link href="@(customContent.CustomScriptContent(Model.PortalPageId, "default.css", WebGISVersion.CssVersion))" rel="stylesheet" />
 }
 
 @if (Model.IsContentAuthor)
@@ -69,7 +69,7 @@
     }
     else
     {
-        <link href="@(customContent.CustomScriptContent(Model.PortalPageId, Model.CurrentUsername, "portal.css", portalCssVersion))" rel="stylesheet" />
+        <link href="@(customContent.CustomScriptContent(Model.PortalPageId, "portal.css", portalCssVersion))" rel="stylesheet" />
     }
 }
 <script src="@(portalContentUrl)/scripts/webgis-portal-cloud.js?@(WebGISVersion.CssVersion)"></script>
