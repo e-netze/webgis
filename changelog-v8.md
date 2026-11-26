@@ -106,6 +106,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   Internet: `forbidden` => ok, blacklist => warning (new verdict `SecurityVerdict.PartialDeviation`), not set =>
   critical; intranet: not set => hint.
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-custom-services)
+- Portal: Removed the legacy portal page view `Portal.cshtml` (and `webgis-portal.js`); portal pages
+  always use the `Cloud` view. The `portal.config` key `portal-home-view-name` was removed and is ignored.
 
 ### Fixed
 

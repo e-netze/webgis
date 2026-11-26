@@ -18,7 +18,6 @@ public class PortalConfigKeys
     public const string PortalName = ConfigurationSectionName + ":portal-name";
     public const string PortalNameUrl = ConfigurationSectionName + ":portal-name-url";
 
-    public const string PortalHomeViewName = ConfigurationSectionName + ":portal-home-view-name";
     public const string DefaultPortalPageId = ConfigurationSectionName + ":default-page-id";
 
     public const string PortalCustomContentRootPath = ConfigurationSectionName + ":portal-custom-content-rootpath";

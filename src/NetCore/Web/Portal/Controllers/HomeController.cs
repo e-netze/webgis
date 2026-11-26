@@ -108,8 +108,6 @@ public class HomeController : PortalBaseController
                                             .GetFavItemsAsync(portalUser.Username, String.Empty, "webgis.tools.portal.publish.categorymaps");
             }
 
-            var viewName = _config.Get<string>(PortalConfigKeys.PortalHomeViewName, "Cloud");
-
             string scopeUrl = String.Empty, manifestUrl = String.Empty;
 
             if (_config.RegisterServiceWorker())
@@ -120,7 +118,7 @@ public class HomeController : PortalBaseController
                     $"{_config.ManifestRootUrl().WithoutEndingSlashes()}/{id}/manifest.json";
             }
 
-            return ViewResult(viewName, new PortalModel()
+            return ViewResult("Cloud", new PortalModel()
             {
                 PortalPageId = id,
                 PortalPageName = portal.Name,
