@@ -21,6 +21,7 @@ static public class ServiceCollectionExtensions
 
     static public IServiceCollection AddMapServiceIntitializerService(this IServiceCollection services)
     {
+        services.AddSingleton<CustomServiceUrlValidator>();
         return services.AddTransient<MapServiceInitializerService>();
     }
 

@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
 
+using E.Standard.Security.Cryptography;
 using E.Standard.Security.Cryptography.Abstractions;
 
 namespace E.Standard.WebMapping.Core.Api.Extensions;
@@ -28,8 +29,8 @@ static public class DynamicContentSignature
 
     static public string Sign(ICryptoService crypto, string type, string url)
     {
-        Unwrap(crypto, type, url, out bool signed);
-        if (signed || String.IsNullOrEmpty(url))
+        Unwrap(crypto, type, url, out bool signed, out bool legacy);
+        if ((signed && !legacy) || String.IsNullOrEmpty(url))
         {
             return url;
         }
@@ -40,8 +41,15 @@ static public class DynamicContentSignature
 
     /// <summary>Removes the signature from the url and tells whether it was valid.</summary>
     static public string Unwrap(ICryptoService crypto, string type, string url, out bool signed)
+        => Unwrap(crypto, type, url, out signed, out _);
+
+    /// <summary>
+    /// Removes the signature from the url and tells whether it was valid. Legacy signatures (default key) are still
+    /// accepted, because they are persisted in MapBuilder html snippets.
+    /// </summary>
+    static private string Unwrap(ICryptoService crypto, string type, string url, out bool signed, out bool legacy)
     {
-        signed = false;
+        signed = legacy = false;
 
         int index = url?.LastIndexOf(Marker, StringComparison.Ordinal) ?? -1;
         if (index < 0)
@@ -50,11 +58,11 @@ static public class DynamicContentSignature
         }
 
         string plainUrl = url.Substring(0, index);
-        string signature = url.Substring(index + Marker.Length);
+        var signature = Encoding.UTF8.GetBytes(url.Substring(index + Marker.Length));
 
-        signed = CryptographicOperations.FixedTimeEquals(
-            Encoding.UTF8.GetBytes(signature),
-            Encoding.UTF8.GetBytes(CalcSignature(crypto, type, plainUrl)));
+        bool valid = CryptographicOperations.FixedTimeEquals(signature, Encoding.UTF8.GetBytes(CalcSignature(crypto, type, plainUrl)));
+        legacy = CryptographicOperations.FixedTimeEquals(signature, Encoding.UTF8.GetBytes(CalcLegacySignature(crypto, type, plainUrl)));
+        signed = valid || legacy;
 
         return plainUrl;
     }
@@ -126,9 +134,9 @@ static public class DynamicContentSignature
             }
 
             string type = typeNode.GetValue<string>();
-            Unwrap(crypto, type, url, out bool signed);
+            Unwrap(crypto, type, url, out bool signed, out bool legacy);
 
-            if (signed)
+            if (signed && (requireSigned || !legacy))
             {
                 continue;
             }
@@ -138,6 +146,7 @@ static public class DynamicContentSignature
                 throw new InvalidOperationException("Map contains dynamic content without a valid signature. Reload the map and save it again.");
             }
 
+            // unsigned or legacy signature => (re-)sign with the current signature
             content["url"] = Sign(crypto, type, url);
             changed = true;
         }
@@ -152,6 +161,12 @@ static public class DynamicContentSignature
     }
 
     private static string CalcSignature(ICryptoService crypto, string type, string url)
+    {
+        string signed = crypto.SignText($"dynamic-content|{type}|{url}", CryptoPurposes.DynamicContentSignature);
+        return signed.Substring(signed.LastIndexOf('.') + 1);
+    }
+
+    private static string CalcLegacySignature(ICryptoService crypto, string type, string url)
         => Convert.ToBase64String(
             SHA256.HashData(Encoding.UTF8.GetBytes(
                 crypto.StaticDefaultEncrypt_Aes($"dynamic-content|{type}|{url}"))));

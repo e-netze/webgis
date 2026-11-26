@@ -409,11 +409,29 @@ public class RestController : ApiBaseController
     {
         return await SecureMethodHandlerAsync(async (ui) =>
         {
-            url.CheckAllowedCustomServiceUrl(this.Request, _config);
+            if (!_mapServiceInitializer.CustomServicesEnabled)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
 
-            var restHelper = _restService.Helper;
-            var service = await _mapServiceInitializer.CustomServiceInstanceAsync(_mapServiceInitializer.GenerateNewCustomServiceId(), url, displayname, user, password, ui);
-            ServiceInfoDTO info = restHelper.CreateServiceInfo(this, service, ui);
+            if (!await _mapServiceInitializer.IsAllowedCustomServiceUrlAsync(url))
+            {
+                throw new Exception("Url is not allowed");
+            }
+
+            ServiceInfoDTO info;
+            try
+            {
+                var restHelper = _restService.Helper;
+                var service = await _mapServiceInitializer.CustomServiceInstanceAsync(_mapServiceInitializer.GenerateNewCustomServiceId(), url, displayname, user, password, ui);
+                info = restHelper.CreateServiceInfo(this, service, ui);
+            }
+            catch (Exception ex)
+            {
+                // no details (connection errors, server responses) to the client => no port/host scanning
+                _logger.LogWarning(ex, "Custom service {url} could not be loaded", url);
+                throw new Exception("Service could not be loaded");
+            }
 
             info.CustomRequestParameters = new
             {

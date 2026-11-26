@@ -447,6 +447,7 @@ public class Startup
         });
 
         services.Configure<SubscriberSecurityOptions>(Configuration.BindSubscriberSecurityOptions);
+        services.Configure<CustomServicesOptions>(Configuration.BindCustomServicesOptions);
 
 
         #endregion

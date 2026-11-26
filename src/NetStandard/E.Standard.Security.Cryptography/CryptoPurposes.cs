@@ -85,4 +85,16 @@ public static class CryptoPurposes
     /// Only generated per response, never persisted.
     /// </summary>
     public const string GeorefImageUrl = "georef-image-url";
+
+    /// <summary>
+    /// HMAC signature of TOC vis filters ("id|args", <c>sig</c> of the filter, also persisted in saved/shared maps).
+    /// Legacy signatures (hash of the default key encryption, args only) are still accepted.
+    /// </summary>
+    public const string VisFilterSignature = "visfilter-signature";
+
+    /// <summary>
+    /// HMAC signature of dynamic content urls (<c>url#webgis-sig=...</c>, "type|url"), also persisted in MapBuilder html snippets.
+    /// Legacy signatures (hash of the default key encryption) are still accepted.
+    /// </summary>
+    public const string DynamicContentSignature = "dynamic-content-signature";
 }

@@ -110,6 +110,33 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   always use the `Cloud` view. The `portal.config` key `portal-home-view-name` was removed and is ignored.
 - Portal content images: new image ids (`iid`) are encrypted with AES-GCM (purpose `PortalContentImage`)
   instead of the default key; legacy ids in existing content remain readable.
+- Georeferencing (images): the image urls (`/rest/tooldata/.../get?id=...`) are encrypted with AES-GCM (purpose
+  `GeorefImageUrl`, random nonce per request) instead of the default key. Old urls are not accepted any more (they
+  are only generated per map session).
+- Security (custom services, SSRF): user-added custom services must be enabled on the server and may only reach
+  public hosts by default. **!! Breaking Change !!**
+  - New `api.config` keys `security:allow-custom-services` (default `false`; without it `/rest/customserviceinfo`
+    returns 403 and stored `custom.{id}.connection` values are ignored) and `security:custom-services-allow-hosts`
+    (exact host or `*.domain`, `*` = all; skips the address check, e.g. for intranet map servers). Bound to
+    `CustomServicesOptions`.
+  - `CustomServiceUrlValidator`: http/https only, `security-add-custom-services-host-blacklist` still applies
+    (`forbidden` disables custom services), the host must resolve to public addresses only (no loopback, private,
+    link-local, ...). The url is checked again when a stored connection is loaded. The previous exception
+    "localhost is allowed if the API runs on localhost" was removed (use `custom-services-allow-hosts=localhost`).
+  - Generic error messages ("Url is not allowed", "Service could not be loaded"), details are only logged.
+  - Residual risk: DNS rebinding and redirects, because the service requests resolve the host again.
+  - Security report: new rules for both keys; the blacklist is now rated as fine-tuning (low risk). This replaces
+    the rating of the blacklist described above.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-security-custom-services)
+- Security (signatures): the signatures of TOC vis filters (`VisFilterDefinitionDTO.Signature`) and dynamic content
+  urls (`#webgis-sig=`) are HMAC-SHA256 with purpose-bound keys (`CryptoPurposes.VisFilterSignature`,
+  `DynamicContentSignature`, via `ICryptoService.SignText`) instead of a hash of the default key encryption.
+  - The vis filter signature now also covers the filter id (service and layer), so a signed filter can't be
+    applied to another layer.
+  - Legacy signatures (saved maps, MapBuilder html) are still accepted; dynamic content urls with a legacy
+    signature are re-signed when a map is loaded. Maps saved with this version fail these checks on older API
+    versions sharing the same storage.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/api/index.html#api-config-dynamic-content)
 
 ### Fixed
 
