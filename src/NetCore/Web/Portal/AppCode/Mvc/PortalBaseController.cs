@@ -401,6 +401,48 @@ public class PortalBaseController : Controller/*, IPortalBaseController<IActionR
         }
     }
 
+    // Uploaded images are sent base64 + GCM encrypted (~1.8x) as a single form value to the API,
+    // which must stay below the API's default form value length limit (4 MB)
+    protected const int MaxUploadImageBytes = 2 * 1024 * 1024;
+
+    protected static readonly System.Text.RegularExpressions.Regex UploadImageStorageNameRegex =
+        new System.Text.RegularExpressions.Regex("^[A-Za-z0-9_\\-]+$", System.Text.RegularExpressions.RegexOptions.Compiled);
+
+    protected static void ValidateUploadImageSize(byte[] data)
+    {
+        if (data == null || data.Length == 0)
+        {
+            throw new UploadImageException("Es wurde keine Datei hochgeladen.");
+        }
+
+        if (data.Length > MaxUploadImageBytes)
+        {
+            throw new UploadImageException($"Das Bild ist zu groß ({Math.Round(data.Length / 1024.0 / 1024.0, 1)} MB). Maximal erlaubt sind {MaxUploadImageBytes / 1024 / 1024} MB.");
+        }
+    }
+
+    protected IActionResult UploadImageErrorView(Exception ex)
+    {
+        string message = ex is UploadImageException
+            ? ex.Message
+            : "Beim Hochladen des Bildes ist ein Fehler aufgetreten.";
+
+        if (ex is not UploadImageException)
+        {
+            LogException(ex);
+        }
+
+        return ViewResult(new Portal.Core.Models.Portal.PortalUploadContentModel()
+        {
+            ErrorMessage = message
+        });
+    }
+
+    protected class UploadImageException : Exception
+    {
+        public UploadImageException(string message) : base(message) { }
+    }
+
     protected IActionResult ExceptionView(Exception ex)
     {
         if (IsApiUnavailableException(ex))

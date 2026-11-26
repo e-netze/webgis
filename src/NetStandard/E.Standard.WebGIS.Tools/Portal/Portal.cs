@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 
 using E.Standard.Json;
+using E.Standard.Security.Cryptography;
 using E.Standard.WebGIS.Core;
 using E.Standard.WebGIS.Core.Models;
 using E.Standard.WebGIS.Core.Reflection;
@@ -340,7 +341,7 @@ public class Portal : IApiServerButton, IStorageInteractions
                         imagePath,
                         data, WebMapping.Core.Api.IO.StorageBlobType.Data);
 
-                    return new ApiRawStringEventResponse(bridge.SecurityEncryptStringLegacy(pageId + @"/" + imagePath), "text/html");
+                    return new ApiRawStringEventResponse(bridge.SecurityEncryptString(pageId + @"/" + imagePath, CryptoPurposes.PortalContentImage), "text/html");
                 }
             }
         }
@@ -352,7 +353,8 @@ public class Portal : IApiServerButton, IStorageInteractions
     public ApiEventResponse OnContentImage(IBridge bridge, ApiToolEventArguments e)
     {
         string id = e["id"];
-        string imageId = bridge.SecurityDecryptStringOrLegacy(id);
+        // new iids: GCM bound to PortalContentImage; legacy (default key) iids are persisted in existing content html
+        string imageId = bridge.SecurityDecryptStringOrLegacy(id, CryptoPurposes.PortalContentImage);
 
         byte[] data = null;
         try

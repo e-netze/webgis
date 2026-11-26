@@ -108,8 +108,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-custom-services)
 - Portal: Removed the legacy portal page view `Portal.cshtml` (and `webgis-portal.js`); portal pages
   always use the `Cloud` view. The `portal.config` key `portal-home-view-name` was removed and is ignored.
+- Portal content images: new image ids (`iid`) are encrypted with AES-GCM (purpose `PortalContentImage`)
+  instead of the default key; legacy ids in existing content remain readable.
 
 ### Fixed
+
+- Portal: uploading content/map images larger than ~2.3 MB silently did nothing (API form value limit). Images
+  are now limited to 2 MB with an error message; upload errors are shown instead of being written into the page script.
 
 - ArcGIS Server authentication (e.g. MapServer WMTS services) against ArcGIS Server 12.1:
   without an `f` parameter, AGS 12.1 redirects unauthenticated requests to an HTML login page

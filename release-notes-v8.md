@@ -24,6 +24,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 - **Breaking change:** The `/storage` endpoint of the API (HTTP storage shared between API instances) was removed for security reasons, so `storage-rootpath` in `api.config` must be a local or shared directory and no longer an `http(s)` URL.
 - **Breaking change:** User-added custom services (with user/password) in saved maps are encrypted in a new, more secure format; existing maps keep working, but maps saved with this version cannot be opened by older API versions, so update the production system before copying storage from an updated test system.
 - The legacy portal page layout was removed; portal pages always use the `Cloud` layout and the `portal.config` key `portal-home-view-name` is ignored.
+- Images inserted into portal page content after the update are not displayed by older API versions sharing the same storage; existing images keep working.
 ### New
 
 - Subscriber login hardened for internet use: secure auth cookie with session lifetime, captcha and temporary lockout after failed logins, single-use captchas; configurable in the `api.config` section `security` (`cookie-secure`, `session-*`, `login-*`, `captcha-lifetime-minutes`), optionally shared between instances via Redis.
@@ -45,6 +46,7 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
 
 ### Fixed
 
+- Portal: uploading content or map images larger than about 2 MB did nothing; images are now limited to 2 MB and upload errors are shown.
 - Secured ArcGIS Server services (e.g. MapServer WMTS basemaps) with stored credentials work again with ArcGIS Server 12.1.
   [Issue #533](https://github.com/e-netze/webgis-community/issues/533)
 

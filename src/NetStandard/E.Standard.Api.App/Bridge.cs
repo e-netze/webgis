@@ -1243,6 +1243,11 @@ public class Bridge : IBridge
         return _crypto.EncryptAuthenticated(input ?? String.Empty, CryptoPurposes.ApiBridge);
     }
 
+    public string SecurityEncryptString(string input, string purpose)
+    {
+        return _crypto.EncryptAuthenticated(input ?? String.Empty, purpose);
+    }
+
     public string SecurityDecryptString(string encInput)
     {
         if (!_crypto.TryDecryptAuthenticated(encInput, CryptoPurposes.ApiBridge, out var text))
@@ -1253,14 +1258,20 @@ public class Bridge : IBridge
         return text;
     }
 
+    public string SecurityTryDecryptString(string encInput, string purpose)
+        => _crypto.TryDecryptAuthenticated(encInput, purpose, out var text) ? text : null;
+
     public string SecurityEncryptStringLegacy(string input)
     {
         return _crypto.EncryptTextDefault(input, CryptoResultStringType.Hex);
     }
 
     public string SecurityDecryptStringOrLegacy(string encInput)
+        => SecurityDecryptStringOrLegacy(encInput, CryptoPurposes.ApiBridge);
+
+    public string SecurityDecryptStringOrLegacy(string encInput, string purpose)
     {
-        if (_crypto.TryDecryptAuthenticated(encInput, CryptoPurposes.ApiBridge, out var text))
+        if (_crypto.TryDecryptAuthenticated(encInput, purpose, out var text))
         {
             return text;
         }

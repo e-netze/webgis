@@ -49,7 +49,7 @@ public static class CryptoPurposes
 
     /// <summary>
     /// <c>IAppCryptography.SecurityEncryptString/SecurityDecryptString</c> of the API bridge: encrypted tool parameters,
-    /// tool urls/ids (portal content images, mobile files, georef images, ...) and form values the portal sends to API tools.
+    /// tool urls/ids (mobile files, georef image ids, ...) and form values the portal sends to API tools.
     /// </summary>
     public const string ApiBridge = "api-bridge";
 
@@ -73,4 +73,16 @@ public static class CryptoPurposes
     /// (<c>custom_request_parameters.connection</c> / <c>custom.{serviceId}.connection</c>, also stored in saved maps).
     /// </summary>
     public const string CustomServiceConnection = "custom-service-connection";
+
+    /// <summary>
+    /// Encrypted storage path of an uploaded portal content image (<c>iid</c> in <c>./{page}/ContentImage/?iid=...</c>,
+    /// persisted in the content html). Older content may still contain legacy (default key) iids.
+    /// </summary>
+    public const string PortalContentImage = "portal-content-image";
+
+    /// <summary>
+    /// Encrypted storage path of a georeferenced image (<c>id</c> in <c>rest/tooldata/.../get?id=...</c>, overlay urls).
+    /// Only generated per response, never persisted.
+    /// </summary>
+    public const string GeorefImageUrl = "georef-image-url";
 }

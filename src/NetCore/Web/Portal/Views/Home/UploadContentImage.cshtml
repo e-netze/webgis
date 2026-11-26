@@ -9,6 +9,14 @@
 
 <script type="text/javascript">
 
-    top.$('.mce-btn.mce-open').parent().find('.mce-textbox').val('@Html.Raw(Model.ImageUrl)');
+    (function () {
+        var errorMessage = @Json.Serialize(Model?.ErrorMessage);
+        if (errorMessage) {
+            top.alert(errorMessage);
+            return;
+        }
+
+        top.$('.mce-btn.mce-open').parent().find('.mce-textbox').val(@Json.Serialize(Model?.ImageUrl));
+    })();
 
 </script>
