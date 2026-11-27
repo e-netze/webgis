@@ -128,6 +128,11 @@ static public class ConfigExtensions
         options.AcceptLegacyAuthCookie =
             "true".Equals(config[PortalConfigKeys.SecurityAcceptLegacyAuthCookie]?.Trim(), StringComparison.OrdinalIgnoreCase);
 
+        if (Enum.TryParse(config[PortalConfigKeys.SecurityCookieSecure]?.Trim(), true, out PortalCookieSecureMode cookieSecure))
+        {
+            options.CookieSecure = cookieSecure;
+        }
+
         options.AllowedRedirectHosts = (config[PortalConfigKeys.SecurityAllowedRedirectHosts] ?? "")
             .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }

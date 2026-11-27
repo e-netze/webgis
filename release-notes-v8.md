@@ -47,6 +47,8 @@ The version number encodes the release date: `Major.{Year-2000}.{CalendarWeek}{B
   [Docs](https://docs.webgiscloud.com/en/webgis/annex/security.html#annex-security-custom-services)
 - Portal: hardened login cookie and `/hmac` redirect handling; new `portal.config` keys `security:accept-legacy-auth-cookie` and `security:allowed-redirect-hosts`.
   [Docs](https://docs.webgiscloud.com/en/webgis/config/portal/index.html#portal-config-security)
+- Portal login cookie is set with `HttpOnly` and `SameSite=Lax`; the `Secure` flag follows HTTPS requests (`auto`) and can be forced via the new `portal.config` key `security:cookie-secure` (`auto`|`always`|`never`). Behind a TLS-terminating proxy, forward the `X-Forwarded-*` headers.
+  [Docs](https://docs.webgiscloud.com/en/webgis/config/portal/index.html#portal-config-security)
 
 ### Fixed
 
