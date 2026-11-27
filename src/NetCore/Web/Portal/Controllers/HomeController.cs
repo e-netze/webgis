@@ -110,8 +110,6 @@ public class HomeController : PortalBaseController
                                             .GetFavItemsAsync(portalUser.Username, String.Empty, "webgis.tools.portal.publish.categorymaps");
             }
 
-            var viewName = _config.Get<string>(PortalConfigKeys.PortalHomeViewName, "Cloud");
-
             string scopeUrl = String.Empty, manifestUrl = String.Empty;
 
             if (_config.RegisterServiceWorker())
@@ -125,7 +123,7 @@ public class HomeController : PortalBaseController
             var isMapAuthor = IsAuthorizedPortalMapAuthor(portal, portalUser);
             var isPortalPageOwner = portalUser.Username.Equals(portal.Subscriber, StringComparison.OrdinalIgnoreCase);
 
-            return ViewResult(viewName, new PortalModel()
+            return ViewResult("Cloud", new PortalModel()
             {
                 PortalPageId = id,
                 PortalPageName = portal.Name,
@@ -306,14 +304,25 @@ public class HomeController : PortalBaseController
             var file = _uploadFiles.GetFiles(this.Request)["content-image"];
             if (file == null)
             {
-                throw new Exception("No file uploaded");
+                throw new UploadImageException("Es wurde keine Datei hochgeladen.");
             }
 
             byte[] data = file.Data;
+            ValidateUploadImageSize(data);
 
-            string storageName = await _api.UploadPortalPageContentImageAsync(this.HttpContext, id, contentId, data);
+            string storageName = (await _api.UploadPortalPageContentImageAsync(this.HttpContext, id, contentId, data))?.Trim();
 
-            string url = "./" + id + "/ContentImage/?format=image/png&iid=" + storageName.Trim();
+            if (String.IsNullOrEmpty(storageName))
+            {
+                throw new UploadImageException("Das Bild konnte nicht gespeichert werden (keine Berechtigung).");
+            }
+            if (!UploadImageStorageNameRegex.IsMatch(storageName))
+            {
+                // e.g. an error message from the api => never write it into the client response
+                throw new Exception($"Invalid content image storage name returned from api: {storageName}");
+            }
+
+            string url = "./" + id + "/ContentImage/?format=image/png&iid=" + storageName;
 
             return ViewResult(new PortalUploadContentModel()
             {
@@ -322,7 +331,7 @@ public class HomeController : PortalBaseController
         }
         catch (Exception ex)
         {
-            return ExceptionView(ex);
+            return UploadImageErrorView(ex);
         }
     }
 

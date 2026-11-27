@@ -3,4 +3,5 @@
 public class PortalUploadContentModel
 {
     public string ImageUrl { get; set; }
+    public string ErrorMessage { get; set; }
 }

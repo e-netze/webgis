@@ -299,15 +299,6 @@ static public class ConfigurationServiceExtensions
         return config[ApiConfigKeys.SecurityUsermanagementAllowWildcards] == "true";
     }
 
-    static public IEnumerable<string> SecurityAddCustomServiceHostBlacklist(this ConfigurationService config)
-    {
-        return config[ApiConfigKeys.SecurityAddCustomServiceHostBlacklist]?
-                    .Split(',')
-                    .Select(s => s.Trim())
-                    .Where(s => !String.IsNullOrEmpty(s))
-                    ?? Array.Empty<string>();
-    }
-
     #endregion
 
     #region AppRoles
@@ -402,6 +393,26 @@ static public class ConfigurationServiceExtensions
     static public string SecureEndpointBasicAuthPassword(this IConfiguration config)
         => config[ApiConfigKeys.SecuritySecureEndpointBasicAuthPassword] ?? "";
 
+
+    static public void BindCustomServicesOptions(this IConfiguration config, CustomServicesOptions options)
+    {
+        if (bool.TryParse(config[ApiConfigKeys.SecurityAllowCustomServices], out bool allow))
+        {
+            options.Allow = allow;
+        }
+
+        options.AllowHosts = (config[ApiConfigKeys.SecurityCustomServicesAllowHosts] ?? String.Empty)
+            .Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(h => h.Trim().ToLowerInvariant())
+            .Where(h => h.Length > 0)
+            .ToArray();
+
+        options.HostBlacklist = (config[ApiConfigKeys.SecurityAddCustomServiceHostBlacklist] ?? String.Empty)
+            .Split(',')
+            .Select(s => s.Trim())
+            .Where(s => s.Length > 0)
+            .ToArray();
+    }
 
     static public void BindSubscriberSecurityOptions(this IConfiguration config, SubscriberSecurityOptions options)
     {

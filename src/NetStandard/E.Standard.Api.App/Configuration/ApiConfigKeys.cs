@@ -145,6 +145,8 @@ public class ApiConfigKeys
 
     public const string SecuritySetupPassword = ConfigurationSectionName + ":security-setup-pwd";
     public const string SecurityAddCustomServiceHostBlacklist = ConfigurationSectionName + ":security-add-custom-services-host-blacklist";
+    public const string SecurityAllowCustomServices = ConfigurationSectionName + ":security:allow-custom-services";
+    public const string SecurityCustomServicesAllowHosts = ConfigurationSectionName + ":security:custom-services-allow-hosts";
 
     public const string SupportedLanguages = ConfigurationSectionName + ":supported-languages";
 

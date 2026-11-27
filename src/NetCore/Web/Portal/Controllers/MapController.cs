@@ -317,12 +317,18 @@ public class MapController : PortalBaseController
             var file = _uploadFiles.GetFiles(Request)["map-image"];
             if (file == null)
             {
-                throw new Exception("No file uploaded");
+                throw new UploadImageException("Es wurde keine Datei hochgeladen.");
             }
 
             byte[] data = file.Data;
+            ValidateUploadImageSize(data);
 
             string storageName = await _api.UploadMapImageAsync(HttpContext, id, category, map, data);
+            if (!String.IsNullOrWhiteSpace(storageName))
+            {
+                // api returns an empty string on success, anything else is an error message
+                throw new Exception($"Map image upload failed: {storageName}");
+            }
 
             string url = "../../mapImage/?category=" + category + "&map=" + map + "&t=" + DateTime.UtcNow.Ticks;
 
@@ -333,7 +339,7 @@ public class MapController : PortalBaseController
         }
         catch (Exception ex)
         {
-            return ExceptionView(ex);
+            return UploadImageErrorView(ex);
         }
     }
 

@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 
 using E.Standard.Json;
+using E.Standard.Security.Cryptography;
 using E.Standard.WebGIS.Core.Extensions;
 using E.Standard.WebGIS.Tools.Georeferencing.Image.Models;
 using E.Standard.WebMapping.Core.Api.Bridge;
@@ -94,7 +95,7 @@ static public class BridgeExtensions
 
         string filePath = $"{owner.Username2StorageDirectory()}/_georefimages/{georefImageMetadata.Id.GeorefImageIdToStorageName()}.{georefImageMetadata.ImageExtension}";
 
-        return $"{bridge.AppRootUrl}/rest/tooldata/{typeof(OutStream).ToToolId()}/get?id={bridge.SecurityEncryptStringLegacy(filePath)}";
+        return bridge.GeorefImageUrlFromStoragePath(filePath);
     }
 
     static public string GeorefImageUrl(this IBridge bridge, string filename)
@@ -106,8 +107,14 @@ static public class BridgeExtensions
 
         string filePath = $"{bridge.CurrentUser.Username.Username2StorageDirectory()}/_georefimages/{filename}";
 
-        return $"{bridge.AppRootUrl}/rest/tooldata/{typeof(OutStream).ToToolId()}/get?id={bridge.SecurityEncryptStringLegacy(filePath)}";
+        return bridge.GeorefImageUrlFromStoragePath(filePath);
     }
+
+    static private string GeorefImageUrlFromStoragePath(this IBridge bridge, string filePath)
+        => $"{bridge.AppRootUrl}/rest/tooldata/{typeof(OutStream).ToToolId()}/get?id={bridge.SecurityEncryptString(filePath, CryptoPurposes.GeorefImageUrl)}";
+
+    static public string GeorefImageUrlIdToStoragePath(this IBridge bridge, string id)
+        => bridge.SecurityTryDecryptString(id, CryptoPurposes.GeorefImageUrl);
 
     static public string GeorefImageUrlToStorageName(this IBridge bridge, string url)
     {
@@ -118,7 +125,7 @@ static public class BridgeExtensions
 
         var filePathEncrypted = url.Substring(url.IndexOf("?id=") + 4);
 
-        var filePath = bridge.SecurityDecryptStringOrLegacy(filePathEncrypted);
+        var filePath = bridge.GeorefImageUrlIdToStoragePath(filePathEncrypted);
         if (filePath is null)
         {
             return String.Empty;

@@ -68,27 +68,47 @@ public static class SecurityReportRules
         return internet ? Deviation : Hint;
     }
 
-    // user-added custom services: "forbidden" => ok, host blacklist => partly secured, nothing => all hosts reachable (SSRF)
+    // user-added custom services: disabled => not applicable, enabled => the host blacklist can restrict the reachable public hosts further
     private static SecurityVerdict CustomServiceHostBlacklist(SecurityRuleContext c, bool internet)
     {
-        var entries = c.Str("security-add-custom-services-host-blacklist", "")
-            .Split(',')
-            .Select(s => s.Trim())
-            .Where(s => s.Length > 0)
-            .ToArray();
+        if (!CustomServicesAllowed(c))
+        {
+            return NotApplicable;
+        }
 
-        if (entries.Contains("forbidden"))
+        return internet ? Hint : Ok;
+    }
+
+    // allow-hosts lets custom services reach loopback/private/link-local hosts (SSRF into the internal network)
+    private static SecurityVerdict CustomServicesAllowHosts(SecurityRuleContext c, bool internet)
+    {
+        if (!CustomServicesAllowed(c))
+        {
+            return NotApplicable;
+        }
+
+        var hosts = c.Str("security:custom-services-allow-hosts", "")
+            .Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+        if (hosts.Length == 0)
         {
             return Ok;
         }
 
-        if (!internet)
+        if (hosts.Contains("*"))
         {
-            return entries.Length > 0 ? Ok : Hint;
+            return internet ? Deviation : Hint;
         }
 
-        return entries.Length > 0 ? PartialDeviation : Deviation;
+        return internet ? PartialDeviation : Ok;
     }
+
+    private static bool CustomServicesAllowed(SecurityRuleContext c)
+        => c.Bool("security:allow-custom-services", false)
+           && !c.Str("security-add-custom-services-host-blacklist", "")
+                .Split(',')
+                .Select(s => s.Trim())
+                .Contains("forbidden");
 
     // DataLinq code editing allows changing/uploading Razor code that is compiled and executed in the API process
     // (only with login, but still). It should only be enabled in development environments:
@@ -201,7 +221,13 @@ public static class SecurityReportRules
         Rule("dynamic-content:max-redirects", "5", Fine, SecurityRisk.Low, DynamicContent,
             c => InRange(c, "dynamic-content:max-redirects", 5, 0, 5)),
 
-        Rule("security-add-custom-services-host-blacklist", "-", Feature, SecurityRisk.High, CustomServices,
+        Rule("security:allow-custom-services", "false", Feature, SecurityRisk.High, CustomServices,
+            c => CustomServicesAllowed(c) ? Hint : Ok,
+            c => Ok),
+        Rule("security:custom-services-allow-hosts", "-", CompatOptOut, SecurityRisk.High, CustomServices,
+            c => CustomServicesAllowHosts(c, true),
+            c => CustomServicesAllowHosts(c, false)),
+        Rule("security-add-custom-services-host-blacklist", "-", Fine, SecurityRisk.Low, CustomServices,
             c => CustomServiceHostBlacklist(c, true),
             c => CustomServiceHostBlacklist(c, false)),
 

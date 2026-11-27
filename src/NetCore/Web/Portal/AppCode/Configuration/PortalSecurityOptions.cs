@@ -1,7 +1,17 @@
 namespace Portal.Core.AppCode.Configuration;
 
+public enum PortalCookieSecureMode
+{
+    Auto,
+    Always,
+    Never
+}
+
 public class PortalSecurityOptions
 {
+    // Secure flag of the auth cookie: Auto = only for https requests.
+    public PortalCookieSecureMode CookieSecure { get; set; } = PortalCookieSecureMode.Auto;
+
     // Auth cookies written by older versions (AES-CBC without integrity protection) are rejected by default.
     public bool AcceptLegacyAuthCookie { get; set; } = false;
 

@@ -116,24 +116,25 @@ public class WebgisCookieService
 
         string cookieValue = CookieVersionPrefix + _crypto.EncryptAuthenticated(JSerializer.Serialize(data), CookiePurpose);
 
-        CookieOptions options = null;
+        var options = new CookieOptions()
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+            Path = "/",
+            Secure = _securityOptions.CookieSecure switch
+            {
+                PortalCookieSecureMode.Always => true,
+                PortalCookieSecureMode.Never => false,
+                _ => context.Request.IsHttps
+            }
+        };
 
         if (expires != null)
         {
-            options = new CookieOptions()
-            {
-                Expires = expires
-            };
+            options.Expires = expires;
         }
 
-        if (options == null)
-        {
-            context.Response.Cookies.Append(AuthCookieName, cookieValue);
-        }
-        else
-        {
-            context.Response.Cookies.Append(AuthCookieName, cookieValue, options);
-        }
+        context.Response.Cookies.Append(AuthCookieName, cookieValue, options);
         context.Response.Headers.Append("P3P", "CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'");
     }
 

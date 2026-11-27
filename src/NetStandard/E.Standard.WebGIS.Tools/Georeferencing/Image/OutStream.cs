@@ -69,7 +69,7 @@ public class OutStream : IApiButton, IApiCustomToolServiceProvider
     {
         string id = e["id"];
 
-        string blobName = bridge.SecurityDecryptStringOrLegacy(id)
+        string blobName = bridge.GeorefImageUrlIdToStoragePath(id)
             ?? throw new System.IO.FileNotFoundException();
         string contentType = $"image/{blobName.Split('.').Last().ToLower()}";
 

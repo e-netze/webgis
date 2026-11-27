@@ -9,8 +9,18 @@
 
 <script type="text/javascript">
 
-    top.$('.mapimage-preview').empty();
-    var imageUrl = top.webgis.url.relative('@Html.Raw(Model.ImageUrl)');
-    $("<div style=\"background:url('"+imageUrl+"') no-repeat center center;width:140px;height:140px\"></div>").appendTo(top.$('.mapimage-preview'));
+    (function () {
+        var errorMessage = @Json.Serialize(Model?.ErrorMessage);
+        if (errorMessage) {
+            top.alert(errorMessage);
+            return;
+        }
+
+        top.$('.mapimage-preview').empty();
+        var imageUrl = top.webgis.url.relative(@Json.Serialize(Model?.ImageUrl));
+        top.$("<div>")
+            .css({ background: "url('" + imageUrl + "') no-repeat center center", width: '140px', height: '140px' })
+            .appendTo(top.$('.mapimage-preview'));
+    })();
 
 </script>

@@ -33,13 +33,15 @@ public class MapServiceInitializerService
     private readonly ICryptoService _crypto;
     private readonly IRequestContext _requestContext;
     private readonly CmsDocumentsService _cmsDocuments;
+    private readonly CustomServiceUrlValidator _customServiceUrlValidator;
 
     public MapServiceInitializerService(ConfigurationService config,
                                         IUrlHelperService urlHelper,
                                         ITempDataObjectCache objectCache,
                                         ICryptoService crypto,
                                         IRequestContext requestContext,
-                                        CmsDocumentsService cmsDocuments)
+                                        CmsDocumentsService cmsDocuments,
+                                        CustomServiceUrlValidator customServiceUrlValidator)
     {
         _config = config;
         _urlHelper = urlHelper;
@@ -47,6 +49,7 @@ public class MapServiceInitializerService
         _crypto = crypto;
         _requestContext = requestContext;
         _cmsDocuments = cmsDocuments;
+        _customServiceUrlValidator = customServiceUrlValidator;
     }
 
     public IMap Map(IRequestContext requestContext, CmsDocument.UserIdentification ui, string name = "")
@@ -670,7 +673,7 @@ public class MapServiceInitializerService
 
     async public Task<IMapService> GetCustomServiceByUrlAsync(string serviceId, IMap parent, CmsDocument.UserIdentification ui, NameValueCollection requestFormParameters)
     {
-        if (!IsCustomService(serviceId))
+        if (!IsCustomService(serviceId) || !_customServiceUrlValidator.IsEnabled)
         {
             return null;
         }
@@ -682,7 +685,9 @@ public class MapServiceInitializerService
 
             string connectionString = DecodeCustomServiceConnectionString(connectionParameter);
 
-            if (!String.IsNullOrEmpty(connectionString))
+            // re-check the url: the host blacklist/allow list or the dns resolution may have changed since the map was saved
+            if (!String.IsNullOrEmpty(connectionString)
+                && await _customServiceUrlValidator.IsAllowedUrlAsync(connectionString.ExtractConnectionStringValue("url")))
             {
                 service = await CustomServiceInstanceAsync(
                     serviceId,
@@ -703,6 +708,10 @@ public class MapServiceInitializerService
     }
 
     public string GenerateNewCustomServiceId() => $"{CustomServicePrefix}{Guid.NewGuid():N}";
+
+    public bool CustomServicesEnabled => _customServiceUrlValidator.IsEnabled;
+
+    public Task<bool> IsAllowedCustomServiceUrlAsync(string url) => _customServiceUrlValidator.IsAllowedUrlAsync(url);
 
     public string EncodeCustomServiceConnectionString(string url, string displayName, string user, string password, CmsDocument.UserIdentification ui)
     {

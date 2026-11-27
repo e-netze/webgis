@@ -18,7 +18,6 @@ public class PortalConfigKeys
     public const string PortalName = ConfigurationSectionName + ":portal-name";
     public const string PortalNameUrl = ConfigurationSectionName + ":portal-name-url";
 
-    public const string PortalHomeViewName = ConfigurationSectionName + ":portal-home-view-name";
     public const string DefaultPortalPageId = ConfigurationSectionName + ":default-page-id";
 
     public const string PortalCustomContentRootPath = ConfigurationSectionName + ":portal-custom-content-rootpath";
@@ -55,6 +54,7 @@ public class PortalConfigKeys
     public const string SecuritySecureEndpointBasicAuthUsername = ConfigurationSectionName + ":security:secure-endpoint-basicauth-username";
     public const string SecuritySecureEndpointBasicAuthPassword = ConfigurationSectionName + ":security:secure-endpoint-basicauth-password";
     public const string SecurityAcceptLegacyAuthCookie = ConfigurationSectionName + ":security:accept-legacy-auth-cookie";
+    public const string SecurityCookieSecure = ConfigurationSectionName + ":security:cookie-secure";
     public const string SecurityAllowedRedirectHosts = ConfigurationSectionName + ":security:allowed-redirect-hosts";
 
     public const string AllowSubscriberAccessPageSettings = ConfigurationSectionName + ":allow-subscriber-user-access-page-settings";
